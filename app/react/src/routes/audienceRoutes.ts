@@ -3,8 +3,6 @@ import {
   SegmentsActionbar,
 } from '../containers/Audience/Segments/List';
 
-import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage';
-
 import { EditAudienceSegmentPage } from '../containers/Audience/Segments/Edit';
 
 import {
@@ -24,6 +22,7 @@ import Partition from '../containers/Audience/Partitions/Dashboard/Partition';
 import AudiencePartitionPage from '../containers/Audience/Partitions/Edit/AudiencePartitionPage';
 
 import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
+import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
 
 
 export const audienceDefinition: NavigatorDefinition = {
@@ -88,7 +87,7 @@ export const audienceDefinition: NavigatorDefinition = {
   audienceSegmentBuilder: {
     path: '/audience/segment-builder',
     layout: 'main',
-    contentComponent: QueryToolPage,
+    contentComponent: SegmentBuilderPage,
     requiredFeature: 'audience.segment_builder',
     requireDatamart: true
   },

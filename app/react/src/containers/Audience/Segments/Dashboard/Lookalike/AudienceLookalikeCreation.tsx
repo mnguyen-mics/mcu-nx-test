@@ -62,7 +62,7 @@ const fieldGridConfig = {
 class AudienceLookalikeCreation extends React.Component<
   Props,
   AudienceLookalikeState
-> {
+  > {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -199,13 +199,6 @@ class AudienceLookalikeCreation extends React.Component<
                     ),
                     required: true,
                     ...fieldGridConfig,
-                  }}
-                  selectProps={{
-                    defaultValue:
-                      this.state.partitions.length &&
-                      this.state.partitions[0].id
-                        ? this.state.partitions[0].id
-                        : '',
                   }}
                 />
               </div>

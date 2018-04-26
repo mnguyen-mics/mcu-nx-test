@@ -10,9 +10,9 @@ import { settingsDefinitions } from '../../routes/settingsDefinition';
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import { MenuMode } from 'antd/lib/menu';
-import { Datamart } from '../../models/organisation/organisation';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMultipleLevelMenuDefinition, NavigatorSubMenuDefinition } from '../../routes/domain';
+import { DatamartResource } from '../../models/datamart/DatamartResource';
 
 
 const basePath = '/v2/o/:organisationId(\\d+)';
@@ -24,7 +24,7 @@ export interface NavigatorSettingsSideMenuProps {
 }
 
 interface NavigatorSettingsSideMenuStoreProps {
-  defaultDatamart: (organisationId: string) => Datamart;
+  defaultDatamart: (organisationId: string) => DatamartResource;
 }
 
 interface RouteProps {

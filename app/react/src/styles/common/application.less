@@ -28,6 +28,11 @@ a {
   padding: 0 40px 60px;
   height: inherit;
   overflow-y: scroll;
+  &.flex {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+  }
 }
 
 .edit-top {
@@ -140,4 +145,8 @@ input:disabled {
 
 .bm-burger-button {
   display: none;
+}
+
+.no-margin-bottom {
+  margin-bottom: 0!important;
 }

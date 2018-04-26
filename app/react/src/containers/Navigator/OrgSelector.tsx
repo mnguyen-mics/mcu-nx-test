@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Input, Card, Row, Col } from 'antd';
+import { Card, Row, Col } from 'antd';
 import { connect } from 'react-redux';
 import log from '../../utils/Logger';
 import _ from 'lodash';
@@ -12,8 +12,8 @@ import * as SessionHelper from '../../state/Session/selectors';
 import OrgLogo from '../Logo/OrgLogo';
 import { ButtonStyleless } from '../../components/index';
 import { Workspace } from '../../models/organisation/organisation';
+import Search from 'antd/lib/input/Search';
 
-const Search = Input.Search;
 const { Meta } = Card;
 
 export interface OrgSelectorProps {
@@ -21,7 +21,7 @@ export interface OrgSelectorProps {
   workspace: Workspace;
   hasDatamarts: boolean;
   size: number;
-  onItemClick: () => void
+  onItemClick: () => void;
 }
 
 interface OrgSelectorState {
@@ -33,8 +33,11 @@ type InnerProps = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
+  searchInput: React.RefObject<Search>;
+
   constructor(props: InnerProps) {
     super(props);
+    this.searchInput = React.createRef<Search>();
     this.state = {
       search: '',
     };
@@ -43,11 +46,8 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
   changeWorkspace = ({ key }: { key: string }) => {
     const {
       history,
-      match: {
-        path,
-        params,
-      },
-      onItemClick
+      match: { path, params },
+      onItemClick,
     } = this.props;
 
     const toPath = pathToRegexp.compile(path);
@@ -57,8 +57,8 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
     });
     log.debug(`Change workspace, redirect to ${fullUrl}`);
     history.push(fullUrl);
-    onItemClick()
-  }
+    onItemClick();
+  };
 
   onSearch = (value: string) => {
     this.setState({ search: value });
@@ -102,10 +102,12 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
         <Row gutter={20} style={{ marginRight: 20, marginLeft: 20 }}>
           <Col span={24}>
             <Search
+              ref={this.searchInput}
               placeholder="Search Organisation"
               onSearch={this.onSearch}
               className="search-input"
               onChange={this.onChange}
+              autoFocus={true}
             />
           </Col>
 
@@ -136,7 +138,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
                 ))
               ) : (
                 <div className="mcs-no-results">
-                   <FormattedMessage
+                  <FormattedMessage
                     id="orgSelector.noResult"
                     defaultMessage="No Results"
                   />

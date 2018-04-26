@@ -1,34 +1,32 @@
-import { PublicJobExecutionResource, JobExecutionStatus } from "../Job/JobResource";
+import {
+  PublicJobExecutionResource,
+  JobExecutionStatus,
+} from '../Job/JobResource';
 
 export interface AudienceSegmentResource {
   id: string;
   organisation_id: string;
   name: string;
-  short_description?: string,
+  short_description?: string;
   technical_name?: string;
   default_ttl?: number;
   datamart_id: string;
   provider_name?: string;
-  persisted: boolean,
-  type: AudienceSegmentType
+  persisted: boolean;
+  type: AudienceSegmentType;
 }
 
 export type AudienceSegmentType =
-  'USER_LIST' |
-  'USER_QUERY' |
-  'USER_ACTIVATION' |
-  'USER_PARTITION' |
-  'USER_PIXEL' |
-  'USER_LOOKALIKE';
+  | 'USER_LIST'
+  | 'USER_QUERY'
+  | 'USER_ACTIVATION'
+  | 'USER_PARTITION'
+  | 'USER_PIXEL'
+  | 'USER_LOOKALIKE';
 
-export type UserQueryEvaluationMode =
-  'REAL_TIME' |
-  'AUTOMATIC' |
-  'ON_DEMAND';
+export type UserQueryEvaluationMode = 'REAL_TIME' | 'AUTOMATIC' | 'ON_DEMAND';
 
-export type FeedType =
-  'FILE_IMPORT' |
-  'TAG';
+export type FeedType = 'FILE_IMPORT' | 'TAG';
 
 export type LookAlikeAlgorithm =
   | 'CLUSTER_OVERLAP'
@@ -39,16 +37,11 @@ export type AudienceLookalikeStatus =
   | 'DRAFT'
   | 'CALIBRATING'
   | 'CALIBRATION_ERROR'
-  | 'CALIBRATED'
+  | 'CALIBRATED';
 
 export interface UserListSegment extends AudienceSegmentResource {
   feed_type: FeedType;
   type: 'USER_LIST';
-}
-
-export interface UserQuerySegment extends AudienceSegmentResource {
-  query_id: string;
-  type: 'USER_QUERY';
 }
 
 export interface UserLookalikeSegment extends AudienceSegmentResource {
@@ -62,18 +55,24 @@ export interface UserLookalikeSegment extends AudienceSegmentResource {
   status: AudienceLookalikeStatus;
 }
 
-
-export type AudienceSegmentShape = UserListSegment | UserQuerySegment |  UserLookalikeSegment;
-
+export type AudienceSegmentShape =
+  | UserListSegment
+  | UserQuerySegment
+  | UserLookalikeSegment;
 
 export interface OverlapJobResult extends PublicJobExecutionResource {
-  external_model_name: 'PUBLIC_AUDIENCE_SEGMENT',
+  external_model_name: 'PUBLIC_AUDIENCE_SEGMENT';
   output_result: {
-    status: JobExecutionStatus,
+    status: JobExecutionStatus;
     result: {
       data_file_uri: string;
-    },
-  }
+    };
+  };
+}
+
+export interface UserQuerySegment extends AudienceSegmentResource {
+  query_id?: string;
+  type: 'USER_QUERY';
 }
 
 export interface SegmentOverlapResult {
@@ -89,7 +88,7 @@ export interface OverlapItemResult {
 }
 
 export interface OverlapFileResource {
-  date: number,
+  date: number;
   segments: SegmentOverlapResult[];
   overlaps: OverlapItemResult[];
 }

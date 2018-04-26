@@ -35,7 +35,7 @@ export default AuditStatusRenderer;
 export const auditIconConfig: {
   [key in CreativeAuditStatus]: {
     type: McsIconType;
-    color: React.CSSWideKeyword | any;
+    color: string;
   }
 } = {
   NOT_AUDITED: {

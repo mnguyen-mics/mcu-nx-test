@@ -7,7 +7,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 
 import FormFieldWrapper from '../../../../components/Form/FormFieldWrapper';
 import ButtonStyleless from '../../../../components/ButtonStyleless';
-import FormSelect from '../../../../components/Form/FormSelect/FormSelect';
 import CreativeService from '../../../../services/CreativeService';
 import messages from '../Edit/messages';
 
@@ -36,7 +35,12 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { organisationId } }, input } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      input,
+    } = this.props;
     CreativeService.getCreativeFormats(organisationId, {
       type: 'DISPLAY_AD',
     }).then(res => {
@@ -53,7 +57,12 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
   }
 
   render() {
-    const { intl: { formatMessage }, input, meta, disabled } = this.props;
+    const {
+      intl: { formatMessage },
+      input,
+      meta,
+      disabled,
+    } = this.props;
     const { standardFormat, availableFormats } = this.state;
 
     let validateStatus: 'error' | 'success' | 'warning' | 'validating' =
@@ -105,7 +114,7 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
         <div className="creative-format">
           <div className="field">
             {standardFormat ? (
-              <FormSelect
+              <Select
                 onBlur={input.onBlur as () => any}
                 onChange={input.onChange as () => any}
                 onFocus={input.onFocus as () => any}
@@ -117,7 +126,7 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
                     {option}
                   </Option>
                 ))}
-              </FormSelect>
+              </Select>
             ) : (
               <div className="custom">
                 <div className="input">

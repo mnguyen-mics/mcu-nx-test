@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps, match } from 'react-router-dom';
 
 import * as featureSelector from '../../state/Features/selectors';
 import * as SessionHelper from '../../state/Session/selectors';
-import { Datamart } from '../../models/organisation/organisation';
+import { DatamartResource } from '../../models/datamart/DatamartResource';
 
 export interface InjectedFeaturesProps {
   hasFeature: (requiredFeatures?: string | string[], requireDatamart?: boolean) => boolean;
@@ -14,7 +14,7 @@ interface RouteParams { organisationId: string }
 
 type Props = RouteComponentProps<RouteParams> & {
   hasFeatureStore: (featureId: string) => boolean;
-  getDefaultDatamart: (orgnasationId: string) => Datamart
+  getDefaultDatamart: (orgnasationId: string) => DatamartResource
 } & {
   computedMatch: match<RouteParams>
 } & { [key: string]: any };

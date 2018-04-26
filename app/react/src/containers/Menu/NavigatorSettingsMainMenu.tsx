@@ -10,16 +10,16 @@ import {
   hasDatamarts,
 } from '../../state/Session/selectors';
 import { getOrgFeatures } from '../../state/Features/selectors';
-import { Datamart } from '../../models/organisation/organisation';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition } from '../../routes/domain';
+import { DatamartResource } from '../../models/datamart/DatamartResource';
 
 export interface NavigatorSettingsMainMenuProps {
 }
 
 interface NavigatorSettingsMainMenuStoreProps {
   organisationHasDatamarts: (organisationId: string) => boolean;
-  defaultDatamart: (organisationId: string) => Datamart;
+  defaultDatamart: (organisationId: string) => DatamartResource;
   orgFeatures: string[];
 }
 

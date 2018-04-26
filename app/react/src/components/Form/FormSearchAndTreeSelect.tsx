@@ -14,6 +14,7 @@ export interface FormSearchAndTreeSelectProps {
   value: string[];
   handleClickOnRemove: (key: string) => void;
   handleOnChange: (checkedKeys: string[]) => void;
+  small?: boolean;
 }
 
 export default class FormSearchAndTreeSelect extends React.Component<
@@ -58,6 +59,7 @@ export default class FormSearchAndTreeSelect extends React.Component<
       loading,
       handleClickOnRemove,
       handleOnChange,
+      small
     } = this.props;
 
     const selectedLeaves: Array<{
@@ -115,6 +117,7 @@ export default class FormSearchAndTreeSelect extends React.Component<
         label={label}
         rowProps={{ align: flexAlign }}
         helpToolTipProps={tooltipProps}
+        small={small}
       >
         <Col span={24}>
           <div

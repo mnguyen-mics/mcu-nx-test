@@ -11,6 +11,7 @@ import SearchAndTreeSelect from './SearchAndTreeSelect';
 import LabelsSelector from './LabelsSelector';
 import OtqlConsole from './OtqlConsole';
 import TreeSelect from './TreeSelect';
+import RenderInBody from './RenderInBody';
 
 export {
   ButtonStyleless,
@@ -26,4 +27,5 @@ export {
   SearchAndTreeSelect,
   OtqlConsole,
   TreeSelect,
+  RenderInBody,
 };

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Select } from 'antd';
 import { WrappedFieldProps } from 'redux-form';
-import { SelectProps, OptionProps } from 'antd/lib/select';
-
-import FormSelect from './FormSelect';
+import { OptionProps } from 'antd/lib/select';
+import { RestrictedSelectProps } from './DefaultSelect';
 
 const { Option } = Select;
 
 export interface FormSelectAddonProps {
-  selectProps?: SelectProps;
+  selectProps?: RestrictedSelectProps;
   options: OptionProps[];
   style?: React.CSSProperties;
   disabled?: boolean;
@@ -31,13 +30,13 @@ class AddonSelect extends React.Component<
     );
 
     const optionsToDisplay = filteredOptions.map(option => (
-      <Option key={option.value} value={option.value}>
+      <Option key={option.value} {...option}>
         {option.title}
       </Option>
     ));
 
     return (
-      <FormSelect
+      <Select
         onBlur={input.onBlur as () => any}
         onChange={input.onChange as () => any}
         onFocus={input.onFocus as () => any}
@@ -47,7 +46,7 @@ class AddonSelect extends React.Component<
         disabled={disabled}
       >
         {optionsToDisplay}
-      </FormSelect>
+      </Select>
     );
   }
 }

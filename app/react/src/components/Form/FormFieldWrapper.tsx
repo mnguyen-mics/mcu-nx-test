@@ -13,6 +13,7 @@ export interface FormFieldWrapperProps {
   hoverToolTipProps?: TooltipProps;
   renderFieldAction?: () => React.ReactNode;
   rowProps?: RowProps;
+  small?: boolean;
 }
 
 const defaultFieldGridConfig: Partial<FormItemProps> = {
@@ -35,28 +36,32 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
     rowProps,
     label,
     renderFieldAction,
+    small,
     ...formInputProps,
   } = props;
+
+
+  const renderedLabel = small ? <span><span className="field-label">{label}</span><div className="field-helper">{helpToolTipProps && helpToolTipProps.title}</div></span>  : <span className="field-label">{label}</span>
 
   return (
     <div className={hasMarginBottom ? '' : 'form-field-wrapper'}>
       <Form.Item
-        label={label && <span className="field-label">{label}</span>}
-        {...defaultFieldGridConfig}
+        label={label && renderedLabel}
+        {...!small && defaultFieldGridConfig}
         {...formInputProps}
       >
         <Row {...defaultRowProps} {...rowProps}>
-          {!isEmpty(hoverToolTipProps)
+          {!isEmpty(hoverToolTipProps) && !small
             ? (
               <Tooltip placement="top" {...hoverToolTipProps}>
                 <Col span={20}>{children}</Col>
               </Tooltip>
             ) : (
-              <Col span={20}>{children}</Col>
+              <Col span={small ? 24 : 20}>{children}</Col>
             )
           }
 
-          {!isEmpty(helpToolTipProps)
+          {!isEmpty(helpToolTipProps) && !small
             ? (
               <Col span={2} className={`field-tooltip`}>
                 <Tooltip {...helpToolTipProps} placement="right">
@@ -64,7 +69,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
                 </Tooltip>
               </Col>
             ) : (
-              <Col span={2} className="no-field-tooltip" />
+              small ? null : <Col span={2} className="no-field-tooltip" />
             )
           }
           {(typeof renderFieldAction !== 'undefined')
@@ -84,6 +89,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
 
 FormFieldWrapper.defaultProps = {
   hasMarginBottom: false,
+  small: false
 };
 
 export default FormFieldWrapper;

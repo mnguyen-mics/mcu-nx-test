@@ -13,6 +13,7 @@ export interface FormTextAreaProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
   inputProps?: TextAreaProps & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
   helpToolTipProps?: TooltipProps;
+  small?: boolean;
 }
 
 const FormTextArea: React.SFC<FormTextAreaProps & WrappedFieldProps> = props => {
@@ -26,6 +27,7 @@ const FormTextArea: React.SFC<FormTextAreaProps & WrappedFieldProps> = props => 
       help={props.meta.touched && (props.meta.warning || props.meta.error)}
       helpToolTipProps={props.helpToolTipProps}
       validateStatus={validateStatus}
+      small={props.small}
       {...props.formItemProps}
     >
       <Input.TextArea

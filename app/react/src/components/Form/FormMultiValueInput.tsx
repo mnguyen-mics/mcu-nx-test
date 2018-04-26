@@ -18,6 +18,7 @@ export interface FormMultiInputProps {
   values: string[];
   handleClickOnRemove: (key: string) => void;
   handleClickOnItem: (key: string) => void;
+  small?: boolean;
 }
 
 class FormMultiInput extends React.Component<
@@ -72,6 +73,7 @@ class FormMultiInput extends React.Component<
     return (
       <FormFieldWrapper
         helpToolTipProps={this.props.helpToolTipProps}
+        small={this.props.small}
         {...this.props.formItemProps}
       >
         <div className="selected-audience-services-container">

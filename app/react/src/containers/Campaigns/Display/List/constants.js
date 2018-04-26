@@ -5,6 +5,7 @@ import {
   LABELS_SEARCH_SETTINGS
 } from '../../../../utils/LocationSearchHelper.ts';
 
+
 export const DISPLAY_SEARCH_SETTINGS = [
   ...PAGINATION_SEARCH_SETTINGS,
   ...FILTERS_SEARCH_SETTINGS,

@@ -9,7 +9,7 @@ import { Export } from '../../../../models/exports/exports';
 import modalMessages from '../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
-import ExportsService from '../../../../services/Library/ExportsService';
+import ExportService from '../../../../services/Library/ExportService';
 import log from '../../../../utils/Logger';
 import messages from './messages';
 
@@ -73,7 +73,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     if (this.state.exportIsRunning) {
       message.error(formatMessage(messages.exportRunning));
     } else if (this.props.exportObject) {
-      ExportsService.createExecution(this.props.exportObject.id)
+      ExportService.createExecution(this.props.exportObject.id)
         .then(res => this.setState({ exportIsRunning: true }))
         .then(res => this.props.onNewExecution())
     }

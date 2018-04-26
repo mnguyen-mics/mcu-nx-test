@@ -7,13 +7,19 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
-import FormSelect from './FormSelect';
+import { Omit } from '../../../utils/Types';
+
+export type RestrictedSelectProps = Omit<
+  SelectProps,
+  'onChange' | 'value' | 'onBlur' | 'onFocus' | 'defaultValue'
+>;
 
 export interface DefaultSelectProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
-  selectProps?: SelectProps;
+  selectProps?: RestrictedSelectProps;
   options?: OptionProps[];
   disabled?: boolean;
+  small?: boolean;
 }
 
 const Option = Select.Option;
@@ -37,7 +43,10 @@ class DefaultSelect extends React.Component<
   }
 
   setDefaultValue = () => {
-    const { options, input: { value, onChange } } = this.props;
+    const {
+      options,
+      input: { value, onChange },
+    } = this.props;
 
     if (options && options.length === 1 && (!value || value === '')) {
       onChange(options[0].value);
@@ -53,6 +62,7 @@ class DefaultSelect extends React.Component<
       meta,
       options,
       selectProps,
+      small,
     } = this.props;
 
     let validateStatus = 'success' as
@@ -64,31 +74,30 @@ class DefaultSelect extends React.Component<
     if (meta && meta.touched && meta.warning) validateStatus = 'warning';
 
     const optionsToDisplay = options!.map(option => (
-      <Option
-        key={option.value}
-        {...option}
-      >
+      <Option key={option.value} {...option}>
         {option.title}
       </Option>
     ));
 
     return (
-        <FormFieldWrapper
-          help={meta.touched && (meta.warning || meta.error)}
-          helpToolTipProps={helpToolTipProps}
-          validateStatus={validateStatus}
-          {...formItemProps}
+      <FormFieldWrapper
+        help={meta.touched && (meta.warning || meta.error)}
+        helpToolTipProps={helpToolTipProps}
+        validateStatus={validateStatus}
+        small={small}
+        {...formItemProps}
+      >
+        <Select
+          {...selectProps}
+          onBlur={input.onBlur as () => any}
+          onChange={input.onChange as () => any}
+          onFocus={input.onFocus as () => any}
+          value={input.value}
+          disabled={disabled}
         >
-          <FormSelect
-            {...selectProps}
-            onBlur={input.onBlur as () => any}
-            onChange={input.onChange as () => any}
-            onFocus={input.onFocus as () => any}
-            value={input.value}
-            disabled={disabled}
-          >{optionsToDisplay}
-          </FormSelect>
-        </FormFieldWrapper>
+          {optionsToDisplay}
+        </Select>
+      </FormFieldWrapper>
     );
   }
 }

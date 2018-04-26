@@ -4,12 +4,12 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import log from '../../utils/Logger';
 import * as SessionHelper from '../../state/Session/selectors';
-import { Datamart } from '../../models/organisation/organisation';
+import { DatamartResource } from '../../models/datamart/DatamartResource';
 
 let limiter = 0;
 
 export interface InjectedDatamartProps {
-  datamart: Datamart;
+  datamart: DatamartResource;
 }
 
 const mapStateToProps = (state: any) => {

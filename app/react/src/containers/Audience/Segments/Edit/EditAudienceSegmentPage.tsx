@@ -33,13 +33,13 @@ import {
 import {
   QueryLanguage,
   QueryResource,
+  DatamartResource,
 } from '../../../../models/datamart/DatamartResource';
 import { DataResponse } from '../../../../services/ApiService';
 import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { PluginProperty } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import DatamartSelector from './../../Common/DatamartSelector';
-import { Datamart } from '../../../../models/organisation/organisation';
 import { EditContentLayout } from '../../../../components/Layout';
 import SegmentTypeSelector from '../../Common/SegmentTypeSelector';
 import { getWorkspace } from '../../../../state/Session/selectors';
@@ -63,7 +63,7 @@ interface State {
   queryLanguage?: QueryLanguage;
   queryContainer?: any;
   loading: boolean;
-  selectedDatamart?: Datamart;
+  selectedDatamart?: DatamartResource;
   selectedSegmentType?: SegmentType;
   displayDatamartSelector: boolean;
 }
@@ -92,9 +92,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   countDefaultLifetime = (
     audienceSegment: AudienceSegmentShape,
   ): {
-    defaultLiftime?: number;
-    defaultLiftimeUnit?: DefaultLiftimeUnit;
-  } => {
+      defaultLiftime?: number;
+      defaultLiftimeUnit?: DefaultLiftimeUnit;
+    } => {
     let lifetime = moment
       .duration(audienceSegment.default_ttl, 'milliseconds')
       .asMonths();
@@ -141,87 +141,95 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       },
       workspace,
     } = props;
-
     const QueryContainer = (window as any).angular
       .element(document.body)
       .injector()
       .get('core/datamart/queries/QueryContainer');
-
     if (segmentId) {
       const getSegment: Promise<
         DataResponse<AudienceSegmentShape>
-      > = AudienceSegmentService.getSegment(segmentId).then(res => {
-        if (res.data.type === 'USER_QUERY' && res.data.query_id) {
-          QueryService.getQuery(res.data.datamart_id, res.data.query_id)
-            .then(r => r.data)
-            .then(r => {
-              const defQuery = new QueryContainer(r.datamart_id, r.id);
-              defQuery.load();
-              DatamartService.getDatamart(r.datamart_id)
-                .then(resp => resp.data)
-                .then(datamartResource => {
-                  this.setState({
-                    queryLanguage: r.query_language as QueryLanguage,
-                    queryContainer: defQuery,
-                    audienceSegmentFormData: {
-                      ...this.state.audienceSegmentFormData,
-                      query: r,
-                      type: this.extractSegmentType(res.data),
-                    },
-                    selectedDatamart: datamartResource,
+        > = AudienceSegmentService.getSegment(segmentId).then(res => {
+          if (res.data.type === 'USER_QUERY' && res.data.query_id) {
+            QueryService.getQuery(res.data.datamart_id, res.data.query_id)
+              .then(r => r.data)
+              .then(r => {
+
+                DatamartService.getDatamart(r.datamart_id)
+                  .then(resp => resp.data)
+                  .then(datamartResource => {
+
+                    const newState: Partial<State> = {
+                      queryLanguage: r.query_language,
+                      audienceSegmentFormData: {
+                        ...this.state.audienceSegmentFormData,
+                        query: r,
+                      },
+                      selectedDatamart: datamartResource,
+                    }
+
+                    if (r.query_language === 'SELECTORQL') {
+
+                      const defQuery = new QueryContainer(res.data.datamart_id, r.id);
+                      defQuery.load();
+                      newState.queryContainer = defQuery;
+                    }
+
+                    this.setState(newState as State);
+
                   });
-                });
-            });
-        }
-        return res;
-      });
+
+
+              });
+          }
+          return res;
+        });
 
       const getExternalFeed: Promise<
         AudienceExternalFeedResource[]
-      > = AudienceSegmentService.getAudienceExternalFeeds(segmentId)
-        .then(res => res.data)
-        .then(res => {
-          return Promise.all(
-            res.map(plugin =>
-              AudienceSegmentService.getAudienceExternalFeedProperty(
-                segmentId,
-                plugin.id,
-              )
-                .then(r => r.data)
-                .then(r => {
-                  return {
-                    ...plugin,
-                    status:
-                      (plugin.status as any) === 'INITIAL'
-                        ? 'PAUSED'
-                        : plugin.status,
-                    properties: r,
-                  };
-                }),
-            ),
-          );
-        });
+        > = AudienceSegmentService.getAudienceExternalFeeds(segmentId)
+          .then(res => res.data)
+          .then(res => {
+            return Promise.all(
+              res.map(plugin =>
+                AudienceSegmentService.getAudienceExternalFeedProperty(
+                  segmentId,
+                  plugin.id,
+                )
+                  .then(r => r.data)
+                  .then(r => {
+                    return {
+                      ...plugin,
+                      status:
+                        (plugin.status as any) === 'INITIAL'
+                          ? 'PAUSED'
+                          : plugin.status,
+                      properties: r,
+                    };
+                  }),
+              ),
+            );
+          });
       const getTagFeed: Promise<
         AudienceTagFeedResource[]
-      > = AudienceSegmentService.getAudienceTagFeeds(segmentId)
-        .then(res => res.data)
-        .then(res => {
-          return Promise.all(
-            res.map(plugin =>
-              AudienceSegmentService.getAudienceTagFeedProperty(
-                segmentId,
-                plugin.id,
-              )
-                .then(r => r.data)
-                .then(r => {
-                  return {
-                    ...plugin,
-                    properties: r,
-                  };
-                }),
-            ),
-          );
-        });
+        > = AudienceSegmentService.getAudienceTagFeeds(segmentId)
+          .then(res => res.data)
+          .then(res => {
+            return Promise.all(
+              res.map(plugin =>
+                AudienceSegmentService.getAudienceTagFeedProperty(
+                  segmentId,
+                  plugin.id,
+                )
+                  .then(r => r.data)
+                  .then(r => {
+                    return {
+                      ...plugin,
+                      properties: r,
+                    };
+                  }),
+              ),
+            );
+          });
 
       Promise.all([getSegment, getExternalFeed, getTagFeed])
         .then(res =>
@@ -243,7 +251,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
             };
             return newStat;
           }),
-        )
+      )
         .catch(err => {
           props.notifyError(err);
           this.setState({ loading: false });
@@ -438,7 +446,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       sid =>
         sid && !savedIds.includes(sid)
           ? () =>
-              AudienceSegmentService.deleteAudienceExternalFeeds(segmentId, sid)
+            AudienceSegmentService.deleteAudienceExternalFeeds(segmentId, sid)
           : () => Promise.resolve(),
     );
     return [...saveCreatePromise, ...deletePromise];
@@ -526,16 +534,15 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       .datamart_id as string;
 
     const { queryLanguage, queryContainer } = this.state;
-
-    return queryLanguage === 'OTQL'
-      ? QueryService.updateQuery(datamartId, queryId, {
-          query_language: queryLanguage,
-          query_text: (audienceSegmentFormData.query as QueryResource)
-            .query_text,
-          datamart_id: datamartId,
-        })
-          .then((res: any) => res.data)
-          .then((res: any) => res.id)
+    return queryLanguage === 'OTQL' || queryLanguage === 'JSON_OTQL'
+      ? QueryService.updateQuery(audienceSegmentFormData.audienceSegment.datamart_id!, queryId, {
+        query_language: queryLanguage,
+        query_text: (audienceSegmentFormData.query as QueryResource)
+          .query_text,
+        datamart_id: datamartId,
+      })
+        .then((res: any) => res.data)
+        .then((res: any) => res.id)
       : queryContainer.saveOrUpdate().then(() => queryContainer.id);
   };
 
@@ -549,14 +556,21 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     return queryLanguage === 'OTQL'
       ? QueryService.createQuery(datamartId, {
-          query_language: 'OTQL',
-          query_text: (audienceSegmentFormData.query as QueryResource)
-            .query_text,
-          datamart_id: datamartId,
-        })
-          .then(res => res.data)
-          .then(res => res.id)
-      : queryContainer.saveOrUpdate().then(() => queryContainer.id);
+        query_language: 'OTQL',
+        query_text: (audienceSegmentFormData.query as QueryResource)
+          .query_text,
+        datamart_id: datamartId,
+      })
+        .then(res => res.data)
+        .then(res => res.id)
+      : queryLanguage === 'JSON_OTQL' ? QueryService.createQuery(datamartId, {
+        query_language: 'JSON_OTQL',
+        query_text: (audienceSegmentFormData.query as QueryResource)
+          .query_text,
+        datamart_id: datamartId,
+      })
+        .then(res => res.data)
+        .then(res => res.id) : queryContainer.saveOrUpdate().then(() => queryContainer.id);
   };
 
   generateUpdateRequest = (
@@ -571,7 +585,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         )
           .then(res =>
             this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData),
-          )
+        )
           .then(rest => {
             if (audienceSegmentFormData.userListFiles !== undefined) {
               Promise.all(
@@ -595,7 +609,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       case 'USER_QUERY':
         return this.updateQuery(
           (audienceSegmentFormData.audienceSegment as UserQuerySegment)
-            .query_id,
+            .query_id!,
           audienceSegmentFormData,
         )
           .then(queryId => {
@@ -605,9 +619,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               query_id: queryId,
             });
           })
-          .then(res =>
+          .then((res: any) =>
             this.saveOrUpdatePlugin(res.data.id, audienceSegmentFormData),
-          );
+        );
       default:
         return Promise.resolve();
     }
@@ -631,7 +645,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           .duration(
             Number(formData.defaultLiftime),
             formData.defaultLiftimeUnit,
-          )
+        )
           .asMilliseconds();
       }
       return undefined;
@@ -719,7 +733,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           this.setState({ loading: false });
           const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${
             response.data.id
-          }/edit`;
+            }/edit`;
           history.push(adGroupDashboardUrl);
         })
         .catch(err => {
@@ -759,7 +773,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     return history.push(`/v2/o/${organisationId}/audience/segments`);
   };
 
-  onDatamartSelect = (datamart: Datamart) => {
+  onDatamartSelect = (datamart: DatamartResource) => {
     const QueryContainer = (window as any).angular
       .element(document.body)
       .injector()
@@ -825,10 +839,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const audienceSegmentName =
       audienceSegmentFormData.audienceSegment &&
-      audienceSegmentFormData.audienceSegment.name
+        audienceSegmentFormData.audienceSegment.name
         ? formatMessage(messagesMap.breadcrumbEditAudienceSegment, {
-            name: audienceSegmentFormData.audienceSegment.name,
-          })
+          name: audienceSegmentFormData.audienceSegment.name,
+        })
         : formatMessage(messages.audienceSegmentBreadCrumb);
 
     const breadcrumbPaths = [
@@ -852,7 +866,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const getQueryLanguageToDisplay =
       this.state.audienceSegmentFormData.query &&
-      this.state.audienceSegmentFormData.query.query_language
+        this.state.audienceSegmentFormData.query.query_language
         ? this.state.audienceSegmentFormData.query.query_language
         : this.state.queryLanguage;
     return segmentId || (selectedSegmentType && selectedDatamart) ? (
@@ -869,17 +883,17 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         segmentType={selectedSegmentType}
       />
     ) : (
-      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-        {displayDatamartSelector ? (
-          <DatamartSelector onSelect={this.onDatamartSelect} />
-        ) : (
-          <SegmentTypeSelector
-            onSelect={this.onSegmentTypeSelect}
-            segmentTypesToDisplay={this.getSegmentTypesToDisplay()}
-          />
-        )}
-      </EditContentLayout>
-    );
+        <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+          {displayDatamartSelector ? (
+            <DatamartSelector onSelect={this.onDatamartSelect} />
+          ) : (
+              <SegmentTypeSelector
+                onSelect={this.onSegmentTypeSelect}
+                segmentTypesToDisplay={this.getSegmentTypesToDisplay()}
+              />
+            )}
+        </EditContentLayout>
+      );
   }
 }
 

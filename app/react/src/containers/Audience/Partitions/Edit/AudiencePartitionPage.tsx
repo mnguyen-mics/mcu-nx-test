@@ -16,9 +16,9 @@ import { InjectedDatamartProps } from '../../../Datamart/injectDatamart';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { Datamart } from '../../../../models/organisation/organisation';
 import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from './../../Common/DatamartSelector';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 const messages = defineMessages({
   editPartition: {
@@ -43,12 +43,12 @@ const messages = defineMessages({
   },
 });
 
-interface AudiencePartitionPageProps {}
+interface AudiencePartitionPageProps { }
 
 interface AudiencePartitionPageState {
   partitionFormData?: AudiencePartitionFormData;
   isLoading: boolean;
-  selectedDatamart?: Datamart;
+  selectedDatamart?: DatamartResource;
 }
 
 type JoinedProps = AudiencePartitionPageProps &
@@ -60,7 +60,7 @@ type JoinedProps = AudiencePartitionPageProps &
 class AudiencePartitionPage extends React.Component<
   JoinedProps,
   AudiencePartitionPageState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -132,12 +132,12 @@ class AudiencePartitionPage extends React.Component<
         .then(newAudiencePartition => {
           const url = `/v2/o/${organisationId}/audience/partitions/${
             newAudiencePartition.data.id
-          }`;
+            }`;
           location.pathname
             ? history.push({
-                pathname: url,
-                state: { from: `${location.pathname}` },
-              })
+              pathname: url,
+              state: { from: `${location.pathname}` },
+            })
             : history.push(url);
           message.success(intl.formatMessage(messages.partitionSaved));
           this.setState({
@@ -165,13 +165,13 @@ class AudiencePartitionPage extends React.Component<
 
     return location.pathname
       ? history.push({
-          pathname: url,
-          state: { from: `${location.pathname}` },
-        })
+        pathname: url,
+        state: { from: `${location.pathname}` },
+      })
       : history.push(url);
   };
 
-  onDatamartSelect = (datamart: Datamart) => {
+  onDatamartSelect = (datamart: DatamartResource) => {
     this.setState({
       selectedDatamart: datamart,
     });
@@ -193,10 +193,10 @@ class AudiencePartitionPage extends React.Component<
       const placementListName =
         partitionId && partitionFormData
           ? intl.formatMessage(messages.editPartition, {
-              name: partitionFormData.name
-                ? partitionFormData.name
-                : intl.formatMessage(messages.partition),
-            })
+            name: partitionFormData.name
+              ? partitionFormData.name
+              : intl.formatMessage(messages.partition),
+          })
           : intl.formatMessage(messages.newPartition);
       const breadcrumbPaths = [
         {
@@ -215,10 +215,10 @@ class AudiencePartitionPage extends React.Component<
           breadCrumbPaths={breadcrumbPaths}
         />
       ) : (
-        <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-          <DatamartSelector onSelect={this.onDatamartSelect} />
-        </EditContentLayout>
-      );
+          <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+            <DatamartSelector onSelect={this.onDatamartSelect} />
+          </EditContentLayout>
+        );
     }
   }
 }

@@ -4,7 +4,7 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import { Select } from 'antd';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
-import FormSelect, { FormSelectProps } from './FormSelect/FormSelect';
+import { SelectProps } from 'antd/lib/select';
 
 export interface OptionsProps {
   label: string;
@@ -17,9 +17,10 @@ export interface DoubleLinkedSelectOptionsProps {
 
 export interface FormDoubleLinkedSelectProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  leftFormSelectProps: FormSelectProps;
-  rightFormSelectProps: FormSelectProps;
+  leftFormSelectProps: SelectProps;
+  rightFormSelectProps: SelectProps;
   optionsProps: DoubleLinkedSelectOptionsProps;
+  small?:boolean
 }
 
 type JoinedProps = FormDoubleLinkedSelectProps & WrappedFieldProps;
@@ -80,23 +81,25 @@ class FormDoubleLinkedSelect extends React.Component<JoinedProps> {
       >
         <div className="double-select">
           <div className="select">
-            <FormSelect
-              children={leftOptions}
+            <Select
               value={input.value.leftValue}
               onChange={this.updateLeftSelect}
               {...leftFormSelectProps}
-            />
+            >
+              {leftOptions}
+            </Select>
           </div>
           <div className="double-select-separator">
             <p className="ant-form-split">=</p>
           </div>
           <div className="select">
-            <FormSelect
-              children={rightOptions}
+            <Select
               value={input.value.rightValue}
               onChange={this.updateRightSelect}
               {...rightFormSelectProps}
-            />
+            >
+              {rightOptions}
+            </Select>
           </div>
         </div>
       </FormFieldWrapper>
