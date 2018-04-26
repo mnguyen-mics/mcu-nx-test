@@ -28,16 +28,18 @@ const messages = defineMessages({
 
 interface SegmentTypeSelectorProps {
   onSelect: (item: SegmentType) => any;
+  segmentTypesToDisplay: Array<{ title: string; value: SegmentType }>;
 }
 
 type Props = SegmentTypeSelectorProps;
 
 class SegmentTypeSelector extends React.Component<Props> {
-  onSelect = (item: SegmentType) => () => {
+  onSelect = (item: SegmentType, expertQuery: boolean = false) => () => {
     this.props.onSelect(item);
   };
 
   render() {
+    const { segmentTypesToDisplay } = this.props;
     return (
       <Layout>
         <div className="edit-layout ant-layout">
@@ -51,29 +53,38 @@ class SegmentTypeSelector extends React.Component<Props> {
                 <Row className="menu">
                   <div className="presentation">
                     <MenuPresentational
-                      title={'User List'}
-                      type="user-list"
-                      select={this.onSelect('USER_LIST')}
+                      title={'User Query'}
+                      type="user-query"
+                      select={this.onSelect('USER_QUERY')}
                     />
                     <div className="separator">
                       <FormattedMessage {...messages.segmentTypeOr} />
                     </div>
                     <MenuPresentational
-                      title={'User Query'}
-                      type="user-query"
-                      select={this.onSelect('USER_QUERY')}
+                      title={'User List'}
+                      type="user-list"
+                      select={this.onSelect('USER_LIST')}
                     />
                   </div>
                 </Row>
-                <Row className="intermediate-title">
-                  <FormattedMessage {...messages.otherSegmentTypes} />
-                </Row>
-                <Row className="menu">
-                  <MenuList
-                    title={'User Pixel'}
-                    select={this.onSelect('USER_PIXEL')}
-                  />
-                </Row>
+                {segmentTypesToDisplay.length > 0 && (
+                  <div>
+                    <Row className="intermediate-title">
+                      <FormattedMessage {...messages.otherSegmentTypes} />
+                    </Row>
+                    <Row className="menu">
+                      {segmentTypesToDisplay.map(item => {
+                        return (
+                          <MenuList
+                            key={item.value}
+                            title={item.title}
+                            select={this.onSelect(item.value)}
+                          />
+                        );
+                      })}
+                    </Row>
+                  </div>
+                )}
               </Row>
             </Content>
           </Layout>

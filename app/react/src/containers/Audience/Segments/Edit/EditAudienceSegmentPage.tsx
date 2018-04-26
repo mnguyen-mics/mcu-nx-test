@@ -782,6 +782,30 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     });
   };
 
+  getSegmentTypesToDisplay = () => {
+    const { selectedDatamart } = this.state;
+    const segmentTypesToDisplay: Array<{
+      title: string;
+      value: SegmentType;
+    }> = [];
+    if (
+      selectedDatamart &&
+      selectedDatamart.storage_model_version === 'v201709'
+    ) {
+      segmentTypesToDisplay.push(
+        {
+          title: 'User Pixel',
+          value: 'USER_PIXEL',
+        },
+        {
+          title: 'User Expert Query',
+          value: 'USER_QUERY',
+        },
+      );
+    }
+    return segmentTypesToDisplay;
+  };
+
   render() {
     const {
       intl: { formatMessage },
@@ -849,7 +873,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         {displayDatamartSelector ? (
           <DatamartSelector onSelect={this.onDatamartSelect} />
         ) : (
-          <SegmentTypeSelector onSelect={this.onSegmentTypeSelect} />
+          <SegmentTypeSelector
+            onSelect={this.onSegmentTypeSelect}
+            segmentTypesToDisplay={this.getSegmentTypesToDisplay()}
+          />
         )}
       </EditContentLayout>
     );
