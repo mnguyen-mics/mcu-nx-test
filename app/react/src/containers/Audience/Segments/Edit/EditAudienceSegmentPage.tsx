@@ -791,8 +791,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   };
 
   onSegmentTypeSelect = (segmentType: SegmentType) => {
+
+    const queryLanguage: QueryLanguage = this.state.selectedDatamart && this.state.selectedDatamart.storage_model_version === 'v201506' ? 'SELECTORQL' : 'OTQL';
+
     this.setState({
       selectedSegmentType: segmentType,
+      queryLanguage: segmentType === 'USER_QUERY' ? queryLanguage : undefined
     });
   };
 
