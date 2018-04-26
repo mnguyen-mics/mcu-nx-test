@@ -12,7 +12,7 @@ import injectNotifications, {
 import UserListImportCard from './UserListImportCard';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
-import { AudienceSegmentShape, AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
@@ -20,7 +20,6 @@ import { parseSearch, compareSearches } from '../../../../utils/LocationSearchHe
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
 
 interface State {
-  audienceSegment?: AudienceSegmentShape;
   loading: boolean;
   counter: {
     report: AudienceReport,
@@ -129,7 +128,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
   render() {
 
-    const { intl } = this.props;
+    const { intl, segment } = this.props;
     const { counter, dashboard } = this.state
 
     const getLoadingValue = (
@@ -156,13 +155,13 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         display: <Overlap />,
       },
     ];
-    if (this.state.audienceSegment !== undefined) {
-      if (this.state.audienceSegment.type === 'USER_LIST') {
+    if (segment) {
+      if (segment.type === 'USER_LIST') {
         items.push({
           title: intl.formatMessage(messages.imports),
           display: (
             <UserListImportCard
-              datamartId={this.state.audienceSegment.datamart_id}
+              datamartId={segment.datamart_id}
             />
           ),
         });
