@@ -200,13 +200,6 @@ class AudienceLookalikeCreation extends React.Component<
                     required: true,
                     ...fieldGridConfig,
                   }}
-                  selectProps={{
-                    defaultValue:
-                      this.state.partitions.length &&
-                        this.state.partitions[0].id
-                        ? this.state.partitions[0].id
-                        : '',
-                  }}
                 />
               </div>
 

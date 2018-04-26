@@ -56,6 +56,7 @@ import {
 import { FormSection, FieldCtor } from '../../../../components/Form';
 import { Path } from '../../../../components/ActionBar';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
+import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
 
 const FORM_ID = 'audienceSegmentForm';
 
@@ -80,7 +81,7 @@ export interface AudienceSegmentFormProps
   onSubmit: (audienceSegmentFormData: AudienceSegmentFormData) => void;
   breadCrumbPaths: Path[];
   audienceSegmentFormData: AudienceSegmentFormData;
-  datamart?: Datamart;
+  datamart?: DatamartResource;
   feedType?: FeedType;
   segmentCreation: boolean;
   queryContainer: any;
@@ -118,15 +119,19 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       intl,
       initialValues,
       segmentType,
+      audienceSegmentFormData,
     } = this.props;
     const type = segmentType
       ? segmentType
       : initialValues && initialValues.audienceSegment
         ? initialValues.audienceSegment.type
         : undefined;
+    const datamartId = datamart
+      ? datamart.id
+      : audienceSegmentFormData.audienceSegment.datamart_id;
+
     switch (type) {
       case 'USER_LIST':
-        const { audienceSegmentFormData } = this.props;
         return (
           <UserListSection
             segmentId={audienceSegmentFormData.audienceSegment.id as string}
@@ -169,17 +174,13 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                 component={JSONQL}
                 inputProps={{
                   datamartId:
-                    this.props.initialValues &&
-                      this.props.initialValues.query
-                      ? this.props.initialValues.query
-                        .datamart_id
-                      : datamart.id,
+                    datamartId!,
                 }}
               />,
             )
             : this.generateUserQueryTemplate(
               <SelectorQL
-                datamartId={datamart.id}
+                datamartId={datamartId!}
                 organisationId={organisationId}
                 queryContainer={this.props.queryContainer}
               />,
@@ -198,7 +199,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       change,
       breadCrumbPaths,
       datamart,
-      segmentType,
       initialValues,
     } = this.props;
 
@@ -239,7 +239,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
           type === 'USER_PIXEL'
             ? messages.audienceSegmentSiderMenuProperties
             : type === 'USER_QUERY'
-              ? messages.audienceSegmentSiderMenuUserQuery
+              ? messages.audienceSegmentSectionQueryTitle
               : messages.audienceSegmentSiderMenuImport,
         component: this.renderPropertiesField(),
       });

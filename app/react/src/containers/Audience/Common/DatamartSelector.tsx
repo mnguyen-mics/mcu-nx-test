@@ -8,7 +8,7 @@ import { defineMessages } from 'react-intl';
 import { getWorkspace } from '../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Datamart } from '../../../models/organisation/organisation';
+import { DatamartResource } from '../../../models/datamart/DatamartResource';
 
 const { Content } = Layout;
 
@@ -24,7 +24,7 @@ const messages = defineMessages({
 });
 
 interface DatamartSelectorProps {
-  onSelect: (item: Datamart) => void;
+  onSelect: (item: DatamartResource) => void;
 }
 
 interface MapStateToProps {
@@ -36,7 +36,7 @@ type Props = DatamartSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DatamartSelector extends React.Component<Props> {
-  onSelect = (item: Datamart) => () => {
+  onSelect = (item: DatamartResource) => () => {
     this.props.onSelect(item);
   };
 
