@@ -39,7 +39,8 @@ export interface AudienceSegmentFormData {
 export type SegmentType =
   'USER_LIST' |
   'USER_PIXEL' |
-  'USER_QUERY'
+  'USER_QUERY' |
+  'USER_LOOKALIKE'
 
 export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   audienceSegment: {
@@ -48,5 +49,5 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   defaultLiftimeUnit: 'days',
   audienceExternalFeeds: [],
   audienceTagFeeds: [],
-  userListFiles:[],
+  userListFiles: [],
 };
