@@ -126,9 +126,6 @@ class ConversionValueFormSection extends React.Component<Props, State> {
                       value: 'EUR',
                     },
                   ]}
-                  selectProps={{
-                    value: 'EUR',
-                  }}
                 />
               ),
             }}

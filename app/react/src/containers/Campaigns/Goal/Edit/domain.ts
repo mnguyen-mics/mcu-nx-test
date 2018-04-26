@@ -15,7 +15,9 @@ export interface LookbackWindow {
 }
 
 export const INITIAL_GOAL_FORM_DATA: GoalFormData = {
-  goal: {},
+  goal: {
+    goal_value_currency: 'EUR'
+  },
   attributionModels: [],
   triggerMode: 'QUERY',
   queryContainer: {}
