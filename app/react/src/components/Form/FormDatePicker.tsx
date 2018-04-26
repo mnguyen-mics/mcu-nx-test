@@ -12,6 +12,7 @@ import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 export interface FormDatePickerProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
   datePickerProps: DatePickerProps;
+  small?: boolean;
   unixTimestamp?: boolean;
 }
 
@@ -46,6 +47,7 @@ const FormDatePicker: React.SFC<
       help={props.meta.touched && (props.meta.warning || props.meta.error)}
       helpToolTipProps={props.helpToolTipProps}
       validateStatus={validateStatus}
+      small={props.small}
       {...props.formItemProps}
     >
       <DatePicker

@@ -7,12 +7,13 @@ import { TooltipProps } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { CheckboxProps } from 'antd/lib/checkbox/Checkbox';
 
-import FormFieldWrapper from './FormFieldWrapper';
+import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 
-export interface FormBooleanProps {
-  formItemProps?: FormItemProps;
+export interface FormBooleanProps extends FormFieldWrapperProps {
+  formItemProps?: FormItemProps & { hasMarginBottom?: boolean; };
   inputProps?: CheckboxProps;
-  helpToolTipProps: TooltipProps;
+  helpToolTipProps?: TooltipProps;
+  small?: boolean;
 }
 
 interface StateInterface {
@@ -51,6 +52,7 @@ class FormBoolean extends React.Component<
       inputProps,
       helpToolTipProps,
       input,
+      small,
     } = this.props;
 
     let validateStatus = 'success' as
@@ -66,6 +68,7 @@ class FormBoolean extends React.Component<
         help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={helpToolTipProps}
         validateStatus={validateStatus}
+        small={small}
         {...formItemProps}
       >
         <Checkbox

@@ -1,7 +1,7 @@
 import ApiService, { DataResponse } from './ApiService';
 import { QueryResource } from '../models/datamart/DatamartResource';
 
-const queryService = {
+const QueryService = {
   getQuery(
     datamartId: string,
     queryId: string,
@@ -26,4 +26,4 @@ const queryService = {
   },
 };
 
-export default queryService;
+export default QueryService;

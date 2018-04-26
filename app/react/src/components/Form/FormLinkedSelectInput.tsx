@@ -15,6 +15,7 @@ export interface FormLinkedSelectInputProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
   leftFormSelectProps: SelectProps;
   leftOptionsProps: OptionsProps[];
+  small?: boolean;
 }
 
 type JoinedProps = FormLinkedSelectInputProps & WrappedFieldProps;
@@ -45,6 +46,7 @@ class FormLinkedSelectInput extends React.Component<JoinedProps> {
       helpToolTipProps,
       leftFormSelectProps,
       renderFieldAction,
+      small
     } = this.props;
 
     const leftOptions = this.createLeftOptions();
@@ -58,6 +60,7 @@ class FormLinkedSelectInput extends React.Component<JoinedProps> {
         helpToolTipProps={helpToolTipProps}
         renderFieldAction={renderFieldAction}
         validateStatus={validateStatus}
+        small={small}
         {...formItemProps}
       >
         <Col span={11}>

@@ -13,6 +13,7 @@ export interface FormUploadProps {
   helpToolTipProps: TooltipProps;
   buttonText: string;
   noUploadModal?: () => void;
+  small?: boolean
 }
 
 type JoinedProps = FormUploadProps & WrappedFieldProps & InjectedIntlProps;
@@ -58,6 +59,7 @@ class FormUpload extends React.Component<JoinedProps> {
       formItemProps,
       inputProps,
       helpToolTipProps,
+      small,
     } = this.props;
 
     let validateStatus = 'success' as
@@ -84,6 +86,7 @@ class FormUpload extends React.Component<JoinedProps> {
         help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={helpToolTipProps}
         validateStatus={validateStatus}
+        small={small}
         {...formItemProps}
       >
         <Upload {...input} {...inputProps} {...uploadDetailProps}>

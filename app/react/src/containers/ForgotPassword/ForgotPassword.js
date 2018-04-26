@@ -71,9 +71,8 @@ class ForgotPassword extends Component {
               <FormattedMessage {...messages.resetPasswordEmailSpan} />
             </div>
             <br />
-            <Button type="primary" htmlType="button" className="reset-password-button">;
-
-            <Link to="/login"><FormattedMessage {...messages.resetPasswordReturnToLogin} /></Link>
+            <Button type="primary" htmlType="button" className="reset-password-button">
+              <Link to="/login"><FormattedMessage {...messages.resetPasswordReturnToLogin} /></Link>
             </Button>
           </div>
           }

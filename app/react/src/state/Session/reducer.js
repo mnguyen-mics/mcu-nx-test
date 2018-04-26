@@ -19,6 +19,7 @@ const defaultSessionState = {
     mics_uaid: '',
     mics_vid: '',
   },
+  connectedUserLoaded: false,
   isFechingCookies: true,
   isFetchingWorkspace: false,
   isUploadingLogo: false,
@@ -30,7 +31,10 @@ const session = (state = defaultSessionState, action) => {
       return {
         ...state,
         connectedUserLoaded: true,
-        connectedUser: { ...action.payload },
+        connectedUser: {
+          ...action.payload,
+          workspaces: action.payload.workspaces.sort((w1, w2) => w1.organisation_id - w2.organisation_id)
+        },
       };
     case WORKSPACE.REQUEST:
       return {

@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Button, Layout } from 'antd';
+import { Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import UsersService from '../../../../../services/UsersService';
@@ -35,7 +35,7 @@ interface RouterProps {
 class UserList extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   UserListState
-> {
+  > {
   state = initialState;
 
   archiveUser = (recommenderId: string) => {
@@ -49,15 +49,15 @@ class UserList extends React.Component<
       };
       UsersService.getUsers(organisationId, options).then(
         (results: { data: User[]; total?: number; count: number }) => {
-          
-            this.setState({
-              loading: false,
-              data: results.data,
-              total: results.total || results.count,
-            });
-          }
-        );
-      })
+
+          this.setState({
+            loading: false,
+            data: results.data,
+            total: results.total || results.count,
+          });
+        }
+      );
+    })
   };
 
   onClickEdit = (user: User) => {
@@ -69,7 +69,7 @@ class UserList extends React.Component<
   };
 
   render() {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const { match: { params: { organisationId } } } = this.props;
 
     const actionsColumnsDefinition = [
       {
@@ -90,7 +90,7 @@ class UserList extends React.Component<
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/settings/organisation/users/${
               record.id
-            }/edit`}
+              }/edit`}
           >
             {text}{' '}{record.last_name}
           </Link>
@@ -107,22 +107,22 @@ class UserList extends React.Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-      iconType: 'settings',
-      intlMessage: messages.emptyUsers,
-    };
+        iconType: 'settings',
+        intlMessage: messages.emptyUsers,
+      };
 
-    const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/recommenders/create`)
+    // const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/recommenders/create`)
 
-    const buttons = [
-      (<Button key="create" type="primary" onClick={onClick}>
-      <FormattedMessage {...messages.newUser} />
-    </Button>)
-    ]
+    // const buttons = [
+    //   (<Button key="create" type="primary" onClick={onClick}>
+    //     <FormattedMessage {...messages.newUser} />
+    //   </Button>)
+    // ]
 
     const additionnalComponent = (<div>
       <div className="mcs-card-header mcs-card-title">
         <span className="mcs-card-title"><FormattedMessage {...messages.users} /></span>
-        <span className="mcs-card-button">{buttons}</span>
+        {/* <span className="mcs-card-button">{buttons}</span> */}
       </div>
       <hr className="mcs-separator" />
     </div>)

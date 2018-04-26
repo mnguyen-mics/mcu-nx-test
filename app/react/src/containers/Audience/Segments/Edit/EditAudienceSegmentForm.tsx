@@ -48,28 +48,32 @@ import AudienceTagFeedSection, {
 import { UserListSection } from './Sections/list';
 
 import { McsFormSection } from '../../../../utils/FormHelper';
-import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
-import { Datamart } from '../../../../models/organisation/organisation';
+import {
+  QueryLanguage,
+  DatamartResource,
+} from '../../../../models/datamart/DatamartResource';
 import { FormSection, FieldCtor } from '../../../../components/Form';
 import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
 import { Path } from '../../../../components/ActionBar';
+import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
 
 const FORM_ID = 'audienceSegmentForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
->;
+  >;
 const AudienceExternalFeedField = FieldArray as new () => GenericFieldArray<
   Field,
   AudienceExternalFeedSectionProps
->;
+  >;
 const AudienceTagFeedField = FieldArray as new () => GenericFieldArray<
   Field,
   AudienceTagFeedSectionProps
->;
+  >;
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field;
 
 export interface AudienceSegmentFormProps
   extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
@@ -77,7 +81,7 @@ export interface AudienceSegmentFormProps
   onSubmit: (audienceSegmentFormData: AudienceSegmentFormData) => void;
   breadCrumbPaths: Path[];
   audienceSegmentFormData: AudienceSegmentFormData;
-  datamart?: Datamart;
+  datamart?: DatamartResource;
   feedType?: FeedType;
   segmentCreation: boolean;
   queryContainer: any;
@@ -115,15 +119,19 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       intl,
       initialValues,
       segmentType,
+      audienceSegmentFormData,
     } = this.props;
     const type = segmentType
       ? segmentType
       : initialValues && initialValues.audienceSegment
         ? initialValues.audienceSegment.type
         : undefined;
+    const datamartId = datamart
+      ? datamart.id
+      : audienceSegmentFormData.audienceSegment.datamart_id;
+
     switch (type) {
       case 'USER_LIST':
-        const { audienceSegmentFormData } = this.props;
         return (
           <UserListSection
             segmentId={audienceSegmentFormData.audienceSegment.id as string}
@@ -147,30 +155,39 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       case 'USER_QUERY':
         return queryLanguage === 'OTQL'
           ? this.generateUserQueryTemplate(
-              <FormOTQL
+            <FormOTQL
+              name={'query.query_text'}
+              component={OTQLInputEditor}
+              formItemProps={{
+                label: intl.formatMessage(
+                  messages.audienceSegmentSectionQueryTitle,
+                ),
+              }}
+              helpToolTipProps={{
+                title: intl.formatMessage(
+                  messages.audienceSegmentCreationUserQueryFieldHelper,
+                ),
+              }}
+            />,
+          )
+          : queryLanguage === 'JSON_OTQL'
+            ? this.generateUserQueryTemplate(
+              <FormJSONQL
                 name={'query.query_text'}
-                component={OTQLInputEditor}
-                formItemProps={{
-                  label: intl.formatMessage(
-                    messages.audienceSegmentSectionQueryTitle,
-                  ),
-                }}
-                helpToolTipProps={{
-                  title: intl.formatMessage(
-                    messages.audienceSegmentCreationUserQueryFieldHelper,
-                  ),
+                component={JSONQL}
+                inputProps={{
+                  datamartId:
+                    datamartId!,
                 }}
               />,
             )
-          : datamart
-            ? this.generateUserQueryTemplate(
-                <SelectorQL
-                  datamartId={datamart.id}
-                  organisationId={organisationId}
-                  queryContainer={this.props.queryContainer}
-                />,
-              )
-            : null;
+            : this.generateUserQueryTemplate(
+              <SelectorQL
+                datamartId={datamartId!}
+                organisationId={organisationId}
+                queryContainer={this.props.queryContainer}
+              />,
+            );
       default:
         return <div>Not Supported</div>;
     }
@@ -180,11 +197,11 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     const {
       handleSubmit,
       close,
+      segmentType,
       segmentCreation,
       change,
       breadCrumbPaths,
       datamart,
-      segmentType,
       initialValues,
     } = this.props;
 
@@ -225,7 +242,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
           type === 'USER_PIXEL'
             ? messages.audienceSegmentSiderMenuProperties
             : type === 'USER_QUERY'
-              ? messages.audienceSegmentSiderMenuUserQuery
+              ? messages.audienceSegmentSectionQueryTitle
               : messages.audienceSegmentSiderMenuImport,
         component: this.renderPropertiesField(),
       });

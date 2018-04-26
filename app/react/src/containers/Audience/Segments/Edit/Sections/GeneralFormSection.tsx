@@ -21,7 +21,7 @@ import {
 } from '../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
 import { SegmentType } from '../domain';
-import { Datamart } from '../../../../../models/organisation/organisation';
+import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 
 const messagesMap = defineMessages({
   audienceSegmentFormSelectTypeOptionUserList: {
@@ -41,7 +41,7 @@ const messagesMap = defineMessages({
 export interface GeneralFormSectionProps {
   segmentCreation: boolean;
   segmentType: SegmentType;
-  datamart?: Datamart;
+  datamart?: DatamartResource;
 }
 
 type Props = InjectedIntlProps &
@@ -59,7 +59,6 @@ class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      technicalName: '',
       displayAdvancedSection: false,
       neverExpire: false,
     };

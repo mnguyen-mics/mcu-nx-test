@@ -30,7 +30,7 @@ class Slide extends React.Component<SlideProps> {
           display: 'inline-block',
         };
 
-    const transitionStyles: React.CSSProperties = !this.props.horizontal
+    const transitionStyles: any /*React.CSSProperties*/ = !this.props.horizontal
       ? {
           entering: { height: '0px', opacity: 0 },
           entered: { height: '50px', opacity: 1 },

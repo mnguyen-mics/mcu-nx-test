@@ -8,7 +8,7 @@ import ExportHeader from './ExportHeader';
 import Card from '../../../../components/Card/Card';
 import { Filters } from '../../../../components/ItemList';
 import { Export, ExportExecution } from '../../../../models/exports/exports';
-import ExportsService from '../../../../services/Library/ExportsService';
+import ExportService from '../../../../services/Library/ExportService';
 import ExportActionbar from './ExportActionbar';
 import TableView from '../../../../components/TableView/TableView';
 import log from '../../../../utils/Logger';
@@ -140,13 +140,13 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
   }
 
   fetchExportExecution = (exportId: string, options: object) => {
-    const fetchExport = ExportsService.getExport(exportId)
+    const fetchExport = ExportService.getExport(exportId)
       .then(res => res.data)
       .then(res =>
         this.setState({ exportObject: { item: res, isLoading: false } }),
       )
       .catch(err => log(err));
-    const fetchExportExecution = ExportsService.getExportExecutions(
+    const fetchExportExecution = ExportService.getExportExecutions(
       exportId,
       options,
     )

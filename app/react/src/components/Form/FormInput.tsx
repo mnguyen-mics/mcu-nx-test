@@ -14,6 +14,7 @@ export interface FormInputProps extends FormFieldWrapperProps {
   inputProps?: InputProps;
   helpToolTipProps?: TooltipProps;
   textArea?: boolean;
+  small?: boolean;
 }
 
 const FormInput: React.SFC<FormInputProps & WrappedFieldProps> = props => {
@@ -30,6 +31,7 @@ const FormInput: React.SFC<FormInputProps & WrappedFieldProps> = props => {
       help={props.meta.touched && (props.meta.warning || props.meta.error)}
       helpToolTipProps={props.helpToolTipProps}
       validateStatus={validateStatus}
+      small={props.small}
       {...props.formItemProps}
     >
       <InputComponent

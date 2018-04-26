@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Select } from 'antd';
-import { SelectProps } from 'antd/lib/select';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { WrappedFieldProps } from 'redux-form';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
-import FormSelect from './FormSelect';
+import { RestrictedSelectProps } from './DefaultSelect';
 
 const Option = Select.Option;
 
 export interface FormTagSelectProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  selectProps?: SelectProps & { options: Array<{ label: string, value: string }> };
+  selectProps?: RestrictedSelectProps & { options: Array<{ label: string, value: string }> };
+  small?: boolean;
 }
 
 const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
@@ -22,6 +22,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
     input,
     meta,
     selectProps,
+    small,
   } = props;
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
@@ -43,9 +44,10 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
       help={meta.touched && (meta.warning || meta.error)}
       helpToolTipProps={helpToolTipProps}
       validateStatus={validateStatus}
+      small={small}
       {...formItemProps}
     >
-      <FormSelect
+      <Select
         {...selectProps}
         mode={mode}
         onBlur={input.onBlur as () => any}
@@ -53,7 +55,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
         onFocus={input.onFocus as () => any}
         value={input.value || []}
       >{optionsToDisplay}
-      </FormSelect>
+      </Select>
     </FormFieldWrapper>
   );
 };

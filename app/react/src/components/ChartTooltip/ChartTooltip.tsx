@@ -16,7 +16,7 @@ const ChartTooltip: React.SFC<ChartTooltipProps> = ({ tooltipStyle, children }) 
   const style: React.CSSProperties = {
     left: tooltipStyle!.xTooltip,
     top: tooltipStyle!.yTooltip,
-    visibility: tooltipStyle!.visibility,
+    visibility: tooltipStyle!.visibility as any,
     position: 'fixed',
   };
 

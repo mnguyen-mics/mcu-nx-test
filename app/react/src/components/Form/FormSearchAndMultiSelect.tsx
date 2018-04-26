@@ -14,6 +14,7 @@ export interface FormSearchAndMultiSelectProps {
   loading?: boolean;
   handleClickOnRemove: (key: string) => void;
   handleClickOnItem: (key: string) => void;
+  small?: boolean;
 }
 
 const FormSearchAndMultiSelect: React.SFC<
@@ -28,6 +29,7 @@ const FormSearchAndMultiSelect: React.SFC<
     value,
     handleClickOnRemove,
     handleClickOnItem,
+    small,
   } = props;
 
   const selectedItemsView = loading ? (
@@ -58,6 +60,7 @@ const FormSearchAndMultiSelect: React.SFC<
       label={label}
       rowProps={{ align: flexAlign }}
       helpToolTipProps={tooltipProps}
+      small={small}
     >
       <Col span={24}>
         <div

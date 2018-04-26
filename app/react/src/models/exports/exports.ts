@@ -10,7 +10,7 @@ export interface Export {
 
 export interface ExportCreateResource {
     name: string;
-    output_format: 'CSV';
+    output_format: 'CSV' | 'JSON';
     query_id: string;
     type: 'QUERY';
 }

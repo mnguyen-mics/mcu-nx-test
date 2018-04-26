@@ -20,4 +20,4 @@ export interface Datamart {
     type: 'DATAMART' | 'CROSS_DATAMART';
     datafarm: string;
     storage_model_version: string;
-  }
+}

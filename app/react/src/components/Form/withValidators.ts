@@ -50,6 +50,7 @@ export interface FieldValidatorsProps {
   isValidFloat: Validator;
   isValidInteger: Validator;
   isValidDouble: Validator;
+  isValidArrayOfNumber: Validator;
 }
 
 export interface ValidatorProps {
@@ -99,6 +100,13 @@ const isValidInteger = (formatMessage: FormatMessageHandler): Validator => value
     formatMessage(defaultErrorMessages.invalidNumber) : undefined;
 };
 
+const isValidArrayOfNumber = (formatMessage: FormatMessageHandler): Validator => value => {
+  const containsOnlyNumber = value.reduce((acc: boolean, val: string) => {
+    return /^\d+$/.test(val) ? acc : false;
+  }, true)
+  return !(value && Array.isArray(value) && containsOnlyNumber) ? formatMessage(defaultErrorMessages.invalidNumber) : undefined
+}
+
 export default compose<{}, ValidatorProps>(
   injectIntl,
   withProps<ValidatorProps, InjectedIntlProps>(
@@ -113,6 +121,7 @@ export default compose<{}, ValidatorProps>(
           isValidFloat: isValidFloat(formatMessage),
           isValidInteger: isValidInteger(formatMessage),
           isValidDouble: isValidDouble(formatMessage),
+          isValidArrayOfNumber: isValidArrayOfNumber(formatMessage)
         },
       };
     }),

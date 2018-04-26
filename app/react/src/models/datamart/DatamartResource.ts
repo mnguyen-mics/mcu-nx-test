@@ -3,16 +3,17 @@ export interface DatamartResource {
   name: string;
   organisation_id: string;
   token: string;
-  creation_date: Date;
+  creation_date: number;
   time_zone: string;
   type: DatamartType;
   datafarm: string;
+  region: string;
   storage_model_version: string;
 }
 
 type DatamartType = 'DATAMART' | 'CROSS_DATAMART';
 
-export type QueryLanguage = 'SELECTORQL' | 'OTQL';
+export type QueryLanguage = 'SELECTORQL' | 'OTQL' | 'JSON_OTQL';
 export interface QueryResource {
   id: string;
   datamart_id: string;

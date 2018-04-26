@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Omit } from '../utils/Types';
 
 export interface ButtonStylelessProps {
-  onClick: any;
+  onClick?: any;
 }
 
 const ButtonStyleless: React.SFC<

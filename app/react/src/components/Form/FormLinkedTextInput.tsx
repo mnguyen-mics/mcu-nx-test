@@ -15,6 +15,7 @@ export interface FormLinkedTextInputProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
   leftFormInput: InputProps;
   rightFormInput: InputProps;
+  small?: boolean;
 }
 
 type JoinedProps = FormLinkedTextInputProps & WrappedFieldProps;
@@ -40,6 +41,7 @@ class FormLinkedTextInput extends React.Component<JoinedProps> {
       renderFieldAction,
       leftFormInput,
       rightFormInput,
+      small,
     } = this.props;
 
 
@@ -53,6 +55,7 @@ class FormLinkedTextInput extends React.Component<JoinedProps> {
         helpToolTipProps={helpToolTipProps}
         renderFieldAction={renderFieldAction}
         validateStatus={validateStatus}
+        small={small}
         {...formItemProps}
       >
         <Col span={11}>

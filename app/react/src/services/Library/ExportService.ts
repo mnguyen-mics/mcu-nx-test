@@ -1,7 +1,7 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import { Export, ExportCreateResource, ExportExecution } from '../../models/exports/exports';
 
-const exportService = {
+const ExportService = {
   getExports(organisationId: string, options: object = {}): Promise<DataListResponse<Export>> {
     const endpoint = 'exports';
 
@@ -37,4 +37,4 @@ const exportService = {
   }
 };
 
-export default exportService;
+export default ExportService;
