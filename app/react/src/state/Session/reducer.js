@@ -22,7 +22,6 @@ const defaultSessionState = {
   isFechingCookies: true,
   isFetchingWorkspace: false,
   isUploadingLogo: false,
-
 };
 
 const session = (state = defaultSessionState, action) => {

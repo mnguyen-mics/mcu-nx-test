@@ -31,8 +31,8 @@ import withNormalizer, {
 } from '../../../../components/Form/withNormalizer';
 import {
   AudienceSegmentFormData,
-  SegmentTypeFormLoader,
   EditAudienceSegmentParam,
+  SegmentType,
 } from './domain';
 import { FeedType } from '../../../../models/audiencesegment/';
 import * as FeatureSelectors from '../../../../state/Features/selectors';
@@ -60,7 +60,6 @@ const FORM_ID = 'audienceSegmentForm';
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
 >;
-
 const AudienceExternalFeedField = FieldArray as new () => GenericFieldArray<
   Field,
   AudienceExternalFeedSectionProps
@@ -78,12 +77,12 @@ export interface AudienceSegmentFormProps
   onSubmit: (audienceSegmentFormData: AudienceSegmentFormData) => void;
   breadCrumbPaths: Path[];
   audienceSegmentFormData: AudienceSegmentFormData;
-  datamart: Datamart;
-  segmentType: SegmentTypeFormLoader;
+  datamart?: Datamart;
   feedType?: FeedType;
   segmentCreation: boolean;
   queryContainer: any;
-  queryLanguage: QueryLanguage;
+  queryLanguage?: QueryLanguage;
+  segmentType?: SegmentType;
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
@@ -108,15 +107,21 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 
   renderPropertiesField = () => {
     const {
-      segmentType,
       datamart,
       queryLanguage,
       match: {
         params: { organisationId },
       },
       intl,
+      initialValues,
+      segmentType,
     } = this.props;
-    switch (segmentType) {
+    const type = segmentType
+      ? segmentType
+      : initialValues && initialValues.audienceSegment
+        ? initialValues.audienceSegment.type
+        : undefined;
+    switch (type) {
       case 'USER_LIST':
         const { audienceSegmentFormData } = this.props;
         return (
@@ -126,16 +131,18 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         );
       case 'USER_PIXEL':
         return (
-          <FormCodeSnippet
-            language="html"
-            codeSnippet={`<img style="display:none" src="https://api.mediarithmics.com/v1/user_lists/pixel?dat_token=${
-              datamart.token
-            }&user_list_tech_name=${encodeURIComponent(
-              this.props.audienceSegmentFormData.audienceSegment
-                .technical_name || '',
-            )}" />`}
-            copyToClipboard={true}
-          />
+          datamart && (
+            <FormCodeSnippet
+              language="html"
+              codeSnippet={`<img style="display:none" src="https://api.mediarithmics.com/v1/user_lists/pixel?dat_token=${
+                datamart.token
+              }&user_list_tech_name=${encodeURIComponent(
+                this.props.audienceSegmentFormData.audienceSegment
+                  .technical_name || '',
+              )}" />`}
+              copyToClipboard={true}
+            />
+          )
         );
       case 'USER_QUERY':
         return queryLanguage === 'OTQL'
@@ -155,13 +162,15 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                 }}
               />,
             )
-          : this.generateUserQueryTemplate(
-              <SelectorQL
-                datamartId={datamart.id}
-                organisationId={organisationId}
-                queryContainer={this.props.queryContainer}
-              />,
-            );
+          : datamart
+            ? this.generateUserQueryTemplate(
+                <SelectorQL
+                  datamartId={datamart.id}
+                  organisationId={organisationId}
+                  queryContainer={this.props.queryContainer}
+                />,
+              )
+            : null;
       default:
         return <div>Not Supported</div>;
     }
@@ -171,11 +180,19 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     const {
       handleSubmit,
       close,
-      segmentType,
       segmentCreation,
       change,
       breadCrumbPaths,
+      datamart,
+      segmentType,
+      initialValues,
     } = this.props;
+
+    const type = segmentType
+      ? segmentType
+      : initialValues && initialValues.audienceSegment
+        ? initialValues.audienceSegment.type
+        : undefined;
 
     const genericFieldArrayProps = {
       formChange: change,
@@ -197,21 +214,19 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         <GeneralFormSection
           segmentCreation={segmentCreation}
           segmentType={segmentType as any}
+          datamart={datamart}
         />
       ),
     });
-    if (
-      !(
-        segmentCreation &&
-        (segmentType === 'USER_PIXEL' || segmentType === 'USER_LIST')
-      )
-    ) {
+    if (!(segmentCreation && (type === 'USER_PIXEL' || type === 'USER_LIST'))) {
       sections.push({
         id: 'properties',
         title:
-          segmentType === 'USER_PIXEL'
+          type === 'USER_PIXEL'
             ? messages.audienceSegmentSiderMenuProperties
-            : messages.audienceSegmentSiderMenuImport,
+            : type === 'USER_QUERY'
+              ? messages.audienceSegmentSiderMenuUserQuery
+              : messages.audienceSegmentSiderMenuImport,
         component: this.renderPropertiesField(),
       });
     }

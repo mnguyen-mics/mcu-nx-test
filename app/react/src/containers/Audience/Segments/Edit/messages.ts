@@ -25,6 +25,10 @@ export default defineMessages({
     id: 'segment.sider.menu.properties',
     defaultMessage: 'Properties',
   },
+  audienceSegmentSiderMenuUserQuery: {
+    id: 'segment.sider.menu.user.query',
+    defaultMessage: 'User Query',
+  },
   audienceSegmentSectionGeneralTitle: {
     id: 'audience.segment.create.section.general.title',
     defaultMessage: 'General Information',

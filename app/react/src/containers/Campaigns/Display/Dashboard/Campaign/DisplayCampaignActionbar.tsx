@@ -15,12 +15,11 @@ import ExportService from '../../../../../services/ExportService';
 import ReportService from '../../../../../services/ReportService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import log from '../../../../../utils/Logger';
-import { parseSearch } from '../../../../../utils/LocationSearchHelper';
+import { parseSearch, DateSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { ReportView } from '../../../../../models/ReportView';
-import McsMoment from '../../../../../utils/McsMoment';
 
 interface DisplayCampaignActionBarProps {
   campaign: {
@@ -53,10 +52,7 @@ const formatReportView = (reportView: ReportView, key: string) => {
   return normalizeArrayOfObject(format, key);
 };
 
-const fetchAllExportData = (organisationId: string, campaignId: string, filter: {
-  from: McsMoment;
-  to: McsMoment;
-}) => {
+const fetchAllExportData = (organisationId: string, campaignId: string, filter: DateSearchSettings) => {
 
   const lookbackWindow = filter.to.toMoment().unix() - filter.from.toMoment().unix();
   const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
@@ -199,7 +195,7 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
 
     this.setState({ exportIsRunning: true });
 
-    const filter = parseSearch(this.props.location.search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+    const filter = parseSearch<DateSearchSettings>(this.props.location.search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
     const hideExportLoadingMsg = message.loading(this.props.translations.EXPORT_IN_PROGRESS, 0);
 

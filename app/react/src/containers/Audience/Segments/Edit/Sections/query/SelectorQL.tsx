@@ -47,8 +47,6 @@ export default class AngularWidget extends React.Component<AngularWidgetProps> {
           />
         </div>
       </ReactAngularJS>
-    ) : (
-      'error'
-    );
+    ) : null;
   }
 }

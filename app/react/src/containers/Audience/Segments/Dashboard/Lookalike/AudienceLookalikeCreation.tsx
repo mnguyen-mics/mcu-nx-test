@@ -1,26 +1,31 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
+import { reduxForm, InjectedFormProps, Form, ConfigProps } from 'redux-form';
 import {
-  reduxForm,
-  InjectedFormProps,
-  Form,
-  ConfigProps,
-} from 'redux-form';
-import { FormInputField, FormInput, FormSelectField, DefaultSelect, FormSliderField, FormSlider, withValidators } from '../../../../../components/Form'
-import AudiencePartitionService from '../../../../../services/AudiencePartitionsService'
+  FormInputField,
+  FormInput,
+  FormSelectField,
+  DefaultSelect,
+  FormSliderField,
+  FormSlider,
+  withValidators,
+} from '../../../../../components/Form';
+import AudiencePartitionService from '../../../../../services/AudiencePartitionsService';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
-import messages from '../messages'
+import messages from '../messages';
 import { Omit } from '../../../../../utils/Types';
 import { Layout } from 'antd';
 import { Path } from '../../../../../components/ActionBar';
 import { UserLookalikeSegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { Loading } from '../../../../../components';
@@ -28,20 +33,21 @@ import { Loading } from '../../../../../components';
 const FORM_ID = 'lookalikeForm';
 const { Content } = Layout;
 
-export interface AudienceLookalikeCreationProps extends Omit<ConfigProps<any>, 'form'> {
+export interface AudienceLookalikeCreationProps
+  extends Omit<ConfigProps<any>, 'form'> {
   breadCrumbPaths: Path[];
   close: () => void;
 }
 
 interface AudienceLookalikeState {
   partitions: AudiencePartitionResource[];
-  loading: boolean
+  loading: boolean;
 }
 
-type LookAlikeFormData = Partial<UserLookalikeSegment>
+type LookAlikeFormData = Partial<UserLookalikeSegment>;
 
 type Props = AudienceLookalikeCreationProps &
-  RouteComponentProps<{ organisationId: string, segmentId: string }> &
+  RouteComponentProps<{ organisationId: string; segmentId: string }> &
   InjectedDatamartProps &
   InjectedIntlProps &
   InjectedFormProps<any, AudienceLookalikeCreationProps> &
@@ -53,82 +59,82 @@ const fieldGridConfig = {
   wrapperCol: { span: 19, offset: 1 },
 };
 
-
 class AudienceLookalikeCreation extends React.Component<
   Props,
   AudienceLookalikeState
-  > {
-
+> {
   constructor(props: Props) {
     super(props);
     this.state = {
       partitions: [],
-      loading: true
-    }
+      loading: true,
+    };
   }
 
   componentDidMount() {
-    this.fetchAudiencePartition()
+    this.fetchAudiencePartition();
   }
 
   fetchAudiencePartition = () => {
     const {
       match: {
-        params: {
-          organisationId,
-        }
+        params: { organisationId },
       },
       datamart,
-      notifyError
+      notifyError,
     } = this.props;
-    AudiencePartitionService.getPartitions(organisationId, datamart.id, { first_result: 0, max_results: 500, status: 'PUBLISHED' })
+    AudiencePartitionService.getPartitions(organisationId, {
+      first_result: 0,
+      max_results: 500,
+      status: 'PUBLISHED',
+      datamart_id: datamart.id,
+    })
       .then(res => res.data)
       .then(res => this.setState({ partitions: res, loading: false }))
       .catch(err => {
-        notifyError(err)
-        this.setState({ loading: false })
-      })
-  }
+        notifyError(err);
+        this.setState({ loading: false });
+      });
+  };
 
   save = (formData: LookAlikeFormData): any => {
     const {
       match: {
-        params: {
-          organisationId,
-        }
+        params: { organisationId },
       },
       history,
-      notifyError
+      notifyError,
     } = this.props;
     return this.setState({ loading: true }, () => {
       const { extension_factor, ...rest } = formData;
-      const formattedFormData = extension_factor ? { ...rest, extension_factor: extension_factor / 100 } : { ...rest }
-      AudienceSegmentService.createAudienceSegment(organisationId, formattedFormData)
+      const formattedFormData = extension_factor
+        ? { ...rest, extension_factor: extension_factor / 100 }
+        : { ...rest };
+      AudienceSegmentService.createAudienceSegment(
+        organisationId,
+        formattedFormData,
+      )
         .then(res => res.data)
         .then(res => {
-
           this.setState({ loading: false }, () => {
-            this.props.close()
-            history.push(`/v2/o/${organisationId}/audience/segments/${res.id}`)
-          })
+            this.props.close();
+            history.push(`/v2/o/${organisationId}/audience/segments/${res.id}`);
+          });
         })
         .catch(err => {
-          notifyError(err)
-          this.setState({ loading: false })
-        })
-    })
-  }
+          notifyError(err);
+          this.setState({ loading: false });
+        });
+    });
+  };
 
   render() {
-
     const {
       intl,
       handleSubmit,
       breadCrumbPaths,
-      fieldValidators: {
-        isRequired
-      },
-      close
+      fieldValidators: { isRequired },
+      close,
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -139,7 +145,7 @@ class AudienceLookalikeCreation extends React.Component<
     };
 
     if (this.state.loading) {
-      return <Loading className="loading-full-screen" />
+      return <Loading className="loading-full-screen" />;
     }
     // const defaultValue = this.state.partitions.length && this.state.partitions[0].id ? this.state.partitions[0].id : '';
 
@@ -160,57 +166,72 @@ class AudienceLookalikeCreation extends React.Component<
               </div>
               <div>
                 <FormInputField
-                  name='name'
+                  name="name"
                   component={FormInput}
                   validate={[isRequired]}
                   props={{
                     formItemProps: {
-                      label: intl.formatMessage(messages.lookAlikeModalNameLabel),
+                      label: intl.formatMessage(
+                        messages.lookAlikeModalNameLabel,
+                      ),
                       required: true,
-                      ...fieldGridConfig
+                      ...fieldGridConfig,
                     },
                     inputProps: {
-                      placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
+                      placeholder: intl.formatMessage(
+                        messages.lookAlikeModalNameLabel,
+                      ),
                     },
                   }}
                 />
               </div>
               <div>
                 <FormSelectField
-                  name='audience_partition_id'
+                  name="audience_partition_id"
                   component={DefaultSelect}
-                  options={this.state.partitions.map(i => { return { title: i.name, value: i.id } })}
+                  options={this.state.partitions.map(i => {
+                    return { title: i.name, value: i.id };
+                  })}
                   validate={[isRequired]}
                   formItemProps={{
-                    label: intl.formatMessage(messages.lookAlikeModalPartitionLabel),
+                    label: intl.formatMessage(
+                      messages.lookAlikeModalPartitionLabel,
+                    ),
                     required: true,
-                    ...fieldGridConfig
+                    ...fieldGridConfig,
                   }}
                   selectProps={{
-                    defaultValue: this.state.partitions.length && this.state.partitions[0].id ? this.state.partitions[0].id : '',
+                    defaultValue:
+                      this.state.partitions.length &&
+                      this.state.partitions[0].id
+                        ? this.state.partitions[0].id
+                        : '',
                   }}
                 />
               </div>
 
               <div>
                 <FormSliderField
-                  name='extension_factor'
+                  name="extension_factor"
                   component={FormSlider}
                   validate={[isRequired]}
                   formItemProps={{
-                    label: intl.formatMessage(messages.lookAlikeModalExtentionFactorLabel),
+                    label: intl.formatMessage(
+                      messages.lookAlikeModalExtentionFactorLabel,
+                    ),
                     required: true,
-                    ...fieldGridConfig
+                    ...fieldGridConfig,
                   }}
                   inputProps={{
-                    defaultValue: 30
+                    defaultValue: 30,
                   }}
                 />
               </div>
             </Content>
           </Form>
         </Layout>
-      </Layout>);
+      </Layout>
+    );
   }
 }
 
@@ -224,4 +245,4 @@ export default compose<Props, AudienceLookalikeCreationProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-)(AudienceLookalikeCreation)
+)(AudienceLookalikeCreation);

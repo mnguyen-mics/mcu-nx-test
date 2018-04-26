@@ -4,9 +4,10 @@ export interface DatamartResource {
   organisation_id: string;
   token: string;
   creation_date: Date;
-  time_zone: string; // DateTimeZone ?
+  time_zone: string;
   type: DatamartType;
   datafarm: string;
+  storage_model_version: string;
 }
 
 type DatamartType = 'DATAMART' | 'CROSS_DATAMART';

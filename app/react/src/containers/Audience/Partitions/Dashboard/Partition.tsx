@@ -107,10 +107,10 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     const datamartId = query.datamart ? query.datamart : this.props.datamart.id;
     const options = {
       audience_partition_id: partitionId,
+      datamart_id: datamartId
     };
     return AudienceSegmentService.getSegments(
       organisationId,
-      datamartId,
       options,
     )
       .then(res => res.data)

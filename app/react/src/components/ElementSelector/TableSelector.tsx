@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { Checkbox, Radio } from 'antd';
+import { FormattedMessage } from 'react-intl';
+import { Checkbox, Radio, Icon } from 'antd';
 import { omit } from 'lodash';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { PaginationProps } from 'antd/lib/pagination';
 import { TableView, TableViewFilters } from '../TableView';
 import { DataColumnDefinition, TableViewProps } from '../TableView/TableView';
@@ -8,34 +11,53 @@ import { normalizeArrayOfObject } from '../../utils/Normalizer';
 import { DataListResponse, DataResponse } from '../../services/ApiService';
 import { SearchFilter, SelectableItem } from './';
 import SelectorLayout from './SelectorLayout';
+import { MultiSelectProps } from '../MultiSelect';
+import { getWorkspace } from '../../state/Session/selectors';
+import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
+import { RouteComponentProps, withRouter } from 'react-router';
+import {
+  PaginationSearchSettings,
+  KeywordSearchSettings,
+  DatamartSearchSettings,
+} from '../../utils/LocationSearchHelper';
 
 export interface TableSelectorProps<T extends SelectableItem> {
   actionBarTitle: string;
   columnsDefinitions: Array<DataColumnDefinition<T>>;
   displayFiltering?: boolean;
   searchPlaceholder?: string;
+  filtersOptions?: Array<MultiSelectProps<any>>;
   selectedIds?: string[];
   fetchDataList: (filter?: SearchFilter) => Promise<DataListResponse<T>>;
   fetchData: (id: string) => Promise<DataResponse<T>>;
   singleSelection?: boolean;
   save: (selectedIds: string[], selectedElement: T[]) => void;
   close: () => void;
+  displayDatamartSelector?: boolean;
 }
 
-interface State<T> {
+interface MapStateToProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
+}
+
+interface State<T>
+  extends PaginationSearchSettings,
+    KeywordSearchSettings,
+    DatamartSearchSettings {
   selectedElementsById: { [elementId: string]: T };
   elementsById: { [elementId: string]: T };
   allElementIds: string[];
   noElement: boolean;
   isLoading: boolean;
   total: number;
-  pageSize: number;
-  currentPage: number;
-  keywords: string;
 }
 
+type Props<T extends SelectableItem> = TableSelectorProps<T> &
+  RouteComponentProps<{ organisationId: string }> &
+  MapStateToProps;
+
 class TableSelector<T extends SelectableItem> extends React.Component<
-  TableSelectorProps<T>,
+  Props<T>,
   State<T>
 > {
   static defaultProps: Partial<TableSelectorProps<any>> = {
@@ -44,7 +66,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     singleSelection: false,
   };
 
-  constructor(props: TableSelectorProps<T>) {
+  constructor(props: Props<T>) {
     super(props);
     this.state = {
       selectedElementsById: {},
@@ -56,11 +78,12 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       pageSize: 10,
       currentPage: 1,
       keywords: '',
+      datamartId: '',
     };
   }
 
   componentDidMount() {
-    this.setState({ isLoading: true});
+    this.setState({ isLoading: true });
     Promise.all([
       this.populateTable(this.props.selectedIds).then(response => {
         if (response.length === 0) {
@@ -77,10 +100,10 @@ class TableSelector<T extends SelectableItem> extends React.Component<
 
   loadSelectedElementsById = () => {
     const { selectedIds } = this.props;
-    
+
     if (selectedIds) {
       const promises: Array<Promise<T>> = [];
-      selectedIds.forEach((id) => {
+      selectedIds.forEach(id => {
         promises.push(this.props.fetchData(id).then(resp => resp.data));
       });
       Promise.all(promises).then(selectedElements => {
@@ -89,7 +112,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         });
       });
     }
-  }
+  };
 
   componentDidUpdate(prevProps: TableSelectorProps<T>, prevState: State<T>) {
     const {
@@ -97,17 +120,20 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       pageSize,
       keywords,
       selectedElementsById,
+      datamartId,
     } = this.state;
     const {
       currentPage: prevCurrentPage,
       pageSize: prevPageSize,
       keywords: prevKeywords,
+      datamartId: prevDatamartId,
     } = prevState;
 
     if (
       currentPage !== prevCurrentPage ||
       pageSize !== prevPageSize ||
-      keywords !== prevKeywords
+      keywords !== prevKeywords ||
+      datamartId !== prevDatamartId
     ) {
       this.populateTable(Object.keys(selectedElementsById));
     }
@@ -139,6 +165,65 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     };
   };
 
+  getFiltersOptions = () => {
+    const {
+      displayDatamartSelector,
+      workspace,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    if (
+      workspace(organisationId).datamarts.length > 1 &&
+      displayDatamartSelector
+    ) {
+      const datamartItems = workspace(organisationId)
+        .datamarts.map(d => ({
+          key: d.id,
+          value: d.name || d.token,
+        }))
+        .concat([
+          {
+            key: '',
+            value: 'All',
+          },
+        ]);
+
+      return [
+        {
+          displayElement: (
+            <div>
+              <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+              <Icon type="down" />
+            </div>
+          ),
+          selectedItems: this.state.datamartId
+            ? [datamartItems.find(d => d.key === this.state.datamartId)]
+            : [datamartItems],
+          items: datamartItems,
+          singleSelectOnly: true,
+          getKey: (item: any) => (item && item.key ? item.key : ''),
+          display: (item: any) => item.value,
+          handleItemClick: (datamartItem: { key: string; value: string }) => {
+            this.setState(
+              {
+                datamartId:
+                  datamartItem && datamartItem.key ? datamartItem.key : '',
+              },
+              () => {
+                this.populateTable(
+                  Object.keys(this.state.selectedElementsById),
+                );
+              },
+            );
+          },
+        },
+      ];
+    }
+    return [];
+  };
+
   handleAdd = () => {
     const { save } = this.props;
     const { selectedElementsById } = this.state;
@@ -152,37 +237,35 @@ class TableSelector<T extends SelectableItem> extends React.Component<
 
   populateTable = (selectedIds: string[] = []) => {
     const { displayFiltering } = this.props;
-    const { currentPage, keywords, pageSize } = this.state;
+    const { currentPage, keywords, pageSize, datamartId } = this.state;
 
     const filterOptions = displayFiltering
-      ? { currentPage, keywords, pageSize }
+      ? { currentPage, keywords, pageSize, datamartId }
       : undefined;
 
-    return this.props
-      .fetchDataList(filterOptions)
-      .then(({ data, total }) => {
-        const allElementIds = data.map(element => element.id);
-        const elementsById = normalizeArrayOfObject(data, 'id');
-        const selectedElementsById = {
-          ...this.state.selectedElementsById,
-          ...selectedIds.reduce((acc, elementId) => {
-            if (!this.state.selectedElementsById[elementId]) {
-              return { ...acc, [elementId]: elementsById[elementId] };
-            }
-            return acc;
-          }, {}),
-        };
+    return this.props.fetchDataList(filterOptions).then(({ data, total }) => {
+      const allElementIds = data.map(element => element.id);
+      const elementsById = normalizeArrayOfObject(data, 'id');
+      const selectedElementsById = {
+        ...this.state.selectedElementsById,
+        ...selectedIds.reduce((acc, elementId) => {
+          if (!this.state.selectedElementsById[elementId]) {
+            return { ...acc, [elementId]: elementsById[elementId] };
+          }
+          return acc;
+        }, {}),
+      };
 
-        this.setState({
-          allElementIds,
-          elementsById,
-          selectedElementsById,
-          isLoading: false,
-          total: total || data.length,
-        });
-
-        return data;
+      this.setState({
+        allElementIds,
+        elementsById,
+        selectedElementsById,
+        isLoading: false,
+        total: total || data.length,
       });
+
+      return data;
+    });
   };
 
   toggleElementSelection = (element: T) => {
@@ -251,6 +334,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       <TableViewFilters
         {...tableViewProps}
         searchOptions={this.getSearchOptions()}
+        filtersOptions={this.getFiltersOptions()}
       />
     ) : (
       <TableView {...tableViewProps} />
@@ -270,4 +354,11 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   }
 }
 
-export default TableSelector;
+const mapStateToProps = (state: any) => ({
+  workspace: getWorkspace(state),
+});
+
+export default compose<Props<any>, TableSelectorProps<any>>(
+  connect(mapStateToProps, undefined),
+  withRouter,
+)(TableSelector);

@@ -8,7 +8,6 @@ import { QueryResource } from "../../../../models/datamart/DatamartResource";
 export interface EditAudienceSegmentParam {
   organisationId: string;
   segmentId: string;
-  type: SegmentTypeFormLoader;
 }
 
 export type DefaultLiftimeUnit = 'days' | 'weeks' | 'months'
@@ -37,7 +36,7 @@ export interface AudienceSegmentFormData {
 
 
 
-export type SegmentTypeFormLoader =
+export type SegmentType =
   'USER_LIST' |
   'USER_PIXEL' |
   'USER_QUERY'
@@ -49,5 +48,5 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   defaultLiftimeUnit: 'days',
   audienceExternalFeeds: [],
   audienceTagFeeds: [],
-  userListFiles:[]
+  userListFiles:[],
 };

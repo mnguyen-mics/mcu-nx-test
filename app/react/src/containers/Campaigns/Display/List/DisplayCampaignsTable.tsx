@@ -36,10 +36,11 @@ import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
 import { MapDispatchToProps, MapStateToProps } from './DisplayCampaignsPage';
 import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
+import { FilterParams } from './DisplayCampaignsActionbar';
 
 interface DisplayCampaignsTableProps
   extends MapDispatchToProps,
-    MapStateToProps {
+  MapStateToProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingStatuses: boolean;
 }
@@ -65,7 +66,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+      const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
       loadDisplayCampaignsDataSource(organisationId, filter, true);
     }
   }
@@ -96,7 +97,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, DISPLAY_SEARCH_SETTINGS);
+        const filter = parseSearch<FilterParams>(nextSearch, DISPLAY_SEARCH_SETTINGS);
         loadDisplayCampaignsDataSource(
           nextOrganisationId,
           filter,
@@ -120,7 +121,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       translations,
     } = this.props;
 
-    const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
+    const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -161,7 +162,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
 
     const editUrl = `/v2/o/${organisationId}/campaigns/display/${
       campaign.id
-    }/edit`;
+      }/edit`;
 
     history.push({
       pathname: editUrl,
@@ -212,6 +213,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
+          currentPage: 1
         }),
       defaultValue: filter.keywords,
     };
@@ -442,8 +444,8 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
-    );
+        <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
+      );
   }
 }
 

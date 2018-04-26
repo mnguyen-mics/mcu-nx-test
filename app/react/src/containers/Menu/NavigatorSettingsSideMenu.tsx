@@ -1,12 +1,8 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { Link, withRouter, matchPath } from 'react-router-dom';
 import { Menu } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import {
-  getDefaultDatamart,
-} from '../../state/Session/selectors';
 import McsIcon, { McsIconType } from '../../components/McsIcon';
 
 import { settingsDefinitions } from '../../routes/settingsDefinition';
@@ -219,14 +215,7 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  defaultDatamart: getDefaultDatamart(state),
-});
-
-const mapDispatchToProps = {};
-
 export default compose<Props, NavigatorSettingsSideMenuProps>(
   withRouter,
   injectFeatures,
-  connect(mapStateToProps, mapDispatchToProps),
 )(NavigatorSettingsSideMenu);
