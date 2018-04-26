@@ -544,9 +544,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       .datamart_id as string;
 
     const { queryLanguage, queryContainer } = this.state;
-
     return queryLanguage === 'OTQL' || queryLanguage === 'JSON_OTQL'
-      ? QueryService.updateQuery(datamart.id, queryId, {
+      ? QueryService.updateQuery(audienceSegmentFormData.audienceSegment.datamart_id!, queryId, {
         query_language: queryLanguage,
         query_text: (audienceSegmentFormData.query as QueryResource)
           .query_text,
@@ -574,7 +573,14 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       })
         .then(res => res.data)
         .then(res => res.id)
-      : queryContainer.saveOrUpdate().then(() => queryContainer.id);
+      : queryLanguage === 'JSON_OTQL' ? QueryService.createQuery(datamart.id, {
+        query_language: 'JSON_OTQL',
+        query_text: (audienceSegmentFormData.query as QueryResource)
+          .query_text,
+        datamart_id: datamart.id,
+      })
+        .then(res => res.data)
+        .then(res => res.id) : queryContainer.saveOrUpdate().then(() => queryContainer.id);
   };
 
   generateUpdateRequest = (
