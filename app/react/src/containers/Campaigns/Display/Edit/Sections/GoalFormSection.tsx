@@ -27,7 +27,11 @@ import {
   GoalSelectionCreateRequest,
 } from '../../../../../models/goal';
 import { FormSection } from '../../../../../components/Form';
-import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
+import {
+  ReduxFormChangeProps,
+  Task,
+  executeTasksInSequence,
+} from '../../../../../utils/FormHelper';
 import {
   isGoalResource,
   INITIAL_GOAL_FORM_DATA,
@@ -238,29 +242,34 @@ class GoalFormSection extends React.Component<Props> {
 
     const updateFields = (goalId: string, goalName: string) => {
       const newFields: GoalFieldModel[] = [];
+      const tasks: Task[] = [];
       fields.getAll().forEach(_field => {
-        GoalService.getGoal(goalId)
-          .then(resp => resp.data)
-          .then(goalResource => {
-            if (_field.key === field.key) {
-              newFields.push({
-                key: cuid(),
-                model: {
-                  goal_id: goalId,
-                  goal_selection_type: 'CONVERSION',
-                  default: true,
-                },
-                meta: {
-                  name: goalName,
-                  triggerMode: goalResource.new_query_id ? 'QUERY' : 'PIXEL',
-                },
-              });
-            } else {
-              newFields.push(_field);
-            }
-          });
+        tasks.push(() => {
+          return GoalService.getGoal(goalId)
+            .then(resp => resp.data)
+            .then(goalResource => {
+              if (_field.key === field.key) {
+                newFields.push({
+                  key: cuid(),
+                  model: {
+                    goal_id: goalId,
+                    goal_selection_type: 'CONVERSION',
+                    default: true,
+                  },
+                  meta: {
+                    name: goalName,
+                    triggerMode: goalResource.new_query_id ? 'QUERY' : 'PIXEL',
+                  },
+                });
+              } else {
+                newFields.push(_field);
+              }
+            });
+        });
       });
-      formChange((fields as any).name, newFields);
+      return executeTasksInSequence(tasks).then(() => {
+        formChange((fields as any).name, newFields);
+      });
     };
 
     const handleOnClick = () => {
