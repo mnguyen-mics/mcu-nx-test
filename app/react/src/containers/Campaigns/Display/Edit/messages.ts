@@ -857,7 +857,7 @@ export default defineMessages({
   goalPixelModalSaveGoal: {
     id: 'goal.pixel.modal.saveGoal',
     defaultMessage:
-      "Before Getting your pixel, we need to save your Goal. After saving you won't be able to modify your goal. Are you sure you want to save your Goal?",
+      "Before getting your pixel, we need to save your Goal. After saving you will still be able to modify your goal. Do you want to continue?",
   },
   errorFormMessage: {
     id: 'campaign.form.generic.error.message',
