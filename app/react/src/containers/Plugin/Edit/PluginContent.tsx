@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm from './PluginEditForm';
 import {
-  PluginInterface,
+  PluginResource,
   PluginProperty,
   PluginType,
 } from '../../../models/Plugins';
@@ -46,17 +46,16 @@ interface PluginContentOuterProps {
 }
 
 interface PluginContentState {
-  plugin: PluginInterface;
+  plugin: PluginResource;
   isLoading: boolean;
   pluginProperties: PluginProperty[];
-  availablePlugins: PluginInterface[];
+  availablePlugins: PluginResource[];
 }
 
 function initEmptyPluginSelection() {
   return {
     id: '',
     organisation_id: '',
-    plugin_type: '',
     group_id: '',
     artifact_id: '',
     current_version_id: '',
@@ -119,7 +118,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           plugin_type: this.props.pluginType,
         })
           .then(res => res.data)
-          .then((response: PluginInterface[]) => {
+          .then((response: PluginResource[]) => {
             this.setState({
               availablePlugins: response,
               isLoading: false,
@@ -129,11 +128,11 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
     );
   };
 
-  createPlugin = (plugin: PluginInterface, properties: PluginProperty[]) => {
+  createPlugin = (plugin: PluginResource, properties: PluginProperty[]) => {
     this.props.saveOrCreatePluginInstance(plugin, properties);
   };
 
-  onSelectPlugin = (plugin: PluginInterface) => {
+  onSelectPlugin = (plugin: PluginResource) => {
     this.setState(
       {
         isLoading: true,

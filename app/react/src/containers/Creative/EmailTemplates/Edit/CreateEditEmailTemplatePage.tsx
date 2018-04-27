@@ -6,7 +6,7 @@ import CreativeService from '../../../../services/CreativeService';
 import PluginService from '../../../../services/PluginService';
 import PluginEditForm from '../../../Plugin/Edit/PluginEditForm';
 import { EditContentLayout } from '../../../../components/Layout';
-import { PluginProperty, PluginInterface } from '../../../../models/Plugins';
+import { PluginProperty, PluginVersionResource } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import { DataResponse } from '../../../../services/ApiService';
@@ -30,7 +30,7 @@ interface CreateEmailTemplateState {
   edition: boolean;
   isLoading: boolean;
   initialValues?: EmailTemplateForm;
-  emailTemplateRenderer?: PluginInterface;
+  emailTemplateRenderer?: PluginVersionResource;
 }
 
 type JoinedProps = InjectedNotificationProps &

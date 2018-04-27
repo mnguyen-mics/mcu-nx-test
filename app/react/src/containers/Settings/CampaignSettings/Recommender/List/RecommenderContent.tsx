@@ -14,7 +14,7 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import { PluginProperty, Recommender, PluginVersion } from '../../../../../models/Plugins';
+import { PluginProperty, Recommender, PluginVersionResource } from '../../../../../models/Plugins';
 import messages from './messages';
 
 const { Content } = Layout;
@@ -59,7 +59,7 @@ class RecommenderContent extends React.Component<
           const promises = results.data.map(va => {
             return new Promise((resolve, reject) => {
               PluginService.getEngineVersion(va.version_id)
-              .then((recommender: PluginVersion) => {
+              .then((recommender: PluginVersionResource) => {
                 return PluginService.getEngineProperties(recommender.id);
               }).then((v: PluginProperty[]) => resolve(v));
             });

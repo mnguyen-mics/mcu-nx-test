@@ -9,7 +9,7 @@ import * as actions from '../../../../../state/Notifications/actions';
 import {
   PluginProperty,
   Recommender,
-  PluginInterface,
+  PluginResource,
 } from '../../../../../models/Plugins';
 
 import messages from './messages';
@@ -28,7 +28,7 @@ interface CreateRecommenderState {
   edition: boolean;
   isLoading: boolean;
   initialValues?: RecommenderForm;
-  selectedRecommender?: PluginInterface;
+  selectedRecommender?: PluginResource;
 }
 
 interface CreateRecommenderProps {
@@ -191,7 +191,7 @@ class CreateEditRecommender extends React.Component<
     return Promise.all(propertiesPromises);
   };
 
-  onSelect = (bo: PluginInterface) => {
+  onSelect = (bo: PluginResource) => {
     this.setState({
       initialValues: { plugin: bo },
     });

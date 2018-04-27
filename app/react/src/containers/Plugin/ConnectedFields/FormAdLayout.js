@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Select, Tooltip, Row, Col, Button, Modal } from 'antd';
+import { Select, Button, Modal } from 'antd';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import messages from '../messages';
-
-import McsIcon from '../../../components/McsIcon.tsx';
+import FormFieldWrapper from '../../../components/Form/FormFieldWrapper.tsx';
 import PluginService from '../../../services/PluginService.ts';
 
 
@@ -123,18 +122,23 @@ class FormAdLayout extends Component {
 
   onModalConfirm = () => {
     const { input } = this.props;
+    const {
+      value,
+      adLayouts,
+      versions,
+    } = this.state;
 
-    if (this.state.value.id === '') {
+    if (value.id === '') {
       this.setState(prevState => {
         const nextState = prevState;
-        nextState.value.id = this.state.adLayouts[0].value;
+        nextState.value.id = adLayouts[0].value;
       }, () => {
-        if (this.state.value.version === '') {
+        if (value.version === '') {
           this.setState(prevState => {
             const nextState = prevState;
-            nextState.value.version = this.state.versions[0].value;
+            nextState.value.version = versions[0].value;
           }, () => {
-            input.onChange(this.state.value);
+            input.onChange(value);
             this.setState(prevState => {
               const nextState = prevState;
               nextState.open = false;
@@ -142,32 +146,28 @@ class FormAdLayout extends Component {
           });
         }
       });
-    } else if (this.state.value.version === '') {
+    } else if (value.version === '') {
       this.setState(prevState => {
         const nextState = prevState;
-        nextState.value.version = this.state.versions[0].value;
+        nextState.value.version = versions[0].value;
       }, () => {
-        input.onChange(this.state.value);
+        input.onChange(value);
         this.setState(prevState => {
           const nextState = prevState;
           nextState.open = false;
         });
       });
     } else {
-      input.onChange(this.state.value);
-      this.setState(prevState => {
-        const nextState = prevState;
-        nextState.open = false;
+      input.onChange(value);
+      this.setState({
+        open: false
       });
     }
-
-
   }
 
   onModalClose = () => {
-    this.setState(prevState => {
-      const nextState = prevState;
-      nextState.open = false;
+    this.setState({
+      open: false
     });
   }
 
@@ -178,6 +178,13 @@ class FormAdLayout extends Component {
       helpToolTipProps,
       input,
     } = this.props;
+
+    const {
+      adLayouts,
+      open,
+      versions,
+      versionLoading,
+    } = this.state;
 
     let validateStatus = '';
     if (meta.touched && meta.invalid) validateStatus = 'error';
@@ -190,53 +197,69 @@ class FormAdLayout extends Component {
       ...helpToolTipProps,
     };
 
-    return ((this.state.adLayouts && this.state.adLayouts.length)) ? (
-      <Form.Item
+    const label = input.value && input.value.id !== null ?
+      adLayouts.find(item => { return item.value === input.value.id; }).text :
+      '';
+
+    const children = (
+      <div>
+        <Button
+          onClick={() => { this.setState({ open: true }); }}
+        >
+          {input.value ?
+            <FormattedMessage {...messages.adLayoutButtonChange} /> :
+            <FormattedMessage {...messages.adLayoutButtonChoose} />}
+        </Button>
+        <Modal
+          title={<FormattedMessage {...messages.adLayoutModalTitle} />}
+          visible={open}
+          onOk={this.onModalConfirm}
+          onCancel={this.onModalClose}
+        >
+          {adLayouts && adLayouts.length && (
+            <FormattedMessage {...messages.adLayoutModalElement} />
+          )}
+          {adLayouts && adLayouts.length && (
+            <Select
+              style={{ width: '100%' }}
+              defaultValue={adLayouts[0].value}
+              onChange={(value) => { this.onChange('id', value); }}
+              onSelect={this.getNewAdlayoutVersion}
+            >
+              {adLayouts.map(({ disabled, value, key, title, text }) => (
+                <Option {...{ disabled, value, key, title }}>{text}</Option>
+              ))}
+            </Select>
+          )}
+          {versions && versions.length && !versionLoading && (
+            <FormattedMessage {...messages.adLayoutModalLabel} />
+          )}
+          {versions && versions.length && !versionLoading && (
+            <Select
+              style={{ width: '100%' }}
+              defaultValue={versions[0].value}
+              onChange={(value) => { this.onChange('version', value); }}
+            >
+              {versions.map(({ disabled, value, key, title, text }) => (
+                <Option {...{ disabled, value, key, title }}>{text}</Option>
+              ))}
+            </Select>)}
+        </Modal>
+      </div>
+    );
+
+    return adLayouts && adLayouts.length && (
+      <FormFieldWrapper
         help={meta.touched && (meta.warning || meta.error)}
+        helpToolTipProps={displayHelpToolTip ? mergedTooltipProps : undefined}
         validateStatus={validateStatus}
+        label={label}
         {...formItemProps}
       >
-
-        <Row align="middle" type="flex" className="m-b-20">
-          <Col span={22}>
-            { input.value && input.value.id !== null ? <span className="m-r-10">{this.state.adLayouts.find(item => { return item.value === input.value.id; }).text} - {input.value.version}</span> : null }
-            <Button onClick={() => { this.setState({ open: true }); }}>{input.value ? <FormattedMessage {...messages.adLayoutButtonChange} /> : <FormattedMessage {...messages.adLayoutButtonChoose} />}</Button>
-            <Modal
-              title={<FormattedMessage {...messages.adLayoutModalTitle} />}
-              visible={this.state.open}
-              onOk={() => { this.onModalConfirm(); }}
-              onCancel={() => { this.onModalClose(); }}
-            >
-              {(this.state.adLayouts && this.state.adLayouts.length) && (<span><FormattedMessage {...messages.adLayoutModalElement} /></span>)}
-              {(this.state.adLayouts && this.state.adLayouts.length) && (
-                <Select style={{ width: '100%' }} defaultValue={this.state.adLayouts[0].value} onChange={(value) => { this.onChange('id', value); }} onSelect={this.getNewAdlayoutVersion}>
-                  {this.state.adLayouts.map(({ disabled, value, key, title, text }) => (
-                    <Option {...{ disabled, value, key, title }}>{text}</Option>
-                  ))}
-                </Select>)}
-
-              {(this.state.versions && this.state.versions.length && !this.state.versionLoading) ? (<span><FormattedMessage {...messages.adLayoutModalLabel} /></span>) : null}
-              {(this.state.versions && this.state.versions.length && !this.state.versionLoading) ? (
-                <Select style={{ width: '100%' }} defaultValue={this.state.versions[0].value} onChange={(value) => { this.onChange('version', value); }}>
-                  {this.state.versions.map(({ disabled, value, key, title, text }) => (
-                    <Option {...{ disabled, value, key, title }}>{text}</Option>
-                  ))}
-                </Select>) : null}
-            </Modal>
-          </Col>
-
-          {displayHelpToolTip &&
-            <Col span={2} className="field-tooltip">
-              <Tooltip {...mergedTooltipProps}>
-                <McsIcon type="info" />
-              </Tooltip>
-            </Col>}
-        </Row>
-      </Form.Item>
-    ) : null;
+        {children}
+      </FormFieldWrapper>
+    );
   }
-
-
 }
 
 FormAdLayout.defaultProps = {

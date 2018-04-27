@@ -7,7 +7,7 @@ import BidOptimizerService from '../../../../../services/Library/BidOptimizerSer
 import {
   PluginProperty,
   BidOptimizer,
-  PluginInterface,
+  PluginResource,
 } from '../../../../../models/Plugins';
 
 import messages from './messages';
@@ -27,7 +27,7 @@ interface CreateBidOptimizerState {
   edition: boolean;
   isLoading: boolean;
   initialValues?: BidOptimizerForm;
-  selectedBidOptimizer?: PluginInterface;
+  selectedBidOptimizer?: PluginResource;
 }
 
 type JoinedProps = InjectedNotificationProps &
@@ -192,7 +192,7 @@ class CreateEditBidOptimizer extends React.Component<
     return Promise.all(propertiesPromises);
   };
 
-  onSelect = (bo: PluginInterface) => {
+  onSelect = (bo: PluginResource) => {
     this.setState({
       initialValues: { plugin: bo },
     });
