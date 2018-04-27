@@ -28,7 +28,6 @@ interface State {
 
 interface MapStateProps {
   notifyError: (err: any) => void;
-  defaultDatamart: (organisationId: string) => { id: string };
 }
 
 type Props = InjectedIntlProps &

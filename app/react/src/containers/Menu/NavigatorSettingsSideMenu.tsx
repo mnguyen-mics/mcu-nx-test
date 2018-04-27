@@ -12,7 +12,6 @@ import { RouteComponentProps } from 'react-router';
 import { MenuMode } from 'antd/lib/menu';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMultipleLevelMenuDefinition, NavigatorSubMenuDefinition } from '../../routes/domain';
-import { DatamartResource } from '../../models/datamart/DatamartResource';
 
 
 const basePath = '/v2/o/:organisationId(\\d+)';
@@ -23,17 +22,12 @@ export interface NavigatorSettingsSideMenuProps {
   onMenuItemClick: () => void;
 }
 
-interface NavigatorSettingsSideMenuStoreProps {
-  defaultDatamart: (organisationId: string) => DatamartResource;
-}
-
 interface RouteProps {
   organisationId: string;
 }
 
 type Props = NavigatorSettingsSideMenuProps &
   RouteComponentProps<RouteProps> &
-  NavigatorSettingsSideMenuStoreProps &
   InjectedFeaturesProps;
 
 interface NavigatorSettingsSideMenuState {

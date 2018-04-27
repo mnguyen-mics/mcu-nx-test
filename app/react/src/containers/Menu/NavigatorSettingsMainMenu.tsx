@@ -12,14 +12,12 @@ import {
 import { getOrgFeatures } from '../../state/Features/selectors';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition } from '../../routes/domain';
-import { DatamartResource } from '../../models/datamart/DatamartResource';
 
 export interface NavigatorSettingsMainMenuProps {
 }
 
 interface NavigatorSettingsMainMenuStoreProps {
   organisationHasDatamarts: (organisationId: string) => boolean;
-  defaultDatamart: (organisationId: string) => DatamartResource;
   orgFeatures: string[];
 }
 

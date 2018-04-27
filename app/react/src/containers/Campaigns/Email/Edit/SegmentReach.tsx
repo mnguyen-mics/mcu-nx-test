@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { FormattedMessage, FormattedNumber, FormattedPlural } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import EmailCampaignService from '../../../../services/EmailCampaignService';
+import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { EditEmailBlastRouteMatchParam } from './domain';
+import { formatMetric } from '../../../../utils/MetricHelper';
 
 interface SegmentReachProps {
   segmentIds: string[];
@@ -82,10 +85,20 @@ class SegmentReach extends React.Component<Props, State> {
       }
 
       return (
-        <div className="segment-user-reach">
-          <FormattedMessage id="potential-reach" defaultMessage="Potential Reach" />:
-          <span className="reach-number"><FormattedNumber value={count} /></span>
-          <FormattedPlural value={count} one="email" other="emails" />
+        <div className="segment-user-reach">          
+          <FormattedMessage 
+            id="potential-reach" 
+            defaultMessage={`Potential Reach: {emailCountLabeled} 
+              { emailCount, plural, one { email } other { emails }} `}
+            values={{
+              emailCountLabeled: (
+                <span className="reach-number">
+                  {formatMetric(count, '0,00')}
+                </span>
+              ),
+              emailCount: count,
+            }}    
+          />          
         </div>
       );
     }
@@ -95,5 +108,10 @@ class SegmentReach extends React.Component<Props, State> {
 }
 
 export default compose<Props, SegmentReachProps>(
-  withRouter
+  withRouter,
+  connect(
+    state => ({
+      defaultDatamart: getDefaultDatamart(state),
+    }),
+  ),
 )(SegmentReach);
