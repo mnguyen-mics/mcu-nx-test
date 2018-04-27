@@ -44,7 +44,7 @@ class PropertiesFormSection extends React.Component<Props> {
     const {
       initialValue: {
         creative,
-        rendererPlugin: { current_version_id: rendererPluginVersionId },
+        rendererPlugin: { current_version_id: rendererPluginVersionId, plugin_id },
         properties,
       },
       match: { params: { organisationId } },
@@ -79,7 +79,7 @@ class PropertiesFormSection extends React.Component<Props> {
               key={fieldDef.technical_name}
               definition={fieldDef}
               disabled={isDisabled}
-              pluginVersionId={rendererPluginVersionId}
+              pluginVersionId={rendererPluginVersionId ? rendererPluginVersionId : plugin_id}
               organisationId={organisationId}
               {...additionnalProps}
             />

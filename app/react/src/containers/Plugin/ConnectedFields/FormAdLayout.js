@@ -76,7 +76,9 @@ class FormAdLayout extends Component {
           return { key: item.id, disabled: disabled, value: item.id, name: item.name, title: `${item.name} (${item.id})`, text: `${item.name} (${item.id})` };
         });
       }, () => {
-        this.getNewAdlayoutVersion(organisationId, adLayouts[0].id);
+        if (adLayouts[0] && adLayouts[0].id) {
+          this.getNewAdlayoutVersion(organisationId, adLayouts[0].id);
+        }
       });
     });
   }
