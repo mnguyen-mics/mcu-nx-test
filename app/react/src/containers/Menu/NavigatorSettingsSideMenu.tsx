@@ -11,8 +11,10 @@ import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import { MenuMode } from 'antd/lib/menu';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
-import { NavigatorMultipleLevelMenuDefinition, NavigatorSubMenuDefinition } from '../../routes/domain';
-
+import {
+  NavigatorMultipleLevelMenuDefinition,
+  NavigatorSubMenuDefinition,
+} from '../../routes/domain';
 
 const basePath = '/v2/o/:organisationId(\\d+)';
 
@@ -35,7 +37,10 @@ interface NavigatorSettingsSideMenuState {
   vecticalOpenKeys: string[];
 }
 
-class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettingsSideMenuState> {
+class NavigatorSettingsSideMenu extends React.Component<
+  Props,
+  NavigatorSettingsSideMenuState
+> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -45,24 +50,37 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
   }
 
   componentDidMount() {
-    const { location: { pathname } } = this.props;
-    this.checkInitialState(pathname)
-    
+    const {
+      location: { pathname },
+    } = this.props;
+    this.checkInitialState(pathname);
   }
 
   checkInitialState = (pathname: string) => {
     const currentOpenSubMenu = settingsDefinitions
-      .filter(item => item.type === 'multi' && item.subMenuItems && item.subMenuItems.length > 0)
+      .filter(
+        item =>
+          item.type === 'multi' &&
+          item.subMenuItems &&
+          item.subMenuItems.length > 0,
+      )
       .find(
-        item => item.type === 'multi' && item.subMenuItems.reduce((acc: boolean, val) => {
-          return matchPath(pathname, { path: `${basePath}${val.path}`, exact: false, strict: false }) ? true : acc;
-        }, false)
+        item =>
+          item.type === 'multi' &&
+          item.subMenuItems.reduce((acc: boolean, val) => {
+            return matchPath(pathname, {
+              path: `${basePath}${val.path}`,
+              exact: false,
+              strict: false,
+            })
+              ? true
+              : acc;
+          }, false),
       );
 
     if (currentOpenSubMenu)
       this.setState({ inlineOpenKeys: [currentOpenSubMenu.iconType] }); // eslint-disable-line react/no-did-mount-set-state
-  }
-  
+  };
 
   onOpenChange = (openKeys: string[]) => {
     const state = this.state;
@@ -91,19 +109,21 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
   };
 
   getAvailableItems() {
-    const {
-      hasFeature
-    } = this.props;
+    const { hasFeature } = this.props;
 
-    const checkIfHasAtLeastOneFeature = (item: NavigatorMultipleLevelMenuDefinition): boolean => {
+    const checkIfHasAtLeastOneFeature = (
+      item: NavigatorMultipleLevelMenuDefinition,
+    ): boolean => {
       return item.subMenuItems.reduce((acc, val) => {
-        return hasFeature(val.requiredFeature, val.requireDatamart) ? hasFeature(val.requiredFeature, val.requireDatamart) : acc;
-      }, false)
-    }
+        return hasFeature(val.requiredFeature, val.requireDatamart)
+          ? hasFeature(val.requiredFeature, val.requireDatamart)
+          : acc;
+      }, false);
+    };
 
     return settingsDefinitions.reduce((acc, item) => {
       if (item.type === 'multi' && checkIfHasAtLeastOneFeature(item)) {
-        const subMenuItems = (item.subMenuItems || []).filter((subMenuItem) =>
+        const subMenuItems = (item.subMenuItems || []).filter(subMenuItem =>
           hasFeature(subMenuItem.requiredFeature, subMenuItem.requireDatamart),
         );
         return [...acc, { ...item, subMenuItems }];
@@ -114,7 +134,9 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
 
   buildItems() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { pathname },
       hasFeature,
     } = this.props;
@@ -122,28 +144,50 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
     const baseUrl = `/v2/o/${organisationId}`;
 
     const currentOpenMenu = settingsDefinitions
-      .filter(item => item.type === 'multi' && item.subMenuItems && item.subMenuItems.length > 0)
+      .filter(
+        item =>
+          item.type === 'multi' &&
+          item.subMenuItems &&
+          item.subMenuItems.length > 0,
+      )
       .find(
-        item => item.type === 'multi' && item.subMenuItems.reduce((acc: boolean, val) => {
-          return matchPath(pathname, { path: `${basePath}${val.path}`, exact: false, strict: false }) ? true : acc;
-        }, false)
+        item =>
+          item.type === 'multi' &&
+          item.subMenuItems.reduce((acc: boolean, val) => {
+            return matchPath(pathname, {
+              path: `${basePath}${val.path}`,
+              exact: false,
+              strict: false,
+            })
+              ? true
+              : acc;
+          }, false),
       );
 
-    return currentOpenMenu && currentOpenMenu.type === 'multi' && currentOpenMenu.subMenuItems && currentOpenMenu.subMenuItems.map((itemDef) => {
-      return hasFeature(itemDef.requiredFeature, itemDef.requireDatamart) ? (
-        <Menu.Item key={itemDef.path}>
-          <Link to={`${baseUrl}${itemDef.path}`}>
-            <McsIcon type={itemDef.iconType as McsIconType} />
-            <span className="nav-text">
-              <FormattedMessage {...itemDef.translation} />
-            </span>
-          </Link>
-        </Menu.Item>
-      ) : null;
-    });
+    return (
+      currentOpenMenu &&
+      currentOpenMenu.type === 'multi' &&
+      currentOpenMenu.subMenuItems &&
+      currentOpenMenu.subMenuItems.map(itemDef => {
+        return hasFeature(itemDef.requiredFeature, itemDef.requireDatamart) ? (
+          <Menu.Item key={itemDef.path}>
+            <Link to={`${baseUrl}${itemDef.path}`}>
+              <McsIcon type={itemDef.iconType as McsIconType} />
+              <span className="nav-text">
+                <FormattedMessage {...itemDef.translation} />
+              </span>
+            </Link>
+          </Menu.Item>
+        ) : null;
+      })
+    );
   }
 
-  getAllKeysWithPath = (): Array<{ path: string, key: string, mainKey: string }> => {
+  getAllKeysWithPath = (): Array<{
+    path: string;
+    key: string;
+    mainKey: string;
+  }> => {
     return this.getAvailableItems().reduce((acc, item) => {
       let subMenuKeys;
       if (item.type === 'multi') {
@@ -154,34 +198,34 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
               {
                 key: subItem.path,
                 path: subItem.path,
-                mainKey: item.iconType
+                mainKey: item.iconType,
               },
             ];
           },
           [],
         );
-        return [
-          ...acc,
-          ...subMenuKeys,
-        ];
+        return [...acc, ...subMenuKeys];
       } else {
         return [
           ...acc,
           {
             key: item.iconType,
             path: (item as any).path,
-            mainKey: item.iconType
+            mainKey: item.iconType,
           },
         ];
       }
     }, []);
-  }
+  };
 
   render() {
-    const { mode, location: { pathname } } = this.props;
+    const {
+      mode,
+      location: { pathname },
+    } = this.props;
 
     const getSelectedKeys = (): string[] => {
-      const currentItem = this.getAllKeysWithPath().find((item) => {
+      const currentItem = this.getAllKeysWithPath().find(item => {
         const matched = matchPath(pathname, {
           path: `${basePath}${item.path}`,
         });
