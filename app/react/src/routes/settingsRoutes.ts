@@ -1,32 +1,36 @@
-import { SitesListPage } from '../containers/Settings/DatamartSettings/Sites/List'
-import { DatamartsListPage } from '../containers/Settings/DatamartSettings/Datamarts/List'
-import { MobileApplicationsListPage } from '../containers/Settings/DatamartSettings/MobileApplications/List'
+import { SitesListPage } from '../containers/Settings/DatamartSettings/Sites/List';
+import { DatamartsListPage } from '../containers/Settings/DatamartSettings/Datamarts/List';
+import { MobileApplicationsListPage } from '../containers/Settings/DatamartSettings/MobileApplications/List';
 
-import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labels'
-import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UserPage'
-import OrganisationAccount from '../containers/Settings/OrganisationSettings/OrganisationAccount/OrganisationAccount'
+import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labels';
+import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UserPage';
+import OrganisationAccount from '../containers/Settings/OrganisationSettings/OrganisationAccount/OrganisationAccount';
 
-import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/'
+import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/';
 
 import MobileApplicationEditPage from '../containers/Settings/DatamartSettings/MobileApplications/Edit/MobileApplicationEditPage';
 import SiteEditPage from '../containers/Settings/DatamartSettings/Sites/Edit/SiteEditPage';
 import DatamartEditPage from '../containers/Settings/DatamartSettings/Datamarts/Edit/DatamartEditPage';
 
-import { BidOptimizerContent } from '../containers/Settings/CampaignSettings/BidOptimizer/List'
-import { CreateEditBidOptimizer } from '../containers/Settings/CampaignSettings/BidOptimizer/Edit'
+import { BidOptimizerContent } from '../containers/Settings/CampaignSettings/BidOptimizer/List';
+import { CreateEditBidOptimizer } from '../containers/Settings/CampaignSettings/BidOptimizer/Edit';
 
-import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List'
-import { CreateEditAttributionModel } from '../containers/Settings/CampaignSettings/AttributionModel/Edit'
+import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List';
+import { CreateEditAttributionModel } from '../containers/Settings/CampaignSettings/AttributionModel/Edit';
 
-import { EmailRouterContent } from '../containers/Settings/CampaignSettings/EmailRouter/List'
-import { CreateEditEmailRouter } from '../containers/Settings/CampaignSettings/EmailRouter/Edit'
+import { EmailRouterContent } from '../containers/Settings/CampaignSettings/EmailRouter/List';
+import { CreateEditEmailRouter } from '../containers/Settings/CampaignSettings/EmailRouter/Edit';
 
-import { RecommenderContent } from '../containers/Settings/CampaignSettings/Recommender/List'
-import { CreateEditRecommender } from '../containers/Settings/CampaignSettings/Recommender/Edit'
+import { RecommenderContent } from '../containers/Settings/CampaignSettings/Recommender/List';
+import { CreateEditRecommender } from '../containers/Settings/CampaignSettings/Recommender/Edit';
 
-import { VisitAnalyzerContent } from '../containers/Settings/DatamartSettings/VisitAnalyzer/List'
-import { CreateEditVisitAnalyzer } from '../containers/Settings/DatamartSettings/VisitAnalyzer/Edit'
-import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
+import { VisitAnalyzerContent } from '../containers/Settings/DatamartSettings/VisitAnalyzer/List';
+import { CreateEditVisitAnalyzer } from '../containers/Settings/DatamartSettings/VisitAnalyzer/Edit';
+import {
+  NavigatorRoute,
+  NavigatorDefinition,
+  generateRoutesFromDefinition,
+} from './domain';
 
 import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportListPage';
 
@@ -43,7 +47,7 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'settings',
     contentComponent: SitesListPage,
     requiredFeature: 'datamartSettings.sites',
-    requireDatamart: true
+    requireDatamart: true,
   },
 
   settingsDatamartSitesCreation: {
@@ -51,15 +55,15 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: SiteEditPage,
     requiredFeature: 'datamartSettings.sites',
-    requireDatamart: true
+    requireDatamart: true,
   },
-  
+
   settingsDatamartSitesEdition: {
     path: '/settings/datamart/sites/:siteId/edit',
     layout: 'edit',
     editComponent: SiteEditPage,
     requiredFeature: 'datamartSettings.sites',
-    requireDatamart: true
+    requireDatamart: true,
   },
 
   // mobile apps
@@ -68,21 +72,21 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'settings',
     contentComponent: MobileApplicationsListPage,
     requiredFeature: 'datamartSettings.mobile_applications',
-    requireDatamart: true
+    requireDatamart: true,
   },
   settingsDatamartMobileAppCreation: {
     path: '/settings/datamart/mobile_application/create',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
     requiredFeature: 'datamartSettings.mobile_applications',
-    requireDatamart: true
+    requireDatamart: true,
   },
   settingsDatamartMobileAppEdition: {
     path: '/settings/datamart/mobile_application/:mobileApplicationId/edit',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
     requiredFeature: 'datamartSettings.mobile_applications',
-    requireDatamart: true
+    requireDatamart: true,
   },
   // datamart
   settingsDatamartDatamartList: {
@@ -90,21 +94,21 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'settings',
     contentComponent: DatamartsListPage,
     requiredFeature: 'datamartSettings.datamarts',
-    requireDatamart: true
+    requireDatamart: true,
   },
   settingsDatamartDatamartEdition: {
     path: '/settings/datamart/my_datamart/:datamartId/edit',
     layout: 'edit',
     editComponent: DatamartEditPage,
     requiredFeature: 'datamartSettings.datamarts',
-    requireDatamart: true
+    requireDatamart: true,
   },
   settingsDatamartServiceUsageReport: {
     path: '/settings/datamart/my_datamart/:datamartId/service_usage_report',
     layout: 'settings',
     contentComponent: ServiceUsageReportListPage,
     requiredFeature: 'datamartSettings.service_usage_report',
-    requireDatamart: true
+    requireDatamart: true,
   },
 
   // visit analyzer
@@ -113,21 +117,21 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'settings',
     contentComponent: VisitAnalyzerContent,
     requiredFeature: 'datamartSettings.visit_analyzers',
-    requireDatamart: true
+    requireDatamart: true,
   },
   settingsDatamartVisitAnalyzerEdition: {
     path: '/settings/datamart/visit_analyzers/:visitAnalyzerId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEditVisitAnalyzer,
     requiredFeature: 'datamartSettings.visit_analyzers',
-    requireDatamart: true
+    requireDatamart: true,
   },
   settingsDatamartVisitAnalyzerCreation: {
     path: '/settings/datamart/visit_analyzers/create',
     layout: 'edit',
     editComponent: CreateEditVisitAnalyzer,
     requiredFeature: 'datamartSettings.visit_analyzers',
-    requireDatamart: true
+    requireDatamart: true,
   },
 
   /*
@@ -159,15 +163,13 @@ export const settingsDefinition: NavigatorDefinition = {
     contentComponent: UserListPage,
     requiredFeature: 'organisationSettings.users',
   },
- 
-  
- 
+
   /*
 
   ACCOUNT SETTINGS
   
   */
-  
+
   settingsAccountProfileList: {
     path: '/settings/account/my_profile',
     layout: 'settings',
@@ -211,7 +213,8 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   settingsCampaignAttributionModelEdition: {
-    path: '/settings/campaigns/attribution_models/:attributionModelId(\\d+)/edit',
+    path:
+      '/settings/campaigns/attribution_models/:attributionModelId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEditAttributionModel,
     requiredFeature: 'campaignsSettings.attribution_models',
@@ -264,6 +267,8 @@ export const settingsDefinition: NavigatorDefinition = {
     editComponent: CreateEditRecommender,
     requiredFeature: 'campaignsSettings.recommenders',
   },
-}
+};
 
-export const settingsRoutes: NavigatorRoute[] = generateRoutesFromDefinition(settingsDefinition);
+export const settingsRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
+  settingsDefinition,
+);

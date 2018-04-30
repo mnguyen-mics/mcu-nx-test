@@ -7,9 +7,7 @@ import { Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import UsersService from '../../../../../services/UsersService';
-import {
-  PAGINATION_SEARCH_SETTINGS,
-} from '../../../../../utils/LocationSearchHelper';
+import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { User } from '../../../../../models/settings/settings';
 import messages from './messages';
@@ -35,7 +33,7 @@ interface RouterProps {
 class UserList extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   UserListState
-  > {
+> {
   state = initialState;
 
   archiveUser = (recommenderId: string) => {
@@ -49,19 +47,23 @@ class UserList extends React.Component<
       };
       UsersService.getUsers(organisationId, options).then(
         (results: { data: User[]; total?: number; count: number }) => {
-
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        }
+        },
       );
-    })
+    });
   };
 
   onClickEdit = (user: User) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     history.push(
       `/v2/o/${organisationId}/settings/organisation/users/${user.id}/edit`,
@@ -69,14 +71,16 @@ class UserList extends React.Component<
   };
 
   render() {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const actionsColumnsDefinition = [
       {
         key: 'action',
-        actions: [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-        ],
+        actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
       },
     ];
 
@@ -90,9 +94,9 @@ class UserList extends React.Component<
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/settings/organisation/users/${
               record.id
-              }/edit`}
+            }/edit`}
           >
-            {text}{' '}{record.last_name}
+            {text} {record.last_name}
           </Link>
         ),
       },
@@ -107,9 +111,9 @@ class UserList extends React.Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-        iconType: 'settings',
-        intlMessage: messages.emptyUsers,
-      };
+      iconType: 'settings',
+      intlMessage: messages.emptyUsers,
+    };
 
     // const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/recommenders/create`)
 
@@ -119,13 +123,17 @@ class UserList extends React.Component<
     //   </Button>)
     // ]
 
-    const additionnalComponent = (<div>
-      <div className="mcs-card-header mcs-card-title">
-        <span className="mcs-card-title"><FormattedMessage {...messages.users} /></span>
-        {/* <span className="mcs-card-button">{buttons}</span> */}
+    const additionnalComponent = (
+      <div>
+        <div className="mcs-card-header mcs-card-title">
+          <span className="mcs-card-title">
+            <FormattedMessage {...messages.users} />
+          </span>
+          {/* <span className="mcs-card-button">{buttons}</span> */}
+        </div>
+        <hr className="mcs-separator" />
       </div>
-      <hr className="mcs-separator" />
-    </div>)
+    );
 
     return (
       <div className="ant-layout">
