@@ -33,6 +33,7 @@ import {
 } from './domain';
 
 import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportListPage';
+import EditUserPage from '../containers/Settings/OrganisationSettings/Users/Edit/EditUserPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -161,6 +162,18 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/organisation/users',
     layout: 'settings',
     contentComponent: UserListPage,
+    requiredFeature: 'organisationSettings.users',
+  },
+  settingsOrganisationUserEdition: {
+    path: '/settings/organisation/users/:userId/edit',
+    layout: 'edit',
+    editComponent: EditUserPage,
+    requiredFeature: 'organisationSettings.users',
+  },
+  settingsOrganisationUserCreation: {
+    path: '/settings/organisation/users/create',
+    layout: 'edit',
+    editComponent: EditUserPage,
     requiredFeature: 'organisationSettings.users',
   },
 

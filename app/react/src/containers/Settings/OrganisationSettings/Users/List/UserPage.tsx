@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Layout } from 'antd';
+import { Layout, Button } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import UsersService from '../../../../../services/UsersService';
@@ -115,13 +115,16 @@ class UserList extends React.Component<
       intlMessage: messages.emptyUsers,
     };
 
-    // const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/recommenders/create`)
+    const onClick = () =>
+      this.props.history.push(
+        `/v2/o/${organisationId}/settings/organisation/users/create`,
+      );
 
-    // const buttons = [
-    //   (<Button key="create" type="primary" onClick={onClick}>
-    //     <FormattedMessage {...messages.newUser} />
-    //   </Button>)
-    // ]
+    const buttons = (
+      <Button key="create" type="primary" onClick={onClick}>
+        <FormattedMessage {...messages.newUser} />
+      </Button>
+    );
 
     const additionnalComponent = (
       <div>
@@ -129,7 +132,7 @@ class UserList extends React.Component<
           <span className="mcs-card-title">
             <FormattedMessage {...messages.users} />
           </span>
-          {/* <span className="mcs-card-button">{buttons}</span> */}
+          <span className="mcs-card-button">{buttons}</span>
         </div>
         <hr className="mcs-separator" />
       </div>
