@@ -169,6 +169,14 @@ export default defineMessages({
     id: 'timeline.activity.events.detail',
     defaultMessage: 'Details',
   },
+  eventJson: {
+    id: 'timeline.activity.events.json',
+    defaultMessage: 'Event JSON',
+  },
+  eventJsonModalOkText: {
+    id: 'timeline.activity.event.json.modal.ok.text',
+    defaultMessage: 'Close',
+  },
   less: {
     id: 'timeline.activity.events.less',
     defaultMessage: 'Less',

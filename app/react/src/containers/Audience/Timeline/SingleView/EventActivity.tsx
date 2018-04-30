@@ -1,36 +1,49 @@
 import * as React from 'react';
-import { Row, Col, Tag, Tooltip, Button, Modal } from 'antd';
+import { Row, Col, Tag, Tooltip, Modal } from 'antd';
 import moment from 'moment';
-import { FormattedMessage } from 'react-intl';
-
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/styles/hljs';
 import McsIcon from '../../../../components/McsIcon';
 import messages from '../messages';
+import { ButtonStyleless } from '../../../../components';
 
 interface EventActivityProps {
   event: {
     $event_name: string;
-    $properties: object; // type it better
+    $properties: object;
     $ts: number;
   };
 }
 
 interface State {
   showMore: boolean;
-  showEventModal: boolean;
 }
 
-class EventActivity extends React.Component<EventActivityProps, State> {
-  constructor(props: EventActivityProps) {
+type Props = EventActivityProps & InjectedIntlProps;
+
+class EventActivity extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       showMore: false,
-      showEventModal: false,
     };
   }
 
   handleJSONViewModal = () => {
-    this.setState({
-      showEventModal: !this.state.showEventModal,
+    const { event, intl } = this.props;
+    Modal.info({
+      title: intl.formatMessage(messages.eventJson),
+      okText: intl.formatMessage(messages.eventJsonModalOkText),
+      width: '650px',
+      content: (
+        <SyntaxHighlighter language="json" style={docco}>
+          {JSON.stringify(event, undefined, 4)}
+        </SyntaxHighlighter>
+      ),
+      onOk() {
+        //
+      },
     });
   };
 
@@ -97,14 +110,14 @@ class EventActivity extends React.Component<EventActivityProps, State> {
 
   render() {
     const { event } = this.props;
-    const { showEventModal } = this.state;
+    const { showMore } = this.state;
 
     const changeVisibility = () => {
       this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
-        nextState.showMore = !this.state.showMore;
+        nextState.showMore = !showMore;
         return nextState;
       });
     };
@@ -117,13 +130,21 @@ class EventActivity extends React.Component<EventActivityProps, State> {
         <Col span={19}>
           <div className="section-title">{event.$event_name}</div>
           <div className="section-cta">
+            {showMore && (
+              <ButtonStyleless
+                onClick={this.handleJSONViewModal}
+                className="mcs-card-inner-action"
+                style={{ marginRight: '10px' }}
+              >
+                <FormattedMessage {...messages.viewEventJson} />
+              </ButtonStyleless>
+            )}
             {Object.keys(event.$properties).length !== 0 && (
               <button
                 className="mcs-card-inner-action"
                 onClick={changeVisibility}
               >
-                {' '}
-                {!this.state.showMore ? (
+                {!showMore ? (
                   <span>
                     <McsIcon type="chevron" />{' '}
                     <FormattedMessage {...messages.detail} />
@@ -138,20 +159,9 @@ class EventActivity extends React.Component<EventActivityProps, State> {
             )}
           </div>
         </Col>
-        {this.state.showMore && (
+        {showMore && (
           <div className="event-properties-list">
             {this.renderProperties(event.$properties, true)}
-            <Button onClick={this.handleJSONViewModal} size="small">
-              <FormattedMessage {...messages.viewEventJson} />
-            </Button>
-            <Modal
-              width={980}
-              title="Title"
-              visible={showEventModal}
-              onCancel={this.handleJSONViewModal}
-            >
-              <p>{JSON.stringify(event, undefined, 4)}</p>
-            </Modal>
           </div>
         )}
       </Row>
@@ -159,4 +169,4 @@ class EventActivity extends React.Component<EventActivityProps, State> {
   }
 }
 
-export default EventActivity;
+export default injectIntl(EventActivity);

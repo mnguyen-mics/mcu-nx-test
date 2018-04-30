@@ -11,7 +11,7 @@ import { getDefaultDatamart } from '../../../state/Session/selectors';
 import * as actions from '../../../state/Notifications/actions';
 import Monitoring from './Monitoring';
 
-import UserDataService from '../../../services/UserDataService';
+import UserDataService from '../../../services/UserDataService.ts';
 import initialState from './initialState';
 
 class TimelinePage extends Component {

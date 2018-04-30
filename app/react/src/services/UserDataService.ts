@@ -1,6 +1,16 @@
 import ApiService, { DataResponse } from './ApiService';
 
-type ChannelResource = any; // type it  better
+type ChannelResource = {
+  creation_ts: number;
+  datamart_id: string;
+  domain: string;
+  id: string;
+  name: string;
+  organisation_id: string;
+  token: string;
+  type: string;
+  visit_analyzer_model_id: string;
+};
 
 const UserDataService = {
   getProfile(
@@ -103,7 +113,10 @@ const UserDataService = {
     });
   },
 
-  getChannel(datamartId: string, channelId: string): Promise<DataResponse<ChannelResource>> {
+  getChannel(
+    datamartId: string,
+    channelId: string,
+  ): Promise<DataResponse<ChannelResource>> {
     const endpoint = `datamarts/${datamartId}/channels/${channelId}`;
 
     return ApiService.getRequest(endpoint);
