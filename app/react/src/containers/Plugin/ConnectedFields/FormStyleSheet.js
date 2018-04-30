@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Select, Tooltip, Row, Col, Button, Modal } from 'antd';
+import { Select, Button, Modal } from 'antd';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import messages from '../messages';
-
-import McsIcon from '../../../components/McsIcon.tsx';
+import FormFieldWrapper from '../../../components/Form/FormFieldWrapper.tsx';
 import PluginService from '../../../services/PluginService.ts';
 
 const Option = Select.Option;
@@ -115,12 +114,12 @@ class FormStyleSheet extends Component {
 
   onModalConfirm = () => {
     const { input } = this.props;
-    const { value, versions } = this.state;
-    if (value.id === '') {
+    const { value, versions, styleSheets } = this.state;
+    if (value.id === '' && styleSheets[0]) {
       this.setState(
         prevState => {
           const nextState = prevState;
-          nextState.value.id = this.state.styleSheets[0].value;
+          nextState.value.id = styleSheets[0].value;
         },
         () => {
           if (value.version === '') {
@@ -140,7 +139,7 @@ class FormStyleSheet extends Component {
           }
         },
       );
-    } else if (value.version === '') {
+    } else if (value.version === '' && versions[0]) {
       this.setState(
         prevState => {
           const nextState = prevState;
@@ -186,112 +185,88 @@ class FormStyleSheet extends Component {
       ...helpToolTipProps,
     };
 
-    return (
-      styleSheets &&
-      styleSheets.length && (
-        <Form.Item
-          help={meta.touched && (meta.warning || meta.error)}
-          validateStatus={validateStatus}
-          labelCol={{ span: 3 }}
-          wrapperCol={{ span: 10, offset: 1 }}
-          {...formItemProps}
+    let label;
+    if (input.value && input.value.id) {
+      label = styleSheets.find(item => {
+        return item.value === input.value.id;
+      }).text;
+    }
+    if (input.value.version) {
+      label = `${label} - ${input.value.version}`;
+    }
+
+    const children = (
+      <div>
+        <Button
+          onClick={() => {
+            this.setState({ open: true });
+          }}
         >
-          <Row align="middle" type="flex" className="m-b-20">
-            <Col span={22}>
-              {input.value &&
-                input.value.id && (
-                  <span className="m-r-10">
-                    {
-                      styleSheets.find(item => {
-                        return item.value === input.value.id;
-                      }).text
-                    }{' '}
-                    - {input.value.version}
-                  </span>
-                )}
-              <Button
-                onClick={() => {
-                  this.setState({ open: true });
-                }}
-              >
-                {input.value ? (
-                  <FormattedMessage {...messages.styleSheetButtonChange} />
-                ) : (
-                  <FormattedMessage {...messages.styleSheetButtonChoose} />
-                )}
-              </Button>
-              <Modal
-                title={<FormattedMessage {...messages.styleSheetModalTitle} />}
-                visible={this.state.open}
-                onOk={() => {
-                  this.onModalConfirm();
-                }}
-                onCancel={() => {
-                  this.onModalClose();
-                }}
-              >
-                {styleSheets &&
-                  styleSheets.length && (
-                    <span>
-                      <FormattedMessage {...messages.styleSheetModalElement} />
-                    </span>
-                  )}
-                {styleSheets &&
-                  styleSheets.length && (
-                    <Select
-                      style={{ width: '100%' }}
-                      defaultValue={styleSheets[0].value}
-                      onChange={value => {
-                        this.onChange('id', value);
-                      }}
-                      onSelect={this.getNewStyleSheetsVersion}
-                    >
-                      {styleSheets.map(
-                        ({ disabled, value, key, title, text }) => (
-                          <Option {...{ disabled, value, key, title }}>
-                            {text}
-                          </Option>
-                        ),
-                      )}
-                    </Select>
-                  )}
+          {input.value && input.value.id ? (
+            <FormattedMessage {...messages.styleSheetButtonChange} />
+          ) : (
+            <FormattedMessage {...messages.styleSheetButtonChoose} />
+          )}
+        </Button>
+        <Modal
+          title={<FormattedMessage {...messages.styleSheetModalTitle} />}
+          visible={this.state.open}
+          onOk={this.onModalConfirm}
+          onCancel={this.onModalClose}
+        >
+          {styleSheets && styleSheets.length ? (
+            <span>
+              <FormattedMessage {...messages.styleSheetModalElement} />
+            </span>
+          ) : null}
+          {styleSheets && styleSheets.length ? (
+            <Select
+              style={{ width: '100%' }}
+              defaultValue={styleSheets[0].value}
+              onChange={value => {
+                this.onChange('id', value);
+              }}
+              onSelect={this.getNewStyleSheetsVersion}
+            >
+              {styleSheets.map(({ disabled, value, key, title, text }) => (
+                <Option {...{ disabled, value, key, title }}>{text}</Option>
+              ))}
+            </Select>
+          ) : null}
 
-                {versions &&
-                  versions.length &&
-                  !versionLoading && (
-                    <FormattedMessage {...messages.styleSheetModalVersions} />
-                  )}
-                {versions &&
-                  versions.length &&
-                  !versionLoading && (
-                    <Select
-                      style={{ width: '100%' }}
-                      defaultValue={versions[0].value}
-                      onChange={value => {
-                        this.onChange('version', value);
-                      }}
-                    >
-                      {versions.map(({ disabled, value, key, title, text }) => (
-                        <Option {...{ disabled, value, key, title }}>
-                          {text}
-                        </Option>
-                      ))}
-                    </Select>
-                  )}
-              </Modal>
-            </Col>
-
-            {displayHelpToolTip && (
-              <Col span={2} className="field-tooltip">
-                <Tooltip {...mergedTooltipProps}>
-                  <McsIcon type="info" />
-                </Tooltip>
-              </Col>
+          {versions &&
+            versions.length &&
+            !versionLoading && (
+              <FormattedMessage {...messages.styleSheetModalVersions} />
             )}
-          </Row>
-        </Form.Item>
-      )
+          {versions && versions.length && !versionLoading ? (
+            <Select
+              style={{ width: '100%' }}
+              defaultValue={versions[0].value}
+              onChange={value => {
+                this.onChange('version', value);
+              }}
+            >
+              {versions.map(({ disabled, value, key, title, text }) => (
+                <Option {...{ disabled, value, key, title }}>{text}</Option>
+              ))}
+            </Select>
+          ) : null}
+        </Modal>
+      </div>
     );
+
+    return styleSheets && styleSheets.length ? (
+      <FormFieldWrapper
+        help={meta.touched && (meta.warning || meta.error)}
+        helpToolTipProps={displayHelpToolTip ? mergedTooltipProps : undefined}
+        validateStatus={validateStatus}
+        label={label}
+        {...formItemProps}
+      >
+        {children}
+      </FormFieldWrapper>
+    ) : null;
   }
 }
 

@@ -137,7 +137,7 @@ class FormAdLayout extends Component {
     const { input } = this.props;
     const { value, adLayouts, versions } = this.state;
 
-    if (value.id === '') {
+    if (value.id === '' && adLayouts[0]) {
       this.setState(
         prevState => {
           const nextState = prevState;
@@ -161,7 +161,7 @@ class FormAdLayout extends Component {
           }
         },
       );
-    } else if (value.version === '') {
+    } else if (value.version === '' && versions[0]) {
       this.setState(
         prevState => {
           const nextState = prevState;
@@ -219,7 +219,7 @@ class FormAdLayout extends Component {
             this.setState({ open: true });
           }}
         >
-          {input.value ? (
+          {input.value && input.value.id ? (
             <FormattedMessage {...messages.adLayoutButtonChange} />
           ) : (
             <FormattedMessage {...messages.adLayoutButtonChoose} />
@@ -231,63 +231,54 @@ class FormAdLayout extends Component {
           onOk={this.onModalConfirm}
           onCancel={this.onModalClose}
         >
-          {adLayouts &&
-            adLayouts.length && (
-              <FormattedMessage {...messages.adLayoutModalElement} />
-            )}
-          {adLayouts &&
-            adLayouts.length && (
-              <Select
-                style={{ width: '100%' }}
-                defaultValue={adLayouts[0].value}
-                onChange={value => {
-                  this.onChange('id', value);
-                }}
-                onSelect={this.getNewAdlayoutVersion}
-              >
-                {adLayouts.map(({ disabled, value, key, title, text }) => (
-                  <Option {...{ disabled, value, key, title }}>{text}</Option>
-                ))}
-              </Select>
-            )}
-          {versions &&
-            versions.length &&
-            !versionLoading && (
-              <FormattedMessage {...messages.adLayoutModalLabel} />
-            )}
-          {versions &&
-            versions.length &&
-            !versionLoading && (
-              <Select
-                style={{ width: '100%' }}
-                defaultValue={versions[0].value}
-                onChange={value => {
-                  this.onChange('version', value);
-                }}
-              >
-                {versions.map(({ disabled, value, key, title, text }) => (
-                  <Option {...{ disabled, value, key, title }}>{text}</Option>
-                ))}
-              </Select>
-            )}
+          {adLayouts && adLayouts.length ? (
+            <FormattedMessage {...messages.adLayoutModalElement} />
+          ) : null}
+          {adLayouts && adLayouts.length ? (
+            <Select
+              style={{ width: '100%' }}
+              defaultValue={adLayouts[0].value}
+              onChange={value => {
+                this.onChange('id', value);
+              }}
+              onSelect={this.getNewAdlayoutVersion}
+            >
+              {adLayouts.map(({ disabled, value, key, title, text }) => (
+                <Option {...{ disabled, value, key, title }}>{text}</Option>
+              ))}
+            </Select>
+          ) : null}
+          {versions && versions.length && !versionLoading ? (
+            <FormattedMessage {...messages.adLayoutModalLabel} />
+          ) : null}
+          {versions && versions.length && !versionLoading ? (
+            <Select
+              style={{ width: '100%' }}
+              defaultValue={versions[0].value}
+              onChange={value => {
+                this.onChange('version', value);
+              }}
+            >
+              {versions.map(({ disabled, value, key, title, text }) => (
+                <Option {...{ disabled, value, key, title }}>{text}</Option>
+              ))}
+            </Select>
+          ) : null}
         </Modal>
       </div>
     );
 
-    return (
-      adLayouts &&
-      adLayouts.length && (
-        <FormFieldWrapper
-          help={meta.touched && (meta.warning || meta.error)}
-          helpToolTipProps={displayHelpToolTip ? mergedTooltipProps : undefined}
-          validateStatus={validateStatus}
-          label={label}
-          {...formItemProps}
-        >
-          {children}
-        </FormFieldWrapper>
-      )
-    );
+    return adLayouts && adLayouts.length ? (
+      <FormFieldWrapper
+        help={meta.touched && (meta.warning || meta.error)}
+        helpToolTipProps={displayHelpToolTip ? mergedTooltipProps : undefined}
+        validateStatus={validateStatus}
+        label={label}
+        {...formItemProps}
+      >
+        {children}
+      </FormFieldWrapper>
+    ) : null;
   }
 }
 
