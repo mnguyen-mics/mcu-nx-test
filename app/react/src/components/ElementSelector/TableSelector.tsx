@@ -42,8 +42,8 @@ interface MapStateToProps {
 
 interface State<T>
   extends PaginationSearchSettings,
-    KeywordSearchSettings,
-    DatamartSearchSettings {
+  KeywordSearchSettings,
+  DatamartSearchSettings {
   selectedElementsById: { [elementId: string]: T };
   elementsById: { [elementId: string]: T };
   allElementIds: string[];
@@ -59,7 +59,7 @@ type Props<T extends SelectableItem> = TableSelectorProps<T> &
 class TableSelector<T extends SelectableItem> extends React.Component<
   Props<T>,
   State<T>
-> {
+  > {
   static defaultProps: Partial<TableSelectorProps<any>> = {
     displayFiltering: false,
     selectedIds: [],
@@ -161,7 +161,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     const { searchPlaceholder } = this.props;
     return {
       placeholder: searchPlaceholder ? searchPlaceholder : 'Search a template',
-      onSearch: (value: string) => this.setState({ keywords: value }),
+      onSearch: (value: string) => this.setState({ keywords: value, currentPage: 1 }),
     };
   };
 
@@ -242,30 +242,32 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     const filterOptions = displayFiltering
       ? { currentPage, keywords, pageSize, datamartId }
       : undefined;
+    this.setState({ isLoading: true })
+    return this.props
+      .fetchDataList(filterOptions)
+      .then(({ data, total }) => {
+        const allElementIds = data.map(element => element.id);
+        const elementsById = normalizeArrayOfObject(data, 'id');
+        const selectedElementsById = {
+          ...this.state.selectedElementsById,
+          ...selectedIds.reduce((acc, elementId) => {
+            if (!this.state.selectedElementsById[elementId]) {
+              return { ...acc, [elementId]: elementsById[elementId] };
+            }
+            return acc;
+          }, {}),
+        };
 
-    return this.props.fetchDataList(filterOptions).then(({ data, total }) => {
-      const allElementIds = data.map(element => element.id);
-      const elementsById = normalizeArrayOfObject(data, 'id');
-      const selectedElementsById = {
-        ...this.state.selectedElementsById,
-        ...selectedIds.reduce((acc, elementId) => {
-          if (!this.state.selectedElementsById[elementId]) {
-            return { ...acc, [elementId]: elementsById[elementId] };
-          }
-          return acc;
-        }, {}),
-      };
+        this.setState({
+          allElementIds,
+          elementsById,
+          selectedElementsById,
+          isLoading: false,
+          total: total || data.length,
+        });
 
-      this.setState({
-        allElementIds,
-        elementsById,
-        selectedElementsById,
-        isLoading: false,
-        total: total || data.length,
+        return data;
       });
-
-      return data;
-    });
   };
 
   toggleElementSelection = (element: T) => {
@@ -337,8 +339,8 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         filtersOptions={this.getFiltersOptions()}
       />
     ) : (
-      <TableView {...tableViewProps} />
-    );
+        <TableView {...tableViewProps} />
+      );
 
     return (
       <SelectorLayout
