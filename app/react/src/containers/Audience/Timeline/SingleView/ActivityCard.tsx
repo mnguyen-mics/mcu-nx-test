@@ -3,7 +3,10 @@ import { Row, Icon } from 'antd';
 import moment from 'moment';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
+import {
+  Activity,
+  ActivityCardProps,
+} from '../../../../models/timeline/timeline';
 import { Card } from '../../../../components/Card/index';
 import EventActivity from './EventActivity';
 import Device from './Device';
@@ -14,37 +17,6 @@ import UserDataService from '../../../../services/UserDataService';
 import messages from '../messages';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
-
-interface ActivityProps {
-  $email_hash: string | object;
-  $events: any[];
-  $location: {
-    $latlon: any[];
-  };
-  $origin: object;
-  $session_duration: number;
-  $session_status: string;
-  $site_id: string;
-  $topics: object;
-  $ts: number;
-  $ttl: number;
-  $type: string;
-  $user_account_id: string;
-  $user_agent_id: string;
-  $app_id: string;
-}
-
-interface ActivityCardProps {
-  activity: ActivityProps;
-  datamartId: string;
-  identifiers: {
-    isLoading: boolean;
-    hasItems: boolean;
-    items: {
-      USER_AGENT: any;
-    };
-  };
-}
 
 interface State {
   siteName?: string;
@@ -60,7 +32,7 @@ class ActivityCard extends React.Component<Props, State> {
     };
   }
 
-  getChannelInformation(activity: ActivityProps) {
+  getChannelInformation(activity: Activity) {
     if (activity && needToDisplayDurationFor.indexOf(activity.$type) > -1) {
       const id = activity.$site_id ? activity.$site_id : activity.$app_id;
       const prefix = activity.$site_id ? 'Site' : 'App';
@@ -128,7 +100,7 @@ class ActivityCard extends React.Component<Props, State> {
       : null;
   };
 
-  diplayVisitDuration = (activity: ActivityProps) => {
+  diplayVisitDuration = (activity: Activity) => {
     const secs = moment
       .duration(activity.$session_duration, 'seconds')
       .seconds();
@@ -215,4 +187,4 @@ class ActivityCard extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl)(ActivityCard);
+export default compose<Props, ActivityCardProps>(injectIntl)(ActivityCard);

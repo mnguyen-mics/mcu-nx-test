@@ -61,7 +61,7 @@ class EventActivity extends React.Component<Props, State> {
     if (Array.isArray(object)) {
       if (object.length > 0) {
         returnValue = object.map(o => (
-          <div className="m-b-10">{this.renderProperties(o)}</div>
+          <div className="m-b-10" key={o}>{this.renderProperties(o)}</div>
         ));
       } else {
         returnValue = '[]';
@@ -72,7 +72,7 @@ class EventActivity extends React.Component<Props, State> {
       returnValue = Object.keys(object).map(key => {
         const value = object[key];
         const generatedValue = (
-          <div>
+          <div key={key}>
             <Tooltip title={key}>
               <Tag className="card-tag">{key}</Tag>
             </Tooltip>
