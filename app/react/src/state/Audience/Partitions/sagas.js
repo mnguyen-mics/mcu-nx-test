@@ -22,6 +22,7 @@ function* loadAudiencePartitionsList({ payload }) {
 
     if (filter.keywords) { options.keywords = filter.keywords; }
     if (filter.types) { options.types = filter.types; }
+    if (filter.datamartId) { options.datamart_id = filter.datamartId; }
 
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),
