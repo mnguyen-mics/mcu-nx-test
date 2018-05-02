@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Layout, Button } from 'antd';
+import { Layout, /*Button*/ } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import UsersService from '../../../../../services/UsersService';
@@ -58,24 +58,24 @@ class UserList extends React.Component<
   };
 
   onClickEdit = (user: User) => {
-    const {
-      history,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
+    // const {
+    //   history,
+    //   match: {
+    //     params: { organisationId },
+    //   },
+    // } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/organisation/users/${user.id}/edit`,
-    );
+    // history.push(
+    //   `/v2/o/${organisationId}/settings/organisation/users/${user.id}/edit`,
+    // );
   };
 
   render() {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
+    // const {
+    //   match: {
+    //     params: { organisationId },
+    //   },
+    // } = this.props;
 
     const actionsColumnsDefinition = [
       {
@@ -89,16 +89,16 @@ class UserList extends React.Component<
         intlMessage: messages.usersName,
         key: 'first_name',
         isHideable: false,
-        render: (text: string, record: User) => (
-          <Link
-            className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/organisation/users/${
-              record.id
-            }/edit`}
-          >
-            {text} {record.last_name}
-          </Link>
-        ),
+        // render: (text: string, record: User) => (
+        //   <Link
+        //     className="mcs-campaigns-link"
+        //     to={`/v2/o/${organisationId}/settings/organisation/users/${
+        //       record.id
+        //     }/edit`}
+        //   >
+        //     {text} {record.last_name}
+        //   </Link>
+        // ),
       },
       {
         intlMessage: messages.usersEmail,
@@ -115,16 +115,16 @@ class UserList extends React.Component<
       intlMessage: messages.emptyUsers,
     };
 
-    const onClick = () =>
-      this.props.history.push(
-        `/v2/o/${organisationId}/settings/organisation/users/create`,
-      );
+    // const onClick = () =>
+    //   this.props.history.push(
+    //     `/v2/o/${organisationId}/settings/organisation/users/create`,
+    //   );
 
-    const buttons = (
-      <Button key="create" type="primary" onClick={onClick}>
-        <FormattedMessage {...messages.newUser} />
-      </Button>
-    );
+    // const buttons = (
+    //   <Button key="create" type="primary" onClick={onClick}>
+    //     <FormattedMessage {...messages.newUser} />
+    //   </Button>
+    // );
 
     const additionnalComponent = (
       <div>
@@ -132,7 +132,7 @@ class UserList extends React.Component<
           <span className="mcs-card-title">
             <FormattedMessage {...messages.users} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
+          {/* <span className="mcs-card-button">{buttons}</span> */}
         </div>
         <hr className="mcs-separator" />
       </div>

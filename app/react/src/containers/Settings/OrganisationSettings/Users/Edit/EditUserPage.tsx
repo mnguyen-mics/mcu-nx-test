@@ -2,13 +2,13 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
-// import { message } from 'antd';
+import { message } from 'antd';
 import { Loading } from '../../../../../components/index';
 import EditUserForm from './EditUserForm';
 import { INITIAL_USER_FORM_DATA } from './domain';
 import UsersService from '../../../../../services/UsersService';
 import { User } from '../../../../../models/settings/settings';
-// import { notifyError } from '../../../../../state/Notifications/actions';
+import { notifyError } from '../../../../../state/Notifications/actions';
 
 const messages = defineMessages({
   newUser: {
@@ -92,51 +92,51 @@ class EditUserPage extends React.Component<Props, State> {
   };
 
   save = (formData: Partial<User>) => {
-    // const {
-    //   match: {
-    //     params: { organisationId, userId },
-    //   },
-    //   intl,
-    // } = this.props;
-    // this.setState({
-    //   loading: true,
-    // });
-    // const hideSaveInProgress = message.loading(
-    //   intl.formatMessage(messages.savingInProgress),
-    //   0,
-    // );
-    // const redirectAndNotify = (success: boolean = false) => {
-    //   this.setState({
-    //     loading: false,
-    //   });
-    //   hideSaveInProgress();
-    //   this.close();
-    //   success
-    //     ? message.success(intl.formatMessage(messages.updateSuccess))
-    //     : message.error(intl.formatMessage(messages.updateError));
-    // };
-    // let createOrUpdateUserPromise;
-    // if (userId) {
-    //   createOrUpdateUserPromise = UsersService.updateUser(
-    //     userId,
-    //     organisationId,
-    //     formData,
-    //   );
-    // } else {
-    //   createOrUpdateUserPromise = UsersService.createUser(
-    //     organisationId,
-    //     formData,
-    //   );
-    // }
+    const {
+      match: {
+        params: { organisationId, userId },
+      },
+      intl,
+    } = this.props;
+    this.setState({
+      loading: true,
+    });
+    const hideSaveInProgress = message.loading(
+      intl.formatMessage(messages.savingInProgress),
+      0,
+    );
+    const redirectAndNotify = (success: boolean = false) => {
+      this.setState({
+        loading: false,
+      });
+      hideSaveInProgress();
+      this.close();
+      success
+        ? message.success(intl.formatMessage(messages.updateSuccess))
+        : message.error(intl.formatMessage(messages.updateError));
+    };
+    let createOrUpdateUserPromise;
+    if (userId) {
+      createOrUpdateUserPromise = UsersService.updateUser(
+        userId,
+        organisationId,
+        formData,
+      );
+    } else {
+      createOrUpdateUserPromise = UsersService.createUser(
+        organisationId,
+        formData,
+      );
+    }
 
-    // createOrUpdateUserPromise
-    //   .then(() => {
-    //     redirectAndNotify();
-    //   })
-    //   .catch(err => {
-    //     redirectAndNotify();
-    //     notifyError(err);
-    //   });
+    createOrUpdateUserPromise
+      .then(() => {
+        redirectAndNotify();
+      })
+      .catch(err => {
+        redirectAndNotify();
+        notifyError(err);
+      });
   };
 
   render() {
