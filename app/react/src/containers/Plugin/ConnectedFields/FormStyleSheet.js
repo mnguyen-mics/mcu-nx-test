@@ -112,60 +112,9 @@ class FormStyleSheet extends Component {
     });
   };
 
-  onModalConfirm = () => {
-    const { input } = this.props;
-    const { value, versions, styleSheets } = this.state;
-    if (value.id === '' && styleSheets[0]) {
-      this.setState(
-        prevState => {
-          const nextState = prevState;
-          nextState.value.id = styleSheets[0].value;
-        },
-        () => {
-          if (value.version === '') {
-            this.setState(
-              prevState => {
-                const nextState = prevState;
-                nextState.value.version = versions[0].value;
-              },
-              () => {
-                input.onChange(value);
-                this.setState(prevState => {
-                  const nextState = prevState;
-                  nextState.open = false;
-                });
-              },
-            );
-          }
-        },
-      );
-    } else if (value.version === '' && versions[0]) {
-      this.setState(
-        prevState => {
-          const nextState = prevState;
-          nextState.value.version = versions[0].value;
-        },
-        () => {
-          input.onChange(value);
-          this.setState(prevState => {
-            const nextState = prevState;
-            nextState.open = false;
-          });
-        },
-      );
-    } else {
-      input.onChange(value);
-      this.setState(prevState => {
-        const nextState = prevState;
-        nextState.open = false;
-      });
-    }
-  };
-
   onModalClose = () => {
-    this.setState(prevState => {
-      const nextState = prevState;
-      nextState.open = false;
+    this.setState({
+      open: false,
     });
   };
 
@@ -211,8 +160,9 @@ class FormStyleSheet extends Component {
         <Modal
           title={<FormattedMessage {...messages.styleSheetModalTitle} />}
           visible={this.state.open}
-          onOk={this.onModalConfirm}
+          onOk={this.onModalClose}
           onCancel={this.onModalClose}
+          confirmLoading={versionLoading}
         >
           {styleSheets && styleSheets.length ? (
             <span>
@@ -222,7 +172,6 @@ class FormStyleSheet extends Component {
           {styleSheets && styleSheets.length ? (
             <Select
               style={{ width: '100%' }}
-              defaultValue={styleSheets[0].value}
               onChange={value => {
                 this.onChange('id', value);
               }}
@@ -242,7 +191,6 @@ class FormStyleSheet extends Component {
           {versions && versions.length && !versionLoading ? (
             <Select
               style={{ width: '100%' }}
-              defaultValue={versions[0].value}
               onChange={value => {
                 this.onChange('version', value);
               }}

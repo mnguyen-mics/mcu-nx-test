@@ -75,6 +75,7 @@ class FormAdLayout extends Component {
                 text: `${item.name} (${item.id})`,
               };
             });
+            return nextState;
           },
           () => {
             if (adLayouts[0] && adLayouts[0].id) {
@@ -133,56 +134,6 @@ class FormAdLayout extends Component {
     });
   };
 
-  onModalConfirm = () => {
-    const { input } = this.props;
-    const { value, adLayouts, versions } = this.state;
-
-    if (value.id === '' && adLayouts[0]) {
-      this.setState(
-        prevState => {
-          const nextState = prevState;
-          nextState.value.id = adLayouts[0].value;
-        },
-        () => {
-          if (value.version === '') {
-            this.setState(
-              prevState => {
-                const nextState = prevState;
-                nextState.value.version = versions[0].value;
-              },
-              () => {
-                input.onChange(value);
-                this.setState(prevState => {
-                  const nextState = prevState;
-                  nextState.open = false;
-                });
-              },
-            );
-          }
-        },
-      );
-    } else if (value.version === '' && versions[0]) {
-      this.setState(
-        prevState => {
-          const nextState = prevState;
-          nextState.value.version = versions[0].value;
-        },
-        () => {
-          input.onChange(value);
-          this.setState(prevState => {
-            const nextState = prevState;
-            nextState.open = false;
-          });
-        },
-      );
-    } else {
-      input.onChange(value);
-      this.setState({
-        open: false,
-      });
-    }
-  };
-
   onModalClose = () => {
     this.setState({
       open: false,
@@ -228,7 +179,8 @@ class FormAdLayout extends Component {
         <Modal
           title={<FormattedMessage {...messages.adLayoutModalTitle} />}
           visible={open}
-          onOk={this.onModalConfirm}
+          onOk={this.onModalClose}
+          confirmLoading={versionLoading}
           onCancel={this.onModalClose}
         >
           {adLayouts && adLayouts.length ? (
@@ -237,7 +189,6 @@ class FormAdLayout extends Component {
           {adLayouts && adLayouts.length ? (
             <Select
               style={{ width: '100%' }}
-              defaultValue={adLayouts[0].value}
               onChange={value => {
                 this.onChange('id', value);
               }}
@@ -254,7 +205,6 @@ class FormAdLayout extends Component {
           {versions && versions.length && !versionLoading ? (
             <Select
               style={{ width: '100%' }}
-              defaultValue={versions[0].value}
               onChange={value => {
                 this.onChange('version', value);
               }}
