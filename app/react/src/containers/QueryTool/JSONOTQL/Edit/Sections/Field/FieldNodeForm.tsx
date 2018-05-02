@@ -122,6 +122,12 @@ class FieldNodeForm extends React.Component<Props> {
         return { type: 'NUMERIC', operator: 'EQUAL', values: [] };
       case 'Float':
         return { type: 'NUMERIC', operator: 'EQUAL', values: [] };
+      case 'Int':
+        return { type: 'NUMERIC', operator: 'EQUAL', values: [] };
+      case 'Double':
+        return { type: 'NUMERIC', operator: 'EQUAL', values: [] };
+      case 'BigDecimal':
+        return { type: 'NUMERIC', operator: 'EQUAL', values: [] };
       default:
         return {};
     }
