@@ -304,7 +304,7 @@ class EmailCampaign extends React.Component<Props, State> {
             />
             <Card>
               <McsTabs items={items} />
-            </Card>;
+            </Card>
             <BlastCard />
           </Content>
         </div>

@@ -238,7 +238,13 @@ const ReportService = {
       const formattedData = [];
       for (const d = moment(params.start_date); d.diff(moment(params.end_date)) < 0; d.add('days', 1)) {
         const dataForDay = data.find(a => {
-          return a[0] === d.format(DATE_FORMAT);
+          if (typeof a[0] === 'string') {
+            // YYYY-MM-DD
+            return a[0] === d.format(DATE_FORMAT);
+          } else {
+            // unix timestamp in millisec
+            return a[0] === d.valueOf();
+          }
         });
         if (!dataForDay) {
           const newDateData: Array<string | number> = [];
