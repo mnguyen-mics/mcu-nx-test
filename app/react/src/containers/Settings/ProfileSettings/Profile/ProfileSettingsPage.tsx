@@ -9,15 +9,15 @@ import {
   defineMessages,
   InjectedIntlProps,
 } from 'react-intl';
-import SettingsService from '../../../services/SettingsService';
-import * as SessionActions from '../../../state/Session/actions';
+import SettingsService from '../../../../services/SettingsService';
+import * as SessionActions from '../../../../state/Session/actions';
 
-import { FormInput } from '../../../components/Form/';
+import { FormInput } from '../../../../components/Form/';
 import { withRouter, RouteComponentProps } from 'react-router';
 import injectNotifications, {
   InjectedNotificationProps,
-} from '../../Notifications/injectNotifications';
-import { User } from '../../../models/settings/settings';
+} from '../../../Notifications/injectNotifications';
+import { User } from '../../../../models/settings/settings';
 
 const { Content } = Layout;
 export interface ProfileSettingsPageProps {

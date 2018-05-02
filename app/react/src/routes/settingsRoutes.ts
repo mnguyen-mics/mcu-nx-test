@@ -6,7 +6,7 @@ import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labe
 import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UserPage';
 import OrganisationAccount from '../containers/Settings/OrganisationSettings/OrganisationAccount/OrganisationAccount';
 
-import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/';
+import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/Profile';
 
 import MobileApplicationEditPage from '../containers/Settings/DatamartSettings/MobileApplications/Edit/MobileApplicationEditPage';
 import SiteEditPage from '../containers/Settings/DatamartSettings/Sites/Edit/SiteEditPage';
@@ -34,6 +34,8 @@ import {
 
 import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportListPage';
 import EditUserPage from '../containers/Settings/OrganisationSettings/Users/Edit/EditUserPage';
+import ApiTokenListPage from '../containers/Settings/ProfileSettings/ApiToken/List/ApiTokenListPage';
+import EditApiTokenPage from '../containers/Settings/ProfileSettings/ApiToken/Edit/EditApiTokenPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -188,6 +190,24 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'settings',
     contentComponent: ProfileSettingsPage,
     requiredFeature: 'accountSettings.profile',
+  },
+  settingsAccountApiTokenList: {
+    path: '/settings/account/api_tokens',
+    layout: 'settings',
+    contentComponent: ApiTokenListPage,
+    requiredFeature: 'accountSettings.api_tokens',
+  },
+  settingsAccountApiTokenEdition: {
+    path: '/settings/account/api_tokens/:apiTokenId/edit',
+    layout: 'edit',
+    editComponent: EditApiTokenPage,
+    requiredFeature: 'accountSettings.api_tokens',
+  },
+  settingsAccountApiTokenCreation: {
+    path: '/settings/account/api_tokens/create',
+    layout: 'edit',
+    editComponent: EditApiTokenPage,
+    requiredFeature: 'accountSettings.api_tokens',
   },
 
   /*
