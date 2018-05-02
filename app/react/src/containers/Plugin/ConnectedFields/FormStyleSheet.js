@@ -118,6 +118,12 @@ class FormStyleSheet extends Component {
     });
   };
 
+  onConfirm = () => {
+    const { input } = this.props;
+    input.onChange(this.state.value);
+    this.onModalClose();
+  };
+
   render() {
     const { meta, formItemProps, helpToolTipProps, input } = this.props;
 
@@ -136,9 +142,11 @@ class FormStyleSheet extends Component {
 
     let label;
     if (input.value && input.value.id) {
-      label = styleSheets.find(item => {
-        return item.value === input.value.id;
-      }).text;
+      label = (
+        styleSheets.find(item => {
+          return item.value === input.value.id;
+        }) || {}
+      ).text;
     }
     if (input.value.version) {
       label = `${label} - ${input.value.version}`;
@@ -160,7 +168,7 @@ class FormStyleSheet extends Component {
         <Modal
           title={<FormattedMessage {...messages.styleSheetModalTitle} />}
           visible={this.state.open}
-          onOk={this.onModalClose}
+          onOk={this.onConfirm}
           onCancel={this.onModalClose}
           confirmLoading={versionLoading}
         >
@@ -183,11 +191,9 @@ class FormStyleSheet extends Component {
             </Select>
           ) : null}
 
-          {versions &&
-            versions.length &&
-            !versionLoading && (
-              <FormattedMessage {...messages.styleSheetModalVersions} />
-            )}
+          {versions && versions.length && !versionLoading ? (
+            <FormattedMessage {...messages.styleSheetModalVersions} />
+          ) : null}
           {versions && versions.length && !versionLoading ? (
             <Select
               style={{ width: '100%' }}
@@ -201,6 +207,7 @@ class FormStyleSheet extends Component {
             </Select>
           ) : null}
         </Modal>
+        {`  (${label})`}
       </div>
     );
 
@@ -209,7 +216,6 @@ class FormStyleSheet extends Component {
         help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={displayHelpToolTip ? mergedTooltipProps : undefined}
         validateStatus={validateStatus}
-        label={label}
         {...formItemProps}
       >
         {children}
@@ -228,6 +234,7 @@ FormStyleSheet.defaultProps = {
 FormStyleSheet.propTypes = {
   input: PropTypes.shape({
     name: PropTypes.string.isRequired,
+    value: PropTypes.shape({}).isRequired,
   }).isRequired,
   meta: PropTypes.shape({
     error: PropTypes.string,

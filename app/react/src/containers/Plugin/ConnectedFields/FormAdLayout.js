@@ -12,20 +12,20 @@ const Option = Select.Option;
 const defaultTooltipPlacement = 'right';
 
 class FormAdLayout extends Component {
-  state = {
-    open: false,
-    value: {
-      id: '',
-      version: '',
-    },
-    displayValues: {
-      elementName: '',
-      versionName: '',
-    },
-    adLayouts: [],
-    versions: [],
-    versionLoading: false,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+      value: { id: '', version: '' },
+      displayValues: {
+        elementName: '',
+        versionName: '',
+      },
+      adLayouts: [],
+      versions: [],
+      versionLoading: false,
+    };
+  }
 
   componentDidMount() {
     const {
@@ -140,6 +140,12 @@ class FormAdLayout extends Component {
     });
   };
 
+  onConfirm = () => {
+    const { input } = this.props;
+    input.onChange(this.state.value);
+    this.onModalClose();
+  };
+
   render() {
     const { meta, formItemProps, helpToolTipProps, input } = this.props;
 
@@ -159,9 +165,11 @@ class FormAdLayout extends Component {
     const label =
       input.value &&
       input.value.id &&
-      adLayouts.find(item => {
-        return item.value === input.value.id;
-      }).text;
+      (
+        adLayouts.find(item => {
+          return item.value === input.value.id;
+        }) || {}
+      ).text;
 
     const children = (
       <div>
@@ -179,7 +187,7 @@ class FormAdLayout extends Component {
         <Modal
           title={<FormattedMessage {...messages.adLayoutModalTitle} />}
           visible={open}
-          onOk={this.onModalClose}
+          onOk={this.onConfirm}
           confirmLoading={versionLoading}
           onCancel={this.onModalClose}
         >
@@ -215,6 +223,7 @@ class FormAdLayout extends Component {
             </Select>
           ) : null}
         </Modal>
+        {`  (${label})`}
       </div>
     );
 
@@ -223,7 +232,6 @@ class FormAdLayout extends Component {
         help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={displayHelpToolTip ? mergedTooltipProps : undefined}
         validateStatus={validateStatus}
-        label={label}
         {...formItemProps}
       >
         {children}
@@ -242,6 +250,7 @@ FormAdLayout.defaultProps = {
 FormAdLayout.propTypes = {
   input: PropTypes.shape({
     name: PropTypes.string.isRequired,
+    value: PropTypes.shape({}).isRequired,
   }).isRequired,
   meta: PropTypes.shape({
     error: PropTypes.string,
