@@ -406,16 +406,16 @@ class GoalFormSection extends React.Component<Props, State> {
           }}
         >
           {this.getGoalRecords()}
-          <Modal
-            title={formatMessage(messages.goalPixelModalTitle)}
-            visible={visible}
-            onOk={this.goalPixelModalOnOk}
-            confirmLoading={loading}
-            onCancel={this.closeGoalPixelModal}
-          >
-            <p>{formatMessage(messages.goalPixelModalSaveGoal)}</p>
-          </Modal>
         </RelatedRecords>
+        <Modal
+          title={formatMessage(messages.goalPixelModalTitle)}
+          visible={visible}
+          onOk={this.goalPixelModalOnOk}
+          confirmLoading={loading}
+          onCancel={this.closeGoalPixelModal}
+        >
+          <p>{formatMessage(messages.goalPixelModalSaveGoal)}</p>
+        </Modal>
       </div>
     );
   }
