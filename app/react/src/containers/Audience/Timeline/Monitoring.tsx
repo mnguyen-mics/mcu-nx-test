@@ -77,7 +77,7 @@ class Monitoring extends React.Component<Props> {
   };
 
   renderPendingTimeline = (activities: Activities) => {
-    if (activities.hasItems === true && activities.items.length !== 0) {
+    if (activities.hasItems && activities.items.length > 0) {
       return activities.isLoading ? (
         <Spin size="small" />
       ) : (
@@ -88,16 +88,17 @@ class Monitoring extends React.Component<Props> {
           <FormattedMessage {...messages.seeMore} />
         </button>
       );
+    } else {
+      return (
+        <div className="mcs-title">
+          {activities.hasItems ? (
+            <FormattedMessage {...messages.noActivities} />
+          ) : (
+            <FormattedMessage {...messages.noActivitiesLeft} />
+          )}
+        </div>
+      );
     }
-    return (
-      <div className="mcs-title">
-        {activities.hasItems ? (
-          <FormattedMessage {...messages.noActivities} />
-        ) : (
-          <FormattedMessage {...messages.noActivitiesLeft} />
-        )}
-      </div>
-    );
   };
 
   render() {
@@ -147,7 +148,12 @@ class Monitoring extends React.Component<Props> {
                       <Spin />
                     </Col>
                   ) : (
-                    <Timeline pending={this.renderPendingTimeline(activities)}>
+                    <Timeline
+                      pending={this.renderPendingTimeline(activities)}
+                      pendingDot={
+                        !activities.hasItems || activities.items.length === 0
+                      }
+                    >
                       {activities.byDay !== {} &&
                         keys.map(day => {
                           const activityOnDay = activities.byDay[day];

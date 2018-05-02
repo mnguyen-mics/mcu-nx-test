@@ -9,7 +9,7 @@ import moment from 'moment';
 import { getDefaultDatamart } from '../../../state/Session/selectors';
 
 import * as actions from '../../../state/Notifications/actions';
-import Monitoring from './Monitoring';
+import Monitoring from './Monitoring.tsx';
 
 import UserDataService from '../../../services/UserDataService.ts';
 import initialState from './initialState';
