@@ -151,7 +151,10 @@ class Monitoring extends React.Component<Props> {
                     <Timeline
                       pending={this.renderPendingTimeline(activities)}
                       pendingDot={
-                        !activities.hasItems || activities.items.length === 0
+                        (!activities.hasItems ||
+                          activities.items.length === 0) && (
+                          <McsIcon type="status" className="mcs-timeline-last-dot" />
+                        )
                       }
                     >
                       {activities.byDay !== {} &&
