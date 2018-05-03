@@ -153,25 +153,23 @@ class EditApiTokenPage extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
       match: {
-        params: { organisationId },
+        params: { organisationId, apiTokenId },
       },
     } = this.props;
     const { apiTokenData, loading } = this.state;
 
-    // const userName = apiTokenId
-    //   ? formatMessage(messages.editApiToken, {
-    //       name: apiTokenData.???
-    //         ? userData.first_name
-    //         : formatMessage(messages.user),
-    //     })
-    //   : formatMessage(messages.newUser);
+    const apiTokenName = apiTokenId
+      ? formatMessage(messages.editApiToken, {
+          name: apiTokenData.name
+        })
+      : formatMessage(messages.apiToken);
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.apiTokens),
         url: `/v2/o/${organisationId}/settings/account/api_tokens`,
       },
       {
-        name: 'apiToken', // change
+        name: apiTokenName
       },
     ];
 

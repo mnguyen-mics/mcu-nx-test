@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import {
   injectIntl,
   InjectedIntlProps,
@@ -76,6 +77,10 @@ const messages = defineMessages({
     id: 'settings.profile.apitoken.delete.modal.title',
     defaultMessage: 'Are you sure to delete this Api Token ?',
   },
+  nextButtonApiTokenModal: {
+    id: 'settings.profile.apitoken.modal.next.buttin',
+    defaultMessage: 'Next',
+  },
   deleteApiTokenModalContent: {
     id: 'settings.profile.apitoken.delete.modal.content',
     defaultMessage:
@@ -92,7 +97,7 @@ const messages = defineMessages({
   createApiTokenModalContent: {
     id: 'settings.profile.apitoken.create.modal.content',
     defaultMessage:
-      'You will get the api token value just after this step. Make sure to copy the value of the api token.',
+      'By clicking on the create button, you will get your newly created Api Token. Make sure to copy it right away since it is the only time you will be able to see it.',
   },
   createApiTokenModalOkText: {
     id: 'settings.profile.apitoken.create.modal.ok.text',
@@ -118,6 +123,10 @@ const messages = defineMessages({
   apiTokenSuccessfullySaved: {
     id: 'settings.profile.apitoken.successfully.saved',
     defaultMessage: 'Api Token successfully saved.',
+  },
+  snippetCodeCopied: {
+    id: 'settings.profile.apitoken.code.copied',
+    defaultMessage: 'Code snippet copied',
   },
 });
 
@@ -302,18 +311,27 @@ class ApiTokenListPage extends React.Component<Props, State> {
       const {
         intl: { formatMessage },
       } = this.props;
+
+      const handleOnClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+        message.info(formatMessage(messages.snippetCodeCopied));
+      };
       Modal.warning({
         title: formatMessage(messages.apiTokenModalTitle),
         width: '600px',
         content: (
-          <p>
-            {formatMessage(messages.apiTokenModalContent)}
-            <SyntaxHighlighter language="json" style={docco}>
-              {apiTokenData.value}
-            </SyntaxHighlighter>
-          </p>
+          <div>
+            <b>{formatMessage(messages.apiTokenModalContent)}</b>
+            <br /><br />
+            <CopyToClipboard onCopy={handleOnClick}>
+              <div style={{ cursor: 'pointer' }}>
+                <SyntaxHighlighter language="json" style={docco}>
+                  {apiTokenData.value}
+                </SyntaxHighlighter>
+              </div>
+            </CopyToClipboard>
+          </div>
         ),
-        okText: 'Ok',
+        okText: formatMessage(messages.nextButtonApiTokenModal),
         onOk: () => {
           message.success(formatMessage(messages.apiTokenSuccessfullySaved));
           const filters = {
