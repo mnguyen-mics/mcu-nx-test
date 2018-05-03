@@ -10,7 +10,12 @@
     </div>
   </div>
 
-  <form name="form" role="form" class="mcs-default-edit-content mcs-full-page-form">
+  <!------------------------ New campaigns (e.g. V2017 ones) shouldn't be edited by "legacy" Navigator ------------------------>
+  <div ng-hide="!isV2017">
+    <h2>The page that you are trying to reach has changed, please go to <a href="https://navigator-beta.mediarithmics.com/#/v2/o/{{campaign.organisation_id}}/campaigns/display/{{campaign.id}}/edit" target="_blank" >https://navigator-beta.mediarithmics.com/#/v2/{{campaign.organisation_id}}/campaigns/email/{{campaign.id}}</a></h2>
+  </div>
+
+  <form name="form" role="form" ng-hide="isV2017" class="mcs-default-edit-content mcs-full-page-form">
 
     <!------------------------ Basic Info ------------------------>
     <div class="mcs-default-heading">

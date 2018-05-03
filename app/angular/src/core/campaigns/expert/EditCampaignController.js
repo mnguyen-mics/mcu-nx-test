@@ -21,6 +21,7 @@ define(['./module', 'moment'], function (module, moment) {
         campaignDateRange: { startDate: moment(), endDate: moment().add(20, 'days') },
         schedule: ''
       };
+      $scope.isV2017 = false;
 
       function updateSelectedGoals() {
         $scope.selectedGoals = DisplayCampaignService.getGoalSelections();
@@ -65,6 +66,9 @@ define(['./module', 'moment'], function (module, moment) {
             endDate: moment($scope.campaign.end_date)
           };
         }
+
+        $scope.isV2017 = ($scope.campaign.model_version === "V2017_09");
+
       }
 
       CampaignPluginService.getCampaignEditor("com.mediarithmics.campaign.display", "default-editor").then(function (template) {
