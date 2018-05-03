@@ -208,23 +208,23 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         title: messages.menuProperties,
       },
     ] : [
-      {
-        sectionId: 'properties',
-        title: messages.menuProperties,
-      }
-    ];
+        {
+          sectionId: 'properties',
+          title: messages.menuProperties,
+        }
+      ];
 
     const actionbarProps =
       pluginProperties.length || editionMode
         ? {
-            formId,
-            message: messages.save,
-            onClose: onClose,
-          }
+          formId,
+          message: messages.save,
+          onClose: onClose,
+        }
         : {
-            formId,
-            onClose: onClose,
-          };
+          formId,
+          onClose: onClose,
+        };
 
     return isLoading || loading ? (
       <div style={{ display: 'flex', flex: 1 }}>
@@ -250,15 +250,15 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         />
       </EditContentLayout>
     ) : (
-      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-        <PluginEditSelector
-          onSelect={this.onSelectPlugin}
-          availablePlugins={this.state.availablePlugins}
-          listTitle={this.props.listTitle}
-          listSubTitle={this.props.listSubTitle}
-        />
-      </EditContentLayout>
-    );
+          <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+            <PluginEditSelector
+              onSelect={this.onSelectPlugin}
+              availablePlugins={this.state.availablePlugins}
+              listTitle={this.props.listTitle}
+              listSubTitle={this.props.listSubTitle}
+            />
+          </EditContentLayout>
+        );
   }
 }
 

@@ -40,7 +40,7 @@ interface State<T> {
 class CollectionSelector<T extends SelectableItem> extends React.Component<
   CollectionSelectorProps<T>,
   State<T>
-> {
+  > {
   static defaultProps: Partial<CollectionSelectorProps<any>> = {
     displayFiltering: false,
     selectedIds: [],
@@ -123,7 +123,7 @@ class CollectionSelector<T extends SelectableItem> extends React.Component<
     const { searchPlaceholder } = this.props;
     return {
       placeholder: searchPlaceholder ? searchPlaceholder : 'Search a template',
-      onSearch: (value: string) => this.setState({ keywords: value }),
+      onSearch: (value: string) => this.setState({ keywords: value, currentPage: 1 }),
     };
   };
 
@@ -145,7 +145,7 @@ class CollectionSelector<T extends SelectableItem> extends React.Component<
     const filterOptions = displayFiltering
       ? { currentPage, keywords, pageSize }
       : undefined;
-
+    this.setState({ isLoading: true })
     return this.props
       .fetchDataList(filterOptions)
       .then(({ data, total }) => {
@@ -156,6 +156,7 @@ class CollectionSelector<T extends SelectableItem> extends React.Component<
           allElementIds,
           elementsById,
           total: total || data.length,
+          isLoading: false
         });
 
         return data;
@@ -235,8 +236,8 @@ class CollectionSelector<T extends SelectableItem> extends React.Component<
         searchOptions={this.getSearchOptions()}
       />
     ) : (
-      <CollectionView {...collectionViewProps} />
-    );
+        <CollectionView {...collectionViewProps} />
+      );
 
     return (
       <SelectorLayout

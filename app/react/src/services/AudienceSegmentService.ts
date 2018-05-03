@@ -25,9 +25,8 @@ export interface SegmentImportResult {
   total_user_segment_treated: number;
 }
 
-export interface UserSegmentImportJobExecutionResource
-  extends BaseExecutionResource<{}, SegmentImportResult> {
-  job_type: 'USER_SEGMENT_IMPORT';
+export interface UserSegmentImportJobExecutionResource extends BaseExecutionResource<{}, SegmentImportResult> {
+  job_type: 'USER_SEGMENT_IMPORT'
 }
 
 export interface GetSegmentsOption extends PaginatedApiParam {
@@ -40,6 +39,7 @@ export interface GetSegmentsOption extends PaginatedApiParam {
   audience_partition_id?: string;
   persisted?: boolean;
   datamart_id?: string;
+  keywords?: string;
 }
 
 const AudienceSegmentService = {
