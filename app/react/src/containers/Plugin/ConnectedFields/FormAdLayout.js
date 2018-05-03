@@ -1,41 +1,35 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Select, Tooltip, Row, Col, Button, Modal } from 'antd';
+import { Select, Button, Modal } from 'antd';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import messages from '../messages';
-
-import McsIcon from '../../../components/McsIcon.tsx';
+import FormFieldWrapper from '../../../components/Form/FormFieldWrapper.tsx';
 import PluginService from '../../../services/PluginService.ts';
-
 
 const Option = Select.Option;
 
 const defaultTooltipPlacement = 'right';
 
 class FormAdLayout extends Component {
-
-  state= {
-    open: false,
-    value: {
-      id: '',
-      version: ''
-    },
-    displayValues: {
-      elementName: '',
-      versionName: ''
-    },
-    adLayouts: [],
-    versions: [],
-    versionLoading: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+      value: { id: '', version: '' },
+      displayValues: {
+        elementName: '',
+        versionName: '',
+      },
+      adLayouts: [],
+      versions: [],
+      versionLoading: false,
+    };
   }
 
   componentDidMount() {
     const {
-      options: {
-        pluginVersionId,
-        organisationId,
-      },
+      options: { pluginVersionId, organisationId },
     } = this.props;
 
     this.getAdLayout(organisationId, pluginVersionId);
@@ -43,10 +37,7 @@ class FormAdLayout extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      options: {
-        pluginVersionId,
-        organisationId,
-      },
+      options: { pluginVersionId, organisationId },
     } = this.props;
 
     const {
@@ -56,60 +47,84 @@ class FormAdLayout extends Component {
       },
     } = nextProps;
 
-    if (pluginVersionId !== nextPluginVersionId || organisationId !== nextOrganisationId) {
+    if (
+      pluginVersionId !== nextPluginVersionId ||
+      organisationId !== nextOrganisationId
+    ) {
       this.getAdLayout(nextOrganisationId, nextPluginVersionId);
     }
   }
 
-
   getAdLayout = (organisationId, rendererVersion) => {
     const {
-      options: {
-        disabled
-      }
+      options: { disabled },
     } = this.props;
 
-    PluginService.getAdLayouts(organisationId, rendererVersion).then(adLayouts => {
-      this.setState(prevState => {
-        const nextState = prevState;
-        nextState.adLayouts = adLayouts.map(item => {
-          return { key: item.id, disabled: disabled, value: item.id, name: item.name, title: `${item.name} (${item.id})`, text: `${item.name} (${item.id})` };
-        });
-      }, () => {
-        this.getNewAdlayoutVersion(organisationId, adLayouts[0].id);
-      });
-    });
-  }
+    PluginService.getAdLayouts(organisationId, rendererVersion).then(
+      adLayouts => {
+        this.setState(
+          prevState => {
+            const nextState = prevState;
+            nextState.adLayouts = adLayouts.map(item => {
+              return {
+                key: item.id,
+                disabled: disabled,
+                value: item.id,
+                name: item.name,
+                title: `${item.name} (${item.id})`,
+                text: `${item.name} (${item.id})`,
+              };
+            });
+            return nextState;
+          },
+          () => {
+            if (adLayouts[0] && adLayouts[0].id) {
+              this.getNewAdlayoutVersion(organisationId, adLayouts[0].id);
+            }
+          },
+        );
+      },
+    );
+  };
 
-  getNewAdlayoutVersion = (adLayoutId) => {
+  getNewAdlayoutVersion = adLayoutId => {
     const {
-      options: {
-        disabled,
-        organisationId
-      }
+      options: { disabled, organisationId },
     } = this.props;
 
-    this.setState(prevState => {
-      const nextState = prevState;
-      nextState.versionLoading = true;
-      return nextState;
-    }, () => {
-      PluginService.getAdLayoutVersion(organisationId, adLayoutId).then(versions => {
-        this.setState(prevState => {
-          const nextState = {
-            ...prevState
-          };
-          nextState.versions = versions.map(item => {
-            const title = `${item.filename} ${item.filename ? '-' : ''} ${item.status} (${item.id})`;
-            return { key: item.id, disabled: disabled, value: item.id, title: title, text: title };
-          });
-          nextState.versionLoading = false;
-          return nextState;
-        });
-      });
-    });
-  }
-
+    this.setState(
+      prevState => {
+        const nextState = prevState;
+        nextState.versionLoading = true;
+        return nextState;
+      },
+      () => {
+        PluginService.getAdLayoutVersion(organisationId, adLayoutId).then(
+          versions => {
+            this.setState(prevState => {
+              const nextState = {
+                ...prevState,
+              };
+              nextState.versions = versions.map(item => {
+                const title = `${item.filename} ${item.filename ? '-' : ''} ${
+                  item.status
+                } (${item.id})`;
+                return {
+                  key: item.id,
+                  disabled: disabled,
+                  value: item.id,
+                  title: title,
+                  text: title,
+                };
+              });
+              nextState.versionLoading = false;
+              return nextState;
+            });
+          },
+        );
+      },
+    );
+  };
 
   onChange = (type, value) => {
     this.setState(prevState => {
@@ -117,65 +132,24 @@ class FormAdLayout extends Component {
       nextState.value[type] = value;
       return nextState;
     });
-  }
-
-  onModalConfirm = () => {
-    const { input } = this.props;
-
-    if (this.state.value.id === '') {
-      this.setState(prevState => {
-        const nextState = prevState;
-        nextState.value.id = this.state.adLayouts[0].value;
-      }, () => {
-        if (this.state.value.version === '') {
-          this.setState(prevState => {
-            const nextState = prevState;
-            nextState.value.version = this.state.versions[0].value;
-          }, () => {
-            input.onChange(this.state.value);
-            this.setState(prevState => {
-              const nextState = prevState;
-              nextState.open = false;
-            });
-          });
-        }
-      });
-    } else if (this.state.value.version === '') {
-      this.setState(prevState => {
-        const nextState = prevState;
-        nextState.value.version = this.state.versions[0].value;
-      }, () => {
-        input.onChange(this.state.value);
-        this.setState(prevState => {
-          const nextState = prevState;
-          nextState.open = false;
-        });
-      });
-    } else {
-      input.onChange(this.state.value);
-      this.setState(prevState => {
-        const nextState = prevState;
-        nextState.open = false;
-      });
-    }
-
-
-  }
+  };
 
   onModalClose = () => {
-    this.setState(prevState => {
-      const nextState = prevState;
-      nextState.open = false;
+    this.setState({
+      open: false,
     });
-  }
+  };
+
+  onConfirm = () => {
+    const { input } = this.props;
+    input.onChange(this.state.value);
+    this.onModalClose();
+  };
 
   render() {
-    const {
-      meta,
-      formItemProps,
-      helpToolTipProps,
-      input,
-    } = this.props;
+    const { meta, formItemProps, helpToolTipProps, input } = this.props;
+
+    const { adLayouts, open, versions, versionLoading } = this.state;
 
     let validateStatus = '';
     if (meta.touched && meta.invalid) validateStatus = 'error';
@@ -188,53 +162,82 @@ class FormAdLayout extends Component {
       ...helpToolTipProps,
     };
 
-    return ((this.state.adLayouts && this.state.adLayouts.length)) ? (
-      <Form.Item
+    const label =
+      input.value &&
+      input.value.id &&
+      (
+        adLayouts.find(item => {
+          return item.value === input.value.id;
+        }) || {}
+      ).text;
+
+    const children = (
+      <div>
+        <Button
+          onClick={() => {
+            this.setState({ open: true });
+          }}
+        >
+          {input.value && input.value.id ? (
+            <FormattedMessage {...messages.adLayoutButtonChange} />
+          ) : (
+            <FormattedMessage {...messages.adLayoutButtonChoose} />
+          )}
+        </Button>
+        <Modal
+          title={<FormattedMessage {...messages.adLayoutModalTitle} />}
+          visible={open}
+          onOk={this.onConfirm}
+          confirmLoading={versionLoading}
+          onCancel={this.onModalClose}
+        >
+          {adLayouts && adLayouts.length ? (
+            <FormattedMessage {...messages.adLayoutModalElement} />
+          ) : null}
+          {adLayouts && adLayouts.length ? (
+            <Select
+              style={{ width: '100%' }}
+              onChange={value => {
+                this.onChange('id', value);
+              }}
+              onSelect={this.getNewAdlayoutVersion}
+            >
+              {adLayouts.map(({ disabled, value, key, title, text }) => (
+                <Option {...{ disabled, value, key, title }}>{text}</Option>
+              ))}
+            </Select>
+          ) : null}
+          {versions && versions.length && !versionLoading ? (
+            <FormattedMessage {...messages.adLayoutModalLabel} />
+          ) : null}
+          {versions && versions.length && !versionLoading ? (
+            <Select
+              style={{ width: '100%' }}
+              onChange={value => {
+                this.onChange('version', value);
+              }}
+            >
+              {versions.map(({ disabled, value, key, title, text }) => (
+                <Option {...{ disabled, value, key, title }}>{text}</Option>
+              ))}
+            </Select>
+          ) : null}
+        </Modal>
+        {`  (${label})`}
+      </div>
+    );
+
+    return adLayouts && adLayouts.length ? (
+      <FormFieldWrapper
         help={meta.touched && (meta.warning || meta.error)}
+        helpToolTipProps={displayHelpToolTip ? mergedTooltipProps : undefined}
         validateStatus={validateStatus}
         {...formItemProps}
       >
-
-        <Row align="middle" type="flex" className="m-b-20">
-          <Col span={22}>
-            { input.value && input.value.id !== null ? <span className="m-r-10">{this.state.adLayouts.find(item => { return item.value === input.value.id; }).text} - {input.value.version}</span> : null }
-            <Button onClick={() => { this.setState({ open: true }); }}>{input.value ? <FormattedMessage {...messages.adLayoutButtonChange} /> : <FormattedMessage {...messages.adLayoutButtonChoose} />}</Button>
-            <Modal
-              title={<FormattedMessage {...messages.adLayoutModalTitle} />}
-              visible={this.state.open}
-              onOk={() => { this.onModalConfirm(); }}
-              onCancel={() => { this.onModalClose(); }}
-            >
-              {(this.state.adLayouts && this.state.adLayouts.length) && (<span><FormattedMessage {...messages.adLayoutModalElement} /></span>)}
-              {(this.state.adLayouts && this.state.adLayouts.length) && (
-                <Select style={{ width: '100%' }} defaultValue={this.state.adLayouts[0].value} onChange={(value) => { this.onChange('id', value); }} onSelect={this.getNewAdlayoutVersion}>
-                  {this.state.adLayouts.map(({ disabled, value, key, title, text }) => (
-                    <Option {...{ disabled, value, key, title }}>{text}</Option>
-                  ))}
-                </Select>)}
-
-              {(this.state.versions && this.state.versions.length && !this.state.versionLoading) ? (<span><FormattedMessage {...messages.adLayoutModalLabel} /></span>) : null}
-              {(this.state.versions && this.state.versions.length && !this.state.versionLoading) ? (
-                <Select style={{ width: '100%' }} defaultValue={this.state.versions[0].value} onChange={(value) => { this.onChange('version', value); }}>
-                  {this.state.versions.map(({ disabled, value, key, title, text }) => (
-                    <Option {...{ disabled, value, key, title }}>{text}</Option>
-                  ))}
-                </Select>) : null}
-            </Modal>
-          </Col>
-
-          {displayHelpToolTip &&
-            <Col span={2} className="field-tooltip">
-              <Tooltip {...mergedTooltipProps}>
-                <McsIcon type="info" />
-              </Tooltip>
-            </Col>}
-        </Row>
-      </Form.Item>
+        {children}
+      </FormFieldWrapper>
     ) : null;
   }
-
-
 }
 
 FormAdLayout.defaultProps = {
@@ -247,6 +250,7 @@ FormAdLayout.defaultProps = {
 FormAdLayout.propTypes = {
   input: PropTypes.shape({
     name: PropTypes.string.isRequired,
+    value: PropTypes.shape({}).isRequired,
   }).isRequired,
   meta: PropTypes.shape({
     error: PropTypes.string,
