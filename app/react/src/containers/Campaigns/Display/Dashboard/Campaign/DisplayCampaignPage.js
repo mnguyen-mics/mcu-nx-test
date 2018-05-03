@@ -495,6 +495,7 @@ class DisplayCampaignPage extends Component {
             ...prevState,
           };
           nextState.ads.items.itemById[adId].status = response.data.status;
+          return nextState;
         });
         if (successMessage || errorMessage) {
           const uid = Math.random();
@@ -544,6 +545,7 @@ class DisplayCampaignPage extends Component {
             ...prevState,
           };
           nextState.adGroups.items.itemById[adGroupId] = response.data;
+          return nextState;
         });
 
         if (successMessage || errorMessage) {
@@ -589,6 +591,7 @@ class DisplayCampaignPage extends Component {
             ...prevState,
           };
           nextState.campaign.items.itemById = response.data;
+          return nextState;
         });
       })
       .catch(error => {

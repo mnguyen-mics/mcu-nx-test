@@ -225,6 +225,7 @@ class AdGroupPage extends Component {
           ...prevState,
         };
         nextState.adGroups.items.itemById = response.data;
+        return nextState;
       });
     }).catch(error => {
       notifyError(error);
@@ -243,6 +244,7 @@ class AdGroupPage extends Component {
         ...prevState,
       };
       nextState.ads.items.itemById[adId].status = body.status;
+      return nextState;
     });
     return DisplayCampaignService.updateAd(adId, this.state.campaign.items.itemById.id, this.state.adGroups.items.itemById.id, body).then(response => {
       this.setState(prevState => {
@@ -250,6 +252,7 @@ class AdGroupPage extends Component {
           ...prevState,
         };
         nextState.ads.items.itemById[adId].status = response.data.status;
+        return nextState;
       });
       if (successMessage || errorMessage) {
         const uid = Math.random();
@@ -280,6 +283,7 @@ class AdGroupPage extends Component {
           ...prevState,
         };
         nextState.ads.items.itemById[adId].status = undoBody.status;
+        return nextState;
       });
     });
   }
