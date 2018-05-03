@@ -77,16 +77,16 @@ class UserList extends React.Component<
     //   },
     // } = this.props;
 
-    const actionsColumnsDefinition = [
-      {
-        key: 'action',
-        actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
-      },
-    ];
+    // const actionsColumnsDefinition = [
+    //   {
+    //     key: 'action',
+    //     actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
+    //   },
+    // ];
 
     const dataColumnsDefinition = [
       {
-        intlMessage: messages.usersName,
+        intlMessage: messages.usersFirstName,
         key: 'first_name',
         isHideable: false,
         // render: (text: string, record: User) => (
@@ -99,6 +99,11 @@ class UserList extends React.Component<
         //     {text} {record.last_name}
         //   </Link>
         // ),
+      },
+      {
+        intlMessage: messages.usersLastName,
+        key: 'last_name',
+        isHideable: false,
       },
       {
         intlMessage: messages.usersEmail,
@@ -147,7 +152,7 @@ class UserList extends React.Component<
             loading={this.state.loading}
             total={this.state.total}
             columns={dataColumnsDefinition}
-            actionsColumnsDefinition={actionsColumnsDefinition}
+            // actionsColumnsDefinition={actionsColumnsDefinition}
             pageSettings={PAGINATION_SEARCH_SETTINGS}
             emptyTable={emptyTable}
             additionnalComponent={additionnalComponent}

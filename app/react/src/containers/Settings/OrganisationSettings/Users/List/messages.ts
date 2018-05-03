@@ -5,9 +5,13 @@ const messages = defineMessages({
     id: 'users.title',
     defaultMessage: 'Users',
   },
-  usersName: {
-    id: 'users.name',
-    defaultMessage: 'Name',
+  usersFirstName: {
+    id: 'users.first.name',
+    defaultMessage: 'First Name',
+  },
+  usersLastName: {
+    id: 'users.last.name',
+    defaultMessage: 'Last Name',
   },
   usersEmail: {
     id: 'users.email',
