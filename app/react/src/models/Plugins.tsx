@@ -114,3 +114,25 @@ export interface AudienceTagFeed {
   id: string;
   status: Status;
 }
+
+export interface Adlayout {
+  id: string;
+  name: string;
+  optimal_formats: string;
+  organisation_id: string;
+  renderer_id: string;
+  render_version_id: string;
+}
+
+export interface StylesheetVersionResource {
+  artifact_id: string;
+  creation_date: number;
+  description: string;
+  group_id: string;
+  id: string;
+  organisation_id: string;
+  plugin_version_id: string;
+  status: string;
+  style_sheet_id: string;
+  version_id: string;
+}

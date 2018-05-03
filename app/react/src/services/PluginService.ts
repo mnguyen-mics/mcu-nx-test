@@ -1,3 +1,4 @@
+import { Adlayout, StylesheetVersionResource } from './../models/Plugins';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PluginResource, PluginVersionResource } from '../models/Plugins';
@@ -59,41 +60,38 @@ const pluginService = {
       },
     );
   },
-  getAdLayouts(organisationId: string, pluginVersionId: string): Promise<any> {
+  getAdLayouts(
+    organisationId: string,
+    pluginVersionId: string,
+  ): Promise<DataListResponse<Adlayout>> {
     const endpoint = `ad_layouts?organisation_id=${organisationId}&renderer_version_id=${pluginVersionId}`;
-    return ApiService.getRequest(endpoint).then((res: any) => res.data);
+    return ApiService.getRequest(endpoint);
   },
   getAdLayoutVersion(
     organisationId: string,
     adLayoutVersion: string,
-  ): Promise<PluginVersionResource[]> {
+  ): Promise<DataListResponse<any>> {
     const endpoint = `ad_layouts/${adLayoutVersion}/versions`;
     const params = {
       organisation_id: organisationId,
       statuses: 'DRAFT,PUBLISHED',
     };
-    return ApiService.getRequest(endpoint, params).then(
-      (res: DataListResponse<PluginVersionResource>) => res.data,
-    );
+    return ApiService.getRequest(endpoint, params);
   },
-  getStyleSheets(organisationId: string): Promise<any> {
+  getStyleSheets(organisationId: string): Promise<DataListResponse<any>> {
     const endpoint = `style_sheets?organisation_id=${organisationId}`;
-    return ApiService.getRequest(endpoint).then(
-      (res: DataListResponse<any>) => res.data,
-    );
+    return ApiService.getRequest(endpoint);
   },
   getStyleSheetsVersion(
     organisationId: string,
     styleSheetId: string,
-  ): Promise<PluginVersionResource[]> {
+  ): Promise<DataListResponse<StylesheetVersionResource>> {
     const endpoint = `style_sheets/${styleSheetId}/versions`;
     const params = {
       organisation_id: organisationId,
       statuses: 'DRAFT,PUBLISHED',
     };
-    return ApiService.getRequest(endpoint, params).then(
-      (res: DataListResponse<PluginVersionResource>) => res.data,
-    );
+    return ApiService.getRequest(endpoint, params);
   },
   handleSaveOfProperties(
     params: any,
