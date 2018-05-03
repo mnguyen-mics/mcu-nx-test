@@ -13,7 +13,7 @@ import {
   defineMessages,
 } from 'react-intl';
 import { Layout, Button, Modal, message } from 'antd';
-import { McsIconType } from '../../../../../components/McsIcon';
+import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import ApiTokenService from '../../../../../services/ApiTokenService';
@@ -37,10 +37,6 @@ const initialState = {
 };
 
 const messages = defineMessages({
-  apiTokenId: {
-    id: 'settings.profile.apitoken.list.id',
-    defaultMessage: 'Api Token ID',
-  },
   apiTokenName: {
     id: 'settings.profile.apitoken.list.name',
     defaultMessage: 'Api Token name',
@@ -122,7 +118,7 @@ const messages = defineMessages({
   },
   apiTokenSuccessfullySaved: {
     id: 'settings.profile.apitoken.successfully.saved',
-    defaultMessage: 'Api Token successfully saved.',
+    defaultMessage: 'Api Token successfully saved. Give it a name.',
   },
   snippetCodeCopied: {
     id: 'settings.profile.apitoken.code.copied',
@@ -256,11 +252,6 @@ class ApiTokenListPage extends React.Component<Props, State> {
 
     const dataColumnsDefinition = [
       {
-        intlMessage: messages.apiTokenId,
-        key: 'id',
-        isHideable: false,
-      },
-      {
         intlMessage: messages.apiTokenName,
         key: 'name',
         isVisibleByDefault: true,
@@ -294,8 +285,21 @@ class ApiTokenListPage extends React.Component<Props, State> {
         key: 'expiration_date',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (value: string, record: ApiToken) =>
-          moment(parseInt(value, 10)).format('DD/MM/YYYY'),
+        render: (value: string, record: ApiToken) => {
+          const now = Date.now();
+          const status =
+            record.expiration_date - now < 2592000000 /* 1 month in millisec*/
+              ? record.expiration_date - now < 0
+                ? 'expirated'
+                : 'warning'
+              : 'ok';
+          return (
+            <span>
+              {moment(parseInt(value, 10)).format('DD/MM/YYYY')}
+              <McsIcon type="status" className={`apitoken-status-${status}`} />
+            </span>
+          );
+        },
       },
     ];
 
@@ -310,6 +314,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
     const apiTokenModal = (apiTokenData: ApiToken) => {
       const {
         intl: { formatMessage },
+        history,
       } = this.props;
 
       const handleOnClick = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -321,7 +326,8 @@ class ApiTokenListPage extends React.Component<Props, State> {
         content: (
           <div>
             <b>{formatMessage(messages.apiTokenModalContent)}</b>
-            <br /><br />
+            <br />
+            <br />
             <CopyToClipboard onCopy={handleOnClick}>
               <div style={{ cursor: 'pointer' }}>
                 <SyntaxHighlighter language="json" style={docco}>
@@ -333,12 +339,12 @@ class ApiTokenListPage extends React.Component<Props, State> {
         ),
         okText: formatMessage(messages.nextButtonApiTokenModal),
         onOk: () => {
-          message.success(formatMessage(messages.apiTokenSuccessfullySaved));
-          const filters = {
-            currentPage: 1,
-            pageSize: 10,
-          };
-          this.fetchApiTokens(organisationId, filters);
+          message.success(formatMessage(messages.apiTokenSuccessfullySaved), 5);
+          history.push(
+            `/v2/o/${organisationId}/settings/account/api_tokens/${
+              apiTokenData.id
+            }/edit`,
+          );
         },
       });
     };
