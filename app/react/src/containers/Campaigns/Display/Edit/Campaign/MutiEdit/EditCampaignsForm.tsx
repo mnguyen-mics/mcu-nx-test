@@ -182,7 +182,7 @@ class EditCampaignsForm extends React.Component<
                 ))}
                 {v2014CampaignNames.length > 0 && (
                   <div>
-                    <br/>
+                    <br />
                     <FormattedMessage {...messageMap.oldCampaignsNames} />
                     <br />
                     {v2014CampaignNames.map((oldCampaignName, index) => (
