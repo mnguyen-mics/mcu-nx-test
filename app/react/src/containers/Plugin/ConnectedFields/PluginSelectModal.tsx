@@ -121,14 +121,18 @@ class PluginSelectModal extends React.Component<Props, State> {
     const { input } = this.props;
     const { id, selectedVersion } = this.state;
 
-    const value = {
-      id: id,
-      version: selectedVersion,
-    };
-    input.onChange(value);
-    this.setState({
-      open: false,
-    });
+    if (id && selectedVersion) {
+      const value = {
+        id: id,
+        version: selectedVersion,
+      };
+      input.onChange(value);
+      this.setState({
+        open: false,
+      });
+
+    }
+
   };
 
   showModal = () => {

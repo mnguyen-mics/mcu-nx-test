@@ -63,7 +63,14 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
 
   renderAdRendererSubmenu = () => {
     const { onSelect } = this.props;
-    const previousAdRendererIds = ['1', '1004', '1005', '1032', '1047', '1026'];
+    const previousAdRendererIds = [
+      imageAdRendererId,
+      htmlAdRendererId,
+      externalAdRendererId,
+      nativeIvidenceAdRendererId,
+      nativeQuantumAdRendererId,
+      imageSkinsAdRendererId,
+    ];
     const adRendererSubmenu: Submenu[] = [];
     PluginService.getPlugins({
       max_results: 1000,
