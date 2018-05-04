@@ -1,10 +1,11 @@
-export interface PluginInterface {
+export interface PluginResource {
   id: string;
   organisation_id: string;
-  plugin_type: string;
+  plugin_type?: PluginType;
   group_id: string;
   artifact_id: string;
   current_version_id: string;
+  plugin_id?: string
 }
 
 export interface PluginProperty {
@@ -25,7 +26,7 @@ export type PluginType = 'ACTIVITY_ANALYZER' |
 'AUDIENCE_SEGMENT_EXTERNAL_FEED' |
 'AUDIENCE_SEGMENT_TAG_FEED';
 
-export interface PluginVersion {
+export interface PluginVersionResource {
   id: string;
   plugin_id: string;
   organisation_id: string;
@@ -33,6 +34,7 @@ export interface PluginVersion {
   group_id: string;
   artifact_id: string;
   version_id: string;
+  max_qps: number;
 }
 
 export interface AttributionModel {
@@ -111,4 +113,26 @@ export interface AudienceTagFeed {
   group_id: string;
   id: string;
   status: Status;
+}
+
+export interface Adlayout {
+  id: string;
+  name: string;
+  optimal_formats: string;
+  organisation_id: string;
+  renderer_id: string;
+  render_version_id: string;
+}
+
+export interface StylesheetVersionResource {
+  artifact_id: string;
+  creation_date: number;
+  description: string;
+  group_id: string;
+  id: string;
+  organisation_id: string;
+  plugin_version_id: string;
+  status: string;
+  style_sheet_id: string;
+  version_id: string;
 }

@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { Upload, Button, Icon } from 'antd';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
+import {
+  UploadProps,
+  UploadFile,
+  UploadChangeParam,
+} from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipProps } from 'antd/lib/tooltip';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -13,44 +17,36 @@ export interface FormUploadProps {
   helpToolTipProps: TooltipProps;
   buttonText: string;
   noUploadModal?: () => void;
-  small?: boolean
+  small?: boolean;
+}
+
+interface State {
+  file?: UploadFile;
 }
 
 type JoinedProps = FormUploadProps & WrappedFieldProps & InjectedIntlProps;
 
-class FormUpload extends React.Component<JoinedProps> {
+/**
+ * TODO generalize this component as it is too coupled to plugin property type ASSET_FILE
+ */
+class FormUpload extends React.Component<JoinedProps, State> {
+  constructor(props: JoinedProps) {
+    super(props);
 
-  state = {
-    fileName: '',
-    canRemoveFile: false,
-  };
-
-  componentDidMount() {
-    const { input } = this.props;
-
-    if (input.value.asset_id) {
-      input.onChange([input.value]);
-      this.changeFileName(input.value.original_file_name);
-      this.changeCanRemoveFile(false);
-    } else {
-      input.onChange([]);
-      this.changeCanRemoveFile(true);
+    let existingFile: UploadFile | undefined;
+    if (props.input.value && props.input.value.asset_id) {
+      existingFile = {
+        uid: props.input.value.asset_id,
+        name: props.input.value.original_file_name,
+        size: 0,
+        type: '',
+      };
     }
+
+    this.state = {
+      file: existingFile,
+    };
   }
-
-  changeCanRemoveFile = (canRemoveFile: boolean) => {
-    this.setState({ canRemoveFile: canRemoveFile });
-  };
-
-  changeFileName = (fileName: string) => {
-    this.setState({ fileName: fileName });
-  };
-
-  onRemoveFile = () => {
-    const { input } = this.props;
-    this.changeFileName('');
-    input.onChange([]);
-  };
 
   render() {
     const {
@@ -62,6 +58,8 @@ class FormUpload extends React.Component<JoinedProps> {
       small,
     } = this.props;
 
+    const { file } = this.state;
+
     let validateStatus = 'success' as
       | 'success'
       | 'warning'
@@ -70,16 +68,26 @@ class FormUpload extends React.Component<JoinedProps> {
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
-    const uploadDetailProps = {
+    const uploadDetailProps: Partial<UploadProps> = {
       action: '/',
-      beforeUpload: (file: UploadFile) => {
-        this.changeFileName(file.name);
-        const formData = new FormData(); /* global FormData */
-        formData.append('file', file as any, file.name);
-        input.onChange([file]);
+      beforeUpload: (uploadFile: UploadFile) => {
         return false;
       },
+      onChange: (info: UploadChangeParam) => {
+        if (!(inputProps && inputProps.disabled)) {
+          this.setState({ file: info.file });
+          input.onChange({ ...input.value, file: info.file });
+        }
+      },
+      onRemove: (uploadFile: UploadFile) => {
+        if (!(inputProps && inputProps.disabled)) {
+          this.setState({ file: undefined });
+          input.onChange(undefined);
+        }
+      },
     };
+
+    const fileList = file ? [file] : [];
 
     return (
       <FormFieldWrapper
@@ -89,7 +97,7 @@ class FormUpload extends React.Component<JoinedProps> {
         small={small}
         {...formItemProps}
       >
-        <Upload {...input} {...inputProps} {...uploadDetailProps}>
+        <Upload fileList={fileList} {...inputProps} {...uploadDetailProps}>
           <Button
             onClick={
               inputProps && inputProps.disabled

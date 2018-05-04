@@ -21,6 +21,14 @@ export default defineMessages({
     id: 'form.adLayout.modal.versions.label',
     defaultMessage: 'Select your AdLayout Version'
   },
+  noAdLayoutSelected: {
+    id: 'form.no.adLayout.selected',
+    defaultMessage: 'No AdLayout selected'
+  },
+  noStyleSheetSelected: {
+    id: 'form.no.stylesheet.selected',
+    defaultMessage: 'No StyleSheet selected'
+  },
   styleSheetButtonChoose: {
     id: 'form.stylesheet.button.choose',
     defaultMessage: 'Choose a StyleSheet'
