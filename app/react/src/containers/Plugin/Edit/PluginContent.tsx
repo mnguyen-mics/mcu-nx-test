@@ -42,7 +42,7 @@ interface PluginContentOuterProps {
   onSelect: (t: any) => void;
   initialValue: any;
   loading: boolean;
-  showGeneralInformation?: boolean
+  showGeneralInformation?: boolean;
 }
 
 interface PluginContentState {
@@ -67,8 +67,6 @@ type JoinedProps = PluginContentOuterProps &
   RouteComponentProps<RouterProps>;
 
 class PluginContent extends React.Component<JoinedProps, PluginContentState> {
-
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -145,7 +143,9 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
             const lastVersion = res.data[res.data.length - 1];
             return PluginService.getPluginVersionProperty(
               plugin.id,
-              lastVersion.id,
+              plugin.current_version_id
+                ? plugin.current_version_id
+                : lastVersion.id,
             );
           })
           .then(res => {
@@ -187,7 +187,9 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       breadcrumbPaths,
       onClose,
       editionMode,
@@ -198,33 +200,35 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
 
     const { pluginProperties, isLoading, plugin } = this.state;
 
-    const sidebarItems = showGeneralInformation ? [
-      {
-        sectionId: 'general',
-        title: messages.menuGeneralInformation,
-      },
-      {
-        sectionId: 'properties',
-        title: messages.menuProperties,
-      },
-    ] : [
-        {
-          sectionId: 'properties',
-          title: messages.menuProperties,
-        }
-      ];
+    const sidebarItems = showGeneralInformation
+      ? [
+          {
+            sectionId: 'general',
+            title: messages.menuGeneralInformation,
+          },
+          {
+            sectionId: 'properties',
+            title: messages.menuProperties,
+          },
+        ]
+      : [
+          {
+            sectionId: 'properties',
+            title: messages.menuProperties,
+          },
+        ];
 
     const actionbarProps =
       pluginProperties.length || editionMode
         ? {
-          formId,
-          message: messages.save,
-          onClose: onClose,
-        }
+            formId,
+            message: messages.save,
+            onClose: onClose,
+          }
         : {
-          formId,
-          onClose: onClose,
-        };
+            formId,
+            onClose: onClose,
+          };
 
     return isLoading || loading ? (
       <div style={{ display: 'flex', flex: 1 }}>
@@ -246,19 +250,21 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           pluginVersionId={plugin.id}
           formId={formId}
           initialValues={this.formatInitialValues(initialValue)}
-          showGeneralInformation={showGeneralInformation !== undefined ? showGeneralInformation : true}
+          showGeneralInformation={
+            showGeneralInformation !== undefined ? showGeneralInformation : true
+          }
         />
       </EditContentLayout>
     ) : (
-          <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-            <PluginEditSelector
-              onSelect={this.onSelectPlugin}
-              availablePlugins={this.state.availablePlugins}
-              listTitle={this.props.listTitle}
-              listSubTitle={this.props.listSubTitle}
-            />
-          </EditContentLayout>
-        );
+      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+        <PluginEditSelector
+          onSelect={this.onSelectPlugin}
+          availablePlugins={this.state.availablePlugins}
+          listTitle={this.props.listTitle}
+          listSubTitle={this.props.listSubTitle}
+        />
+      </EditContentLayout>
+    );
   }
 }
 
