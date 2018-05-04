@@ -308,6 +308,12 @@ class FieldNodeForm extends React.Component<Props> {
         return this.generateNumericComparisonOperator();
       case 'Float':
         return this.generateNumericComparisonOperator();
+      case 'Int':
+        return this.generateNumericComparisonOperator();
+      case 'Double':
+        return this.generateNumericComparisonOperator();
+      case 'BigDecimal':
+        return this.generateNumericComparisonOperator();
       default:
         return [];
     }
@@ -459,6 +465,18 @@ class FieldNodeForm extends React.Component<Props> {
           condition as NumericComparisonOperator,
         );
       case 'Float':
+        return this.generateNumericComparisonField(
+          condition as NumericComparisonOperator,
+        );
+      case 'Int':
+        return this.generateNumericComparisonField(
+          condition as NumericComparisonOperator,
+        );
+      case 'Double':
+        return this.generateNumericComparisonField(
+          condition as NumericComparisonOperator,
+        );
+      case 'BigDecimal':
         return this.generateNumericComparisonField(
           condition as NumericComparisonOperator,
         );
