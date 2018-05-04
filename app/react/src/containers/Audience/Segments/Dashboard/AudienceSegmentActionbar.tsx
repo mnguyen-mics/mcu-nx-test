@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, message } from 'antd';
+import { Button, message, Dropdown, Menu } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
@@ -26,6 +26,7 @@ import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { fetchOverlapAnalysis } from './OverlapServices';
+import { ClickParam } from 'antd/lib/menu';
 
 export interface AudienceSegmentActionbarProps {
   segment: null | AudienceSegmentResource;
@@ -148,6 +149,16 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
   }
 
+  handleCreateNewFeed = () => {
+    const {
+      match: { params: { organisationId, segmentId } },
+      location,
+      history
+    } = this.props;
+    const editUrl = `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/create`;
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
+  }
+
   render() {
     const {
       match: { params: { organisationId } },
@@ -222,12 +233,13 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     //   return Promise.resolve();
     // };
 
-    let actionButton = (
-      <Button className="mcs-primary" type="primary" onClick={onClick}>
-        <McsIcon type="bolt" />
-        <FormattedMessage {...segmentMessages.lookAlikeCreation} />
-      </Button>
-    );
+    let actionButton = null;
+    //  (
+    //   <Button className="mcs-primary" type="primary" onClick={onClick}>
+    //     <McsIcon type="bolt" />
+    //     <FormattedMessage {...segmentMessages.lookAlikeCreation} />
+    //   </Button>
+    // );
 
     if (
       segment &&
@@ -289,17 +301,44 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       }
     }
 
+    const onMenuClick = (event: ClickParam) => {
+      switch (event.key) {
+        case 'FEED':
+          return this.handleCreateNewFeed()
+        case 'LOOKALIKE':
+          return onClick();
+        default:
+          return () => ({});
+      }
+    }
+
+    const dropdowMenu = (
+      <Menu onClick={onMenuClick}>
+        <Menu.Item key="FEED">
+          Add a Feed
+        </Menu.Item>
+        <Menu.Item key="LOOKALIKE">
+          <FormattedMessage {...segmentMessages.lookAlikeCreation} />
+        </Menu.Item>
+      </Menu>
+    )
+
     return (
       <Actionbar path={breadcrumbPaths}>
         {actionButton}
-        <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          <McsIcon type="download" />
-          <FormattedMessage id="EXPORT" />
-        </Button>
         <Button onClick={this.onEditClick}>
           <McsIcon type="pen" />
           <FormattedMessage id="EDIT" />
         </Button>
+        <Button onClick={this.handleRunExport} loading={exportIsRunning}>
+          <McsIcon type="download" />
+          <FormattedMessage id="EXPORT" />
+        </Button>
+        <Dropdown overlay={dropdowMenu} trigger={['click']}>
+          <Button>
+            <McsIcon className="compact" type={'dots'} />
+          </Button>
+        </Dropdown>
       </Actionbar>
     );
   }

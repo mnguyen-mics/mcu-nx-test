@@ -4,8 +4,6 @@ import {
   reduxForm,
   ConfigProps,
   InjectedFormProps,
-  GenericFieldArray,
-  FieldArray,
   Field,
 } from 'redux-form';
 import { connect } from 'react-redux';
@@ -39,12 +37,6 @@ import * as FeatureSelectors from '../../../../state/Features/selectors';
 
 import GeneralFormSection from './Sections/GeneralFormSection';
 import SelectorQL from './Sections/query/SelectorQL';
-import AudienceExternalFeedSection, {
-  AudienceExternalFeedSectionProps,
-} from './Sections/AudienceExternalFeedSection';
-import AudienceTagFeedSection, {
-  AudienceTagFeedSectionProps,
-} from './Sections/AudienceTagFeedSection';
 import { PixelSection } from './Sections/pixel';
 import { UserListSection } from './Sections/list';
 
@@ -62,14 +54,6 @@ const FORM_ID = 'audienceSegmentForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
-  >;
-const AudienceExternalFeedField = FieldArray as new () => GenericFieldArray<
-  Field,
-  AudienceExternalFeedSectionProps
-  >;
-const AudienceTagFeedField = FieldArray as new () => GenericFieldArray<
-  Field,
-  AudienceTagFeedSectionProps
   >;
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
@@ -196,7 +180,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       close,
       segmentType,
       segmentCreation,
-      change,
       breadCrumbPaths,
       datamart,
       initialValues,
@@ -207,11 +190,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       : initialValues && initialValues.audienceSegment
         ? initialValues.audienceSegment.type
         : undefined;
-
-    const genericFieldArrayProps = {
-      formChange: change,
-      rerenderOnEveryChange: true,
-    };
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -242,32 +220,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
               ? messages.audienceSegmentSectionQueryTitle
               : messages.audienceSegmentSiderMenuImport,
         component: this.renderPropertiesField(),
-      });
-    }
-
-    if (!segmentCreation) {
-      sections.push({
-        id: 'audienceExternalFeed',
-        title: messages.sectionAudienceExternalFeedTitle,
-        component: (
-          <AudienceExternalFeedField
-            name={'audienceExternalFeeds'}
-            component={AudienceExternalFeedSection}
-            {...genericFieldArrayProps}
-          />
-        ),
-      });
-
-      sections.push({
-        id: 'audienceTagFeed',
-        title: messages.sectionAudienceTagFeedTitle,
-        component: (
-          <AudienceTagFeedField
-            name={'audienceTagFeeds'}
-            component={AudienceTagFeedSection}
-            {...genericFieldArrayProps}
-          />
-        ),
       });
     }
 

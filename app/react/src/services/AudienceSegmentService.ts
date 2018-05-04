@@ -220,6 +220,14 @@ const AudienceSegmentService = {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds`;
     return ApiService.getRequest(endpoint);
   },
+  getAudienceExternalFeed(
+    audienceSegmentId: string,
+    feedId: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceExternalFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${feedId}`;
+    return ApiService.getRequest(endpoint);
+  },
   createAudienceExternalFeeds(
     audienceSegmentId: string,
     audienceExternalFeed: Partial<AudienceExternalFeed>,
@@ -251,6 +259,14 @@ const AudienceSegmentService = {
     options: object = {},
   ): Promise<DataListResponse<PluginProperty>> {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${feedId}/properties`;
+    return ApiService.getRequest(endpoint);
+  },
+  getAudienceTagFeed(
+    audienceSegmentId: string,
+    feedId: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceTagFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${feedId}`;
     return ApiService.getRequest(endpoint);
   },
   getAudienceTagFeeds(

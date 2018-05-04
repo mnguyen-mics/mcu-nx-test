@@ -9,6 +9,10 @@ export default defineMessages({
     id: 'plugin.edit.general',
     defaultMessage: 'General Information',
   },
+  menuType: {
+    id: 'plugin.edit.type',
+    defaultMessage: 'Type',
+  },
   menuProperties: {
     id: 'plugin.edit.proerties',
     defaultMessage: 'Properties',

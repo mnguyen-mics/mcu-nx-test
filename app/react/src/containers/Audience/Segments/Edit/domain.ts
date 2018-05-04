@@ -20,6 +20,14 @@ export interface AudienceTagFeedResource extends AudienceTagFeed {
   properties?: PluginProperty[]
 }
 
+export interface AudienceExternalFeedTyped extends AudienceExternalFeed {
+  type: 'EXTERNAL_FEED'
+}
+
+export interface AudienceTagFeedTyped extends AudienceTagFeed {
+  type: 'TAG_FEED'
+}
+
 export type AudienceExternalFeedsFieldModel = FieldArrayModel<AudienceExternalFeedResource>;
 
 export type AudienceTagFeedsFieldModel = FieldArrayModel<AudienceTagFeedResource>
@@ -27,9 +35,7 @@ export type AudienceTagFeedsFieldModel = FieldArrayModel<AudienceTagFeedResource
 export interface AudienceSegmentFormData {
   audienceSegment: Partial<AudienceSegmentShape>;
   defaultLiftime?: number;
-  defaultLiftimeUnit: DefaultLiftimeUnit;
-  audienceExternalFeeds: AudienceExternalFeedsFieldModel[];
-  audienceTagFeeds: AudienceTagFeedsFieldModel[];
+  defaultLiftimeUnit?: DefaultLiftimeUnit;
   query?: QueryResource;
   userListFiles?: UploadFile[];
 }
@@ -47,7 +53,5 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
     persisted: true
   },
   defaultLiftimeUnit: 'days',
-  audienceExternalFeeds: [],
-  audienceTagFeeds: [],
   userListFiles: [],
 };
