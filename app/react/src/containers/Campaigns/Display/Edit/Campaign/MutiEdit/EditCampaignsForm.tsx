@@ -9,7 +9,12 @@ import {
   InjectedFormProps,
 } from 'redux-form';
 import { RouteComponentProps } from 'react-router';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import {
+  InjectedIntlProps,
+  injectIntl,
+  defineMessages,
+  FormattedMessage,
+} from 'react-intl';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
 
@@ -34,6 +39,11 @@ const messageMap = defineMessages({
     id: 'edit.campaigns.all.campaigns.names',
     defaultMessage: 'You have selected all the campaigns.',
   },
+  oldCampaignsNames: {
+    id: 'edit.campaigns.2014.campaigns.names',
+    defaultMessage:
+      'It is not recommended to edit these campaigns because they are deprecated :',
+  },
 });
 
 const CampaignsInfosFieldArray = FieldArray as new () => GenericFieldArray<
@@ -46,6 +56,7 @@ export interface EditCampaignsFormData {
 
 interface EditCampaignsFormState {
   campaignNames: string[];
+  v2014CampaignNames: string[];
   loading: boolean;
 }
 
@@ -74,6 +85,7 @@ class EditCampaignsForm extends React.Component<
     this.state = {
       campaignNames: [],
       loading: false,
+      v2014CampaignNames: [],
     };
   }
 
@@ -89,17 +101,22 @@ class EditCampaignsForm extends React.Component<
   }
 
   fetchData = (selectedRowKeys: string[]) => {
+    const v2014CampaignNames: string[] = [];
     Promise.all(
       selectedRowKeys.map(campaignId => {
         return DisplayCampaignService.getCampaignDisplay(campaignId)
           .then(apiResp => apiResp.data)
           .then(campaignData => {
+            if (campaignData.model_version === 'V2014_06') {
+              v2014CampaignNames.push(campaignData.name);
+            }
             return campaignData.name || '';
           });
       }),
     ).then(campaignNames => {
       this.setState({
         campaignNames: campaignNames,
+        v2014CampaignNames: v2014CampaignNames,
       });
     });
   };
@@ -126,6 +143,8 @@ class EditCampaignsForm extends React.Component<
   render() {
     const { handleSubmit, close } = this.props;
 
+    const { loading, campaignNames, v2014CampaignNames } = this.state;
+
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: [
@@ -137,7 +156,7 @@ class EditCampaignsForm extends React.Component<
       onClose: close,
     };
 
-    if (this.state.loading) {
+    if (loading) {
       return <Loading className="loading-full-screen" />;
     }
 
@@ -158,9 +177,19 @@ class EditCampaignsForm extends React.Component<
                 title={messages.multiEditTitle}
               />
               <Row style={{ marginBottom: '3em' }}>
-                {this.state.campaignNames.map((campaignName, index) => (
+                {campaignNames.map((campaignName, index) => (
                   <Tag key={index}>{campaignName}</Tag>
                 ))}
+                {v2014CampaignNames.length > 0 && (
+                  <div>
+                    <br/>
+                    <FormattedMessage {...messageMap.oldCampaignsNames} />
+                    <br />
+                    {v2014CampaignNames.map((oldCampaignName, index) => (
+                      <Tag key={index}>{oldCampaignName}</Tag>
+                    ))}
+                  </div>
+                )}
               </Row>
               <Row>
                 <Col span={4} />

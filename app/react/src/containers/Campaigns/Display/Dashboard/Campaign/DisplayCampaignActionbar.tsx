@@ -245,10 +245,16 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
           campaignId,
         },
       },
+      campaign,
+      intl
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
-    history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}` } });
+    if(campaign.items.model_version === 'V2014_06') {
+      message.info(intl.formatMessage(messages.editionNotAllowed));
+    } else {
+      const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
+      history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}` } });
+    }
   }
 
   render() {
