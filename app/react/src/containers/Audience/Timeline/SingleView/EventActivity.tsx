@@ -60,8 +60,10 @@ class EventActivity extends React.Component<Props, State> {
 
     if (Array.isArray(object)) {
       if (object.length > 0) {
-        returnValue = object.map(o => (
-          <div className="m-b-10" key={o}>{this.renderProperties(o)}</div>
+        returnValue = object.map((o, i) => (
+          <div className="m-b-10" key={i}>
+            {this.renderProperties(o)}
+          </div>
         ));
       } else {
         returnValue = '[]';
@@ -117,7 +119,7 @@ class EventActivity extends React.Component<Props, State> {
         const nextState = {
           ...prevState,
         };
-        nextState.showMore = !showMore;
+        nextState.showMore = !prevState.showMore;
         return nextState;
       });
     };

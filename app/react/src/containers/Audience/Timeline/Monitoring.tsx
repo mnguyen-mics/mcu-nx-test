@@ -27,7 +27,9 @@ interface Activities {
   isLoading: boolean;
   hasItems: boolean;
   items: Activity[];
-  byDay: any; // type it better
+  byDay: {
+    [date: string]: Activity[]
+  };
   fetchNewActivities: () => void; // check type
 }
 
@@ -151,10 +153,10 @@ class Monitoring extends React.Component<Props> {
                     <Timeline
                       pending={this.renderPendingTimeline(activities)}
                       pendingDot={
-                        (!activities.hasItems ||
-                          activities.items.length === 0) && (
-                          <McsIcon type="status" className="mcs-timeline-last-dot" />
-                        )
+                        <McsIcon
+                          type="status"
+                          className="mcs-timeline-last-dot"
+                        />
                       }
                     >
                       {activities.byDay !== {} &&
