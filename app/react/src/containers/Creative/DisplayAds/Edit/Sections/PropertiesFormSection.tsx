@@ -28,7 +28,9 @@ type Props = MapStateProps &
 
 class PropertiesFormSection extends React.Component<Props> {
   noUploadModal = (creative: DisplayAdResource) => () => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     Modal.warning({
       title: formatMessage(modalMessages.noActionTitle),
       content:
@@ -44,10 +46,12 @@ class PropertiesFormSection extends React.Component<Props> {
     const {
       initialValue: {
         creative,
-        rendererPlugin: { current_version_id: rendererPluginVersionId },
+        rendererPlugin: { id: pluginVersionId },
         properties,
       },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     // TODO the following properties of PluginFieldGenerator should
@@ -73,13 +77,13 @@ class PropertiesFormSection extends React.Component<Props> {
           subtitle={messages.creativeSectionPropertySubTitle}
         />
         {Object.keys(properties).map(key => {
-          const fieldDef = properties[key]
+          const fieldDef = properties[key];
           return (
             <PluginFieldGenerator
               key={fieldDef.technical_name}
               definition={fieldDef}
               disabled={isDisabled}
-              pluginVersionId={rendererPluginVersionId}
+              pluginVersionId={pluginVersionId}
               organisationId={organisationId}
               {...additionnalProps}
             />

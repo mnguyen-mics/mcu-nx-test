@@ -9,7 +9,7 @@ import * as actions from '../../../../../state/Notifications/actions';
 import {
   PluginProperty,
   EmailRouter,
-  PluginInterface,
+  PluginResource,
 } from '../../../../../models/Plugins';
 
 import messages from './messages';
@@ -28,7 +28,7 @@ interface CreateEmailRouterState {
   edition: boolean;
   isLoading: boolean;
   initialValues?: EmailRouterForm;
-  selectedEmailRouter?: PluginInterface;
+  selectedEmailRouter?: PluginResource;
 }
 
 interface CreateEmailRouterProps {
@@ -191,7 +191,7 @@ class CreateEditEmailRouter extends React.Component<
     return Promise.all(propertiesPromises);
   };
 
-  onSelect = (bo: PluginInterface) => {
+  onSelect = (bo: PluginResource) => {
     this.setState({
       initialValues: { plugin: bo },
     });

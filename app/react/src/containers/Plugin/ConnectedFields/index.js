@@ -1,5 +1,5 @@
-import FormAdLayout from './FormAdLayout';
-import FormStyleSheet from './FormStyleSheet';
+import FormAdLayout from './FormAdLayout.tsx';
+import FormStyleSheet from './FormStyleSheet.tsx';
 import { FormDataFile } from './FormDataFile/index.ts';
 
 export {
