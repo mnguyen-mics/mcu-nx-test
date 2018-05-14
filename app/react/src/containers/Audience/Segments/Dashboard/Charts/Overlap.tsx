@@ -23,7 +23,7 @@ import {
   injectDatamart,
   InjectedDatamartProps,
 } from '../../../../Datamart/index';
-import { fetchOverlapAnalysis, createOverlapAnalysis, stopInterval, fetchOverlapAnalysisLoop } from '../OverlapServices';
+import { fetchOverlapAnalysis, OverlapInterval } from '../OverlapServices';
 import { OverlapData } from '../constants';
 
 const VerticalBarChartJS = VerticalBarChart as any;
@@ -40,6 +40,8 @@ type Props =
   InjectedIntlProps;
 
 class Overlap extends React.Component<Props, State> {
+
+  overlapInterval: OverlapInterval = new OverlapInterval()
 
   constructor(props: Props) {
     super(props);
@@ -59,7 +61,7 @@ class Overlap extends React.Component<Props, State> {
       match: { params: { segmentId } },
     } = this.props;
 
-    fetchOverlapAnalysisLoop(segmentId).then(() => fetchOverlapAnalysis(segmentId)).then(res => this.setState({ data: res, isFetchingOverlap: false }));
+    this.overlapInterval.fetchOverlapAnalysisLoop(segmentId).then(() => fetchOverlapAnalysis(segmentId)).then(res => this.setState({ data: res, isFetchingOverlap: false }));
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -72,13 +74,13 @@ class Overlap extends React.Component<Props, State> {
 
     if (segmentId !== nextSegmentId) {
       this.setState({ isFetchingOverlap: true }, () => {
-        fetchOverlapAnalysisLoop(nextSegmentId).then(() => fetchOverlapAnalysis(nextSegmentId)).then(res => this.setState({ data: res, isFetchingOverlap: false }));
+        this.overlapInterval.fetchOverlapAnalysisLoop(nextSegmentId).then(() => fetchOverlapAnalysis(nextSegmentId)).then(res => this.setState({ data: res, isFetchingOverlap: false }));
       })
     }
   }
 
   componentWillUnmount() {
-    stopInterval()
+    this.overlapInterval.stopInterval()
   }
 
   renderStackedAreaCharts() {
@@ -129,7 +131,7 @@ class Overlap extends React.Component<Props, State> {
 
     const createOv = () => {
       this.setState({ isFetchingOverlap: true })
-      createOverlapAnalysis(datamart.id, segmentId, organisationId)
+      this.overlapInterval.createOverlapAnalysis(datamart.id, segmentId, organisationId)
         .then(() => {
           fetchOverlapAnalysis(segmentId).then(res => this.setState({ data: res, isFetchingOverlap: false }));
         });

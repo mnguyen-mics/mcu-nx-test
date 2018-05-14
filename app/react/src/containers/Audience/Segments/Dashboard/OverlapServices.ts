@@ -3,19 +3,47 @@ import { OverlapData, FormattedOverlapData, Data } from "./constants";
 import { OverlapFileResource, OverlapItemResult, AudienceSegmentShape } from "../../../../models/audiencesegment/AudienceSegmentResource";
 import DataFileService from "../../../../services/DataFileService";
 
-let interval: any = null;
 
-export function createOverlapAnalysis(datamartId: string, segmentId: string, organisationId: string) {
-  return AudienceSegmentService.createOverlap(datamartId, segmentId)
-    .then(res => {
-      return fetchOverlapAnalysisLoop(segmentId)
+export class OverlapInterval {
+  interval: number = 0;
+
+  stopInterval() {
+    clearTimeout(this.interval)
+  }
+
+  fetchOverlapAnalysisLoop(segmentId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.interval = window.setInterval(async () => {
+        const job = await AudienceSegmentService.retrieveOverlap(segmentId, {
+          first_result: 0,
+          max_results: 1,
+        }).then(r => r.data)
+        if (job.length) {
+          const lastJob = job[0];
+          if (lastJob.external_model_name === 'PUBLIC_AUDIENCE_SEGMENT') {
+            if (!(lastJob.status === 'PENDING' || lastJob.status === 'RUNNING' || lastJob.status === 'SCHEDULED' || lastJob.status === 'WAITING_DEPENDENT_JOB')) {
+              this.stopInterval()
+              resolve()
+            }
+          } else {
+            this.stopInterval()
+            resolve()
+          }
+        }
+      }, 2000)
     })
+  }
+
+  createOverlapAnalysis(datamartId: string, segmentId: string, organisationId: string) {
+    return AudienceSegmentService.createOverlap(datamartId, segmentId)
+      .then(res => {
+        return this.fetchOverlapAnalysisLoop(segmentId)
+      })
+
+  }
 
 }
 
-export function stopInterval() {
-  clearTimeout(interval)
-}
 
 
 export function fetchOverlapAnalysis(segmentId: string): Promise<OverlapData> {
@@ -73,29 +101,6 @@ export function fetchOverlapAnalysis(segmentId: string): Promise<OverlapData> {
         hasOverlap: false
       }
     })
-}
-
-export function fetchOverlapAnalysisLoop(segmentId: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    interval = window.setInterval(async () => {
-      const job = await AudienceSegmentService.retrieveOverlap(segmentId, {
-        first_result: 0,
-        max_results: 1,
-      }).then(r => r.data)
-      if (job.length) {
-        const lastJob = job[0];
-        if (lastJob.external_model_name === 'PUBLIC_AUDIENCE_SEGMENT') {
-          if (!(lastJob.status === 'PENDING' || lastJob.status === 'RUNNING' || lastJob.status === 'SCHEDULED' || lastJob.status === 'WAITING_DEPENDENT_JOB')) {
-            clearTimeout(interval)
-            resolve()
-          }
-        } else {
-          clearTimeout(interval)
-          resolve()
-        }
-      }
-    }, 1000)
-  })
 }
 
 function readOverlap(datafile: Blob) {
