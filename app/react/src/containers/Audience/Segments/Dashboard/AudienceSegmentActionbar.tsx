@@ -21,10 +21,11 @@ import { injectDrawer } from '../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { UserLookalikeSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import { SEGMENT_QUERY_SETTINGS, fetchOverlapAnalysis, OverlapData } from './constants';
+import { SEGMENT_QUERY_SETTINGS, OverlapData } from './constants';
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { fetchOverlapAnalysis } from './OverlapServices';
 
 export interface AudienceSegmentActionbarProps {
   segment: null | AudienceSegmentResource;
