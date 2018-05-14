@@ -153,6 +153,23 @@ export function fetchOverlapAnalysis(segmentId: string): Promise<OverlapData> {
     })
 }
 
+export function fetchOverlapAnalysisLoop(segmentId: string): Promise<OverlapData> {
+  return new Promise((resolve, reject) => {
+    interval = window.setInterval(async () => {
+      const overlapData = await fetchOverlapAnalysis(segmentId)
+      if (overlapData) {
+        if (!overlapData.isRunning) {
+          clearTimeout(interval)
+          resolve(overlapData)
+        } else if (overlapData.isInError) {
+          clearTimeout(interval)
+          reject(overlapData)
+        }
+      }
+    }, 3000)
+  })
+}
+
 function readOverlap(datafile: Blob) {
   return new Promise(resolve => {
     const fileReader = new FileReader(); /* global FileReader */

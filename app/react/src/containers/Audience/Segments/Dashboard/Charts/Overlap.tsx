@@ -23,7 +23,7 @@ import {
   injectDatamart,
   InjectedDatamartProps,
 } from '../../../../Datamart/index';
-import { OverlapData, fetchOverlapAnalysis, createOverlapAnalysis, stopInterval } from '../constants';
+import { OverlapData, fetchOverlapAnalysis, createOverlapAnalysis, stopInterval, fetchOverlapAnalysisLoop } from '../constants';
 
 const VerticalBarChartJS = VerticalBarChart as any;
 interface State {
@@ -58,7 +58,7 @@ class Overlap extends React.Component<Props, State> {
       match: { params: { segmentId } },
     } = this.props;
 
-    fetchOverlapAnalysis(segmentId).then(res => this.setState({ data: res, isFetchingOverlap: false }));
+    fetchOverlapAnalysisLoop(segmentId).then(res => this.setState({ data: res, isFetchingOverlap: false }));
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -71,12 +71,12 @@ class Overlap extends React.Component<Props, State> {
 
     if (segmentId !== nextSegmentId) {
       this.setState({ isFetchingOverlap: true }, () => {
-        fetchOverlapAnalysis(nextSegmentId).then(res => this.setState({ data: res, isFetchingOverlap: false }));
+        fetchOverlapAnalysisLoop(nextSegmentId).then(res => this.setState({ data: res, isFetchingOverlap: false }));
       })
     }
   }
 
-  componentWillUpdate() {
+  componentWillUnmount() {
     stopInterval()
   }
 
