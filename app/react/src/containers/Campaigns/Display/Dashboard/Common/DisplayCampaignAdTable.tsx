@@ -14,7 +14,7 @@ import {
   AdResource,
   AdInfoResource,
 } from '../../../../../models/campaign/display/index';
-import { Popover } from '../../../../../components/PopupContainers/index'; 
+import { Popover } from '../../../../../components/PopupContainers/index';
 import { UpdateMessage } from '../Campaign/DisplayCampaignAdGroupTable';
 import { ExtendedTableRowSelection } from '../../../../../components/TableView/TableView';
 
@@ -43,7 +43,7 @@ type JoinedProps = DisplayCampaignAdTableProps &
 class DisplayCampaignAdTable extends React.Component<
   JoinedProps,
   DisplayCampaignAdTableState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -58,7 +58,7 @@ class DisplayCampaignAdTable extends React.Component<
       location,
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/creatives/display/edit/${ad.id}`;
+    const editUrl = `/v2/o/${organisationId}/creatives/display/edit/${ad.creative_id}`;
 
     history.push({
       pathname: editUrl,
@@ -108,17 +108,6 @@ class DisplayCampaignAdTable extends React.Component<
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
-    const renderPopover = (recordId: string, recordName: string) => {
-      return (
-        <div className="mcs-ad-popover">
-          <span className="mcs-ad-helper" />
-          <img
-            src={`https://ads.mediarithmics.com/ads/screenshot?rid=${recordId}`}
-            alt={recordName}
-          />
-        </div>
-      );
-    };
 
     const sorter = (a: any, b: any, key: string) => {
       if (a[key] === undefined && b[key] === undefined) {
@@ -140,30 +129,30 @@ class DisplayCampaignAdTable extends React.Component<
       const initialStatus = checked ? 'PAUSED' : 'ACTIVE';
       const successMessage = checked
         ? {
-            title: formatMessage(messages.notificationSuccess),
-            body: formatMessage(messages.notificationAdActivationSuccess, {
-              name: record.name,
-            }),
-          }
+          title: formatMessage(messages.notificationSuccess),
+          body: formatMessage(messages.notificationAdActivationSuccess, {
+            name: record.name,
+          }),
+        }
         : {
-            title: formatMessage(messages.notificationSuccess),
-            body: formatMessage(messages.notificationAdPauseSuccess, {
-              name: record.name,
-            }),
-          };
+          title: formatMessage(messages.notificationSuccess),
+          body: formatMessage(messages.notificationAdPauseSuccess, {
+            name: record.name,
+          }),
+        };
       const errorMessage = checked
         ? {
-            title: formatMessage(messages.notificationError),
-            body: formatMessage(messages.notificationAdActivationError, {
-              name: record.name,
-            }),
-          }
+          title: formatMessage(messages.notificationError),
+          body: formatMessage(messages.notificationAdActivationError, {
+            name: record.name,
+          }),
+        }
         : {
-            title: formatMessage(messages.notificationError),
-            body: formatMessage(messages.notificationAdPauseError, {
-              name: record.name,
-            }),
-          };
+          title: formatMessage(messages.notificationError),
+          body: formatMessage(messages.notificationAdPauseError, {
+            name: record.name,
+          }),
+        };
       updateAd(
         record.id,
         {
@@ -191,11 +180,11 @@ class DisplayCampaignAdTable extends React.Component<
                   defaultMessage="Audit sucessfull"
                 />
               ) : (
-                <FormattedMessage
-                  id="display.campaign.adtable.ad.noaudit.msg"
-                  defaultMessage="You need to pass the Audit first"
-                />
-              )
+                  <FormattedMessage
+                    id="display.campaign.adtable.ad.noaudit.msg"
+                    defaultMessage="You need to pass the Audit first"
+                  />
+                )
             }
           >
             <McsIcon
@@ -234,6 +223,27 @@ class DisplayCampaignAdTable extends React.Component<
         },
       },
       {
+        key: 'image',
+        isVisibleByDefault: true,
+        isHideable: true,
+        render: (text: string, record: AdResource) => <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            alignContent: 'center',
+            justifyContent: 'center',
+            minWidth: '100px',
+            minHeight: '100px',
+          }}
+        >
+          <img
+            src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.creative_id}`}
+            alt={record.name}
+            style={{ maxHeight: 100, maxWidth: 100 }}
+          />
+        </div>,
+      },
+      {
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
@@ -242,17 +252,12 @@ class DisplayCampaignAdTable extends React.Component<
             history.push({
               pathname: `/v2/o/${organisationId}/creatives/display/edit/${
                 record.creative_id
-              }`,
+                }`,
               state: { from: `${location.pathname}${location.search}` },
             });
           };
           return (
-            <Popover
-              content={renderPopover(record.creative_id, text)}
-              title={text}
-            >
-              <ButtonStyleless onClick={editCreative}>{text}</ButtonStyleless>
-            </Popover>
+            <ButtonStyleless onClick={editCreative}>{text}</ButtonStyleless>
           );
         },
       },
