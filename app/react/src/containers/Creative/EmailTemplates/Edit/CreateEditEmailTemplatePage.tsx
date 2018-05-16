@@ -40,7 +40,7 @@ type JoinedProps = InjectedNotificationProps &
 class CreateEmailTemplate extends React.Component<
   JoinedProps,
   CreateEmailTemplateState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
 
@@ -107,9 +107,9 @@ class CreateEmailTemplate extends React.Component<
                   return prop.technical_name === 'template_file' &&
                     prop.property_type === 'DATA_FILE'
                     ? {
-                        ...prop,
-                        value: { ...prop.value, acceptedFile: 'text/html' },
-                      }
+                      ...prop,
+                      value: { ...prop.value, acceptedFile: 'text/html' },
+                    }
                     : prop;
                 }),
             };
@@ -154,9 +154,9 @@ class CreateEmailTemplate extends React.Component<
                   return prop.technical_name === 'template_file' &&
                     prop.property_type === 'DATA_FILE'
                     ? {
-                        ...prop,
-                        value: { ...prop.value, acceptedFile: 'text/html' },
-                      }
+                      ...prop,
+                      value: { ...prop.value, acceptedFile: 'text/html' },
+                    }
                     : prop;
                 }),
               },
@@ -288,49 +288,49 @@ class CreateEmailTemplate extends React.Component<
       (this.state.initialValues &&
         this.state.initialValues.properties &&
         this.state.initialValues.properties.length) ||
-      this.state.edition
+        this.state.edition
         ? {
-            formId,
-            message: messages.save,
-            onClose: this.redirect,
-          }
+          formId,
+          message: messages.save,
+          onClose: this.redirect,
+        }
         : {
-            formId,
-            onClose: this.redirect,
-          };
+          formId,
+          onClose: this.redirect,
+        };
 
     return isLoading ? (
       <div style={{ display: 'flex', flex: 1 }}>
         <Loading className="loading-full-screen" />
       </div>
     ) : (
-      <EditContentLayout
-        paths={breadcrumbPaths}
-        items={sidebarItems}
-        scrollId={formId}
-        {...actionbarProps}
-      >
-        <PluginEditForm
-          editionMode={this.state.edition}
-          organisationId={organisationId}
-          save={this.saveOrCreatePluginInstance}
-          pluginProperties={
-            (this.state.initialValues && this.state.initialValues.properties) ||
-            []
-          }
-          isLoading={isLoading}
-          pluginVersionId={
-            (this.state.emailTemplateRenderer &&
-              this.state.emailTemplateRenderer.id) ||
-            ''
-          }
-          formId={formId}
-          initialValues={this.formatInitialValues(this.state.initialValues)}
-          showGeneralInformation={true}
-          showTechnicalName={true}
-        />
-      </EditContentLayout>
-    );
+        <EditContentLayout
+          paths={breadcrumbPaths}
+          items={sidebarItems}
+          scrollId={formId}
+          {...actionbarProps}
+        >
+          <PluginEditForm
+            editionMode={this.state.edition}
+            organisationId={organisationId}
+            save={this.saveOrCreatePluginInstance}
+            pluginProperties={
+              (this.state.initialValues && this.state.initialValues.properties) ||
+              []
+            }
+            disableFields={isLoading}
+            pluginVersionId={
+              (this.state.emailTemplateRenderer &&
+                this.state.emailTemplateRenderer.id) ||
+              ''
+            }
+            formId={formId}
+            initialValues={this.formatInitialValues(this.state.initialValues)}
+            showGeneralInformation={true}
+            showTechnicalName={true}
+          />
+        </EditContentLayout>
+      );
   }
 }
 

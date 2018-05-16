@@ -17,6 +17,7 @@ import { EditContentLayout } from '../../../components/Layout';
 import Loading from '../../../components/Loading';
 import messages from './messages';
 import { Path } from '../../../components/ActionBar';
+import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 
 const formId = 'pluginForm';
 
@@ -43,6 +44,7 @@ interface PluginContentOuterProps {
   initialValue: any;
   loading: boolean;
   showGeneralInformation?: boolean;
+  disableFields?: boolean;
 }
 
 interface PluginContentState {
@@ -171,7 +173,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
   formatInitialValues = (initialValues: any) => {
     const formattedProperties: any = {};
 
-    if (initialValues.properties) {
+    if (initialValues && initialValues.properties) {
       initialValues.properties.forEach((property: PluginProperty) => {
         formattedProperties[property.technical_name] = {
           value: property.value,
@@ -180,7 +182,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
     }
 
     return {
-      plugin: initialValues.plugin,
+      plugin: initialValues ? initialValues.plugin : undefined,
       properties: formattedProperties,
     };
   };
@@ -196,39 +198,49 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
       initialValue,
       loading,
       showGeneralInformation,
+      disableFields
     } = this.props;
 
     const { pluginProperties, isLoading, plugin } = this.state;
 
-    const sidebarItems = showGeneralInformation
-      ? [
-          {
-            sectionId: 'general',
-            title: messages.menuGeneralInformation,
-          },
-          {
-            sectionId: 'properties',
-            title: messages.menuProperties,
-          },
-        ]
-      : [
-          {
-            sectionId: 'properties',
-            title: messages.menuProperties,
-          },
-        ];
+    const sidebarItems: SideBarItem[] = [];
+
+    if (!editionMode) {
+      sidebarItems.push({
+        sectionId: 'type',
+        title: messages.menuType,
+        onClick: () => this.setState({ pluginProperties: [] }),
+        type: 'validated'
+      });
+    }
+
+
+    if (showGeneralInformation) {
+      sidebarItems.push(
+        {
+          sectionId: 'general',
+          title: messages.menuGeneralInformation,
+        }
+      )
+    }
+    sidebarItems.push(
+      {
+        sectionId: 'properties',
+        title: messages.menuProperties,
+      }
+    )
 
     const actionbarProps =
       pluginProperties.length || editionMode
         ? {
-            formId,
-            message: messages.save,
-            onClose: onClose,
-          }
+          formId,
+          message: messages.save,
+          onClose: onClose,
+        }
         : {
-            formId,
-            onClose: onClose,
-          };
+          formId,
+          onClose: onClose,
+        };
 
     return isLoading || loading ? (
       <div style={{ display: 'flex', flex: 1 }}>
@@ -246,7 +258,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           organisationId={organisationId}
           save={this.createPlugin}
           pluginProperties={pluginProperties}
-          isLoading={isLoading}
+          disableFields={(isLoading || disableFields) ? true : false}
           pluginVersionId={plugin.id}
           formId={formId}
           initialValues={this.formatInitialValues(initialValue)}
@@ -256,15 +268,15 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         />
       </EditContentLayout>
     ) : (
-      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-        <PluginEditSelector
-          onSelect={this.onSelectPlugin}
-          availablePlugins={this.state.availablePlugins}
-          listTitle={this.props.listTitle}
-          listSubTitle={this.props.listSubTitle}
-        />
-      </EditContentLayout>
-    );
+          <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+            <PluginEditSelector
+              onSelect={this.onSelectPlugin}
+              availablePlugins={this.state.availablePlugins}
+              listTitle={this.props.listTitle}
+              listSubTitle={this.props.listSubTitle}
+            />
+          </EditContentLayout>
+        );
   }
 }
 

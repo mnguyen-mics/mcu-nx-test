@@ -31,12 +31,12 @@ interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
   organisationId: string;
   save: (pluginValue: any, propertiesValue: PluginProperty[]) => void;
   pluginProperties: PluginProperty[];
-  isLoading: boolean;
+  disableFields: boolean;
   pluginVersionId: string;
   formId: string;
   initialValues: any;
   showGeneralInformation: boolean;
-  showTechnicalName?: boolean; 
+  showTechnicalName?: boolean;
 }
 
 type JoinedProps = PluginEditFormProps &
@@ -104,7 +104,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
   pluginFieldGenerated = () => {
     const {
-      isLoading,
+      disableFields,
       organisationId,
       pluginVersionId,
       pluginProperties,
@@ -115,7 +115,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
         <PluginFieldGenerator
           key={`${fieldDef.technical_name}`}
           definition={fieldDef}
-          disabled={isLoading}
+          disabled={disableFields}
           pluginVersionId={pluginVersionId}
           organisationId={organisationId}
         />
@@ -130,44 +130,44 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     const InputField: FieldCtor<FormInputProps> = Field;
     return (
       <div>
-      <ButtonStyleless
-        className="optional-section-title"
-        onClick={this.toggleAdvancedSection}
-      >
-        <McsIcon type="settings" />
-        <span className="step-title">
-          {intl.formatMessage(messages.advanced)}
-        </span>
-        <McsIcon type="chevron" />
-      </ButtonStyleless>
-      <div
-        className={
-          !this.state.displayAdvancedSection
-            ? 'hide-section'
-            : 'optional-section-content'
-        }
-      >
-        <InputField
-          name="plugin.technical_name"
-          component={FormInput}
-          formItemProps={{
-            label: intl.formatMessage(
-              messages.sectionTechnicalName,
-            ),
-          }}
-          inputProps={{
-            placeholder: intl.formatMessage(
-              messages.sectionTechnicalPlaceholder,
-            ),
-          }}
-          helpToolTipProps={{
-            title: intl.formatMessage(
-              messages.sectionTechnicalHelper,
-            ),
-          }}
-        />
-      </div>
-    </div>)
+        <ButtonStyleless
+          className="optional-section-title"
+          onClick={this.toggleAdvancedSection}
+        >
+          <McsIcon type="settings" />
+          <span className="step-title">
+            {intl.formatMessage(messages.advanced)}
+          </span>
+          <McsIcon type="chevron" />
+        </ButtonStyleless>
+        <div
+          className={
+            !this.state.displayAdvancedSection
+              ? 'hide-section'
+              : 'optional-section-content'
+          }
+        >
+          <InputField
+            name="plugin.technical_name"
+            component={FormInput}
+            formItemProps={{
+              label: intl.formatMessage(
+                messages.sectionTechnicalName,
+              ),
+            }}
+            inputProps={{
+              placeholder: intl.formatMessage(
+                messages.sectionTechnicalPlaceholder,
+              ),
+            }}
+            helpToolTipProps={{
+              title: intl.formatMessage(
+                messages.sectionTechnicalHelper,
+              ),
+            }}
+          />
+        </div>
+      </div>)
   }
 
   render() {
@@ -176,7 +176,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       formId,
       fieldValidators: { isRequired },
       intl: { formatMessage },
-      isLoading,
+      disableFields,
       showGeneralInformation,
       showTechnicalName
     } = this.props;
@@ -189,7 +189,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       },
       inputProps: {
         placeholder: formatMessage(messages.sectionGeneralPlaceholder),
-        disabled: isLoading,
+        disabled: disableFields,
       },
       helpToolTipProps: {
         title: formatMessage(messages.sectionGeneralHelper),
@@ -209,7 +209,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
           <button type="submit" style={{ display: 'none' }} />
           <Content
             className="mcs-content-container mcs-form-container ad-group-form"
-            // add ID?
+          // add ID?
           >
             {showGeneralInformation ? <div><div id={'general'}>
               <Row
@@ -232,7 +232,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
                 }
               </Row>
             </div>
-            <hr /></div> : null}
+              <hr /></div> : null}
             <div id={'properties'}>
               <Row
                 type="flex"

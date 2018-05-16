@@ -18,6 +18,7 @@ import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { parseSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
+import FeedCardList from './Feeds/FeedCardList'
 
 interface State {
   loading: boolean;
@@ -28,7 +29,7 @@ interface State {
   dashboard: {
     report: AudienceReport,
     isLoading: boolean
-  }
+  },
 }
 
 export interface AudienceSegmentDashboardProps {
@@ -53,7 +54,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       dashboard: {
         isLoading: true,
         report: []
-      }
+      },
     };
   }
 
@@ -102,6 +103,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   }
 
   fetchCounterView = (organisationId: string, filters: Filter[]) => {
+    this.setState({ counter: { ...this.state.counter, isLoading: true } })
     return ReportService.getAudienceSegmentReport(
       organisationId,
       new McsMoment('now'),
@@ -114,6 +116,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   }
 
   fetchDashboardView = (organisationId: string, from: McsMoment, to: McsMoment, filters: Filter[]) => {
+    this.setState({ dashboard: { ...this.state.dashboard, isLoading: true } })
     return ReportService.getAudienceSegmentReport(
       organisationId,
       from,
@@ -179,6 +182,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         <Card>
           <McsTabs items={items} />
         </Card>
+        <FeedCardList />
       </div>
     );
   }

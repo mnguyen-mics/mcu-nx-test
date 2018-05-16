@@ -1,5 +1,4 @@
 import * as React from 'react';
-import cuid from 'cuid';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -10,15 +9,10 @@ import { PluginProperty, PluginType } from '../../../../../models/Plugins';
 
 import messages from '../messages';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-import { AudienceExternalFeedResource, AudienceTagFeedResource, EditAudienceSegmentParam } from '../domain';
+import { EditAudienceSegmentParam } from '../domain';
+import { AudienceFeedFormModel, PluginAudienceFeedInterface } from './domain';
+import { Path } from '../../../../../components/ActionBar';
 
-
-type PluginAudienceFeedInterface = AudienceExternalFeedResource | AudienceTagFeedResource;
-
-export interface AudienceFeedFormModel {
-  plugin: PluginAudienceFeedInterface;
-  properties?: PluginProperty[];
-}
 
 interface CreateAudienceFeedState {
   edition: boolean;
@@ -33,6 +27,7 @@ export interface CreateAudienceFeedProps<T = any> {
   edition: boolean;
   type: PluginType;
   identifier: string | null;
+  breadcrumbPaths: Path[];
 }
 
 type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
@@ -42,7 +37,7 @@ type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
 class CreateAudienceFeed<T> extends React.Component<
   JoinedProps<T>,
   CreateAudienceFeedState
-> {
+  > {
   constructor(props: JoinedProps<T>) {
     super(props);
 
@@ -53,7 +48,7 @@ class CreateAudienceFeed<T> extends React.Component<
     };
   }
 
- 
+
 
   onSelect = (model: PluginAudienceFeedInterface) => {
     this.setState({
@@ -66,51 +61,23 @@ class CreateAudienceFeed<T> extends React.Component<
       onSave,
     } = this.props;
 
-    const {
-      edition
-    } = this.state;
-
-    let returnValue;
-
-    if (edition) {
-      const generatedAf = {
-        ...audienceFeed,
-        status: audienceFeed.status ? audienceFeed.status : 'PAUSED',
-        properties: properties
-      }
-      returnValue = {
-        key: this.props.identifier,
-        model: generatedAf
-      }
-    } else {
-      const generatedAf = {
-        artifact_id: audienceFeed.artifact_id,
-        group_id: audienceFeed.group_id,
-        status: "PAUSED",
-        properties: properties
-      }
-      returnValue = {
-        key: cuid(),
-        model: generatedAf
-      }
+    const returnValue = {
+      plugin: audienceFeed,
+      properties: properties
     }
+
     return onSave(returnValue as any)
   }
 
   render() {
-
+    const { breadcrumbPaths } = this.props;
     const { isLoading } = this.state;
-
-    const breadcrumbPaths = [
-      { name: this.state.initialValues && this.state.initialValues.plugin.artifact_id ? this.state.initialValues.plugin.artifact_id : 'Add a new Audience Feed' },
-    ];
-    
 
     return (
       <PluginContent
         pluginType={this.props.type}
-        listTitle={this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED' ?  messages.listTagTitle : messages.listExternalTitle}
-        listSubTitle={this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED' ?  messages.listTagSubTitle : messages.listExternalSubTitle}
+        listTitle={this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED' ? messages.listTagTitle : messages.listExternalTitle}
+        listSubTitle={this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED' ? messages.listTagSubTitle : messages.listExternalSubTitle}
         breadcrumbPaths={breadcrumbPaths}
         saveOrCreatePluginInstance={this.onSave}
         onClose={this.props.onClose}
@@ -119,6 +86,7 @@ class CreateAudienceFeed<T> extends React.Component<
         initialValue={this.state.initialValues}
         loading={isLoading}
         showGeneralInformation={false}
+        disableFields={this.state.initialValues && (this.state.initialValues.plugin.status === 'ACTIVE' || this.state.initialValues.plugin.status === 'PUBLISHED')}
       />
     );
   }

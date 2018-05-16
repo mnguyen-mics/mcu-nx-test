@@ -3,6 +3,103 @@
 .mcs-card-container {
   transition: width 0.5s, transition 0.5s;
   overflow: hidden;
+
+  &.compact {
+    padding: 0;
+  }
+
+  &.actionable-card {
+    .actions {
+      color: @primary-color;
+      text-align: right;
+    }
+  }
+
+  &.actionable-card {
+    .actions {
+      color: @info-color;
+    }
+  }
+
+  &.hoverable-card {
+    .hover {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      opacity: 0;
+      transition: all 100ms ease-in;
+      .icon {
+        margin-right: 0;
+      }
+    }
+  }
+  &.hoverable-card:hover {
+    .hover {
+      opacity: 1;
+     
+    }
+  }
+
+  &.feed-card {
+    height: 146px;
+    .top-menu {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      .icon {
+        margin-right: 0;
+      }
+    }
+    .wrapper {
+      padding: 10px;
+      .card-header {
+        display: inline-block;
+        width: 100%;
+        .title {
+          font-size: 1.2em;
+          font-weight: 500;
+          font-style: normal;
+          font-stretch: normal;
+          line-height: normal;
+          letter-spacing: normal;
+          color: @primary-color;
+          line-height: 45px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .image-title {
+          width: 45px;
+          height: 45px;
+          margin-right: 7px;
+          float: left;
+        }
+        .image-placeholder {
+          margin-right: 7px;
+          float: left;
+          font-style: normal;
+          vertical-align: baseline;
+          text-align: center;
+          text-transform: none;
+          line-height: 1;
+          width: 45px;
+          height: 45px;
+          border-radius: 2px;
+          background: linear-gradient(149deg, #dee4e8, #eceaea);
+          background-size: 400% 400%;
+          -webkit-animation: loadingAnimation 1s ease infinite;
+          -moz-animation: loadingAnimation 1s ease infinite;
+          -o-animation: loadingAnimation 1s ease infinite;
+          animation: loadingAnimation 1s ease infinite;
+        }
+      }
+      .content {
+        padding: 20px 0;
+      }
+    }
+    
+  }
+
   .mcs-content-element.container;
   margin-bottom: 40px;
 
