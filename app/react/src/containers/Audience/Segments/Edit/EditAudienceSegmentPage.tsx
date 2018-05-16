@@ -275,10 +275,18 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       .then(response => {
         hideSaveInProgress();
         if (!!response) {
-          const adGroupDashboardUrl = `/v2/o/${organisationId}/audience/segments/${
-            response.data.id
-            }`;
-          history.push(adGroupDashboardUrl);
+          let redirect = '';
+          if (response.data.type === 'USER_LIST' && !audienceSegmentFormData.audienceSegment.id) {
+            redirect = `/v2/o/${organisationId}/audience/segments/${
+              response.data.id
+              }/edit`;
+          } else {
+            redirect = `/v2/o/${organisationId}/audience/segments/${
+              response.data.id
+              }`;
+          }
+
+          history.push(redirect);
         }
       })
       .catch(err => {

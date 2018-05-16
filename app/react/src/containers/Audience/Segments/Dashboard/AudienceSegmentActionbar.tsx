@@ -213,33 +213,8 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
 
     const onRecalibrateClick = () => onCalibrationClick()
 
-    // const onRecalibrateClick = () => {
-    //   if (
-    //     segment &&
-    //     Object.keys(segment).length &&
-    //     (segment as AudienceSegmentResource).id
-    //   ) {
-    //     AudienceSegmentService.recalibrateAudienceLookAlike(
-    //       (segment as AudienceSegmentResource).id,
-    //     ).then(res => {
-    //       const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
-    //       loadAudienceSegmentSingleDataSource(
-    //         segmentId,
-    //         organisationId,
-    //         filter,
-    //       );
-    //     });
-    //   }
-    //   return Promise.resolve();
-    // };
-
     let actionButton = null;
-    //  (
-    //   <Button className="mcs-primary" type="primary" onClick={onClick}>
-    //     <McsIcon type="bolt" />
-    //     <FormattedMessage {...segmentMessages.lookAlikeCreation} />
-    //   </Button>
-    // );
+
 
     if (
       segment &&

@@ -80,11 +80,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     } = this.props;
 
     const editFeed = () => {
-      let formattedFeed = { ...feed };
-      delete formattedFeed.type;
+      const { type, ...formattedFeed } = feed;
       const nextBestAction = this.getNextBestAction();
+      let newFormattedFeed = formattedFeed;
       if (nextBestAction !== null) {
-        formattedFeed = {
+        newFormattedFeed = {
           ...formattedFeed,
           status: nextBestAction
         }
@@ -92,7 +92,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
       if (feed.type === 'EXTERNAL_FEED') {
         this.setState({ isLoading: true })
-        return AudienceSegmentService.updateAudienceExternalFeeds(segmentId, feed.id, formattedFeed)
+        return AudienceSegmentService.updateAudienceExternalFeeds(segmentId, feed.id, newFormattedFeed)
           .then(res => res.data)
           .then(res => {
             this.setState({ isLoading: false }, () => {
@@ -107,7 +107,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       }
       if (feed.type === 'TAG_FEED') {
         this.setState({ isLoading: true })
-        return AudienceSegmentService.updateAudienceTagFeeds(segmentId, feed.id, formattedFeed)
+        return AudienceSegmentService.updateAudienceTagFeeds(segmentId, feed.id, newFormattedFeed)
           .then(res => res.data)
           .then(res => {
             this.setState({ isLoading: false }, () => {
