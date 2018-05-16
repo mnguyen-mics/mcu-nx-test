@@ -279,6 +279,6 @@ export default defineMessages({
   },
   editionNotAllowed: {
     id: 'display.campaign.actionbar.edition.not.allowed',
-    defaultMessage: 'Edition on this campaign is deprecated.'
+    defaultMessage: 'Edition on this campaign is deprecated, you must use navigator legacy to edit this campaign.'
   }
 }) as { [key: string]: { id: string; defaultMessage: string } };

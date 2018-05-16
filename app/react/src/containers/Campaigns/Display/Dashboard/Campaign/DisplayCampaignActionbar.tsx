@@ -202,7 +202,7 @@ const fetchAllExportData = (
 class DisplayCampaignActionbar extends React.Component<
   JoinedProps,
   DisplayCampaignActionBarState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
     this.state = { exportIsRunning: false };
@@ -322,10 +322,10 @@ class DisplayCampaignActionbar extends React.Component<
           <FormattedMessage id="EXPORT" />
         </Button>
 
-        <Button onClick={this.editCampaign}>
+        {campaign.items.model_version === 'V2014_06' ? null : <Button onClick={this.editCampaign}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.editCampaign} />
-        </Button>
+        </Button>}
 
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
@@ -431,9 +431,9 @@ class DisplayCampaignActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="DUPLICATE">
+        {campaign.items.model_version === 'V2014_06' ? null : <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
-        </Menu.Item>
+        </Menu.Item>}
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archiveCampaign} />
         </Menu.Item>

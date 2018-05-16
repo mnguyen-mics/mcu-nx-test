@@ -40,7 +40,7 @@ import { FilterParams } from './DisplayCampaignsActionbar';
 
 interface DisplayCampaignsTableProps
   extends MapDispatchToProps,
-    MapStateToProps {
+  MapStateToProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingStatuses: boolean;
 }
@@ -179,7 +179,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
     } else {
       const editUrl = `/v2/o/${organisationId}/campaigns/display/${
         campaign.id
-      }/edit`;
+        }/edit`;
 
       history.push({
         pathname: editUrl,
@@ -194,11 +194,15 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         params: { organisationId },
       },
       history,
+      intl,
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
-
-    history.push({ pathname: editUrl, state: { campaignId: campaign.id } });
+    if (campaign.model_version === 'V2014_06') {
+      message.info(intl.formatMessage(messages.editionNotAllowed));
+    } else {
+      history.push({ pathname: editUrl, state: { campaignId: campaign.id } });
+    }
   };
 
   updateLocationSearch = (params: any) => {
@@ -469,8 +473,8 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
-    );
+        <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
+      );
   }
 }
 
