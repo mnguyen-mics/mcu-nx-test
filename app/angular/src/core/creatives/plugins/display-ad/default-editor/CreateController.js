@@ -15,6 +15,7 @@ define(['./module'], function (module) {
         {name: "Ividence template", groupId: "com.ividence", artifactId: "display-ad-renderer"},
         {name: "Quantum native JS Tag", groupId: "com.mediarithmics.creative.display", artifactId: "quantum-native-script"}        
       ];
+      
       // TODO handle multiple groups / artifacts renderers according to the organisation
       if ($scope.organisationId === "1147") {
         $scope.groupArtifacts.push({name: "AntVoice Ad-Renderer", groupId: "ant.mics.plugin.renderer", artifactId: "antvoice_handlebar_renderer"});

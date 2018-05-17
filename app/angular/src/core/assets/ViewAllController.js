@@ -11,6 +11,9 @@ define(['./module', 'clipboard', 'jquery'], function (module, clipboard, $) {
       $scope.adLayoutRendererVersions = [];
       $scope.listMode = true;
 
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/assets');
+
       $scope.pluploadOptions = {
         multi_selection: true,
         url: configuration.ADS_UPLOAD_URL + "?organisation_id=" + Session.getCurrentWorkspace().organisation_id,

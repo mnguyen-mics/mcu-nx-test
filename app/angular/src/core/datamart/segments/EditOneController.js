@@ -5,9 +5,9 @@ define(['./module'], function (module) {
 
 
   module.controller('core/datamart/segments/EditOneController', [
-    '$scope', '$log', 'Restangular', 'core/common/auth/Session', 'lodash', '$stateParams', '$location', '$uibModal','moment',
-    'core/datamart/queries/QueryContainer','$q','core/common/properties/PluginInstanceContainer',
-    function($scope, $log, Restangular, Session, _, $stateParams, $location, $uibModal, moment, QueryContainer,$q, PluginInstanceContainer) {
+    '$scope', '$log', 'Restangular', 'core/common/auth/Session', 'lodash', '$stateParams', '$location', '$uibModal', 'moment',
+    'core/datamart/queries/QueryContainer', '$q', 'core/common/properties/PluginInstanceContainer',
+    function ($scope, $log, Restangular, Session, _, $stateParams, $location, $uibModal, moment, QueryContainer, $q, PluginInstanceContainer) {
       var segmentId = $stateParams.segment_id;
       var type = $stateParams.type;
 
@@ -15,25 +15,25 @@ define(['./module'], function (module) {
 
       $scope.realTime = {
         active: false
-      };      
+      };
 
       if (!segmentId) {
-        if (type === 'USER_QUERY'){
+        if (type === 'USER_QUERY') {
           $scope.segment = {
-            type : type,
+            type: type,
             datamart_id: Session.getCurrentDatamartId(),
             evaluation_mode: 'PERIODIC',
             evaluation_period: 1,
             evaluation_period_unit: 'DAY',
-            segmentLifetime : "never",
+            segmentLifetime: "never",
           };
           var queryContainer = new QueryContainer(Session.getCurrentDatamartId());
           $scope.queryContainer = queryContainer;
         } else {
           $scope.segment = {
             datamart_id: Session.getCurrentDatamartId(),
-            type : type,
-            segmentLifetime : "never",
+            type: type,
+            segmentLifetime: "never",
           };
         }
 
@@ -41,26 +41,26 @@ define(['./module'], function (module) {
         Restangular.one('audience_segments', segmentId).get().then(function (segment) {
           $scope.segment = segment;
 
-          if (segment.type === 'USER_QUERY'){
+          if (segment.type === 'USER_QUERY') {
             $scope.realTime.active = segment.evaluation_mode === 'REAL_TIME';
             var queryContainer = new QueryContainer(Session.getCurrentDatamartId(), segment.query_id);
-            queryContainer.load().then(function sucess(loadedQueryContainer){
+            queryContainer.load().then(function sucess(loadedQueryContainer) {
               $scope.queryContainer = loadedQueryContainer;
             });
 
           }
 
-          if (segment.default_ttl){
+          if (segment.default_ttl) {
             $scope.segment.segmentLifetime = "expire";
             $scope.segment.segmentLifetimeNumber = moment.duration(segment.default_ttl, 'milliseconds').asDays();
             $scope.segment.segmentLifetimeUnit = 'days';
           } else {
             $scope.segment.segmentLifetime = "never";
           }
-          segment.all('external_feeds').getList().then(function(feeds) {
+          segment.all('external_feeds').getList().then(function (feeds) {
             var pluginContainers = [];
 
-            for(var i = 0; i<feeds.length; i++) {
+            for (var i = 0; i < feeds.length; i++) {
               var pic = new PluginInstanceContainer(feeds[i]);
               pic.loadProperties($q);
               pluginContainers.push(pic);
@@ -70,10 +70,10 @@ define(['./module'], function (module) {
 
           });
 
-          segment.all('tag_feeds').getList().then(function(feeds) {
+          segment.all('tag_feeds').getList().then(function (feeds) {
             var pluginContainers = [];
 
-            for(var i = 0; i<feeds.length; i++) {
+            for (var i = 0; i < feeds.length; i++) {
               var pic = new PluginInstanceContainer(feeds[i]);
               pic.loadProperties($q);
               pluginContainers.push(pic);
@@ -86,60 +86,60 @@ define(['./module'], function (module) {
         });
       }
 
-      var saveSegment = function(queryId){
+      var saveSegment = function (queryId) {
         var promise = null;
         //compute default_lifetime
-        if ($scope.segment.segmentLifetime === 'never'){
+        if ($scope.segment.segmentLifetime === 'never') {
           $scope.segment.default_ttl = null;
         } else {
-          $scope.segment.default_ttl = moment.duration($scope.segment.segmentLifetimeNumber,$scope.segment.segmentLifetimeUnit).asMilliseconds();
+          $scope.segment.default_ttl = moment.duration($scope.segment.segmentLifetimeNumber, $scope.segment.segmentLifetimeUnit).asMilliseconds();
         }
 
-        if ($scope.realTime.active){
+        if ($scope.realTime.active) {
           $scope.segment.evaluation_mode = 'REAL_TIME';
         } else if ($scope.segment.evaluation_mode !== 'LIVE') {
           $scope.segment.evaluation_mode = 'PERIODIC';
         }
 
-        if(segmentId) {
+        if (segmentId) {
           promise = $scope.segment.put();
         } else {
           $scope.segment.query_id = queryId;
-          promise = Restangular.all('audience_segments').post($scope.segment, {organisation_id: Session.getCurrentWorkspace().organisation_id});
+          promise = Restangular.all('audience_segments').post($scope.segment, { organisation_id: Session.getCurrentWorkspace().organisation_id });
         }
         function updateActivationStatusIfNeeded(promise, activation) {
-          if(activation && activation.value.id === undefined && activation.value.status === 'ACTIVE') {
-            return promise.then(function() {
-                $log.info("start activation", activation);
-                activation.value.status = 'ACTIVE';
-                return activation.save();
+          if (activation && activation.value.id === undefined && activation.value.status === 'ACTIVE') {
+            return promise.then(function () {
+              $log.info("start activation", activation);
+              activation.value.status = 'ACTIVE';
+              return activation.save();
             });
           } else {
             return promise;
           }
-          
+
         }
-        promise.then(function(audienceSegment) {
+        promise.then(function (audienceSegment) {
           var promises = [];
 
-          if ($scope.activations || $scope.tagActivations){
-            if($scope.activations.length) {
-              for(var i=0; i < $scope.activations.length; i++) {
+          if ($scope.activations || $scope.tagActivations) {
+            if ($scope.activations.length) {
+              for (var i = 0; i < $scope.activations.length; i++) {
                 var activation = $scope.activations[i];
                 var p = activation.save();
                 promises.push(updateActivationStatusIfNeeded(p, activation));
               }
             }
 
-            if($scope.tagActivations.length) {
-              for(var a=0; a < $scope.tagActivations.length; a++) {
+            if ($scope.tagActivations.length) {
+              for (var a = 0; a < $scope.tagActivations.length; a++) {
                 var tagActivation = $scope.tagActivations[a];
                 var pt = tagActivation.save();
                 promises.push(updateActivationStatusIfNeeded(pt, tagActivation));
               }
             }
 
-            return $q.all(promises).then(function(){
+            return $q.all(promises).then(function () {
               return audienceSegment;
             });
 
@@ -150,11 +150,11 @@ define(['./module'], function (module) {
         }, function failure(e) {
           $scope.error = 'There was an error while saving segment';
           $log.info("failure " + e);
-        }).then(function success(audienceSegment){
+        }).then(function success(audienceSegment) {
           $log.info("success");
           var organisationId = Session.getCurrentWorkspace().organisation_id;
-          $location.path(Session.getWorkspacePrefixUrl() + "/datamart/segments/" + audienceSegment.type + "/" + audienceSegment.id + "/report");
-        }, function failure(){
+          $location.path("/v2/o/" + organisationId + "/audience/segments/" + audienceSegment.id);
+        }, function failure() {
           $scope.error = 'There was an error while saving segment';
           $log.info("failure");
         });
@@ -164,24 +164,24 @@ define(['./module'], function (module) {
 
       $scope.$on("mics-audience-segment:external-feed-added", function (event, activation) {
         $log.info("new external feed added : ", activation);
-        if (($scope.activations).indexOf(activation) === -1){
+        if (($scope.activations).indexOf(activation) === -1) {
           $scope.activations.push(activation);
         }
       });
 
       $scope.$on("mics-audience-segment:tag-feed-added", function (event, activation) {
         $log.info("new tag feed added : ", activation);
-        if (($scope.tagActivations).indexOf(activation) === -1){
+        if (($scope.tagActivations).indexOf(activation) === -1) {
           $scope.tagActivations.push(activation);
         }
       });
 
       $scope.$on("mics-audience-segment:goal-selected", function (event, selectedGoal) {
-        var existingGoal = !!_.find($scope.goals, function(goal){
+        var existingGoal = !!_.find($scope.goals, function (goal) {
           return goal.id === selectedGoal.id;
         });
 
-        if (!existingGoal){
+        if (!existingGoal) {
           $scope.goals.push(selectedGoal);
         }
       });
@@ -193,11 +193,11 @@ define(['./module'], function (module) {
         newScope.activation = new PluginInstanceContainer({}, endpoint);
 
         $uibModal.open({
-            templateUrl: 'angular/src/core/datamart/segments/add-activation.html',
-            scope : newScope,
-            backdrop : 'static',
-            controller: 'core/datamart/segments/AddActivationController'
-          });
+          templateUrl: 'angular/src/core/datamart/segments/add-activation.html',
+          scope: newScope,
+          backdrop: 'static',
+          controller: 'core/datamart/segments/AddActivationController'
+        });
       };
 
       $scope.addTagActivation = function () {
@@ -207,11 +207,11 @@ define(['./module'], function (module) {
         newScope.activation = new PluginInstanceContainer({}, endpoint);
 
         $uibModal.open({
-            templateUrl: 'angular/src/core/datamart/segments/add-activation.html',
-            scope : newScope,
-            backdrop : 'static',
-            controller: 'core/datamart/segments/AddTagActivationController'
-          });
+          templateUrl: 'angular/src/core/datamart/segments/add-activation.html',
+          scope: newScope,
+          backdrop: 'static',
+          controller: 'core/datamart/segments/AddTagActivationController'
+        });
       };
 
       $scope.editQuery = function () {
@@ -220,13 +220,13 @@ define(['./module'], function (module) {
         newScope.enableSelectedValues = true;
         $uibModal.open({
           templateUrl: 'angular/src/core/datamart/queries/edit-query.html',
-          scope : newScope,
-          backdrop : 'static',
+          scope: newScope,
+          backdrop: 'static',
           controller: 'core/datamart/queries/EditQueryController',
           windowClass: 'edit-query-popin'
-        }).result.then(function ok(queryContainerUpdate){
+        }).result.then(function ok(queryContainerUpdate) {
           $scope.queryContainer = queryContainerUpdate;
-        }, function cancel(){
+        }, function cancel() {
           $log.debug("Edit Query model dismissed");
         });
       };
@@ -237,8 +237,8 @@ define(['./module'], function (module) {
 
         $uibModal.open({
           templateUrl: 'angular/src/core/datamart/segments/add-activation.html',
-          scope : newScope,
-          backdrop : 'static',
+          scope: newScope,
+          backdrop: 'static',
           controller: 'core/datamart/segments/AddActivationController',
           size: "lg"
         });
@@ -261,8 +261,8 @@ define(['./module'], function (module) {
 
         $uibModal.open({
           templateUrl: 'angular/src/core/datamart/segments/add-activation.html',
-          scope : newScope,
-          backdrop : 'static',
+          scope: newScope,
+          backdrop: 'static',
           controller: 'core/datamart/segments/AddTagActivationController',
           size: "lg"
         });
@@ -281,22 +281,22 @@ define(['./module'], function (module) {
 
       $scope.removeGoal = function (goal) {
         var i = $scope.goals.indexOf(goal);
-        $scope.goals.splice(i,1);
+        $scope.goals.splice(i, 1);
       };
 
       $scope.removeActivation = function (activation) {
         var i = $scope.activations.indexOf(activation);
-        $scope.activations.splice(i,1);
+        $scope.activations.splice(i, 1);
       };
 
       $scope.removeTagActivation = function (activation) {
         var i = $scope.tagActivations.indexOf(activation);
-        $scope.tagActivations.splice(i,1);
+        $scope.tagActivations.splice(i, 1);
       };
 
       $scope.cancel = function () {
-        if ($scope.segment.id){
-          $location.path(Session.getWorkspacePrefixUrl() + "/datamart/segments/" +  $scope.segment.type + "/" + $scope.segment.id + "/report");
+        if ($scope.segment.id) {
+          $location.path(Session.getWorkspacePrefixUrl() + "/datamart/segments/" + $scope.segment.type + "/" + $scope.segment.id + "/report");
         } else {
           $location.path(Session.getWorkspacePrefixUrl() + "/datamart/segments");
         }
@@ -304,11 +304,11 @@ define(['./module'], function (module) {
       };
 
       $scope.next = function () {
-        if ($scope.segment.type === 'USER_QUERY'){
-          $scope.queryContainer.saveOrUpdate().then(function sucess(updateQueryContainer){
+        if ($scope.segment.type === 'USER_QUERY') {
+          $scope.queryContainer.saveOrUpdate().then(function sucess(updateQueryContainer) {
             saveSegment(updateQueryContainer.id);
-          }, function error(reason){
-            if (reason.data && reason.data.error_id){
+          }, function error(reason) {
+            if (reason.data && reason.data.error_id) {
               $scope.error = "An error occured while saving query , errorId: " + reason.data.error_id;
             } else {
               $scope.error = "An error occured while saving query";

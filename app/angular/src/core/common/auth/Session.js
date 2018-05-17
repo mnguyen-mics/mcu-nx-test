@@ -20,8 +20,8 @@ define(['./module'], function (module) {
   };
 
   module.factory('core/common/auth/Session', [
-    '$q', '$location', '$log', '$rootScope', 'Restangular', 'core/login/constants',  'core/configuration', 'core/common/auth/AuthenticationService', 'async','lodash',
-    function ($q, $location, $log, $rootScope, Restangular, LoginConstants, coreConfig, AuthenticationService, async, _) {
+    '$q', '$location', '$log', '$rootScope', 'Restangular', 'core/login/constants', 'core/configuration', 'core/common/auth/AuthenticationService', 'async', 'lodash', '$document', '$window',
+    function ($q, $location, $log, $rootScope, Restangular, LoginConstants, coreConfig, AuthenticationService, async, _, $document, $window) {
       var service = {};
       service.initialized = false;
 
@@ -46,6 +46,12 @@ define(['./module'], function (module) {
         }
         return {organisation_id: organisationId, datamart_id: datamartId};
       };
+
+      // function log() {
+      //   console.log('Angular ack event CONNECTED_USER_SUCCESS');
+      // }
+
+      // $document.addEventListener('CONNECTED_USER_SUCCESS', log(), false);
 
       service.init = function (workspaceString) {
         var workspaceId = service.parseWorkspaceId(workspaceString);
@@ -99,6 +105,9 @@ define(['./module'], function (module) {
                 $log.debug("Fetching organisation : ", organisationId);
                 service.updateWorkspace(organisationId, datamartId).then(function () {
                   self.initialized = true;
+                  var event = new Event(LoginConstants.LOGIN_SUCCESS);
+                  $window.dispatchEvent(event);
+                  $rootScope.$broadcast(LoginConstants.LOGIN_SUCCESS);
                   deferred.resolve();
                 });
               } else {
@@ -115,6 +124,9 @@ define(['./module'], function (module) {
                 }
                 $log.debug("Use default : ", self.currentWorkspace);
                 self.initialized = true;
+                var event = new Event(LoginConstants.LOGIN_SUCCESS);
+                $window.dispatchEvent(event);
+                $rootScope.$broadcast(LoginConstants.LOGIN_SUCCESS);
                 deferred.resolve();
               }
             }
@@ -131,7 +143,7 @@ define(['./module'], function (module) {
           $log.debug("change current workspace to ", workspace);
           this.currentWorkspace = workspace;
 
-          document.title = workspace.organisation_name + " - " + workspace.datamart_name;
+          // document.title = workspace.organisation_name + " - " + workspace.datamart_name;
           $log.debug("Set page title to :", document.title);
           $rootScope.$broadcast(LoginConstants.WORKSPACE_CHANGED);
         }
@@ -174,6 +186,12 @@ define(['./module'], function (module) {
 
       service.getWorkspacePrefixUrl = function () {
         return "/o"+ service.getCurrentWorkspace().organisation_id + "d"+service.getCurrentWorkspace().datamart_id;
+      };
+
+      service.getV2WorkspacePrefixUrl = function () {
+        var organisationPart = '/o/' + service.getCurrentWorkspace().organisation_id;
+        // var datamartPart = service.getCurrentWorkspace().datamart_id ? '/d/' + service.getCurrentWorkspace().datamart_id : '';
+        return 'v2' + organisationPart; // + datamartPart;
       };
 
       service.getCurrentDatamartId = function () {

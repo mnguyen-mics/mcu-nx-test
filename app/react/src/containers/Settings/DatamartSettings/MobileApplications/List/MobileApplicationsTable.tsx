@@ -1,0 +1,129 @@
+import * as React from 'react';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import moment from 'moment';
+
+import {
+  EmptyTableView,
+  TableViewFilters,
+} from '../../../../../components/TableView';
+import messages from './messages';
+import { MobileApplicationResource } from '../../../../../models/settings/settings';
+import { Filter } from '../../Common/domain';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { compose } from 'recompose';
+
+export interface MobileApplicationsTableProps {
+  isFetchingMobileApplications: boolean;
+  dataSource: MobileApplicationResource[];
+  totalMobileApplications: number;
+  noMobileApplicationYet: boolean;
+  onFilterChange: (a: Partial<Filter>) => void;
+  onArchiveMobileApplication: (a: MobileApplicationResource) => void;
+  onEditMobileApplication: (a: MobileApplicationResource) => void;
+  filter: Filter;
+}
+
+type Props = MobileApplicationsTableProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
+
+class MobileApplicationsTable extends React.Component<Props> {
+  render() {
+    const {
+      intl: { formatMessage },
+      filter,
+      totalMobileApplications,
+      onFilterChange,
+      onEditMobileApplication,
+      onArchiveMobileApplication,
+      noMobileApplicationYet,
+      isFetchingMobileApplications,
+      dataSource,
+      match: { params: { organisationId } }
+    } = this.props;
+
+    const pagination = {
+      current: filter.currentPage,
+      pageSize: filter.pageSize,
+      total: totalMobileApplications,
+      onChange: (page: number, size: number) =>
+        onFilterChange({
+          currentPage: page,
+          pageSize: size,
+        }),
+      onShowSizeChange: (current: number, size: number) =>
+        onFilterChange({
+          pageSize: size,
+          currentPage: 1,
+        }),
+    };
+
+    const dataColumns = [
+      {
+        intlMessage: messages.mobileApplicationName,
+        key: 'name',
+        isHideable: false,
+        render: (text: string, record: MobileApplicationResource) => <Link to={
+          `/v2/o/${organisationId}/settings/datamart/mobile_application/${record.id}/edit`
+        }>
+          {text}
+        </Link>
+      },
+      {
+        intlMessage: messages.mobileApplicationToken,
+        key: 'token',
+        isVisibleByDefault: true,
+        isHideable: true,
+      },
+      {
+        intlMessage: messages.mobileApplicationCreationDate,
+        key: 'creation_ts',
+        isVisibleByDefault: true,
+        isHideable: true,
+        render: (ts: string) => moment(ts).format('DD/MM/YYYY'),
+      },
+    ];
+
+    const actionColumns = [
+      {
+        key: 'action',
+        actions: [
+          {
+            intlMessage: messages.editMobileApplication,
+            callback: onEditMobileApplication,
+          },
+          {
+            intlMessage: messages.archiveMobileApplication,
+            callback: onArchiveMobileApplication,
+          },
+        ],
+      },
+    ];
+
+    const searchOptions = {
+      placeholder: formatMessage(messages.searchPlaceholder),
+      onSearch: (value: string) =>
+        onFilterChange({
+          name: value,
+        }),
+      defaultValue: filter.name,
+    };
+
+    return noMobileApplicationYet ? (
+      <EmptyTableView
+        iconType="settings"
+        intlMessage={messages.emptyMobileApplications}
+        className="mcs-table-view-empty mcs-empty-card"
+      />
+    ) : (
+      <TableViewFilters
+        columns={dataColumns}
+        actionsColumnsDefinition={actionColumns}
+        searchOptions={searchOptions}
+        dataSource={dataSource}
+        loading={isFetchingMobileApplications}
+        pagination={pagination}
+      />
+    );
+  }
+}
+
+export default compose<Props, MobileApplicationsTableProps>(injectIntl, withRouter)(MobileApplicationsTable);

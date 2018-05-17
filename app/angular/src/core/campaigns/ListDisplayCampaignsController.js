@@ -56,6 +56,9 @@ define(['./module'], function (module) {
         params = {administration_id: currentWorkspace.organisation_id, max_results: 2000, campaign_type: "DISPLAY"};
       }
 
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/display');
+
       Restangular.all('display_campaigns').getList(params).then(function (displayCampaigns) {
         $scope.displayCampaigns = displayCampaigns;
       });

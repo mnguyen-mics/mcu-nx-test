@@ -2,9 +2,9 @@ define(['./module'], function (module) {
   'use strict';
 
   module.controller('core/settings/mobileapplications/EditOneController', [
-    '$scope', '$log', '$location', '$state', '$stateParams', '$uibModal', '$filter', '$q', 'Restangular', 'core/common/auth/Session', 'lodash',
+    '$scope', '$rootScope', '$log', '$location', '$state', '$stateParams', '$uibModal', '$filter', '$q', 'Restangular', 'core/common/auth/Session', 'lodash',
     'core/common/ErrorService', 'core/common/WarningService',
-    function ($scope, $log, $location, $state, $stateParams, $uibModal, $filter, $q, Restangular, Session, _, ErrorService, WarningService) {
+    function ($scope, $rootScope, $log, $location, $state, $stateParams, $uibModal, $filter, $q, Restangular, Session, _, ErrorService, WarningService) {
       var datamartId = Session.getCurrentDatamartId();
       var organisationId = Session.getCurrentWorkspace().organisation_id;
       $scope.organisationId = organisationId;
@@ -52,7 +52,7 @@ define(['./module'], function (module) {
           Restangular.all("datamarts/" + datamartId + "/mobile_applications/" + $stateParams.appId).customPUT($scope.app, undefined, {organisation_id: organisationId})
             .catch(handleAppError)
         ])).then(function () {
-          $location.path(Session.getWorkspacePrefixUrl() + "/settings/mobileapplications");
+          $location.path($rootScope.currentV2WorkspaceId + "/settings").search('tab', 'mobile_applications');
         }).catch(function (e) {
           ErrorService.showErrorModal(e);
         });
@@ -65,7 +65,7 @@ define(['./module'], function (module) {
       // ---------------- APP ----------------
 
       $scope.cancel = function () {
-        $location.path(Session.getWorkspacePrefixUrl() + "/settings/mobileapplications");
+        $location.path($rootScope.currentV2WorkspaceId + "/settings").search('tab', 'mobile_applications');
       };
 
       $scope.done = function () {
@@ -79,7 +79,7 @@ define(['./module'], function (module) {
           }
         } else {
           Restangular.all("datamarts/" + datamartId + "/mobile_applications").post($scope.app).then(function (app) {
-            $location.path(Session.getWorkspacePrefixUrl() + "/settings/mobileapplications");
+            $location.path($rootScope.currentV2WorkspaceId + "/settings").search('tab', 'mobile_applications');
           }, handleAppError);
         }
       };

@@ -1,7 +1,7 @@
-import api from './api';
+import apiRequest from './apiRequest';
 import logoutListener from './logoutListener';
 
 export {
-    api,
-    logoutListener
+  apiRequest,
+  logoutListener,
 };

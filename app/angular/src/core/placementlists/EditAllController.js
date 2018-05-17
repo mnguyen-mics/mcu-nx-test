@@ -9,6 +9,9 @@ define(['./module'], function (module) {
       Restangular.all('placement_lists').getList({organisation_id: organisationId}).then(function (placementLists) {
         $scope.placementLists = placementLists;
       });
+      
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/placements');
 
       $scope.organisationId = organisationId;
 

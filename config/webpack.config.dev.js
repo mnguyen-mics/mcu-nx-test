@@ -1,6 +1,6 @@
-const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const paths = require('./paths');
 const configFactory = require('./webpack.config');
@@ -8,23 +8,29 @@ const configFactory = require('./webpack.config');
 const customFontPath = 'app/react/src/assets/fonts/';
 
 const devConfig = {
+  mode: 'development',
 
   devtool: 'eval',
 
   output: {
     filename: '[name].js',
     path: paths.appPath,
-    publicPath: paths.publicPath
+    publicPath: paths.publicPath,
+  },
+
+  node: {
+    fs: 'empty',
   },
 
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
+    // not working till we remove grunt-webpack
+    // new webpack.HotModuleReplacementPlugin(),
+    new HardSourceWebpackPlugin(),
     new HtmlWebpackPlugin({
       inject: true,
-      template: paths.appHtml
+      template: paths.appHtml,
     }),
-  ]
-
+  ],
 };
 
 module.exports = merge(configFactory(false, customFontPath, false), devConfig);

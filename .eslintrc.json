@@ -1,5 +1,9 @@
 {
     "extends": "airbnb",
+    "globals": {
+      "window": true,
+      "Event": true
+    },
     "plugins": [
         "react",
         "import"
@@ -22,6 +26,8 @@
             "off"
         ],
         "no-class-assign": "off",
+        "object-shorthand": "off",
+        "import/no-unresolved": "off",
         "import/prefer-default-export": "off",
         "import/no-extraneous-dependencies": [
             "error",
