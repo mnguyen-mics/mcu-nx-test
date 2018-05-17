@@ -28,6 +28,9 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { ReportView } from '../../../../../models/ReportView';
+import GoalService from '../../../../../services/GoalService';
+import { GoalsCampaignRessource } from './domain';
+import { Index } from '../../../../../utils';
 
 interface DisplayCampaignActionBarProps {
   campaign: {
@@ -80,6 +83,39 @@ const fetchAllExportData = (
     'cpa',
   ];
 
+  const getGoalsData = () =>
+    DisplayCampaignService.getGoals(campaignId)
+      .then(res => {
+        const promises = res.data.map(goal => {
+          return GoalService.getAttributionModels(goal.goal_id).then(
+            attribution => {
+              const goalCampaign: GoalsCampaignRessource = { ...goal, attribution: attribution.data };
+              return goalCampaign;
+            },
+          );
+        });
+        return Promise.all(promises);
+      })
+      .then(res => {
+        return Promise.all(res.map(goal => {
+          const goalAttributionPerformance: Array<Promise<Index<any>>> = []
+          goal.attribution.forEach(attribution => {
+            const filters = [`campaign_id==${campaignId}`, `goal_id==${goal.goal_id}`, `attribution_model_id==${attribution.id}`];
+            const myPromise = ReportService.getConversionAttributionPerformance(
+              organisationId,
+              filter.from,
+              filter.to,
+              filters,
+              ['day'],
+              undefined,
+            ).then(report => normalizeReportView(report.data.report_view))
+              .then(report => ({ ...attribution, perf: report }))
+            goalAttributionPerformance.push(myPromise)
+          })
+          return Promise.all(goalAttributionPerformance).then(attribution => ({ ...goal, attribution }))
+        }))
+      });
+
   const apiResults = Promise.all([
     ReportService.getMediaDeliveryReport(
       organisationId,
@@ -117,25 +153,20 @@ const fetchAllExportData = (
       dimensions,
       defaultMetrics,
     ),
-    DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, {
-      view: 'deep',
-    }),
+    getGoalsData(),
+    DisplayCampaignService.getCampaignDisplayViewDeep(
+      campaignId,
+      { view: 'deep' },
+    ),
   ]);
 
   return apiResults.then(responses => {
     const mediaData = normalizeReportView(responses[0].data.report_view);
-    const adPerformanceById = formatReportView(
-      responses[1].data.report_view,
-      'message_id',
-    );
-    const adGroupPerformanceById = formatReportView(
-      responses[2].data.report_view,
-      'sub_campaign_id',
-    );
-    const overallDisplayData = normalizeReportView(
-      responses[3].data.report_view,
-    );
-    const data = responses[4].data;
+    const adPerformanceById = formatReportView(responses[1].data.report_view, 'message_id');
+    const adGroupPerformanceById = formatReportView(responses[2].data.report_view, 'sub_campaign_id');
+    const overallDisplayData = normalizeReportView(responses[3].data.report_view);
+    const goalData = responses[4];
+    const data = responses[5].data;
     const campaign = {
       ...data,
     };
@@ -195,6 +226,7 @@ const fetchAllExportData = (
       },
       overallDisplayData: overallDisplayData,
       displayData: campaign,
+      goalData: goalData
     };
   });
 };
@@ -218,37 +250,30 @@ class DisplayCampaignActionbar extends React.Component<
 
     this.setState({ exportIsRunning: true });
 
-    const filter = parseSearch<DateSearchSettings>(
-      this.props.location.search,
-      DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<DateSearchSettings>(this.props.location.search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
-    const hideExportLoadingMsg = message.loading(
-      this.props.translations.EXPORT_IN_PROGRESS,
-      0,
-    );
+    const hideExportLoadingMsg = message.loading(this.props.translations.EXPORT_IN_PROGRESS, 0);
 
-    fetchAllExportData(organisationId, campaignId, filter)
-      .then(exportData => {
-        ExportService.exportDisplayCampaignDashboard(
-          organisationId,
-          exportData.displayData,
-          exportData.overallDisplayData,
-          exportData.mediaData,
-          exportData.adGroupData.items,
-          exportData.adData.items,
-          filter,
-          formatMessage,
-        );
-        this.setState({ exportIsRunning: false });
-        hideExportLoadingMsg();
-      })
-      .catch(err => {
-        log.error(err);
-        this.setState({ exportIsRunning: false });
-        hideExportLoadingMsg();
-      });
-  };
+    fetchAllExportData(organisationId, campaignId, filter).then(exportData => {
+      ExportService.exportDisplayCampaignDashboard(
+        organisationId,
+        exportData.displayData,
+        exportData.overallDisplayData,
+        exportData.mediaData,
+        exportData.adGroupData.items,
+        exportData.adData.items,
+        exportData.goalData,
+        filter,
+        formatMessage,
+      );
+      this.setState({ exportIsRunning: false });
+      hideExportLoadingMsg();
+    }).catch((err) => {
+      log.error(err);
+      this.setState({ exportIsRunning: false });
+      hideExportLoadingMsg();
+    });
+  }
 
   exportIsRunningModal = (e: React.FormEvent<HTMLButtonElement>) => {
     const {

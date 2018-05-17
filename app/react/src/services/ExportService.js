@@ -61,7 +61,12 @@ function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
  * @returns {*}
  */
 function addSheet(tabTitle, data, headers, filter, formatMessage, title, otherInfos) {
-  const formattedTabTitle = formatMessage(tabTitle);
+  let formattedTabTitle;
+  if (typeof tabTitle === 'string') {
+    formattedTabTitle = tabTitle;
+  } else {
+    formattedTabTitle = formatMessage(tabTitle);
+  }
   const sheetTitle = title ? title : tabTitle;
   if (data && data.length) {
     const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage, otherInfos);
@@ -220,7 +225,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
 /**
  * Display Campaign Dashboard
  */
-const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, mediasData, adGroupsData, adsData, filter, formatMessage) => {
+const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, mediasData, adGroupsData, adsData, goalData, filter, formatMessage) => {
 
   const campaignPageTitle = `${campaign.name} - ${campaign.id}`;
   const hourlyPrecision = (datenum(filter.to.raw()) - datenum(filter.from.raw())) <= 1;
@@ -262,6 +267,12 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
     { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
   ];
 
+  const goalHeaders = [
+    dateHeader,
+    { name: 'weighted_conversions', translation: formatMessage(displayCampaignMessages.weightedConversion) },
+    { name: 'interaction_to_conversion_duration', translation: formatMessage(displayCampaignMessages.interactionToConversionDuration) },
+  ];
+
   const otherInfos = campaign ? campaign : null;
   const title = '';
 
@@ -271,11 +282,24 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
     to: filter.to.toMoment().format('YYYY-MM-DD'),
   };
 
+  const buildGoalSheets = () => {
+    const goalSheets = [];
+    goalData.forEach(goal => {
+      goal.attribution.forEach(attribution => {
+        goalSheets.push(
+          addSheet(`${goal.goal_name} - ${attribution.attribution_model_name}`, attribution.perf, goalHeaders, exportFilter, formatMessage, `${goal.goal_name} - ${attribution.attribution_model_name}`, otherInfos)
+        );
+      });
+    });
+    return goalSheets;
+  };
+
   const sheets = [
     addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, exportFilter, formatMessage, campaignPageTitle, title, otherInfos),
     addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, exportFilter, formatMessage, title, otherInfos),
     addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, exportFilter, formatMessage, title, otherInfos),
-    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, exportFilter, formatMessage, title, otherInfos)
+    addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, exportFilter, formatMessage, title, otherInfos),
+    ...buildGoalSheets()
   ].filter(x => x);
 
   if (sheets.length) {
