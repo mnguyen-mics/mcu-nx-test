@@ -12,7 +12,7 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-import { Layout, Button, Modal, message } from 'antd';
+import { Layout, Button, Modal, message, Input, Alert } from 'antd';
 import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
@@ -34,6 +34,7 @@ const initialState = {
   total: 0,
   isModalVisible: false,
   saving: false,
+  name: ''
 };
 
 const messages = defineMessages({
@@ -67,11 +68,11 @@ const messages = defineMessages({
   },
   deleteApiToken: {
     id: 'settings.profile.apitoken.list.delete.button',
-    defaultMessage: 'Delete',
+    defaultMessage: 'Revoke',
   },
   deleteApiTokenModalTitle: {
     id: 'settings.profile.apitoken.delete.modal.title',
-    defaultMessage: 'Are you sure to delete this Api Token ?',
+    defaultMessage: 'Are you sure to revoke this Api Token ?',
   },
   nextButtonApiTokenModal: {
     id: 'settings.profile.apitoken.modal.next.buttin',
@@ -80,11 +81,15 @@ const messages = defineMessages({
   deleteApiTokenModalContent: {
     id: 'settings.profile.apitoken.delete.modal.content',
     defaultMessage:
-      'If you delete this Api Token, you will not be able to get it back.',
+      'If you revoke this Api Token, you will not be able to get it back and any application using this token will cease to work.',
+  },
+  dangerZone: {
+    id: 'settings.profile.apitoken.dangerzone',
+    defaultMessage: 'DANGER ZONE!!'
   },
   deleteApiTokenModalOkText: {
     id: 'settings.profile.apitoken.delete.modal.ok.text',
-    defaultMessage: 'Delete',
+    defaultMessage: 'Revoke Anyway',
   },
   createApiTokenModalTitle: {
     id: 'settings.profile.apitoken.create.modal.title',
@@ -93,7 +98,7 @@ const messages = defineMessages({
   createApiTokenModalContent: {
     id: 'settings.profile.apitoken.create.modal.content',
     defaultMessage:
-      'By clicking on the create button, you will get your newly created Api Token. Make sure to copy it right away since it is the only time you will be able to see it.',
+      'Give your Api Token a name. Be aware that you can only see once an API token. Make sure to copy it right away as you will not be able to view it afterwards',
   },
   createApiTokenModalOkText: {
     id: 'settings.profile.apitoken.create.modal.ok.text',
@@ -106,7 +111,7 @@ const messages = defineMessages({
   apiTokenModalContent: {
     id: 'settings.profile.apitoken.modal.content',
     defaultMessage:
-      'Copy this token. You will not be able to get it back after.',
+      'MAKE SURE TO COPY THIS TOKEN!! You will not be able to get it back afterwards, click on the token to copy it to your clipboard.',
   },
   ApiTokenModalCancelText: {
     id: 'settings.profile.apitoken.delete.modal.cancel.text',
@@ -114,7 +119,7 @@ const messages = defineMessages({
   },
   apiTokenSuccessfullyDeleted: {
     id: 'settings.profile.apitoken.successfully.deleted',
-    defaultMessage: 'Api Token successfully deleted.',
+    defaultMessage: 'Api Token successfully revoked.',
   },
   apiTokenSuccessfullySaved: {
     id: 'settings.profile.apitoken.successfully.saved',
@@ -132,6 +137,7 @@ interface State {
   total: number;
   isModalVisible: boolean;
   saving: boolean;
+  name: string;
 }
 
 interface MapStateToProps {
@@ -195,10 +201,17 @@ class ApiTokenListPage extends React.Component<Props, State> {
     } = this.props;
     Modal.confirm({
       title: intl.formatMessage(messages.deleteApiTokenModalTitle),
-      content: intl.formatMessage(messages.deleteApiTokenModalContent),
+      content: (
+        <div>
+          <Alert message={intl.formatMessage(messages.dangerZone)} type="error" />
+          <br />
+          <p>{intl.formatMessage(messages.deleteApiTokenModalContent)}</p>
+        </div>
+      ),
       okText: intl.formatMessage(messages.deleteApiTokenModalOkText),
       cancelText: intl.formatMessage(messages.ApiTokenModalCancelText),
       onOk: () => {
+        this.setState({ loading: true })
         ApiTokenService.deleteApiToken(
           apiToken.id,
           connectedUser.id,
@@ -227,6 +240,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
   handleModal = () => {
     this.setState({
       isModalVisible: !this.state.isModalVisible,
+      name: ''
     });
   };
 
@@ -260,7 +274,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
           <Link
             to={`/v2/o/${organisationId}/settings/account/api_tokens/${
               record.id
-            }/edit`}
+              }/edit`}
           >
             {value}
           </Link>
@@ -271,6 +285,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         key: 'value',
         isVisibleByDefault: true,
         isHideable: false,
+        render: (value: string) => <div>{`${value.substring(0, 25)}...`}</div>
       },
       {
         intlMessage: messages.apiTokenCreationDate,
@@ -307,14 +322,13 @@ class ApiTokenListPage extends React.Component<Props, State> {
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-      iconType: 'settings',
-      intlMessage: messages.emptyApiTokenList,
-    };
+        iconType: 'settings',
+        intlMessage: messages.emptyApiTokenList,
+      };
 
     const apiTokenModal = (apiTokenData: ApiToken) => {
       const {
         intl: { formatMessage },
-        history,
       } = this.props;
 
       const handleOnClick = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -325,8 +339,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         width: '600px',
         content: (
           <div>
-            <b>{formatMessage(messages.apiTokenModalContent)}</b>
-            <br />
+            <Alert message={formatMessage(messages.apiTokenModalContent)} type="warning" />
             <br />
             <CopyToClipboard onCopy={handleOnClick}>
               <div style={{ cursor: 'pointer' }}>
@@ -340,11 +353,11 @@ class ApiTokenListPage extends React.Component<Props, State> {
         okText: formatMessage(messages.nextButtonApiTokenModal),
         onOk: () => {
           message.success(formatMessage(messages.apiTokenSuccessfullySaved), 5);
-          history.push(
-            `/v2/o/${organisationId}/settings/account/api_tokens/${
-              apiTokenData.id
-            }/edit`,
-          );
+          const filters = {
+            currentPage: 1,
+            pageSize: 10,
+          };
+          this.fetchApiTokens(organisationId, filters)
         },
       });
     };
@@ -355,7 +368,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         saving: true,
       });
 
-      ApiTokenService.createApiToken(connectedUser.id, organisationId)
+      ApiTokenService.createApiToken(connectedUser.id, organisationId, { name: this.state.name })
         .then(resp => resp.data)
         .then(apiTokenData => {
           this.setState({
@@ -391,6 +404,8 @@ class ApiTokenListPage extends React.Component<Props, State> {
       </div>
     );
 
+    const changeName = (e: React.ChangeEvent<HTMLInputElement>) => this.setState({ name: e.target.value })
+
     return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
@@ -416,6 +431,8 @@ class ApiTokenListPage extends React.Component<Props, State> {
           okText={intl.formatMessage(messages.createApiTokenModalOkText)}
         >
           <p>{intl.formatMessage(messages.createApiTokenModalContent)}</p>
+          <br />
+          <Input onChange={changeName} placeholder={intl.formatMessage(messages.apiTokenName)} />,
         </Modal>
       </div>
     );
