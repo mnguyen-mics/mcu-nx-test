@@ -33,7 +33,7 @@ interface DisplayCampaignActionBarProps {
   campaign: {
     isLoadingList?: boolean;
     isLoadingPerf?: boolean;
-    items: DisplayCampaignInfoResource;
+    items?: DisplayCampaignInfoResource;
   };
   updateCampaign: (
     campaignId: string,
@@ -307,7 +307,7 @@ class DisplayCampaignActionbar extends React.Component<
         name: formatMessage(messages.display),
         url: `/v2/o/${organisationId}/campaigns/display`,
       },
-      { name: campaign.items.name },
+      { name: campaign.items && campaign.items.name ? campaign.items.name : '' },
     ];
 
     return (
@@ -339,11 +339,10 @@ class DisplayCampaignActionbar extends React.Component<
   buildActionElement = () => {
     const { campaign, updateCampaign } = this.props;
 
-    const onClickElement = (status: string) => () =>
-      updateCampaign(campaign.items.id, {
-        status,
-        type: 'DISPLAY',
-      });
+    const onClickElement = (status: string) => () => campaign.items ? updateCampaign(campaign.items.id, {
+      status,
+      type: 'DISPLAY',
+    }) : null;
 
     const activeCampaignElement = (
       <Button
@@ -419,7 +418,7 @@ class DisplayCampaignActionbar extends React.Component<
     const onClick = (event: any) => {
       switch (event.key) {
         case 'ARCHIVED':
-          return handleArchiveGoal(campaign.items.id);
+          return campaign.items ? handleArchiveGoal(campaign.items.id) : null;
         case 'DUPLICATE':
           return this.duplicateCampaign();
         default:

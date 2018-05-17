@@ -237,7 +237,7 @@ class EmailCampaign extends React.Component<Props, State> {
           message: intl.formatMessage(messageMap.notifError),
           description: intl.formatMessage(messageMap.statusUpdateFailure),
         }),
-      );
+    );
   };
 
   render() {
@@ -296,7 +296,7 @@ class EmailCampaign extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <CampaignDashboardHeader campaign={campaign || {}} />
+            <CampaignDashboardHeader campaign={campaign} />
             <Labels
               labellableId={campaignId}
               labellableType="EMAIL_CAMPAIGN"

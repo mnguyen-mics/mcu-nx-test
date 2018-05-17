@@ -14,7 +14,7 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 
-interface MediaPerformance {
+export interface MediaPerformance {
   display_network_name: string;
   impressions_cost: string;
   impressions: string;
@@ -28,7 +28,7 @@ interface MediaPerformance {
 
 interface MediaPerformanceTableProps {
   isFetchingMediaStat: boolean;
-  dataSet: MediaPerformance[];
+  dataSet?: MediaPerformance[];
 }
 
 interface RouterProps {

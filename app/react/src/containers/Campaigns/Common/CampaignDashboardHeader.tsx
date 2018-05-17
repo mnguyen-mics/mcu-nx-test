@@ -4,9 +4,9 @@ import CampaignStatusIndicator from './CampaignStatusIndicator';
 import { CampaignStatus } from '../../../models/campaign/constants';
 
 interface Props {
-  campaign: {
-    name?: string;
-    status?: CampaignStatus;
+  campaign?: {
+    name: string;
+    status: CampaignStatus;
   };
 }
 
@@ -14,15 +14,15 @@ class CampaignDashboardHeader extends React.Component<Props> {
   render() {
     const { campaign } = this.props;
 
-    const campaignStatus = campaign.status && (
+    const campaignStatus = campaign && (
       <CampaignStatusIndicator status={campaign.status} />
     );
 
     return (
       <ContentHeader
-        title={campaign.name}
+        title={campaign && campaign.name}
         subTitle={campaignStatus}
-        loading={!campaign.name}
+        loading={!campaign}
       />
     );
   }
