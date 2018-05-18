@@ -31,7 +31,7 @@ export interface AdGroupSubProps<T> {
 interface AdGroupActionBarSubProps<T> {
   isLoadingList: boolean;
   isLoadingPerf: boolean;
-  items: T;
+  items?: T;
 }
 
 export interface DashboardPerformanceSubProps {
@@ -103,7 +103,7 @@ class AdGroup extends React.Component<JoinedProps> {
         />
         <Content className="mcs-content-container">
           <CampaignDashboardHeader campaign={adGroups.items} />
-          {campaign.items.model_version === 'V2014_06' ? < Alert className="m-b-20" message={intl.formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
+          {campaign.items && campaign.items.model_version === 'V2014_06' ? < Alert className="m-b-20" message={intl.formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
           <AdGroupsDashboard
             isFetchingMediaStat={dashboardPerformance.media.isLoading}
             mediaStat={dashboardPerformance.media.items}

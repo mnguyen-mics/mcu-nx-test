@@ -302,7 +302,7 @@ class DisplayCampaignActionbar extends React.Component<
       intl,
     } = this.props;
 
-    if (campaign.items.model_version === 'V2014_06') {
+    if (campaign.items && campaign.items.model_version === 'V2014_06') {
       message.info(intl.formatMessage(messages.editionNotAllowed));
     } else {
       const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
@@ -347,7 +347,7 @@ class DisplayCampaignActionbar extends React.Component<
           <FormattedMessage id="EXPORT" />
         </Button>
 
-        {campaign.items.model_version === 'V2014_06' ? null : <Button onClick={this.editCampaign}>
+        {(campaign.items && campaign.items.model_version === 'V2014_06') ? null : <Button onClick={this.editCampaign}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.editCampaign} />
         </Button>}
@@ -394,8 +394,8 @@ class DisplayCampaignActionbar extends React.Component<
       return null;
     }
 
-    return campaign.items.status === 'PAUSED' ||
-      campaign.items.status === 'PENDING'
+    return campaign.items && (campaign.items.status === 'PAUSED' ||
+      campaign.items.status === 'PENDING')
       ? activeCampaignElement
       : pauseCampaignElement;
   };
@@ -455,7 +455,7 @@ class DisplayCampaignActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
-        {campaign.items.model_version === 'V2014_06' ? null : <Menu.Item key="DUPLICATE">
+        {campaign.items && campaign.items.model_version === 'V2014_06' ? null : <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
         </Menu.Item>}
         <Menu.Item key="ARCHIVED">

@@ -51,7 +51,7 @@ class AdGroupPage extends Component {
       },
       adGroups: {
         items: {
-          itemById: {},
+          itemById: undefined,
           isLoading: false,
           isUpdating: false,
           isArchiving: false,

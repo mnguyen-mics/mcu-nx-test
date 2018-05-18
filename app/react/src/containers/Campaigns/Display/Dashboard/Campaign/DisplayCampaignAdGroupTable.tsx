@@ -36,7 +36,7 @@ interface DisplayCampaignAdGroupTableProps {
     },
   ) => void;
   rowSelection: ExtendedTableRowSelection;
-  campaign: DisplayCampaignInfoResource;
+  campaign?: DisplayCampaignInfoResource;
 }
 
 interface DisplayCampaignAdGroupTableState {
@@ -255,13 +255,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
 
     const actions = []
 
-    if (this.props.campaign.model_version === 'V2014_06') {
-      actions.push(
-        {
-          intlMessage: messages.duplicate,
-          callback: this.duplicateCampaign,
-        })
-    } else {
+    if (this.props.campaign && this.props.campaign.model_version !== 'V2014_06') {
       actions.push({
         translationKey: 'EDIT',
         callback: this.editCampaign,

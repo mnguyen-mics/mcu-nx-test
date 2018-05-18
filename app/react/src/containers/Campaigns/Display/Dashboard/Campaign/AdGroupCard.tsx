@@ -74,7 +74,7 @@ interface AdGroupCardProps extends CardProps {
     errorMessage?: UpdateMessage,
     undoBody?: Partial<AdGroupResource>,
   ) => Promise<any>;
-  campaign: DisplayCampaignInfoResource;
+  campaign?: DisplayCampaignInfoResource;
 }
 
 interface AdGroupCardState {
@@ -339,7 +339,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     };
     const adGroupButtons: JSX.Element = (
       <span>
-        {campaign.model_version !== 'V2014_06' && <Button className="m-r-10" type="primary" onClick={onClick}>
+        {campaign && campaign.model_version !== 'V2014_06' && <Button className="m-r-10" type="primary" onClick={onClick}>
           <FormattedMessage {...messages.newAdGroups} />
         </Button>}
         {this.renderDatePicker()}
@@ -368,7 +368,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
             </p>
           </Modal>
         ) : null}
-        {campaign.model_version !== 'V2014_06' ? <Slide
+        {campaign && campaign.model_version !== 'V2014_06' ? <Slide
           toShow={hasSelected}
           horizontal={true}
           content={
