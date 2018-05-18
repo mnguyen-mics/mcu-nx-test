@@ -69,4 +69,8 @@ export default defineMessages({
     id: 'save.campaigns.success.msg',
     defaultMessage: 'Campaigns successfully saved',
   },
+  editionNotAllowed: {
+    id: 'display.campaigns.table.edition.not.allowed',
+    defaultMessage: 'Edition on this campaign is deprecated, you must use navigator legacy to edit this campaign'
+  }
 });

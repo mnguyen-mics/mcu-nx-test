@@ -155,7 +155,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     return (
       <Actionbar path={breadcrumbPaths}>
         {actionElement}
-        <Link
+        {displayCampaign.model_version !== 'V2014_06' ? <Link
           to={{
             pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`,
             state: { from: `${location.pathname}${location.search}` },
@@ -165,7 +165,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
             <McsIcon type="pen" />
             <FormattedMessage {...messages.editAdGroup} />
           </Button>
-        </Link>
+        </Link> : null}
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
             <Icon type="ellipsis" />

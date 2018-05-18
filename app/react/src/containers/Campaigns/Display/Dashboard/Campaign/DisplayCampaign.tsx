@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout } from 'antd';
+import { Layout, Alert } from 'antd';
 import { compose } from 'recompose';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import {
@@ -108,6 +108,7 @@ class DisplayCampaign extends React.Component<JoinedProps> {
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <CampaignDashboardHeader campaign={campaign.items} />
+            {campaign.items.model_version === 'V2014_06' ? < Alert className="m-b-20" message={formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
             <Labels
               labellableId={campaignId}
               organisationId={organisationId}
@@ -132,6 +133,7 @@ class DisplayCampaign extends React.Component<JoinedProps> {
               isFetchingStat={adGroups.isLoadingPerf}
               dataSet={adGroups.items}
               updateAdGroup={updateAdGroup}
+              campaign={campaign.items}
             />
 
             <AdCard
