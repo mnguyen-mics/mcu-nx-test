@@ -33,6 +33,14 @@ export default defineMessages({
     id: 'display.metrics.cpc',
     defaultMessage: 'CPC'
   },
+  weightedConversion: {
+    id: 'display.metrics.weightedConversion',
+    defaultMessage: 'Weighted Conversions'
+  },
+  interactionToConversionDuration: {
+    id: 'display.metrics.interaction_to_conversion_duration',
+    defaultMessage: 'Interaction To Conversion Duration'
+  },
   impressionCost: {
     id: 'display.metrics.impressions_cost',
     defaultMessage: 'Spent'

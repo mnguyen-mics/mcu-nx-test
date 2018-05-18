@@ -77,7 +77,7 @@ export interface SourceStatData {
   dataSource: SourceStat[];
 }
 
-interface Filters extends DateSearchSettings {}
+interface Filters extends DateSearchSettings { }
 
 const ReportType: Array<'SOURCE' | 'CAMPAIGN' | 'CREATIVES'> = ['SOURCE', 'CAMPAIGN', 'CREATIVES'];
 
@@ -110,7 +110,7 @@ type JoinedProps = GoalAttributionProps &
 class GoalAttribution extends React.Component<
   JoinedProps,
   GoalAttributionState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -224,7 +224,7 @@ class GoalAttribution extends React.Component<
         this.setState({
           overall: { isLoading: false, items: normalizeReportView(res) },
         }),
-      );
+    );
   };
 
   fetchDetailled = (
@@ -438,12 +438,12 @@ class GoalAttribution extends React.Component<
         value:
           !this.state.overall.isLoading && this.state.overall.items.length
             ? formatMetric(
-                this.state.overall.items.reduce(
-                  (acc, item) => acc + parseInt(item.weighted_conversions, 10),
-                  0,
-                ),
-                '0,0',
-              )
+              this.state.overall.items.reduce(
+                (acc, item) => acc + parseInt(item.weighted_conversions, 10),
+                0,
+              ),
+              '0,0',
+            )
             : '--',
       },
       {
@@ -461,15 +461,15 @@ class GoalAttribution extends React.Component<
                 ),
                 '0,0',
               ),
-              duration: moment.utc(postViewInteractionDuration * 1000).format("HH:mm:ss")
-            }) 
+              duration: postViewInteractionDuration && !isNaN(postViewInteractionDuration) ? moment.utc(postViewInteractionDuration * 1000).format("HH:mm:ss") : '--'
+            })
             : '--',
       },
       {
         name: formatMessage(messages.postClick),
         value:
           !this.state.overall.isLoading && this.state.overall.items.length
-            ? formatMessage( messages.pCpVFormatDuration, {
+            ? formatMessage(messages.pCpVFormatDuration, {
               value: formatMetric(
                 this.state.overall.items.reduce(
                   (acc, item) =>
@@ -480,7 +480,7 @@ class GoalAttribution extends React.Component<
                 ),
                 '0,0',
               ),
-              duration: moment.utc(postClickInteractionDuration * 1000).format("HH:mm:ss")
+              duration: postClickInteractionDuration && !isNaN(postClickInteractionDuration) ? moment.utc(postClickInteractionDuration * 1000).format("HH:mm:ss") : '--'
             })
             : '--',
       },
@@ -488,7 +488,7 @@ class GoalAttribution extends React.Component<
         name: formatMessage(messages.interactionToConversionDuration),
         value:
           !this.state.overall.isLoading && this.state.overall.items.length
-            ? moment.utc(InteractionDuration * 1000).format("HH:mm:ss")
+            ? InteractionDuration && !isNaN(InteractionDuration) ? moment.utc(InteractionDuration * 1000).format("HH:mm:ss") : '--'
             : '--',
       },
     ];

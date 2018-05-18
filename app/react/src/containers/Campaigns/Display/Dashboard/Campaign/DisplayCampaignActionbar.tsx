@@ -28,12 +28,15 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { ReportView } from '../../../../../models/ReportView';
+import GoalService from '../../../../../services/GoalService';
+import { GoalsCampaignRessource } from './domain';
+import { Index } from '../../../../../utils';
 
 interface DisplayCampaignActionBarProps {
   campaign: {
     isLoadingList?: boolean;
     isLoadingPerf?: boolean;
-    items: DisplayCampaignInfoResource;
+    items?: DisplayCampaignInfoResource;
   };
   updateCampaign: (
     campaignId: string,
@@ -80,6 +83,39 @@ const fetchAllExportData = (
     'cpa',
   ];
 
+  const getGoalsData = () =>
+    DisplayCampaignService.getGoals(campaignId)
+      .then(res => {
+        const promises = res.data.map(goal => {
+          return GoalService.getAttributionModels(goal.goal_id).then(
+            attribution => {
+              const goalCampaign: GoalsCampaignRessource = { ...goal, attribution: attribution.data };
+              return goalCampaign;
+            },
+          );
+        });
+        return Promise.all(promises);
+      })
+      .then(res => {
+        return Promise.all(res.map(goal => {
+          const goalAttributionPerformance: Array<Promise<Index<any>>> = []
+          goal.attribution.forEach(attribution => {
+            const filters = [`campaign_id==${campaignId}`, `goal_id==${goal.goal_id}`, `attribution_model_id==${attribution.id}`];
+            const myPromise = ReportService.getConversionAttributionPerformance(
+              organisationId,
+              filter.from,
+              filter.to,
+              filters,
+              ['day'],
+              undefined,
+            ).then(report => normalizeReportView(report.data.report_view))
+              .then(report => ({ ...attribution, perf: report }))
+            goalAttributionPerformance.push(myPromise)
+          })
+          return Promise.all(goalAttributionPerformance).then(attribution => ({ ...goal, attribution }))
+        }))
+      });
+
   const apiResults = Promise.all([
     ReportService.getMediaDeliveryReport(
       organisationId,
@@ -117,25 +153,20 @@ const fetchAllExportData = (
       dimensions,
       defaultMetrics,
     ),
-    DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, {
-      view: 'deep',
-    }),
+    getGoalsData(),
+    DisplayCampaignService.getCampaignDisplayViewDeep(
+      campaignId,
+      { view: 'deep' },
+    ),
   ]);
 
   return apiResults.then(responses => {
     const mediaData = normalizeReportView(responses[0].data.report_view);
-    const adPerformanceById = formatReportView(
-      responses[1].data.report_view,
-      'message_id',
-    );
-    const adGroupPerformanceById = formatReportView(
-      responses[2].data.report_view,
-      'sub_campaign_id',
-    );
-    const overallDisplayData = normalizeReportView(
-      responses[3].data.report_view,
-    );
-    const data = responses[4].data;
+    const adPerformanceById = formatReportView(responses[1].data.report_view, 'message_id');
+    const adGroupPerformanceById = formatReportView(responses[2].data.report_view, 'sub_campaign_id');
+    const overallDisplayData = normalizeReportView(responses[3].data.report_view);
+    const goalData = responses[4];
+    const data = responses[5].data;
     const campaign = {
       ...data,
     };
@@ -195,6 +226,7 @@ const fetchAllExportData = (
       },
       overallDisplayData: overallDisplayData,
       displayData: campaign,
+      goalData: goalData
     };
   });
 };
@@ -218,37 +250,30 @@ class DisplayCampaignActionbar extends React.Component<
 
     this.setState({ exportIsRunning: true });
 
-    const filter = parseSearch<DateSearchSettings>(
-      this.props.location.search,
-      DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<DateSearchSettings>(this.props.location.search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
-    const hideExportLoadingMsg = message.loading(
-      this.props.translations.EXPORT_IN_PROGRESS,
-      0,
-    );
+    const hideExportLoadingMsg = message.loading(this.props.translations.EXPORT_IN_PROGRESS, 0);
 
-    fetchAllExportData(organisationId, campaignId, filter)
-      .then(exportData => {
-        ExportService.exportDisplayCampaignDashboard(
-          organisationId,
-          exportData.displayData,
-          exportData.overallDisplayData,
-          exportData.mediaData,
-          exportData.adGroupData.items,
-          exportData.adData.items,
-          filter,
-          formatMessage,
-        );
-        this.setState({ exportIsRunning: false });
-        hideExportLoadingMsg();
-      })
-      .catch(err => {
-        log.error(err);
-        this.setState({ exportIsRunning: false });
-        hideExportLoadingMsg();
-      });
-  };
+    fetchAllExportData(organisationId, campaignId, filter).then(exportData => {
+      ExportService.exportDisplayCampaignDashboard(
+        organisationId,
+        exportData.displayData,
+        exportData.overallDisplayData,
+        exportData.mediaData,
+        exportData.adGroupData.items,
+        exportData.adData.items,
+        exportData.goalData,
+        filter,
+        formatMessage,
+      );
+      this.setState({ exportIsRunning: false });
+      hideExportLoadingMsg();
+    }).catch((err) => {
+      log.error(err);
+      this.setState({ exportIsRunning: false });
+      hideExportLoadingMsg();
+    });
+  }
 
   exportIsRunningModal = (e: React.FormEvent<HTMLButtonElement>) => {
     const {
@@ -277,7 +302,7 @@ class DisplayCampaignActionbar extends React.Component<
       intl,
     } = this.props;
 
-    if (campaign.items.model_version === 'V2014_06') {
+    if (campaign.items && campaign.items.model_version === 'V2014_06') {
       message.info(intl.formatMessage(messages.editionNotAllowed));
     } else {
       const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
@@ -307,7 +332,7 @@ class DisplayCampaignActionbar extends React.Component<
         name: formatMessage(messages.display),
         url: `/v2/o/${organisationId}/campaigns/display`,
       },
-      { name: campaign.items.name },
+      { name: campaign.items && campaign.items.name ? campaign.items.name : '' },
     ];
 
     return (
@@ -322,7 +347,7 @@ class DisplayCampaignActionbar extends React.Component<
           <FormattedMessage id="EXPORT" />
         </Button>
 
-        {campaign.items.model_version === 'V2014_06' ? null : <Button onClick={this.editCampaign}>
+        {(campaign.items && campaign.items.model_version === 'V2014_06') ? null : <Button onClick={this.editCampaign}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.editCampaign} />
         </Button>}
@@ -339,11 +364,10 @@ class DisplayCampaignActionbar extends React.Component<
   buildActionElement = () => {
     const { campaign, updateCampaign } = this.props;
 
-    const onClickElement = (status: string) => () =>
-      updateCampaign(campaign.items.id, {
-        status,
-        type: 'DISPLAY',
-      });
+    const onClickElement = (status: string) => () => campaign.items ? updateCampaign(campaign.items.id, {
+      status,
+      type: 'DISPLAY',
+    }) : null;
 
     const activeCampaignElement = (
       <Button
@@ -370,8 +394,8 @@ class DisplayCampaignActionbar extends React.Component<
       return null;
     }
 
-    return campaign.items.status === 'PAUSED' ||
-      campaign.items.status === 'PENDING'
+    return campaign.items && (campaign.items.status === 'PAUSED' ||
+      campaign.items.status === 'PENDING')
       ? activeCampaignElement
       : pauseCampaignElement;
   };
@@ -419,7 +443,7 @@ class DisplayCampaignActionbar extends React.Component<
     const onClick = (event: any) => {
       switch (event.key) {
         case 'ARCHIVED':
-          return handleArchiveGoal(campaign.items.id);
+          return campaign.items ? handleArchiveGoal(campaign.items.id) : null;
         case 'DUPLICATE':
           return this.duplicateCampaign();
         default:
@@ -431,7 +455,7 @@ class DisplayCampaignActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
-        {campaign.items.model_version === 'V2014_06' ? null : <Menu.Item key="DUPLICATE">
+        {campaign.items && campaign.items.model_version === 'V2014_06' ? null : <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
         </Menu.Item>}
         <Menu.Item key="ARCHIVED">

@@ -21,6 +21,9 @@ import { AdResource } from '../../../../../models/campaign/display/AdResource';
 import AdCard from './AdCard';
 import AdGroupCard from './AdGroupCard';
 import { Labels } from '../../../../Labels/index';
+import { GoalsCampaignRessource } from './domain';
+import { OverallStat } from '../Charts/DisplayStackedAreaChart';
+import { MediaPerformance } from '../Charts/MediaPerformanceTable';
 
 const { Content } = Layout;
 
@@ -30,17 +33,17 @@ export interface CampaignSubProps<T> {
   items?: T[];
 }
 
-interface DashboardPerformanceSubProps {
+interface DashboardPerformanceSubProps<T> {
   isLoading: boolean;
   hasFetched: boolean;
-  items?: object[];
+  items?: T[];
 }
 
 interface DisplayCampaignProps {
   campaign: {
     isLoadingList?: boolean;
     isLoadingPerf?: boolean;
-    items: DisplayCampaignInfoResource;
+    items?: DisplayCampaignInfoResource;
   };
   ads: CampaignSubProps<AdInfoResource>;
   adGroups: CampaignSubProps<AdGroupResource>;
@@ -66,11 +69,11 @@ interface DisplayCampaignProps {
     },
   ) => void;
   dashboardPerformance: {
-    media: DashboardPerformanceSubProps;
-    overall: DashboardPerformanceSubProps;
-    campaign: DashboardPerformanceSubProps;
+    media: DashboardPerformanceSubProps<MediaPerformance>;
+    overall: DashboardPerformanceSubProps<OverallStat>;
+    campaign: DashboardPerformanceSubProps<OverallStat>;
   };
-  goals: object[];
+  goals: GoalsCampaignRessource[];
 }
 
 type JoinedProps = DisplayCampaignProps &
@@ -108,7 +111,7 @@ class DisplayCampaign extends React.Component<JoinedProps> {
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <CampaignDashboardHeader campaign={campaign.items} />
-            {campaign.items.model_version === 'V2014_06' ? < Alert className="m-b-20" message={formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
+            {campaign.items && campaign.items.model_version === 'V2014_06' ? < Alert className="m-b-20" message={formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
             <Labels
               labellableId={campaignId}
               organisationId={organisationId}
@@ -150,7 +153,7 @@ class DisplayCampaign extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<DisplayCampaignProps, JoinedProps>(
+export default compose<JoinedProps, DisplayCampaignProps>(
   injectIntl,
   withRouter,
   injectDrawer,

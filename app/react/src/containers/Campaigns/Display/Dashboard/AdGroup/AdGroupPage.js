@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { injectIntl, intlShape } from 'react-intl';
 import { Button } from 'antd';
 
-import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
+import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants.ts';
 import messages from '../messages.ts';
 import AdGroup from './AdGroup.tsx';
 
@@ -51,7 +51,7 @@ class AdGroupPage extends Component {
       },
       adGroups: {
         items: {
-          itemById: {},
+          itemById: undefined,
           isLoading: false,
           isUpdating: false,
           isArchiving: false,
