@@ -169,6 +169,14 @@ export default defineMessages({
     id: 'timeline.activity.events.detail',
     defaultMessage: 'Details',
   },
+  eventJson: {
+    id: 'timeline.activity.events.json',
+    defaultMessage: 'Event JSON',
+  },
+  eventJsonModalOkText: {
+    id: 'timeline.activity.event.json.modal.ok.text',
+    defaultMessage: 'Close',
+  },
   less: {
     id: 'timeline.activity.events.less',
     defaultMessage: 'Less',
@@ -212,5 +220,9 @@ export default defineMessages({
   seconds: {
     id: 'timeline.activity.visit.duration.seconds',
     defaultMessage: 'seconds',
+  },
+  viewEventJson: {
+    id: 'timeline.event.activity.view.json.button',
+    defaultMessage: 'View JSON source',
   },
 });

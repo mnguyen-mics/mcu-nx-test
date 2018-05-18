@@ -103,6 +103,7 @@ class MonitoringActionbar extends Component {
           <InputGroup compact>
             <Select name="type" style={{ width: '30%' }} defaultValue={this.state.form.type} onChange={this.updateType}>
               <Option value="user_point_id">User Point Id</Option>
+              <Option value="user_account_id">User Account Id</Option>
               <Option value="user_agent_id">Vector Id</Option>
               <Option value="email_hash">Email Hash</Option>
             </Select>

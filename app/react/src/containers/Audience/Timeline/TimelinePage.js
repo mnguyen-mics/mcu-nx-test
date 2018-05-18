@@ -9,10 +9,13 @@ import moment from 'moment';
 import { getDefaultDatamart } from '../../../state/Session/selectors';
 
 import * as actions from '../../../state/Notifications/actions';
-import Monitoring from './Monitoring';
+import Monitoring from './Monitoring.tsx';
 
-import UserDataService from '../../../services/UserDataService';
+import UserDataService from '../../../services/UserDataService.ts';
 import initialState from './initialState';
+import { takeLatest } from '../../../utils/ApiHelper.ts';
+
+const takeLatestActivities = takeLatest(UserDataService.getActivities);
 
 class TimelinePage extends Component {
 
@@ -77,7 +80,7 @@ class TimelinePage extends Component {
       if (cookies.mics_vid) {
         history.push(`/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${cookies.mics_vid}`);
       }
-    } else if ((organisationId !== nextOrganisationId) || (identifierType !== nextIdentifierType) || (identifierId !== nextIdentifierId)) {
+    } else if ((organisationId !== nextOrganisationId) || (identifierType !== nextIdentifierType) || (decodeURIComponent(identifierId) !== decodeURIComponent(nextIdentifierId))) {
       const cb = () => this.fetchAllData(organisationId, defaultDatamart(nextOrganisationId).id, nextIdentifierType, nextIdentifierId);
       this.resetTimelineData(cb());
     }
@@ -245,7 +248,7 @@ class TimelinePage extends Component {
         },
       };
       return nextState;
-    }, () => UserDataService.getActivities(organisationId, datamartId, identifierType, identifierId, params)
+    }, () => takeLatestActivities(organisationId, datamartId, identifierType, identifierId, params)
       .then((response) => {
         this.setState((prevState) => {
           const nextState = {
