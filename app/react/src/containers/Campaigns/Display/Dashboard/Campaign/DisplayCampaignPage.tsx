@@ -20,22 +20,19 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
+  DateSearchSettings,
 } from '../../../../../utils/LocationSearchHelper';
 
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { initialPageState, DisplayCampaignPageState, GoalsCampaignRessource } from './domain';
 import { CancelablePromise } from '../../../../../services/ApiService';
 import { AdInfoResource, AdResource, AdGroupResource } from '../../../../../models/campaign/display';
-import McsMoment from '../../../../../utils/McsMoment';
 import { ReportView } from '../../../../../models/ReportView';
 import { UpdateMessage } from './DisplayCampaignAdGroupTable';
+import { Index } from '../../../../../utils';
 
 
 type Props = RouteComponentProps<{ organisationId: string, campaignId: string }> & InjectedNotificationProps
-
-interface CampaignDashboardFilters { from: McsMoment, to: McsMoment };
-
-interface A { [key: string]: any }
 
 class DisplayCampaignPage extends React.Component<Props, DisplayCampaignPageState> {
   cancelablePromises: Array<CancelablePromise<any>> = [];
@@ -64,7 +61,7 @@ class DisplayCampaignPage extends React.Component<Props, DisplayCampaignPageStat
         search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
-      const filter: CampaignDashboardFilters = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+      const filter = parseSearch<DateSearchSettings>(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
       this.fetchAllData(organisationId, campaignId, filter);
     }
@@ -97,7 +94,7 @@ class DisplayCampaignPage extends React.Component<Props, DisplayCampaignPageStat
           ),
         });
       } else {
-        const filter: CampaignDashboardFilters = parseSearch(
+        const filter = parseSearch<DateSearchSettings>(
           nextSearch,
           DISPLAY_DASHBOARD_SEARCH_SETTINGS,
         );
@@ -111,7 +108,7 @@ class DisplayCampaignPage extends React.Component<Props, DisplayCampaignPageStat
     this.cancelablePromises.forEach(promise => promise.cancel());
   }
 
-  fetchAllData = (organisationId: string, campaignId: string, filter: CampaignDashboardFilters) => {
+  fetchAllData = (organisationId: string, campaignId: string, filter: DateSearchSettings) => {
     const lookbackWindow =
       filter.to.toMoment().unix() - filter.from.toMoment().unix();
     const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
@@ -403,7 +400,7 @@ class DisplayCampaignPage extends React.Component<Props, DisplayCampaignPageStat
     }
   };
 
-  formatListView(a: A, b: { [key: string]: any }) {
+  formatListView(a: Index<any>, b: Index<any>) {
     if (a) {
       return Object.keys(a).map(c => {
         return {
