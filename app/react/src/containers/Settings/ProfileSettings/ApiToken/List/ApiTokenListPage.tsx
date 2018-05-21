@@ -341,7 +341,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
           <div>
             <Alert message={formatMessage(messages.apiTokenModalContent)} type="warning" />
             <br />
-            <CopyToClipboard onCopy={handleOnClick}>
+            <CopyToClipboard text={apiTokenData.value} onCopy={handleOnClick}>
               <div style={{ cursor: 'pointer' }}>
                 <SyntaxHighlighter language="json" style={docco}>
                   {apiTokenData.value}
@@ -432,7 +432,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         >
           <p>{intl.formatMessage(messages.createApiTokenModalContent)}</p>
           <br />
-          <Input onChange={changeName} placeholder={intl.formatMessage(messages.apiTokenName)} />,
+          <Input onChange={changeName} placeholder={intl.formatMessage(messages.apiTokenName)} />
         </Modal>
       </div>
     );
