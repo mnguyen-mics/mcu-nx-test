@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Layout } from 'antd';
+import { Layout, /*Button*/ } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import UsersService from '../../../../../services/UsersService';
-import {
-  PAGINATION_SEARCH_SETTINGS,
-} from '../../../../../utils/LocationSearchHelper';
+import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { User } from '../../../../../models/settings/settings';
 import messages from './messages';
@@ -35,7 +33,7 @@ interface RouterProps {
 class UserList extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   UserListState
-  > {
+> {
   state = initialState;
 
   archiveUser = (recommenderId: string) => {
@@ -49,52 +47,63 @@ class UserList extends React.Component<
       };
       UsersService.getUsers(organisationId, options).then(
         (results: { data: User[]; total?: number; count: number }) => {
-
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        }
+        },
       );
-    })
+    });
   };
 
   onClickEdit = (user: User) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    // const {
+    //   history,
+    //   match: {
+    //     params: { organisationId },
+    //   },
+    // } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/organisation/users/${user.id}/edit`,
-    );
+    // history.push(
+    //   `/v2/o/${organisationId}/settings/organisation/users/${user.id}/edit`,
+    // );
   };
 
   render() {
-    const { match: { params: { organisationId } } } = this.props;
+    // const {
+    //   match: {
+    //     params: { organisationId },
+    //   },
+    // } = this.props;
 
-    const actionsColumnsDefinition = [
-      {
-        key: 'action',
-        actions: [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-        ],
-      },
-    ];
+    // const actionsColumnsDefinition = [
+    //   {
+    //     key: 'action',
+    //     actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
+    //   },
+    // ];
 
     const dataColumnsDefinition = [
       {
-        intlMessage: messages.usersName,
+        intlMessage: messages.usersFirstName,
         key: 'first_name',
         isHideable: false,
-        render: (text: string, record: User) => (
-          <Link
-            className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/organisation/users/${
-              record.id
-              }/edit`}
-          >
-            {text}{' '}{record.last_name}
-          </Link>
-        ),
+        // render: (text: string, record: User) => (
+        //   <Link
+        //     className="mcs-campaigns-link"
+        //     to={`/v2/o/${organisationId}/settings/organisation/users/${
+        //       record.id
+        //     }/edit`}
+        //   >
+        //     {text} {record.last_name}
+        //   </Link>
+        // ),
+      },
+      {
+        intlMessage: messages.usersLastName,
+        key: 'last_name',
+        isHideable: false,
       },
       {
         intlMessage: messages.usersEmail,
@@ -107,25 +116,32 @@ class UserList extends React.Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-        iconType: 'settings',
-        intlMessage: messages.emptyUsers,
-      };
+      iconType: 'settings',
+      intlMessage: messages.emptyUsers,
+    };
 
-    // const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/recommenders/create`)
+    // const onClick = () =>
+    //   this.props.history.push(
+    //     `/v2/o/${organisationId}/settings/organisation/users/create`,
+    //   );
 
-    // const buttons = [
-    //   (<Button key="create" type="primary" onClick={onClick}>
+    // const buttons = (
+    //   <Button key="create" type="primary" onClick={onClick}>
     //     <FormattedMessage {...messages.newUser} />
-    //   </Button>)
-    // ]
+    //   </Button>
+    // );
 
-    const additionnalComponent = (<div>
-      <div className="mcs-card-header mcs-card-title">
-        <span className="mcs-card-title"><FormattedMessage {...messages.users} /></span>
-        {/* <span className="mcs-card-button">{buttons}</span> */}
+    const additionnalComponent = (
+      <div>
+        <div className="mcs-card-header mcs-card-title">
+          <span className="mcs-card-title">
+            <FormattedMessage {...messages.users} />
+          </span>
+          {/* <span className="mcs-card-button">{buttons}</span> */}
+        </div>
+        <hr className="mcs-separator" />
       </div>
-      <hr className="mcs-separator" />
-    </div>)
+    );
 
     return (
       <div className="ant-layout">
@@ -136,7 +152,7 @@ class UserList extends React.Component<
             loading={this.state.loading}
             total={this.state.total}
             columns={dataColumnsDefinition}
-            actionsColumnsDefinition={actionsColumnsDefinition}
+            // actionsColumnsDefinition={actionsColumnsDefinition}
             pageSettings={PAGINATION_SEARCH_SETTINGS}
             emptyTable={emptyTable}
             additionnalComponent={additionnalComponent}

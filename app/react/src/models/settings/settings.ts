@@ -1,3 +1,5 @@
+import { Workspace } from "../organisation/organisation";
+
 export interface PropertyResource {
     creation_ts: number;
     datamart_id: string
@@ -94,3 +96,21 @@ export interface User {
     locale: string;
     organisation_id: string;
 } 
+
+export interface ConnectedUser {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    locale: string;
+    workspaces: Workspace[];
+    default_workspace: number;
+}
+
+export type ApiToken = {
+    creation_date: number;
+    expiration_date: number;
+    id: string;
+    name: string;
+    value: string;
+};
