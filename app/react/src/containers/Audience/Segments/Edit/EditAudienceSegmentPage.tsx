@@ -387,6 +387,14 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     return segmentTypesToDisplay;
   };
 
+  resetFormData = () => {
+    this.setState({
+      audienceSegmentFormData: {
+        audienceSegment: {}
+      }
+    })
+  }
+
   render() {
     const {
       intl: { formatMessage },
@@ -429,7 +437,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return <Loading className="loading-full-screen" />;
     }
 
-    const selectedSegmentType = audienceSegmentFormData.audienceSegment.type === 'USER_LIST' && audienceSegmentFormData.audienceSegment.feed_type === 'TAG' ? 'USER_PIXEL' : audienceSegmentFormData.audienceSegment.type;
+    let selectedSegmentType: SegmentType | undefined;
+    if (audienceSegmentFormData.audienceSegment) {
+      selectedSegmentType =  
+      audienceSegmentFormData.audienceSegment.type === 'USER_LIST' &&
+      audienceSegmentFormData.audienceSegment.feed_type === 'TAG' ? 'USER_PIXEL' : audienceSegmentFormData.audienceSegment.type;
+    }
+  
 
     const getQueryLanguageToDisplay =
       this.state.audienceSegmentFormData.query &&
@@ -448,6 +462,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         queryContainer={this.state.queryContainer}
         queryLanguage={getQueryLanguageToDisplay}
         segmentType={selectedSegmentType}
+        goToSegmentTypeSelection={this.resetFormData}
       />
     ) : (
         <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>

@@ -71,6 +71,7 @@ export interface AudienceSegmentFormProps
   queryContainer: any;
   queryLanguage?: QueryLanguage;
   segmentType?: SegmentType;
+  goToSegmentTypeSelection?: () => void;
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
@@ -183,6 +184,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       breadCrumbPaths,
       datamart,
       initialValues,
+      goToSegmentTypeSelection,
     } = this.props;
 
     const type = segmentType
@@ -227,6 +229,15 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       items: sections.map(s => ({ sectionId: s.id, title: s.title })),
       scrollId: FORM_ID,
     };
+
+    if (goToSegmentTypeSelection) {
+      sideBarProps.items.unshift({
+        sectionId: 'type',
+        title: messages.audienceSegmentSiderMenuType,
+        onClick: goToSegmentTypeSelection,
+        type: 'validated',
+      });
+    }
 
     const renderedSections = sections.map((section, index) => {
       return section.component ? (

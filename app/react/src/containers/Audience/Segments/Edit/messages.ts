@@ -21,6 +21,10 @@ export default defineMessages({
     id: 'segment.sider.menu.import',
     defaultMessage: 'Import',
   },
+  audienceSegmentSiderMenuType: {
+    id: 'segment.sider.menu.type',
+    defaultMessage: 'Segment Type',
+  },
   audienceSegmentSiderMenuProperties: {
     id: 'segment.sider.menu.properties',
     defaultMessage: 'Properties',
