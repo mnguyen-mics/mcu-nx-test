@@ -56,8 +56,8 @@ const messages = defineMessages({
 
 interface KeywordListFormProps
   extends Omit<ConfigProps<KeywordListFormData>, 'form'> {
-    save: (formData: KeywordListFormData) => void;
-    close: () => void;
+  save: (formData: KeywordListFormData) => void;
+  close: () => void;
   breadCrumbPaths: Path[];
 }
 interface KeywordListFormState {}
@@ -137,8 +137,8 @@ class KeywordListForm extends React.Component<
             className="edit-layout ant-layout"
             onSubmit={handleSubmit(save) as any}
           >
-            {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
+            {/* this button enables submit on enter */}
+            <button type="submit" style={{ display: 'none' }} />
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container"
