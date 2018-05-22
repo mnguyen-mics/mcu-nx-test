@@ -9,8 +9,6 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import FormFieldWrapper from '../FormFieldWrapper';
 import { SliderProps } from 'antd/lib/slider';
 import { LabeledValue } from 'antd/lib/select';
-import { DataListResponse, DataResponse } from '../../../services/ApiService';
-import { Index } from '../../../utils';
 
 const { Option } = Select;
 
@@ -18,19 +16,13 @@ export interface FormSearchObjectProps {
   formItemProps?: FormItemProps;
   inputProps?: SliderProps;
   helpToolTipProps?: TooltipProps;
-  fetchListMethod: (organisationId: string, options: Index<any>) => Promise<DataListResponse<any>>;
-  fetchSingleMethod: (id: string) => Promise<DataResponse<any>>;
-  organisationId: string;
+  fetchListMethod: (keyword: string) => Promise<LabeledValue[]>;
+  fetchSingleMethod: (id: string) => Promise<LabeledValue>;
   small?: boolean;
 }
 
-interface Data {
-  value: string;
-  name: string;
-}
-
 interface FormSearchObjectState {
-  data: Data[];
+  data: LabeledValue[];
   value?: LabeledValue[];
   fetching: boolean;
 }
@@ -66,7 +58,7 @@ class FormSearchObject extends React.Component<
 
   fetchInitialData = (values: string[]) => {
     const { fetchSingleMethod } = this.props;
-    return Promise.all(values.map(i => fetchSingleMethod(i).then(r => ({ key: r.data.id, label: r.data.name })))).then(res => {
+    return Promise.all(values.map(i => fetchSingleMethod(i))).then(res => {
       this.setState({ value: res })
     })
   }
@@ -74,17 +66,15 @@ class FormSearchObject extends React.Component<
   fetchData = (value: string) => {
     const {
       fetchListMethod,
-      organisationId
     } = this.props;
 
+    this.setState({ fetching: true })
     fetchListMethod(
-      organisationId,
-      {
-        keywords: value
-      }
+      value
     ).then(res => {
       this.setState({
-        data: res.data.map(r => ({ value: r.id, name: r.name }))
+        data: res,
+        fetching: false
       })
     })
   }
@@ -111,7 +101,7 @@ class FormSearchObject extends React.Component<
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
-    const options = this.state.data.map(d => <Option key={d.value} value={d.value}>{d.name}</Option>);
+    const options = this.state.data.map(d => <Option key={d.key} value={d.key}>{d.label}</Option>);
 
     return (
       <FormFieldWrapper

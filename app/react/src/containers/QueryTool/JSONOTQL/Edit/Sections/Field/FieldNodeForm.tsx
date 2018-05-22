@@ -427,6 +427,10 @@ class FieldNodeForm extends React.Component<Props> {
   generateIdComparisonField(condition: StringComparisonOperator) {
     const { intl, name, match: { params: { organisationId } }, objectType } = this.props;
 
+
+    const fetchListMethod = (keywords: string) => AudienceSegmentService.getSegments(organisationId, { keywords }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
+    const fetchSingleMethod = (id: string) => AudienceSegmentService.getSegment(id).then(res => ({ key: res.data.id, label: res.data.name }))
+
     return objectType.name === 'UserSegment' ? (
       <FormSearchObjectField
         name={`${name}.comparison.values`}
@@ -435,9 +439,8 @@ class FieldNodeForm extends React.Component<Props> {
           label: intl.formatMessage(messages.fieldConditionValuesStringLabel),
           required: true,
         }}
-        fetchListMethod={AudienceSegmentService.getSegments}
-        fetchSingleMethod={AudienceSegmentService.getSegment}
-        organisationId={organisationId}
+        fetchListMethod={fetchListMethod}
+        fetchSingleMethod={fetchSingleMethod}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
