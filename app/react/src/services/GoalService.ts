@@ -52,6 +52,14 @@ const GoalService = {
     return ApiService.postRequest(endpoint, resource);
   },
 
+  deleteGoal(
+    goalId: string,
+  ): Promise<DataResponse<GoalResource>> {
+    const endpoint = `goals/${goalId}`;
+
+    return ApiService.deleteRequest(endpoint);
+  },
+
   linkAttributionModelToGoal(
     goalId: string,
     resource: Partial<AttributionSelectionCreateRequest>,

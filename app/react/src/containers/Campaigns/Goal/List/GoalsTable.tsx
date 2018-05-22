@@ -45,26 +45,29 @@ const messages = defineMessages({
     id: 'goal.filterby.label',
     defaultMessage: 'Filter By Label',
   },
-  goalModalConfirmArchiveTitle: {
-    id: 'goals.table.archive.modal.title',
-    defaultMessage: 'Are you sure you want to archive this goal?',
+  goalModalConfirmDeleteTitle: {
+    id: 'goals.table.delete.modal.title',
+    defaultMessage: 'Are you sure you want to delete this goal?',
   },
-  goalModalConfirmArchiveMessage: {
-    id: 'goals.table.archive.modal.message',
-    defaultMessage:
-      "You'll be able to recover it from the archived goal filter.",
+  goalModalConfirmDeleteMessage: {
+    id: 'goals.table.delete.modal.message',
+    defaultMessage: "You'll not be able to recover it.",
   },
-  goalModalConfirmArchiveOk: {
-    id: 'goals.table.archive.modal.ok',
-    defaultMessage: 'Archive Now',
+  goalModalConfirmDeleteOk: {
+    id: 'goals.table.delete.modal.ok',
+    defaultMessage: 'Delete Now',
   },
-  goalModalConfirmArchiveCancel: {
-    id: 'goals.table.archive.modal.cancel',
+  goalModalConfirmDeleteCancel: {
+    id: 'goals.table.delete.modal.cancel',
     defaultMessage: 'Cancel',
   },
   searchBarPlaceholder: {
     id: 'goals.table.searchbar.placeholder',
     defaultMessage: 'Search Goals',
+  },
+  deleteGoalActionButton: {
+    id: 'goals.table.delete.action.button',
+    defaultMessage: 'Delete',
   },
 });
 
@@ -162,7 +165,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
     this.props.resetGoalsTable();
   }
 
-  handleArchiveGoal = (goal: GoalResource) => {
+  handleDeleteGoal = (goal: GoalResource) => {
     const {
       match: {
         params: { organisationId },
@@ -175,19 +178,15 @@ class GoalsTable extends React.Component<GoalsTableProps> {
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
-    const archivedGoal = {
-      ...goal,
-      archived: true,
-    };
 
     Modal.confirm({
-      title: messages.goalModalConfirmArchiveTitle,
-      content: messages.goalModalConfirmArchiveMessage,
+      title: intl.formatMessage(messages.goalModalConfirmDeleteTitle),
+      content: intl.formatMessage(messages.goalModalConfirmDeleteMessage),
       iconType: 'exclamation-circle',
-      okText: intl.formatMessage(messages.goalModalConfirmArchiveOk),
-      cancelText: intl.formatMessage(messages.goalModalConfirmArchiveCancel),
+      okText: intl.formatMessage(messages.goalModalConfirmDeleteOk),
+      cancelText: intl.formatMessage(messages.goalModalConfirmDeleteCancel),
       onOk() {
-        return GoalService.updateGoal(goal.id, { ...archivedGoal }).then(() => {
+        return GoalService.deleteGoal(goal.id).then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -344,8 +343,8 @@ class GoalsTable extends React.Component<GoalsTableProps> {
             callback: this.handleEditGoal,
           },
           {
-            translationKey: 'ARCHIVE',
-            callback: this.handleArchiveGoal,
+            intlMessage: messages.deleteGoalActionButton,
+            callback: this.handleDeleteGoal,
           },
         ],
       },
