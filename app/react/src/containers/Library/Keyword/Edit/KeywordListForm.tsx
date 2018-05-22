@@ -56,7 +56,8 @@ const messages = defineMessages({
 
 interface KeywordListFormProps
   extends Omit<ConfigProps<KeywordListFormData>, 'form'> {
-  close: () => void;
+    save: (formData: KeywordListFormData) => void;
+    close: () => void;
   breadCrumbPaths: Path[];
 }
 interface KeywordListFormState {}
@@ -103,7 +104,7 @@ class KeywordListForm extends React.Component<
   };
 
   render() {
-    const { breadCrumbPaths, handleSubmit, close } = this.props;
+    const { breadCrumbPaths, handleSubmit, save, close } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
@@ -134,7 +135,7 @@ class KeywordListForm extends React.Component<
           <ScrollspySider {...sideBarProps} />
           <Form
             className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
+            onSubmit={handleSubmit(save) as any}
           >
             {/* this button enables submit on enter */}
             <button type="submit" style={{ display: 'none' }} />

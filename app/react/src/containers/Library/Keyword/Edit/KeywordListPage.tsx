@@ -149,7 +149,7 @@ class KeywordListPage extends React.Component<
       return (
         <KeywordListForm
           initialValues={this.state.keywordListFormData}
-          onSubmit={this.save}
+          save={this.save}
           close={this.close}
           breadCrumbPaths={breadcrumbPaths}
         />
