@@ -7,7 +7,7 @@ import { AttributionModelFormData } from './domain';
 import {
   AttributionModel,
   PluginProperty,
-  PluginInterface,
+  PluginVersionResource,
 } from '../../../../../models/Plugins';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -102,7 +102,7 @@ class AttributionModelForm extends React.Component<
     save({ plugin, properties });
   };
 
-  onSelect = (plugin: PluginInterface) => {
+  onSelect = (plugin: PluginVersionResource) => {
     this.setState({
       initialValues: {
         plugin: {
