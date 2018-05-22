@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { Row, Col } from 'antd';
 import messages from '../messages';
 import {
   FormInput,
@@ -18,17 +19,24 @@ type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
 interface State {
   displayAdvancedSection: boolean;
+  displayWarning: boolean;
 }
 
 class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { displayAdvancedSection: false };
+    this.state = { displayAdvancedSection: false, displayWarning: false };
   }
 
   toggleAdvancedSection = () => {
     this.setState({
       displayAdvancedSection: !this.state.displayAdvancedSection,
+    });
+  };
+
+  warningOnTokenChange = () => {
+    this.setState({
+      displayWarning: true,
     });
   };
 
@@ -38,6 +46,8 @@ class GeneralFormSection extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
+    const { displayWarning } = this.state;
+
     return (
       <div>
         <FormSection
@@ -45,45 +55,53 @@ class GeneralFormSection extends React.Component<Props, State> {
           title={messages.sectionGeneralTitle}
         />
 
-        <div>
-          <FormInputField
-            name="mobileapplication.name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralNameLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(
-                messages.contentSectionGeneralNamePlaceholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentSectionGeneralNameTooltip),
-            }}
-          />
-        </div>
+        <FormInputField
+          name="mobileapplication.name"
+          component={FormInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.contentSectionGeneralNameLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(
+              messages.contentSectionGeneralNamePlaceholder,
+            ),
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.contentSectionGeneralNameTooltip),
+          }}
+        />
 
-        <div>
-          <FormInputField
-            name="mobileapplication.token"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralTokenLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(
-                messages.contentSectionGeneralTokenPlaceholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentSectionGeneralTokenTooltip),
-            }}
-          />
-        </div>
+        <FormInputField
+          name="mobileapplication.token"
+          component={FormInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.contentSectionGeneralTokenLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(
+              messages.contentSectionGeneralTokenPlaceholder,
+            ),
+            onFocus: this.warningOnTokenChange,
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.contentSectionGeneralTokenTooltip),
+          }}
+        />
+
+        {displayWarning && (
+          <div>
+            <Row>
+              <Col span={20} offset={4} className="modificationWarning">
+                {formatMessage(messages.warningOnTokenEditioon)}
+              </Col>
+            </Row>
+            <br />
+          </div>
+        )}
       </div>
     );
   }

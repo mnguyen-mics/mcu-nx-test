@@ -97,4 +97,8 @@ export default defineMessages({
         id: 'settings.site.form.Aliases.tooltip',
         defaultMessage: 'Type your alias name and then click on enter to validate.',
     },
+    warningOnTokenEditioon: {
+        id: 'settings.datamart.warning.token.edition',
+        defaultMessage: 'Danger Zone: By editing this token, if you have any properties using it they will stop.'
+    }
 })
