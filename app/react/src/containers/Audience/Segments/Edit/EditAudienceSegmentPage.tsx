@@ -393,14 +393,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     return segmentTypesToDisplay;
   };
 
-  resetFormData = () => {
-    this.setState({
-      audienceSegmentFormData: {
-        audienceSegment: {},
-      },
-    });
-  };
-
   render() {
     const {
       intl: { formatMessage },
@@ -433,6 +425,17 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         name: audienceSegmentName,
       },
     ];
+
+    let resetFormData;
+    if (!segmentId) {
+      resetFormData = () => {
+        this.setState({
+          audienceSegmentFormData: {
+            audienceSegment: {},
+          },
+        });
+      };
+    }
 
     const actionbarProps = {
       onClose: this.redirectToSegmentList,
@@ -469,7 +472,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         queryContainer={this.state.queryContainer}
         queryLanguage={getQueryLanguageToDisplay}
         segmentType={selectedSegmentType}
-        goToSegmentTypeSelection={this.resetFormData}
+        goToSegmentTypeSelection={resetFormData}
       />
     ) : (
       <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
