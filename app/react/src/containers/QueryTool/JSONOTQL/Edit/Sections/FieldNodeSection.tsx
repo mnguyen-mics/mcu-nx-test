@@ -12,7 +12,7 @@ import { QueryBooleanOperator } from '../../../../../models/datamart/graphdb/Que
 // import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { FormItemProps } from 'antd/lib/form';
 import { FieldNodeFormData } from '../domain';
-import { FieldResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
+import { FieldResource, ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import FieldNodeForm from './Field/FieldNodeForm';
 
 export interface FieldNodeSectionProps {
@@ -21,6 +21,7 @@ export interface FieldNodeSectionProps {
   booleanOperator: QueryBooleanOperator;
   onBooleanOperatorChange: (value: QueryBooleanOperator) => void;
   formChange: (fieldName: string, fieldValue: any) => void;
+  objectType: ObjectLikeTypeInfoResource;
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -36,6 +37,7 @@ class FieldNodeSection extends React.Component<JoinedProps> {
       formChange,
       onBooleanOperatorChange,
       booleanOperator,
+      objectType,
     } = this.props;
 
     const handleOnClick = () =>
@@ -58,6 +60,7 @@ class FieldNodeSection extends React.Component<JoinedProps> {
               name={name}
               expressionIndex={index}
               availableFields={availableFields}
+              objectType={objectType}
             />
           </div>
         </div>
@@ -106,7 +109,6 @@ class FieldNodeSection extends React.Component<JoinedProps> {
           title={messages.fieldConditionTitle}
         />
         <div className="form-field-wrapper">
-          {/* <TransitionGroup>{renderedFields}</TransitionGroup> */}
           {renderedFields}
         </div>
         <Row>

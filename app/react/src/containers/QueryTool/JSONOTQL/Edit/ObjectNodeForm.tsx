@@ -44,7 +44,7 @@ interface MapStateToProps {
 const FieldNodeListFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   FieldNodeSectionProps
->;
+  >;
 
 type Props = InjectedFormProps<ObjectNodeFormData, ObjectNodeFormProps> &
   ObjectNodeFormProps &
@@ -75,10 +75,7 @@ class ObjectNodeForm extends React.Component<Props> {
     });
   };
 
-  /**
-   * Same a getQueryableObjectTypes but for scalar types
-   */
-  getQueryableFields = () => {
+  getSelectedObjectType = () => {
     const { objectType, objectTypes, formValues } = this.props;
 
     const selectedFieldType = objectType.fields.find(
@@ -90,13 +87,23 @@ class ObjectNodeForm extends React.Component<Props> {
         const match = selectedFieldType.match(/\w+/);
         return !!(match && match[0] === ot.name);
       })!
+
+  }
+
+  /**
+   * Same a getQueryableObjectTypes but for scalar types
+   */
+  getQueryableFields = () => {
+    const { objectTypes } = this.props;
+
+    return this.getSelectedObjectType()
       .fields.filter(
         f =>
           !objectTypes.find(ot => {
             const match = f.field_type.match(/\w+/);
             return !!(match && match[0] === ot.name);
           }) && f.directives.find(dir => dir.name === 'TreeIndex'),
-      );
+    );
   };
 
   render() {
@@ -159,6 +166,7 @@ class ObjectNodeForm extends React.Component<Props> {
             formChange={change}
             booleanOperator={formValues.objectNodeForm.boolean_operator}
             onBooleanOperatorChange={onBooleanOperatorChange}
+            objectType={this.getSelectedObjectType()}
             {...genericFieldArrayProps}
           />
         ),

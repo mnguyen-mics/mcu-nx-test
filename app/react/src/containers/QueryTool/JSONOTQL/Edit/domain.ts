@@ -17,6 +17,7 @@ export const SUPPORTED_FIELD_TYPES = [
   'Int',
   'Double',
   'BigDecimal',
+  'ID'
 ];
 
 export interface FieldNodeFormData extends FieldNode {
