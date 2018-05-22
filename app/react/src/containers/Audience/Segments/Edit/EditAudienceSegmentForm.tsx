@@ -54,7 +54,7 @@ const FORM_ID = 'audienceSegmentForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
-  >;
+>;
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field;
@@ -137,39 +137,38 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       case 'USER_QUERY':
         return queryLanguage === 'OTQL'
           ? this.generateUserQueryTemplate(
-            <FormOTQL
-              name={'query.query_text'}
-              component={OTQLInputEditor}
-              formItemProps={{
-                label: intl.formatMessage(
-                  messages.audienceSegmentSectionQueryTitle,
-                ),
-              }}
-              helpToolTipProps={{
-                title: intl.formatMessage(
-                  messages.audienceSegmentCreationUserQueryFieldHelper,
-                ),
-              }}
-            />,
-          )
-          : queryLanguage === 'JSON_OTQL'
-            ? this.generateUserQueryTemplate(
-              <FormJSONQL
+              <FormOTQL
                 name={'query.query_text'}
-                component={JSONQL}
-                inputProps={{
-                  datamartId:
-                    datamartId!,
+                component={OTQLInputEditor}
+                formItemProps={{
+                  label: intl.formatMessage(
+                    messages.audienceSegmentSectionQueryTitle,
+                  ),
+                }}
+                helpToolTipProps={{
+                  title: intl.formatMessage(
+                    messages.audienceSegmentCreationUserQueryFieldHelper,
+                  ),
                 }}
               />,
             )
+          : queryLanguage === 'JSON_OTQL'
+            ? this.generateUserQueryTemplate(
+                <FormJSONQL
+                  name={'query.query_text'}
+                  component={JSONQL}
+                  inputProps={{
+                    datamartId: datamartId!,
+                  }}
+                />,
+              )
             : this.generateUserQueryTemplate(
-              <SelectorQL
-                datamartId={datamartId!}
-                organisationId={organisationId}
-                queryContainer={this.props.queryContainer}
-              />,
-            );
+                <SelectorQL
+                  datamartId={datamartId!}
+                  organisationId={organisationId}
+                  queryContainer={this.props.queryContainer}
+                />,
+              );
       default:
         return <div>Not Supported</div>;
     }
