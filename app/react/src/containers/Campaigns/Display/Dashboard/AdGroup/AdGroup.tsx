@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { withRouter, Link } from 'react-router-dom';
-import { Button, Layout } from 'antd';
+import { Button, Layout, Alert } from 'antd';
 import { compose } from 'recompose';
 
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
@@ -31,7 +31,7 @@ export interface AdGroupSubProps<T> {
 interface AdGroupActionBarSubProps<T> {
   isLoadingList: boolean;
   isLoadingPerf: boolean;
-  items: T;
+  items?: T;
 }
 
 export interface DashboardPerformanceSubProps {
@@ -103,6 +103,7 @@ class AdGroup extends React.Component<JoinedProps> {
         />
         <Content className="mcs-content-container">
           <CampaignDashboardHeader campaign={adGroups.items} />
+          {campaign.items && campaign.items.model_version === 'V2014_06' ? < Alert className="m-b-20" message={intl.formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
           <AdGroupsDashboard
             isFetchingMediaStat={dashboardPerformance.media.isLoading}
             mediaStat={dashboardPerformance.media.items}

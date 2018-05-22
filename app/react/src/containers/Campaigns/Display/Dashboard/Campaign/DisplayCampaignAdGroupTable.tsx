@@ -13,6 +13,7 @@ import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import { ExtendedTableRowSelection } from '../../../../../components/TableView/TableView';
+import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
 
 export interface UpdateMessage {
   title: string;
@@ -35,6 +36,7 @@ interface DisplayCampaignAdGroupTableProps {
     },
   ) => void;
   rowSelection: ExtendedTableRowSelection;
+  campaign?: DisplayCampaignInfoResource;
 }
 
 interface DisplayCampaignAdGroupTableState {
@@ -48,7 +50,7 @@ type JoinedProps = DisplayCampaignAdGroupTableProps &
 class DisplayCampaignAdGroupTable extends React.Component<
   JoinedProps,
   DisplayCampaignAdGroupTableState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -66,7 +68,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
     history.push({
       pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${
         adgroup.id
-      }`,
+        }`,
       state: { from: `${location.pathname}${location.search}` },
     });
   };
@@ -118,30 +120,30 @@ class DisplayCampaignAdGroupTable extends React.Component<
       const initialStatus = checked ? 'PAUSED' : 'ACTIVE';
       const successMessage = checked
         ? {
-            title: formatMessage(messages.notificationSuccess),
-            body: formatMessage(messages.notificationAdGroupActivationSuccess, {
-              name: record.name,
-            }),
-          }
+          title: formatMessage(messages.notificationSuccess),
+          body: formatMessage(messages.notificationAdGroupActivationSuccess, {
+            name: record.name,
+          }),
+        }
         : {
-            title: formatMessage(messages.notificationSuccess),
-            body: formatMessage(messages.notificationAdGroupPauseSuccess, {
-              name: record.name,
-            }),
-          };
+          title: formatMessage(messages.notificationSuccess),
+          body: formatMessage(messages.notificationAdGroupPauseSuccess, {
+            name: record.name,
+          }),
+        };
       const errorMessage = checked
         ? {
-            title: formatMessage(messages.notificationError),
-            body: formatMessage(messages.notificationAdGroupActivationError, {
-              name: record.name,
-            }),
-          }
+          title: formatMessage(messages.notificationError),
+          body: formatMessage(messages.notificationAdGroupActivationError, {
+            name: record.name,
+          }),
+        }
         : {
-            title: formatMessage(messages.notificationError),
-            body: formatMessage(messages.notificationAdGroupPauseError, {
-              name: record.name,
-            }),
-          };
+          title: formatMessage(messages.notificationError),
+          body: formatMessage(messages.notificationAdGroupPauseError, {
+            name: record.name,
+          }),
+        };
 
       updateAdGroup(
         record.id,
@@ -191,7 +193,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
             className="mcs-campaigns-link"
             to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${
               record.id
-            }`}
+              }`}
           >
             {text}
           </Link>
@@ -250,26 +252,27 @@ class DisplayCampaignAdGroupTable extends React.Component<
       // },
     ];
 
+
+    const actions = []
+
+    if (this.props.campaign && this.props.campaign.model_version !== 'V2014_06') {
+      actions.push({
+        translationKey: 'EDIT',
+        callback: this.editCampaign,
+      },
+        {
+          intlMessage: messages.duplicate,
+          callback: this.duplicateCampaign,
+        }, )
+    }
+
     const actionColumns = [
       {
         key: 'action',
-        actions: [
-          {
-            translationKey: 'EDIT',
-            callback: this.editCampaign,
-          },
-          {
-            intlMessage: messages.duplicate,
-            callback: this.duplicateCampaign,
-          },
-          // Commented for now to be improved later
-          // {
-          //   translationKey: 'ARCHIVE',
-          //   callback: this.archiveAdGroup,
-          // },
-        ],
+        actions: actions
       },
     ];
+
 
     const pagination = {
       pageSize: this.state.pageSize,

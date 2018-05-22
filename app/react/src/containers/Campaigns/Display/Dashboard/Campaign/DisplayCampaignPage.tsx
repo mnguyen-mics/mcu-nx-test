@@ -1,20 +1,18 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import * as React from 'react';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { Button } from 'antd';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
-import DisplayCampaign from './DisplayCampaign.tsx';
+import DisplayCampaign from './DisplayCampaign';
 
-import ReportService from '../../../../../services/ReportService.ts';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService.ts';
-import GoalService from '../../../../../services/GoalService.ts';
-import { normalizeArrayOfObject } from '../../../../../utils/Normalizer.ts';
-import { normalizeReportView } from '../../../../../utils/MetricHelper.ts';
-import { makeCancelable } from '../../../../../utils/ApiHelper.ts';
+import ReportService from '../../../../../services/ReportService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import GoalService from '../../../../../services/GoalService';
+import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import { makeCancelable } from '../../../../../utils/ApiHelper';
 import log from '../../../../../utils/Logger';
 
 import {
@@ -22,94 +20,32 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
-} from '../../../../../utils/LocationSearchHelper.ts';
+  DateSearchSettings,
+} from '../../../../../utils/LocationSearchHelper';
 
-import * as NotificationActions from '../../../../../state/Notifications/actions';
+import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import { initialPageState, DisplayCampaignPageState, GoalsCampaignRessource } from './domain';
+import { CancelablePromise } from '../../../../../services/ApiService';
+import { AdInfoResource, AdResource, AdGroupResource } from '../../../../../models/campaign/display';
+import { ReportView } from '../../../../../models/ReportView';
+import { UpdateMessage } from './DisplayCampaignAdGroupTable';
+import { Index } from '../../../../../utils';
 
-class DisplayCampaignPage extends Component {
-  cancelablePromises = [];
 
-  constructor(props) {
+type Props = RouteComponentProps<{ organisationId: string, campaignId: string }> & InjectedNotificationProps
+
+class DisplayCampaignPage extends React.Component<Props, DisplayCampaignPageState> {
+  cancelablePromises: Array<CancelablePromise<any>> = [];
+
+  constructor(props: Props) {
     super(props);
 
-    this.state = {
-      campaign: {
-        items: {
-          itemById: {},
-          isLoading: false,
-          isUpdating: false,
-          isArchiving: false,
-          hasItems: true,
-          hasFetched: false,
-        },
-        overallPerformance: {
-          performance: [],
-          isLoading: false,
-          hasFetched: false,
-          error: false,
-        },
-        performance: {
-          performance: [],
-          isLoading: false,
-          hasFetched: false,
-          error: false,
-        },
-        mediaPerformance: {
-          performance: [],
-          isLoading: false,
-          hasFetched: false,
-          error: false,
-        },
-      },
-      adGroups: {
-        items: {
-          itemById: {},
-          adGroupCampaign: {},
-          isLoading: false,
-          isUpdating: false,
-          isArchiving: false,
-          hasItems: true,
-          hasFetched: false,
-        },
-        performance: {
-          performanceById: {},
-          isLoading: false,
-          hasFetched: false,
-          error: false,
-        },
-      },
-      ads: {
-        items: {
-          itemById: {},
-          adAdGroup: {},
-          isLoading: false,
-          isUpdating: false,
-          isArchiving: false,
-          hasItems: true,
-          hasFetched: false,
-        },
-        performance: {
-          performanceById: {},
-          isLoading: false,
-          hasFetched: false,
-          error: false,
-        },
-      },
-      goals: {
-        items: {
-          itemById: [],
-          isLoading: false,
-          hasItems: true,
-          hasFetched: false,
-        },
-        performance: {
-          performanceById: {},
-          isLoading: false,
-          hasFetched: false,
-          error: false,
-        },
-      },
-    };
+    this.state = initialPageState;
+  }
+
+  formatReportView(reportView: ReportView, key: string) {
+    const format = normalizeReportView(reportView);
+    return normalizeArrayOfObject(format, key);
   }
 
   componentDidMount() {
@@ -125,13 +61,13 @@ class DisplayCampaignPage extends Component {
         search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+      const filter = parseSearch<DateSearchSettings>(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
       this.fetchAllData(organisationId, campaignId, filter);
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       location: { search },
       match: { params: { campaignId } },
@@ -158,7 +94,7 @@ class DisplayCampaignPage extends Component {
           ),
         });
       } else {
-        const filter = parseSearch(
+        const filter = parseSearch<DateSearchSettings>(
           nextSearch,
           DISPLAY_DASHBOARD_SEARCH_SETTINGS,
         );
@@ -172,10 +108,10 @@ class DisplayCampaignPage extends Component {
     this.cancelablePromises.forEach(promise => promise.cancel());
   }
 
-  fetchAllData = (organisationId, campaignId, filter) => {
+  fetchAllData = (organisationId: string, campaignId: string, filter: DateSearchSettings) => {
     const lookbackWindow =
       filter.to.toMoment().unix() - filter.from.toMoment().unix();
-    const dimensions = lookbackWindow > 172800 ? 'day' : 'day,hour_of_day';
+    const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
     const getCampaignAdGroupAndAd = () =>
       DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, {
         view: 'deep',
@@ -284,8 +220,8 @@ class DisplayCampaignPage extends Component {
         };
       });
 
-      const ads = [];
-      const adAdGroup = [];
+      const ads: AdInfoResource[] = [];
+      const adAdGroup: Array<{ ad_id: string, ad_group_id: string, campaign_id: string }> = [];
 
       data.ad_groups.forEach(adGroup => {
         adGroup.ads.forEach(ad => {
@@ -336,7 +272,8 @@ class DisplayCampaignPage extends Component {
         const promises = goals.map(goal => {
           return GoalService.getAttributionModels(goal.goal_id).then(
             attribution => {
-              return { ...goal, attribution: attribution.data };
+              const goalCampaign: GoalsCampaignRessource = { ...goal, attribution: attribution.data };
+              return goalCampaign;
             },
           );
         });
@@ -366,7 +303,7 @@ class DisplayCampaignPage extends Component {
       })
       .catch(err =>
         this.catchCancellablePromises(err, 'campaign', 'performance'),
-      );
+    );
 
     getAdGroupPerf.promise
       .then(response => {
@@ -374,7 +311,7 @@ class DisplayCampaignPage extends Component {
           'adGroups',
           'performance',
           'performanceById',
-          DisplayCampaignPage.formatReportView(
+          this.formatReportView(
             response.data.report_view,
             'sub_campaign_id',
           ),
@@ -382,7 +319,7 @@ class DisplayCampaignPage extends Component {
       })
       .catch(err =>
         this.catchCancellablePromises(err, 'adGroups', 'performance'),
-      );
+    );
 
     getAdPerf.promise
       .then(response => {
@@ -390,7 +327,7 @@ class DisplayCampaignPage extends Component {
           'ads',
           'performance',
           'performanceById',
-          DisplayCampaignPage.formatReportView(
+          this.formatReportView(
             response.data.report_view,
             'message_id',
           ),
@@ -408,12 +345,12 @@ class DisplayCampaignPage extends Component {
           'campaign',
           'mediaPerformance',
           'performance',
-          normalizeReportView(formattedReportView, 'campaign_id'),
+          normalizeReportView(formattedReportView),
         );
       })
       .catch(err =>
         this.catchCancellablePromises(err, 'campaign', 'mediaPerformance'),
-      );
+    );
 
     getOverallCampaignPerf.promise
       .then(response => {
@@ -421,49 +358,49 @@ class DisplayCampaignPage extends Component {
           'campaign',
           'overallPerformance',
           'performance',
-          normalizeReportView(response.data.report_view, 'campaign_id'),
+          normalizeReportView(response.data.report_view),
         );
       })
       .catch(err =>
         this.catchCancellablePromises(err, 'campaign', 'overallPerformance'),
-      );
+    );
   };
 
   updateStateOnPerf(
-    firstLevelKey,
-    secondLevelKey,
-    thirdLevel,
-    performanceReport,
+    firstLevelKey: keyof DisplayCampaignPageState,
+    secondLevelKey: string,
+    thirdLevel: string,
+    performanceReport: object,
   ) {
     this.setState(prevState => {
       const nextState = {
         ...prevState,
       };
-      nextState[firstLevelKey][secondLevelKey].isLoading = false;
-      nextState[firstLevelKey][secondLevelKey].hasFetched = true;
-      nextState[firstLevelKey][secondLevelKey][thirdLevel] = performanceReport;
+      (nextState[firstLevelKey] as any)[secondLevelKey].isLoading = false;
+      (nextState[firstLevelKey] as any)[secondLevelKey].hasFetched = true;
+      (nextState[firstLevelKey] as any)[secondLevelKey][thirdLevel] = performanceReport;
 
       return nextState;
     });
   }
 
-  catchCancellablePromises = (err, firstLevelKey, secondLevelKey) => {
+  catchCancellablePromises = (err: any, firstLevelKey: keyof DisplayCampaignPageState, secondLevelKey: string) => {
     if (!err.isCanceled) {
       log.error(err);
       this.setState(prevState => {
         const nextState = {
           ...prevState,
         };
-        nextState[firstLevelKey][secondLevelKey].isLoading = false;
-        nextState[firstLevelKey][secondLevelKey].hasFetched = true;
-        nextState[firstLevelKey][secondLevelKey].error = true;
+        (nextState[firstLevelKey] as any)[secondLevelKey].isLoading = false;
+        (nextState[firstLevelKey] as any)[secondLevelKey].hasFetched = true;
+        (nextState[firstLevelKey] as any)[secondLevelKey].error = true;
 
         return nextState;
       });
     }
   };
 
-  formatListView(a, b) {
+  formatListView(a: Index<any>, b: Index<any>) {
     if (a) {
       return Object.keys(a).map(c => {
         return {
@@ -475,12 +412,7 @@ class DisplayCampaignPage extends Component {
     return [];
   }
 
-  static formatReportView(reportView, key) {
-    const format = normalizeReportView(reportView);
-    return normalizeArrayOfObject(format, key);
-  }
-
-  updateAd = (adId, body, successMessage, errorMessage, undoBody) => {
+  updateAd = (adId: string, body: Partial<AdResource>, successMessage?: UpdateMessage, errorMessage?: UpdateMessage, undoBody?: Partial<AdResource>): Promise<any> => {
     const { notifySuccess, notifyError, removeNotification } = this.props;
 
     return DisplayCampaignService.updateAd(
@@ -495,25 +427,28 @@ class DisplayCampaignPage extends Component {
             ...prevState,
           };
           nextState.ads.items.itemById[adId].status = response.data.status;
+          return nextState;
         });
-        if (successMessage || errorMessage) {
-          const uid = Math.random();
+        if ((successMessage || errorMessage) && undoBody) {
+          const uid = Math.random().toString();
           const undo = () => {
             this.updateAd(adId, undoBody).then(() => {
               removeNotification(uid);
             });
           };
 
-          notifySuccess({
-            uid,
-            message: successMessage.title,
-            description: successMessage.body,
-            btn: (
-              <Button type="primary" size="small" onClick={undo}>
-                <span>Undo</span>
-              </Button>
-            ),
-          });
+          if (successMessage) {
+            notifySuccess({
+              uid,
+              message: successMessage.title,
+              description: successMessage.body,
+              btn: (
+                <Button type="primary" size="small" onClick={undo}>
+                  <span>Undo</span>
+                </Button>
+              ),
+            });
+          }
         }
 
         return null;
@@ -530,11 +465,11 @@ class DisplayCampaignPage extends Component {
       });
   };
 
-  updateAdGroup = (adGroupId, body, successMessage, errorMessage, undoBody) => {
+  updateAdGroup = (adGroupId: string, body: Partial<AdGroupResource>, successMessage?: UpdateMessage, errorMessage?: UpdateMessage, undoBody?: Partial<AdGroupResource>): Promise<any> => {
     const { notifySuccess, notifyError, removeNotification } = this.props;
 
     return DisplayCampaignService.updateAdGroup(
-      this.state.adGroups.items.adGroupCampaign[adGroupId].campaign_id,
+      (this.state.adGroups.items.adGroupCampaign as any)[adGroupId].campaign_id,
       adGroupId,
       body,
     )
@@ -544,25 +479,28 @@ class DisplayCampaignPage extends Component {
             ...prevState,
           };
           nextState.adGroups.items.itemById[adGroupId] = response.data;
+          return nextState;
         });
 
-        if (successMessage || errorMessage) {
+        if ((successMessage || errorMessage) && undoBody) {
           const undo = () => {
             this.updateAdGroup(adGroupId, undoBody).then(() => {
               removeNotification(adGroupId);
             });
           };
 
-          notifySuccess({
-            uid: parseInt(adGroupId, 0),
-            message: successMessage.title,
-            description: successMessage.body,
-            btn: (
-              <Button type="primary" size="small" onClick={undo}>
-                <span>Undo</span>
-              </Button>
-            ),
-          });
+          if (successMessage) {
+            notifySuccess({
+              uid: parseInt(adGroupId, 0),
+              message: successMessage.title,
+              description: successMessage.body,
+              btn: (
+                <Button type="primary" size="small" onClick={undo}>
+                  <span>Undo</span>
+                </Button>
+              ),
+            });
+          }
         }
 
         return null;
@@ -579,16 +517,18 @@ class DisplayCampaignPage extends Component {
       });
   };
 
-  updateCampaign = (campaignId, body, successMessage, errorMessage) => {
+  updateCampaign = (campaignId: string, body: object, errorMessage?: UpdateMessage): Promise<any> => {
     const { notifyError } = this.props;
 
-    DisplayCampaignService.updateCampaign(campaignId, body)
+    return DisplayCampaignService.updateCampaign(campaignId, body)
+      .then(response => DisplayCampaignService.getCampaignDisplayViewDeep(campaignId))
       .then(response => {
         this.setState(prevState => {
           const nextState = {
             ...prevState,
           };
           nextState.campaign.items.itemById = response.data;
+          return nextState;
         });
       })
       .catch(error => {
@@ -661,22 +601,8 @@ class DisplayCampaignPage extends Component {
   }
 }
 
-DisplayCampaignPage.propTypes = {
-  match: PropTypes.shape().isRequired,
-  location: PropTypes.shape().isRequired,
-  history: PropTypes.shape().isRequired,
-  notifySuccess: PropTypes.func.isRequired,
-  notifyError: PropTypes.func.isRequired,
-  removeNotification: PropTypes.func.isRequired,
-};
 
-DisplayCampaignPage = compose(
+export default compose(
   withRouter,
-  connect(undefined, {
-    notifyError: NotificationActions.notifyError,
-    notifySuccess: NotificationActions.notifySuccess,
-    removeNotification: NotificationActions.removeNotification,
-  }),
+  injectNotifications
 )(DisplayCampaignPage);
-
-export default DisplayCampaignPage;

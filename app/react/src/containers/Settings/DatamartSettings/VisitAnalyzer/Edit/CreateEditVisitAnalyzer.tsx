@@ -9,7 +9,7 @@ import * as actions from '../../../../../state/Notifications/actions';
 import {
   PluginProperty,
   VisitAnalyzer,
-  PluginInterface,
+  PluginResource,
 } from '../../../../../models/Plugins';
 
 import messages from './messages';
@@ -28,7 +28,7 @@ interface CreateVisitAnalyzerState {
   edition: boolean;
   isLoading: boolean;
   initialValues?: VisitAnalyzerForm;
-  selectedVisitAnalyzer?: PluginInterface;
+  selectedVisitAnalyzer?: PluginResource;
 }
 
 interface CreateVisitAnalyzerProps {
@@ -200,7 +200,7 @@ class CreateEditVisitAnalyzer extends React.Component<
     return Promise.all(propertiesPromises);
   };
 
-  onSelect = (bo: PluginInterface) => {
+  onSelect = (bo: PluginResource) => {
     this.setState({
       initialValues: { plugin: bo },
     });

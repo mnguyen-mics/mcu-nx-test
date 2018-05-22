@@ -9,6 +9,8 @@ import {
   AudienceSegmentPage,
 } from '../containers/Audience/Segments/Dashboard';
 
+import AudienceFeedPage from '../containers/Audience/Segments/Edit/AudienceFeedForm/AudienceFeedPage';
+
 import {
   AudiencePartitionsTable,
   PartitionsActionbar,
@@ -52,6 +54,20 @@ export const audienceDefinition: NavigatorDefinition = {
     path: '/audience/segments/:segmentId',
     layout: 'main',
     contentComponent: AudienceSegmentPage,
+    requiredFeature: 'audience.segments',
+    requireDatamart: true
+  },
+  feedCreate: {
+    path: '/audience/segments/:segmentId/feeds/create',
+    layout: 'edit',
+    editComponent: AudienceFeedPage,
+    requiredFeature: 'audience.segments',
+    requireDatamart: true
+  },
+  feedEdit: {
+    path: '/audience/segments/:segmentId/feeds/:feedType/:feedId/edit',
+    layout: 'edit',
+    editComponent: AudienceFeedPage,
     requiredFeature: 'audience.segments',
     requireDatamart: true
   },

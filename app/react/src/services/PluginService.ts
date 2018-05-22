@@ -1,6 +1,7 @@
+import { Adlayout, StylesheetVersionResource } from './../models/Plugins';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { PluginInterface, PluginVersion } from '../models/Plugins';
+import { PluginResource, PluginVersionResource } from '../models/Plugins';
 import { PropertyResourceShape } from '../models/plugin';
 import DataFileService from './DataFileService';
 
@@ -12,21 +13,23 @@ interface GetPluginOptions extends PaginatedApiParam {
 }
 
 const pluginService = {
-  getPlugins(options: GetPluginOptions = {}): Promise<DataListResponse<PluginInterface>> {
+  getPlugins(
+    options: GetPluginOptions = {},
+  ): Promise<DataListResponse<PluginResource>> {
     const endpoint = 'plugins';
     return ApiService.getRequest(endpoint, options);
   },
   getPluginVersions(
     pluginId: string,
     params: object = {},
-  ): Promise<DataListResponse<PluginInterface>> {
+  ): Promise<DataListResponse<PluginVersionResource>> {
     const endpoint = `plugins/${pluginId}/versions`;
     return ApiService.getRequest(endpoint, params);
   },
   getPluginVersion(
     pluginId: string,
     versionId: string,
-  ): Promise<DataResponse<PluginInterface>> {
+  ): Promise<DataResponse<PluginVersionResource>> {
     const endpoint = `plugins/${pluginId}/versions/${versionId}`;
     return ApiService.getRequest(endpoint);
   },
@@ -49,49 +52,46 @@ const pluginService = {
       (res: DataListResponse<PropertyResourceShape>) => res.data,
     );
   },
-  getEngineVersion(engineVersionId: string): Promise<PluginVersion> {
+  getEngineVersion(engineVersionId: string): Promise<PluginVersionResource> {
     const endpoint = `plugins/version/${engineVersionId}`;
     return ApiService.getRequest(endpoint).then(
-      (res: DataResponse<PluginVersion>) => {
+      (res: DataResponse<PluginVersionResource>) => {
         return res.data;
       },
     );
   },
-  getAdLayouts(organisationId: string, pluginVersionId: string): Promise<any> {
+  getAdLayouts(
+    organisationId: string,
+    pluginVersionId: string,
+  ): Promise<DataListResponse<Adlayout>> {
     const endpoint = `ad_layouts?organisation_id=${organisationId}&renderer_version_id=${pluginVersionId}`;
-    return ApiService.getRequest(endpoint).then((res: any) => res.data);
+    return ApiService.getRequest(endpoint);
   },
   getAdLayoutVersion(
     organisationId: string,
     adLayoutVersion: string,
-  ): Promise<PluginVersion[]> {
+  ): Promise<DataListResponse<any>> {
     const endpoint = `ad_layouts/${adLayoutVersion}/versions`;
     const params = {
       organisation_id: organisationId,
       statuses: 'DRAFT,PUBLISHED',
     };
-    return ApiService.getRequest(endpoint, params).then(
-      (res: DataListResponse<PluginVersion>) => res.data,
-    );
+    return ApiService.getRequest(endpoint, params);
   },
-  getStyleSheets(organisationId: string): Promise<any> {
+  getStyleSheets(organisationId: string): Promise<DataListResponse<any>> {
     const endpoint = `style_sheets?organisation_id=${organisationId}`;
-    return ApiService.getRequest(endpoint).then(
-      (res: DataListResponse<any>) => res.data,
-    );
+    return ApiService.getRequest(endpoint);
   },
   getStyleSheetsVersion(
     organisationId: string,
     styleSheetId: string,
-  ): Promise<PluginVersion[]> {
+  ): Promise<DataListResponse<StylesheetVersionResource>> {
     const endpoint = `style_sheets/${styleSheetId}/versions`;
     const params = {
       organisation_id: organisationId,
       statuses: 'DRAFT,PUBLISHED',
     };
-    return ApiService.getRequest(endpoint, params).then(
-      (res: DataListResponse<PluginVersion>) => res.data,
-    );
+    return ApiService.getRequest(endpoint, params);
   },
   handleSaveOfProperties(
     params: any,

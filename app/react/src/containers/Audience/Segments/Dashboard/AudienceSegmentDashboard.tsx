@@ -12,15 +12,15 @@ import injectNotifications, {
 import UserListImportCard from './UserListImportCard';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
-import { AudienceSegmentShape, AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { parseSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
+import FeedCardList from './Feeds/FeedCardList'
 
 interface State {
-  audienceSegment?: AudienceSegmentShape;
   loading: boolean;
   counter: {
     report: AudienceReport,
@@ -29,7 +29,7 @@ interface State {
   dashboard: {
     report: AudienceReport,
     isLoading: boolean
-  }
+  },
 }
 
 export interface AudienceSegmentDashboardProps {
@@ -54,7 +54,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       dashboard: {
         isLoading: true,
         report: []
-      }
+      },
     };
   }
 
@@ -103,6 +103,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   }
 
   fetchCounterView = (organisationId: string, filters: Filter[]) => {
+    this.setState({ counter: { ...this.state.counter, isLoading: true } })
     return ReportService.getAudienceSegmentReport(
       organisationId,
       new McsMoment('now'),
@@ -115,6 +116,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   }
 
   fetchDashboardView = (organisationId: string, from: McsMoment, to: McsMoment, filters: Filter[]) => {
+    this.setState({ dashboard: { ...this.state.dashboard, isLoading: true } })
     return ReportService.getAudienceSegmentReport(
       organisationId,
       from,
@@ -129,7 +131,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
   render() {
 
-    const { intl } = this.props;
+    const { intl, segment } = this.props;
     const { counter, dashboard } = this.state
 
     const getLoadingValue = (
@@ -156,13 +158,13 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         display: <Overlap />,
       },
     ];
-    if (this.state.audienceSegment !== undefined) {
-      if (this.state.audienceSegment.type === 'USER_LIST') {
+    if (segment) {
+      if (segment.type === 'USER_LIST') {
         items.push({
           title: intl.formatMessage(messages.imports),
           display: (
             <UserListImportCard
-              datamartId={this.state.audienceSegment.datamart_id}
+              datamartId={segment.datamart_id}
             />
           ),
         });
@@ -180,6 +182,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         <Card>
           <McsTabs items={items} />
         </Card>
+        <FeedCardList />
       </div>
     );
   }

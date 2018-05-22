@@ -188,6 +188,10 @@ export default defineMessages({
         id: 'menu.account.profile',
         defaultMessage: 'Profile',
     },
+    accountSettingsApiToken: {
+        id: 'menu.account.api.tokens',
+        defaultMessage: 'Api Tokens',
+    },
 
     campaignSettingsTitle: {
         id: 'menu.campaigns.title',

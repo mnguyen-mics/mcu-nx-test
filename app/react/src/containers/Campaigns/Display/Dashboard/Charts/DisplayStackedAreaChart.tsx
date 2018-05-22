@@ -32,7 +32,7 @@ import injectThemeColors, {
 const LegendChartWithModalJS = LegendChartWithModal as any;
 const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
 
-interface OverallStat {
+export interface OverallStat {
   cpa: string;
   cpc: string;
   cpm: string;
@@ -45,10 +45,10 @@ interface OverallStat {
 interface DisplayStackedAreaChartProps<T = any> {
   hasFetchedCampaignStat: boolean;
   isFetchingCampaignStat: boolean;
-  dataSource: T[];
+  dataSource?: T[];
   isFetchingOverallStat: boolean;
   hasFetchedOverallStat: boolean;
-  overallStat: OverallStat[];
+  overallStat?: OverallStat[];
   renderCampaignProgress?: boolean;
 }
 
@@ -69,7 +69,7 @@ type JoinedProps<T = any> = DisplayStackedAreaChartProps<T> &
 class DisplayStackedAreaChart<T> extends React.Component<
   JoinedProps<T>,
   DisplayStackedAreaChartState
-> {
+  > {
   constructor(props: JoinedProps<T>) {
     super(props);
 
@@ -180,35 +180,35 @@ class DisplayStackedAreaChart<T> extends React.Component<
       {
         name: 'CPA',
         value:
-          hasFetchedOverallStat && overallStat.length
+          hasFetchedOverallStat && overallStat && overallStat.length
             ? formatMetric(overallStat[0].cpa, '0,0[.]00', '', '€')
             : undefined,
       },
       {
         name: 'CPC',
         value:
-          hasFetchedOverallStat && overallStat.length
+          hasFetchedOverallStat && overallStat && overallStat.length
             ? formatMetric(overallStat[0].cpc, '0,0[.]00', '', '€')
             : undefined,
       },
       {
         name: 'CTR',
         value:
-          hasFetchedOverallStat && overallStat.length
+          hasFetchedOverallStat && overallStat && overallStat.length
             ? formatMetric(parseFloat(overallStat[0].ctr) / 100, '0.000 %')
             : undefined,
       },
       {
         name: 'CPM',
         value:
-          hasFetchedOverallStat && overallStat.length
+          hasFetchedOverallStat && overallStat && overallStat.length
             ? formatMetric(overallStat[0].cpm, '0,0[.]00', '', '€')
             : undefined,
       },
       {
         name: 'Spent',
         value:
-          hasFetchedOverallStat && overallStat.length
+          hasFetchedOverallStat && overallStat && overallStat.length
             ? formatMetric(overallStat[0].impressions_cost, '0,0[.]00', '', '€')
             : undefined,
       },
@@ -231,8 +231,8 @@ class DisplayStackedAreaChart<T> extends React.Component<
         />
       </div>
     ) : (
-      <LoadingChart />
-    );
+        <LoadingChart />
+      );
   }
 
   render() {
@@ -267,28 +267,28 @@ class DisplayStackedAreaChart<T> extends React.Component<
         {renderCampaignProgress ? <hr /> : null}
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {dataSource.length === 0 && hasFetchedCampaignStat ? (
+            {dataSource && dataSource.length === 0 && hasFetchedCampaignStat ? (
               <div />
             ) : (
-              <LegendChartWithModalJS
-                identifier="chartLegend"
-                options={legendOptions}
-                legends={legends}
-                onLegendChange={onLegendChange}
-              />
-            )}
+                <LegendChartWithModalJS
+                  identifier="chartLegend"
+                  options={legendOptions}
+                  legends={legends}
+                  onLegendChange={onLegendChange}
+                />
+              )}
           </Col>
           <Col span={12}>
             <span className="mcs-card-button">{this.renderDatePicker()}</span>
           </Col>
         </Row>
-        {dataSource.length === 0 && hasFetchedCampaignStat ? (
+        {dataSource && dataSource.length === 0 && hasFetchedCampaignStat ? (
           <EmptyCharts title={formatMessage(messages.noStatAvailable)} />
         ) : (
-          <Row gutter={20}>
-            <Col span={24}>{this.renderStackedAreaCharts()}</Col>
-          </Row>
-        )}
+            <Row gutter={20}>
+              <Col span={24}>{this.renderStackedAreaCharts()}</Col>
+            </Row>
+          )}
       </div>
     );
 

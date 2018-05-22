@@ -38,6 +38,7 @@ import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -73,6 +74,7 @@ interface AdGroupCardProps extends CardProps {
     errorMessage?: UpdateMessage,
     undoBody?: Partial<AdGroupResource>,
   ) => Promise<any>;
+  campaign?: DisplayCampaignInfoResource;
 }
 
 interface AdGroupCardState {
@@ -173,9 +175,9 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       onSave: (formData: EditAdGroupsFormData) => Promise<any>;
       selectedRowKeys?: string[];
     } = {
-      close: this.props.closeNextDrawer,
-      onSave: this.saveAdGroups,
-    };
+        close: this.props.closeNextDrawer,
+        onSave: this.saveAdGroups,
+      };
     if (allRowsAreSelected) {
       additionalProps.selectedRowKeys = undefined;
     } else {
@@ -307,6 +309,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       isFetching,
       isFetchingStat,
       dataSet,
+      campaign,
     } = this.props;
 
     const {
@@ -336,9 +339,9 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     };
     const adGroupButtons: JSX.Element = (
       <span>
-        <Button className="m-r-10" type="primary" onClick={onClick}>
+        {campaign && campaign.model_version !== 'V2014_06' && <Button className="m-r-10" type="primary" onClick={onClick}>
           <FormattedMessage {...messages.newAdGroups} />
-        </Button>
+        </Button>}
         {this.renderDatePicker()}
         <Slide
           toShow={hasSelected}
@@ -365,7 +368,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
             </p>
           </Modal>
         ) : null}
-        <Slide
+        {campaign && campaign.model_version !== 'V2014_06' ? <Slide
           toShow={hasSelected}
           horizontal={true}
           content={
@@ -377,7 +380,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
               <FormattedMessage {...messages.editAdGroup} />
             </Button>
           }
-        />
+        /> : null}
         <Slide
           toShow={hasSelected}
           horizontal={true}
@@ -404,6 +407,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
           dataSet={dataSet}
           updateAdGroup={updateAdGroup}
           rowSelection={rowSelection}
+          campaign={campaign}
         />
       </Card>
     );

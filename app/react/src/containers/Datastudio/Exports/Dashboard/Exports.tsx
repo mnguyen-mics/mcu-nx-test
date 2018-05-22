@@ -36,7 +36,7 @@ interface ExportExecutionItems {
   total: number;
 }
 
-interface ExportsProps {}
+interface ExportsProps { }
 
 interface ExportsState {
   exportObject: ExportItem;
@@ -144,7 +144,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       .then(res => res.data)
       .then(res =>
         this.setState({ exportObject: { item: res, isLoading: false } }),
-      )
+    )
       .catch(err => log(err));
     const fetchExportExecution = ExportService.getExportExecutions(
       exportId,
@@ -158,7 +158,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
             total: res.total ? res.total : res.count,
           },
         }),
-      )
+    )
       .catch(err => log(err));
 
     return Promise.all([fetchExport, fetchExportExecution]);
@@ -188,11 +188,11 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     } else if (execution.status === 'SUCCEEDED') {
       (window as any).location = `${
         (window as any).MCS_CONSTANTS.API_URL
-      }/v1/exports/
+        }/v1/exports/
 ${this.props.match.params.exportId}/executions/
 ${execution.id}/files/
 technical_name=${execution.result.output_files[0]}
-?access_token=${getCookie('access_token')}`;
+?access_token=${encodeURI(getCookie('access_token'))}`;
     }
   };
 
@@ -272,8 +272,8 @@ technical_name=${execution.result.output_files[0]}
           exportObject={this.state.exportObject.item}
           isExportExecutionRunning={
             this.state.exportExecutions.items.length &&
-            (this.state.exportExecutions.items[0].status === 'PENDING' ||
-              this.state.exportExecutions.items[0].status === 'RUNNING')
+              (this.state.exportExecutions.items[0].status === 'PENDING' ||
+                this.state.exportExecutions.items[0].status === 'RUNNING')
               ? true
               : false
           }

@@ -22,10 +22,7 @@ import { McsFormSection } from '../../../../utils/FormHelper';
 import messages from './messages';
 import ObjectNodeSection from './Sections/ObjectNodeSection';
 import { QueryBooleanOperator } from '../../../../models/datamart/graphdb/QueryDocument';
-import {
-  ObjectLikeTypeInfoResource,
-  FieldResource,
-} from '../../../../models/datamart/graphdb/RuntimeSchema';
+import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import FieldNodeSection, {
   FieldNodeSectionProps,
 } from './Sections/FieldNodeSection';
@@ -47,7 +44,7 @@ interface MapStateToProps {
 const FieldNodeListFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   FieldNodeSectionProps
->;
+  >;
 
 type Props = InjectedFormProps<ObjectNodeFormData, ObjectNodeFormProps> &
   ObjectNodeFormProps &
@@ -56,16 +53,57 @@ type Props = InjectedFormProps<ObjectNodeFormData, ObjectNodeFormProps> &
   MapStateToProps;
 
 class ObjectNodeForm extends React.Component<Props> {
-  buildAvailableFieldResource = (selectedValue: string): FieldResource[] => {
-    const selectedObject = this.props.objectTypes.find(
-      i => i.name === selectedValue,
+  /**
+   * Filter fields by field_type that represent
+   * an object type (ie not scalar ie [UserEvent!]!)
+   * We use a regexp to extract the type
+   * A TreeIndex directive means it is queryable (ie indexed)
+   */
+  getQueryableObjectTypes = () => {
+    const { objectType, objectTypes } = this.props;
+    return objectType.fields.filter(field => {
+      const found = objectTypes.find(ot => {
+        const match = field.field_type.match(/\w+/);
+        return !!(match && match[0] === ot.name);
+      });
+      const hasIndexedField =
+        !!found &&
+        !!found.fields.find(
+          f => !!f.directives.find(dir => dir.name === 'TreeIndex'),
+        );
+      return !!found && hasIndexedField;
+    });
+  };
+
+  getSelectedObjectType = () => {
+    const { objectType, objectTypes, formValues } = this.props;
+
+    const selectedFieldType = objectType.fields.find(
+      f => f.name === formValues.objectNodeForm.field,
+    )!.field_type;
+
+    return objectTypes
+      .find(ot => {
+        const match = selectedFieldType.match(/\w+/);
+        return !!(match && match[0] === ot.name);
+      })!
+
+  }
+
+  /**
+   * Same a getQueryableObjectTypes but for scalar types
+   */
+  getQueryableFields = () => {
+    const { objectTypes } = this.props;
+
+    return this.getSelectedObjectType()
+      .fields.filter(
+        f =>
+          !objectTypes.find(ot => {
+            const match = f.field_type.match(/\w+/);
+            return !!(match && match[0] === ot.name);
+          }) && f.directives.find(dir => dir.name === 'TreeIndex'),
     );
-    const objectTypesNames = this.props.objectTypes.map(i => i.name);
-    return selectedObject && selectedObject.fields
-      ? selectedObject.fields.filter(
-          i => !objectTypesNames.find(o => i.field_type.indexOf(o) > -1),
-        )
-      : [];
   };
 
   render() {
@@ -75,8 +113,6 @@ class ObjectNodeForm extends React.Component<Props> {
       close,
       change,
       formValues,
-      objectType,
-      objectTypes,
     } = this.props;
 
     const genericFieldArrayProps = {
@@ -106,11 +142,7 @@ class ObjectNodeForm extends React.Component<Props> {
       title: messages.objectNodeTitle,
       component: (
         <ObjectNodeSection
-          objectTypeFields={objectType.fields.filter(field => {
-            const found = objectTypes.find(ot => field.field_type.indexOf(ot.name) > -1);            
-            const hasIndexedField = !!found && !!found.fields.find(f => !f.directives.find(dir => dir.name === 'TreeIndex'))
-            return !!found && hasIndexedField;
-          })}
+          objectTypeFields={this.getQueryableObjectTypes()}
           onSelect={resetFieldNodeForm}
         />
       ),
@@ -123,9 +155,6 @@ class ObjectNodeForm extends React.Component<Props> {
     const showFieldNodeForm = hasField;
 
     if (showFieldNodeForm) {
-      const selectedFieldType = objectType.fields.find(
-        f => f.name === formValues.objectNodeForm.field,
-      )!.field_type;
       sections.push({
         id: 'fieldConditions',
         title: messages.objectNodeTitle,
@@ -133,16 +162,11 @@ class ObjectNodeForm extends React.Component<Props> {
           <FieldNodeListFieldArray
             name="fieldNodeForm"
             component={FieldNodeSection}
-            availableFields={objectTypes
-              .find(ot => selectedFieldType.indexOf(ot.name) > -1)!
-              .fields.filter(
-                f =>
-                  !objectTypes.find(ot => f.field_type.indexOf(ot.name) > -1) &&
-                  f.directives.find(dir => dir.name === 'TreeIndex'),
-              )}
+            availableFields={this.getQueryableFields()}
             formChange={change}
             booleanOperator={formValues.objectNodeForm.boolean_operator}
             onBooleanOperatorChange={onBooleanOperatorChange}
+            objectType={this.getSelectedObjectType()}
             {...genericFieldArrayProps}
           />
         ),

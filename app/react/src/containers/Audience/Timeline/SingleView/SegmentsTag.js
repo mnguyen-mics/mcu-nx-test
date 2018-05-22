@@ -44,7 +44,7 @@ class SegmentsTag extends Component {
 }
 
 SegmentsTag.propTypes = {
-  segmentId: PropTypes.number.isRequired,
+  segmentId: PropTypes.string.isRequired,
 };
 
 export default SegmentsTag;

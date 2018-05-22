@@ -31,7 +31,7 @@ interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
   organisationId: string;
   save: (pluginValue: any, propertiesValue: PluginProperty[]) => void;
   pluginProperties: PluginProperty[];
-  isLoading: boolean;
+  disableFields: boolean;
   pluginVersionId: string;
   formId: string;
   initialValues: any;
@@ -104,7 +104,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
   pluginFieldGenerated = () => {
     const {
-      isLoading,
+      disableFields,
       organisationId,
       pluginVersionId,
       pluginProperties,
@@ -115,7 +115,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
         <PluginFieldGenerator
           key={`${fieldDef.technical_name}`}
           definition={fieldDef}
-          disabled={isLoading}
+          disabled={disableFields}
           pluginVersionId={pluginVersionId}
           organisationId={organisationId}
         />
@@ -171,7 +171,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       formId,
       fieldValidators: { isRequired },
       intl: { formatMessage },
-      isLoading,
+      disableFields,
       showGeneralInformation,
       showTechnicalName,
     } = this.props;
@@ -184,7 +184,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       },
       inputProps: {
         placeholder: formatMessage(messages.sectionGeneralPlaceholder),
-        disabled: isLoading,
+        disabled: disableFields,
       },
       helpToolTipProps: {
         title: formatMessage(messages.sectionGeneralHelper),

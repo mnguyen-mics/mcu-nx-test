@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm from './PluginEditForm';
 import {
-  PluginInterface,
+  PluginResource,
   PluginProperty,
   PluginType,
 } from '../../../models/Plugins';
@@ -17,6 +17,7 @@ import { EditContentLayout } from '../../../components/Layout';
 import Loading from '../../../components/Loading';
 import messages from './messages';
 import { Path } from '../../../components/ActionBar';
+import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 
 const formId = 'pluginForm';
 
@@ -43,20 +44,20 @@ interface PluginContentOuterProps {
   initialValue: any;
   loading: boolean;
   showGeneralInformation?: boolean;
+  disableFields?: boolean;
 }
 
 interface PluginContentState {
-  plugin: PluginInterface;
+  plugin: PluginResource;
   isLoading: boolean;
   pluginProperties: PluginProperty[];
-  availablePlugins: PluginInterface[];
+  availablePlugins: PluginResource[];
 }
 
 function initEmptyPluginSelection() {
   return {
     id: '',
     organisation_id: '',
-    plugin_type: '',
     group_id: '',
     artifact_id: '',
     current_version_id: '',
@@ -117,7 +118,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           plugin_type: this.props.pluginType,
         })
           .then(res => res.data)
-          .then((response: PluginInterface[]) => {
+          .then((response: PluginResource[]) => {
             this.setState({
               availablePlugins: response,
               isLoading: false,
@@ -127,11 +128,11 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
     );
   };
 
-  createPlugin = (plugin: PluginInterface, properties: PluginProperty[]) => {
+  createPlugin = (plugin: PluginResource, properties: PluginProperty[]) => {
     this.props.saveOrCreatePluginInstance(plugin, properties);
   };
 
-  onSelectPlugin = (plugin: PluginInterface) => {
+  onSelectPlugin = (plugin: PluginResource) => {
     this.setState(
       {
         isLoading: true,
@@ -144,7 +145,9 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
             const lastVersion = res.data[res.data.length - 1];
             return PluginService.getPluginVersionProperty(
               plugin.id,
-              lastVersion.id,
+              plugin.current_version_id
+                ? plugin.current_version_id
+                : lastVersion.id,
             );
           })
           .then(res => {
@@ -170,7 +173,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
   formatInitialValues = (initialValues: any) => {
     const formattedProperties: any = {};
 
-    if (initialValues.properties) {
+    if (initialValues && initialValues.properties) {
       initialValues.properties.forEach((property: PluginProperty) => {
         formattedProperties[property.technical_name] = {
           value: property.value,
@@ -179,41 +182,48 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
     }
 
     return {
-      plugin: initialValues.plugin,
+      plugin: initialValues ? initialValues.plugin : undefined,
       properties: formattedProperties,
     };
   };
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       breadcrumbPaths,
       onClose,
       editionMode,
       initialValue,
       loading,
       showGeneralInformation,
+      disableFields,
     } = this.props;
 
     const { pluginProperties, isLoading, plugin } = this.state;
 
-    const sidebarItems = showGeneralInformation
-      ? [
-          {
-            sectionId: 'general',
-            title: messages.menuGeneralInformation,
-          },
-          {
-            sectionId: 'properties',
-            title: messages.menuProperties,
-          },
-        ]
-      : [
-          {
-            sectionId: 'properties',
-            title: messages.menuProperties,
-          },
-        ];
+    const sidebarItems: SideBarItem[] = [];
+
+    if (!editionMode) {
+      sidebarItems.push({
+        sectionId: 'type',
+        title: messages.menuType,
+        onClick: () => this.setState({ pluginProperties: [] }),
+        type: 'validated',
+      });
+    }
+
+    if (showGeneralInformation) {
+      sidebarItems.push({
+        sectionId: 'general',
+        title: messages.menuGeneralInformation,
+      });
+    }
+    sidebarItems.push({
+      sectionId: 'properties',
+      title: messages.menuProperties,
+    });
 
     const actionbarProps =
       pluginProperties.length || editionMode
@@ -243,7 +253,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           organisationId={organisationId}
           save={this.createPlugin}
           pluginProperties={pluginProperties}
-          isLoading={isLoading}
+          disableFields={isLoading || disableFields ? true : false}
           pluginVersionId={plugin.id}
           formId={formId}
           initialValues={this.formatInitialValues(initialValue)}

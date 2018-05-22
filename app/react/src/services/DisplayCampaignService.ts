@@ -52,7 +52,7 @@ const DisplayCampaignService = {
     body: Partial<DisplayCampaignResource>,
   ): Promise<DataResponse<DisplayCampaignResource>> {
     const endpoint = `display_campaigns/${campaignId}`;
-    return ApiService.putRequest(endpoint, {...body, type: 'DISPLAY' });
+    return ApiService.putRequest(endpoint, { ...body, type: 'DISPLAY' });
   },
 
   deleteCampaign(
@@ -146,24 +146,24 @@ const DisplayCampaignService = {
     adGroupId: string,
     audienceSegmentId: string,
     body: Partial<AudienceSegmentSelectionResource>,
-   ): Promise<DataResponse<AudienceSegmentSelectionResource>> {
+  ): Promise<DataResponse<AudienceSegmentSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${audienceSegmentId}`;
     return ApiService.putRequest(endpoint, body);
   },
 
   deleteAudienceSegment(
-      campaignId: string,
-      adGroupId: string,
-      id: string,
-    ): Promise<any> {
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+  ): Promise<any> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
     return ApiService.deleteRequest(endpoint);
   },
 
   /* PUBLISHER SERVICES */
   getPublishers(
-      campaignId: string,
-    ): Promise<InventorySourceResource[]> {
+    campaignId: string,
+  ): Promise<InventorySourceResource[]> {
     const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
     return ApiService.getRequest(endpoint)
       .then((res: DataResponse<InventorySourceResource[]>) => res.data.map((elem: InventorySourceResource) => {
@@ -180,17 +180,17 @@ const DisplayCampaignService = {
   },
 
   createPublisher(
-      campaignId: string,
-      body: object,
-    ): Promise<InventorySourceResource> {
+    campaignId: string,
+    body: object,
+  ): Promise<InventorySourceResource> {
     const endpoint = `display_campaigns/${campaignId}/inventory_sources/`;
     return ApiService.postRequest(endpoint, body);
   },
 
   deletePublisher(
-      campaignId: string,
-      id: string,
-    ): Promise<InventorySourceResource> {
+    campaignId: string,
+    id: string,
+  ): Promise<InventorySourceResource> {
     const endpoint = `display_campaigns/${campaignId}/inventory_sources/${id}`;
     return ApiService.deleteRequest(endpoint);
   },
@@ -209,16 +209,16 @@ const DisplayCampaignService = {
     campaignId: string,
     adGroupId: string,
     body: object,
-  ): Promise<AdResource> {
+  ): Promise<DataResponse<AdResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${adId}`;
     return ApiService.putRequest(endpoint, body);
   },
 
   createAd(
-      campaignId: string,
-      adGroupId: string,
-      body: AdCreateRequest,
-    ): Promise<AdResource> {
+    campaignId: string,
+    adGroupId: string,
+    body: AdCreateRequest,
+  ): Promise<AdResource> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
     return ApiService.postRequest(endpoint, body);
   },
@@ -227,7 +227,7 @@ const DisplayCampaignService = {
     campaignId: string,
     adGroupId: string,
     id: string,
-  ): Promise<any>  {
+  ): Promise<any> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${id}`;
     return ApiService.deleteRequest(endpoint);
   },
@@ -311,9 +311,9 @@ const DisplayCampaignService = {
   },
 
   createPlacementList(
-      campaignId: string,
-      adGroupId: string,
-      body: Partial<PlacementListSelectionResource>,
+    campaignId: string,
+    adGroupId: string,
+    body: Partial<PlacementListSelectionResource>,
   ): Promise<DataResponse<PlacementListSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
     return ApiService.postRequest(endpoint, body);

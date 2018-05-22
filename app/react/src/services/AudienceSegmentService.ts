@@ -25,9 +25,8 @@ export interface SegmentImportResult {
   total_user_segment_treated: number;
 }
 
-export interface UserSegmentImportJobExecutionResource
-  extends BaseExecutionResource<{}, SegmentImportResult> {
-  job_type: 'USER_SEGMENT_IMPORT';
+export interface UserSegmentImportJobExecutionResource extends BaseExecutionResource<{}, SegmentImportResult> {
+  job_type: 'USER_SEGMENT_IMPORT'
 }
 
 export interface GetSegmentsOption extends PaginatedApiParam {
@@ -40,6 +39,7 @@ export interface GetSegmentsOption extends PaginatedApiParam {
   audience_partition_id?: string;
   persisted?: boolean;
   datamart_id?: string;
+  keywords?: string;
 }
 
 const AudienceSegmentService = {
@@ -220,6 +220,14 @@ const AudienceSegmentService = {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds`;
     return ApiService.getRequest(endpoint);
   },
+  getAudienceExternalFeed(
+    audienceSegmentId: string,
+    feedId: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceExternalFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${feedId}`;
+    return ApiService.getRequest(endpoint);
+  },
   createAudienceExternalFeeds(
     audienceSegmentId: string,
     audienceExternalFeed: Partial<AudienceExternalFeed>,
@@ -251,6 +259,14 @@ const AudienceSegmentService = {
     options: object = {},
   ): Promise<DataListResponse<PluginProperty>> {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${feedId}/properties`;
+    return ApiService.getRequest(endpoint);
+  },
+  getAudienceTagFeed(
+    audienceSegmentId: string,
+    feedId: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceTagFeed>> {
+    const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${feedId}`;
     return ApiService.getRequest(endpoint);
   },
   getAudienceTagFeeds(

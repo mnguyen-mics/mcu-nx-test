@@ -14,6 +14,12 @@ const accountSettingsDefinition: NavigatorMenuDefinition = {
       ),
       translation: messages.accountSettingsProfile,
     },
+    {
+      ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsAccountApiTokenList,
+      ),
+      translation: messages.accountSettingsApiToken,
+    },
     
   ],
 };

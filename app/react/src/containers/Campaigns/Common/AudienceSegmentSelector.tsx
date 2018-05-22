@@ -19,7 +19,7 @@ import { UserWorkspaceResource } from '../../../models/directory/UserProfileReso
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentResource>
-> = TableSelector;
+  > = TableSelector;
 
 const messages = defineMessages({
   segmentSelectorTitle: {
@@ -90,7 +90,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
     };
 
     if (filter.keywords) {
-      options.name = filter.keywords;
+      options.keywords = filter.keywords;
     }
 
     if (filter.datamartId) {

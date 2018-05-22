@@ -221,7 +221,7 @@ export default defineMessages({
     id: 'audience.segment.addExisting',
     defaultMessage: 'Add Existing',
   },
-  
+
   // User List
 
   uploadMessage: {
@@ -239,5 +239,18 @@ export default defineMessages({
   uploadButton: {
     id: 'audience.segment.upload.button',
     defaultMessage: 'Upload',
+  },
+
+  actionBarSegmentTitle: {
+    id: 'audience.segment.actionbar.segment',
+    defaultMessage: 'Segments',
+  },
+  actionBarSegmentFeedsCreate: {
+    id: 'audience.segment.actionbar.feeds.create',
+    defaultMessage: 'Add a new Feed',
+  },
+  actionBarSegmentFeedsEdit: {
+    id: 'audience.segment.actionbar.feeds.edit',
+    defaultMessage: 'Edit your Feed',
   },
 });

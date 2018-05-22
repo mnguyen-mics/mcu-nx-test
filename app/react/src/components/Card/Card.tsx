@@ -5,11 +5,12 @@ export interface CardProps {
   buttons?: React.ReactNode;
   title?: React.ReactNode;
   isLoading?: boolean;
+  className?: string;
 }
 
 class Card extends React.Component<CardProps> {
   render() {
-    const { title, buttons, isLoading, children } = this.props;
+    const { title, buttons, isLoading, children, className } = this.props;
 
     const hasHeader = title || buttons;
 
@@ -21,7 +22,7 @@ class Card extends React.Component<CardProps> {
     );
 
     return (
-      <Row className="mcs-card-container">
+      <Row className={`mcs-card-container ${className ? className : ''}`}>
         {hasHeader && (
           <Row className="mcs-card-header">
             <Col span={24}>
@@ -39,8 +40,8 @@ class Card extends React.Component<CardProps> {
               <Spin />
             </Col>
           ) : (
-            children
-          )}
+              children
+            )}
         </Row>
       </Row>
     );

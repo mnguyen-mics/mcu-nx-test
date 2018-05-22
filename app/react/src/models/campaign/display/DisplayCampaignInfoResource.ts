@@ -20,6 +20,7 @@ export interface DisplayCampaignInfoResource {
   currency_code: string;
   time_zone: string;
   max_bid_price: number;
+  model_version: string;
   total_budget: number;
   max_daily_budget: number;
   total_impression_capping: number;

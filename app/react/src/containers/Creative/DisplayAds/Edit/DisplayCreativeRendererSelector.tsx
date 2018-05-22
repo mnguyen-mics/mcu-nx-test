@@ -17,12 +17,12 @@ import { Submenu } from '../../../../components/FormMenu/MenuSubList';
 
 const { Content } = Layout;
 
-const imageAdRendererId = '1';
-const htmlAdRendererId = '1004';
-const externalAdRendererId = '1005';
+const imageAdRendererId = '1065';
+const htmlAdRendererId = '1078';
+const externalAdRendererId = '1061';
 const nativeIvidenceAdRendererId = '1032';
 const nativeQuantumAdRendererId = '1047';
-const imageSkinsAdRendererId = '1026';
+const imageSkinsAdRendererId = '1057';
 
 export interface DisplayCreativeRendererSelectorProps {
   onSelect: (adRendererId: string) => void;
@@ -63,7 +63,14 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
 
   renderAdRendererSubmenu = () => {
     const { onSelect } = this.props;
-    const previousAdRendererIds = ['1', '1004', '1005', '1032', '1047', '1026'];
+    const previousAdRendererIds = [
+      imageAdRendererId,
+      htmlAdRendererId,
+      externalAdRendererId,
+      nativeIvidenceAdRendererId,
+      nativeQuantumAdRendererId,
+      imageSkinsAdRendererId,
+    ];
     const adRendererSubmenu: Submenu[] = [];
     PluginService.getPlugins({
       max_results: 1000,
@@ -74,7 +81,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
         adRendererList
           .filter(ad => !previousAdRendererIds.includes(ad.id))
           .forEach(adRenderer => {
-            const separators = ['_','-'];
+            const separators = ['_', '-'];
             const formattedName = adRenderer.artifact_id
               .split(new RegExp(separators.join('|'), 'g'))
               .map(word => word.charAt(0).toUpperCase() + word.slice(1))

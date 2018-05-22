@@ -265,9 +265,11 @@ function hasTypeChild(
   const objectTypeNames = objectTypes.map(ots => ots.name);
   const fieldTypeNames = objectType.fields.map(f => f.field_type);
   return (
-    fieldTypeNames.filter(
-      ftn => !!objectTypeNames.find(otn => ftn.indexOf(otn) > -1),
-    ).length > 0
+    fieldTypeNames.filter(ftn => {
+      // using a regexp to extract type like [UserEvent!]!
+      const match = ftn.match(/\w+/);
+      return !!objectTypeNames.find(otn => !!(match && match[0] === otn));
+    }).length > 0
   );
 }
 
@@ -310,12 +312,11 @@ export function buildNodeModelBTree(
       const objectNode = new ObjectNodeModel(treeNode, treeNodePath);
       objectNode.objectTypeInfo = objectType;
 
-      
       const field = objectType.fields.find(f => f.name === treeNode.field)!;
       const nextObjectType = objectTypes.find(
         ot => field.field_type.indexOf(ot.name) > -1,
       )!;
-      
+
       const hidePlusNode = !hasTypeChild(nextObjectType, objectTypes);
       return {
         node: objectNode,
@@ -336,7 +337,11 @@ export function buildNodeModelBTree(
             hidePlusNode
               ? undefined
               : {
-                  node: new PlusNodeModel(treeNode, treeNodePath, nextObjectType),
+                  node: new PlusNodeModel(
+                    treeNode,
+                    treeNodePath,
+                    nextObjectType,
+                  ),
                 },
           ),
       };
