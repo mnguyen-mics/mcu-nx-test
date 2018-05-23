@@ -45,7 +45,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
       filter: {
         currentPage: 1,
         pageSize: 10,
-        name: '',
+        keywords: '',
       },
     };
   }
@@ -141,10 +141,10 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
         channel_type: 'MOBILE_APPLICATION'
       };
 
-      if (filter.name) {
+      if (filter.keywords) {
         return {
           ...options,
-          name: filter.name,
+          name: filter.keywords,
         }
       }
       return options;
@@ -153,7 +153,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
     ChannelService.getChannels(organisationId, datamartId, buildGetMobileApplicationsOptions()).then(response => {
       this.setState({
         isFetchingMobileApplications: false,
-        noMobileApplicationYet: response && response.count === 0 && !filter.name,
+        noMobileApplicationYet: response && response.count === 0 && !filter.keywords,
         mobileApplications: response.data,
         totalMobileApplications: response.total ? response.total : response.count,
       });

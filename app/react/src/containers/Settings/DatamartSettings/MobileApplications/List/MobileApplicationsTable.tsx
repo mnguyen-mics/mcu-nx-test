@@ -102,9 +102,9 @@ class MobileApplicationsTable extends React.Component<Props> {
       placeholder: formatMessage(messages.searchPlaceholder),
       onSearch: (value: string) =>
         onFilterChange({
-          name: value,
+          keywords: value,
         }),
-      defaultValue: filter.name,
+      defaultValue: filter.keywords,
     };
 
     return noMobileApplicationYet ? (
