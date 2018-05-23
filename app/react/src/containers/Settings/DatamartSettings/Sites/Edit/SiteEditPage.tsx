@@ -11,7 +11,7 @@ import {
   INITIAL_SITE_FORM_DATA,
   SiteFormData,
 } from './domain';
-import SiteService from '../../../../../services/SiteService';
+import ChannelService from '../../../../../services/ChannelService';
 import messages from './messages';
 import SiteEditForm from './SiteEditForm';
 import Loading from '../../../../../components/Loading';
@@ -20,7 +20,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { createFieldArrayModel } from '../../../../../utils/FormHelper';
-import { SiteResource, EventRules } from '../../../../../models/settings/settings';
+import { ChannelResource, EventRules } from '../../../../../models/settings/settings';
 import { VisitAnalyzerFieldModel } from '../../Common/domain';
 
 interface State {
@@ -57,16 +57,16 @@ class SiteEditPage extends React.Component<Props, State> {
       siteIdFromURLParam || siteIdFromLocState;
 
     if (siteId) {
-      const getSites = SiteService.getSite(
+      const getSites = ChannelService.getChannel(
         this.props.datamart.id,
         siteId,
       );
-      const getEventRules = SiteService.getEventRules(
+      const getEventRules = ChannelService.getEventRules(
         this.props.datamart.id,
         siteId,
         organisationId,
       );
-      const getAliases = SiteService.getAliases(
+      const getAliases = ChannelService.getAliases(
         this.props.datamart.id,
         siteId,
         organisationId,
@@ -126,39 +126,39 @@ class SiteEditPage extends React.Component<Props, State> {
       return null;
     }
 
-    const generateEventRulesTasks = (site: SiteResource): Array<Promise<any>> => {
+    const generateEventRulesTasks = (site: ChannelResource): Array<Promise<any>> => {
       const startIds = this.state.siteFormData.eventRulesFields.map(erf => erf.model.id)
       const savedIds: string[] = [];
       const saveCreatePromises = siteFormData.eventRulesFields.map(erf => {
         if (!erf.model.id) {
-          return SiteService.createEventRules(datamart.id, site.id, { organisation_id: organisationId, properties: {...erf.model, datamart_id: datamart.id, site_id: site.id} })
+          return ChannelService.createEventRules(datamart.id, site.id, { organisation_id: organisationId, properties: {...erf.model, datamart_id: datamart.id, site_id: site.id} })
         } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);
-          return SiteService.updateEventRules(datamart.id, site.id, organisationId, erf.model.id, {...erf.model, datamart_id: datamart.id, site_id: site.id})
+          return ChannelService.updateEventRules(datamart.id, site.id, organisationId, erf.model.id, {...erf.model, datamart_id: datamart.id, site_id: site.id})
         }
         return Promise.resolve();
       });
-      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? SiteService.deleteEventRules(datamart.id, site.id, organisationId, sid) : Promise.resolve())
+      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? ChannelService.deleteEventRules(datamart.id, site.id, organisationId, sid) : Promise.resolve())
       return [...saveCreatePromises, ...deletePromises]
     }
 
-    const generateAliasesTasks = (site: SiteResource): Array<Promise<any>> => {
+    const generateAliasesTasks = (site: ChannelResource): Array<Promise<any>> => {
       const startId = this.state.siteFormData.aliases.map(alias => alias.model.id)
       const savedIds: string[] = [];
       const saveCreatePromises = siteFormData.aliases.map(alias => {
         if (!alias.model.id) {
-          return SiteService.createAliases(datamart.id, site.id, { organisation_id: organisationId, site_id: site.id, name: alias.model.name })
+          return ChannelService.createAliases(datamart.id, site.id, { organisation_id: organisationId, site_id: site.id, name: alias.model.name })
         } else if (startId.includes(alias.model.id)) {
           savedIds.push(alias.model.id);
-          return SiteService.updateAliases(datamart.id, site.id, organisationId, alias.model.id, {...alias.model, site_id: site.id, organisation_id: organisationId})
+          return ChannelService.updateAliases(datamart.id, site.id, organisationId, alias.model.id, {...alias.model, site_id: site.id, organisation_id: organisationId})
         }
         return Promise.resolve();
       });
-      const deletePromises = startId.map(sid => sid && !savedIds.includes(sid) ? SiteService.deleteAliases(datamart.id, site.id, organisationId, sid) : Promise.resolve())
+      const deletePromises = startId.map(sid => sid && !savedIds.includes(sid) ? ChannelService.deleteAliases(datamart.id, site.id, organisationId, sid) : Promise.resolve())
       return [...saveCreatePromises, ...deletePromises]
     }
 
-    const generateAllPromises = (site: SiteResource): Array<Promise<any>> => {
+    const generateAllPromises = (site: ChannelResource): Array<Promise<any>> => {
       return [...generateEventRulesTasks(site), ...generateAliasesTasks(site)]
     }
 
@@ -171,14 +171,14 @@ class SiteEditPage extends React.Component<Props, State> {
           visit_analyzer_model_id: getVisitAnalyzerId(siteFormData.visitAnalyzerFields),
         };
 
-        return SiteService.updateSite(
+        return ChannelService.updateSite(
           this.props.datamart.id,
           siteFormData.site.id,
           mbApp,
         ).then((site) => Promise.all(generateAllPromises(site.data)));
       }
 
-      return SiteService.createSite(
+      return ChannelService.createChannel(
         this.props.match.params.organisationId,
         this.props.datamart.id,
         {

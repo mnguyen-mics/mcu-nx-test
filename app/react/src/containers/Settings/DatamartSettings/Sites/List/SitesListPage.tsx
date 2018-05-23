@@ -4,7 +4,7 @@ import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Button, Layout } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import SiteService from '../../../../../services/SiteService';
+import ChannelService from '../../../../../services/ChannelService';
 
 import settingsMessages from '../../../messages';
 import messages from './messages';
@@ -13,12 +13,12 @@ import SitesTable from './SitesTable';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { Filter } from '../../Common/domain';
-import { SiteResource } from '../../../../../models/settings/settings';
+import { ChannelResource } from '../../../../../models/settings/settings';
 
 const { Content } = Layout;
 
 interface SiteListState {
-  sites: SiteResource[],
+  sites: ChannelResource[],
   totalSites: number,
   isFetchingSites: boolean;
   noSiteYet: boolean;
@@ -87,7 +87,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     // to do
   }
 
-  handleEditSite = (site: SiteResource) => {
+  handleEditSite = (site: ChannelResource) => {
     const {
       match: {
         params: {
@@ -118,6 +118,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     const buildGetSitesOptions = () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+        channel_type: 'SITE'
       };
 
       if (filter.name) {
@@ -129,7 +130,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       return options;
     };
 
-    SiteService.getSites(organisationId, datamartId, buildGetSitesOptions()).then(response => {
+    ChannelService.getChannels(organisationId, datamartId, buildGetSitesOptions()).then(response => {
       this.setState({
         isFetchingSites: false,
         noSiteYet: response && response.count === 0 && !filter.name,

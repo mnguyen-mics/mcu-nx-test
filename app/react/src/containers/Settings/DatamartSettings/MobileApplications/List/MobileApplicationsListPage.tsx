@@ -4,7 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Row, Layout } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import MobileApplicationService from '../../../../../services/MobileApplicationService';
+import ChannelService from '../../../../../services/ChannelService';
 
 import messages from './messages';
 import settingsMessages from '../../../messages';
@@ -15,7 +15,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import { MobileApplicationResource } from '../../../../../models/settings/settings';
+import { ChannelResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 
@@ -24,7 +24,7 @@ export interface MobileApplicationsListPageProps {
 }
 
 interface MobileApplicationsListPageState {
-  mobileApplications: MobileApplicationResource[]
+  mobileApplications: ChannelResource[]
   totalMobileApplications: number;
   isFetchingMobileApplications: boolean;
   noMobileApplicationYet: boolean;
@@ -107,7 +107,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
     return Promise.resolve()
   }
 
-  handleEditMobileApplication = (mobileApplication: MobileApplicationResource) => {
+  handleEditMobileApplication = (mobileApplication: ChannelResource) => {
     const {
       match: {
         params: {
@@ -138,6 +138,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
     const buildGetMobileApplicationsOptions = () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+        channel_type: 'MOBILE_APPLICATION'
       };
 
       if (filter.name) {
@@ -149,7 +150,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
       return options;
     };
 
-    MobileApplicationService.getMobileApplications(organisationId, datamartId, buildGetMobileApplicationsOptions()).then(response => {
+    ChannelService.getChannels(organisationId, datamartId, buildGetMobileApplicationsOptions()).then(response => {
       this.setState({
         isFetchingMobileApplications: false,
         noMobileApplicationYet: response && response.count === 0 && !filter.name,

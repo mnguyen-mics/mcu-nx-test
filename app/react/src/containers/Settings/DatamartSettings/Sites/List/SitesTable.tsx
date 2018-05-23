@@ -7,19 +7,19 @@ import {
   TableViewFilters,
 } from '../../../../../components/TableView';
 import messages from './messages';
-import { SiteResource } from '../../../../../models/settings/settings';
+import { ChannelResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 export interface SitesTableProps {
   isFetchingSites: boolean;
-  dataSource: SiteResource[];
+  dataSource: ChannelResource[];
   totalSites: number;
   noSiteYet: boolean;
   onFilterChange: (a: Partial<Filter>) => void;
-  onArchiveSite: (a: SiteResource) => void;
-  onEditSite: (a: SiteResource) => void;
+  onArchiveSite: (a: ChannelResource) => void;
+  onEditSite: (a: ChannelResource) => void;
   filter: Filter;
 }
 
@@ -61,7 +61,7 @@ class SitesTable extends React.Component<Props> {
         intlMessage: messages.siteName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: SiteResource) => <Link to={
+        render: (text: string, record: ChannelResource) => <Link to={
           `/v2/o/${organisationId}/settings/datamart/sites/${record.id}/edit`
         }>
           {text}

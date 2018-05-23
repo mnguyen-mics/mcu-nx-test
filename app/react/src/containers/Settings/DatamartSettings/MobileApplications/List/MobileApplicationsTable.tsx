@@ -7,19 +7,19 @@ import {
   TableViewFilters,
 } from '../../../../../components/TableView';
 import messages from './messages';
-import { MobileApplicationResource } from '../../../../../models/settings/settings';
+import { ChannelResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 
 export interface MobileApplicationsTableProps {
   isFetchingMobileApplications: boolean;
-  dataSource: MobileApplicationResource[];
+  dataSource: ChannelResource[];
   totalMobileApplications: number;
   noMobileApplicationYet: boolean;
   onFilterChange: (a: Partial<Filter>) => void;
-  onArchiveMobileApplication: (a: MobileApplicationResource) => void;
-  onEditMobileApplication: (a: MobileApplicationResource) => void;
+  onArchiveMobileApplication: (a: ChannelResource) => void;
+  onEditMobileApplication: (a: ChannelResource) => void;
   filter: Filter;
 }
 
@@ -61,7 +61,7 @@ class MobileApplicationsTable extends React.Component<Props> {
         intlMessage: messages.mobileApplicationName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: MobileApplicationResource) => <Link to={
+        render: (text: string, record: ChannelResource) => <Link to={
           `/v2/o/${organisationId}/settings/datamart/mobile_application/${record.id}/edit`
         }>
           {text}

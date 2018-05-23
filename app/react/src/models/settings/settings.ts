@@ -1,6 +1,6 @@
 import { Workspace } from "../organisation/organisation";
 
-export interface PropertyResource {
+export interface ChannelResource {
     creation_ts: number;
     datamart_id: string
     id: string;
@@ -10,17 +10,19 @@ export interface PropertyResource {
     visit_analyzer_model_id: string | null;
 }
 
+export type ChannelResourceShape = MobileApplicationResource | SiteResource; 
 
-export interface MobileApplicationResource extends PropertyResource {
+export interface MobileApplicationResource extends ChannelResource {
     type: 'MOBILE_APPLICATION';
 }
 
-export interface MobileApplicationCreationResource extends Partial<PropertyResource> {
+export interface MobileApplicationCreationResource extends Partial<ChannelResource> {
     type: 'MOBILE_APPLICATION';
 }
 
-export interface SiteResource extends PropertyResource {
+export interface SiteResource extends ChannelResource {
     type: 'SITE';
+    domain: string;
 }
 
 

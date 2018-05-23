@@ -28,9 +28,12 @@ import GeneralFormSection from './Sections/GeneralFormSection';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 
 import VisitAnalyzerSection, {
-    VisitAnalyzerSectionProps,
+  VisitAnalyzerSectionProps,
 } from '../../Common/VisitAnalyzerFormSection';
 import * as SessionSelectors from '../../../../../state/Session/selectors';
+import EventRulesSection, {
+  EventRulesSectionProps,
+} from '../../Common/EventRulesSection';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -60,16 +63,16 @@ type Props = InjectedFormProps<
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-const FORM_ID = 'mobileApplicationForm';
+export const FORM_ID = 'mobileApplicationForm';
+
+const EventRulesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  EventRulesSectionProps
+>;
 
 class MobileApplicationEditForm extends React.Component<Props> {
   render() {
-    const {
-      handleSubmit,
-      breadCrumbPaths,
-      close,
-      change,
-    } = this.props;
+    const { handleSubmit, breadCrumbPaths, close, change } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
@@ -91,8 +94,20 @@ class MobileApplicationEditForm extends React.Component<Props> {
     });
 
     sections.push({
+      id: 'eventRules',
+      title: messages.sectionEventRulesTitle,
+      component: (
+        <EventRulesFieldArray
+          name="eventRulesFields"
+          component={EventRulesSection}
+          {...genericFieldArrayProps}
+        />
+      ),
+    });
+
+    sections.push({
       id: 'visitAnalyzer',
-      title: messages.sectionGeneralTitle,
+      title: messages.sectionVisitAnalyzerTitle,
       component: (
         <VisitAnalyzerFieldArray
           name="visitAnalyzerFields"
