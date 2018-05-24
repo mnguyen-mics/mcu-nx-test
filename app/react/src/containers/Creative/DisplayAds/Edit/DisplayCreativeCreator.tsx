@@ -9,7 +9,9 @@ import { DisplayCreativeFormData } from './domain';
 import Loading from '../../../../components/Loading';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
 import { DisplayCreativeFormProps } from './DisplayCreativeForm';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 export interface DisplayCreativeCreatorProps extends DisplayCreativeFormProps {}
 
@@ -18,7 +20,9 @@ interface State {
   creativeFormData: Partial<DisplayCreativeFormData>;
 }
 
-type Props = DisplayCreativeCreatorProps & InjectedIntlProps & InjectedNotificationProps;
+type Props = DisplayCreativeCreatorProps &
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 class DisplayCreativeCreator extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -61,9 +65,9 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
     const initialValues = this.props.initialValues || creativeFormData;
 
     return Object.keys(initialValues).length > 0 ? (
-      <DisplayCreativeForm 
-        {...this.props} 
-        initialValues={initialValues} 
+      <DisplayCreativeForm
+        {...this.props}
+        initialValues={initialValues}
         goToCreativeTypeSelection={this.resetFormData}
       />
     ) : (
@@ -75,6 +79,6 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, DisplayCreativeCreatorProps>(
-  injectNotifications,
-)(DisplayCreativeCreator);
+export default compose<Props, DisplayCreativeCreatorProps>(injectNotifications)(
+  DisplayCreativeCreator,
+);

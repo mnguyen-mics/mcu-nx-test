@@ -116,7 +116,9 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
   getAllEmailTemplatesIds = () => {
     const {
       totalCreativeEmails,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       notifyError,
     } = this.props;
     const options: GetCreativesOptions = {
@@ -138,7 +140,9 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       location: { search, pathname, state },
       history,
       intl,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       dataSource,
     } = this.props;
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);

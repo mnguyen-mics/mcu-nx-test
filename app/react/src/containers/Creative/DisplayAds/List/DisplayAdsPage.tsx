@@ -90,7 +90,9 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
   getAllCreativesIds = () => {
     const {
       totalCreativeDisplay,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       notifyError,
     } = this.props;
     const options: GetCreativesOptions = {
@@ -195,7 +197,9 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       location: { search, pathname, state },
       history,
       fetchCreativeDisplay,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       dataSource,
     } = this.props;
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);

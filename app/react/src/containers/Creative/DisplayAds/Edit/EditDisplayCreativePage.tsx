@@ -13,7 +13,9 @@ import {
 } from './domain';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
 import Loading from '../../../../components/Loading';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 interface State {
   loading: boolean;
@@ -35,7 +37,9 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     const {
       history,
       location,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     const url =
@@ -47,7 +51,12 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   };
 
   onSave = (creativeData: DisplayCreativeFormData) => {
-    const { match: { params: { organisationId } }, intl } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      intl,
+    } = this.props;
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -78,7 +87,11 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   };
 
   render() {
-    const { match: { params: { creativeId } } } = this.props;
+    const {
+      match: {
+        params: { creativeId },
+      },
+    } = this.props;
 
     const actionBarButtonText = messages.creativeCreationSaveButton;
 
@@ -110,8 +123,6 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
-  injectIntl,
-  withRouter,
-  injectNotifications,
-)(EditDisplayCreativePage);
+export default compose<Props, {}>(injectIntl, withRouter, injectNotifications)(
+  EditDisplayCreativePage,
+);

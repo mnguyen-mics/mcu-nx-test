@@ -47,7 +47,9 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
     const {
       history,
       location: { search, pathname },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       fetchCreativeDisplay,
     } = this.props;
 
@@ -66,14 +68,18 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
   componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       location: { search },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
       fetchCreativeDisplay,
     } = this.props;
 
     const {
       location: { pathname: nextPathname, search: nextSearch, state },
-      match: { params: { organisationId: nextOrganisationId } },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -125,7 +131,9 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
       isFetchingCreativeDisplay,
       dataSource,
@@ -140,10 +148,11 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
 
     const searchOptions = {
       placeholder: intl.formatMessage(messages.creativeModalSearchPlaceholder),
-      onSearch: (value: string) => this.updateLocationSearch({
-        keywords: value,
-        currentPage: 1
-      }),
+      onSearch: (value: string) =>
+        this.updateLocationSearch({
+          keywords: value,
+          currentPage: 1,
+        }),
       defaultValue: filter.keywords,
     };
 
@@ -236,12 +245,17 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-        <EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />
-      );
+      <EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />
+    );
   }
 
   editCreativeDisplay(creative: DisplayAdResource) {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
 
     history.push(
       `/v2/o/${organisationId}/creatives/display/edit/${creative.id}`,
@@ -249,7 +263,9 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
   }
   archiveCreativeDisplay(creative: DisplayAdResource) {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search, pathname, state },
       fetchCreativeDisplay,
       intl,
@@ -261,7 +277,9 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
     if (creative.audit_status === 'NOT_AUDITED') {
       Modal.confirm({
         title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
-        content: intl.formatMessage(messages.creativeModalConfirmArchivedContent),
+        content: intl.formatMessage(
+          messages.creativeModalConfirmArchivedContent,
+        ),
         iconType: 'exclamation-circle',
         okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
         cancelText: intl.formatMessage(messages.cancelText),
@@ -294,9 +312,8 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
         title: intl.formatMessage(messages.creativeModalNoArchiveTitle),
         content: intl.formatMessage(messages.creativeModalNoArchiveMessage),
         iconType: 'exclamation-circle',
-      })
+      });
     }
-
   }
 }
 

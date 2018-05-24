@@ -87,15 +87,17 @@ const DisplayCreativeFormService = {
       const creativeId = resp.data.id;
 
       return Promise.all(
-        Object.keys(properties).filter(key => properties[key].writable).map(key => {
-          const item = properties[key];
-          return CreativeService.updateDisplayCreativeRendererProperty(
-            organisationId,
-            creativeId,
-            item.technical_name,
-            item,
-          );
-        }),
+        Object.keys(properties)
+          .filter(key => properties[key].writable)
+          .map(key => {
+            const item = properties[key];
+            return CreativeService.updateDisplayCreativeRendererProperty(
+              organisationId,
+              creativeId,
+              item.technical_name,
+              item,
+            );
+          }),
       ).then(() => {
         return CreativeService.takeScreenshot(creativeId).then(() => {
           return creativeId;
