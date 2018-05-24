@@ -62,6 +62,10 @@ export default defineMessages({
         id: 'menu.creatives.emails',
         defaultMessage: 'Emails',
     },
+    creativesNative: {
+        id: 'menu.creatives.native',
+        defaultMessage: 'Native',
+    },
 
 
     // LIBRARY

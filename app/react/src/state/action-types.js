@@ -110,6 +110,10 @@ export const CREATIVES_EMAIL_DELETE = createRequestTypes('CREATIVES_EMAIL_DELETE
 export const CREATIVES_EMAIL_FETCH = createRequestTypes('CREATIVES_EMAIL_FETCH');
 export const CREATIVES_EMAIL_RESET = 'CREATIVES_EMAIL_RESET';
 
+export const CREATIVES_NATIVE_DELETE = createRequestTypes('CREATIVES_NATIVE_DELETE');
+export const CREATIVES_NATIVE_FETCH = createRequestTypes('CREATIVES_NATIVE_FETCH');
+export const CREATIVES_NATIVE_RESET = 'CREATIVES_NATIVE_RESET';
+
 export const GET_LOGO = createRequestTypes('GET_LOGO');
 export const PUT_LOGO = createRequestTypes('PUT_LOGO');
 export const SAVE_PROFILE = createRequestTypes('SAVE_PROFILE');

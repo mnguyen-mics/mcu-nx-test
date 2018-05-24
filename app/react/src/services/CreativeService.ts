@@ -1,6 +1,7 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   CreativeType,
+  CreativeSubtype,
   GenericCreativeResource,
   CreativeStatus,
   CreativeResourceShape,
@@ -17,6 +18,7 @@ import PluginService from './PluginService';
 
 export interface GetCreativesOptions {
   creative_type?: CreativeType;
+  creative_subtype?: CreativeSubtype;
   scope?: string;
   keywords?: string[];
   statuses?: CreativeStatus[];

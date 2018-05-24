@@ -2,50 +2,62 @@ import { EditDisplayCreativePage } from '../containers/Creative/DisplayAds/Edit'
 
 import DisplayAdsPage from '../containers/Creative/DisplayAds/List/DisplayAdsPage';
 
+import NativeListPage from '../containers/Creative/NativeAds/List/NativeListPage';
+
 import { CreateEmailTemplate } from '../containers/Creative/EmailTemplates/Edit';
 
+import { EmailListPage } from '../containers/Creative/EmailTemplates/List';
 import {
-  EmailListPage,
-} from '../containers/Creative/EmailTemplates/List';
-import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
+  NavigatorRoute,
+  NavigatorDefinition,
+  generateRoutesFromDefinition,
+} from './domain';
 
 export const creativesDefinition: NavigatorDefinition = {
   creativeDisplayList: {
     path: '/creatives/display',
     layout: 'main',
     contentComponent: DisplayAdsPage,
-    requiredFeature: 'creatives.display'
+    requiredFeature: 'creatives.display',
   },
   creativeDisplayCreation: {
     path: '/creatives/display/create',
     layout: 'edit',
     editComponent: EditDisplayCreativePage,
-    requiredFeature: 'creatives.display'
+    requiredFeature: 'creatives.display',
   },
   creativeDisplayEdit: {
     path: '/creatives/display/edit/:creativeId(\\d+)',
     layout: 'edit',
     editComponent: EditDisplayCreativePage,
-    requiredFeature: 'creatives.display'
+    requiredFeature: 'creatives.display',
   },
   creativeEmailList: {
     path: '/creatives/email',
     layout: 'main',
     contentComponent: EmailListPage,
-    requiredFeature: 'creatives.email'
+    requiredFeature: 'creatives.email',
+  },
+  creativeNativeList: {
+    path: '/creatives/native',
+    layout: 'main',
+    contentComponent: NativeListPage,
+    requiredFeature: 'creatives.native',
   },
   creativeEmailCreation: {
     path: '/creatives/email/create',
     layout: 'edit',
     editComponent: CreateEmailTemplate,
-    requiredFeature: 'creatives.email'
+    requiredFeature: 'creatives.email',
   },
   creativeEmailEdition: {
     path: '/creatives/email/:creativeId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEmailTemplate,
-    requiredFeature: 'creatives.email'
+    requiredFeature: 'creatives.email',
   },
 };
 
-export const creativeRoutes: NavigatorRoute[] = generateRoutesFromDefinition(creativesDefinition);
+export const creativeRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
+  creativesDefinition,
+);
