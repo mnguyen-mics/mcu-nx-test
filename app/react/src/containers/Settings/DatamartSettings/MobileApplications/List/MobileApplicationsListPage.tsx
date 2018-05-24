@@ -1,14 +1,21 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { Button, Row, Layout } from 'antd';
+import { Button, Row, Layout, Icon } from 'antd';
+import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import ChannelService from '../../../../../services/ChannelService';
-
+import { Index } from '../../../../../utils';
 import messages from './messages';
 import settingsMessages from '../../../messages';
-
+import {
+  updateSearch,
+  DATAMART_SEARCH_SETTINGS,
+  KEYWORD_SEARCH_SETTINGS,
+  parseSearch,
+  compareSearches,
+} from '../../../../../utils/LocationSearchHelper';
 import MobileApplicationsTable from './MobileApplicationsTable';
 import { injectDrawer } from '../../../../../components/Drawer';
 import injectNotifications, {
@@ -18,23 +25,36 @@ import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDraw
 import { ChannelResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
+import { MultiSelectProps } from '../../../../../components/MultiSelect';
+import { getWorkspace } from '../../../../../state/Session/selectors';
+import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 
 const { Content } = Layout;
-export interface MobileApplicationsListPageProps {
+export interface MobileApplicationsListPageProps {}
+
+interface MapStateToProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
 interface MobileApplicationsListPageState {
-  mobileApplications: ChannelResource[]
+  mobileApplications: ChannelResource[];
   totalMobileApplications: number;
   isFetchingMobileApplications: boolean;
   noMobileApplicationYet: boolean;
   filter: Filter;
 }
 
-type Props = MobileApplicationsListPageProps & RouteComponentProps<{ organisationId: string }> & InjectedNotificationProps & InjectedDrawerProps & InjectedDatamartProps;
+type Props = MobileApplicationsListPageProps &
+  RouteComponentProps<{ organisationId: string }> &
+  InjectedNotificationProps &
+  InjectedDrawerProps &
+  MapStateToProps &
+  InjectedDatamartProps;
 
-class MobileApplicationsListPage extends React.Component<Props, MobileApplicationsListPageState> {
-
+class MobileApplicationsListPage extends React.Component<
+  Props,
+  MobileApplicationsListPageState
+> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -52,123 +72,201 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
 
   buildNewActionElement = (organisationId: string, datamartId: string) => {
     return (
-      <Button key={messages.newMobileApplication.id} type="primary" onClick={this.onClick}>
+      <Button
+        key={messages.newMobileApplication.id}
+        type="primary"
+        onClick={this.onClick}
+      >
         <FormattedMessage {...messages.newMobileApplication} />
       </Button>
     );
-  }
-  
+  };
+
   onClick = () => {
     const {
       history,
       match: {
-        params: {
-          organisationId
-        }
-      }
+        params: { organisationId },
+      },
     } = this.props;
-    history.push(`/v2/o/${organisationId}/settings/datamart/mobile_application/create`)
-  }
+    history.push(
+      `/v2/o/${organisationId}/settings/datamart/mobile_application/create`,
+    );
+  };
 
   componentDidMount() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
+      location: { search },
       datamart,
     } = this.props;
-
-    this.fetchMobileApplications(organisationId, datamart.id, this.state.filter);
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+    const datamartId = filter.datamartId ? filter.datamartId : datamart.id;
+    this.setState({
+      isFetchingMobileApplications: true,
+    });
+    this.fetchMobileApplications(
+      organisationId,
+      datamartId,
+      this.state.filter,
+    ).then(() => {
+      this.setState({
+        isFetchingMobileApplications: false,
+      });
+    });
   }
 
   componentWillReceiveProps(nextProps: Props) {
     const {
-     match: {
-       params: {
-         organisationId
-       }
-     }, 
-     datamart,
+      match: {
+        params: { organisationId },
+      },
+      location: { search },
     } = this.props;
 
     const {
       match: {
-        params: {
-          organisationId: nextOrganiastionId
-        }
-      }, 
-      datamart: nextDatamart,
-     } = this.props;
+        params: { organisationId: nextOrganisationId },
+      },
+      location: { search: nextSearch },
+    } = nextProps;
 
-    if (nextOrganiastionId !== organisationId || nextDatamart.id !== datamart.id)
-      this.fetchMobileApplications(organisationId, datamart.id, this.state.filter);
+    if (
+      nextOrganisationId !== organisationId ||
+      !compareSearches(search, nextSearch)
+    ) {
+      const nextFilter = parseSearch(
+        nextSearch,
+        this.getSearchSetting(nextOrganisationId),
+      );
+      const datamartId = nextFilter.datamartId;
+      this.setState({
+        isFetchingMobileApplications: true,
+      });
+      this.fetchMobileApplications(
+        organisationId,
+        datamartId,
+        this.state.filter,
+      ).then(() => {
+        this.setState({
+          isFetchingMobileApplications: false,
+        });
+      });
+    }
   }
 
-
   handleArchiveMobileApplication() {
-    return Promise.resolve()
+    return Promise.resolve();
   }
 
   handleEditMobileApplication = (mobileApplication: ChannelResource) => {
     const {
       match: {
-        params: {
-          organisationId
-        }
+        params: { organisationId },
       },
       history,
     } = this.props;
 
-    history.push(`/v2/o/${organisationId}/settings/datamart/mobile_application/${mobileApplication.id}/edit`);
-  }
+    history.push(
+      `/v2/o/${organisationId}/settings/datamart/mobile_application/${
+        mobileApplication.id
+      }/edit`,
+    );
+  };
 
   handleFilterChange = (newFilter: Filter) => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       datamart,
     } = this.props;
 
     this.setState({ filter: newFilter });
     this.fetchMobileApplications(organisationId, datamart.id, newFilter);
-  }
+  };
 
   /**
    * Data
    */
 
-  fetchMobileApplications = (organisationId: string, datamartId: string, filter: Filter) => {
+  fetchMobileApplications = (
+    organisationId: string,
+    datamartId: string,
+    filter: Filter,
+  ) => {
     const buildGetMobileApplicationsOptions = () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-        channel_type: 'MOBILE_APPLICATION'
+        channel_type: 'MOBILE_APPLICATION',
       };
 
       if (filter.keywords) {
         return {
           ...options,
           name: filter.keywords,
-        }
+        };
       }
       return options;
     };
 
-    ChannelService.getChannels(organisationId, datamartId, buildGetMobileApplicationsOptions()).then(response => {
-      this.setState({
-        isFetchingMobileApplications: false,
-        noMobileApplicationYet: response && response.count === 0 && !filter.keywords,
-        mobileApplications: response.data,
-        totalMobileApplications: response.total ? response.total : response.count,
+    return ChannelService.getChannels(
+      organisationId,
+      datamartId,
+      buildGetMobileApplicationsOptions(),
+    )
+      .then(response => {
+        this.setState({
+          isFetchingMobileApplications: false,
+          noMobileApplicationYet:
+            response && response.count === 0 && !filter.keywords,
+          mobileApplications: response.data,
+          totalMobileApplications: response.total
+            ? response.total
+            : response.count,
+        });
+      })
+      .catch(error => {
+        this.setState({ isFetchingMobileApplications: false });
+        this.props.notifyError(error);
       });
-    }).catch(error => {
-      this.setState({ isFetchingMobileApplications: false });
-      this.props.notifyError(error);
-    });
+  };
+
+  getSearchSetting(organisationId: string) {
+    return [...KEYWORD_SEARCH_SETTINGS, ...DATAMART_SEARCH_SETTINGS];
   }
 
-  
+  updateLocationSearch = (params: Index<any>) => {
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+      location: { search: currentSearch, pathname },
+    } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(
+        currentSearch,
+        params,
+        this.getSearchSetting(organisationId),
+      ),
+    };
+
+    history.push(nextLocation);
+  };
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       datamart,
+      workspace,
+      location: { search },
     } = this.props;
 
     const {
@@ -182,13 +280,52 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
     const newButton = this.buildNewActionElement(organisationId, datamart.id);
     const buttons = [newButton];
 
+    const datamartItems = workspace(organisationId).datamarts.map(d => ({
+      key: d.id,
+      value: d.name || d.token,
+    }));
+
+    const filtersOptions: Array<MultiSelectProps<any>> = [];
+
+    if (workspace(organisationId).datamarts.length > 1) {
+      const filterData = parseSearch(
+        search,
+        this.getSearchSetting(organisationId),
+      );
+      const datamartFilter = {
+        displayElement: (
+          <div>
+            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+            <Icon type="down" />
+          </div>
+        ),
+        selectedItems: filterData.datamartId
+          ? [datamartItems.find(di => di.key === filterData.datamartId)]
+          : [datamartItems[0]],
+        items: datamartItems,
+        singleSelectOnly: true,
+        getKey: (item: any) => (item && item.key ? item.key : ''),
+        display: (item: any) => item.value,
+        handleItemClick: (datamartItem: { key: string; value: string }) => {
+          this.updateLocationSearch({
+            datamartId:
+              datamartItem && datamartItem.key ? datamartItem.key : undefined,
+            currentPage: 1,
+          });
+        },
+      };
+      filtersOptions.push(datamartFilter);
+    }
+
     return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <Row className="mcs-table-container">
             <div>
               <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title"><FormattedMessage {...settingsMessages.mobileApplications} /></span>
+                <span className="mcs-card-title">
+                  <FormattedMessage {...settingsMessages.mobileApplications} />
+                </span>
                 <span className="mcs-card-button">{buttons}</span>
               </div>
               <hr className="mcs-separator" />
@@ -201,6 +338,7 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
                 onFilterChange={this.handleFilterChange}
                 onArchiveMobileApplication={this.handleArchiveMobileApplication}
                 onEditMobileApplication={this.handleEditMobileApplication}
+                filtersOptions={filtersOptions}
               />
             </div>
           </Row>
@@ -210,10 +348,15 @@ class MobileApplicationsListPage extends React.Component<Props, MobileApplicatio
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose<Props, MobileApplicationsListPageProps>(
   injectIntl,
   withRouter,
   injectDrawer,
   injectDatamart,
   injectNotifications,
+  connect(mapStateToProps),
 )(MobileApplicationsListPage);
