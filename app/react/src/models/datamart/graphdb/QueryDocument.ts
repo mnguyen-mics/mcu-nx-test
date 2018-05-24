@@ -129,16 +129,22 @@ export type QueryFieldExistence = 'EXISTS' | 'DOES_NOT_EXIST';
 
 export interface SelectionField {
   name: string;
-  selections: SelectionField[]
+  selections?: SelectionField[]
+  directives?: DirectiveField[];
+}
+
+export interface DirectiveField {
+  name: string;
 }
 
 export interface SelectionOperation {
-  selections: SelectionField[]
+  selections?: SelectionField[];
+  directives?: DirectiveField[];
 }
 
 export interface QueryDocument {
   language_version?: string;
-  operation?: SelectionOperation;
+  operations: SelectionOperation[];
   // aggregations: Aggregation[],
   from: string;
   where?: ObjectTreeExpressionNodeShape
