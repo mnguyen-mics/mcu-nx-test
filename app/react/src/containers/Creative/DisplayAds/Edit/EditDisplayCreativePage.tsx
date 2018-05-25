@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
+import queryString from 'query-string';
 import DisplayCreativeFormLoader from './DisplayCreativeFormLoader';
 import { DisplayCreativeCreator } from './index';
 import messages from './messages';
@@ -36,16 +36,22 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   redirect = () => {
     const {
       history,
-      location,
+      location: { search, state },
       match: {
         params: { organisationId },
       },
     } = this.props;
 
+    const subtype = queryString.parse(search).subtype
+      ? queryString.parse(search).subtype
+      : undefined;
+
     const url =
-      location.state && location.state.from
-        ? location.state.from
-        : `/v2/o/${organisationId}/creatives/display`;
+      state && state.from
+        ? state.from
+        : subtype === 'native'
+          ? `/v2/o/${organisationId}/creatives/native`
+          : `/v2/o/${organisationId}/creatives/display`;
 
     history.push(url);
   };
@@ -56,6 +62,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl,
+      location: { search },
     } = this.props;
 
     const hideSaveInProgress = message.loading(
@@ -67,7 +74,15 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    DisplayCreativeFormService.saveDisplayCreative(organisationId, creativeData)
+    const subtype = queryString.parse(search).subtype
+      ? queryString.parse(search).subtype
+      : undefined;
+
+    DisplayCreativeFormService.saveDisplayCreative(
+      organisationId,
+      creativeData,
+      subtype,
+    )
       .then(() => {
         hideSaveInProgress();
         this.redirect();
@@ -91,7 +106,10 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       match: {
         params: { creativeId },
       },
+      location: { search },
     } = this.props;
+
+    const query = queryString.parse(search);
 
     const actionBarButtonText = messages.creativeCreationSaveButton;
 
@@ -99,7 +117,9 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       {
         name: creativeId
           ? messages.creativeEditionBreadCrumb
-          : messages.creativeCreationBreadCrumb,
+          : query.subtype === 'native'
+            ? messages.nativeCreationBreadCrumb
+            : messages.creativeCreationBreadCrumb,
       },
     ];
 

@@ -73,6 +73,10 @@ export default defineMessages({
     id: 'creatives.create.actionbar.breadcrumb.label',
     defaultMessage: 'New Display Creative',
   },
+  nativeCreationBreadCrumb: {
+    id: 'natives.create.actionbar.breadcrumb.label',
+    defaultMessage: 'New Native Creative',
+  },
   creativeEditionBreadCrumb: {
     id: 'creatives.edition.actionbar.breadcrumb.label',
     defaultMessage: 'Edit Display Creative',

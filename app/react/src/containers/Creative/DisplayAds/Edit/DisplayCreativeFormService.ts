@@ -59,6 +59,7 @@ const DisplayCreativeFormService = {
   saveDisplayCreative(
     organisationId: string,
     formData: DisplayCreativeFormData,
+    subtype?: string 
   ): Promise<TCreativeId> {
     const { creative, rendererPlugin, properties } = formData;
 
@@ -74,7 +75,7 @@ const DisplayCreativeFormService = {
         renderer_group_id: rendererPlugin.group_id,
         editor_artifact_id: 'default-editor',
         editor_group_id: 'com.mediarithmics.creative.display',
-        subtype: 'BANNER',
+        subtype: subtype === 'native' ?  'NATIVE' : 'BANNER',
         ...creative
       };
       createOrUpdatePromise = CreativeService.createDisplayCreative(

@@ -10,6 +10,7 @@ import { automationsSagas } from './Automations/sagas';
 import { partitionsSagas } from './Audience/Partitions/sagas';
 import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
+import { nativeCreativesSagas } from './Creatives/Native/sagas';
 import { labelsSagas } from './Labels/sagas';
 import { versionSagas } from './Version/sagas';
 import { accountSagas } from './Account/sagas';
@@ -30,6 +31,7 @@ export default function* sagas() {
     ...partitionsSagas,
     ...creativeDisplaySagas,
     ...creativeEmailsSagas,
+    ...nativeCreativesSagas,
     ...accountSagas,
     ...featuresSagas,
   ]);

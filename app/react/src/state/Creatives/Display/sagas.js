@@ -19,12 +19,16 @@ function* loadCreativeDisplay({ payload }) {
     let options = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       archived: filter.archived,
+      creative_subtype: [
+        'BANNER',
+        'VIDEO'
+      ],
     };
 
     if (filter.keywords) {
       options = {
         ...options,
-        keywords: filter.keywords
+        keywords: filter.keywords,
       };
     }
 

@@ -83,7 +83,7 @@ class NativeActionBar extends React.Component<JoinedProps> {
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/v2/o/${organisationId}/creatives/native/create`}>
+        <Link to={`/v2/o/${organisationId}/creatives/display/create?subtype=native`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
             <FormattedMessage {...messages.newNativeCreativeButton} />

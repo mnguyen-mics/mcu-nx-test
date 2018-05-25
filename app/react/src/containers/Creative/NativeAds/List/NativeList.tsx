@@ -207,7 +207,7 @@ class NativeCreativesTable extends React.Component<
         render: (text: string, record: any) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/creatives/display/${record.id}/edit`}
+            to={`/v2/o/${organisationId}/creatives/display/edit/${record.id}?subtype=native`}
           >
             {text}
           </Link>
@@ -272,7 +272,7 @@ class NativeCreativesTable extends React.Component<
   editNativeCreatives(campaign: DisplayAdResource) {
     const { match: { params: { organisationId } }, history } = this.props;
 
-    history.push(`/v2/o/${organisationId}/creatives/display/${campaign.id}/edit`);
+    history.push(`/v2/o/${organisationId}/creatives/display/edit/${campaign.id}?subtype=native`);
   }
 
   archiveNativeCreatives(native: DisplayAdResource) {
