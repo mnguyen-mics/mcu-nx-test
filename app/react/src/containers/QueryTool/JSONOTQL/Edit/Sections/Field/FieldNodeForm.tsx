@@ -102,6 +102,8 @@ class FieldNodeForm extends React.Component<Props> {
         return { type: 'STRING', operator: 'EQ', values: [] };
       case 'Bool':
         return { type: 'BOOLEAN', operator: 'EQUAL', values: [] };
+      case 'Boolean':
+        return { type: 'BOOLEAN', operator: 'EQUAL', values: [] };
       case 'Enum':
         return { type: 'ENUM', operator: 'EQ', values: [] };
       case 'Number':
@@ -290,6 +292,8 @@ class FieldNodeForm extends React.Component<Props> {
         return this.generateStringComparisonOperator();
       case 'Bool':
         return this.generateBooleanComparisonOperator();
+      case 'Boolean':
+        return this.generateBooleanComparisonOperator();
       case 'Enum':
         return this.generateEnumComparisonOperator();
       case 'Number':
@@ -472,6 +476,10 @@ class FieldNodeForm extends React.Component<Props> {
           condition as StringComparisonOperator,
         );
       case 'Bool':
+        return this.generateBooleanComparisonField(
+          condition as BooleanComparisonOperator,
+        );
+      case 'Boolean':
         return this.generateBooleanComparisonField(
           condition as BooleanComparisonOperator,
         );
