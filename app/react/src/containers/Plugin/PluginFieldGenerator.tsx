@@ -37,7 +37,18 @@ interface AdditionalInputProps {
   disabled?: boolean;
 }
 
-class PluginFieldGenerator extends React.Component<JoinedProps> {
+interface State {
+  nativeDataType: number;
+}
+
+class PluginFieldGenerator extends React.Component<JoinedProps, State> {
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      nativeDataType: 1,
+    };
+  }
+
   technicalNameToName = (technicalName: string) => {
     return technicalName
       .split('_')
@@ -52,6 +63,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     name: string,
     fieldDefinition: PluginProperty,
     validation: Validator[] = [],
+    warn: Validator[] = [],
     additionalInputProps: AdditionalInputProps = {},
     options = {},
   ) => {
@@ -84,13 +96,19 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     };
 
     return (
-      <Field
-        key={`properties.${name}`}
-        name={`properties.${name}`}
-        component={component}
-        validate={validation}
-        {...customInputProps}
-      />
+      <div>
+        {/* {fieldDefinition.property_type === 'NATIVE_DATA' && (
+          //
+        )} */}
+        <Field
+          key={`properties.${name}`}
+          name={`properties.${name}`}
+          component={component}
+          validate={validation}
+          warn={warn}
+          {...customInputProps}
+        />
+      </div>
     );
   };
 
@@ -99,7 +117,15 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     organisationId: string,
   ) => {
     const {
-      fieldValidators: { isValidInteger, isValidDouble },
+      fieldValidators: {
+        isValidInteger,
+        isValidDouble,
+        isRequired,
+        isValidSponsoredField,
+        isValidDescField,
+        isValidRatingField,
+        isValidCtatextField,
+      },
     } = this.props;
 
     switch (fieldDefinition.property_type) {
@@ -121,6 +147,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
           [],
+          [],
           {
             disabled: this.props.disabled,
             buttonText: 'Upload File',
@@ -134,6 +161,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           `${fieldDefinition.technical_name}.value.value`,
           fieldDefinition,
           [],
+          [],
           { rows: 4 },
           { textArea: true },
         );
@@ -142,6 +170,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           FormStyleSheet,
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
+          [],
           [],
           {},
           {
@@ -155,6 +184,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           FormAdLayout,
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
+          [],
           [],
           {},
           {
@@ -199,6 +229,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
           [],
+          [],
           {
             buttonText: 'Upload File',
             accept: (fieldDefinition.value as AcceptedFilePropertyResource)
@@ -215,11 +246,65 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
       case 'RECOMMENDER':
         return <div>RECOMMENDER_ID</div>;
       case 'NATIVE_DATA':
-        return this.renderFieldBasedOnConfig(
-          FormInput,
-          `${fieldDefinition.technical_name}.value.value`,
-          fieldDefinition,
-        );
+        switch (fieldDefinition.value.type) {
+          case 1:
+            return this.renderFieldBasedOnConfig(
+              FormInput,
+              `${fieldDefinition.technical_name}.value.value`,
+              fieldDefinition,
+              [isRequired],
+              [isValidSponsoredField],
+            );
+          case 2:
+            return this.renderFieldBasedOnConfig(
+              FormInput,
+              `${fieldDefinition.technical_name}.value.value`,
+              fieldDefinition,
+              [isRequired],
+              [isValidDescField],
+            );
+          case 3:
+            return this.renderFieldBasedOnConfig(
+              FormInput,
+              `${fieldDefinition.technical_name}.value.value`,
+              fieldDefinition,
+              [],
+              [isValidRatingField],
+            );
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+            return this.renderFieldBasedOnConfig(
+              FormInput,
+              `${fieldDefinition.technical_name}.value.value`,
+              fieldDefinition,
+              [isValidInteger],
+              [],
+            );
+          case 8:
+          case 9:
+          case 10:
+          case 11:
+            return this.renderFieldBasedOnConfig(
+              FormInput,
+              `${fieldDefinition.technical_name}.value.value`,
+              fieldDefinition,
+              [],
+              [],
+            );
+          case 12:
+            return this.renderFieldBasedOnConfig(
+              FormInput,
+              `${fieldDefinition.technical_name}.value.value`,
+              fieldDefinition,
+              [],
+              [isValidCtatextField],
+            );
+          default:
+            return <div>Please contact your support</div>;
+        }
+
       case 'NATIVE_TITLE':
         return this.renderFieldBasedOnConfig(
           FormInput,
@@ -231,6 +316,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           FormUpload,
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
+          [],
           [],
           {
             disabled: this.props.disabled,
@@ -246,9 +332,11 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
 
   render() {
     const { definition, organisationId } = this.props;
-    return definition && organisationId
-      ? this.generateFielBasedOnDefinition(definition, organisationId)
-      : null;
+    return (
+      definition &&
+      organisationId &&
+      this.generateFielBasedOnDefinition(definition, organisationId)
+    );
   }
 }
 

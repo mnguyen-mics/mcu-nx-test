@@ -35,6 +35,22 @@ const defaultErrorMessages = defineMessages({
     id: 'common.form.field.error.positive_number',
     defaultMessage: 'Number must be above 0',
   },
+  invalidSponsoredField: {
+    id: 'common.form.field.error.invalid.sponsored.field',
+    defaultMessage: 'Max 25 characters',
+  },
+  invalidDescField: {
+    id: 'common.form.field.error.invalid.desc.field',
+    defaultMessage: 'Max 140 characters',
+  },
+  invalidRatingField: {
+    id: 'common.form.field.error.invalid.rating.field',
+    defaultMessage: 'Integer between 0 and 5',
+  },
+  invalidCtatextField: {
+    id: 'common.form.field.error.invalid.ctatext.field',
+    defaultMessage: 'Max 15 characters',
+  },
 });
 
 type FormatMessageHandler = (
@@ -51,6 +67,10 @@ export interface FieldValidatorsProps {
   isValidInteger: Validator;
   isValidDouble: Validator;
   isValidArrayOfNumber: Validator;
+  isValidSponsoredField: Validator;
+  isValidDescField: Validator;
+  isValidRatingField: Validator;
+  isValidCtatextField: Validator;
 }
 
 export interface ValidatorProps {
@@ -107,6 +127,38 @@ const isValidArrayOfNumber = (formatMessage: FormatMessageHandler): Validator =>
   return !(value && Array.isArray(value) && containsOnlyNumber) ? formatMessage(defaultErrorMessages.invalidNumber) : undefined
 }
 
+/***** Data Asset Types Validators 
+See https://www.iab.com/wp-content/uploads/2017/04/OpenRTB-Native-Ads-Specification-Draft_1.2_2017-04.pdf
+At page 39 --> 7.6 Data Asset Types *****/
+
+/***** Type 1 Sponsored *****/
+
+const isValidSponsoredField = (formatMessage: FormatMessageHandler): Validator => value => {
+  return value && value.length <= 25 ?
+    formatMessage(defaultErrorMessages.invalidSponsoredField) : undefined;
+};
+
+/***** Type 2 Desc *****/
+
+const isValidDescField = (formatMessage: FormatMessageHandler): Validator => value => {
+  return value && value.length <= 140 ?
+    formatMessage(defaultErrorMessages.invalidDescField) : undefined;
+};
+
+/***** Type 3 Rating *****/
+
+const isValidRatingField = (formatMessage: FormatMessageHandler): Validator => value => {
+  return value && parseInt(value, 10) >= 0 && parseInt(value, 10) <= 5 ?
+    formatMessage(defaultErrorMessages.invalidRatingField) : undefined;
+};
+
+/***** Type 12 Rating *****/
+
+const isValidCtatextField = (formatMessage: FormatMessageHandler): Validator => value => {
+  return value && value.length <= 15 ?
+    formatMessage(defaultErrorMessages.invalidCtatextField) : undefined;
+};
+
 export default compose<{}, ValidatorProps>(
   injectIntl,
   withProps<ValidatorProps, InjectedIntlProps>(
@@ -121,7 +173,11 @@ export default compose<{}, ValidatorProps>(
           isValidFloat: isValidFloat(formatMessage),
           isValidInteger: isValidInteger(formatMessage),
           isValidDouble: isValidDouble(formatMessage),
-          isValidArrayOfNumber: isValidArrayOfNumber(formatMessage)
+          isValidArrayOfNumber: isValidArrayOfNumber(formatMessage),
+          isValidSponsoredField: isValidSponsoredField(formatMessage),
+          isValidDescField: isValidDescField(formatMessage),
+          isValidRatingField: isValidRatingField(formatMessage),
+          isValidCtatextField: isValidCtatextField(formatMessage),
         },
       };
     }),

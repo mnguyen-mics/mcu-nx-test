@@ -4,6 +4,7 @@ import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PluginResource, PluginVersionResource } from '../models/Plugins';
 import { PropertyResourceShape } from '../models/plugin';
 import DataFileService from './DataFileService';
+import AssetsFilesService from './Library/AssetsFilesService';
 
 interface GetPluginOptions extends PaginatedApiParam {
   plugin_type?: string;
@@ -125,6 +126,38 @@ const pluginService = {
             ApiService.putRequest(endpoint, newParams);
           },
         );
+      }
+      return Promise.resolve();
+    } else if (params.property_type === 'NATIVE_IMAGE') {
+      if (params.value && params.value.length === 0) {
+        return Promise.resolve();
+      }
+
+      const fileValue =
+        params.value && params.value.file ? params.value.file : null;
+
+      if (fileValue !== null) {
+        const formData = new FormData(); /* global FormData */
+        formData.append('file', fileValue, fileValue.name);
+
+        return AssetsFilesService.uploadAssetsFile(
+          organisationId,
+          formData,
+        ).then(res => {
+          const newParams = {
+            ...params,
+          };
+          newParams.value = {
+            original_file_name: res.data.original_filename,
+            file_path: res.data.file_path,
+            asset_id: res.data.id,
+            require_display: true,
+            height: res.data.height,
+            width: res.data.width,
+            type: 1,
+          };
+          ApiService.putRequest(endpoint, newParams);
+        });
       }
       return Promise.resolve();
     } else if (params.property_type === 'DATA_FILE') {
