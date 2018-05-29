@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { Row, Col } from 'antd';
+import { Row, Col, Alert } from 'antd';
+import { RouteComponentProps, withRouter } from 'react-router';
 import messages from '../messages';
 import {
   FormInput,
@@ -14,8 +15,12 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
+import { McsIcon } from '../../../../../../components';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps &
+  RouteComponentProps<{ mobileApplicationId: string }>;
 
 interface State {
   displayAdvancedSection: boolean;
@@ -44,6 +49,9 @@ class GeneralFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      match: {
+        params: { mobileApplicationId },
+      },
     } = this.props;
 
     const { displayWarning } = this.state;
@@ -73,6 +81,26 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
         />
 
+        {displayWarning &&
+          mobileApplicationId && (
+            <div>
+              <Row>
+                <Col span={24} className="modificationWarning">
+                  <Alert
+                    message={
+                      <div>
+                        <McsIcon type="warning" />
+                        {formatMessage(messages.warningOnTokenEdition)}
+                      </div>
+                    }
+                    type="warning"
+                  />
+                </Col>
+              </Row>
+              <br />
+            </div>
+          )}
+
         <FormInputField
           name="mobileapplication.token"
           component={FormInput}
@@ -91,22 +119,11 @@ class GeneralFormSection extends React.Component<Props, State> {
             title: formatMessage(messages.contentSectionGeneralTokenTooltip),
           }}
         />
-
-        {displayWarning && (
-          <div>
-            <Row>
-              <Col span={20} offset={4} className="modificationWarning">
-                {formatMessage(messages.warningOnTokenEditioon)}
-              </Col>
-            </Row>
-            <br />
-          </div>
-        )}
       </div>
     );
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
+export default compose(injectIntl, withValidators, withNormalizer, withRouter)(
   GeneralFormSection,
 );
