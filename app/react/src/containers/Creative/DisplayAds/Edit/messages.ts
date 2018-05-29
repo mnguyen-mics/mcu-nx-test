@@ -79,7 +79,15 @@ export default defineMessages({
   },
   creativeEditionBreadCrumb: {
     id: 'creatives.edition.actionbar.breadcrumb.label',
-    defaultMessage: 'Edit Display Creative',
+    defaultMessage: 'Edit {name}',
+  },
+  displayListBreadCrumb: {
+    id: 'display.creatives.list.actionbar.breadcrumb.label',
+    defaultMessage: 'Display Ads',
+  },
+  nativeListBreadCrumb: {
+    id: 'native.creatives.list.actionbar.breadcrumb.label',
+    defaultMessage: 'Natives',
   },
   creativeCreationGeneralNameFieldTitle: {
     id: 'creatives.create.section.general.field.name.title',

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Modal } from 'antd';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import {
   FormattedMessage,
   defineMessages,
@@ -68,6 +68,8 @@ class NativeActionBar extends React.Component<JoinedProps> {
         isArchiving,
       },
       intl,
+      location: { pathname },
+      history,
     } = this.props;
 
     const breadcrumbPaths = [
@@ -81,14 +83,21 @@ class NativeActionBar extends React.Component<JoinedProps> {
       rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0
     );
 
+    const newnativeLink = () => {
+      history.push({
+        pathname: `/v2/o/${organisationId}/creatives/display/create`,
+        state: { from: `${pathname}` },
+      });
+    };
+
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/v2/o/${organisationId}/creatives/display/create?subtype=native`}>
+        <a onClick={newnativeLink}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
             <FormattedMessage {...messages.newNativeCreativeButton} />
           </Button>
-        </Link>
+        </a>
         <Slider
           toShow={hasSelected}
           horizontal={true}

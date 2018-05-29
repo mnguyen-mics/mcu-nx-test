@@ -2,7 +2,6 @@ import * as React from 'react';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Layout, Row } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
-import queryString from 'query-string';
 import { FormTitle } from '../../../../components/Form';
 import {
   MenuList,
@@ -102,14 +101,14 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
     const {
       onSelect,
       intl: { formatMessage },
-      location: { search },
+      location,
     } = this.props;
 
     const onTypeSelect = (adRendererId: string) => () => {
       onSelect(adRendererId);
     };
 
-    const query = queryString.parse(search);
+    const from = location && location.state && location.state.from;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: 'typePickerForm',
@@ -117,7 +116,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
       paths: [
         {
           name:
-            query.subtype === 'native'
+            from && from.includes('native')
               ? messages.nativeCreationBreadCrumb
               : messages.creativeCreationBreadCrumb,
         },
@@ -134,7 +133,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
                 title={messages.creativesTypePickerTitle}
                 subtitle={messages.creativesTypePickerSubTitle}
               />
-              {query.subtype === 'native' ? (
+              {from && from.includes('native') ? (
                 <Row style={{ width: '650px', display: 'inline-block' }}>
                   <Row className="menu">
                     <MenuSubList

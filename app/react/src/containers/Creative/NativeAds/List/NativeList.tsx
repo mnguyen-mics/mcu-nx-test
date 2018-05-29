@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
@@ -29,7 +29,9 @@ import { MapStateToProps, MapDispatchToProps } from './NativeListPage';
 import CreativeService from '../../../../services/CreativeService';
 import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
 
-interface NativeCreativesTableProps extends MapStateToProps, MapDispatchToProps {
+interface NativeCreativesTableProps
+  extends MapStateToProps,
+    MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
 }
 
@@ -41,20 +43,20 @@ interface NativeCreativesTableState {
 
 type JoinedProps = NativeCreativesTableProps &
   RouteComponentProps<CampaignRouteParams> &
-  TranslationProps & InjectedIntlProps;
-
+  TranslationProps &
+  InjectedIntlProps;
 
 const messages = defineMessages({
   searchPlaceholder: {
     id: 'creative.native.list.searchPlaceholder',
-    defaultMessage: 'Search Native Creatives'
-  }
-})
+    defaultMessage: 'Search Native Creatives',
+  },
+});
 
 class NativeCreativesTable extends React.Component<
   JoinedProps,
   NativeCreativesTableState
-  > {
+> {
   constructor(props: JoinedProps) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
@@ -71,7 +73,9 @@ class NativeCreativesTable extends React.Component<
     const {
       history,
       location: { search, pathname },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       fetchNativeCreatives,
     } = this.props;
 
@@ -90,14 +94,18 @@ class NativeCreativesTable extends React.Component<
   componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       location: { search },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
       fetchNativeCreatives,
     } = this.props;
 
     const {
       location: { pathname: nextPathname, search: nextSearch, state },
-      match: { params: { organisationId: nextOrganisationId } },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -109,10 +117,7 @@ class NativeCreativesTable extends React.Component<
       if (!isSearchValid(nextSearch, NATIVE_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(
-            nextSearch,
-            NATIVE_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(nextSearch, NATIVE_SEARCH_SETTINGS),
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
@@ -134,11 +139,7 @@ class NativeCreativesTable extends React.Component<
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        NATIVE_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, NATIVE_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -154,7 +155,6 @@ class NativeCreativesTable extends React.Component<
 
   render() {
     const {
-      match: { params: { organisationId } },
       location: { search },
       isFetchingNatives,
       dataSource,
@@ -204,14 +204,17 @@ class NativeCreativesTable extends React.Component<
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (text: string, record: any) => (
-          <Link
-            className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/creatives/display/edit/${record.id}?subtype=native`}
-          >
-            {text}
-          </Link>
-        ),
+        render: (text: string, record: any) => {
+          const editLink = () => {
+            this.editNativeCreatives(record);
+          };
+
+          return (
+            <a className="mcs-campaigns-link" onClick={editLink}>
+              {text}
+            </a>
+          );
+        },
       },
       {
         translationKey: 'AUDIT_STATUS',
@@ -245,10 +248,11 @@ class NativeCreativesTable extends React.Component<
 
     const searchOptions = {
       placeholder: intl.formatMessage(messages.searchPlaceholder),
-      onSearch: (value: string) => this.updateLocationSearch({
-        keywords: value,
-        currentPage: 1
-      }),
+      onSearch: (value: string) =>
+        this.updateLocationSearch({
+          keywords: value,
+          currentPage: 1,
+        }),
       defaultValue: filter.keywords,
     };
 
@@ -265,19 +269,30 @@ class NativeCreativesTable extends React.Component<
         />
       </div>
     ) : (
-        <EmptyTableView iconType="display" text="EMPTY_NATIVE_CREATIVES" />
-      );
+      <EmptyTableView iconType="display" text="EMPTY_NATIVE_CREATIVES" />
+    );
   }
 
-  editNativeCreatives(campaign: DisplayAdResource) {
-    const { match: { params: { organisationId } }, history } = this.props;
+  editNativeCreatives(native: DisplayAdResource) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+      location,
+    } = this.props;
 
-    history.push(`/v2/o/${organisationId}/creatives/display/edit/${campaign.id}?subtype=native`);
+    history.push({
+      pathname: `/v2/o/${organisationId}/creatives/display/edit/${native.id}`,
+      state: { from: `${location.pathname}` },
+    });
   }
 
   archiveNativeCreatives(native: DisplayAdResource) {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search, pathname, state },
       fetchNativeCreatives,
       translations,

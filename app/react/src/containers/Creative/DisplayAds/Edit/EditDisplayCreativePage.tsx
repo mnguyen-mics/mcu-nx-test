@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import queryString from 'query-string';
 import DisplayCreativeFormLoader from './DisplayCreativeFormLoader';
 import { DisplayCreativeCreator } from './index';
 import messages from './messages';
@@ -12,6 +11,7 @@ import {
   EditDisplayCreativeRouteMatchParams,
 } from './domain';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
+import CreativeService from '../../../../services/CreativeService';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -19,6 +19,7 @@ import injectNotifications, {
 
 interface State {
   loading: boolean;
+  creativeName: string;
 }
 
 type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams> &
@@ -30,28 +31,42 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     super(props);
     this.state = {
       loading: false,
+      creativeName: '',
     };
+  }
+
+  componentDidMount() {
+    const {
+      match: {
+        params: { creativeId },
+      },
+    } = this.props;
+    if (creativeId) {
+      CreativeService.getCreative(creativeId)
+        .then(resp => resp.data)
+        .then(creativeData => {
+          this.setState({
+            creativeName: creativeData.name
+              ? creativeData.name
+              : `creative ${creativeData.id}`,
+          });
+        });
+    }
   }
 
   redirect = () => {
     const {
       history,
-      location: { search, state },
+      location: { state },
       match: {
         params: { organisationId },
       },
     } = this.props;
 
-    const subtype = queryString.parse(search).subtype
-      ? queryString.parse(search).subtype
-      : undefined;
-
     const url =
       state && state.from
         ? state.from
-        : subtype === 'native'
-          ? `/v2/o/${organisationId}/creatives/native`
-          : `/v2/o/${organisationId}/creatives/display`;
+        : `/v2/o/${organisationId}/creatives/display`;
 
     history.push(url);
   };
@@ -62,7 +77,9 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl,
-      location: { search },
+      location: {
+        state: { from },
+      },
     } = this.props;
 
     const hideSaveInProgress = message.loading(
@@ -74,9 +91,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    const subtype = queryString.parse(search).subtype
-      ? queryString.parse(search).subtype
-      : undefined;
+    const subtype = from.includes('native') ? 'native' : undefined;
 
     DisplayCreativeFormService.saveDisplayCreative(
       organisationId,
@@ -104,22 +119,43 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   render() {
     const {
       match: {
-        params: { creativeId },
+        params: { creativeId, organisationId },
       },
-      location: { search },
+      location,
+      intl,
     } = this.props;
 
-    const query = queryString.parse(search);
+    const { creativeName } = this.state;
 
     const actionBarButtonText = messages.creativeCreationSaveButton;
 
+    const from = location && location.state && location.state.from;
+
+    const breadCrumbToList =
+      from && location.state.from.includes('native')
+        ? {
+            name: messages.nativeListBreadCrumb,
+            path: `/v2/o/${organisationId}/creatives/native`,
+          }
+        : {
+            name: messages.displayListBreadCrumb,
+            path: `/v2/o/${organisationId}/creatives/display`,
+          };
+
+    const creaName = creativeId
+      ? intl.formatMessage(messages.creativeEditionBreadCrumb, {
+          name: creativeName,
+        })
+      : from && location.state.from.includes('native')
+        ? messages.nativeCreationBreadCrumb
+        : messages.creativeCreationBreadCrumb;
+
     const breadCrumbPaths = [
       {
-        name: creativeId
-          ? messages.creativeEditionBreadCrumb
-          : query.subtype === 'native'
-            ? messages.nativeCreationBreadCrumb
-            : messages.creativeCreationBreadCrumb,
+        ...breadCrumbToList,
+      },
+      {
+        name: creaName,
       },
     ];
 

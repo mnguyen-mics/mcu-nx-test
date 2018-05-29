@@ -83,13 +83,13 @@ const creativesMenuDefinition: NavigatorMenuDefinition = {
       translation: messages.creativesDisplay,
     },
     {
+      ...generateMissingdefinitionItemFromRoute(creativesDefinition.creativeNativeList),
+      translation: messages.creativesNative,
+    },
+    {
       ...generateMissingdefinitionItemFromRoute(creativesDefinition.creativeEmailList),
       translation: messages.creativesEmails,
     },
-    {
-      ...generateMissingdefinitionItemFromRoute(creativesDefinition.creativeNativeList),
-      translation: messages.creativesNative,
-    }
   ]
 }
 
