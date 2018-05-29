@@ -98,7 +98,9 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     fieldDefinition: PluginProperty,
     organisationId: string,
   ) => {
-    const { fieldValidators: { isValidInteger, isValidDouble } } = this.props;
+    const {
+      fieldValidators: { isValidInteger, isValidDouble },
+    } = this.props;
 
     switch (fieldDefinition.property_type) {
       case 'STRING':
@@ -212,6 +214,31 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
         return <div>DATAMART_ID</div>;
       case 'RECOMMENDER':
         return <div>RECOMMENDER_ID</div>;
+      case 'NATIVE_DATA':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+        );
+      case 'NATIVE_TITLE':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+        );
+      case 'NATIVE_IMAGE':
+        return this.renderFieldBasedOnConfig(
+          FormUpload,
+          `${fieldDefinition.technical_name}.value`,
+          fieldDefinition,
+          [],
+          {
+            disabled: this.props.disabled,
+            buttonText: 'Upload File',
+            accept: '.jpg,.jpeg,.png,.gif',
+            noUploadModal: this.props.noUploadModal,
+          },
+        );
       default:
         return <div>Please contact your support</div>;
     }
