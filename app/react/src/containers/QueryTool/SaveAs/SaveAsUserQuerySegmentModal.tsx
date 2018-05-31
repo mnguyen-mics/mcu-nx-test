@@ -45,7 +45,7 @@ class SaveAsUserQuerySegmentModal extends React.Component<Props> {
           />
         }
       >
-        { visible && <NewUserQuerySegmentSimpleForm onSubmit={handleOnSubmit} /> }
+        { visible && <NewUserQuerySegmentSimpleForm onSubmit={handleOnSubmit} initialValues={{persisted: true}} /> }
       </Modal>
     );
   }
