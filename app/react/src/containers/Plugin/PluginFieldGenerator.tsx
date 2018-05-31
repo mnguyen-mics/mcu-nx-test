@@ -97,9 +97,6 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
 
     return (
       <div>
-        {/* {fieldDefinition.property_type === 'NATIVE_DATA' && (
-          //
-        )} */}
         <Field
           key={`properties.${name}`}
           name={`properties.${name}`}

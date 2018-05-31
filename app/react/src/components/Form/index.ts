@@ -25,6 +25,7 @@ import FormCodeSnippet from './FormCodeSnippet';
 import TagSelect from './FormSelect/TagSelect';
 import FormDragAndDrop from './FormDragAndDrop';
 import { CheckboxProps } from 'antd/lib/checkbox';
+import FormRate, { FormRateProps } from './FormRate'
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
@@ -53,6 +54,7 @@ export default {
   DefaultSelect,
   TagSelect,
   FormSlider,
+  FormRate,
 };
 
 export {
@@ -79,7 +81,8 @@ export {
   DefaultSelect,
   TagSelect,
   FormDragAndDrop,
-  FormSlider
+  FormSlider,
+  FormRate
 };
 
 export const FormInputField = Field as new() => GenericField<FormInputProps>;
@@ -92,3 +95,5 @@ export const FormDateRangePickerField = Field as new() => GenericField<FormDateR
 export const FormCheckboxField = Field as new() => GenericField<CheckboxProps>;
 export const FormBooleanField = Field as new() => GenericField<FormBooleanProps>;
 export const FormSliderField = Field as new() => GenericField<FormSliderProps>;
+export const FormRateField = Field as new() => GenericField<FormRateProps>;
+
