@@ -9,6 +9,7 @@ import { Loading } from '../../../../components/index';
 import KeywordService from '../../../../services/Library/KeywordListsService';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
 import KeywordListFormService from './KeywordListFormService';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 const messages = defineMessages({
   editKeywordList: {
@@ -37,7 +38,7 @@ const messages = defineMessages({
   },
 });
 
-interface KeywordListPageProps {}
+interface KeywordListPageProps { }
 
 interface KeywordListPageState {
   keywordListFormData: KeywordListFormData;
@@ -46,12 +47,12 @@ interface KeywordListPageState {
 
 type JoinedProps = KeywordListPageProps &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string; keywordsListId: string }>;
+  RouteComponentProps<{ organisationId: string; keywordsListId: string }> & InjectedNotificationProps;
 
 class KeywordListPage extends React.Component<
   JoinedProps,
   KeywordListPageState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -87,6 +88,7 @@ class KeywordListPage extends React.Component<
     const {
       match: { params: { keywordsListId, organisationId } },
       intl,
+      notifyError,
     } = this.props;
 
     const { keywordListFormData: initialFormdata } = this.state;
@@ -109,13 +111,18 @@ class KeywordListPage extends React.Component<
       hideSaveInProgress();
       this.close();
       message.success(intl.formatMessage(messages.keywordListSaved));
-    });
+    })
+      .catch(err => {
+        this.setState({ isLoading: false })
+        notifyError(err);
+        hideSaveInProgress()
+      });;
   };
 
   close = () => {
     const { history, match: { params: { organisationId } } } = this.props;
 
-    const url = `/v2/o/${organisationId}/library/keywordslists`;
+    const url = `/v2/o/${organisationId}/library/keywordslist`;
 
     return history.push(url);
   };
@@ -132,15 +139,15 @@ class KeywordListPage extends React.Component<
       const keywordListName =
         keywordsListId && keywordListFormData
           ? intl.formatMessage(messages.editKeywordList, {
-              name: keywordListFormData.name
-                ? keywordListFormData.name
-                : intl.formatMessage(messages.keywordList),
-            })
+            name: keywordListFormData.name
+              ? keywordListFormData.name
+              : intl.formatMessage(messages.keywordList),
+          })
           : intl.formatMessage(messages.newKeywordList);
       const breadcrumbPaths = [
         {
           name: intl.formatMessage(messages.keywordLists),
-          url: `/v2/o/${organisationId}/audience/partitions`,
+          url: `/v2/o/${organisationId}/library/keywordslist`,
         },
         {
           name: keywordListName,
@@ -160,5 +167,6 @@ class KeywordListPage extends React.Component<
 
 export default compose<JoinedProps, KeywordListPageProps>(
   injectIntl,
+  injectNotifications,
   withRouter,
 )(KeywordListPage);

@@ -13,38 +13,33 @@ interface RouterProps {
   organisationId: string;
 }
 
-class PlacementListsActionbar extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps> {
-
+class DealListActionbar extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps
+> {
   render() {
-
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      intl: {
-        formatMessage,
-      },
+      match: { params: { organisationId } },
+      intl: { formatMessage },
     } = this.props;
 
-    const breadcrumbPaths = [{ name: formatMessage(messages.placements), url: `/v2/o/${organisationId}/library/placementlist` }];
+    const breadcrumbPaths = [
+      {
+        name: formatMessage(messages.dealList),
+        url: `/v2/o/${organisationId}/library/deallist`,
+      },
+    ];
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`v2/o/${organisationId}/library/placementlist/create`}>
+        <Link to={`/v2/o/${organisationId}/library/deallist/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage {...messages.newPlacement} />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage {...messages.newDealList} />
           </Button>
         </Link>
       </Actionbar>
     );
-
   }
-
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-)(PlacementListsActionbar);
+export default compose(injectIntl, withRouter)(DealListActionbar);
