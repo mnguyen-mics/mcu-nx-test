@@ -59,7 +59,7 @@ define(['./module'], function (module) {
         }, function () {
           $log.info('Modal dismissed at: ' + new Date());
         });
-      }
+      };
 
       $scope.administrator = currentWorkspace.administrator;
 
