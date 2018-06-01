@@ -287,7 +287,7 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
     goalData.forEach(goal => {
       goal.attribution.forEach(attribution => {
         goalSheets.push(
-          addSheet(`${goal.goal_name} - ${attribution.attribution_model_name}`, attribution.perf, goalHeaders, exportFilter, formatMessage, `${goal.goal_name} - ${attribution.attribution_model_name}`, otherInfos)
+          addSheet(`${attribution.attribution_model_name} - ${goal.goal_name}`, attribution.perf, goalHeaders, exportFilter, formatMessage, `${goal.goal_name} - ${attribution.attribution_model_name}`, otherInfos)
         );
       });
     });
