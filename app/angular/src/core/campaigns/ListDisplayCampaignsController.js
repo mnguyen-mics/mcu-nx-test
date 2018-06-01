@@ -48,6 +48,18 @@ define(['./module'], function (module) {
       $scope.organisationName = function (id) {
         return Session.getOrganisationName(id);
       };
+      $scope.organisationId = currentWorkspace.organisation_id;
+      $scope.showModal = function() {
+        var uploadModal = $uibModal.open({
+          templateUrl: 'angular/src/core/campaigns/betaModal.html',
+          scope: $scope,
+          backdrop: 'static',
+        });
+        uploadModal.result.then(function () {
+        }, function () {
+          $log.info('Modal dismissed at: ' + new Date());
+        });
+      };
 
       $scope.administrator = currentWorkspace.administrator;
 
