@@ -56,9 +56,16 @@ export const AudienceFeedFormService = {
       ))
     }
 
+    const {
+      plugin: {
+        organisation_id,
+        ...formDataFormatted
+      }
+    } = formData
+
     return AudienceSegmentService.createAudienceTagFeeds(
       segmentId,
-      formData.plugin
+      formDataFormatted
     ).then((res) => updateOrCreatePluginProperties(
       organisationId,
       segmentId,
@@ -88,9 +95,16 @@ export const AudienceFeedFormService = {
       ))
     }
 
+    const {
+      plugin: {
+        organisation_id,
+        ...formDataFormatted
+      }
+    } = formData
+
     return AudienceSegmentService.createAudienceExternalFeeds(
       segmentId,
-      formData.plugin
+      formDataFormatted
     ).then((res) => updateOrCreatePluginProperties(
       organisationId,
       segmentId,

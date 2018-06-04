@@ -113,6 +113,7 @@ export interface AudienceTagFeed {
   group_id: string;
   id: string;
   status: Status;
+  organisation_id: string;
 }
 
 export interface Adlayout {
