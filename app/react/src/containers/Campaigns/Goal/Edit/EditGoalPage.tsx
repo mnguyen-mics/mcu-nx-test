@@ -14,6 +14,9 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import GoalFormService from './GoalFormService';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart/index';
+import { EditContentLayout } from '../../../../components/Layout';
+import DatamartSelector from '../../../../containers/Audience/Common/DatamartSelector';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -42,6 +45,7 @@ const messages = defineMessages({
 interface State {
   goalFormData: GoalFormData;
   loading: boolean;
+  selectedDatamart?: DatamartResource;
 }
 
 type Props = InjectedIntlProps &
@@ -166,15 +170,34 @@ class EditGoalPage extends React.Component<Props, State> {
       : history.push(defaultRedirectUrl);
   };
 
+  onDatamartSelect = (datamart: DatamartResource) => {
+    const { goalFormData } = this.state;
+    this.setState({
+      selectedDatamart: datamart,
+      goalFormData: {
+        ...goalFormData,
+        goal: {
+          ...goalFormData.goal,
+          datamart_id: datamart.id,
+        },
+      },
+    });
+  };
+
   render() {
     const {
       match: {
-        params: { organisationId },
+        params: { organisationId, goalId },
       },
       intl: { formatMessage },
     } = this.props;
 
-    const { loading, goalFormData } = this.state;
+    const { loading, goalFormData, selectedDatamart } = this.state;
+
+    const actionbarProps = {
+      onClose: this.onClose,
+      formId: 'audienceSegmentForm',
+    };
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -197,7 +220,7 @@ class EditGoalPage extends React.Component<Props, State> {
       },
     ];
 
-    return (
+    return goalId || selectedDatamart ? (
       <GoalForm
         initialValues={goalFormData}
         onSubmit={this.save}
@@ -205,6 +228,10 @@ class EditGoalPage extends React.Component<Props, State> {
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
       />
+    ) : (
+      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+        <DatamartSelector onSelect={this.onDatamartSelect} />
+      </EditContentLayout>
     );
   }
 }

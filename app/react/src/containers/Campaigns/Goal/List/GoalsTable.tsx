@@ -15,9 +15,7 @@ import {
 } from '../../../../components/TableView/index';
 
 import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
-
 import { GOAL_SEARCH_SETTINGS } from './constants';
-
 import {
   updateSearch,
   parseSearch,
@@ -28,17 +26,18 @@ import {
   DateSearchSettings,
   KeywordSearchSettings,
   LabelsSearchSettings,
+  DatamartSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
-
 import { formatMetric } from '../../../../utils/MetricHelper';
-
 import { getTableDataSource } from '../../../../state/Campaigns/Goal/selectors';
-
+import { getWorkspace } from '../../../../state/Session/selectors';
 import GoalService from '../../../../services/GoalService';
 import { Label } from '../../../Labels/Labels';
 import { GoalResource } from '../../../../models/goal';
 import { Index } from '../../../../utils';
 import { McsRange } from '../../../../utils/McsMoment';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
+import { MultiSelectProps } from '../../../../components/MultiSelect';
 
 const messages = defineMessages({
   labelFilterBy: {
@@ -75,6 +74,7 @@ export interface ParamFilters
   extends PaginationSearchSettings,
     DateSearchSettings,
     KeywordSearchSettings,
+    DatamartSearchSettings,
     LabelsSearchSettings {
   statuses?: string[];
 }
@@ -86,6 +86,7 @@ interface MapStateToProps {
   isFetchingGoalsStat: boolean;
   dataSource: GoalResource[];
   totalGoals: number;
+  workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
 interface MapDispatchToProps {
@@ -247,6 +248,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       hasGoals,
       labels,
       intl,
+      workspace,
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
@@ -350,7 +352,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       },
     ];
 
-    const filtersOptions = [
+    const filtersOptions: Array<MultiSelectProps<any>> = [
       {
         displayElement: (
           <div>
@@ -371,6 +373,44 @@ class GoalsTable extends React.Component<GoalsTableProps> {
         },
       },
     ];
+
+    if (workspace(organisationId).datamarts.length > 1) {
+      const datamartItems = workspace(organisationId)
+        .datamarts.map(d => ({
+          key: d.id,
+          value: d.name || d.token,
+        }))
+        .concat([
+          {
+            key: '',
+            value: 'All',
+          },
+        ]);
+
+      const datamartFilterOptions: MultiSelectProps<any> = {
+        displayElement: (
+          <div>
+            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+            <Icon type="down" />
+          </div>
+        ),
+        selectedItems: filter.datamartId
+          ? [datamartItems.find(di => di.key === filter.datamartId)]
+          : [datamartItems],
+        items: datamartItems,
+        singleSelectOnly: true,
+        getKey: (item: any) => (item && item.key ? item.key : ''),
+        display: (item: any) => item.value,
+        handleItemClick: (datamartItem: { key: string; value: string }) => {
+          this.updateLocationSearch({
+            datamartId:
+              datamartItem && datamartItem.key ? datamartItem.key : undefined,
+          });
+        },
+      };
+
+      filtersOptions.push(datamartFilterOptions);
+    }
 
     const labelsOptions = {
       labels: this.props.labels,
@@ -416,6 +456,7 @@ const mapStateToProps = (state: any) => ({
   isFetchingGoalsStat: state.goalsTable.performanceReportApi.isFetching,
   dataSource: getTableDataSource(state),
   totalGoals: state.goalsTable.goalsApi.total,
+  workspace: getWorkspace(state),
 });
 
 const mapDispatchToProps = {
@@ -426,5 +467,8 @@ const mapDispatchToProps = {
 export default compose<GoalsTableProps, {}>(
   injectIntl,
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(GoalsTable);

@@ -12,6 +12,7 @@ export interface GetGoalsOption extends PaginatedApiParam {
   archived?: boolean;
   order_by?: string[];
   label_ids?: string[];
+  datamart_id?: string;
 }
 
 const GoalService = {
@@ -24,7 +25,9 @@ const GoalService = {
       organisation_id: organisationId,
       ...options,
     };
-
+    if(options.datamart_id) {
+      params.datamart_id = options.datamart_id
+    }
     return ApiService.getRequest(endpoint, params);
   },
 

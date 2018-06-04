@@ -59,6 +59,7 @@ function* loadGoals({ payload }) {
 
     if (filter.keywords) { options.keywords = filter.keywords; }
     if (filter.label_id.length) { options.label_id = filter.label_id; }
+    if (filter.datamart_id && filter.datamart_id.length) { options.datamart_id = filter.datamart_id; }
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),
     };
