@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
+import { RouteComponentProps, withRouter } from 'react-router';
+import { compose } from 'recompose';
 import messages from '../../messages';
 import withValidators, {
   ValidatorProps,
@@ -15,21 +16,26 @@ import {
   FormInputField,
   FormAddonSelectField,
   FormDateRangePickerField,
+  FormAlert,
 } from '../../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../../components';
 import FormDateRangePicker from '../../../../../../components/Form/FormDateRangePicker';
-import { compose } from 'recompose';
+import { EditAdGroupRouteMatchParam } from '../domain';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps &
+  RouteComponentProps<EditAdGroupRouteMatchParam>;
 
 interface State {
   displayAdvancedSection: boolean;
+  displayWarning: boolean;
 }
 
 class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { displayAdvancedSection: false };
+    this.state = { displayAdvancedSection: false, displayWarning: false };
   }
 
   toggleAdvancedSection = () => {
@@ -38,12 +44,23 @@ class GeneralFormSection extends React.Component<Props, State> {
     });
   };
 
+  warningOnTokenChange = () => {
+    this.setState({
+      displayWarning: true,
+    });
+  };
+
   render() {
     const {
       fieldNormalizer: { normalizeInteger },
       fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       intl: { formatMessage },
+      match: {
+        params: { adGroupId },
+      },
     } = this.props;
+
+    const { displayWarning } = this.state;
 
     return (
       <div>
@@ -200,6 +217,17 @@ class GeneralFormSection extends React.Component<Props, State> {
                 : 'optional-section-content'
             }
           >
+            {displayWarning &&
+              adGroupId && (
+                <div>
+                  <FormAlert
+                    iconType="warning"
+                    type="warning"
+                    message={formatMessage(messages.warningOnTokenEdition)}
+                  />
+                  <br />
+                </div>
+              )}
             <FormInputField
               name="adGroup.technical_name"
               component={FormInput}
@@ -210,6 +238,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 placeholder: formatMessage(
                   messages.contentSectionGeneralRow8Placeholder,
                 ),
+                onFocus: this.warningOnTokenChange,
               }}
               helpToolTipProps={{
                 title: formatMessage(messages.contentSectionGeneralRow8Tooltip),
@@ -258,6 +287,9 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+  withRouter,
+)(GeneralFormSection);

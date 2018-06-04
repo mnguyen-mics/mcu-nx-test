@@ -9,6 +9,7 @@ import {
   AddonSelect,
   FormInputField,
   FormAddonSelectField,
+  FormAlert,
 } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -16,17 +17,23 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../components/Form/withNormalizer';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { EditDisplayCampaignRouteMatchParam } from '../domain';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps &
+  RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
 interface State {
   displayAdvancedSection: boolean;
+  displayWarning: boolean;
 }
 
 class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { displayAdvancedSection: false };
+    this.state = { displayAdvancedSection: false, displayWarning: false };
   }
 
   toggleAdvancedSection = () => {
@@ -35,12 +42,23 @@ class GeneralFormSection extends React.Component<Props, State> {
     });
   };
 
+  warningOnTokenChange = () => {
+    this.setState({
+      displayWarning: true,
+    });
+  };
+
   render() {
     const {
       fieldNormalizer: { normalizeInteger },
       fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       intl: { formatMessage },
+      match: {
+        params: { campaignId },
+      },
     } = this.props;
+
+    const { displayWarning } = this.state;
 
     return (
       <div>
@@ -135,7 +153,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           />
 
           <FormInputField
-            name="campaign.max_budget_per_period" 
+            name="campaign.max_budget_per_period"
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
@@ -203,6 +221,17 @@ class GeneralFormSection extends React.Component<Props, State> {
                 : 'optional-section-content'
             }
           >
+            {displayWarning &&
+              campaignId && (
+                <div>
+                  <FormAlert
+                    iconType="warning"
+                    type="warning"
+                    message={formatMessage(messages.warningOnTokenEdition)}
+                  />
+                  <br />
+                </div>
+              )}
             <FormInputField
               name="campaign.technical_name"
               component={FormInput}
@@ -215,6 +244,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 placeholder: formatMessage(
                   messages.contentSectionGeneralAdvancedPartRow1Placeholder,
                 ),
+                onFocus: this.warningOnTokenChange,
               }}
               helpToolTipProps={{
                 title: formatMessage(
@@ -229,6 +259,9 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+  withRouter,
+)(GeneralFormSection);

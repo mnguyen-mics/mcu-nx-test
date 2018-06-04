@@ -18,10 +18,12 @@ import {
   FormAddonSelectField,
   FormBoolean,
   FormBooleanField,
+  FormAlert
 } from '../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
-import { SegmentType } from '../domain';
+import { SegmentType, EditAudienceSegmentParam } from '../domain';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 const messagesMap = defineMessages({
   audienceSegmentFormSelectTypeOptionUserList: {
@@ -47,12 +49,14 @@ export interface GeneralFormSectionProps {
 type Props = InjectedIntlProps &
   ValidatorProps &
   NormalizerProps &
-  GeneralFormSectionProps;
+  GeneralFormSectionProps &
+  RouteComponentProps<EditAudienceSegmentParam>;
 
 interface State {
   technicalName?: string;
   displayAdvancedSection: boolean;
   neverExpire: boolean;
+  displayWarning: boolean;
 }
 
 class GeneralFormSection extends React.Component<Props, State> {
@@ -61,12 +65,19 @@ class GeneralFormSection extends React.Component<Props, State> {
     this.state = {
       displayAdvancedSection: false,
       neverExpire: false,
+      displayWarning: false,
     };
   }
 
   toggleAdvancedSection = () => {
     this.setState({
       displayAdvancedSection: !this.state.displayAdvancedSection,
+    });
+  };
+
+  warningOnTokenChange = () => {
+    this.setState({
+      displayWarning: true,
     });
   };
 
@@ -77,29 +88,50 @@ class GeneralFormSection extends React.Component<Props, State> {
   getTechnicalNameField = () => {
     const {
       intl: { formatMessage },
+      match: {
+        params: {
+          segmentId
+        }
+      }
     } = this.props;
 
+    const { displayWarning } = this.state;
+
     return (
-      <FormInputField
-        name="audienceSegment.technical_name"
-        component={FormInput}
-        onChange={this.handleOnchangeTechnicalName}
-        formItemProps={{
-          label: formatMessage(
-            messages.contentSectionGeneralAdvancedPartRow1Label,
-          ),
-        }}
-        inputProps={{
-          placeholder: formatMessage(
-            messages.contentSectionGeneralAdvancedPartRow1Placeholder,
-          ),
-        }}
-        helpToolTipProps={{
-          title: formatMessage(
-            messages.contentSectionGeneralAdvancedPartRow1Tooltip,
-          ),
-        }}
-      />
+      <div>
+        {displayWarning &&
+          segmentId && (
+            <div>
+              <FormAlert
+                iconType="warning"
+                type="warning"
+                message={formatMessage(messages.warningOnTokenEdition)}
+              />
+              <br />
+            </div>
+          )}
+        <FormInputField
+          name="audienceSegment.technical_name"
+          component={FormInput}
+          onChange={this.handleOnchangeTechnicalName}
+          formItemProps={{
+            label: formatMessage(
+              messages.contentSectionGeneralAdvancedPartRow1Label,
+            ),
+          }}
+          inputProps={{
+            placeholder: formatMessage(
+              messages.contentSectionGeneralAdvancedPartRow1Placeholder,
+            ),
+            onFocus: this.warningOnTokenChange,
+          }}
+          helpToolTipProps={{
+            title: formatMessage(
+              messages.contentSectionGeneralAdvancedPartRow1Tooltip,
+            ),
+          }}
+        />
+      </div>
     );
   };
 
@@ -248,7 +280,8 @@ class GeneralFormSection extends React.Component<Props, State> {
                 </div>
               </div>
 
-              {segmentType === 'USER_QUERY' || segmentType === 'USER_LOOKALIKE' ? (
+              {segmentType === 'USER_QUERY' ||
+              segmentType === 'USER_LOOKALIKE' ? (
                 <div>
                   <FormBooleanField
                     name="audienceSegment.persisted"
@@ -278,4 +311,5 @@ export default compose<Props, GeneralFormSectionProps>(
   injectIntl,
   withValidators,
   withNormalizer,
+  withRouter,
 )(GeneralFormSection);

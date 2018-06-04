@@ -11,6 +11,7 @@ import {
   FormInput,
   withValidators,
   FormInputField,
+  FormAlert,
 } from '../../../../../components/Form';
 import messages from '../messages';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
@@ -34,16 +35,23 @@ type Props = ValidatorProps &
 
 interface State {
   displayAdvancedSection: boolean;
+  displayWarning: boolean;
 }
 class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { displayAdvancedSection: false };
+    this.state = { displayAdvancedSection: false, displayWarning: false };
   }
 
   toggleAdvancedSection = () => {
     this.setState({
       displayAdvancedSection: !this.state.displayAdvancedSection,
+    });
+  };
+
+  warningOnTokenChange = () => {
+    this.setState({
+      displayWarning: true,
     });
   };
 
@@ -66,7 +74,12 @@ class GeneralFormSection extends React.Component<Props, State> {
       intl: { formatMessage },
       fieldValidators: { isRequired },
       initialValue: { creative },
+      match: {
+        params: { creativeId },
+      },
     } = this.props;
+
+    const { displayWarning } = this.state;
 
     let isDisabled = false;
 
@@ -153,6 +166,17 @@ class GeneralFormSection extends React.Component<Props, State> {
                 : 'optional-section-content'
             }
           >
+            {displayWarning &&
+              creativeId && (
+                <div>
+                  <FormAlert
+                    iconType="warning"
+                    type="warning"
+                    message={formatMessage(messages.warningOnTokenEdition)}
+                  />
+                  <br />
+                </div>
+              )}
             <FormInputField
               name="creative.technical_name"
               component={FormInput}
@@ -165,6 +189,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 placeholder: formatMessage(
                   messages.creativeCreationAdvancedTechnicalFieldPlaceholder,
                 ),
+                onFocus: this.warningOnTokenChange,
               }}
               helpToolTipProps={{
                 title: formatMessage(

@@ -27,6 +27,7 @@ import TagSelect, { FormTagSelectProps } from './FormSelect/TagSelect';
 import FormDragAndDrop from './FormDragAndDrop';
 import { CheckboxProps } from 'antd/lib/checkbox';
 import FormRate, { FormRateProps } from './FormRate'
+import FormAlert from './FormAlert';
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
@@ -57,6 +58,7 @@ export default {
   TagSelect,
   FormSlider,
   FormRate,
+  FormAlert
 };
 
 export {
@@ -85,7 +87,8 @@ export {
   TagSelect,
   FormDragAndDrop,
   FormSlider,
-  FormRate
+  FormRate,
+  FormAlert
 };
 
 export const FormInputField = Field as new () => GenericField<FormInputProps>;

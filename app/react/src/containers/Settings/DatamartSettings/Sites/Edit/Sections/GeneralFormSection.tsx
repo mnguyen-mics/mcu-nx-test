@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { Row, Col, Alert } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import messages from '../messages';
 import {
@@ -15,7 +14,7 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
-import { McsIcon } from '../../../../../../components';
+import FormAlert from '../../../../../../components/Form/FormAlert';
 
 type Props = InjectedIntlProps &
   ValidatorProps &
@@ -84,19 +83,11 @@ class GeneralFormSection extends React.Component<Props, State> {
         {displayWarning &&
           siteId && (
             <div>
-              <Row>
-                <Col span={24} className="modificationWarning">
-                  <Alert
-                    message={
-                      <div>
-                        <McsIcon type="warning" />
-                        {formatMessage(messages.warningOnTokenEdition)}
-                      </div>
-                    }
-                    type="warning"
-                  />
-                </Col>
-              </Row>
+              <FormAlert
+                iconType="warning"
+                type="warning"
+                message={formatMessage(messages.warningOnTokenEdition)}
+              />
               <br />
             </div>
           )}
@@ -142,6 +133,9 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer, withRouter)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+  withRouter,
+)(GeneralFormSection);

@@ -53,6 +53,11 @@ export default defineMessages({
     id: 'editAdGroups.title',
     defaultMessage: 'Multi Ad Group Edit',
   },
+  warningOnTokenEdition: {
+    id: 'campaign.form.edition.technicalName.warning',
+    defaultMessage:
+      'Danger Zone: Editing this technical name may cause any integrations to fail if not updated properly. Please make sure you have reviewed all your integration before saving.',
+  },
   /*
   ==============================================================================
   ============================== BREADCRUMB TITLES =============================
