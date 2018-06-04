@@ -7,6 +7,9 @@ import NativeListPage from '../containers/Creative/NativeAds/List/NativeListPage
 import { CreateEmailTemplate } from '../containers/Creative/EmailTemplates/Edit';
 
 import { EmailListPage } from '../containers/Creative/EmailTemplates/List';
+
+import EditNativeCreativePage from '../containers/Creative/NativeAds/Edit/EditNativeCreativePage';
+
 import {
   NavigatorRoute,
   NavigatorDefinition,
@@ -42,6 +45,18 @@ export const creativesDefinition: NavigatorDefinition = {
     path: '/creatives/native',
     layout: 'main',
     contentComponent: NativeListPage,
+    requiredFeature: 'creatives.native',
+  },
+  creativeNativeCreation: {
+    path: '/creatives/native/create',
+    layout: 'edit',
+    editComponent: EditNativeCreativePage,
+    requiredFeature: 'creatives.native',
+  },
+  creativeNativeEdit: {
+    path: '/creatives/native/edit/:nativeId(\\d+)',
+    layout: 'edit',
+    editComponent: EditNativeCreativePage,
     requiredFeature: 'creatives.native',
   },
   creativeEmailCreation: {

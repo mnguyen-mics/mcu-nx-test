@@ -20,8 +20,6 @@ const { Content } = Layout;
 const imageAdRendererId = '1065';
 const htmlAdRendererId = '1078';
 const externalAdRendererId = '1061';
-const nativeIvidenceAdRendererId = '1032';
-const nativeQuantumAdRendererId = '1047';
 const imageSkinsAdRendererId = '1057';
 
 export interface DisplayCreativeRendererSelectorProps {
@@ -45,32 +43,12 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
     };
   }
 
-  renderNativeSubmenu = () => {
-    const {
-      onSelect,
-      intl: { formatMessage },
-    } = this.props;
-
-    return [
-      {
-        title: formatMessage(messages.creativeTypeQuantum),
-        select: () => onSelect(nativeQuantumAdRendererId),
-      },
-      {
-        title: formatMessage(messages.creativeTypeIvidence),
-        select: () => onSelect(nativeIvidenceAdRendererId),
-      },
-    ];
-  };
-
   renderAdRendererSubmenu = () => {
     const { onSelect } = this.props;
     const previousAdRendererIds = [
       imageAdRendererId,
       htmlAdRendererId,
       externalAdRendererId,
-      nativeIvidenceAdRendererId,
-      nativeQuantumAdRendererId,
       imageSkinsAdRendererId,
     ];
     const adRendererSubmenu: Submenu[] = [];
@@ -101,24 +79,18 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
     const {
       onSelect,
       intl: { formatMessage },
-      location,
     } = this.props;
 
     const onTypeSelect = (adRendererId: string) => () => {
       onSelect(adRendererId);
     };
 
-    const from = location && location.state && location.state.from;
-
     const actionBarProps: FormLayoutActionbarProps = {
       formId: 'typePickerForm',
       onClose: this.props.close,
       paths: [
         {
-          name:
-            from && from.includes('native')
-              ? messages.nativeCreationBreadCrumb
-              : messages.creativeCreationBreadCrumb,
+          name: messages.creativeCreationBreadCrumb,
         },
       ],
     };
@@ -133,60 +105,46 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
                 title={messages.creativesTypePickerTitle}
                 subtitle={messages.creativesTypePickerSubTitle}
               />
-              {from && from.includes('native') ? (
-                <Row style={{ width: '650px', display: 'inline-block' }}>
-                  <Row className="menu">
-                    <MenuSubList
-                      title={formatMessage(messages.creativeTypeNative)}
-                      subtitles={[
-                        formatMessage(messages.creativeTypeQuantum),
-                        formatMessage(messages.creativeTypeIvidence),
-                      ]}
-                      submenu={this.renderNativeSubmenu()}
+
+              <Row style={{ width: '650px', display: 'inline-block' }}>
+                <Row className="menu">
+                  <div className="presentation">
+                    <MenuPresentational
+                      title={formatMessage(messages.creativeTypeImage)}
+                      type="image"
+                      select={onTypeSelect(imageAdRendererId)}
                     />
-                  </Row>
-                </Row>
-              ) : (
-                <Row style={{ width: '650px', display: 'inline-block' }}>
-                  <Row className="menu">
-                    <div className="presentation">
-                      <MenuPresentational
-                        title={formatMessage(messages.creativeTypeImage)}
-                        type="image"
-                        select={onTypeSelect(imageAdRendererId)}
-                      />
-                      <div className="separator">
-                        <FormattedMessage {...messages.creativeTypeOr} />
-                      </div>
-                      <MenuPresentational
-                        title={formatMessage(messages.creativeTypeHtml)}
-                        type="code"
-                        select={onTypeSelect(htmlAdRendererId)}
-                      />
+                    <div className="separator">
+                      <FormattedMessage {...messages.creativeTypeOr} />
                     </div>
-                  </Row>
-                  <Row className="intermediate-title">
-                    <FormattedMessage {...messages.creativeTypeAdvanced} />
-                  </Row>
-                  <Row className="menu">
-                    <MenuList
-                      title={formatMessage(messages.creativeTypeAgency)}
-                      select={onTypeSelect(externalAdRendererId)}
+                    <MenuPresentational
+                      title={formatMessage(messages.creativeTypeHtml)}
+                      type="code"
+                      select={onTypeSelect(htmlAdRendererId)}
                     />
-                    <MenuList
-                      title={formatMessage(messages.creativeTypeSkin)}
-                      select={onTypeSelect(imageSkinsAdRendererId)}
-                    />
-                    <MenuSubList
-                      title={formatMessage(messages.allRendererList)}
-                      subtitles={[
-                        formatMessage(messages.allRendererListSubtitle),
-                      ]}
-                      submenu={this.renderAdRendererSubmenu()}
-                    />
-                  </Row>
+                  </div>
                 </Row>
-              )}
+                <Row className="intermediate-title">
+                  <FormattedMessage {...messages.creativeTypeAdvanced} />
+                </Row>
+                <Row className="menu">
+                  <MenuList
+                    title={formatMessage(messages.creativeTypeAgency)}
+                    select={onTypeSelect(externalAdRendererId)}
+                  />
+                  <MenuList
+                    title={formatMessage(messages.creativeTypeSkin)}
+                    select={onTypeSelect(imageSkinsAdRendererId)}
+                  />
+                  <MenuSubList
+                    title={formatMessage(messages.allRendererList)}
+                    subtitles={[
+                      formatMessage(messages.allRendererListSubtitle),
+                    ]}
+                    submenu={this.renderAdRendererSubmenu()}
+                  />
+                </Row>
+              </Row>
             </Content>
           </Layout>
         </div>

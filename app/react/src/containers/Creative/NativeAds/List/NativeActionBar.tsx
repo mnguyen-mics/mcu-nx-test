@@ -85,7 +85,7 @@ class NativeActionBar extends React.Component<JoinedProps> {
 
     const newnativeLink = () => {
       history.push({
-        pathname: `/v2/o/${organisationId}/creatives/display/create`,
+        pathname: `/v2/o/${organisationId}/creatives/native/create`,
         state: { from: `${pathname}` },
       });
     };

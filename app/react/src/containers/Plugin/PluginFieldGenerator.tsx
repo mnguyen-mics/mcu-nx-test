@@ -114,15 +114,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
     organisationId: string,
   ) => {
     const {
-      fieldValidators: {
-        isValidInteger,
-        isValidDouble,
-        isRequired,
-        isValidSponsoredField,
-        isValidDescField,
-        isValidRatingField,
-        isValidCtatextField,
-      },
+      fieldValidators: { isValidInteger, isValidDouble },
     } = this.props;
 
     switch (fieldDefinition.property_type) {
@@ -243,65 +235,17 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
       case 'RECOMMENDER':
         return <div>RECOMMENDER_ID</div>;
       case 'NATIVE_DATA':
-        switch (fieldDefinition.value.type) {
-          case 1:
-            return this.renderFieldBasedOnConfig(
-              FormInput,
-              `${fieldDefinition.technical_name}.value.value`,
-              fieldDefinition,
-              [isRequired],
-              [isValidSponsoredField],
-            );
-          case 2:
-            return this.renderFieldBasedOnConfig(
-              FormInput,
-              `${fieldDefinition.technical_name}.value.value`,
-              fieldDefinition,
-              [isRequired],
-              [isValidDescField],
-            );
-          case 3:
-            return this.renderFieldBasedOnConfig(
-              FormInput,
-              `${fieldDefinition.technical_name}.value.value`,
-              fieldDefinition,
-              [],
-              [isValidRatingField],
-            );
-          case 4:
-          case 5:
-          case 6:
-          case 7:
-            return this.renderFieldBasedOnConfig(
-              FormInput,
-              `${fieldDefinition.technical_name}.value.value`,
-              fieldDefinition,
-              [isValidInteger],
-              [],
-            );
-          case 8:
-          case 9:
-          case 10:
-          case 11:
-            return this.renderFieldBasedOnConfig(
-              FormInput,
-              `${fieldDefinition.technical_name}.value.value`,
-              fieldDefinition,
-              [],
-              [],
-            );
-          case 12:
-            return this.renderFieldBasedOnConfig(
-              FormInput,
-              `${fieldDefinition.technical_name}.value.value`,
-              fieldDefinition,
-              [],
-              [isValidCtatextField],
-            );
-          default:
-            return <div>Please contact your support</div>;
-        }
-
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+          this.getErrorValidatorForNativeFieldProperty(
+            fieldDefinition.value.type,
+          ),
+          this.getWarningValidatorForNativeFieldProperty(
+            fieldDefinition.value.type,
+          ),
+        );
       case 'NATIVE_TITLE':
         return this.renderFieldBasedOnConfig(
           FormInput,
@@ -324,6 +268,42 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
         );
       default:
         return <div>Please contact your support</div>;
+    }
+  };
+
+  getErrorValidatorForNativeFieldProperty = (type: number) => {
+    const {
+      fieldValidators: { isRequired, isValidInteger },
+    } = this.props;
+    switch (type) {
+      case 1:
+      case 2:
+        return [isRequired];
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+        return [isValidInteger];
+      default:
+        return [];
+    }
+  };
+
+  getWarningValidatorForNativeFieldProperty = (type: number) => {
+    const {
+      fieldValidators: { isCharLengthLessThan, isIntegerBetween },
+    } = this.props;
+    switch (type) {
+      case 1:
+        return [isCharLengthLessThan(25)];
+      case 2:
+        return [isCharLengthLessThan(140)];
+      case 3:
+        return [isIntegerBetween(0, 5)];
+      case 12:
+        return [isCharLengthLessThan(15)];
+      default:
+        return [];
     }
   };
 

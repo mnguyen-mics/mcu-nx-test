@@ -62,11 +62,6 @@ class NativeCreativesTable extends React.Component<
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
     this.archiveNativeCreatives = this.archiveNativeCreatives.bind(this);
     this.editNativeCreatives = this.editNativeCreatives.bind(this);
-    this.state = {
-      modalVisible: false,
-      selectedNativeId: '',
-      inputValue: [],
-    };
   }
 
   componentDidMount() {
@@ -283,7 +278,7 @@ class NativeCreativesTable extends React.Component<
     } = this.props;
 
     history.push({
-      pathname: `/v2/o/${organisationId}/creatives/display/edit/${native.id}`,
+      pathname: `/v2/o/${organisationId}/creatives/native/edit/${native.id}`,
       state: { from: `${location.pathname}` },
     });
   }

@@ -3,14 +3,14 @@ import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import DisplayCreativeFormLoader from './DisplayCreativeFormLoader';
-import { DisplayCreativeCreator } from './index';
+import DisplayCreativeFormLoader from '../../DisplayAds/Edit/DisplayCreativeFormLoader';
+import NativeCreativeCreator from './NativeCreativeCreator';
 import messages from './messages';
 import {
-  DisplayCreativeFormData,
-  EditDisplayCreativeRouteMatchParams,
+  NativeCreativeFormData,
+  EditNativeCreativeRouteMatchParams,
 } from './domain';
-import DisplayCreativeFormService from './DisplayCreativeFormService';
+import DisplayCreativeFormService from '../../DisplayAds/Edit/DisplayCreativeFormService';
 import CreativeService from '../../../../services/CreativeService';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
@@ -19,36 +19,36 @@ import injectNotifications, {
 
 interface State {
   loading: boolean;
-  creativeName: string;
+  nativeName: string;
 }
 
-type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams> &
+type Props = RouteComponentProps<EditNativeCreativeRouteMatchParams> &
   InjectedNotificationProps &
   InjectedIntlProps;
 
-class EditDisplayCreativePage extends React.Component<Props, State> {
+class EditNativeCreativePage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       loading: false,
-      creativeName: '',
+      nativeName: '',
     };
   }
 
   componentDidMount() {
     const {
       match: {
-        params: { creativeId },
+        params: { nativeId },
       },
     } = this.props;
-    if (creativeId) {
-      CreativeService.getCreative(creativeId)
+    if (nativeId) {
+      CreativeService.getCreative(nativeId)
         .then(resp => resp.data)
-        .then(creativeData => {
+        .then(nativeData => {
           this.setState({
-            creativeName: creativeData.name
-              ? creativeData.name
-              : `creative ${creativeData.id}`,
+            nativeName: nativeData.name
+              ? nativeData.name
+              : `creative ${nativeData.id}`,
           });
         });
     }
@@ -66,12 +66,12 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     const url =
       state && state.from
         ? state.from
-        : `/v2/o/${organisationId}/creatives/display`;
+        : `/v2/o/${organisationId}/creatives/native`;
 
     history.push(url);
   };
 
-  onSave = (creativeData: DisplayCreativeFormData) => {
+  onSave = (nativeData: NativeCreativeFormData) => {
     const {
       match: {
         params: { organisationId },
@@ -90,8 +90,8 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
 
     DisplayCreativeFormService.saveDisplayCreative(
       organisationId,
-      creativeData,
-      'BANNER',
+      nativeData,
+      'NATIVE',
     )
       .then(() => {
         hideSaveInProgress();
@@ -114,36 +114,25 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   render() {
     const {
       match: {
-        params: { creativeId, organisationId },
+        params: { nativeId, organisationId },
       },
-      location,
       intl,
     } = this.props;
 
-    const { creativeName } = this.state;
+    const { nativeName } = this.state;
 
-    const actionBarButtonText = messages.creativeCreationSaveButton;
+    const actionBarButtonText = messages.save;
 
-    const from = location && location.state && location.state.from;
-
-    const breadCrumbToList =
-      from && location.state.from.includes('native')
-        ? {
+    const breadCrumbToList = {
             name: messages.nativeListBreadCrumb,
             path: `/v2/o/${organisationId}/creatives/native`,
-          }
-        : {
-            name: messages.displayListBreadCrumb,
-            path: `/v2/o/${organisationId}/creatives/display`,
           };
 
-    const creaName = creativeId
+    const creaName = nativeId
       ? intl.formatMessage(messages.creativeEditionBreadCrumb, {
-          name: creativeName,
+          name: nativeName,
         })
-      : from && location.state.from.includes('native')
-        ? messages.nativeCreationBreadCrumb
-        : messages.creativeCreationBreadCrumb;
+      : messages.nativeCreationBreadCrumb;
 
     const breadCrumbPaths = [
       {
@@ -166,14 +155,14 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       return <Loading className="loading-full-screen" />;
     }
 
-    return creativeId ? (
-      <DisplayCreativeFormLoader {...props} creativeId={creativeId} />
+    return nativeId ? (
+      <DisplayCreativeFormLoader {...props} creativeId={nativeId} />
     ) : (
-      <DisplayCreativeCreator {...props} />
+      <NativeCreativeCreator {...props} />
     );
   }
 }
 
 export default compose<Props, {}>(injectIntl, withRouter, injectNotifications)(
-  EditDisplayCreativePage,
+    EditNativeCreativePage,
 );

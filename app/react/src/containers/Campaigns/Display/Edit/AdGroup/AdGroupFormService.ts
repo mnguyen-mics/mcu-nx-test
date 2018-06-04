@@ -642,6 +642,7 @@ function getAdTasks(
         DisplayCreativeFormService.saveDisplayCreative(
           organisationId,
           creativeFormData,
+          'BANNER'
         ).then(creativeId => {
           return DisplayCampaignService.createAd(campaignId, adGroupId, {
             creative_id: creativeId,
