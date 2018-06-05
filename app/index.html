@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="styles/main.css">
   <!-- endbuild -->
   <link rel="stylesheet" href="styles/font/stylesheet.css">
-
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.css' rel='stylesheet' />
 </head>
 
 <body>
@@ -47,6 +47,7 @@
 <![endif]-->
 
   <div id="mcs-react-app" class="mcs-react-app"></div>
+  
 
   <div class="mcs-colors">
     <div class="mcs-primary"></div>
@@ -78,6 +79,22 @@
       <!--   TODO : explain why our website is awesome and you should allow js here to manage your campaigns. -->
     </p>
   </noscript>
+
+  <!-- Filters used in the css -->
+  <div style="position:absolute;top:-1000px;left:-1000px;">
+    <svg width="0" height="0"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+      <defs>
+        <filter id="formblur">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="13"/>
+        </filter>
+      </defs>
+    </svg>
+  </div>
+  
+
 
 
   <!-- Scripts -->
