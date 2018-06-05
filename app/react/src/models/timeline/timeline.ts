@@ -50,6 +50,8 @@ export interface UserPoint {
   user_point_id: string;
 }
 
+export type UserIdentifierShape = UserAgent | UserPoint;
+
 export interface Device {
   brand?: string;
   browser_family?: string;
@@ -73,10 +75,25 @@ export interface IdentifiersProps {
   };
 }
 
-export interface Segment {
-  creation_ts: number;
-  data_bag: any; // type it better
-  expiration_ts: number;
-  last_modified_ts: string;
+export interface UserProfileResource {
+  creation_date?: number;
+  birth_date?: number;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  isClient?: boolean; 
+}
+
+export interface UserSegmentResource {
   segment_id: string;
+  data_bag: string;
+  last_modified_ts?: number;
+  creation_ts?: number;
+  expiration_ts?: number;
+}
+
+export interface Cookies {
+  mics_lts?: string;
+  mics_uaid?: string;
+  mics_vid?: string;
 }

@@ -9,7 +9,7 @@ import {
   Activity,
   UserAgent,
   IdentifiersProps,
-  Segment,
+  UserSegmentResource,
 } from '../../../models/timeline/timeline';
 import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
@@ -23,14 +23,14 @@ import messages from './messages';
 
 const { Content } = Layout;
 
-interface Activities {
+export interface Activities {
   isLoading: boolean;
   hasItems: boolean;
   items: Activity[];
   byDay: {
-    [date: string]: Activity[]
+    [date: string]: Activity[];
   };
-  fetchNewActivities: () => void; // check type
+  fetchNewActivities?: () => void; // check type
 }
 
 interface MonitoringProps {
@@ -43,7 +43,7 @@ interface MonitoringProps {
   segments: {
     isLoading: boolean;
     hasItems: boolean;
-    items: Segment[];
+    items: UserSegmentResource[];
   };
   activities: Activities;
   datamartId: string;
@@ -225,4 +225,7 @@ class Monitoring extends React.Component<Props> {
   }
 }
 
-export default compose(injectIntl, withRouter)(Monitoring);
+export default compose<Props, MonitoringProps>(
+  injectIntl,
+  withRouter,
+)(Monitoring);
