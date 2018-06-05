@@ -17,6 +17,8 @@ import { injectDatamart, InjectedDatamartProps } from '../../../Datamart/index';
 import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from '../../../../containers/Audience/Common/DatamartSelector';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
+import { getWorkspace } from '../../../../state/Session/selectors';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -48,8 +50,14 @@ interface State {
   selectedDatamart?: DatamartResource;
 }
 
+interface MapStateToProps {
+  hasFeature: (featureName: string) => boolean;
+  workspace: (organisationId: string) => UserWorkspaceResource;
+}
+
 type Props = InjectedIntlProps &
   InjectedDatamartProps &
+  MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; goalId: string }>;
 
@@ -77,12 +85,16 @@ class EditGoalPage extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: { goalId },
+        params: { goalId, organisationId },
       },
+      workspace,
     } = this.props;
 
     if (goalId) {
       this.fetchData(goalId);
+    }
+    if (workspace(organisationId).datamarts.length === 1) {
+      this.onDatamartSelect(workspace(organisationId).datamarts[0])
     }
   }
 
@@ -172,6 +184,11 @@ class EditGoalPage extends React.Component<Props, State> {
 
   onDatamartSelect = (datamart: DatamartResource) => {
     const { goalFormData } = this.state;
+    const QueryContainer = (window as any).angular
+      .element(document.body)
+      .injector()
+      .get('core/datamart/queries/QueryContainer');
+    const defQuery = new QueryContainer(datamart.id);
     this.setState({
       selectedDatamart: datamart,
       goalFormData: {
@@ -180,6 +197,9 @@ class EditGoalPage extends React.Component<Props, State> {
           ...goalFormData.goal,
           datamart_id: datamart.id,
         },
+        queryLanguage:
+          datamart.storage_model_version === 'v201506' ? 'SELECTORQL' : 'OTQL',
+        queryContainer: defQuery,
       },
     });
   };
@@ -236,10 +256,18 @@ class EditGoalPage extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  workspace: getWorkspace(state),
+  hasFeature: FeatureSelectors.hasFeature(state),
+});
+
 export default compose(
   withRouter,
   injectIntl,
   injectDatamart,
-  connect(state => ({ hasFeature: FeatureSelectors.hasFeature(state) })),
   injectNotifications,
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(EditGoalPage);
