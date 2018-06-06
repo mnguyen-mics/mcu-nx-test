@@ -47,6 +47,7 @@ interface MonitoringProps {
   };
   activities: Activities;
   datamartId: string;
+  filter?: React.ReactNode;
 }
 
 type Props = MonitoringProps & InjectedIntlProps;
@@ -110,6 +111,7 @@ class Monitoring extends React.Component<Props> {
       activities,
       profile,
       datamartId,
+      filter
     } = this.props;
     const keys = Object.keys(activities.byDay);
     return (
@@ -134,6 +136,7 @@ class Monitoring extends React.Component<Props> {
                 className="mcs-monitoring"
               >
                 <Col span={6}>
+                {filter && filter}
                   <div className="mcs-subtitle">
                     <FormattedMessage {...messages.visitor} />
                   </div>
