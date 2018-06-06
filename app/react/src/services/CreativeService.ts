@@ -18,6 +18,7 @@ import PluginService from './PluginService';
 
 export interface GetCreativesOptions {
   creative_type?: CreativeType;
+  type?: CreativeType;
   creative_subtype?: CreativeSubtype[];
   scope?: string;
   keywords?: string[];
