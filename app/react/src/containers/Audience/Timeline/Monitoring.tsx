@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import cuid from 'cuid';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
@@ -111,12 +112,12 @@ class Monitoring extends React.Component<Props> {
       activities,
       profile,
       datamartId,
-      filter
+      filter,
     } = this.props;
     const keys = Object.keys(activities.byDay);
     return (
       <div className="ant-layout">
-        <MonitoringActionbar />
+        <MonitoringActionbar filter={filter} />
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <Row>
@@ -136,7 +137,6 @@ class Monitoring extends React.Component<Props> {
                 className="mcs-monitoring"
               >
                 <Col span={6}>
-                {filter && filter}
                   <div className="mcs-subtitle">
                     <FormattedMessage {...messages.visitor} />
                   </div>
@@ -167,7 +167,7 @@ class Monitoring extends React.Component<Props> {
                           const activityOnDay = activities.byDay[day];
                           const dayToFormattedMessage = this.renderDate(day);
                           return (
-                            <div className="mcs-timeline" key={day}>
+                            <div className="mcs-timeline" key={cuid()}>
                               <Timeline.Item
                                 dot={
                                   <Icon
@@ -184,7 +184,7 @@ class Monitoring extends React.Component<Props> {
                                 activityOnDay.map((activity: Activity) => {
                                   return (
                                     <Timeline.Item
-                                      key={activity.$ts}
+                                      key={cuid()}
                                       dot={
                                         <McsIcon
                                           type="status"

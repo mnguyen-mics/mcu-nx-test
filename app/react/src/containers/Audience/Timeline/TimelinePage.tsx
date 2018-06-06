@@ -538,21 +538,23 @@ class TimelinePage extends React.Component<JoinedProps, State> {
         getKey: (item: any) => (item && item.key ? item.key : ''),
         display: (item: any) => item.value,
         handleItemClick: (datamartItem: { key: string; value: string }) => {
-          this.setState(
-            {
-              selectedDatamartId: datamartItem.key,
-            },
-            () => {
-              if (identifierId && identifierType) {
-                this.fetchAllData(
-                  organisationId,
-                  selectedDatamartId,
-                  identifierType,
-                  identifierId,
-                );
-              }
-            },
-          );
+          if (datamartItem.key !== selectedDatamartId) {
+            this.setState(
+              {
+                selectedDatamartId: datamartItem.key,
+              },
+              () => {
+                if (identifierId && identifierType) {
+                  this.fetchAllData(
+                    organisationId,
+                    selectedDatamartId,
+                    identifierType,
+                    identifierId,
+                  );
+                }
+              },
+            );
+          }
         },
       };
       return (
