@@ -73,7 +73,7 @@ const channelService = {
   createEventRules(
     datamartId: string,
     channelId: string,
-    body: { organisation_id: string; properties: Partial<EventRules> },
+    body: Partial<EventRules>,
   ): Promise<DataResponse<EventRules>> {
     const endpoint = `datamarts/${datamartId}/channels/${channelId}/event_rules`;
     return ApiService.postRequest(endpoint, body);

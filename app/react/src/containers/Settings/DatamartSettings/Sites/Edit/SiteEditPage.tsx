@@ -183,12 +183,9 @@ class SiteEditPage extends React.Component<Props, State> {
       const saveCreatePromises = siteFormData.eventRulesFields.map(erf => {
         if (!erf.model.id) {
           return ChannelService.createEventRules(datamartId, site.id, {
-            organisation_id: organisationId,
-            properties: {
-              ...erf.model,
-              datamart_id: datamartId,
-              site_id: site.id,
-            },
+            ...erf.model,
+            datamart_id: datamartId,
+            site_id: site.id,
           });
         } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);

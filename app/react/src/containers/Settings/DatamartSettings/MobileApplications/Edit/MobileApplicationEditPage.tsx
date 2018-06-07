@@ -181,12 +181,9 @@ class EditMobileAppPage extends React.Component<Props, State> {
         erf => {
           if (!erf.model.id) {
             return ChannelService.createEventRules(datamartId, channel.id, {
-              organisation_id: organisationId,
-              properties: {
-                ...erf.model,
-                datamart_id: datamartId,
-                site_id: channel.id,
-              },
+              ...erf.model,
+              datamart_id: datamartId,
+              site_id: channel.id,
             });
           } else if (startIds.includes(erf.model.id)) {
             savedIds.push(erf.model.id);
