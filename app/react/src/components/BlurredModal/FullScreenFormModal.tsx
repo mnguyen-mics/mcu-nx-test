@@ -5,7 +5,7 @@ export interface FullScreenFormModalProps {
   opened?: boolean;
 }
 
-export default class FullScreenModal extends React.Component<FullScreenFormModalProps, any> {
+export default class FullScreenModal extends React.Component<FullScreenFormModalProps> {
 
   el: HTMLDivElement;
 
