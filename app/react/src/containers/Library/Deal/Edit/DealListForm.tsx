@@ -74,7 +74,6 @@ class DealListForm extends React.Component<
   }
 
   buildFormSections = () => {
-    const {} = this.props;
 
     const sections: McsFormSection[] = [];
 

@@ -21,8 +21,8 @@ const datamartServices = {
     const endpoint = `deal_lists?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, dealList);
   },
-  updateDealList(dealListId: string, dealList: Partial<DealsListResource>): Promise<DataResponse<DealsListResource>> {
-    const endpoint = `deal_lists/${dealListId}`;
+  updateDealList(organisationId: string, dealListId: string, dealList: Partial<DealsListResource>): Promise<DataResponse<DealsListResource>> {
+    const endpoint = `deal_lists/${dealListId}?organisation_id=${organisationId}`;
     return ApiService.putRequest(endpoint, dealList);
   },
   deleteDealList(organisationId: string, dealListId: string): Promise<DataResponse<DealsListResource>> {

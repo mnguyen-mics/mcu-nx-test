@@ -39,12 +39,8 @@ type Props = InjectedIntlProps &
   NormalizerProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
 
-interface State {}
 
-class GeneralFormSection extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
+class GeneralFormSection extends React.Component<Props> {
 
   render() {
     const {

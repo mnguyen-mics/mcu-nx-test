@@ -38,14 +38,12 @@ const messages = defineMessages({
   },
 });
 
-interface DealListPageProps {}
-
 interface DealListPageState {
   dealListFormData: DealListFormData;
   isLoading: boolean;
 }
 
-type JoinedProps = DealListPageProps &
+type JoinedProps = 
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; dealListId: string }> & InjectedNotificationProps;
 
@@ -162,7 +160,7 @@ class DealListPage extends React.Component<
   }
 }
 
-export default compose<JoinedProps, DealListPageProps>(
+export default compose<JoinedProps, {}>(
   injectIntl,
   injectNotifications,
   withRouter,

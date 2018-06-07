@@ -38,14 +38,12 @@ const messages = defineMessages({
   },
 });
 
-interface KeywordListPageProps { }
-
 interface KeywordListPageState {
   keywordListFormData: KeywordListFormData;
   isLoading: boolean;
 }
 
-type JoinedProps = KeywordListPageProps &
+type JoinedProps = 
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; keywordsListId: string }> & InjectedNotificationProps;
 
@@ -165,7 +163,7 @@ class KeywordListPage extends React.Component<
   }
 }
 
-export default compose<JoinedProps, KeywordListPageProps>(
+export default compose<JoinedProps, {}>(
   injectIntl,
   injectNotifications,
   withRouter,
