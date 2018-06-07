@@ -10,12 +10,7 @@ import messages from './messages';
 const InputGroup = Input.Group;
 const Option = Select.Option;
 
-interface MonitoringActionbarProps {
-  filter?: React.ReactNode;
-}
-
-type Props = MonitoringActionbarProps &
-  InjectedIntlProps &
+type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {
@@ -96,7 +91,6 @@ class MonitoringActionbar extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl: { formatMessage },
-      filter
     } = this.props;
 
     const breadcrumbPaths = [
@@ -157,7 +151,6 @@ class MonitoringActionbar extends React.Component<Props, State> {
             />
           </InputGroup>
         </Modal>
-        {filter && filter}
         <Button
           className="mcs-primary"
           type="primary"
@@ -171,7 +164,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, MonitoringActionbarProps>(
+export default compose<Props, {}>(
   injectIntl,
   withRouter,
 )(MonitoringActionbar);

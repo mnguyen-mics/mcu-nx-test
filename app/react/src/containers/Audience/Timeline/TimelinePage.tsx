@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { Icon } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import queryString from 'query-string';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import lodash from 'lodash';
 import moment from 'moment';
-import {
-  getDefaultDatamart,
-  getWorkspace,
-} from '../../../state/Session/selectors';
+import { getWorkspace } from '../../../state/Session/selectors';
 import Monitoring, { Activities } from './Monitoring';
 import UserDataService from '../../../services/UserDataService';
 import initialState from './initialState';
@@ -23,8 +20,15 @@ import {
   UserSegmentResource,
   Cookies,
 } from '../../../models/timeline/timeline';
-import MultiSelect from '../../../components/MultiSelect';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
+import { DatamartSelector } from '../../Datamart';
+
+const messages = defineMessages({
+  selectMonitoringDatamart: {
+    id: 'audience.monitoring.select.datamart.breadcrumb.title',
+    defaultMessage: 'Select Monitoring Datamart',
+  },
+});
 
 const takeLatestActivities = takeLatest(UserDataService.getActivities);
 
@@ -54,10 +58,10 @@ interface State {
     hasItems: boolean;
     items: object; // type better
   };
-  selectedDatamartId: string;
 }
 
 type JoinedProps = MapStateToProps &
+  InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<TimelinePageParams>;
 
@@ -91,9 +95,6 @@ class TimelinePage extends React.Component<JoinedProps, State> {
           USER_POINT: [],
         },
       },
-      selectedDatamartId: props.defaultDatamart(
-        props.match.params.organisationId,
-      ).id,
     };
   }
 
@@ -104,9 +105,10 @@ class TimelinePage extends React.Component<JoinedProps, State> {
         params: { organisationId, identifierType, identifierId },
       },
       cookies,
+      location,
       isFechingCookies,
     } = this.props;
-    const { selectedDatamartId } = this.state;
+
     if (
       (identifierType === undefined || identifierId === undefined) &&
       (cookies.mics_vid || cookies.mics_uaid)
@@ -131,12 +133,14 @@ class TimelinePage extends React.Component<JoinedProps, State> {
     ) {
       // TODO HANDLE NO DATA FOR THIS USER
     } else {
-      this.fetchAllData(
-        organisationId,
-        selectedDatamartId,
-        identifierType,
-        identifierId,
-      );
+      if (queryString.parse(location.search).datamartId) {
+        this.fetchAllData(
+          organisationId,
+          queryString.parse(location.search).datamartId,
+          identifierType,
+          identifierId,
+        );
+      }
     }
   }
 
@@ -147,9 +151,8 @@ class TimelinePage extends React.Component<JoinedProps, State> {
       },
       history,
       cookies,
+      location: { search },
     } = this.props;
-
-    const { selectedDatamartId } = this.state;
 
     const {
       match: {
@@ -159,6 +162,7 @@ class TimelinePage extends React.Component<JoinedProps, State> {
           identifierId: nextIdentifierId,
         },
       },
+      location: { search: nextSearch },
     } = nextProps;
 
     if (
@@ -177,14 +181,16 @@ class TimelinePage extends React.Component<JoinedProps, State> {
       identifierType !== nextIdentifierType ||
       decodeURIComponent(identifierId) !== decodeURIComponent(nextIdentifierId)
     ) {
-      const cb = () =>
-        this.fetchAllData(
-          organisationId,
-          selectedDatamartId,
-          nextIdentifierType,
-          nextIdentifierId,
-        );
-      this.resetTimelineData(cb());
+      if (search !== nextSearch && queryString.parse(nextSearch).datamartId) {
+        const cb = () =>
+          this.fetchAllData(
+            organisationId,
+            queryString.parse(nextSearch).datamartId,
+            nextIdentifierType,
+            nextIdentifierId,
+          );
+        this.resetTimelineData(cb());
+      }
     }
   }
 
@@ -259,7 +265,6 @@ class TimelinePage extends React.Component<JoinedProps, State> {
             });
           })
           .catch(err => {
-            this.props.notifyError(err);
             this.setState(prevState => {
               const nextState = {
                 ...prevState,
@@ -313,7 +318,6 @@ class TimelinePage extends React.Component<JoinedProps, State> {
             });
           })
           .catch(err => {
-            this.props.notifyError(err);
             this.setState(prevState => {
               const nextState = {
                 ...prevState,
@@ -368,7 +372,6 @@ class TimelinePage extends React.Component<JoinedProps, State> {
             });
           })
           .catch(err => {
-            this.props.notifyError(err);
             this.setState(prevState => {
               const nextState = {
                 ...prevState,
@@ -450,7 +453,6 @@ class TimelinePage extends React.Component<JoinedProps, State> {
             });
           })
           .catch(err => {
-            this.props.notifyError(err);
             this.setState(prevState => {
               const nextState = {
                 ...prevState,
@@ -507,79 +509,58 @@ class TimelinePage extends React.Component<JoinedProps, State> {
     }
   };
 
-  renderDatamartFilter = () => {
-    const {
-      workspace,
-      match: {
-        params: { organisationId, identifierId, identifierType },
-      },
-      defaultDatamart,
-    } = this.props;
-    const { selectedDatamartId } = this.state;
-    if (workspace(organisationId).datamarts.length > 1) {
-      const datamartItems = workspace(organisationId).datamarts.map(d => ({
-        key: d.id,
-        value: d.name || d.token,
-      }));
-      const filterOptions = {
-        displayElement: (
-          <div>
-            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
-            <Icon type="down" />
-          </div>
-        ),
-        selectedItems: [
-          datamartItems.find(
-            di => di.key === defaultDatamart(organisationId).id,
-          ),
-        ],
-        items: datamartItems,
-        singleSelectOnly: true,
-        getKey: (item: any) => (item && item.key ? item.key : ''),
-        display: (item: any) => item.value,
-        handleItemClick: (datamartItem: { key: string; value: string }) => {
-          if (datamartItem.key !== selectedDatamartId) {
-            this.setState(
-              {
-                selectedDatamartId: datamartItem.key,
-              },
-              () => {
-                if (identifierId && identifierType) {
-                  this.fetchAllData(
-                    organisationId,
-                    selectedDatamartId,
-                    identifierType,
-                    identifierId,
-                  );
-                }
-              },
-            );
-          }
-        },
-      };
-      return (
-        <MultiSelect {...filterOptions} buttonClass="mcs-table-filters-item" />
-      );
-    }
-    return;
+  onDatamartSelect = (datamart: DatamartResource) => {
+    const { history, location } = this.props;
+    history.push({
+      pathname: location.pathname,
+      search: queryString.stringify({ datamartId: datamart.id }),
+    });
   };
 
   render() {
+    const { identifiers, profile, activities, segments } = this.state;
+
     const {
-      identifiers,
-      profile,
-      activities,
-      segments,
-      selectedDatamartId,
-    } = this.state;
-    return (
+      intl,
+      workspace,
+      match: {
+        params: { organisationId },
+      },
+      location,
+    } = this.props;
+
+    let selectedDatamartId = '';
+
+    const datamartIdQueryString = queryString.parse(location.search).datamartId;
+
+    const datamarts = workspace(organisationId).datamarts;
+
+    if (datamarts && datamarts.length === 1) {
+      selectedDatamartId = datamarts[0].id;
+    }
+
+    if (datamartIdQueryString) {
+      selectedDatamartId = datamartIdQueryString;
+    }
+
+    return selectedDatamartId ? (
       <Monitoring
         identifiers={identifiers}
         profile={profile}
         activities={activities}
         segments={segments}
         datamartId={selectedDatamartId}
-        filter={this.renderDatamartFilter()}
+      />
+    ) : (
+      <DatamartSelector
+        onSelectDatamart={this.onDatamartSelect}
+        actionbarProps={{
+          paths: [
+            {
+              name: intl.formatMessage(messages.selectMonitoringDatamart),
+            },
+          ],
+        }}
       />
     );
   }
@@ -588,7 +569,6 @@ class TimelinePage extends React.Component<JoinedProps, State> {
 const mapStateToProps = (state: any) => ({
   cookies: state.session.cookies,
   isFechingCookies: state.session.isFechingCookies,
-  defaultDatamart: getDefaultDatamart(state),
   workspace: getWorkspace(state),
 });
 

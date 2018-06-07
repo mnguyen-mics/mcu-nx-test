@@ -48,7 +48,6 @@ interface MonitoringProps {
   };
   activities: Activities;
   datamartId: string;
-  filter?: React.ReactNode;
 }
 
 type Props = MonitoringProps & InjectedIntlProps;
@@ -112,12 +111,11 @@ class Monitoring extends React.Component<Props> {
       activities,
       profile,
       datamartId,
-      filter,
     } = this.props;
     const keys = Object.keys(activities.byDay);
     return (
       <div className="ant-layout">
-        <MonitoringActionbar filter={filter} />
+        <MonitoringActionbar />
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <Row>
