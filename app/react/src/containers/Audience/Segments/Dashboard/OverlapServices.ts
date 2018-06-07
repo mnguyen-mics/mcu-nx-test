@@ -29,6 +29,9 @@ export class OverlapInterval {
             this.stopInterval()
             resolve()
           }
+        } else {
+          this.stopInterval()
+          resolve()
         }
       }, 2000)
     })
