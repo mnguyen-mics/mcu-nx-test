@@ -28,7 +28,7 @@ export interface NewUserQuerySimpleFormData {
 
 const initialFormData: Partial<NewUserQuerySimpleFormData> = {
   defaultLifetimeUnit: 'days',
-  persisted: false,
+  persisted: true,
 };
 
 export const FORM_ID = 'userQuerySegmentSimpleForm';
