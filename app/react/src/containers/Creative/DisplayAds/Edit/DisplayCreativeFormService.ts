@@ -75,9 +75,7 @@ const DisplayCreativeFormService = {
         editor_artifact_id: 'default-editor',
         editor_group_id: 'com.mediarithmics.creative.display',
         subtype: 'BANNER',
-        format: creative.format,
-        destination_domain: creative.destination_domain,
-        name: creative.name,
+        ...creative
       };
       createOrUpdatePromise = CreativeService.createDisplayCreative(
         organisationId,
