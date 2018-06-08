@@ -107,6 +107,7 @@ class TimelinePage extends React.Component<JoinedProps, State> {
       cookies,
       location,
       isFechingCookies,
+      workspace,
     } = this.props;
 
     if (
@@ -140,6 +141,13 @@ class TimelinePage extends React.Component<JoinedProps, State> {
           identifierType,
           identifierId,
         );
+      } else if (workspace(organisationId).datamarts.length === 1) {
+        this.fetchAllData(
+          organisationId,
+          workspace(organisationId).datamarts[0].id,
+          identifierType,
+          identifierId,
+        );
       }
     }
   }
@@ -147,11 +155,12 @@ class TimelinePage extends React.Component<JoinedProps, State> {
   componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       match: {
-        params: { organisationId, identifierType, identifierId },
+        params: { organisationId },
       },
       history,
       cookies,
       location: { search },
+      workspace,
     } = this.props;
 
     const {
@@ -177,20 +186,26 @@ class TimelinePage extends React.Component<JoinedProps, State> {
         );
       }
     } else if (
-      organisationId !== nextOrganisationId ||
-      identifierType !== nextIdentifierType ||
-      decodeURIComponent(identifierId) !== decodeURIComponent(nextIdentifierId)
+      search !== nextSearch &&
+      queryString.parse(nextSearch).datamartId
     ) {
-      if (search !== nextSearch && queryString.parse(nextSearch).datamartId) {
-        const cb = () =>
-          this.fetchAllData(
-            organisationId,
-            queryString.parse(nextSearch).datamartId,
-            nextIdentifierType,
-            nextIdentifierId,
-          );
-        this.resetTimelineData(cb());
-      }
+      const cb = () =>
+        this.fetchAllData(
+          nextOrganisationId,
+          queryString.parse(nextSearch).datamartId,
+          nextIdentifierType,
+          nextIdentifierId,
+        );
+      this.resetTimelineData(cb());
+    } else if (workspace(organisationId).datamarts.length === 1) {
+      const cb = () =>
+        this.fetchAllData(
+          nextOrganisationId,
+          workspace(organisationId).datamarts[0].id,
+          nextIdentifierType,
+          nextIdentifierId,
+        );
+      this.resetTimelineData(cb());
     }
   }
 
