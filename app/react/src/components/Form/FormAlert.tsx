@@ -16,16 +16,20 @@ class FormAlert extends React.Component<JoinedProps> {
     const { message, iconType, type } = this.props;
     return (
       <Row>
-        <Col span={24} className="modificationWarning">
-          <Alert
-            message={
-              <div>
-                <McsIcon type={iconType} />
-                {message}
-              </div>
-            }
-            type={type ? type : 'info'}
-          />
+        <Col offset={4} className="modificationWarning">
+          <Row>
+            <Col span={15}>
+              <Alert
+                message={
+                  <div>
+                    <McsIcon type={iconType} />
+                    {message}
+                  </div>
+                }
+                type={type ? type : 'info'}
+              />
+            </Col>
+          </Row>
         </Col>
       </Row>
     );
