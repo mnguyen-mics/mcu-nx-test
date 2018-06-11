@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-
+import { getFormInitialValues } from 'redux-form';
+import { connect } from 'react-redux';
 import { compose } from 'recompose';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { Row } from 'antd/lib/grid';
 import withValidators, {
   ValidatorProps,
@@ -18,12 +20,16 @@ import {
   FormAddonSelectField,
   FormBoolean,
   FormBooleanField,
-  FormAlert
+  FormAlert,
 } from '../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
-import { SegmentType, EditAudienceSegmentParam } from '../domain';
+import {
+  SegmentType,
+  EditAudienceSegmentParam,
+  AudienceSegmentFormData,
+} from '../domain';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { FORM_ID } from '../EditAudienceSegmentForm';
 
 const messagesMap = defineMessages({
   audienceSegmentFormSelectTypeOptionUserList: {
@@ -46,8 +52,13 @@ export interface GeneralFormSectionProps {
   datamart?: DatamartResource;
 }
 
+interface MapStateToProps {
+  initialFormValues: Partial<AudienceSegmentFormData>;
+}
+
 type Props = InjectedIntlProps &
   ValidatorProps &
+  MapStateToProps &
   NormalizerProps &
   GeneralFormSectionProps &
   RouteComponentProps<EditAudienceSegmentParam>;
@@ -76,8 +87,14 @@ class GeneralFormSection extends React.Component<Props, State> {
   };
 
   warningOnTokenChange = () => {
+    const { initialFormValues } = this.props;
+    const technicalName =
+      initialFormValues &&
+      initialFormValues.audienceSegment &&
+      initialFormValues.audienceSegment.technical_name;
+
     this.setState({
-      displayWarning: true,
+      displayWarning: !!technicalName
     });
   };
 
@@ -89,10 +106,8 @@ class GeneralFormSection extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
       match: {
-        params: {
-          segmentId
-        }
-      }
+        params: { segmentId },
+      },
     } = this.props;
 
     const { displayWarning } = this.state;
@@ -312,4 +327,7 @@ export default compose<Props, GeneralFormSectionProps>(
   withValidators,
   withNormalizer,
   withRouter,
+  connect((state: any) => ({
+    initialFormValues: getFormInitialValues(FORM_ID)(state),
+  })),
 )(GeneralFormSection);

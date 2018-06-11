@@ -15,9 +15,18 @@ import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
 import FormAlert from '../../../../../../components/Form/FormAlert';
+import { connect } from 'react-redux';
+import { getFormInitialValues } from 'redux-form';
+import { FORM_ID } from '../SiteEditForm';
+import { SiteFormData } from '../domain';
+
+interface MapStateToProps {
+  initialFormValues: Partial<SiteFormData>;
+}
 
 type Props = InjectedIntlProps &
   ValidatorProps &
+  MapStateToProps &
   NormalizerProps &
   RouteComponentProps<{ siteId: string }>;
 
@@ -39,8 +48,13 @@ class GeneralFormSection extends React.Component<Props, State> {
   };
 
   warningOnTokenChange = () => {
+    const { initialFormValues } = this.props;
+    const token =
+      initialFormValues &&
+      initialFormValues.site &&
+      initialFormValues.site.token;
     this.setState({
-      displayWarning: true,
+      displayWarning: !!token,
     });
   };
 
@@ -138,4 +152,7 @@ export default compose(
   withValidators,
   withNormalizer,
   withRouter,
+  connect((state: any) => ({
+    initialFormValues: getFormInitialValues(FORM_ID)(state),
+  })),
 )(GeneralFormSection);

@@ -2,6 +2,8 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
+import { connect } from 'react-redux';
+import { getFormInitialValues } from 'redux-form';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
 import {
   FormInput,
@@ -18,10 +20,19 @@ import withNormalizer, {
   NormalizerProps,
 } from '../../../../../components/Form/withNormalizer';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { EditDisplayCampaignRouteMatchParam } from '../domain';
+import {
+  EditDisplayCampaignRouteMatchParam,
+  DisplayCampaignFormData,
+} from '../domain';
+import { FORM_ID } from '../DisplayCampaignForm';
+
+interface MapStateToProps {
+  initialFormValues: Partial<DisplayCampaignFormData>;
+}
 
 type Props = InjectedIntlProps &
   ValidatorProps &
+  MapStateToProps &
   NormalizerProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
@@ -43,8 +54,13 @@ class GeneralFormSection extends React.Component<Props, State> {
   };
 
   warningOnTokenChange = () => {
+    const { initialFormValues } = this.props;
+    const technicalName =
+      initialFormValues &&
+      initialFormValues.campaign &&
+      initialFormValues.campaign.technical_name;
     this.setState({
-      displayWarning: true,
+      displayWarning: !!technicalName,
     });
   };
 
@@ -264,4 +280,7 @@ export default compose(
   withValidators,
   withNormalizer,
   withRouter,
+  connect((state: any) => ({
+    initialFormValues: getFormInitialValues(FORM_ID)(state),
+  })),
 )(GeneralFormSection);

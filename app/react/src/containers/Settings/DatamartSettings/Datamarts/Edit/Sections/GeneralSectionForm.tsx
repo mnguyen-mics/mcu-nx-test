@@ -15,9 +15,18 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
+import { connect } from 'react-redux';
+import { getFormInitialValues } from 'redux-form';
+import { FORM_ID } from '../DatamartEditForm';
+import { DatamartFormData } from '../domain';
+
+interface MapStateToProps {
+  initialFormValues: Partial<DatamartFormData>;
+}
 
 type Props = InjectedIntlProps &
   ValidatorProps &
+  MapStateToProps &
   NormalizerProps &
   RouteComponentProps<{ datamartId: string }>;
 
@@ -39,8 +48,13 @@ class GeneralFormSection extends React.Component<Props, State> {
   };
 
   warningOnTokenChange = () => {
+    const { initialFormValues } = this.props;
+    const token =
+      initialFormValues &&
+      initialFormValues.datamart &&
+      initialFormValues.datamart.token;
     this.setState({
-      displayWarning: true,
+      displayWarning: !!token,
     });
   };
 
@@ -102,4 +116,7 @@ export default compose(
   withValidators,
   withNormalizer,
   withRouter,
+  connect((state: any) => ({
+    initialFormValues: getFormInitialValues(FORM_ID)(state),
+  })),
 )(GeneralFormSection);

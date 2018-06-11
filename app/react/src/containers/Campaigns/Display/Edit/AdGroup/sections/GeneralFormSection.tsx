@@ -20,10 +20,18 @@ import {
 } from '../../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../../components';
 import FormDateRangePicker from '../../../../../../components/Form/FormDateRangePicker';
-import { EditAdGroupRouteMatchParam } from '../domain';
+import { EditAdGroupRouteMatchParam, AdGroupFormData } from '../domain';
+import { connect } from 'react-redux';
+import { getFormInitialValues } from 'redux-form';
+import { FORM_ID } from '../AdGroupForm';
+
+interface MapStateToProps {
+  initialFormValues: Partial<AdGroupFormData>;
+}
 
 type Props = InjectedIntlProps &
   ValidatorProps &
+  MapStateToProps &
   NormalizerProps &
   RouteComponentProps<EditAdGroupRouteMatchParam>;
 
@@ -45,8 +53,13 @@ class GeneralFormSection extends React.Component<Props, State> {
   };
 
   warningOnTokenChange = () => {
+    const { initialFormValues } = this.props;
+    const technicalName =
+      initialFormValues &&
+      initialFormValues.adGroup &&
+      initialFormValues.adGroup.technical_name;
     this.setState({
-      displayWarning: true,
+      displayWarning: !!technicalName,
     });
   };
 
@@ -292,4 +305,7 @@ export default compose(
   withValidators,
   withNormalizer,
   withRouter,
+  connect((state: any) => ({
+    initialFormValues: getFormInitialValues(FORM_ID)(state),
+  })),
 )(GeneralFormSection);

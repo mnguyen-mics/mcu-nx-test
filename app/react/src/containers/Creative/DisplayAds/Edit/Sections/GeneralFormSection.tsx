@@ -50,8 +50,13 @@ class GeneralFormSection extends React.Component<Props, State> {
   };
 
   warningOnTokenChange = () => {
+    const { initialValue } = this.props;
+    const technicalName =
+      initialValue &&
+      initialValue.creative &&
+      initialValue.creative.technical_name;
     this.setState({
-      displayWarning: true,
+      displayWarning: !!technicalName,
     });
   };
 

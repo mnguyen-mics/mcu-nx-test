@@ -50,7 +50,7 @@ import { Path } from '../../../../components/ActionBar';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
 import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
 
-const FORM_ID = 'audienceSegmentForm';
+export const FORM_ID = 'audienceSegmentForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
