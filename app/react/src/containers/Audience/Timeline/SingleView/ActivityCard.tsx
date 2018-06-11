@@ -15,6 +15,7 @@ import Location from './Location';
 import Topics from './Topics';
 import UserDataService from '../../../../services/UserDataService';
 import messages from '../messages';
+import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
 
@@ -25,6 +26,8 @@ interface State {
 type Props = ActivityCardProps & InjectedIntlProps;
 
 class ActivityCard extends React.Component<Props, State> {
+  getChannelPromise: CancelablePromise<any> | undefined = undefined;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -32,18 +35,21 @@ class ActivityCard extends React.Component<Props, State> {
     };
   }
 
+  componentWillUnmount() {
+    if (this.getChannelPromise) {
+      this.getChannelPromise.cancel();
+    }
+  }
+
   getChannelInformation(activity: Activity) {
     if (activity && needToDisplayDurationFor.indexOf(activity.$type) > -1) {
       const id = activity.$site_id ? activity.$site_id : activity.$app_id;
       const prefix = activity.$site_id ? 'Site' : 'App';
-      UserDataService.getChannel(this.props.datamartId, id).then(response => {
-        this.setState(prevState => {
-          const nextState = {
-            ...prevState,
-          };
-          nextState.siteName = `${prefix}: ${response.data.name}`;
-          return nextState;
-        });
+      this.getChannelPromise = makeCancelable(
+        UserDataService.getChannel(this.props.datamartId, id),
+      );
+      this.getChannelPromise.promise.then(response => {
+        this.setState({ siteName: `${prefix}: ${response.data.name}` });
       });
     } else {
       this.setState(prevState => {
@@ -147,22 +153,17 @@ class ActivityCard extends React.Component<Props, State> {
         </span>
       ) : null;
 
+    const device = agent && agent.device ? agent.device : null;
+    const longitude =
+      activity && activity.$location ? activity.$location.$latlon[1] : 0;
+    const latitude =
+      activity && activity.$location ? activity.$location.$latlon[0] : 0;
     return (
       <Card title={this.state.siteName} buttons={renderDuration}>
         <Row>
-          <Device
-            vectorId={activity.$user_agent_id}
-            device={agent && agent.device ? agent.device : null}
-          />
+          <Device vectorId={activity.$user_agent_id} device={device} />
           <Origin origin={activity.$origin} />
-          <Location
-            longitude={
-              activity && activity.$location ? activity.$location.$latlon[1] : 0
-            }
-            latitude={
-              activity && activity.$location ? activity.$location.$latlon[0] : 0
-            }
-          />
+          <Location longitude={longitude} latitude={latitude} />
           <Topics topics={activity.$topics} />
           <div>
             {activity.$events
