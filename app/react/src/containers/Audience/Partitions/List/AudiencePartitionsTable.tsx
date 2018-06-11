@@ -1,239 +1,44 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Modal, Icon } from 'antd';
+import { Link } from 'react-router-dom';
+import {Icon } from 'antd';
 import { compose } from 'recompose';
+import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 
 import { TableViewFilters } from '../../../../components/TableView/index';
-import * as AudiencePartitionsActions from '../../../../state/Audience/Partitions/actions';
-import { PARTITIONS_SEARCH_SETTINGS } from './constants';
-import {
-  updateSearch,
-  parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearches,
-  PaginationSearchSettings,
-  KeywordSearchSettings,
-  DatamartSearchSettings,
-} from '../../../../utils/LocationSearchHelper';
-import { getTableDataSource } from '../../../../state/Audience/Partitions/selectors';
 import { getWorkspace } from '../../../../state/Session/selectors';
-import { TranslationProps } from '../../../Helpers/withTranslations';
-import { withTranslations } from '../../../Helpers';
 import { AudiencePartitionResource } from '../../../../models/audiencePartition/AudiencePartitionResource';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import { FormattedMessage } from 'react-intl';
-import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
-
-interface FilterParams
-  extends PaginationSearchSettings,
-    KeywordSearchSettings,
-    DatamartSearchSettings {}
+import { DataListResponse } from '../../../../services/ApiService';
+import { PartitionFilterParams } from './AudiencePartitionsPage';
+import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 
 interface MapStateToProps {
-  isFetchingAudiencePartitions: boolean;
-  dataSource: AudiencePartitionResource[];
-  totalAudiencePartitions: number;
-  hasAudiencePartitions: boolean;
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-interface MapDispatchToProps {
-  loadAudiencePartitionsDataSource: (
-    organisationId: string,
-    filter: FilterParams,
-    bool?: boolean,
-  ) => AudiencePartitionResource[];
-  archiveAudiencePartition: (partitionId: string) => void;
-  resetAudiencePartitionsTable: () => void;
+export interface AudiencePartitionsTableProps {
+  organisationId: string;
+  filter: PartitionFilterParams;
+  audiencePartitions?: DataListResponse<AudiencePartitionResource>;
+  fetchingPartitions: boolean;
+  onChange: (filter: Partial<PartitionFilterParams>) => void;
+  onArchive: (partition: AudiencePartitionResource) => void;
+  onEdit: (partition: AudiencePartitionResource) => void;
 }
 
-type Props = MapStateToProps &
-  MapDispatchToProps &
-  TranslationProps &
-  InjectedDatamartProps &
-  RouteComponentProps<{ organisationId: string }>;
+type Props = MapStateToProps & AudiencePartitionsTableProps & InjectedIntlProps;
+
+class AudiencePartitionTable extends TableViewFilters<AudiencePartitionResource> {}
 
 class AudiencePartitionsTable extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.archivePartition = this.archivePartition.bind(this);
-    this.editPartition = this.editPartition.bind(this);
-  }
-
-  loadAudiencePartitionsData = () => {
-    const {
-      location: { search },
-      match: {
-        params: { organisationId },
-      },
-      loadAudiencePartitionsDataSource,
-    } = this.props;
-    const filter = parseSearch<FilterParams>(
-      search,
-      this.getSearchSetting(organisationId),
-    );
-    loadAudiencePartitionsDataSource(organisationId, filter, true);
-  };
-
-  componentDidMount() {
-    const {
-      history,
-      location: { search, pathname },
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-
-    if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(
-          search,
-          this.getSearchSetting(organisationId),
-        ),
-        state: { reloadDataSource: true },
-      });
-    } else {
-      this.loadAudiencePartitionsData();
-    }
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const {
-      location: { search, pathname },
-      match: {
-        params: { organisationId },
-      },
-      history,
-      loadAudiencePartitionsDataSource,
-    } = this.props;
-
-    const {
-      location: { search: prevSearch, state },
-      match: {
-        params: { organisationId: prevOrganisationId },
-      },
-    } = prevProps;
-
-    const checkEmptyDataSource = state && state.reloadDataSource;
-
-    if (
-      !compareSearches(search, prevSearch) ||
-      organisationId !== prevOrganisationId
-    ) {
-      if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
-        history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            this.getSearchSetting(organisationId),
-          ),
-          state: { reloadDataSource: organisationId !== prevOrganisationId },
-        });
-      } else {
-        const filter = parseSearch<FilterParams>(
-          search,
-          this.getSearchSetting(organisationId),
-        );
-
-        loadAudiencePartitionsDataSource(
-          organisationId,
-          filter,
-          checkEmptyDataSource,
-        );
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.resetAudiencePartitionsTable();
-  }
-
-  archivePartition = (partition: AudiencePartitionResource) => {
-    const {
-      // match: { params: { organisationId } },
-      // location: { search },
-      // archiveAudiencePartition,
-      // loadAudiencePartitionsDataSource,
-      translations,
-    } = this.props;
-
-    // const filter = parseSearch(search, this.getSearchSetting(organisationId));
-
-    Modal.confirm({
-      title: translations.PARTITIONS_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.PARTITIONS_MODAL_CONFIRM_ARCHIVED_BODY,
-      iconType: 'exclamation-circle',
-      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
-      onOk() {
-        // WAITING BACKEND PART
-        //   return archiveAudiencePartition(partition.id).then(() => {
-        //     const datamartId = filter.datamarts[0];
-        //     loadAudiencePartitionsDataSource(organisationId, datamartId, filter);
-        //   });
-      },
-      onCancel() {
-        //
-      },
-    });
-  };
-
-  editPartition = (partition: any) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      history,
-    } = this.props;
-
-    const editUrl = `/v2/o/${organisationId}/audience/partitions/${
-      partition.id
-    }/edit`;
-
-    history.push({
-      pathname: editUrl,
-      search: `?datamart=${partition.datamart_id}&type=${partition.type}`,
-      state: { from: `${location.pathname}${location.search}` },
-    });
-  };
-
-  getSearchSetting(organisationId: string) {
-    return [...PARTITIONS_SEARCH_SETTINGS];
-  }
-
-  updateLocationSearch = (params: Partial<FilterParams>) => {
-    const {
-      history,
-      match: {
-        params: { organisationId },
-      },
-      location: { search: currentSearch, pathname },
-    } = this.props;
-    const nextLocation = {
-      pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        this.getSearchSetting(organisationId),
-      ),
-    };
-
-    history.push(nextLocation);
-  };
-
   getFiltersOptions = () => {
     const {
       workspace,
-      match: {
-        params: { organisationId },
-      },
-      location: { search },
+      filter,
+      organisationId,
+      onChange,
     } = this.props;
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
 
     if (workspace(organisationId).datamarts.length > 1) {
       const datamartItems = workspace(organisationId)
@@ -264,7 +69,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
           getKey: (item: any) => (item && item.key ? item.key : ''),
           display: (item: any) => item.value,
           handleItemClick: (datamartItem: { key: string; value: string }) => {
-            this.updateLocationSearch({
+            onChange({
               datamartId:
                 datamartItem && datamartItem.key ? datamartItem.key : undefined,
             });
@@ -277,23 +82,19 @@ class AudiencePartitionsTable extends React.Component<Props> {
 
   render() {
     const {
-      match: {
-        params: { organisationId },
-      },
-      location: { search },
-      translations,
-      isFetchingAudiencePartitions,
-      dataSource,
-      totalAudiencePartitions,
-      hasAudiencePartitions,
+      audiencePartitions,
+      fetchingPartitions,
+      organisationId,
+      intl,
+      filter,
+      onChange,
+      onEdit,
     } = this.props;
 
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
-
     const searchOptions = {
-      placeholder: translations.SEARCH_AUDIENCE_PARTITIONS,
+      placeholder: intl.formatMessage(messageMap.searchPlaceholder),
       onSearch: (value: string) =>
-        this.updateLocationSearch({
+        onChange({
           keywords: value,
         }),
       defaultValue: filter.keywords,
@@ -302,46 +103,46 @@ class AudiencePartitionsTable extends React.Component<Props> {
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalAudiencePartitions,
+      total: audiencePartitions ? audiencePartitions.total || audiencePartitions.count || 0 : 0,
       onChange: (page: number) =>
-        this.updateLocationSearch({
+        onChange({
           currentPage: page,
         }),
       onShowSizeChange: (current: number, size: number) =>
-        this.updateLocationSearch({
+        onChange({
           currentPage: 1,
           pageSize: size,
         }),
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<AudiencePartitionResource>> = [
       {
-        translationKey: 'NAME',
+        intlMessage: messageMap.columnName,
         key: 'name',
-        render: (text: string, record: AudiencePartitionResource) => (
+        render: (text, partition) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/audience/partitions/${record.id}`}
+            to={`/v2/o/${organisationId}/audience/partitions/${partition.id}`}
           >
             {text}
           </Link>
         ),
       },
       {
-        translationKey: 'TYPE',
+        intlMessage: messageMap.columnType,
         key: 'audience_partition_type',
         isHideable: false,
-        render: (text: string) => <span>{text}</span>,
+        render: (text, partition) => <span>{partition.audience_partition_type}</span>,
       },
       {
-        translationKey: 'PART_COUNT',
+        intlMessage: messageMap.columnPartCount,
         key: 'part_count',
-        render: (text: string) => <span>{text}</span>,
+        render: (text, partition) => <span>{partition.part_count}</span>,
       },
       {
-        translationKey: 'STATUS',
+        intlMessage: messageMap.columnStatus,
         key: 'status',
-        render: (text: string) => <span>{text}</span>,
+        render: (text, partition) => <span>{partition.status}</span>,
       },
     ];
 
@@ -351,7 +152,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
         actions: [
           {
             translationKey: 'EDIT',
-            callback: this.editPartition,
+            callback: onEdit,
           },
           // waiting backend part
           // {
@@ -364,12 +165,12 @@ class AudiencePartitionsTable extends React.Component<Props> {
 
     return (
       <div className="mcs-table-container">
-        <TableViewFilters
+        <AudiencePartitionTable
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           searchOptions={searchOptions}
-          dataSource={hasAudiencePartitions ? dataSource : []}
-          loading={isFetchingAudiencePartitions}
+          dataSource={audiencePartitions ? audiencePartitions.data : []}
+          loading={fetchingPartitions}
           pagination={pagination}
           filtersOptions={this.getFiltersOptions()}
         />
@@ -379,27 +180,33 @@ class AudiencePartitionsTable extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: any) => ({
-  hasAudiencePartitions:
-    state.audiencePartitionsTable.audiencePartitionsApi.hasItems,
-  isFetchingAudiencePartitions:
-    state.audiencePartitionsTable.audiencePartitionsApi.isFetching,
-  dataSource: getTableDataSource(state),
-  totalAudiencePartitions:
-    state.audiencePartitionsTable.audiencePartitionsApi.total,
   workspace: getWorkspace(state),
 });
 
-const mapDispatchToProps = {
-  loadAudiencePartitionsDataSource:
-    AudiencePartitionsActions.fetchAudiencePartitionsList.request,
-  // archiveAudiencePartition: AudiencePartitionsActions.archiveAudiencePartition,
-  resetAudiencePartitionsTable:
-    AudiencePartitionsActions.resetAudiencePartitionsTable,
-};
-
-export default compose<Props, {}>(
-  withRouter,
-  withTranslations,
-  injectDatamart,
-  connect(mapStateToProps, mapDispatchToProps),
+export default compose<Props, AudiencePartitionsTableProps>(
+  injectIntl,
+  connect(mapStateToProps),
 )(AudiencePartitionsTable);
+
+const messageMap = defineMessages({
+  columnName: {
+    id: 'audience.partitions.table.column.name',
+    defaultMessage: 'Name',
+  },
+  columnType: {
+    id: 'audience.partitions.table.column.type',
+    defaultMessage: 'Type',
+  },
+  columnPartCount: {
+    id: 'audience.partitions.table.column.part_count',
+    defaultMessage: 'Part Count',
+  },
+  columnStatus: {
+    id: 'audience.partitions.table.column.status',
+    defaultMessage: 'Status',
+  },
+  searchPlaceholder: {
+    id: 'audience.partitions.search.placeholder',
+    defaultMessage: 'Search Audience Partitions',
+  }
+});

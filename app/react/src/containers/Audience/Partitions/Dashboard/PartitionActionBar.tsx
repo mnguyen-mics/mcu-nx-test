@@ -87,7 +87,7 @@ class PartitionActionBar extends React.Component<
             partition
               ? `/v2/o/${organisationId}/audience/partitions/${
                   partition.id
-                }/edit?type=${partition.audience_partition_type}`
+                }/edit`
               : ''
           }
         >

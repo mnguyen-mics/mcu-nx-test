@@ -156,19 +156,16 @@ class AudiencePartitionPage extends React.Component<
   redirect = () => {
     const {
       history,
+      match: {
+        params: { organisationId, partitionId },
+      },
       location,
-      match: { params: { organisationId, partitionId } },
     } = this.props;
-    const url = partitionId
-      ? `/v2/o/${organisationId}/audience/partitions/${partitionId}`
-      : `/v2/o/${organisationId}/audience/partitions`;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/audience/partitions${partitionId ? `/${partitionId}` : ''}`;
 
-    return location.pathname
-      ? history.push({
-        pathname: url,
-        state: { from: `${location.pathname}` },
-      })
-      : history.push(url);
+    return location.state && location.state.from
+      ? history.push(location.state.from)
+      : history.push(defaultRedirectUrl);
   };
 
   onDatamartSelect = (datamart: DatamartResource) => {
