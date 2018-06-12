@@ -15,6 +15,7 @@ import Location from './Location';
 import Topics from './Topics';
 import UserDataService from '../../../../services/UserDataService';
 import messages from '../messages';
+import log from '../../../../utils/Logger';
 import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
@@ -50,7 +51,7 @@ class ActivityCard extends React.Component<Props, State> {
       );
       this.getChannelPromise.promise.then(response => {
         this.setState({ siteName: `${prefix}: ${response.data.name}` });
-      });
+      }).catch(err => log.error(err));
     } else {
       this.setState(prevState => {
         const nextState = {
