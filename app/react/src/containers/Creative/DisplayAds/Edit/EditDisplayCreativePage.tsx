@@ -88,11 +88,15 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    DisplayCreativeFormService.saveDisplayCreative(
-      organisationId,
-      creativeData,
-      'BANNER',
-    )
+    creativeData = {
+      ...creativeData,
+      creative: {
+        ...creativeData.creative,
+        subtype: 'BANNER',
+      },
+    };
+
+    DisplayCreativeFormService.saveDisplayCreative(organisationId, creativeData)
       .then(() => {
         hideSaveInProgress();
         this.redirect();
@@ -174,6 +178,8 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(injectIntl, withRouter, injectNotifications)(
-  EditDisplayCreativePage,
-);
+export default compose<Props, {}>(
+  injectIntl,
+  withRouter,
+  injectNotifications,
+)(EditDisplayCreativePage);

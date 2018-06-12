@@ -17,9 +17,8 @@ import { PropertyResourceShape } from '../models/plugin/index';
 import PluginService from './PluginService';
 
 export interface GetCreativesOptions {
-  creative_type?: CreativeType;
   type?: CreativeType;
-  creative_subtype?: CreativeSubtype[];
+  subtype?: CreativeSubtype[];
   scope?: string;
   keywords?: string[];
   statuses?: CreativeStatus[];
@@ -56,7 +55,7 @@ const CreativeService = {
     options: GetCreativesOptions = {},
   ): Promise<DataListResponse<DisplayAdResource>> {
     return CreativeService.getCreatives(organisationId, {
-      creative_type: 'DISPLAY_AD',
+      type: 'DISPLAY_AD',
       ...options,
     });
   },
@@ -66,7 +65,7 @@ const CreativeService = {
     options: GetCreativesOptions = {},
   ): Promise<DataListResponse<EmailTemplateResource>> {
     return CreativeService.getCreatives(organisationId, {
-      creative_type: 'EMAIL_TEMPLATE',
+      type: 'EMAIL_TEMPLATE',
       ...options,
     });
   },

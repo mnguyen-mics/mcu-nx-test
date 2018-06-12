@@ -96,7 +96,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       notifyError,
     } = this.props;
     const options: GetCreativesOptions = {
-      creative_type: 'DISPLAY_AD',
+      type: 'DISPLAY_AD',
       archived: false,
       max_results: totalCreativeDisplay, // mandatory
     };

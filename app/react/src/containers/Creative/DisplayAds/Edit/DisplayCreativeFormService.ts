@@ -2,7 +2,7 @@ import { DisplayCreativeFormData, isDisplayAdResource } from './domain';
 import CreativeService from '../../../../services/CreativeService';
 import { extractData, extractDataList } from '../../../../services/ApiService';
 import PluginService from '../../../../services/PluginService';
-import { DisplayAdCreateRequest, CreativeSubtype } from '../../../../models/creative/CreativeResource';
+import { DisplayAdCreateRequest } from '../../../../models/creative/CreativeResource';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { PropertyResourceShape } from '../../../../models/plugin/index';
 
@@ -59,7 +59,6 @@ const DisplayCreativeFormService = {
   saveDisplayCreative(
     organisationId: string,
     formData: DisplayCreativeFormData,
-    subtype?: CreativeSubtype, 
   ): Promise<TCreativeId> {
     const { creative, rendererPlugin, properties } = formData;
 
@@ -75,7 +74,7 @@ const DisplayCreativeFormService = {
         renderer_group_id: rendererPlugin.group_id,
         editor_artifact_id: 'default-editor',
         editor_group_id: 'com.mediarithmics.creative.display',
-        subtype: subtype,
+        subtype: formData.creative.subtype,
         ...creative
       };
       createOrUpdatePromise = CreativeService.createDisplayCreative(

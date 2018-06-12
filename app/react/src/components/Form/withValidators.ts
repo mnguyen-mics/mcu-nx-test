@@ -35,12 +35,12 @@ const defaultErrorMessages = defineMessages({
     id: 'common.form.field.error.positive_number',
     defaultMessage: 'Number must be above 0',
   },
-  invalidLengthField: {
-    id: 'common.form.field.error.invalid.length.field',
+  exceedMaxCharacters: {
+    id: 'common.form.field.error.exceed_max_char',
     defaultMessage: 'Max {length} characters',
   },
-  invalidRatingField: {
-    id: 'common.form.field.error.invalid.rating.field',
+  integerOutOfRange: {
+    id: 'common.form.field.error.integer_out_of_range',
     defaultMessage: 'Integer between {min} and {max}',
   },
 });
@@ -117,22 +117,14 @@ const isValidArrayOfNumber = (formatMessage: FormatMessageHandler): Validator =>
   return !(value && Array.isArray(value) && containsOnlyNumber) ? formatMessage(defaultErrorMessages.invalidNumber) : undefined
 }
 
-/***** Data Asset Types Validators 
-See https://www.iab.com/wp-content/uploads/2017/04/OpenRTB-Native-Ads-Specification-Draft_1.2_2017-04.pdf
-At page 39 --> 7.6 Data Asset Types *****/
-
-/***** Type 1 Sponsored, Type 2 Desc & Type 12 Rating *****/
-
 const isCharLengthLessThan = (formatMessage: FormatMessageHandler) =>  (length: number): Validator => value => {
   return value && value.length >= length ?
-    formatMessage(defaultErrorMessages.invalidLengthField, { length: length }) : undefined;
+    formatMessage(defaultErrorMessages.exceedMaxCharacters, { length: length }) : undefined;
 };
-
-/***** Type 3 Rating *****/
 
 const isIntegerBetween = (formatMessage: FormatMessageHandler) => (min: number, max: number): Validator => value => {
   return value && parseInt(value, 10) >= min && parseInt(value, 10) <= max ?
-    formatMessage(defaultErrorMessages.invalidRatingField, { min: min, max: max }) : undefined;
+    formatMessage(defaultErrorMessages.integerOutOfRange, { min: min, max: max }) : undefined;
 };
 
 export default compose<{}, ValidatorProps>(

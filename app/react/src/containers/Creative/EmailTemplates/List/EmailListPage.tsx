@@ -122,7 +122,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       notifyError,
     } = this.props;
     const options: GetCreativesOptions = {
-      creative_type: 'EMAIL_TEMPLATE',
+      type: 'EMAIL_TEMPLATE',
       archived: false,
       max_results: totalCreativeEmails, // mandatory
     };

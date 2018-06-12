@@ -271,6 +271,11 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
     }
   };
 
+  /***** Data Asset Types Validators 
+    See https://www.iab.com/wp-content/uploads/2017/04/OpenRTB-Native-Ads-Specification-Draft_1.2_2017-04.pdf
+    At page 39 --> 7.6 Data Asset Types
+  *****/
+
   getErrorValidatorForNativeFieldProperty = (type: number) => {
     const {
       fieldValidators: { isRequired, isValidInteger },

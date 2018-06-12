@@ -122,8 +122,8 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       notifyError,
     } = this.props;
     const options: GetCreativesOptions = {
-      creative_type: 'DISPLAY_AD',
-      creative_subtype: ['NATIVE'],
+      type: 'DISPLAY_AD',
+      subtype: ['NATIVE'],
       archived: false,
       max_results: totalNativeCreatives, // mandatory
     };

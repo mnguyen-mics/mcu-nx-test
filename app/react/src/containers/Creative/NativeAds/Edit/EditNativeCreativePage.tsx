@@ -88,11 +88,15 @@ class EditNativeCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    DisplayCreativeFormService.saveDisplayCreative(
-      organisationId,
-      nativeData,
-      'NATIVE',
-    )
+    nativeData = {
+      ...nativeData,
+      creative: {
+        ...nativeData.creative,
+        subtype: 'NATIVE',
+      },
+    };
+
+    DisplayCreativeFormService.saveDisplayCreative(organisationId, nativeData)
       .then(() => {
         hideSaveInProgress();
         this.redirect();
@@ -124,9 +128,9 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     const actionBarButtonText = messages.save;
 
     const breadCrumbToList = {
-            name: messages.nativeListBreadCrumb,
-            path: `/v2/o/${organisationId}/creatives/native`,
-          };
+      name: messages.nativeListBreadCrumb,
+      path: `/v2/o/${organisationId}/creatives/native`,
+    };
 
     const creaName = nativeId
       ? intl.formatMessage(messages.creativeEditionBreadCrumb, {
@@ -163,6 +167,8 @@ class EditNativeCreativePage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(injectIntl, withRouter, injectNotifications)(
-    EditNativeCreativePage,
-);
+export default compose<Props, {}>(
+  injectIntl,
+  withRouter,
+  injectNotifications,
+)(EditNativeCreativePage);
