@@ -72,9 +72,16 @@ class EventRulesSection extends React.Component<Props> {
 
     const formattedEventRule = eventRule;
 
-    if (formattedEventRule.model.type === 'URL_MATCH') {
+    if (
+      formattedEventRule.model.type === 'URL_MATCH' &&
+      formattedEventRule.model.event_template &&
+      formattedEventRule.model.event_template.$properties
+    ) {
       formattedEventRule.model.event_template.$properties = formattedEventRule.model.event_template.$properties.reduce(
-        (acc: { [key: string]: string}, cur: { leftValue: string, rightValue: string }) => {
+        (
+          acc: { [key: string]: string },
+          cur: { leftValue: string; rightValue: string },
+        ) => {
           acc[cur.leftValue] = cur.rightValue;
           return acc;
         },
@@ -103,7 +110,11 @@ class EventRulesSection extends React.Component<Props> {
   openEventRulesSelector = (record: EventRuleFieldModel) => {
     let initialValues = record;
 
-    if (record.model.type === 'URL_MATCH') {
+    if (
+      record.model.type === 'URL_MATCH' &&
+      record.model.event_template &&
+      record.model.event_template.$properties
+    ) {
       const formattedProperties = Object.keys(
         record.model.event_template.$properties,
       ).map(key => {
@@ -173,7 +184,13 @@ class EventRulesSection extends React.Component<Props> {
     const props: EventRulesFormProps = {
       close: this.props.closeNextDrawer,
       onSubmit: this.updateEventRules,
-      breadCrumbPaths: [{ name: this.props.intl.formatMessage(messages.sectionTitleCreateEventRule) }],
+      breadCrumbPaths: [
+        {
+          name: this.props.intl.formatMessage(
+            messages.sectionTitleCreateEventRule,
+          ),
+        },
+      ],
       initialValues: initialValues,
     };
 
@@ -227,7 +244,9 @@ class EventRulesSection extends React.Component<Props> {
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     return (
       <div>
@@ -275,6 +294,7 @@ class EventRulesSection extends React.Component<Props> {
   }
 }
 
-export default compose<EventRulesSectionProps, Props>(injectIntl, injectDrawer)(
-  EventRulesSection,
-);
+export default compose<EventRulesSectionProps, Props>(
+  injectIntl,
+  injectDrawer,
+)(EventRulesSection);
