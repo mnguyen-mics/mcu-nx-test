@@ -7,7 +7,9 @@ export type ServiceType =
   'DISPLAY_CAMPAIGN.ADEX_INVENTORY' |
   'DISPLAY_CAMPAIGN.REAL_TIME_BIDDING' |
   'DISPLAY_CAMPAIGN.VISIBILITY' |
-  'DISPLAY_CAMPAIGN.INVENTORY_ACCESS';
+  'DISPLAY_CAMPAIGN.INVENTORY_ACCESS' |
+  'DISPLAY_CAMPAIGN.AD_EXCHANGE_HUB_INVENTORY' |
+  'DISPLAY_CAMPAIGN.DISPLAY_NETWORK_INVENTORY';
 export type ServiceCategoryType =
   'AUDIENCE';
 export type ServiceCategorySubType =
@@ -23,6 +25,7 @@ export interface ServiceItemPublicResource {
   category_id?: string;
   list_weight?: number;
   reseller_agreement_id?: string;
+  type : string;
 }
 
 export interface AudienceSegmentServiceItemPublicResource extends ServiceItemPublicResource {

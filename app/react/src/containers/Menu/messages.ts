@@ -101,6 +101,10 @@ export default defineMessages({
         id: 'menu.library.Catalogs',
         defaultMessage: 'Catalogs',
     },
+    libraryDealList: {
+        id: 'menu.library.DealLst',
+        defaultMessage: 'Deal Lists',
+    },
     libraryAdLayouts: {
         id: 'menu.library.layouts',
         defaultMessage: 'Ad Layouts',

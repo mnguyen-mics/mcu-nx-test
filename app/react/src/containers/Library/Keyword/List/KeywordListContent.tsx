@@ -103,7 +103,7 @@ class KeywordListContent extends React.Component<
   onClickEdit = (keyword: KeywordListResource) => {
     const { history } = this.props;
 
-    history.push(`keywordslist/${keyword.id}`);
+    history.push(`keywordslist/${keyword.id}/edit`);
   };
 
   render() {
@@ -128,7 +128,7 @@ class KeywordListContent extends React.Component<
         render: (text: string, record: KeywordListResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`v2/o/${organisationId}/library/keywordslist/${record.id}`}
+            to={`v2/o/${organisationId}/library/keywordslist/${record.id}/edit`}
           >
             {text}
           </Link>
