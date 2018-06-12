@@ -9,6 +9,7 @@ import messages from './messages';
 import {
   DisplayCreativeFormData,
   EditDisplayCreativeRouteMatchParams,
+  CustomUploadType,
 } from './domain';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
 import CreativeService from '../../../../services/CreativeService';
@@ -20,6 +21,8 @@ import injectNotifications, {
 interface State {
   loading: boolean;
   creativeName: string;
+  allowMultiple?: boolean;
+  customLoader?: CustomUploadType;
 }
 
 type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams> &
@@ -72,12 +75,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   };
 
   onSave = (creativeData: DisplayCreativeFormData) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      intl,
-    } = this.props;
+    const { match: { params: { organisationId, creativeId } }, intl } = this.props;
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -88,10 +86,36 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
+    if (this.state.allowMultiple) {
+      DisplayCreativeFormService.handleSaveMutipleCreatives(
+        organisationId,
+        creativeData 
+      ).then(i => {
+        hideSaveInProgress();
+        if (creativeId) {
+          this.setState({ loading: false })
+        } else {
+          this.redirect();
+        }
+      }).catch(err => {
+        hideSaveInProgress();
+        this.props.notifyError(err);
+        this.setState({
+          loading: false,
+        });
+      })
+      return;
+    }
+
     DisplayCreativeFormService.saveDisplayCreative(organisationId, creativeData)
       .then(() => {
         hideSaveInProgress();
-        this.redirect();
+        if (creativeId) {
+          this.setState({ loading: false })
+        } else {
+          this.redirect();
+        }
+        
       })
       .catch(err => {
         hideSaveInProgress();
@@ -101,6 +125,10 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
         });
       });
   };
+
+  onPluginSelect = (allowMultiple: boolean, customLoader: CustomUploadType) => {
+    this.setState({ allowMultiple, customLoader })
+  }
 
   onSubmitFail = () => {
     const { intl } = this.props;
@@ -118,7 +146,8 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
 
     const { creativeName } = this.state;
 
-    const actionBarButtonText = messages.creativeCreationSaveButton;
+    const actionBarButtonSave = messages.saveCreative;
+    const actionBarButtonSaveRefresh = messages.creativeCreationSaveButton;
 
     const from = location && location.state && location.state.from;
 
@@ -153,7 +182,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     const props = {
       close: this.redirect,
       onSubmit: this.onSave,
-      actionBarButtonText: actionBarButtonText,
+      actionBarButtonText: creativeId ? actionBarButtonSaveRefresh : actionBarButtonSave,
       breadCrumbPaths: breadCrumbPaths,
       onSubmitFail: this.onSubmitFail,
     };
@@ -163,9 +192,9 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     }
 
     return creativeId ? (
-      <DisplayCreativeFormLoader {...props} creativeId={creativeId} />
+      <DisplayCreativeFormLoader {...props} creativeId={creativeId} layout={'SPLIT'} />
     ) : (
-      <DisplayCreativeCreator {...props} />
+      <DisplayCreativeCreator {...props} onPluginSelect={this.onPluginSelect} allowMultiple={this.state.allowMultiple} customLoader={this.state.customLoader} layout={'SPLIT'} />
     );
   }
 }

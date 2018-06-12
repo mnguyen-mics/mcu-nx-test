@@ -1,9 +1,7 @@
 import * as React from 'react';
 
-import { Card } from '../../../../../components/Card';
-import { FormSection } from '../../../../../components/Form/index';
-import messages from '../messages';
 import { AuditComponentContainer } from '../../Audit';
+import { Row } from 'antd';
 
 interface AuditFormSectionProps {
   creativeId: string;
@@ -14,15 +12,15 @@ class AuditFormSection extends React.Component<AuditFormSectionProps> {
     const { creativeId } = this.props;
 
     return (
-      <div>
-        <FormSection
-          title={messages.creativeSectionAuditTitle}
-          subtitle={messages.creativeSectionAuditSubTitle}
-        />
-        <Card>
-          <AuditComponentContainer creativeId={creativeId} />
-        </Card>
-      </div>
+      <Row
+        type="flex"
+        align="middle"
+        justify="space-between"
+        className={'mcs-actionbar'}
+        style={{ backgroundColor: 'white' }}
+      >
+        <AuditComponentContainer creativeId={creativeId} />
+      </Row>
     );
   }
 }

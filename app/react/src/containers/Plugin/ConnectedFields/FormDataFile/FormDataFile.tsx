@@ -29,6 +29,7 @@ export interface FormDataFileProps {
   helpToolTipProps: TooltipProps;
   buttonText: string;
   accept: AcceptedFile;
+  small?: boolean;
 }
 
 export interface FormDataFileState {
@@ -245,6 +246,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
         helpToolTipProps={this.props.helpToolTipProps}
         validateStatus={validateStatus}
         {...this.props.formItemProps}
+        small={this.props.small}
       >
         <Col span={22}>
           {!canEdit ? (

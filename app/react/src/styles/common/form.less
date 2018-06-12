@@ -31,6 +31,9 @@
 
     .presentation {
       display: flex;
+      display: -moz-flex;
+      display: -webkit-flex;
+      display: -ms-flex;
       flex-wrap: wrap;
       align-items: stretch;
       justify-content: space-between;
@@ -52,6 +55,9 @@
         border: @border-width-base @border-style-base @border-color-base;
         border-radius: @border-radius-sm @border-radius-sm;
         display: flex;
+        display: -moz-flex;
+        display: -webkit-flex;
+        display: -ms-flex;
         align-items: center;
         .content {
           .icon {
@@ -503,5 +509,13 @@
 
   .double-select-separator {
     width: 8%;
+  }
+}
+
+.ant-form-vertical {
+  .form-field-wrapper {
+    .ant-form-item-label {
+      white-space: initial;
+    }
   }
 }

@@ -1,11 +1,12 @@
 import { CreativeSubtype } from './../../../../models/creative/CreativeResource';
-import { DisplayCreativeFormData, isDisplayAdResource } from './domain';
+import { DisplayCreativeFormData, isDisplayAdResource, DisplayAdShape } from './domain';
 import CreativeService from '../../../../services/CreativeService';
 import { extractData, extractDataList } from '../../../../services/ApiService';
 import PluginService from '../../../../services/PluginService';
 import { DisplayAdCreateRequest } from '../../../../models/creative/CreativeResource';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { PropertyResourceShape } from '../../../../models/plugin/index';
+import { UploadFile } from 'antd/lib/upload/interface';
 
 type TCreativeId = string;
 
@@ -46,6 +47,7 @@ const DisplayCreativeFormService = {
           rendererPlugin: lastVersion,
           properties: normalizeProperties(properties),
           pluginLayout: pLayout,
+          repeatFields: []
         };
       });
     });
@@ -134,6 +136,62 @@ const DisplayCreativeFormService = {
       });
     });
   },
+
+  handleSaveMutipleCreatives(
+    organisationId: string,
+    formData: DisplayCreativeFormData,
+  ): Promise<any> {
+
+    const { rendererPlugin, repeatFields } = formData;
+
+    const getImageFormat = (file: UploadFile) => {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.addEventListener("load", (i: any) => {
+          resolve(`${img.width}x${img.height}`)
+        });
+        img.src = url;
+      })
+    }
+
+    return Promise.all(repeatFields.map(field => {
+
+      const properties: any = {
+        ...formData.properties,
+        image: {
+          technical_name: 'image',
+          value: {
+            file: field.file
+          },
+          property_type: 'ASSET',
+          origin: 'PLUGIN',
+          writable: true,
+          deletable: false
+        }
+      }
+    
+      return getImageFormat(field.file).then((i) => {
+        const creative: DisplayAdShape = {
+          destination_domain: formData.creative.destination_domain,
+          name: field.name,
+          format: i as string
+        }
+
+        const newFormData: DisplayCreativeFormData = {
+          creative,
+          rendererPlugin,
+          properties,
+          repeatFields
+        }
+
+        return DisplayCreativeFormService.saveDisplayCreative(
+          organisationId,
+          newFormData
+        )
+      })
+    }))
+  }
 };
 
 export default DisplayCreativeFormService;

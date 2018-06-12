@@ -33,6 +33,7 @@ import DisplayCreativeFormLoader, {
 import {
   DisplayCreativeFormData,
   isDisplayAdResource,
+  CustomUploadType,
 } from '../../../../../Creative/DisplayAds/Edit/domain';
 import { computeDimensionsByRatio } from '../../../../../../utils/ShapeHelper';
 import { ButtonStyleless } from '../../../../../../components/index';
@@ -58,6 +59,7 @@ export interface DisplayAdResourceWithFieldIndex {
 interface AdsSectionState {
   displayCreativeCacheById: Index<DisplayAdResource>;
   loading: boolean;
+  customLoader?: CustomUploadType;
 }
 
 type Props = AdFormSectionProps &
@@ -146,30 +148,39 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
       this.props.closeNextDrawer();
     };
 
-    const additionalProps: DisplayCreativeCreatorProps = {
+    if (!field) {
+      const additionalProps: DisplayCreativeCreatorProps = {
+        onSubmit: handleOnSubmit,
+        actionBarButtonText: messages.addNewCreative,
+        breadCrumbPaths: [],
+        close: () => { this.setState({ customLoader: undefined }); this.props.closeNextDrawer(); },
+        avoidCloseAlert: true,
+        layout: 'STANDARD'
+      };
+
+      this.props.openNextDrawer(DisplayCreativeCreator, { additionalProps });
+      return;
+    }
+
+    const additionalEditProps: Partial<DisplayCreativeFormLoaderProps> = {
       onSubmit: handleOnSubmit,
       actionBarButtonText: messages.addNewCreative,
       breadCrumbPaths: [],
       close: this.props.closeNextDrawer,
+      avoidCloseAlert: true,
+      layout: 'STANDARD'
     };
-
-    const options = {
-      additionalProps,
-    };
-
-    let FormComponent = DisplayCreativeCreator;
-
-    if (field) {
-      if (!isDisplayCreativeFormData(field.model)) {
-        FormComponent = DisplayCreativeFormLoader;
-        (additionalProps as DisplayCreativeFormLoaderProps).creativeId =
-          field.model.creative_id;
-      } else {
-        additionalProps.initialValues = field.model;
-      }
+    if (!isDisplayCreativeFormData(field.model)) {
+      additionalEditProps.creativeId = field.model.creative_id;
+      this.props.openNextDrawer(DisplayCreativeFormLoader, {
+        additionalProps: additionalEditProps
+      });
+      return;
+    } else {
+      additionalEditProps.initialValues = field.model;
+      this.props.openNextDrawer(DisplayCreativeCreator, { additionalProps: (additionalEditProps as DisplayCreativeCreatorProps) });
+      return;
     }
-
-    this.props.openNextDrawer(FormComponent, options);
   };
 
   openCreativeCardSelector = () => {

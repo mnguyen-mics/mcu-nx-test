@@ -61,14 +61,17 @@ class AuditComponent extends React.Component<Props, State> {
     return (
       <div style={{ overflow: 'hidden' }}>
         <div>
-          <div className={'float-left'} style={{ lineHeight: '34px' }}>
+          <div className={'float-left'} style={{ lineHeight: '60px' }}>
             <AuditStatusRenderer auditStatus={creative.audit_status} />
           </div>
-          <AuditActionButtonList
-            auditActions={creative.available_user_audit_actions}
-            confirmAuditAction={onMakeAuditAction}
-          />
-          {auditDetailsButton}
+          <div className="left-part-margin">
+            <AuditActionButtonList
+              auditActions={creative.available_user_audit_actions}
+              confirmAuditAction={onMakeAuditAction}
+            />
+            {auditDetailsButton}
+          </div>
+          
         </div>
         <Modal
           title={auditDetailsMessage}

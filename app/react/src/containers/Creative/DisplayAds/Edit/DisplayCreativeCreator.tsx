@@ -5,7 +5,7 @@ import { InjectedIntlProps } from 'react-intl';
 import DisplayCreativeRendererSelector from './DisplayCreativeRendererSelector';
 import log from '../../../../utils/Logger';
 import { DisplayCreativeForm } from './index';
-import { DisplayCreativeFormData } from './domain';
+import { DisplayCreativeFormData, MicsPLuginDefinition, PluginDefinitionComplexItem, CustomUploadType } from './domain';
 import Loading from '../../../../components/Loading';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
 import { DisplayCreativeFormProps } from './DisplayCreativeForm';
@@ -13,7 +13,14 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 
-export interface DisplayCreativeCreatorProps extends DisplayCreativeFormProps {}
+export type LayoutType = 'SPLIT' | 'STANDARD';
+
+export interface DisplayCreativeCreatorProps extends DisplayCreativeFormProps {
+  onPluginSelect?: (allowMultiple: boolean, customLoader: CustomUploadType) => void;
+  allowMultiple?: boolean;
+  customLoader?: CustomUploadType;
+  layout: LayoutType;
+}
 
 interface State {
   isLoading: boolean;
@@ -35,12 +42,44 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
 
   loadFormData = (adRendererId: string) => {
     this.setState({ isLoading: true });
+    const { onPluginSelect } = this.props;
+
     DisplayCreativeFormService.initializeFormData(adRendererId, 'BANNER')
-      .then(creativeFormData =>
-        this.setState({
-          creativeFormData,
-          isLoading: false,
-        }),
+      .then(creativeFormData => {
+        let type;
+        Object.keys(MicsPLuginDefinition).forEach(key => {
+          if (MicsPLuginDefinition[key].id === creativeFormData.rendererPlugin.plugin_id) {
+            type = key
+          }
+        })
+
+        if (type && 
+            MicsPLuginDefinition[type] && 
+            (MicsPLuginDefinition[type] as PluginDefinitionComplexItem).propertiesFormatter && 
+            MicsPLuginDefinition[type] && 
+            (MicsPLuginDefinition[type] as PluginDefinitionComplexItem).customUploadType &&
+            onPluginSelect 
+          ) {
+          this.setState({
+            creativeFormData: {
+              ...creativeFormData,
+              properties: MicsPLuginDefinition[type] && (MicsPLuginDefinition[type] as PluginDefinitionComplexItem).propertiesFormatter(creativeFormData.properties)
+            },
+            isLoading: false,
+          })
+          onPluginSelect(
+            MicsPLuginDefinition[type] && MicsPLuginDefinition[type].allowMultipleUpload ? MicsPLuginDefinition[type].allowMultipleUpload : false,
+            MicsPLuginDefinition[type] && (MicsPLuginDefinition[type] as PluginDefinitionComplexItem).customUploadType
+          )
+        } else {
+          this.setState({
+            creativeFormData,
+            isLoading: false,
+          })
+        }
+
+
+      }
       )
       .catch(err => {
         log.debug(err);
@@ -69,13 +108,16 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
         {...this.props}
         initialValues={initialValues}
         goToCreativeTypeSelection={this.resetFormData}
+        allowMultipleUpload={this.props.allowMultiple}
+        customLoader={this.props.customLoader}
+        layout={this.props.layout ? this.props.layout : 'STANDARD'}
       />
     ) : (
-      <DisplayCreativeRendererSelector
-        onSelect={this.loadFormData}
-        close={this.props.close}
-      />
-    );
+        <DisplayCreativeRendererSelector
+          onSelect={this.loadFormData}
+          close={this.props.close}
+        />
+      );
   }
 }
 

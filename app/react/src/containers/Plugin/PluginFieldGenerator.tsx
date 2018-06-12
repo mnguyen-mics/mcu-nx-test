@@ -51,6 +51,7 @@ interface PluginFieldGeneratorProps {
   organisationId: string;
   noUploadModal?: () => void; // check type
   pluginVersionId: string;
+  small?: boolean;
 }
 
 type JoinedProps = PluginFieldGeneratorProps &
@@ -123,6 +124,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
         : undefined,
       openNextDrawer: this.props.openNextDrawer,
       closeNextDrawer: this.props.closeNextDrawer,
+      small: this.props.small
     };
 
     return (

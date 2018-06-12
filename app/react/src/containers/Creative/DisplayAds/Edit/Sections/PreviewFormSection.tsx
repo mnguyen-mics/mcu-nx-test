@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { FormSection } from '../../../../../components/Form';
-import messages from '../messages';
 import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 import {
   DisplayCreativeFormData,
@@ -9,16 +7,34 @@ import {
 } from '../domain';
 import { connect } from 'react-redux';
 import { getFormInitialValues } from 'redux-form';
+import { compose } from 'recompose';
+const Dimensions = require('react-dimensions')
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
+  containerWidth: number;
+  containerHeight: number;
 }
 
 const configuration = {
   ADS_PREVIEW_URL: '//ads.mediarithmics.com/ads/render',
 };
 
-class PreviewFormSection extends React.Component<MapStateProps> {
+interface State {
+  width?: number,
+  height?: number
+}
+
+class PreviewFormSection extends React.Component<MapStateProps, State> {
+
+  constructor(props: MapStateProps) {
+    super(props)
+    this.state = {
+      width: undefined,
+      height: undefined
+    }
+  }
+
   renderIframeCreative = (creative: DisplayAdResource) => {
     const { initialValue: { properties: rendererProperties } } = this.props;
 
@@ -54,7 +70,7 @@ class PreviewFormSection extends React.Component<MapStateProps> {
     return previewUrl;
   };
 
-  formatDimension = (format: string) => {
+  formatDimension = (format: string): { width: number, height: number } => {
     return {
       width: parseInt(format.split('x')[0], 10),
       height: parseInt(format.split('x')[1], 10),
@@ -66,27 +82,44 @@ class PreviewFormSection extends React.Component<MapStateProps> {
 
     if (!isDisplayAdResource(creative)) return null;
 
+
+    const setTransformStyle = () => {
+      const {
+        containerHeight,
+        containerWidth
+      } = this.props;
+      if (containerWidth && containerHeight) {
+        const xRatio = (containerWidth - 80) / this.formatDimension(creative.format).width;
+        const yRatio = (containerHeight - 80) / this.formatDimension(creative.format).height;
+        const minRatio = Math.min(yRatio, xRatio);
+        return minRatio >= 1 ? 1 : minRatio;
+      }
+      return undefined;
+    }
+
+    const transformStyle = setTransformStyle();
+
     return (
-      <div>
-        <FormSection
-          title={messages.creativeSectionPreviewTitle}
-          subtitle={messages.creativeSectionPreviewSubTitle}
-        />
-        <iframe
+      <div style={{ padding: 40, flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+        {transformStyle && <iframe
           className="renderer"
           src={this.renderIframeCreative(creative)}
           frameBorder="0"
           scrolling="no"
           width={this.formatDimension(creative.format).width}
           height={this.formatDimension(creative.format).height}
-        />
+          style={{ position: 'absolute', transform: `scale(${transformStyle})` }}
+        />}
       </div>
     );
   }
 }
 
-export default connect((state: any) => ({
-  initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(
-    state,
-  ) as DisplayCreativeFormData,
-}))(PreviewFormSection);
+export default compose<MapStateProps, {}>(
+  connect((state: any) => ({
+    initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(
+      state,
+    ) as DisplayCreativeFormData,
+  })),
+  Dimensions({ containerStyle: { flexGrow: 1, display: 'flex', justifyContent: 'space-between', flexDirection: 'column' } })
+)(PreviewFormSection);

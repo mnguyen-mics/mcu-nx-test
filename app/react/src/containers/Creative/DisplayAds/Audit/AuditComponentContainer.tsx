@@ -65,7 +65,7 @@ class AuditComponentContainer extends React.Component<Props, State> {
     if (!creative) return null;
 
     return (
-      <Spin spinning={loading}>
+      <Spin spinning={loading} wrapperClassName={'full-width'}>
         <AuditComponent
           creative={creative}
           auditStatuses={auditStatuses}
