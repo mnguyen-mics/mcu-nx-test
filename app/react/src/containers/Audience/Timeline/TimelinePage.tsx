@@ -159,7 +159,7 @@ class TimelinePage extends React.Component<JoinedProps, State> {
       },
       history,
       cookies,
-      location: { search },
+      location: { search, pathname },
       workspace,
     } = this.props;
 
@@ -171,7 +171,7 @@ class TimelinePage extends React.Component<JoinedProps, State> {
           identifierId: nextIdentifierId,
         },
       },
-      location: { search: nextSearch },
+      location: { search: nextSearch, pathname: nextPathname },
     } = nextProps;
 
     if (
@@ -186,8 +186,8 @@ class TimelinePage extends React.Component<JoinedProps, State> {
         );
       }
     } else if (
-      search !== nextSearch &&
-      queryString.parse(nextSearch).datamartId
+      (search !== nextSearch && queryString.parse(nextSearch).datamartId) ||
+      pathname !== nextPathname
     ) {
       const cb = () =>
         this.fetchAllData(
