@@ -73,6 +73,10 @@ export default defineMessages({
     defaultMessage:
       'Give your Campaign a Technical Name if you need (can be useful when using integrations)',
   },
+  warningOnTokenEdition: {
+    id: 'emailEditor.steps.general.technical_name.warning',
+    defaultMessage: 'Danger Zone: Editing this technical name may cause any integrations to fail if not updated properly. Please make sure you have reviewed all your integration before saving.',
+  },
   emailEditorRouterTitle: {
     id: 'emailEditor.step.title.router',
     defaultMessage: 'Router',

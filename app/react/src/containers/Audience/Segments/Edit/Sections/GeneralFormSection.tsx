@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { getFormInitialValues } from 'redux-form';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { RouteComponentProps, withRouter } from 'react-router';
 import { Row } from 'antd/lib/grid';
 import withValidators, {
   ValidatorProps,
@@ -14,22 +11,18 @@ import withNormalizer, {
 } from '../../../../../components/Form/withNormalizer';
 import {
   FormInput,
+  FormAlertInput,
   FormSection,
   AddonSelect,
   FormInputField,
+  FormAlertInputField,
   FormAddonSelectField,
   FormBoolean,
   FormBooleanField,
-  FormAlert,
 } from '../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
-import {
-  SegmentType,
-  EditAudienceSegmentParam,
-  AudienceSegmentFormData,
-} from '../domain';
+import { SegmentType } from '../domain';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
-import { FORM_ID } from '../EditAudienceSegmentForm';
 
 const messagesMap = defineMessages({
   audienceSegmentFormSelectTypeOptionUserList: {
@@ -52,22 +45,15 @@ export interface GeneralFormSectionProps {
   datamart?: DatamartResource;
 }
 
-interface MapStateToProps {
-  initialFormValues: Partial<AudienceSegmentFormData>;
-}
-
 type Props = InjectedIntlProps &
   ValidatorProps &
-  MapStateToProps &
   NormalizerProps &
-  GeneralFormSectionProps &
-  RouteComponentProps<EditAudienceSegmentParam>;
+  GeneralFormSectionProps;
 
 interface State {
   technicalName?: string;
   displayAdvancedSection: boolean;
   neverExpire: boolean;
-  displayWarning: boolean;
 }
 
 class GeneralFormSection extends React.Component<Props, State> {
@@ -76,25 +62,12 @@ class GeneralFormSection extends React.Component<Props, State> {
     this.state = {
       displayAdvancedSection: false,
       neverExpire: false,
-      displayWarning: false,
     };
   }
 
   toggleAdvancedSection = () => {
     this.setState({
       displayAdvancedSection: !this.state.displayAdvancedSection,
-    });
-  };
-
-  warningOnTokenChange = () => {
-    const { initialFormValues } = this.props;
-    const technicalName =
-      initialFormValues &&
-      initialFormValues.audienceSegment &&
-      initialFormValues.audienceSegment.technical_name;
-
-    this.setState({
-      displayWarning: !!technicalName
     });
   };
 
@@ -105,48 +78,32 @@ class GeneralFormSection extends React.Component<Props, State> {
   getTechnicalNameField = () => {
     const {
       intl: { formatMessage },
-      match: {
-        params: { segmentId },
-      },
     } = this.props;
 
-    const { displayWarning } = this.state;
-
     return (
-      <div>
-        {displayWarning &&
-          segmentId && (
-            <div>
-              <FormAlert
-                iconType="warning"
-                type="warning"
-                message={formatMessage(messages.warningOnTokenEdition)}
-              />
-              <br />
-            </div>
-          )}
-        <FormInputField
-          name="audienceSegment.technical_name"
-          component={FormInput}
-          onChange={this.handleOnchangeTechnicalName}
-          formItemProps={{
-            label: formatMessage(
-              messages.contentSectionGeneralAdvancedPartRow1Label,
-            ),
-          }}
-          inputProps={{
-            placeholder: formatMessage(
-              messages.contentSectionGeneralAdvancedPartRow1Placeholder,
-            ),
-            onFocus: this.warningOnTokenChange,
-          }}
-          helpToolTipProps={{
-            title: formatMessage(
-              messages.contentSectionGeneralAdvancedPartRow1Tooltip,
-            ),
-          }}
-        />
-      </div>
+      <FormAlertInputField
+        name="audienceSegment.technical_name"
+        component={FormAlertInput}
+        onChange={this.handleOnchangeTechnicalName}
+        formItemProps={{
+          label: formatMessage(
+            messages.contentSectionGeneralAdvancedPartRow1Label,
+          ),
+        }}
+        inputProps={{
+          placeholder: formatMessage(
+            messages.contentSectionGeneralAdvancedPartRow1Placeholder,
+          ),
+        }}
+        helpToolTipProps={{
+          title: formatMessage(
+            messages.contentSectionGeneralAdvancedPartRow1Tooltip,
+          ),
+        }}
+        iconType="warning"
+        type="warning"
+        message={formatMessage(messages.warningOnTokenEdition)}
+      />
     );
   };
 
@@ -326,8 +283,4 @@ export default compose<Props, GeneralFormSectionProps>(
   injectIntl,
   withValidators,
   withNormalizer,
-  withRouter,
-  connect((state: any) => ({
-    initialFormValues: getFormInitialValues(FORM_ID)(state),
-  })),
 )(GeneralFormSection);
