@@ -1,3 +1,4 @@
+import { CreativeSubtype } from './../../../../models/creative/CreativeResource';
 import { DisplayCreativeFormData, isDisplayAdResource } from './domain';
 import CreativeService from '../../../../services/CreativeService';
 import { extractData, extractDataList } from '../../../../services/ApiService';
@@ -18,7 +19,7 @@ function normalizeProperties(properties: PropertyResourceShape[]) {
 }
 
 const DisplayCreativeFormService = {
-  initializeFormData(adRendererId: string): Promise<DisplayCreativeFormData> {
+  initializeFormData(adRendererId: string, subtype: CreativeSubtype): Promise<DisplayCreativeFormData> {
     return PluginService.getPluginVersions(adRendererId).then(resp => {
       const lastVersion = resp.data[resp.data.length - 1];
       return PluginService.getPluginVersionProperty(
@@ -26,7 +27,9 @@ const DisplayCreativeFormService = {
         lastVersion.id,
       ).then(properties => {
         return {
-          creative: {},
+          creative: {
+            subtype: subtype
+          },
           rendererPlugin: lastVersion,
           properties: normalizeProperties(properties),
         };

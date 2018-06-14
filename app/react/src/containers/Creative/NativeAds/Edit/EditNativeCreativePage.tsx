@@ -88,14 +88,6 @@ class EditNativeCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    nativeData = {
-      ...nativeData,
-      creative: {
-        ...nativeData.creative,
-        subtype: 'NATIVE',
-      },
-    };
-
     DisplayCreativeFormService.saveDisplayCreative(organisationId, nativeData)
       .then(() => {
         hideSaveInProgress();

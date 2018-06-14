@@ -88,14 +88,6 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    creativeData = {
-      ...creativeData,
-      creative: {
-        ...creativeData.creative,
-        subtype: 'BANNER',
-      },
-    };
-
     DisplayCreativeFormService.saveDisplayCreative(organisationId, creativeData)
       .then(() => {
         hideSaveInProgress();

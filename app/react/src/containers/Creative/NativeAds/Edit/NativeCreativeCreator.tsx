@@ -35,7 +35,7 @@ class NativeCreativeCreator extends React.Component<Props, State> {
 
   loadFormData = (adRendererId: string) => {
     this.setState({ isLoading: true });
-    DisplayCreativeFormService.initializeFormData(adRendererId)
+    DisplayCreativeFormService.initializeFormData(adRendererId, 'NATIVE')
       .then(nativeFormData =>
         this.setState({
           nativeFormData,

@@ -35,7 +35,7 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
 
   loadFormData = (adRendererId: string) => {
     this.setState({ isLoading: true });
-    DisplayCreativeFormService.initializeFormData(adRendererId)
+    DisplayCreativeFormService.initializeFormData(adRendererId, 'BANNER')
       .then(creativeFormData =>
         this.setState({
           creativeFormData,

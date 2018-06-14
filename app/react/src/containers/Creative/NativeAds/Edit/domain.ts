@@ -18,15 +18,6 @@ export interface EditNativeCreativeRouteMatchParams {
   nativeId?: string;
 }
 
-export function isNativeAdResource(
-  creative: NativeAdShape,
-): creative is DisplayAdResource {
-  return (
-    (creative as DisplayAdResource).id !== undefined &&
-    creative.subtype === 'NATIVE'
-  );
-}
-
 export type operationType = 'equals';
 
 export interface CreativesInfosFieldModel {
