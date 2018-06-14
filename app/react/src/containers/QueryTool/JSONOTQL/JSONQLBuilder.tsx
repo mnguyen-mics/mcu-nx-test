@@ -186,6 +186,15 @@ class JSONQLBuilder extends React.Component<Props, State> {
         ) {
           this.props.undoRedo.handleRedo();
         }
+        if (
+          this.state.keydown.includes('Control') && 
+          (this.state.keydown.includes('y') ||
+            this.state.keydown.includes('Y') &&
+            this.props.undoRedo.enableRedo
+          )
+         ) {
+              this.props.undoRedo.handleRedo();
+         }
       },
     );
   };
