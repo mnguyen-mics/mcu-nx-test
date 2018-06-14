@@ -34,9 +34,8 @@ const messages = defineMessages({
 });
 
 interface PartitionActionBarProps {
-  partition: AudiencePartitionResource;
+  partition?: AudiencePartitionResource;
   publishPartition: () => void;
-  loading: boolean;
 }
 
 interface PartitionActionBarState {}
@@ -73,7 +72,7 @@ class PartitionActionBar extends React.Component<
     ];
     return (
       <Actionbar path={breadcrumbPaths}>
-        {partition.status !== 'PUBLISHED' && !this.props.loading && (
+        {partition && partition.status !== 'PUBLISHED' && (
           <Button
             className="mcs-primary"
             type="primary"
