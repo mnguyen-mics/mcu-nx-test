@@ -126,6 +126,7 @@ class CreateEmailTemplate extends React.Component<
         },
       };
 
+
       if (pLayoutRes !== null && pLayoutRes.status !== "error") {
         nextState.pluginLayout = pLayoutRes.data;
       };
@@ -155,34 +156,36 @@ class CreateEmailTemplate extends React.Component<
   }
 
   fetchInitialValues = (emailTemplateId: string): Promise<any> => {
-    return Promise.all([
-      CreativeService.getEmailTemplate(
-        emailTemplateId,
-      ).then(res => res.data),
-      CreativeService.getEmailTemplateProperties(
-        emailTemplateId,
-      ).then(res => res.data),
-      PluginService.getLocalizedPluginLayout(
-        CreativeRendererId,
-        emailTemplateId
-      )
-    ]).then(results => {
-      this.promisesValues(results[1], results[2]);
+    return PluginService.getPluginVersions(CreativeRendererId).then(res => {
 
-       this.setState(prevState => {
-         const nextState: CreateEmailTemplateState = {
-          ...prevState,
-          initialValues: {
-            plugin: results[0],
-            ...prevState.initialValues,
-          },
-        };
+      return Promise.all([
+        CreativeService.getEmailTemplate(
+          emailTemplateId,
+        ).then(res1 => res1.data),
+        CreativeService.getEmailTemplateProperties(
+          emailTemplateId,
+        ).then(res1 => res1.data),
+        CreativeService.getEmailTemplateLocalizedPluginLayout(
+          emailTemplateId,
+        )
+      ]).then(results => {
+        this.promisesValues(results[1], results[2]);
 
-        return nextState;
-      });
+        this.setState(prevState => {
+          const nextState: CreateEmailTemplateState = {
+            ...prevState,
+            initialValues: {
+              plugin: results[0],
+              ...prevState.initialValues,
+            },
+          };
 
-      return results;
-    })
+          return nextState;
+        });
+
+        return results;
+      })
+    });
   };
 
   redirect = () => {

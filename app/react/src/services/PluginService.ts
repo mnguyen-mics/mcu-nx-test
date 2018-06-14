@@ -219,7 +219,7 @@ const pluginService = {
 
     return ApiService.putRequest(endpoint, params);
   },
-  getLocalizedPluginLayout(pluginId: string, pluginVersionId: string, locale: string = "en_US"): Promise<DataResponse<PluginLayout> | null> {
+  getLocalizedPluginLayout(pluginId: string, pluginVersionId: string, locale: string = "en-US"): Promise<DataResponse<PluginLayout> | null> {
     const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties_layout?locale=${locale}`;
     return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint)
       .catch(err => {

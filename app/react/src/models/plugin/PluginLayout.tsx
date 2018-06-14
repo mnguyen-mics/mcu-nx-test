@@ -6,7 +6,8 @@ export interface PluginLayout {
 export interface PluginLayoutSectionResource {
   title: string,
   sub_title: string,
-  fields: PluginLayoutFieldResource[]
+  fields: PluginLayoutFieldResource[],
+  advanced_fields: PluginLayoutFieldResource[]
 }
 
 export interface PluginLayoutFieldResource {
@@ -26,7 +27,14 @@ export type PluginLayoutField =
   'NUMBER' |
   'SELECT' |
   'MULTI_SELECT' |
-  'IMAGE';
+  'IMAGE' |
+  'INPUT' |
+  'INPUT_NUMBER' |
+  'SWITCH' |
+  'RADIO' |
+  'CHECKBOX' |
+  'DATE' |
+  'DATE_RANGE';
 
 export interface PluginLayoutEnumResource {
   value: string,

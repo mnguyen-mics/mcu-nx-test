@@ -2,6 +2,7 @@ import { PropertyResourceShape } from './../../../../models/plugin/index';
 import { DisplayAdCreateRequest } from './../../../../models/creative/CreativeResource';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
 import { PluginVersionResource } from '../../../../models/Plugins';
+import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 
 export type DisplayAdShape =
   | DisplayAdResource
@@ -13,6 +14,7 @@ export interface DisplayCreativeFormData {
   creative: DisplayAdShape;
   rendererPlugin: PluginVersionResource;
   properties: { [technicalName: string]: PropertyResourceShape };
+  pluginLayout?: PluginLayout;
 }
 
 export interface EditDisplayCreativeRouteMatchParams {

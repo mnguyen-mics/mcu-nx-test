@@ -14,6 +14,7 @@ export interface FormDatePickerProps extends FormFieldWrapperProps {
   datePickerProps: DatePickerProps;
   small?: boolean;
   unixTimestamp?: boolean;
+  isoDate?: boolean;
 }
 
 const FormDatePicker: React.SFC<
@@ -30,14 +31,18 @@ const FormDatePicker: React.SFC<
   // By default, input.value is initialised to '' by redux-form
   // But antd DatePicker doesn't like that
   // So we don't pass this props if equal to ''
-  const value =
-    props.input.value === ''
-      ? undefined
-      : props.unixTimestamp ? moment(props.input.value) : props.input.value;
+  let value = props.input.value;
+  if (value === '') { 
+    value = undefined; 
+  } else if (props.unixTimestamp || props.isoDate) { 
+    value = moment(value); 
+  }
 
   const onChange = (date: moment.Moment, dateString: string) => {
     if (props.unixTimestamp) {
       return props.input.onChange(date && parseInt(date.format('x'), 0));
+    } else if (props.isoDate) {
+      return props.input.onChange(dateString);
     }
     return props.input.onChange(date);
   };

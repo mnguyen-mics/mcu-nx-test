@@ -19,9 +19,20 @@ import {
   FormCodeEdit,
   FormCodeEditField,
   FormTextAreaField,
-  FormTextArea
+  FormTextArea,
+  FormSwitch,
+  FormSwitchField,
+  FormDatePickerField,
+  FormDatePicker,
+  FormDateRangePickerField,
+  FormDateRangePicker,
+  FormFieldWrapper,
+  FormRadioGroupField,
+  FormRadioGroup,
+  FormCheckboxGroupField,
+  FormCheckboxGroup
 } from '../../components/Form/index';
-import FormSelect, { DefaultSelectField, TagSelectField } from '../../components/Form/FormSelect';
+import FormSelect, { DefaultSelectField, TagSelectField } from '../../components/Form/';
 import { FormInputProps } from '../../components/Form/FormInput';
 import { InputProps } from 'antd/lib/input';
 import { FormItemProps } from 'antd/lib/form';
@@ -429,7 +440,124 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               formItemProps={pluginFieldProps.formItemProps}
               helpToolTipProps={{ title: pluginLayoutFieldDefinition.tooltip }}
             />
-          )
+          );
+
+        case 'INPUT':
+
+          return (
+            <FormInputField
+              key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
+              name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
+              component={FormInput}
+              {...pluginFieldProps}
+            />
+          );
+        case 'INPUT_NUMBER':
+
+          return (
+            <FormInputField
+              key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
+              name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
+              component={FormInput}
+              {...pluginFieldProps}
+              inputProps={{ ...pluginFieldProps.inputProps, type: "number" }}
+            />
+          );
+
+        case 'SWITCH':
+
+          return (
+
+            <FormFieldWrapper
+              help={pluginFieldProps.formItemProps.help}
+              helpToolTipProps={pluginFieldProps.helpToolTipProps}
+              validateStatus={pluginFieldProps.formItemProps.validateStatus}
+              {...pluginFieldProps.formItemProps}
+            >
+              <FormSwitchField
+                key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
+                name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
+                component={FormSwitch}
+                {...pluginFieldProps}
+              />
+            </FormFieldWrapper>
+
+
+
+          );
+
+        case 'RADIO':
+
+          const elements = pluginLayoutFieldDefinition.enum !== undefined ?
+            pluginLayoutFieldDefinition.enum.map(el => { return { id: el.value, value: el.value, title: el.label } }) :
+            [];
+
+          return (
+            <FormFieldWrapper
+              help={pluginFieldProps.formItemProps.help}
+              helpToolTipProps={pluginFieldProps.helpToolTipProps}
+              validateStatus={pluginFieldProps.formItemProps.validateStatus}
+              {...pluginFieldProps.formItemProps}
+            >
+              <FormRadioGroupField
+                key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
+                name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
+                component={FormRadioGroup}
+                elements={elements}
+                {...pluginFieldProps}
+              />
+            </FormFieldWrapper>
+          );
+
+        case 'CHECKBOX':
+
+          const options = pluginLayoutFieldDefinition.enum !== undefined ?
+            pluginLayoutFieldDefinition.enum :
+            [];
+
+          return (
+            <FormFieldWrapper
+              help={pluginFieldProps.formItemProps.help}
+              helpToolTipProps={pluginFieldProps.helpToolTipProps}
+              validateStatus={pluginFieldProps.formItemProps.validateStatus}
+              {...pluginFieldProps.formItemProps}
+            >
+              <FormCheckboxGroupField
+                key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
+                name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
+                component={FormCheckboxGroup}
+                options={options}
+                valueAsString={true}
+                {...pluginFieldProps}
+              />
+            </FormFieldWrapper>
+          );
+
+        case 'DATE':
+
+          return (
+            <FormDatePickerField
+              key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
+              name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
+              component={FormDatePicker}
+              datePickerProps={{}}
+              isoDate={true}
+              {...pluginFieldProps}
+            />
+          );
+
+        case 'DATE_RANGE':
+
+          return (
+            <FormDateRangePickerField
+              key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
+              name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
+              component={FormDateRangePicker}
+              startDatePickerProps={{}}
+              endDatePickerProps={{}}
+              {...pluginFieldProps}
+            />
+          );
 
         default:
           return this.handleFieldDefinition(fieldDefinition);
@@ -663,5 +791,5 @@ const messages = defineMessages({
     id: 'fieldDefinition-DataFile-uploadFile',
     defaultMessage: 'Upload File',
   },
-  
+
 });

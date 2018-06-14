@@ -56,6 +56,7 @@ type JoinedProps = PluginEditFormProps &
 interface PluginEditFormState {
   loading: boolean;
   displayAdvancedSection: boolean;
+  displayAdvancedFields: { [key:string]:boolean; };
 }
 
 export interface FormModel {
@@ -73,9 +74,18 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
   constructor(props: JoinedProps) {
     super(props);
+
+    const tabDisplayAdvancedFields: { [key:string]:boolean; } = {};
+    if (props.pluginLayout !== undefined) {
+      props.pluginLayout.sections.forEach(element => {
+        tabDisplayAdvancedFields[element.title] = false;
+      });
+    }
+
     this.state = {
       loading: false,
-      displayAdvancedSection: false
+      displayAdvancedSection: false,
+      displayAdvancedFields: tabDisplayAdvancedFields, 
     };
   }
 
@@ -237,8 +247,48 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     }
   }
 
+  toggleAdvancedFields = (sectionTitle: string) => {
+    return () => {
+      const tabDisplayAdvancedFields: { [key:string]:boolean; } = this.state.displayAdvancedFields;
+      tabDisplayAdvancedFields[sectionTitle] = !tabDisplayAdvancedFields[sectionTitle];
+
+      this.setState({
+        displayAdvancedFields: tabDisplayAdvancedFields,
+      });
+    };
+  }
+
   generateFormSection = (section: PluginLayoutSectionResource) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
     const returnedFields = section.fields.map(this.generateFormField)
+    const advancedFields = (section.advanced_fields.length !== 0) ?
+      (
+        <div>
+          <ButtonStyleless
+            className="optional-section-title"
+            onClick={this.toggleAdvancedFields(section.title)}
+          >
+            <McsIcon type="settings" />
+            <span className="step-title">
+              {formatMessage(messages.advanced)}
+            </span>
+            <McsIcon type="chevron" />
+          </ButtonStyleless>
+
+          <div
+            className={!this.state.displayAdvancedFields[section.title]
+              ? 'hide-section'
+              : 'optional-section-content'
+            }
+          >
+            {section.advanced_fields.map(this.generateFormField)}
+          </div>
+        </div>
+      ) :
+      null;
 
     return (
       <div id={section.title}>
@@ -250,6 +300,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
           />
         </Row>
         {returnedFields}
+        {advancedFields}
       </div>
     );
   }
@@ -274,7 +325,6 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       intl: { formatMessage },
       disableFields,
       showTechnicalName,
-      isLoading,
       showGeneralInformation,
       pluginLayout
     } = this.props;
