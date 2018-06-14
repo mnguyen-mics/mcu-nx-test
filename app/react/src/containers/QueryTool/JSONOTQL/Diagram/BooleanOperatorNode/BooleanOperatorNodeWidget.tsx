@@ -10,6 +10,7 @@ interface Props {
   node: BooleanOperatorNodeModel;
   diagramEngine: DiagramEngine;
   treeNodeOperations: TreeNodeOperations;
+  lockGlobalInteraction: (lock: boolean) => void;
 }
 
 interface State {
@@ -41,7 +42,9 @@ export default class BooleanOperatorNodeWidget extends React.Component<Props, St
     const {
       node,
       treeNodeOperations,
+      lockGlobalInteraction
     } = this.props;
+    lockGlobalInteraction(false)
     this.setState({ focus: false })
     return treeNodeOperations.updateNode(node.treeNodePath, {
       ...node.objectOrGroupNode,
@@ -54,8 +57,10 @@ export default class BooleanOperatorNodeWidget extends React.Component<Props, St
     const {
       node,
       treeNodeOperations,
+      lockGlobalInteraction
     } = this.props;
     this.setState({ focus: false })
+    lockGlobalInteraction(false)
     return treeNodeOperations.deleteNode(node.treeNodePath)
   }
   
@@ -65,6 +70,7 @@ export default class BooleanOperatorNodeWidget extends React.Component<Props, St
     const onHover = (type: 'enter' | 'leave') => () => this.setState({ hover: type === 'enter' ? true : false });
     const onClick = () => {
       this.setPosition(document.getElementById(this.id) as HTMLDivElement)
+      this.props.lockGlobalInteraction(!this.state.focus)
       this.setState({ focus: !this.state.focus })
     };
 

@@ -52,6 +52,7 @@ export interface JSONQLBuilderProps {
 
 interface State {
   keydown: string[];
+  locked: boolean;
 }
 
 type Props = JSONQLBuilderProps;
@@ -64,19 +65,20 @@ class JSONQLBuilder extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.engine.registerNodeFactory(
-      new BooleanOperatorNodeFactory(this.getTreeNodeOperations()),
+      new BooleanOperatorNodeFactory(this.getTreeNodeOperations(), this.lockInteraction),
     );
     this.engine.registerNodeFactory(
-      new PlusNodeFactory(this.getTreeNodeOperations(), this.props.objectTypes),
+      new PlusNodeFactory(this.getTreeNodeOperations(), this.props.objectTypes, this.lockInteraction),
     );
     this.engine.registerNodeFactory(
       new ObjectNodeFactory(
         this.getTreeNodeOperations(),
         this.props.objectTypes,
+        this.lockInteraction
       ),
     );
     this.engine.registerNodeFactory(
-      new FieldNodeFactory(this.getTreeNodeOperations()),
+      new FieldNodeFactory(this.getTreeNodeOperations(),  this.lockInteraction),
     );
 
     this.engine.registerLinkFactory(new SimpleLinkFactory());
@@ -84,7 +86,13 @@ class JSONQLBuilder extends React.Component<Props, State> {
 
     this.state = {
       keydown: [],
+      locked: false,
     };
+  }
+
+
+  lockInteraction = (locked: boolean) => {
+    this.setState({ locked })
   }
 
   componentDidMount() {
@@ -280,8 +288,9 @@ class JSONQLBuilder extends React.Component<Props, State> {
         />
         <DiagramWidget
           diagramEngine={this.engine}
-          allowCanvasZoom={true}
-          allowCanvasTranslation={true}
+          allowCanvasZoom={!this.state.locked}
+          allowCanvasTranslation={!this.state.locked}
+          inverseZoom={true}
         />
         <BuilderMenu undoRedo={this.props.undoRedo} />
       </div>

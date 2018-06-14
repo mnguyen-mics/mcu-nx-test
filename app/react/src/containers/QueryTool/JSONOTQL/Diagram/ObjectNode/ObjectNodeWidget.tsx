@@ -23,14 +23,13 @@ interface ObjectNodeWidgetProps {
   diagramEngine: DiagramEngine;
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
+  lockGlobalInteraction: (lock: boolean) => void;
 }
 
 interface State {
   focus: boolean;
   hover: boolean;
 }
-
-const RenderInBodyAny = RenderInBody as any;
 
 type Props = ObjectNodeWidgetProps & InjectedIntlProps & InjectedDrawerProps;
 
@@ -61,14 +60,19 @@ class ObjectNodeWidget extends React.Component<Props, State> {
   };
 
   removeNode = () => {
+    const {
+      lockGlobalInteraction
+    } = this.props;
     this.setState({ focus: false }, () => {
       this.props.treeNodeOperations.deleteNode(this.props.node.treeNodePath);
+      lockGlobalInteraction(false)
     });
   };
 
   editNode = () => {
-    const { node } = this.props;
+    const { node, lockGlobalInteraction } = this.props;
     this.setState({ focus: false }, () => {
+      lockGlobalInteraction(false)
       this.props.openNextDrawer<ObjectNodeFormProps>(ObjectNodeForm, {
         additionalProps: {
           close: this.props.closeNextDrawer,
@@ -94,9 +98,10 @@ class ObjectNodeWidget extends React.Component<Props, State> {
 
     const onHover = (type: 'enter' | 'leave') => () =>
       this.setState({ hover: type === 'enter' ? true : false });
-    const onFocus = (focus: boolean) => () => {
+    const onFocus = () => {
+      this.props.lockGlobalInteraction(!this.state.focus)
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
-      this.setState({ focus });
+      this.setState({ focus: !this.state.focus });
     };
 
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
@@ -121,7 +126,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
       <div
         id={this.id}
         className="object-node"
-        onClick={onFocus(true)}
+        onClick={onFocus}
         onMouseEnter={onHover('enter')}
         onMouseLeave={onHover('leave')}
         style={{
@@ -149,10 +154,10 @@ class ObjectNodeWidget extends React.Component<Props, State> {
           <PortWidget name="center" node={this.props.node} />
         </div>
         {this.state.focus && (
-          <RenderInBodyAny>
+          <RenderInBody>
             <div className="query-builder">
               <div
-                onClick={onFocus(false)}
+                onClick={onFocus}
                 style={{
                   position: 'fixed',
                   top: 0,
@@ -181,7 +186,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
                   zIndex: 1002,
                   transform: `scale(${zoomRatio})`,
                 }}
-                onClick={onFocus(false)}
+                onClick={onFocus}
               >
                 {renderedObjectNode}
               </span>
@@ -203,7 +208,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
                 </div>
               </div>
             </div>
-          </RenderInBodyAny>
+          </RenderInBody>
         )}
       </div>
     );

@@ -19,6 +19,7 @@ interface Props {
   diagramEngine: DiagramEngine;
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
+  lockGlobalInteraction: (lock: boolean) => void
 }
 
 interface State {
@@ -36,9 +37,10 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
   }
 
   addObjectNode = () => {
-    const { node } = this.props;
+    const { node, lockGlobalInteraction } = this.props;
     this.setState({ focus: false }, () => {
       // let computedSchemaPath = ['UserPoint'];
+      lockGlobalInteraction(false)
       this.props.openNextDrawer<ObjectNodeFormProps>(ObjectNodeForm, {
         additionalProps: {
           close: this.props.closeNextDrawer,
@@ -82,6 +84,7 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
     const { node } = this.props;
 
     const handleClickOnPlus = () => {
+      this.props.lockGlobalInteraction(!this.state.focus);
       this.setState({ focus: !this.state.focus });
     };
 

@@ -10,14 +10,17 @@ export default class PlusNodeFactory extends AbstractNodeFactory<
 > {
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
+  lockGlobalInteraction: (locked: boolean) => void;
 
   constructor(
     _treeNodeOperations: TreeNodeOperations,
     _objectTypes: ObjectLikeTypeInfoResource[],
+    _lockGlobalInteraction: (locked: boolean) => void
   ) {
     super('plus-node');
     this.treeNodeOperations = _treeNodeOperations;
     this.objectTypes = _objectTypes;
+    this.lockGlobalInteraction = _lockGlobalInteraction;
   }
 
   generateReactWidget(
@@ -32,6 +35,7 @@ export default class PlusNodeFactory extends AbstractNodeFactory<
       diagramEngine: diagramEngine,
       treeNodeOperations: this.treeNodeOperations,
       objectTypes: this.objectTypes,
+      lockGlobalInteraction: this.lockGlobalInteraction
     });
   }
 
