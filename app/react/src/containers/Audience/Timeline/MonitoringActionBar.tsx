@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Input, Select, Button, Modal } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import queryString from 'query-string';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar } from '../../Actionbar';
@@ -43,11 +44,15 @@ class MonitoringActionbar extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      location
     } = this.props;
+    const datamartId = queryString.parse(location.search).datamartId
+      ? queryString.parse(location.search).datamartId
+      : '';
     history.push(
       `/v2/o/${organisationId}/audience/timeline/${this.state.form.type}/${
         this.state.form.value
-      }`,
+      }?datamartId=${datamartId}`,
     );
     this.setState(prevState => {
       const nextState = {
@@ -62,15 +67,12 @@ class MonitoringActionbar extends React.Component<Props, State> {
     });
   };
 
-  updateValue = (type: string, e: any) => {
-    this.setState((prevState: any) => {
+  updateValue = (e: any) => {
+    this.setState(prevState => {
       const nextState = {
         ...prevState,
-        form: {
-          ...prevState.form,
-          type: e.target.value,
-        },
       };
+      nextState.form.value = e.target.value;
       return nextState;
     });
   };
@@ -105,7 +107,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
     const onSubmitClick = (e: any) => this.submitModal(e);
     const onValueChange = (e: any) => {
       e.persist();
-      this.updateValue('value', e);
+      this.updateValue(e);
     };
 
     return (
