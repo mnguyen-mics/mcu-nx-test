@@ -87,10 +87,6 @@ export default class FieldNodeWidget extends React.Component<Props, State> {
           borderStyle: 'solid',
           color: node.getColor(),
           borderColor: node.getColor(),
-          boxShadow:
-            this.state.hover && !this.state.focus
-              ? '0 3px 6px rgba(0, 0, 0, 0.4)'
-              : 'none',
         }}
         onMouseEnter={onHover('enter')}
         onMouseLeave={onHover('leave')}
@@ -122,7 +118,7 @@ export default class FieldNodeWidget extends React.Component<Props, State> {
                 }}
               />
               <span
-                className="object-node"
+                className="object-node no-hover"
                 style={{
                   ...node.getSize(),
                   backgroundColor: '#ffffff',

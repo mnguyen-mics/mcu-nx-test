@@ -137,10 +137,6 @@ class ObjectNodeWidget extends React.Component<Props, State> {
           color: '#ffffff',
           borderColor: node.getColor(),
           backgroundColor: node.getColor(),
-          boxShadow:
-            this.state.hover && !this.state.focus
-              ? '0 3px 6px rgba(0, 0, 0, 0.4)'
-              : 'none',
         }}
       >
         {renderedObjectNode}
@@ -170,7 +166,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
                 }}
               />
               <span
-                className="object-node"
+                className="object-node no-hover"
                 style={{
                   ...node.getSize(),
                   borderRadius: 4,

@@ -92,6 +92,13 @@
     align-items: center;
     transition: box-shadow 300ms ease-in;
     cursor: pointer;
+
+    &:hover {
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+    &.no-hover:hover {
+      box-shadow: none;
+    }
    
     .field {
       width: 100%;
@@ -224,7 +231,7 @@
 
   .button-helpers {
     position: absolute;
-    right: 0;
+    right: 20px;
     bottom: 30px;
     z-index: 10000;
     display: block;

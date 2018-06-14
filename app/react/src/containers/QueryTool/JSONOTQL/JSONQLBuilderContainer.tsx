@@ -262,7 +262,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           className={`mcs-content-container ${
             editionLayout ? 'flex' : ''
             }`}
-          style={{ padding: 0 }}
+          style={{ padding: 0, overflow: 'hidden' }}
         >
           <JSONQLBuilder
             objectTypes={objectTypes}
