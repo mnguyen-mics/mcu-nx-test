@@ -19,7 +19,7 @@ function* loadNativeCreatives({ payload }) {
     let options = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       archived: filter.archived,
-      creative_subtype: ['NATIVE'],
+      subtype: ['NATIVE'],
     };
 
     if (filter.keywords) {

@@ -19,7 +19,7 @@ function* loadCreativeDisplay({ payload }) {
     let options = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       archived: filter.archived,
-      creative_subtype: [
+      subtype: [
         'BANNER',
         'VIDEO'
       ],
