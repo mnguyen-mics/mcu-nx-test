@@ -1,6 +1,7 @@
 export interface PluginLayout {
   version: string,
-  sections: PluginLayoutSectionResource[]
+  sections: PluginLayoutSectionResource[],
+  metadata: PluginLayoutMetadataResource
 }
 
 export interface PluginLayoutSectionResource {
@@ -39,4 +40,11 @@ export type PluginLayoutField =
 export interface PluginLayoutEnumResource {
   value: string,
   label: string
+}
+
+export interface PluginLayoutMetadataResource {
+  large_icon_asset_id: string,
+  small_icon_asset_id: string,
+  display_name: string,
+  description: string
 }
