@@ -125,6 +125,12 @@ const serviceSettingsDefinition: NavigatorMenuDefinition = {
       ),
       translation: messages.subscribedServicesSettingsList,
     },
+    {
+      ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsServiceItemsList,
+      ),
+      translation: messages.serviceItemsSettingsList,
+    },
   ],
 };
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import {
@@ -9,15 +9,16 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-import { McsIconType } from '../../../../components/McsIcon';
-import ItemList, { Filters } from '../../../../components/ItemList';
-import { PAGINATION_SEARCH_SETTINGS } from '../../../../utils/LocationSearchHelper';
-import CatalogService from '../../../../services/CatalogService';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { ServiceOfferResource } from '../../../../models/servicemanagement/PublicServiceItemResource';
+import { McsIconType } from '../../../../../components/McsIcon';
+import ItemList, { Filters } from '../../../../../components/ItemList';
+import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
+import CatalogService from '../../../../../services/CatalogService';
+import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
+import { ServiceOfferResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import injectNotifications, {
   InjectedNotificationProps,
-} from '../../../Notifications/injectNotifications';
+} from '../../../../Notifications/injectNotifications';
+import { ButtonStyleless } from '../../../../../components';
 
 const { Content } = Layout;
 
@@ -30,17 +31,9 @@ const messages = defineMessages({
     id: 'settings.services.subscribed.offers.list.credited.account.id',
     defaultMessage: 'Credited account id',
   },
-  serviceOfferVersion: {
-    id: 'settings.services.subscribed.offers.list.version',
-    defaultMessage: 'Version',
-  },
   serviceOfferProviderId: {
     id: 'settings.services.subscribed.offers.list.provided.id',
     defaultMessage: 'Provided Id',
-  },
-  serviceOfferConditions: {
-    id: 'settings.services.subscribed.offers.list.conditions',
-    defaultMessage: 'Conditions',
   },
   emptyOffers: {
     id: 'settings.services.subscribed.offers.empty.list',
@@ -66,7 +59,7 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedIntlProps &
   InjectedNotificationProps;
 
-class DatamartsListPage extends React.Component<Props, State> {
+class SubscribedServicesListPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -75,10 +68,6 @@ class DatamartsListPage extends React.Component<Props, State> {
       total: 0,
     };
   }
-
-  archiveOffer = (serviceOfferId: string) => {
-    return Promise.resolve();
-  };
 
   fetchOffers = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
@@ -101,32 +90,12 @@ class DatamartsListPage extends React.Component<Props, State> {
     });
   };
 
-  onClickEdit = (offer: ServiceOfferResource) => {
-    // const {
-    //   history,
-    //   match: {
-    //     params: { organisationId },
-    //   },
-    // } = this.props;
-    // history.push(
-    //   `/v2/o/${organisationId}/settings/subscribed_services/${
-    //     offer.id
-    //   }/edit`,
-    // );
-  };
-
   render() {
     const {
-      match: {
-        params: { organisationId },
-      },
+      // match: {
+      //   params: { organisationId },
+      // },
     } = this.props;
-    const actionsColumnsDefinition = [
-      {
-        key: 'action',
-        actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
-      },
-    ];
 
     const dataColumnsDefinition = [
       {
@@ -134,15 +103,14 @@ class DatamartsListPage extends React.Component<Props, State> {
         key: 'name',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (value: string, record: ServiceOfferResource) => (
-          <Link
-            to={`/v2/o/${organisationId}/settings/subscribed_services/${
-              record.id
-            }/edit`}
-          >
-            {value}
-          </Link>
-        ),
+        render: (value: string, record: ServiceOfferResource) => {
+          const test = () => {
+            CatalogService.getServiceItemConditions(record.id, {}).then(resp =>
+              console.log(resp.data),
+            );
+          };
+          return <ButtonStyleless onClick={test}>{value}</ButtonStyleless>;
+        },
       },
       {
         intlMessage: messages.serviceOfferCreditedAccountId,
@@ -154,15 +122,6 @@ class DatamartsListPage extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: messages.serviceOfferVersion,
-        key: 'version',
-        isVisibleByDefault: true,
-        isHideable: false,
-        render: (value: string, record: ServiceOfferResource) => (
-          <span>{record.version}</span>
-        ),
-      },
-      {
         intlMessage: messages.serviceOfferProviderId,
         key: 'provided_id',
         isVisibleByDefault: true,
@@ -170,20 +129,6 @@ class DatamartsListPage extends React.Component<Props, State> {
         render: (value: string, record: ServiceOfferResource) => (
           <span>{record.provider_id}</span>
         ),
-      },
-      {
-        intlMessage: messages.serviceOfferConditions,
-        key: 'conditions',
-        isVisibleByDefault: true,
-        isHideable: false,
-        render: (value: string, record: ServiceOfferResource) => {
-          const renderServiceTypes = () => {
-            record.conditions.forEach(c => (
-              <span key={c.id}>{c.serviceItem.service_type}</span>
-            ));
-          };
-          return <div>{renderServiceTypes}</div>;
-        },
       },
     ];
 
@@ -215,7 +160,6 @@ class DatamartsListPage extends React.Component<Props, State> {
             loading={this.state.loading}
             total={this.state.total}
             columns={dataColumnsDefinition}
-            actionsColumnsDefinition={actionsColumnsDefinition}
             pageSettings={PAGINATION_SEARCH_SETTINGS}
             emptyTable={emptyTable}
             additionnalComponent={additionnalComponent}
@@ -230,4 +174,4 @@ export default compose(
   withRouter,
   injectIntl,
   injectNotifications,
-)(DatamartsListPage);
+)(SubscribedServicesListPage);

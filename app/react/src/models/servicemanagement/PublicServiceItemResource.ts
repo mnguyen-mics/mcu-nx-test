@@ -25,7 +25,9 @@ export interface ServiceItemPublicResource {
   category_id?: string;
   list_weight?: number;
   reseller_agreement_id?: string;
-  type : string;
+  type?: string;
+  display_network_id?: string;
+  inventory_access_type?: string;
 }
 
 export interface AudienceSegmentServiceItemPublicResource extends ServiceItemPublicResource {

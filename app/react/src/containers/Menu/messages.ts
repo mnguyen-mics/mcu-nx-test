@@ -239,6 +239,10 @@ export default defineMessages({
         id: 'menu.service.offers.list',
         defaultMessage: 'Service Offers List', 
     },
+    serviceItemsSettingsList: {
+        id: 'menu.service.serviceItems.list',
+        defaultMessage: 'Service Items List', 
+    },
 
     // BACK TO APP
     backToAppSettings: {

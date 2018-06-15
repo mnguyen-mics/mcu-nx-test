@@ -17,6 +17,10 @@ interface GetOfferOptions extends PaginatedApiParam {
   serviceAgreementId?: string;
 }
 
+interface GetServiceItemConditionsOptions extends PaginatedApiParam {
+  orderBy?: string;
+}
+
 interface GetServiceOptions extends PaginatedApiParam {
   root?: boolean;
   parentCategoryId?: string;
@@ -81,6 +85,7 @@ const CatalogService = {
   ): Promise<DataListResponse<ServiceItemPublicResource>> {
     const endpoint = `subscribed_services/${organisationId}/services`;
     const params = {
+      ...options,
       root: options.root,
       parent_category_id: options.parentCategoryId,
       service_family: options.serviceFamily,
@@ -104,6 +109,7 @@ const CatalogService = {
   ): Promise<DataListResponse<ServiceOfferResource>> {
     const endpoint = `subscribed_services/${customerOrgId}/offers`;
     const params = {
+      ...options,
       service_agreement_id: options.serviceAgreementId,
     };
     return ApiService.getRequest(endpoint, params);
@@ -118,6 +124,20 @@ const CatalogService = {
       serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'],
     }) as Promise<DataListResponse<AudienceSegmentServiceItemPublicResource>>;
   },
+
+  // Service Item Conditions
+
+  getServiceItemConditions(
+    offerId: string,
+    options: GetServiceItemConditionsOptions,
+  ): Promise<DataListResponse<any>> { // TYPE
+    const endpoint = `subscribed_services/${offerId}/service_item_conditions`;
+    const params = {
+      ...options,
+      order_by: options.orderBy,
+    };
+    return ApiService.getRequest(endpoint, params);
+  }
 };
 
 export default CatalogService;
