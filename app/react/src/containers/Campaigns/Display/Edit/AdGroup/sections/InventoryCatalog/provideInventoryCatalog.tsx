@@ -96,7 +96,7 @@ const provideInventoryCatalog = (Component: React.ComponentClass<InjectedInvento
                 return {
                   node: category.node,
                   children: childrenCategory,
-                  services,
+                  services: services.data,
                 };
               },
             );
@@ -200,7 +200,7 @@ const provideInventoryCatalog = (Component: React.ComponentClass<InjectedInvento
         history,
         location,
         match,
-        ...rest,
+        ...rest
       } = this.props
 
       // with remove props used for the purpose of this HOC

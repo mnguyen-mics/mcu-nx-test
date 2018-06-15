@@ -105,7 +105,15 @@ export default defineMessages({
   },
   dropdownAddExisting: {
     id: 'adGroupEditor.dropdown.addExisting',
-    defaultMessage: 'Add existing',
+    defaultMessage: 'Add Existing',
+  },
+  dropdownAddOwn: {
+    id: 'adGroupEditor.dropdown.addOwn',
+    defaultMessage: 'Add Own Segment',
+  },
+  dropdownAddShared: {
+    id: 'adGroupEditor.dropdown.addShared',
+    defaultMessage: 'Add Shared Segment',
   },
 
   /*

@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   ServiceCategoryTree,
   ServiceFamily,
@@ -79,7 +79,7 @@ const CatalogService = {
       categorySubtype?: ServiceCategorySubType[],
       searchDepth?: number,
     } = {},
-  ): Promise<ServiceItemPublicResource[]> {
+  ): Promise<DataListResponse<ServiceItemPublicResource>> {
     const endpoint = `subscribed_services/${organisationId}/services`;
     const params = {
       root: options.root,
@@ -90,7 +90,37 @@ const CatalogService = {
       category_type: options.categoryType,
       category_subtype: options.categorySubtype,
     };
-    return ApiService.getRequest(endpoint, params).then((res: any) => res.data as ServiceItemPublicResource[]);
+    return ApiService.getRequest(endpoint, params);
+  },
+
+  getServices1(
+    organisationId: string,
+    options: {
+      root?: boolean,
+      parentCategoryId?: string,
+      serviceFamily?: ServiceFamily[],
+      serviceType?: ServiceType[],
+      locale?: Locale,
+      categoryType?: ServiceCategoryType[],
+      categorySubtype?: ServiceCategorySubType[],
+      searchDepth?: number,
+    } = {},
+  ): Promise<DataListResponse<ServiceItemPublicResource>> {
+    const endpoint = `subscribed_services/${organisationId}/services`;
+    const params = {
+      root: options.root,
+      parent_category_id: options.parentCategoryId,
+      service_family: options.serviceFamily,
+      service_type: options.serviceType,
+      locale: options.locale,
+      category_type: options.categoryType,
+      category_subtype: options.categorySubtype,
+    };
+    return ApiService.getRequest(endpoint, params);
+  },
+
+  getService(serviceId: string): Promise<DataResponse<ServiceItemPublicResource>> {
+    return ApiService.getRequest(`/service_items/${serviceId}`)
   },
 
   getAudienceSegmentServices(
@@ -103,11 +133,11 @@ const CatalogService = {
       categorySubtype?: ServiceCategorySubType[],
       searchDepth?: number,
     } = {},
-  ): Promise<AudienceSegmentServiceItemPublicResource[]> {
+  ): Promise<DataListResponse<AudienceSegmentServiceItemPublicResource>> {
     return CatalogService.getServices(
       organisationId,
       {...options, serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT']},
-    ) as Promise<AudienceSegmentServiceItemPublicResource[]>;
+    ) as Promise<DataListResponse<AudienceSegmentServiceItemPublicResource>>;
   },
 
 };

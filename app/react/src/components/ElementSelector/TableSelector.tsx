@@ -28,6 +28,7 @@ export interface TableSelectorProps<T extends SelectableItem> {
   searchPlaceholder?: string;
   filtersOptions?: Array<MultiSelectProps<any>>;
   selectedIds?: string[];
+  defaultSelectedKey?: keyof T;
   fetchDataList: (filter?: SearchFilter) => Promise<DataListResponse<T>>;
   fetchData: (id: string) => Promise<DataResponse<T>>;
   singleSelection?: boolean;
@@ -64,6 +65,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     displayFiltering: false,
     selectedIds: [],
     singleSelection: false,
+    defaultSelectedKey: 'id'
   };
 
   constructor(props: Props<T>) {
@@ -99,7 +101,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   }
 
   loadSelectedElementsById = () => {
-    const { selectedIds } = this.props;
+    const { selectedIds, defaultSelectedKey } = this.props;
 
     if (selectedIds) {
       const promises: Array<Promise<T>> = [];
@@ -108,7 +110,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       });
       Promise.all(promises).then(selectedElements => {
         this.setState({
-          selectedElementsById: normalizeArrayOfObject(selectedElements, 'id'),
+          selectedElementsById: normalizeArrayOfObject(selectedElements, defaultSelectedKey as any),
         });
       });
     }
@@ -140,7 +142,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   }
 
   getColumnsDefinitions = (): Array<DataColumnDefinition<T>> => {
-    const { columnsDefinitions } = this.props;
+    const { columnsDefinitions, defaultSelectedKey } = this.props;
     const { selectedElementsById } = this.state;
 
     return [
@@ -149,7 +151,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         render: (text: string, record: T) => {
           const Field = this.props.singleSelection ? Radio : Checkbox;
           return (
-            <Field checked={!!selectedElementsById[record.id]}>{text}</Field>
+            <Field checked={!!selectedElementsById[(record as any)[defaultSelectedKey]]}>{text}</Field>
           );
         },
       },
@@ -236,7 +238,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   };
 
   populateTable = (selectedIds: string[] = []) => {
-    const { displayFiltering } = this.props;
+    const { displayFiltering, defaultSelectedKey } = this.props;
     const { currentPage, keywords, pageSize, datamartId } = this.state;
 
     const filterOptions = displayFiltering
@@ -246,8 +248,8 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     return this.props
       .fetchDataList(filterOptions)
       .then(({ data, total }) => {
-        const allElementIds = data.map(element => element.id);
-        const elementsById = normalizeArrayOfObject(data, 'id');
+        const allElementIds = data.map(element => (element as any)[defaultSelectedKey]);
+        const elementsById = normalizeArrayOfObject(data, defaultSelectedKey as any);
         const selectedElementsById = {
           ...this.state.selectedElementsById,
           ...selectedIds.reduce((acc, elementId) => {
@@ -271,7 +273,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   };
 
   toggleElementSelection = (element: T) => {
-    const elementId = element.id;
+    const elementId = (element as any)[this.props.defaultSelectedKey];
     this.setState(prevState => {
       const isElementSelected = prevState.selectedElementsById[elementId];
 
