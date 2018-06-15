@@ -85,7 +85,7 @@ class AdGroup extends React.Component<JoinedProps> {
 
     const adButtons = (
       <span>
-        <Link to={`/${organisationId}/campaigns/email/edit/`}>
+        <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
           <Button className="m-r-10" type="primary">
             <FormattedMessage {...messages.newCreatives} />
           </Button>
