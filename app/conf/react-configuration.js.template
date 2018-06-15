@@ -37,7 +37,8 @@
     'datamartSettings.datamarts',
     'datamartSettings.service_usage_report',
     'accountSettings.profile',
-    'accountSettings.api_tokens'
+    'accountSettings.api_tokens',
+    'serviceOffersSettings.subscribed_offers'
   ];
 
  const gravityFeatures = [

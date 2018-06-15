@@ -210,6 +210,11 @@ export default defineMessages({
         defaultMessage: 'Campaigns', 
     },
 
+    serviceOffersSettingsTitle: {
+        id: 'menu.service.offers.title',
+        defaultMessage: 'Services', 
+    },
+
     campaignSettingsbidOptimizer: {
         id: 'menu.campaigns.bid_optimizer',
         defaultMessage: 'Bid Optimizer', 
@@ -228,6 +233,11 @@ export default defineMessages({
     campaignSettingsRecommenders: {
         id: 'menu.campaigns.recommenders',
         defaultMessage: 'Recommenders', 
+    },
+
+    subscribedServicesSettingsList: {
+        id: 'menu.service.offers.list',
+        defaultMessage: 'Service Offers List', 
     },
 
     // BACK TO APP

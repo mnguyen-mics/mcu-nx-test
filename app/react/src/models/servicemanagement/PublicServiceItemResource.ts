@@ -72,3 +72,34 @@ export interface ServiceCategoryTree {
   children: ServiceCategoryTree[];
   services?: ServiceCategoryPublicResource[];
 }
+
+export interface ServiceOfferResource {
+    id: string;
+    name: string;
+    custom: boolean;
+    credited_account_id: string;
+    version: string;
+    provider_id: string;
+    conditions: ServiceItemConditions[] 
+} 
+
+export interface ServiceItemConditions {
+    id: string;
+    version: string;
+    serviceItem: ServiceItem;
+}
+
+export interface ServiceItem {
+    id: string;
+    version: string;
+    provider_id: string;
+    service_family: ServiceFamily;
+    service_type: ServiceType;
+    reseller_agreement: ServiceAgreement; 
+}
+
+export interface ServiceAgreement {
+    id: string;
+    version: string;
+    offers: ServiceOfferResource[] 
+}

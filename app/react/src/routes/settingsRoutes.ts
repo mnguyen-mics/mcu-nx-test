@@ -36,6 +36,7 @@ import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/
 import EditUserPage from '../containers/Settings/OrganisationSettings/Users/Edit/EditUserPage';
 import ApiTokenListPage from '../containers/Settings/ProfileSettings/ApiToken/List/ApiTokenListPage';
 import EditApiTokenPage from '../containers/Settings/ProfileSettings/ApiToken/Edit/EditApiTokenPage';
+import SubscribedServicesListPage from '../containers/Settings/ServicesSettings/List/SubscribedServicesListPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -293,6 +294,20 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: CreateEditRecommender,
     requiredFeature: 'campaignsSettings.recommenders',
+  },
+
+    /*
+  
+    SERVICE OFFERS SETTINGS
+  
+  */
+
+  // Service Offers List
+  settingsSubscribedOffersList: {
+    path: '/settings/subscribed_services',
+    layout: 'settings',
+    contentComponent: SubscribedServicesListPage,
+    requiredFeature: 'servicesSettings.subscribed_services_list',
   },
 };
 
