@@ -8,7 +8,9 @@ import {
 } from '../../../../models/creative/CreativeResource';
 import AuditComponent from './AuditComponent';
 import { compose } from 'recompose';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 export interface AuditComponentContainerProps {
   creativeId: string;

@@ -6,13 +6,18 @@ import CreativeService from '../../../../services/CreativeService';
 import PluginService from '../../../../services/PluginService';
 import PluginEditForm from '../../../Plugin/Edit/PluginEditForm';
 import { EditContentLayout } from '../../../../components/Layout';
-import { PluginProperty, PluginVersionResource } from '../../../../models/Plugins';
+import {
+  PluginProperty,
+  PluginVersionResource,
+} from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import { DataResponse } from '../../../../services/ApiService';
 
 import messages from './messages';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const CreativeRendererId = '1034';
 
@@ -40,7 +45,7 @@ type JoinedProps = InjectedNotificationProps &
 class CreateEmailTemplate extends React.Component<
   JoinedProps,
   CreateEmailTemplateState
-  > {
+> {
   constructor(props: JoinedProps) {
     super(props);
 
@@ -52,7 +57,11 @@ class CreateEmailTemplate extends React.Component<
 
   componentDidMount() {
     const { edition } = this.state;
-    const { match: { params: { organisationId, creativeId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId, creativeId },
+      },
+    } = this.props;
     if (edition && creativeId) {
       this.fetchInitialValues(creativeId);
     } else {
@@ -61,7 +70,11 @@ class CreateEmailTemplate extends React.Component<
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
-    const { match: { params: { organisationId, creativeId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId, creativeId },
+      },
+    } = this.props;
     const {
       match: {
         params: {
@@ -107,9 +120,9 @@ class CreateEmailTemplate extends React.Component<
                   return prop.technical_name === 'template_file' &&
                     prop.property_type === 'DATA_FILE'
                     ? {
-                      ...prop,
-                      value: { ...prop.value, acceptedFile: 'text/html' },
-                    }
+                        ...prop,
+                        value: { ...prop.value, acceptedFile: 'text/html' },
+                      }
                     : prop;
                 }),
             };
@@ -154,9 +167,9 @@ class CreateEmailTemplate extends React.Component<
                   return prop.technical_name === 'template_file' &&
                     prop.property_type === 'DATA_FILE'
                     ? {
-                      ...prop,
-                      value: { ...prop.value, acceptedFile: 'text/html' },
-                    }
+                        ...prop,
+                        value: { ...prop.value, acceptedFile: 'text/html' },
+                      }
                     : prop;
                 }),
               },
@@ -168,7 +181,12 @@ class CreateEmailTemplate extends React.Component<
   };
 
   redirect = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/creatives/email`;
     history.push(attributionModelUrl);
   };
@@ -180,7 +198,9 @@ class CreateEmailTemplate extends React.Component<
     const { edition } = this.state;
 
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
       notifyError,
     } = this.props;
@@ -267,7 +287,9 @@ class CreateEmailTemplate extends React.Component<
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -288,54 +310,52 @@ class CreateEmailTemplate extends React.Component<
       (this.state.initialValues &&
         this.state.initialValues.properties &&
         this.state.initialValues.properties.length) ||
-        this.state.edition
+      this.state.edition
         ? {
-          formId,
-          message: messages.save,
-          onClose: this.redirect,
-        }
+            formId,
+            message: messages.save,
+            onClose: this.redirect,
+          }
         : {
-          formId,
-          onClose: this.redirect,
-        };
+            formId,
+            onClose: this.redirect,
+          };
 
     return isLoading ? (
       <div style={{ display: 'flex', flex: 1 }}>
         <Loading className="loading-full-screen" />
       </div>
     ) : (
-        <EditContentLayout
-          paths={breadcrumbPaths}
-          items={sidebarItems}
-          scrollId={formId}
-          {...actionbarProps}
-        >
-          <PluginEditForm
-            editionMode={this.state.edition}
-            organisationId={organisationId}
-            save={this.saveOrCreatePluginInstance}
-            pluginProperties={
-              (this.state.initialValues && this.state.initialValues.properties) ||
-              []
-            }
-            disableFields={isLoading}
-            pluginVersionId={
-              (this.state.emailTemplateRenderer &&
-                this.state.emailTemplateRenderer.id) ||
-              ''
-            }
-            formId={formId}
-            initialValues={this.formatInitialValues(this.state.initialValues)}
-            showGeneralInformation={true}
-            showTechnicalName={true}
-          />
-        </EditContentLayout>
-      );
+      <EditContentLayout
+        paths={breadcrumbPaths}
+        items={sidebarItems}
+        scrollId={formId}
+        {...actionbarProps}
+      >
+        <PluginEditForm
+          editionMode={this.state.edition}
+          organisationId={organisationId}
+          save={this.saveOrCreatePluginInstance}
+          pluginProperties={
+            (this.state.initialValues && this.state.initialValues.properties) ||
+            []
+          }
+          disableFields={isLoading}
+          pluginVersionId={
+            (this.state.emailTemplateRenderer &&
+              this.state.emailTemplateRenderer.id) ||
+            ''
+          }
+          formId={formId}
+          initialValues={this.formatInitialValues(this.state.initialValues)}
+          showGeneralInformation={true}
+          showTechnicalName={true}
+        />
+      </EditContentLayout>
+    );
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-  injectNotifications,
-)(CreateEmailTemplate);
+export default compose(injectIntl, withRouter, injectNotifications)(
+  CreateEmailTemplate,
+);

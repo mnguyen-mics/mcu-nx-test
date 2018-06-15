@@ -37,7 +37,18 @@ interface AdditionalInputProps {
   disabled?: boolean;
 }
 
-class PluginFieldGenerator extends React.Component<JoinedProps> {
+interface State {
+  nativeDataType: number;
+}
+
+class PluginFieldGenerator extends React.Component<JoinedProps, State> {
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      nativeDataType: 1,
+    };
+  }
+
   technicalNameToName = (technicalName: string) => {
     return technicalName
       .split('_')
@@ -52,6 +63,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     name: string,
     fieldDefinition: PluginProperty,
     validation: Validator[] = [],
+    warn: Validator[] = [],
     additionalInputProps: AdditionalInputProps = {},
     options = {},
   ) => {
@@ -84,13 +96,16 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     };
 
     return (
-      <Field
-        key={`properties.${name}`}
-        name={`properties.${name}`}
-        component={component}
-        validate={validation}
-        {...customInputProps}
-      />
+      <div>
+        <Field
+          key={`properties.${name}`}
+          name={`properties.${name}`}
+          component={component}
+          validate={validation}
+          warn={warn}
+          {...customInputProps}
+        />
+      </div>
     );
   };
 
@@ -98,7 +113,9 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
     fieldDefinition: PluginProperty,
     organisationId: string,
   ) => {
-    const { fieldValidators: { isValidInteger, isValidDouble } } = this.props;
+    const {
+      fieldValidators: { isValidInteger, isValidDouble },
+    } = this.props;
 
     switch (fieldDefinition.property_type) {
       case 'STRING':
@@ -119,6 +136,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
           [],
+          [],
           {
             disabled: this.props.disabled,
             buttonText: 'Upload File',
@@ -132,6 +150,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           `${fieldDefinition.technical_name}.value.value`,
           fieldDefinition,
           [],
+          [],
           { rows: 4 },
           { textArea: true },
         );
@@ -140,6 +159,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           FormStyleSheet,
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
+          [],
           [],
           {},
           {
@@ -153,6 +173,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           FormAdLayout,
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
+          [],
           [],
           {},
           {
@@ -197,6 +218,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
           `${fieldDefinition.technical_name}.value`,
           fieldDefinition,
           [],
+          [],
           {
             buttonText: 'Upload File',
             accept: (fieldDefinition.value as AcceptedFilePropertyResource)
@@ -212,16 +234,91 @@ class PluginFieldGenerator extends React.Component<JoinedProps> {
         return <div>DATAMART_ID</div>;
       case 'RECOMMENDER':
         return <div>RECOMMENDER_ID</div>;
+      case 'NATIVE_DATA':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+          this.getErrorValidatorForNativeFieldProperty(
+            fieldDefinition.value.type,
+          ),
+          this.getWarningValidatorForNativeFieldProperty(
+            fieldDefinition.value.type,
+          ),
+        );
+      case 'NATIVE_TITLE':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+        );
+      case 'NATIVE_IMAGE':
+        return this.renderFieldBasedOnConfig(
+          FormUpload,
+          `${fieldDefinition.technical_name}.value`,
+          fieldDefinition,
+          [],
+          [],
+          {
+            disabled: this.props.disabled,
+            buttonText: 'Upload File',
+            accept: '.jpg,.jpeg,.png,.gif',
+            noUploadModal: this.props.noUploadModal,
+          },
+        );
       default:
         return <div>Please contact your support</div>;
     }
   };
 
+  /***** Data Asset Types Validators 
+    See https://www.iab.com/wp-content/uploads/2017/04/OpenRTB-Native-Ads-Specification-Draft_1.2_2017-04.pdf
+    At page 39 --> 7.6 Data Asset Types
+  *****/
+
+  getErrorValidatorForNativeFieldProperty = (type: number) => {
+    const {
+      fieldValidators: { isRequired, isValidInteger },
+    } = this.props;
+    switch (type) {
+      case 1:
+      case 2:
+        return [isRequired];
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+        return [isValidInteger];
+      default:
+        return [];
+    }
+  };
+
+  getWarningValidatorForNativeFieldProperty = (type: number) => {
+    const {
+      fieldValidators: { isCharLengthLessThan, isIntegerBetween },
+    } = this.props;
+    switch (type) {
+      case 1:
+        return [isCharLengthLessThan(25)];
+      case 2:
+        return [isCharLengthLessThan(140)];
+      case 3:
+        return [isIntegerBetween(0, 5)];
+      case 12:
+        return [isCharLengthLessThan(15)];
+      default:
+        return [];
+    }
+  };
+
   render() {
     const { definition, organisationId } = this.props;
-    return definition && organisationId
-      ? this.generateFielBasedOnDefinition(definition, organisationId)
-      : null;
+    return (
+      definition &&
+      organisationId &&
+      this.generateFielBasedOnDefinition(definition, organisationId)
+    );
   }
 }
 

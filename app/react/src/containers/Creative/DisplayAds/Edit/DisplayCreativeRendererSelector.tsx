@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Layout, Row } from 'antd';
-
+import { RouteComponentProps, withRouter } from 'react-router';
 import { FormTitle } from '../../../../components/Form';
 import {
   MenuList,
@@ -20,8 +20,6 @@ const { Content } = Layout;
 const imageAdRendererId = '1065';
 const htmlAdRendererId = '1078';
 const externalAdRendererId = '1061';
-const nativeIvidenceAdRendererId = '1032';
-const nativeQuantumAdRendererId = '1047';
 const imageSkinsAdRendererId = '1057';
 
 export interface DisplayCreativeRendererSelectorProps {
@@ -33,7 +31,9 @@ interface State {
   adRendererSubmenu: Submenu[];
 }
 
-type Props = DisplayCreativeRendererSelectorProps & InjectedIntlProps;
+type Props = DisplayCreativeRendererSelectorProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCreativeRendererSelector extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -43,32 +43,12 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
     };
   }
 
-  renderNativeSubmenu = () => {
-    const {
-      onSelect,
-      intl: { formatMessage },
-    } = this.props;
-
-    return [
-      {
-        title: formatMessage(messages.creativeTypeQuantum),
-        select: () => onSelect(nativeQuantumAdRendererId),
-      },
-      {
-        title: formatMessage(messages.creativeTypeIvidence),
-        select: () => onSelect(nativeIvidenceAdRendererId),
-      },
-    ];
-  };
-
   renderAdRendererSubmenu = () => {
     const { onSelect } = this.props;
     const previousAdRendererIds = [
       imageAdRendererId,
       htmlAdRendererId,
       externalAdRendererId,
-      nativeIvidenceAdRendererId,
-      nativeQuantumAdRendererId,
       imageSkinsAdRendererId,
     ];
     const adRendererSubmenu: Submenu[] = [];
@@ -125,6 +105,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
                 title={messages.creativesTypePickerTitle}
                 subtitle={messages.creativesTypePickerSubTitle}
               />
+
               <Row style={{ width: '650px', display: 'inline-block' }}>
                 <Row className="menu">
                   <div className="presentation">
@@ -156,14 +137,6 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
                     select={onTypeSelect(imageSkinsAdRendererId)}
                   />
                   <MenuSubList
-                    title={formatMessage(messages.creativeTypeNative)}
-                    subtitles={[
-                      formatMessage(messages.creativeTypeQuantum),
-                      formatMessage(messages.creativeTypeIvidence),
-                    ]}
-                    submenu={this.renderNativeSubmenu()}
-                  />
-                  <MenuSubList
                     title={formatMessage(messages.allRendererList)}
                     subtitles={[
                       formatMessage(messages.allRendererListSubtitle),
@@ -180,4 +153,4 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
   }
 }
 
-export default injectIntl(DisplayCreativeRendererSelector);
+export default withRouter(injectIntl(DisplayCreativeRendererSelector));

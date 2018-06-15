@@ -2,43 +2,43 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps } from 'react-intl';
 
-import DisplayCreativeRendererSelector from './DisplayCreativeRendererSelector';
+import NativeCreativeRendererSelector from './NativeCreativeRendererSelector';
 import log from '../../../../utils/Logger';
-import { DisplayCreativeForm } from './index';
-import { DisplayCreativeFormData } from './domain';
+import { DisplayCreativeForm } from '../../DisplayAds/Edit';
+import { NativeCreativeFormData } from './domain';
 import Loading from '../../../../components/Loading';
-import DisplayCreativeFormService from './DisplayCreativeFormService';
-import { DisplayCreativeFormProps } from './DisplayCreativeForm';
+import DisplayCreativeFormService from './../../DisplayAds/Edit/DisplayCreativeFormService';
+import { DisplayCreativeFormProps } from '../../DisplayAds/Edit/DisplayCreativeForm';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 
-export interface DisplayCreativeCreatorProps extends DisplayCreativeFormProps {}
+export interface NativeCreativeCreatorProps extends DisplayCreativeFormProps {}
 
 interface State {
   isLoading: boolean;
-  creativeFormData: Partial<DisplayCreativeFormData>;
+  nativeFormData: Partial<NativeCreativeFormData>;
 }
 
-type Props = DisplayCreativeCreatorProps &
+type Props = NativeCreativeCreatorProps &
   InjectedIntlProps &
   InjectedNotificationProps;
 
-class DisplayCreativeCreator extends React.Component<Props, State> {
+class NativeCreativeCreator extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       isLoading: false,
-      creativeFormData: {},
+      nativeFormData: {},
     };
   }
 
   loadFormData = (adRendererId: string) => {
     this.setState({ isLoading: true });
-    DisplayCreativeFormService.initializeFormData(adRendererId, 'BANNER')
-      .then(creativeFormData =>
+    DisplayCreativeFormService.initializeFormData(adRendererId, 'NATIVE')
+      .then(nativeFormData =>
         this.setState({
-          creativeFormData,
+          nativeFormData,
           isLoading: false,
         }),
       )
@@ -53,16 +53,16 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
 
   resetFormData = () => {
     this.setState({
-      creativeFormData: {},
+      nativeFormData: {},
     });
   };
 
   render() {
-    const { creativeFormData, isLoading } = this.state;
+    const { nativeFormData, isLoading } = this.state;
 
     if (isLoading) return <Loading className="loading-full-screen" />;
 
-    const initialValues = this.props.initialValues || creativeFormData;
+    const initialValues = this.props.initialValues || nativeFormData;
 
     return Object.keys(initialValues).length > 0 ? (
       <DisplayCreativeForm
@@ -71,7 +71,7 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
         goToCreativeTypeSelection={this.resetFormData}
       />
     ) : (
-      <DisplayCreativeRendererSelector
+      <NativeCreativeRendererSelector
         onSelect={this.loadFormData}
         close={this.props.close}
       />
@@ -79,6 +79,6 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, DisplayCreativeCreatorProps>(injectNotifications)(
-  DisplayCreativeCreator,
+export default compose<Props, NativeCreativeCreatorProps>(injectNotifications)(
+    NativeCreativeCreator,
 );

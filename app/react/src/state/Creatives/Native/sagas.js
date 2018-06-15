@@ -2,15 +2,15 @@ import { call, fork, put, all, takeLatest } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
-import { fetchCreativeDisplay } from './actions';
+import { fetchNativeCreatives } from './actions';
 
 import CreativeService from '../../../services/CreativeService.ts';
 
 import { getPaginatedApiParam } from '../../../utils/ApiHelper.ts';
 
-import { CREATIVES_DISPLAY_FETCH } from '../../action-types';
+import { CREATIVES_NATIVE_FETCH } from '../../action-types';
 
-function* loadCreativeDisplay({ payload }) {
+function* loadNativeCreatives({ payload }) {
   try {
     const { organisationId, filter, isInitialRender } = payload;
 
@@ -19,10 +19,7 @@ function* loadCreativeDisplay({ payload }) {
     let options = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       archived: filter.archived,
-      subtype: [
-        'BANNER',
-        'VIDEO'
-      ],
+      subtype: ['NATIVE'],
     };
 
     if (filter.keywords) {
@@ -45,11 +42,19 @@ function* loadCreativeDisplay({ payload }) {
           organisationId,
           initialOptions,
         ),
-        response: call(CreativeService.getDisplayAds, organisationId, options),
+        response: call(
+          CreativeService.getDisplayAds,
+          organisationId,
+          options,
+        ),
       };
     } else {
       allCalls = {
-        response: call(CreativeService.getDisplayAds, organisationId, options),
+        response: call(
+          CreativeService.getDisplayAds,
+          organisationId,
+          options,
+        ),
       };
     }
 
@@ -59,15 +64,15 @@ function* loadCreativeDisplay({ payload }) {
       response.hasItems = initialFetch.total > 0;
     }
 
-    yield put(fetchCreativeDisplay.success(response));
+    yield put(fetchNativeCreatives.success(response));
   } catch (error) {
     log.error(error);
-    yield put(fetchCreativeDisplay.failure(error));
+    yield put(fetchNativeCreatives.failure(error));
   }
 }
 
-function* watchfetchCreativeDisplay() {
-  yield takeLatest(CREATIVES_DISPLAY_FETCH.REQUEST, loadCreativeDisplay);
+function* watchfetchNativeCreatives() {
+  yield takeLatest(CREATIVES_NATIVE_FETCH.REQUEST, loadNativeCreatives);
 }
 
-export const creativeDisplaySagas = [fork(watchfetchCreativeDisplay)];
+export const nativeCreativesSagas = [fork(watchfetchNativeCreatives)];

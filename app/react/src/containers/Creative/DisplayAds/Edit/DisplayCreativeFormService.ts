@@ -1,3 +1,4 @@
+import { CreativeSubtype } from './../../../../models/creative/CreativeResource';
 import { DisplayCreativeFormData, isDisplayAdResource } from './domain';
 import CreativeService from '../../../../services/CreativeService';
 import { extractData, extractDataList } from '../../../../services/ApiService';
@@ -18,7 +19,7 @@ function normalizeProperties(properties: PropertyResourceShape[]) {
 }
 
 const DisplayCreativeFormService = {
-  initializeFormData(adRendererId: string): Promise<DisplayCreativeFormData> {
+  initializeFormData(adRendererId: string, subtype: CreativeSubtype): Promise<DisplayCreativeFormData> {
     return PluginService.getPluginVersions(adRendererId).then(resp => {
       const lastVersion = resp.data[resp.data.length - 1];
       return PluginService.getPluginVersionProperty(
@@ -26,7 +27,9 @@ const DisplayCreativeFormService = {
         lastVersion.id,
       ).then(properties => {
         return {
-          creative: {},
+          creative: {
+            subtype: subtype
+          },
           rendererPlugin: lastVersion,
           properties: normalizeProperties(properties),
         };
@@ -74,7 +77,7 @@ const DisplayCreativeFormService = {
         renderer_group_id: rendererPlugin.group_id,
         editor_artifact_id: 'default-editor',
         editor_group_id: 'com.mediarithmics.creative.display',
-        subtype: 'BANNER',
+        subtype: formData.creative.subtype,
         ...creative
       };
       createOrUpdatePromise = CreativeService.createDisplayCreative(
@@ -87,15 +90,17 @@ const DisplayCreativeFormService = {
       const creativeId = resp.data.id;
 
       return Promise.all(
-        Object.keys(properties).filter(key => properties[key].writable).map(key => {
-          const item = properties[key];
-          return CreativeService.updateDisplayCreativeRendererProperty(
-            organisationId,
-            creativeId,
-            item.technical_name,
-            item,
-          );
-        }),
+        Object.keys(properties)
+          .filter(key => properties[key].writable)
+          .map(key => {
+            const item = properties[key];
+            return CreativeService.updateDisplayCreativeRendererProperty(
+              organisationId,
+              creativeId,
+              item.technical_name,
+              item,
+            );
+          }),
       ).then(() => {
         return CreativeService.takeScreenshot(creativeId).then(() => {
           return creativeId;

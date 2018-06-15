@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Modal } from 'antd';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import {
   FormattedMessage,
   defineMessages,
@@ -10,65 +10,72 @@ import {
 import { compose } from 'recompose';
 
 import { Actionbar } from '../../../Actionbar';
-import { withTranslations } from '../../../Helpers';
 import McsIcon from '../../../../components/McsIcon';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 import Slider from '../../../../components/Transition/Slide';
 
 const messages = defineMessages({
-  archiveEmailsModalTitle: {
-    id: 'archive.emails.modal.title',
-    defaultMessage: 'Archive Emails',
+  archiveNativesModalTitle: {
+    id: 'archive.natives.modal.title',
+    defaultMessage: 'Archive Native Creatives',
   },
-  archiveEmailsModalMessage: {
-    id: 'archive.emails.modal.message',
-    defaultMessage: 'Are you sure to archive all the selected emails ?',
+  archiveNativesModalMessage: {
+    id: 'archive.natives.modal.message',
+    defaultMessage:
+      'Are you sure to archive all the selected native creatives ?',
+  },
+  breadCrumbNativeListTitle: {
+    id: 'actionBar.natives.breadCrumb.title',
+    defaultMessage: 'Natives',
+  },
+  newNativeCreativeButton: {
+    id: 'actionBar.natives.new.native',
+    defaultMessage: 'New Native',
   },
 });
 
-interface EmailActionBarProps {
+interface NativeActionBarProps {
   rowSelection: {
     selectedRowKeys: string[];
     onChange: (selectedRowKeys: string[]) => void;
     unselectAllItemIds: () => void;
   };
   multiEditProps: {
-    archiveEmails: () => void;
+    archiveNatives: () => void;
     isArchiveModalVisible: boolean;
     handleOk: () => void;
     handleCancel: () => void;
     isArchiving: boolean;
   };
 }
-type JoinedProps = EmailActionBarProps &
+type JoinedProps = NativeActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
-  InjectedIntlProps &
-  TranslationProps;
+  InjectedIntlProps;
 
-class EmailActionBar extends React.Component<JoinedProps> {
+class NativeActionBar extends React.Component<JoinedProps> {
   render() {
     const {
       match: {
         params: { organisationId },
       },
-      translations,
       rowSelection,
       multiEditProps: {
-        archiveEmails,
+        archiveNatives,
         isArchiveModalVisible,
         handleCancel,
         handleOk,
         isArchiving,
       },
       intl,
+      location: { pathname },
+      history,
     } = this.props;
 
     const breadcrumbPaths = [
       {
-        name: translations.EMAILS_TEMPLATES,
-        url: `/v2/o/${organisationId}/creatives/email`,
+        name: intl.formatMessage(messages.breadCrumbNativeListTitle),
+        url: `/v2/o/${organisationId}/creatives/native`,
       },
     ];
 
@@ -76,19 +83,27 @@ class EmailActionBar extends React.Component<JoinedProps> {
       rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0
     );
 
+    const newnativeLink = () => {
+      history.push({
+        pathname: `/v2/o/${organisationId}/creatives/native/create`,
+        state: { from: `${pathname}` },
+      });
+    };
+
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/v2/o/${organisationId}/creatives/email/create`}>
+        <a onClick={newnativeLink}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_EMAIL_TEMPLATE" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage {...messages.newNativeCreativeButton} />
           </Button>
-        </Link>
+        </a>
         <Slider
           toShow={hasSelected}
           horizontal={true}
           content={
             <Button
-              onClick={archiveEmails}
+              onClick={archiveNatives}
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
@@ -99,13 +114,13 @@ class EmailActionBar extends React.Component<JoinedProps> {
 
         {hasSelected ? (
           <Modal
-            title={intl.formatMessage(messages.archiveEmailsModalTitle)}
+            title={intl.formatMessage(messages.archiveNativesModalTitle)}
             visible={isArchiveModalVisible}
             onOk={handleOk}
             onCancel={handleCancel}
             confirmLoading={isArchiving}
           >
-            <p>{intl.formatMessage(messages.archiveEmailsModalMessage)}</p>
+            <p>{intl.formatMessage(messages.archiveNativesModalMessage)}</p>
           </Modal>
         ) : null}
       </Actionbar>
@@ -113,8 +128,7 @@ class EmailActionBar extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, EmailActionBarProps>(
-  withTranslations,
+export default compose<JoinedProps, NativeActionBarProps>(
   withRouter,
   injectIntl,
-)(EmailActionBar);
+)(NativeActionBar);

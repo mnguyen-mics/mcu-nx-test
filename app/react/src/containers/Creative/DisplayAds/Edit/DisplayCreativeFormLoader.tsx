@@ -8,7 +8,9 @@ import { DisplayCreativeFormProps } from './DisplayCreativeForm';
 import { DisplayCreativeFormData } from './domain';
 import { Loading } from '../../../../components/index';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 export interface DisplayCreativeFormLoaderProps
   extends DisplayCreativeFormProps {
@@ -37,7 +39,12 @@ class DisplayCreativeFormLoader extends React.Component<
   }
 
   componentDidMount() {
-    const { match: { params: { organisationId } }, creativeId } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      creativeId,
+    } = this.props;
     this.loadFormData(organisationId, creativeId);
   }
 
@@ -46,12 +53,11 @@ class DisplayCreativeFormLoader extends React.Component<
 
     DisplayCreativeFormService.loadFormData(creativeId)
       .then(creativeFormData => {
-          this.setState({
-            creativeFormData,
-            isLoading: false,
-          })
-        }
-      )
+        this.setState({
+          creativeFormData,
+          isLoading: false,
+        });
+      })
       .catch(err => {
         log.debug(err);
         this.props.notifyError(err);
@@ -63,7 +69,7 @@ class DisplayCreativeFormLoader extends React.Component<
 
   saveFormData = () => {
     this.setState({ isLoading: true });
-  }
+  };
 
   render() {
     const { creativeId, ...rest } = this.props;
@@ -73,7 +79,7 @@ class DisplayCreativeFormLoader extends React.Component<
     }
 
     return (
-      <DisplayCreativeForm        
+      <DisplayCreativeForm
         {...rest}
         initialValues={this.state.creativeFormData}
       />

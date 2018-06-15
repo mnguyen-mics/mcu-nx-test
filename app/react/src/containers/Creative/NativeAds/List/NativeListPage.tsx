@@ -3,8 +3,8 @@ import { Layout, message } from 'antd';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
-import EmailActionBar from './EmailActionBar';
-import EmailList from './EmailList';
+import NativeActionBar from './NativeActionBar';
+import NativeList from './NativeList';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -14,17 +14,17 @@ import CreativeService, {
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import {
-  getEmailTemplates,
-  isFetchingEmailTemplates,
-  hasEmailTemplates,
-  getEmailTemplatesTotal,
-} from '../../../../state/Creatives/Emails/selectors';
+  getNativeCreatives,
+  isFetchingNativeCreatives,
+  hasNativeCreatives,
+  getNativeCreativesTotal,
+} from '../../../../state/Creatives/Native/selectors';
 import {
   parseSearch,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
-import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
-import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
+import { NATIVE_SEARCH_SETTINGS } from './constants';
+import * as NativeCreativesActions from '../../../../state/Creatives/Native/actions';
 import { TranslationProps } from '../../../Helpers/withTranslations';
 import { Filters } from '../../../../components/ItemList';
 import injectNotifications, {
@@ -34,30 +34,30 @@ import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
 
 const messages = defineMessages({
   archiveSuccess: {
-    id: 'archive.email.success.msg',
-    defaultMessage: 'Email templates successfully archived',
+    id: 'archive.native.success.msg',
+    defaultMessage: 'Native creative successfully archived',
   },
 });
 
 const { Content } = Layout;
 
 export interface MapDispatchToProps {
-  fetchCreativeEmails: (
+  fetchNativeCreatives: (
     organisationId: string,
     filter: Filters,
     bool?: boolean,
   ) => void;
-  resetCreativeEmails: () => void;
+  resetNativeCreatives: () => void;
 }
 
 export interface MapStateToProps extends TranslationProps {
-  hasCreativeEmails: boolean;
-  isFetchingCreativeEmails: boolean;
+  hasNatives: boolean;
+  isFetchingNatives: boolean;
   dataSource: object[]; // type better
-  totalCreativeEmails: number;
+  totalNativeCreatives: number;
 }
 
-interface EmailListPageState {
+interface NativeListPageState {
   selectedRowKeys: string[];
   isArchiveModalVisible: boolean;
   allRowsAreSelected: boolean;
@@ -71,7 +71,7 @@ type JoinedProps = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
+class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -97,7 +97,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     });
   };
 
-  archiveEmails = () => {
+  archiveNativeCreatives = () => {
     this.showModal();
   };
 
@@ -113,22 +113,23 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     });
   };
 
-  getAllEmailTemplatesIds = () => {
+  getAllNativeCreativeIds = () => {
     const {
-      totalCreativeEmails,
+      totalNativeCreatives,
       match: {
         params: { organisationId },
       },
       notifyError,
     } = this.props;
     const options: GetCreativesOptions = {
-      type: 'EMAIL_TEMPLATE',
+      type: 'DISPLAY_AD',
+      subtype: ['NATIVE'],
       archived: false,
-      max_results: totalCreativeEmails, // mandatory
+      max_results: totalNativeCreatives, // mandatory
     };
-    return CreativeService.getEmailTemplates(organisationId, options)
+    return CreativeService.getDisplayAds(organisationId, options)
       .then(apiResp =>
-        apiResp.data.map(emailTemplateResource => emailTemplateResource.id),
+        apiResp.data.map(nativeCreativesResource => nativeCreativesResource.id),
       )
       .catch(err => {
         notifyError(err);
@@ -145,20 +146,20 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       },
       dataSource,
     } = this.props;
-    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+    const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
     if (dataSource.length === 1 && filter.currentPage !== 1) {
       const newFilter = {
         ...filter,
         currentPage: 1,
       };
-      this.props.fetchCreativeEmails(organisationId, filter, true);
+      this.props.fetchNativeCreatives(organisationId, filter, true);
       history.push({
         pathname: pathname,
         search: updateSearch(search, newFilter),
         state: state,
       });
     } else {
-      this.props.fetchCreativeEmails(organisationId, filter, true);
+      this.props.fetchNativeCreatives(organisationId, filter, true);
     }
 
     this.setState({
@@ -168,18 +169,18 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     message.success(intl.formatMessage(messages.archiveSuccess));
   };
 
-  makeArchiveAction = (emailTemplateIds: string[]) => {
+  makeArchiveAction = (nativeIds: string[]) => {
     this.setState({
       isArchiving: true,
     });
     const tasks: Task[] = [];
-    emailTemplateIds.forEach(emailTemplateId => {
+    nativeIds.forEach(nativeId => {
       tasks.push(() => {
-        return CreativeService.getEmailTemplate(emailTemplateId)
+        return CreativeService.getDisplayAd(nativeId)
           .then(apiResp => apiResp.data)
-          .then(emailTemplateData => {
-            return CreativeService.updateEmailTemplate(emailTemplateId, {
-              ...emailTemplateData,
+          .then(nativeData => {
+            return CreativeService.updateDisplayCreative(nativeId, {
+              ...nativeData,
               archived: true,
             });
           });
@@ -197,7 +198,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
     if (allRowsAreSelected) {
-      return this.getAllEmailTemplatesIds().then(
+      return this.getAllNativeCreativeIds().then(
         (allTemplatesIds: string[]) => {
           this.makeArchiveAction(allTemplatesIds);
         },
@@ -216,12 +217,12 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
   render() {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
     const {
-      hasCreativeEmails,
-      isFetchingCreativeEmails,
+      hasNatives,
+      isFetchingNatives,
       dataSource,
-      totalCreativeEmails,
-      fetchCreativeEmails,
-      resetCreativeEmails,
+      totalNativeCreatives,
+      fetchNativeCreatives,
+      resetNativeCreatives,
       translations,
     } = this.props;
     const rowSelection = {
@@ -235,7 +236,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     };
 
     const multiEditProps = {
-      archiveEmails: this.archiveEmails,
+      archiveNatives: this.archiveNativeCreatives,
       isArchiveModalVisible: this.state.isArchiveModalVisible,
       handleOk: this.handleOk,
       handleCancel: this.handleCancel,
@@ -243,24 +244,24 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
     };
 
     const reduxProps = {
-      hasCreativeEmails,
-      isFetchingCreativeEmails,
+      hasNatives,
+      isFetchingNatives,
       dataSource,
-      totalCreativeEmails,
-      fetchCreativeEmails,
-      resetCreativeEmails,
+      totalNativeCreatives,
+      fetchNativeCreatives,
+      resetNativeCreatives,
       translations,
     };
 
     return (
       <div className="ant-layout">
-        <EmailActionBar
+        <NativeActionBar
           rowSelection={rowSelection}
           multiEditProps={multiEditProps}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <EmailList rowSelection={rowSelection} {...reduxProps} />
+            <NativeList rowSelection={rowSelection} {...reduxProps} />
           </Content>
         </div>
       </div>
@@ -269,16 +270,16 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
 }
 
 const mapStateToProps = (state: MapStateToProps) => ({
-  hasCreativeEmails: hasEmailTemplates(state),
-  isFetchingCreativeEmails: isFetchingEmailTemplates(state),
-  dataSource: getEmailTemplates(state),
-  totalCreativeEmails: getEmailTemplatesTotal(state),
+  hasNatives: hasNativeCreatives(state),
+  isFetchingNativeCreatives: isFetchingNativeCreatives(state),
+  dataSource: getNativeCreatives(state),
+  totalNativeCreatives: getNativeCreativesTotal(state),
   translations: state.translations,
 });
 
 const mapDispatchToProps = {
-  fetchCreativeEmails: CreativeEmailsActions.fetchCreativeEmails.request,
-  resetCreativeEmails: CreativeEmailsActions.resetCreativeEmails,
+  fetchNativeCreatives: NativeCreativesActions.fetchNativeCreatives.request,
+  resetNativeCreatives: NativeCreativesActions.resetNativeCreatives,
 };
 export default compose<JoinedProps, {}>(
   withRouter,
@@ -286,4 +287,4 @@ export default compose<JoinedProps, {}>(
   injectDrawer,
   injectNotifications,
   connect(mapStateToProps, mapDispatchToProps),
-)(EmailListPage);
+)(NativeListPage);

@@ -35,6 +35,14 @@ const defaultErrorMessages = defineMessages({
     id: 'common.form.field.error.positive_number',
     defaultMessage: 'Number must be above 0',
   },
+  exceedMaxCharacters: {
+    id: 'common.form.field.error.exceed_max_char',
+    defaultMessage: 'Max {length} characters',
+  },
+  integerOutOfRange: {
+    id: 'common.form.field.error.integer_out_of_range',
+    defaultMessage: 'Integer between {min} and {max}',
+  },
 });
 
 type FormatMessageHandler = (
@@ -51,6 +59,8 @@ export interface FieldValidatorsProps {
   isValidInteger: Validator;
   isValidDouble: Validator;
   isValidArrayOfNumber: Validator;
+  isCharLengthLessThan: (value: number) => Validator;
+  isIntegerBetween: (min: number, max: number) => Validator;
 }
 
 export interface ValidatorProps {
@@ -107,6 +117,16 @@ const isValidArrayOfNumber = (formatMessage: FormatMessageHandler): Validator =>
   return !(value && Array.isArray(value) && containsOnlyNumber) ? formatMessage(defaultErrorMessages.invalidNumber) : undefined
 }
 
+const isCharLengthLessThan = (formatMessage: FormatMessageHandler) =>  (length: number): Validator => value => {
+  return value && value.length >= length ?
+    formatMessage(defaultErrorMessages.exceedMaxCharacters, { length: length }) : undefined;
+};
+
+const isIntegerBetween = (formatMessage: FormatMessageHandler) => (min: number, max: number): Validator => value => {
+  return value && parseInt(value, 10) >= min && parseInt(value, 10) <= max ?
+    formatMessage(defaultErrorMessages.integerOutOfRange, { min: min, max: max }) : undefined;
+};
+
 export default compose<{}, ValidatorProps>(
   injectIntl,
   withProps<ValidatorProps, InjectedIntlProps>(
@@ -121,7 +141,9 @@ export default compose<{}, ValidatorProps>(
           isValidFloat: isValidFloat(formatMessage),
           isValidInteger: isValidInteger(formatMessage),
           isValidDouble: isValidDouble(formatMessage),
-          isValidArrayOfNumber: isValidArrayOfNumber(formatMessage)
+          isValidArrayOfNumber: isValidArrayOfNumber(formatMessage),
+          isCharLengthLessThan: isCharLengthLessThan(formatMessage),
+          isIntegerBetween: isIntegerBetween(formatMessage),
         },
       };
     }),

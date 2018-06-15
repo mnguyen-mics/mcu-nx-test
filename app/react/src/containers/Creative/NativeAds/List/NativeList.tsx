@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
@@ -9,9 +9,8 @@ import {
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView/index';
-import EmailTestModal from './EmailTestModal';
 
-import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
+import { NATIVE_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
   parseSearch,
@@ -23,49 +22,46 @@ import {
 import CreativeScreenshot from '../../CreativeScreenshot';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { Filters } from '../../../../components/ItemList';
-import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
+import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
 import { withTranslations } from '../../../Helpers/index';
 import { TranslationProps } from '../../../Helpers/withTranslations';
-import { MapStateToProps, MapDispatchToProps } from './EmailListPage';
+import { MapStateToProps, MapDispatchToProps } from './NativeListPage';
 import CreativeService from '../../../../services/CreativeService';
 import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
 
-interface CreativeEmailsTableProps extends MapStateToProps, MapDispatchToProps {
+interface NativeCreativesTableProps
+  extends MapStateToProps,
+    MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
 }
 
-interface CreativeEmailsTableState {
+interface NativeCreativesTableState {
   modalVisible: boolean;
   inputValue: string[];
-  selectedtemplateId: string;
+  selectedNativeId: string;
 }
 
-type JoinedProps = CreativeEmailsTableProps &
+type JoinedProps = NativeCreativesTableProps &
   RouteComponentProps<CampaignRouteParams> &
   TranslationProps &
   InjectedIntlProps;
 
 const messages = defineMessages({
   searchPlaceholder: {
-    id: 'creative.email.list.searchPlaceholder',
-    defaultMessage: 'Search Email Templates',
+    id: 'creative.native.list.searchPlaceholder',
+    defaultMessage: 'Search Native Creatives',
   },
 });
 
-class CreativeEmailsTable extends React.Component<
+class NativeCreativesTable extends React.Component<
   JoinedProps,
-  CreativeEmailsTableState
+  NativeCreativesTableState
 > {
   constructor(props: JoinedProps) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.archiveCreativeEmails = this.archiveCreativeEmails.bind(this);
-    this.editCreativeEmails = this.editCreativeEmails.bind(this);
-    this.state = {
-      modalVisible: false,
-      selectedtemplateId: '',
-      inputValue: [],
-    };
+    this.archiveNativeCreatives = this.archiveNativeCreatives.bind(this);
+    this.editNativeCreatives = this.editNativeCreatives.bind(this);
   }
 
   componentDidMount() {
@@ -75,18 +71,18 @@ class CreativeEmailsTable extends React.Component<
       match: {
         params: { organisationId },
       },
-      fetchCreativeEmails,
+      fetchNativeCreatives,
     } = this.props;
 
-    if (!isSearchValid(search, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
+    if (!isSearchValid(search, NATIVE_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS),
+        search: buildDefaultSearch(search, NATIVE_SEARCH_SETTINGS),
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
-      fetchCreativeEmails(organisationId, filter, true);
+      const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
+      fetchNativeCreatives(organisationId, filter, true);
     }
   }
 
@@ -97,7 +93,7 @@ class CreativeEmailsTable extends React.Component<
         params: { organisationId },
       },
       history,
-      fetchCreativeEmails,
+      fetchNativeCreatives,
     } = this.props;
 
     const {
@@ -113,24 +109,21 @@ class CreativeEmailsTable extends React.Component<
       !compareSearches(search, nextSearch) ||
       organisationId !== nextOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, NATIVE_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(
-            nextSearch,
-            CREATIVE_EMAIL_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(nextSearch, NATIVE_SEARCH_SETTINGS),
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS);
-        fetchCreativeEmails(nextOrganisationId, filter, checkEmptyDataSource);
+        const filter = parseSearch(nextSearch, NATIVE_SEARCH_SETTINGS);
+        fetchNativeCreatives(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
   }
 
   componentWillUnmount() {
-    this.props.resetCreativeEmails();
+    this.props.resetNativeCreatives();
   }
 
   updateLocationSearch(params: Filters) {
@@ -141,44 +134,37 @@ class CreativeEmailsTable extends React.Component<
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        CREATIVE_EMAIL_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, NATIVE_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
   }
 
-  viewTestModal = (template: EmailTemplateResource) => {
-    this.setState({ modalVisible: true, selectedtemplateId: template.id });
+  viewTestModal = (template: DisplayAdResource) => {
+    this.setState({ modalVisible: true, selectedNativeId: template.id });
   };
 
   handleCancel = () => {
-    this.setState({ modalVisible: false, selectedtemplateId: '' });
+    this.setState({ modalVisible: false, selectedNativeId: '' });
   };
 
   render() {
     const {
-      match: {
-        params: { organisationId },
-      },
       location: { search },
-      isFetchingCreativeEmails,
+      isFetchingNatives,
       dataSource,
-      totalCreativeEmails,
-      hasCreativeEmails,
+      totalNativeCreatives,
+      hasNatives,
       rowSelection,
       intl,
     } = this.props;
 
-    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+    const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
 
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalCreativeEmails,
+      total: totalNativeCreatives,
       onChange: (page: number) => {
         this.updateLocationSearch({
           currentPage: page,
@@ -213,14 +199,17 @@ class CreativeEmailsTable extends React.Component<
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (text: string, record: any) => (
-          <Link
-            className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/creatives/email/${record.id}/edit`}
-          >
-            {text}
-          </Link>
-        ),
+        render: (text: string, record: any) => {
+          const editLink = () => {
+            this.editNativeCreatives(record);
+          };
+
+          return (
+            <a className="mcs-campaigns-link" onClick={editLink}>
+              {text}
+            </a>
+          );
+        },
       },
       {
         translationKey: 'AUDIT_STATUS',
@@ -241,16 +230,12 @@ class CreativeEmailsTable extends React.Component<
         key: 'action',
         actions: [
           {
-            translationKey: 'SEND_TEST',
-            callback: this.viewTestModal,
-          },
-          {
             translationKey: 'EDIT',
-            callback: this.editCreativeEmails,
+            callback: this.editNativeCreatives,
           },
           {
             translationKey: 'ARCHIVE',
-            callback: this.archiveCreativeEmails,
+            callback: this.archiveNativeCreatives,
           },
         ],
       },
@@ -266,53 +251,51 @@ class CreativeEmailsTable extends React.Component<
       defaultValue: filter.keywords,
     };
 
-    return hasCreativeEmails ? (
+    return hasNatives ? (
       <div className="mcs-table-container">
-        <EmailTestModal
-          organisationId={this.props.match.params.organisationId}
-          isModalVisible={this.state.modalVisible}
-          selectedtemplateId={this.state.selectedtemplateId}
-          handleCancel={this.handleCancel}
-        />
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}
-          loading={isFetchingCreativeEmails}
+          loading={isFetchingNatives}
           pagination={pagination}
           rowSelection={rowSelection}
           searchOptions={searchOptions}
         />
       </div>
     ) : (
-      <EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />
+      <EmptyTableView iconType="display" text="EMPTY_NATIVE_CREATIVES" />
     );
   }
 
-  editCreativeEmails(campaign: EmailTemplateResource) {
+  editNativeCreatives(native: DisplayAdResource) {
     const {
       match: {
         params: { organisationId },
       },
       history,
+      location,
     } = this.props;
 
-    history.push(`/v2/o/${organisationId}/creatives/email/${campaign.id}/edit`);
+    history.push({
+      pathname: `/v2/o/${organisationId}/creatives/native/edit/${native.id}`,
+      state: { from: `${location.pathname}` },
+    });
   }
 
-  archiveCreativeEmails(email: EmailTemplateResource) {
+  archiveNativeCreatives(native: DisplayAdResource) {
     const {
       match: {
         params: { organisationId },
       },
       location: { search, pathname, state },
-      fetchCreativeEmails,
+      fetchNativeCreatives,
       translations,
       dataSource,
       history,
     } = this.props;
 
-    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+    const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
 
     Modal.confirm({
       title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
@@ -321,8 +304,8 @@ class CreativeEmailsTable extends React.Component<
       okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
       cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
       onOk() {
-        CreativeService.updateEmailTemplate(email.id, {
-          ...email,
+        CreativeService.updateDisplayCreative(native.id, {
+          ...native,
           archived: true,
         }).then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
@@ -330,14 +313,14 @@ class CreativeEmailsTable extends React.Component<
               ...filter,
               currentPage: filter.currentPage - 1,
             };
-            fetchCreativeEmails(organisationId, filter, true);
+            fetchNativeCreatives(organisationId, filter, true);
             history.replace({
               pathname: pathname,
               search: updateSearch(search, newFilter),
               state: state,
             });
           }
-          fetchCreativeEmails(organisationId, filter, true);
+          fetchNativeCreatives(organisationId, filter, true);
         });
       },
       onCancel() {
@@ -347,8 +330,8 @@ class CreativeEmailsTable extends React.Component<
   }
 }
 
-export default compose<JoinedProps, CreativeEmailsTableProps>(
+export default compose<JoinedProps, NativeCreativesTableProps>(
   withRouter,
   withTranslations,
   injectIntl,
-)(CreativeEmailsTable);
+)(NativeCreativesTable);
