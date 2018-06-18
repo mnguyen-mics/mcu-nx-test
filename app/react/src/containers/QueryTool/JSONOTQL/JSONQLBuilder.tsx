@@ -48,6 +48,8 @@ export interface JSONQLBuilderProps {
   staleQueryResult: boolean;
   queryResult: QueryResult;
   runQuery: () => void;
+  datamartId: string;
+  organisationId: string;
 }
 
 interface State {
@@ -283,7 +285,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
   }
 
   render() {
-    const { queryResult, staleQueryResult, runQuery } = this.props;
+    const { queryResult, staleQueryResult, runQuery, query, datamartId, organisationId } = this.props;
 
     return (
       <div
@@ -294,6 +296,9 @@ class JSONQLBuilder extends React.Component<Props, State> {
           queryResults={[queryResult]}
           staleQueryResult={staleQueryResult}
           onRefresh={runQuery}
+          datamartId={datamartId}
+          organisationId={organisationId}
+          query={query}
         />
         <DiagramWidget
           diagramEngine={this.engine}

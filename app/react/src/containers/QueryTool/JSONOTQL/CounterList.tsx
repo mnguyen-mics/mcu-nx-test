@@ -1,11 +1,16 @@
 import * as React from 'react';
 import { QueryResult } from './JSONQLBuilder';
 import Counter from './Counter';
+import { ObjectTreeExpressionNodeShape } from '../../../models/datamart/graphdb/QueryDocument';
+import TimelineSelector from './TimelineSelector';
 
 export interface CounterListProps {
   queryResults: QueryResult[];
   staleQueryResult: boolean;
   onRefresh: () => void;
+  query:  ObjectTreeExpressionNodeShape | undefined; 
+  datamartId: string;
+  organisationId: string;
 }
 
 export default class CounterList extends React.Component<
@@ -23,7 +28,7 @@ export default class CounterList extends React.Component<
   };
 
   render() {
-    const { queryResults, staleQueryResult, onRefresh } = this.props;
+    const { queryResults, staleQueryResult, onRefresh, organisationId } = this.props;
     if (queryResults.length === 0) {
       return null;
     }
@@ -60,6 +65,7 @@ export default class CounterList extends React.Component<
               />
             );
           })}
+          <TimelineSelector stale={staleQueryResult} datamartId={this.props.datamartId} query={this.props.query} organisationId={organisationId} />
         </div>
       </div>
     );

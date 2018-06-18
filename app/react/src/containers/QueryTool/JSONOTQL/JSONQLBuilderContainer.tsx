@@ -16,6 +16,8 @@ import QueryService from '../../../services/QueryService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
+import OTQLService from '../../../services/OTQLService';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 export interface JSONQLBuilderContainerProps {
   datamartId: string;
@@ -39,7 +41,7 @@ interface State {
 
 type Props = JSONQLBuilderContainerProps &
   InjectedIntlProps &
-  InjectedNotificationProps;
+  InjectedNotificationProps & RouteComponentProps<{ organisationId: string }>;
 
 class JSONQLBuilderContainer extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -235,7 +237,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { editionLayout, renderActionBar, datamartId } = this.props;
+    const { editionLayout, renderActionBar, datamartId, match: { params: { organisationId } } } = this.props;
     const {
       fetchingObjectTypes,
       objectTypes,
@@ -278,6 +280,8 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
             runQuery={this.runQuery}
             staleQueryResult={staleQueryResult}
             queryResult={queryResult}
+            datamartId={this.props.datamartId}
+            organisationId={organisationId}
           />
         </Layout.Content>
       </Layout>
@@ -286,6 +290,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
 }
 
 export default compose<Props, JSONQLBuilderContainerProps>(
+  withRouter,
   injectIntl,
   injectNotifications,
   connect(state => ({
