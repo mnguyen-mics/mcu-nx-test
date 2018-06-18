@@ -93,32 +93,6 @@ const CatalogService = {
     return ApiService.getRequest(endpoint, params);
   },
 
-  getServices1(
-    organisationId: string,
-    options: {
-      root?: boolean,
-      parentCategoryId?: string,
-      serviceFamily?: ServiceFamily[],
-      serviceType?: ServiceType[],
-      locale?: Locale,
-      categoryType?: ServiceCategoryType[],
-      categorySubtype?: ServiceCategorySubType[],
-      searchDepth?: number,
-    } = {},
-  ): Promise<DataListResponse<ServiceItemPublicResource>> {
-    const endpoint = `subscribed_services/${organisationId}/services`;
-    const params = {
-      root: options.root,
-      parent_category_id: options.parentCategoryId,
-      service_family: options.serviceFamily,
-      service_type: options.serviceType,
-      locale: options.locale,
-      category_type: options.categoryType,
-      category_subtype: options.categorySubtype,
-    };
-    return ApiService.getRequest(endpoint, params);
-  },
-
   getService(serviceId: string): Promise<DataResponse<ServiceItemPublicResource>> {
     return ApiService.getRequest(`/service_items/${serviceId}`)
   },

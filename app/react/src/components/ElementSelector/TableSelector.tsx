@@ -110,7 +110,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       });
       Promise.all(promises).then(selectedElements => {
         this.setState({
-          selectedElementsById: normalizeArrayOfObject(selectedElements, defaultSelectedKey as any),
+          selectedElementsById: normalizeArrayOfObject(selectedElements, defaultSelectedKey!),
         });
       });
     }
@@ -150,8 +150,9 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         key: 'selected',
         render: (text: string, record: T) => {
           const Field = this.props.singleSelection ? Radio : Checkbox;
+          const key = selectedElementsById[record[defaultSelectedKey!].toString()];
           return (
-            <Field checked={!!selectedElementsById[(record as any)[defaultSelectedKey]]}>{text}</Field>
+            <Field checked={!!key}>{text}</Field>
           );
         },
       },
@@ -248,8 +249,8 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     return this.props
       .fetchDataList(filterOptions)
       .then(({ data, total }) => {
-        const allElementIds = data.map(element => (element as any)[defaultSelectedKey]);
-        const elementsById = normalizeArrayOfObject(data, defaultSelectedKey as any);
+        const allElementIds = data.map(element => element[defaultSelectedKey!].toString());
+        const elementsById = normalizeArrayOfObject(data, defaultSelectedKey!);
         const selectedElementsById = {
           ...this.state.selectedElementsById,
           ...selectedIds.reduce((acc, elementId) => {
@@ -273,7 +274,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   };
 
   toggleElementSelection = (element: T) => {
-    const elementId = (element as any)[this.props.defaultSelectedKey];
+    const elementId = element[this.props.defaultSelectedKey!].toString();
     this.setState(prevState => {
       const isElementSelected = prevState.selectedElementsById[elementId];
 
