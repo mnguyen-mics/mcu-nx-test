@@ -191,7 +191,9 @@ class DealForm extends React.Component<JoinedProps, State> {
   fetchAdexchanges = (organisationId: string) => {
     return CatalogService.getServices(organisationId, {
       serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS']
-    }).then(res => this.setState({
+    })
+    .then(res => res.data)
+    .then(res => this.setState({
       adex: {
         loading: false,
         data: res.filter(r => r.type === 'inventory_access_ad_exchange') as AdexInventoryServiceItemPublicResource[],
