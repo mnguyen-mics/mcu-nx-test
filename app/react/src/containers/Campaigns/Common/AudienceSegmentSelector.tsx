@@ -11,11 +11,14 @@ import AudienceSegmentService, {
   GetSegmentsOption,
 } from '../../../services/AudienceSegmentService';
 import { AudienceSegmentResource } from '../../../models/audiencesegment';
-import { formatMetric } from '../../../utils/MetricHelper';
+import { formatMetric, normalizeReportView } from '../../../utils/MetricHelper';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { Index } from '../../../utils';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
+import ReportService from '../../../services/ReportService';
+import McsMoment from '../../../utils/McsMoment';
+import { normalizeArrayOfObject } from '../../../utils/Normalizer';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentResource>
@@ -72,6 +75,26 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       reportBySegmentId: {},
       fetchingReport: false,
     };
+  }
+
+  componentDidMount() {	
+    const { match: { params: { organisationId } } } = this.props;	
+    this.setState({ fetchingReport: true });	
+    ReportService.getAudienceSegmentReport(	
+      organisationId,	
+      new McsMoment('now'),	
+      new McsMoment('now'),	
+      ['audience_segment_id'],	
+      undefined,	
+    ).then(resp => {	
+      this.setState({	
+        fetchingReport: false,	
+        reportBySegmentId: normalizeArrayOfObject(	
+          normalizeReportView(resp.data.report_view),	
+          'audience_segment_id',	
+        ),	
+      });	
+    });	
   }
 
   saveSegments = (
