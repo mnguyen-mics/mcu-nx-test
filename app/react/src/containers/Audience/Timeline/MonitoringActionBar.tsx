@@ -1,89 +1,57 @@
 import * as React from 'react';
 import { Input, Select, Button, Modal } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import queryString from 'query-string';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar } from '../../Actionbar';
 import McsIcon from '../../../components/McsIcon';
 import messages from './messages';
+import { Identifier } from './Monitoring';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
 
-type Props = InjectedIntlProps &
+interface MonitoringActionBarProps {
+  isModalVisible: boolean;
+  handleModal: (visible: boolean) => void;
+  onIdentifierChange: (identifier: Identifier) => void;
+}
+
+type Props = MonitoringActionBarProps &
+  InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {
-  modalVisible: boolean;
-  form: {
-    type?: string;
-    value: string | null;
-  };
+  identifierId: string;
+  identifierType: string;
 }
 
 class MonitoringActionbar extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      modalVisible: false,
-      form: {
-        type: 'user_point_id',
-        value: null,
-      },
+      identifierId: '',
+      identifierType: '',
     };
   }
 
-  setModalVisible = (modalVisible: boolean) => {
-    this.setState({ modalVisible });
-  };
-
-  submitModal = (e: any) => {
-    const {
-      history,
-      match: {
-        params: { organisationId },
-      },
-      location
-    } = this.props;
-    const datamartId = queryString.parse(location.search).datamartId
-      ? queryString.parse(location.search).datamartId
-      : '';
-    history.push(
-      `/v2/o/${organisationId}/audience/timeline/${this.state.form.type}/${
-        this.state.form.value
-      }?datamartId=${datamartId}`,
-    );
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState,
-        modalVisible: false,
-        form: {
-          type: 'user_point_id',
-          value: null,
-        },
-      };
-      return nextState;
-    });
-  };
-
   updateValue = (e: any) => {
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState,
-      };
-      nextState.form.value = e.target.value;
-      return nextState;
+    this.setState({
+      identifierId: e.target.value,
     });
   };
 
   updateType = (type: string) => {
-    this.setState(prevState => {
-      const nextState = {
-        ...prevState,
-      };
-      nextState.form.type = type;
-      return nextState;
+    this.setState({
+      identifierType: type,
+    });
+  };
+
+  submitModal = () => {
+    const { identifierId, identifierType } = this.state;
+    this.props.onIdentifierChange({
+      id: identifierId,
+      type: identifierType,
     });
   };
 
@@ -93,7 +61,11 @@ class MonitoringActionbar extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl: { formatMessage },
+      isModalVisible,
+      handleModal,
     } = this.props;
+
+    const { identifierId, identifierType } = this.state;
 
     const breadcrumbPaths = [
       {
@@ -102,9 +74,9 @@ class MonitoringActionbar extends React.Component<Props, State> {
       },
     ];
 
-    const onReturnClick = () => this.setModalVisible(false);
-    const onUserLookupClick = () => this.setModalVisible(true);
-    const onSubmitClick = (e: any) => this.submitModal(e);
+    const onReturnClick = () => handleModal(false);
+    const onUserLookupClick = () => handleModal(true);
+    const onSubmitClick = (e: any) => this.submitModal();
     const onValueChange = (e: any) => {
       e.persist();
       this.updateValue(e);
@@ -115,15 +87,13 @@ class MonitoringActionbar extends React.Component<Props, State> {
         <Modal
           title="Enter the user identifier you want to lookup"
           wrapClassName="vertical-center-modal"
-          visible={this.state.modalVisible}
+          visible={isModalVisible}
           footer={[
             <Button key="back" size="large" onClick={onReturnClick}>
               Return
             </Button>,
             <Button
-              disabled={
-                this.state.form.value === null || this.state.form.type === null
-              }
+              disabled={identifierId === null || identifierType === null}
               key="submit"
               type="primary"
               size="large"
@@ -137,7 +107,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
           <InputGroup compact={true}>
             <Select
               style={{ width: '30%' }}
-              defaultValue={this.state.form.type}
+              defaultValue={identifierType}
               onChange={this.updateType}
             >
               <Option value="user_point_id">User Point Id</Option>
@@ -166,7 +136,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
+export default compose<Props, MonitoringActionBarProps>(
   injectIntl,
   withRouter,
 )(MonitoringActionbar);

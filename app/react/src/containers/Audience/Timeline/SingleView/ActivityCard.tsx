@@ -49,9 +49,11 @@ class ActivityCard extends React.Component<Props, State> {
       this.getChannelPromise = makeCancelable(
         UserDataService.getChannel(this.props.datamartId, id),
       );
-      this.getChannelPromise.promise.then(response => {
-        this.setState({ siteName: `${prefix}: ${response.data.name}` });
-      }).catch(err => log.error(err));
+      this.getChannelPromise.promise
+        .then(response => {
+          this.setState({ siteName: `${prefix}: ${response.data.name}` });
+        })
+        .catch(err => log.error(err));
     } else {
       this.setState(prevState => {
         const nextState = {
