@@ -32,6 +32,7 @@ interface EmailTemplateForm {
 }
 
 interface CreateEmailTemplateState {
+  edition: boolean;
   isLoading: boolean;
   pluginLayout?: PluginLayout;
   initialValues?: EmailTemplateForm;
@@ -45,11 +46,12 @@ type JoinedProps = InjectedNotificationProps &
 class CreateEmailTemplate extends React.Component<
   JoinedProps,
   CreateEmailTemplateState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
 
     this.state = {
+      edition: props.match.params.creativeId ? true : false,
       isLoading: true,
     };
   }
@@ -60,12 +62,23 @@ class CreateEmailTemplate extends React.Component<
       match: {
         params: { organisationId, creativeId },
       },
+      notifyError
     } = this.props;
-    if (edition && creativeId) {
-      this.fetchInitialValues(creativeId);
-    } else {
-      this.fetchCreationValue(organisationId);
-    }
+
+    this.setState(() => { return { isLoading: true } });
+
+    const promise = edition && creativeId ? this.fetchInitialValues(creativeId) : this.fetchCreationValue(organisationId);
+
+    promise.then(() => {
+      this.setState(() => {
+        return { isLoading: false };
+      })
+    }).catch(err => {
+      notifyError(err);
+      this.setState(() => {
+        return { isLoading: false };
+      });
+    });
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
@@ -73,6 +86,7 @@ class CreateEmailTemplate extends React.Component<
       match: {
         params: { organisationId, creativeId },
       },
+      notifyError
     } = this.props;
     const {
       match: {
@@ -121,6 +135,7 @@ class CreateEmailTemplate extends React.Component<
     this.setState(prevState => {
       const nextState = {
         ...prevState,
+        isLoading: false,
         initialValues: {
           properties: modifiedProperties
         },
@@ -331,14 +346,14 @@ class CreateEmailTemplate extends React.Component<
         this.state.initialValues.properties.length) ||
         !!creativeId
         ? {
-            formId,
-            message: messages.save,
-            onClose: this.redirect,
-          }
+          formId,
+          message: messages.save,
+          onClose: this.redirect,
+        }
         : {
-            formId,
-            onClose: this.redirect,
-          };
+          formId,
+          onClose: this.redirect,
+        };
 
     return isLoading ? (
       <div style={{ display: 'flex', flex: 1 }}>
