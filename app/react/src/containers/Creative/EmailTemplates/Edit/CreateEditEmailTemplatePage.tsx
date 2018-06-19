@@ -173,33 +173,35 @@ class CreateEmailTemplate extends React.Component<
   fetchInitialValues = (emailTemplateId: string): Promise<any> => {
     return PluginService.getPluginVersions(CreativeRendererId).then(res => {
 
-      return Promise.all([
-        CreativeService.getEmailTemplate(
-          emailTemplateId,
-        ).then(res1 => res1.data),
-        CreativeService.getEmailTemplateProperties(
-          emailTemplateId,
-        ).then(res1 => res1.data),
-        CreativeService.getEmailTemplateLocalizedPluginLayout(
-          emailTemplateId,
-        )
-      ]).then(results => {
-        this.promisesValues(results[1], results[2]);
-
-        this.setState(prevState => {
-          const nextState: CreateEmailTemplateState = {
-            ...prevState,
-            initialValues: {
-              plugin: results[0],
-              ...prevState.initialValues,
-            },
-          };
-
-          return nextState;
-        });
-
-        return results;
-      })
+      return CreativeService.getEmailTemplate(
+        emailTemplateId,
+      ).then(resultGetEmailTemplate => {
+        return Promise.all([
+          CreativeService.getEmailTemplateProperties(
+            emailTemplateId,
+          ).then(res1 => res1.data),
+          PluginService.getLocalizedPluginLayout(
+            resultGetEmailTemplate.data.renderer_plugin_id,
+            resultGetEmailTemplate.data.renderer_version_id
+          )
+        ]).then(results => {
+          this.promisesValues(results[0], results[1]);
+  
+          this.setState(prevState => {
+            const nextState: CreateEmailTemplateState = {
+              ...prevState,
+              initialValues: {
+                plugin: resultGetEmailTemplate.data,
+                ...prevState.initialValues,
+              },
+            };
+  
+            return nextState;
+          });
+  
+          return results;
+        });      
+      });
     });
   };
 
