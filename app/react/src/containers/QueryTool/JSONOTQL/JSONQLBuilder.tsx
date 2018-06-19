@@ -63,24 +63,36 @@ class JSONQLBuilder extends React.Component<Props, State> {
   engine = new DiagramEngine();
   nodeBTreeCache?: NodeModelBTree;
   div: React.RefObject<HTMLDivElement>;
+  isDragging: boolean = false;
 
   constructor(props: Props) {
     super(props);
     this.engine.registerNodeFactory(
-      new BooleanOperatorNodeFactory(this.getTreeNodeOperations(), this.lockInteraction),
+      new BooleanOperatorNodeFactory(
+        this.getTreeNodeOperations(),
+        this.lockInteraction,
+      ),
     );
     this.engine.registerNodeFactory(
-      new PlusNodeFactory(this.getTreeNodeOperations(), this.props.objectTypes, this.lockInteraction),
+      new PlusNodeFactory(
+        this.getTreeNodeOperations(),
+        this.props.objectTypes,
+        this.lockInteraction,
+      ),
     );
     this.engine.registerNodeFactory(
       new ObjectNodeFactory(
         this.getTreeNodeOperations(),
         this.props.objectTypes,
-        this.lockInteraction
+        this.lockInteraction,
       ),
     );
     this.engine.registerNodeFactory(
-      new FieldNodeFactory(this.getTreeNodeOperations(),  this.lockInteraction),
+      new FieldNodeFactory(
+        this.getTreeNodeOperations(),
+        this.props.objectTypes,
+        this.lockInteraction,
+      ),
     );
 
     this.engine.registerLinkFactory(new SimpleLinkFactory());
@@ -92,25 +104,16 @@ class JSONQLBuilder extends React.Component<Props, State> {
     };
   }
 
-
   lockInteraction = (locked: boolean) => {
-    this.setState({ locked })
-  }
+    this.setState({ locked });
+  };
 
   componentDidMount() {
-    // if (this.div && this.div.current){
-    //   this.div.current.addEventListener('keydown', this.handleKeyDown);
-    //   this.div.current.addEventListener('keyup', this.handleKeyUp);
-    // }
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('keyup', this.handleKeyUp);
   }
 
   componentWillUnmount() {
-    // if (this.div && this.div.current){
-    //   this.div.current.removeEventListener('keydown', this.handleKeyDown);
-    //   this.div.current.removeEventListener('keyup', this.handleKeyUp);
-    // }
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('keyup', this.handleKeyUp);
   }
@@ -189,14 +192,13 @@ class JSONQLBuilder extends React.Component<Props, State> {
           this.props.undoRedo.handleRedo();
         }
         if (
-          this.state.keydown.includes('Control') && 
+          this.state.keydown.includes('Control') &&
           (this.state.keydown.includes('y') ||
-            this.state.keydown.includes('Y') &&
-            this.props.undoRedo.enableRedo
-          )
-         ) {
-              this.props.undoRedo.handleRedo();
-         }
+            (this.state.keydown.includes('Y') &&
+              this.props.undoRedo.enableRedo))
+        ) {
+          this.props.undoRedo.handleRedo();
+        }
       },
     );
   };
@@ -285,7 +287,14 @@ class JSONQLBuilder extends React.Component<Props, State> {
   }
 
   render() {
-    const { queryResult, staleQueryResult, runQuery, query, datamartId, organisationId } = this.props;
+    const {
+      queryResult,
+      staleQueryResult,
+      runQuery,
+      query,
+      datamartId,
+      organisationId,
+    } = this.props;
 
     return (
       <div

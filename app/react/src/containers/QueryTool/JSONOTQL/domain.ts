@@ -208,12 +208,12 @@ export class UpdateOperation implements Operation {
   execute(
     treeNode: ObjectTreeExpressionNodeShape,
   ): ObjectTreeExpressionNodeShape | undefined {
-    if (isLeafNode(treeNode)) {
-      return treeNode;
-    }
-
     if (this.path.length === 0) {
       return this.node;
+    }
+
+    if (isLeafNode(treeNode)) {
+      return treeNode;
     }
 
     const [head, ...tail] = this.path;
@@ -348,6 +348,7 @@ export function buildNodeModelBTree(
 
     case 'FIELD':
       const fieldNode = new FieldNodeModel(treeNode, treeNodePath);
+      fieldNode.objectTypeInfo = objectType;
       return {
         node: fieldNode,
       };

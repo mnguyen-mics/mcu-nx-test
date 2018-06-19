@@ -2,13 +2,15 @@ import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../Port/SimplePortModel';
 import { QueryBuilderNode } from '../../domain';
 import { FieldNode } from '../../../../../models/datamart/graphdb/QueryDocument';
+import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 
 export default class FieldNodeModel extends NodeModel
   implements QueryBuilderNode {
   collapsed = false;
   negation = false;
+  edition = false;
   treeNodePath: number[] = [];
-
+  objectTypeInfo: ObjectLikeTypeInfoResource;
   fieldNode: FieldNode;
 
   constructor(fieldNode?: FieldNode, treeNodePath?: number[]) {
@@ -33,6 +35,9 @@ export default class FieldNodeModel extends NodeModel
   }
 
   getColor = () => {
+    if (this.extras.edition) {
+      return '#00a1df'
+    }
     if (this.extras.negation) {
       return '#ff5959';
     }

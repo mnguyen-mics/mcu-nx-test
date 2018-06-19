@@ -147,7 +147,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
                   <InputNumber style={{ width: '100%' }} defaultValue={1} value={value as number} onChange={this.onValueChange} />
                 </Col>
                 <Col span={7}>
-                <Select defaultValue={this.state.relativePeriod} onChange={onPeriodChange}>
+                <Select defaultValue={this.state.relativePeriod} onChange={onPeriodChange} getPopupContainer={this.props.datePickerProps && this.props.datePickerProps.getCalendarContainer}>
                   <Select.Option value="d">Days</Select.Option>
                   <Select.Option value="M">Months</Select.Option>
                   <Select.Option value="y">Years</Select.Option>

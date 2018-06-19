@@ -7,14 +7,13 @@ import { TooltipProps } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper from '../FormFieldWrapper';
-import { SliderProps } from 'antd/lib/slider';
-import { LabeledValue } from 'antd/lib/select';
+import { LabeledValue, SelectProps } from 'antd/lib/select';
 
 const { Option } = Select;
 
 export interface FormSearchObjectProps {
   formItemProps?: FormItemProps;
-  inputProps?: SliderProps;
+  selectProps?: SelectProps;
   helpToolTipProps?: TooltipProps;
   fetchListMethod: (keyword: string) => Promise<LabeledValue[]>;
   fetchSingleMethod: (id: string) => Promise<LabeledValue>;
@@ -93,6 +92,7 @@ class FormSearchObject extends React.Component<
       formItemProps,
       helpToolTipProps,
       small,
+      selectProps
     } = this.props;
 
     let validateStatus = 'success' as
@@ -125,6 +125,7 @@ class FormSearchObject extends React.Component<
             onChange={this.handleChange}
             notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
             style={{ width: '100%' }}
+            {...selectProps}
           >
             {options}
           </Select>

@@ -5,35 +5,63 @@ import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { Field, GenericField, getFormValues } from 'redux-form';
-import { DefaultSelect, FormMultiTagField, FormSelectField, withNormalizer, withValidators } from '../../../../../../components/Form';
+import {
+  DefaultSelect,
+  FormMultiTagField,
+  FormSelectField,
+  withNormalizer,
+  withValidators,
+} from '../../../../../../components/Form';
 import FormMultiTag from '../../../../../../components/Form/FormSelect/FormMultiTag';
-import FormSearchObject, { FormSearchObjectProps } from '../../../../../../components/Form/FormSelect/FormSearchObject';
-import TagSelect, { FormTagSelectProps } from '../../../../../../components/Form/FormSelect/TagSelect';
+import FormSearchObject, {
+  FormSearchObjectProps,
+} from '../../../../../../components/Form/FormSelect/FormSearchObject';
+import TagSelect, {
+  FormTagSelectProps,
+} from '../../../../../../components/Form/FormSelect/TagSelect';
 import { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { ValidatorProps } from '../../../../../../components/Form/withValidators';
-import { BooleanComparisonOperator, EnumComparisonOperator, NumericComparisonOperator, QueryFieldComparisonType, StringComparisonOperator, TimeComparisonOperator } from '../../../../../../models/datamart/graphdb/QueryDocument';
-import { FieldResource, ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
+import {
+  BooleanComparisonOperator,
+  EnumComparisonOperator,
+  NumericComparisonOperator,
+  QueryFieldComparisonType,
+  StringComparisonOperator,
+  TimeComparisonOperator,
+} from '../../../../../../models/datamart/graphdb/QueryDocument';
+import {
+  FieldResource,
+  ObjectLikeTypeInfoResource,
+} from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import AudienceSegmentService from '../../../../../../services/AudienceSegmentService';
-import { FORM_ID, FieldNodeFormData, ObjectNodeFormData, SUPPORTED_FIELD_TYPES } from '../../domain';
+import {
+  FORM_ID,
+  FieldNodeFormData,
+  ObjectNodeFormData,
+  SUPPORTED_FIELD_TYPES,
+} from '../../domain';
 import messages from '../../messages';
-import FormRelativeAbsoluteDate, { FormRelativeAbsoluteDateProps } from './Comparison/FormRelativeAbsoluteDate';
+import FormRelativeAbsoluteDate, {
+  FormRelativeAbsoluteDateProps,
+} from './Comparison/FormRelativeAbsoluteDate';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
-  >;
+>;
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
   FormRelativeAbsoluteDateProps
-  >;
+>;
 export const FormSearchObjectField = Field as new () => GenericField<
   FormSearchObjectProps
-  >;
+>;
 
 export interface FieldNodeFormProps {
-  expressionIndex: number;
+  expressionIndex?: number;
   availableFields: FieldResource[];
-  name: string;
+  name?: string;
   formChange: (fieldName: string, value: any) => void;
   objectType: ObjectLikeTypeInfoResource;
+  idToAttachDropDowns?: string;
 }
 
 interface MapStateToProps {
@@ -75,7 +103,7 @@ class FieldNodeForm extends React.Component<Props> {
     if (fieldName !== nextFieldName && nextFieldName !== undefined) {
       const fieldType = this.getSelectedFieldType(nextFieldName);
       formChange(
-        `${name}.comparison`,
+        name ? `${name}.comparison` : 'comparison',
         this.generateFieldTypeComparison(fieldType),
       );
     }
@@ -83,12 +111,17 @@ class FieldNodeForm extends React.Component<Props> {
 
   getField = (
     formValues: ObjectNodeFormData,
-    index: number,
+    index?: number,
   ): FieldNodeFormData | undefined => {
-    return formValues.fieldNodeForm &&
-      formValues.fieldNodeForm.length &&
-      formValues.fieldNodeForm[index]
-      ? formValues.fieldNodeForm[index]
+    if (index !== undefined) {
+      return formValues.fieldNodeForm &&
+        formValues.fieldNodeForm.length &&
+        formValues.fieldNodeForm[index]
+        ? formValues.fieldNodeForm[index]
+        : undefined;
+    }
+    return formValues.fieldNodeForm
+      ? ((formValues as any).fieldNodeForm as FieldNodeFormData)
       : undefined;
   };
 
@@ -128,7 +161,7 @@ class FieldNodeForm extends React.Component<Props> {
     return availableFields
       .filter(field =>
         SUPPORTED_FIELD_TYPES.find(t => field.field_type.indexOf(t) > -1),
-    )
+      )
       .map(i => ({ value: i.name, title: i.name }));
   };
 
@@ -314,15 +347,28 @@ class FieldNodeForm extends React.Component<Props> {
   };
 
   generateTimestampComparisonField(condition: TimeComparisonOperator) {
-    const { intl, name } = this.props;
+    const { intl, name, idToAttachDropDowns } = this.props;
+
+
+    let popUpProps = {};
+
+    if (idToAttachDropDowns) {
+      popUpProps = {
+        getCalendarContainer: (e: HTMLElement) =>
+          document.getElementById(idToAttachDropDowns)!,
+      };
+    }
 
     return (
       <FormRelativeAbsoluteDateField
-        name={`${name}.comparison.values`}
+        name={name ? `${name}.comparison.values` : 'comparison.values'}
         component={FormRelativeAbsoluteDate}
         formItemProps={{
           label: intl.formatMessage(messages.fieldConditionValuesLabel),
           required: true,
+        }}
+        datePickerProps={{
+          ...popUpProps
         }}
         small={true}
         unixTimstamp={true}
@@ -331,15 +377,27 @@ class FieldNodeForm extends React.Component<Props> {
   }
 
   generateDateComparisonField(condition: TimeComparisonOperator) {
-    const { intl, name } = this.props;
+    const { intl, name, idToAttachDropDowns } = this.props;
+
+    let popUpProps = {};
+
+    if (idToAttachDropDowns) {
+      popUpProps = {
+        getCalendarContainer: (e: HTMLElement) =>
+          document.getElementById(idToAttachDropDowns)!,
+      };
+    }
 
     return (
       <FormRelativeAbsoluteDateField
-        name={`${name}.comparison.values`}
+        name={name ? `${name}.comparison.values` : 'comparison.values'}
         component={FormRelativeAbsoluteDate}
         formItemProps={{
           label: intl.formatMessage(messages.fieldConditionValuesLabel),
           required: true,
+        }}
+        datePickerProps={{
+          ...popUpProps
         }}
         small={true}
       />
@@ -347,11 +405,20 @@ class FieldNodeForm extends React.Component<Props> {
   }
 
   generateStringComparisonField(condition: StringComparisonOperator) {
-    const { intl, name } = this.props;
+    const { intl, name, idToAttachDropDowns } = this.props;
+
+    let popUpProps = {};
+
+    if (idToAttachDropDowns) {
+      popUpProps = {
+        getPopupContainer: (e: HTMLElement) =>
+          document.getElementById(idToAttachDropDowns)!,
+      };
+    }
 
     return (
       <FormMultiTagField
-        name={`${name}.comparison.values`}
+        name={name ? `${name}.comparison.values` : 'comparison.values'}
         component={FormMultiTag}
         formItemProps={{
           label: intl.formatMessage(messages.fieldConditionValuesStringLabel),
@@ -360,6 +427,7 @@ class FieldNodeForm extends React.Component<Props> {
         selectProps={{
           options: [],
           dropdownStyle: { display: 'none' },
+          ...popUpProps
         }}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
@@ -370,11 +438,20 @@ class FieldNodeForm extends React.Component<Props> {
   }
 
   generateBooleanComparisonField(condition: BooleanComparisonOperator) {
-    const { intl, name } = this.props;
+    const { intl, name, idToAttachDropDowns } = this.props;
+
+    let popUpProps = {};
+
+    if (idToAttachDropDowns) {
+      popUpProps = {
+        getPopupContainer: (e: HTMLElement) =>
+          document.getElementById(idToAttachDropDowns)!,
+      };
+    }
 
     return (
       <FormTagSelectField
-        name={`${name}.comparison.values`}
+        name={name ? `${name}.comparison.values` : 'comparison.values'}
         component={TagSelect}
         formItemProps={{
           label: intl.formatMessage(messages.fieldConditionValuesLabel),
@@ -385,6 +462,7 @@ class FieldNodeForm extends React.Component<Props> {
             { value: 'true', label: 'true' },
             { value: 'false', label: 'false' },
           ],
+          ...popUpProps,
         }}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
@@ -401,12 +479,21 @@ class FieldNodeForm extends React.Component<Props> {
   }
 
   generateNumericComparisonField(condition: NumericComparisonOperator) {
-    const { intl, name, fieldValidators } = this.props;
+    const { intl, name, fieldValidators, idToAttachDropDowns } = this.props;
+
+    let popUpProps = {};
+
+    if (idToAttachDropDowns) {
+      popUpProps = {
+        getPopupContainer: (e: HTMLElement) =>
+          document.getElementById(idToAttachDropDowns)!,
+      };
+    }
 
     // TODO do multi rendering for equals and not equals, do simple input rendering for the rest
     return (
       <FormMultiTagField
-        name={`${name}.comparison.values`}
+        name={name ? `${name}.comparison.values` : 'comparison.values'}
         component={FormMultiTag}
         validate={[
           fieldValidators.isRequired,
@@ -419,6 +506,7 @@ class FieldNodeForm extends React.Component<Props> {
         selectProps={{
           options: [],
           dropdownStyle: { display: 'none' },
+          ...popUpProps
         }}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
@@ -429,15 +517,38 @@ class FieldNodeForm extends React.Component<Props> {
   }
 
   generateIdComparisonField(condition: StringComparisonOperator) {
-    const { intl, name, match: { params: { organisationId } }, objectType } = this.props;
+    const {
+      intl,
+      name,
+      match: {
+        params: { organisationId },
+      },
+      objectType,
+      idToAttachDropDowns,
+    } = this.props;
 
+    const fetchListMethod = (keywords: string) =>
+      AudienceSegmentService.getSegments(organisationId, { keywords }).then(
+        res => res.data.map(r => ({ key: r.id, label: r.name })),
+      );
+    const fetchSingleMethod = (id: string) =>
+      AudienceSegmentService.getSegment(id).then(res => ({
+        key: res.data.id,
+        label: res.data.name,
+      }));
 
-    const fetchListMethod = (keywords: string) => AudienceSegmentService.getSegments(organisationId, { keywords }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
-    const fetchSingleMethod = (id: string) => AudienceSegmentService.getSegment(id).then(res => ({ key: res.data.id, label: res.data.name }))
+    let popUpProps = {};
+
+    if (idToAttachDropDowns) {
+      popUpProps = {
+        getPopupContainer: (e: HTMLElement) =>
+          document.getElementById(idToAttachDropDowns)!,
+      };
+    }
 
     return objectType.name === 'UserSegment' ? (
       <FormSearchObjectField
-        name={`${name}.comparison.values`}
+        name={name ? `${name}.comparison.values` : 'comparison.values'}
         component={FormSearchObject}
         formItemProps={{
           label: intl.formatMessage(messages.fieldConditionValuesStringLabel),
@@ -448,9 +559,14 @@ class FieldNodeForm extends React.Component<Props> {
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
+        selectProps={{
+          ...popUpProps,
+        }}
         small={true}
       />
-    ) : this.generateStringComparisonField(condition);
+    ) : (
+      this.generateStringComparisonField(condition)
+    );
   }
 
   generateAvailableConditionField = (
@@ -519,6 +635,7 @@ class FieldNodeForm extends React.Component<Props> {
       intl,
       formValues,
       name,
+      idToAttachDropDowns,
     } = this.props;
 
     const field = this.getField(formValues, expressionIndex);
@@ -529,10 +646,19 @@ class FieldNodeForm extends React.Component<Props> {
         ? (field.comparison.operator as ConditionsOperators)
         : undefined;
 
+    let popUpProps = {};
+
+    if (idToAttachDropDowns) {
+      popUpProps = {
+        getPopupContainer: (e: HTMLElement) =>
+          document.getElementById(idToAttachDropDowns)!,
+      };
+    }
+
     return (
       <div>
         <FormSelectField
-          name={`${name}.field`}
+          name={name ? `${name}.field` : 'field'}
           component={DefaultSelect}
           validate={[isRequired]}
           options={this.getAvailableFields()}
@@ -540,10 +666,13 @@ class FieldNodeForm extends React.Component<Props> {
             label: intl.formatMessage(messages.fieldConditionFieldLabel),
             required: true,
           }}
+          selectProps={{
+            ...popUpProps,
+          }}
           small={true}
         />
         <FormSelectField
-          name={`${name}.comparison.operator`}
+          name={name ? `${name}.comparison.operator` : 'comparison.operator'}
           component={DefaultSelect}
           validate={[]}
           options={this.generateAvailableConditionOptions(fieldName)}
@@ -552,6 +681,7 @@ class FieldNodeForm extends React.Component<Props> {
           }}
           selectProps={{
             notFoundContent: intl.formatMessage(messages.fieldTypeNotSupported),
+            ...popUpProps,
           }}
           small={true}
           disabled={!hasSelectedAField}

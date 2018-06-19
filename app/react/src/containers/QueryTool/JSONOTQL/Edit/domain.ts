@@ -39,6 +39,10 @@ export interface ObjectNodeFormData {
   frequency: FrequencyFormData;
 }
 
+export interface FieldNodeFormDataValues {
+  fieldNodeForm: FieldNode;
+}
+
 export const FrequencyConverter = {
   toFrequency(objectNode: ObjectNode): FrequencyFormData {
     if (objectNode.min_score) {
