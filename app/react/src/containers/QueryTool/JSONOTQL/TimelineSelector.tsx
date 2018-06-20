@@ -23,11 +23,15 @@ interface State {
 const messages = defineMessages({
   buttonLabel: {
     id: 'queryBuilder.timelineSelector.button.label',
-    defaultMessage: 'View Random Timeline'
+    defaultMessage: 'View Matching Timeline'
   },
   errorLabel: {
     id: 'queryBuilder.timelineSelector.error.label',
     defaultMessage: 'There is an error with your query'
+  },
+  noResultsLabel: {
+    id: 'queryBuilder.timelineSelector.noResults.label',
+    defaultMessage: 'There is no matching timeline for your query'
   }
 })
 
@@ -61,7 +65,9 @@ class TimelineSelector extends React.Component<Props, State> {
       });
       OTQLService.runJSONOTQLQuery(datamartId, queryDocument)
         .then(res => {
-          window.open(`${window.location.origin}/#/v2/o/${organisationId }/audience/timeline/user_point_id/${res.data.rows[Math.floor(Math.random()*res.data.rows.length)]}?datamart_id=${datamartId}`);
+          if (res.data.rows.length !== 0) {
+            window.open(`${window.location.origin}/#/v2/o/${organisationId }/audience/timeline/user_point_id/${res.data.rows[Math.floor(Math.random()*res.data.rows.length)]}?datamart_id=${datamartId}`);
+          }
           this.setState({
             loading: false,
             error: false,
@@ -92,7 +98,8 @@ class TimelineSelector extends React.Component<Props, State> {
         position: 'relative',
       }}>
         {this.state.loading ? <Spin size={'small'} /> : <ButtonStyleless onClick={onClick}>{formatMessage(messages.buttonLabel)}</ButtonStyleless>}
-        {this.state.error && <div className="error">{formatMessage(messages.errorLabel)}</div>}
+        {(this.state.error && !this.state.loading) && <div className="error">{formatMessage(messages.errorLabel)}</div>}
+        {(this.state.results && this.state.results.length === 0 && !this.state.loading) && <div className="error">{formatMessage(messages.noResultsLabel)}</div>}
       </div>
     );
   }
