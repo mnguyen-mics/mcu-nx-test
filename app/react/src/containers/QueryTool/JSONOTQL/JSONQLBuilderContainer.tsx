@@ -23,7 +23,10 @@ export interface JSONQLBuilderContainerProps {
   datamartId: string;
   queryId?: string;
   queryDocument?: QueryDocument;
-  renderActionBar: (queryDocument: QueryDocument, datamartId: string) => React.ReactNode;
+  renderActionBar: (
+    queryDocument: QueryDocument,
+    datamartId: string,
+  ) => React.ReactNode;
   editionLayout?: boolean;
 }
 
@@ -41,7 +44,8 @@ interface State {
 
 type Props = JSONQLBuilderContainerProps &
   InjectedIntlProps &
-  InjectedNotificationProps & RouteComponentProps<{ organisationId: string }>;
+  InjectedNotificationProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class JSONQLBuilderContainer extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -65,7 +69,6 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
   componentDidMount() {
     const { datamartId, queryId } = this.props;
     this.loadData(datamartId, queryId);
-
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -86,26 +89,39 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
         : Promise.resolve(null),
     ])
       .then(([objectTypes, eventualQuery]) => {
-        this.setState(prevState => ({
-          fetchingObjectTypes: false,
-          objectTypes,
-          queryHistory: {
-            past: [],
-            present: this.props.queryDocument ? this.props.queryDocument.where : undefined,
-            future: [],
+        this.setState(
+          prevState => ({
+            fetchingObjectTypes: false,
+            objectTypes: objectTypes
+              .map(OType => ({
+                ...OType,
+                fields: OType.fields.sort((fieldA, fieldB) =>
+                  fieldA.name.localeCompare(fieldB.name),
+                ),
+              }))
+              .sort((OtypeA, OTypeB) => OtypeA.name.localeCompare(OTypeB.name)),
+            queryHistory: {
+              past: [],
+              present: this.props.queryDocument
+                ? this.props.queryDocument.where
+                : undefined,
+              future: [],
+            },
+          }),
+          () => {
+            this.runQuery(datamartId);
           },
-        }), () => {
-          this.runQuery(datamartId);
-        });
+        );
       })
       .catch(err => {
         this.props.notifyError(err);
         this.setState({ fetchingObjectTypes: false });
       });
-
   }
 
-  fetchObjectTypes = (datamartId: string): Promise<ObjectLikeTypeInfoResource[]> => {
+  fetchObjectTypes = (
+    datamartId: string,
+  ): Promise<ObjectLikeTypeInfoResource[]> => {
     return RuntimeSchemaService.getRuntimeSchemas(datamartId).then(
       schemaRes => {
         const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
@@ -120,20 +136,22 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
                 datamartId,
                 liveSchema.id,
                 object.id,
-              ).then(fieldRes => {
-                return Promise.all(
-                  fieldRes.data.map(field => {
-                    return RuntimeSchemaService.getFieldDirectives(
-                      datamartId,
-                      liveSchema.id,
-                      object.id,
-                      field.id,
-                    ).then(dirRes => ({ ...field, directives: dirRes.data }));
-                  })
-                );
-              }).then(fields => ({ ...object, fields }));
+              )
+                .then(fieldRes => {
+                  return Promise.all(
+                    fieldRes.data.map(field => {
+                      return RuntimeSchemaService.getFieldDirectives(
+                        datamartId,
+                        liveSchema.id,
+                        object.id,
+                        field.id,
+                      ).then(dirRes => ({ ...field, directives: dirRes.data }));
+                    }),
+                  );
+                })
+                .then(fields => ({ ...object, fields }));
             }),
-          )
+          );
         });
       },
     );
@@ -155,7 +173,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
         queryResult: {
           ...prevState.queryResult,
           error: undefined,
-        }
+        },
       };
     });
   };
@@ -177,7 +195,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
         queryResult: {
           ...prevState.queryResult,
           error: undefined,
-        }
+        },
       };
     });
   };
@@ -199,7 +217,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
         queryResult: {
           ...prevState.queryResult,
           error: undefined,
-        }
+        },
       };
     });
   };
@@ -207,7 +225,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
   runQuery = (_datamartId?: string) => {
     const { datamartId } = this.props;
     const queryDocument: QueryDocument = {
-      operations: [{ directives: [{name: 'count'}], selections: [] }],
+      operations: [{ directives: [{ name: 'count' }], selections: [] }],
       from: 'UserPoint',
       where: this.state.queryHistory.present,
     };
@@ -237,7 +255,14 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { editionLayout, renderActionBar, datamartId, match: { params: { organisationId } } } = this.props;
+    const {
+      editionLayout,
+      renderActionBar,
+      datamartId,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     const {
       fetchingObjectTypes,
       objectTypes,
@@ -255,15 +280,16 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
 
     return (
       <Layout className={editionLayout ? 'edit-layout' : ''}>
-        {renderActionBar({          
-          operations: [{ directives: [], selections: [{ name: 'id' }] }],
-          from: 'UserPoint',
-          where: query
-        }, datamartId)}
+        {renderActionBar(
+          {
+            operations: [{ directives: [], selections: [{ name: 'id' }] }],
+            from: 'UserPoint',
+            where: query,
+          },
+          datamartId,
+        )}
         <Layout.Content
-          className={`mcs-content-container ${
-            editionLayout ? 'flex' : ''
-            }`}
+          className={`mcs-content-container ${editionLayout ? 'flex' : ''}`}
           style={{ padding: 0, overflow: 'hidden' }}
         >
           <JSONQLBuilder
