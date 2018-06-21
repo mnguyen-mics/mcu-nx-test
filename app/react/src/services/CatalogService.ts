@@ -12,6 +12,7 @@ import {
   AudienceSegmentServiceItemPublicResource,
 } from '../models/servicemanagement/PublicServiceItemResource';
 import { Locale } from '../models/Locale';
+import { OrganisationResource } from '../models/organisation/organisation';
 
 interface GetOfferOptions extends PaginatedApiParam {
   serviceAgreementId?: string;
@@ -130,14 +131,22 @@ const CatalogService = {
   getServiceItemConditions(
     offerId: string,
     options: GetServiceItemConditionsOptions,
-  ): Promise<DataListResponse<any>> { // TYPE
+  ): Promise<DataListResponse<any>> {
+    // TYPE
     const endpoint = `subscribed_services/${offerId}/service_item_conditions`;
     const params = {
       ...options,
       order_by: options.orderBy,
     };
     return ApiService.getRequest(endpoint, params);
-  }
+  },
+
+  getProvider(
+    organisationId: string,
+  ): Promise<DataResponse<OrganisationResource>> {
+    const endpoint = `organisations/${organisationId}`;
+    return ApiService.getRequest(endpoint);
+  },
 };
 
 export default CatalogService;

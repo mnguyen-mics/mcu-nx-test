@@ -123,13 +123,25 @@ const serviceSettingsDefinition: NavigatorMenuDefinition = {
       ...generateMissingdefinitionItemFromRoute(
         settingsDefinition.settingsSubscribedOffersList,
       ),
-      translation: messages.subscribedServicesSettingsList,
+      translation: messages.subscribedOffersSettingsList,
     },
     {
       ...generateMissingdefinitionItemFromRoute(
         settingsDefinition.settingsServiceItemsList,
       ),
       translation: messages.serviceItemsSettingsList,
+    },
+    {
+      ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsServiceCatalog,
+      ),
+      translation: messages.serviceCatalogSettingsList,
+    },
+    {
+      ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsMyOffers,
+      ),
+      translation: messages.offersSettingsList,
     },
   ],
 };

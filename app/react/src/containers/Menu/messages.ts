@@ -235,13 +235,21 @@ export default defineMessages({
         defaultMessage: 'Recommenders', 
     },
 
-    subscribedServicesSettingsList: {
-        id: 'menu.service.offers.list',
-        defaultMessage: 'Service Offers List', 
+    subscribedOffersSettingsList: {
+        id: 'menu.subscribed.offers.list',
+        defaultMessage: 'Subscribed Offers', 
     },
     serviceItemsSettingsList: {
         id: 'menu.service.serviceItems.list',
-        defaultMessage: 'Service Items List', 
+        defaultMessage: 'My Service Items', 
+    },
+    serviceCatalogSettingsList: {
+        id: 'menu.service.catalog.list',
+        defaultMessage: 'My Service Catalog', 
+    },
+    offersSettingsList: {
+        id: 'menu.service.my.offers.list',
+        defaultMessage: 'My Offers', 
     },
 
     // BACK TO APP

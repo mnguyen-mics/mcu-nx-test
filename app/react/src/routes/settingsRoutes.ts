@@ -36,8 +36,10 @@ import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/
 import EditUserPage from '../containers/Settings/OrganisationSettings/Users/Edit/EditUserPage';
 import ApiTokenListPage from '../containers/Settings/ProfileSettings/ApiToken/List/ApiTokenListPage';
 import EditApiTokenPage from '../containers/Settings/ProfileSettings/ApiToken/Edit/EditApiTokenPage';
-import SubscribedServicesListPage from '../containers/Settings/ServicesSettings/Offers/List/SubscribedServicesListPage';
-import ServiceItemsListPage from '../containers/Settings/ServicesSettings/ServiceItems/List/ServiceItemsListPage';
+import SubscribedOffersListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/SubscribedOffersListPage';
+import ServiceItemsListPage from '../containers/Settings/ServicesSettings/MyServiceItems/List/MyServiceItemsListPage';
+import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
+import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -297,23 +299,35 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'campaignsSettings.recommenders',
   },
 
-    /*
+  /*
   
     SERVICE OFFERS SETTINGS
   
   */
 
   settingsSubscribedOffersList: {
-    path: '/settings/services/subscribed_services',
+    path: '/settings/services/subscribed_offers',
     layout: 'settings',
-    contentComponent: SubscribedServicesListPage,
-    requiredFeature: 'servicesSettings.offer_and_item_list',
+    contentComponent: SubscribedOffersListPage,
+    requiredFeature: 'servicesSettings.subscribed_offers',
   },
   settingsServiceItemsList: {
     path: '/settings/services/service_items',
     layout: 'settings',
     contentComponent: ServiceItemsListPage,
-    requiredFeature: 'servicesSettings.offer_and_item_list',
+    requiredFeature: 'servicesSettings.my_service_items',
+  },
+  settingsServiceCatalog: {
+    path: '/settings/services/service_catalog',
+    layout: 'settings',
+    contentComponent: ServiceCatalogPage,
+    requiredFeature: 'servicesSettings.my_service_catalog',
+  },
+  settingsMyOffers: {
+    path: '/settings/services/my_offers',
+    layout: 'settings',
+    contentComponent: MyOffersPage,
+    requiredFeature: 'servicesSettings.my_offers',
   },
 };
 
