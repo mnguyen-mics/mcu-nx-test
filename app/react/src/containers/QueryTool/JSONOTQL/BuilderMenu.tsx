@@ -40,7 +40,7 @@ export default class BuilderMenu extends React.Component<
 
     return (
       <div style={{ position: 'relative', height: 0 }}>
-        <div className="button-helpers">
+        <div className="button-helpers bottom">
           <ButtonStyleless
             disabled={!enableUndo}
             onClick={handleUndo}

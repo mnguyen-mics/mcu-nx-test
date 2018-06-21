@@ -18,6 +18,7 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import OTQLService from '../../../services/OTQLService';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { computeSchemaModel } from './domain';
 
 export interface JSONQLBuilderContainerProps {
   datamartId: string;
@@ -109,6 +110,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
             },
           }),
           () => {
+
             this.runQuery(datamartId);
           },
         );
@@ -277,7 +279,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
 
     const enableUndo = this.state.queryHistory.past.length > 0;
     const enableRedo = this.state.queryHistory.future.length > 0;
-
+    
     return (
       <Layout className={editionLayout ? 'edit-layout' : ''}>
         {renderActionBar(
@@ -308,6 +310,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
             queryResult={queryResult}
             datamartId={this.props.datamartId}
             organisationId={organisationId}
+            computedSchema={objectTypes.length ? computeSchemaModel(objectTypes, objectTypes.find(ot => ot.name === 'UserPoint')!) : undefined}
           />
         </Layout.Content>
       </Layout>

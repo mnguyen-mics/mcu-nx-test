@@ -22,6 +22,19 @@
     flex-direction: column;
     flex: auto;
   }
+
+  .diagram {
+    height: inherit;
+    transition: width 0.3s ease;
+  }
+
+  .schema-visualizer {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: inherit;
+    transition: width 0.3s ease;
+    box-shadow: -2px 0px 4px 0 rgba(200, 200, 200, 0.14)
+  }
   // margin-bottom: 20px;
   height: inherit;
   overflow: hidden;
@@ -238,13 +251,22 @@
   }
 
   .button-helpers {
+
+    
     position: absolute;
     right: 20px;
-    bottom: 30px;
     z-index: 10000;
     display: block;
     width: 30px;
     cursor: auto;
+
+    &.bottom {
+      bottom: 30px;
+    }
+
+    &.top {
+      top: 30px;
+    }
     
     .helper {
       width: 30px;

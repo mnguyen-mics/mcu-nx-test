@@ -29,9 +29,13 @@ import {
   createLink,
   toNodeList,
   buildLinkList,
+  SchemaItem,
 } from './domain';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import CounterList from './CounterList';
+import { Col } from 'antd';
+import SchemaVizualizer from './SchemaVizualizer';
+import { ButtonStyleless, McsIcon } from '../../../components';
 
 export interface QueryResult {
   loading: boolean;
@@ -50,11 +54,13 @@ export interface JSONQLBuilderProps {
   runQuery: () => void;
   datamartId: string;
   organisationId: string;
+  computedSchema?: SchemaItem;
 }
 
 interface State {
   keydown: string[];
   locked: boolean;
+  viewSchema: boolean;
 }
 
 type Props = JSONQLBuilderProps;
@@ -101,6 +107,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
     this.state = {
       keydown: [],
       locked: false,
+      viewSchema: false,
     };
   }
 
@@ -294,7 +301,13 @@ class JSONQLBuilder extends React.Component<Props, State> {
       query,
       datamartId,
       organisationId,
+      computedSchema,
     } = this.props;
+
+    const { viewSchema } = this.state;
+
+    const onSchemaSelectorClick = () =>
+      this.setState({ viewSchema: !viewSchema });
 
     return (
       <div
@@ -309,13 +322,23 @@ class JSONQLBuilder extends React.Component<Props, State> {
           organisationId={organisationId}
           query={query}
         />
-        <DiagramWidget
-          diagramEngine={this.engine}
-          allowCanvasZoom={!this.state.locked}
-          allowCanvasTranslation={!this.state.locked}
-          inverseZoom={true}
-        />
-        <BuilderMenu undoRedo={this.props.undoRedo} />
+        <Col span={viewSchema ? 18 : 24} className={'diagram'}>
+          <DiagramWidget
+            diagramEngine={this.engine}
+            allowCanvasZoom={!this.state.locked}
+            allowCanvasTranslation={!this.state.locked}
+            inverseZoom={true}
+          />
+          <BuilderMenu undoRedo={this.props.undoRedo} />
+          <div className="button-helpers top">
+            <ButtonStyleless onClick={onSchemaSelectorClick} className="helper">
+              <McsIcon type={'chevron-right'} style={viewSchema ? {} : { transform: 'rotate(180deg)', transition: 'all 0.5ms ease' }} />
+            </ButtonStyleless>
+          </div>
+        </Col>
+        <Col span={viewSchema ? 6 : 24} className="schema-visualizer">
+          <SchemaVizualizer data={computedSchema} />
+        </Col>
       </div>
     );
   }

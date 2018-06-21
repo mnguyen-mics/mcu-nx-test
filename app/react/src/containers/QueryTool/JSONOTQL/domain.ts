@@ -8,7 +8,7 @@ import {
   ObjectTreeExpressionNodeShape,
   FieldNode,
 } from '../../../models/datamart/graphdb/QueryDocument';
-import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType } from '../../../models/datamart/graphdb/RuntimeSchema';
 
 export const MIN_X = 100;
 export const MIN_Y = 100;
@@ -482,5 +482,37 @@ export function applyTranslation(
   return {
     x: position.x + tx,
     y: position.y + ty,
+  };
+}
+
+export interface SchemaItem {
+  id: string;
+  runtime_schema_id: string;
+  type: ObjectLikeType;
+  name: string;
+  fields: Array<FieldInfoResource | SchemaItem>
+}
+
+export function computeSchemaModel(
+  objectTypes: ObjectLikeTypeInfoResource[],
+  initialObjectType: ObjectLikeTypeInfoResource,
+): SchemaItem {
+  return {
+    ...initialObjectType,
+    fields: initialObjectType.fields.map(field => {
+      const match = field.field_type.match(/\w+/);
+      if (
+        match &&
+        match[0] &&
+        objectTypes.map(ot => ot.name).includes(match[0] as string)
+      ) {
+        return computeSchemaModel(
+          objectTypes,
+          {...objectTypes.find(ot => ot.name === match[0])!, name: field.name},
+        );
+      } else {
+        return field;
+      }
+    }),
   };
 }
