@@ -22,16 +22,30 @@ const DisplayCreativeFormService = {
   initializeFormData(adRendererId: string, subtype: CreativeSubtype): Promise<DisplayCreativeFormData> {
     return PluginService.getPluginVersions(adRendererId).then(resp => {
       const lastVersion = resp.data[resp.data.length - 1];
-      return PluginService.getPluginVersionProperty(
-        adRendererId,
-        lastVersion.id,
-      ).then(properties => {
+
+      return Promise.all([
+        PluginService.getPluginVersionProperty(
+          adRendererId,
+          lastVersion.id,
+        ),
+        PluginService.getLocalizedPluginLayout(
+          adRendererId,
+          lastVersion.id
+        )
+      ]).then(res => {
+        const properties = res[0].data;
+        const pLayoutRes = res[1];
+        const pLayout = (pLayoutRes !== null && pLayoutRes.status !== "error") ?
+          pLayoutRes.data
+          :
+          undefined;
         return {
           creative: {
             subtype: subtype
           },
           rendererPlugin: lastVersion,
           properties: normalizeProperties(properties),
+          pluginLayout: pLayout,
         };
       });
     });
@@ -44,18 +58,30 @@ const DisplayCreativeFormService = {
         extractDataList,
       ),
     ]).then(([creative, rendererProperties]) => {
-      return PluginService.getPluginVersion(
-        creative.renderer_plugin_id,
-        creative.renderer_version_id,
-      )
-        .then(extractData)
-        .then(plugin => {
-          return {
-            creative,
-            rendererPlugin: plugin,
-            properties: normalizeProperties(rendererProperties),
-          };
-        });
+
+      return Promise.all([
+        PluginService.getPluginVersion(
+          creative.renderer_plugin_id,
+          creative.renderer_version_id,
+        ).then(extractData),
+        PluginService.getLocalizedPluginLayout(
+          creative.renderer_plugin_id,
+          creative.renderer_version_id
+        )
+      ]).then(res => {
+        const plugin = res[0];
+        const pLayoutRes = res[1];
+        const pLayout = (pLayoutRes !== null && pLayoutRes.status !== "error") ?
+          pLayoutRes.data
+          :
+          undefined;
+        return {
+          creative,
+          rendererPlugin: plugin,
+          properties: normalizeProperties(rendererProperties),
+          pluginLayout: pLayout
+        };
+      });
     });
   },
 

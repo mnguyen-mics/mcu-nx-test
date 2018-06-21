@@ -14,7 +14,9 @@ import {
   CreativeScreenshotResource,
 } from '../models/creative/CreativeResource';
 import { PropertyResourceShape } from '../models/plugin/index';
+import { PluginLayout } from '../models/plugin/PluginLayout';
 import PluginService from './PluginService';
+import log from '../utils/Logger';
 
 export interface GetCreativesOptions {
   type?: CreativeType;
@@ -171,9 +173,18 @@ const CreativeService = {
 
   getEmailTemplateProperties(
     creativeId: string,
-  ): Promise<DataListResponse<any>> {
+  ): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `email_templates/${creativeId}/renderer_properties`;
     return ApiService.getRequest(endpoint);
+  },
+
+  getEmailTemplateLocalizedPluginLayout(creativeId: string, locale: string = "en-US"): Promise<DataResponse<PluginLayout> | null> {
+    const endpoint = `email_templates/${creativeId}/properties_layout?locale=${locale}`;
+    return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint)
+      .catch(err => {
+        log.warn("Cannot retrieve plugin layout", err);
+        return null;
+      });
   },
 
   getAuditStatus(

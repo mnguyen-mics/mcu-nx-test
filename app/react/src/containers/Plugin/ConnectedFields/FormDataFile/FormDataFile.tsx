@@ -279,4 +279,4 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
   }
 }
 
-export default compose(injectDrawer)(FormDataFile);
+export default compose<any, FormDataFileProps & WrappedFieldProps>(injectDrawer)(FormDataFile);

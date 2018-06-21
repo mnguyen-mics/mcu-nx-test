@@ -5,6 +5,8 @@ import { PluginResource, PluginVersionResource } from '../models/Plugins';
 import { PropertyResourceShape } from '../models/plugin';
 import DataFileService from './DataFileService';
 import AssetsFilesService from './Library/AssetsFilesService';
+import { PluginLayout } from '../models/plugin/PluginLayout';
+import log from '../utils/Logger';
 
 interface GetPluginOptions extends PaginatedApiParam {
   plugin_type?: string;
@@ -34,15 +36,9 @@ const pluginService = {
     const endpoint = `plugins/${pluginId}/versions/${versionId}`;
     return ApiService.getRequest(endpoint);
   },
-  getPluginVersionProperty(
-    pluginId: string,
-    pluginVersionId: string,
-    params: object = {},
-  ): Promise<PropertyResourceShape[]> {
+  getPluginVersionProperty(pluginId: string, pluginVersionId: string, params: object = {}): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties`;
-    return ApiService.getRequest(endpoint, params).then(
-      (res: DataListResponse<PropertyResourceShape>) => res.data,
-    );
+    return ApiService.getRequest(endpoint, params);
   },
   getEngineProperties(
     engineVersionId: string,
@@ -113,8 +109,8 @@ const pluginService = {
       if (fileValue !== null) {
         const formData = new FormData(); /* global FormData */
         formData.append('file', fileValue, fileValue.name);
-        return ApiService.postRequest(uploadEndpoint, formData).then(
-          (res: any) => {
+        return ApiService.postRequest(uploadEndpoint, formData)
+          .then((res: any) => {
             const newParams = {
               ...params,
             };
@@ -222,6 +218,14 @@ const pluginService = {
     }
 
     return ApiService.putRequest(endpoint, params);
+  },
+  getLocalizedPluginLayout(pluginId: string, pluginVersionId: string, locale: string = "en-US"): Promise<DataResponse<PluginLayout> | null> {
+    const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties_layout?locale=${locale}`;
+    return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint)
+      .catch(err => {
+        log.warn("Cannot retrieve plugin layout", err);
+        return null;
+      });
   },
 };
 
