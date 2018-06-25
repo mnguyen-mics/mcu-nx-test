@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, defineMessages } from 'react-intl';
-
-import { Form } from '../../components/index';
 import { FormDataFileField, FormDataFile } from './ConnectedFields/FormDataFile';
 import { ValidatorProps } from '../../components/Form/withValidators';
 import { PluginProperty } from '../../models/Plugins';
@@ -29,7 +27,8 @@ import {
   FormRadioGroupField,
   FormRadioGroup,
   FormCheckboxGroupField,
-  FormCheckboxGroup
+  FormCheckboxGroup,
+  withValidators
 } from '../../components/Form/index';
 import FormSelect, { DefaultSelectField, TagSelectField } from '../../components/Form/';
 import { InputProps } from 'antd/lib/input';
@@ -41,7 +40,6 @@ import FormStyleSheet from './ConnectedFields/FormStyleSheet';
 import FormAdLayout from './ConnectedFields/FormAdLayout';
 const DefaultSelect = FormSelect.DefaultSelect;
 const TagSelect = FormSelect.TagSelect;
-const { withValidators } = Form;
 
 interface AcceptedFilePropertyResource extends StringPropertyResource {
   acceptedFile: string;
@@ -638,3 +636,4 @@ const messages = defineMessages({
   },
 
 });
+
