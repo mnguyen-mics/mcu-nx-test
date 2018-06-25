@@ -637,7 +637,14 @@ function getAdTasks(
   const tasks: Task[] = [];
   adFields.forEach(field => {
     if (isDisplayCreativeFormData(field.model)) {
-      const creativeFormData = field.model;
+      let creativeFormData = field.model;
+      creativeFormData = {
+        ...creativeFormData,
+        creative: {
+          ...creativeFormData.creative,
+          subtype: 'BANNER',
+        },
+      }
       tasks.push(() =>
         DisplayCreativeFormService.saveDisplayCreative(
           organisationId,

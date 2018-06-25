@@ -9,6 +9,14 @@ export default defineMessages({
         id: 'settings.mobileapp.form.general.title',
         defaultMessage: 'General Information'
     },
+    sectionVisitAnalyzerTitle: {
+        id: 'settings.mobileapp.form.visitAnalayzer.title',
+        defaultMessage: 'Visit Analyzer'
+    },
+    sectionEventRulesTitle: {
+        id: 'settings.mobileapp.form.section.eventRules.title',
+        defaultMessage: 'Event Rules'
+    },
     sectionGeneralSubTitle: {
         id: 'settings.mobileapp.form.general.subtitle',
         defaultMessage: 'Give your Mobile Application a name',

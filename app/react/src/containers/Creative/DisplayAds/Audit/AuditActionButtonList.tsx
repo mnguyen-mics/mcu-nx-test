@@ -120,8 +120,7 @@ export const confirmAuditActionOkTestMap: {
 } = defineMessages({
   START_AUDIT: {
     id: 'creatives.audit.action.start.confirm.oktext',
-    defaultMessage:
-      "Start the audit",
+    defaultMessage: 'Start the audit',
   },
   FAIL_AUDIT: {
     id: 'creatives.audit.action.fail.confirm.oktext',
@@ -133,7 +132,6 @@ export const confirmAuditActionOkTestMap: {
   },
   RESET_AUDIT: {
     id: 'creatives.audit.action.reset.confirm.oktext',
-    defaultMessage:
-      'Reset the audit',
+    defaultMessage: 'Reset the audit',
   },
 });

@@ -1,4 +1,9 @@
-import ApiService, { DataResponse } from './ApiService';
+import {
+  UserSegmentResource,
+  UserProfileResource,
+  UserIdentifierShape,
+} from './../models/timeline/timeline';
+import ApiService, { DataResponse, DataListResponse } from './ApiService';
 
 type ChannelResource = {
   creation_ts: number;
@@ -19,7 +24,7 @@ const UserDataService = {
     identifierType: string,
     identifierId: string,
     options: object = {},
-  ) {
+  ): Promise<DataResponse<UserProfileResource>> {
     const endpoint =
       identifierType !== 'user_point_id'
         ? `datamarts/${datamartId}/user_profiles/${identifierType}=${identifierId}`
@@ -29,13 +34,8 @@ const UserDataService = {
       ...options,
     };
 
-    return ApiService.getRequest(endpoint, params).catch(error => {
-      // api send 404 when profile doesn't exist
-      if (error && error.error === 'Resource Not Found') {
-        return Promise.resolve({ data: {} });
-      }
-      throw error;
-    });
+    return ApiService.getRequest(endpoint, params);
+
   },
 
   getSegments(
@@ -44,7 +44,7 @@ const UserDataService = {
     identifierType: string,
     identifierId: string,
     options: object = {},
-  ) {
+  ): Promise<DataListResponse<UserSegmentResource>> {
     const endpoint =
       identifierType !== 'user_point_id'
         ? `datamarts/${datamartId}/user_segments/${identifierType}=${identifierId}`
@@ -54,13 +54,7 @@ const UserDataService = {
       ...options,
     };
 
-    return ApiService.getRequest(endpoint, params).catch(error => {
-      // api send 404 when segments doesn't exist
-      if (error && error.error === 'Resource Not Found') {
-        return Promise.resolve({ data: [] });
-      }
-      throw error;
-    });
+    return ApiService.getRequest(endpoint, params);
   },
 
   getIdentifiers(
@@ -69,7 +63,7 @@ const UserDataService = {
     identifierType: string,
     identifierId: string,
     options: object = {},
-  ) {
+  ): Promise<DataListResponse<UserIdentifierShape>> {
     const endpoint =
       identifierType !== 'user_point_id'
         ? `datamarts/${datamartId}/user_identifiers/${identifierType}=${identifierId}`
@@ -79,13 +73,7 @@ const UserDataService = {
       ...options,
     };
 
-    return ApiService.getRequest(endpoint, params).catch(error => {
-      // api send 404 when identifiers doesn't exist
-      if (error && error.error === 'Resource Not Found') {
-        return Promise.resolve({ data: {} });
-      }
-      throw error;
-    });
+    return ApiService.getRequest(endpoint, params);
   },
 
   getActivities(

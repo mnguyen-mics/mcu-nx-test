@@ -80,9 +80,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   countDefaultLifetime = (
     audienceSegment: AudienceSegmentShape,
   ): {
-      defaultLiftime?: number;
-      defaultLiftimeUnit?: DefaultLiftimeUnit;
-    } => {
+    defaultLiftime?: number;
+    defaultLiftimeUnit?: DefaultLiftimeUnit;
+  } => {
     let lifetime = moment
       .duration(audienceSegment.default_ttl, 'milliseconds')
       .asMonths();
@@ -127,7 +127,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       match: {
         params: { organisationId, segmentId },
       },
-      workspace
+      workspace,
     } = props;
     const QueryContainer = (window as any).angular
       .element(document.body)
@@ -143,24 +143,25 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
                 audienceSegmentFormData: initialData,
                 selectedDatamart: datamartResource,
                 loading: false,
-              }
+              };
               if (initialData.query) {
                 newState.queryLanguage = initialData.query.query_language;
                 if (initialData.query.query_language === 'SELECTORQL') {
-
-                  const defQuery = new QueryContainer(initialData.audienceSegment.datamart_id, initialData.query.id);
+                  const defQuery = new QueryContainer(
+                    initialData.audienceSegment.datamart_id,
+                    initialData.query.id,
+                  );
                   defQuery.load();
                   newState.queryContainer = defQuery;
                 }
               }
               this.setState(newState as State);
-            })
+            });
         })
         .catch(err => {
           props.notifyError(err);
           this.setState({ loading: false });
         });
-
     } else {
       const datamarts = workspace(organisationId).datamarts;
       const multipleDatamarts = datamarts.length > 1;
@@ -217,7 +218,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       : history.push(defaultRedirectUrl);
   };
 
-
   save = (audienceSegmentFormData: AudienceSegmentFormData) => {
     const {
       match: {
@@ -236,18 +236,15 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           .duration(
             Number(formData.defaultLiftime),
             formData.defaultLiftimeUnit,
-        )
+          )
           .asMilliseconds();
       }
       return undefined;
     };
 
-
     const datamartId = selectedDatamart
       ? selectedDatamart.id
       : audienceSegmentFormData.audienceSegment.datamart_id;
-
-
 
     const audienceSegment = {
       ...audienceSegmentFormData.audienceSegment,
@@ -276,14 +273,17 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         hideSaveInProgress();
         if (!!response) {
           let redirect = '';
-          if (response.data.type === 'USER_LIST' && !audienceSegmentFormData.audienceSegment.id) {
+          if (
+            response.data.type === 'USER_LIST' &&
+            !audienceSegmentFormData.audienceSegment.id
+          ) {
             redirect = `/v2/o/${organisationId}/audience/segments/${
               response.data.id
-              }/edit`;
+            }/edit`;
           } else {
             redirect = `/v2/o/${organisationId}/audience/segments/${
               response.data.id
-              }`;
+            }`;
           }
 
           history.push(redirect);
@@ -325,28 +325,34 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   };
 
   onSegmentTypeSelect = (segmentType: SegmentType) => {
-    const queryLanguage: QueryLanguage = this.state.selectedDatamart && this.state.selectedDatamart.storage_model_version === 'v201506' ? 'SELECTORQL' : 'OTQL';
+    const queryLanguage: QueryLanguage =
+      this.state.selectedDatamart &&
+      this.state.selectedDatamart.storage_model_version === 'v201506'
+        ? 'SELECTORQL'
+        : 'OTQL';
     if (segmentType === 'USER_PIXEL') {
       this.setState({
         audienceSegmentFormData: {
           ...this.state.audienceSegmentFormData,
           audienceSegment: {
-            ...this.state.audienceSegmentFormData.audienceSegment as UserListSegment,
+            ...(this.state.audienceSegmentFormData
+              .audienceSegment as UserListSegment),
             type: 'USER_LIST',
-            feed_type: 'TAG'
-          }
-        }
+            feed_type: 'TAG',
+          },
+        },
       });
     } else if (segmentType === 'USER_LIST') {
       this.setState({
         audienceSegmentFormData: {
           ...this.state.audienceSegmentFormData,
           audienceSegment: {
-            ...this.state.audienceSegmentFormData.audienceSegment as UserListSegment,
+            ...(this.state.audienceSegmentFormData
+              .audienceSegment as UserListSegment),
             type: 'USER_LIST',
-            feed_type: 'FILE_IMPORT'
-          }
-        }
+            feed_type: 'FILE_IMPORT',
+          },
+        },
       });
     } else if (segmentType === 'USER_QUERY') {
       this.setState({
@@ -354,13 +360,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         audienceSegmentFormData: {
           ...this.state.audienceSegmentFormData,
           audienceSegment: {
-            ...this.state.audienceSegmentFormData.audienceSegment as UserQuerySegment,
+            ...(this.state.audienceSegmentFormData
+              .audienceSegment as UserQuerySegment),
             type: 'USER_QUERY',
-          }
-        }
+          },
+        },
       });
     }
-
   };
 
   getSegmentTypesToDisplay = () => {
@@ -404,10 +410,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const audienceSegmentName =
       audienceSegmentFormData.audienceSegment &&
-        audienceSegmentFormData.audienceSegment.name
+      audienceSegmentFormData.audienceSegment.name
         ? formatMessage(messagesMap.breadcrumbEditAudienceSegment, {
-          name: audienceSegmentFormData.audienceSegment.name,
-        })
+            name: audienceSegmentFormData.audienceSegment.name,
+          })
         : formatMessage(messages.audienceSegmentBreadCrumb);
 
     const breadcrumbPaths = [
@@ -420,6 +426,17 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       },
     ];
 
+    let resetFormData;
+    if (!segmentId) {
+      resetFormData = () => {
+        this.setState({
+          audienceSegmentFormData: {
+            audienceSegment: {},
+          },
+        });
+      };
+    }
+
     const actionbarProps = {
       onClose: this.redirectToSegmentList,
       formId: 'audienceSegmentForm',
@@ -429,11 +446,18 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return <Loading className="loading-full-screen" />;
     }
 
-    const selectedSegmentType = audienceSegmentFormData.audienceSegment.type === 'USER_LIST' && audienceSegmentFormData.audienceSegment.feed_type === 'TAG' ? 'USER_PIXEL' : audienceSegmentFormData.audienceSegment.type;
+    let selectedSegmentType: SegmentType | undefined;
+    if (audienceSegmentFormData.audienceSegment) {
+      selectedSegmentType =
+        audienceSegmentFormData.audienceSegment.type === 'USER_LIST' &&
+        audienceSegmentFormData.audienceSegment.feed_type === 'TAG'
+          ? 'USER_PIXEL'
+          : audienceSegmentFormData.audienceSegment.type;
+    }
 
     const getQueryLanguageToDisplay =
       this.state.audienceSegmentFormData.query &&
-        this.state.audienceSegmentFormData.query.query_language
+      this.state.audienceSegmentFormData.query.query_language
         ? this.state.audienceSegmentFormData.query.query_language
         : this.state.queryLanguage;
     return segmentId || (selectedSegmentType && selectedDatamart) ? (
@@ -448,19 +472,20 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         queryContainer={this.state.queryContainer}
         queryLanguage={getQueryLanguageToDisplay}
         segmentType={selectedSegmentType}
+        goToSegmentTypeSelection={resetFormData}
       />
     ) : (
-        <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-          {displayDatamartSelector ? (
-            <DatamartSelector onSelect={this.onDatamartSelect} />
-          ) : (
-              <SegmentTypeSelector
-                onSelect={this.onSegmentTypeSelect}
-                segmentTypesToDisplay={this.getSegmentTypesToDisplay()}
-              />
-            )}
-        </EditContentLayout>
-      );
+      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+        {displayDatamartSelector ? (
+          <DatamartSelector onSelect={this.onDatamartSelect} />
+        ) : (
+          <SegmentTypeSelector
+            onSelect={this.onSegmentTypeSelect}
+            segmentTypesToDisplay={this.getSegmentTypesToDisplay()}
+          />
+        )}
+      </EditContentLayout>
+    );
   }
 }
 

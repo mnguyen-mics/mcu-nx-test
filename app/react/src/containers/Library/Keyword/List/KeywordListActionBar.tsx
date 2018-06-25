@@ -25,13 +25,13 @@ class KeywordActionbar extends React.Component<
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.keywords),
-        url: `/v2/o/${organisationId}/library/keywordslists`,
+        url: `/v2/o/${organisationId}/library/keywordslist`,
       },
     ];
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/v2/o/${organisationId}/library/keywordslist`}>
+        <Link to={`/v2/o/${organisationId}/library/keywordslist/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
             <FormattedMessage {...messages.newKeyword} />

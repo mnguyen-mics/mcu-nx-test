@@ -73,7 +73,7 @@ type Props = InjectedFormProps<SiteFormData, SiteEditFormProps> &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-const FORM_ID = 'siteForm';
+export const FORM_ID = 'siteForm';
 
 class SiteEditForm extends React.Component<Props> {
   render() {

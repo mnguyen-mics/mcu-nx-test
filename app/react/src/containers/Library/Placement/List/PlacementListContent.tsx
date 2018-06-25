@@ -103,7 +103,7 @@ class PlacementListContent extends React.Component<
   onClickEdit = (placement: PlacementListResource) => {
     const { history } = this.props;
 
-    history.push(`placementlists/${placement.id}`);
+    history.push(`/library/placementlist/${placement.id}/edit`);
   };
 
   render() {
@@ -128,7 +128,7 @@ class PlacementListContent extends React.Component<
         render: (text: string, record: PlacementListResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`v2/o/${organisationId}/library/placementlists/${record.id}`}
+            to={`v2/o/${organisationId}/library/placementlist/${record.id}/edit`}
           >
             {text}
           </Link>

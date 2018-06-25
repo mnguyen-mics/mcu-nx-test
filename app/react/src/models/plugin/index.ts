@@ -22,7 +22,10 @@ export type PropertyResourceShape = StringPropertyResource
 | LongPropertyResource
 | ModelIdPropertyResource
 | DatamartIdPropertyResource
-| RecommenderIdPropertyResource;
+| RecommenderIdPropertyResource 
+| NativeImagePropertyResource
+| NativeTitlePropertyResource
+| NativeDataPropertyResource;
 
 export interface StringPropertyResource extends PropertyResource {
   property_type: 'STRING';
@@ -96,5 +99,20 @@ export interface DatamartIdPropertyResource extends PropertyResource {
 
 export interface RecommenderIdPropertyResource extends PropertyResource {
   property_type: 'RECOMMENDER_ID';
+  value: { value: any };
+}
+
+export interface NativeImagePropertyResource extends PropertyResource {
+  property_type: 'NATIVE_IMAGE';
+  value: { value: any };
+}
+
+export interface NativeTitlePropertyResource extends PropertyResource {
+  property_type: 'NATIVE_TITLE';
+  value: { value: any };
+}
+
+export interface NativeDataPropertyResource extends PropertyResource {
+  property_type: 'NATIVE_DATA';
   value: { value: any };
 }

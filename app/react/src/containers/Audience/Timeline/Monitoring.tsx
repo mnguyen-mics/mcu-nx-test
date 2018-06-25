@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import cuid from 'cuid';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
@@ -9,7 +10,7 @@ import {
   Activity,
   UserAgent,
   IdentifiersProps,
-  Segment,
+  UserSegmentResource,
 } from '../../../models/timeline/timeline';
 import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
@@ -23,14 +24,14 @@ import messages from './messages';
 
 const { Content } = Layout;
 
-interface Activities {
+export interface Activities {
   isLoading: boolean;
   hasItems: boolean;
   items: Activity[];
   byDay: {
-    [date: string]: Activity[]
+    [date: string]: Activity[];
   };
-  fetchNewActivities: () => void; // check type
+  fetchNewActivities?: () => void; // check type
 }
 
 interface MonitoringProps {
@@ -43,7 +44,7 @@ interface MonitoringProps {
   segments: {
     isLoading: boolean;
     hasItems: boolean;
-    items: Segment[];
+    items: UserSegmentResource[];
   };
   activities: Activities;
   datamartId: string;
@@ -164,7 +165,7 @@ class Monitoring extends React.Component<Props> {
                           const activityOnDay = activities.byDay[day];
                           const dayToFormattedMessage = this.renderDate(day);
                           return (
-                            <div className="mcs-timeline" key={day}>
+                            <div className="mcs-timeline" key={cuid()}>
                               <Timeline.Item
                                 dot={
                                   <Icon
@@ -181,7 +182,7 @@ class Monitoring extends React.Component<Props> {
                                 activityOnDay.map((activity: Activity) => {
                                   return (
                                     <Timeline.Item
-                                      key={activity.$ts}
+                                      key={cuid()}
                                       dot={
                                         <McsIcon
                                           type="status"
@@ -225,4 +226,7 @@ class Monitoring extends React.Component<Props> {
   }
 }
 
-export default compose(injectIntl, withRouter)(Monitoring);
+export default compose<Props, MonitoringProps>(
+  injectIntl,
+  withRouter,
+)(Monitoring);

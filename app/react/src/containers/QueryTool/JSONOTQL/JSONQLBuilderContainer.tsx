@@ -206,6 +206,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
   runQuery = (_datamartId?: string) => {
     const { datamartId } = this.props;
     const queryDocument: QueryDocument = {
+      operations: [{ directives: [{name: 'count'}], selections: [] }],
       from: 'UserPoint',
       where: this.state.queryHistory.present,
     };
@@ -253,7 +254,8 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
 
     return (
       <Layout className={editionLayout ? 'edit-layout' : ''}>
-        {renderActionBar({
+        {renderActionBar({          
+          operations: [{ directives: [], selections: [{ name: 'id' }] }],
           from: 'UserPoint',
           where: query
         }, datamartId)}

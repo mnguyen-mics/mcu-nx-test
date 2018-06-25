@@ -63,9 +63,9 @@ function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
 function addSheet(tabTitle, data, headers, filter, formatMessage, title, otherInfos) {
   let formattedTabTitle;
   if (typeof tabTitle === 'string') {
-    formattedTabTitle = tabTitle;
+    formattedTabTitle = tabTitle.substring(0, 30);
   } else {
-    formattedTabTitle = formatMessage(tabTitle);
+    formattedTabTitle = formatMessage(tabTitle).substring(0, 30);
   }
   const sheetTitle = title ? title : tabTitle;
   if (data && data.length) {
@@ -287,7 +287,7 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
     goalData.forEach(goal => {
       goal.attribution.forEach(attribution => {
         goalSheets.push(
-          addSheet(`${goal.goal_name} - ${attribution.attribution_model_name}`, attribution.perf, goalHeaders, exportFilter, formatMessage, `${goal.goal_name} - ${attribution.attribution_model_name}`, otherInfos)
+          addSheet(`${attribution.attribution_model_name} - ${goal.goal_name}`, attribution.perf, goalHeaders, exportFilter, formatMessage, `${goal.goal_name} - ${attribution.attribution_model_name}`, otherInfos)
         );
       });
     });

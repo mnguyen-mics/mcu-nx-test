@@ -25,6 +25,7 @@ interface FormSearchObjectState {
   data: LabeledValue[];
   value?: LabeledValue[];
   fetching: boolean;
+  initialFetch?: boolean;
 }
 
 type Props = FormSearchObjectProps & WrappedFieldProps;
@@ -58,8 +59,9 @@ class FormSearchObject extends React.Component<
 
   fetchInitialData = (values: string[]) => {
     const { fetchSingleMethod } = this.props;
+    this.setState({ initialFetch: true })
     return Promise.all(values.map(i => fetchSingleMethod(i))).then(res => {
-      this.setState({ value: res })
+      this.setState({ value: res, initialFetch: false })
     })
   }
 
@@ -111,20 +113,23 @@ class FormSearchObject extends React.Component<
         small={small}
         {...formItemProps}
       >
-        <Select
-          mode="multiple"
-          labelInValue={true}
-          value={this.state.value}
-          placeholder={'Search'}
-          defaultActiveFirstOption={false}
-          filterOption={false}
-          onSearch={this.fetchData}
-          onChange={this.handleChange}
-          notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
-          style={{ width: '100%' }}
-        >
-          {options}
-        </Select>
+        <Spin spinning={this.state.initialFetch}>
+          <Select
+            mode="multiple"
+            labelInValue={true}
+            value={this.state.value}
+            placeholder={'Search'}
+            defaultActiveFirstOption={false}
+            filterOption={false}
+            onSearch={this.fetchData}
+            onChange={this.handleChange}
+            notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
+            style={{ width: '100%' }}
+          >
+            {options}
+          </Select>
+        </Spin>
+        
       </FormFieldWrapper>
     );
   }

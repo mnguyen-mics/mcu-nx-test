@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   listSubtitle: {
     id: 'audience.segment.form.datamart.selector.list.subtitle',
-    defaultMessage: 'Chose your datamart',
+    defaultMessage: 'Choose your datamart',
   },
 });
 

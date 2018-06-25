@@ -62,6 +62,10 @@ export default defineMessages({
         id: 'menu.creatives.emails',
         defaultMessage: 'Emails',
     },
+    creativesNative: {
+        id: 'menu.creatives.native',
+        defaultMessage: 'Native',
+    },
 
 
     // LIBRARY
@@ -100,6 +104,10 @@ export default defineMessages({
     libraryCatalog: {
         id: 'menu.library.Catalogs',
         defaultMessage: 'Catalogs',
+    },
+    libraryDealList: {
+        id: 'menu.library.DealLst',
+        defaultMessage: 'Deal Lists',
     },
     libraryAdLayouts: {
         id: 'menu.library.layouts',

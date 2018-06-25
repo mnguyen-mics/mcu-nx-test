@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import cuid from 'cuid';
 import {
   injectIntl,
   InjectedIntlProps,
@@ -206,12 +207,14 @@ class TriggerFormSection extends React.Component<Props, State> {
 
     const radioOptions = [
       {
-        label: formatMessage(messages.formCheckBoxText1),
+        title: formatMessage(messages.formCheckBoxText1),
         value: 'QUERY',
+        id: cuid(),
       },
       {
-        label: formatMessage(messages.formCheckBoxText2),
+        title: formatMessage(messages.formCheckBoxText2),
         value: 'PIXEL',
+        id: cuid(),
       },
     ];
 
@@ -229,7 +232,7 @@ class TriggerFormSection extends React.Component<Props, State> {
               <FormRadioGroupField
                 name="triggerMode"
                 component={FormRadioGroup}
-                options={radioOptions}
+                elements={radioOptions}
               />
             </Col>
           </Row>

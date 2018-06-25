@@ -3,7 +3,9 @@ import { Modal, Input, Alert } from 'antd';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import CreativeService from '../../../../services/CreativeService';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const messages = defineMessages({
   modalTitle: {
@@ -50,7 +52,9 @@ interface EmailTestModalState {
   error: boolean;
 }
 
-type JoinedProps = EmailTestModalProps & InjectedNotificationProps & InjectedIntlProps;
+type JoinedProps = EmailTestModalProps &
+  InjectedNotificationProps &
+  InjectedIntlProps;
 
 class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
   constructor(props: JoinedProps) {
@@ -63,7 +67,9 @@ class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
   }
 
   handleOk = () => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     if (this.state.inputValue && this.state.inputValue.length) {
       return this.setState({ isLoading: true }, () => {
         CreativeService.sendTestBlast(
@@ -90,7 +96,9 @@ class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       this.setState({ inputValue: e.target.value });
     };

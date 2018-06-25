@@ -1,3 +1,4 @@
+import { CreativeSubtype } from './../../../../models/creative/CreativeResource';
 import { DisplayCreativeFormData, isDisplayAdResource } from './domain';
 import CreativeService from '../../../../services/CreativeService';
 import { extractData, extractDataList } from '../../../../services/ApiService';
@@ -18,17 +19,33 @@ function normalizeProperties(properties: PropertyResourceShape[]) {
 }
 
 const DisplayCreativeFormService = {
-  initializeFormData(adRendererId: string): Promise<DisplayCreativeFormData> {
+  initializeFormData(adRendererId: string, subtype: CreativeSubtype): Promise<DisplayCreativeFormData> {
     return PluginService.getPluginVersions(adRendererId).then(resp => {
       const lastVersion = resp.data[resp.data.length - 1];
-      return PluginService.getPluginVersionProperty(
-        adRendererId,
-        lastVersion.id,
-      ).then(properties => {
+
+      return Promise.all([
+        PluginService.getPluginVersionProperty(
+          adRendererId,
+          lastVersion.id,
+        ),
+        PluginService.getLocalizedPluginLayout(
+          adRendererId,
+          lastVersion.id
+        )
+      ]).then(res => {
+        const properties = res[0].data;
+        const pLayoutRes = res[1];
+        const pLayout = (pLayoutRes !== null && pLayoutRes.status !== "error") ?
+          pLayoutRes.data
+          :
+          undefined;
         return {
-          creative: {},
+          creative: {
+            subtype: subtype
+          },
           rendererPlugin: lastVersion,
           properties: normalizeProperties(properties),
+          pluginLayout: pLayout,
         };
       });
     });
@@ -41,18 +58,30 @@ const DisplayCreativeFormService = {
         extractDataList,
       ),
     ]).then(([creative, rendererProperties]) => {
-      return PluginService.getPluginVersion(
-        creative.renderer_plugin_id,
-        creative.renderer_version_id,
-      )
-        .then(extractData)
-        .then(plugin => {
-          return {
-            creative,
-            rendererPlugin: plugin,
-            properties: normalizeProperties(rendererProperties),
-          };
-        });
+
+      return Promise.all([
+        PluginService.getPluginVersion(
+          creative.renderer_plugin_id,
+          creative.renderer_version_id,
+        ).then(extractData),
+        PluginService.getLocalizedPluginLayout(
+          creative.renderer_plugin_id,
+          creative.renderer_version_id
+        )
+      ]).then(res => {
+        const plugin = res[0];
+        const pLayoutRes = res[1];
+        const pLayout = (pLayoutRes !== null && pLayoutRes.status !== "error") ?
+          pLayoutRes.data
+          :
+          undefined;
+        return {
+          creative,
+          rendererPlugin: plugin,
+          properties: normalizeProperties(rendererProperties),
+          pluginLayout: pLayout
+        };
+      });
     });
   },
 
@@ -74,10 +103,8 @@ const DisplayCreativeFormService = {
         renderer_group_id: rendererPlugin.group_id,
         editor_artifact_id: 'default-editor',
         editor_group_id: 'com.mediarithmics.creative.display',
-        subtype: 'BANNER',
-        format: creative.format,
-        destination_domain: creative.destination_domain,
-        name: creative.name,
+        subtype: formData.creative.subtype,
+        ...creative
       };
       createOrUpdatePromise = CreativeService.createDisplayCreative(
         organisationId,
@@ -89,15 +116,17 @@ const DisplayCreativeFormService = {
       const creativeId = resp.data.id;
 
       return Promise.all(
-        Object.keys(properties).filter(key => properties[key].writable).map(key => {
-          const item = properties[key];
-          return CreativeService.updateDisplayCreativeRendererProperty(
-            organisationId,
-            creativeId,
-            item.technical_name,
-            item,
-          );
-        }),
+        Object.keys(properties)
+          .filter(key => properties[key].writable)
+          .map(key => {
+            const item = properties[key];
+            return CreativeService.updateDisplayCreativeRendererProperty(
+              organisationId,
+              creativeId,
+              item.technical_name,
+              item,
+            );
+          }),
       ).then(() => {
         return CreativeService.takeScreenshot(creativeId).then(() => {
           return creativeId;
