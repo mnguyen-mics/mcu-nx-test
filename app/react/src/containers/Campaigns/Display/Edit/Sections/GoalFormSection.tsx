@@ -107,8 +107,11 @@ class GoalFormSection extends React.Component<Props, State> {
         if (newGoalIds.includes(field.model.goal.id)) {
           keptFields.push(field);
         }
+      } else if(isGoalFormData(field.model)) {
+        keptFields.push(field);
       }
     });
+    formChange((fields as any).name, keptFields);
 
     const existingGoalIds = getExistingGoalIds(fields.getAll());
     const newFields: GoalFieldModel[] = [];
