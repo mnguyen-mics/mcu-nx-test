@@ -18,7 +18,7 @@ export interface ReduxFormChangeProps {
 
 export interface McsFormSection {
   id: string;
-  title: FormattedMessage.MessageDescriptor;
+  title: FormattedMessage.MessageDescriptor | string;
   component: React.ReactNode;
 }
 

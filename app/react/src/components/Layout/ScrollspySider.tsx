@@ -13,7 +13,7 @@ const { Sider } = Layout;
 
 export interface SideBarItem {
   sectionId: string;
-  title: FormattedMessage.MessageDescriptor;
+  title: FormattedMessage.MessageDescriptor | string;
   onClick?: (sectionId: string) => void;
   type?: 'validated' // potential other values : 'error' | 'warning'
 }
@@ -34,7 +34,7 @@ class ScrollspySider extends React.Component<Props> {
       const iconAndText = (
         <div>
           <McsIcon type="check-rounded-inverted" />
-          <span className="step-title">{intl.formatMessage(item.title)}</span>
+          <span className="step-title">{typeof item.title !== 'string' ? intl.formatMessage(item.title) : item.title}</span>
         </div>
       );
       if (item.onClick) {
