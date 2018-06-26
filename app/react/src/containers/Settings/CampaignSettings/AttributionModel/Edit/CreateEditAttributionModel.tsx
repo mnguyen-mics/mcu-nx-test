@@ -151,6 +151,7 @@ class CreateAttributionModel extends React.Component<
     // if creation save and redirect
     const formattedFormValues = {
       ...plugin,
+      organisation_id: organisationId,
     };
     if (this.state.initialValues) {
       formattedFormValues.artifact_id = this.state.initialValues.plugin.artifact_id;
