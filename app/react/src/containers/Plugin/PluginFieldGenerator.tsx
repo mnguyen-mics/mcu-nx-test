@@ -35,7 +35,7 @@ import FormSelect, { DefaultSelectField, TagSelectField } from '../../components
 import { InputProps } from 'antd/lib/input';
 import { FormItemProps } from 'antd/lib/form';
 import { TooltipProps } from 'antd/lib/tooltip';
-import { StringPropertyResource } from '../../models/plugin';
+import { StringPropertyResource, PropertyResourceShape } from '../../models/plugin';
 import { Field, Validator } from 'redux-form';
 import FormStyleSheet from './ConnectedFields/FormStyleSheet';
 import FormAdLayout from './ConnectedFields/FormAdLayout';
@@ -47,7 +47,7 @@ interface AcceptedFilePropertyResource extends StringPropertyResource {
   acceptedFile: string;
 }
 interface PluginFieldGeneratorProps {
-  definition: PluginProperty;
+  definition: PropertyResourceShape;
   pluginLayoutFieldDefinition?: PluginLayoutFieldResource;
   disabled?: boolean;
   organisationId: string;

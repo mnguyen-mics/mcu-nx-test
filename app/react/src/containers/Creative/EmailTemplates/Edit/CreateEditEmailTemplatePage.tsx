@@ -7,7 +7,6 @@ import PluginService from '../../../../services/PluginService';
 import PluginEditForm from '../../../Plugin/Edit/PluginEditForm';
 import { EditContentLayout } from '../../../../components/Layout';
 import {
-  PluginProperty,
   PluginVersionResource,
 } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
@@ -28,7 +27,7 @@ interface EmailTemplateRouteParam {
 
 interface EmailTemplateForm {
   plugin?: EmailTemplateResource;
-  properties?: PluginProperty[];
+  properties?: PropertyResourceShape[];
 }
 
 interface CreateEmailTemplateState {
@@ -218,7 +217,7 @@ class CreateEmailTemplate extends React.Component<
 
   saveOrCreatePluginInstance = (
     plugin: EmailTemplateResource,
-    properties: PluginProperty[],
+    properties: PropertyResourceShape[],
   ) => {
 
     const {
@@ -272,11 +271,11 @@ class CreateEmailTemplate extends React.Component<
   };
 
   updatePropertiesValue = (
-    properties: PluginProperty[],
+    properties: PropertyResourceShape[],
     organisationId: string,
     id: string,
   ) => {
-    const propertiesPromises: Array<Promise<DataResponse<PluginProperty>>> = [];
+    const propertiesPromises: Array<Promise<DataResponse<PropertyResourceShape>>> = [];
     properties.forEach(item => {
       propertiesPromises.push(
         CreativeService.updateEmailTemplateProperty(
@@ -294,7 +293,7 @@ class CreateEmailTemplate extends React.Component<
     const formattedProperties: any = {};
 
     if (initialValues.properties) {
-      initialValues.properties.forEach((property: PluginProperty) => {
+      initialValues.properties.forEach((property: PropertyResourceShape) => {
         formattedProperties[property.technical_name] = {
           value: property.value,
         };
