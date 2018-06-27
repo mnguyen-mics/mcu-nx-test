@@ -5,7 +5,7 @@ export interface PluginResource {
   group_id: string;
   artifact_id: string;
   current_version_id: string;
-  plugin_id?: string
+  plugin_id?: string;
 }
 
 export interface PluginProperty {
@@ -17,14 +17,15 @@ export interface PluginProperty {
   writable: boolean;
 }
 
-export type PluginType = 'ACTIVITY_ANALYZER' |
-  'RECOMMENDER' |
-  'ACTIVITY_ANALYZER' |
-  'BID_OPTIMIZATION_ENGINE' |
-  'ATTRIBUTION_PROCESSOR' |
-  'EMAIL_ROUTER' |
-  'AUDIENCE_SEGMENT_EXTERNAL_FEED' |
-  'AUDIENCE_SEGMENT_TAG_FEED';
+export type PluginType =
+  | 'ACTIVITY_ANALYZER'
+  | 'RECOMMENDER'
+  | 'ACTIVITY_ANALYZER'
+  | 'BID_OPTIMIZATION_ENGINE'
+  | 'ATTRIBUTION_PROCESSOR'
+  | 'EMAIL_ROUTER'
+  | 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+  | 'AUDIENCE_SEGMENT_TAG_FEED';
 
 export interface PluginVersionResource {
   id: string;
@@ -37,7 +38,16 @@ export interface PluginVersionResource {
   max_qps: number;
 }
 
-export interface AttributionModel {
+export interface PluginInstance {
+  id?: string;
+  artifact_id: string;
+  group_id: string;
+  version_id: string;
+  version_value: string;
+  organisation_id: string;
+}
+
+export interface AttributionModel extends PluginInstance {
   artifact_id: string;
   attribution_processor_id: string;
   group_id: string;
@@ -47,7 +57,7 @@ export interface AttributionModel {
   organisation_id: string;
 }
 
-export interface BidOptimizer {
+export interface BidOptimizer extends PluginInstance {
   engine_artifact_id: string;
   engine_group_id: string;
   engine_version_id: string;
@@ -55,7 +65,7 @@ export interface BidOptimizer {
   name: string;
   organisation_id: string;
 }
-export interface EmailRouter {
+export interface EmailRouter extends PluginInstance {
   id: string;
   name: string;
   organisation_id: string;
@@ -65,7 +75,7 @@ export interface EmailRouter {
   version_id: string;
 }
 
-export interface VisitAnalyzer {
+export interface VisitAnalyzer extends PluginInstance {
   id: string;
   artifact_id: string;
   name: string;
@@ -76,7 +86,7 @@ export interface VisitAnalyzer {
   organisation_id: string;
 }
 
-export interface Recommender {
+export interface Recommender extends PluginInstance {
   id: string;
   artifact_id: string;
   name: string;
@@ -87,8 +97,8 @@ export interface Recommender {
   organisation_id: string;
 }
 
-export type Status = "INITIAL" | "PAUSED" | "ACTIVE" | "PUBLISHED";
-export interface AudienceExternalFeed {
+export type Status = 'INITIAL' | 'PAUSED' | 'ACTIVE' | 'PUBLISHED';
+export interface AudienceExternalFeed extends PluginInstance  {
   artifact_id: string;
   audience_segment_id: string;
   group_id: string;
@@ -98,7 +108,7 @@ export interface AudienceExternalFeed {
   version_id: string;
 }
 
-export interface AudienceTagFeed {
+export interface AudienceTagFeed extends PluginInstance {
   artifact_id: string;
   audience_segment_id: string;
   group_id: string;
