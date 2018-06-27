@@ -17,12 +17,18 @@ import {
   isDisplayAdResource,
 } from '../domain';
 import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
+import PluginSectionGenerator from '../../../../Plugin/PluginSectionGenerator';
+import { PropertyResourceShape } from '../../../../../models/plugin';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
 }
+interface SectionProps {
+  sectionTitle?: string;
+}
 
 type Props = MapStateProps &
+  SectionProps &
   InjectedIntlProps &
   RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
 
@@ -48,6 +54,7 @@ class PropertiesFormSection extends React.Component<Props> {
         creative,
         rendererPlugin: { id: pluginVersionId },
         properties,
+        pluginLayout
       },
       match: {
         params: { organisationId },
@@ -70,31 +77,68 @@ class PropertiesFormSection extends React.Component<Props> {
       additionnalProps.noUploadModal = this.noUploadModal(creative);
     }
 
-    return (
-      <div>
-        <FormSection
-          title={messages.creativeSectionPropertyTitle}
-          subtitle={messages.creativeSectionPropertySubTitle}
-        />
-        {Object.keys(properties).map(key => {
-          const fieldDef = properties[key];
+    if (pluginLayout === undefined) {
+      return (
+        <div>
+          <FormSection
+            title={messages.creativeSectionPropertyTitle}
+            subtitle={messages.creativeSectionPropertySubTitle}
+          />
+          {Object.keys(properties).map(key => {
+            const fieldDef = properties[key];
+            return (
+              <PluginFieldGenerator
+                key={fieldDef.technical_name}
+                definition={fieldDef}
+                disabled={isDisabled}
+                pluginVersionId={pluginVersionId}
+                organisationId={organisationId}
+                {...additionnalProps}
+              />
+            );
+          })}
+        </div>
+      );
+    } else {
+
+      const propertiesToSectionGenerator: PropertyResourceShape[] = [];
+
+      for (const propertyName in properties) {
+        if (properties.hasOwnProperty(propertyName))
+          propertiesToSectionGenerator.push(properties[propertyName]);
+      }
+
+      if (this.props.sectionTitle === undefined) {
+
+        return null;
+
+      } else {
+
+        const possibleSections = pluginLayout.sections.filter(section => section.title === this.props.sectionTitle);
+
+        if (possibleSections.length !== 0) {
+
+          const chosenSection = possibleSections[0];
+
           return (
-            <PluginFieldGenerator
-              key={fieldDef.technical_name}
-              definition={fieldDef}
-              disabled={isDisabled}
-              pluginVersionId={pluginVersionId}
+            <PluginSectionGenerator
+              key={chosenSection.title}
+              pluginLayoutSection={chosenSection}
               organisationId={organisationId}
+              pluginProperties={propertiesToSectionGenerator}
+              pluginVersionId={pluginVersionId}
               {...additionnalProps}
             />
-          );
-        })}
-      </div>
-    );
+          )
+        }
+      }
+    }
+    return null;
   }
 }
 
-export default compose<Props, {}>(
+
+export default compose<Props, SectionProps>(
   withRouter,
   injectIntl,
   connect((state: any, ownProps: Props) => ({

@@ -86,7 +86,7 @@ class AudienceLookalikeCreation extends React.Component<
     AudiencePartitionService.getPartitions(organisationId, {
       first_result: 0,
       max_results: 500,
-      status: 'PUBLISHED',
+      status: ['PUBLISHED'],
       datamart_id: datamart.id,
     })
       .then(res => res.data)

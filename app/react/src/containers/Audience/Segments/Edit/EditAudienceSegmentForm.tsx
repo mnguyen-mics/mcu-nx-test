@@ -30,9 +30,8 @@ import withNormalizer, {
 import {
   AudienceSegmentFormData,
   EditAudienceSegmentParam,
-  SegmentType,
 } from './domain';
-import { FeedType } from '../../../../models/audiencesegment/';
+import { FeedType, AudienceSegmentType } from '../../../../models/audiencesegment/';
 import * as FeatureSelectors from '../../../../state/Features/selectors';
 
 import GeneralFormSection from './Sections/GeneralFormSection';
@@ -70,7 +69,7 @@ export interface AudienceSegmentFormProps
   segmentCreation: boolean;
   queryContainer: any;
   queryLanguage?: QueryLanguage;
-  segmentType?: SegmentType;
+  segmentType?: AudienceSegmentType;
   goToSegmentTypeSelection?: () => void;
 }
 

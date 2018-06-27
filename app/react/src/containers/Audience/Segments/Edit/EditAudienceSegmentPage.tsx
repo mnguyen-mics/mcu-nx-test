@@ -9,7 +9,6 @@ import {
   EditAudienceSegmentParam,
   AudienceSegmentFormData,
   DefaultLiftimeUnit,
-  SegmentType,
 } from './domain';
 import { INITIAL_AUDIENCE_SEGMENT_FORM_DATA } from '../Edit/domain';
 import {
@@ -27,7 +26,7 @@ import {
   QueryLanguage,
   DatamartResource,
 } from '../../../../models/datamart/DatamartResource';
-import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { UserQuerySegment, AudienceSegmentType } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { Loading } from '../../../../components';
 import DatamartSelector from './../../Common/DatamartSelector';
 import { EditContentLayout } from '../../../../components/Layout';
@@ -119,7 +118,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     ) {
       return 'USER_PIXEL';
     }
-    return audienceSegment.type as SegmentType;
+    return audienceSegment.type as AudienceSegmentType;
   };
 
   initialLoading = (props: Props) => {
@@ -324,7 +323,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     });
   };
 
-  onSegmentTypeSelect = (segmentType: SegmentType) => {
+  onSegmentTypeSelect = (segmentType: AudienceSegmentType) => {
     const queryLanguage: QueryLanguage =
       this.state.selectedDatamart &&
       this.state.selectedDatamart.storage_model_version === 'v201506'
@@ -373,7 +372,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     const { selectedDatamart } = this.state;
     const segmentTypesToDisplay: Array<{
       title: string;
-      value: SegmentType;
+      value: AudienceSegmentType;
     }> = [];
     if (
       selectedDatamart &&
@@ -446,7 +445,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return <Loading className="loading-full-screen" />;
     }
 
-    let selectedSegmentType: SegmentType | undefined;
+    let selectedSegmentType: AudienceSegmentType | undefined;
     if (audienceSegmentFormData.audienceSegment) {
       selectedSegmentType =
         audienceSegmentFormData.audienceSegment.type === 'USER_LIST' &&

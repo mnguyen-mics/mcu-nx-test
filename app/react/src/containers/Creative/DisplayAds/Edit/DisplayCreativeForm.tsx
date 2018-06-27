@@ -50,57 +50,59 @@ class DisplayCreativeForm extends React.Component<Props> {
   buildFormSections = () => {
     const { initialValues } = this.props;
 
-      const formSections: McsFormSection[] = [];
+    const formSections: McsFormSection[] = [];
 
-      let existingCreative = null;
-      if (
-        initialValues &&
-        initialValues.creative &&
-        isDisplayAdResource(initialValues.creative)
-      ) {
-        existingCreative = initialValues.creative;
-      }
+    let existingCreative = null;
+    if (
+      initialValues &&
+      initialValues.creative &&
+      isDisplayAdResource(initialValues.creative)
+    ) {
+      existingCreative = initialValues.creative;
+    }
+
+    formSections.push({
+      id: 'general',
+      title: messages.creativeSectionGeneralTitle,
+      component: <GeneralFormSection />,
+    });
+
+    if (existingCreative) {
+      formSections.push({
+        id: 'audit_status',
+        title: messages.creativeSectionAuditTitle,
+        component: <AuditFormSection creativeId={existingCreative.id} />,
+      });
+    }
+
+
+    if (initialValues.pluginLayout === undefined) {
 
       formSections.push({
-        id: 'general',
-        title: messages.creativeSectionGeneralTitle,
-        component: <GeneralFormSection />,
+        id: 'properties',
+        title: messages.creativeSectionPropertyTitle,
+        component: <PropertiesFormSection />,
       });
-
-      if (existingCreative) {
+    }
+    else {
+      initialValues.pluginLayout.sections.forEach(section => {
         formSections.push({
-          id: 'audit_status',
-          title: messages.creativeSectionAuditTitle,
-          component: <AuditFormSection creativeId={existingCreative.id} />,
+          id: section.title,
+          title: section.title,
+          component: <PropertiesFormSection sectionTitle={section.title}/>,
         });
-      }
+      })
+    }
 
+    if (existingCreative) {
+      formSections.push({
+        id: 'preview',
+        title: messages.creativeSectionPreviewTitle,
+        component: <PreviewFormSection />,
+      });
+    }
 
-      if (initialValues.pluginLayout === undefined) {
-
-        formSections.push({
-          id: 'properties',
-          title: messages.creativeSectionPropertyTitle,
-          component: <PropertiesFormSection />,
-        });
-      }
-      else {
-        formSections.push({
-          id: 'properties',
-          title: messages.creativeSectionPropertyTitle,
-          component: <PropertiesFormSection />,
-        }); // A faire dans le cas d'un pluginLayout
-      }
-
-      if (existingCreative) {
-        formSections.push({
-          id: 'preview',
-          title: messages.creativeSectionPreviewTitle,
-          component: <PreviewFormSection />,
-        });
-      }
-
-      return formSections;
+    return formSections;
   };
 
   render() {

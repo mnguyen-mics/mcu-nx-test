@@ -13,7 +13,6 @@ import { FormTitle, withValidators, FieldCtor } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
-import { PluginProperty } from '../../../models/Plugins';
 import { PluginFieldGenerator } from '../../Plugin';
 import { Omit } from '../../../utils/Types';
 
@@ -21,9 +20,11 @@ import messages from './messages';
 import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../components/Drawer/index';
 import { ButtonStyleless, McsIcon } from '../../../components'
-import { PluginLayout, PluginLayoutSectionResource, PluginLayoutFieldResource } from '../../../models/plugin/PluginLayout';
+import { PluginLayout } from '../../../models/plugin/PluginLayout';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
+import PluginSectionGenerator from '../PluginSectionGenerator';
+import { PropertyResourceShape } from '../../../models/plugin';
 
 const FORM_NAME = 'pluginForm';
 
@@ -34,8 +35,8 @@ interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
   // formValues: any;
   editionMode: boolean;
   organisationId: string;
-  save: (pluginValue: any, propertiesValue: PluginProperty[]) => void;
-  pluginProperties: PluginProperty[];
+  save: (pluginValue: any, propertiesValue: PropertyResourceShape[]) => void;
+  pluginProperties: PropertyResourceShape[];
   disableFields: boolean;
   pluginLayout?: PluginLayout;
   isLoading: boolean;
@@ -56,7 +57,6 @@ type JoinedProps = PluginEditFormProps &
 interface PluginEditFormState {
   loading: boolean;
   displayAdvancedSection: boolean;
-  displayAdvancedFields: { [key:string]:boolean; };
 }
 
 export interface FormModel {
@@ -75,17 +75,9 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
   constructor(props: JoinedProps) {
     super(props);
 
-    const tabDisplayAdvancedFields: { [key:string]:boolean; } = {};
-    if (props.pluginLayout !== undefined) {
-      props.pluginLayout.sections.forEach(element => {
-        tabDisplayAdvancedFields[element.title] = false;
-      });
-    }
-
     this.state = {
       loading: false,
       displayAdvancedSection: false,
-      displayAdvancedFields: tabDisplayAdvancedFields, 
     };
   }
 
@@ -120,38 +112,6 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     save(pluginData, formattedProperties);
   };
 
-  generatePluginFields = () => {
-    const {
-      pluginLayout
-    } = this.props;
-
-    if (pluginLayout === undefined) {
-      return (
-        <div>
-          <div>
-            <hr />
-          </div>
-          <div id={'properties'}>
-            <Row
-              type="flex"
-              align="middle"
-              justify="space-between"
-              className="section-header"
-            >
-              <FormTitle title={messages.sectionPropertiesTitle} />
-            </Row>
-            <Row>{this.pluginFieldGenerated()}</Row>
-          </div>
-        </div>)
-    }
-    else {
-      return (
-        <div>
-          {this.generateFormFromPluginLayout()}
-        </div>
-      );
-    }
-  }
 
   pluginFieldGenerated = () => {
     const {
@@ -161,7 +121,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       pluginProperties,
     } = this.props;
 
-    return pluginProperties.map((fieldDef: PluginProperty) => {
+    return pluginProperties.map((fieldDef: PropertyResourceShape) => {
       return (
         <PluginFieldGenerator
           key={`${fieldDef.technical_name}`}
@@ -216,100 +176,27 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     );
   };
 
-  generateFormField = (field: PluginLayoutFieldResource) => {
+  generateFormFromPluginLayout = (pluginLayout: PluginLayout) => {
     const {
       organisationId,
       pluginVersionId,
       pluginProperties,
     } = this.props;
 
-    const currentPluginProperty = pluginProperties.find(prop => prop.technical_name === field.property_technical_name);
-
-    if (currentPluginProperty !== undefined) {
+    return pluginLayout.sections.map((section, index) => {
       return (
-        <Row>
-          <PluginFieldGenerator
-            definition={currentPluginProperty}
-            pluginLayoutFieldDefinition={field}
+        <div key={section.title}>
+          <PluginSectionGenerator
+            pluginLayoutSection={section}
             organisationId={organisationId}
+            pluginProperties={pluginProperties}
             pluginVersionId={pluginVersionId}
           />
-        </Row>
-      );
-    }
-    else {
-      return null;
-    }
-  }
-
-  toggleAdvancedFields = (sectionTitle: string) => {
-    return () => {
-      const tabDisplayAdvancedFields: { [key:string]:boolean; } = this.state.displayAdvancedFields;
-      tabDisplayAdvancedFields[sectionTitle] = !tabDisplayAdvancedFields[sectionTitle];
-
-      this.setState({
-        displayAdvancedFields: tabDisplayAdvancedFields,
-      });
-    };
-  }
-
-  generateFormSection = (section: PluginLayoutSectionResource) => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
-
-    const returnedFields = section.fields.map(this.generateFormField)
-    const advancedFields = (section.advanced_fields.length !== 0) ?
-      (
-        <div>
-          <ButtonStyleless
-            className="optional-section-title"
-            onClick={this.toggleAdvancedFields(section.title)}
-          >
-            <McsIcon type="settings" />
-            <span className="step-title">
-              {formatMessage(messages.advanced)}
-            </span>
-            <McsIcon type="chevron" />
-          </ButtonStyleless>
-
-          <div
-            className={!this.state.displayAdvancedFields[section.title]
-              ? 'hide-section'
-              : 'optional-section-content'
-            }
-          >
-            {section.advanced_fields.map(this.generateFormField)}
-          </div>
+          {index !== pluginLayout.sections.length - 1 ? <hr /> : null}
         </div>
-      ) :
-      null;
+      );
+    });
 
-    return (
-      <div id={section.title}>
-        <hr />
-        <Row type="flex" align="middle" justify="space-between" className="section-header">
-          <FormTitle
-            title={{ id: `section.${section.title}.title`, defaultMessage: section.title }}
-            subtitle={{ id: `section.${section.sub_title}.subTitle`, defaultMessage: section.sub_title }}
-          />
-        </Row>
-        {returnedFields}
-        {advancedFields}
-      </div>
-    );
-  }
-
-  generateFormFromPluginLayout = () => {
-    const {
-      pluginLayout,
-    } = this.props;
-
-    if (pluginLayout !== undefined) {
-
-      return pluginLayout.sections.map(this.generateFormSection);
-    }
-    else return null;
   };
 
   render() {
@@ -339,41 +226,41 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       },
     };
 
-    if (pluginLayout === undefined) {
-      return (
-        <Layout>
-          <Form
-            className={
-              this.state.loading ? 'hide-section' : 'edit-layout ant-layout'
-            }
-            onSubmit={handleSubmit(this.onSubmit)}
-            id={formId}
+    return (
+      <Layout>
+        <Form
+          className={
+            this.state.loading ? 'hide-section' : 'edit-layout ant-layout'
+          }
+          onSubmit={handleSubmit(this.onSubmit)}
+          id={formId}
+        >
+          <Content
+            className="mcs-content-container mcs-form-container ad-group-form" id={formId}
           >
-            <Content
-              className="mcs-content-container mcs-form-container ad-group-form" id={formId}
-            >
-              {showGeneralInformation ? <div><div id={'general'}>
-                <Row
-                  type="flex"
-                  align="middle"
-                  justify="space-between"
-                  className="section-header"
-                >
-                  <FormTitle title={messages.sectionGeneralTitle} />
-                </Row>
-                <Row>
-                  <InputField
-                    name="plugin.name"
-                    component={FormInput}
-                    validate={[isRequired]}
-                    {...fieldProps}
-                  />
-                  {
-                    showTechnicalName ? this.renderTechnicalName() : null
-                  }
-                </Row>
-              </div>
-                <hr /></div> : null}
+            {showGeneralInformation ? <div><div id={'general'}>
+              <Row
+                type="flex"
+                align="middle"
+                justify="space-between"
+                className="section-header"
+              >
+                <FormTitle title={messages.sectionGeneralTitle} />
+              </Row>
+              <Row>
+                <InputField
+                  name="plugin.name"
+                  component={FormInput}
+                  validate={[isRequired]}
+                  {...fieldProps}
+                />
+                {
+                  showTechnicalName ? this.renderTechnicalName() : null
+                }
+              </Row>
+            </div>
+              <hr /></div> : null}
+            {pluginLayout === undefined ?
               <div id={'properties'}>
                 <Row
                   type="flex"
@@ -385,51 +272,14 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
                 </Row>
                 <Row>{this.pluginFieldGenerated()}</Row>
               </div>
-            </Content>
-          </Form>
-        </Layout>
-      );
-    }
-    else {
-
-      return (
-        <Layout>
-          <Form
-            className={
-              this.state.loading ? 'hide-section' : 'edit-layout ant-layout'
-            }
-            onSubmit={handleSubmit(this.onSubmit)}
-            id={formId}
-          >
-            <Content
-              className="mcs-content-container mcs-form-container ad-group-form" id={formId}
-            >
-              {showGeneralInformation ? <div id={'general'}>
-                <Row
-                  type="flex"
-                  align="middle"
-                  justify="space-between"
-                  className="section-header"
-                >
-                  <FormTitle title={messages.sectionGeneralTitle} />
-                </Row>
-                <Row>
-                  <InputField
-                    name="plugin.name"
-                    component={FormInput}
-                    validate={[isRequired]}
-                    {...fieldProps}
-                  />
-                </Row>
-              </div> : null}
-
-              {this.generatePluginFields()}
-
-            </Content>
-          </Form>
-        </Layout>
-      );
-    }
+              :
+              <div>
+                {this.generateFormFromPluginLayout(pluginLayout)}
+              </div>}
+          </Content>
+        </Form>
+      </Layout>
+    );
   }
 }
 

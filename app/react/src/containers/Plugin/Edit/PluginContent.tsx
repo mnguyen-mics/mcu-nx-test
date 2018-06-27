@@ -7,7 +7,6 @@ import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm from './PluginEditForm';
 import {
   PluginResource,
-  PluginProperty,
   PluginType,
 } from '../../../models/Plugins';
 import PluginService from '../../../services/PluginService';
@@ -19,6 +18,7 @@ import messages from './messages';
 import { Path } from '../../../components/ActionBar';
 import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
+import { PropertyResourceShape } from '../../../models/plugin';
 
 const formId = 'pluginForm';
 
@@ -37,7 +37,7 @@ interface PluginContentOuterProps {
   breadcrumbPaths: Path[];
   saveOrCreatePluginInstance: (
     plugin: any,
-    properties: PluginProperty[],
+    properties: PropertyResourceShape[],
   ) => void;
   onClose: () => void;
   editionMode: boolean;
@@ -51,7 +51,7 @@ interface PluginContentOuterProps {
 interface PluginContentState {
   plugin: PluginResource;
   isLoading: boolean;
-  pluginProperties: PluginProperty[];
+  pluginProperties: PropertyResourceShape[];
   pluginLayout?: PluginLayout;
   availablePlugins: PluginResource[];
 }
@@ -130,7 +130,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
     );
   };
 
-  createPlugin = (plugin: PluginResource, properties: PluginProperty[]) => {
+  createPlugin = (plugin: PluginResource, properties: PropertyResourceShape[]) => {
     this.props.saveOrCreatePluginInstance(plugin, properties);
   };
 
@@ -196,7 +196,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
     const formattedProperties: any = {};
 
     if (initialValues && initialValues.properties) {
-      initialValues.properties.forEach((property: PluginProperty) => {
+      initialValues.properties.forEach((property: PropertyResourceShape) => {
         formattedProperties[property.technical_name] = {
           value: property.value,
         };

@@ -1,10 +1,19 @@
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
-import { AudiencePartitionResource } from '../models/audiencePartition/AudiencePartitionResource';
+import { AudiencePartitionResource, AudiencePartitionType, AudiencePartitionStatus } from '../models/audiencePartition/AudiencePartitionResource';
+import { PaginatedApiParam } from '../utils/ApiHelper';
+
+export interface GetPartitionOption extends PaginatedApiParam {
+  datamart_id?: string;
+  type?: AudiencePartitionType[];
+  status?: AudiencePartitionStatus[];
+  keywords?: string;
+  name?: string;
+}
 
 const AudiencePartitionsService = {
   getPartitions(
     organisationId: string,
-    options: object = {},
+    options: GetPartitionOption = {},
   ): Promise<DataListResponse<AudiencePartitionResource>> {
     const endpoint = 'audience_partitions';
 

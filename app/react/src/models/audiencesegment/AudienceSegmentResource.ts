@@ -55,10 +55,17 @@ export interface UserLookalikeSegment extends AudienceSegmentResource {
   status: AudienceLookalikeStatus;
 }
 
+export interface UserPartitionSegment extends AudienceSegmentResource {
+  part_number: number;
+  audience_partition_id: string;
+  type: 'USER_PARTITION';
+}
+
 export type AudienceSegmentShape =
   | UserListSegment
   | UserQuerySegment
-  | UserLookalikeSegment;
+  | UserLookalikeSegment
+  | UserPartitionSegment;
 
 export interface OverlapJobResult extends PublicJobExecutionResource {
   external_model_name: 'PUBLIC_AUDIENCE_SEGMENT';
