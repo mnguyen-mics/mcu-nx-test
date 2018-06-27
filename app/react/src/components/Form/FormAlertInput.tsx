@@ -89,7 +89,6 @@ class FormAlertInput extends React.Component<JoinedProps, State> {
             </Col>
           </Row>
         )}
-        <br />
         <FormFieldWrapper
           help={meta.touched && (meta.warning || meta.error)}
           helpToolTipProps={helpToolTipProps}
