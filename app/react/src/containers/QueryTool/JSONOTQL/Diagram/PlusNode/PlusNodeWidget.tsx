@@ -4,7 +4,13 @@ import { compose } from 'recompose';
 import PlusNodeModel from './PlusNodeModel';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import { TreeNodeOperations } from '../../domain';
+import {
+  TreeNodeOperations,
+  DragAndDropInterface,
+  computeSchemaPathFromQueryPath,
+  computeAdditionalNode,
+  SchemaItem,
+} from '../../domain';
 import { McsIcon, RenderInBody } from '../../../../../components';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import ObjectNodeForm, { ObjectNodeFormProps } from '../../Edit/ObjectNodeForm';
@@ -13,21 +19,88 @@ import {
   generateObjectNodeFromFormData,
   QUERY_DOCUMENT_INITIAL_VALUE,
 } from '../../Edit/domain';
+import { DropTargetMonitor, ConnectDropTarget, DropTarget } from 'react-dnd';
+import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
 
-interface Props {
+interface PlusNodeProps {
   node: PlusNodeModel;
   diagramEngine: DiagramEngine;
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
-  lockGlobalInteraction: (lock: boolean) => void
+  lockGlobalInteraction: (lock: boolean) => void;
+  query?: ObjectTreeExpressionNodeShape;
+  schema?: SchemaItem;
 }
+
+interface DroppedItemProps {
+  canDrop?: boolean;
+  isOver?: boolean;
+  connectDropTarget?: ConnectDropTarget;
+  isDragging?: boolean;
+}
+
+type Props = PlusNodeProps & DroppedItemProps & InjectedThemeColorsProps;
 
 interface State {
   focus: boolean;
   hover: boolean;
 }
 
-class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State> {
+const addinTarget = {
+  drop(props: PlusNodeProps, monitor: DropTargetMonitor) {
+    const releasedItem = monitor.getItem() as DragAndDropInterface;
+
+    const releasedItemPath = releasedItem.path
+      .split('.')
+      .map(i => parseInt(i, 10));
+
+    const hostObjectPath = computeSchemaPathFromQueryPath(
+          props.query,
+          props.node.treeNodePath,
+          props.schema,
+        );
+
+    const newQuery = computeAdditionalNode(
+      releasedItemPath,
+      hostObjectPath.length,
+      props.schema,
+    );
+
+    if (newQuery) {
+      return props.treeNodeOperations.addNode(
+        props.node.treeNodePath,
+        newQuery,
+      );
+    }
+  },
+  canDrop(props: PlusNodeProps, monitor: DropTargetMonitor) {
+    // compute path in schema and compare to the one sent from the grabbed item
+    if (props.node.root && !props.query) {
+      return true;
+    } else if (props.node.root && props.query) {
+      return false;
+    }
+
+    const itemTypeSchemaPath = computeSchemaPathFromQueryPath(
+      props.query,
+      props.node.treeNodePath,
+      props.schema,
+    ).join('.');
+    const canDrop = (monitor.getItem() as DragAndDropInterface).path.startsWith(
+      itemTypeSchemaPath,
+    );
+
+    return canDrop;
+  },
+};
+
+class PlusNodeWidget extends React.Component<
+  Props & InjectedDrawerProps,
+  State
+> {
   top: number = 0;
   left: number = 0;
 
@@ -40,7 +113,7 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
     const { node, lockGlobalInteraction } = this.props;
     this.setState({ focus: false }, () => {
       // let computedSchemaPath = ['UserPoint'];
-      lockGlobalInteraction(false)
+      lockGlobalInteraction(false);
       this.props.openNextDrawer<ObjectNodeFormProps>(ObjectNodeForm, {
         additionalProps: {
           close: this.props.closeNextDrawer,
@@ -62,15 +135,17 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
   };
 
   addGroup = () => {
-    const { treeNodeOperations, node } = this.props;
+    const { treeNodeOperations, node, lockGlobalInteraction } = this.props;
     if (node.root) {
       treeNodeOperations.addNewGroupAsRoot();
+      lockGlobalInteraction(false);
     } else {
       treeNodeOperations.addNode(node.treeNodePath, {
         type: 'GROUP',
         boolean_operator: 'OR',
         expressions: [],
       });
+      lockGlobalInteraction(false);
     }
   };
 
@@ -81,7 +156,14 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
   };
 
   render() {
-    const { node } = this.props;
+    const {
+      node,
+      isDragging,
+      connectDropTarget,
+      canDrop,
+      isOver,
+      colors,
+    } = this.props;
 
     const handleClickOnPlus = () => {
       this.props.lockGlobalInteraction(!this.state.focus);
@@ -94,106 +176,177 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
 
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
 
+    const opacity = isDragging && !canDrop ? 0.3 : 1;
+
+    let backgroundColor = '#ffffff';
+    let color = node.getColor();
+    let borderColor = node.getColor();
+
+    if (this.state.hover) {
+      backgroundColor = node.getColor();
+      color = '#ffffff';
+    }
+
+    if (canDrop && !isOver) {
+      backgroundColor = colors['mcs-info'];
+      color = '#ffffff';
+      borderColor = colors['mcs-info'];
+    }
+
+    if (isOver && canDrop) {
+      backgroundColor = '#ffffff';
+      color = node.getColor();
+      borderColor = node.getColor();
+    }
+
     return (
-      <div className="plus-node noFocus" ref={ref => this.setPosition(ref)}>
+      connectDropTarget &&
+      connectDropTarget(
         <div
-          style={{
-            width: node.getSize().width,
-            height: node.getSize().height,
-            borderWidth: node.getSize().borderWidth,
-            borderColor: node.getColor(),
-            float: 'left',
-            color: this.state.hover ? '#ffffff' : node.getColor(),
-            backgroundColor: this.state.hover ? node.getColor() : '#ffffff',
-          }}
-          onClick={handleClickOnPlus}
-          onMouseEnter={onHover('enter')}
-          onMouseLeave={onHover('leave')}
-          className={`plus-button ${this.state.focus ? 'plus-clicked' : ''}`}
+          className="plus-node noFocus"
+          style={{ opacity }}
+          ref={ref => this.setPosition(ref)}
         >
-          <McsIcon type="plus" />
-        </div>
+          <div
+            style={{
+              width: node.getSize().width,
+              height: node.getSize().height,
+              borderWidth: node.getSize().borderWidth,
+              borderColor: borderColor,
+              float: 'left',
+              color: color,
+              backgroundColor: backgroundColor,
+            }}
+            onClick={handleClickOnPlus}
+            onMouseEnter={onHover('enter')}
+            onMouseLeave={onHover('leave')}
+            className={`plus-button ${this.state.focus ? 'plus-clicked' : ''}`}
+          >
+            <McsIcon type="plus" />
+          </div>
 
-        <div
-          style={{
-            position: 'absolute',
-            top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
-            left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
-          }}
-        >
-          <PortWidget name="center" node={this.props.node} />
-        </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
+              left: 0,
+            }}
+          >
+            <PortWidget name="left" node={this.props.node} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
+            }}
+          >
+            <PortWidget name="top" node={this.props.node} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
+              left: node.getSize().width - node.getSize().borderWidth / 2,
+            }}
+          >
+            <PortWidget name="right" node={this.props.node} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: node.getSize().height - node.getSize().borderWidth / 2,
+              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
+            }}
+          >
+            <PortWidget name="bottom" node={this.props.node} />
+          </div>
 
-        {this.state.focus && (
-          <RenderInBody>
-            <div className="query-builder">
-              <div
-                onClick={handleClickOnPlus}
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'black',
-                  zIndex: 1000,
-                  opacity: 0.6,
-                }}
-              />
-              <span
-                className={`plus-button ${
-                  this.state.focus ? 'plus-clicked' : ''
-                }`}
-                style={{
-                  ...node.getSize(),
-                  backgroundColor: node.getColor(),
-                  color: '#ffffff',
-                  borderColor: node.getColor(),
-                  top: this.top - node.getSize().height * ((1 - zoomRatio) / 2),
-                  left:
-                    this.left - node.getSize().width * ((1 - zoomRatio) / 2),
-                  position: 'absolute',
-                  zIndex: 1002,
-                  transform: `scale(${zoomRatio})`,
-                }}
-                onClick={handleClickOnPlus}
-              >
-                <McsIcon type="plus" />
-              </span>
-              <div
-                className="boolean-menu"
-                style={{
-                  top: this.top,
-                  left: this.left + node.getSize().width,
-                  zIndex: 1001,
-                }}
-              >
-                {(!node.root ||
-                  Object.keys(this.props.diagramEngine.diagramModel.nodes)
-                    .length === 1) && (
-                  <div
-                    onClick={this.addObjectNode}
-                    className="boolean-menu-item"
-                  >
-                    Object
-                  </div>
-                )}
-                {(node.root ||
-                  (node.objectOrGroupNode &&
-                    node.objectOrGroupNode.type === 'GROUP')) && (
-                  <div onClick={this.addGroup} className="boolean-menu-item">
-                    Group
-                  </div>
-                )}
+          {this.state.focus && (
+            <RenderInBody>
+              <div className="query-builder">
+                <div
+                  onClick={handleClickOnPlus}
+                  style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'black',
+                    zIndex: 1000,
+                    opacity: 0.6,
+                  }}
+                />
+                <span
+                  className={`plus-button ${
+                    this.state.focus ? 'plus-clicked' : ''
+                  }`}
+                  style={{
+                    ...node.getSize(),
+                    backgroundColor: node.getColor(),
+                    color: '#ffffff',
+                    borderColor: node.getColor(),
+                    top:
+                      this.top - node.getSize().height * ((1 - zoomRatio) / 2),
+                    left:
+                      this.left - node.getSize().width * ((1 - zoomRatio) / 2),
+                    position: 'absolute',
+                    zIndex: 1002,
+                    transform: `scale(${zoomRatio})`,
+                  }}
+                  onClick={handleClickOnPlus}
+                >
+                  <McsIcon type="plus" />
+                </span>
+                <div
+                  className="boolean-menu"
+                  style={{
+                    top: this.top,
+                    left: this.left + node.getSize().width,
+                    zIndex: 1001,
+                  }}
+                >
+                  {(!node.root ||
+                    Object.keys(this.props.diagramEngine.diagramModel.nodes)
+                      .length === 1) && (
+                    <div
+                      onClick={this.addObjectNode}
+                      className="boolean-menu-item"
+                    >
+                      Object
+                    </div>
+                  )}
+                  {(node.root ||
+                    (node.objectOrGroupNode &&
+                      node.objectOrGroupNode.type === 'GROUP')) && (
+                    <div onClick={this.addGroup} className="boolean-menu-item">
+                      Group
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </RenderInBody>
-        )}
-      </div>
+            </RenderInBody>
+          )}
+        </div>,
+      )
     );
   }
 }
 
-export default compose<Props & InjectedDrawerProps, Props>(injectDrawer)(
-  PlusNodeWidget,
-);
+export default compose<Props & InjectedDrawerProps, PlusNodeProps>(
+  DropTarget(
+    () => {
+      return ['object', 'field'];
+    },
+    addinTarget,
+    (connect, monitor) => ({
+      connectDropTarget: connect.dropTarget(),
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+      isDragging: !!monitor.getItemType(),
+    }),
+  ),
+  injectDrawer,
+  injectThemeColors,
+)(PlusNodeWidget);

@@ -89,6 +89,27 @@ type FieldComparisonGenerator = ComparisonValues<any> & {
 };
 
 class FieldNodeForm extends React.Component<Props> {
+  componentDidMount() {
+    // if no default value compute it
+    const { formValues, expressionIndex, formChange, name } = this.props;
+
+    const field = this.getField(formValues, expressionIndex);
+    if (
+      formValues.fieldNodeForm &&
+      (((formValues.fieldNodeForm as any).field &&
+        !(formValues.fieldNodeForm as any).comparison) ||
+        (formValues.fieldNodeForm.length &&
+          !formValues.fieldNodeForm[expressionIndex!].comparison))
+    ) {
+      const fieldName = field ? field.field : undefined;
+      const fieldType = this.getSelectedFieldType(fieldName);
+      formChange(
+        name ? `${name}.comparison` : 'comparison',
+        this.generateAvailableConditionOptions(fieldType).defaultValue,
+      );
+    }
+  }
+
   componentWillReceiveProps(nextProps: Props) {
     const { formValues, expressionIndex } = this.props;
 
@@ -139,7 +160,7 @@ class FieldNodeForm extends React.Component<Props> {
       .map(i => ({ value: i.name, title: i.name }));
   };
 
-  getSelectedFieldType = (fieldName: string) => {
+  getSelectedFieldType = (fieldName: string | undefined) => {
     const { availableFields } = this.props;
 
     const possibleFieldType = availableFields.find(i => i.name === fieldName);
@@ -171,52 +192,52 @@ class FieldNodeForm extends React.Component<Props> {
       case 'String':
         return {
           ...constants.generateStringComparisonOperator(intl),
-          component: this.generateStringComparisonField()
+          component: this.generateStringComparisonField(),
         };
       case 'Bool':
         return {
           ...constants.generateBooleanComparisonOperator(intl),
-          component: this.generateBooleanComparisonField()
+          component: this.generateBooleanComparisonField(),
         };
       case 'Boolean':
         return {
           ...constants.generateBooleanComparisonOperator(intl),
-          component: this.generateBooleanComparisonField()
+          component: this.generateBooleanComparisonField(),
         };
       case 'Enum':
         return {
           ...constants.generateEnumComparisonOperator(intl),
-          component: this.generateEnumComparisonField()
+          component: this.generateEnumComparisonField(),
         };
       case 'Number':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField()
+          component: this.generateNumericComparisonField(),
         };
       case 'Float':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField()
+          component: this.generateNumericComparisonField(),
         };
       case 'Int':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField()
+          component: this.generateNumericComparisonField(),
         };
       case 'Double':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField()
+          component: this.generateNumericComparisonField(),
         };
       case 'BigDecimal':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField()
+          component: this.generateNumericComparisonField(),
         };
       case 'ID':
         return {
           ...constants.generateStringComparisonOperator(intl),
-          component: this.generateIdComparisonField()
+          component: this.generateIdComparisonField(),
         };
       default:
         return {
@@ -449,7 +470,6 @@ class FieldNodeForm extends React.Component<Props> {
     );
   }
 
-
   render() {
     const {
       expressionIndex,
@@ -467,7 +487,7 @@ class FieldNodeForm extends React.Component<Props> {
       field && field.comparison && field.comparison.operator
         ? (field.comparison.operator as ConditionsOperators)
         : undefined;
-    const fieldType = this.getSelectedFieldType(fieldName)
+    const fieldType = this.getSelectedFieldType(fieldName);
 
     let popUpProps = {};
 

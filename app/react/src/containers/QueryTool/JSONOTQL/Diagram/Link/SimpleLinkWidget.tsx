@@ -2,13 +2,29 @@ import * as React from 'react';
 import { DiagramEngine, PointModel } from 'storm-react-diagrams';
 import SimpleLinkModel from './SimpleLinkModel';
 import { CustomNodeShape } from '../../domain';
+import { compose } from 'recompose';
+import { DropTarget, ConnectDropTarget } from 'react-dnd';
 
 export interface SimpleLinkProps {
   link: SimpleLinkModel;
   diagramEngine: DiagramEngine;
 }
 
-export default class SimpleLinkWidget extends React.Component<SimpleLinkProps> {
+interface DroppedItemProps {
+  connectDropTarget?: ConnectDropTarget;
+  isDragging: boolean;
+}
+
+type Props = SimpleLinkProps & DroppedItemProps;
+
+const addinTarget = {
+  canDrop() {
+   return false
+  },
+};
+
+
+ class SimpleLinkWidget extends React.Component<Props> {
   generateLink(extraProps: any, id: string | number): JSX.Element {
     const Bottom = (
       <path
@@ -23,7 +39,7 @@ export default class SimpleLinkWidget extends React.Component<SimpleLinkProps> {
 
   render() {
     // ensure id is present for all points on the path
-    const { link } = this.props;
+    const { link, isDragging, connectDropTarget } = this.props;
     const points = link.points;
     const paths: JSX.Element[] = [];
 
@@ -70,7 +86,10 @@ export default class SimpleLinkWidget extends React.Component<SimpleLinkProps> {
       );
     }
 
-    return <g>{paths}</g>;
+    const opacity = isDragging ? 0.3 : 1; 
+
+    return connectDropTarget &&
+    connectDropTarget(<g style={{ opacity }}>{paths}</g>);
   }
 }
 
@@ -80,3 +99,16 @@ function generateLinePath(
 ): string {
   return `M${firstPoint.x} ${firstPoint.y} L${lastPoint.x} ${lastPoint.y}`;
 }
+
+export default compose<Props, SimpleLinkProps>(
+  DropTarget(
+    () => {
+      return 'none';
+    },
+    addinTarget,
+    (connect, monitor) => ({
+      connectDropTarget: connect.dropTarget(),
+      isDragging: !!monitor.getItemType()
+    }),
+  ),
+)(SimpleLinkWidget)

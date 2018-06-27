@@ -4,6 +4,7 @@ import ObjectNodeWidget from './ObjectNodeWidget';
 import ObjectNodeModel from './ObjectNodeModel';
 import { TreeNodeOperations } from '../../domain';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
+import { JSONQLBuilderContext } from '../../JSONQLBuilderContext';
 
 export default class ObjectNodeFactory extends AbstractNodeFactory<
   ObjectNodeModel
@@ -27,13 +28,17 @@ export default class ObjectNodeFactory extends AbstractNodeFactory<
     if (node.extras.collapsed) {
       return <div />;
     }
-    return React.createElement(ObjectNodeWidget, {
-      node: node,
-      diagramEngine: diagramEngine,
-      treeNodeOperations: this.treeNodeOperations,
-      objectTypes: this.objectTypes,
-      lockGlobalInteraction: this.lockGlobalInteraction
-    });
+    return <JSONQLBuilderContext.Consumer>{
+      ({query, schema}) => React.createElement(ObjectNodeWidget, {
+        node: node,
+        diagramEngine: diagramEngine,
+        treeNodeOperations: this.treeNodeOperations,
+        objectTypes: this.objectTypes,
+        lockGlobalInteraction: this.lockGlobalInteraction,
+        query: query,
+        schema: schema
+      })}
+    </JSONQLBuilderContext.Consumer>
   }
 
   getNewInstance(initialConfig?: any): ObjectNodeModel {

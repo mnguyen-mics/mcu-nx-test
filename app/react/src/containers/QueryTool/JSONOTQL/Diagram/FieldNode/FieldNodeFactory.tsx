@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
 import FieldNodeWidget from './FieldNodeWidget';
+import { JSONQLBuilderContext } from '../../JSONQLBuilderContext';
 import FieldNodeModel from './FieldNodeModel';
 import { TreeNodeOperations } from '../../domain';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
@@ -26,13 +27,16 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
     if (node.extras.collapsed) {
       return <div />;
     }
-    return React.createElement(FieldNodeWidget, {
-      node: node,
-      diagramEngine: diagramEngine,
-      treeNodeOperations: this.treeNodeOperations,
-      objectTypes: this.objectTypes,
-      lockGlobalInteraction: this.lockGlobalInteraction
-    });
+    return (<JSONQLBuilderContext.Consumer>
+      {({query}) => React.createElement(FieldNodeWidget, {
+        node: node,
+        diagramEngine: diagramEngine,
+        treeNodeOperations: this.treeNodeOperations,
+        objectTypes: this.objectTypes,
+        lockGlobalInteraction: this.lockGlobalInteraction,
+        query: query as any
+      })}
+    </JSONQLBuilderContext.Consumer>) 
   }
 
   getNewInstance(initialConfig?: any): FieldNodeModel {

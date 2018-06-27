@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Tree } from 'antd';
-import { SchemaItem } from './domain';
+import { SchemaItem } from '../domain';
+import FieldNode from './FieldNode';
 
 const TreeNode = Tree.TreeNode;
 
@@ -15,7 +16,7 @@ export default class SchemaVizualizer extends React.Component<
   render() {
     const { data } = this.props;
 
-    const loop = (gData: SchemaItem) =>
+    const loop = (gData: SchemaItem, objectType?: string) =>
       gData &&
       gData.fields.map(
         (item): React.ReactNode => {
@@ -25,12 +26,12 @@ export default class SchemaVizualizer extends React.Component<
           ) {
             const itemSchema = item as SchemaItem;
             return (
-              <TreeNode key={itemSchema.id} title={itemSchema.name}>
-                {loop(itemSchema)}
+              <TreeNode key={itemSchema.id} title={<FieldNode id={itemSchema.id} item={itemSchema} type="object" />}>
+                {loop(itemSchema, itemSchema.schemaType)}
               </TreeNode>
             );
           }
-          return <TreeNode key={item.id} title={item.name} />;
+          return <TreeNode selectable={false} key={item.id} title={<FieldNode id={item.id} type="field" schemaType={objectType} item={item as SchemaItem} />} />;
         },
       );
 

@@ -4,7 +4,7 @@ import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import { compose } from 'recompose';
 import ObjectNodeModel from './ObjectNodeModel';
 import { RenderInBody } from '../../../../../components';
-import { TreeNodeOperations } from '../../domain';
+import { TreeNodeOperations, DragAndDropInterface, computeSchemaPathFromQueryPath, computeAdditionalNode, SchemaItem } from '../../domain';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
@@ -15,8 +15,11 @@ import {
   generateFormDataFromObjectNode,
   FrequencyConverter,
 } from '../../Edit/domain';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps,  } from 'react-intl';
 import { frequencyModeMessageMap } from '../../messages';
+import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
+import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 
 interface ObjectNodeWidgetProps {
   node: ObjectNodeModel;
@@ -24,6 +27,8 @@ interface ObjectNodeWidgetProps {
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
   lockGlobalInteraction: (lock: boolean) => void;
+  query?: ObjectTreeExpressionNodeShape;
+  schema?: SchemaItem;
 }
 
 interface State {
@@ -31,7 +36,37 @@ interface State {
   hover: boolean;
 }
 
-type Props = ObjectNodeWidgetProps & InjectedIntlProps & InjectedDrawerProps;
+const addinTarget = {
+  drop(props: Props, monitor: DropTargetMonitor) {
+    const releasedItem = monitor.getItem() as DragAndDropInterface;
+    const releasedItemPath = releasedItem.path.split('.').map(i => parseInt(i, 10));
+    const hostObjectPath =  computeSchemaPathFromQueryPath(props.query, props.node.treeNodePath, props.schema);
+
+    const newQuery = computeAdditionalNode(releasedItemPath, hostObjectPath.length, props.schema);
+    if (newQuery) props.treeNodeOperations.addNode(props.node.treeNodePath, newQuery)
+  },
+  canDrop(props: ObjectNodeWidgetProps, monitor: DropTargetMonitor) {
+    // compute path in schema and compare to the one sent from the grabbed item
+
+    const itemTypeSchemaPath = computeSchemaPathFromQueryPath(props.query, props.node.treeNodePath, props.schema).join('.');
+    const canDrop = (monitor.getItem() as DragAndDropInterface).path.startsWith(itemTypeSchemaPath);
+
+    return canDrop;
+  }
+};
+
+interface DroppedItemProps {
+  canDrop?: boolean;
+  isOver?: boolean;
+  connectDropTarget?: ConnectDropTarget;
+  isDragging?: boolean;
+}
+
+type Props = ObjectNodeWidgetProps &
+  InjectedIntlProps &
+  InjectedDrawerProps &
+  DroppedItemProps & 
+  InjectedThemeColorsProps;
 
 class ObjectNodeWidget extends React.Component<Props, State> {
   top: number = 0;
@@ -60,19 +95,17 @@ class ObjectNodeWidget extends React.Component<Props, State> {
   };
 
   removeNode = () => {
-    const {
-      lockGlobalInteraction
-    } = this.props;
+
     this.setState({ focus: false }, () => {
       this.props.treeNodeOperations.deleteNode(this.props.node.treeNodePath);
-      lockGlobalInteraction(false)
+      this.props.treeNodeOperations.updateLayout();
     });
   };
 
   editNode = () => {
     const { node, lockGlobalInteraction } = this.props;
     this.setState({ focus: false }, () => {
-      lockGlobalInteraction(false)
+      lockGlobalInteraction(false);
       this.props.openNextDrawer<ObjectNodeFormProps>(ObjectNodeForm, {
         additionalProps: {
           close: this.props.closeNextDrawer,
@@ -94,12 +127,22 @@ class ObjectNodeWidget extends React.Component<Props, State> {
   };
 
   render() {
-    const { node, intl } = this.props;
+    const {
+      node,
+      intl,
+      isOver,
+      isDragging,
+      canDrop,
+      connectDropTarget,
+      colors
+    } = this.props;
+
+    const isActive = isOver && canDrop;
 
     const onHover = (type: 'enter' | 'leave') => () =>
       this.setState({ hover: type === 'enter' ? true : false });
     const onFocus = () => {
-      this.props.lockGlobalInteraction(!this.state.focus)
+      this.props.lockGlobalInteraction(!this.state.focus);
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
       this.setState({ focus: !this.state.focus });
     };
@@ -122,7 +165,23 @@ class ObjectNodeWidget extends React.Component<Props, State> {
       </div>
     );
 
-    return (
+    let backgroundColor = node.getColor();
+    let borderColor = node.getColor();
+
+    if (canDrop) {
+      backgroundColor = colors["mcs-info"];
+      borderColor = colors["mcs-info"];
+    }
+
+    if (isActive) {
+      backgroundColor = colors["mcs-success"];
+      borderColor = colors["mcs-success"];
+    }
+
+    const opacity = isDragging && !canDrop ? 0.3 : 1;
+
+    return connectDropTarget &&
+    connectDropTarget (
       <div
         id={this.id}
         className="object-node"
@@ -135,20 +194,48 @@ class ObjectNodeWidget extends React.Component<Props, State> {
           borderStyle: 'solid',
           fontWeight: 'bold',
           color: '#ffffff',
-          borderColor: node.getColor(),
-          backgroundColor: node.getColor(),
+          borderColor: borderColor,
+          backgroundColor: backgroundColor,
+          opacity
         }}
       >
         {renderedObjectNode}
         <div
-          style={{
-            position: 'absolute',
-            top: (node.getSize().height - node.getSize().borderWidth / 2) / 2,
-            left: (node.getSize().width - node.getSize().borderWidth / 2) / 2,
-          }}
-        >
-          <PortWidget name="center" node={this.props.node} />
-        </div>
+            style={{
+              position: 'absolute',
+              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
+              left: 0,
+            }}
+          >
+            <PortWidget name="left" node={this.props.node} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
+            }}
+          >
+            <PortWidget name="top" node={this.props.node} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
+              left: (node.getSize().width - node.getSize().borderWidth / 2),
+            }}
+          >
+            <PortWidget name="right" node={this.props.node} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: (node.getSize().height - node.getSize().borderWidth / 2),
+              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
+            }}
+          >
+            <PortWidget name="bottom" node={this.props.node} />
+          </div>
         {this.state.focus && (
           <RenderInBody>
             <div className="query-builder">
@@ -211,6 +298,21 @@ class ObjectNodeWidget extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, ObjectNodeWidgetProps>(injectIntl, injectDrawer)(
-  ObjectNodeWidget,
-);
+export default compose<Props, ObjectNodeWidgetProps>(
+  DropTarget(
+    () => {
+      // TODO Dynamicall generate Field or FIELD || OBJECT if the node can have a related object or not
+      return ['field', 'object'];
+    },
+    addinTarget,
+    (connect, monitor) => ({
+      connectDropTarget: connect.dropTarget(),
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+      isDragging: monitor.getItemType()
+    })
+  ),
+  injectIntl,
+  injectDrawer,
+  injectThemeColors,
+)(ObjectNodeWidget);

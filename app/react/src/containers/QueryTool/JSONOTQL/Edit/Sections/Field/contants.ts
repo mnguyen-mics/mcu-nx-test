@@ -20,7 +20,7 @@ export interface ComparisonValues<T> {
   defaultValue: defaultValue;
 }
 
-export default {
+const comparisonOperators = {
   generateNumericComparisonOperator(
     intl: InjectedIntl,
   ): ComparisonValues<NumericComparisonOperator> {
@@ -155,3 +155,5 @@ export default {
     };
   },
 };
+
+export default comparisonOperators;

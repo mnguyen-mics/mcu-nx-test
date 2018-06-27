@@ -11,6 +11,8 @@ import { FieldNodeFormDataValues, FORM_ID } from '../../Edit/domain';
 import { compose } from 'recompose';
 import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
+import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
+import { DropTarget, ConnectDropTarget } from 'react-dnd';
 
 interface FieldNodeWidgetProps {
   node: FieldNodeModel;
@@ -18,6 +20,7 @@ interface FieldNodeWidgetProps {
   treeNodeOperations: TreeNodeOperations;
   lockGlobalInteraction: (lock: boolean) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
+  query: ObjectTreeExpressionNodeShape | undefined
 }
 
 interface MapStateToProps {
@@ -33,7 +36,18 @@ interface State {
 const EDIT_FIELD_SIZE = 300;
 const ARROW_SIZE = 10;
 
-type Props = FieldNodeWidgetProps & MapStateToProps;
+interface DroppedItemProps {
+  connectDropTarget?: ConnectDropTarget;
+  isDragging: boolean;
+}
+
+const addinTarget = {
+  canDrop() {
+   return false
+  },
+};
+
+type Props = FieldNodeWidgetProps & MapStateToProps & DroppedItemProps;
 
 class FieldNodeWidget extends React.Component<Props, State> {
   top: number = 0;
@@ -109,28 +123,28 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   removeNode = () => {
-    const { lockGlobalInteraction } = this.props;
+
     this.setState({ focus: false }, () => {
       this.props.treeNodeOperations.deleteNode(this.props.node.treeNodePath);
-      lockGlobalInteraction(false);
+      this.props.treeNodeOperations.updateLayout();
     });
   };
 
   editNode = (edition: boolean) => {
-    const { lockGlobalInteraction } = this.props;
+
     this.setState(
       {
         edit: edition,
       },
       () => {
         this.props.node.extras.edition = edition;
-        lockGlobalInteraction(false);
+        this.props.treeNodeOperations.updateLayout();
       },
     );
   };
 
   render() {
-    const { node, treeNodeOperations } = this.props;
+    const { node, treeNodeOperations, connectDropTarget, isDragging } = this.props;
 
     const onHover = (type: 'enter' | 'leave') => () =>
       this.setState({ hover: type === 'enter' ? true : false });
@@ -227,11 +241,38 @@ class FieldNodeWidget extends React.Component<Props, State> {
           <div
             style={{
               position: 'absolute',
-              top: (node.getSize().height - node.getSize().borderWidth / 2) / 2,
+              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
               left: 0,
             }}
           >
-            <PortWidget name="center" node={this.props.node} />
+            <PortWidget name="left" node={this.props.node} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
+            }}
+          >
+            <PortWidget name="top" node={this.props.node} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
+              left: (node.getSize().width - node.getSize().borderWidth / 2),
+            }}
+          >
+            <PortWidget name="right" node={this.props.node} />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: (node.getSize().height - node.getSize().borderWidth / 2),
+              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
+            }}
+          >
+            <PortWidget name="bottom" node={this.props.node} />
           </div>
           {this.state.focus && (
             <RenderInBody>
@@ -294,13 +335,16 @@ class FieldNodeWidget extends React.Component<Props, State> {
       );
     };
 
+    const opacity = isDragging ? 0.3 : 1;
+
     const renderedFieldNode = (
-      <div ref={this.setWrapperRef}>
+      <div ref={this.setWrapperRef} style={{opacity}} >
         {this.state.edit ? renderEditNode() : renderedStandardNode()}
       </div>
     );
 
-    return renderedFieldNode;
+    return connectDropTarget &&
+    connectDropTarget(renderedFieldNode);
   }
 }
 
@@ -310,5 +354,15 @@ const mapStateToProps = (state: any) => ({
  
 
 export default compose<Props, FieldNodeWidgetProps>(
+  DropTarget(
+    () => {
+      return 'none';
+    },
+    addinTarget,
+    (connec, monitor) => ({
+      connectDropTarget: connec.dropTarget(),
+      isDragging: !!monitor.getItemType()
+    }),
+  ),
   connect(mapStateToProps)
 )(FieldNodeWidget)

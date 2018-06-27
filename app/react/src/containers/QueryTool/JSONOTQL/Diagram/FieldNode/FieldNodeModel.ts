@@ -20,7 +20,10 @@ export default class FieldNodeModel extends NodeModel
       throw new Error('Missing parameters');
     }
 
-    this.addPort(new SimplePortModel('center'));
+    this.addPort(new SimplePortModel('right'));
+    this.addPort(new SimplePortModel('left'));
+    this.addPort(new SimplePortModel('bottom'));
+    this.addPort(new SimplePortModel('top'));
 
     this.fieldNode = fieldNode;
     this.treeNodePath = treeNodePath;

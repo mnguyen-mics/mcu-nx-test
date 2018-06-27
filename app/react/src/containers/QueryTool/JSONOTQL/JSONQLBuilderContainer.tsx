@@ -19,6 +19,7 @@ import injectNotifications, {
 import OTQLService from '../../../services/OTQLService';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { computeSchemaModel } from './domain';
+import { JSONQLBuilderContext } from './JSONQLBuilderContext';
 
 export interface JSONQLBuilderContainerProps {
   datamartId: string;
@@ -110,7 +111,6 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
             },
           }),
           () => {
-
             this.runQuery(datamartId);
           },
         );
@@ -279,7 +279,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
 
     const enableUndo = this.state.queryHistory.past.length > 0;
     const enableRedo = this.state.queryHistory.future.length > 0;
-    
+
     return (
       <Layout className={editionLayout ? 'edit-layout' : ''}>
         {renderActionBar(
@@ -294,24 +294,46 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           className={`mcs-content-container ${editionLayout ? 'flex' : ''}`}
           style={{ padding: 0, overflow: 'hidden' }}
         >
-          <JSONQLBuilder
-            objectTypes={objectTypes}
-            query={query}
-            updateQuery={this.handleUpdateQuery}
-            undoRedo={{
-              enableUndo: enableUndo,
-              enableRedo: enableRedo,
-              handleUndo: this.handleUndo,
-              handleRedo: this.handleRedo,
-            }}
-            edition={editionLayout}
-            runQuery={this.runQuery}
-            staleQueryResult={staleQueryResult}
-            queryResult={queryResult}
-            datamartId={this.props.datamartId}
-            organisationId={organisationId}
-            computedSchema={objectTypes.length ? computeSchemaModel(objectTypes, objectTypes.find(ot => ot.name === 'UserPoint')!) : undefined}
-          />
+          <JSONQLBuilderContext.Provider value={{ query: query as any, schema: objectTypes.length
+                  ? computeSchemaModel(
+                      objectTypes,
+                      {
+                        ...objectTypes.find(ot => ot.name === 'UserPoint')!,
+                        closestParentType: '',
+                      },
+                      '',
+                    )
+                  : undefined as any }}>
+            <JSONQLBuilder
+              objectTypes={objectTypes}
+              query={query}
+              updateQuery={this.handleUpdateQuery}
+              undoRedo={{
+                enableUndo: enableUndo,
+                enableRedo: enableRedo,
+                handleUndo: this.handleUndo,
+                handleRedo: this.handleRedo,
+              }}
+              edition={editionLayout}
+              runQuery={this.runQuery}
+              staleQueryResult={staleQueryResult}
+              queryResult={queryResult}
+              datamartId={this.props.datamartId}
+              organisationId={organisationId}
+              computedSchema={
+                objectTypes.length
+                  ? computeSchemaModel(
+                      objectTypes,
+                      {
+                        ...objectTypes.find(ot => ot.name === 'UserPoint')!,
+                        closestParentType: '',
+                      },
+                      '',
+                    )
+                  : undefined
+              }
+            />
+          </JSONQLBuilderContext.Provider>
         </Layout.Content>
       </Layout>
     );

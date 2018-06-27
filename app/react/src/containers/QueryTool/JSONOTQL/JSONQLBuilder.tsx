@@ -34,8 +34,10 @@ import {
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import CounterList from './CounterList';
 import { Col } from 'antd';
-import SchemaVizualizer from './SchemaVizualizer';
+import SchemaVizualizer from './SchemaVisualizer/SchemaVizualizer';
 import { ButtonStyleless, McsIcon } from '../../../components';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 export interface QueryResult {
   loading: boolean;
@@ -107,7 +109,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
     this.state = {
       keydown: [],
       locked: false,
-      viewSchema: false,
+      viewSchema: true,
     };
   }
 
@@ -285,7 +287,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
         ),
       );
       model.addLink(
-        createLink(rootNode.ports.center, nodeBTree.node.ports.center),
+        createLink(rootNode.ports.right, nodeBTree.node.ports.left),
       );
       toNodeList(nodeBTree).forEach(n => model.addNode(n));
       buildLinkList(nodeBTree).forEach(l => model.addLink(l));
@@ -344,4 +346,4 @@ class JSONQLBuilder extends React.Component<Props, State> {
   }
 }
 
-export default JSONQLBuilder;
+export default DragDropContext(HTML5Backend)(JSONQLBuilder);
