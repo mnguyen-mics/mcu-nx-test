@@ -196,7 +196,6 @@ class ActivitiesTimeline extends React.Component<Props, State> {
               };
               return nextState;
             });
-            this.props.notifyError(err);
           }),
     );
   };

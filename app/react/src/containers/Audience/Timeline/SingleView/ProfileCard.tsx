@@ -114,7 +114,6 @@ class ProfileCard extends React.Component<Props, State> {
           };
           return nextState;
         });
-        this.props.notifyError(err);
       });
   };
 

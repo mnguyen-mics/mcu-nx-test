@@ -212,7 +212,6 @@ class Monitoring extends React.Component<Props, State> {
           };
           return nextState;
         });
-        this.props.notifyError(error);
       });
   };
 
