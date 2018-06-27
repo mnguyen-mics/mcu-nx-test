@@ -259,7 +259,8 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
             return <i className="mcs-table-cell-loading" />; 
           }
           const value = statBySegmentId[record.id];
-          return value ? `${((value.user_points / totalUserPoint) * 100).toFixed(2)} %`  : '-'
+          const percent = ((value.user_points / totalUserPoint) * 100)
+          return value && totalUserPoint && !isNaN(percent) ? `${percent.toFixed(2)} %`  : '-'
         }
       },
     ];
