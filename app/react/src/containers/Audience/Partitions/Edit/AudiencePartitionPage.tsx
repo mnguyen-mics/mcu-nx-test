@@ -11,8 +11,7 @@ import {
   AudiencePartitionFormData,
   INITIAL_AUDIENCE_PARTITION_FORM_DATA,
 } from './domain';
-import { injectDatamart } from '../../../Datamart/index';
-import { InjectedDatamartProps } from '../../../Datamart/injectDatamart';
+import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart/index';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -52,7 +51,7 @@ interface AudiencePartitionPageState {
 }
 
 type JoinedProps = AudiencePartitionPageProps &
-  InjectedDatamartProps &
+  InjectedWorkspaceProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
@@ -100,7 +99,7 @@ class AudiencePartitionPage extends React.Component<
       history,
       location,
       intl,
-      datamart,
+      workspace
     } = this.props;
     const { selectedDatamart } = this.state;
     this.setState({
@@ -123,7 +122,7 @@ class AudiencePartitionPage extends React.Component<
           });
         });
     } else {
-      const datamartId = selectedDatamart ? selectedDatamart.id : datamart.id;
+      const datamartId = selectedDatamart ? selectedDatamart.id : workspace.datamarts[0].id;
       AudiencePartitionsService.createPartition(
         organisationId,
         datamartId,
@@ -178,8 +177,10 @@ class AudiencePartitionPage extends React.Component<
     const {
       intl,
       match: { params: { partitionId, organisationId } },
+      workspace,
     } = this.props;
     const { partitionFormData, isLoading, selectedDatamart } = this.state;
+    
     const actionbarProps = {
       onClose: this.redirect,
       formId: 'audienceSegmentForm',
@@ -204,7 +205,7 @@ class AudiencePartitionPage extends React.Component<
           name: placementListName,
         },
       ];
-      return partitionId || selectedDatamart ? (
+      return partitionId || workspace.datamarts.length === 1 || selectedDatamart ? (
         <AudiencePartitionForm
           initialValues={this.state.partitionFormData}
           onSubmit={this.save}
@@ -223,6 +224,6 @@ class AudiencePartitionPage extends React.Component<
 export default compose<JoinedProps, AudiencePartitionPageProps>(
   injectIntl,
   withRouter,
-  injectDatamart,
+  injectWorkspace,
   injectNotifications,
 )(AudiencePartitionPage);
