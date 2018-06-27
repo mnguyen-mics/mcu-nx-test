@@ -7,16 +7,14 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
 import * as FeatureSelectors from '../../../../state/Features/selectors';
 import { GoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
-import GoalForm from './GoalForm';
+import GoalFormContainer from './GoalFormContainer';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import GoalFormService from './GoalFormService';
-import { injectDatamart, InjectedDatamartProps } from '../../../Datamart/index';
-import { EditContentLayout } from '../../../../components/Layout';
-import DatamartSelector from '../../../../containers/Audience/Common/DatamartSelector';
-import { DatamartResource } from '../../../../models/datamart/DatamartResource';
+
+// import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
@@ -47,7 +45,7 @@ const messages = defineMessages({
 interface State {
   goalFormData: GoalFormData;
   loading: boolean;
-  selectedDatamart?: DatamartResource;
+  // selectedDatamart?: DatamartResource;
 }
 
 interface MapStateToProps {
@@ -56,7 +54,6 @@ interface MapStateToProps {
 }
 
 type Props = InjectedIntlProps &
-  InjectedDatamartProps &
   MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; goalId: string }>;
@@ -64,20 +61,20 @@ type Props = InjectedIntlProps &
 class EditGoalPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const QueryContainer = (window as any).angular
-      .element(document.body)
-      .injector()
-      .get('core/datamart/queries/QueryContainer');
-    const defQuery = new QueryContainer(props.datamart.id);
+    // const QueryContainer = (window as any).angular
+    //   .element(document.body)
+    //   .injector()
+    //   .get('core/datamart/queries/QueryContainer');
+    // const defQuery = new QueryContainer(props.datamart.id);
     this.state = {
       loading: false,
       goalFormData: {
         ...INITIAL_GOAL_FORM_DATA,
-        queryLanguage:
-          props.datamart.storage_model_version === 'v201506'
-            ? 'SELECTORQL'
-            : 'OTQL',
-        queryContainer: defQuery,
+        // queryLanguage:
+        //   props.datamart.storage_model_version === 'v201506'
+        //     ? 'SELECTORQL'
+        //     : 'OTQL',
+        // queryContainer: defQuery,
       },
     };
   }
@@ -85,24 +82,25 @@ class EditGoalPage extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: { goalId, organisationId },
+        params: { goalId },
       },
-      workspace,
     } = this.props;
 
     if (goalId) {
       this.fetchData(goalId);
     }
-    if (workspace(organisationId).datamarts.length === 1) {
-      this.onDatamartSelect(workspace(organisationId).datamarts[0])
-    }
   }
+
+  onSubmitFail = () => {
+    const { intl } = this.props;
+    message.error(intl.formatMessage(messages.errorFormMessage));
+  };
 
   fetchData = (goalId: string) => {
     this.setState({
       loading: true,
     });
-    GoalFormService.loadGoalData(goalId, this.props.datamart.id)
+    GoalFormService.loadGoalData(goalId)
       .then(goalData => {
         this.setState({
           goalFormData: {
@@ -115,11 +113,6 @@ class EditGoalPage extends React.Component<Props, State> {
         this.setState({ loading: false });
         this.props.notifyError(err);
       });
-  };
-
-  onSubmitFail = () => {
-    const { intl } = this.props;
-    message.error(intl.formatMessage(messages.errorFormMessage));
   };
 
   save = (goalFormData: GoalFormData) => {
@@ -182,42 +175,15 @@ class EditGoalPage extends React.Component<Props, State> {
       : history.push(defaultRedirectUrl);
   };
 
-  onDatamartSelect = (datamart: DatamartResource) => {
-    const { goalFormData } = this.state;
-    const QueryContainer = (window as any).angular
-      .element(document.body)
-      .injector()
-      .get('core/datamart/queries/QueryContainer');
-    const defQuery = new QueryContainer(datamart.id);
-    this.setState({
-      selectedDatamart: datamart,
-      goalFormData: {
-        ...goalFormData,
-        goal: {
-          ...goalFormData.goal,
-          datamart_id: datamart.id,
-        },
-        queryLanguage:
-          datamart.storage_model_version === 'v201506' ? 'SELECTORQL' : 'OTQL',
-        queryContainer: defQuery,
-      },
-    });
-  };
-
   render() {
     const {
       match: {
-        params: { organisationId, goalId },
+        params: { organisationId },
       },
       intl: { formatMessage },
     } = this.props;
 
-    const { loading, goalFormData, selectedDatamart } = this.state;
-
-    const actionbarProps = {
-      onClose: this.onClose,
-      formId: 'audienceSegmentForm',
-    };
+    const { loading, goalFormData } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -230,7 +196,7 @@ class EditGoalPage extends React.Component<Props, State> {
           })
         : formatMessage(messages.breadcrumbNewGoalTitle);
 
-    const breadcrumbPaths = [
+    const breadCrumbPaths = [
       {
         name: messages.breadcrumbGoalsTitle,
         path: `/v2/o/${organisationId}/campaigns/goals`,
@@ -240,18 +206,14 @@ class EditGoalPage extends React.Component<Props, State> {
       },
     ];
 
-    return goalId || selectedDatamart ? (
-      <GoalForm
+    return (
+      <GoalFormContainer
         initialValues={goalFormData}
-        onSubmit={this.save}
+        breadCrumbPaths={breadCrumbPaths}
+        save={this.save}
         close={this.onClose}
-        breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
       />
-    ) : (
-      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-        <DatamartSelector onSelect={this.onDatamartSelect} />
-      </EditContentLayout>
     );
   }
 }
@@ -264,7 +226,6 @@ const mapStateToProps = (state: any) => ({
 export default compose(
   withRouter,
   injectIntl,
-  injectDatamart,
   injectNotifications,
   connect(
     mapStateToProps,

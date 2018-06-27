@@ -37,6 +37,7 @@ import {
   INITIAL_GOAL_FORM_DATA,
   GoalFormData,
 } from '../../../Goal/Edit/domain';
+import GoalFormContainer, { GoalFormContainerProps } from '../../../Goal/Edit/GoalFormContainer';
 import GoalForm, { GoalFormProps } from '../../../Goal/Edit/GoalForm';
 import GoalFormLoader, {
   GoalFormLoaderProps,
@@ -202,19 +203,20 @@ class GoalFormSection extends React.Component<Props, State> {
       additionalProps: props,
     };
 
-    let FormComponent = GoalForm;
+    let FormComponent = GoalFormContainer;
 
     if (!field) {
-      const QueryContainer = (window as any).angular
-        .element(document.body)
-        .injector()
-        .get('core/datamart/queries/QueryContainer');
-      const defQuery = new QueryContainer(this.props.datamart.id);
+      // const QueryContainer = (window as any).angular
+      //   .element(document.body)
+      //   .injector()
+      //   .get('core/datamart/queries/QueryContainer');
+      // const defQuery = new QueryContainer(this.props.datamart.id);
       props.initialValues = {
         ...INITIAL_GOAL_FORM_DATA,
-        queryContainer: defQuery,
+        // ,queryContainer: defQuery,
       };
     } else if (isGoalFormData(field.model)) {
+      FormComponent = GoalForm;
       props.initialValues = field.model;
       if (isGoalResource(field.model.goal)) {
         props.goalId = field.model.goal.id;
@@ -225,7 +227,7 @@ class GoalFormSection extends React.Component<Props, State> {
       (props as GoalFormLoaderProps).goalId = field.model.goal_id;
     }
 
-    this.props.openNextDrawer<GoalFormProps>(FormComponent, options);
+    this.props.openNextDrawer<GoalFormContainerProps>(FormComponent, options);
   };
 
   getPixelSnippet = (field: GoalFieldModel) => {

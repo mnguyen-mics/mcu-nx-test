@@ -239,8 +239,8 @@ function getGoalTasks(
       const goalFormData = field.model;
 
       const fetchGoalInitialFormData = () => {
-        if (isExistingGoal(goalFormData.goal) && datamartId) {
-          return GoalFormService.loadGoalData(goalFormData.goal.id, datamartId);
+        if (isExistingGoal(goalFormData.goal)) {
+          return GoalFormService.loadGoalData(goalFormData.goal.id);
         }
         return Promise.resolve(INITIAL_GOAL_FORM_DATA);
       };

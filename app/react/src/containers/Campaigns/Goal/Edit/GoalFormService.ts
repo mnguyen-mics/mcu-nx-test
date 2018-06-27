@@ -15,9 +15,11 @@ import { GoalResource } from '../../../../models/goal';
 import GoalService from '../../../../services/GoalService';
 import AttributionModelFormService from '../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelFormService';
 import queryService from '../../../../services/QueryService';
+import DatamartService from '../../../../services/DatamartService';
+import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 
 const GoalFormService = {
-  loadGoalData(goalId: string, datamartId: string): Promise<GoalFormData> {
+  loadGoalData(goalId: string): Promise<GoalFormData> {
     return Promise.all([
       GoalService.getGoal(goalId),
       GoalService.getAttributionModels(goalId),
@@ -38,22 +40,28 @@ const GoalFormService = {
         .element(document.body)
         .injector()
         .get('core/datamart/queries/QueryContainer');
-      if (goalRes.data.new_query_id) {
+      if (goalRes.data.datamart_id && goalRes.data.new_query_id) {
         return queryService
-          .getQuery(datamartId, goalRes.data.new_query_id)
+          .getQuery(goalRes.data.datamart_id, goalRes.data.new_query_id)
           .then(r => r.data)
           .then(res => {
-            return new QueryContainer(datamartId, res.id)
+            return new QueryContainer(goalRes.data.datamart_id, res.id)
               .load()
               .then((queryContainer: any) => {
-                goalFormData.queryContainer = queryContainer;
-                return goalFormData;
+                DatamartService.getDatamart(goalRes.data.datamart_id).then(resp => {
+                  goalFormData.queryContainer = queryContainer;
+                  goalFormData.queryLanguage =
+                    resp.data.storage_model_version === 'v201506'
+                      ? 'SELECTORQL'
+                      : ('OTQL' as QueryLanguage);
+                  return goalFormData;
+                });
               });
           });
       } else {
         return {
           ...goalFormData,
-          queryContainer: new QueryContainer(datamartId),
+          queryContainer: new QueryContainer(goalRes.data.datamart_id),
           triggerMode: 'PIXEL',
         };
       }
@@ -84,8 +92,8 @@ const GoalFormService = {
         return {
           ...goalFormData.goal,
           new_query_id: null,
-        }
-      })
+        };
+      });
     }
 
     return goalDataToUpload.then(goalData => {

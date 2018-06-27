@@ -6,7 +6,6 @@ import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 import GoalFormService from './GoalFormService';
 
@@ -26,23 +25,11 @@ type Props = GoalFormLoaderProps &
 class GoalFormLoader extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const QueryContainer = (window as any).angular
-      .element(document.body)
-      .injector()
-      .get('core/datamart/queries/QueryContainer');
-    const defQuery = new QueryContainer(props.datamart.id);
+
     this.state = {
       loading: false,
       goalFormData: {
-        goal: INITIAL_GOAL_FORM_DATA.goal,
-        attributionModels: INITIAL_GOAL_FORM_DATA.attributionModels,
-
-        queryLanguage:
-          props.datamart.storage_model_version === 'v201506'
-            ? 'SELECTORQL'
-            : ('OTQL' as QueryLanguage),
-        queryContainer: defQuery,
-        triggerMode: 'QUERY',
+        ...INITIAL_GOAL_FORM_DATA,
       },
     };
   }
@@ -51,14 +38,15 @@ class GoalFormLoader extends React.Component<Props, State> {
     this.setState({
       loading: true,
     });
-    const { goalId, notifyError, datamart } = this.props;
-    GoalFormService.loadGoalData(goalId, datamart.id)
+    const { goalId, notifyError } = this.props;
+    GoalFormService.loadGoalData(goalId)
       .then(goalData => {
         this.setState({
+          loading: false,
           goalFormData: {
             ...goalData,
+            attributionModels: INITIAL_GOAL_FORM_DATA.attributionModels,
           },
-          loading: false,
         });
       })
       .catch(err => {
