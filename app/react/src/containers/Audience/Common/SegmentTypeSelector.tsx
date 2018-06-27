@@ -3,7 +3,7 @@ import { Layout, Row } from 'antd';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
 import { MenuList, MenuPresentational } from '../../../components/FormMenu';
-import { SegmentType } from '../Segments/Edit/domain';
+import { AudienceSegmentType } from '../../../models/audiencesegment';
 
 const { Content } = Layout;
 
@@ -27,14 +27,14 @@ const messages = defineMessages({
 });
 
 interface SegmentTypeSelectorProps {
-  onSelect: (item: SegmentType) => any;
-  segmentTypesToDisplay: Array<{ title: string; value: SegmentType }>;
+  onSelect: (item: AudienceSegmentType) => any;
+  segmentTypesToDisplay: Array<{ title: string; value: AudienceSegmentType }>;
 }
 
 type Props = SegmentTypeSelectorProps;
 
 class SegmentTypeSelector extends React.Component<Props> {
-  onSelect = (item: SegmentType, expertQuery: boolean = false) => () => {
+  onSelect = (item: AudienceSegmentType, expertQuery: boolean = false) => () => {
     this.props.onSelect(item);
   };
 

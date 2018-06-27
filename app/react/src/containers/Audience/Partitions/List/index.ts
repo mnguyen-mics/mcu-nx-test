@@ -1,7 +1,9 @@
+import AudiencePartitionsPage from './AudiencePartitionsPage';
 import AudiencePartitionsTable from './AudiencePartitionsTable';
-import PartitionsActionbar from './PartitionsActionbar';
+import AudiencePartitionsActionbar from './AudiencePartitionsActionbar';
 
 export {
   AudiencePartitionsTable,
-  PartitionsActionbar,
+  AudiencePartitionsActionbar,
+  AudiencePartitionsPage,
 };

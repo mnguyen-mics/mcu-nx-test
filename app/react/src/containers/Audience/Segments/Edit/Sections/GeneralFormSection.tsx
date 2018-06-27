@@ -20,8 +20,8 @@ import {
   FormBooleanField,
 } from '../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
-import { SegmentType } from '../domain';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import { AudienceSegmentType } from '../../../../../models/audiencesegment';
 
 const messagesMap = defineMessages({
   audienceSegmentFormSelectTypeOptionUserList: {
@@ -40,7 +40,7 @@ const messagesMap = defineMessages({
 
 export interface GeneralFormSectionProps {
   segmentCreation: boolean;
-  segmentType: SegmentType;
+  segmentType: AudienceSegmentType;
   datamart?: DatamartResource;
 }
 
