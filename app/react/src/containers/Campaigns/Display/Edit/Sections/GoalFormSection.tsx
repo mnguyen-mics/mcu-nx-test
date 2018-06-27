@@ -206,14 +206,8 @@ class GoalFormSection extends React.Component<Props, State> {
     let FormComponent = GoalFormContainer;
 
     if (!field) {
-      // const QueryContainer = (window as any).angular
-      //   .element(document.body)
-      //   .injector()
-      //   .get('core/datamart/queries/QueryContainer');
-      // const defQuery = new QueryContainer(this.props.datamart.id);
       props.initialValues = {
         ...INITIAL_GOAL_FORM_DATA,
-        // ,queryContainer: defQuery,
       };
     } else if (isGoalFormData(field.model)) {
       FormComponent = GoalForm;

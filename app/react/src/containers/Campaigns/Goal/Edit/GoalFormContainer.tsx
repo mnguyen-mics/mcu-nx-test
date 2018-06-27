@@ -13,6 +13,7 @@ import { Omit } from '../../../../utils/Types';
 import { Path } from '../../../../components/ActionBar';
 import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from '../../../../containers/Audience/Common/DatamartSelector';
+import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart/index';
 
 export interface GoalFormContainerProps
   extends Omit<ConfigProps<GoalFormData>, 'form'> {
@@ -24,6 +25,7 @@ export interface GoalFormContainerProps
 type Props = GoalFormContainerProps &
   InjectedFormProps<GoalFormData, GoalFormContainerProps> &
   GoalFormProps &
+  InjectedWorkspaceProps & 
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; goalId: string }>;
 
@@ -42,7 +44,7 @@ class GoalFormContainer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { initialValues } = this.props;
+    const { initialValues, workspace } = this.props;
 
     if (initialValues.goal && initialValues.goal.datamart_id) {
       DatamartService.getDatamart(initialValues.goal.datamart_id)
@@ -52,6 +54,8 @@ class GoalFormContainer extends React.Component<Props, State> {
         .catch(err => {
           this.props.notifyError(err);
         });
+    } else if(workspace.datamarts.length === 1) {
+      this.onDatamartSelect(workspace.datamarts[0]);
     }
   }
 
@@ -84,7 +88,8 @@ class GoalFormContainer extends React.Component<Props, State> {
       close,
       onSubmitFail,
       breadCrumbPaths,
-      onSubmit
+      onSubmit,
+      workspace
     } = this.props;
 
     const { selectedDatamart, goalFormData } = this.state;
@@ -94,7 +99,7 @@ class GoalFormContainer extends React.Component<Props, State> {
 
     const formValues = isDatamartId ? initialValues : goalFormData;
 
-    return isDatamartId || selectedDatamart ? (
+    return isDatamartId || workspace.datamarts.length === 1 || selectedDatamart ? (
       <GoalForm
         initialValues={formValues}
         onSubmit={save ? save : onSubmit}
@@ -117,4 +122,5 @@ class GoalFormContainer extends React.Component<Props, State> {
 export default compose<Props, GoalFormContainerProps>(
   injectNotifications,
   withRouter,
+  injectWorkspace
 )(GoalFormContainer);

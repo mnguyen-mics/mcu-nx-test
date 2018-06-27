@@ -13,8 +13,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import GoalFormService from './GoalFormService';
-
-// import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
@@ -45,7 +43,6 @@ const messages = defineMessages({
 interface State {
   goalFormData: GoalFormData;
   loading: boolean;
-  // selectedDatamart?: DatamartResource;
 }
 
 interface MapStateToProps {
@@ -61,20 +58,10 @@ type Props = InjectedIntlProps &
 class EditGoalPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    // const QueryContainer = (window as any).angular
-    //   .element(document.body)
-    //   .injector()
-    //   .get('core/datamart/queries/QueryContainer');
-    // const defQuery = new QueryContainer(props.datamart.id);
     this.state = {
       loading: false,
       goalFormData: {
         ...INITIAL_GOAL_FORM_DATA,
-        // queryLanguage:
-        //   props.datamart.storage_model_version === 'v201506'
-        //     ? 'SELECTORQL'
-        //     : 'OTQL',
-        // queryContainer: defQuery,
       },
     };
   }
