@@ -16,7 +16,6 @@ import QueryService from '../../../services/QueryService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import OTQLService from '../../../services/OTQLService';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { computeSchemaModel } from './domain';
 import { JSONQLBuilderContext } from './JSONQLBuilderContext';

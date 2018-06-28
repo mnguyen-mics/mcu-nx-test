@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ObjectTreeExpressionNodeShape, QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
-import OTQLService from '../../../services/OTQLService';
+import QueryService from '../../../services/QueryService';
 import { OTQLDataResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { Spin } from 'antd';
 import { ButtonStyleless } from '../../../components';
@@ -63,7 +63,7 @@ class TimelineSelector extends React.Component<Props, State> {
         error: false,
         results: undefined
       });
-      OTQLService.runJSONOTQLQuery(datamartId, queryDocument)
+      QueryService.runJSONOTQLQuery(datamartId, queryDocument)
         .then(res => {
           if (res.data.rows.length !== 0) {
             window.open(`${window.location.origin}/#/v2/o/${organisationId }/audience/timeline/user_point_id/${res.data.rows[Math.floor(Math.random()*res.data.rows.length)]}?datamart_id=${datamartId}`);
