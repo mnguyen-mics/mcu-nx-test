@@ -57,7 +57,7 @@ type Props = InjectedFormProps<DatamartFormData, DatamartEditFormProps> &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-const FORM_ID = 'datamartForm';
+export const FORM_ID = 'datamartForm';
 
 class DatamartEditForm extends React.Component<Props> {
   render() {

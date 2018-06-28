@@ -65,5 +65,9 @@ export default defineMessages({
     breadcrumbTitle1: {
         id: 'settings.mobileapp.form.settings',
         defaultMessage: 'Mobile Applications'
+    },
+    warningOnTokenEdition: {
+        id: 'settings.datamart.warning.token.edition',
+        defaultMessage: 'Danger Zone: Editing this token may cause any mobile application data collection to fail if not updated properly. Please make sure you have updated your tag in all your mobile apps before saving.'
     }
 })

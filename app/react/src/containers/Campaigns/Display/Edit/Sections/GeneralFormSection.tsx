@@ -5,9 +5,11 @@ import messages from '../messages';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
 import {
   FormInput,
+  FormAlertInput,
   FormSection,
   AddonSelect,
   FormInputField,
+  FormAlertInputField,
   FormAddonSelectField,
 } from '../../../../../components/Form';
 import withValidators, {
@@ -16,8 +18,21 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../components/Form/withNormalizer';
+import { withRouter, RouteComponentProps } from 'react-router';
+import {
+  EditDisplayCampaignRouteMatchParam,
+  DisplayCampaignFormData,
+} from '../domain';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+interface MapStateToProps {
+  initialFormValues: Partial<DisplayCampaignFormData>;
+}
+
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  MapStateToProps &
+  NormalizerProps &
+  RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
 interface State {
   displayAdvancedSection: boolean;
@@ -135,7 +150,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           />
 
           <FormInputField
-            name="campaign.max_budget_per_period" 
+            name="campaign.max_budget_per_period"
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
@@ -203,9 +218,9 @@ class GeneralFormSection extends React.Component<Props, State> {
                 : 'optional-section-content'
             }
           >
-            <FormInputField
+            <FormAlertInputField
               name="campaign.technical_name"
-              component={FormInput}
+              component={FormAlertInput}
               formItemProps={{
                 label: formatMessage(
                   messages.contentSectionGeneralAdvancedPartRow1Label,
@@ -221,6 +236,9 @@ class GeneralFormSection extends React.Component<Props, State> {
                   messages.contentSectionGeneralAdvancedPartRow1Tooltip,
                 ),
               }}
+              iconType="warning"
+              type="warning"
+              message={formatMessage(messages.warningOnTokenEdition)}
             />
           </div>
         </div>
@@ -229,6 +247,9 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+  withRouter,
+)(GeneralFormSection);

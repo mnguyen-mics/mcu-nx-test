@@ -3,11 +3,16 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { FormSection, FormInputField } from '../../../../../../components/Form';
+import {
+  FormSection,
+  FormInputField,
+  FormInput,
+  FormAlertInputField,
+  FormAlertInput,
+} from '../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../../components/Form/withValidators';
-import FormInput from '../../../../../../components/Form/FormInput';
 import messages from '../../messages';
 import { EditEmailBlastRouteMatchParam } from '../../domain';
 
@@ -45,9 +50,9 @@ class GeneralFormSection extends React.Component<Props> {
             title: formatMessage(messages.emailEditorNameInputHelper),
           }}
         />
-        <FormInputField
+        <FormAlertInputField
           name="campaign.technical_name"
-          component={FormInput}
+          component={FormAlertInput}
           formItemProps={{
             label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
           }}
@@ -59,12 +64,17 @@ class GeneralFormSection extends React.Component<Props> {
           helpToolTipProps={{
             title: formatMessage(messages.emailEditorTechnicalNameInputHelper),
           }}
+          iconType="warning"
+          type="warning"
+          message={formatMessage(messages.warningOnTokenEdition)}
         />
       </div>
     );
   }
 }
 
-export default compose(injectIntl, withRouter, withValidators)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withRouter,
+  withValidators,
+)(GeneralFormSection);

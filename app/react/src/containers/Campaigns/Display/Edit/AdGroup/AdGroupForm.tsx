@@ -96,7 +96,7 @@ type Props = InjectedFormProps<AdGroupFormData, AdGroupFormProps> &
   MapStateToProps &
   RouteComponentProps<EditAdGroupRouteMatchParam>;
 
-const FORM_ID = 'adGroupForm';
+export const FORM_ID = 'adGroupForm';
 
 class AdGroupForm extends React.Component<Props> {
   buildFormSections = () => {

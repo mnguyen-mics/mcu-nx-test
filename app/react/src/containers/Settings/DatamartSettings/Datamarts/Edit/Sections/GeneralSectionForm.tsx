@@ -3,9 +3,9 @@ import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
 import {
-  FormInput,
+  FormAlertInput,
   FormSection,
-  FormInputField,
+  FormAlertInputField,
 } from '../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -45,30 +45,33 @@ class GeneralFormSection extends React.Component<Props, State> {
           title={messages.sectionGeneralTitle}
         />
 
-        <div>
-          <FormInputField
-            name="datamart.token"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralTokenLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(
-                messages.contentSectionGeneralTokenPlaceholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentSectionGeneralTokenTooltip),
-            }}
-          />
-        </div>
+        <FormAlertInputField
+          name="datamart.token"
+          component={FormAlertInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.contentSectionGeneralTokenLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(
+              messages.contentSectionGeneralTokenPlaceholder,
+            ),
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.contentSectionGeneralTokenTooltip),
+          }}
+          iconType="warning"
+          type="warning"
+          message={formatMessage(messages.warningOnTokenEdition)}
+        />
       </div>
     );
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+)(GeneralFormSection);

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-
 import { compose } from 'recompose';
 import { Row } from 'antd/lib/grid';
 import withValidators, {
@@ -12,9 +11,11 @@ import withNormalizer, {
 } from '../../../../../components/Form/withNormalizer';
 import {
   FormInput,
+  FormAlertInput,
   FormSection,
   AddonSelect,
   FormInputField,
+  FormAlertInputField,
   FormAddonSelectField,
   FormBoolean,
   FormBooleanField,
@@ -80,9 +81,9 @@ class GeneralFormSection extends React.Component<Props, State> {
     } = this.props;
 
     return (
-      <FormInputField
+      <FormAlertInputField
         name="audienceSegment.technical_name"
-        component={FormInput}
+        component={FormAlertInput}
         onChange={this.handleOnchangeTechnicalName}
         formItemProps={{
           label: formatMessage(
@@ -99,6 +100,9 @@ class GeneralFormSection extends React.Component<Props, State> {
             messages.contentSectionGeneralAdvancedPartRow1Tooltip,
           ),
         }}
+        iconType="warning"
+        type="warning"
+        message={formatMessage(messages.warningOnTokenEdition)}
       />
     );
   };
@@ -248,7 +252,8 @@ class GeneralFormSection extends React.Component<Props, State> {
                 </div>
               </div>
 
-              {segmentType === 'USER_QUERY' || segmentType === 'USER_LOOKALIKE' ? (
+              {segmentType === 'USER_QUERY' ||
+              segmentType === 'USER_LOOKALIKE' ? (
                 <div>
                   <FormBooleanField
                     name="audienceSegment.persisted"

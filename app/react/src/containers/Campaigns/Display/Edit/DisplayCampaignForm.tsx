@@ -67,7 +67,7 @@ type Props = InjectedFormProps<
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-const FORM_ID = 'campaignForm';
+export const FORM_ID = 'campaignForm';
 
 class DisplayCampaignForm extends React.Component<Props> {
   render() {

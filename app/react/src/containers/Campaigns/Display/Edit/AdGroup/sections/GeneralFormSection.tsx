@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
+import { compose } from 'recompose';
 import messages from '../../messages';
 import withValidators, {
   ValidatorProps,
@@ -10,15 +10,16 @@ import withNormalizer, {
 } from '../../../../../../components/Form/withNormalizer';
 import {
   FormInput,
+  FormAlertInput,
   FormSection,
   AddonSelect,
   FormInputField,
+  FormAlertInputField,
   FormAddonSelectField,
   FormDateRangePickerField,
 } from '../../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../../components';
 import FormDateRangePicker from '../../../../../../components/Form/FormDateRangePicker';
-import { compose } from 'recompose';
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
@@ -200,9 +201,9 @@ class GeneralFormSection extends React.Component<Props, State> {
                 : 'optional-section-content'
             }
           >
-            <FormInputField
+            <FormAlertInputField
               name="adGroup.technical_name"
-              component={FormInput}
+              component={FormAlertInput}
               formItemProps={{
                 label: formatMessage(messages.contentSectionGeneralRow8Label),
               }}
@@ -214,6 +215,9 @@ class GeneralFormSection extends React.Component<Props, State> {
               helpToolTipProps={{
                 title: formatMessage(messages.contentSectionGeneralRow8Tooltip),
               }}
+              iconType="warning"
+              type="warning"
+              message={formatMessage(messages.warningOnTokenEdition)}
             />
 
             <FormInputField
@@ -258,6 +262,8 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+)(GeneralFormSection);
