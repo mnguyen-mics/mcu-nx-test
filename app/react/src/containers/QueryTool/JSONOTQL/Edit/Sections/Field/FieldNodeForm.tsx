@@ -164,7 +164,6 @@ class FieldNodeForm extends React.Component<Props> {
     const { availableFields } = this.props;
 
     const possibleFieldType = availableFields.find(i => i.name === fieldName);
-
     if (possibleFieldType) {
       const fieldType = possibleFieldType.field_type;
       const match = fieldType.match(/\w+/);

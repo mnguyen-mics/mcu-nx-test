@@ -164,6 +164,8 @@ class FieldNodeWidget extends React.Component<Props, State> {
     const triggerEdit = () => this.editNode(true);
     const closeEdit = () => this.editNode(false);
 
+    
+
     const renderEditNode = () => {
       return (
         <div

@@ -314,15 +314,15 @@ export function buildNodeModelBTree(
       objectNode.objectTypeInfo = objectType;
 
       const field = objectType.fields.find(f => f.name === treeNode.field)!;
+      const fieldType = field.field_type.match(/\w+/)![0]
       const nextObjectType = objectTypes.find(
-        ot => field.field_type.indexOf(ot.name) > -1,
+        ot => fieldType === ot.name,
       )!;
-
       const hidePlusNode = !hasTypeChild(nextObjectType, objectTypes);
       return {
         node: objectNode,
         down: treeNode.expressions
-          .slice()
+          .slice() 
           .reverse()
           .reduce(
             (acc, expr, index) => {

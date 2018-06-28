@@ -34,7 +34,7 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
         treeNodeOperations: this.treeNodeOperations,
         objectTypes: this.objectTypes,
         lockGlobalInteraction: this.lockGlobalInteraction,
-        query: query as any
+        query: query
       })}
     </JSONQLBuilderContext.Consumer>) 
   }
