@@ -36,12 +36,10 @@ const fieldSource = {
 class FieldNode extends React.Component<FieldNodeProps, any> {
   render() {
     const { item, isDragging, connectDragSource } = this.props;
-    const opacity = isDragging ? 0.4 : 1;
-
     return connectDragSource &&
     connectDragSource(
-      <div style={{ opacity }}>
-        {isDragging ? <s>{item.name}</s> : <div><McsIcon type="dots" /> {item.name}</div>}
+      <div className={`field-node-item ${isDragging ? 'dragging' : ''}`}>
+        <div>{item.name} <span className="field-type">{item.schemaType ? item.schemaType : (item as any).field_type} <McsIcon type="dots" /></span></div>
       </div>,
     );
   }

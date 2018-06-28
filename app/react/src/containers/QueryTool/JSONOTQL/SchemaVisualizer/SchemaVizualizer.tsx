@@ -26,7 +26,7 @@ export default class SchemaVizualizer extends React.Component<
           ) {
             const itemSchema = item as SchemaItem;
             return (
-              <TreeNode key={itemSchema.id} title={<FieldNode id={itemSchema.id} item={itemSchema} type="object" />}>
+              <TreeNode selectable={false} key={itemSchema.id} title={<FieldNode id={itemSchema.id} item={itemSchema} type="object" />}>
                 {loop(itemSchema, itemSchema.schemaType)}
               </TreeNode>
             );
