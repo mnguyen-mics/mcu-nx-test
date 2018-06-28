@@ -106,7 +106,7 @@ class ActivityCard extends React.Component<Props, State> {
           identif.items.USER_AGENT.find((element: any) => {
             return element.vector_id === userAgentId;
           })
-      : null;
+      : undefined;
   };
 
   diplayVisitDuration = (activity: Activity) => {
@@ -156,7 +156,7 @@ class ActivityCard extends React.Component<Props, State> {
         </span>
       ) : null;
 
-    const device = agent && agent.device ? agent.device : null;
+    const device = agent && agent.device ? agent.device : undefined;
     const longitude =
       activity && activity.$location ? activity.$location.$latlon[1] : 0;
     const latitude =

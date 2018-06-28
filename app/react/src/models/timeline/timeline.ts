@@ -52,12 +52,14 @@ export interface UserPoint {
 
 export type UserIdentifierShape = UserAgent | UserPoint;
 
+export type FormFactor = 'TABLET' | 'SMARTPHONE' | 'PERSONAL_COMPUTER';
+
 export interface Device {
   brand?: string;
   browser_family?: string;
   browser_version?: string;
   carrier?: string;
-  form_factor?: string;
+  form_factor?: FormFactor;
   model?: string;
   os_family?: string;
   os_version?: string;
@@ -81,7 +83,7 @@ export interface UserProfileResource {
   first_name?: string;
   last_name?: string;
   email?: string;
-  isClient?: boolean; 
+  isClient?: boolean;
 }
 
 export interface UserSegmentResource {
@@ -96,4 +98,26 @@ export interface Cookies {
   mics_lts?: string;
   mics_uaid?: string;
   mics_vid?: string;
+}
+
+export interface OriginProps {
+  $campaign_id?: string;
+  $campaign_name?: string;
+  $campaign_technical_name?: string;
+  $channel?: string;
+  $creative_id?: string;
+  $creative_name?: string;
+  $creative_technical_name?: string;
+  $engagement_content_id?: string;
+  $gclid?: string;
+  $keywords?: string;
+  $log_id?: string;
+  $message_id?: string;
+  $message_technical_name?: string;
+  $referral_path?: string;
+  $social_network?: string;
+  $source?: string;
+  $sub_campaign_id?: string;
+  $sub_campaign_technical_name?: string;
+  $ts?: number;
 }

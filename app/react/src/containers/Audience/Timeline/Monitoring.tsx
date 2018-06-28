@@ -136,6 +136,7 @@ class Monitoring extends React.Component<Props, State> {
         params: {
           identifierType: nextIdentifierType,
           identifierId: nextIdentifierId,
+          organisationId: nextOrganisationId
         },
       },
       location: { search: nextSearch, pathname: nextPathname },
@@ -152,14 +153,14 @@ class Monitoring extends React.Component<Props, State> {
     } else if (search !== nextSearch || pathname !== nextPathname) {
       if (identifier.id && identifier.type) {
         this.fetchIdentifiersData(
-          organisationId,
+          nextOrganisationId,
           datamartId,
           identifier.type,
           identifier.id,
         );
       } else if (nextIdentifierType && nextIdentifierId) {
         this.fetchIdentifiersData(
-          organisationId,
+          nextOrganisationId,
           datamartId,
           nextIdentifierType,
           nextIdentifierId,

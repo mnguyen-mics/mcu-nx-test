@@ -53,6 +53,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
       id: identifierId,
       type: identifierType,
     });
+    this.props.handleModal(false);
   };
 
   render() {
@@ -107,7 +108,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
           <InputGroup compact={true}>
             <Select
               style={{ width: '30%' }}
-              defaultValue={identifierType}
+              defaultValue={identifierType || 'user_point_id'}
               onChange={this.updateType}
             >
               <Option value="user_point_id">User Point Id</Option>

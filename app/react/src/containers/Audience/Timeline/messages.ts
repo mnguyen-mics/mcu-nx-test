@@ -1,6 +1,8 @@
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-export default defineMessages({
+const messages: {
+  [propertyName: string]: FormattedMessage.MessageDescriptor
+} = defineMessages({
   lookUpUser: {
     id: 'timeline.actionbar.lookup',
     defaultMessage: 'User Lookup',
@@ -226,3 +228,5 @@ export default defineMessages({
     defaultMessage: 'View JSON source',
   },
 });
+
+export default messages;
