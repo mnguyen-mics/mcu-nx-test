@@ -19,9 +19,11 @@ import {
   DisplayCreativeFormData,
   DISPLAY_CREATIVE_FORM,
   isDisplayAdResource,
+  EditDisplayCreativeRouteMatchParams,
 } from '../domain';
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
+import { RouteComponentProps } from 'react-router';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;

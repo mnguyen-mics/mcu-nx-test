@@ -100,7 +100,7 @@ class DisplayCreativeForm extends React.Component<Props> {
   }
 
   buildFormSections = () => {
-    const { allowMultipleUpload, customLoader, change } = this.props;
+    const { allowMultipleUpload, customLoader, change, initialValues } = this.props;
 
     const leftFormSections: McsFormSection[] = [];
     const rightFormSections: McsFormSection[] = [];
@@ -129,26 +129,21 @@ class DisplayCreativeForm extends React.Component<Props> {
 
     if (initialValues.pluginLayout === undefined) {
 
-      formSections.push({
+      rightFormSections.push({
         id: 'properties',
         title: messages.creativeSectionPropertyTitle,
-        component: <PropertiesFormSection />,
+        component: <PropertiesFormSection small={this.props.layout === 'SPLIT'} />,
       });
     }
     else {
       initialValues.pluginLayout.sections.forEach(section => {
-        formSections.push({
+        rightFormSections.push({
           id: section.title,
           title: section.title,
-          component: <PropertiesFormSection sectionTitle={section.title}/>,
+          component: <PropertiesFormSection sectionTitle={section.title} small={this.props.layout === 'SPLIT'}/>,
         });
       })
     }
-    rightFormSections.push({
-      id: 'properties',
-      title: messages.creativeSectionPropertyTitle,
-      component: <PropertiesFormSection small={this.props.layout === 'SPLIT'} />,
-    });
 
     if (existingCreative) {
       leftFormSections.push({

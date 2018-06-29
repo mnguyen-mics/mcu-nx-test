@@ -306,7 +306,9 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
     const {
       pluginLayoutFieldDefinition,
       disabled,
-      intl } = this.props;
+      small,
+      intl
+    } = this.props;
 
     if (pluginLayoutFieldDefinition !== undefined) {
 
@@ -314,6 +316,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
         formItemProps: FormItemProps,
         inputProps: InputProps,
         helpToolTipProps?: TooltipProps;
+        small?: boolean
       } = {
           inputProps: {
             placeholder: this.technicalNameToName(pluginLayoutFieldDefinition.property_technical_name),
@@ -325,6 +328,11 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
       if (pluginLayoutFieldDefinition.tooltip !== null) {
         pluginFieldProps.helpToolTipProps = { title: pluginLayoutFieldDefinition.tooltip }
       }
+
+      if (small) {
+        pluginFieldProps.small = small
+      }
+
       const helpToolTipProps = pluginLayoutFieldDefinition.tooltip !== null ? { helpToolTipProps: { title: pluginLayoutFieldDefinition.tooltip } } : undefined;
 
       switch (pluginLayoutFieldDefinition.field_type) {
@@ -376,8 +384,9 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
               component={FormCodeEdit}
               formItemProps={pluginFieldProps.formItemProps}
-              inputProps={{ mode: 'html' }}
+              inputProps={{ mode: 'html', height: '200px', showGutter: false }}
               {...pluginFieldProps.helpToolTipProps}
+              small={pluginFieldProps.small}
             />
           )
 
@@ -403,6 +412,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                 pluginLayoutFieldDefinition.enum.map(option => { return { value: option.value, title: option.label } }) : []}
               formItemProps={pluginFieldProps.formItemProps}
               {...pluginFieldProps.helpToolTipProps}
+              {...pluginFieldProps.small}
             />
           );
 
@@ -420,6 +430,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               formItemProps={pluginFieldProps.formItemProps}
               {...pluginFieldProps.helpToolTipProps}
               valueAsString={true}
+              {...pluginFieldProps.small}
             />
           );
 
@@ -434,6 +445,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               noUploadModal={this.props.noUploadModal}
               formItemProps={pluginFieldProps.formItemProps}
               helpToolTipProps={{ title: pluginLayoutFieldDefinition.tooltip }}
+              {...pluginFieldProps.small}
             />
           );
 
@@ -468,6 +480,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               validateStatus={pluginFieldProps.formItemProps.validateStatus}
               {...pluginFieldProps.formItemProps}
+              {...pluginFieldProps.small}
             >
               <FormSwitchField
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
@@ -493,6 +506,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               validateStatus={pluginFieldProps.formItemProps.validateStatus}
               {...pluginFieldProps.formItemProps}
+              {...pluginFieldProps.small}
             >
               <FormRadioGroupField
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
@@ -516,6 +530,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               validateStatus={pluginFieldProps.formItemProps.validateStatus}
               {...pluginFieldProps.formItemProps}
+              {...pluginFieldProps.small}
             >
               <FormCheckboxGroupField
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}

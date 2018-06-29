@@ -16,7 +16,7 @@ export interface DisplayCreativeFormData {
   rendererPlugin: PluginVersionResource;
   properties: { [technicalName: string]: PropertyResourceShape };
   pluginLayout?: PluginLayout;
-  repeatFields: MultipleImageField[];
+  repeatFields?: MultipleImageField[];
 }
 
 export interface MultipleImageField {

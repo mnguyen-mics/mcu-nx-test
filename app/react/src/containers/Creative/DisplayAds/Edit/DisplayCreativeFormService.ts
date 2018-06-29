@@ -77,12 +77,14 @@ const DisplayCreativeFormService = {
           pLayoutRes.data
           :
           undefined;
-        return {
+        const formData: DisplayCreativeFormData = {
           creative,
           rendererPlugin: plugin,
           properties: normalizeProperties(rendererProperties),
-          pluginLayout: pLayout
-        };
+          pluginLayout: pLayout,
+          repeatFields: []
+        }
+        return formData;
       });
     });
   },
@@ -155,7 +157,7 @@ const DisplayCreativeFormService = {
       })
     }
 
-    return Promise.all(repeatFields.map(field => {
+    return Promise.all((repeatFields || []).map(field => {
 
       const properties: any = {
         ...formData.properties,

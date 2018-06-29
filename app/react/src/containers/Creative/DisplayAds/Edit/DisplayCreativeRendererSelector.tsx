@@ -21,8 +21,8 @@ const { Content } = Layout;
 const imageAdRendererId = MicsPLuginDefinition.imageAdRendererId.id;
 const htmlAdRendererId = MicsPLuginDefinition.htmlAdRendererId.id;
 const externalAdRendererId = MicsPLuginDefinition.externalAdRendererId.id;
-const nativeIvidenceAdRendererId = MicsPLuginDefinition.nativeIvidenceAdRendererId.id;
-const nativeQuantumAdRendererId = MicsPLuginDefinition.nativeQuantumAdRendererId.id;
+// const nativeIvidenceAdRendererId = MicsPLuginDefinition.nativeIvidenceAdRendererId.id;
+// const nativeQuantumAdRendererId = MicsPLuginDefinition.nativeQuantumAdRendererId.id;
 const imageSkinsAdRendererId = MicsPLuginDefinition.imageSkinsAdRendererId.id;
 
 export interface DisplayCreativeRendererSelectorProps {

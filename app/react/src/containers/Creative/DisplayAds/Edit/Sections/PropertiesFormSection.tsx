@@ -23,12 +23,10 @@ import { PropertyResourceShape } from '../../../../../models/plugin';
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
 }
-interface SectionProps {
-  sectionTitle?: string;
-}
 
 interface PropertiesFormSectionProps {
   small?: boolean;
+  sectionTitle?: string;
 }
 
 type Props = PropertiesFormSectionProps & 
