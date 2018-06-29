@@ -10,6 +10,7 @@ import { AttributionModel, PluginProperty, PluginResource, PluginInstance } from
 import messages from './messages';
 import GenericPluginContent, { PluginInstanceForm, PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
 import { Omit } from 'antd/lib/form/Form';
+import { PropertyResourceShape } from '../../../../../models/plugin';
 
 const AttributionModelPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AttributionModel>>
 interface AttributionModelRouteParam {
@@ -19,7 +20,7 @@ interface AttributionModelRouteParam {
 
 interface AttributionModelForm  extends PluginInstanceForm<AttributionModel>{
   plugin: AttributionModel;
-  properties?: PluginProperty[];
+  properties?: PropertyResourceShape[];
 }
 
 interface CreateAttributionModelState {

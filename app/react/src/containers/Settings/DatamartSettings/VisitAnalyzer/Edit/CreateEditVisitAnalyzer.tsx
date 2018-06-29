@@ -15,6 +15,7 @@ import {
 
 import messages from './messages';
 import { Omit } from '../../../../../utils/Types';
+import { PropertyResourceShape } from '../../../../../models/plugin';
 
 const VisitAnalyzerPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<VisitAnalyzer>>
 
@@ -29,7 +30,7 @@ interface VisitAnalyzerRouteParam {
 
 interface VisitAnalyzerForm extends PluginInstanceForm<VisitAnalyzer>{
   pluginInstance: VisitAnalyzer;
-  properties?: PluginProperty[];
+  properties?: PropertyResourceShape[];
 }
 
 interface CreateVisitAnalyzerState  {

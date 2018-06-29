@@ -21,6 +21,7 @@ import messages from './messages';
 import { Path } from '../../../components/ActionBar';
 import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
+import { PropertyResourceShape } from '../../../models/plugin';
 
 const formId = 'pluginForm';
 
@@ -35,7 +36,7 @@ interface PluginContentInnerProps {
 
 export interface PluginInstanceForm<T> {
   pluginInstance: T;
-  properties?: PluginProperty[];
+  properties?: PropertyResourceShape[];
 }
 
 export interface PluginContentOuterProps<T extends PluginInstance> {
@@ -49,7 +50,7 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
   onClose: () => void;
   onSaveOrCreatePluginInstance: (
     pluginInstance: T,
-    properties: PluginProperty[],
+    properties: PropertyResourceShape[],
   )=> void ;
   createPluginInstance: (
     organisationId: string, 
@@ -64,7 +65,7 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
 interface PluginContentState<T> {
   plugin: PluginResource;
   isLoading: boolean;
-  pluginProperties: PluginProperty[];
+  pluginProperties: PropertyResourceShape[];
   pluginLayout?: PluginLayout;
   availablePlugins: PluginResource[];
   initialValues?: PluginInstanceForm<T>;
@@ -184,7 +185,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
 
   saveOrCreatePluginInstance = (
     pluginInstance: T,
-    properties: PluginProperty[],
+    properties: PropertyResourceShape[],
   ) => {
     
 
@@ -240,7 +241,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
   };
 
   updatePropertiesValue = (
-    properties: PluginProperty[],
+    properties: PropertyResourceShape[],
     organisationId: string,
     pluginInstanceId: string,
   ) => {
