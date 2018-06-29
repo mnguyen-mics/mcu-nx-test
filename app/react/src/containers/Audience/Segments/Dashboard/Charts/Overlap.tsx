@@ -97,7 +97,7 @@ class Overlap extends React.Component<Props, State> {
         if (item) {
           dataSource.push({
             xKey: item.segment_intersect_with.name,
-            yKey: item.segment_intersect_with.segment_size === 0 ? 0 : (item.overlap_number / item.segment_intersect_with.segment_size) * 100
+            yKey: item.segment_intersect_with.segment_size === 0 ? 0 : (item.overlap_number / item.segment_source_size) * 100
           })
         }
       })
