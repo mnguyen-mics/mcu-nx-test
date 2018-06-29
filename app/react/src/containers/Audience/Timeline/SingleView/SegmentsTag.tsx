@@ -36,6 +36,14 @@ class SegmentsTag extends React.Component<SegmentsTagProps, State> {
     this.fetchSegmentData(segmentId);
   }
 
+  componentDidUpdate(prevProps: SegmentsTagProps) {
+    const { segmentId } = this.props;
+    const { segmentId: prevSegmentId } = prevProps;
+    if (segmentId !== prevSegmentId) {
+      this.fetchSegmentData(segmentId);
+    }
+  }
+
   render() {
     return (
       <Tooltip title={this.state.segment.name}>

@@ -31,7 +31,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
     super(props);
     this.state = {
       identifierId: '',
-      identifierType: '',
+      identifierType: 'user_point_id',
     };
   }
 

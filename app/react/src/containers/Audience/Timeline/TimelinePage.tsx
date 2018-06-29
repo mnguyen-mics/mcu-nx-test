@@ -12,6 +12,7 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { DatamartSelector } from '../../Datamart';
+import { Cookies } from '../../../models/timeline/timeline';
 
 const messages = defineMessages({
   selectMonitoringDatamart: {
@@ -27,6 +28,7 @@ export interface TimelinePageParams {
 }
 
 interface MapStateToProps {
+  cookies: Cookies;
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
@@ -40,6 +42,75 @@ class TimelinePage extends React.Component<JoinedProps> {
     super(props);
   }
 
+  componentDidMount() {
+    const {
+      history,
+      cookies,
+      match: {
+        params: { organisationId, identifierId, identifierType },
+      },
+    } = this.props;
+    const datamartId = queryString.parse(location.search).datamartId
+      ? queryString.parse(location.search).datamartId
+      : '';
+    if (!identifierId && !identifierType) {
+      if (cookies.mics_vid) {
+        history.push(
+          `/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${
+            cookies.mics_vid
+          }`,
+        );
+      } else {
+        history.push(`/v2/o/${organisationId}/audience/timeline`);
+      }
+    } else {
+      history.push(
+        `/v2/o/${organisationId}/audience/timeline/${identifierType}/${identifierId}?datamartId=${
+          datamartId ? datamartId : ''
+        }`,
+      );
+    }
+  }
+
+  componentWillReceiveProps(nextProps: JoinedProps) {
+    const {
+      match: {
+        params: { organisationId, identifierId, identifierType },
+      },
+      history,
+      cookies,
+      location,
+    } = this.props;
+    const {
+      match: {
+        params: {
+          identifierType: nextIdentifierType,
+          identifierId: nextIdentifierId,
+          organisationId: nextOrganisationId,
+        },
+      },
+    } = nextProps;
+    const datamartId = queryString.parse(location.search).datamartId
+      ? queryString.parse(location.search).datamartId
+      : '';
+    if (
+      nextIdentifierId &&
+      nextIdentifierType &&
+      nextIdentifierId !== identifierId &&
+      nextIdentifierType !== identifierType
+    ) {
+      history.push(
+        `/v2/o/${organisationId}/audience/timeline/${nextIdentifierType}/${nextIdentifierId}?datamartId=${datamartId}`,
+      );
+    } else if (cookies.mics_vid && nextOrganisationId !== organisationId) {
+      history.push(
+        `/v2/o/${nextOrganisationId}/audience/timeline/user_agent_id/vec:${
+          cookies.mics_vid
+        }?datamartId=${datamartId}`,
+      );
+    }
+  }
+
   onDatamartSelect = (datamart: DatamartResource) => {
     const { history, location } = this.props;
     history.push({
@@ -49,7 +120,6 @@ class TimelinePage extends React.Component<JoinedProps> {
   };
 
   render() {
-
     const {
       intl,
       workspace,
@@ -65,18 +135,17 @@ class TimelinePage extends React.Component<JoinedProps> {
 
     const datamarts = workspace(organisationId).datamarts;
 
+    if (datamartIdQueryString) {
+      const isRelated = datamarts.find(d => d.id === datamartIdQueryString);
+      selectedDatamartId = isRelated ? datamartIdQueryString : undefined;
+    }
+
     if (datamarts && datamarts.length === 1) {
       selectedDatamartId = datamarts[0].id;
     }
 
-    if (datamartIdQueryString) {
-      selectedDatamartId = datamartIdQueryString;
-    }
-
     return selectedDatamartId ? (
-      <Monitoring
-        datamartId={selectedDatamartId}
-      />
+      <Monitoring datamartId={selectedDatamartId} />
     ) : (
       <DatamartSelector
         onSelectDatamart={this.onDatamartSelect}
@@ -93,6 +162,7 @@ class TimelinePage extends React.Component<JoinedProps> {
 }
 
 const mapStateToProps = (state: any) => ({
+  cookies: state.session.cookies,
   workspace: getWorkspace(state),
 });
 

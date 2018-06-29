@@ -107,7 +107,14 @@ export const audienceDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
   audienceTimeline: {
-    path: '/audience/timeline/:identifierType?/:identifierId?',
+    path: '/audience/timeline/:identifierType/:identifierId',
+    layout: 'main',
+    contentComponent: TimelinePage,
+    requiredFeature: 'audience.monitoring',
+    requireDatamart: true,
+  },
+  audienceTimelineHome: {
+    path: '/audience/timeline',
     layout: 'main',
     contentComponent: TimelinePage,
     requiredFeature: 'audience.monitoring',

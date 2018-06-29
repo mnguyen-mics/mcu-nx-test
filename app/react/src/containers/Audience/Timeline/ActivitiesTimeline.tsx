@@ -28,8 +28,6 @@ export interface Activities {
   byDay: {
     [date: string]: Activity[];
   };
-  nextDate?: string;
-  fetchNewActivities?: (e: any) => void;
 }
 
 interface ActivitiesTimelineProps {
@@ -40,6 +38,7 @@ interface ActivitiesTimelineProps {
 
 interface State {
   activities: Activities;
+  nextDate?: string;
 }
 
 type Props = ActivitiesTimelineProps &
@@ -69,14 +68,14 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       identifier,
     } = this.props;
     if (identifier.id && identifier.type) {
-      this.fetchActivitiesData(
+      this.fetchActivities(
         organisationId,
         datamartId,
         identifier.type,
         identifier.id,
       );
     } else if (identifierId && identifierType) {
-      this.fetchActivitiesData(
+      this.fetchActivities(
         organisationId,
         datamartId,
         identifierType,
@@ -97,21 +96,35 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       match: {
         params: {
           identifierId: prevIdentifierId,
-         //  identifierType: prevIdentifierType,
+          identifierType: prevIdentifierType,
+          organisationId: prevOrganisationId,
         },
       },
     } = prevProps;
 
     if (
-      !prevIdentifierId &&
+      identifierId &&
+      identifierType &&
+      prevIdentifierId !== identifierId &&
+      prevIdentifierType !== identifierType
+    ) {
+      this.fetchActivities(
+        prevOrganisationId,
+        datamartId,
+        identifierType,
+        identifierId,
+      );
+    } else if (
+      organisationId !== prevOrganisationId &&
       identifierId &&
       identifierType
     ) {
-      this.fetchActivitiesData(
+      this.fetchActivities(
         organisationId,
         datamartId,
         identifierType,
         identifierId,
+        true,
       );
     }
   }
@@ -122,15 +135,16 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     });
   };
 
-  fetchActivitiesData = (
+  fetchActivities = (
     organisationId: string,
     datamartId: string,
     identifierType: string,
     identifierId: string,
-    to: string = '',
+    orgHasChanged: boolean = false,
   ) => {
-    const params = to
-      ? { live: true, limit: 10, to: to }
+    const { nextDate } = this.state;
+    const params = nextDate
+      ? { live: true, limit: 10, to: nextDate }
       : { live: true, limit: 10 };
     this.setState(
       (prevState: any) => {
@@ -152,51 +166,58 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         )
           .then((response: any) => {
             this.setState((prevState: any) => {
+              const newData = orgHasChanged
+                ? response.data
+                : prevState.activities.items.concat(response.data);
               const nextState = {
                 activities: {
                   ...prevState.activities,
                   isLoading: false,
                   hasItems: response.data.length === 10,
-                  items: prevState.activities.items.concat(response.data),
-                  byDay: this.groupByDate(
-                    prevState.activities.items.concat(response.data),
-                    '$ts',
-                  ),
-                  nextDate:
-                    response.data.length > 10
-                      ? moment(
-                          response.data[response.data.length - 1].$ts,
-                        ).format('YYYY-MM-DD')
-                      : null,
-                  fetchNewActivities: (e: any) => {
-                    e.preventDefault();
-                    this.fetchActivitiesData(
-                      organisationId,
-                      datamartId,
-                      identifierType,
-                      identifierId,
-                      moment(
-                        response.data[response.data.length - 1].$ts,
-                      ).format('YYYY-MM-DD'),
-                    );
-                  },
+                  items: newData,
+                  byDay: this.groupByDate(newData, '$ts'),
                 },
+                nextDate:
+                  orgHasChanged &&
+                  response.data &&
+                  response.data[response.data.length - 1]
+                    ? moment(
+                        response.data[response.data.length - 1].$ts,
+                      ).format('YYYY-MM-DD')
+                    : undefined,
               };
               return nextState;
             });
           })
           .catch(err => {
-            this.setState((prevState: any) => {
+            this.setState(prevState => {
               const nextState = {
                 activities: {
-                  ...prevState.activities,
                   hasItems: false,
                   isLoading: false,
+                  items: [],
+                  byDay: {}
                 },
               };
               return nextState;
             });
           }),
+    );
+  };
+
+  fetchNewActivities = (e: any) => {
+    const {
+      match: {
+        params: { organisationId, identifierId, identifierType },
+      },
+      datamartId,
+    } = this.props;
+    e.preventDefault();
+    this.fetchActivities(
+      organisationId,
+      datamartId,
+      identifierType,
+      identifierId,
     );
   };
 
@@ -207,7 +228,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       ) : (
         <button
           className="mcs-card-inner-action"
-          onClick={activities.fetchNewActivities}
+          onClick={this.fetchNewActivities}
         >
           <FormattedMessage {...messages.seeMore} />
         </button>

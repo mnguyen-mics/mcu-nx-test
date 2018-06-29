@@ -16,7 +16,7 @@ import TimelineHeader from './TimelineHeader';
 import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
-import { IdentifiersProps, Cookies } from '../../../models/timeline/timeline';
+import { IdentifiersProps } from '../../../models/timeline/timeline';
 import UserDataService from '../../../services/UserDataService';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -31,7 +31,6 @@ export interface Identifier {
 
 interface MapStateToProps {
   isFechingCookies: boolean;
-  cookies: Cookies;
 }
 
 interface State {
@@ -74,34 +73,13 @@ class Monitoring extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      history,
       match: {
         params: { organisationId, identifierType, identifierId },
       },
       datamartId,
-      cookies,
-      isFechingCookies,
     } = this.props;
     const { identifier } = this.state;
-    if (!identifierType || !identifierId) {
-      if (cookies.mics_vid) {
-        history.push(
-          `/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${
-            cookies.mics_vid
-          }`,
-        );
-      } else if (
-        (cookies.mics_vid === '' || cookies.mics_uaid === '') &&
-        isFechingCookies === false
-      ) {
-        // TODO HANDLE NO DATA FOR THIS USER
-      } else if (
-        (cookies.mics_vid === '' || cookies.mics_uaid === '') &&
-        isFechingCookies === true
-      ) {
-        // TODO HANDLE NO DATA FOR THIS USER
-      }
-    } else if (identifier.type && identifier.id) {
+    if (identifier.type && identifier.id) {
       this.fetchIdentifiersData(
         organisationId,
         datamartId,
@@ -120,48 +98,26 @@ class Monitoring extends React.Component<Props, State> {
 
   componentWillReceiveProps(nextProps: Props) {
     const {
-      match: {
-        params: { organisationId },
-      },
-      history,
-      cookies,
-      datamartId,
       location: { search, pathname },
     } = this.props;
-
-    const { identifier } = this.state;
 
     const {
       match: {
         params: {
           identifierType: nextIdentifierType,
           identifierId: nextIdentifierId,
-          organisationId: nextOrganisationId
+          organisationId: nextOrganisationId,
         },
       },
       location: { search: nextSearch, pathname: nextPathname },
+      datamartId: nextDatamartId,
     } = nextProps;
 
-    if (!nextIdentifierType || !nextIdentifierId) {
-      if (cookies.mics_vid) {
-        history.push(
-          `/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${
-            cookies.mics_vid
-          }`,
-        );
-      }
-    } else if (search !== nextSearch || pathname !== nextPathname) {
-      if (identifier.id && identifier.type) {
+    if (search !== nextSearch || pathname !== nextPathname) {
+      if (nextIdentifierType && nextIdentifierId) {
         this.fetchIdentifiersData(
           nextOrganisationId,
-          datamartId,
-          identifier.type,
-          identifier.id,
-        );
-      } else if (nextIdentifierType && nextIdentifierId) {
-        this.fetchIdentifiersData(
-          nextOrganisationId,
-          datamartId,
+          nextDatamartId,
           nextIdentifierType,
           nextIdentifierId,
         );
@@ -199,16 +155,25 @@ class Monitoring extends React.Component<Props, State> {
               hasItems: Object.keys(response.data).length > 0,
               items: lodash.groupBy(response.data, 'type'),
             },
+            identifier: {
+              id: identifierId,
+              type: identifierType,
+            },
           };
           return nextState;
         });
       })
       .catch(error => {
-        this.setState(prevState => {
+        this.setState((prevState: any) => {
           const nextState = {
             identifiers: {
               ...prevState.identifiers,
+              items: {},
               isLoading: false,
+            },
+            identifier: {
+              id: identifierId,
+              type: identifierType,
             },
           };
           return nextState;
@@ -238,12 +203,6 @@ class Monitoring extends React.Component<Props, State> {
         identifier.id
       }?datamartId=${datamartId}`,
     );
-    this.setState({
-      identifier: {
-        type: identifier.type,
-        id: identifier.id,
-      },
-    });
   };
 
   render() {
@@ -312,7 +271,6 @@ class Monitoring extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: any) => ({
-  cookies: state.session.cookies,
   isFechingCookies: state.session.isFechingCookies,
 });
 

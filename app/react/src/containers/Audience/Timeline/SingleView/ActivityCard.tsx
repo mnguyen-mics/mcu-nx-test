@@ -17,6 +17,8 @@ import UserDataService from '../../../../services/UserDataService';
 import messages from '../messages';
 import log from '../../../../utils/Logger';
 import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { TimelinePageParams } from '../TimelinePage';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
 
@@ -24,7 +26,9 @@ interface State {
   siteName?: string;
 }
 
-type Props = ActivityCardProps & InjectedIntlProps;
+type Props = ActivityCardProps &
+  InjectedIntlProps &
+  RouteComponentProps<TimelinePageParams>;
 
 class ActivityCard extends React.Component<Props, State> {
   getChannelPromise: CancelablePromise<any> | undefined = undefined;
@@ -92,6 +96,28 @@ class ActivityCard extends React.Component<Props, State> {
   componentWillReceiveProps() {
     const { activity } = this.props;
     this.getChannelInformation(activity);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      datamartId,
+      activity,
+    } = this.props;
+    const {
+      match: {
+        params: { organisationId: prevOrganisationId },
+      },
+      datamartId: prevDatamartId,
+    } = prevProps;
+    if (
+      organisationId !== prevOrganisationId ||
+      datamartId !== prevDatamartId
+    ) {
+      this.getChannelInformation(activity);
+    }
   }
 
   getAgentInfoFromAgentId = (userAgentId: string) => {
@@ -191,4 +217,7 @@ class ActivityCard extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, ActivityCardProps>(injectIntl)(ActivityCard);
+export default compose<Props, ActivityCardProps>(
+  injectIntl,
+  withRouter,
+)(ActivityCard);

@@ -70,6 +70,31 @@ class ProfileCard extends React.Component<Props, State> {
     }
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      datamartId,
+      identifier: { id, type },
+    } = this.props;
+    const {
+      match: {
+        params: { organisationId: prevOrganisationId },
+      },
+      datamartId: prevDatamartId,
+      identifier: { id: prevIdentifierId, type: prevIdentifierType },
+    } = prevProps;
+    if (
+      organisationId !== prevOrganisationId ||
+      id !== prevIdentifierId ||
+      type !== prevIdentifierType ||
+      datamartId !== prevDatamartId
+    ) {
+      this.fetchProfileData(organisationId, datamartId, type, id);
+    }
+  }
+
   fetchProfileData = (
     organisationId: string,
     datamartId: string,
@@ -110,6 +135,7 @@ class ProfileCard extends React.Component<Props, State> {
             profile: {
               ...prevState.profile,
               isLoading: false,
+              items: {},
             },
           };
           return nextState;

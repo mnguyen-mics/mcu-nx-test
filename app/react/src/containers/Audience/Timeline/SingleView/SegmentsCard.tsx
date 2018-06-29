@@ -61,13 +61,38 @@ class SegmentsCard extends React.Component<Props, State> {
         identifier.type,
         identifier.id,
       );
-    } else if(identifierType && identifierId) {
+    } else if (identifierType && identifierId) {
       this.fetchSegmentsData(
         organisationId,
         datamartId,
         identifierType,
         identifierId,
       );
+    }
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      datamartId,
+      identifier: { id, type },
+    } = this.props;
+    const {
+      match: {
+        params: { organisationId: prevOrganisationId },
+      },
+      datamartId: prevDatamartId,
+      identifier: { id: prevIdentifierId, type: prevIdentifierType },
+    } = prevProps;
+    if (
+      organisationId !== prevOrganisationId ||
+      id !== prevIdentifierId ||
+      type !== prevIdentifierType ||
+      datamartId !== prevDatamartId
+    ) {
+      this.fetchSegmentsData(organisationId, datamartId, type, id);
     }
   }
 
@@ -110,6 +135,7 @@ class SegmentsCard extends React.Component<Props, State> {
           const nextState = {
             segments: {
               ...prevState.segments,
+              items: [],
               isLoading: false,
             },
           };
