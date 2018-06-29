@@ -70,7 +70,7 @@ interface PartitionState {
   audiencePartition?: AudiencePartitionResource;
   userPartitionSegments: UserPartitionSegment[];
   statBySegmentId: Index<{ audience_segment_id: number; user_points: number }>;
-  totalUserPoint: number;
+  totalUserPoint?: number;
   isLoading: boolean;
   isLoadingStats: boolean;
 }
@@ -259,8 +259,11 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
             return <i className="mcs-table-cell-loading" />; 
           }
           const value = statBySegmentId[record.id];
-          const percent = ((value.user_points / totalUserPoint) * 100)
-          return value && totalUserPoint && !isNaN(percent) ? `${percent.toFixed(2)} %`  : '-'
+          if (value && totalUserPoint) {
+            const percent = ((value.user_points / totalUserPoint) * 100)
+            return !isNaN(percent) ? `${percent.toFixed(2)} %`  : '-'
+          }
+          return '-';
         }
       },
     ];
