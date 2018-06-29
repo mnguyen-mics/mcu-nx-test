@@ -227,6 +227,10 @@ const messages: {
     id: 'timeline.event.activity.view.json.button',
     defaultMessage: 'View JSON source',
   },
+  pleaseFillInformations: {
+    id: 'timeline.no.cookie.please.fill.infos',
+    defaultMessage: 'Please click on the User Lookup top right corner button to see data.',
+  },
 });
 
 export default messages;

@@ -753,7 +753,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="users" text="EMPTY_SEGMENTS" />
+      <EmptyTableView iconType="data" text="EMPTY_SEGMENTS" />
     );
   }
 }

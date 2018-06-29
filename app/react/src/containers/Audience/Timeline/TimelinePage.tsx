@@ -127,6 +127,7 @@ class TimelinePage extends React.Component<JoinedProps> {
         params: { organisationId },
       },
       location,
+      cookies
     } = this.props;
 
     let selectedDatamartId = '';
@@ -145,7 +146,7 @@ class TimelinePage extends React.Component<JoinedProps> {
     }
 
     return selectedDatamartId ? (
-      <Monitoring datamartId={selectedDatamartId} />
+      <Monitoring datamartId={selectedDatamartId} cookies={cookies} />
     ) : (
       <DatamartSelector
         onSelectDatamart={this.onDatamartSelect}

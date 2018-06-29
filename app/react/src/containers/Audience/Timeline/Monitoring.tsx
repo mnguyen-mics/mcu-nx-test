@@ -16,11 +16,12 @@ import TimelineHeader from './TimelineHeader';
 import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
-import { IdentifiersProps } from '../../../models/timeline/timeline';
+import { IdentifiersProps, Cookies } from '../../../models/timeline/timeline';
 import UserDataService from '../../../services/UserDataService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
+import { EmptyTableView } from '../../../components/TableView';
 
 const { Content } = Layout;
 
@@ -41,6 +42,7 @@ interface State {
 
 interface MonitoringProps {
   datamartId: string;
+  cookies: Cookies;
 }
 
 type Props = MonitoringProps &
@@ -206,7 +208,7 @@ class Monitoring extends React.Component<Props, State> {
   };
 
   render() {
-    const { datamartId } = this.props;
+    const { datamartId, cookies, intl } = this.props;
 
     const { identifier, identifiers, isModalVisible } = this.state;
 
@@ -219,50 +221,57 @@ class Monitoring extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <Row>
-              <TimelineHeader
-                datamartId={datamartId}
-                identifiers={identifiers}
-              />
-              <Row
-                gutter={20}
-                style={{ marginTop: '20px' }}
-                className="mcs-monitoring"
-              >
-                <Col span={6}>
-                  <div className="mcs-subtitle">
-                    <FormattedMessage {...messages.visitor} />
-                  </div>
-                  <ProfileCard
-                    datamartId={datamartId}
-                    identifier={identifier}
-                  />
-                  <SegmentsCard
-                    datamartId={datamartId}
-                    identifier={identifier}
-                  />
-                </Col>
-                <Col span={12}>
-                  <div className="mcs-subtitle">
-                    <FormattedMessage {...messages.activities} />
-                  </div>
+            {cookies.mics_vid || identifier.id ? (
+              <Row>
+                <TimelineHeader
+                  datamartId={datamartId}
+                  identifiers={identifiers}
+                />
+                <Row
+                  gutter={20}
+                  style={{ marginTop: '20px' }}
+                  className="mcs-monitoring"
+                >
+                  <Col span={6}>
+                    <div className="mcs-subtitle">
+                      <FormattedMessage {...messages.visitor} />
+                    </div>
+                    <ProfileCard
+                      datamartId={datamartId}
+                      identifier={identifier}
+                    />
+                    <SegmentsCard
+                      datamartId={datamartId}
+                      identifier={identifier}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <div className="mcs-subtitle">
+                      <FormattedMessage {...messages.activities} />
+                    </div>
 
-                  <ActivitiesTimeline
-                    datamartId={datamartId}
-                    identifier={identifier}
-                    identifiers={identifiers}
-                  />
-                </Col>
-                <Col span={6}>
-                  <div className="mcs-subtitle">
-                    <FormattedMessage {...messages.identifiers} />
-                  </div>
-                  <AccountIdCard identifiers={identifiers} />
-                  <DeviceCard identifiers={identifiers} />
-                  <EmailCard identifiers={identifiers} />
-                </Col>
+                    <ActivitiesTimeline
+                      datamartId={datamartId}
+                      identifier={identifier}
+                      identifiers={identifiers}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <div className="mcs-subtitle">
+                      <FormattedMessage {...messages.identifiers} />
+                    </div>
+                    <AccountIdCard identifiers={identifiers} />
+                    <DeviceCard identifiers={identifiers} />
+                    <EmailCard identifiers={identifiers} />
+                  </Col>
+                </Row>
               </Row>
-            </Row>
+            ) : (
+              <EmptyTableView
+                iconType="user"
+                text={intl.formatMessage(messages.pleaseFillInformations)}
+              />
+            )}
           </Content>
         </div>
       </div>
@@ -277,6 +286,7 @@ const mapStateToProps = (state: any) => ({
 export default compose<Props, MonitoringProps>(
   injectIntl,
   withRouter,
+  injectIntl,
   injectNotifications,
   connect(
     mapStateToProps,
