@@ -77,6 +77,7 @@ class GoalFormContainer extends React.Component<Props, State> {
         queryLanguage:
           datamart.storage_model_version === 'v201506' ? 'SELECTORQL' : 'OTQL',
         queryContainer: defQuery,
+        triggerMode: 'QUERY'
       },
     });
   };

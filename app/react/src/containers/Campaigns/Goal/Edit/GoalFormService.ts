@@ -15,8 +15,6 @@ import { GoalResource } from '../../../../models/goal';
 import GoalService from '../../../../services/GoalService';
 import AttributionModelFormService from '../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelFormService';
 import queryService from '../../../../services/QueryService';
-import DatamartService from '../../../../services/DatamartService';
-import { QueryLanguage } from '../../../../models/datamart/DatamartResource';
 
 const GoalFormService = {
   loadGoalData(goalId: string): Promise<GoalFormData> {
@@ -48,14 +46,9 @@ const GoalFormService = {
             return new QueryContainer(goalRes.data.datamart_id, res.id)
               .load()
               .then((queryContainer: any) => {
-                DatamartService.getDatamart(goalRes.data.datamart_id).then(resp => {
-                  goalFormData.queryContainer = queryContainer;
-                  goalFormData.queryLanguage =
-                    resp.data.storage_model_version === 'v201506'
-                      ? 'SELECTORQL'
-                      : ('OTQL' as QueryLanguage);
-                  return goalFormData;
-                });
+                goalFormData.queryContainer = queryContainer;
+                goalFormData.queryLanguage = res.query_language;
+                return goalFormData;
               });
           });
       } else {
@@ -77,16 +70,21 @@ const GoalFormService = {
 
     // save query if needed
     let goalDataToUpload = Promise.resolve(goalFormData.goal);
-    if (goalFormData.triggerMode === 'QUERY' && goalFormData.queryContainer) {
-      goalDataToUpload = goalFormData.queryContainer
-        .saveOrUpdate()
-        .then((queryContainerUpdate: any) => {
-          const queryId = queryContainerUpdate.id as string;
-          return {
-            ...goalFormData.goal,
-            new_query_id: queryId,
-          };
-        });
+    if (goalFormData.triggerMode === 'QUERY') {
+      if (
+        goalFormData.queryLanguage !== 'OTQL' &&
+        goalFormData.queryContainer
+      ) {
+        goalDataToUpload = goalFormData.queryContainer
+          .saveOrUpdate()
+          .then((queryContainerUpdate: any) => {
+            const queryId = queryContainerUpdate.id as string;
+            return {
+              ...goalFormData.goal,
+              new_query_id: queryId,
+            };
+          });
+      }
     } else if (goalFormData.triggerMode === 'PIXEL') {
       goalDataToUpload.then(() => {
         return {

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import _ from 'lodash';
 import cuid from 'cuid';
 import {
   injectIntl,
@@ -162,7 +163,7 @@ class TriggerFormSection extends React.Component<Props, State> {
   switchEditMode = () => {
     this.setState({
       editQueryMode: !this.state.editQueryMode,
-      queryContainerCopy: this.state.queryContainer.copy(),
+      queryContainerCopy: _.clone(this.state.queryContainer),
     });
   };
 
@@ -245,6 +246,7 @@ class TriggerFormSection extends React.Component<Props, State> {
             <br />
             <div style={{ float: 'right' }}>
               {!pixelSectionVisible &&
+                this.props.formValues.queryLanguage !== 'OTQL' &&
                 (this.state.editQueryMode ? (
                   <div>
                     <Button

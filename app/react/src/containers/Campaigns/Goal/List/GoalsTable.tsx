@@ -218,7 +218,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       history,
     } = this.props;
 
-    history.push(`/${organisationId}/campaigns/goals/${goal.id}/edit`);
+    history.push(`/v2/o/${organisationId}/campaigns/goals/${goal.id}/edit`);
   };
 
   updateLocationSearch = (params: Partial<ParamFilters>) => {
@@ -314,7 +314,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
         render: (text: string, record: GoalResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/campaigns/goals/${record.id}/edit`}
+            to={`/v2/o/${organisationId}/campaigns/goals/${record.id}`}
           >
             {text}
           </Link>
