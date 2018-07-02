@@ -53,19 +53,10 @@ class SiteEditPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    let selectedDatamartId =
-      props.workspace(props.match.params.organisationId).datamarts.length > 1
-        ? ''
-        : props.datamart.id;
-
-    if (props.match.params.datamartId) {
-      selectedDatamartId = props.match.params.datamartId;
-    }
-
     this.state = {
       loading: true, // default true to avoid render x2 on mounting
       siteData: INITIAL_SITE_FORM_DATA,
-      selectedDatamartId: selectedDatamartId,
+      selectedDatamartId: props.match.params.datamartId,
     };
   }
 
