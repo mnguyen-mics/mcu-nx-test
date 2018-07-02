@@ -1,4 +1,7 @@
-import { QueryLanguage } from './../../../../models/datamart/DatamartResource';
+import {
+  QueryLanguage,
+  QueryResource,
+} from './../../../../models/datamart/DatamartResource';
 import { FieldArrayModelWithMeta } from './../../../../utils/FormHelper';
 import {
   AttributionSelectionResource,
@@ -16,11 +19,11 @@ export interface LookbackWindow {
 
 export const INITIAL_GOAL_FORM_DATA: GoalFormData = {
   goal: {
-    goal_value_currency: 'EUR'
+    goal_value_currency: 'EUR',
   },
   attributionModels: [],
   triggerMode: 'QUERY',
-  queryContainer: {}
+  queryContainer: {},
 };
 
 ///////////////////////////
@@ -38,6 +41,7 @@ export interface GoalFormData {
   queryContainer?: any;
   queryLanguage?: QueryLanguage;
   triggerMode: TriggerMode;
+  query?: QueryResource;
 }
 
 export interface AttributionModelMetaData {
@@ -79,7 +83,7 @@ export function isAttributionModelCreateRequest(
 }
 
 export function isExistingGoal(
-  model: GoalResourceShape
+  model: GoalResourceShape,
 ): model is GoalResource {
   return (model as GoalResource).id !== undefined;
 }

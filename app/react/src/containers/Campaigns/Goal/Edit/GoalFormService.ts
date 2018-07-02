@@ -1,3 +1,4 @@
+import { QueryLanguage } from './../../../../models/datamart/DatamartResource';
 import {
   Task,
   executeTasksInSequence,
@@ -34,6 +35,7 @@ const GoalFormService = {
           }),
         ),
       };
+
       const QueryContainer = (window as any).angular
         .element(document.body)
         .injector()
@@ -43,13 +45,23 @@ const GoalFormService = {
           .getQuery(goalRes.data.datamart_id, goalRes.data.new_query_id)
           .then(r => r.data)
           .then(res => {
-            return new QueryContainer(goalRes.data.datamart_id, res.id)
-              .load()
-              .then((queryContainer: any) => {
-                goalFormData.queryContainer = queryContainer;
-                goalFormData.queryLanguage = res.query_language;
-                return goalFormData;
-              });
+            if (res.query_language === 'SELECTORQL') {
+              return new QueryContainer(goalRes.data.datamart_id, res.id)
+                .load()
+                .then((queryContainer: any) => {
+                  goalFormData.queryContainer = queryContainer;
+                  goalFormData.queryLanguage = res.query_language;
+                  return goalFormData;
+                });
+            } else {
+              return {
+                ...goalFormData,
+                query: {
+                  query_text: res.query_text,
+                  query_language: res.query_language,
+                },
+              };
+            }
           });
       } else {
         return {
@@ -71,10 +83,7 @@ const GoalFormService = {
     // save query if needed
     let goalDataToUpload = Promise.resolve(goalFormData.goal);
     if (goalFormData.triggerMode === 'QUERY') {
-      if (
-        goalFormData.queryLanguage !== 'OTQL' &&
-        goalFormData.queryContainer
-      ) {
+      if (goalFormData.queryLanguage === 'SELECTORQL') {
         goalDataToUpload = goalFormData.queryContainer
           .saveOrUpdate()
           .then((queryContainerUpdate: any) => {
@@ -84,6 +93,25 @@ const GoalFormService = {
               new_query_id: queryId,
             };
           });
+      } else if (goalFormData.queryLanguage === 'OTQL') {
+        const datamartId = goalFormData.goal.datamart_id;
+        const query = {
+          query_text:
+            goalFormData.query && goalFormData.query.query_text
+              ? goalFormData.query.query_text
+              : '',
+          query_language: 'OTQL' as QueryLanguage,
+        };
+        if (datamartId) {
+          goalDataToUpload = goalDataToUpload.then(() => {
+            return queryService.createQuery(datamartId, query).then(resp => {
+              return {
+                ...goalFormData.goal,
+                new_query_id: resp.data.id,
+              };
+            });
+          });
+        }
       }
     } else if (goalFormData.triggerMode === 'PIXEL') {
       goalDataToUpload.then(() => {

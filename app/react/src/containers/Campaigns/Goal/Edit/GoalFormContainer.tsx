@@ -13,7 +13,10 @@ import { Omit } from '../../../../utils/Types';
 import { Path } from '../../../../components/ActionBar';
 import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from '../../../../containers/Audience/Common/DatamartSelector';
-import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart/index';
+import {
+  injectWorkspace,
+  InjectedWorkspaceProps,
+} from '../../../Datamart/index';
 
 export interface GoalFormContainerProps
   extends Omit<ConfigProps<GoalFormData>, 'form'> {
@@ -25,7 +28,7 @@ export interface GoalFormContainerProps
 type Props = GoalFormContainerProps &
   InjectedFormProps<GoalFormData, GoalFormContainerProps> &
   GoalFormProps &
-  InjectedWorkspaceProps & 
+  InjectedWorkspaceProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; goalId: string }>;
 
@@ -54,7 +57,7 @@ class GoalFormContainer extends React.Component<Props, State> {
         .catch(err => {
           this.props.notifyError(err);
         });
-    } else if(workspace.datamarts.length === 1) {
+    } else if (workspace.datamarts.length === 1) {
       this.onDatamartSelect(workspace.datamarts[0]);
     }
   }
@@ -77,7 +80,7 @@ class GoalFormContainer extends React.Component<Props, State> {
         queryLanguage:
           datamart.storage_model_version === 'v201506' ? 'SELECTORQL' : 'OTQL',
         queryContainer: defQuery,
-        triggerMode: 'QUERY'
+        triggerMode: 'QUERY',
       },
     });
   };
@@ -90,7 +93,7 @@ class GoalFormContainer extends React.Component<Props, State> {
       onSubmitFail,
       breadCrumbPaths,
       onSubmit,
-      workspace
+      workspace,
     } = this.props;
 
     const { selectedDatamart, goalFormData } = this.state;
@@ -100,7 +103,9 @@ class GoalFormContainer extends React.Component<Props, State> {
 
     const formValues = isDatamartId ? initialValues : goalFormData;
 
-    return isDatamartId || workspace.datamarts.length === 1 || selectedDatamart ? (
+    return isDatamartId ||
+      workspace.datamarts.length === 1 ||
+      selectedDatamart ? (
       <GoalForm
         initialValues={formValues}
         onSubmit={save ? save : onSubmit}
@@ -123,5 +128,5 @@ class GoalFormContainer extends React.Component<Props, State> {
 export default compose<Props, GoalFormContainerProps>(
   injectNotifications,
   withRouter,
-  injectWorkspace
+  injectWorkspace,
 )(GoalFormContainer);

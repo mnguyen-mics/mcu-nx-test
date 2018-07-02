@@ -121,7 +121,7 @@ class TriggerFormSection extends React.Component<Props, State> {
 
     const { editQueryMode } = this.state;
 
-    return this.props.initialValues.queryLanguage === 'OTQL' ? (
+    return this.props.initialValues.queryLanguage !== 'SELECTORQL' ? (
       <FormOTQL
         name={'query.query_text'}
         component={OTQLInputEditor}
