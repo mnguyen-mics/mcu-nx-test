@@ -62,7 +62,7 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   settingsDatamartSitesEdition: {
-    path: '/settings/datamart/sites/:siteId/edit',
+    path: '/settings/datamart/:datamartId/sites/:siteId/edit',
     layout: 'edit',
     editComponent: SiteEditPage,
     requiredFeature: 'datamartSettings.sites',
@@ -85,7 +85,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
   settingsDatamartMobileAppEdition: {
-    path: '/settings/datamart/mobile_application/:mobileApplicationId/edit',
+    path: '/settings/datamart/:datamartId/mobile_application/:mobileApplicationId/edit',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
     requiredFeature: 'datamartSettings.mobile_applications',

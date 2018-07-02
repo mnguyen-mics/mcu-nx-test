@@ -70,7 +70,7 @@ class SitesTable extends React.Component<Props> {
         isHideable: false,
         render: (text: string, record: ChannelResource) => (
           <Link
-            to={`/v2/o/${organisationId}/settings/datamart/sites/${
+            to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/sites/${
               record.id
             }/edit`}
           >
