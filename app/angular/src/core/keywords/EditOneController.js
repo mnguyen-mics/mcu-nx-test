@@ -10,26 +10,16 @@ define(['./module'], function (module) {
 
       var keywordslistId = $stateParams.keywordslist_id;
 
-      $scope.isCreationMode = !keywordslistId;
 
-      $scope.keywordsList = new KeywordListContainer();
+      // redirect to v2
       if (keywordslistId) {
-        $scope.keywordsList.load(keywordslistId);
+        $location.path(Session.getV2WorkspacePrefixUrl() + `/library/keywordslist/${keywordslistId}/edit`);
+      } else {
+        $location.path(Session.getV2WorkspacePrefixUrl() + `/library/keywordslist/create`);
       }
+      
 
-      $scope.cancel = function () {
-        $location.path( Session.getWorkspacePrefixUrl() + "/library/keywordslists");
-      };
-
-      $scope.next = function () {
-        var promise = $scope.keywordsList.save();
-        promise.then(function success(keywordListContainer){
-          $log.info("success");
-          $location.path( Session.getWorkspacePrefixUrl() + "/library/keywordslists");
-        }, function failure(){
-          $log.info("failure");
-        });
-      };
+     
     }
   ]);
 });

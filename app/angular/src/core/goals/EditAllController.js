@@ -9,30 +9,9 @@ define(['./module'], function (module) {
         $scope.goals = goals;
       });
 
-      $scope.createGoal = function (type) {
-        $location.path(Session.getWorkspacePrefixUrl() + "/goals/");
-      };
+      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/goal`);
 
-      $scope.editGoal = function (goal) {
-        $location.path(Session.getWorkspacePrefixUrl() + "/goals/"+ goal.id);
-      };
-
-      $scope.getGoalReportUrl = function(goal) {
-        return Session.getWorkspacePrefixUrl() + "/goals/" + goal.id + "/report";
-      };
-
-      $scope.archiveGoal = function (goal) {
-        var newScope = $scope.$new(true);
-        newScope.goal = goal;
-        $uibModal.open({
-          templateUrl: 'angular/src/core/goals/archive.html',
-          scope : newScope,
-          backdrop : 'static',
-          controller: 'core/goals/ArchiveController'
-        });
-
-        return false;
-      };
+     
     }
   ]);
 

@@ -11,27 +11,9 @@ define(['./module'], function (module) {
       });
       
       // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/placements');
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/placementlist');
 
-      $scope.organisationId = organisationId;
-
-      $scope.deletePlacementList = function (placementList, $event) {
-        if ($event) {
-          $event.preventDefault();
-          $event.stopPropagation();
-        }
-
-        var newScope = $scope.$new(true);
-        newScope.placementList = placementList;
-        $uibModal.open({
-          templateUrl: 'angular/src/core/placementlists/delete.html',
-          scope : newScope,
-          backdrop : 'static',
-          controller: 'core/placementlists/DeleteController'
-        });
-
-        return false;
-      };
+     
     }
   ]);
 

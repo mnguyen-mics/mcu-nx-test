@@ -2,10 +2,10 @@ define(['./module', 'lodash'], function (module, _) {
 
   'use strict';
 
-  module.controller('core/scenarios/EditOneController/NodeController', ["$scope",'$log', '$uibModal','core/datamart/queries/QueryContainer', 'core/common/auth/Session',function($scope,$log, $uibModal, QueryContainer,Session) {
+  module.controller('core/scenarios/EditOneController/NodeController', ["$scope",'$log', '$uibModal','core/datamart/queries/QueryContainer', 'core/common/auth/Session', '$location',function($scope,$log, $uibModal, QueryContainer,Session, $location) {
     var datamartId = Session.getCurrentDatamartId();
     var nodeCtrl = this;
-    $log.info($scope.node);
+    $log.info($scope);
 
     this.editTrigger = function () {
       var newScope = $scope.$new(true);
@@ -56,63 +56,9 @@ define(['./module', 'lodash'], function (module, _) {
     '$scope', '$log', 'Restangular', 'core/common/auth/Session', '$stateParams', '$location', '$state', 'core/campaigns/DisplayCampaignService', '$uibModal', 'core/common/promiseUtils','$q',  'async', 'core/scenarios/StorylineContainer',"core/common/WaitingService", 'core/common/ErrorService',
     function ($scope, $log, Restangular, Session,  $stateParams, $location, $state, DisplayCampaignService, $uibModal, promiseUtils,$q, async, StorylineContainer,waitingService, ErrorService) {
 
+      $location.path(Session.getV2WorkspacePrefixUrl() + `/automations/${$stateParams.scenario_id}/edit`);
 
-
-      // var scenarioId = $stateParams.scenario_id;
-      // $scope.campaigns = {};
-      // $scope.isCreationMode = !scenarioId;
-
-      // if (!scenarioId) {
-      //   $scope.scenario = {datamart_id: Session.getCurrentDatamartId()};
-      //   $scope.graph = new StorylineContainer(null);
-      // } else {
-      //   Restangular.one('scenarios', scenarioId).get().then(function (scenario) {
-      //   $scope.graph = new StorylineContainer(scenario);
-      //   $scope.scenario = scenario;
-      //   });
-      //   Restangular.one('scenarios', scenarioId).all("inputs").getList().then(function (campaigns) {
-      //     $scope.inputs = campaigns;
-      //   });
-      // }
-
-      $scope.next = function (scenarioId) {
-        waitingService.showWaitingModal();
-        var promise = null;
-        if (scenarioId) {
-
-          promise = $scope.scenario.put();
-        } else {
-          $log.debug("Create a scenario");
-          promise = Restangular.all('scenarios').post($scope.scenario, {organisation_id: Session.getCurrentWorkspace().organisation_id});
-
-        }
-        promise.then(function success(campaignContainer) {
-          $log.info("success");
-          if(!$scope.graph.scenarioId) {
-            return $scope.graph.saveWithNewScenario(campaignContainer);
-          }else {
-            return $scope.graph.save();
-          }
-
-
-        }, function failure() {
-          $log.info("failure");
-        }).then(function ok() {
-          waitingService.hideWaitingModal();
-          $location.path(Session.getWorkspacePrefixUrl() + "/library/scenarios");
-        }, function error(response){
-          waitingService.hideWaitingModal();
-          ErrorService.showErrorModal({
-            error: response
-          });
-        });
-      };
-
-
-
-      $scope.cancel = function () {
-        $location.path(Session.getWorkspacePrefixUrl() + "/library/scenarios");
-      };
+    
     }
   ]);
 });

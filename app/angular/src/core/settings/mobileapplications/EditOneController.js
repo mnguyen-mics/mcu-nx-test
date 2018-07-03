@@ -10,91 +10,13 @@ define(['./module'], function (module) {
       $scope.organisationId = organisationId;
       $scope.editMode = false;
       $scope.app = {type: "MOBILE_APPLICATION", datamart_id: datamartId, organisation_id: organisationId};
-
-      /**
-       * Watchers
-       */
-
-      $scope.$watchGroup(["datamartId", "organisationId"], function (values) {
-        if (values && $stateParams.appId) {
-          $scope.editMode = true;
-          Restangular.one("datamarts/" + datamartId + "/mobile_applications/" + $stateParams.appId).get({organisation_id: organisationId}).then(function (app) {
-            $scope.app = app;
-            if (app.token !== null) {
-              $scope.appToken = app.token;
-            }
-
-            // activity analyser
-            if (app.visit_analyzer_model_id !== null) {
-              Restangular.one('visit_analyzer_models', app.visit_analyzer_model_id).get().then(function (activityAnalyser) {
-                $scope.activityAnalyser = activityAnalyser;
-              });
-            }
-          });
-        }
-      });
-
-
-      /**
-       * Helpers
-       */
-
-      function handleAppError(e) {
-        if ($scope.appToken === undefined) {
-          ErrorService.showErrorModal({error: {message: "This app token is already taken."}});
-        } else {
-          ErrorService.showErrorModal(e);
-        }
+      if ($stateParams.appId) {
+        $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/sites/${$stateParams.appId}/edit`);
+      } else {
+        $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/sites/create`);
       }
 
-      function sendAppEdit() {
-        $q.all(_.flatten([
-          Restangular.all("datamarts/" + datamartId + "/mobile_applications/" + $stateParams.appId).customPUT($scope.app, undefined, {organisation_id: organisationId})
-            .catch(handleAppError)
-        ])).then(function () {
-          $location.path($rootScope.currentV2WorkspaceId + "/settings").search('tab', 'mobile_applications');
-        }).catch(function (e) {
-          ErrorService.showErrorModal(e);
-        });
-      }
 
-      /**
-       * Methods
-       */
-
-      // ---------------- APP ----------------
-
-      $scope.cancel = function () {
-        $location.path($rootScope.currentV2WorkspaceId + "/settings").search('tab', 'mobile_applications');
-      };
-
-      $scope.done = function () {
-        if ($scope.editMode) {
-          if ($scope.appToken !== $scope.app.token) {
-            WarningService.showWarningModal("A app token is already set. Are you sure that you want to override it?").then(sendAppEdit, function () {
-              $scope.app.token = $scope.appToken;
-            });
-          } else {
-            sendAppEdit();
-          }
-        } else {
-          Restangular.all("datamarts/" + datamartId + "/mobile_applications").post($scope.app).then(function (app) {
-            $location.path($rootScope.currentV2WorkspaceId + "/settings").search('tab', 'mobile_applications');
-          }, handleAppError);
-        }
-      };
-
-
-      // ---------------- VISIT ANALYSER ----------------
-      $scope.$on("mics-visit-analyser:selected", function (event, params) {
-        if (params.visitAnalyser === null) {
-          $scope.visitAnalyser = undefined;
-          $scope.app.visit_analyzer_model_id = null;
-        } else {
-          $scope.visitAnalyser = params.visitAnalyser;
-          $scope.app.visit_analyzer_model_id = params.visitAnalyser.id;
-        }
-      });
     }
   ]);
 });
