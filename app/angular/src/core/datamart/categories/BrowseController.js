@@ -9,7 +9,7 @@ define(['./module'], function (module) {
       $scope.baseUrl = '#' + Session.getWorkspacePrefixUrl() + '/datamart/categories/' + $stateParams.catalogToken;
       $scope.itemUrl = Session.getWorkspacePrefixUrl() + '/datamart/items/' + $stateParams.catalogToken;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/library/catalog`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/catalog');
 
     }
   ]);

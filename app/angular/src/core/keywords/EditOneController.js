@@ -13,9 +13,9 @@ define(['./module'], function (module) {
 
       // redirect to v2
       if (keywordslistId) {
-        $location.path(Session.getV2WorkspacePrefixUrl() + `/library/keywordslist/${keywordslistId}/edit`);
+        $location.path(Session.getV2WorkspacePrefixUrl() + '/library/keywordslist/'+ keywordslistId+'/edit');
       } else {
-        $location.path(Session.getV2WorkspacePrefixUrl() + `/library/keywordslist/create`);
+        $location.path(Session.getV2WorkspacePrefixUrl() + '/library/keywordslist/create');
       }
       
 

@@ -115,7 +115,7 @@ define(['./module', 'angular', 'lodash'], function (module, angular, _) {
               Session, ExportService, GoalsService, d3, moment, $interval, $q, ErrorService, AuthenticationService) {
       $scope.organisationId = Session.getCurrentWorkspace().organisation_id;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/display/${$stateParams.campaign_id}`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/display/'+$stateParams.campaign_id);
      
     }
   ]);

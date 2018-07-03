@@ -11,9 +11,9 @@ define(['./module'], function (module) {
       $scope.editMode = false;
       $scope.app = {type: "MOBILE_APPLICATION", datamart_id: datamartId, organisation_id: organisationId};
       if ($stateParams.appId) {
-        $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/sites/${$stateParams.appId}/edit`);
+        $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/sites/' + $stateParams.appId + '/edit');
       } else {
-        $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/sites/create`);
+        $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/sites/create');
       }
 
 

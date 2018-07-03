@@ -15,7 +15,7 @@ define(['./module'], function (module) {
       if ($scope.isCreationMode) {
         $location.path(Session.getV2WorkspacePrefixUrl() + '/library/placementlist/create');
       } else {
-        $location.path(Session.getV2WorkspacePrefixUrl() + `/library/placementlist/${placementListId}/edit`);
+        $location.path(Session.getV2WorkspacePrefixUrl() + '/library/placementlist/' + placementListId + '/edit');
       }
 
     

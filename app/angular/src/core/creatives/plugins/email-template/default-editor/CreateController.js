@@ -11,7 +11,7 @@ define(['./module'], function (module) {
         selectedRenderer: null
       };
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/creatives/email/create`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/creatives/email/create');
 
      
 

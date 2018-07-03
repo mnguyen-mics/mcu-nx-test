@@ -17,7 +17,7 @@ define(['./module', 'moment'], function (module, moment) {
       var campaignId = $stateParams.campaign_id;
       var campaignCtn = {};
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/email/${$stateParams.campaign_id}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/email/'+$stateParams.campaign_id+'/edit');
 
      
     }

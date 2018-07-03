@@ -8,7 +8,7 @@ define(['./module'], function (module) {
 
       var bidOptimizerId = $stateParams.id;
       var type = $stateParams.type;
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/campaigns/bid_optimizer/${bidOptimizerId}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/campaigns/bid_optimizer/'+bidOptimizerId+'/edit');
       
     }
   ]);

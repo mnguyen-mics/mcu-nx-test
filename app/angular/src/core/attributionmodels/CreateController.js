@@ -8,7 +8,7 @@ define(['./module'], function (module) {
       $scope.availableAttributionModels = Restangular.all("attribution_models").getList({
         organisation_id : Session.getCurrentWorkspace().organisation_id
       }).$object;
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/campaigns/attribution_models/create`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/campaigns/attribution_models/create');
      
     }
   ]);

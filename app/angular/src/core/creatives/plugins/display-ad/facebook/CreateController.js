@@ -6,7 +6,7 @@ define(['./module'], function (module) {
     function ($scope, $location, Session, CreativePluginService, $log, DisplayAdService, $q) {
 
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/creatives/display/create`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/creatives/display/create');
 
       
 

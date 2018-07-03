@@ -7,7 +7,7 @@ define(['./module'], function (module) {
       $scope.baseUrl = $location.path();
       $scope.datamartId = Session.getCurrentDatamartId();
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/library/catalog`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/catalog');
     }
   ]);
 });

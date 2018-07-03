@@ -7,7 +7,7 @@ define(['./module', "autofill-event"], function (module) {
       $scope.email = "";
 
       // redirect to v2
-      $location.path(`/forgot_password`);
+      $location.path('/forgot_password');
 
      
     }

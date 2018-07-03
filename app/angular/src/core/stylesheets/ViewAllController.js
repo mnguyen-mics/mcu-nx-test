@@ -11,7 +11,7 @@ define(['./module', 'jquery'], function (module, $) {
       $scope.currentPage = 1;
       $scope.itemsPerPage = 10;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/visit_analyzers`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/visit_analyzers');
     }
   ]);
 });

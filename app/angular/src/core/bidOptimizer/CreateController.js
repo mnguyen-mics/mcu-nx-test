@@ -8,7 +8,7 @@ define(['./module'], function (module) {
       $scope.availableBidOptimizers = Restangular.all("bid_optimizers").getList({
         organisation_id: Session.getCurrentWorkspace().organisation_id
       }).$object;
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/campaigns/bid_optimizer/create`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/campaigns/bid_optimizer/create');
       
     }
   ]);

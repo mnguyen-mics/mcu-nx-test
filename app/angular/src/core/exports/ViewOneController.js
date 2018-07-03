@@ -9,7 +9,7 @@ define(['./module'], function (module) {
       var organisationId = $stateParams.organisation_id;
 
       // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/datastudio/exports/${exportId}`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/datastudio/exports/'+exportId);
       
     }
   ]);

@@ -9,7 +9,7 @@ define(['./module'], function (module) {
         $scope.goals = goals;
       });
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/goal`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/goal');
 
      
     }

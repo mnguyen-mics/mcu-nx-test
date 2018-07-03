@@ -9,7 +9,7 @@ define(['./module'], function (module) {
       $scope.itemsPerPage = 20;
       $scope.currentPageCreative = 0;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/sites`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/sites');
      
     }
   ]);

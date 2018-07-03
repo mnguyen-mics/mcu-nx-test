@@ -56,7 +56,7 @@ define(['./module', 'lodash'], function (module, _) {
     '$scope', '$log', 'Restangular', 'core/common/auth/Session', '$stateParams', '$location', '$state', 'core/campaigns/DisplayCampaignService', '$uibModal', 'core/common/promiseUtils','$q',  'async', 'core/scenarios/StorylineContainer',"core/common/WaitingService", 'core/common/ErrorService',
     function ($scope, $log, Restangular, Session,  $stateParams, $location, $state, DisplayCampaignService, $uibModal, promiseUtils,$q, async, StorylineContainer,waitingService, ErrorService) {
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/automations/${$stateParams.scenario_id}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/automations/' + $stateParams.scenario_id + '/edit');
 
     
     }

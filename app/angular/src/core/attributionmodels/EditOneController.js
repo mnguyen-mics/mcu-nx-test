@@ -8,7 +8,7 @@ define(['./module'], function (module) {
 
       var attributionModelId = $stateParams.id;
       var type = $stateParams.type;
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/campaigns/attribution_models/${attributionModelId}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/campaigns/attribution_models/' + attributionModelId + '/edit');
      
     }
   ]);

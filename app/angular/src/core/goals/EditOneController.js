@@ -14,7 +14,7 @@ define(['./module'], function (module) {
       var deletedAttributionModels = [];
       var isCreationMode = goalId ? false : true;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/goal/${$stateParams.goal_id}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/goal/' + $stateParams.goal_id + '/edit');
 
      
 

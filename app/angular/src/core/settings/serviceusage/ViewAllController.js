@@ -8,7 +8,7 @@ define(['./module'], function (module) {
       $scope.datamartId = Session.getCurrentDatamartId();
       $scope.organisationId = Session.getCurrentWorkspace().organisation_id;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/my_datamart/${$scope.datamartId}/service_usage_report`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/my_datamart/' + $scope.datamartId + '/service_usage_report');
 
       
     }

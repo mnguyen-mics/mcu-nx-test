@@ -77,7 +77,7 @@ define(['./module', 'lodash'], function (module, _) {
       $scope.charts = ['value', 'conversions'];
       $scope.getChartName = ChartsService.getChartName;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/goal/${$stateParams.goal_id}`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/goal/' + $stateParams.goal_id );
 
    
     }

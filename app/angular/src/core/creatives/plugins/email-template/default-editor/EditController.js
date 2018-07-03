@@ -13,7 +13,7 @@ define(['./module', 'ui.ace'], function (module) {
       $scope.htmlContent = "";
       $scope.plainText = "";
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/creatives/email/${$stateParams.creative_id}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/creatives/email/'+$stateParams.creative_id+'/edit');
 
       
 

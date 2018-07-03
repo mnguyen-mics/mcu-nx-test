@@ -19,7 +19,7 @@ define(['./module', 'jquery'], function (module, $) {
       $scope.conversionGoals = [];
       $scope.campaignScopeHelper = {};
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/display/${campaignId}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/display/'+campaignId+'/edit');
 
      
     }

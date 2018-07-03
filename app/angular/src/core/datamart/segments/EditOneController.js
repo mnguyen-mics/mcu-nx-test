@@ -14,7 +14,7 @@ define(['./module'], function (module) {
       $scope.isCreationMode = !segmentId;
 
       // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/audience/segments/${segmentId}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/audience/segments/'+segmentId+'/edit');
 
     
     }

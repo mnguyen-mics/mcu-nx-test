@@ -18,9 +18,9 @@ define(['./module', 'jquery'], function (module, $) {
       $scope.originalRulesIds = [];
 
       if ($stateParams.siteId) {
-        $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/sites/${$stateParams.siteId}/edit`);
+        $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/sites/'+$stateParams.siteId+'/edit');
       } else {
-        $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/sites/create`);
+        $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/sites/create');
       }
 
      

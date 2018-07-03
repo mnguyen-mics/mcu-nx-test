@@ -14,7 +14,7 @@ define(['./module'], function (module) {
       var organisationId = $stateParams.organisation_id;
       var campaignId = $stateParams.campaign_id;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/display/${campaignId}/adgroups/${adGroupId}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/display/'+campaignId+'/adgroups/'+adGroupId+'/edit');
 
 
     }

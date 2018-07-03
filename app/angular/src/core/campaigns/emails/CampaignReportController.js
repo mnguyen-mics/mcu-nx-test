@@ -12,7 +12,7 @@ define(['./module', 'angular', 'lodash'], function (module, angular, _) {
               Session, d3, moment, $interval, $q, ErrorService, AuthenticationService, $timeout, CampaignAnalyticsReportService,EmailCampaignContainer) {
       $scope.organisationId = Session.getCurrentWorkspace().organisation_id;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/email/${$stateParams.campaign_id}`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/email/'+$stateParams.campaign_id);
     
 
     }

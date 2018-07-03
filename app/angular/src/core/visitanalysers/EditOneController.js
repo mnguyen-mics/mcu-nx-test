@@ -9,9 +9,9 @@ define(['./module'], function (module) {
       var activityAnalyserId = $stateParams.id;
       var type = $stateParams.type;
       if (isEdit) {
-        $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/visit_analyzers/${activityAnalyserId}/edit`);
+        $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/visit_analyzers/' + activityAnalyserId + '/edit');
       } else {
-        $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/visit_analyzers/create`);
+        $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/visit_analyzers/create');
       }
       
      

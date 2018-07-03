@@ -14,7 +14,7 @@ define(['./module'], function (module) {
       var organisationId = Session.getCurrentWorkspace().organisation_id;
 
       // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/audience/partitions/${partitionId}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/audience/partitions/${partitionId}/edit');
 
       
     }

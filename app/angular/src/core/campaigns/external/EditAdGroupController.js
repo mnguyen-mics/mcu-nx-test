@@ -18,7 +18,7 @@ define(['./module', 'angular', 'jquery'], function (module, angular, $) {
       $scope.campaignName = DisplayCampaignService.getCampaignValue().name;
       $scope.adGroup = DisplayCampaignService.getAdGroupValue(adGroupId);
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/display/${campaignId}/adgroups/${adGroupId}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/display/'+campaignId+'/adgroups/'+adGroupId+'/edit');
 
     
     }

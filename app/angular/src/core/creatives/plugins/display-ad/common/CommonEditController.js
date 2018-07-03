@@ -10,7 +10,7 @@ define(['./module'], function (module) {
     function ($scope, $sce, $log, $location, $stateParams, DisplayAdService, Session, CreativePluginService, configuration, $state) {
       var creativeId = $stateParams.creative_id;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/creatives/display/edit/${creativeId}`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/creatives/display/edit/'+creativeId);
 
      
     }

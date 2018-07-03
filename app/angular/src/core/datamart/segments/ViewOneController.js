@@ -15,7 +15,7 @@ define(['./module'], function (module) {
       $scope.statsLoading = true;
 
       // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/audience/segments/${$scope.segmentId}`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/audience/segments/'+$scope.segmentId);
 
       
 

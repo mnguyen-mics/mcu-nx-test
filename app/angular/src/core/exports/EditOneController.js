@@ -11,7 +11,7 @@ define(['./module'], function (module) {
       $scope.exportId = exportId;
       $scope.organisationId = organisationId;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/datastudio/exports/${exportId}`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/datastudio/exports/' + exportId);
     }
   ]);
 });

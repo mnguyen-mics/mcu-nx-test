@@ -10,7 +10,7 @@ define(['./module'], function (module) {
       $scope.lastName = userProfile.last_name;
       $scope.workspaces = userProfile.workspaces;
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/account/my_profile`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/account/my_profile');
     }
   ]);
 

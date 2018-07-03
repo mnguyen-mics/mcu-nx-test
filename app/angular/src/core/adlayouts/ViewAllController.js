@@ -5,7 +5,7 @@ define(['./module', 'jquery'], function (module, $) {
     '$scope', 'Restangular', 'core/common/auth/Session', '$location', '$state', '$stateParams', '$uibModal', '$log', '$filter',
     function ($scope, Restangular, Session, $location, $state, $stateParams, $uibModal, $log, $filter) {
       var organisationId = Session.getCurrentWorkspace().organisation_id;
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/visit_analyzers`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/visit_analyzers');
     }
   ]);
 });

@@ -6,7 +6,7 @@ define(['./module', 'jquery'], function (module, $) {
     function ($scope, $log, Restangular, Session, $stateParams, $location) {
       var organisationId = Session.getCurrentWorkspace().organisation_id;
       $scope.organisationId = organisationId;
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/settings/datamart/visit_analyzers`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/settings/datamart/visit_analyzers');
     }
   ]);
 });

@@ -22,7 +22,7 @@ define(['./module', 'moment'], function (module, moment) {
         schedule: ''
       };
 
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/campaigns/display/${campaignId}/edit`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/display/'+campaignId+'/edit');
 
       
     }

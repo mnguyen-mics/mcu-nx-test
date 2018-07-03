@@ -11,7 +11,7 @@ define(['./module'], function (module) {
       var datamartId = Session.getCurrentDatamartId();
 
        // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + `/audience/partitions/${partitionId}`);
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/audience/partitions/'+partitionId);
 
       
 
