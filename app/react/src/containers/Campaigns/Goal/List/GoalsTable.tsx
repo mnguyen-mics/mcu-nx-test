@@ -38,6 +38,9 @@ import { Index } from '../../../../utils';
 import { McsRange } from '../../../../utils/McsMoment';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const messages = defineMessages({
   labelFilterBy: {
@@ -101,6 +104,7 @@ interface MapDispatchToProps {
 type GoalsTableProps = MapStateToProps &
   MapDispatchToProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class GoalsTable extends React.Component<GoalsTableProps> {
@@ -176,6 +180,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       dataSource,
       loadGoalsDataSource,
       intl,
+      notifyError,
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
@@ -187,22 +192,26 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       okText: intl.formatMessage(messages.goalModalConfirmDeleteOk),
       cancelText: intl.formatMessage(messages.goalModalConfirmDeleteCancel),
       onOk() {
-        return GoalService.deleteGoal(goal.id).then(() => {
-          if (dataSource.length === 1 && filter.currentPage !== 1) {
-            const newFilter = {
-              ...filter,
-              currentPage: filter.currentPage - 1,
-            };
-            loadGoalsDataSource(organisationId, filter);
-            history.replace({
-              pathname: pathname,
-              search: updateSearch(search, newFilter),
-              state: state,
-            });
-          } else {
-            loadGoalsDataSource(organisationId, filter);
-          }
-        });
+        return GoalService.deleteGoal(goal.id)
+          .then(() => {
+            if (dataSource.length === 1 && filter.currentPage !== 1) {
+              const newFilter = {
+                ...filter,
+                currentPage: filter.currentPage - 1,
+              };
+              loadGoalsDataSource(organisationId, filter);
+              history.replace({
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+                state: state,
+              });
+            } else {
+              loadGoalsDataSource(organisationId, filter);
+            }
+          })
+          .catch(err => {
+            notifyError(err);
+          });
       },
       onCancel() {
         //
@@ -467,6 +476,7 @@ const mapDispatchToProps = {
 export default compose<GoalsTableProps, {}>(
   injectIntl,
   withRouter,
+  injectNotifications,
   connect(
     mapStateToProps,
     mapDispatchToProps,

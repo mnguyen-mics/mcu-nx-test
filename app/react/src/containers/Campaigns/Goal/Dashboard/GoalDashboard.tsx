@@ -78,7 +78,9 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
 
   componentDidMount() {
     const {
-      match: { params: { goalId } },
+      match: {
+        params: { goalId },
+      },
       location: { search, pathname },
       history,
     } = this.props;
@@ -100,7 +102,9 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
     const {
       history,
       location: { search },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     const {
@@ -155,7 +159,11 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
   };
 
   renderDatePicker() {
-    const { history: { location: { search } } } = this.props;
+    const {
+      history: {
+        location: { search },
+      },
+    } = this.props;
 
     const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
 
@@ -178,21 +186,23 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
   }
 
   renderItems = () => {
-    return this.state.attributionModels.items.sort((a, b) => a.id.localeCompare(b.id)).map(am => {
-      const title =
-        am.attribution_type === 'DIRECT' ? 'Direct' : am.attribution_model_name;
-      return {
-        title: title,
-        display: <GoalAttribution attributionModelId={am.id} />,
-      };
-    });
+    return this.state.attributionModels.items
+      .sort((a, b) => a.id.localeCompare(b.id))
+      .map(am => {
+        const title =
+          am.attribution_type === 'DIRECT'
+            ? 'Direct'
+            : am.attribution_model_name;
+        return {
+          title: title,
+          display: <GoalAttribution attributionModelId={am.id} />,
+        };
+      });
   };
 
   render() {
     const {
-      intl: {
-        formatMessage,
-      }
+      intl: { formatMessage },
     } = this.props;
     const archiveObject = (id: string) => {
       // TODO
@@ -206,14 +216,17 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <GoalHeader goal={this.state.goalObject.item} />
-            <Card title={formatMessage(messages.conversions)} buttons={this.renderDatePicker()}>
+            <Card
+              title={formatMessage(messages.conversions)}
+              buttons={this.renderDatePicker()}
+            >
               <GoalStackedAreaChart />
             </Card>
-            <Card>
-              {this.state.attributionModels.items.length ? (
+            {this.state.attributionModels.items.length && (
+              <Card>
                 <McsTabs items={this.renderItems()} />
-              ) : null}
-            </Card>
+              </Card>
+            )}
           </Content>
         </div>
       </div>
@@ -221,4 +234,7 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
   }
 }
 
-export default compose(injectIntl, withRouter)(GoalDashboard);
+export default compose(
+  injectIntl,
+  withRouter,
+)(GoalDashboard);
