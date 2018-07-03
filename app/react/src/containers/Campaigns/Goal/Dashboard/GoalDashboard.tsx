@@ -222,10 +222,12 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
             >
               <GoalStackedAreaChart />
             </Card>
-            {this.state.attributionModels.items.length && (
+            {this.state.attributionModels.items.length ? (
               <Card>
                 <McsTabs items={this.renderItems()} />
               </Card>
+            ) : (
+              undefined
             )}
           </Content>
         </div>
