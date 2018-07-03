@@ -18,5 +18,6 @@ export const INITIAL_MOBILE_APP_FORM_DATA: MobileApplicationFormData = {
 
 export interface EditMobileAppRouteMatchParam {
   organisationId: string;
+  datamartId: string;
   mobileApplicationId: string;
 }
