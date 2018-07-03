@@ -2,15 +2,13 @@ import * as React from 'react';
 import ReactAngular from '../../../../../ReactAngular/ReactAngular';
 
 export interface AngularWidgetProps {
-  datamartId: string;
-  organisationId: string;
   queryContainer: any;
 }
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      'mcs-query-tool': any;
+      'mcs-query-read-only-view': any;
     }
   }
 }
@@ -21,11 +19,7 @@ export default class AngularWidget extends React.Component<AngularWidgetProps> {
   constructor(props: AngularWidgetProps) {
     super(props);
 
-    (window as any).angular
-      .element(document.body)
-      .injector()
-      .get('core/common/auth/Session')
-      .init(`o${this.props.organisationId}d${this.props.datamartId}`);
+    // (window as any).angular.element(document.body).injector().get('core/common/auth/Session').init(`o${this.props.organisationId}d${this.props.datamartId}`);
   }
 
   render() {
@@ -33,20 +27,14 @@ export default class AngularWidget extends React.Component<AngularWidgetProps> {
       <ReactAngularJS
         scope={{
           container: this.props.queryContainer,
-          organisationId: this.props.organisationId,
-          datamartId: this.props.datamartId,
         }}
       >
         <div>
-          <mcs-query-tool
-            query-container="container"
-            statistics-enabled="true"
-            selected-values-enabled="true"
-            datamart-id="datamartId"
-            organisation-id="organisationId"
-          />
+          <mcs-query-read-only-view query-container="container" />
         </div>
       </ReactAngularJS>
-    ) : null;
+    ) : (
+      'error'
+    );
   }
 }

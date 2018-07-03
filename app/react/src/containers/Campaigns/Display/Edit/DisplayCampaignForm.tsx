@@ -26,9 +26,7 @@ import { DisplayCampaignFormData } from './domain';
 import { Omit } from '../../../../utils/Types';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import GoalFormSection, {
-  GoalFormSectionProps,
-} from './Sections/GoalFormSection';
+import GoalFormSection, { GoalFormSectionProps } from './Sections/GoalFormSection';
 import AdGroupFormSection, {
   AdGroupFormSectionProps,
 } from './Sections/AdGroupFormSection';

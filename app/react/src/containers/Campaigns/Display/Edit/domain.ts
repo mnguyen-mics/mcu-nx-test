@@ -1,3 +1,4 @@
+import { GoalFormData } from './../../Goal/Edit/domain';
 import { DisplayCampaignResource } from '../../../../models/campaign/display';
 import {
   GoalSelectionCreateRequest,
@@ -8,7 +9,6 @@ import {
   FieldArrayModelWithMeta,
 } from '../../../../utils/FormHelper';
 import { AdGroupFormData } from './AdGroup/domain';
-import { GoalFormData } from '../../Goal/Edit/domain';
 
 export interface EditDisplayCampaignRouteMatchParam {
   organisationId: string;
@@ -22,7 +22,7 @@ export type GoalModelShape =
 
 export type GoalFieldModel = FieldArrayModelWithMeta<
   GoalModelShape,
-  { name: string }
+  { name: string, triggerMode: string }
 >;
 export type AdGroupFieldModel = FieldArrayModel<AdGroupFormData>;
 

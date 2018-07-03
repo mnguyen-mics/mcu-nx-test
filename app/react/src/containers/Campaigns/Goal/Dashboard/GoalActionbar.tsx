@@ -46,7 +46,7 @@ class ExportsActionbar extends React.Component<
       match: { params: { organisationId, goalId } },
     } = this.props;
 
-    const editUrl = `/${organisationId}/goals/${goalId}`;
+    const editUrl = `/v2/o/${organisationId}/campaigns/goals/${goalId}/edit`;
     history.push({
       pathname: editUrl,
       state: { from: `${location.pathname}${location.search}` },
@@ -59,7 +59,7 @@ class ExportsActionbar extends React.Component<
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: intl.formatMessage(messages.goal), url: `/v2/o/${organisationId}/campaigns/goal` },
+      { name: intl.formatMessage(messages.goals), url: `/v2/o/${organisationId}/campaigns/goals` },
       { name: object && object.name ? object.name : '' },
     ];
 

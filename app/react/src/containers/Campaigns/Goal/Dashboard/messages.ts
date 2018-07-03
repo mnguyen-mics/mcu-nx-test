@@ -1,9 +1,9 @@
 import { defineMessages } from "react-intl";
 
 export default defineMessages({
-  goal: {
+  goals: {
     id: 'goals.title',
-    defaultMessage: 'Goal'
+    defaultMessage: 'Goals'
   },
   edit: {
     id: 'goals.stats.edit',

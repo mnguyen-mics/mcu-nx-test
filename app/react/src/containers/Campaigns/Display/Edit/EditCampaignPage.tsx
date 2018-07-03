@@ -18,7 +18,7 @@ import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
+import { injectDatamart, InjectedDatamartProps } from '../../../Datamart'
 
 interface State {
   displayCampaignFormData: DisplayCampaignFormData;
@@ -138,7 +138,10 @@ class EditCampaignPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const { loading, displayCampaignFormData } = this.state;
+    const {
+      loading,
+      displayCampaignFormData,
+    } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;

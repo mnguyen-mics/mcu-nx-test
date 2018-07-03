@@ -169,7 +169,7 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
 }
 
 export default compose<JoinedProps, ListCreativesDisplayProps>(
-  withTranslations,
   withRouter,
   injectIntl,
+  withTranslations,
 )(ListCreativesDisplay);

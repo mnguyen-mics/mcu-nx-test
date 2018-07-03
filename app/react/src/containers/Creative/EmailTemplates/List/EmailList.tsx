@@ -349,6 +349,6 @@ class CreativeEmailsTable extends React.Component<
 
 export default compose<JoinedProps, CreativeEmailsTableProps>(
   withRouter,
-  withTranslations,
   injectIntl,
+  withTranslations,
 )(CreativeEmailsTable);

@@ -135,9 +135,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
   };
 
   renderTechnicalName = () => {
-    const {
-      intl
-    } = this.props;
+    const { intl } = this.props;
     const InputField: FieldCtor<FormInputProps> = Field;
     return (
       <div>
@@ -162,9 +160,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
             name="plugin.technical_name"
             component={FormInput}
             formItemProps={{
-              label: intl.formatMessage(
-                messages.sectionTechnicalName,
-              ),
+              label: intl.formatMessage(messages.sectionTechnicalName),
             }}
             inputProps={{
               placeholder: intl.formatMessage(
@@ -172,14 +168,13 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
               ),
             }}
             helpToolTipProps={{
-              title: intl.formatMessage(
-                messages.sectionTechnicalHelper,
-              ),
+              title: intl.formatMessage(messages.sectionTechnicalHelper),
             }}
           />
         </div>
-      </div>)
-  }
+      </div>
+    );
+  };
 
   generateFormFromPluginLayout = (pluginLayout: PluginLayout) => {
     const {
