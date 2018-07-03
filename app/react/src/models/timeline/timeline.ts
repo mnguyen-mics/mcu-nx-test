@@ -1,14 +1,20 @@
+import { Index } from '../../utils';
+
 export interface Activity {
   $email_hash: string | object;
   $events: EventProps[];
   $location: {
-    $latlon: any[]; // ???
+    $latlon: string[];
   };
   $origin: object;
   $session_duration: number;
-  $session_status: string;
+  $session_status:
+    | 'IN_SESSION'
+    | 'SESSION_SNAPSHOT'
+    | 'CLOSED_SESSION'
+    | 'NO_SESSION';
   $site_id: string;
-  $topics: object;
+  $topics: Index<Index<number>>;
   $ts: number;
   $ttl: number;
   $type: string;

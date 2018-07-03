@@ -113,6 +113,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         datamartId,
         identifierType,
         identifierId,
+        true
       );
     } else if (
       organisationId !== prevOrganisationId &&
@@ -140,7 +141,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     datamartId: string,
     identifierType: string,
     identifierId: string,
-    orgHasChanged: boolean = false,
+    dataSourceHasChanged: boolean = false,
   ) => {
     const { nextDate } = this.state;
     const params = nextDate
@@ -164,21 +165,26 @@ class ActivitiesTimeline extends React.Component<Props, State> {
           identifierId,
           params,
         )
-          .then((response: any) => {
-            this.setState((prevState: any) => {
-              const newData = orgHasChanged
+          .then(response => {
+            this.setState(prevState => {
+              const newData = dataSourceHasChanged
                 ? response.data
                 : prevState.activities.items.concat(response.data);
               const nextState = {
                 activities: {
                   ...prevState.activities,
                   isLoading: false,
-                  hasItems: response.data.length === 10,
+                  hasItems:
+                    response.data.filter(
+                      d =>
+                        d.$session_status === 'CLOSED_SESSION' ||
+                        d.$session_status === 'NO_SESSION',
+                    ).length === 10,
                   items: newData,
                   byDay: this.groupByDate(newData, '$ts'),
                 },
                 nextDate:
-                  orgHasChanged &&
+                  !dataSourceHasChanged &&
                   response.data &&
                   response.data[response.data.length - 1]
                     ? moment(
@@ -196,7 +202,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                   hasItems: false,
                   isLoading: false,
                   items: [],
-                  byDay: {}
+                  byDay: {},
                 },
               };
               return nextState;
@@ -276,8 +282,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         pending={this.renderPendingTimeline(activities)}
         pendingDot={<McsIcon type="status" className="mcs-timeline-last-dot" />}
       >
-        {activities.byDay !== {} &&
-          keys.map(day => {
+        {keys.map(day => {
             const activityOnDay = activities.byDay[day];
             const dayToFormattedMessage = this.renderDate(day);
             return (

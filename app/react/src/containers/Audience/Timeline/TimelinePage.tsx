@@ -13,6 +13,7 @@ import injectNotifications, {
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { DatamartSelector } from '../../Datamart';
 import { Cookies } from '../../../models/timeline/timeline';
+import ErrorBoundary from '../../../components/ErrorBoundary';
 
 const messages = defineMessages({
   selectMonitoringDatamart: {
@@ -89,9 +90,13 @@ class TimelinePage extends React.Component<JoinedProps> {
           organisationId: nextOrganisationId,
         },
       },
+      location: nextLocation,
     } = nextProps;
     const datamartId = queryString.parse(location.search).datamartId
       ? queryString.parse(location.search).datamartId
+      : '';
+    const nextDatamartId = queryString.parse(nextLocation.search).datamartId
+      ? queryString.parse(nextLocation.search).datamartId
       : '';
     if (
       nextIdentifierId &&
@@ -102,11 +107,14 @@ class TimelinePage extends React.Component<JoinedProps> {
       history.push(
         `/v2/o/${organisationId}/audience/timeline/${nextIdentifierType}/${nextIdentifierId}?datamartId=${datamartId}`,
       );
-    } else if (cookies.mics_vid && nextOrganisationId !== organisationId) {
+    } else if (
+      cookies.mics_vid &&
+      (nextOrganisationId !== organisationId || datamartId !== nextDatamartId)
+    ) {
       history.push(
         `/v2/o/${nextOrganisationId}/audience/timeline/user_agent_id/vec:${
           cookies.mics_vid
-        }?datamartId=${datamartId}`,
+        }?datamartId=${nextDatamartId}`,
       );
     }
   }
@@ -127,7 +135,7 @@ class TimelinePage extends React.Component<JoinedProps> {
         params: { organisationId },
       },
       location,
-      cookies
+      cookies,
     } = this.props;
 
     let selectedDatamartId = '';
@@ -146,7 +154,9 @@ class TimelinePage extends React.Component<JoinedProps> {
     }
 
     return selectedDatamartId ? (
-      <Monitoring datamartId={selectedDatamartId} cookies={cookies} />
+      <ErrorBoundary>
+        <Monitoring datamartId={selectedDatamartId} cookies={cookies} />
+      </ErrorBoundary>
     ) : (
       <DatamartSelector
         onSelectDatamart={this.onDatamartSelect}

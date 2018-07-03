@@ -117,13 +117,13 @@ class ProfileCard extends React.Component<Props, State> {
       identifierId,
     )
       .then(response => {
-        this.setState(prevState => {
+        this.setState((prevState: any) => {
           const nextState = {
             profile: {
               ...prevState.profile,
               isLoading: false,
-              hasItems: Object.keys(response.data).length > 0,
-              items: response.data,
+              hasItems: response ? Object.keys(response.data).length > 0 : 0,
+              items: response ? response.data : {},
             },
           };
           return nextState;

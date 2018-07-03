@@ -229,7 +229,7 @@ const messages: {
   },
   pleaseFillInformations: {
     id: 'timeline.no.cookie.please.fill.infos',
-    defaultMessage: 'Please click on the User Lookup top right corner button to see data.',
+    defaultMessage: 'There is no user linked to your browser, please select a user to continue',
   },
 });
 

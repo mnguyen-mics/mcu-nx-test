@@ -4,7 +4,7 @@ import lodash from 'lodash';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { Row, Col, Layout } from 'antd';
 import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
@@ -48,7 +48,6 @@ interface MonitoringProps {
 type Props = MonitoringProps &
   MapStateToProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
   RouteComponentProps<TimelinePageParams>;
 
 class Monitoring extends React.Component<Props, State> {
@@ -208,7 +207,7 @@ class Monitoring extends React.Component<Props, State> {
   };
 
   render() {
-    const { datamartId, cookies, intl } = this.props;
+    const { datamartId, cookies } = this.props;
 
     const { identifier, identifiers, isModalVisible } = this.state;
 
@@ -269,7 +268,7 @@ class Monitoring extends React.Component<Props, State> {
             ) : (
               <EmptyTableView
                 iconType="user"
-                text={intl.formatMessage(messages.pleaseFillInformations)}
+                intlMessage={messages.pleaseFillInformations}
               />
             )}
           </Content>
@@ -284,9 +283,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 export default compose<Props, MonitoringProps>(
-  injectIntl,
   withRouter,
-  injectIntl,
   injectNotifications,
   connect(
     mapStateToProps,
