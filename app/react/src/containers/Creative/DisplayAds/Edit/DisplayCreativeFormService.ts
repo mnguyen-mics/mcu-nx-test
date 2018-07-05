@@ -175,9 +175,11 @@ const DisplayCreativeFormService = {
     
       return getImageFormat(field.file).then((i) => {
         const creative: DisplayAdShape = {
+          ...formData.creative,
           destination_domain: formData.creative.destination_domain,
           name: field.name,
           format: i as string
+          
         }
 
         const newFormData: DisplayCreativeFormData = {

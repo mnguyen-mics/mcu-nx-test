@@ -53,7 +53,43 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
               ? creativeData.name
               : `creative ${creativeData.id}`,
           });
+        })
+        .catch(err => {
+          this.setState({ loading: false })
+          this.props.notifyError(err)
+        });;
+    }
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      match: {
+        params: { creativeId },
+      },
+    } = this.props;
+
+    const {
+      match: {
+        params: { creativeId: nextCreativeId },
+      },
+    } = nextProps;
+
+    if (creativeId !== nextCreativeId) {
+      this.setState({ loading: true })
+      CreativeService.getCreative(creativeId)
+      .then(resp => resp.data)
+      .then(creativeData => {
+        this.setState({
+          loading: false,
+          creativeName: creativeData.name
+            ? creativeData.name
+            : `creative ${creativeData.id}`,
         });
+      })
+      .catch(err => {
+        this.setState({ loading: false })
+        this.props.notifyError(err)
+      });
     }
   }
 

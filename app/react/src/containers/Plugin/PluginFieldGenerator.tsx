@@ -385,7 +385,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               component={FormCodeEdit}
               formItemProps={pluginFieldProps.formItemProps}
               inputProps={{ mode: 'html', height: '200px', showGutter: false }}
-              {...pluginFieldProps.helpToolTipProps}
+              helpToolTipProps={pluginFieldProps.helpToolTipProps}
               small={pluginFieldProps.small}
             />
           )
@@ -411,8 +411,8 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               options={pluginLayoutFieldDefinition.enum !== undefined ?
                 pluginLayoutFieldDefinition.enum.map(option => { return { value: option.value, title: option.label } }) : []}
               formItemProps={pluginFieldProps.formItemProps}
-              {...pluginFieldProps.helpToolTipProps}
-              {...pluginFieldProps.small}
+              helpToolTipProps={pluginFieldProps.helpToolTipProps}
+              small={pluginFieldProps.small}
             />
           );
 
@@ -428,9 +428,9 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                   pluginLayoutFieldDefinition.enum : []
               }}
               formItemProps={pluginFieldProps.formItemProps}
-              {...pluginFieldProps.helpToolTipProps}
+              helpToolTipProps={pluginFieldProps.helpToolTipProps}
               valueAsString={true}
-              {...pluginFieldProps.small}
+              small={pluginFieldProps.small}
             />
           );
 
@@ -445,7 +445,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               noUploadModal={this.props.noUploadModal}
               formItemProps={pluginFieldProps.formItemProps}
               helpToolTipProps={{ title: pluginLayoutFieldDefinition.tooltip }}
-              {...pluginFieldProps.small}
+              small={pluginFieldProps.small}
             />
           );
 
@@ -480,7 +480,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               validateStatus={pluginFieldProps.formItemProps.validateStatus}
               {...pluginFieldProps.formItemProps}
-              {...pluginFieldProps.small}
+              small={pluginFieldProps.small}
             >
               <FormSwitchField
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
@@ -506,7 +506,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               validateStatus={pluginFieldProps.formItemProps.validateStatus}
               {...pluginFieldProps.formItemProps}
-              {...pluginFieldProps.small}
+              small={pluginFieldProps.small}
             >
               <FormRadioGroupField
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
@@ -530,7 +530,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               validateStatus={pluginFieldProps.formItemProps.validateStatus}
               {...pluginFieldProps.formItemProps}
-              {...pluginFieldProps.small}
+              small={pluginFieldProps.small}
             >
               <FormCheckboxGroupField
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}

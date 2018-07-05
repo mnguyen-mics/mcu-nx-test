@@ -34,7 +34,6 @@ const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => 
       validateStatus={validateStatus}
       small={props.small}
       {...props.formItemProps}
-      {...props.helpToolTipProps}
     >
       <AceEditor
         value={props.input.value}
