@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Tooltip, Col, Button, Modal } from 'antd';
+import { Col, Button, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipPlacement, TooltipProps } from 'antd/lib/tooltip';
-import { isEmpty } from 'lodash';
+import { TooltipProps } from 'antd/lib/tooltip';
 import { compose } from 'recompose';
 import FormDataFileDrawer, {
   FormDataFileDrawerProps,
@@ -19,7 +18,6 @@ import messages from '../../messages';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 
-const defaultTooltipPlacement: TooltipPlacement = 'right';
 
 export type AcceptedFile = 'text/html' | '*';
 
@@ -154,7 +152,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
   };
 
   render() {
-    const { meta, helpToolTipProps, input } = this.props;
+    const { meta, input } = this.props;
 
     const { canEdit } = this.state;
 
@@ -166,12 +164,6 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
-    const displayHelpToolTip = !isEmpty(helpToolTipProps);
-
-    const mergedTooltipProps = {
-      placement: defaultTooltipPlacement,
-      ...helpToolTipProps,
-    };
 
     const editProps = {
       onClick: () => {
@@ -246,7 +238,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
         validateStatus={validateStatus}
         {...this.props.formItemProps}
       >
-        <Col span={22}>
+        <Col span={24}>
           {!canEdit ? (
             <span>
               <Button onClick={click}>
@@ -267,13 +259,6 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
             </span>
           ) : null}
         </Col>
-        {displayHelpToolTip && (
-          <Col span={2} className="field-tooltip">
-            <Tooltip {...mergedTooltipProps}>
-              <McsIcon type="info" />
-            </Tooltip>
-          </Col>
-        )}
       </FormFieldWrapper>
     );
   }
