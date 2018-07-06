@@ -115,7 +115,7 @@ class ExportContent extends React.Component<
         {
           key: 'action',
           actions: [
-            { translationKey: 'EDIT', callback: this.onClickEdit },
+            // { translationKey: 'EDIT', callback: this.onClickEdit },
             { translationKey: 'ARCHIVE', callback: this.onClickArchive },
           ],
         },
