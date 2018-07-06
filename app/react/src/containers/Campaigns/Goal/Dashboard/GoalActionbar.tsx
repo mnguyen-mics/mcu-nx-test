@@ -13,10 +13,13 @@ import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
 import log from '../../../../utils/Logger';
 import messages from './messages';
+import GoalService from '../../../../services/GoalService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 interface ExportActionbarProps {
   object?: GoalResource;
-  archiveObject: (id: string) => void;
 }
 
 interface ExportActionbarState {
@@ -26,6 +29,7 @@ interface ExportActionbarState {
 type JoinedProps = ExportActionbarProps &
   RouteComponentProps<{ organisationId: string; goalId: string }> &
   InjectedIntlProps &
+  InjectedNotificationProps &
   TranslationProps;
 
 class ExportsActionbar extends React.Component<
@@ -43,7 +47,9 @@ class ExportsActionbar extends React.Component<
     const {
       location,
       history,
-      match: { params: { organisationId, goalId } },
+      match: {
+        params: { organisationId, goalId },
+      },
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/goals/${goalId}/edit`;
@@ -54,12 +60,21 @@ class ExportsActionbar extends React.Component<
   };
 
   render() {
-    const { match: { params: { organisationId } }, object, intl } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      object,
+      intl,
+    } = this.props;
 
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: intl.formatMessage(messages.goals), url: `/v2/o/${organisationId}/campaigns/goals` },
+      {
+        name: intl.formatMessage(messages.goals),
+        url: `/v2/o/${organisationId}/campaigns/goals`,
+      },
       { name: object && object.name ? object.name : '' },
     ];
 
@@ -80,27 +95,46 @@ class ExportsActionbar extends React.Component<
   }
 
   buildMenu = () => {
-    const { object, archiveObject, intl: { formatMessage } } = this.props;
+    const {
+      object,
+      history,
+      notifyError,
+      match: {
+        params: { organisationId },
+      },
+      intl: { formatMessage },
+    } = this.props;
 
-    const handleArchiveGoal = (displayCampaignId: string) => {
-      Modal.confirm({
-        title: formatMessage(modalMessages.archiveCampaignConfirm),
-        content: formatMessage(modalMessages.archiveCampaignMessage),
-        iconType: 'exclamation-circle',
-        okText: formatMessage(modalMessages.confirm),
-        cancelText: formatMessage(modalMessages.cancel),
-        onOk() {
-          return archiveObject(displayCampaignId);
-        },
-        // onCancel() {},
-      });
+    const handleDeleteGoal = (displayCampaignId: string) => {
+      if (object) {
+        Modal.confirm({
+          title: formatMessage(messages.deleteGoalModalTitle),
+          content: formatMessage(messages.deleteGoalModalBody),
+          iconType: 'exclamation-circle',
+          okText: formatMessage(modalMessages.confirm),
+          cancelText: formatMessage(modalMessages.cancel),
+          onOk() {
+            return GoalService.deleteGoal(object.id)
+              .then(() => {
+                const editUrl = `/v2/o/${organisationId}/campaigns/goals`;
+                history.push({
+                  pathname: editUrl,
+                  state: { from: `${location.pathname}${location.search}` },
+                });
+              })
+              .catch(err => {
+                notifyError(err);
+              });
+          },
+        });
+      }
     };
 
     const onClick = (event: any) => {
       if (object)
         switch (event.key) {
           case 'ARCHIVED':
-            return handleArchiveGoal(object.id);
+            return handleDeleteGoal(object.id);
           default:
             return () => {
               log.error('onclick error');
@@ -111,7 +145,7 @@ class ExportsActionbar extends React.Component<
     return (
       <Menu onClick={onClick}>
         <Menu.Item key="ARCHIVED">
-          <FormattedMessage {...messages.archive} />
+          <FormattedMessage {...messages.delete} />
         </Menu.Item>
       </Menu>
     );
@@ -122,4 +156,5 @@ export default compose<JoinedProps, ExportActionbarProps>(
   withRouter,
   injectIntl,
   withTranslations,
+  injectNotifications,
 )(ExportsActionbar);

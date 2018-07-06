@@ -13,6 +13,18 @@ export default defineMessages({
     id: 'goals.stats.archive',
     defaultMessage: 'Archive'
   },
+  delete: {
+    id: 'goals.stats.delete',
+    defaultMessage: 'Delete'
+  },
+  deleteGoalModalTitle: {
+    id: 'goals.stats.delete.modal.title',
+    defaultMessage: 'Are you sure you want to delete this Goal?'
+  },
+  deleteGoalModalBody: {
+    id: 'goals.stats.delete.modal.body',
+    defaultMessage: 'By deleting this Goal all its activities will be suspended. Are you sure to perform this action ?'
+  },
   value: {
     id: 'goals.stats.value',
     defaultMessage: 'Conversion Value'
