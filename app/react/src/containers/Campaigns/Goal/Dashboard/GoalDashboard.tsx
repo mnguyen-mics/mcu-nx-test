@@ -207,7 +207,7 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
     return (
       <div className="ant-layout">
         <GoalActionbar
-          object={this.state.goalObject.item}
+          goal={this.state.goalObject.item}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">

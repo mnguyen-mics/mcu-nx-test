@@ -19,7 +19,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 
 interface ExportActionbarProps {
-  object?: GoalResource;
+  goal?: GoalResource;
 }
 
 interface ExportActionbarState {
@@ -64,7 +64,7 @@ class ExportsActionbar extends React.Component<
       match: {
         params: { organisationId },
       },
-      object,
+      goal,
       intl,
     } = this.props;
 
@@ -75,7 +75,7 @@ class ExportsActionbar extends React.Component<
         name: intl.formatMessage(messages.goals),
         url: `/v2/o/${organisationId}/campaigns/goals`,
       },
-      { name: object && object.name ? object.name : '' },
+      { name: goal && goal.name ? goal.name : '' },
     ];
 
     return (
@@ -96,7 +96,7 @@ class ExportsActionbar extends React.Component<
 
   buildMenu = () => {
     const {
-      object,
+      goal,
       history,
       notifyError,
       match: {
@@ -105,16 +105,16 @@ class ExportsActionbar extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const handleDeleteGoal = (displayCampaignId: string) => {
-      if (object) {
+    const handleArchiveGoal = (displayCampaignId: string) => {
+      if (goal) {
         Modal.confirm({
-          title: formatMessage(messages.deleteGoalModalTitle),
-          content: formatMessage(messages.deleteGoalModalBody),
+          title: formatMessage(messages.archiveGoalModalTitle),
+          content: formatMessage(messages.archiveGoalModalBody),
           iconType: 'exclamation-circle',
           okText: formatMessage(modalMessages.confirm),
           cancelText: formatMessage(modalMessages.cancel),
           onOk() {
-            return GoalService.deleteGoal(object.id)
+            return GoalService.updateGoal(goal.id, {...goal, archived: true})
               .then(() => {
                 const editUrl = `/v2/o/${organisationId}/campaigns/goals`;
                 history.push({
@@ -131,10 +131,10 @@ class ExportsActionbar extends React.Component<
     };
 
     const onClick = (event: any) => {
-      if (object)
+      if (goal)
         switch (event.key) {
           case 'ARCHIVED':
-            return handleDeleteGoal(object.id);
+            return handleArchiveGoal(goal.id);
           default:
             return () => {
               log.error('onclick error');
@@ -145,7 +145,7 @@ class ExportsActionbar extends React.Component<
     return (
       <Menu onClick={onClick}>
         <Menu.Item key="ARCHIVED">
-          <FormattedMessage {...messages.delete} />
+          <FormattedMessage {...messages.archive} />
         </Menu.Item>
       </Menu>
     );

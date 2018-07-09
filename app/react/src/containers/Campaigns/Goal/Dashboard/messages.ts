@@ -17,13 +17,13 @@ export default defineMessages({
     id: 'goals.stats.delete',
     defaultMessage: 'Delete'
   },
-  deleteGoalModalTitle: {
-    id: 'goals.stats.delete.modal.title',
-    defaultMessage: 'Are you sure you want to delete this Goal?'
+  archiveGoalModalTitle: {
+    id: 'goals.stats.archive.modal.title',
+    defaultMessage: 'Are you sure you want to archive this Goal?'
   },
-  deleteGoalModalBody: {
-    id: 'goals.stats.delete.modal.body',
-    defaultMessage: 'By deleting this Goal all its activities will be suspended. Are you sure to perform this action ?'
+  archiveGoalModalBody: {
+    id: 'goals.stats.archive.modal.body',
+    defaultMessage: 'By archiving this Goal all its activities will be suspended. Are you sure to perform this action ?'
   },
   value: {
     id: 'goals.stats.value',
