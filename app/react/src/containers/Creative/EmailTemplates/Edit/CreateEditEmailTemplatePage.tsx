@@ -115,7 +115,7 @@ class CreateEmailTemplate extends React.Component<
     }
   }
 
-  promisesValues = (properties: PropertyResourceShape[], pLayoutRes: DataResponse<PluginLayout> | null) => {
+  promisesValues = (properties: PropertyResourceShape[], pLayoutRes: DataResponse<PluginLayout> | null, lastVersion?: PluginVersionResource) => {
 
     const modifiedProperties = properties
       .sort(a => {
@@ -136,8 +136,9 @@ class CreateEmailTemplate extends React.Component<
         ...prevState,
         isLoading: false,
         initialValues: {
-          properties: modifiedProperties
+          properties: modifiedProperties,
         },
+        emailTemplateRenderer: lastVersion
       };
 
 
@@ -163,7 +164,7 @@ class CreateEmailTemplate extends React.Component<
           lastVersion.id
         )
       ]).then(results => {
-        this.promisesValues(results[0], results[1]);
+        this.promisesValues(results[0], results[1], lastVersion);
         return results;
       })
     });
@@ -186,17 +187,6 @@ class CreateEmailTemplate extends React.Component<
         ]).then(results => {
           this.promisesValues(results[0], results[1]);
   
-          this.setState(prevState => {
-            const nextState: CreateEmailTemplateState = {
-              ...prevState,
-              initialValues: {
-                plugin: resultGetEmailTemplate.data,
-                ...prevState.initialValues,
-              },
-            };
-  
-            return nextState;
-          });
   
           return results;
         });      
@@ -254,7 +244,9 @@ class CreateEmailTemplate extends React.Component<
       formattedFormValues.renderer_group_id = this.state.emailTemplateRenderer.group_id;
       formattedFormValues.editor_artifact_id = 'default-editor';
       formattedFormValues.editor_group_id = 'com.mediarithmics.template.email';
+  
     }
+
     return this.setState({ isLoading: true }, () => {
       CreativeService.createEmailTemplate(organisationId, formattedFormValues)
         .then(res => res.data)
