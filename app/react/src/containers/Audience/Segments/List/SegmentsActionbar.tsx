@@ -66,7 +66,7 @@ const fetchExportData = (
   const buildOptions = () => {
     const options: Index<any> = {
       first_result: 0,
-      max_results: 2000,
+      max_results: 5000,
     };
 
     if (filter.keywords) {
