@@ -164,6 +164,8 @@ class FieldNodeWidget extends React.Component<Props, State> {
     const triggerEdit = () => this.editNode(true);
     const closeEdit = () => this.editNode(false);
 
+    const onMouseOver = () => this.props.lockGlobalInteraction(true);
+    const onMouseLeave = () => this.props.lockGlobalInteraction(false)
     
 
     const renderEditNode = () => {
@@ -181,6 +183,8 @@ class FieldNodeWidget extends React.Component<Props, State> {
             width: EDIT_FIELD_SIZE,
           }}
           className="mcs-form-container no-padding"
+          onMouseOver={onMouseOver}
+          onMouseLeave={onMouseLeave}
         >
           <div
             style={{
