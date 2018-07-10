@@ -546,7 +546,7 @@ class TimelinePage extends React.Component<JoinedProps, State> {
 
     let selectedDatamartId = '';
 
-    const datamartIdQueryString = queryString.parse(location.search).datamart_id;
+    const datamartIdQueryString = queryString.parse(location.search).datamartId;
 
     const datamarts = workspace(organisationId).datamarts;
 
