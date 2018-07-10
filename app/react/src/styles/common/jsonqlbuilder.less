@@ -1,6 +1,6 @@
 
 .query-builder {
-
+  width: 100%;
   &.full-screen {
     position: absolute;
     top: 0;
@@ -19,8 +19,13 @@
 
   &.edition-mode {
     display: flex;
-    flex-direction: column;
     flex: auto;
+    .schema-visualizer {
+      height: 100%
+    }
+    .diagram {
+      height: 100%;
+    }
   }
 
   .diagram {

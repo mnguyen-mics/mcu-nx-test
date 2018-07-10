@@ -323,6 +323,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
           datamartId={datamartId}
           organisationId={organisationId}
           query={query}
+          editionLayout={this.props.edition}
         />
         <Col span={viewSchema ? 18 : 24} className={'diagram'}>
           <DiagramWidget

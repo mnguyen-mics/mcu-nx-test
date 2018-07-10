@@ -290,7 +290,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           datamartId,
         )}
         <Layout.Content
-          className={`mcs-content-container ${editionLayout ? 'flex' : ''}`}
+          className={`mcs-content-container ${editionLayout ? 'flex-basic' : ''}`}
           style={{ padding: 0, overflow: 'hidden' }}
         >
           <JSONQLBuilderContext.Provider value={{ query: query as any, schema: objectTypes.length

@@ -11,6 +11,7 @@ export interface CounterListProps {
   query:  ObjectTreeExpressionNodeShape | undefined; 
   datamartId: string;
   organisationId: string;
+  editionLayout?: boolean;
 }
 
 export default class CounterList extends React.Component<
@@ -28,12 +29,13 @@ export default class CounterList extends React.Component<
   };
 
   render() {
-    const { queryResults, staleQueryResult, onRefresh, organisationId } = this.props;
+    const { queryResults, staleQueryResult, onRefresh, organisationId, editionLayout } = this.props;
     if (queryResults.length === 0) {
       return null;
     }
+    const style: React.CSSProperties = editionLayout ? {} : { position: 'relative', height: 0 }
     return (
-      <div style={{ position: 'relative', height: 0 }}>
+      <div style={style}>
         <div
           style={{
             position: 'absolute',
