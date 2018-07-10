@@ -13,6 +13,18 @@ export default defineMessages({
     id: 'goals.stats.archive',
     defaultMessage: 'Archive'
   },
+  delete: {
+    id: 'goals.stats.delete',
+    defaultMessage: 'Delete'
+  },
+  archiveGoalModalTitle: {
+    id: 'goals.stats.archive.modal.title',
+    defaultMessage: 'Are you sure you want to archive this Goal?'
+  },
+  archiveGoalModalBody: {
+    id: 'goals.stats.archive.modal.body',
+    defaultMessage: 'By archiving this Goal all its activities will be suspended. Are you sure to perform this action ?'
+  },
   value: {
     id: 'goals.stats.value',
     defaultMessage: 'Conversion Value'
