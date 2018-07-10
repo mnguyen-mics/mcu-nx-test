@@ -186,8 +186,17 @@ class CreateEmailTemplate extends React.Component<
           )
         ]).then(results => {
           this.promisesValues(results[0], results[1]);
-  
-  
+    
+          this.setState(prevState => {
+            const nextState = {
+              ...prevState,
+              initialValues: {
+                properties: prevState.initialValues ? prevState.initialValues.properties : [],
+                plugin: resultGetEmailTemplate.data
+              }
+            }
+            return nextState;
+          });
           return results;
         });      
       });
