@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Layout, Card, Row, Col } from 'antd';
+import { Layout, Row, Col } from 'antd';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { withRouter, RouteComponentProps } from 'react-router';
 import {
   injectIntl,
@@ -8,7 +10,9 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-import CatalogService from '../../../../../services/CatalogService';
+import CatalogService, {
+  GetServiceOptions,
+} from '../../../../../services/CatalogService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -92,10 +96,13 @@ class ServiceItemsListPage extends React.Component<Props, State> {
     organisationId: string,
     options: InfiniteListFilters,
   ) => {
-    const fecthOptions = {
+    const fecthOptions: GetServiceOptions = {
       first_result: options.page,
       max_results: options.pageSize,
     };
+    if (options.keywords) {
+      fecthOptions.keywords = options.keywords;
+    }
     return CatalogService.getServices(organisationId, fecthOptions);
   };
 
@@ -119,34 +126,33 @@ class ServiceItemsListPage extends React.Component<Props, State> {
     return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
-          <Card className="mcs-settings-card-title">
+          <Row className="mcs-table-container">
             <div className="mcs-card-title">
-              <span className="mcs-card-title">
-                <FormattedMessage {...messages.myServiceItemsTitle} />
-              </span>
+              <FormattedMessage {...messages.myServiceItemsTitle} />
             </div>
-          </Card>
-          <br />
-          <Card>
-            <Row>
-              <Col span={6}>
-                <InfiniteList
-                  fetchData={this.fetchServiceItems}
-                  onItemClick={this.onServiceItemSelection}
-                  getItemKey={this.getItemKey}
-                  getItemTitle={this.getItemName}
-                />
-              </Col>
-              <Col span={17} offset={1}>
-              
-                <div className="mcs-card-title">
-                  <span className="mcs-card-title">
-                    {item ? item.name : undefined}
-                  </span>
-                </div>
-              </Col>
-            </Row>
-          </Card>
+          </Row>
+          <Row className="mcs-table-container mcs-settings-card">
+            <Col span={6} className="mcs-settings-card-separator">
+              <InfiniteList
+                fetchData={this.fetchServiceItems}
+                onItemClick={this.onServiceItemSelection}
+                getItemKey={this.getItemKey}
+                getItemTitle={this.getItemName}
+              />
+            </Col>
+            <Col span={18}>
+              <div className="mcs-card-title service-container-header">
+                {item ? item.name : undefined}
+              </div>
+              <div className="service-container">
+                {item && (
+                  <SyntaxHighlighter language="json" style={docco}>
+                    {JSON.stringify(item, undefined, 4)}
+                  </SyntaxHighlighter>
+                )}
+              </div>
+            </Col>
+          </Row>
         </Content>
       </div>
     );

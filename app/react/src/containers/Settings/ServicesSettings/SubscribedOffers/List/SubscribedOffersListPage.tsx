@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Layout, Card, Row, Col } from 'antd';
+import { Layout, Row, Col, Spin } from 'antd';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { withRouter, RouteComponentProps } from 'react-router';
 import {
   injectIntl,
@@ -8,14 +10,20 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-import CatalogService from '../../../../../services/CatalogService';
+import CatalogService, {
+  GetOfferOptions,
+} from '../../../../../services/CatalogService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import InfiniteList, {
   InfiniteListFilters,
 } from '../../../../../components/InfiniteList';
-import { ServiceOfferResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
+import {
+  ServiceItemOfferResource,
+  ServiceItemConditionsShape,
+  ServiceItemShape,
+} from '../../../../../models/servicemanagement/PublicServiceItemResource';
 
 const { Content } = Layout;
 
@@ -31,7 +39,10 @@ interface RouterProps {
 }
 
 interface State {
-  item?: ServiceOfferResource;
+  offer?: ServiceItemOfferResource;
+  serviceItemConditions: ServiceItemConditionsShape[];
+  serviceItems: ServiceItemShape[];
+  isLoading: boolean;
 }
 
 type Props = RouteComponentProps<RouterProps> &
@@ -41,60 +52,96 @@ type Props = RouteComponentProps<RouterProps> &
 class SubscribedOffersListPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {}
+    this.state = {
+      serviceItemConditions: [],
+      serviceItems: [],
+      isLoading: false,
+    };
   }
 
   fetchOffers = (organisationId: string, options: InfiniteListFilters) => {
-    const fecthOptions = {
+    const fecthOptions: GetOfferOptions = {
       first_result: options.page,
       max_results: options.pageSize,
     };
+    if (options.keywords) {
+      fecthOptions.keywords = options.keywords;
+    }
     return CatalogService.getSubscribedOffers(organisationId, fecthOptions);
   };
 
-  onServiceItemSelection = (item: ServiceOfferResource) => () => {
+  onSubscribedOfferSelection = (offer: ServiceItemOfferResource) => () => {
     this.setState({
-      item: item,
+      isLoading: true,
     });
+    CatalogService.getServiceItemConditions(offer.id)
+      .then(resp => {
+        this.setState({
+          offer: offer,
+          serviceItemConditions: resp.data,
+          isLoading: false,
+        });
+      })
+      .catch(err => {
+        this.setState({
+          isLoading: false,
+        });
+        this.props.notifyError(err);
+      });
   };
 
-  getItemKey = (item: ServiceOfferResource) => {
-    return item.id
-  }
+  getItemKey = (offer: ServiceItemOfferResource) => {
+    return offer.id;
+  };
 
-  getItemName = (item: ServiceOfferResource) => {
-    return item.name
-  }
+  getItemName = (offer: ServiceItemOfferResource) => {
+    return offer.name;
+  };
 
   render() {
-    const { item } = this.state;
+    const { offer, serviceItemConditions, isLoading } = this.state;
 
     return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
-          <Card className="mcs-settings-card-title">
+          <Row className="mcs-table-container">
             <div className="mcs-card-title">
-              <span className="mcs-card-title">
-                <FormattedMessage {...messages.serviceOffers} />
-              </span>
+              <FormattedMessage {...messages.serviceOffers} />
             </div>
-          </Card>
-          <br />
-          <Card>
-            <Row>
-              <Col span={6}>
-                <InfiniteList
-                  fetchData={this.fetchOffers}
-                  onItemClick={this.onServiceItemSelection}
-                  getItemKey={this.getItemKey}
-                  getItemTitle={this.getItemName}
-                />
-              </Col>
-              <Col span={18}>
-                <div>{item ? item.name : undefined}</div>
-              </Col>
-            </Row>
-          </Card>
+          </Row>
+          <Row className="mcs-table-container mcs-settings-card">
+            <Col span={6} className="mcs-settings-card-separator">
+              <InfiniteList
+                fetchData={this.fetchOffers}
+                onItemClick={this.onSubscribedOfferSelection}
+                getItemKey={this.getItemKey}
+                getItemTitle={this.getItemName}
+              />
+            </Col>
+            <Col span={18}>
+              <div className="mcs-card-title service-container-header">
+                {offer ? offer.name : undefined}
+              </div>
+              <div className="service-container">
+                {serviceItemConditions.length > 0 || !isLoading ? (
+                  serviceItemConditions.map(sic => {
+                    return (
+                      <div key={sic.id}>
+                        <SyntaxHighlighter language="json" style={docco}>
+                          {JSON.stringify(sic, undefined, 4)}
+                        </SyntaxHighlighter>
+                        <br />
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="infinite-loading-container">
+                    <Spin />
+                  </div>
+                )}
+              </div>
+            </Col>
+          </Row>
         </Content>
       </div>
     );

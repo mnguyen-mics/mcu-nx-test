@@ -1,3 +1,4 @@
+import { ServiceItemConditionsShape } from './../models/servicemanagement/PublicServiceItemResource';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
@@ -6,7 +7,7 @@ import {
   ServiceType,
   ServiceCategoryType,
   ServiceCategorySubType,
-  ServiceOfferResource,
+  ServiceItemOfferResource,
   ServiceCategoryPublicResource,
   ServiceItemPublicResource,
   AudienceSegmentServiceItemPublicResource,
@@ -14,15 +15,16 @@ import {
 import { Locale } from '../models/Locale';
 import { OrganisationResource } from '../models/organisation/organisation';
 
-interface GetOfferOptions extends PaginatedApiParam {
+export interface GetOfferOptions extends PaginatedApiParam {
   serviceAgreementId?: string;
+  keywords?: string;
 }
 
 interface GetServiceItemConditionsOptions extends PaginatedApiParam {
   orderBy?: string;
 }
 
-interface GetServiceOptions extends PaginatedApiParam {
+export interface GetServiceOptions extends PaginatedApiParam {
   root?: boolean;
   parentCategoryId?: string;
   serviceFamily?: ServiceFamily[];
@@ -31,6 +33,7 @@ interface GetServiceOptions extends PaginatedApiParam {
   categoryType?: ServiceCategoryType[];
   categorySubtype?: ServiceCategorySubType[];
   searchDepth?: number;
+  keywords?: string;
 }
 
 const CatalogService = {
@@ -107,7 +110,7 @@ const CatalogService = {
   getSubscribedOffers(
     customerOrgId: string,
     options: GetOfferOptions,
-  ): Promise<DataListResponse<ServiceOfferResource>> {
+  ): Promise<DataListResponse<ServiceItemOfferResource>> {
     const endpoint = `subscribed_services/${customerOrgId}/offers`;
     const params = {
       ...options,
@@ -130,10 +133,9 @@ const CatalogService = {
 
   getServiceItemConditions(
     offerId: string,
-    options: GetServiceItemConditionsOptions,
-  ): Promise<DataListResponse<any>> {
-    // TYPE
-    const endpoint = `subscribed_services/${offerId}/service_item_conditions`;
+    options: GetServiceItemConditionsOptions = {},
+  ): Promise<DataListResponse<ServiceItemConditionsShape>> {
+    const endpoint = `service_offers/${offerId}/service_item_conditions`;
     const params = {
       ...options,
       order_by: options.orderBy,

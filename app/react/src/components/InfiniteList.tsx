@@ -12,6 +12,10 @@ const messages = defineMessages({
     id: 'settings.services.infinite.scroll.searchBar.placeholder',
     defaultMessage: 'Enter your search here',
   },
+  loadingSearchBarPlaceholder: {
+    id: 'settings.services.infinite.scroll.loading.data.searchBar.placeholder',
+    defaultMessage: 'Loading, please wait....',
+  },
 });
 
 const InputSearch = Input.Search;
@@ -19,6 +23,7 @@ const InputSearch = Input.Search;
 export interface InfiniteListFilters {
   page: number;
   pageSize: number;
+  keywords?: string;
 }
 
 interface InfiniteListProps<T = any> {
@@ -38,11 +43,14 @@ type Props<T = any> = InfiniteListProps<T> &
 interface State<T> {
   data: T[];
   loading: boolean;
+  initialLoading: boolean;
   hasMore: boolean;
   first: number;
   size: number;
-  searchValue: string;
 }
+
+const initialPage = 0;
+const initialPageSize = 12;
 
 class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
   constructor(props: Props<T>) {
@@ -50,15 +58,22 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
     this.state = {
       data: [],
       loading: false,
+      initialLoading: false,
       hasMore: true,
-      first: 0,
-      size: 8,
-      searchValue: ''
+      first: initialPage,
+      size: initialPageSize,
     };
   }
 
   componentDidMount() {
-    this.handleInfiniteOnLoad();
+    this.setState({
+      initialLoading: true,
+    });
+    this.handleInfiniteOnLoad().then(() => {
+      this.setState({
+        initialLoading: false,
+      });
+    });
   }
 
   handleInfiniteOnLoad = () => {
@@ -74,7 +89,7 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
       loading: true,
     });
     const prevData = data;
-    this.props
+    return this.props
       .fetchData(organisationId, { page: first, pageSize: size })
       .then(res => {
         this.setState({
@@ -100,35 +115,70 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
     );
   };
 
-  onSearch = () => {
-    const { searchValue } = this.state;
-    this.props.fetchData()
-  }
+  onSearch = (searchValue: string) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    this.props
+      .fetchData(organisationId, {
+        page: initialPage,
+        pageSize: initialPageSize,
+        keywords: searchValue,
+      })
+      .then(res => {
+        this.setState({
+          data: res.data,
+          loading: false,
+          hasMore: res.data.length === initialPageSize,
+          first: initialPageSize + 1,
+        });
+      });
+  };
 
   render() {
     const { intl } = this.props;
-    const { data, loading, hasMore, searchValue } = this.state;
+    const { data, loading, hasMore, initialLoading } = this.state;
     return (
-      <div className="infinite-container">
+      <div className="infinite-container" style={{ maxHeight: '600px' }}>
         <InfiniteScroll
           initialLoad={false}
           loadMore={this.handleInfiniteOnLoad}
           hasMore={!loading && hasMore}
           useWindow={false}
         >
-          <InputSearch
-          value={searchValue}
-            placeholder={intl.formatMessage(messages.searchBarPlaceholder)}
-            onSearch={}
-          />
-          <List dataSource={data} renderItem={this.renderItem}>
-            {loading &&
-              hasMore && (
-                <div className="infinite-loading-container">
-                  <Spin />
-                </div>
-              )}
-          </List>
+          {initialLoading ? (
+            <div>
+              <InputSearch
+                placeholder={intl.formatMessage(
+                  messages.loadingSearchBarPlaceholder,
+                )}
+                className="infinite-scroll-searchbar"
+                disabled={true}
+              />
+              <div className="infinite-loading-container">
+                <Spin />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <InputSearch
+                placeholder={intl.formatMessage(messages.searchBarPlaceholder)}
+                onSearch={this.onSearch}
+                className="infinite-scroll-searchbar"
+              />
+              <List dataSource={data} renderItem={this.renderItem}>
+                {loading &&
+                  hasMore && (
+                    <div className="infinite-loading-container">
+                      <Spin />
+                    </div>
+                  )}
+              </List>
+            </div>
+          )}
         </InfiniteScroll>
       </div>
     );
