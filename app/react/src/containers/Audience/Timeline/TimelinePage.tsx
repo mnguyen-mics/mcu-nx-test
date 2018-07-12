@@ -51,9 +51,6 @@ class TimelinePage extends React.Component<JoinedProps> {
         params: { organisationId, identifierId, identifierType },
       },
     } = this.props;
-    const datamartId = queryString.parse(location.search).datamartId
-      ? queryString.parse(location.search).datamartId
-      : '';
     if (!identifierId && !identifierType) {
       if (cookies.mics_vid) {
         history.push(
@@ -64,60 +61,9 @@ class TimelinePage extends React.Component<JoinedProps> {
       } else {
         history.push(`/v2/o/${organisationId}/audience/timeline`);
       }
-    } else {
-      history.push(
-        `/v2/o/${organisationId}/audience/timeline/${identifierType}/${identifierId}?datamartId=${
-          datamartId ? datamartId : ''
-        }`,
-      );
     }
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const {
-      match: {
-        params: { organisationId, identifierId, identifierType },
-      },
-      history,
-      cookies,
-      location,
-    } = this.props;
-    const {
-      match: {
-        params: {
-          identifierType: nextIdentifierType,
-          identifierId: nextIdentifierId,
-          organisationId: nextOrganisationId,
-        },
-      },
-      location: nextLocation,
-    } = nextProps;
-    const datamartId = queryString.parse(location.search).datamartId
-      ? queryString.parse(location.search).datamartId
-      : '';
-    const nextDatamartId = queryString.parse(nextLocation.search).datamartId
-      ? queryString.parse(nextLocation.search).datamartId
-      : '';
-    if (
-      nextIdentifierId &&
-      nextIdentifierType &&
-      nextIdentifierId !== identifierId &&
-      nextIdentifierType !== identifierType
-    ) {
-      history.push(
-        `/v2/o/${organisationId}/audience/timeline/${nextIdentifierType}/${nextIdentifierId}?datamartId=${datamartId}`,
-      );
-    } else if (
-      cookies.mics_vid &&
-      (nextOrganisationId !== organisationId || datamartId !== nextDatamartId)
-    ) {
-      history.push(
-        `/v2/o/${nextOrganisationId}/audience/timeline/user_agent_id/vec:${
-          cookies.mics_vid
-        }?datamartId=${nextDatamartId}`,
-      );
-    }
-  }
 
   onDatamartSelect = (datamart: DatamartResource) => {
     const { history, location } = this.props;

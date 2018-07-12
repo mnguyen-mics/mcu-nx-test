@@ -105,15 +105,15 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     if (
       identifierId &&
       identifierType &&
-      prevIdentifierId !== identifierId ||
-      prevIdentifierType !== identifierType
+      (prevIdentifierId !== identifierId ||
+        prevIdentifierType !== identifierType)
     ) {
       this.fetchActivities(
         prevOrganisationId,
         datamartId,
         identifierType,
         identifierId,
-        true
+        true,
       );
     } else if (
       organisationId !== prevOrganisationId &&
@@ -283,42 +283,42 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         pendingDot={<McsIcon type="status" className="mcs-timeline-last-dot" />}
       >
         {keys.map(day => {
-            const activityOnDay = activities.byDay[day];
-            const dayToFormattedMessage = this.renderDate(day);
-            return (
-              <div className="mcs-timeline" key={cuid()}>
-                <Timeline.Item
-                  dot={<Icon type="flag" className="mcs-timeline-dot" />}
-                >
-                  <div className="mcs-title">{dayToFormattedMessage}</div>
-                </Timeline.Item>
-                {activityOnDay.length !== 0 &&
-                  activityOnDay.map((activity: Activity) => {
-                    return (
-                      <Timeline.Item
-                        key={cuid()}
-                        dot={
-                          <McsIcon
-                            type="status"
-                            className={
-                              activity.$session_status === 'SESSION_SNAPSHOT'
-                                ? 'mcs-timeline-dot live'
-                                : 'mcs-timeline-dot'
-                            }
-                          />
-                        }
-                      >
-                        <ActivityCard
-                          activity={activity}
-                          datamartId={datamartId}
-                          identifiers={identifiers}
+          const activityOnDay = activities.byDay[day];
+          const dayToFormattedMessage = this.renderDate(day);
+          return (
+            <div className="mcs-timeline" key={cuid()}>
+              <Timeline.Item
+                dot={<Icon type="flag" className="mcs-timeline-dot" />}
+              >
+                <div className="mcs-title">{dayToFormattedMessage}</div>
+              </Timeline.Item>
+              {activityOnDay.length !== 0 &&
+                activityOnDay.map((activity: Activity) => {
+                  return (
+                    <Timeline.Item
+                      key={cuid()}
+                      dot={
+                        <McsIcon
+                          type="status"
+                          className={
+                            activity.$session_status === 'SESSION_SNAPSHOT'
+                              ? 'mcs-timeline-dot live'
+                              : 'mcs-timeline-dot'
+                          }
                         />
-                      </Timeline.Item>
-                    );
-                  })}
-              </div>
-            );
-          })}
+                      }
+                    >
+                      <ActivityCard
+                        activity={activity}
+                        datamartId={datamartId}
+                        identifiers={identifiers}
+                      />
+                    </Timeline.Item>
+                  );
+                })}
+            </div>
+          );
+        })}
       </Timeline>
     );
   }
