@@ -105,7 +105,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     if (
       identifierId &&
       identifierType &&
-      prevIdentifierId !== identifierId &&
+      prevIdentifierId !== identifierId ||
       prevIdentifierType !== identifierType
     ) {
       this.fetchActivities(
