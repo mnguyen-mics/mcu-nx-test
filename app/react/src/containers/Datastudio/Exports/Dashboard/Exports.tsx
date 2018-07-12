@@ -196,11 +196,11 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     } else if (execution.status === 'SUCCEEDED') {
       (window as any).location = `${
         (window as any).MCS_CONSTANTS.API_URL
-      }/v1/exports/
-        ${this.props.match.params.exportId}/executions/
-        ${execution.id}/files/
-        technical_name=${execution.result.output_files[0]}
-        ?access_token=${encodeURI(getCookie('access_token'))}`;
+      }/v1/exports/${this.props.match.params.exportId}/executions/${
+        execution.id
+      }/files/technical_name=${
+        execution.result.output_files[0]
+      }?access_token=${encodeURI(getCookie('access_token'))}`;
     }
   };
 
