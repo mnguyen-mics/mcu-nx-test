@@ -64,6 +64,22 @@ class TimelinePage extends React.Component<JoinedProps> {
     }
   }
 
+  componentWillReceiveProps() {
+    const {
+      history,
+      cookies,
+      match: {
+        params: { organisationId, identifierId, identifierType },
+      },
+    } = this.props;
+    if (!identifierId && !identifierType && cookies.mics_vid) {
+      history.push(
+        `/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${
+          cookies.mics_vid
+        }`,
+      );
+    }
+  }
 
   onDatamartSelect = (datamart: DatamartResource) => {
     const { history, location } = this.props;
