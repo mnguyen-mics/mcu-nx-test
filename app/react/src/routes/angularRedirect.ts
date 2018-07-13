@@ -15,6 +15,14 @@ interface Redirect {
 const redirects: Redirect[] = [
   // campaigns
   {
+    from: '/campaigns/display',
+    to: campaignsDefinition.campaignDisplayList.path
+  },
+  {
+    from: '/campaigns/email',
+    to: campaignsDefinition.campaignEmailList.path
+  },
+  {
     from: '/campaigns/select-campaign-template',
     to: campaignsDefinition.campaignDisplayList.path
   },
