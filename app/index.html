@@ -57,23 +57,7 @@
     <div class="mcs-highlight"></div>
     <div class="mcs-warning"></div>
   </div>
-  <script>
-    function switchApp(newUrl) {
 
-      var angularContainer = document.getElementById("mcs-app");
-      var reactContainer = document.getElementById("mcs-react-app");
-
-      reactContainer.style.display = "block";
-    }
-
-    function onHashChange(location) {
-      return switchApp(location.newURL);
-    }
-
-    switchApp(window.location.href);
-    window.onhashchange = onHashChange;
-
-  </script>
 
   <!--[if lt IE 9]>
 <script src="angular/bower_components/es5-shim/es5-shim.js"></script>
