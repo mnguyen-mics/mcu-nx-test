@@ -1,21 +1,35 @@
+// import 'babel-polyfill';
+import 'regenerator-runtime/runtime';  //eslint-disable-line
+// https://github.com/redux-saga/redux-saga#using-umd-build-in-the-browser
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import hashHistory from 'react-router/lib/hashHistory';
-import { routerMiddleware } from 'react-router-redux';
+import createSagaMiddleware from 'redux-saga';
 
-import { api, logoutListener } from '../middleware';
+import { apiRequest, logoutListener } from '../middleware';
 import rootReducer from '../reducers';
+import sagas from '../state/sagas';
 
-// Apply the middleware to the store
-const reactRouterMiddleware = routerMiddleware(hashHistory);
+// Uncomment to ajust plugged middlewares accordingly
+// const IS_PROD = process.env.NODE_ENV !== 'production';
 
-export default function configureStore(preloadedState) {
+export default function configureStore() {
 
-  const composeMiddleware = compose(
-    applyMiddleware(thunkMiddleware, reactRouterMiddleware, api, logoutListener),
-    window.devToolsExtension ? window.devToolsExtension() : f => f, // eslint-disable-line no-undef
-    f => f);
+  const middlewares = [];
 
-  return createStore(rootReducer, preloadedState, composeMiddleware);
+  const sagaMiddleware = createSagaMiddleware();
 
+  middlewares.push(logoutListener);
+  middlewares.push(thunkMiddleware);
+  middlewares.push(apiRequest);
+  middlewares.push(sagaMiddleware);
+
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line no-undef, no-underscore-dangle
+
+  const store = createStore(rootReducer, /* preloadedState, */ composeEnhancers(
+    applyMiddleware(...middlewares),
+  ));
+
+  sagaMiddleware.run(sagas);
+
+  return store;
 }

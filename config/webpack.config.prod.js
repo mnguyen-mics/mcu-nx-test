@@ -2,8 +2,8 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const cssnano = require('cssnano');
+const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const paths = require('./paths');
 const configFactory = require('./webpack.config');
@@ -11,55 +11,42 @@ const configFactory = require('./webpack.config');
 const customFontPath = `${paths.public}/src/assets/fonts/`;
 
 const prodConfig = {
+  mode: 'production',
+
+  entry: {
+    'plateforme.alliancegravity.com/style-less': paths.appGravityStyleLess,
+    'app.teamjoin.fr/style-less': paths.appTeamjoinStyleLess,
+  },
 
   output: {
     filename: '[name].[chunkhash].js',
     path: paths.appDistPath,
-    publicPath: paths.publicDistPath
+    publicPath: paths.publicDistPath,
+  },
+
+  node: {
+    fs: 'empty',
   },
 
   plugins: [
+    new HardSourceWebpackPlugin(),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appDistHtml,
-      filename: '../index.html'
+      filename: '../index.html',
+      excludeAssets: [/(plateforme|app).*\/style.*.(css|js)/], // let's find a better way to handle style when we sign a new white label
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        screw_ie8: true, // React doesn't support IE8
-        warnings: false
-      },
-      mangle: {
-        screw_ie8: true
-      },
-      output: {
-        comments: true,
-        screw_ie8: true
-      }
-    }),
-    new OptimizeCSSAssetsPlugin({
-      cssProcessor: cssnano,
-      cssProcessorOptions: {
-        discardComments: {
-          removeAll: true,
-        },
-        // Run cssnano in safe mode to avoid
-        // potentially unsafe transformations.
-        safe: true
-      },
-      canPrint: false,
-    }),
+    new HtmlWebpackExcludeAssetsPlugin(),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
     }),
     new CopyWebpackPlugin([
       {
         from: 'app/react/src/assets',
-        to: 'src/assets'
-      }
-    ])
-  ]
-
+        to: 'src/assets',
+      },
+    ]),
+  ],
 };
 
 module.exports = merge(configFactory(true, customFontPath, true), prodConfig);

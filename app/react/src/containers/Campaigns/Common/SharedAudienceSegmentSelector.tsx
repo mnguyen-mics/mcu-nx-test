@@ -1,0 +1,116 @@
+import * as React from 'react';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { compose } from 'recompose';
+import { withRouter, RouteComponentProps } from 'react-router';
+import TableSelector, {
+  TableSelectorProps,
+} from '../../../components/ElementSelector/TableSelector';
+import { SearchFilter } from '../../../components/ElementSelector';
+import { DataColumnDefinition } from '../../../components/TableView/TableView';
+import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
+import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
+import CatalogService from '../../../services/CatalogService';
+import { AudienceSegmentServiceItemPublicResource } from '../../../models/servicemanagement/PublicServiceItemResource';
+import { DataResponse } from '../../../services/ApiService';
+
+const SegmentTableSelector: React.ComponentClass<
+  TableSelectorProps<AudienceSegmentServiceItemPublicResource>
+  > = TableSelector;
+
+const messages = defineMessages({
+  segmentSelectorTitle: {
+    id: 'shared-segment-selector-title',
+    defaultMessage: 'Add an audience',
+  },
+  segmentSelectorSearchPlaceholder: {
+    id: 'shared-segment-selector-search-placeholder',
+    defaultMessage: 'Search audience',
+  },
+  segmentSelectorColumnName: {
+    id: 'shared-segment-selector-column-name',
+    defaultMessage: 'Name',
+  },
+  segmentSelectorColumnUserPoints: {
+    id: 'shared-segment-selector-column-userPoints',
+    defaultMessage: 'User Points',
+  },
+  segmentSelectorColumnCookieIds: {
+    id: 'shared-segment-selector.column-cookieIds',
+    defaultMessage: 'Desktop Cookie Ids',
+  },
+});
+
+export interface SharedAudienceSegmentSelectorProps {
+  selectedSegmentIds: string[];
+  save: (segments: AudienceSegmentServiceItemPublicResource[]) => void;
+  close: () => void;
+}
+
+interface MapStateProps {
+  defaultDatamart: (organisationId: string) => { id: string };
+  workspace: (organisationId: string) => UserWorkspaceResource;
+}
+
+type Props = SharedAudienceSegmentSelectorProps &
+  InjectedIntlProps &
+  MapStateProps &
+  InjectedDatamartProps &
+  RouteComponentProps<{ organisationId: string }>;
+
+class SharedAudienceSegmentSelector extends React.Component<Props> {
+
+  saveSegments = (
+    segmentIds: string[],
+    segments: AudienceSegmentServiceItemPublicResource[],
+  ) => {
+    this.props.save(segments);
+  };
+
+  fetchSegments = (filter: SearchFilter) => {
+    const { match: { params: { organisationId } } } = this.props;
+
+    return CatalogService.getAudienceSegmentServices(
+      organisationId
+    );
+  };
+
+  fetchSegment = (segmentId: string) => {
+    return CatalogService.getService(segmentId) as Promise<DataResponse<AudienceSegmentServiceItemPublicResource>>;
+  };
+
+  render() {
+    const { selectedSegmentIds, close, intl: { formatMessage } } = this.props;
+
+    const columns: Array<DataColumnDefinition<AudienceSegmentServiceItemPublicResource>> = [
+      {
+        intlMessage: messages.segmentSelectorColumnName,
+        key: 'name',
+        render: (text, record) => <span>{record.name}</span>,
+      },
+    ];
+
+    return (
+      <SegmentTableSelector
+        actionBarTitle={formatMessage(messages.segmentSelectorTitle)}
+        displayFiltering={false}
+        searchPlaceholder={formatMessage(
+          messages.segmentSelectorSearchPlaceholder,
+        )}
+        selectedIds={selectedSegmentIds}
+        defaultSelectedKey={'segment_id'}
+        fetchDataList={this.fetchSegments}
+        fetchData={this.fetchSegment}
+        columnsDefinitions={columns}
+        save={this.saveSegments}
+        close={close}
+        displayDatamartSelector={false}
+      />
+    );
+  }
+}
+
+export default compose<Props, SharedAudienceSegmentSelectorProps>(
+  withRouter,
+  injectIntl,
+  injectDatamart,
+)(SharedAudienceSegmentSelector);

@@ -1,11 +1,62 @@
 (function(){
   'use strict';
 
-  var MCS_CONSTANTS = {
+ const defaultFeatures = [
+    'audience.segments',
+    'audience.partitions',
+    'audience.segment_builder',
+    'audience.monitoring',
+    'campaigns.display',
+    'campaigns.email',
+    'campaigns.goals',
+    'campaignsSettings.bid_optimizers',
+    'campaignsSettings.attribution_models',
+    'campaignsSettings.email_routers',
+    'campaignsSettings.recommenders',
+    'automations',
+    'creatives.display',
+    'creatives.native',
+    'creatives.email',
+    'library.placements',
+    'library.keywords',
+    'library.catalog',
+    'library.ad_layouts',
+    'library.stylesheets',
+    'library.assets',
+    'library.exports',
+    'datastudio.query_tool',
+    'datastudio.report',
+    'datastudio.exports',
+    'organisationSettings.labels',
+    'organisationSettings.users',
+    'organisationSettings.settings',
+    'datamartSettings.visit_analyzers',
+    'datamartSettings.sites',
+    'datamartSettings.mobile_applications',
+    'datamartSettings.datamarts',
+    'datamartSettings.service_usage_report',
+    'accountSettings.profile',
+    'accountSettings.api_tokens'
+  ];
+
+ const gravityFeatures = [
+    'audience.segments',
+    'campaigns.display',
+    'campaigns.display.edition.audience_catalog',
+    'creatives.display',
+    'organisationSettings.labels',
+    'organisationSettings.users',
+    'organisationSettings.settings',
+    'accountSettings.profile',
+  ]
+
+ var MCS_CONSTANTS = {
     NAVIGATOR_URL: 'http://navigator.mediarithmics.local',
-    API_URL: 'http://api.mediarithmics.local'
+    API_URL: 'http://api.mediarithmics.local',
+    FEATURES: defaultFeatures,
+    SITE_NAME: 'mediarithmics | navigator'
   };
 
-  window.MCS_CONSTANTS = MCS_CONSTANTS;
+ window.MCS_CONSTANTS = MCS_CONSTANTS;
 
 })();

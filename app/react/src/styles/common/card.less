@@ -1,0 +1,326 @@
+@import 'application.less';
+
+.mcs-card-container {
+  transition: width 0.5s, transition 0.5s;
+  overflow: hidden;
+
+  &.compact {
+    padding: 0;
+  }
+
+  &.actionable-card {
+    .actions {
+      color: @primary-color;
+      text-align: right;
+    }
+  }
+
+  &.actionable-card {
+    .actions {
+      color: @info-color;
+    }
+  }
+
+  &.hoverable-card {
+    .hover {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      opacity: 0;
+      transition: all 100ms ease-in;
+      .icon {
+        margin-right: 0;
+      }
+    }
+  }
+  &.hoverable-card:hover {
+    .hover {
+      opacity: 1;
+     
+    }
+  }
+
+  &.feed-card {
+    height: 146px;
+    .top-menu {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      .icon {
+        margin-right: 0;
+      }
+    }
+    .wrapper {
+      padding: 10px;
+      .card-header {
+        display: inline-block;
+        width: 100%;
+        .title {
+          font-size: 1.2em;
+          font-weight: 500;
+          font-style: normal;
+          font-stretch: normal;
+          line-height: normal;
+          letter-spacing: normal;
+          color: @primary-color;
+          line-height: 45px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .image-title {
+          width: 45px;
+          height: 45px;
+          margin-right: 7px;
+          float: left;
+        }
+        .image-placeholder {
+          margin-right: 7px;
+          float: left;
+          font-style: normal;
+          vertical-align: baseline;
+          text-align: center;
+          text-transform: none;
+          line-height: 1;
+          width: 45px;
+          height: 45px;
+          border-radius: 2px;
+          background: linear-gradient(149deg, #dee4e8, #eceaea);
+          background-size: 400% 400%;
+          -webkit-animation: loadingAnimation 1s ease infinite;
+          -moz-animation: loadingAnimation 1s ease infinite;
+          -o-animation: loadingAnimation 1s ease infinite;
+          animation: loadingAnimation 1s ease infinite;
+        }
+      }
+      .content {
+        padding: 20px 0;
+      }
+    }
+    
+  }
+
+  .mcs-content-element.container;
+  margin-bottom: 40px;
+
+  hr {
+    margin-bottom: 14px;
+  }
+
+  .border-top {
+    margin: 0 -20px !important;
+    padding: 12px 15px;
+    border-top: @border-width-base @border-style-base @border-color-split;
+  }
+
+  .section {
+    .section-ts {
+      letter-spacing: 0.3px;
+      font-size: 0.9em;
+      text-align: left;
+      color: darken(@normal-color, 30);
+    }
+    .section-title {
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      font-size: 1.1em;
+      text-align: left;
+      color: @primary-color;
+      float: left;
+    }
+    .section-cta {
+      float: right;
+    }
+  }
+
+  .sm-footer {
+    margin-bottom: -15px !important;
+  }
+
+  .timed-footer {
+    color: darken(@normal-color, 30);
+    letter-spacing: 0.3px;
+    font-size: 0.8em;
+  }
+
+  .table-line {
+    margin: 3px 0;
+    .table-right {
+      color: @primary-color;
+      text-align: left;
+      width: 50%;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: noWrap;
+    }
+
+    .table-left {
+      text-align: left;
+      width: 50%;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: noWrap;
+    }
+
+    .title {
+      font-weight: 500;
+      color: @primary-color;
+    }
+
+    .subtitle {
+      color: #919191;
+    }
+
+    .icon {
+      font-size: 2.5em;
+      color: #919191;
+      width: 30px;
+    }
+
+    .icon-left {
+      float: left;
+    }
+
+    .info-right {
+      div {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: noWrap;
+      }
+    }
+  }
+
+  .button-sm {
+    color: @info-color;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+  }
+
+  .event-properties-list {
+    display: block;
+    float: left;
+    margin-top: 20px;
+    word-break: break-all;
+    .event-properties-list-item {
+      .event-properties-sublist {
+        border-left: 3px solid #e1e1e1;
+        margin-left: 40px;
+        padding-left: 5px;
+      }
+    }
+  }
+
+  .card-tag {
+    margin: 3px 0;
+    background-color: #f9f9f9;
+    border: solid 1px #e1e1e1;
+    border-radius: 8px;
+  }
+
+  .card-tag.alone {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: noWrap;
+  }
+  .empty {
+    font-style: italic;
+    font-size: 0.8em;
+    color: lighten(#919191, 10%);
+  }
+}
+
+.mcs-card-header {
+  margin-bottom: 14px;
+  // border-bottom: 1px solid #e8e8e8;
+}
+
+.mcs-card-title {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-align: left;
+  color: @primary-color;
+  line-height: 40px;
+}
+
+.mcs-card-button {
+  float: right;
+  margin-bottom: 20px;
+  div {
+    margin-left: 8px;
+  }
+  // button:last-child {
+  //   margin-right: 0px;
+  // }
+}
+
+.mcs-card-inner-action {
+  text-align: center;
+  color: @info-color;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+
+.mcs-card-footer {
+  text-align: center;
+  width: 100%;
+  padding-top: 20px;
+  .mcs-card-footer-link {
+    .mcs-card-inner-action;
+  }
+}
+
+.mcs-table-container-full {
+  border-radius: 2px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+
+  .mcs-table-header {
+    width: 100%;
+    background-color: @primary-color;
+    padding: 30px 10px;
+    border-radius: 2px;
+    margin-bottom: 0px;
+    .section {
+      color: white;
+      text-align: center;
+      .icon {
+        font-size: 5em;
+        color: @info-color;
+      }
+      .title {
+        font-size: 1.5em;
+        font-weight: normal;
+      }
+      .number {
+        font-size: 2.6em;
+        font-weight: bold;
+      }
+    }
+    .section.border {
+      border-right: 1px solid rgba(215, 215, 215, 0.49);
+    }
+  }
+
+  .mcs-table-body {
+    padding: 0px 10px 20px 10px;
+  }
+}
+
+.selected-rows-btn {
+  color: @info-color;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+.selected-rows-alert {
+  background-color: fade(@warning-color, 15%);
+  border-color: fade(@warning-color, 50%);
+}

@@ -1,25 +1,15 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
 const paths = require('./paths');
-const babelOptions = require('./babel');
 const pkg = require('../package.json');
 
-const extractSass = new ExtractTextPlugin({
-  filename: '[name].[chunkhash].css',
-  disable: process.env.NODE_ENV === 'development'
-});
-
-const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
-
+const configFactory = (isProduction, customFontPath, lintFailOnError) => {
   return {
-
     entry: {
-      babel: 'babel-polyfill',
       app: path.join(paths.reactAppSrc, '/index.js'),
-      style: paths.appStyle,
-      'react-vendors': Object.keys(pkg.dependencies)
+      'style-less': paths.appStyleLess,
+      'react-vendors': Object.keys(pkg.dependencies),
     },
 
     module: {
@@ -30,33 +20,37 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
           use: {
             loader: 'eslint-loader',
             query: {
-              failOnError: eslintFailOnError
-            }
+              failOnError: lintFailOnError,
+            },
           },
-          enforce: 'pre'
+          enforce: 'pre',
         },
         {
-          test: /\.js$/,
+          test: /\.ts$/,
           include: paths.reactAppSrc,
           use: {
-            loader: 'babel-loader',
-            options: babelOptions
-          }
+            loader: 'tslint-loader',
+            query: {
+              failOnError: lintFailOnError,
+            },
+          },
+          enforce: 'pre',
         },
         {
-          test: /\.scss$/,
-          loader: extractSass.extract({
-            use: [
-              'css-loader?sourceMap',
-              'resolve-url-loader',
-              `sass-loader?${JSON.stringify({
-                sourceMap: false,
-                includePaths: [paths.appNodeModules],
-                data: `$custom_font_path: '${customFontPath}';`
-              })}`
-            ],
-            fallback: 'style-loader'
-          })
+          test: /\.jsx?$/,
+          include: paths.reactAppSrc,
+          loader: 'babel-loader',
+        },
+        {
+          test: /\.tsx?$/,
+          include: paths.reactAppSrc,
+          use: ['babel-loader', 'ts-loader'],
+        },
+        {
+          test: /\.less$/i,
+          loader: ExtractTextPlugin.extract({
+            use: ['css-loader', 'less-loader'],
+          }),
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
@@ -64,8 +58,10 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
             {
               loader: 'file-loader',
               query: {
-                name: `${isProduction ? '/src/assets/images/' : ''}[name].[ext]`
-              }
+                name: `${
+                  isProduction ? '/src/assets/images/' : ''
+                }[name].[ext]`,
+              },
             },
             {
               loader: 'image-webpack-loader',
@@ -76,36 +72,35 @@ const configFactory = (isProduction, customFontPath, eslintFailOnError) => {
                 },
                 optipng: {
                   optimizationLevel: 7,
-                }
-              }
-            }
-          ]
+                },
+              },
+            },
+          ],
         },
         {
           test: /\.(eot|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/,
-          use: 'url-loader'
-        }
-      ]
+          use: 'url-loader',
+        },
+      ],
     },
 
     resolve: {
-      modules: [paths.appNodeModules]
+      alias: {
+        Containers: path.resolve(__dirname, 'app/react/src/containers/'),
+      },
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
     },
 
     plugins: [
-      extractSass,
+      new ExtractTextPlugin('[name].css'),
       new webpack.DefinePlugin({
-        PUBLIC_PATH: JSON.stringify('react')
+        PUBLIC_PATH: JSON.stringify('react'),
       }),
       new webpack.DefinePlugin({
-        PUBLIC_URL: JSON.stringify('/v2')
+        PUBLIC_URL: JSON.stringify('/v2'),
       }),
-      new webpack.optimize.CommonsChunkPlugin({
-        names: ['react-vendors', 'manifest']
-      })
-    ]
+    ],
   };
-
 };
 
 module.exports = configFactory;

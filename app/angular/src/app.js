@@ -2,15 +2,16 @@ define(['app-setup', 'angularAMD', 'jquery'],
   function (app, angularAMD, jQuery) {
     'use strict';
 
-    jQuery("#mics_loading").remove();
+    // jQuery("#mics_loading").remove();
 
-    app.run(['$rootScope', '$location', '$log', 'core/common/auth/AuthenticationService', 'core/common/auth/Session', "lodash", "core/login/constants", "core/common/ErrorReporting","$state","$stateParams", "$urlRouter",
-      function ($rootScope, $location, $log, AuthenticationService, Session, _, LoginConstants, ErrorReporting, $state, $stateParams, $urlRouter ) {
+    app.run(['$rootScope', '$window', '$location', '$log', 'core/common/auth/AuthenticationService', 'core/common/auth/Session', "lodash", "core/login/constants", "core/common/ErrorReporting","$state","$stateParams", "$urlRouter",
+      function ($rootScope, $window, $location, $log, AuthenticationService, Session, _, LoginConstants, ErrorReporting, $state, $stateParams, $urlRouter ) {
         var defaults = _.partialRight(_.assign, function (a, b) {
           return typeof a === 'undefined' ? b : a;
         });
 
         ErrorReporting.setup();
+        //
 
         function updateWorkspaces() {
           $log.debug("app.js updateWorkspaces !", $state.current, $state.params);
@@ -19,10 +20,11 @@ define(['app-setup', 'angularAMD', 'jquery'],
           var workspace = Session.getCurrentWorkspace();
           $rootScope.currentWorkspace =  workspace;
           $rootScope.currentWorkspaceId = "o" + workspace.organisation_id + "d" + workspace.datamart_id;
+          $rootScope.currentV2WorkspaceId = Session.getV2WorkspacePrefixUrl();
           var toStateParams = _.extend({} , $stateParams);
           toStateParams.organisation_id = $rootScope.currentWorkspaceId;
           $log.debug("redirect to new state", toStateParams);
-          if($state.current.name.indexOf("init-session") === -1) {
+          if ($state.current.name.indexOf("init-session") === -1 && !$location.url().match('/v2') && !$location.url().match('/login')) {
             $state.go($state.current, toStateParams, {
               location: true, notify: true, reload: true
             });
@@ -31,21 +33,48 @@ define(['app-setup', 'angularAMD', 'jquery'],
 
 
         if (AuthenticationService.hasAccessToken()) {
-          if (AuthenticationService.hasRefreshToken()) {
-            AuthenticationService.setupTokenRefresher();
-          }
+          // Done by react
+          // if (AuthenticationService.hasRefreshToken()) {
+          //   AuthenticationService.setupTokenRefresher();
+          // }
           if (!Session.isInitialized()) {
             $log.debug("not initialized");
             AuthenticationService.pushPendingPath($location.url());
-            $location.path('/init-session');
+            // if (!$location.url().match('/v2')) {
+              // $location.path('/init-session');
+            // } else {
+              Session.init($stateParams.organisationId).then(function () {
+                if (!$location.url().match('/v2')) {
+                  $location.path(AuthenticationService.popPendingPath());
+                }
+                // var event = new Event(LoginConstants.LOGIN_SUCCESS);
+                // $window.dispatchEvent(event);
+                // $rootScope.$broadcast(LoginConstants.LOGIN_SUCCESS);
+              });
+            // }
           }
-        } else if (AuthenticationService.hasRefreshToken()) {
-          $log.debug("has refresh token -> remember-me");
-          // Keep the current path in memory
-          AuthenticationService.pushPendingPath($location.url());
-          // Redirect to the remember-me page
-          $location.path('/remember-me');
-        } else {
+        } 
+        // Auto login based on refresh token is done by react
+        // But angular and react are not really synchronise
+        // osef if its a route handled by angular, no auto login
+        // else if (AuthenticationService.hasRefreshToken()) {
+        //   $log.debug("has refresh token -> remember-me");
+        //   // Keep the current path in memory
+        //   AuthenticationService.pushPendingPath($location.url());
+        //   // Redirect to the remember-me page
+        //   AuthenticationService.createAccessToken().then(function () {
+        //     // success  redirect to the pending path
+        //     if (!$location.url().match('/v2')) {
+        //       $location.path(AuthenticationService.popPendingPath());
+        //     }
+
+        //   }, function() {
+        //     // failure : redirect to the login page
+        //     $location.path('/login');
+        //   });
+        //   // $location.path('/remember-me');
+        // } 
+        else {
           var parsedStateFromUrl = _($state.get()).find(function(s) {
             // http://stackoverflow.com/questions/29892353/angular-ui-router-resolve-state-from-url/30926025#30926025
 
@@ -58,10 +87,12 @@ define(['app-setup', 'angularAMD', 'jquery'],
           });
           $log.debug("parsed state from url : ", parsedStateFromUrl);
           if (!parsedStateFromUrl || !parsedStateFromUrl.publicUrl) {
-            $log.debug("not a public url, go to login");
-            AuthenticationService.pushPendingPath($location.url());
-            // Redirect to login
-            $location.path('/login');
+            if (!$location.url().match('/v2') && !$location.url().match('/login')) {
+              $log.debug("not a public url, go to login");
+              AuthenticationService.pushPendingPath($location.url());
+              // Redirect to login
+              $location.path('/login');
+            }
           }
         }
 
@@ -98,19 +129,39 @@ define(['app-setup', 'angularAMD', 'jquery'],
           if (toState.publicUrl) {
             $log.debug("nothing to check, public url !");
           } else {
-            if (!AuthenticationService.hasRefreshToken()) {
-              if (toState.url !== 'login') {
-                AuthenticationService.pushPendingPath($location.url());
-              }
-              // Redirect to login
-              $location.path('/login');
-            } else if (toParams.organisation_id !== fromParams.organisation_id && !!toParams.organisation_id) {
+            // if (!AuthenticationService.hasRefreshToken()) {
+            //   if (toState.url !== 'login') {
+            //     AuthenticationService.pushPendingPath($location.url());
+            //   }
+            //   // Redirect to login
+            //   $location.path('/login');
+            // } else 
+            if (toParams.organisation_id !== fromParams.organisation_id && !!toParams.organisation_id) {
               var workspace = Session.getCurrentWorkspace();
               if (workspace && ("o" + workspace.organisation_id + "d" + workspace.datamart_id === toParams.organisation_id || workspace.organisation_id === toParams.organisation_id)) {
                 $log.debug("done");
               } else if (toState.name !== 'logout') {
                 $log.debug("prevent");
                 event.preventDefault();
+
+                $log.debug('onStateChangeStart: window.organisationId=', window.organisationId);
+                if (!Session.isInitialized() && window.organisationId) {
+                  AuthenticationService.setRestangularAuthHeader();
+                  Session.init(window.organisationId).then(function() {
+                    Session.updateWorkspaceFromCurrentWorkspace(window.organisationId).then(function (result) {
+                      if (result) {
+                        $state.go(toState, toParams, {
+                          location: true, notify: true, reload: true
+                        });
+                      } else {
+                        $state.go(toState, toParams, {
+                          location: true, notify: false, reload: false
+                        });
+                      }
+                    });
+                  });
+                }
+
                 Session.updateWorkspaceFromCurrentWorkspace(toParams.organisation_id).then(function (result) {
                   if (result) {
                     $state.go(toState, toParams, {
@@ -130,5 +181,6 @@ define(['app-setup', 'angularAMD', 'jquery'],
     ]);
 
     angularAMD.bootstrap(app, true, document.body);
+    window.angularLoaded = true;
     return app;
   });

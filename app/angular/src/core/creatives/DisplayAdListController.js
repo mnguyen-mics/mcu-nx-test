@@ -11,8 +11,10 @@ define(['./module'], function (module) {
       /**
        * Variables
        */
-      $scope.organisationId = Session.getCurrentWorkspace().organisation_id;
-      $scope.creativeformat = null;
+
+      // redirect to v2
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/creatives/display');
+
       // Pagination
       $scope.currentPageCreative = 1;
       $scope.itemsPerPage = 10;
@@ -38,8 +40,8 @@ define(['./module'], function (module) {
         url: configuration.ADS_UPLOAD_URL + "?organisation_id=" + $scope.organisationId,
         filters: {
           mime_types: [
-            {title: "Image files", extensions: "jpg,jpeg,png,gif"},
-            {title: "Flash files", extensions: "swf"}
+            { title: "Image files", extensions: "jpg,jpeg,png,gif" },
+            { title: "Flash files", extensions: "swf" }
           ],
           max_file_size: "200kb"
         }
@@ -52,7 +54,7 @@ define(['./module'], function (module) {
       };
       // Creative Edit Url
       $scope.getEditUrlForCreative = _.memoize(function (creative) {
-        var result = {url: ""};
+        var result = { url: "" };
         var editorPromise = creativePluginService.getEditor(creative.editor_group_id, creative.editor_artifact_id);
         editorPromise.then(function success(editor) {
           result.url = editor.getEditPath(creative);

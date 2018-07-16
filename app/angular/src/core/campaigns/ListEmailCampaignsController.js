@@ -18,7 +18,9 @@ define(['./module'], function (module) {
     'CampaignAnalyticsReportService', 'core/campaigns/CampaignPluginService', 'core/common/files/ExportService',
     function ($scope, $location, $uibModal, $log, Restangular, d3, moment, DisplayCampaignService, Session, CampaignAnalyticsReportService, CampaignPluginService, ExportService) {
       var currentWorkspace = Session.getCurrentWorkspace();
-      $scope.currentOrgId = Session.getCurrentWorkspace().organisation_id;
+
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/email');
+
       $scope.currentPageEmailCampaign = 1;
       $scope.itemsPerPage = 10;
 
@@ -30,9 +32,9 @@ define(['./module'], function (module) {
 
       $scope.administrator = currentWorkspace.administrator;
 
-      var params = {organisation_id: currentWorkspace.organisation_id};
+      var params = { organisation_id: currentWorkspace.organisation_id };
       if ($scope.administrator) {
-        params = {administration_id: currentWorkspace.organisation_id};
+        params = { administration_id: currentWorkspace.organisation_id };
       }
 
       $scope.emailCampaigns = [];

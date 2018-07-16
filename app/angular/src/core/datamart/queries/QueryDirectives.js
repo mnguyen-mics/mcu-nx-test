@@ -15,7 +15,9 @@ define(['./module'], function (module) {
                     // same as '=condition'
                     queryContainer: '=',
                     statisticsEnabled: '=',
-                    selectedValuesEnabled: '='
+                    selectedValuesEnabled: '=',
+                    datamartId: '=',
+                    organisationId: '=',
                 },
                 link: function ($scope, element, attr) {
 
@@ -25,15 +27,24 @@ define(['./module'], function (module) {
                       throw "Missing queryContainer";
                     }
 
+                    // if (!$scope.organisationId){
+                    //     $scope.error = "Cannot load query-tool instance";
+                    //     throw "Missing organisationId";
+                    // }
+                    // if (!$scope.datamartId){
+                    //     $scope.error = "Cannot load query-tool instance";
+                    //     throw "Missing datamardId";
+                    // }
+
                     var organisationId = Session.getCurrentWorkspace().organisation_id;
 
                     //dataTransfer hack : The jQuery event object does not have a dataTransfer property... true, but one can try:
                     angular.element.event.props.push('dataTransfer');
-
+                 
                     $scope.statistics = {total: 0, hasUserAccountId: 0, hasEmail: 0, hasCookie: 0};
 
                     var fetchPropertySelectors = function (forceReload) {
-                        PropertySelectorService.getPropertySelectors(forceReload).then(function (result) {
+                        PropertySelectorService.getPropertySelectors(forceReload, $scope.datamartId).then(function (result) {
                             $scope.criteriaContainer = CriteriaContainer.loadPropertySelectors(result);
                         });
                     };
@@ -102,7 +113,7 @@ define(['./module'], function (module) {
                     };
 
                     $scope.goToTimeline = function (userPointId) {
-                        return "/#" + Session.getWorkspacePrefixUrl() + "/datamart/users/" + userPointId;
+                        return "/#" + Session.getV2WorkspacePrefixUrl() + "/audience/timeline/user_point_id/" + userPointId;
                     };
 
                     $scope.addGroup = function (queryContainer, $event) {
@@ -477,7 +488,7 @@ define(['./module'], function (module) {
 
               } else if (scope.condition.value.property_selector_name === 'SEGMENT_ID'){
                   //Let's fetch datamart's audience segment's resources
-                Restangular.all("audience_segments").getList({"datamart_id": Session.getCurrentDatamartId(),persisted:true, "with_source_datamarts":1, max_results: 2000}).then(function(segments) {
+                Restangular.all("audience_segments").getList({"datamart_id": Session.getCurrentDatamartId(),persisted:true,"with_source_datamarts":1,max_results:2000}).then(function(segments) {
                   var currentDatamart = Session.getCurrentWorkspace().datamart;
                   var sourcesDatamart = Session.getCurrentWorkspace().sourcesDatamart;
 

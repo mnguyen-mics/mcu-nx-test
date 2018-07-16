@@ -1,0 +1,35 @@
+@import 'helpers.less';
+
+.mcs-login-container {
+  .mcs-centered-container;
+  background-image: radial-gradient(circle at 49% 13%, @info-color , @primary-color);
+
+  .login-frame {
+    background-color: @layout-body-background ;
+    max-width: 350px;
+    padding: 30px 50px 30px 50px;
+
+    .login-form {
+      max-width: 300px;
+
+      .image-wrapper {
+        width: 100%;
+        text-align: center;
+        .login-logo {
+          padding-bottom:37px;
+          max-width: 100%;
+          max-height: 150px;
+        }
+      }
+      
+
+      .login-form-forgot {
+        float: right; 
+      }
+
+      .login-form-button {
+        width: 100%;
+      }
+    }
+  }
+}

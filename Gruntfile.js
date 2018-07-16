@@ -49,6 +49,8 @@ module.exports = function (grunt) {
 
   var isSnapshot = version.indexOf("SNAPSHOT") !== -1;
 
+  var betaArtifact = grunt.option('beta');
+
   var webpack = require('webpack');
   var webpackMiddleware = require("webpack-dev-middleware");
   var webpackDevConfig = require('./config/webpack.config.dev.js');
@@ -82,7 +84,7 @@ module.exports = function (grunt) {
       release: {
         options: {
           groupId: "com.mediarithmics.web",
-          artifactId: "navigator",
+          artifactId: betaArtifact ? "navigator-beta" : "navigator",
           version: version,
           packaging: 'zip',
           auth: {
@@ -105,9 +107,9 @@ module.exports = function (grunt) {
           livereload: true
         }
       },
-      jsTest: {
-        files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint:test', 'karma']
+      compass: { 
+        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'], 
+        tasks: ['compass:server', 'autoprefixer'] 
       },
       genRequireJsFiles: {
         files: ['/app/**/module.json'],
@@ -449,12 +451,12 @@ module.exports = function (grunt) {
         actions: [
           {
             name: 'requirejs-newpath',
-            search: '<script data-main=".*" src="angular/bower_components/requirejs/require.js"></script>',
+            search: "window.mainRev='.*'",
             replace: function (match) {
-              var regex = /data-main="(.*)" /;
+              var regex = /window.mainRev=\'(.*)\'/;
               var result = regex.exec(match);
               var revFileName = grunt.filerev.summary['dist/scripts/' + result[1]].replace('dist', '');
-              return '<script data-main="' + revFileName + '" src="angular/bower_components/requirejs/require.js"></script>';
+              return "window.mainRev='"+ revFileName +"'";
             }
 
           }
@@ -494,13 +496,13 @@ module.exports = function (grunt) {
     // Run some tasks in parallel to speed up the build process
     concurrent: {
       server: [
-        // 'compass:server'
+        'compass:server'
       ],
       test: [
         'compass'
       ],
       dist: [
-        // 'compass:dist',
+        'compass:dist',
         'imagemin',
         'svgmin'
       ]
@@ -520,13 +522,6 @@ module.exports = function (grunt) {
     //   }
     // },
 
-    // Test settings
-    karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
-      }
-    },
 
     genRequireJsFiles: {
       config: {
@@ -544,9 +539,11 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('versionFile', function () {
+  grunt.registerTask('versionFile', function (target) {
     var path = require("path");
-    grunt.file.write(path.join(grunt.config('yeoman.dist'), "version.txt"), version);
+    var targetPathConfig = grunt.config('yeoman.' + target);
+    grunt.file.write(path.join(targetPathConfig, "version.txt"), version);
+    grunt.file.write(path.join(targetPathConfig, "version.json"), JSON.stringify({ version: version }));
   });
 
   grunt.registerMultiTask('genRequireJsFiles', function () {
@@ -601,6 +598,7 @@ module.exports = function (grunt) {
       'genRequireJsFiles:config',
       'concurrent:server',
       'connect:livereload',
+      'versionFile:app',
       'watch'
     ]);
   });
@@ -615,8 +613,7 @@ module.exports = function (grunt) {
     'jshint:all',
     'genRequireJsFiles:config',
     'concurrent:test',
-    'connect:test',
-    'karma'
+    'connect:test'
   ]);
 
   grunt.registerTask('build', [
@@ -638,7 +635,7 @@ module.exports = function (grunt) {
     'copy:generated_iab',
     'webpack:build',
     'htmlmin',
-    'versionFile',
+    'versionFile:dist',
     'compress'
   ]);
 

@@ -1,0 +1,305 @@
+import * as React from 'react';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { compose } from 'recompose';
+import { WrappedFieldProps } from 'redux-form';
+
+import messages from '../../messages';
+import withValidators, {
+  ValidatorProps,
+} from '../../../../../../components/Form/withValidators';
+import withNormalizer, {
+  NormalizerProps,
+} from '../../../../../../components/Form/withNormalizer';
+import {
+  FormSection,
+  FormSelectField,
+} from '../../../../../../components/Form';
+import DefaultSelect from '../../../../../../components/Form/FormSelect/DefaultSelect';
+import { AdGroupResource } from '../../../../../../models/campaign/display';
+import { TargetedMedia } from '../../../../../../models/campaign/constants';
+import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
+
+interface DeviceFormSectionProps
+  extends WrappedFieldProps,
+    ReduxFormChangeProps {
+  initialValues: Partial<AdGroupResource>;
+}
+
+type Props = DeviceFormSectionProps &
+  InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps;
+
+interface State {
+  displayAdvancedSection: boolean;
+  mediaValue?: TargetedMedia;
+}
+
+class DeviceFormSection extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      displayAdvancedSection: false,
+      mediaValue: this.props.initialValues.targeted_medias,
+    };
+  }
+
+  toggleAdvancedSection = () => {
+    this.setState({
+      displayAdvancedSection: !this.state.displayAdvancedSection,
+    });
+  };
+
+  operatingSystems = () => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    return [
+      {
+        value: 'ALL',
+        title: formatMessage(messages.contentSectionDeviceOSAll),
+      },
+      {
+        value: 'IOS',
+        title: formatMessage(messages.contentSectionDeviceOSiOS),
+      },
+      {
+        value: 'ANDROID',
+        title: formatMessage(messages.contentSectionDeviceOSAndroid),
+      },
+      {
+        value: 'WINDOWS_PHONE',
+        title: formatMessage(messages.contentSectionDeviceOSWindowsPhone),
+      },
+    ];
+  };
+
+  medias = () => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    return [
+      {
+        value: 'WEB',
+        title: formatMessage(messages.contentSectionDeviceMediaTypeWebsite),
+      },
+      {
+        value: 'MOBILE_APP',
+        title: formatMessage(messages.contentSectionDeviceMediaTypeMobileApp),
+      },
+    ];
+  };
+
+  devices = () => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    const { mediaValue } = this.state;
+    return [
+      {
+        value: 'ALL',
+        title: formatMessage(messages.contentSectionDeviceTypeAll),
+        disabled: mediaValue === 'MOBILE_APP',
+      },
+      {
+        value: 'ONLY_DESKTOP',
+        title: formatMessage(messages.contentSectionDeviceTypeDesktop),
+        disabled: mediaValue === 'MOBILE_APP',
+      },
+      {
+        value: 'ONLY_MOBILE',
+        title: formatMessage(messages.contentSectionDeviceTypeMobile),
+      },
+      {
+        value: 'ONLY_TABLET',
+        title: formatMessage(messages.contentSectionDeviceTypeTablet),
+      },
+      {
+        value: 'MOBILE_AND_TABLET',
+        title: formatMessage(messages.contentSectionDeviceTypeMobileAndTablet),
+      },
+    ];
+  };
+
+  connectionTypes = () => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    const { mediaValue } = this.state;
+    return [
+      {
+        value: 'ALL',
+        title: formatMessage(messages.contentSectionDeviceConnectionTypeAll),
+      },
+      {
+        value: 'ETHERNET',
+        title: formatMessage(
+          messages.contentSectionDeviceConnectionTypeEthernet,
+        ),
+        disabled: mediaValue === 'MOBILE_APP',
+      },
+      {
+        value: 'WIFI',
+        title: formatMessage(messages.contentSectionDeviceConnectionTypeWifi),
+      },
+      {
+        value: 'CELLULAR_NETWORK_2G',
+        title: formatMessage(messages.contentSectionDeviceConnectionType2G),
+      },
+      {
+        value: 'CELLULAR_NETWORK_3G',
+        title: formatMessage(messages.contentSectionDeviceConnectionType3G),
+      },
+      {
+        value: 'CELLULAR_NETWORK_4G',
+        title: formatMessage(messages.contentSectionDeviceConnectionType4G),
+      },
+    ];
+  };
+
+  browserFamilies = () => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    return [
+      {
+        value: 'ALL',
+        title: formatMessage(messages.contentSectionDeviceBrowserAll),
+      },
+      {
+        value: 'CHROME',
+        title: formatMessage(messages.contentSectionDeviceBrowserChrome),
+      },
+      {
+        value: 'FIREFOX',
+        title: formatMessage(messages.contentSectionDeviceBrowserFirefox),
+      },
+      {
+        value: 'SAFARI',
+        title: formatMessage(messages.contentSectionDeviceBrowserSafari),
+      },
+      {
+        value: 'INTERNET_EXPLORER',
+        title: formatMessage(messages.contentSectionDeviceBrowserIE),
+      },
+      {
+        value: 'OPERA',
+        title: formatMessage(messages.contentSectionDeviceBrowserOpera),
+      },
+    ];
+  };
+
+  onMediaChange = (value: TargetedMedia) => {
+    this.setState({
+      mediaValue: value,
+    });
+    this.props.formChange(
+      'adGroup.targeted_devices',
+      value === 'WEB' ? 'ALL' : 'ONLY_MOBILE',
+    );
+    this.props.formChange('adGroup.targeted_operating_systems', 'ALL');
+    this.props.formChange('adGroup.targeted_connection_types', 'ALL');
+    this.props.formChange('adGroup.targeted_browser_families', 'ALL');
+  };
+
+  render() {
+    const {
+      fieldValidators: { isRequired },
+      intl: { formatMessage },
+    } = this.props;
+
+    return (
+      <div>
+        <FormSection
+          subtitle={messages.sectionSubtitleDevice}
+          title={messages.sectionTitleDevice}
+        />
+
+        <div>
+          <FormSelectField
+            name="adGroup.targeted_medias"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(messages.contentSectionDeviceMediaTypeLabel),
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(
+                messages.contentSectionDeviceMediaTypeTooltip,
+              ),
+            }}
+            selectProps={{
+              onSelect: this.onMediaChange,
+            }}
+            options={this.medias()}
+          />
+
+          <FormSelectField
+            name="adGroup.targeted_devices"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(messages.contentSectionDeviceTypeLabel),
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.contentSectionDeviceTypeTooltip),
+            }}
+            options={this.devices()}
+          />
+
+          <FormSelectField
+            name="adGroup.targeted_operating_systems"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(messages.contentSectionDeviceOSLabel),
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.contentSectionDeviceOSTooltip),
+            }}
+            options={this.operatingSystems()}
+          />
+
+          <FormSelectField
+            name="adGroup.targeted_connection_types"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(
+                messages.contentSectionDeviceConnectionTypeLabel,
+              ),
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(
+                messages.contentSectionDeviceConnectionTypeTooltip,
+              ),
+            }}
+            options={this.connectionTypes()}
+          />
+
+          <FormSelectField
+            name="adGroup.targeted_browser_families"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(messages.contentSectionDeviceBrowserLabel),
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.contentSectionDeviceBrowserTooltip),
+            }}
+            options={this.browserFamilies()}
+          />
+        </div>
+      </div>
+    );
+  }
+}
+
+export default compose<Props, any>(injectIntl, withValidators, withNormalizer)(
+  DeviceFormSection,
+);
