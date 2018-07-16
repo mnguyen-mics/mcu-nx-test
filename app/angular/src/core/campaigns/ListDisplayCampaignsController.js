@@ -41,9 +41,6 @@ define(['./module'], function (module) {
       var currentWorkspace = Session.getCurrentWorkspace();
 
       $location.path(Session.getV2WorkspacePrefixUrl() + '/campaigns/display');
-
-     
-      
     }
   ]);
 
