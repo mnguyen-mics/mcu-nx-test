@@ -99,7 +99,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
   close = () => {
     const { history, match: { params: { organisationId } } } = this.props;
 
-    const url = `/v2/o/${organisationId}/library/placements`;
+    const url = `/v2/o/${organisationId}/library/placementlist`;
 
     return history.push(url);
   };
@@ -160,7 +160,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.placements),
-        url: `/v2/o/${organisationId}/library/placements`,
+        url: `/v2/o/${organisationId}/library/placementlist`,
       },
       {
         name: placementListName,

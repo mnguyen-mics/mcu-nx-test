@@ -15,3 +15,14 @@ export interface DealsListResource {
     name: string;
     technical_name?: string;
   }
+
+  export interface DealResource {
+    id: string;
+    value: string;
+    organisation_id: string;
+    ad_exchange_id: string;
+    display_network_id: string;
+    floor_price: string;
+    currency: string;
+    deal_list_id?: string;
+  }

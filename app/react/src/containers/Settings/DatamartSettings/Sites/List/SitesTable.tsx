@@ -1,29 +1,33 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import moment from 'moment';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import {
   EmptyTableView,
   TableViewFilters,
 } from '../../../../../components/TableView';
 import messages from './messages';
-import { SiteResource } from '../../../../../models/settings/settings';
+import { ChannelResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
+import { MultiSelectProps } from '../../../../../components/MultiSelect';
 
 export interface SitesTableProps {
   isFetchingSites: boolean;
-  dataSource: SiteResource[];
+  dataSource: ChannelResource[];
   totalSites: number;
   noSiteYet: boolean;
   onFilterChange: (a: Partial<Filter>) => void;
-  onArchiveSite: (a: SiteResource) => void;
-  onEditSite: (a: SiteResource) => void;
+  onArchiveSite: (a: ChannelResource) => void;
+  onEditSite: (a: ChannelResource) => void;
   filter: Filter;
+  filtersOptions: Array<MultiSelectProps<any>>;
 }
 
-type Props = SitesTableProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
+type Props = SitesTableProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class SitesTable extends React.Component<Props> {
   render() {
@@ -37,7 +41,10 @@ class SitesTable extends React.Component<Props> {
       onEditSite,
       filter,
       intl: { formatMessage },
-      match: { params: { organisationId } }
+      match: {
+        params: { organisationId },
+      },
+      filtersOptions
     } = this.props;
 
     const pagination = {
@@ -47,7 +54,7 @@ class SitesTable extends React.Component<Props> {
       onChange: (page: number, size: number) =>
         onFilterChange({
           currentPage: page,
-          pageSize: size
+          pageSize: size,
         }),
       onShowSizeChange: (current: number, size: number) =>
         onFilterChange({
@@ -61,11 +68,15 @@ class SitesTable extends React.Component<Props> {
         intlMessage: messages.siteName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: SiteResource) => <Link to={
-          `/v2/o/${organisationId}/settings/datamart/sites/${record.id}/edit`
-        }>
-          {text}
-        </Link> 
+        render: (text: string, record: ChannelResource) => (
+          <Link
+            to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/sites/${
+              record.id
+            }/edit`}
+          >
+            {text}
+          </Link>
+        ),
       },
       {
         intlMessage: messages.siteToken,
@@ -102,13 +113,17 @@ class SitesTable extends React.Component<Props> {
       placeholder: formatMessage(messages.searchPlaceholder),
       onSearch: (value: string) =>
         onFilterChange({
-          name: value,
+          keywords: value,
         }),
-      defaultValue: filter.name,
+      defaultValue: filter.keywords,
     };
 
     return noSiteYet ? (
-      <EmptyTableView iconType="settings" intlMessage={messages.emptySites} className="mcs-table-view-empty mcs-empty-card" />
+      <EmptyTableView
+        iconType="settings"
+        intlMessage={messages.emptySites}
+        className="mcs-table-view-empty mcs-empty-card"
+      />
     ) : (
       <TableViewFilters
         columns={dataColumns}
@@ -117,9 +132,12 @@ class SitesTable extends React.Component<Props> {
         dataSource={dataSource}
         loading={isFetchingSites}
         pagination={pagination}
+        filtersOptions={filtersOptions}
       />
     );
   }
 }
 
-export default compose<Props, SitesTableProps>(injectIntl, withRouter)(SitesTable);
+export default compose<Props, SitesTableProps>(injectIntl, withRouter)(
+  SitesTable,
+);

@@ -1,6 +1,7 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   CreativeType,
+  CreativeSubtype,
   GenericCreativeResource,
   CreativeStatus,
   CreativeResourceShape,
@@ -13,10 +14,13 @@ import {
   CreativeScreenshotResource,
 } from '../models/creative/CreativeResource';
 import { PropertyResourceShape } from '../models/plugin/index';
+import { PluginLayout } from '../models/plugin/PluginLayout';
 import PluginService from './PluginService';
+import log from '../utils/Logger';
 
 export interface GetCreativesOptions {
-  creative_type?: CreativeType;
+  type?: CreativeType;
+  subtype?: CreativeSubtype[];
   scope?: string;
   keywords?: string[];
   statuses?: CreativeStatus[];
@@ -53,7 +57,7 @@ const CreativeService = {
     options: GetCreativesOptions = {},
   ): Promise<DataListResponse<DisplayAdResource>> {
     return CreativeService.getCreatives(organisationId, {
-      creative_type: 'DISPLAY_AD',
+      type: 'DISPLAY_AD',
       ...options,
     });
   },
@@ -63,7 +67,7 @@ const CreativeService = {
     options: GetCreativesOptions = {},
   ): Promise<DataListResponse<EmailTemplateResource>> {
     return CreativeService.getCreatives(organisationId, {
-      creative_type: 'EMAIL_TEMPLATE',
+      type: 'EMAIL_TEMPLATE',
       ...options,
     });
   },
@@ -169,9 +173,18 @@ const CreativeService = {
 
   getEmailTemplateProperties(
     creativeId: string,
-  ): Promise<DataListResponse<any>> {
+  ): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `email_templates/${creativeId}/renderer_properties`;
     return ApiService.getRequest(endpoint);
+  },
+
+  getEmailTemplateLocalizedPluginLayout(creativeId: string, locale: string = "en-US"): Promise<DataResponse<PluginLayout> | null> {
+    const endpoint = `email_templates/${creativeId}/properties_layout?locale=${locale}`;
+    return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint)
+      .catch(err => {
+        log.warn("Cannot retrieve plugin layout", err);
+        return null;
+      });
   },
 
   getAuditStatus(

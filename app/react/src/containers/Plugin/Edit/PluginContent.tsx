@@ -7,7 +7,6 @@ import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm from './PluginEditForm';
 import {
   PluginResource,
-  PluginProperty,
   PluginType,
 } from '../../../models/Plugins';
 import PluginService from '../../../services/PluginService';
@@ -18,6 +17,8 @@ import Loading from '../../../components/Loading';
 import messages from './messages';
 import { Path } from '../../../components/ActionBar';
 import { SideBarItem } from '../../../components/Layout/ScrollspySider';
+import { PluginLayout } from '../../../models/plugin/PluginLayout';
+import { PropertyResourceShape } from '../../../models/plugin';
 
 const formId = 'pluginForm';
 
@@ -36,7 +37,7 @@ interface PluginContentOuterProps {
   breadcrumbPaths: Path[];
   saveOrCreatePluginInstance: (
     plugin: any,
-    properties: PluginProperty[],
+    properties: PropertyResourceShape[],
   ) => void;
   onClose: () => void;
   editionMode: boolean;
@@ -50,7 +51,8 @@ interface PluginContentOuterProps {
 interface PluginContentState {
   plugin: PluginResource;
   isLoading: boolean;
-  pluginProperties: PluginProperty[];
+  pluginProperties: PropertyResourceShape[];
+  pluginLayout?: PluginLayout;
   availablePlugins: PluginResource[];
 }
 
@@ -128,7 +130,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
     );
   };
 
-  createPlugin = (plugin: PluginResource, properties: PluginProperty[]) => {
+  createPlugin = (plugin: PluginResource, properties: PropertyResourceShape[]) => {
     this.props.saveOrCreatePluginInstance(plugin, properties);
   };
 
@@ -143,17 +145,37 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         PluginService.getPluginVersions(plugin.id)
           .then(res => {
             const lastVersion = res.data[res.data.length - 1];
-            return PluginService.getPluginVersionProperty(
+            const promise1 = PluginService.getPluginVersionProperty(
               plugin.id,
               plugin.current_version_id
                 ? plugin.current_version_id
                 : lastVersion.id,
             );
+            const promise2 = PluginService.getLocalizedPluginLayout(
+              plugin.id,
+              lastVersion.id
+            );
+            return Promise.all([promise1, promise2]);
           })
-          .then(res => {
-            this.setState({
-              pluginProperties: res,
-              isLoading: false,
+          .then(([res1, res2]) => {
+            if (res2 !== null && res2.status !== "error") {
+              this.setState({
+                pluginProperties: res1.data,
+                pluginLayout: res2.data,
+                isLoading: false,
+              });
+            }
+            else {
+              this.setState({
+                pluginProperties: res1.data,
+                isLoading: false,
+              });
+            }
+          })
+          .catch(err => {
+            actions.notifyError(err);
+            this.setState(() => {
+              return { isLoading: false };
             });
           });
       },
@@ -174,7 +196,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
     const formattedProperties: any = {};
 
     if (initialValues && initialValues.properties) {
-      initialValues.properties.forEach((property: PluginProperty) => {
+      initialValues.properties.forEach((property: PropertyResourceShape) => {
         formattedProperties[property.technical_name] = {
           value: property.value,
         };
@@ -198,7 +220,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
       initialValue,
       loading,
       showGeneralInformation,
-      disableFields
+      disableFields,
     } = this.props;
 
     const { pluginProperties, isLoading, plugin } = this.state;
@@ -210,37 +232,45 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         sectionId: 'type',
         title: messages.menuType,
         onClick: () => this.setState({ pluginProperties: [] }),
-        type: 'validated'
+        type: 'validated',
       });
     }
 
-
     if (showGeneralInformation) {
+      sidebarItems.push({
+        sectionId: 'general',
+        title: messages.menuGeneralInformation,
+      });
+    }
+    if (this.state.pluginLayout === undefined) {
       sidebarItems.push(
         {
-          sectionId: 'general',
-          title: messages.menuGeneralInformation,
+          sectionId: 'properties',
+          title: messages.menuProperties,
         }
       )
+    } else {
+      this.state.pluginLayout.sections.forEach(section => {
+        sidebarItems.push(
+          {
+            sectionId: section.title,
+            title: { id: section.title, defaultMessage: section.title },
+          }
+        )
+      });
     }
-    sidebarItems.push(
-      {
-        sectionId: 'properties',
-        title: messages.menuProperties,
-      }
-    )
 
     const actionbarProps =
       pluginProperties.length || editionMode
         ? {
-          formId,
-          message: messages.save,
-          onClose: onClose,
-        }
+            formId,
+            message: messages.save,
+            onClose: onClose,
+          }
         : {
-          formId,
-          onClose: onClose,
-        };
+            formId,
+            onClose: onClose,
+          };
 
     return isLoading || loading ? (
       <div style={{ display: 'flex', flex: 1 }}>
@@ -259,6 +289,8 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           save={this.createPlugin}
           pluginProperties={pluginProperties}
           disableFields={(isLoading || disableFields) ? true : false}
+          pluginLayout={this.state.pluginLayout !== undefined ? this.state.pluginLayout : undefined}
+          isLoading={isLoading}
           pluginVersionId={plugin.id}
           formId={formId}
           initialValues={this.formatInitialValues(initialValue)}
@@ -268,15 +300,15 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         />
       </EditContentLayout>
     ) : (
-          <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-            <PluginEditSelector
-              onSelect={this.onSelectPlugin}
-              availablePlugins={this.state.availablePlugins}
-              listTitle={this.props.listTitle}
-              listSubTitle={this.props.listSubTitle}
-            />
-          </EditContentLayout>
-        );
+      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+        <PluginEditSelector
+          onSelect={this.onSelectPlugin}
+          availablePlugins={this.state.availablePlugins}
+          listTitle={this.props.listTitle}
+          listSubTitle={this.props.listSubTitle}
+        />
+      </EditContentLayout>
+    );
   }
 }
 

@@ -40,14 +40,6 @@ export interface AudienceSegmentFormData {
   userListFiles?: UploadFile[];
 }
 
-
-
-export type SegmentType =
-  'USER_LIST' |
-  'USER_PIXEL' |
-  'USER_QUERY' |
-  'USER_LOOKALIKE'
-
 export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   audienceSegment: {
     persisted: true

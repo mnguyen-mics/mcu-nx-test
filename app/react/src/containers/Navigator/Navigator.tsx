@@ -33,6 +33,8 @@ import { UserWorkspaceResource } from '../../models/directory/UserProfileResourc
 import { getCookies } from '../../state/Session/actions';
 import NoAccess from './NoAccess';
 import { NavigatorRoute } from '../../routes/domain';
+import angularRedirect from '../../routes/angularRedirect'
+import RedirectAngular from './Route/RedirectAngular';
 
 
 interface MapStateToProps {
@@ -238,6 +240,10 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             path="/v2/forgot_password"
             component={ForgotPassword}
           />
+          {angularRedirect.map(redirect => {
+            const render = () => <RedirectAngular from={redirect.from} to={redirect.to} baseUrl={basePath} />;
+            return <Route key={redirect.from} exact={true} path={`${'/:orgDatamartSettings'}${redirect.from}`} render={render} />
+          })}
           <Route render={errorRouteRender} />
         </Switch>
     );

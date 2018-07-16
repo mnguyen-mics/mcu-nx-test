@@ -50,7 +50,9 @@ type JoinedProps = EmailActionBarProps &
 class EmailActionBar extends React.Component<JoinedProps> {
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       translations,
       rowSelection,
       multiEditProps: {
@@ -112,7 +114,7 @@ class EmailActionBar extends React.Component<JoinedProps> {
 }
 
 export default compose<JoinedProps, EmailActionBarProps>(
-  withTranslations,
   withRouter,
   injectIntl,
+  withTranslations,
 )(EmailActionBar);

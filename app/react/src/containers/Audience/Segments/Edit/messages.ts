@@ -21,6 +21,10 @@ export default defineMessages({
     id: 'segment.sider.menu.import',
     defaultMessage: 'Import',
   },
+  audienceSegmentSiderMenuType: {
+    id: 'segment.sider.menu.type',
+    defaultMessage: 'Segment Type',
+  },
   audienceSegmentSiderMenuProperties: {
     id: 'segment.sider.menu.properties',
     defaultMessage: 'Properties',
@@ -43,7 +47,8 @@ export default defineMessages({
   },
   audienceSegmentSectionImportSubTitle: {
     id: 'segment.sider.menu.section.import.subtitle',
-    defaultMessage: 'Upload new user points to your segment, if your segment has already some data, it will add the new data on the top of it.',
+    defaultMessage:
+      'Upload new user points to your segment, if your segment has already some data, it will add the new data on the top of it.',
   },
   audienceSegmentSectionQueryTitle: {
     id: 'audience.segment.create.section.query.title',
@@ -87,6 +92,11 @@ export default defineMessages({
   contentSectionGeneralAdvancedPartRow1Placeholder: {
     id: 'audience.segment.section1.advancedPart.row1.placeholder',
     defaultMessage: 'Technical Name',
+  },
+  warningOnTokenEdition: {
+    id: 'audience.segment.form.edition.technicalName.warning',
+    defaultMessage:
+      'Danger Zone: Editing this technical name may cause any integrations to fail if not updated properly. Please make sure you have reviewed all your integration before saving.',
   },
   contentSectionGeneralAdvancedPartRow1Tooltip: {
     id: 'audience.segment.section1.advancedPart.row1.tooltip',
@@ -215,7 +225,8 @@ export default defineMessages({
 
   audienceFeedDisableExplanation: {
     id: 'audience.segment.audiencefeed.disable.explanation',
-    defaultMessage: 'You need to save your Feed before setting it to \'Started.\'',
+    defaultMessage:
+      "You need to save your Feed before setting it to 'Started.'",
   },
   addExisting: {
     id: 'audience.segment.addExisting',

@@ -2,10 +2,7 @@ import { call, fork, put, all, takeLatest } from 'redux-saga/effects';
 
 import log from '../../../utils/Logger';
 
-import {
-  fetchGoals,
-  fetchGoalsPerformanceReport,
-} from './actions';
+import { fetchGoals, fetchGoalsPerformanceReport } from './actions';
 
 import GoalService from '../../../services/GoalService.ts';
 import ReportService from '../../../services/ReportService.ts';
@@ -20,11 +17,7 @@ import {
 
 function* loadPerformanceReport({ payload }) {
   try {
-
-    const {
-      organisationId,
-      filter,
-    } = payload;
+    const { organisationId, filter } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
@@ -32,7 +25,13 @@ function* loadPerformanceReport({ payload }) {
     const endDate = filter.to;
     const dimension = 'goal_id';
 
-    const response = yield call(ReportService.getConversionPerformanceReport, organisationId, startDate, endDate, dimension);
+    const response = yield call(
+      ReportService.getConversionPerformanceReport,
+      organisationId,
+      startDate,
+      endDate,
+      dimension,
+    );
     yield put(fetchGoalsPerformanceReport.success(response));
   } catch (error) {
     log.error(error);
@@ -43,12 +42,7 @@ function* loadPerformanceReport({ payload }) {
 
 function* loadGoals({ payload }) {
   try {
-
-    const {
-      organisationId,
-      filter,
-      isInitialRender,
-    } = payload;
+    const { organisationId, filter, isInitialRender } = payload;
 
     if (!(organisationId || filter)) throw new Error('Payload is invalid');
 
@@ -57,17 +51,27 @@ function* loadGoals({ payload }) {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
-    if (filter.keywords) { options.keywords = filter.keywords; }
-    if (filter.label_id.length) { options.label_id = filter.label_id; }
+    if (filter.keywords) {
+      options.keywords = filter.keywords;
+    }
+    if (filter.label_id.length) {
+      options.label_id = filter.label_id;
+    }
+    if (filter.datamartId) {
+      options.datamart_id = filter.datamartId;
+    }
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),
     };
-
     let allCalls;
 
     if (isInitialRender) {
       allCalls = {
-        initialFetch: call(GoalService.getGoals, organisationId, initialOptions),
+        initialFetch: call(
+          GoalService.getGoals,
+          organisationId,
+          initialOptions,
+        ),
         response: call(GoalService.getGoals, organisationId, options),
       };
     } else {
@@ -99,7 +103,10 @@ function* watchFetchGoals() {
 }
 
 function* watchFetchPerformanceReport() {
-  yield takeLatest(GOALS_PERFORMANCE_REPORT_FETCH.REQUEST, loadPerformanceReport);
+  yield takeLatest(
+    GOALS_PERFORMANCE_REPORT_FETCH.REQUEST,
+    loadPerformanceReport,
+  );
 }
 
 function* watchLoadGoalsAndPerformance() {

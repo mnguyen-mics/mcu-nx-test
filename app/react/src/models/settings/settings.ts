@@ -1,4 +1,6 @@
-export interface PropertyResource {
+import { Workspace } from "../organisation/organisation";
+
+export interface ChannelResource {
     creation_ts: number;
     datamart_id: string
     id: string;
@@ -8,17 +10,19 @@ export interface PropertyResource {
     visit_analyzer_model_id: string | null;
 }
 
+export type ChannelResourceShape = MobileApplicationResource | SiteResource; 
 
-export interface MobileApplicationResource extends PropertyResource {
+export interface MobileApplicationResource extends ChannelResource {
     type: 'MOBILE_APPLICATION';
 }
 
-export interface MobileApplicationCreationResource extends Partial<PropertyResource> {
+export interface MobileApplicationCreationResource extends Partial<ChannelResource> {
     type: 'MOBILE_APPLICATION';
 }
 
-export interface SiteResource extends PropertyResource {
+export interface SiteResource extends ChannelResource {
     type: 'SITE';
+    domain: string;
 }
 
 
@@ -94,3 +98,21 @@ export interface User {
     locale: string;
     organisation_id: string;
 } 
+
+export interface ConnectedUser {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    locale: string;
+    workspaces: Workspace[];
+    default_workspace: number;
+}
+
+export type ApiToken = {
+    creation_date: number;
+    expiration_date: number;
+    id: string;
+    name: string;
+    value: string;
+};

@@ -14,8 +14,8 @@ import { DisplayCampaignInfoResource } from '../../../../../models/campaign/disp
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 
 interface AdGroupActionbarProps {
-  adGroup: AdGroupResource;
-  displayCampaign: DisplayCampaignInfoResource;
+  adGroup?: AdGroupResource;
+  displayCampaign?: DisplayCampaignInfoResource;
   updateAdGroup: (adGroupId: string, body: Partial<AdGroupResource>) => void;
   archiveAdGroup: () => void;
 }
@@ -33,7 +33,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     const { adGroup, updateAdGroup } = this.props;
 
     const onClickElement = (status: AdGroupStatus) =>
-      updateAdGroup(adGroup.id, {
+      adGroup && updateAdGroup(adGroup.id, {
         status,
       });
 
@@ -56,7 +56,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
       </Button>
     );
 
-    return adGroup.id
+    return adGroup && adGroup.id
       ? adGroup.status === 'PAUSED' || adGroup.status === 'PENDING'
         ? activeCampaignElement
         : pauseCampaignElement
@@ -81,7 +81,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
   };
 
   buildMenu = () => {
-    const { adGroup, archiveAdGroup, intl } = this.props;
+    const { adGroup, archiveAdGroup, intl, displayCampaign } = this.props;
 
     const handleArchiveGoal = (displayCampaignId: string) => {
       Modal.confirm({
@@ -102,7 +102,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     const onClick = (event: any) => {
       switch (event.key) {
         case 'ARCHIVED':
-          return handleArchiveGoal(adGroup.id);
+          return adGroup && handleArchiveGoal(adGroup.id);
         case 'DUPLICATE':
           return this.duplicateAdGroup();
         default:
@@ -114,9 +114,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
     const addMenu = (
       <Menu onClick={onClick}>
-        <Menu.Item key="DUPLICATE">
+        {displayCampaign && displayCampaign.model_version !== 'V2014_06' ? <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
-        </Menu.Item>
+        </Menu.Item> : null}
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archiveAdGroup} />
         </Menu.Item>
@@ -145,17 +145,17 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
         key: formatMessage(messages.display),
       },
       {
-        name: displayCampaign.name,
+        name: displayCampaign && displayCampaign.name,
         url: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
-        key: displayCampaign.id,
+        key: displayCampaign && displayCampaign.id,
       },
-      { name: adGroup.name, key: adGroup.id },
+      { name: adGroup && adGroup.name, key: adGroup && adGroup.id },
     ];
 
     return (
       <Actionbar path={breadcrumbPaths}>
         {actionElement}
-        <Link
+        {displayCampaign && displayCampaign.model_version !== 'V2014_06' ? <Link
           to={{
             pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`,
             state: { from: `${location.pathname}${location.search}` },
@@ -165,7 +165,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
             <McsIcon type="pen" />
             <FormattedMessage {...messages.editAdGroup} />
           </Button>
-        </Link>
+        </Link> : null}
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
             <Icon type="ellipsis" />

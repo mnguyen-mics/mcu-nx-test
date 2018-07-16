@@ -47,6 +47,7 @@ export interface OverlapData {
 
 export interface FormattedOverlapData {
   segment_source_id: string;
+  segment_source_size: number;
   segment_intersect_with: {
     id: string,
     name: string,

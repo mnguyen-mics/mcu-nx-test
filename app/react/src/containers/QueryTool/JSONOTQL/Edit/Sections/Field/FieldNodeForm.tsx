@@ -1,54 +1,39 @@
-import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { OptionProps } from 'antd/lib/select';
-import { getFormValues, Field, GenericField } from 'redux-form';
-import {
-  FormSelectField,
-  withNormalizer,
-  withValidators,
-  FormMultiTagField,
-  DefaultSelect,
-} from '../../../../../../components/Form';
-import { compose } from 'recompose';
-import { ValidatorProps } from '../../../../../../components/Form/withValidators';
-import { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
-import messages from '../../messages';
-import {
-  FORM_ID,
-  ObjectNodeFormData,
-  FieldNodeFormData,
-  SUPPORTED_FIELD_TYPES,
-} from '../../domain';
+import * as React from 'react';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import {
-  BooleanComparisonOperator,
-  NumericComparisonOperator,
-  EnumComparisonOperator,
-  QueryFieldComparisonType,
-  StringComparisonOperator,
-  TimeComparisonOperator,
-} from '../../../../../../models/datamart/graphdb/QueryDocument';
-import TagSelect, {
-  FormTagSelectProps,
-} from '../../../../../../components/Form/FormSelect/TagSelect';
-import { FieldResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
-import FormRelativeAbsoluteDate, {
-  FormRelativeAbsoluteDateProps,
-} from './Comparison/FormRelativeAbsoluteDate';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { compose } from 'recompose';
+import { Field, GenericField, getFormValues } from 'redux-form';
+import { DefaultSelect, FormMultiTagField, FormSelectField, withNormalizer, withValidators } from '../../../../../../components/Form';
 import FormMultiTag from '../../../../../../components/Form/FormSelect/FormMultiTag';
+import FormSearchObject, { FormSearchObjectProps } from '../../../../../../components/Form/FormSelect/FormSearchObject';
+import TagSelect, { FormTagSelectProps } from '../../../../../../components/Form/FormSelect/TagSelect';
+import { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
+import { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import { BooleanComparisonOperator, EnumComparisonOperator, NumericComparisonOperator, QueryFieldComparisonType, StringComparisonOperator, TimeComparisonOperator } from '../../../../../../models/datamart/graphdb/QueryDocument';
+import { FieldResource, ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
+import AudienceSegmentService from '../../../../../../services/AudienceSegmentService';
+import { FORM_ID, FieldNodeFormData, ObjectNodeFormData, SUPPORTED_FIELD_TYPES } from '../../domain';
+import messages from '../../messages';
+import FormRelativeAbsoluteDate, { FormRelativeAbsoluteDateProps } from './Comparison/FormRelativeAbsoluteDate';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
->;
+  >;
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
   FormRelativeAbsoluteDateProps
->;
+  >;
+export const FormSearchObjectField = Field as new () => GenericField<
+  FormSearchObjectProps
+  >;
 
 export interface FieldNodeFormProps {
   expressionIndex: number;
   availableFields: FieldResource[];
   name: string;
   formChange: (fieldName: string, value: any) => void;
+  objectType: ObjectLikeTypeInfoResource;
 }
 
 interface MapStateToProps {
@@ -59,7 +44,8 @@ type Props = FieldNodeFormProps &
   InjectedIntlProps &
   ValidatorProps &
   NormalizerProps &
-  MapStateToProps;
+  MapStateToProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 type ConditionsOperators =
   | NumericComparisonOperator
@@ -116,6 +102,8 @@ class FieldNodeForm extends React.Component<Props> {
         return { type: 'STRING', operator: 'EQ', values: [] };
       case 'Bool':
         return { type: 'BOOLEAN', operator: 'EQUAL', values: [] };
+      case 'Boolean':
+        return { type: 'BOOLEAN', operator: 'EQUAL', values: [] };
       case 'Enum':
         return { type: 'ENUM', operator: 'EQ', values: [] };
       case 'Number':
@@ -128,6 +116,8 @@ class FieldNodeForm extends React.Component<Props> {
         return { type: 'NUMERIC', operator: 'EQUAL', values: [] };
       case 'BigDecimal':
         return { type: 'NUMERIC', operator: 'EQUAL', values: [] };
+      case 'ID':
+        return { type: 'STRING', operator: 'EQ', values: [] };
       default:
         return {};
     }
@@ -138,7 +128,7 @@ class FieldNodeForm extends React.Component<Props> {
     return availableFields
       .filter(field =>
         SUPPORTED_FIELD_TYPES.find(t => field.field_type.indexOf(t) > -1),
-      )
+    )
       .map(i => ({ value: i.name, title: i.name }));
   };
 
@@ -302,6 +292,8 @@ class FieldNodeForm extends React.Component<Props> {
         return this.generateStringComparisonOperator();
       case 'Bool':
         return this.generateBooleanComparisonOperator();
+      case 'Boolean':
+        return this.generateBooleanComparisonOperator();
       case 'Enum':
         return this.generateEnumComparisonOperator();
       case 'Number':
@@ -314,6 +306,8 @@ class FieldNodeForm extends React.Component<Props> {
         return this.generateNumericComparisonOperator();
       case 'BigDecimal':
         return this.generateNumericComparisonOperator();
+      case 'ID':
+        return this.generateStringComparisonOperator();
       default:
         return [];
     }
@@ -434,6 +428,31 @@ class FieldNodeForm extends React.Component<Props> {
     );
   }
 
+  generateIdComparisonField(condition: StringComparisonOperator) {
+    const { intl, name, match: { params: { organisationId } }, objectType } = this.props;
+
+
+    const fetchListMethod = (keywords: string) => AudienceSegmentService.getSegments(organisationId, { keywords }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
+    const fetchSingleMethod = (id: string) => AudienceSegmentService.getSegment(id).then(res => ({ key: res.data.id, label: res.data.name }))
+
+    return objectType.name === 'UserSegment' ? (
+      <FormSearchObjectField
+        name={`${name}.comparison.values`}
+        component={FormSearchObject}
+        formItemProps={{
+          label: intl.formatMessage(messages.fieldConditionValuesStringLabel),
+          required: true,
+        }}
+        fetchListMethod={fetchListMethod}
+        fetchSingleMethod={fetchSingleMethod}
+        helpToolTipProps={{
+          title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
+        }}
+        small={true}
+      />
+    ) : this.generateStringComparisonField(condition);
+  }
+
   generateAvailableConditionField = (
     fieldName: string,
     condition: ConditionsOperators,
@@ -452,7 +471,15 @@ class FieldNodeForm extends React.Component<Props> {
         return this.generateStringComparisonField(
           condition as StringComparisonOperator,
         );
+      case 'ID':
+        return this.generateIdComparisonField(
+          condition as StringComparisonOperator,
+        );
       case 'Bool':
+        return this.generateBooleanComparisonField(
+          condition as BooleanComparisonOperator,
+        );
+      case 'Boolean':
         return this.generateBooleanComparisonField(
           condition as BooleanComparisonOperator,
         );
@@ -542,6 +569,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 export default compose<Props, FieldNodeFormProps>(
+  withRouter,
   injectIntl,
   withValidators,
   withNormalizer,

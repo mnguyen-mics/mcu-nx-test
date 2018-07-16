@@ -33,8 +33,6 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 
-const LegendChartWithModalJS = LegendChartWithModal as any;
-const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
 
 interface OverallStats {
   value: string;
@@ -78,7 +76,7 @@ const overallPerformanceFetch = takeLatest(
 class GoalStackedAreaChart extends React.Component<
   JoinedProps,
   GoalStackedAreaChartState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
 
@@ -274,16 +272,17 @@ class GoalStackedAreaChart extends React.Component<
         <div style={{ float: 'left' }}>
           <MetricsColumn metrics={metrics} isLoading={isLoading} />
         </div>
-        <StackedAreaPlotDoubleAxisJS
+        <StackedAreaPlotDoubleAxis
           identifier="StackedAreaChartGoalOverview"
           dataset={items}
           options={optionsForChart}
           style={{ flex: '1' }}
+          intlMessages={messages}
         />
       </div>
     ) : (
-      <LoadingChart />
-    );
+        <LoadingChart />
+      );
   }
 
   render() {
@@ -314,22 +313,22 @@ class GoalStackedAreaChart extends React.Component<
             {items.length === 0 && isLoading ? (
               <div />
             ) : (
-              <LegendChartWithModalJS
-                identifier="chartLegend"
-                options={legendOptions}
-                legends={legends}
-                onLegendChange={onLegendChange}
-              />
-            )}
+                <LegendChartWithModal
+                  identifier="chartLegend"
+                  options={legendOptions}
+                  legends={legends}
+                  onLegendChange={onLegendChange}
+                />
+              )}
           </Col>
         </Row>
         {items.length === 0 && !isLoading ? (
           <EmptyCharts title={formatMessage(messages.noStatAvailable)} />
         ) : (
-          <Row gutter={20}>
-            <Col span={24}>{this.renderStackedAreaCharts()}</Col>
-          </Row>
-        )}
+            <Row gutter={20}>
+              <Col span={24}>{this.renderStackedAreaCharts()}</Col>
+            </Row>
+          )}
       </div>
     );
 

@@ -73,9 +73,21 @@ export default defineMessages({
     id: 'creatives.create.actionbar.breadcrumb.label',
     defaultMessage: 'New Display Creative',
   },
+  nativeCreationBreadCrumb: {
+    id: 'natives.create.actionbar.breadcrumb.label',
+    defaultMessage: 'New Native Creative',
+  },
   creativeEditionBreadCrumb: {
     id: 'creatives.edition.actionbar.breadcrumb.label',
-    defaultMessage: 'Edit Display Creative',
+    defaultMessage: 'Edit {name}',
+  },
+  displayListBreadCrumb: {
+    id: 'display.creatives.list.actionbar.breadcrumb.label',
+    defaultMessage: 'Display Ads',
+  },
+  nativeListBreadCrumb: {
+    id: 'native.creatives.list.actionbar.breadcrumb.label',
+    defaultMessage: 'Natives',
   },
   creativeCreationGeneralNameFieldTitle: {
     id: 'creatives.create.section.general.field.name.title',
@@ -200,6 +212,11 @@ export default defineMessages({
   creativeCreationAdvancedTechnicalFieldTitle: {
     id: 'creatives.create.section.advanced.field.technical.title',
     defaultMessage: 'Technical Name',
+  },
+  warningOnTokenEdition: {
+    id: 'creative.form.edition.technicalName.warning',
+    defaultMessage:
+      'Danger Zone: Editing this technical name may cause any integrations to fail if not updated properly. Please make sure you have reviewed all your integration before saving.',
   },
   creativeCreationAdvancedTechnicalFieldPlaceholder: {
     id: 'creatives.create.section.advanced.field.technical.placeholder',

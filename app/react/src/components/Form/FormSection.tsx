@@ -11,6 +11,7 @@ interface DropdownButtonItemProps {
   id: string;
   message: FormattedMessage.MessageDescriptor;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 interface FormSectionProps extends FormTitleProps {
@@ -28,7 +29,7 @@ class FormSection extends React.Component<FormSectionProps> {
     const displayOptions =
       dropdownItems &&
       dropdownItems.map(item => (
-        <Menu.Item key={item.id}>
+        <Menu.Item key={item.id} disabled={item.disabled}>
           <FormattedMessage {...item.message} />
         </Menu.Item>
       ));

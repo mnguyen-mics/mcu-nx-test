@@ -14,6 +14,7 @@ import {
 import AudienceSegmentSelector, {
   AudienceSegmentSelectorProps,
 } from '../../../../../Common/AudienceSegmentSelector';
+import SharedAudienceSegmentSelector, { SharedAudienceSegmentSelectorProps } from '../../../../../Common/SharedAudienceSegmentSelector';
 import {
   RelatedRecords,
   RecordElement,
@@ -32,6 +33,7 @@ import FormSwitch from '../../../../../../../components/Form/FormSwitch';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../../components/Drawer/';
 import { InjectedDrawerProps } from '../../../../../../../components/Drawer/injectDrawer';
+import { AudienceSegmentServiceItemPublicResource } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 
 export interface AudienceSegmentFormSectionProps extends ReduxFormChangeProps {}
 
@@ -100,7 +102,7 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
     this.props.closeNextDrawer();
   };
 
-  openAudienceSegmentSelector = () => {
+  openAudienceSegmentSelector = (type: 'first_party' | 'second_party') => () => {
     const { fields } = this.props;
 
     const selectedSegmentIds = fields
@@ -113,14 +115,55 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
       save: this.updateSegments,
     };
 
-    const options = {
-      additionalProps: audienceSegmentSelectorProps,
+    const sharedAudienceSegmentSelectorProps = {
+      selectedSegmentIds,
+      close: this.props.closeNextDrawer,
+      save: this.updateServices,
     };
+    if (type === 'first_party' ) {
+      const options = {
+        additionalProps: audienceSegmentSelectorProps,
+      };
+      this.props.openNextDrawer<AudienceSegmentSelectorProps>(
+        AudienceSegmentSelector,
+        options,
+      );
+    }
+    if (type === 'second_party') {
+      const options = {
+        additionalProps: sharedAudienceSegmentSelectorProps,
+      };
+      this.props.openNextDrawer<SharedAudienceSegmentSelectorProps>(
+        SharedAudienceSegmentSelector,
+        options,
+      );
+    }
+   
+  };
 
-    this.props.openNextDrawer<AudienceSegmentSelectorProps>(
-      AudienceSegmentSelector,
-      options,
-    );
+  updateServices = (segments: AudienceSegmentServiceItemPublicResource[]) => {
+    const { fields, formChange } = this.props;
+    const segmentIds = segments.map(s => s.segment_id);
+    const fieldSegmentIds = fields
+      .getAll()
+      .map(field => field.model.audience_segment_id);
+
+    const keptSegments = fields
+      .getAll()
+      .filter(field => segmentIds.includes(field.model.audience_segment_id));
+    const addedSegments = segments
+      .filter(s => !fieldSegmentIds.includes(s.segment_id))
+      .map(segment => ({
+        key: cuid(),
+        model: {
+          audience_segment_id: segment.segment_id,
+          exclude: false,
+        },
+        meta: { name: segment.name },
+      }));
+
+    formChange((fields as any).name, keptSegments.concat(addedSegments));
+    this.props.closeNextDrawer();
   };
 
   getSegmentRecords = () => {
@@ -199,9 +242,14 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
         <FormSection
           dropdownItems={[
             {
-              id: messages.dropdownAddExisting.id,
-              message: messages.dropdownAddExisting,
-              onClick: this.openAudienceSegmentSelector,
+              id: messages.dropdownAddOwn.id,
+              message: messages.dropdownAddOwn,
+              onClick: this.openAudienceSegmentSelector('first_party'),
+            },
+            {
+              id: messages.dropdownAddShared.id,
+              message: messages.dropdownAddShared,
+              onClick: this.openAudienceSegmentSelector('second_party'),
             },
           ]}
           subtitle={messages.sectionSubtitleAudience}

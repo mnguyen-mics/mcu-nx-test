@@ -7,9 +7,9 @@ import { displayCampaignsSagas } from './Campaigns/Display/sagas';
 import { goalsSagas } from './Campaigns/Goal/sagas';
 import { forgotPasswordSagas } from './ForgotPassword/sagas';
 import { automationsSagas } from './Automations/sagas';
-import { partitionsSagas } from './Audience/Partitions/sagas';
 import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
+import { nativeCreativesSagas } from './Creatives/Native/sagas';
 import { labelsSagas } from './Labels/sagas';
 import { versionSagas } from './Version/sagas';
 import { accountSagas } from './Account/sagas';
@@ -27,9 +27,9 @@ export default function* sagas() {
     ...automationsSagas,
     ...versionSagas,
     ...labelsSagas,
-    ...partitionsSagas,
     ...creativeDisplaySagas,
     ...creativeEmailsSagas,
+    ...nativeCreativesSagas,
     ...accountSagas,
     ...featuresSagas,
   ]);

@@ -15,6 +15,7 @@
     'campaignsSettings.recommenders',
     'automations',
     'creatives.display',
+    'creatives.native',
     'creatives.email',
     'library.placements',
     'library.keywords',
@@ -35,6 +36,7 @@
     'datamartSettings.datamarts',
     'datamartSettings.service_usage_report',
     'accountSettings.profile',
+    'accountSettings.api_tokens'
   ];
 
  const gravityFeatures = [

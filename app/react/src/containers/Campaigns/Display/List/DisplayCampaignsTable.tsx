@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
-import { Icon, Modal, Tooltip } from 'antd';
+import { Icon, Modal, Tooltip, message } from 'antd';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 
 import {
@@ -55,7 +55,9 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
     const {
       history,
       location: { search, pathname },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       loadDisplayCampaignsDataSource,
     } = this.props;
 
@@ -74,14 +76,18 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
   componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       location: { search },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
       loadDisplayCampaignsDataSource,
     } = this.props;
 
     const {
       location: { pathname: nextPathname, search: nextSearch, state },
-      match: { params: { organisationId: nextOrganisationId } },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -97,7 +103,10 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch<FilterParams>(nextSearch, DISPLAY_SEARCH_SETTINGS);
+        const filter = parseSearch<FilterParams>(
+          nextSearch,
+          DISPLAY_SEARCH_SETTINGS,
+        );
         loadDisplayCampaignsDataSource(
           nextOrganisationId,
           filter,
@@ -113,7 +122,9 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
 
   archiveCampaign = (campaign: DisplayCampaignResource) => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { pathname, state, search },
       loadDisplayCampaignsDataSource,
       history,
@@ -155,27 +166,43 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
 
   editCampaign = (campaign: DisplayCampaignResource) => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location,
       history,
+      intl,
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/campaigns/display/${
-      campaign.id
-      }/edit`;
+    if (campaign.model_version === 'V2014_06') {
+      message.info(intl.formatMessage(messages.editionNotAllowed));
+    } else {
+      const editUrl = `/v2/o/${organisationId}/campaigns/display/${
+        campaign.id
+        }/edit`;
 
-    history.push({
-      pathname: editUrl,
-      state: { from: `${location.pathname}${location.search}` },
-    });
+      history.push({
+        pathname: editUrl,
+        state: { from: `${location.pathname}${location.search}` },
+      });
+    }
   };
 
   duplicateCampaign = (campaign: DisplayCampaignResource) => {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+      intl,
+    } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
-
-    history.push({ pathname: editUrl, state: { campaignId: campaign.id } });
+    if (campaign.model_version === 'V2014_06') {
+      message.info(intl.formatMessage(messages.editionNotAllowed));
+    } else {
+      history.push({ pathname: editUrl, state: { campaignId: campaign.id } });
+    }
   };
 
   updateLocationSearch = (params: any) => {
@@ -193,7 +220,9 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
       hasDisplayCampaigns,
       translations,
@@ -213,7 +242,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
-          currentPage: 1
+          currentPage: 1,
         }),
       defaultValue: filter.keywords,
     };

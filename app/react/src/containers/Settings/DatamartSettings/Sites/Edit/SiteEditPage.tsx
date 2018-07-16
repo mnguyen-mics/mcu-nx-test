@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { message } from 'antd';
+import { Layout, message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
@@ -11,34 +11,52 @@ import {
   INITIAL_SITE_FORM_DATA,
   SiteFormData,
 } from './domain';
-import SiteService from '../../../../../services/SiteService';
+import ChannelService from '../../../../../services/ChannelService';
 import messages from './messages';
-import SiteEditForm from './SiteEditForm';
+import SiteEditForm, { FORM_ID } from './SiteEditForm';
 import Loading from '../../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { createFieldArrayModel } from '../../../../../utils/FormHelper';
-import { SiteResource, EventRules } from '../../../../../models/settings/settings';
+import {
+  ChannelResource,
+  EventRules,
+} from '../../../../../models/settings/settings';
 import { VisitAnalyzerFieldModel } from '../../Common/domain';
+import DatamartSelector from '../../../../../containers/Audience/Common/DatamartSelector';
+import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import { getWorkspace } from '../../../../../state/Session/selectors';
+import FormLayoutActionbar, {
+  FormLayoutActionbarProps,
+} from '../../../../../components/Layout/FormLayoutActionbar';
+import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 
 interface State {
-  siteFormData: SiteFormData;
+  siteData: SiteFormData;
   loading: boolean;
+  selectedDatamartId: string;
+}
+
+interface MapStateToProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<EditSiteRouteMatchParam> &
+  MapStateToProps &
   InjectedDatamartProps;
 
 class SiteEditPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+
     this.state = {
       loading: true, // default true to avoid render x2 on mounting
-      siteFormData: INITIAL_SITE_FORM_DATA,
+      siteData: INITIAL_SITE_FORM_DATA,
+      selectedDatamartId: props.match.params.datamartId,
     };
   }
 
@@ -48,47 +66,55 @@ class SiteEditPage extends React.Component<Props, State> {
         params: { siteId: siteIdFromURLParam, organisationId },
       },
       location,
+      datamart,
     } = this.props;
 
-    const siteIdFromLocState =
-      location.state && location.state.siteId;
+    const siteIdFromLocState = location.state && location.state.siteId;
 
-    const siteId =
-      siteIdFromURLParam || siteIdFromLocState;
+    const siteId = siteIdFromURLParam || siteIdFromLocState;
 
     if (siteId) {
-      const getSites = SiteService.getSite(
-        this.props.datamart.id,
+      const getSites = ChannelService.getChannel(
+        this.state.selectedDatamartId,
         siteId,
       );
-      const getEventRules = SiteService.getEventRules(
-        this.props.datamart.id,
+      const getEventRules = ChannelService.getEventRules(
+        this.state.selectedDatamartId,
         siteId,
         organisationId,
       );
-      const getAliases = SiteService.getAliases(
-        this.props.datamart.id,
+      const getAliases = ChannelService.getAliases(
+        this.state.selectedDatamartId,
         siteId,
         organisationId,
-      )
+      );
 
-      Promise.all([getSites, getEventRules, getAliases]).then(res => {
+      Promise.all([getSites, getEventRules, getAliases])
+        .then(res => {
           const formData = {
             site: res[0].data,
-            visitAnalyzerFields: res[0].data.visit_analyzer_model_id ? [
-              createFieldArrayModel({
-                visit_analyzer_model_id: res[0].data.visit_analyzer_model_id,
-              }),
-            ] : [],
-            eventRulesFields: res[1].data.map((er: EventRules) => createFieldArrayModel(er)),
-            aliases: res[2].data.map(al => createFieldArrayModel(al))
+            visitAnalyzerFields: res[0].data.visit_analyzer_model_id
+              ? [
+                  createFieldArrayModel({
+                    visit_analyzer_model_id:
+                      res[0].data.visit_analyzer_model_id,
+                  }),
+                ]
+              : [],
+            eventRulesFields: res[1].data.map((er: EventRules) =>
+              createFieldArrayModel(er),
+            ),
+            aliases: res[2].data.map(al => createFieldArrayModel(al)),
           };
           return formData;
         })
         .then((formData: SiteFormData) =>
           this.setState({
             loading: false,
-            siteFormData: formData,
+            siteData: formData,
+            selectedDatamartId: formData.site.datamart_id
+              ? formData.site.datamart_id
+              : datamart.id,
           }),
         );
     } else {
@@ -103,12 +129,25 @@ class SiteEditPage extends React.Component<Props, State> {
 
   save = (siteFormData: SiteFormData) => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId, siteId },
+      },
       notifyError,
       history,
       intl,
-      datamart
+      datamart,
     } = this.props;
+
+    const { siteData, selectedDatamartId } = this.state;
+
+    let datamartId: string;
+    if (siteId) {
+      datamartId = siteData.site.datamart_id
+        ? siteData.site.datamart_id
+        : datamart.id;
+    } else {
+      datamartId = selectedDatamartId;
+    }
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -119,80 +158,140 @@ class SiteEditPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    const getVisitAnalyzerId = (visitAnalyzerFields: VisitAnalyzerFieldModel[]) => {
-      if (visitAnalyzerFields.length && visitAnalyzerFields[0].model && visitAnalyzerFields[0].model.visit_analyzer_model_id) {
-        return visitAnalyzerFields[0].model.visit_analyzer_model_id
+    const getVisitAnalyzerId = (
+      visitAnalyzerFields: VisitAnalyzerFieldModel[],
+    ) => {
+      if (
+        visitAnalyzerFields.length &&
+        visitAnalyzerFields[0].model &&
+        visitAnalyzerFields[0].model.visit_analyzer_model_id
+      ) {
+        return visitAnalyzerFields[0].model.visit_analyzer_model_id;
       }
       return null;
-    }
+    };
 
-    const generateEventRulesTasks = (site: SiteResource): Array<Promise<any>> => {
-      const startIds = this.state.siteFormData.eventRulesFields.map(erf => erf.model.id)
+    const generateEventRulesTasks = (
+      site: ChannelResource,
+    ): Array<Promise<any>> => {
+      const startIds = this.state.siteData.eventRulesFields.map(
+        erf => erf.model.id,
+      );
       const savedIds: string[] = [];
       const saveCreatePromises = siteFormData.eventRulesFields.map(erf => {
         if (!erf.model.id) {
-          return SiteService.createEventRules(datamart.id, site.id, { organisation_id: organisationId, properties: {...erf.model, datamart_id: datamart.id, site_id: site.id} })
+          return ChannelService.createEventRules(datamartId, site.id, {
+            ...erf.model,
+            datamart_id: datamartId,
+            site_id: site.id,
+          });
         } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);
-          return SiteService.updateEventRules(datamart.id, site.id, organisationId, erf.model.id, {...erf.model, datamart_id: datamart.id, site_id: site.id})
+          return ChannelService.updateEventRules(
+            datamartId,
+            site.id,
+            organisationId,
+            erf.model.id,
+            { ...erf.model, datamart_id: datamartId, site_id: site.id },
+          );
         }
         return Promise.resolve();
       });
-      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? SiteService.deleteEventRules(datamart.id, site.id, organisationId, sid) : Promise.resolve())
-      return [...saveCreatePromises, ...deletePromises]
-    }
+      const deletePromises = startIds.map(
+        sid =>
+          sid && !savedIds.includes(sid)
+            ? ChannelService.deleteEventRules(
+                datamartId,
+                site.id,
+                organisationId,
+                sid,
+              )
+            : Promise.resolve(),
+      );
+      return [...saveCreatePromises, ...deletePromises];
+    };
 
-    const generateAliasesTasks = (site: SiteResource): Array<Promise<any>> => {
-      const startId = this.state.siteFormData.aliases.map(alias => alias.model.id)
+    const generateAliasesTasks = (
+      site: ChannelResource,
+    ): Array<Promise<any>> => {
+      const startId = this.state.siteData.aliases.map(alias => alias.model.id);
       const savedIds: string[] = [];
       const saveCreatePromises = siteFormData.aliases.map(alias => {
         if (!alias.model.id) {
-          return SiteService.createAliases(datamart.id, site.id, { organisation_id: organisationId, site_id: site.id, name: alias.model.name })
+          return ChannelService.createAliases(datamartId, site.id, {
+            organisation_id: organisationId,
+            site_id: site.id,
+            name: alias.model.name,
+          });
         } else if (startId.includes(alias.model.id)) {
           savedIds.push(alias.model.id);
-          return SiteService.updateAliases(datamart.id, site.id, organisationId, alias.model.id, {...alias.model, site_id: site.id, organisation_id: organisationId})
+          return ChannelService.updateAliases(
+            datamartId,
+            site.id,
+            organisationId,
+            alias.model.id,
+            {
+              ...alias.model,
+              site_id: site.id,
+              organisation_id: organisationId,
+            },
+          );
         }
         return Promise.resolve();
       });
-      const deletePromises = startId.map(sid => sid && !savedIds.includes(sid) ? SiteService.deleteAliases(datamart.id, site.id, organisationId, sid) : Promise.resolve())
-      return [...saveCreatePromises, ...deletePromises]
-    }
+      const deletePromises = startId.map(
+        sid =>
+          sid && !savedIds.includes(sid)
+            ? ChannelService.deleteAliases(
+                datamartId,
+                site.id,
+                organisationId,
+                sid,
+              )
+            : Promise.resolve(),
+      );
+      return [...saveCreatePromises, ...deletePromises];
+    };
 
-    const generateAllPromises = (site: SiteResource): Array<Promise<any>> => {
-      return [...generateEventRulesTasks(site), ...generateAliasesTasks(site)]
-    }
+    const generateAllPromises = (
+      site: ChannelResource,
+    ): Array<Promise<any>> => {
+      return [...generateEventRulesTasks(site), ...generateAliasesTasks(site)];
+    };
 
-    const generateSavingPromise = (): Promise<
-      any
-    > => {
+    const generateSavingPromise = (): Promise<any> => {
       if (siteFormData.site.id) {
         const mbApp = {
           ...siteFormData.site,
-          visit_analyzer_model_id: getVisitAnalyzerId(siteFormData.visitAnalyzerFields),
+          visit_analyzer_model_id: getVisitAnalyzerId(
+            siteFormData.visitAnalyzerFields,
+          ),
         };
 
-        return SiteService.updateSite(
-          this.props.datamart.id,
+        return ChannelService.updateSite(
+          datamartId,
           siteFormData.site.id,
           mbApp,
-        ).then((site) => Promise.all(generateAllPromises(site.data)));
+        ).then(site => Promise.all(generateAllPromises(site.data)));
       }
 
-      return SiteService.createSite(
+      return ChannelService.createChannel(
         this.props.match.params.organisationId,
-        this.props.datamart.id,
+        datamartId,
         {
           ...siteFormData.site,
-          visit_analyzer_model_id: getVisitAnalyzerId(siteFormData.visitAnalyzerFields),
+          visit_analyzer_model_id: getVisitAnalyzerId(
+            siteFormData.visitAnalyzerFields,
+          ),
           type: 'SITE',
         },
-      ).then((site) => Promise.all(generateAllPromises(site.data)));
+      ).then(site => Promise.all(generateAllPromises(site.data)));
     };
 
     generateSavingPromise()
       .then(() => {
         hideSaveInProgress();
-        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/sites`;
+        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/sites?datamartId=${this.state.selectedDatamartId}`;
         history.push(mobileApplicationUrl);
       })
       .catch(err => {
@@ -208,62 +307,87 @@ class SiteEditPage extends React.Component<Props, State> {
     const {
       history,
       location,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/sites`;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/sites?datamartId=${this.state.selectedDatamartId}`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
       : history.push(defaultRedirectUrl);
   };
 
+  onDatamartSelect = (datamart: DatamartResource) => {
+    this.setState({
+      selectedDatamartId: datamart.id,
+    });
+  };
+
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
-    const { loading, siteFormData } = this.state;
+    const { loading, siteData, selectedDatamartId } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
     }
 
     const mobileName =
-    siteFormData.site &&
-    siteFormData.site.name
+      siteData.site && siteData.site.name
         ? formatMessage(messages.editSiteTitle, {
-            name: siteFormData.site.name,
+            name: siteData.site.name,
           })
         : formatMessage(messages.createSiteTitle);
 
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle1,
-        path: `/v2/o/${organisationId}/settings/datamart/sites`,
+        path: `/v2/o/${organisationId}/settings/datamart/sites?datamartId=${this.state.selectedDatamartId}`,
       },
       {
         name: mobileName,
       },
     ];
 
-    return (
+    const actionBarProps: FormLayoutActionbarProps = {
+      formId: FORM_ID,
+      paths: breadcrumbPaths,
+      onClose: this.onClose,
+    };
+
+    return selectedDatamartId ? (
       <SiteEditForm
-        initialValues={siteFormData}
+        initialValues={siteData}
         onSubmit={this.save}
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
       />
+    ) : (
+      <Layout className="edit-layout">
+        <FormLayoutActionbar {...actionBarProps} />
+        <DatamartSelector onSelect={this.onDatamartSelect} />
+      </Layout>
     );
   }
 }
+
+const mapStateToProps = (state: any) => ({
+  workspace: getWorkspace(state),
+  hasFeature: FeatureSelectors.hasFeature(state),
+});
 
 export default compose(
   withRouter,
   injectIntl,
   injectDatamart,
-  connect(state => ({ hasFeature: FeatureSelectors.hasFeature(state) })),
+  connect(mapStateToProps),
   injectNotifications,
 )(SiteEditPage);

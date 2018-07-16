@@ -30,14 +30,12 @@ import withNormalizer, {
 import {
   AudienceSegmentFormData,
   EditAudienceSegmentParam,
-  SegmentType,
 } from './domain';
-import { FeedType } from '../../../../models/audiencesegment/';
+import { FeedType, AudienceSegmentType } from '../../../../models/audiencesegment/';
 import * as FeatureSelectors from '../../../../state/Features/selectors';
 
 import GeneralFormSection from './Sections/GeneralFormSection';
 import SelectorQL from './Sections/query/SelectorQL';
-import { PixelSection } from './Sections/pixel';
 import { UserListSection } from './Sections/list';
 
 import { McsFormSection } from '../../../../utils/FormHelper';
@@ -46,15 +44,16 @@ import {
   DatamartResource,
 } from '../../../../models/datamart/DatamartResource';
 import { FormSection, FieldCtor } from '../../../../components/Form';
-import { Path } from '../../../../components/ActionBar';
+import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
+import { Path } from '../../../../components/ActionBar';
 import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
 
-const FORM_ID = 'audienceSegmentForm';
+export const FORM_ID = 'audienceSegmentForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
-  >;
+>;
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field;
@@ -70,7 +69,8 @@ export interface AudienceSegmentFormProps
   segmentCreation: boolean;
   queryContainer: any;
   queryLanguage?: QueryLanguage;
-  segmentType?: SegmentType;
+  segmentType?: AudienceSegmentType;
+  goToSegmentTypeSelection?: () => void;
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
@@ -124,51 +124,53 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       case 'USER_PIXEL':
         return (
           datamart && (
-            <PixelSection
-              datamartToken={datamart.token}
-              userListTechName={
+            <FormCodeSnippet
+              language="html"
+              codeSnippet={`<img style="display:none" src="https://api.mediarithmics.com/v1/user_lists/pixel?dat_token=${
+                datamart.token
+              }&user_list_tech_name=${encodeURIComponent(
                 this.props.audienceSegmentFormData.audienceSegment
-                  .technical_name
-              }
+                  .technical_name || '',
+              )}" />`}
+              copyToClipboard={true}
             />
           )
         );
       case 'USER_QUERY':
         return queryLanguage === 'OTQL'
           ? this.generateUserQueryTemplate(
-            <FormOTQL
-              name={'query.query_text'}
-              component={OTQLInputEditor}
-              formItemProps={{
-                label: intl.formatMessage(
-                  messages.audienceSegmentSectionQueryTitle,
-                ),
-              }}
-              helpToolTipProps={{
-                title: intl.formatMessage(
-                  messages.audienceSegmentCreationUserQueryFieldHelper,
-                ),
-              }}
-            />,
-          )
-          : queryLanguage === 'JSON_OTQL'
-            ? this.generateUserQueryTemplate(
-              <FormJSONQL
+              <FormOTQL
                 name={'query.query_text'}
-                component={JSONQL}
-                inputProps={{
-                  datamartId:
-                    datamartId!,
+                component={OTQLInputEditor}
+                formItemProps={{
+                  label: intl.formatMessage(
+                    messages.audienceSegmentSectionQueryTitle,
+                  ),
+                }}
+                helpToolTipProps={{
+                  title: intl.formatMessage(
+                    messages.audienceSegmentCreationUserQueryFieldHelper,
+                  ),
                 }}
               />,
             )
+          : queryLanguage === 'JSON_OTQL'
+            ? this.generateUserQueryTemplate(
+                <FormJSONQL
+                  name={'query.query_text'}
+                  component={JSONQL}
+                  inputProps={{
+                    datamartId: datamartId!,
+                  }}
+                />,
+              )
             : this.generateUserQueryTemplate(
-              <SelectorQL
-                datamartId={datamartId!}
-                organisationId={organisationId}
-                queryContainer={this.props.queryContainer}
-              />,
-            );
+                <SelectorQL
+                  datamartId={datamartId!}
+                  organisationId={organisationId}
+                  queryContainer={this.props.queryContainer}
+                />,
+              );
       default:
         return <div>Not Supported</div>;
     }
@@ -183,6 +185,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       breadCrumbPaths,
       datamart,
       initialValues,
+      goToSegmentTypeSelection,
     } = this.props;
 
     const type = segmentType
@@ -227,6 +230,15 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       items: sections.map(s => ({ sectionId: s.id, title: s.title })),
       scrollId: FORM_ID,
     };
+
+    if (goToSegmentTypeSelection) {
+      sideBarProps.items.unshift({
+        sectionId: 'type',
+        title: messages.audienceSegmentSiderMenuType,
+        onClick: goToSegmentTypeSelection,
+        type: 'validated',
+      });
+    }
 
     const renderedSections = sections.map((section, index) => {
       return section.component ? (

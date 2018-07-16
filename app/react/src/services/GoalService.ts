@@ -1,9 +1,9 @@
+import { AttributionSelectionCreateRequest } from './../models/goal/AttributionSelectionResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import {
   GoalResource,
   GoalCreateRequest,
-  AttributionSelectionCreateRequest,
   AttributionSelectionResource,
 } from '../models/goal';
 
@@ -12,6 +12,7 @@ export interface GetGoalsOption extends PaginatedApiParam {
   archived?: boolean;
   order_by?: string[];
   label_ids?: string[];
+  datamart_id?: string;
 }
 
 const GoalService = {
@@ -24,7 +25,9 @@ const GoalService = {
       organisation_id: organisationId,
       ...options,
     };
-
+    if(options.datamart_id) {
+      params.datamart_id = options.datamart_id
+    }
     return ApiService.getRequest(endpoint, params);
   },
 
@@ -36,7 +39,7 @@ const GoalService = {
 
   updateGoal(
     goaldId: string,
-    resource: Partial<GoalCreateRequest>,
+    resource: Partial<GoalResource>,
   ): Promise<DataResponse<GoalResource>> {
     const endpoint = `goals/${goaldId}`;
 
@@ -52,13 +55,31 @@ const GoalService = {
     return ApiService.postRequest(endpoint, resource);
   },
 
-  createAttributionModel(
+  deleteGoal(
     goalId: string,
-    resource: AttributionSelectionCreateRequest,
+  ): Promise<DataResponse<GoalResource>> {
+    const endpoint = `goals/${goalId}`;
+
+    return ApiService.deleteRequest(endpoint);
+  },
+
+  linkAttributionModelToGoal(
+    goalId: string,
+    resource: Partial<AttributionSelectionCreateRequest>,
   ): Promise<DataResponse<AttributionSelectionResource>> {
     const endpoint = `goals/${goalId}/attribution_models`;
 
     return ApiService.postRequest(endpoint, resource);
+  },
+
+  updateLinkAttributionModel(
+    goalId: string,
+    selectionId: string,
+    resource: Partial<AttributionSelectionResource>,
+  ): Promise<DataResponse<AttributionSelectionResource>> {
+    const endpoint = `goals/${goalId}/attribution_models/${selectionId}`;
+
+    return ApiService.putRequest(endpoint, resource);
   },
 
   getAttributionModels(
@@ -66,6 +87,14 @@ const GoalService = {
   ): Promise<DataListResponse<AttributionSelectionResource>> {
     const endpoint = `goals/${goalId}/attribution_models`;
     return ApiService.getRequest(endpoint);
+  },
+
+  deleteAttributionModel(
+    goalId: string,
+    attributionModelId: string,
+  ): Promise<any> {
+    const endpoint = `goals/${goalId}/attribution_models/${attributionModelId}`;
+    return ApiService.deleteRequest(endpoint);
   },
 };
 

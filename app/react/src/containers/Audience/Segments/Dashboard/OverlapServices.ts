@@ -29,6 +29,9 @@ export class OverlapInterval {
             this.stopInterval()
             resolve()
           }
+        } else {
+          this.stopInterval()
+          resolve()
         }
       }, 2000)
     })
@@ -138,7 +141,7 @@ function formatOverlapResponse(overlapResult: OverlapFileResource, segmentId: st
   return Promise.all(promises)
     .then(segmentResources => {
       const formattedvalues: FormattedOverlapData[] = [];
-
+      const segmentSourceSize =  overlapResult.segments.find(seg => seg.segment_id.toString() === segmentId)!.segment_size
       topOverlaps.forEach(to => {
         const isInOverlap = segmentResources.find(sr => sr ? sr.id === to.segment_intersect_with.toString() : false);
         if (isInOverlap) {
@@ -147,6 +150,7 @@ function formatOverlapResponse(overlapResult: OverlapFileResource, segmentId: st
           formattedvalues.push({
             ...to,
             segment_source_id: to.segment_source_id.toString(),
+            segment_source_size: segmentSourceSize,
             segment_intersect_with: {
               id: to.segment_intersect_with.toString(),
               name: isInOverlap.name,

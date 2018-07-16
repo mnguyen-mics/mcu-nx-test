@@ -42,20 +42,20 @@ interface CreativeEmailsTableState {
 
 type JoinedProps = CreativeEmailsTableProps &
   RouteComponentProps<CampaignRouteParams> &
-  TranslationProps & InjectedIntlProps;
-
+  TranslationProps &
+  InjectedIntlProps;
 
 const messages = defineMessages({
   searchPlaceholder: {
     id: 'creative.email.list.searchPlaceholder',
-    defaultMessage: 'Search Email Templates'
-  }
-})
+    defaultMessage: 'Search Email Templates',
+  },
+});
 
 class CreativeEmailsTable extends React.Component<
   JoinedProps,
   CreativeEmailsTableState
-  > {
+> {
   constructor(props: JoinedProps) {
     super(props);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
@@ -72,7 +72,9 @@ class CreativeEmailsTable extends React.Component<
     const {
       history,
       location: { search, pathname },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       fetchCreativeEmails,
     } = this.props;
 
@@ -91,14 +93,18 @@ class CreativeEmailsTable extends React.Component<
   componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       location: { search },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
       fetchCreativeEmails,
     } = this.props;
 
     const {
       location: { pathname: nextPathname, search: nextSearch, state },
-      match: { params: { organisationId: nextOrganisationId } },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
@@ -155,7 +161,9 @@ class CreativeEmailsTable extends React.Component<
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
       isFetchingCreativeEmails,
       dataSource,
@@ -250,10 +258,11 @@ class CreativeEmailsTable extends React.Component<
 
     const searchOptions = {
       placeholder: intl.formatMessage(messages.searchPlaceholder),
-      onSearch: (value: string) => this.updateLocationSearch({
-        keywords: value,
-        currentPage: 1
-      }),
+      onSearch: (value: string) =>
+        this.updateLocationSearch({
+          keywords: value,
+          currentPage: 1,
+        }),
       defaultValue: filter.keywords,
     };
 
@@ -276,19 +285,26 @@ class CreativeEmailsTable extends React.Component<
         />
       </div>
     ) : (
-        <EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />
-      );
+      <EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />
+    );
   }
 
   editCreativeEmails(campaign: EmailTemplateResource) {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
 
     history.push(`/v2/o/${organisationId}/creatives/email/${campaign.id}/edit`);
   }
 
   archiveCreativeEmails(email: EmailTemplateResource) {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search, pathname, state },
       fetchCreativeEmails,
       translations,
@@ -333,6 +349,6 @@ class CreativeEmailsTable extends React.Component<
 
 export default compose<JoinedProps, CreativeEmailsTableProps>(
   withRouter,
-  withTranslations,
   injectIntl,
+  withTranslations,
 )(CreativeEmailsTable);

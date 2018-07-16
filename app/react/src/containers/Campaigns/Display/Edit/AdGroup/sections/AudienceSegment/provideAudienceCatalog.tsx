@@ -101,7 +101,7 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
                 return {
                   node: category.node,
                   children: childrenCategory,
-                  services,
+                  services: services.data,
                 };
               },
             );
@@ -139,7 +139,9 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
   
       CatalogService.getAudienceSegmentServices(organisationId, {
         categorySubtype: ['AUDIENCE.GENDER'],
-      }).then(genderServiceItems => {
+      })
+      .then(res => res.data)
+      .then(genderServiceItems => {
         this.setState(prevState => ({
           genderServiceItems: {
             data: genderServiceItems,
@@ -161,7 +163,9 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
   
       CatalogService.getAudienceSegmentServices(organisationId, {
         categorySubtype: ['AUDIENCE.AGE'],
-      }).then(ageServiceItems => {
+      })
+      .then(res => res.data)
+      .then(ageServiceItems => {
         this.setState(prevState => ({
           ageServiceItems: {
             data: ageServiceItems,
@@ -202,7 +206,7 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
         history,
         location,
         match,
-        ...rest,
+        ...rest
       } = this.props
 
       // with remove props used for the purpose of this HOC

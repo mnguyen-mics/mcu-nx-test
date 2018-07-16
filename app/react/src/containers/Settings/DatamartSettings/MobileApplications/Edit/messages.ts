@@ -9,6 +9,14 @@ export default defineMessages({
         id: 'settings.mobileapp.form.general.title',
         defaultMessage: 'General Information'
     },
+    sectionVisitAnalyzerTitle: {
+        id: 'settings.mobileapp.form.visitAnalayzer.title',
+        defaultMessage: 'Visit Analyzer'
+    },
+    sectionEventRulesTitle: {
+        id: 'settings.mobileapp.form.section.eventRules.title',
+        defaultMessage: 'Event Rules'
+    },
     sectionGeneralSubTitle: {
         id: 'settings.mobileapp.form.general.subtitle',
         defaultMessage: 'Give your Mobile Application a name',
@@ -57,5 +65,9 @@ export default defineMessages({
     breadcrumbTitle1: {
         id: 'settings.mobileapp.form.settings',
         defaultMessage: 'Mobile Applications'
+    },
+    warningOnTokenEdition: {
+        id: 'settings.datamart.warning.token.edition',
+        defaultMessage: 'Danger Zone: Editing this token may cause any mobile application data collection to fail if not updated properly. Please make sure you have updated your tag in all your mobile apps before saving.'
     }
 })

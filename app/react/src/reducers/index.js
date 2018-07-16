@@ -13,7 +13,6 @@ import LoginReducers from '../state/Login/reducer';
 import ForgotPasswordReducers from '../state/ForgotPassword/reducer';
 import SessionReducers from '../state/Session/reducer';
 import TranslationsReducers from '../state/Translations/reducer';
-import AudiencePartitionsReducers from '../state/Audience/Partitions/reducer';
 import AutomationListReducers from '../state/Automations/reducer';
 import LabelsReducers from '../state/Labels/reducer';
 
@@ -37,7 +36,6 @@ const allReducers = Object.assign({},
   TranslationsReducers,
   AutomationListReducers,
   LabelsReducers,
-  AudiencePartitionsReducers,
   MenuReducers,
   creativesReducer,
   drawerReducer,

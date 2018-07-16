@@ -1,4 +1,4 @@
-import TimelinePage from './TimelinePage';
+import TimelinePage from './TimelinePage.tsx';
 
 export {
   TimelinePage,

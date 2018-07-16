@@ -7,23 +7,27 @@ import {
   TableViewFilters,
 } from '../../../../../components/TableView';
 import messages from './messages';
-import { MobileApplicationResource } from '../../../../../models/settings/settings';
+import { ChannelResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
+import { MultiSelectProps } from '../../../../../components/MultiSelect';
 
 export interface MobileApplicationsTableProps {
   isFetchingMobileApplications: boolean;
-  dataSource: MobileApplicationResource[];
+  dataSource: ChannelResource[];
   totalMobileApplications: number;
   noMobileApplicationYet: boolean;
   onFilterChange: (a: Partial<Filter>) => void;
-  onArchiveMobileApplication: (a: MobileApplicationResource) => void;
-  onEditMobileApplication: (a: MobileApplicationResource) => void;
+  onArchiveMobileApplication: (a: ChannelResource) => void;
+  onEditMobileApplication: (a: ChannelResource) => void;
   filter: Filter;
+  filtersOptions: Array<MultiSelectProps<any>>;
 }
 
-type Props = MobileApplicationsTableProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
+type Props = MobileApplicationsTableProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class MobileApplicationsTable extends React.Component<Props> {
   render() {
@@ -37,7 +41,10 @@ class MobileApplicationsTable extends React.Component<Props> {
       noMobileApplicationYet,
       isFetchingMobileApplications,
       dataSource,
-      match: { params: { organisationId } }
+      match: {
+        params: { organisationId },
+      },
+      filtersOptions
     } = this.props;
 
     const pagination = {
@@ -61,11 +68,15 @@ class MobileApplicationsTable extends React.Component<Props> {
         intlMessage: messages.mobileApplicationName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: MobileApplicationResource) => <Link to={
-          `/v2/o/${organisationId}/settings/datamart/mobile_application/${record.id}/edit`
-        }>
-          {text}
-        </Link>
+        render: (text: string, record: ChannelResource) => (
+          <Link
+            to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/mobile_application/${
+              record.id
+            }/edit`}
+          >
+            {text}
+          </Link>
+        ),
       },
       {
         intlMessage: messages.mobileApplicationToken,
@@ -102,9 +113,9 @@ class MobileApplicationsTable extends React.Component<Props> {
       placeholder: formatMessage(messages.searchPlaceholder),
       onSearch: (value: string) =>
         onFilterChange({
-          name: value,
+          keywords: value,
         }),
-      defaultValue: filter.name,
+      defaultValue: filter.keywords,
     };
 
     return noMobileApplicationYet ? (
@@ -121,9 +132,13 @@ class MobileApplicationsTable extends React.Component<Props> {
         dataSource={dataSource}
         loading={isFetchingMobileApplications}
         pagination={pagination}
+        filtersOptions={filtersOptions}
       />
     );
   }
 }
 
-export default compose<Props, MobileApplicationsTableProps>(injectIntl, withRouter)(MobileApplicationsTable);
+export default compose<Props, MobileApplicationsTableProps>(
+  injectIntl,
+  withRouter,
+)(MobileApplicationsTable);

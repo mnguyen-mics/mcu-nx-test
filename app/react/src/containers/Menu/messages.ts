@@ -62,6 +62,10 @@ export default defineMessages({
         id: 'menu.creatives.emails',
         defaultMessage: 'Emails',
     },
+    creativesNative: {
+        id: 'menu.creatives.native',
+        defaultMessage: 'Native',
+    },
 
 
     // LIBRARY
@@ -100,6 +104,10 @@ export default defineMessages({
     libraryCatalog: {
         id: 'menu.library.Catalogs',
         defaultMessage: 'Catalogs',
+    },
+    libraryDealList: {
+        id: 'menu.library.DealLst',
+        defaultMessage: 'Deal Lists',
     },
     libraryAdLayouts: {
         id: 'menu.library.layouts',
@@ -187,6 +195,10 @@ export default defineMessages({
     accountSettingsProfile: {
         id: 'menu.account.profile',
         defaultMessage: 'Profile',
+    },
+    accountSettingsApiToken: {
+        id: 'menu.account.api.tokens',
+        defaultMessage: 'Api Tokens',
     },
 
     campaignSettingsTitle: {

@@ -83,9 +83,13 @@ const creativesMenuDefinition: NavigatorMenuDefinition = {
       translation: messages.creativesDisplay,
     },
     {
+      ...generateMissingdefinitionItemFromRoute(creativesDefinition.creativeNativeList),
+      translation: messages.creativesNative,
+    },
+    {
       ...generateMissingdefinitionItemFromRoute(creativesDefinition.creativeEmailList),
       translation: messages.creativesEmails,
-    }
+    },
   ]
 }
 
@@ -113,6 +117,10 @@ const libraryMenuDefinition: NavigatorMenuDefinition = {
       path: '/library/stylesheets',
       translation: messages.libraryStylesheets,
       legacyPath: true,
+    },
+    {
+      ...generateMissingdefinitionItemFromRoute(libraryDefinition.libraryDealList),
+      translation: messages.libraryDealList,
     },
     {
       ...generateMissingdefinitionItemFromRoute(libraryDefinition.libraryCatalogList),

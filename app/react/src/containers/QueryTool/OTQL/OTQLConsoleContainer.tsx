@@ -12,7 +12,7 @@ import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
 import ActionBar from '../../../components/ActionBar';
 import ContentHeader from '../../../components/ContentHeader';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
-import OTQLService from '../../../services/OTQLService';
+import QueryService from '../../../services/QueryService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -62,7 +62,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       queryResult: null,
     });
     this.asyncQuery = makeCancelable(
-      OTQLService.runOTQLQuery(datamartId, otqlQuery),
+      QueryService.runOTQLQuery(datamartId, otqlQuery),
     );
     this.asyncQuery.promise
       .then(result => {

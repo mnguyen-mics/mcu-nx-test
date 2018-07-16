@@ -61,10 +61,7 @@ type JoinedProps = ListCreativesDisplayProps &
   InjectedIntlProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class ListCreativesDisplay extends React.Component<
-  JoinedProps
-> {
-
+class ListCreativesDisplay extends React.Component<JoinedProps> {
   render() {
     const {
       selectedRowKeys,
@@ -76,7 +73,9 @@ class ListCreativesDisplay extends React.Component<
         handleOk,
         isArchiving,
       },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl,
     } = this.props;
 
@@ -170,7 +169,7 @@ class ListCreativesDisplay extends React.Component<
 }
 
 export default compose<JoinedProps, ListCreativesDisplayProps>(
-  withTranslations,
   withRouter,
   injectIntl,
+  withTranslations,
 )(ListCreativesDisplay);

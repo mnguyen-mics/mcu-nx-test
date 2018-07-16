@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout, message } from 'antd';
+import { Button, Layout, message } from 'antd';
 import { compose } from 'recompose';
 import moment from 'moment';
 import ExportHeader from './ExportHeader';
@@ -55,7 +55,9 @@ type JoinedProps = ExportsProps &
 class Exports extends React.Component<JoinedProps, ExportsState> {
   fetchLoop = window.setInterval(() => {
     const {
-      match: { params: { exportId } },
+      match: {
+        params: { exportId },
+      },
       location: { search },
     } = this.props;
 
@@ -86,7 +88,9 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
 
   componentDidMount() {
     const {
-      match: { params: { exportId } },
+      match: {
+        params: { exportId },
+      },
       location: { search, pathname },
       history,
     } = this.props;
@@ -108,7 +112,9 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     const {
       history,
       location: { search },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     const {
@@ -178,8 +184,10 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     history.push(nextLocation);
   };
 
-  downloadFile = (execution: ExportExecution) => {
-    const { intl: { formatMessage } } = this.props;
+  downloadFile = (execution: ExportExecution) => (e: any) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     if (execution.status === 'RUNNING' || execution.status === 'PENDING') {
       message.error(formatMessage(messages.exportRunning));
@@ -188,16 +196,18 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     } else if (execution.status === 'SUCCEEDED') {
       (window as any).location = `${
         (window as any).MCS_CONSTANTS.API_URL
-      }/v1/exports/
-${this.props.match.params.exportId}/executions/
-${execution.id}/files/
-technical_name=${execution.result.output_files[0]}
-?access_token=${getCookie('access_token')}`;
+      }/v1/exports/${this.props.match.params.exportId}/executions/${
+        execution.id
+      }/files/technical_name=${
+        execution.result.output_files[0]
+      }?access_token=${encodeURI(getCookie('access_token'))}`;
     }
   };
 
   buildColumnDefinition = () => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     const dataColumns = [
       {
@@ -221,28 +231,30 @@ technical_name=${execution.result.output_files[0]}
             ? moment(text).format('DD/MM/YYYY h:mm:ss')
             : formatMessage(messages.notStarted),
       },
-    ];
-
-    const actionColumns = [
       {
         key: 'action',
-        actions: [
-          {
-            intlMessage: messages.download,
-            callback: this.downloadFile,
-          },
-        ],
+        render: (text: string, record: ExportExecution, index: number) => {
+          return (
+            record.status === 'SUCCEEDED' && (
+              <Button type="primary" onClick={this.downloadFile(record)}>
+                {' '}
+                {formatMessage(messages.download)}
+              </Button>
+            )
+          );
+        },
       },
     ];
 
     return {
       dataColumnsDefinition: dataColumns,
-      actionsColumnsDefinition: actionColumns,
     };
   };
 
   render() {
-    const { location: { search } } = this.props;
+    const {
+      location: { search },
+    } = this.props;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
     const pagination = {
@@ -290,9 +302,6 @@ technical_name=${execution.result.output_files[0]}
               <TableView
                 dataSource={this.state.exportExecutions.items}
                 columns={this.buildColumnDefinition().dataColumnsDefinition}
-                actionsColumnsDefinition={
-                  this.buildColumnDefinition().actionsColumnsDefinition
-                }
                 pagination={pagination}
                 loading={this.state.exportExecutions.isLoading}
               />
@@ -304,4 +313,7 @@ technical_name=${execution.result.output_files[0]}
   }
 }
 
-export default compose<JoinedProps, {}>(injectIntl, withRouter)(Exports);
+export default compose<JoinedProps, {}>(
+  injectIntl,
+  withRouter,
+)(Exports);
