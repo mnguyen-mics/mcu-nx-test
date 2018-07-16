@@ -1,26 +1,43 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
-import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Form, Icon, Input, Button, Alert } from 'antd';
-import logoUrl from '../../assets/images/logo.png';
 import { sendPassword, passwordForgotReset } from '../../state/ForgotPassword/actions';
 import messages from './messages';
+import { FormComponentProps } from 'antd/lib/form';
 
+const logoUrl = require('../../assets/images/logo.png');
 const FormItem = Form.Item;
 
-class ForgotPassword extends Component {
+interface ForgotPasswordProps {}
 
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+interface MapStateToProps { // eslint-disable-line react/forbid-prop-types
+  hasError: boolean,
+  sendPasswordRequest: (obj: { email: string }) => void,
+  passwordForgotReset: () => void,
+  isRequesting: boolean,
+  passwordSentSuccess: boolean
+}
 
+type Props = ForgotPasswordProps & MapStateToProps & InjectedIntlProps & FormComponentProps
+
+class ForgotPassword extends React.Component<Props> {
 
   componentWillUnmount() {
     this.props.passwordForgotReset();
+  }
+
+  handleSubmit = (e: React.FormEvent<any>) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.props.sendPasswordRequest({
+          email: values.email,
+        });
+      }
+    });
   }
 
   render() {
@@ -71,9 +88,7 @@ class ForgotPassword extends Component {
               <FormattedMessage {...messages.resetPasswordEmailSpan} />
             </div>
             <br />
-            <Button type="primary" htmlType="button" className="reset-password-button">
-              <Link to="/login"><FormattedMessage {...messages.resetPasswordReturnToLogin} /></Link>
-            </Button>
+            <Link className="back-to-login" to="/login"><FormattedMessage {...messages.resetPasswordBack} /></Link>
           </div>
           }
 
@@ -83,31 +98,9 @@ class ForgotPassword extends Component {
 
   }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        this.props.sendPasswordRequest({
-          email: values.email,
-        });
-      }
-    });
-  }
-
 }
 
-
-ForgotPassword.propTypes = {
-  form: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  hasError: PropTypes.bool.isRequired,
-  sendPasswordRequest: PropTypes.func.isRequired,
-  passwordForgotReset: PropTypes.func.isRequired,
-  isRequesting: PropTypes.bool.isRequired,
-  passwordSentSuccess: PropTypes.bool.isRequired,
-  intl: intlShape.isRequired,
-};
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   hasError: state.forgotPassword.hasError,
   isRequesting: state.forgotPassword.isRequesting,
   passwordSentSuccess: state.forgotPassword.passwordSentSuccess,
@@ -117,17 +110,11 @@ const mapDispatchToProps = {
   sendPasswordRequest: sendPassword.request,
   passwordForgotReset: passwordForgotReset,
 };
-
-ForgotPassword = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ForgotPassword);
-
-ForgotPassword = Form.create()(ForgotPassword);
-
-ForgotPassword = compose(
+export default compose(
   injectIntl,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+  Form.create(),
 )(ForgotPassword);
-
-
-export default ForgotPassword;
