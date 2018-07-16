@@ -11,37 +11,11 @@ define(['./module'], function (module) {
         $scope.keywordsLists = keywordsLists;
       });
 
+      
       // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/keywords');
-
-      $scope.organisationId = organisationId;
-
-      $scope.editKeywordsList = function (keywordsList, $event) {
-        if ($event) {
-          $event.preventDefault();
-          $event.stopPropagation();
-        }
-
-        $location.path( Session.getWorkspacePrefixUrl() + "/library/keywordslists/" + keywordsList.id);
-      };
-
-      $scope.deleteKeywordsList = function (keywordsList, $event) {
-        if ($event) {
-          $event.preventDefault();
-          $event.stopPropagation();
-        }
-
-        var newScope = $scope.$new(true);
-        newScope.keywordsList = keywordsList;
-        $uibModal.open({
-          templateUrl: 'angular/src/core/keywords/delete.html',
-          scope : newScope,
-          backdrop : 'static',
-          controller: 'core/keywords/DeleteController'
-        });
-
-        return false;
-      };
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/keywordslist');
+      
+     
     }
   ]);
 
