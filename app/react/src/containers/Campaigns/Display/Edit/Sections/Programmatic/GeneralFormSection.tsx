@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import messages from '../messages';
-import { ButtonStyleless, McsIcon } from '../../../../../components';
+import messages from '../../messages';
+import { ButtonStyleless, McsIcon } from '../../../../../../components';
 import {
   FormInput,
   FormAlertInput,
@@ -11,18 +11,18 @@ import {
   FormInputField,
   FormAlertInputField,
   FormAddonSelectField,
-} from '../../../../../components/Form';
+} from '../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+} from '../../../../../../components/Form/withValidators';
 import withNormalizer, {
   NormalizerProps,
-} from '../../../../../components/Form/withNormalizer';
+} from '../../../../../../components/Form/withNormalizer';
 import { withRouter, RouteComponentProps } from 'react-router';
 import {
   EditDisplayCampaignRouteMatchParam,
   DisplayCampaignFormData,
-} from '../domain';
+} from '../../domain';
 
 interface MapStateToProps {
   initialFormValues: Partial<DisplayCampaignFormData>;

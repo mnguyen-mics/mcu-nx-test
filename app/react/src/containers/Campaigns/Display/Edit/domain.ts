@@ -1,4 +1,4 @@
-import { GoalFormData } from './../../Goal/Edit/domain';
+import { GoalFormData } from '../../Goal/Edit/domain';
 import { DisplayCampaignResource } from '../../../../models/campaign/display';
 import {
   GoalSelectionCreateRequest,
@@ -32,12 +32,15 @@ export interface DisplayCampaignFormData {
   adGroupFields: AdGroupFieldModel[];
 }
 
+export type CampaignType = 'AD_SERVING' | 'PROGRAMMATIC' | 'CAMPAIGN_TRACKING' 
+
 export const INITIAL_DISPLAY_CAMPAIGN_FORM_DATA: DisplayCampaignFormData = {
   campaign: {
     model_version: 'V2017_09',
     max_budget_period: 'DAY',
     editor_version_id: '11',
     time_zone: 'Europe/Paris',
+    type: 'DISPLAY'
   },
   goalFields: [],
   adGroupFields: [],
