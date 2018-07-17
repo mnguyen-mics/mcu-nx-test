@@ -16,8 +16,8 @@ import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { AuthenticatedRoute } from './Route';
 import { Notifications } from '../../containers/Notifications';
-import { ForgotPassword } from '../ForgotPassword';
-import { Login } from '../Login';
+import { ForgotPassword } from '../Authentication/ForgotPassword';
+import { Login } from '../Authentication/Login';
 import routes from '../../routes/routes';
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
@@ -234,6 +234,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
           <Route exact={true} path="/login" render={loginRouteRender} />
           <Route exact={true} path="/logout" render={logoutRouteRender} />
+          <Route exact={true} path="/set-password" render={logoutRouteRender} />
 
           <Route
             exact={true}
