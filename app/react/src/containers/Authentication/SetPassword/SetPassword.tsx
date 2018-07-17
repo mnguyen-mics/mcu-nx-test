@@ -12,6 +12,9 @@ import { FormComponentProps } from 'antd/lib/form';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { SET_PASSWORD_SEARCH_SETTINGS, parseSearch } from '../../../utils/LocationSearchHelper';
 import AuthService from '../../../services/AuthService';
+import { defaultErrorMessages } from '../../../components/Form/withValidators';
+
+const logoUrl = require('../../../assets/images/logo.png');
 export interface SetPasswordProps {}
 
 type Props = SetPasswordProps & InjectedIntlProps & FormComponentProps & RouteComponentProps<{}>;
@@ -79,9 +82,10 @@ class SetPassword extends React.Component<Props, State> {
     return true;
   };
 
-  public render() {
+  render() {
     const {
       form: { getFieldDecorator },
+      intl,
     } = this.props;
 
     const { isError } = this.state;
@@ -102,13 +106,13 @@ class SetPassword extends React.Component<Props, State> {
               <img
                 alt="mics-logo"
                 className="login-logo"
-                src={'../../../assets/images/logo.png'}
+                src={logoUrl}
               />
             </div>
             {errorMsg}
             <FormItem>
               {getFieldDecorator('password1', {
-                rules: [{ required: true, message: 'Password' }],
+                rules: [{ required: true, message: intl.formatMessage(defaultErrorMessages.required) }],
               })(
                 <Input
                   prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
@@ -119,7 +123,7 @@ class SetPassword extends React.Component<Props, State> {
             </FormItem>
             <FormItem>
               {getFieldDecorator('password2', {
-                rules: [{ required: true, message: 'test' }],
+                rules: [{ required: true, message: intl.formatMessage(defaultErrorMessages.required) }],
               })(
                 <Input
                   prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
