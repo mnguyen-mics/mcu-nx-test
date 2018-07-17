@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { FormLayoutActionbar } from '../../../../components/Layout';
 import { FormTitle } from '../../../../components/Form';
-import { MenuPresentational, MenuList } from '../../../../components/FormMenu';
+import { MenuPresentational } from '../../../../components/FormMenu';
 import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayoutActionbar';
@@ -112,7 +112,7 @@ class DisplayCampaignSelector extends React.Component<
                     />
                   </div>
                 </Row>
-                <Row className="intermediate-title">
+                {/* <Row className="intermediate-title">
                   <FormattedMessage {...messages.displayTypeAdvanced} />
                 </Row>
                 <Row className="menu">
@@ -120,7 +120,7 @@ class DisplayCampaignSelector extends React.Component<
                     title={formatMessage(messages.trackingType)}
                     select={onTypeSelect('TRACKING')}
                   />
-                </Row>
+                </Row> */}
               </Row>
             </Content>
           </Layout>

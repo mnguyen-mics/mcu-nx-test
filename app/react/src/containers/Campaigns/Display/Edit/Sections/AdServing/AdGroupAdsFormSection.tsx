@@ -240,11 +240,11 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
     return (
       <div>
         <Row className="footer">
-          <Col className="inline formatWrapper" span={16}>
+          <Col className="inline formatWrapper" span={20}>
             <div style={shapeStyle} />
             <div className="dimensions">{data.creativeResource.format}</div>
           </Col>
-          <Col className="inline buttons" span={6}>
+          <Col className="inline buttons" span={2}>
 
             <ButtonStyleless onClick={removeField}>
               <McsIcon className="button" type="delete" />

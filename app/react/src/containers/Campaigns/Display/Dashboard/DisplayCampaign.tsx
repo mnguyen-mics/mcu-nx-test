@@ -1,0 +1,76 @@
+import * as React from 'react';
+import { DisplayCampaignInfoResource } from '../../../../models/campaign/display';
+import DisplayCampaignService from '../../../../services/DisplayCampaignService';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { compose } from 'recompose';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import DisplayCampaignProgrammaticPage from './ProgrammaticCampaign/DisplayCampaignPage';
+import DisplayCampaignAdServingPage from './AdServing/AdServingPage';
+import { Loading } from '../../../../components';
+
+export interface DisplayCampaignProps {}
+
+type Props = DisplayCampaignProps & RouteComponentProps<{ organisationId: string, campaignId: string }> & InjectedNotificationProps
+
+interface State {
+  campaign?: DisplayCampaignInfoResource;
+  loading: boolean
+}
+
+class DisplayCampaign extends React.Component<
+Props,
+  State
+> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      loading: true
+    }
+  }
+
+  componentDidMount() {
+    const { match: { params: { campaignId } } } = this.props;
+
+    this.fetchAllData(campaignId)
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const { match: { params: { campaignId } } } = this.props;
+    const { match: { params: { campaignId: nextCampaignId } } } = nextProps;
+
+    if (campaignId !== nextCampaignId) {
+      this.fetchAllData(nextCampaignId)
+    }
+  }
+  
+
+  fetchAllData = (
+    campaignId: string,
+  ) => {
+    return DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, {
+      view: 'deep',
+    }).then(res => {
+      this.setState({ campaign: res.data, loading: false })
+    }).catch((err) => this.props.notifyError(err));
+  };
+
+  public render() {
+
+    if (this.state.loading || !this.state.campaign) return <Loading className="loading-full-screen" />;
+  
+    switch(this.state.campaign.subtype) {
+      case 'PROGRAMMATIC':
+      case 'TRACKING':
+        return <DisplayCampaignProgrammaticPage />
+      case 'AD_SERVING':
+        return <DisplayCampaignAdServingPage
+          campaign={this.state.campaign}
+        />
+    }
+  }
+}
+
+export default compose<Props, DisplayCampaignProps>(
+  withRouter,
+  injectNotifications
+)(DisplayCampaign)
