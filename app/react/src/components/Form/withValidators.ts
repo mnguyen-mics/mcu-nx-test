@@ -2,7 +2,7 @@ import { compose, withProps } from 'recompose';
 import { injectIntl, defineMessages, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Validator } from 'redux-form';
 
-const defaultErrorMessages = defineMessages({
+export const defaultErrorMessages = defineMessages({
   required: {
     id: 'common.form.field.error.required',
     defaultMessage: 'required',

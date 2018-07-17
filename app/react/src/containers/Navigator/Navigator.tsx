@@ -16,8 +16,9 @@ import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { AuthenticatedRoute } from './Route';
 import { Notifications } from '../../containers/Notifications';
-import { ForgotPassword } from '../ForgotPassword';
-import { Login } from '../Login';
+import { ForgotPassword } from '../Authentication/ForgotPassword';
+import { Login } from '../Authentication/Login';
+import { SetPassword } from '../Authentication/SetPassword'
 import routes from '../../routes/routes';
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
@@ -228,22 +229,27 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     return (
         <Switch>
+          <Route exact={true} path="/set-password" component={SetPassword} />
           <Route exact={true} path="/" render={renderRoute} />
 
           {routeMapping}
 
+          
           <Route exact={true} path="/login" render={loginRouteRender} />
           <Route exact={true} path="/logout" render={logoutRouteRender} />
+          
 
           <Route
             exact={true}
             path="/v2/forgot_password"
             component={ForgotPassword}
           />
+          
           {angularRedirect.map(redirect => {
             const render = () => <RedirectAngular from={redirect.from} to={redirect.to} baseUrl={basePath} />;
             return <Route key={redirect.from} exact={true} path={`${'/:orgDatamartSettings'}${redirect.from}`} render={render} />
           })}
+          
           <Route render={errorRouteRender} />
         </Switch>
     );

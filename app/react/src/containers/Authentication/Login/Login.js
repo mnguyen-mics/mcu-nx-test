@@ -5,11 +5,11 @@ import { withRouter, Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { Form, Icon, Input, Button, Checkbox, Alert } from 'antd';
 
-import log from '../../utils/Logger';
+import log from '../../../utils/Logger';
 
-import logoUrl from '../../assets/images/logo.png';
+import logoUrl from '../../../assets/images/logo.png';
 
-import { logIn } from '../../state/Login/actions';
+import { logIn } from '../../../state/Login/actions';
 
 const FormItem = Form.Item;
 
