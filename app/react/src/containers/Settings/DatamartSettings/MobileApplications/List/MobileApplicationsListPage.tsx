@@ -182,10 +182,15 @@ class MobileApplicationsListPage extends React.Component<
         params: { organisationId },
       },
       datamart,
+      location: {search}
     } = this.props;
 
     this.setState({ filter: newFilter });
-    this.fetchMobileApplications(organisationId, datamart.id, newFilter);
+    const filters = parseSearch(
+      search,
+      this.getSearchSetting(organisationId),
+    );
+    this.fetchMobileApplications(organisationId, filters.datamartId ? filters.datamartId : datamart.id, newFilter);
   };
 
   /**
