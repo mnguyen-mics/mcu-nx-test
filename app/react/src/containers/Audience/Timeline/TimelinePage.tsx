@@ -71,13 +71,14 @@ class TimelinePage extends React.Component<JoinedProps> {
       match: {
         params: { organisationId, identifierId, identifierType },
       },
+      location,
     } = this.props;
+    const datamarId = queryString.parse(location.search).datamarId;
     if (!identifierId && !identifierType && cookies.mics_vid) {
-      history.push(
-        `/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${
-          cookies.mics_vid
-        }`,
-      );
+      const url = `/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${
+        cookies.mics_vid
+      }?datamartId=${datamarId ? datamarId : ''}`;
+      history.push(url);
     }
   }
 
