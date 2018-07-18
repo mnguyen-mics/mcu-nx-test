@@ -18,6 +18,8 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import messages from '../messages';
 import { FormattedMessage } from 'react-intl';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 
 
 const { Content } = Layout;
@@ -27,9 +29,9 @@ export interface DisplayCampaignProps {
 }
 
 type Props = DisplayCampaignProps &
-  RouteComponentProps<{ organisationId: string; campaignId: string }>;
+  RouteComponentProps<{ organisationId: string; campaignId: string }> & InjectedNotificationProps;
 
-class AdServing extends React.Component<Props, any> {
+class AdServing extends React.Component<Props> {
   componentDidMount() {
     const {
       history,
@@ -68,7 +70,18 @@ class AdServing extends React.Component<Props, any> {
   }
 
   archiveCampaign = (campaignId: string) => {
-    // to fo
+    const {
+      history,
+      match: { params: { organisationId } }
+    } = this.props;
+    return DisplayCampaignService.updateCampaign(campaignId, {archived: true})
+      .then(() => {
+        history.push({
+          pathname: `/v2/o/${organisationId}/campaigns/display`
+        })
+      }).catch(err => {
+        this.props.notifyError(err)
+      })
   };
 
   public render() {
@@ -116,4 +129,4 @@ class AdServing extends React.Component<Props, any> {
   }
 }
 
-export default compose<Props, DisplayCampaignProps>(withRouter)(AdServing);
+export default compose<Props, DisplayCampaignProps>(withRouter, injectNotifications)(AdServing);

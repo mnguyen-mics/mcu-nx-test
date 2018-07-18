@@ -195,7 +195,7 @@ class EditCampaignPage extends React.Component<Props, State> {
             onSubmitFail={this.onSubmitFail}
           />;
       case 'TRACKING':
-          return 'test2';
+          return 'This feature is not supported yet!';
     }
 
   }

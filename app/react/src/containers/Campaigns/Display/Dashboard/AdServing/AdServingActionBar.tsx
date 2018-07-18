@@ -19,7 +19,7 @@ export interface AdServingActionBarProps {
 
 type Props = AdServingActionBarProps & RouteComponentProps<{ organisationId: string, campaignId: string }> & InjectedIntlProps;
 
-class AdServingActionBar extends React.Component<Props, any> {
+class AdServingActionBar extends React.Component<Props> {
 
   getSnippet = (type: ClickParam) => {
     const { campaign, intl: { formatMessage }, match: { params: { organisationId } } } = this.props;
@@ -59,7 +59,7 @@ class AdServingActionBar extends React.Component<Props, any> {
       intl: { formatMessage },
     } = this.props;
 
-    const handleArchiveGoal = (displayCampaignId: string) => {
+    const handleArchiveCampaign = (displayCampaignId: string) => {
       Modal.confirm({
         title: formatMessage(modalMessages.archiveCampaignConfirm),
         content: formatMessage(modalMessages.archiveCampaignMessage),
@@ -76,7 +76,7 @@ class AdServingActionBar extends React.Component<Props, any> {
     const onClick = (event: any) => {
       switch (event.key) {
         case 'ARCHIVED':
-          return campaign ? handleArchiveGoal(campaign.id) : null;
+          return campaign ? handleArchiveCampaign(campaign.id) : null;
         case 'DUPLICATE':
           return this.duplicateCampaign();
         default:

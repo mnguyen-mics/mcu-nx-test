@@ -25,7 +25,7 @@ const messages = defineMessages({
   },
   displayCampaignTypePickerSubTitle: {
     id: 'display.campaign.edit.select.subtitle',
-    defaultMessage: 'Select Your Campaign Type'
+    defaultMessage: 'Select your campaign type, if you don\'t know which type you should use, please contact your representative.'
   },
   programmaticType: {
     id: 'display.campaign.edit.select.programmatic',
@@ -55,8 +55,7 @@ const messages = defineMessages({
 
 
 class DisplayCampaignSelector extends React.Component<
-  Props,
-  any
+  Props
 > {
   public render() {
 
@@ -112,6 +111,7 @@ class DisplayCampaignSelector extends React.Component<
                     />
                   </div>
                 </Row>
+                { /* to be uncommented when this feature is available */ }
                 {/* <Row className="intermediate-title">
                   <FormattedMessage {...messages.displayTypeAdvanced} />
                 </Row>
