@@ -1,8 +1,9 @@
 import ApiService, { DataResponse } from './ApiService';
-import { Workspace, Cookie } from '../models/organisation/organisation';
+import { Cookie } from '../models/organisation/organisation';
+import { UserWorkspaceResource } from '../models/directory/UserProfileResource';
 
 export default {
-  getWorkspace(organisationId: string): Promise<DataResponse<Workspace>> {
+  getWorkspace(organisationId: string): Promise<DataResponse<UserWorkspaceResource>> {
     const endpoint = `organisations/${organisationId}/workspace`;
     return ApiService.getRequest(endpoint);
   },

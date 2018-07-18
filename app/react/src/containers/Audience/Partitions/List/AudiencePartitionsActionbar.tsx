@@ -11,10 +11,10 @@ import McsIcon from '../../../../components/McsIcon';
 import { withTranslations } from '../../../Helpers';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { TranslationProps } from '../../../Helpers/withTranslations';
-import { Datamart } from '../../../../models/organisation/organisation';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 interface MapStateToProps {
-  defaultDatamart: (organisationId: string) => Datamart;
+  defaultDatamart: (organisationId: string) => DatamartResource;
 }
 
 type Props = MapStateToProps &

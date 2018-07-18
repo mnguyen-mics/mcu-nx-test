@@ -11,14 +11,14 @@ import pathToRegexp from 'path-to-regexp';
 import * as SessionHelper from '../../state/Session/selectors';
 import OrgLogo from '../Logo/OrgLogo';
 import { ButtonStyleless } from '../../components/index';
-import { Workspace } from '../../models/organisation/organisation';
 import Search from 'antd/lib/input/Search';
+import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 
 const { Meta } = Card;
 
 export interface OrgSelectorProps {
-  workspaces: Workspace[];
-  workspace: Workspace;
+  workspaces: UserWorkspaceResource[];
+  workspace: UserWorkspaceResource;
   hasDatamarts: boolean;
   size: number;
   onItemClick: () => void;
@@ -160,9 +160,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
 }
 
 const mapStateToProps = (state: any) => ({
-  workspaces: Object.keys(SessionHelper.getWorkspaces(state)).map(
-    item => SessionHelper.getWorkspaces(state)[item],
-  ),
+  workspaces: state.session.connectedUser.workspaces,
   workspace: SessionHelper.getWorkspace(state),
   hasDatamarts: SessionHelper.hasDatamarts(state),
 });
