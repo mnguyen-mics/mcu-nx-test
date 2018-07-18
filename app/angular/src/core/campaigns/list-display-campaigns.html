@@ -12,16 +12,7 @@
     <div class="campaign-list-controller mics-table-toolbar">
       <!-- New Campaign Button -->
       <div class="col-md-6">
-        <div class="campaign-list-actions" uib-dropdown>
-          <button class="mics-btn mics-btn-add" uib-dropdown-toggle type="button">New Campaign</button>
-          <ul class="dropdown-menu" role="menu">
-            <li role="presentation" ng-repeat="editor in campaignEditors">
-              <a role="menuitem" tabindex="-1" ng-click="create(editor)">
-                {{editor.name}}
-              </a>
-            </li>
-          </ul>
-        </div>
+          <button class="mics-btn mics-btn-add" ng-click="showModal()" type="button">New Campaign</button>
       </div>
       <!-- Date picker -->
       <div class="col-md-6">

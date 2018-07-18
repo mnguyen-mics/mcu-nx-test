@@ -5,11 +5,11 @@ import { withRouter, Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { Form, Icon, Input, Button, Checkbox, Alert } from 'antd';
 
-import log from '../../utils/Logger';
+import log from '../../../utils/Logger';
 
-import logoUrl from '../../assets/images/logo.png';
+import logoUrl from '../../../assets/images/logo.png';
 
-import { logIn } from '../../state/Login/actions';
+import { logIn } from '../../../state/Login/actions';
 
 const FormItem = Form.Item;
 
@@ -40,7 +40,7 @@ class Login extends Component {
             <div className="image-wrapper">
               <img alt="mics-logo" className="login-logo" src={logoUrl} />
             </div>
-            { errorMsg }
+            {errorMsg}
             <FormItem>
               {getFieldDecorator('email', {
                 rules: [{ required: true, message: translations.EMAL_REQUIRED }],

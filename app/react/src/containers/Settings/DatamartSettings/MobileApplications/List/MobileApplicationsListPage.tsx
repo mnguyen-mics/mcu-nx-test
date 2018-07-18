@@ -170,7 +170,7 @@ class MobileApplicationsListPage extends React.Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/mobile_application/${
+      `/v2/o/${organisationId}/settings/datamart/${mobileApplication.datamart_id}/mobile_application/${
         mobileApplication.id
       }/edit`,
     );

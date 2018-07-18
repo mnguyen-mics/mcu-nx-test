@@ -276,7 +276,7 @@ define(['./module'], function (module) {
 
           scope.micsPlUpload = {
             multi_selection: false,
-            url: $location.protocol() + ":" + Restangular.one("data_file").one("data").getRestangularUrl()+ "?uri=" + encodeURIComponent(scope.property.value.uri),
+            url: Restangular.one("data_file").one("data").getRestangularUrl()+ "?uri=" + encodeURIComponent(scope.property.value.uri),
             http_method: "PUT",
             multipart: false,
             filters: {
@@ -300,7 +300,7 @@ define(['./module'], function (module) {
           };
 
           scope.$watch("property.value.uri", function () {
-           scope.micsPlUpload.url = $location.protocol() + ":" + Restangular.one("data_file").one("data").getRestangularUrl()+ "?uri=" + encodeURIComponent(scope.property.value.uri);
+           scope.micsPlUpload.url = Restangular.one("data_file").one("data").getRestangularUrl()+ "?uri=" + encodeURIComponent(scope.property.value.uri);
           });
 
           scope.isNotValid = function(uri){

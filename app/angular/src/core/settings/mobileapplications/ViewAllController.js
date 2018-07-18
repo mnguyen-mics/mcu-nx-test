@@ -2,8 +2,8 @@ define(['./module'], function (module) {
   'use strict';
 
   module.controller('core/settings/mobileapplications/ViewAllController', [
-    '$scope', '$log', '$location', '$state', '$stateParams', 'Restangular', 'core/common/auth/Session', 'lodash', '$filter',
-    function ($scope, $log, $location, $state, $stateParams, Restangular, Session, _, $filter) {
+    '$scope', '$log', '$location', '$state', '$stateParams', 'Restangular', 'core/common/auth/Session', 'lodash', '$filter', 'core/common/WarningService',
+    function ($scope, $log, $location, $state, $stateParams, Restangular, Session, _, $filter, WarningService) {
       $scope.datamartId = Session.getCurrentDatamartId();
       $scope.organisationId = Session.getCurrentWorkspace().organisation_id;
       $scope.itemsPerPage = 20;
@@ -32,10 +32,12 @@ define(['./module'], function (module) {
         $location.path(Session.getWorkspacePrefixUrl() + "/settings/mobileapplications/new");
       };
 
-      $scope.archive = function (app) {
-        Restangular.all("datamarts/" + $scope.datamartId + "/mobile_applications/" + app.id).remove({"organisation_id": $scope.organisationId}).then(function () {
-          $state.transitionTo($state.current, $stateParams, {
-            reload: true, inherit: true, notify: true
+      $scope.delete = function (app) {
+        WarningService.showWarningModal("Do you really want to delete this mobile application?").then(function () {
+          Restangular.all("datamarts/" + $scope.datamartId + "/mobile_applications/" + app.id).remove({"organisation_id": $scope.organisationId}).then(function () {
+            $state.transitionTo($state.current, $stateParams, {
+              reload: true, inherit: true, notify: true
+            });
           });
         });
       };

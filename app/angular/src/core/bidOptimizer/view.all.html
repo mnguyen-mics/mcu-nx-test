@@ -23,8 +23,7 @@
       </thead>
       <tbody>
       <tr ng-repeat="bidOptimizer in bidOptimizers"
-          fetch-plugin-from-version="bidOptimizer.engine_version_id as engine"
-          fetch-plugin-properties="engine.id as engineProperties">
+          fetch-plugin-version-properties="bidOptimizer.engine_version_id as engineProperties">
         <td>{{bidOptimizer.name}}</td>
         <td>{{engineProperties['name'].value}}</td>
         <td>{{engineProperties['provider'].value}}</td>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Radio } from 'antd';
 import { RadioProps } from 'antd/lib/radio';
 
-interface FormRadioProps {
+export interface FormRadioProps {
   title: string;
 }
 

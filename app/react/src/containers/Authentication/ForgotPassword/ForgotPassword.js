@@ -5,8 +5,8 @@ import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import { Form, Icon, Input, Button, Alert } from 'antd';
-import logoUrl from '../../assets/images/logo.png';
-import { sendPassword, passwordForgotReset } from '../../state/ForgotPassword/actions';
+import logoUrl from '../../../assets/images/logo.png';
+import { sendPassword, passwordForgotReset } from '../../../state/ForgotPassword/actions';
 import messages from './messages';
 
 const FormItem = Form.Item;
@@ -83,8 +83,8 @@ class ForgotPassword extends Component {
 
   }
 
-  handleSubmit = () => {
-
+  handleSubmit = (e) => {
+    e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         this.props.sendPasswordRequest({

@@ -13,7 +13,6 @@ import { FormTitle, withValidators, FieldCtor } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
-import { PluginProperty } from '../../../models/Plugins';
 import { PluginFieldGenerator } from '../../Plugin';
 import { Omit } from '../../../utils/Types';
 
@@ -21,17 +20,26 @@ import messages from './messages';
 import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../components/Drawer/index';
 import { ButtonStyleless, McsIcon } from '../../../components'
+import { PluginLayout } from '../../../models/plugin/PluginLayout';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { BasicProps } from 'antd/lib/layout/layout';
+import PluginSectionGenerator from '../PluginSectionGenerator';
+import { PropertyResourceShape } from '../../../models/plugin';
 
-const { Content } = Layout;
 const FORM_NAME = 'pluginForm';
 
+const Content = Layout.Content as React.ComponentClass<
+  BasicProps & { id: string }
+  >;
 interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
   // formValues: any;
   editionMode: boolean;
   organisationId: string;
-  save: (pluginValue: any, propertiesValue: PluginProperty[]) => void;
-  pluginProperties: PluginProperty[];
+  save: (pluginValue: any, propertiesValue: PropertyResourceShape[]) => void;
+  pluginProperties: PropertyResourceShape[];
   disableFields: boolean;
+  pluginLayout?: PluginLayout;
+  isLoading: boolean;
   pluginVersionId: string;
   formId: string;
   initialValues: any;
@@ -43,7 +51,8 @@ type JoinedProps = PluginEditFormProps &
   InjectedFormProps &
   ValidatorProps &
   InjectedIntlProps &
-  InjectedDrawerProps;
+  InjectedDrawerProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 interface PluginEditFormState {
   loading: boolean;
@@ -65,9 +74,10 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
   constructor(props: JoinedProps) {
     super(props);
+
     this.state = {
       loading: false,
-      displayAdvancedSection: false
+      displayAdvancedSection: false,
     };
   }
 
@@ -102,6 +112,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     save(pluginData, formattedProperties);
   };
 
+
   pluginFieldGenerated = () => {
     const {
       disableFields,
@@ -110,7 +121,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       pluginProperties,
     } = this.props;
 
-    return pluginProperties.map((fieldDef: PluginProperty) => {
+    return pluginProperties.map((fieldDef: PropertyResourceShape) => {
       return (
         <PluginFieldGenerator
           key={`${fieldDef.technical_name}`}
@@ -124,9 +135,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
   };
 
   renderTechnicalName = () => {
-    const {
-      intl
-    } = this.props;
+    const { intl } = this.props;
     const InputField: FieldCtor<FormInputProps> = Field;
     return (
       <div>
@@ -151,9 +160,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
             name="plugin.technical_name"
             component={FormInput}
             formItemProps={{
-              label: intl.formatMessage(
-                messages.sectionTechnicalName,
-              ),
+              label: intl.formatMessage(messages.sectionTechnicalName),
             }}
             inputProps={{
               placeholder: intl.formatMessage(
@@ -161,14 +168,36 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
               ),
             }}
             helpToolTipProps={{
-              title: intl.formatMessage(
-                messages.sectionTechnicalHelper,
-              ),
+              title: intl.formatMessage(messages.sectionTechnicalHelper),
             }}
           />
         </div>
-      </div>)
-  }
+      </div>
+    );
+  };
+
+  generateFormFromPluginLayout = (pluginLayout: PluginLayout) => {
+    const {
+      organisationId,
+      pluginVersionId,
+      pluginProperties,
+    } = this.props;
+
+    return pluginLayout.sections.map((section, index) => {
+      return (
+        <div key={section.title}>
+          <PluginSectionGenerator
+            pluginLayoutSection={section}
+            organisationId={organisationId}
+            pluginProperties={pluginProperties}
+            pluginVersionId={pluginVersionId}
+          />
+          {index !== pluginLayout.sections.length - 1 ? <hr /> : null}
+        </div>
+      );
+    });
+
+  };
 
   render() {
     const {
@@ -177,8 +206,9 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       fieldValidators: { isRequired },
       intl: { formatMessage },
       disableFields,
+      showTechnicalName,
       showGeneralInformation,
-      showTechnicalName
+      pluginLayout
     } = this.props;
 
     const InputField: FieldCtor<FormInputProps> = Field;
@@ -205,11 +235,8 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
           onSubmit={handleSubmit(this.onSubmit)}
           id={formId}
         >
-          {/* this button enables submit on enter */}
-          <button type="submit" style={{ display: 'none' }} />
           <Content
-            className="mcs-content-container mcs-form-container ad-group-form"
-          // add ID?
+            className="mcs-content-container mcs-form-container ad-group-form" id={formId}
           >
             {showGeneralInformation ? <div><div id={'general'}>
               <Row
@@ -233,17 +260,22 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
               </Row>
             </div>
               <hr /></div> : null}
-            <div id={'properties'}>
-              <Row
-                type="flex"
-                align="middle"
-                justify="space-between"
-                className="section-header"
-              >
-                <FormTitle title={messages.sectionPropertiesTitle} />
-              </Row>
-              <Row>{this.pluginFieldGenerated()}</Row>
-            </div>
+            {pluginLayout === undefined ?
+              <div id={'properties'}>
+                <Row
+                  type="flex"
+                  align="middle"
+                  justify="space-between"
+                  className="section-header"
+                >
+                  <FormTitle title={messages.sectionPropertiesTitle} />
+                </Row>
+                <Row>{this.pluginFieldGenerated()}</Row>
+              </div>
+              :
+              <div>
+                {this.generateFormFromPluginLayout(pluginLayout)}
+              </div>}
           </Content>
         </Form>
       </Layout>
@@ -253,6 +285,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
 export default compose<JoinedProps, PluginEditFormProps>(
   injectIntl,
+  withRouter,
   injectDrawer,
   reduxForm({
     form: FORM_NAME,

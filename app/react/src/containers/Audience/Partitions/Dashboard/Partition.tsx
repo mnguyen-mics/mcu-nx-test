@@ -1,22 +1,26 @@
-import * as React from 'react';
-import { compose } from 'recompose';
 import { Layout, message, Modal } from 'antd';
+import * as React from 'react';
+import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import queryString from 'query-string';
-
-import PartitionActionBar from './PartitionActionBar';
-import ContentHeader from '../../../../components/ContentHeader';
+import { compose } from 'recompose';
 import Card from '../../../../components/Card/Card';
-import TableView from '../../../../components/TableView/TableView';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import {
-  AudiencePartitionResource,
-  AudiencePartitionStatus,
-} from '../../../../models/audiencePartition/AudiencePartitionResource';
+import ContentHeader from '../../../../components/ContentHeader';
+import TableView, { DataColumnDefinition, TableViewProps } from '../../../../components/TableView/TableView';
+import { AudiencePartitionResource, AudiencePartitionStatus } from '../../../../models/audiencePartition/AudiencePartitionResource';
+import { UserPartitionSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import AudiencePartitionService from '../../../../services/AudiencePartitionsService';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
-import { injectDatamart, InjectedDatamartProps } from '../../../Datamart/index';
+import QueryService from '../../../../services/QueryService';
+import ReportService from '../../../../services/ReportService';
+import { Index } from '../../../../utils';
+import McsMoment from '../../../../utils/McsMoment';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import { InjectedWorkspaceProps, injectWorkspace } from '../../../Datamart/index';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import PartitionActionBar from './PartitionActionBar';
+
 
 const { Content } = Layout;
 
@@ -63,108 +67,204 @@ const messages = defineMessages({
 interface PartitionProps {}
 
 interface PartitionState {
-  partitionData: AudiencePartitionResource;
-  partitions: AudienceSegmentResource[];
+  audiencePartition?: AudiencePartitionResource;
+  userPartitionSegments: UserPartitionSegment[];
+  statBySegmentId: Index<{ audience_segment_id: number; user_points: number }>;
+  totalUserPoint?: number;
   isLoading: boolean;
+  isLoadingStats: boolean;
 }
 
 type JoinedProps = PartitionProps &
-  InjectedDatamartProps &
+  InjectedWorkspaceProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
+
+const PartitionTable = TableView as React.ComponentClass<
+  TableViewProps<UserPartitionSegment>
+>;
 
 class Partition extends React.Component<JoinedProps, PartitionState> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
-      partitionData: {},
-      partitions: [],
-      isLoading: true,
+      audiencePartition: undefined,
+      userPartitionSegments: [],
+      isLoading: false,
+      isLoadingStats: false,
+      totalUserPoint: 0,
+      statBySegmentId: {},
     };
   }
 
   componentDidMount() {
-    const { match: { params: { partitionId } } } = this.props;
-    AudiencePartitionService.getPartition(partitionId)
-      .then(resp => resp.data)
-      .then(partitionData => {
-        this.fetchSegments().then(partitions => {
-          this.setState({
-            partitionData: partitionData,
-            partitions: partitions,
-            isLoading: false,
-          });
-        });
-      });
+    const {
+      match: {
+        params: { partitionId },
+      },
+    } = this.props;
+    this.loadData(partitionId);
   }
 
-  fetchSegments = () => {
+  componentWillReceiveProps(nextProps: JoinedProps) {
+    const { history } = this.props;
+    if (
+      this.state.audiencePartition &&
+      this.state.audiencePartition.organisation_id &&
+      this.state.audiencePartition.organisation_id !==
+        nextProps.match.params.organisationId
+    ) {
+      history.push(
+        `/v2/o/${nextProps.match.params.organisationId}/audience/partitions`,
+      );
+    }
+    if (
+      nextProps.match.params.partitionId !== this.props.match.params.partitionId
+    ) {
+      this.loadData(nextProps.match.params.partitionId);
+    }
+  }
+
+  loadData = (partitionId: string) => {
     const {
-      match: { params: { organisationId, partitionId } },
-      location: { search },
+      workspace,
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
-    const query = queryString.parse(search);
-    const datamartId = query.datamart ? query.datamart : this.props.datamart.id;
-    const options = {
-      audience_partition_id: partitionId,
-      datamart_id: datamartId
-    };
-    return AudienceSegmentService.getSegments(
-      organisationId,
-      options,
-    )
-      .then(res => res.data)
-      .then(partitions => {
-        return partitions;
-      });
+    this.setState({ isLoading: true, isLoadingStats: true });    
+    AudiencePartitionService.getPartition(partitionId).then(partitionRes => {
+      const datamart = workspace.datamarts.find(
+        d => d.id === partitionRes.data.datamart_id,
+      )!;
+      return Promise.all([
+        AudienceSegmentService.getSegments(organisationId, {
+          audience_partition_id: partitionId,
+          type: 'USER_PARTITION',
+          max_results: 500,
+        }).then(segmentsRes => {
+          this.setState({
+            isLoading: false,
+            audiencePartition: partitionRes.data,
+            userPartitionSegments: segmentsRes.data as UserPartitionSegment[],
+          });
+          return segmentsRes;
+        }),      
+        Promise.all([
+          this.fetchTotalUsers(datamart),
+          ReportService.getAudienceSegmentReport(
+            organisationId,
+            new McsMoment('now'),
+            new McsMoment('now'),
+            ['audience_segment_id'],
+            ['user_points'],
+          ),
+        ]).then(([total, reportViewRes]) => {
+          const normalized = normalizeReportView<{
+            audience_segment_id: number;
+            user_points: number;
+          }>(reportViewRes.data.report_view);
+        
+          this.setState({
+            isLoadingStats: false,
+            totalUserPoint: total,
+            statBySegmentId: normalizeArrayOfObject(normalized, 'audience_segment_id')
+          });
+          return reportViewRes;
+        }),
+      ]);
+    }).catch(err => {
+      this.props.notifyError(err);
+      this.setState({
+        isLoading: false,
+        isLoadingStats: false,
+      })
+    });
   };
 
+  fetchTotalUsers = (datamart: DatamartResource): Promise<number> => {
+    switch (datamart.storage_model_version) {
+      case 'v201709':
+        return QueryService.runOTQLQuery(
+          datamart.id,
+          'select @count {} from UserPoint',
+        ).then(res => {
+          return res.data ? res.data.rows[0].count : 0;
+        });
+      case 'v201506':
+        return QueryService.runSelectorQLQuery(datamart.id).then(
+          res => res.data.total,
+        );
+      default:
+        return Promise.resolve(0);
+    }
+  };  
+
   publishPartition = () => {
-    const { match: { params: { partitionId } }, intl } = this.props;
-    const { partitionData } = this.state;
+    const {
+      match: {
+        params: { partitionId },
+      },
+      intl,
+    } = this.props;
+    const { audiencePartition } = this.state;
 
     this.setState({
       isLoading: true,
     });
     const publishedStatus: AudiencePartitionStatus = 'PUBLISHED';
     const publishedPartitionData = {
-      ...partitionData,
+      ...audiencePartition,
       status: publishedStatus,
     };
     AudiencePartitionService.publishPartition(
       partitionId,
       publishedPartitionData,
     ).then(resp => {
-      this.fetchSegments().then(partitions => {
-        this.setState({
-          partitionData: resp.data,
-          partitions: partitions,
-          isLoading: false,
-        });
-      });
+      this.loadData(partitionId);
       message.success(intl.formatMessage(messages.partitionPublished));
     });
   };
 
-  buildColumnDefinition = () => {
+  buildColumnDefinition = (): Array<
+    DataColumnDefinition<UserPartitionSegment>
+  > => {
+    const { isLoadingStats, statBySegmentId, totalUserPoint } = this.state;
     return [
       {
         intlMessage: messages.partNumber,
         key: 'part_number',
         isHideable: false,
-        render: (text: string) => text,
+        render: (text, record) => record.part_number,
       },
       {
         intlMessage: messages.users,
         key: 'users',
         isHideable: false,
-        render: (text: string) => (text ? text : '-'),
+        render: (text, record) => {
+          if (isLoadingStats){
+            return <i className="mcs-table-cell-loading" />; 
+          }
+          const value = statBySegmentId[record.id];
+          return value ? value.user_points : '-'
+        },
       },
       {
         intlMessage: messages.percentage,
         key: 'percentage',
         isHideable: false,
-        render: (text: string) => (text ? text : '-'),
+        render: (text, record) => {
+          if (isLoadingStats){
+            return <i className="mcs-table-cell-loading" />; 
+          }
+          const value = statBySegmentId[record.id];
+          if (value && totalUserPoint) {
+            const percent = ((value.user_points / totalUserPoint) * 100)
+            return !isNaN(percent) ? `${percent.toFixed(2)} %`  : '-'
+          }
+          return '-';
+        }
       },
     ];
   };
@@ -181,23 +281,25 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
 
   render() {
     const { intl } = this.props;
-    const { isLoading } = this.state;
+    const { isLoading, audiencePartition, userPartitionSegments  } = this.state;
+
+    const partitionName = audiencePartition ? audiencePartition.name : '';
+
     return (
       <div className="ant-layout">
         <PartitionActionBar
-          partition={this.state.partitionData}
+          partition={this.state.audiencePartition}
           publishPartition={this.displayHidePublishModal}
-          loading={isLoading}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <ContentHeader
-              title={this.state.partitionData.name}
+              title={partitionName}
               loading={isLoading}
             />
             <Card title={intl.formatMessage(messages.overview)}>
-              <TableView
-                dataSource={this.state.partitions}
+              <PartitionTable
+                dataSource={userPartitionSegments}
                 columns={this.buildColumnDefinition()}
                 loading={isLoading}
               />
@@ -209,4 +311,9 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
   }
 }
 
-export default compose(withRouter, injectIntl, injectDatamart)(Partition);
+export default compose(
+  withRouter,
+  injectIntl,
+  injectWorkspace,
+  injectNotifications,
+)(Partition);

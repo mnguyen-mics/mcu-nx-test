@@ -130,7 +130,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/sites/${site.id}/edit`,
+      `/v2/o/${organisationId}/settings/datamart/${site.datamart_id}/sites/${site.id}/edit`,
     );
   };
 

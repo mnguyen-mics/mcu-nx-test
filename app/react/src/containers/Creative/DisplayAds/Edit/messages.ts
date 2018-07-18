@@ -213,6 +213,11 @@ export default defineMessages({
     id: 'creatives.create.section.advanced.field.technical.title',
     defaultMessage: 'Technical Name',
   },
+  warningOnTokenEdition: {
+    id: 'creative.form.edition.technicalName.warning',
+    defaultMessage:
+      'Danger Zone: Editing this technical name may cause any integrations to fail if not updated properly. Please make sure you have reviewed all your integration before saving.',
+  },
   creativeCreationAdvancedTechnicalFieldPlaceholder: {
     id: 'creatives.create.section.advanced.field.technical.placeholder',
     defaultMessage: 'Technical Name',

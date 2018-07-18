@@ -25,26 +25,13 @@ define([
   'bootstrap-tokenfield',
   'core/configuration',
   'core/common/index',
-  'core/adblock/index',
-  'core/adlayouts/index',
-  'core/assets/index',
-  'core/exports/index',
-  'core/bidOptimizer/index',
-  'core/attributionmodels/index',
-  'core/visitanalysers/index',
-  'core/goals/index',
+ 
   'core/scenarios/index',
-  'core/keywords/index',
-  'core/creatives/index',
-  'core/adgroups/index',
-  'core/campaigns/index',
-  'core/placementlists/index',
+  
   'core/login/index',
-  'core/password/index',
+
   'core/datamart/index',
-  'core/layout/index',
-  'core/settings/index',
-  'core/stylesheets/index',
+  
   'optional-plugin',
   'navigator',
   'plugins'

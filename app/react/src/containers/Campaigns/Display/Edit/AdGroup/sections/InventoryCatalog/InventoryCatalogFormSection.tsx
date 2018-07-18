@@ -375,7 +375,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
           model: {
             data: {
               deal_list_id: value,
-              ad_group_id: "1", // to be removed
             },
             type: 'DEAL_LIST',
           },

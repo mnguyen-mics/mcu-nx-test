@@ -97,4 +97,8 @@ export default defineMessages({
         id: 'settings.site.form.Aliases.tooltip',
         defaultMessage: 'Type your alias name and then click on enter to validate.',
     },
+    warningOnTokenEdition: {
+        id: 'settings.site.warning.token.edition',
+        defaultMessage: 'Danger Zone: Editing this token may cause any web site data collection tag to fail if not updated properly. Please make sure you have updated all your tags before saving.'
+    }
 })

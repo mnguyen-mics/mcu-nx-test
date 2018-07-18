@@ -53,6 +53,11 @@ export default defineMessages({
     id: 'editAdGroups.title',
     defaultMessage: 'Multi Ad Group Edit',
   },
+  warningOnTokenEdition: {
+    id: 'campaign.form.edition.technicalName.warning',
+    defaultMessage:
+      'Danger Zone: Editing this technical name may cause any integrations to fail if not updated properly. Please make sure you have reviewed all your integration before saving.',
+  },
   /*
   ==============================================================================
   ============================== BREADCRUMB TITLES =============================
@@ -245,6 +250,10 @@ export default defineMessages({
   contentSectionGeneralRow1Placeholder: {
     id: 'adGroupEditor.section.general.row1.placeholder',
     defaultMessage: 'This is an ad group',
+  },
+  campaignFormPlaceholderCampaignName: {
+    id: 'campaign.form.section.general.placeholder.name',
+    defaultMessage: 'This is a campaign name',
   },
   contentSectionGeneralRow1Tooltip: {
     id: 'adGroupEditor.section.general.row1.tooltip',
@@ -847,6 +856,11 @@ export default defineMessages({
     id: 'goal.pixel.modal.title',
     defaultMessage: 'Your Goal Pixel',
   },
+  
+  getCodeSnippet: {
+    id: 'goal.pixel.get.code.snippet',
+    defaultMessage: 'Get code snippet',
+  },
 
   goalPixelModalContent: {
     id: 'goal.pixel.modal.content',
@@ -856,7 +870,7 @@ export default defineMessages({
   goalPixelModalSaveGoal: {
     id: 'goal.pixel.modal.saveGoal',
     defaultMessage:
-      "Before Getting your pixel, we need to save your Goal. After saving you won't be able to modify your goal. Are you sure you want to save your Goal?",
+      "Before getting your pixel, we need to save your Goal. After saving you will still be able to modify your goal. Do you want to continue?",
   },
   errorFormMessage: {
     id: 'campaign.form.generic.error.message',

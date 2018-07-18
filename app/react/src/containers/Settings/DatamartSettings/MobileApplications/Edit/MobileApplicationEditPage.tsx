@@ -54,13 +54,11 @@ type Props = InjectedIntlProps &
 class EditMobileAppPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+
     this.state = {
       loading: true, // default true to avoid render x2 on mounting
       mobileApplicationData: INITIAL_MOBILE_APP_FORM_DATA,
-      selectedDatamartId:
-        props.workspace(props.match.params.organisationId).datamarts.length > 1
-          ? ''
-          : props.datamart.id,
+      selectedDatamartId: props.match.params.datamartId,
     };
   }
 
@@ -83,11 +81,11 @@ class EditMobileAppPage extends React.Component<Props, State> {
 
     if (mobileApplicationId) {
       const getMobileApplication = ChannelService.getChannel(
-        this.props.datamart.id,
+        this.state.selectedDatamartId,
         mobileApplicationId,
       );
       const getEventRules = ChannelService.getEventRules(
-        this.props.datamart.id,
+        this.state.selectedDatamartId,
         mobileApplicationId,
         organisationId,
       );
@@ -260,7 +258,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
     generateSavingPromise()
       .then(() => {
         hideSaveInProgress();
-        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/mobile_applications`;
+        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/mobile_applications?datamartId=${this.state.selectedDatamartId}`;
         history.push(mobileApplicationUrl);
       })
       .catch(err => {
@@ -281,7 +279,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/mobile_applications`;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/mobile_applications?datamartId=${this.state.selectedDatamartId}`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
@@ -319,7 +317,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle1,
-        path: `/v2/o/${organisationId}/settings/datamart/mobile_applications`,
+        path: `/v2/o/${organisationId}/settings/datamart/mobile_applications?datamartId=${this.state.selectedDatamartId}`,
       },
       {
         name: mobileName,

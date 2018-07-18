@@ -116,8 +116,8 @@ define(['navigator-setup', 'angularAMD', 'lodash', 'async', 'jquery', 'plupload'
     ]);
 
     // Configure the Restangular Service
-    navigator.config(['RestangularProvider', 'core/configuration',
-      function (RestangularProvider, configuration) {
+    navigator.config(['RestangularProvider', 'core/configuration', '$httpProvider',
+      function (RestangularProvider, configuration, $httpProvider) {
         // Set the api entry point
         RestangularProvider.setBaseUrl(configuration.WS_URL);
         RestangularProvider.addRequestInterceptor(function (element, operation, what, url) {
@@ -126,6 +126,8 @@ define(['navigator-setup', 'angularAMD', 'lodash', 'async', 'jquery', 'plupload'
           }
           return element;
         });
+        // also used by restangular
+        $httpProvider.defaults.headers.common["X-Requested-By"] = "mediarithmics-navigator";
         // Configure the response extractor
         RestangularProvider.setResponseExtractor(function (response, operation, what, url) {
           // This is a get for a list

@@ -87,7 +87,7 @@ define(['app-setup', 'angularAMD', 'jquery'],
           });
           $log.debug("parsed state from url : ", parsedStateFromUrl);
           if (!parsedStateFromUrl || !parsedStateFromUrl.publicUrl) {
-            if (!$location.url().match('/v2') && !$location.url().match('/login')) {
+            if (!$location.url().match('/v2') && !$location.url().match('/login') && !$location.url().match('/set-password')) {
               $log.debug("not a public url, go to login");
               AuthenticationService.pushPendingPath($location.url());
               // Redirect to login

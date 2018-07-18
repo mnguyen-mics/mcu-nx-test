@@ -70,7 +70,7 @@ class MobileApplicationsTable extends React.Component<Props> {
         isHideable: false,
         render: (text: string, record: ChannelResource) => (
           <Link
-            to={`/v2/o/${organisationId}/settings/datamart/mobile_application/${
+            to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/mobile_application/${
               record.id
             }/edit`}
           >

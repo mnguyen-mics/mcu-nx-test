@@ -10,8 +10,7 @@ import { AudienceSegmentPage } from '../containers/Audience/Segments/Dashboard';
 import AudienceFeedPage from '../containers/Audience/Segments/Edit/AudienceFeedForm/AudienceFeedPage';
 
 import {
-  AudiencePartitionsTable,
-  PartitionsActionbar,
+  AudiencePartitionsPage,
 } from '../containers/Audience/Partitions/List';
 
 import TimelinePage from '../containers/Audience/Timeline/TimelinePage';
@@ -73,8 +72,7 @@ export const audienceDefinition: NavigatorDefinition = {
   audiencePartitionsList: {
     path: '/audience/partitions',
     layout: 'main',
-    contentComponent: AudiencePartitionsTable,
-    actionBarComponent: PartitionsActionbar,
+    contentComponent: AudiencePartitionsPage,
     requiredFeature: 'audience.partitions',
     requireDatamart: true,
   },

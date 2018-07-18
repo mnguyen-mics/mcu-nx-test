@@ -6,6 +6,7 @@ import {
   FormInput,
   FormSection,
   FormInputField,
+  FormAlertInputField,
 } from '../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -13,7 +14,7 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
-
+import FormAlertInput from '../../../../../../components/Form/FormAlertInput';
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
@@ -46,69 +47,69 @@ class GeneralFormSection extends React.Component<Props, State> {
           title={messages.sectionGeneralTitle}
         />
 
-        <div>
-          <FormInputField
-            name="site.name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralNameLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(
-                messages.contentSectionGeneralNamePlaceholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentSectionGeneralNameTooltip),
-            }}
-          />
-        </div>
+        <FormInputField
+          name="site.name"
+          component={FormInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.contentSectionGeneralNameLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(
+              messages.contentSectionGeneralNamePlaceholder,
+            ),
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.contentSectionGeneralNameTooltip),
+          }}
+        />
 
-        <div>
-          <FormInputField
-            name="site.token"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralTokenLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(
-                messages.contentSectionGeneralTokenPlaceholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentSectionGeneralTokenTooltip),
-            }}
-          />
-        </div>
-        <div>
-          <FormInputField
-            name="site.domain"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralDomainLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(
-                messages.contentSectionGeneralDomainPlaceholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentSectionGeneralDomainTooltip),
-            }}
-          />
-        </div>
+        <FormAlertInputField
+          name="site.token"
+          component={FormAlertInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.contentSectionGeneralTokenLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(
+              messages.contentSectionGeneralTokenPlaceholder,
+            ),
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.contentSectionGeneralTokenTooltip),
+          }}
+          iconType="warning"
+          type="warning"
+          message={formatMessage(messages.warningOnTokenEdition)}
+        />
+
+        <FormInputField
+          name="site.domain"
+          component={FormInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.contentSectionGeneralDomainLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(
+              messages.contentSectionGeneralDomainPlaceholder,
+            ),
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.contentSectionGeneralDomainTooltip),
+          }}
+        />
       </div>
     );
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+)(GeneralFormSection);

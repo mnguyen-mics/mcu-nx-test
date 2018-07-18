@@ -16,7 +16,6 @@ import QueryService from '../../../services/QueryService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import OTQLService from '../../../services/OTQLService';
 
 export interface JSONQLBuilderContainerProps {
   datamartId: string;
@@ -216,7 +215,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
         loading: true,
       },
     });
-    OTQLService.runJSONOTQLQuery(datamartId, queryDocument)
+    QueryService.runJSONOTQLQuery(datamartId, queryDocument)
       .then(res => {
         this.setState({
           queryResult: {

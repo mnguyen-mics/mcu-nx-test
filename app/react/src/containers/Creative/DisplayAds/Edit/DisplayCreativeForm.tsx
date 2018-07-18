@@ -29,12 +29,12 @@ import { McsFormSection } from '../../../../utils/FormHelper';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
->;
+  >;
 
 export interface DisplayCreativeFormProps
   extends Omit<ConfigProps<DisplayCreativeFormData>, 'form'> {
-  actionBarButtonText: FormattedMessage.MessageDescriptor;
   close: () => void;
+  actionBarButtonText: FormattedMessage.MessageDescriptor;
   breadCrumbPaths: Path[];
   goToCreativeTypeSelection?: () => void;
 }
@@ -75,11 +75,24 @@ class DisplayCreativeForm extends React.Component<Props> {
       });
     }
 
-    formSections.push({
-      id: 'properties',
-      title: messages.creativeSectionPropertyTitle,
-      component: <PropertiesFormSection />,
-    });
+
+    if (initialValues.pluginLayout === undefined) {
+
+      formSections.push({
+        id: 'properties',
+        title: messages.creativeSectionPropertyTitle,
+        component: <PropertiesFormSection />,
+      });
+    }
+    else {
+      initialValues.pluginLayout.sections.forEach(section => {
+        formSections.push({
+          id: section.title,
+          title: section.title,
+          component: <PropertiesFormSection sectionTitle={section.title}/>,
+        });
+      })
+    }
 
     if (existingCreative) {
       formSections.push({

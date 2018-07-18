@@ -21,7 +21,7 @@ type Props = MapStateToProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class PartitionsActionbar extends React.Component<Props> {
+class AudiencePartitionsActionbar extends React.Component<Props> {
   render() {
     const {
       match: { params: { organisationId } },
@@ -76,4 +76,4 @@ export default compose(
   withTranslations,
   withRouter,
   connect(mapStateToProps, undefined),
-)(PartitionsActionbar);
+)(AudiencePartitionsActionbar);

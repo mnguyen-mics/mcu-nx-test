@@ -1,19 +1,13 @@
-import {
-  DisplayCampaignsPage,
-} from '../containers/Campaigns/Display/List';
+import { DisplayCampaignsPage } from '../containers/Campaigns/Display/List';
 
 import {
   DisplayCampaignPage,
   AdGroupPage,
 } from '../containers/Campaigns/Display/Dashboard';
 
-import {
-  EditAdGroupPage,
-} from '../containers/Campaigns/Display/Edit/AdGroup';
+import { EditAdGroupPage } from '../containers/Campaigns/Display/Edit/AdGroup';
 
-import {
-  EditCampaignPage,
-} from '../containers/Campaigns/Display/Edit';
+import { EditCampaignPage } from '../containers/Campaigns/Display/Edit';
 
 // import {
 //   CreateEmailPage,
@@ -21,6 +15,7 @@ import {
 //   CreateBlastPage,
 // } from '../containers/Campaigns/Email/Edit';
 
+import EditGoalPage from '../containers/Campaigns/Goal/Edit/EditGoalPage';
 import EditBlastPage from '../containers/Campaigns/Email/Edit/Blast/EditBlastPage';
 import EditEmailCampaignPage from '../containers/Campaigns/Email/Edit/Campaign/EditCampaignPage';
 
@@ -29,7 +24,7 @@ import {
   EmailCampaignListPage,
 } from '../containers/Campaigns/Email/List';
 
-import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard';
+import { EmailCampaignPage } from '../containers/Campaigns/Email/Dashboard/index';
 
 import { GoalsActionbar, GoalsTable } from '../containers/Campaigns/Goal/List';
 
@@ -118,7 +113,7 @@ export const campaignsDefinition: NavigatorDefinition = {
     requiredFeature: 'campaigns.email'
   },
   campaignGoalList: {
-    path: '/campaigns/goal',
+    path: '/campaigns/goals',
     layout: 'main',
     contentComponent: GoalsTable,
     actionBarComponent: GoalsActionbar,
@@ -126,12 +121,22 @@ export const campaignsDefinition: NavigatorDefinition = {
     requireDatamart: true
   },
   campaignGoalDashboard: {
-    path: '/campaigns/goal/:goalId(\\d+)',
+    path: '/campaigns/goals/:goalId(\\d+)',
     layout: 'main',
     contentComponent: GoalDashboard,
     requiredFeature: 'campaigns.goals',
     requireDatamart: true
   },
-}
+  goalEdition: {
+    path: '/campaigns/goals/:goalId/edit',
+    layout: 'edit',
+    editComponent: EditGoalPage,
+  },
+  goalCreation: {
+    path: '/campaigns/goals/create',
+    layout: 'edit',
+    editComponent: EditGoalPage,
+  },
+};
 
 export const campaignRoutes: NavigatorRoute[] = generateRoutesFromDefinition(campaignsDefinition)

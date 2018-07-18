@@ -2,9 +2,9 @@ define(['./module'], function (module) {
 
   'use strict';
   var updateStatistics = function ($scope, AudienceSegmentAnalyticsReportService) {
-      AudienceSegmentAnalyticsReportService.allAudienceSegments().then(function (report) {
-        $scope.audienceSegmentStats = report;
-      });
+    AudienceSegmentAnalyticsReportService.allAudienceSegments().then(function (report) {
+      $scope.audienceSegmentStats = report;
+    });
   };
 
   module.controller('core/datamart/segments/EditAllController', [
@@ -12,6 +12,7 @@ define(['./module'], function (module) {
     '$filter',
     function ($scope, Restangular, Session, $location, $uibModal, AudienceSegmentAnalyticsReportService, moment, $filter) {
       var datamartId = Session.getCurrentWorkspace().datamart_id;
+      var organisationId = Session.getCurrentWorkspace().organisation_id;
 
       $scope.currentPage = 1;
       $scope.itemsPerPage = 10;
@@ -19,21 +20,21 @@ define(['./module'], function (module) {
       // redirect to v2
       $location.path(Session.getV2WorkspacePrefixUrl() + '/audience/segments');
 
-      Restangular.all('audience_segments').getList({datamart_id: datamartId, max_results: 200}).then(function (segments) {
-        var filteredSegments = segments.filter(function (seg){
+      Restangular.all('audience_segments').getList({ datamart_id: datamartId, max_results: 200 }).then(function (segments) {
+        var filteredSegments = segments.filter(function (seg) {
           return seg.type !== 'USER_PARTITION';
         });
         $scope.segments = filteredSegments;
         $scope.sortType = 'name';
       });
 
-      $scope.filteredSegments = function() {
+      $scope.filteredSegments = function () {
         return $filter('filter')($scope.segments, $scope.searchInput);
       };
 
-      $scope.reportDateRange = {startDate: moment(), endDate: moment()};
-      var todayDate = {startDate: moment(), endDate: moment()};
-      var sevenDaysRange = {startDate: moment().subtract('days', 7), endDate: moment()};
+      $scope.reportDateRange = { startDate: moment(), endDate: moment() };
+      var todayDate = { startDate: moment(), endDate: moment() };
+      var sevenDaysRange = { startDate: moment().subtract('days', 7), endDate: moment() };
       AudienceSegmentAnalyticsReportService.setDateRange(todayDate);
 
       updateStatistics($scope, AudienceSegmentAnalyticsReportService);
@@ -88,8 +89,8 @@ define(['./module'], function (module) {
         newScope.segment = segment;
         $uibModal.open({
           templateUrl: 'angular/src/core/datamart/segments/delete.html',
-          scope : newScope,
-          backdrop : 'static',
+          scope: newScope,
+          backdrop: 'static',
           controller: 'core/datamart/segments/DeleteController'
         });
 

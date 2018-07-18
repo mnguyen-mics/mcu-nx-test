@@ -17,7 +17,7 @@
     </div>
     <div ng-if="step == 'STEP_2'">
         <div class="modal-body" ng-if="step == 'STEP_2'">
-            <div ng-repeat="property in properties">
+            <div ng-repeat="property in properties|orderBy:['-value.origin', 'value.technical_name']">
                 <mcs-double-property property="property.value" ng-if="property.value.property_type == 'DOUBLE'"  ng-disabled="property.value.origin == 'PLUGIN_STATIC'"></mcs-double-property>
                 <mcs-text-property property="property.value" ng-if="property.value.property_type == 'STRING'"  ng-disabled="property.value.origin == 'PLUGIN_STATIC'"></mcs-text-property>
                 <mcs-boolean-property property="property.value" ng-if="property.value.property_type == 'BOOLEAN'" ng-disabled="property.value.origin == 'PLUGIN_STATIC'"></mcs-boolean-property>

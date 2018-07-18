@@ -26,9 +26,7 @@ import { DisplayCampaignFormData } from './domain';
 import { Omit } from '../../../../utils/Types';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import GoalFormSection, {
-  GoalFormSectionProps,
-} from './Sections/GoalFormSection';
+import GoalFormSection, { GoalFormSectionProps } from './Sections/GoalFormSection';
 import AdGroupFormSection, {
   AdGroupFormSectionProps,
 } from './Sections/AdGroupFormSection';
@@ -67,7 +65,7 @@ type Props = InjectedFormProps<
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-const FORM_ID = 'campaignForm';
+export const FORM_ID = 'campaignForm';
 
 class DisplayCampaignForm extends React.Component<Props> {
   render() {

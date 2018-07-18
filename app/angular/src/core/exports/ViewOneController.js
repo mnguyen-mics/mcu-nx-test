@@ -9,18 +9,8 @@ define(['./module'], function (module) {
       var organisationId = $stateParams.organisation_id;
 
       // redirect to v2
-      $location.path(Session.getV2WorkspacePrefixUrl() + '/library/exports/'+exportId);
-
-      $scope.exportId = exportId;
-      $scope.organisationId = organisationId;
-
-      Restangular.one('exports', exportId).get().then(function (exportObj) {
-        $scope['export'] = exportObj;
-        var queryContainer = new QueryContainer(exportObj.datamart_id, exportObj.query_id);
-        queryContainer.load().then(function sucess(loadedQueryContainer){
-          $scope.queryContainer = loadedQueryContainer;
-        });
-      });
+      $location.path(Session.getV2WorkspacePrefixUrl() + '/datastudio/exports/'+exportId);
+      
     }
   ]);
 });

@@ -11,16 +11,18 @@
       <h1 ng-show="!isEdit">New Visit Analyser</h1>
     </div>
 
-    <div mcs-form-group="" label-for="visit_analyser_name" label-text="Name">
-      <input required class="input-lg" ng-model="visitAnalyser.name" type="text" id="visit_analyser_name">
+    <div mcs-form-group="" label-for="activity_analyser_name" label-text="Name">
+      <input required class="input-lg" ng-model="activityAnalyser.name" type="text" id="activity_analyser_name">
     </div>
 
     <div class="row">
       <div class="col-md-12">
         <h4>Properties</h4>
-        <div ng-repeat="property in properties">
+        <div ng-repeat="property in properties|orderBy:['-value.origin', 'value.technical_name']">
           <mcs-data-file-property property="property.value" ng-if="property.value.property_type == 'DATA_FILE'" ng-disabled="property.value.origin == 'PLUGIN_STATIC'"></mcs-data-file-property>
-          <mcs-text-property property="property.value" ng-if="property.value.property_type == 'STRING'"  ng-disabled="property.value.origin == 'PLUGIN_STATIC'"></mcs-text-property>
+          <mcs-double-property property="property.value" ng-if="property.value.property_type == 'DOUBLE'"  ng-disabled="property.value.origin == 'PLUGIN_STATIC'"></mcs-double-property>
+          <mcs-number-property property="property.value" ng-if="property.value.property_type == 'INT'"  ng-disabled="property.value.origin == 'PLUGIN_STATIC'"></mcs-number-property>
+          <mcs-text-property property="property.value" ng-if="property.value.property_type == 'STRING'" ng-disabled="property.value.origin == 'PLUGIN_STATIC'"></mcs-text-property>
           <mcs-boolean-property property="property.value" ng-if="property.value.property_type == 'BOOLEAN'" ng-disabled="property.value.origin == 'PLUGIN_STATIC'"></mcs-boolean-property>
         </div>
       </div>

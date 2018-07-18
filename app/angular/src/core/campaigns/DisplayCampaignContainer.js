@@ -39,7 +39,7 @@ define(['./module'], function (module) {
         var inventorySourcesP = root.getList('inventory_sources');
         var locationsP = root.getList('locations');
         var goalSelectionsP = meta.getList('goal_selections');
-        var userActivationSegmentsP = Restangular.all('audience_segments').getList({organisation_id: this.workspace.organisation_id, datamart_id: this.workspace.datamart_id, campaign_id: campaignId});
+        var userActivationSegmentsP = Restangular.all('audience_segments').getList({organisation_id: this.workspace.organisation_id, datamart_id: this.workspace.datamart_id, campaign_id: campaignId, max_results: 2000});
         var self = this;
         var defered = $q.defer();
 
@@ -192,6 +192,10 @@ define(['./module'], function (module) {
       };
 
       DisplayCampaignContainer.prototype.addPostalCodeLocation = function (location) {
+        this.locations.push(location);
+      };
+
+      DisplayCampaignContainer.prototype.addCountryLocation = function (location) {
         this.locations.push(location);
       };
 

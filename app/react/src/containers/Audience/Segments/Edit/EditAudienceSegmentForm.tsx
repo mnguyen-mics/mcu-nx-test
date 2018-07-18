@@ -30,14 +30,12 @@ import withNormalizer, {
 import {
   AudienceSegmentFormData,
   EditAudienceSegmentParam,
-  SegmentType,
 } from './domain';
-import { FeedType } from '../../../../models/audiencesegment/';
+import { FeedType, AudienceSegmentType } from '../../../../models/audiencesegment/';
 import * as FeatureSelectors from '../../../../state/Features/selectors';
 
 import GeneralFormSection from './Sections/GeneralFormSection';
 import SelectorQL from './Sections/query/SelectorQL';
-import { PixelSection } from './Sections/pixel';
 import { UserListSection } from './Sections/list';
 
 import { McsFormSection } from '../../../../utils/FormHelper';
@@ -46,11 +44,12 @@ import {
   DatamartResource,
 } from '../../../../models/datamart/DatamartResource';
 import { FormSection, FieldCtor } from '../../../../components/Form';
-import { Path } from '../../../../components/ActionBar';
+import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
+import { Path } from '../../../../components/ActionBar';
 import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
 
-const FORM_ID = 'audienceSegmentForm';
+export const FORM_ID = 'audienceSegmentForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -70,7 +69,7 @@ export interface AudienceSegmentFormProps
   segmentCreation: boolean;
   queryContainer: any;
   queryLanguage?: QueryLanguage;
-  segmentType?: SegmentType;
+  segmentType?: AudienceSegmentType;
   goToSegmentTypeSelection?: () => void;
 }
 
@@ -125,12 +124,15 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       case 'USER_PIXEL':
         return (
           datamart && (
-            <PixelSection
-              datamartToken={datamart.token}
-              userListTechName={
+            <FormCodeSnippet
+              language="html"
+              codeSnippet={`<img style="display:none" src="https://api.mediarithmics.com/v1/user_lists/pixel?dat_token=${
+                datamart.token
+              }&user_list_tech_name=${encodeURIComponent(
                 this.props.audienceSegmentFormData.audienceSegment
-                  .technical_name
-              }
+                  .technical_name || '',
+              )}" />`}
+              copyToClipboard={true}
             />
           )
         );

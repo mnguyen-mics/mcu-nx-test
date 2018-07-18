@@ -2,20 +2,20 @@ import * as React from 'react';
 import { Field, getFormInitialValues, Validator } from 'redux-form';
 import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 
 import {
   FormSection,
   FieldCtor,
   FormInput,
+  FormAlertInput,
   withValidators,
   FormInputField,
+  FormAlertInputField,
 } from '../../../../../components/Form';
 import messages from '../messages';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import {
-  EditDisplayCreativeRouteMatchParams,
   DisplayCreativeFormData,
   DISPLAY_CREATIVE_FORM,
   isDisplayAdResource,
@@ -27,18 +27,16 @@ interface MapStateProps {
   initialValue: DisplayCreativeFormData;
 }
 
-type Props = ValidatorProps &
-  InjectedIntlProps &
-  MapStateProps &
-  RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
+type Props = ValidatorProps & InjectedIntlProps & MapStateProps;
 
 interface State {
   displayAdvancedSection: boolean;
+  displayWarning: boolean;
 }
 class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { displayAdvancedSection: false };
+    this.state = { displayAdvancedSection: false, displayWarning: false };
   }
 
   toggleAdvancedSection = () => {
@@ -153,9 +151,9 @@ class GeneralFormSection extends React.Component<Props, State> {
                 : 'optional-section-content'
             }
           >
-            <FormInputField
+            <FormAlertInputField
               name="creative.technical_name"
-              component={FormInput}
+              component={FormAlertInput}
               formItemProps={{
                 label: formatMessage(
                   messages.creativeCreationAdvancedTechnicalFieldTitle,
@@ -171,6 +169,9 @@ class GeneralFormSection extends React.Component<Props, State> {
                   messages.creativeCreationAdvancedTechnicalFieldTooltip,
                 ),
               }}
+              iconType="warning"
+              type="warning"
+              message={formatMessage(messages.warningOnTokenEdition)}
             />
           </div>
         </div>
@@ -181,7 +182,6 @@ class GeneralFormSection extends React.Component<Props, State> {
 
 export default compose<Props, {}>(
   injectIntl,
-  withRouter,
   withValidators,
   connect((state: any, ownProps: Props) => ({
     initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(

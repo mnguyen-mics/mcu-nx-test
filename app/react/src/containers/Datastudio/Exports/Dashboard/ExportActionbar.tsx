@@ -105,10 +105,10 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
           <FormattedMessage {...messages.newExecution} />
         </Button>
 
-        <Button onClick={this.editCampaign}>
+        {/* <Button onClick={this.editCampaign}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.edit} />
-        </Button>
+        </Button> */}
 
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>

@@ -100,6 +100,24 @@ export const KEYWORD_SEARCH_SETTINGS: SearchSetting[] = [
   },
 ];
 
+export const SET_PASSWORD_SEARCH_SETTINGS: SearchSetting[] = [
+  {
+    paramName: 'email',
+    defaultValue: '',
+    deserialize: (query: Index<string>) => query.email,
+    serialize: (value: string) => value,
+    isValid: () => true,
+  },
+  {
+    paramName: 'token',
+    defaultValue: '',
+    deserialize: (query: Index<string>) => query.token,
+    serialize: (value: string) => value,
+    isValid: () => true,
+  },
+];
+
+
 export interface KeywordSearchSettings {
   keywords: string;
 }

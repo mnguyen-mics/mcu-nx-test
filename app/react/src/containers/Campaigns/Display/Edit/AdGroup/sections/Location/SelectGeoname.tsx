@@ -340,6 +340,7 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
         key: cuid(),
         model: {
           geoname_id: selectedGeoname.id,
+          type: 'GEONAME',
           country: selectedGeoname.country_iso,
           admin1: selectedGeoname.admin1,
           admin2: selectedGeoname.admin2,
