@@ -594,7 +594,7 @@ function getInventoryCatalogTask(
       DisplayCampaignService.deleteKeywordList(campaignId, adGroupId, id),
     );
   });
-  initialPlacementListIds.filter(id => !currentKeywordListIds.includes(id)).forEach(id => {
+  initialPlacementListIds.filter(id => !currentPlacementListIds.includes(id)).forEach(id => {
     tasks.push(() =>
       DisplayCampaignService.deletePlacementList(campaignId, adGroupId, id),
     );
