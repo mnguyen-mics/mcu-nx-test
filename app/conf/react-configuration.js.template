@@ -39,7 +39,6 @@
     'accountSettings.profile',
     'accountSettings.api_tokens',
     'servicesSettings.subscribed_offers',
-    'servicesSettings.my_service_items',
     'servicesSettings.my_service_catalog',
     'servicesSettings.my_offers',
   ];
