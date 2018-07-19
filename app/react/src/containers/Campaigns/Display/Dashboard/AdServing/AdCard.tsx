@@ -69,7 +69,10 @@ class AdCard extends React.Component<Props, State> {
   
 
   fetchData = (organisationId: string, creativeId: string, from: McsMoment, to: McsMoment) => {
-    const getAdPerf = makeCancelable(ReportService.getAdDeliveryReport(organisationId, 'creative_id', creativeId, from, to));
+    const lookbackWindow =
+    to.toMoment().unix() - from.toMoment().unix();
+    const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
+    const getAdPerf = makeCancelable(ReportService.getAdDeliveryReport(organisationId, 'creative_id', creativeId, from, to, dimensions));
     this.cancelablePromises.push(getAdPerf)
     this.setState({ loading: true })
     getAdPerf.promise

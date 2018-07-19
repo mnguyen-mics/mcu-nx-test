@@ -90,7 +90,6 @@ class DisplayCampaignSelector extends React.Component<
             <Content className="mcs-content-container mcs-form-container text-center">
               <FormTitle
                 title={messages.displayCampaignTypePickerTitle}
-                subtitle={messages.displayCampaignTypePickerSubTitle}
               />
 
               <Row style={{ width: '650px', display: 'inline-block' }}>

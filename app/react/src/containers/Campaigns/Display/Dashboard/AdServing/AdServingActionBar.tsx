@@ -27,7 +27,7 @@ class AdServingActionBar extends React.Component<Props> {
     campaign.ad_groups.forEach(adGroup => {
       return adGroup.ads.forEach(ad => ads.push(ad))
     });
-    generateCsvData(organisationId, campaign.name, type.key as ExportType, ads, formatMessage)
+    generateCsvData(organisationId, campaign, type.key as ExportType, ads, formatMessage)
   }
 
   editCampaign = () => {
