@@ -1,224 +1,276 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import cuid from 'cuid';
-import { withRouter } from 'react-router-dom';
-import moment from 'moment';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
-import { Row, Col, Icon, Timeline, Layout, Spin } from 'antd';
-import McsIcon from '../../../components/McsIcon';
-import {
-  Activity,
-  UserAgent,
-  IdentifiersProps,
-  UserSegmentResource,
-} from '../../../models/timeline/timeline';
+import lodash from 'lodash';
+import { connect } from 'react-redux';
+import queryString from 'query-string';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
+import { Row, Col, Layout } from 'antd';
 import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
 import SegmentsCard from './SingleView/SegmentsCard';
 import AccountIdCard from './SingleView/AccountIdCard';
 import DeviceCard from './SingleView/DeviceCard';
 import EmailCard from './SingleView/EmailCard';
-import ActivityCard from './SingleView/ActivityCard';
 import TimelineHeader from './TimelineHeader';
+import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
+import { TimelinePageParams } from './TimelinePage';
+import { IdentifiersProps, Cookies } from '../../../models/timeline/timeline';
+import UserDataService from '../../../services/UserDataService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
+import { EmptyTableView } from '../../../components/TableView';
 
 const { Content } = Layout;
 
-export interface Activities {
-  isLoading: boolean;
-  hasItems: boolean;
-  items: Activity[];
-  byDay: {
-    [date: string]: Activity[];
-  };
-  fetchNewActivities?: () => void; // check type
+export interface Identifier {
+  id: string;
+  type: string;
+}
+
+interface MapStateToProps {
+  isFechingCookies: boolean;
+}
+
+interface State {
+  isModalVisible: boolean;
+  identifier: Identifier;
+  identifiers: IdentifiersProps;
 }
 
 interface MonitoringProps {
-  identifiers: IdentifiersProps;
-  profile: {
-    isLoading: boolean;
-    hasItems: boolean;
-    items: object; // type better
-  };
-  segments: {
-    isLoading: boolean;
-    hasItems: boolean;
-    items: UserSegmentResource[];
-  };
-  activities: Activities;
   datamartId: string;
+  cookies: Cookies;
 }
 
-type Props = MonitoringProps & InjectedIntlProps;
+type Props = MonitoringProps &
+  MapStateToProps &
+  InjectedNotificationProps &
+  RouteComponentProps<TimelinePageParams>;
 
-class Monitoring extends React.Component<Props> {
-  renderDate = (day: string) => {
+class Monitoring extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isModalVisible: false,
+      identifier: {
+        id: '',
+        type: '',
+      },
+      identifiers: {
+        isLoading: false,
+        hasItems: false,
+        items: {
+          USER_ACCOUNT: [],
+          USER_AGENT: [],
+          USER_EMAIL: [],
+          USER_POINT: [],
+        },
+      },
+    };
+  }
+
+  componentDidMount() {
     const {
-      intl: { formatMessage },
+      match: {
+        params: { organisationId, identifierType, identifierId },
+      },
+      datamartId,
     } = this.props;
-    switch (day) {
-      case moment().format('YYYY-MM-DD'):
-        return formatMessage(messages.today);
-      case moment()
-        .subtract(1, 'days')
-        .format('YYYY-MM-DD'):
-        return formatMessage(messages.yesterday);
-      default:
-        return day;
+    const { identifier } = this.state;
+    if (identifier.type && identifier.id) {
+      this.fetchIdentifiersData(
+        organisationId,
+        datamartId,
+        identifier.type,
+        identifier.id,
+      );
+    } else if (identifierType && identifierId) {
+      this.fetchIdentifiersData(
+        organisationId,
+        datamartId,
+        identifierType,
+        identifierId,
+      );
     }
-  };
+  }
 
-  getLastSeen = (userAgents: UserAgent[]) => {
-    if (userAgents) {
-      const formattedAgents = userAgents.map(item => {
-        return item.last_activity_ts;
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      location: { search, pathname },
+    } = this.props;
+
+    const {
+      match: {
+        params: {
+          identifierType: nextIdentifierType,
+          identifierId: nextIdentifierId,
+          organisationId: nextOrganisationId,
+        },
+      },
+      location: { search: nextSearch, pathname: nextPathname },
+      datamartId: nextDatamartId,
+    } = nextProps;
+
+    if (search !== nextSearch || pathname !== nextPathname) {
+      if (nextIdentifierType && nextIdentifierId) {
+        this.fetchIdentifiersData(
+          nextOrganisationId,
+          nextDatamartId,
+          nextIdentifierType,
+          nextIdentifierId,
+        );
+      }
+    }
+  }
+
+  fetchIdentifiersData = (
+    organisationId: string,
+    datamartId: string,
+    identifierType: string,
+    identifierId: string,
+  ) => {
+    this.setState(prevState => {
+      const nextState = {
+        identifiers: {
+          ...prevState.identifiers,
+          isLoading: true,
+        },
+      };
+      return nextState;
+    });
+    UserDataService.getIdentifiers(
+      organisationId,
+      datamartId,
+      identifierType,
+      identifierId,
+    )
+      .then(response => {
+        this.setState((prevState: any) => {
+          const nextState = {
+            identifiers: {
+              ...prevState.identifiers,
+              isLoading: false,
+              hasItems: Object.keys(response.data).length > 0,
+              items: lodash.groupBy(response.data, 'type'),
+            },
+            identifier: {
+              id: identifierId,
+              type: identifierType,
+            },
+          };
+          return nextState;
+        });
+      })
+      .catch(error => {
+        this.setState((prevState: any) => {
+          const nextState = {
+            identifiers: {
+              ...prevState.identifiers,
+              items: {},
+              isLoading: false,
+            },
+            identifier: {
+              id: identifierId,
+              type: identifierType,
+            },
+          };
+          return nextState;
+        });
       });
-      return Math.max.apply(null, formattedAgents);
-    }
-    return 0;
   };
 
-  renderPendingTimeline = (activities: Activities) => {
-    if (activities.hasItems && activities.items.length > 0) {
-      return activities.isLoading ? (
-        <Spin size="small" />
-      ) : (
-        <button
-          className="mcs-card-inner-action"
-          onClick={activities.fetchNewActivities}
-        >
-          <FormattedMessage {...messages.seeMore} />
-        </button>
-      );
-    } else {
-      return (
-        <div className="mcs-title">
-          {activities.hasItems ? (
-            <FormattedMessage {...messages.noActivities} />
-          ) : (
-            <FormattedMessage {...messages.noActivitiesLeft} />
-          )}
-        </div>
-      );
-    }
+  handleModal = (visible: boolean) => {
+    this.setState({
+      isModalVisible: visible,
+    });
+  };
+
+  onIdentifierChange = (identifier: Identifier) => {
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+      location,
+    } = this.props;
+    const datamartId = queryString.parse(location.search).datamartId
+      ? queryString.parse(location.search).datamartId
+      : '';
+    history.push(
+      `/v2/o/${organisationId}/audience/timeline/${identifier.type}/${
+        identifier.id
+      }?datamartId=${datamartId}`,
+    );
   };
 
   render() {
-    const {
-      segments,
-      identifiers,
-      activities,
-      profile,
-      datamartId,
-    } = this.props;
-    const keys = Object.keys(activities.byDay);
+    const { datamartId, cookies } = this.props;
+
+    const { identifier, identifiers, isModalVisible } = this.state;
+
     return (
       <div className="ant-layout">
-        <MonitoringActionbar />
+        <MonitoringActionbar
+          onIdentifierChange={this.onIdentifierChange}
+          isModalVisible={isModalVisible}
+          handleModal={this.handleModal}
+        />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <Row>
-              <TimelineHeader
-                userId={{
-                  id:
-                    identifiers.items.USER_POINT &&
-                    identifiers.items.USER_POINT[0]
-                      ? identifiers.items.USER_POINT[0].user_point_id
-                      : '',
-                  lastSeen: this.getLastSeen(identifiers.items.USER_AGENT),
-                }}
-              />
-              <Row
-                gutter={20}
-                style={{ marginTop: '20px' }}
-                className="mcs-monitoring"
-              >
-                <Col span={6}>
-                  <div className="mcs-subtitle">
-                    <FormattedMessage {...messages.visitor} />
-                  </div>
-                  <ProfileCard profile={profile} />
-                  <SegmentsCard segments={segments} />
-                </Col>
-                <Col span={12}>
-                  <div className="mcs-subtitle">
-                    <FormattedMessage {...messages.activities} />
-                  </div>
-                  {activities.isLoading === true &&
-                  activities.items.length === 0 ? (
-                    <Col span={24} className="text-center">
-                      <Spin />
-                    </Col>
-                  ) : (
-                    <Timeline
-                      pending={this.renderPendingTimeline(activities)}
-                      pendingDot={
-                        <McsIcon
-                          type="status"
-                          className="mcs-timeline-last-dot"
-                        />
-                      }
-                    >
-                      {activities.byDay !== {} &&
-                        keys.map(day => {
-                          const activityOnDay = activities.byDay[day];
-                          const dayToFormattedMessage = this.renderDate(day);
-                          return (
-                            <div className="mcs-timeline" key={cuid()}>
-                              <Timeline.Item
-                                dot={
-                                  <Icon
-                                    type="flag"
-                                    className="mcs-timeline-dot"
-                                  />
-                                }
-                              >
-                                <div className="mcs-title">
-                                  {dayToFormattedMessage}
-                                </div>
-                              </Timeline.Item>
-                              {activityOnDay.length !== 0 &&
-                                activityOnDay.map((activity: Activity) => {
-                                  return (
-                                    <Timeline.Item
-                                      key={cuid()}
-                                      dot={
-                                        <McsIcon
-                                          type="status"
-                                          className={
-                                            activity.$session_status ===
-                                            'SESSION_SNAPSHOT'
-                                              ? 'mcs-timeline-dot live'
-                                              : 'mcs-timeline-dot'
-                                          }
-                                        />
-                                      }
-                                    >
-                                      <ActivityCard
-                                        activity={activity}
-                                        datamartId={datamartId}
-                                        identifiers={identifiers}
-                                      />
-                                    </Timeline.Item>
-                                  );
-                                })}
-                            </div>
-                          );
-                        })}
-                    </Timeline>
-                  )}
-                </Col>
-                <Col span={6}>
-                  <div className="mcs-subtitle">
-                    <FormattedMessage {...messages.identifiers} />
-                  </div>
-                  <AccountIdCard identifiers={identifiers} />
-                  <DeviceCard identifiers={identifiers} />
-                  <EmailCard identifiers={identifiers} />
-                </Col>
+            {cookies.mics_vid || identifier.id ? (
+              <Row>
+                <TimelineHeader
+                  datamartId={datamartId}
+                  identifiers={identifiers}
+                />
+                <Row
+                  gutter={20}
+                  style={{ marginTop: '20px' }}
+                  className="mcs-monitoring"
+                >
+                  <Col span={6}>
+                    <div className="mcs-subtitle">
+                      <FormattedMessage {...messages.visitor} />
+                    </div>
+                    <ProfileCard
+                      datamartId={datamartId}
+                      identifier={identifier}
+                    />
+                    <SegmentsCard
+                      datamartId={datamartId}
+                      identifier={identifier}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <div className="mcs-subtitle">
+                      <FormattedMessage {...messages.activities} />
+                    </div>
+
+                    <ActivitiesTimeline
+                      datamartId={datamartId}
+                      identifier={identifier}
+                      identifiers={identifiers}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <div className="mcs-subtitle">
+                      <FormattedMessage {...messages.identifiers} />
+                    </div>
+                    <AccountIdCard identifiers={identifiers} />
+                    <DeviceCard identifiers={identifiers} />
+                    <EmailCard identifiers={identifiers} />
+                  </Col>
+                </Row>
               </Row>
-            </Row>
+            ) : (
+              <EmptyTableView
+                iconType="user"
+                intlMessage={messages.pleaseFillInformations}
+              />
+            )}
           </Content>
         </div>
       </div>
@@ -226,7 +278,15 @@ class Monitoring extends React.Component<Props> {
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  isFechingCookies: state.session.isFechingCookies,
+});
+
 export default compose<Props, MonitoringProps>(
-  injectIntl,
   withRouter,
+  injectNotifications,
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(Monitoring);
