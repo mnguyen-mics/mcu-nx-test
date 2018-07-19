@@ -33,7 +33,7 @@ const session = (state = defaultSessionState, action) => {
         connectedUserLoaded: true,
         connectedUser: {
           ...action.payload,
-          workspaces: action.payload.workspaces.sort((w1, w2) => w1.organisation_id - w2.organisation_id)
+          workspaces: action.payload.workspaces
         },
       };
     case WORKSPACE.REQUEST:
