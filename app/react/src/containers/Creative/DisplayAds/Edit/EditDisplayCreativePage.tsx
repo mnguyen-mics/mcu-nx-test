@@ -231,10 +231,10 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     }
 
     if (!creativeId) {
-      return (<DisplayCreativeCreator {...props} layout={'SPLIT'} />)
+      return (<DisplayCreativeCreator {...props} />)
     }
 
-    return <DisplayCreativeFormLoader {...props} creativeId={creativeId} layout={'SPLIT'} />;
+    return <DisplayCreativeFormLoader {...props} creativeId={creativeId} />;
   }
 }
 

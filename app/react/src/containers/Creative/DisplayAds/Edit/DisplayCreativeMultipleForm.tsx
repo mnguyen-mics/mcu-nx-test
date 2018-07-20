@@ -18,7 +18,6 @@ import {
 } from './Sections';
 import { Omit } from '../../../../utils/Types';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import { LayoutType } from './DisplayCreativeCreator';
 import DisplayCreativeFormLayout from './DisplayCreativeFormLayout';
 import CustomMultipleImageLoader, { CustomMultipleImageLoaderProps } from './CustomLoaders/CustomMultipleImageLoader';
 
@@ -33,7 +32,6 @@ export interface DisplayCreativeFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   goToCreativeTypeSelection?: () => void;
-  layout: LayoutType;
 }
 
 type Props = DisplayCreativeFormProps &
@@ -62,7 +60,7 @@ class DisplayCreativeForm extends React.Component<Props> {
     rightFormSections.push({
       id: 'general',
       title: messages.creativeSectionGeneralTitle,
-      component: <GeneralMultipleSection small={this.props.layout === 'SPLIT'} />,
+      component: <GeneralMultipleSection small={true} />,
     });
 
     if (existingCreative) {
@@ -79,14 +77,14 @@ class DisplayCreativeForm extends React.Component<Props> {
       rightFormSections.push({
         id: 'properties',
         title: messages.creativeSectionPropertyTitle,
-        component: <PropertiesFormSection small={this.props.layout === 'SPLIT'} />,
+        component: <PropertiesFormSection small={true} />,
       });
     } else {
       initialValues.pluginLayout.sections.forEach(section => {
         rightFormSections.push({
           id: section.title,
           title: section.title,
-          component: <PropertiesFormSection sectionTitle={section.title} small={this.props.layout === 'SPLIT'}/>,
+          component: <PropertiesFormSection sectionTitle={section.title} small={true}/>,
         });
       })
     }
@@ -134,7 +132,6 @@ class DisplayCreativeForm extends React.Component<Props> {
         actionBarButtonText={actionBarButtonText}
         close={close}
         breadCrumbPaths={breadCrumbPaths}
-        layout={this.props.layout ? this.props.layout : 'STANDARD'}
         leftFormSections={sections.leftPanel}
         rightFormSections={sections.rightPanel}
         handleSubmit={handleSubmit}

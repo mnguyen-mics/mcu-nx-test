@@ -15,9 +15,6 @@ import FormLayoutActionbar, {
 import { Path } from '../../../../components/ActionBar';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import { LayoutType } from './DisplayCreativeCreator';
-import { ScrollspySider } from '../../../../components/Layout';
-import { SidebarWrapperProps } from '../../../../components/Layout/ScrollspySider';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -27,7 +24,6 @@ export interface DisplayCreativeFormLayoutProps {
   actionBarButtonText: FormattedMessage.MessageDescriptor;
   close: () => void;
   breadCrumbPaths: Path[];
-  layout: LayoutType;
   leftFormSections: McsFormSection[];
   rightFormSections: McsFormSection[];
   handleSubmit: any;
@@ -66,7 +62,6 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
   
   generateLayout = () => {
     const { rightFormSections, leftFormSections } = this.props;
-    if (this.props.layout === 'SPLIT') {
 
       const renderedRightSections = rightFormSections.map((section, index) => {
         return (
@@ -119,31 +114,7 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
           </Layout>
         </Layout>
       )
-    } else {
-      const renderedRightSections = rightFormSections.map((section, index) => {
-        return (
-          <div key={section.id}>
-            <div key={section.id} id={section.id}>
-              {section.component}
-            </div>
-            {index !== rightFormSections.length - 1 && <hr />}
-          </div>
-        );
-      });
-      return (
-        <Layout className="ant-layout-has-sider">
-          
-          <Layout>
-            <Content
-              id={DISPLAY_CREATIVE_FORM}
-              className="mcs-content-container mcs-form-container"
-            >
-              {renderedRightSections}
-            </Content>
-          </Layout>
-        </Layout>
-      )
-    }
+    
   }
 
   render() {
@@ -151,7 +122,6 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
       handleSubmit,
       actionBarButtonText,
       breadCrumbPaths,
-      rightFormSections
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -160,26 +130,16 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
       message: actionBarButtonText,
       onClose: this.onClose,
     };
-    
-    const sideBarProps: SidebarWrapperProps = {
-      items: rightFormSections.map(s => ({ sectionId: s.id, title: s.title })),
-      scrollId: DISPLAY_CREATIVE_FORM,
-    };
 
-    let layoutProps = {}
-    if (this.props.layout === 'SPLIT') {
-      layoutProps = { layout: 'vertical' }
-    }
 
     return (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          {this.props.layout === 'STANDARD' ? <ScrollspySider {...sideBarProps} /> : null}
           <Form
             className="edit-layout ant-layout"
             onSubmit={handleSubmit as any}
-            {...layoutProps}
+            layout={"vertical"}
           >
             {/* this button enables submit on enter */}
             <button type="submit" style={{ display: 'none' }} />

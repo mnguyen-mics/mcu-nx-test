@@ -15,13 +15,7 @@ import injectNotifications, {
 import { PropertyResourceShape } from '../../../../models/plugin';
 import DisplayCreativeMultipleForm from './DisplayCreativeMultipleForm';
 
-
-
-
-export type LayoutType = 'SPLIT' | 'STANDARD';
-
 export interface DisplayCreativeCreatorProps extends DisplayCreativeFormProps {
-  layout: LayoutType;
 }
 
 interface State {
@@ -101,7 +95,6 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
         {...this.props}
         initialValues={initialValues}
         goToCreativeTypeSelection={this.resetFormData}
-        layout={this.props.layout ? this.props.layout : 'STANDARD'}
       />
     }
 
@@ -109,7 +102,6 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
       {...this.props}
       initialValues={initialValues}
       goToCreativeTypeSelection={this.resetFormData}
-      layout={this.props.layout ? this.props.layout : 'STANDARD'}
     />)
 
    

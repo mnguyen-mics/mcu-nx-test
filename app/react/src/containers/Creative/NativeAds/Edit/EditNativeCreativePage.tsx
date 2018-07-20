@@ -152,9 +152,9 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     }
 
     return nativeId ? (
-      <DisplayCreativeFormLoader {...props} creativeId={nativeId} layout={'SPLIT'} />
+      <DisplayCreativeFormLoader {...props} creativeId={nativeId} />
     ) : (
-      <NativeCreativeCreator {...props} layout={'SPLIT'} />
+      <NativeCreativeCreator {...props} />
     );
   }
 }
