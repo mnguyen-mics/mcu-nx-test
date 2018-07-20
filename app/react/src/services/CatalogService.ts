@@ -13,7 +13,6 @@ import {
   AudienceSegmentServiceItemPublicResource,
 } from '../models/servicemanagement/PublicServiceItemResource';
 import { Locale } from '../models/Locale';
-import { OrganisationResource } from '../models/organisation/organisation';
 
 export interface GetOfferOptions extends PaginatedApiParam {
   serviceAgreementId?: string;
@@ -22,6 +21,7 @@ export interface GetOfferOptions extends PaginatedApiParam {
 
 interface GetServiceItemConditionsOptions extends PaginatedApiParam {
   orderBy?: string;
+  keywords?: string;
 }
 
 export interface GetServiceOptions extends PaginatedApiParam {
@@ -104,7 +104,7 @@ const CatalogService = {
   getService(
     serviceId: string,
   ): Promise<DataResponse<ServiceItemPublicResource>> {
-    return ApiService.getRequest(`/service_items/${serviceId}`);
+    return ApiService.getRequest(`service_items/${serviceId}`);
   },
 
   getSubscribedOffers(
@@ -117,6 +117,14 @@ const CatalogService = {
       service_agreement_id: options.serviceAgreementId,
     };
     return ApiService.getRequest(endpoint, params);
+  },
+
+  getSubscribedOffer(
+    customerOrgId: string,
+    offerId: string,
+  ): Promise<DataListResponse<ServiceItemOfferResource>> {
+    const endpoint = `subscribed_services/${customerOrgId}/offers/${offerId}`;
+    return ApiService.getRequest(endpoint);
   },
 
   getAudienceSegmentServices(
@@ -143,11 +151,17 @@ const CatalogService = {
     return ApiService.getRequest(endpoint, params);
   },
 
-  getProvider(
-    organisationId: string,
-  ): Promise<DataResponse<OrganisationResource>> {
-    const endpoint = `organisations/${organisationId}`;
-    return ApiService.getRequest(endpoint);
+  getServiceItemConditionsForOrg(
+    customerOrgId: string,
+    offerId: string,
+    options: GetServiceItemConditionsOptions = {},
+  ): Promise<DataListResponse<ServiceItemConditionsShape>> {
+    const endpoint = `subscribed_services/${customerOrgId}/offers/${offerId}/service_item_conditions`;
+    const params = {
+      ...options,
+      order_by: options.orderBy,
+    };
+    return ApiService.getRequest(endpoint, params);
   },
 };
 

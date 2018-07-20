@@ -3,8 +3,6 @@ import { compose } from 'recompose';
 import { List, Spin, Input } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { DataListResponse } from '../services/ApiService';
-import ButtonStyleless from '../components/ButtonStyleless';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
 const messages = defineMessages({
@@ -29,16 +27,15 @@ export interface InfiniteListFilters {
 interface InfiniteListProps<T = any> {
   fetchData: (
     organisationId: string,
+    offerId: string,
     filter: InfiniteListFilters,
-  ) => Promise<DataListResponse<T>>;
-  onItemClick: (item: T) => void;
-  getItemKey: (item: T) => string | number;
-  getItemTitle: (item: T) => React.ReactNode;
+  ) => Promise<any>;
+  renderItem: (item: T) => React.ReactNode;
 }
 
 type Props<T = any> = InfiniteListProps<T> &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<{ organisationId: string; offerId: string }>;
 
 interface State<T> {
   data: T[];
@@ -79,7 +76,7 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
   handleInfiniteOnLoad = () => {
     const {
       match: {
-        params: { organisationId },
+        params: { organisationId, offerId },
       },
     } = this.props;
 
@@ -90,49 +87,40 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
     });
     const prevData = data;
     return this.props
-      .fetchData(organisationId, { page: first, pageSize: size })
+      .fetchData(organisationId, offerId, { page: first, pageSize: size })
       .then(res => {
         this.setState({
-          data: prevData.concat(res.data),
+          data: prevData.concat(res),
           loading: false,
-          hasMore: res.data.length === size,
+          hasMore: res.length === size,
           first: first + size,
         });
+      })
+      .catch(err => {
+        this.setState({
+          loading: false,
+        });
       });
-  };
-
-  renderItem = (item: any) => {
-    const { onItemClick, getItemKey, getItemTitle } = this.props;
-    return (
-      <List.Item key={getItemKey(item)}>
-        <ButtonStyleless
-          onClick={onItemClick(item)}
-          style={{ textAlign: 'left' }}
-        >
-          <List.Item.Meta title={getItemTitle(item)} />
-        </ButtonStyleless>
-      </List.Item>
-    );
   };
 
   onSearch = (searchValue: string) => {
     const {
       match: {
-        params: { organisationId },
+        params: { organisationId, offerId },
       },
     } = this.props;
 
     this.props
-      .fetchData(organisationId, {
+      .fetchData(organisationId, offerId, {
         page: initialPage,
         pageSize: initialPageSize,
         keywords: searchValue,
       })
       .then(res => {
         this.setState({
-          data: res.data,
+          data: res,
           loading: false,
-          hasMore: res.data.length === initialPageSize,
+          hasMore: res.length === initialPageSize,
           first: initialPageSize + 1,
         });
       });
@@ -169,7 +157,7 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
                 onSearch={this.onSearch}
                 className="infinite-scroll-searchbar"
               />
-              <List dataSource={data} renderItem={this.renderItem}>
+              <List dataSource={data} renderItem={this.props.renderItem}>
                 {loading &&
                   hasMore && (
                     <div className="infinite-loading-container">

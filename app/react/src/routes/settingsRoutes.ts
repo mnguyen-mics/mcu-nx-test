@@ -37,6 +37,7 @@ import EditUserPage from '../containers/Settings/OrganisationSettings/Users/Edit
 import ApiTokenListPage from '../containers/Settings/ProfileSettings/ApiToken/List/ApiTokenListPage';
 import EditApiTokenPage from '../containers/Settings/ProfileSettings/ApiToken/Edit/EditApiTokenPage';
 import SubscribedOffersListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/SubscribedOffersListPage';
+import ServiceItemListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/ServiceItemListPage';
 import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -308,6 +309,13 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/services/subscribed_offers',
     layout: 'settings',
     contentComponent: SubscribedOffersListPage,
+    requiredFeature: 'servicesSettings.subscribed_offers',
+  },
+  settingsSubscribedOfferServiceItemConditionList: {
+    path:
+      '/settings/services/subscribed_offers/:offerId/service_item_conditions',
+    layout: 'settings',
+    contentComponent: ServiceItemListPage,
     requiredFeature: 'servicesSettings.subscribed_offers',
   },
   settingsServiceCatalog: {
