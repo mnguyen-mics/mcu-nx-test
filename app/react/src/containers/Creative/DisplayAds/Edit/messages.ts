@@ -41,6 +41,10 @@ export default defineMessages({
     id: 'creatives.create.section.general.subtitle',
     defaultMessage: 'Give your Creative a name, a format and a destination domain to make it usable.',
   },
+  creativeSectionGeneralMultipleSubTitle: {
+    id: 'creatives.create.section.general.multiple.subtitle',
+    defaultMessage: 'Give your Creative a destination domain. You can change your creative name in the left panel.',
+  },
   creativeSectionPropertyTitle: {
     id: 'creatives.create.section.properties.title',
     defaultMessage: 'Creative Properties',

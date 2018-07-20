@@ -5,20 +5,22 @@ import { InjectedIntlProps } from 'react-intl';
 import DisplayCreativeRendererSelector from './DisplayCreativeRendererSelector';
 import log from '../../../../utils/Logger';
 import { DisplayCreativeForm } from './index';
-import { DisplayCreativeFormData, MicsPLuginDefinition, PluginDefinitionComplexItem, CustomUploadType } from './domain';
+import { DisplayCreativeFormData, IMAGE_AD_RENDERER } from './domain';
 import Loading from '../../../../components/Loading';
 import DisplayCreativeFormService from './DisplayCreativeFormService';
 import { DisplayCreativeFormProps } from './DisplayCreativeForm';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { PropertyResourceShape } from '../../../../models/plugin';
+import DisplayCreativeMultipleForm from './DisplayCreativeMultipleForm';
+
+
+
 
 export type LayoutType = 'SPLIT' | 'STANDARD';
 
 export interface DisplayCreativeCreatorProps extends DisplayCreativeFormProps {
-  onPluginSelect?: (allowMultiple: boolean, customLoader: CustomUploadType) => void;
-  allowMultiple?: boolean;
-  customLoader?: CustomUploadType;
   layout: LayoutType;
 }
 
@@ -40,47 +42,29 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
     };
   }
 
+  filterProperties = (pluginId: string, properties: { [technicalName: string]: PropertyResourceShape }): { [technicalName: string]: PropertyResourceShape } => {
+    switch(pluginId) {
+      case IMAGE_AD_RENDERER:
+        const { image, ...formattedProperties } = properties;
+        return formattedProperties;
+      default:
+        return properties;
+    }
+  }
+
   loadFormData = (adRendererId: string) => {
     this.setState({ isLoading: true });
-    const { onPluginSelect } = this.props;
 
     DisplayCreativeFormService.initializeFormData(adRendererId, 'BANNER')
       .then(creativeFormData => {
-        let type;
-        Object.keys(MicsPLuginDefinition).forEach(key => {
-          if (MicsPLuginDefinition[key].id === creativeFormData.rendererPlugin.plugin_id) {
-            type = key
-          }
+        this.setState({
+          creativeFormData: {
+            ...creativeFormData,
+            properties: this.filterProperties(creativeFormData.rendererPlugin.plugin_id, creativeFormData.properties)
+          },
+          isLoading: false,
         })
-
-        if (type && 
-            MicsPLuginDefinition[type] && 
-            (MicsPLuginDefinition[type] as PluginDefinitionComplexItem).propertiesFormatter && 
-            MicsPLuginDefinition[type] && 
-            (MicsPLuginDefinition[type] as PluginDefinitionComplexItem).customUploadType &&
-            onPluginSelect 
-          ) {
-          this.setState({
-            creativeFormData: {
-              ...creativeFormData,
-              properties: MicsPLuginDefinition[type] && (MicsPLuginDefinition[type] as PluginDefinitionComplexItem).propertiesFormatter(creativeFormData.properties)
-            },
-            isLoading: false,
-          })
-          onPluginSelect(
-            MicsPLuginDefinition[type] && MicsPLuginDefinition[type].allowMultipleUpload ? MicsPLuginDefinition[type].allowMultipleUpload : false,
-            MicsPLuginDefinition[type] && (MicsPLuginDefinition[type] as PluginDefinitionComplexItem).customUploadType
-          )
-        } else {
-          this.setState({
-            creativeFormData,
-            isLoading: false,
-          })
-        }
-
-
-      }
-      )
+      })
       .catch(err => {
         log.debug(err);
         this.props.notifyError(err);
@@ -103,21 +87,32 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
 
     const initialValues = this.props.initialValues || creativeFormData;
 
-    return Object.keys(initialValues).length > 0 ? (
-      <DisplayCreativeForm
+    if (!Object.keys(initialValues).length) {
+      return <DisplayCreativeRendererSelector
+        onSelect={this.loadFormData}
+        close={this.props.close}
+      />
+     
+    }
+
+    if (initialValues.rendererPlugin && initialValues.rendererPlugin.plugin_id === IMAGE_AD_RENDERER) {
+      // render multiupload form for image ad renderer
+      return <DisplayCreativeMultipleForm
         {...this.props}
         initialValues={initialValues}
         goToCreativeTypeSelection={this.resetFormData}
-        allowMultipleUpload={this.props.allowMultiple}
-        customLoader={this.props.customLoader}
         layout={this.props.layout ? this.props.layout : 'STANDARD'}
       />
-    ) : (
-        <DisplayCreativeRendererSelector
-          onSelect={this.loadFormData}
-          close={this.props.close}
-        />
-      );
+    }
+
+    return (<DisplayCreativeForm
+      {...this.props}
+      initialValues={initialValues}
+      goToCreativeTypeSelection={this.resetFormData}
+      layout={this.props.layout ? this.props.layout : 'STANDARD'}
+    />)
+
+   
   }
 }
 

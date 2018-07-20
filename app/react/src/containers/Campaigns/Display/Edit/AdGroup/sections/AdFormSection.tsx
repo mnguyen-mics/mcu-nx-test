@@ -33,7 +33,6 @@ import DisplayCreativeFormLoader, {
 import {
   DisplayCreativeFormData,
   isDisplayAdResource,
-  CustomUploadType,
 } from '../../../../../Creative/DisplayAds/Edit/domain';
 import { computeDimensionsByRatio } from '../../../../../../utils/ShapeHelper';
 import { ButtonStyleless } from '../../../../../../components/index';
@@ -59,7 +58,6 @@ export interface DisplayAdResourceWithFieldIndex {
 interface AdsSectionState {
   displayCreativeCacheById: Index<DisplayAdResource>;
   loading: boolean;
-  customLoader?: CustomUploadType;
 }
 
 type Props = AdFormSectionProps &
@@ -153,9 +151,8 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
         onSubmit: handleOnSubmit,
         actionBarButtonText: messages.addNewCreative,
         breadCrumbPaths: [],
-        close: () => { this.setState({ customLoader: undefined }); this.props.closeNextDrawer(); },
-        avoidCloseAlert: true,
-        layout: 'STANDARD'
+        close: () => { this.props.closeNextDrawer(); },
+        layout: 'STANDARD',
       };
 
       this.props.openNextDrawer(DisplayCreativeCreator, { additionalProps });
@@ -167,7 +164,6 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
       actionBarButtonText: messages.addNewCreative,
       breadCrumbPaths: [],
       close: this.props.closeNextDrawer,
-      avoidCloseAlert: true,
       layout: 'STANDARD'
     };
     if (!isDisplayCreativeFormData(field.model)) {

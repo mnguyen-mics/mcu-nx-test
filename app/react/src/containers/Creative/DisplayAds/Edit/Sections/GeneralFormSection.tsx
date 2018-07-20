@@ -30,7 +30,6 @@ interface MapStateProps {
 }
 
 export interface GeneralFormSectionProps {
-  allowMultipleUpload?: boolean;
   small?: boolean;
 }
 
@@ -75,7 +74,6 @@ class GeneralFormSection extends React.Component<Props, State> {
       intl: { formatMessage },
       fieldValidators: { isRequired },
       initialValue: { creative },
-      allowMultipleUpload,
       small
     } = this.props;
 
@@ -95,7 +93,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           title={messages.creativeSectionGeneralTitle}
           subtitle={messages.creativeSectionGeneralSubTitle}
         />
-        {!allowMultipleUpload && <FormInputField
+        <FormInputField
           name="creative.name"
           component={FormInput}
           validate={[isRequired]}
@@ -117,14 +115,14 @@ class GeneralFormSection extends React.Component<Props, State> {
             ),
           }}
           small={small}
-        />}
-        {!allowMultipleUpload && <CreativeFormatEditorField
+        />
+        <CreativeFormatEditorField
           name="creative.format"
           component={DisplayCreativeFormatEditor}
           validate={[this.isCreativeFormatValid()]}
           disabled={isDisabled}
           small={small}
-        />}
+        />
         <FormInputField
           name="creative.destination_domain"
           component={FormInput}
@@ -148,7 +146,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
           small={small}
         />
-        {!allowMultipleUpload && <div>
+        <div>
           <ButtonStyleless
             className="optional-section-title"
             onClick={this.toggleAdvancedSection}
@@ -192,7 +190,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               small={small}
             />
           </div>
-        </div>}
+        </div>
       </div>
     );
   }

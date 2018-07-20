@@ -55,61 +55,23 @@ const operation = (
   return operationMap[chosenOperation](propertyValue, targetValue);
 };
 
-export type CustomUploadType = 'image' | 'data_file';
 
-interface PluginDefinitionBaseItem {
-  id: string;
-  allowMultipleUpload: boolean;
-}
+export const IMAGE_AD_RENDERER = '1065';
+export const HTML_AD_RENDRER = '1078';
+export const EXTERNAL_AD_RENDERER = '1061';
+export const IMAGE_SKINS_AD_RENDERER = '1057';
+export const NATIVE_QUANTUM_AD_RENDERER = '1047';
+export const NATIVE_IVIDENCE_AD_RENDERER = '1032';
 
-export interface PluginDefinitionComplexItem extends PluginDefinitionBaseItem {
-  customUploadType: CustomUploadType,
-  propertiesFormatter: (properties:  { [technicalName: string]: PropertyResourceShape }) => { [technicalName: string]: PropertyResourceShape }
-}
-
-interface PluginDefinitionImageItem extends PluginDefinitionComplexItem {
-  customUploadType: 'image',
-}
-
-interface PluginDefinitionDataFileItem extends PluginDefinitionComplexItem {
-  customUploadType: 'data_file';
-}
-
-type PluginDefinitionItem = PluginDefinitionBaseItem |  PluginDefinitionImageItem |  PluginDefinitionDataFileItem;
-
-export const MicsPLuginDefinition: { [key: string]: PluginDefinitionItem } = {
-  imageAdRendererId: {
-    id: '1065',
-    allowMultipleUpload: true,
-    customUploadType: 'image',
-    propertiesFormatter: (properties?: { [technicalName: string]: PropertyResourceShape }) => {
-      if (properties) {
-        const { image, ...formattedProperties } = properties;
-        return formattedProperties;
-      }
-      return {}
-    }
-  },
-  htmlAdRendererId: { 
-    id: '1078',
-    allowMultipleUpload: false,
-  },
-  externalAdRendererId: {
-    id: '1061',
-    allowMultipleUpload: false
-  },
-  nativeIvidenceAdRendererId: {
-    id: '1032',
-    allowMultipleUpload: false
-  },
-  nativeQuantumAdRendererId: {
-    id: '1047',
-    allowMultipleUpload: false
-  },
-  imageSkinsAdRendererId: {
-    id: '1057',
-    allowMultipleUpload: false
-  },
+export const isExistingCreative = (initialValues: Partial<DisplayCreativeFormData>) => {
+  if (
+    initialValues &&
+    initialValues.creative &&
+    isDisplayAdResource(initialValues.creative)
+  ) {
+    return initialValues.creative
+  }
+  return undefined
 }
 
 export default operation;
