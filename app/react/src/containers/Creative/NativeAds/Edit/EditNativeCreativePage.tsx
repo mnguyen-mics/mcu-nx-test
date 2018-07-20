@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import DisplayCreativeFormLoader from '../../DisplayAds/Edit/DisplayCreativeFormLoader';
 import NativeCreativeCreator from './NativeCreativeCreator';
 import messages from './messages';
 import {
@@ -16,6 +15,7 @@ import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import NativeCreativeFormLoader from './NativeCreativeFormLoader';
 
 interface State {
   loading: boolean;
@@ -152,7 +152,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     }
 
     return nativeId ? (
-      <DisplayCreativeFormLoader {...props} creativeId={nativeId} />
+      <NativeCreativeFormLoader {...props} creativeId={nativeId} />
     ) : (
       <NativeCreativeCreator {...props} />
     );

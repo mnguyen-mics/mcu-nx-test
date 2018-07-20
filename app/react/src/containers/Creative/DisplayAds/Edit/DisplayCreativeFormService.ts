@@ -8,6 +8,7 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { PropertyResourceShape } from '../../../../models/plugin/index';
 import { UploadFile } from 'antd/lib/upload/interface';
 
+
 type TCreativeId = string;
 
 function normalizeProperties(properties: PropertyResourceShape[]) {
@@ -20,7 +21,7 @@ function normalizeProperties(properties: PropertyResourceShape[]) {
 }
 
 const DisplayCreativeFormService = {
-  initializeFormData(adRendererId: string, subtype: CreativeSubtype): Promise<DisplayCreativeFormData> {
+  initializeFormData(adRendererId: string, subtype: CreativeSubtype, defaultFormat?: string): Promise<DisplayCreativeFormData> {
     return PluginService.getPluginVersions(adRendererId).then(resp => {
       const lastVersion = resp.data[resp.data.length - 1];
 
@@ -40,10 +41,15 @@ const DisplayCreativeFormService = {
           pLayoutRes.data
           :
           undefined;
+
+        const creative: Partial<DisplayAdShape> = {
+          subtype,
+        }
+        if (defaultFormat) {
+          creative.format = defaultFormat;
+        }
         return {
-          creative: {
-            subtype: subtype
-          },
+          creative,
           rendererPlugin: lastVersion,
           properties: normalizeProperties(properties),
           pluginLayout: pLayout,
