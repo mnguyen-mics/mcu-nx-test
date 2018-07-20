@@ -4,7 +4,7 @@ import ExportService from "../../../../../services/ExportService";
 import { MessageValue, FormattedMessage } from 'react-intl';
 
 // tslint:disable-next-line no-invalid-template-strings 
-const GOOGLE_CLICK_MACRO = "${CLICK_URL}";
+const GOOGLE_CLICK_MACRO = "%%CLICK_URL_ESC%%";
 // tslint:disable-next-line no-invalid-template-strings 
 const APX_CLICK_MACRO = "${CLICK_URL_ENC}";
 const NONE_MACRO = "/*INSERT HERE YOUR CLICK TRACKING URL*/"
