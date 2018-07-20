@@ -8,43 +8,43 @@ import { WrappedFieldArrayProps } from 'redux-form';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 
-import messages from '../messages';
-import { injectDrawer } from '../../../../../components/Drawer/index';
+import messages from '../../messages';
+import { injectDrawer } from '../../../../../../components/Drawer';
 import {
   EditDisplayCampaignRouteMatchParam,
   GoalFieldModel,
   isGoalFormData,
-} from '../domain';
-import GoalSelector, { GoalSelectorProps } from '../../../Common/GoalSelector';
-import { InjectedDatamartProps, injectDatamart } from '../../../../Datamart';
-import { McsIcon, ButtonStyleless } from '../../../../../components';
+} from '../../domain';
+import GoalSelector, { GoalSelectorProps } from '../../../../Common/GoalSelector';
+import { InjectedDatamartProps, injectDatamart } from '../../../../../Datamart';
+import { McsIcon, ButtonStyleless } from '../../../../../../components';
 import {
   RelatedRecords,
   RecordElement,
-} from '../../../../../components/RelatedRecord';
+} from '../../../../../../components/RelatedRecord';
 import {
   GoalResource,
   GoalSelectionCreateRequest,
-} from '../../../../../models/goal';
-import { FormSection } from '../../../../../components/Form';
+} from '../../../../../../models/goal';
+import { FormSection } from '../../../../../../components/Form';
 import {
   ReduxFormChangeProps,
   Task,
   executeTasksInSequence,
-} from '../../../../../utils/FormHelper';
+} from '../../../../../../utils/FormHelper';
 import {
   isGoalResource,
   INITIAL_GOAL_FORM_DATA,
   GoalFormData,
-} from '../../../Goal/Edit/domain';
-import GoalFormContainer, { GoalFormContainerProps } from '../../../Goal/Edit/GoalFormContainer';
-import GoalForm, { GoalFormProps } from '../../../Goal/Edit/GoalForm';
+} from '../../../../Goal/Edit/domain';
+import GoalFormContainer, { GoalFormContainerProps } from '../../../../Goal/Edit/GoalFormContainer';
+import GoalForm, { GoalFormProps } from '../../../../Goal/Edit/GoalForm';
 import GoalFormLoader, {
   GoalFormLoaderProps,
-} from '../../../Goal/Edit/GoalFormLoader';
-import GoalFormService from '../../../Goal/Edit/GoalFormService';
-import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import GoalService from '../../../../../services/GoalService';
+} from '../../../../Goal/Edit/GoalFormLoader';
+import GoalFormService from '../../../../Goal/Edit/GoalFormService';
+import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import GoalService from '../../../../../../services/GoalService';
 
 export interface GoalFormSectionProps extends ReduxFormChangeProps {}
 

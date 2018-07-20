@@ -29,7 +29,7 @@ import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer'
 import messages from '../messages';
 import DisplayCampaignFormService from '../Edit/DisplayCampaignFormService';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
-import { UpdateMessage } from '../Dashboard/Campaign/DisplayCampaignAdGroupTable';
+import { UpdateMessage } from '../Dashboard/ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';

@@ -1,81 +1,51 @@
 import * as React from 'react';
-import {
-  Form,
-  reduxForm,
-  InjectedFormProps,
-  ConfigProps,
-  GenericFieldArray,
-  Field,
-  FieldArray,
-} from 'redux-form';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import { Layout } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
-import { BasicProps } from 'antd/lib/layout/layout';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { Path } from '../../../../components/ActionBar';
-import FormLayoutActionbar, {
-  FormLayoutActionbarProps,
-} from '../../../../components/Layout/FormLayoutActionbar';
-import ScrollspySider, {
-  SidebarWrapperProps,
-} from '../../../../components/Layout/ScrollspySider';
-import messages from './messages';
 import { DisplayCampaignFormData } from './domain';
+import { ConfigProps, reduxForm, InjectedFormProps, Form, GenericFieldArray, Field, FieldArray } from 'redux-form';
 import { Omit } from '../../../../utils/Types';
-import GeneralFormSection from './Sections/Programmatic/GeneralFormSection';
+import { Path } from '../../../../components/ActionBar';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { compose } from 'recompose';
+import { Layout } from 'antd';
+import { FormLayoutActionbar, ScrollspySider } from '../../../../components/Layout';
+import { SidebarWrapperProps } from '../../../../components/Layout/ScrollspySider';
+import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import GoalFormSection, { GoalFormSectionProps } from './Sections/Programmatic/GoalFormSection';
-import AdGroupFormSection, {
-  AdGroupFormSectionProps,
-} from './Sections/Programmatic/AdGroupFormSection';
-import * as SessionSelectors from '../../../../state/Session/selectors';
+import { GeneralFormSection } from './Sections/AdServing'
+import messages from './messages';
+import AdGroupAdsFormSection, { AdGroupAdsFormSectionProps } from './Sections/AdServing/AdGroupAdsFormSection';
 
-const Content = Layout.Content as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const { Content } = Layout;
 
-const GoalFieldArray = FieldArray as new () => GenericFieldArray<
-  Field,
-  GoalFormSectionProps
->;
-
-const AdGroupFieldArray = FieldArray as new () => GenericFieldArray<
-  Field,
-  AdGroupFormSectionProps
->;
-
-export interface DisplayCampaignFormProps
+export interface DisplayAdServingCampaignFormProps
   extends Omit<ConfigProps<DisplayCampaignFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
 }
 
-interface MapStateToProps {
-  hasDatamarts: (organisationId: string) => boolean;
-}
-
 type Props = InjectedFormProps<
   DisplayCampaignFormData,
-  DisplayCampaignFormProps
+  DisplayAdServingCampaignFormProps
 > &
-  DisplayCampaignFormProps &
-  MapStateToProps &
+DisplayAdServingCampaignFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 export const FORM_ID = 'campaignForm';
 
-class DisplayCampaignForm extends React.Component<Props> {
-  render() {
+
+const AdGroupAdsFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  AdGroupAdsFormSectionProps
+>;
+
+class DisplayAdServingCampaignForm extends React.Component<Props, any> {
+  public render() {
     const {
       handleSubmit,
       breadCrumbPaths,
       close,
       change,
-      match: { params: { organisationId } },
-      hasDatamarts,
     } = this.props;
 
     const genericFieldArrayProps = {
@@ -96,28 +66,13 @@ class DisplayCampaignForm extends React.Component<Props> {
       title: messages.sectionTitle1,
       component: <GeneralFormSection />,
     });
-
-    if (hasDatamarts(organisationId)) {
-      sections.push({
-        id: 'goals',
-        title: messages.sectionTitle2,
-        component: (
-          <GoalFieldArray
-            name="goalFields"
-            component={GoalFormSection}
-            {...genericFieldArrayProps}
-          />
-        ),
-      });
-    }
-
     sections.push({
-      id: 'adGroups',
+      id: 'ads',
       title: messages.sectionTitle3,
       component: (
-        <AdGroupFieldArray
+        <AdGroupAdsFieldArray
           name="adGroupFields"
-          component={AdGroupFormSection}
+          component={AdGroupAdsFormSection}
           {...genericFieldArrayProps}
         />
       ),
@@ -154,7 +109,7 @@ class DisplayCampaignForm extends React.Component<Props> {
               id={FORM_ID}
               className="mcs-content-container mcs-form-container"
             >
-              {renderedSections}
+              <div className="ad-group-form">{renderedSections}</div>
             </Content>
           </Form>
         </Layout>
@@ -163,12 +118,11 @@ class DisplayCampaignForm extends React.Component<Props> {
   }
 }
 
-export default compose<Props, DisplayCampaignFormProps>(
+export default  compose<Props, DisplayAdServingCampaignFormProps>(
   injectIntl,
   withRouter,
   reduxForm({
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
-)(DisplayCampaignForm);
+)(DisplayAdServingCampaignForm);

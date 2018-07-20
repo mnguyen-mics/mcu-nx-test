@@ -31,7 +31,7 @@ function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
   const sheet = [];
   const blankLine = [];
   sheet.push(titleLine);
-  sheet.push([`${formatMessage(dateMessages.from)} ${filter.from} ${formatMessage(dateMessages.to)} ${filter.to}`]);
+  if (filter && filter.from && filter.to) sheet.push([`${formatMessage(dateMessages.from)} ${filter.from} ${formatMessage(dateMessages.to)} ${filter.to}`]);
   if (otherInfos) {
     sheet.push([otherInfos.name]);
     sheet.push([otherInfos.id]);
@@ -573,6 +573,22 @@ const exportServiceUsageReportList = (organisationId, data, filter, formatMessag
   }
 };
 
+const exportCreativeAdServingSnippet = (organisationId, campaignName, data, formatMessage) => {
+  const pageTitle = `Creative Snippets - ${campaignName}`;
+  const creativeSnippetHeaders = [
+    { name: 'creative_name', translation: formatMessage(displayCampaignMessages.creativeName) },
+    { name: 'snippet_code', translation: formatMessage(displayCampaignMessages.snippet) },
+  ];
+
+  const sheets = [
+    addSheet(exportMessages.creativeName, data, creativeSnippetHeaders, undefined, formatMessage, pageTitle)
+  ].filter(x => x);
+
+  if (sheets.length) {
+    exportData(sheets, `${organisationId}_${campaignName}-snippets`, 'xlsx');
+  }
+};
+
 export default {
   exportData,
   exportGoals,
@@ -582,5 +598,6 @@ export default {
   exportDisplayCampaigns,
   exportDisplayCampaignDashboard,
   exportAudienceSegmentDashboard,
-  exportServiceUsageReportList
+  exportServiceUsageReportList,
+  exportCreativeAdServingSnippet
 };

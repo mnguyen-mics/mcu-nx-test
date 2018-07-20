@@ -15,7 +15,7 @@ import {
   AdInfoResource,
 } from '../../../../../models/campaign/display/index';
 import { Popover } from '../../../../../components/PopupContainers/index';
-import { UpdateMessage } from '../Campaign/DisplayCampaignAdGroupTable';
+import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { ExtendedTableRowSelection } from '../../../../../components/TableView/TableView';
 
 interface DisplayCampaignAdTableProps {

@@ -83,4 +83,8 @@ export default defineMessages({
     id: 'settings.datamart.seriveUsageReport.export.serviceElementName',
     defaultMessage: 'Segment Element Name',
   },
+  creativeName: {
+    id: 'settings.datamart.seriveUsageReport.export.CreativeName',
+    defaultMessage: 'Creative Snippets',
+  },
 });

@@ -6,7 +6,7 @@ import { Button, Layout, Alert } from 'antd';
 import { compose } from 'recompose';
 
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
-import AdCard from '../Campaign/AdCard';
+import AdCard from '../ProgrammaticCampaign/AdCard';
 import AdGroupsDashboard from './AdGroupsDashboard';
 import AdGroupActionbar from './AdGroupActionbar';
 import messages from '../messages';
@@ -16,7 +16,7 @@ import {
   AdResource,
 } from '../../../../../models/campaign/display/index';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
-import { UpdateMessage } from '../Campaign/DisplayCampaignAdGroupTable';
+import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 
