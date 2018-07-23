@@ -249,5 +249,9 @@ export default defineMessages({
   modalConfirmCancel: {
     id: 'creatives.create.modal.confirm.cancel',
     defaultMessage: 'Cancel'
+  },
+  successfulSaving: {
+    id: 'creatives.create.modal.save.successful',
+    defaultMessage: 'Your Creative has been successfully saved!'
   }
 });

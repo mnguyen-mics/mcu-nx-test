@@ -54,7 +54,31 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     }
   }
 
-  redirect = () => {
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      match: {
+        params: { nativeId },
+      },
+    } = this.props;
+    const {
+      match: {
+        params: { nativeId: nextNativeId },
+      },
+    } = nextProps;
+    if (nextNativeId && nativeId !== nextNativeId) {
+      CreativeService.getCreative(nextNativeId)
+        .then(resp => resp.data)
+        .then(nativeData => {
+          this.setState({
+            nativeName: nativeData.name
+              ? nativeData.name
+              : `creative ${nativeData.id}`,
+          });
+        });
+    }
+  }
+
+  redirect = (createdId?: string) => {
     const {
       history,
       location: { state },
@@ -63,10 +87,14 @@ class EditNativeCreativePage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const url =
+    let url =
       state && state.from
         ? state.from
         : `/v2/o/${organisationId}/creatives/native`;
+
+    if (createdId) {
+      url = `/v2/o/${organisationId}/creatives/native/edit/${createdId}`
+    }
 
     history.push(url);
   };
@@ -89,9 +117,12 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     });
 
     DisplayCreativeFormService.saveDisplayCreative(organisationId, nativeData)
-      .then(() => {
+      .then((createdId) => {
         hideSaveInProgress();
-        this.redirect();
+        this.setState({
+          loading: false
+        })
+        this.redirect(createdId);
       })
       .catch(err => {
         hideSaveInProgress();

@@ -73,7 +73,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
 
     if (creativeId !== nextCreativeId) {
       this.setState({ loading: true })
-      CreativeService.getCreative(creativeId)
+      CreativeService.getCreative(nextCreativeId)
       .then(resp => resp.data)
       .then(creativeData => {
         this.setState({
@@ -90,53 +90,29 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     }
   }
 
-  redirect = () => {
+  redirect = (savedId?: string) => {
     const {
       history,
       location: { state },
       match: {
         params: { organisationId },
       },
+      intl: {
+        formatMessage
+      }
     } = this.props;
 
-    const url =
+    let url =
       state && state.from
         ? state.from
         : `/v2/o/${organisationId}/creatives/display`;
-
+    
+    if (savedId) {
+      url = `/v2/o/${organisationId}/creatives/display/edit/${savedId}`;
+      message.success(formatMessage(messages.successfulSaving), 3);
+    }
     history.push(url);
   };
-
-  onSaveMultipleCreative = (creativeData: DisplayCreativeFormData) => {
-    const { match: { params: { organisationId, creativeId } }, intl } = this.props;
-
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
-
-    this.setState({
-      loading: true,
-    });
-
-    DisplayCreativeFormService.handleSaveMutipleCreatives(
-      organisationId,
-      creativeData 
-    ).then(i => {
-      hideSaveInProgress();
-      if (creativeId) {
-        this.setState({ loading: false })
-      } else {
-        this.redirect();
-      }
-    }).catch(err => {
-      hideSaveInProgress();
-      this.props.notifyError(err);
-      this.setState({
-        loading: false,
-      });
-    })
-  }
 
   onSave = (creativeData: DisplayCreativeFormData) => {
     const { match: { params: { organisationId, creativeId } }, intl } = this.props;
@@ -150,11 +126,18 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    DisplayCreativeFormService.saveDisplayCreative(organisationId, creativeData)
-      .then(() => {
+    const savePromise = creativeData.repeatFields && creativeData.repeatFields.length ? DisplayCreativeFormService.handleSaveMutipleCreatives(
+      organisationId,
+      creativeData 
+    ) : DisplayCreativeFormService.saveDisplayCreative(organisationId, creativeData)
+
+    savePromise
+      .then((savedId) => {
         hideSaveInProgress();
         if (creativeId) {
           this.setState({ loading: false })
+        } else if (typeof savedId === 'string') {
+          this.redirect(savedId)
         } else {
           this.redirect();
         }
@@ -219,7 +202,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     ];
 
     const props = {
-      close: this.redirect,
+      close: () => this.redirect(),
       onSubmit: this.onSave,
       actionBarButtonText: creativeId ? actionBarButtonSaveRefresh : actionBarButtonSave,
       breadCrumbPaths: breadCrumbPaths,
