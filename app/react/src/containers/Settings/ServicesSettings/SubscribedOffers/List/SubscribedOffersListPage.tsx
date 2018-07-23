@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Layout, Row } from 'antd';
+import { Layout, Row, Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 import {
@@ -17,11 +17,11 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { ServiceItemOfferResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
-import { McsIconType } from '../../../../../components/McsIcon';
+import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 
 const { Content } = Layout;
 
-const messages = defineMessages({
+export const messages = defineMessages({
   serviceOffers: {
     id: 'settings.services.subscribed.service.offers.list',
     defaultMessage: 'Subscribed Offers',
@@ -46,6 +46,10 @@ const messages = defineMessages({
   subscribedOffersTitle: {
     id: 'settings.services.subscribed.service.offers.title',
     defaultMessage: 'Subscribed Offers',
+  },
+  unknownOffer: {
+    id: 'settings.services.subscribed.offers.list.unknown.offer',
+    defaultMessage: 'Unknown offer',
   },
 });
 
@@ -152,9 +156,18 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <Row className="mcs-table-container">
-            <div className="mcs-card-title">
-              <FormattedMessage {...messages.subscribedOffersTitle} />
-            </div>
+            <Breadcrumb
+              className={'mcs-breadcrumb'}
+              separator={<McsIcon type="chevron-right" />}
+            >
+              <Breadcrumb.Item>
+                <Link
+                  to={`/v2/o/${organisationId}/settings/services/subscribed_offers`}
+                >
+                  <FormattedMessage {...messages.subscribedOffersTitle} />
+                </Link>
+              </Breadcrumb.Item>
+            </Breadcrumb>
           </Row>
           <ItemList
             fetchList={this.fetchOffers}

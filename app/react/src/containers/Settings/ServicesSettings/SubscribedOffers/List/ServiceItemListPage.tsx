@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { List, Layout, Row, Col, Spin } from 'antd';
-import SyntaxHighlighter from 'react-syntax-highlighter';
+import { List, Layout, Row, Col, Breadcrumb } from 'antd';
+// import { docco } from 'react-syntax-highlighter/styles/hljs';
+// import SyntaxHighlighter from 'react-syntax-highlighter';
 import { Link } from 'react-router-dom';
-import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { withRouter, RouteComponentProps } from 'react-router';
 import ButtonStyleless from '../../../../../components/ButtonStyleless';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -23,6 +23,8 @@ import {
   ServiceItemOfferResource,
 } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { DataResponse } from '../../../../../services/ApiService';
+import { McsIcon } from '../../../../../components';
+import { messages } from './SubscribedOffersListPage';
 
 const { Content } = Layout;
 
@@ -103,7 +105,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
       });
   };
 
-  onItemClick = (item: Item) => {
+  storeItemData = (item: Item) => {
     this.setState({
       item: {
         serviceItem: item.serviceItem,
@@ -112,15 +114,30 @@ class ServiceItemListPage extends React.Component<Props, State> {
     });
   };
 
+  onItemClick = (item: Item) => () => {
+    this.storeItemData(item);
+  };
+
   getItemTitle = (item: Item) => {
     return item.serviceItem ? item.serviceItem.name : undefined;
   };
 
   renderItem = (item: Item) => {
+    const isItemSelected =
+      item &&
+      item.serviceItem &&
+      this.state.item &&
+      this.state.item.serviceItem &&
+      item.serviceItem.id === this.state.item.serviceItem.id;
     return item && item.serviceItem ? (
-      <List.Item key={item.serviceItem.id}>
+      <List.Item
+        key={item.serviceItem.id}
+        className={
+          isItemSelected ? 'infinite-list-selected-item' : 'infinite-list-item'
+        }
+      >
         <ButtonStyleless
-          onClick={this.onItemClick}
+          onClick={this.onItemClick(item)}
           style={{ textAlign: 'left' }}
         >
           <List.Item.Meta title={this.getItemTitle(item)} />
@@ -133,7 +150,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
   render() {
     const {
-      item: { serviceItem, serviceItemCondition },
+      item: { serviceItem /*serviceItemCondition*/ },
       offer,
     } = this.state;
 
@@ -141,35 +158,49 @@ class ServiceItemListPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      intl,
     } = this.props;
 
     return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <Row className="mcs-table-container">
-            <div className="mcs-card-title">
-              <Link
-                to={`/v2/o/${organisationId}/settings/services/subscribed_offers`}
-              >
-                {offer ? offer.name : <Spin />}
-              </Link>
-              {serviceItem ? ` > ${serviceItem.name}` : undefined}
-            </div>
+            <Breadcrumb
+              className={'mcs-breadcrumb'}
+              separator={<McsIcon type="chevron-right" />}
+            >
+              <Breadcrumb.Item>
+                <Link
+                  to={`/v2/o/${organisationId}/settings/services/subscribed_offers`}
+                >
+                  {intl.formatMessage(messages.subscribedOffersTitle)}
+                </Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>
+                {offer ? offer.name : intl.formatMessage(messages.unknownOffer)}
+              </Breadcrumb.Item>
+            </Breadcrumb>
           </Row>
           <Row className="mcs-table-container mcs-settings-card">
             <Col span={6}>
               <InfiniteList
                 fetchData={this.fetchData}
                 renderItem={this.renderItem}
-                onItemClick={this.onItemClick}
+                storeItemData={this.storeItemData}
               />
             </Col>
             <Col span={18} className="mcs-settings-card-separator">
               <div className="mcs-card-title service-container-header">
                 {serviceItem && serviceItem.name ? serviceItem.name : undefined}
               </div>
+              <div className="service-container">
+              <div className="service-price">0.123 €</div>
+                {serviceItem && serviceItem.description
+                  ? serviceItem.description
+                  : 'No description'}
+              </div>
 
-              {serviceItem && (
+              {/* {serviceItem && (
                 <div className="service-container">
                   <SyntaxHighlighter language="json" style={docco}>
                     {JSON.stringify(serviceItem, undefined, 4)}
@@ -183,7 +214,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
                     {JSON.stringify(serviceItemCondition, undefined, 4)}
                   </SyntaxHighlighter>
                 </div>
-              )}
+              )} */}
             </Col>
           </Row>
         </Content>

@@ -31,7 +31,7 @@ interface InfiniteListProps<T = any> {
     filter: InfiniteListFilters,
   ) => Promise<any>;
   renderItem: (item: T) => React.ReactNode;
-  onItemClick: (item: T) => void;
+  storeItemData: (item: T) => void;
 }
 
 type Props<T = any> = InfiniteListProps<T> &
@@ -70,7 +70,7 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
     this.handleInfiniteOnLoad().then(() => {
       const { data } = this.state;
       if (data[0]) {
-        this.props.onItemClick(data[0]);
+        this.props.storeItemData(data[0]);
       }
       this.setState({
         initialLoading: false,
@@ -162,7 +162,11 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
                 onSearch={this.onSearch}
                 className="infinite-scroll-searchbar"
               />
-              <List dataSource={data} renderItem={this.props.renderItem}>
+              <List
+                dataSource={data}
+                renderItem={this.props.renderItem}
+                className="infinite-list"
+              >
                 {loading &&
                   hasMore && (
                     <div className="infinite-loading-container">
