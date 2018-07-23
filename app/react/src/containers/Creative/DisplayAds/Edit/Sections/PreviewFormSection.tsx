@@ -8,6 +8,7 @@ import {
 import { connect } from 'react-redux';
 import { getFormInitialValues } from 'redux-form';
 import { compose } from 'recompose';
+import { Spin } from 'antd';
 const Dimensions = require('react-dimensions')
 
 interface MapStateProps {
@@ -22,7 +23,8 @@ const configuration = {
 
 interface State {
   width?: number,
-  height?: number
+  height?: number,
+  loaded?: boolean
 }
 
 class PreviewFormSection extends React.Component<MapStateProps, State> {
@@ -98,9 +100,11 @@ class PreviewFormSection extends React.Component<MapStateProps, State> {
     }
 
     const transformStyle = setTransformStyle();
+    const onLoad = () => this.setState({ loaded: true })
 
     return (
       <div style={{ padding: 40, flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+        <div style={{ opacity: this.state.loaded ? 0 : 1 }}><Spin /></div>
         {transformStyle && <iframe
           className="renderer"
           src={this.renderIframeCreative(creative)}
@@ -108,7 +112,8 @@ class PreviewFormSection extends React.Component<MapStateProps, State> {
           scrolling="no"
           width={this.formatDimension(creative.format).width}
           height={this.formatDimension(creative.format).height}
-          style={{ position: 'absolute', transform: `scale(${transformStyle})` }}
+          style={{ position: 'absolute', transform: `scale(${transformStyle})`, opacity: this.state.loaded ? 1 : 0 }}
+          onLoad={onLoad}
         />}
       </div>
     );
