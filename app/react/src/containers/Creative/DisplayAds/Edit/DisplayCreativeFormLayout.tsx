@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { InjectedFormProps } from 'redux-form';
 import { compose } from 'recompose';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { Layout, Form, Modal } from 'antd';
 
 import {
-  DisplayCreativeFormData,
   DISPLAY_CREATIVE_FORM,
 } from './domain';
 import messages from './messages';
@@ -26,11 +24,10 @@ export interface DisplayCreativeFormLayoutProps {
   breadCrumbPaths: Path[];
   leftFormSections: McsFormSection[];
   rightFormSections: McsFormSection[];
-  handleSubmit: any;
+  pristine: boolean;
 }
 
-type Props = DisplayCreativeFormLayoutProps &
-  InjectedFormProps<DisplayCreativeFormData, DisplayCreativeFormLayoutProps> & InjectedIntlProps;
+type Props = DisplayCreativeFormLayoutProps & InjectedIntlProps;
 
 class DisplayCreativeFormLayout extends React.Component<Props> {
   constructor(props: Props) {
@@ -119,7 +116,6 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
 
   render() {
     const {
-      handleSubmit,
       actionBarButtonText,
       breadCrumbPaths,
     } = this.props;
@@ -138,7 +134,6 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
         <Layout className={'ant-layout-has-sider'}>
           <Form
             className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
             layout={"vertical"}
           >
             {/* this button enables submit on enter */}
@@ -149,7 +144,7 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
       </Layout>
     );
   }
-}
+} 
 
 export default compose<Props, DisplayCreativeFormLayoutProps>(
   injectIntl

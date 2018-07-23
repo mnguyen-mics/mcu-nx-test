@@ -122,7 +122,7 @@ class DisplayCreativeForm extends React.Component<Props> {
     const {
       actionBarButtonText,
       breadCrumbPaths,
-      handleSubmit,
+      pristine,
       close
     } = this.props;
 
@@ -134,7 +134,7 @@ class DisplayCreativeForm extends React.Component<Props> {
         breadCrumbPaths={breadCrumbPaths}
         leftFormSections={sections.leftPanel}
         rightFormSections={sections.rightPanel}
-        handleSubmit={handleSubmit}
+        pristine={pristine}
       />
     );
   }

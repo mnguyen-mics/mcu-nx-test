@@ -97,7 +97,7 @@ class NativeCreativeForm extends React.Component<Props> {
     const {
       actionBarButtonText,
       breadCrumbPaths,
-      handleSubmit,
+      pristine,
       close
     } = this.props;
 
@@ -109,7 +109,7 @@ class NativeCreativeForm extends React.Component<Props> {
         breadCrumbPaths={breadCrumbPaths}
         leftFormSections={sections.leftPanel}
         rightFormSections={sections.rightPanel}
-        handleSubmit={handleSubmit}
+        pristine={pristine}
       />
     );
   }
