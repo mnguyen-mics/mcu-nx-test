@@ -103,7 +103,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
       });
   };
 
-  onItemClick = (item: Item) => () => {
+  onItemClick = (item: Item) => {
     this.setState({
       item: {
         serviceItem: item.serviceItem,
@@ -120,7 +120,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
     return item && item.serviceItem ? (
       <List.Item key={item.serviceItem.id}>
         <ButtonStyleless
-          onClick={this.onItemClick(item)}
+          onClick={this.onItemClick}
           style={{ textAlign: 'left' }}
         >
           <List.Item.Meta title={this.getItemTitle(item)} />
@@ -161,6 +161,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
               <InfiniteList
                 fetchData={this.fetchData}
                 renderItem={this.renderItem}
+                onItemClick={this.onItemClick}
               />
             </Col>
             <Col span={18} className="mcs-settings-card-separator">
