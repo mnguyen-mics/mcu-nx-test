@@ -17,18 +17,10 @@ import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {
-  EditDisplayCampaignRouteMatchParam,
-  DisplayCampaignFormData,
-} from '../../domain';
-
-interface MapStateToProps {
-  initialFormValues: Partial<DisplayCampaignFormData>;
-}
+import { EditDisplayCampaignRouteMatchParam } from '../../domain';
 
 type Props = InjectedIntlProps &
   ValidatorProps &
-  MapStateToProps &
   NormalizerProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
@@ -50,7 +42,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
   render() {
     const {
-      fieldValidators: { isRequired, },
+      fieldValidators: { isRequired },
       intl: { formatMessage },
     } = this.props;
 
@@ -79,8 +71,6 @@ class GeneralFormSection extends React.Component<Props, State> {
               title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
             }}
           />
-
-          
         </div>
 
         <div>
