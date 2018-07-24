@@ -20,6 +20,7 @@ import { Omit } from '../../../../utils/Types';
 import { McsFormSection } from '../../../../utils/FormHelper';
 import DisplayCreativeFormLayout from './DisplayCreativeFormLayout';
 import CustomMultipleImageLoader, { CustomMultipleImageLoaderProps } from './CustomLoaders/CustomMultipleImageLoader';
+import NotSupportedPlaceholder from './CustomLoaders/NotSupportedPlaceholder';
 
 const ImageLoaderFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -93,7 +94,7 @@ class DisplayCreativeForm extends React.Component<Props> {
       leftFormSections.push({
         id: 'preview',
         title: messages.creativeSectionPreviewTitle,
-        component: <PreviewFormSection />,
+        component: initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? <NotSupportedPlaceholder /> : <PreviewFormSection />,
       });
     }
 

@@ -19,6 +19,7 @@ import GeneralFormSection from './GeneralFormSection';
 import { Omit } from '../../../../utils/Types';
 import { McsFormSection } from '../../../../utils/FormHelper';
 import DisplayCreativeFormLayout from '../../DisplayAds/Edit/DisplayCreativeFormLayout';
+import NotSupportedPlaceholder from '../../DisplayAds/Edit/CustomLoaders/NotSupportedPlaceholder';
 
 
 export interface NativeCreativeFormProps
@@ -75,7 +76,7 @@ class NativeCreativeForm extends React.Component<Props> {
       leftFormSections.push({
         id: 'preview',
         title: messages.creativeSectionPreviewTitle,
-        component: <PreviewFormSection />,
+        component: initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? <NotSupportedPlaceholder /> : <PreviewFormSection />,
       });
     }
 

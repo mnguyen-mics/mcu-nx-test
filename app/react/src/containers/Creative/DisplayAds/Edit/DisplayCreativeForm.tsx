@@ -82,17 +82,12 @@ class DisplayCreativeForm extends React.Component<Props> {
     }
 
     if (existingCreative) {
-      leftFormSections.push(initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? 
+      leftFormSections.push(
         {
           id: 'preview',
           title: messages.creativeSectionPreviewTitle,
-          component: <NotSupportedPlaceholder />
-        }
-        : {
-        id: 'preview',
-        title: messages.creativeSectionPreviewTitle,
-        component: <PreviewFormSection />,
-      });
+          component: initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? <NotSupportedPlaceholder /> : <PreviewFormSection />,
+        });
     }
 
     if (!existingCreative) {
