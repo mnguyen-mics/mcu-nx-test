@@ -18,6 +18,7 @@ import ReportService from '../../../../../services/ReportService';
 import { makeCancelable } from '../../../../../utils/ApiHelper';
 import { CancelablePromise } from '../../../../../services/ApiService';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import { Index } from '../../../../../utils';
 
 const LegendChartTS = LegendChart as any;
 const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
@@ -52,31 +53,34 @@ class AdCard extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { ad, match: { params: { organisationId } }, location: {search} } = this.props;
+    const { ad, match: { params: { organisationId, campaignId } }, location: {search} } = this.props;
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
-    this.fetchData(organisationId, ad.creative_id, filter.from, filter.to)
+    this.fetchData(organisationId, ad.creative_id, filter.from, filter.to, campaignId)
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    const { ad, match: { params: { organisationId } }, location: {search} } = this.props;
-    const { ad: nextAd, match: { params: { organisationId: nextOrganisationId } }, location: {search: nextSearch} } = nextProps;
-    if (ad.id !== nextAd.id || organisationId !== nextOrganisationId || !compareSearches(search, nextSearch)) {
+    const { ad, match: { params: { organisationId, campaignId } }, location: {search} } = this.props;
+    const { ad: nextAd, match: { params: { organisationId: nextOrganisationId, campaignId: nextCampaignId } }, location: {search: nextSearch} } = nextProps;
+    if (ad.id !== nextAd.id || organisationId !== nextOrganisationId || !compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
       const filter = parseSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-      this.fetchData(nextOrganisationId, nextAd.creative_id, filter.from, filter.to)
+      this.fetchData(nextOrganisationId, nextAd.creative_id, filter.from, filter.to, nextCampaignId)
     }
   }
-  
 
-  fetchData = (organisationId: string, creativeId: string, from: McsMoment, to: McsMoment) => {
+  filterValueForCampaign = (normalizedReport: Index<any>, campaignId: string) => {
+    return normalizedReport.filter((item: any) => item.campaign_id === campaignId);
+  }
+
+  fetchData = (organisationId: string, creativeId: string, from: McsMoment, to: McsMoment, campaignId: string) => {
     const lookbackWindow =
     to.toMoment().unix() - from.toMoment().unix();
-    const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
+    const dimensions = lookbackWindow > 172800 ? ['day', 'campaign_id'] : ['day,hour_of_day','campaign_id'];
     const getAdPerf = makeCancelable(ReportService.getAdDeliveryReport(organisationId, 'creative_id', creativeId, from, to, dimensions));
     this.cancelablePromises.push(getAdPerf)
     this.setState({ loading: true })
     getAdPerf.promise
-      .then(res => normalizeReportView(res.data.report_view))
+      .then(res => this.filterValueForCampaign(normalizeReportView(res.data.report_view), campaignId))
       .then(res => {
         const t = res as any;
         this.setState({

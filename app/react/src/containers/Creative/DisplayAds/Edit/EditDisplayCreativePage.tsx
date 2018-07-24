@@ -97,9 +97,6 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      intl: {
-        formatMessage
-      }
     } = this.props;
 
     let url =
@@ -109,7 +106,6 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     
     if (savedId) {
       url = `/v2/o/${organisationId}/creatives/display/edit/${savedId}`;
-      message.success(formatMessage(messages.successfulSaving), 3);
     }
     history.push(url);
   };
@@ -141,7 +137,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
         } else {
           this.redirect();
         }
-        message.success(intl.formatMessage(messages.successfulSaving))
+        message.success(formatMessage(messages.successfulSaving), 3);
       })
       .catch(err => {
         hideSaveInProgress();
