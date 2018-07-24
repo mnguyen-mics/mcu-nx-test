@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
+import { reduxForm, InjectedFormProps, ConfigProps,  FieldArray, GenericFieldArray, Field  } from 'redux-form';
 import { compose } from 'recompose';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 
@@ -10,23 +10,27 @@ import {
 } from './domain';
 import messages from './messages';
 import { Path } from '../../../../components/ActionBar';
-import CustomLoaderPlaceholder from './CustomLoaders/CustomLoaderPlaceholder';
-import NotSupportedPlaceholder from './CustomLoaders/NotSupportedPlaceholder';
 import {
-  GeneralFormSection,
   AuditFormSection,
   PropertiesFormSection,
   PreviewFormSection,
+  GeneralMultipleSection
 } from './Sections';
 import { Omit } from '../../../../utils/Types';
 import { McsFormSection } from '../../../../utils/FormHelper';
 import DisplayCreativeFormLayout from './DisplayCreativeFormLayout';
+import CustomMultipleImageLoader, { CustomMultipleImageLoaderProps } from './CustomLoaders/CustomMultipleImageLoader';
+import NotSupportedPlaceholder from './CustomLoaders/NotSupportedPlaceholder';
 
+const ImageLoaderFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  CustomMultipleImageLoaderProps
+>;
 
 export interface DisplayCreativeFormProps
   extends Omit<ConfigProps<DisplayCreativeFormData>, 'form'> {
-  close: () => void;
   actionBarButtonText: FormattedMessage.MessageDescriptor;
+  close: () => void;
   breadCrumbPaths: Path[];
   goToCreativeTypeSelection?: () => void;
 }
@@ -42,7 +46,12 @@ class DisplayCreativeForm extends React.Component<Props> {
   
 
   buildFormSections = () => {
-    const { initialValues } = this.props;
+    const { initialValues, change } = this.props;
+
+    const genericFieldArrayProps = {
+      formChange: change,
+      rerenderOnEveryChange: true,
+    };
 
     const leftFormSections: McsFormSection[] = [];
     const rightFormSections: McsFormSection[] = [];
@@ -52,7 +61,7 @@ class DisplayCreativeForm extends React.Component<Props> {
     rightFormSections.push({
       id: 'general',
       title: messages.creativeSectionGeneralTitle,
-      component: <GeneralFormSection small={true} />,
+      component: <GeneralMultipleSection small={true} />,
     });
 
     if (existingCreative) {
@@ -82,19 +91,25 @@ class DisplayCreativeForm extends React.Component<Props> {
     }
 
     if (existingCreative) {
-      leftFormSections.push(
-        {
-          id: 'preview',
-          title: messages.creativeSectionPreviewTitle,
-          component: initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? <NotSupportedPlaceholder /> : <PreviewFormSection />,
-        });
+      leftFormSections.push({
+        id: 'preview',
+        title: messages.creativeSectionPreviewTitle,
+        component: initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? <NotSupportedPlaceholder /> : <PreviewFormSection />,
+      });
     }
 
     if (!existingCreative) {
       leftFormSections.push({
-        id: 'no-loader',
+        id: 'loader',
         title: messages.creativeSectionPreviewTitle,
-        component: <CustomLoaderPlaceholder />,
+        component: <ImageLoaderFieldArray
+          name='repeatFields'
+          component={CustomMultipleImageLoader}
+          inputProps={{
+            multiple: true
+          }}
+          {...genericFieldArrayProps}
+        />,
       });
     }
 

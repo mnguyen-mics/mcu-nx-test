@@ -41,6 +41,10 @@ export default defineMessages({
     id: 'creatives.create.section.general.subtitle',
     defaultMessage: 'Give your Creative a name, a format and a destination domain to make it usable.',
   },
+  creativeSectionGeneralMultipleSubTitle: {
+    id: 'creatives.create.section.general.multiple.subtitle',
+    defaultMessage: 'Give your Creative a destination domain. You can change your creative name in the left panel.',
+  },
   creativeSectionPropertyTitle: {
     id: 'creatives.create.section.properties.title',
     defaultMessage: 'Creative Properties',
@@ -66,8 +70,8 @@ export default defineMessages({
     defaultMessage: 'This is how you creative will render on a publisher website. Please note that the tracker won\'t be visible here',
   },
   creativeCreationSaveButton: {
-    id: 'creatives.create.actionbar.button.save',
-    defaultMessage: 'Save',
+    id: 'creatives.create.actionbar.button.saveRefresh',
+    defaultMessage: 'Save & Refresh',
   },
   creativeCreationBreadCrumb: {
     id: 'creatives.create.actionbar.breadcrumb.label',
@@ -230,4 +234,24 @@ export default defineMessages({
     id: 'creatives.create.section.general.invalidFormat',
     defaultMessage: 'Invalid format.',
   },
+  modalConfirmTitle: {
+    id: 'creatives.create.modal.confirm.title',
+    defaultMessage: 'Warning'
+  },
+  modalConfirmContent: {
+    id: 'creatives.create.modal.confirm.content',
+    defaultMessage: 'You have changes that are not saved. Do you want to proceed ?'
+  },
+  modalConfirmOk: {
+    id: 'creatives.create.modal.confirm.Ok',
+    defaultMessage: 'Close Without Saving'
+  },
+  modalConfirmCancel: {
+    id: 'creatives.create.modal.confirm.cancel',
+    defaultMessage: 'Cancel'
+  },
+  successfulSaving: {
+    id: 'creatives.create.modal.save.successful',
+    defaultMessage: 'Your Creative has been successfully saved!'
+  }
 });

@@ -4,7 +4,6 @@ import { InjectedIntlProps } from 'react-intl';
 
 import NativeCreativeRendererSelector from './NativeCreativeRendererSelector';
 import log from '../../../../utils/Logger';
-import { DisplayCreativeForm } from '../../DisplayAds/Edit';
 import { NativeCreativeFormData } from './domain';
 import Loading from '../../../../components/Loading';
 import DisplayCreativeFormService from './../../DisplayAds/Edit/DisplayCreativeFormService';
@@ -12,6 +11,7 @@ import { DisplayCreativeFormProps } from '../../DisplayAds/Edit/DisplayCreativeF
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import NativeCreativeForm from './NativeCreativeForm';
 
 export interface NativeCreativeCreatorProps extends DisplayCreativeFormProps {}
 
@@ -35,7 +35,7 @@ class NativeCreativeCreator extends React.Component<Props, State> {
 
   loadFormData = (adRendererId: string) => {
     this.setState({ isLoading: true });
-    DisplayCreativeFormService.initializeFormData(adRendererId, 'NATIVE')
+    DisplayCreativeFormService.initializeFormData(adRendererId, 'NATIVE', '640x190')
       .then(nativeFormData =>
         this.setState({
           nativeFormData,
@@ -65,7 +65,7 @@ class NativeCreativeCreator extends React.Component<Props, State> {
     const initialValues = this.props.initialValues || nativeFormData;
 
     return Object.keys(initialValues).length > 0 ? (
-      <DisplayCreativeForm
+      <NativeCreativeForm
         {...this.props}
         initialValues={initialValues}
         goToCreativeTypeSelection={this.resetFormData}

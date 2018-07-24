@@ -23,12 +23,14 @@ import { PropertyResourceShape } from '../../../../../models/plugin';
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
 }
-interface SectionProps {
+
+interface PropertiesFormSectionProps {
+  small?: boolean;
   sectionTitle?: string;
 }
 
-type Props = MapStateProps &
-  SectionProps &
+type Props = PropertiesFormSectionProps & 
+  MapStateProps &
   InjectedIntlProps &
   RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
 
@@ -59,6 +61,7 @@ class PropertiesFormSection extends React.Component<Props> {
       match: {
         params: { organisationId },
       },
+      small
     } = this.props;
 
     // TODO the following properties of PluginFieldGenerator should
@@ -67,7 +70,9 @@ class PropertiesFormSection extends React.Component<Props> {
     // I'm sure we can find a better pattern
 
     let isDisabled = false;
-    const additionnalProps: any = {};
+    const additionnalProps: any = {
+      small: small
+    };
 
     if (isDisplayAdResource(creative)) {
       isDisabled =
@@ -75,6 +80,7 @@ class PropertiesFormSection extends React.Component<Props> {
         creative.audit_status === 'AUDIT_PENDING';
 
       additionnalProps.noUploadModal = this.noUploadModal(creative);
+      additionnalProps.small = small;
     }
 
     if (pluginLayout === undefined) {
@@ -137,8 +143,7 @@ class PropertiesFormSection extends React.Component<Props> {
   }
 }
 
-
-export default compose<Props, SectionProps>(
+export default compose<Props, PropertiesFormSectionProps>(
   withRouter,
   injectIntl,
   connect((state: any, ownProps: Props) => ({

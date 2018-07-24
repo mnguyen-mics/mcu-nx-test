@@ -7,34 +7,33 @@ import {
   DisplayCreativeFormData,
   DISPLAY_CREATIVE_FORM,
   isExistingCreative,
-} from './domain';
-import messages from './messages';
+} from '../../DisplayAds/Edit/domain';
+import messages from '../../DisplayAds/Edit/messages';
 import { Path } from '../../../../components/ActionBar';
-import CustomLoaderPlaceholder from './CustomLoaders/CustomLoaderPlaceholder';
-import NotSupportedPlaceholder from './CustomLoaders/NotSupportedPlaceholder';
+import CustomLoaderPlaceholder from '../../DisplayAds/Edit/CustomLoaders/CustomLoaderPlaceholder';
 import {
-  GeneralFormSection,
-  AuditFormSection,
   PropertiesFormSection,
   PreviewFormSection,
-} from './Sections';
+} from '../../DisplayAds/Edit/Sections';
+import GeneralFormSection from './GeneralFormSection';
 import { Omit } from '../../../../utils/Types';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import DisplayCreativeFormLayout from './DisplayCreativeFormLayout';
+import DisplayCreativeFormLayout from '../../DisplayAds/Edit/DisplayCreativeFormLayout';
+import NotSupportedPlaceholder from '../../DisplayAds/Edit/CustomLoaders/NotSupportedPlaceholder';
 
 
-export interface DisplayCreativeFormProps
+export interface NativeCreativeFormProps
   extends Omit<ConfigProps<DisplayCreativeFormData>, 'form'> {
-  close: () => void;
   actionBarButtonText: FormattedMessage.MessageDescriptor;
+  close: () => void;
   breadCrumbPaths: Path[];
   goToCreativeTypeSelection?: () => void;
 }
 
-type Props = DisplayCreativeFormProps &
-  InjectedFormProps<DisplayCreativeFormData, DisplayCreativeFormProps> & InjectedIntlProps;
+type Props = NativeCreativeFormProps &
+  InjectedFormProps<DisplayCreativeFormData, NativeCreativeFormProps> & InjectedIntlProps;
 
-class DisplayCreativeForm extends React.Component<Props> {
+class NativeCreativeForm extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
@@ -55,14 +54,6 @@ class DisplayCreativeForm extends React.Component<Props> {
       component: <GeneralFormSection small={true} />,
     });
 
-    if (existingCreative) {
-      leftFormSections.push({
-        id: 'audit_status',
-        title: messages.creativeSectionAuditTitle,
-        component: <AuditFormSection creativeId={existingCreative.id} />,
-      });
-    }
-
 
     if (initialValues.pluginLayout === undefined) {
 
@@ -82,12 +73,11 @@ class DisplayCreativeForm extends React.Component<Props> {
     }
 
     if (existingCreative) {
-      leftFormSections.push(
-        {
-          id: 'preview',
-          title: messages.creativeSectionPreviewTitle,
-          component: initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? <NotSupportedPlaceholder /> : <PreviewFormSection />,
-        });
+      leftFormSections.push({
+        id: 'preview',
+        title: messages.creativeSectionPreviewTitle,
+        component: initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? <NotSupportedPlaceholder /> : <PreviewFormSection />,
+      });
     }
 
     if (!existingCreative) {
@@ -126,10 +116,10 @@ class DisplayCreativeForm extends React.Component<Props> {
   }
 }
 
-export default compose<Props, DisplayCreativeFormProps>(
+export default compose<Props, NativeCreativeFormProps>(
   reduxForm({
     form: DISPLAY_CREATIVE_FORM,
     enableReinitialize: true,
   }),
   injectIntl
-)(DisplayCreativeForm);
+)(NativeCreativeForm);

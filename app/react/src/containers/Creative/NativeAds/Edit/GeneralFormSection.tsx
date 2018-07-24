@@ -1,28 +1,26 @@
 import * as React from 'react';
-import { Field, getFormInitialValues, Validator } from 'redux-form';
+import { getFormInitialValues } from 'redux-form';
 import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 
 import {
   FormSection,
-  FieldCtor,
   FormInput,
   FormAlertInput,
   withValidators,
   FormInputField,
   FormAlertInputField,
-} from '../../../../../components/Form';
-import messages from '../messages';
-import { ValidatorProps } from '../../../../../components/Form/withValidators';
+} from '../../../../components/Form';
+import messages from '../../DisplayAds/Edit/messages';
+import { ValidatorProps } from '../../../../components/Form/withValidators';
 import {
   DisplayCreativeFormData,
   DISPLAY_CREATIVE_FORM,
   isDisplayAdResource,
   EditDisplayCreativeRouteMatchParams,
-} from '../domain';
-import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
-import { ButtonStyleless, McsIcon } from '../../../../../components';
+} from '../../DisplayAds/Edit/domain';
+import { ButtonStyleless, McsIcon } from '../../../../components';
 import { RouteComponentProps } from 'react-router';
 
 interface MapStateProps {
@@ -41,31 +39,18 @@ type Props = ValidatorProps &
 
 interface State {
   displayAdvancedSection: boolean;
+  displayWarning: boolean;
 }
 class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { displayAdvancedSection: false };
+    this.state = { displayAdvancedSection: false, displayWarning: false };
   }
 
   toggleAdvancedSection = () => {
     this.setState({
       displayAdvancedSection: !this.state.displayAdvancedSection,
     });
-  };
-
-  isCreativeFormatValid = (): Validator => (value: string) => {
-    const { intl } = this.props;
-    if (value) {
-      const width = value.split('x')[0];
-      const height = value.split('x')[1];
-      const isValidFormat =
-        width && height && /^\d+$/.test(width) && /^\d+$/.test(height);
-      return !isValidFormat
-        ? intl.formatMessage(messages.invalidFormat)
-        : undefined;
-    }
-    return undefined;
   };
 
   render() {
@@ -83,8 +68,6 @@ class GeneralFormSection extends React.Component<Props, State> {
         creative.audit_status === 'AUDIT_PASSED' ||
         creative.audit_status === 'AUDIT_PENDING';
     }
-
-    const CreativeFormatEditorField: FieldCtor<{ disabled?: boolean, small?: boolean }> = Field;
 
     return (
       <div>
@@ -115,36 +98,8 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
           small={small}
         />
-        <CreativeFormatEditorField
-          name="creative.format"
-          component={DisplayCreativeFormatEditor}
-          validate={[this.isCreativeFormatValid()]}
-          disabled={isDisabled}
-          small={small}
-        />
-        <FormInputField
-          name="creative.destination_domain"
-          component={FormInput}
-          validate={[isRequired]}
-          formItemProps={{
-            label: formatMessage(
-              messages.creativeCreationGeneralDomainFieldTitle,
-            ),
-            required: small,
-          }}
-          inputProps={{
-            placeholder: formatMessage(
-              messages.creativeCreationGeneralDomainFieldPlaceHolder,
-            ),
-            disabled: isDisabled,
-          }}
-          helpToolTipProps={{
-            title: formatMessage(
-              messages.creativeCreationGeneralDomainFieldHelper,
-            ),
-          }}
-          small={small}
-        />
+        
+      
         <div>
           <ButtonStyleless
             className="optional-section-title"

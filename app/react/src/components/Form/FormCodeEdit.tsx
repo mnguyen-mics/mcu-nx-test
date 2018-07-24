@@ -7,6 +7,7 @@ import { TooltipProps } from 'antd/lib/tooltip';
 import { AceEditorProps } from 'react-ace/types'
 import 'brace/ext/searchbox'
 import { WrappedFieldProps } from 'redux-form';
+import 'brace/theme/github';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
 
@@ -37,12 +38,13 @@ const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => 
       <AceEditor
         value={props.input.value}
         {...props.inputProps}
-        theme="monokai"
+        theme="github"
         name={props.input.name}
         onBlur={onBlur}
         onFocus={onFocus}
         width={'100%'}
         onChange={props.input.onChange}
+        showPrintMargin={false}
       />
     </FormFieldWrapper>
   );

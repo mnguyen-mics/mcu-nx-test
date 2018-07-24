@@ -35,6 +35,7 @@ export interface PluginVersionResource {
   artifact_id: string;
   version_id: string;
   max_qps: number;
+  archived: boolean;
 }
 
 export interface AttributionModelCreateRequest {

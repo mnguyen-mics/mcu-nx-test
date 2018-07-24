@@ -14,13 +14,16 @@ import FormLayoutActionbar, {
 } from '../../../../components/Layout/FormLayoutActionbar';
 import PluginService from '../../../../services/PluginService';
 import { Submenu } from '../../../../components/FormMenu/MenuSubList';
+import { IMAGE_SKINS_AD_RENDERER, EXTERNAL_AD_RENDERER, HTML_AD_RENDRER, IMAGE_AD_RENDERER } from './domain';
 
 const { Content } = Layout;
 
-const imageAdRendererId = '1065';
-const htmlAdRendererId = '1078';
-const externalAdRendererId = '1061';
-const imageSkinsAdRendererId = '1057';
+const imageAdRendererId = IMAGE_AD_RENDERER;
+const htmlAdRendererId = HTML_AD_RENDRER;
+const externalAdRendererId = EXTERNAL_AD_RENDERER;
+// const nativeIvidenceAdRendererId = MicsPLuginDefinition.nativeIvidenceAdRendererId.id;
+// const nativeQuantumAdRendererId = MicsPLuginDefinition.nativeQuantumAdRendererId.id;
+const imageSkinsAdRendererId = IMAGE_SKINS_AD_RENDERER;
 
 export interface DisplayCreativeRendererSelectorProps {
   onSelect: (adRendererId: string) => void;

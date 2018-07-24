@@ -14,6 +14,7 @@ const Option = Select.Option;
 
 export interface CreativeFormatEditorProps extends WrappedFieldProps {
   disabled?: boolean;
+  small?: boolean;
 }
 
 type JoinedProps = CreativeFormatEditorProps &
@@ -62,6 +63,7 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
       input,
       meta,
       disabled,
+      small
     } = this.props;
     const { standardFormat, availableFormats } = this.state;
 
@@ -110,6 +112,7 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
         label={formatMessage(messages.creativeCreationGeneralFormatFieldTitle)}
         required={true}
         validateStatus={validateStatus}
+        small={small}
       >
         <div className="creative-format">
           <div className="field">

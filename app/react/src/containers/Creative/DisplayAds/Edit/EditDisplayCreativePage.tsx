@@ -50,34 +50,72 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
               ? creativeData.name
               : `creative ${creativeData.id}`,
           });
-        });
+        })
+        .catch(err => {
+          this.setState({ loading: false })
+          this.props.notifyError(err)
+        });;
     }
   }
 
-  redirect = () => {
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      match: {
+        params: { creativeId },
+      },
+    } = this.props;
+
+    const {
+      match: {
+        params: { creativeId: nextCreativeId },
+      },
+    } = nextProps;
+
+    if (creativeId !== nextCreativeId) {
+      this.setState({ loading: true })
+      CreativeService.getCreative(nextCreativeId)
+      .then(resp => resp.data)
+      .then(creativeData => {
+        this.setState({
+          loading: false,
+          creativeName: creativeData.name
+            ? creativeData.name
+            : `creative ${creativeData.id}`,
+        });
+      })
+      .catch(err => {
+        this.setState({ loading: false })
+        this.props.notifyError(err)
+      });
+    }
+  }
+
+  redirect = (savedId?: string) => {
     const {
       history,
       location: { state },
       match: {
         params: { organisationId },
       },
+      intl: {
+        formatMessage
+      }
     } = this.props;
 
-    const url =
+    let url =
       state && state.from
         ? state.from
         : `/v2/o/${organisationId}/creatives/display`;
-
+    
+    if (savedId) {
+      url = `/v2/o/${organisationId}/creatives/display/edit/${savedId}`;
+      message.success(formatMessage(messages.successfulSaving), 3);
+    }
     history.push(url);
   };
 
   onSave = (creativeData: DisplayCreativeFormData) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      intl,
-    } = this.props;
+    const { match: { params: { organisationId, creativeId } }, intl } = this.props;
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -88,10 +126,22 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    DisplayCreativeFormService.saveDisplayCreative(organisationId, creativeData)
-      .then(() => {
+    const savePromise = creativeData.repeatFields && creativeData.repeatFields.length ? DisplayCreativeFormService.handleSaveMutipleCreatives(
+      organisationId,
+      creativeData 
+    ) : DisplayCreativeFormService.saveDisplayCreative(organisationId, creativeData)
+
+    savePromise
+      .then((savedId) => {
         hideSaveInProgress();
-        this.redirect();
+        if (creativeId) {
+          this.setState({ loading: false })
+        } else if (typeof savedId === 'string') {
+          this.redirect(savedId)
+        } else {
+          this.redirect();
+        }
+        message.success(intl.formatMessage(messages.successfulSaving))
       })
       .catch(err => {
         hideSaveInProgress();
@@ -118,7 +168,8 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
 
     const { creativeName } = this.state;
 
-    const actionBarButtonText = messages.creativeCreationSaveButton;
+    const actionBarButtonSave = messages.saveCreative;
+    const actionBarButtonSaveRefresh = messages.creativeCreationSaveButton;
 
     const from = location && location.state && location.state.from;
 
@@ -151,9 +202,9 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     ];
 
     const props = {
-      close: this.redirect,
+      close: () => this.redirect(),
       onSubmit: this.onSave,
-      actionBarButtonText: actionBarButtonText,
+      actionBarButtonText: creativeId ? actionBarButtonSaveRefresh : actionBarButtonSave,
       breadCrumbPaths: breadCrumbPaths,
       onSubmitFail: this.onSubmitFail,
     };
@@ -162,11 +213,11 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       return <Loading className="loading-full-screen" />;
     }
 
-    return creativeId ? (
-      <DisplayCreativeFormLoader {...props} creativeId={creativeId} />
-    ) : (
-      <DisplayCreativeCreator {...props} />
-    );
+    if (!creativeId) {
+      return (<DisplayCreativeCreator {...props} />)
+    }
+
+    return <DisplayCreativeFormLoader {...props} creativeId={creativeId} />;
   }
 }
 

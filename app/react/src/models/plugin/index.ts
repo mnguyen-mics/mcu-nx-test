@@ -1,3 +1,4 @@
+import { UploadFile } from "antd/lib/upload/interface";
 
 export type PluginPropertyOrigin = 'PLUGIN_STATIC' | 'PLUGIN' | 'INSTANCE';
 
@@ -14,6 +15,7 @@ export type PropertyResourceShape = StringPropertyResource
 | IntPropertyResource
 | BooleanPropertyResource
 | AssetPropertyResource
+| AssetPropertyCreationResource
 | DataFilePropertyResource
 | AdLayoutPropertyResource
 | StyleSheetPropertyResource
@@ -55,6 +57,11 @@ export interface BooleanPropertyResource extends PropertyResource {
 export interface AssetPropertyResource extends PropertyResource {
   property_type: 'ASSET';
   value: { value: any };
+}
+
+export interface AssetPropertyCreationResource extends PropertyResource {
+  property_type: 'ASSET';
+  value: { file: UploadFile };
 }
 
 export interface DataFilePropertyResource extends PropertyResource {

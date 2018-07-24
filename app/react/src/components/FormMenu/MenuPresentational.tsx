@@ -19,14 +19,16 @@ const MenuPresentational: React.SFC<MenuPresentationalProps> = ({
   return (
     <button className="presentation-item" onClick={select}>
       <div className="content">
-        <McsIcon type={type} />
-        <div className="title">
-          {title}
-        </div>
-        <div className="subtitle">
-          { subtitles && subtitles.map(subtitle => {
-            return `${subtitle}, `;
-          }) }
+        <div>
+          <McsIcon type={type} />
+          <div className="title">
+            {title}
+          </div>
+          <div className="subtitle">
+            {subtitles && subtitles.map(subtitle => {
+              return `${subtitle}, `;
+            })}
+          </div>
         </div>
       </div>
     </button>
