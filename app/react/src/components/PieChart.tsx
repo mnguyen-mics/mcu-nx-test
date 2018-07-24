@@ -5,7 +5,7 @@ import { IPiePlotEntity, Pie } from 'plottable/build/src/plots';
 import BasicTooltip from './ChartTooltip/BasicTooltip';
 import TooltipArea from './ChartTooltip/TooltipArea';
 
-interface DatasetProps {
+export interface DatasetProps {
   key: string;
   value: number;
   color: string;
