@@ -11,6 +11,7 @@ import {
 import messages from './messages';
 import { Path } from '../../../../components/ActionBar';
 import CustomLoaderPlaceholder from './CustomLoaders/CustomLoaderPlaceholder';
+import NotSupportedPlaceholder from './CustomLoaders/NotSupportedPlaceholder';
 import {
   GeneralFormSection,
   AuditFormSection,
@@ -81,7 +82,13 @@ class DisplayCreativeForm extends React.Component<Props> {
     }
 
     if (existingCreative) {
-      leftFormSections.push({
+      leftFormSections.push(initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? 
+        {
+          id: 'preview',
+          title: messages.creativeSectionPreviewTitle,
+          component: <NotSupportedPlaceholder />
+        }
+        : {
         id: 'preview',
         title: messages.creativeSectionPreviewTitle,
         component: <PreviewFormSection />,
