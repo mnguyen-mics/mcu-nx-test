@@ -49,6 +49,8 @@ class PreviewFormSection extends React.Component<MapStateProps, State> {
         case 'URL':
           tagType = foundTagType!.value.url;
           break;
+        case 'ASSET':
+          break;
         default:
           tagType = foundTagType!.value.value;
           break;

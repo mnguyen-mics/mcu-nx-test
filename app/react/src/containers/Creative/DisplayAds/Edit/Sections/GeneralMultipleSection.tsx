@@ -11,14 +11,9 @@ import {
 import messages from '../messages';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import {
-  DisplayCreativeFormData,
   EditDisplayCreativeRouteMatchParams,
 } from '../domain';
 import { RouteComponentProps } from 'react-router';
-
-interface MapStateProps {
-  initialValue: DisplayCreativeFormData;
-}
 
 export interface GeneralFormSectionProps {
   allowMultipleUpload?: boolean;
@@ -28,7 +23,6 @@ export interface GeneralFormSectionProps {
 type Props = ValidatorProps &
   GeneralFormSectionProps &
   InjectedIntlProps &
-  MapStateProps &
   RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
 
 interface State {

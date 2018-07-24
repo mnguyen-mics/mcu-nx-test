@@ -5,7 +5,7 @@ import { extractData, extractDataList } from '../../../../services/ApiService';
 import PluginService from '../../../../services/PluginService';
 import { DisplayAdCreateRequest } from '../../../../models/creative/CreativeResource';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
-import { PropertyResourceShape } from '../../../../models/plugin/index';
+import { PropertyResourceShape, AssetPropertyCreationResource } from '../../../../models/plugin/index';
 import { UploadFile } from 'antd/lib/upload/interface';
 
 
@@ -165,18 +165,20 @@ const DisplayCreativeFormService = {
 
     return Promise.all((repeatFields || []).map(field => {
 
-      const properties: any = {
+      const imageProperty: AssetPropertyCreationResource = {
+        technical_name: 'image',
+        value: {
+          file: field.file
+        },
+        property_type: 'ASSET',
+        origin: 'PLUGIN',
+        writable: true,
+        deletable: false
+      }
+
+      const properties = {
         ...formData.properties,
-        image: {
-          technical_name: 'image',
-          value: {
-            file: field.file
-          },
-          property_type: 'ASSET',
-          origin: 'PLUGIN',
-          writable: true,
-          deletable: false
-        }
+        image: imageProperty
       }
     
       return getImageFormat(field.file).then((i) => {

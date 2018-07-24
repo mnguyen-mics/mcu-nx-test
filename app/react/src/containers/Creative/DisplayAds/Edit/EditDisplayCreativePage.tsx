@@ -141,7 +141,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
         } else {
           this.redirect();
         }
-        
+        message.success(intl.formatMessage(messages.successfulSaving))
       })
       .catch(err => {
         hideSaveInProgress();

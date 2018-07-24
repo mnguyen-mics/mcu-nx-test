@@ -123,6 +123,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
           loading: false
         })
         this.redirect(createdId);
+        message.success(intl.formatMessage(messages.successfulSaving))
       })
       .catch(err => {
         hideSaveInProgress();

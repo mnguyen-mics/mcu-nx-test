@@ -41,12 +41,11 @@ type Props = ValidatorProps &
 
 interface State {
   displayAdvancedSection: boolean;
-  displayWarning: boolean;
 }
 class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { displayAdvancedSection: false, displayWarning: false };
+    this.state = { displayAdvancedSection: false };
   }
 
   toggleAdvancedSection = () => {
