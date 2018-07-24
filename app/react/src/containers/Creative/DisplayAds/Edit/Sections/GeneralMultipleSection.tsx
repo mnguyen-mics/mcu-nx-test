@@ -16,7 +16,6 @@ import {
 import { RouteComponentProps } from 'react-router';
 
 export interface GeneralFormSectionProps {
-  allowMultipleUpload?: boolean;
   small?: boolean;
 }
 
