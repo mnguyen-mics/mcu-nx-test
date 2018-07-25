@@ -114,7 +114,6 @@ const UserDataService = {
   },
 
   getActivities(
-    organisationId: string,
     datamartId: string,
     identifierType: string,
     identifierId: string,
