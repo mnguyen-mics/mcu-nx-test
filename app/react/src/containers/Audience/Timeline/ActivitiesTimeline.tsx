@@ -5,11 +5,9 @@ import moment from 'moment';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-
 import UserDataService from '../../../services/UserDataService';
 import { Activity, IdentifiersProps } from '../../../models/timeline/timeline';
 import { Identifier } from './Monitoring';
-import { takeLatest } from '../../../utils/ApiHelper';
 import messages from './messages';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { McsIcon } from '../../../components';
@@ -18,6 +16,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { TimelinePageParams } from './TimelinePage';
+import { takeLatest } from '../../../utils/ApiHelper';
 
 const takeLatestActivities = takeLatest(UserDataService.getActivities);
 
@@ -62,71 +61,33 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: { organisationId, identifierId, identifierType },
+        params: { identifierId, identifierType },
       },
       datamartId,
       identifier,
     } = this.props;
     if (identifier.id && identifier.type) {
-      this.fetchActivities(
-        organisationId,
-        datamartId,
-        identifier.type,
-        identifier.id,
-      );
+      this.fetchActivities(datamartId, identifier.type, identifier.id);
     } else if (identifierId && identifierType) {
-      this.fetchActivities(
-        organisationId,
-        datamartId,
-        identifierType,
-        identifierId,
-      );
+      this.fetchActivities(datamartId, identifierType, identifierId);
     }
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
       match: {
-        params: { organisationId, identifierId, identifierType },
+        params: { identifierId, identifierType },
       },
       datamartId,
+      location: { search, pathname },
     } = this.props;
 
     const {
-      match: {
-        params: {
-          identifierId: prevIdentifierId,
-          identifierType: prevIdentifierType,
-          organisationId: prevOrganisationId,
-        },
-      },
+      location: { search: prevSearch, pathname: prevPathname },
     } = prevProps;
 
-    if (
-      identifierId &&
-      identifierType &&
-      (prevIdentifierId !== identifierId ||
-        prevIdentifierType !== identifierType)
-    ) {
-      this.fetchActivities(
-        prevOrganisationId,
-        datamartId,
-        identifierType,
-        identifierId,
-        true,
-      );
-    } else if (
-      organisationId !== prevOrganisationId &&
-      identifierId &&
-      identifierType
-    ) {
-      this.fetchActivities(
-        organisationId,
-        datamartId,
-        identifierType,
-        identifierId,
-        true,
-      );
+    if (search !== prevSearch || pathname !== prevPathname) {
+      this.fetchActivities(datamartId, identifierType, identifierId, true);
     }
   }
 
@@ -137,16 +98,16 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   };
 
   fetchActivities = (
-    organisationId: string,
     datamartId: string,
     identifierType: string,
     identifierId: string,
     dataSourceHasChanged: boolean = false,
   ) => {
     const { nextDate } = this.state;
-    const params = nextDate
-      ? { live: true, limit: 10, to: nextDate }
-      : { live: true, limit: 10 };
+    const params =
+      nextDate && !dataSourceHasChanged
+        ? { live: true, limit: 10, to: nextDate }
+        : { live: true, limit: 10 };
     this.setState(
       (prevState: any) => {
         const nextState = {
@@ -158,13 +119,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         return nextState;
       },
       () =>
-        takeLatestActivities(
-          organisationId,
-          datamartId,
-          identifierType,
-          identifierId,
-          params,
-        )
+        takeLatestActivities(datamartId, identifierType, identifierId, params)
           .then(response => {
             this.setState(prevState => {
               const newData = dataSourceHasChanged
@@ -214,17 +169,12 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   fetchNewActivities = (e: any) => {
     const {
       match: {
-        params: { organisationId, identifierId, identifierType },
+        params: { identifierId, identifierType },
       },
       datamartId,
     } = this.props;
     e.preventDefault();
-    this.fetchActivities(
-      organisationId,
-      datamartId,
-      identifierType,
-      identifierId,
-    );
+    this.fetchActivities(datamartId, identifierType, identifierId);
   };
 
   renderPendingTimeline = (activities: Activities) => {
