@@ -131,7 +131,7 @@ class StackedAreaPlot extends Component {
 
       this.setTooltip({
         xTooltip: (mousePosition.x + 320 < width
-          ? this.svgBoundingClientRect.left + mousePosition.x + 80
+          ? this.svgBoundingClientRect.left + mousePosition.x + 150
           : (this.svgBoundingClientRect.left + mousePosition.x) - 200
         ),
         yTooltip: (mousePosition.y + 120 < height
