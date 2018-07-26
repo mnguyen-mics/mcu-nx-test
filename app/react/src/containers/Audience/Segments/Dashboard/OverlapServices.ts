@@ -121,7 +121,7 @@ function readOverlap(datafile: Blob) {
 function formatOverlapResponse(overlapResult: OverlapFileResource, segmentId: string): Promise<Data | null> {
   const topOverlaps: OverlapItemResult[] = overlapResult.overlaps.sort((a, b) => {
     return a.overlap_number > b.overlap_number ? -1 : 1;
-  }); // select 20 biggest overlpas
+  }); // sort overlaps
 
   const topSegments = topOverlaps.map(overlap => {
     return overlapResult.segments.find(
