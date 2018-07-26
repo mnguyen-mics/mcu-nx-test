@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Layout } from 'antd';
+import { Layout, Button } from 'antd';
 import { FormLayoutActionbar } from '../../../components/Layout';
 import { FormLayoutActionbarProps } from '../../../components/Layout/FormLayoutActionbar';
-import { defineMessages } from 'react-intl';
 import MapboxGLMap from './Sections/Map';
 import { Form, ConfigProps, InjectedFormProps, reduxForm } from 'redux-form';
 import { Omit } from '../../../utils/Types';
@@ -10,18 +9,16 @@ import { ZoneBuilderFormData } from './domain';
 import { Path } from '../../../components/ActionBar';
 import { compose } from 'recompose';
 import GeneralFormSection from './Sections/GeneralFormSection';
-import FullScreenModal from '../../../components/BlurredModal/FullScreenFormModal'
+import BlurredModal from '../../../components/BlurredModal/BlurredModal';
+import messages from './messages';
+import { McsIcon } from '../../../components';
+import { FormattedMessage } from 'react-intl';
+import { ButtonProps } from 'antd/lib/button';
 
 
 
 const { Content } = Layout;
 
-const messages = defineMessages({
-  saveZone: {
-    id: 'library.edit.zone.save',
-    defaultMessage: 'Save Zone'
-  }
-})
 
 const FORM_ID = 'zoneBuilder'
 
@@ -60,7 +57,18 @@ class ZoneBuilderForm extends React.Component<Props> {
       onClose: onClose
     };
 
+    const submitButtonProps: ButtonProps = {
+      htmlType: 'submit',
+      type: 'primary',
+      onClick: handleSubmit(onSave)
+    };
 
+    const modalFooter = (
+      <Button {...submitButtonProps} className="mcs-primary">
+        <McsIcon type="plus" />
+        <FormattedMessage {...messages.saveZone} />
+      </Button>
+    )
 
     return (
       <Layout className="edit-layout">
@@ -78,14 +86,16 @@ class ZoneBuilderForm extends React.Component<Props> {
                 onDraw={onDrawChange}
               />
             </Content>
-            <FullScreenModal
+            <BlurredModal
+              onClose={onStep2Abort}
+              formId={FORM_ID}
               opened={showStep2}
+              footer={modalFooter}
             >
-              <GeneralFormSection
-                onClose={onStep2Abort}
-                formId={FORM_ID}
-              />
-            </FullScreenModal>
+              <GeneralFormSection />
+            </BlurredModal>
+              
+
           </Form>
         </Layout>
       </Layout>
