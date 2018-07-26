@@ -72,7 +72,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
   formatOverlapData = (data: OverlapData) => {
     return data.data ? data.data.formattedOverlap.map(d => ({
       xKey: d!.segment_intersect_with.name,
-      yKey: d!.segment_intersect_with.segment_size === 0 ? 0 : (d!.overlap_number / d!.segment_intersect_with.segment_size) * 100,
+      yKey: d!.segment_intersect_with.segment_size === 0 ? 0 : (d!.overlap_number / d!.segment_source_size) * 100,
       segment_intersect_with: d!.segment_intersect_with.id
     })) : []
   }
