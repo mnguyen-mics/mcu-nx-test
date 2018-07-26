@@ -211,7 +211,7 @@ class MobileApplicationsListPage extends React.Component<
       if (filter.keywords) {
         return {
           ...options,
-          name: filter.keywords,
+          keywords: filter.keywords,
         };
       }
       return options;
