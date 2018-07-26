@@ -162,7 +162,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       if (filter.keywords) {
         return {
           ...options,
-          name: filter.keywords,
+          keywords: filter.keywords,
         };
       }
       return options;
