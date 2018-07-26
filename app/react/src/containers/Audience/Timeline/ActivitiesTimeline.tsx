@@ -139,7 +139,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                   byDay: this.groupByDate(newData, '$ts'),
                 },
                 nextDate:
-                  !dataSourceHasChanged &&
+                  newData.length % 10 === 0 &&
                   response.data &&
                   response.data[response.data.length - 1]
                     ? moment(
