@@ -24,9 +24,7 @@ class AudienceDashboardPage extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props)
-    this.state = {
-      layout: undefined
-    }
+    this.state = {}
   }
 
   componentDidMount() {
