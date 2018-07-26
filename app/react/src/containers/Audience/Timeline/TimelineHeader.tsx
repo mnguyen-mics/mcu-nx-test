@@ -3,22 +3,21 @@ import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import messages from './messages';
 import ContentHeader from '../../../components/ContentHeader';
-import { RouteComponentProps, withRouter } from 'react-router';
 import { IdentifiersProps, UserAgent } from '../../../models/timeline/timeline';
-import { compose } from 'recompose';
 
 interface TimelineHeaderProps {
   datamartId: string;
   identifiers: IdentifiersProps;
+  userPointId: string;
 }
 
-type Props = TimelineHeaderProps &
-  RouteComponentProps<{ organisationId: string }>;
+type Props = TimelineHeaderProps;
 
 class TimelineHeader extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
+
 
   getLastSeen = (userAgents: UserAgent[]) => {
     if (userAgents) {
@@ -31,12 +30,9 @@ class TimelineHeader extends React.Component<Props> {
   };
 
   render() {
-    const { identifiers } = this.props;
+    const { identifiers, userPointId } = this.props;
     const userId = {
-      id:
-        identifiers.items.USER_POINT && identifiers.items.USER_POINT[0]
-          ? identifiers.items.USER_POINT[0].user_point_id
-          : '',
+      id: userPointId,
       lastSeen: this.getLastSeen(identifiers.items.USER_AGENT),
     };
     const lastSeen =
@@ -47,10 +43,10 @@ class TimelineHeader extends React.Component<Props> {
         </span>
       ) : null;
 
-    return userId.id && userId.lastSeen ? (
-      <ContentHeader title={userId.id} subTitle={lastSeen} />
+    return userPointId ? (
+      <ContentHeader title={userPointId} subTitle={lastSeen} />
     ) : null;
   }
 }
 
-export default compose<Props, TimelineHeaderProps>(withRouter)(TimelineHeader);
+export default TimelineHeader;
