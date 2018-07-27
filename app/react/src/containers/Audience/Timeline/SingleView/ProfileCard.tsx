@@ -13,7 +13,6 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { TimelinePageParams } from '../TimelinePage';
 import ProfileInfo from './ProfileInfo';
-import { DataResponse } from '../../../../services/ApiService';
 
 interface ProfileCardProps {
   datamartId: string;
@@ -105,7 +104,7 @@ class ProfileCard extends React.Component<Props, State> {
               compartment_id: userCompartiment.id,
             },
           )
-            .then(r => ({ profile: r, compartment: userCompartiment }))
+            .then(r => ({ profile: r ? r.data : {}, compartment: userCompartiment }))
             .catch(() =>
               Promise.resolve({
                 profile: undefined,
@@ -132,7 +131,6 @@ class ProfileCard extends React.Component<Props, State> {
 
   render() {
     const { intl } = this.props;
-
     return (
       <Card title={intl.formatMessage(messages.profileTitle)} isLoading={!this.state.profileByCompartments}>
         {!this.state.profileByCompartments ? (
@@ -142,7 +140,7 @@ class ProfileCard extends React.Component<Props, State> {
             return (
               <Row gutter={10} key={key} className="table-line border-top">
                 <div className="sub-title">{key}</div>
-                <ProfileInfo profile={this.state.profileByCompartments[key] ? (this.state.profileByCompartments[key] as DataResponse<any>).data : {}} />
+                <ProfileInfo profile={this.state.profileByCompartments[key]} />
               </Row>
             );
           })
