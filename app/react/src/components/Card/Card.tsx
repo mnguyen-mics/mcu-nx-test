@@ -14,9 +14,11 @@ class Card extends React.Component<CardProps> {
 
     const hasHeader = title || buttons;
 
+    
     const titleElement = title && (
-      <span className="mcs-card-title">{title}</span>
-    );
+        <span className="mcs-card-title">{title}</span>
+      );
+    
     const buttonsElement = buttons && (
       <span className="mcs-card-button">{buttons}</span>
     );
@@ -28,9 +30,6 @@ class Card extends React.Component<CardProps> {
             <Col span={24}>
               {titleElement}
               {buttonsElement}
-            </Col>
-            <Col span={24}>
-              <hr />
             </Col>
           </Row>
         )}

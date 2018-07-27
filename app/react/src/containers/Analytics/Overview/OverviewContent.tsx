@@ -329,6 +329,7 @@ class OverviewContent extends React.Component<
           </Col>
           <Col span={12}>
             <Card buttons={buttons} title={formatMessage(messages.device_type)}>
+              <hr />
               <DeviceType
                 hasFetchedVisitReport={this.state.hasFetchedVisitReport}
                 report={this.state.visitReportFormFactor}
@@ -338,7 +339,9 @@ class OverviewContent extends React.Component<
         </Row>
         <Row gutter={10} className="table-line">
           <Col span={24}>
+            <hr />
             <Card buttons={buttons} title={formatMessage(messages.locations)}>
+              <hr />
               <UsersMap
                 hasFetchedVisitReport={this.state.hasFetchedVisitReport}
                 report={this.state.visitReportCountry}

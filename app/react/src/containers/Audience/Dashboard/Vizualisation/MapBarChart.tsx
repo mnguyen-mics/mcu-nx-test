@@ -150,6 +150,7 @@ class MapBarChart extends React.Component<Props, State> {
 
     return (
       <Card title={title}>
+        <hr />
         {generateChart()}
       </Card>
     );

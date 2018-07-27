@@ -199,6 +199,7 @@ class AdCard extends React.Component<Props, State> {
 
     return (
       <Card title={title} buttons={<span>{this.renderDatePicker()}</span>}>
+        <hr />
         <Row className="mcs-chart-header">
           <Col span={12}>
             {dataSource && dataSource.length === 0 && loading ? (

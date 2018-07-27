@@ -69,6 +69,7 @@ export default class Count extends React.Component<CountProps, State> {
   public render() {
     return (
       <Card className="dashboard-counter">
+        <hr />
         <div className="title">
           {this.state.loading ? (
             <i

@@ -407,6 +407,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
 
     return (
       <Card title={title} buttons={adButtons}>
+        <hr />
         <DisplayCampaignAdTable
           isFetching={isFetching || isUpdatingStatuses}
           isFetchingStat={isFetchingStat}
