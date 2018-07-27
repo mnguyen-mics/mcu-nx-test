@@ -27,7 +27,7 @@ export default class ProfileInfo extends React.Component<ProfileInfoProps, State
 
   public render() {
     const { profile } = this.props;
-
+    
     const convertedObjectToArray = Object.keys(profile).map(key => {
       return [key, profile[key]];
     });
@@ -54,13 +54,13 @@ export default class ProfileInfo extends React.Component<ProfileInfoProps, State
     const generateValues = (t: object) => Object.keys(t).map(k => [k, (t as any)[k]])
 
     const generateItems = (profileInfoSlice: [string, any], shouldSlide: boolean = false, margin: number = -5): React.ReactNode => {
-      if (typeof profileInfoSlice[1] === 'string' || typeof profileInfoSlice[1] === 'number') {
+      if (typeof profileInfoSlice[1] === 'string' || typeof profileInfoSlice[1] === 'number' || !profileInfoSlice[1]) {
         return (<Row gutter={10} key={cuid()} className={"table-line"} style={{ marginLeft: shouldSlide ? margin + 10 : margin }}>
         <Col className="table-left" span={12}>
           <Tooltip title={profileInfoSlice[0]}>{profileInfoSlice[0]}</Tooltip>
         </Col>
         <Col className="table-right" span={12}>
-          <Tooltip title={profileInfoSlice[1]}>{profileInfoSlice[1]}</Tooltip>
+          <Tooltip title={profileInfoSlice[1] ? profileInfoSlice[1] : 'null'}>{profileInfoSlice[1] ? profileInfoSlice[1] : 'null'}</Tooltip>
         </Col>
       </Row>)
       }
