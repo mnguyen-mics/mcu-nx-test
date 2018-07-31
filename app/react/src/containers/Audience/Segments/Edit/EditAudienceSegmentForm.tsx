@@ -126,9 +126,9 @@ class EditAudienceSegmentForm extends React.Component<Props> {
           datamart && (
             <FormCodeSnippet
               language="html"
-              codeSnippet={`<img style="display:none" src="https://api.mediarithmics.com/v1/user_lists/pixel?dat_token=${
+              codeSnippet={`<img style="display:none" src="https://events.mediarithmics.com/v1/user_lists/pixel?$dat_token=${
                 datamart.token
-              }&user_list_tech_name=${encodeURIComponent(
+              }&$segtn=${encodeURIComponent(
                 this.props.audienceSegmentFormData.audienceSegment
                   .technical_name || '',
               )}" />`}
