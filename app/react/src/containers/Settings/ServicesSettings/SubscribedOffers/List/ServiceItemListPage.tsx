@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { List, Layout, Row, Col, Breadcrumb } from 'antd';
-// import { docco } from 'react-syntax-highlighter/styles/hljs';
-// import SyntaxHighlighter from 'react-syntax-highlighter';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 import ButtonStyleless from '../../../../../components/ButtonStyleless';
@@ -18,23 +16,15 @@ import InfiniteList, {
 } from '../../../../../components/InfiniteList';
 import {
   ServiceItemShape,
-  ServiceItemConditionsShape,
-  ServiceItemPublicResource,
   ServiceItemOfferResource,
 } from '../../../../../models/servicemanagement/PublicServiceItemResource';
-import { DataResponse } from '../../../../../services/ApiService';
 import { McsIcon } from '../../../../../components';
 import { messages } from './SubscribedOffersListPage';
 
 const { Content } = Layout;
 
-export interface Item {
-  serviceItem?: ServiceItemShape;
-  serviceItemCondition?: ServiceItemConditionsShape;
-}
-
 interface State {
-  item: Item;
+  serviceItem?: ServiceItemShape;
   offer?: ServiceItemOfferResource;
 }
 
@@ -45,9 +35,7 @@ type Props = RouteComponentProps<{ organisationId: string; offerId: string }> &
 class ServiceItemListPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      item: {},
-    };
+    this.state = {};
   }
 
   componentDidMount() {
@@ -77,61 +65,40 @@ class ServiceItemListPage extends React.Component<Props, State> {
     if (options.keywords) {
       fecthOptions.keywords = options.keywords;
     }
-    const promises: Array<
-      Promise<DataResponse<ServiceItemPublicResource>>
-    > = [];
-    return CatalogService.getServiceItemConditionsForOrg(
+
+    return CatalogService.getSubscribedServiceItems(
       organisationId,
       offerId,
       fecthOptions,
     )
       .then(resp => {
-        resp.data.map(sic => {
-          promises.push(CatalogService.getService(sic.service_item_id));
-        });
-        return Promise.all(promises).then(res => {
-          return res.map(r => {
-            return {
-              serviceItem: r.data,
-              serviceItemCondition: resp.data.find(
-                sic => sic.service_item_id === r.data.id,
-              ),
-            };
-          });
-        });
+        return resp.data;
       })
       .catch(err => {
         this.props.notifyError(err);
       });
   };
 
-  storeItemData = (item: Item) => {
+  storeItemData = (item: ServiceItemShape) => {
     this.setState({
-      item: {
-        serviceItem: item.serviceItem,
-        serviceItemCondition: item.serviceItemCondition,
-      },
+      serviceItem: item,
     });
   };
 
-  onItemClick = (item: Item) => () => {
+  onItemClick = (item: ServiceItemShape) => () => {
     this.storeItemData(item);
   };
 
-  getItemTitle = (item: Item) => {
-    return item.serviceItem ? item.serviceItem.name : undefined;
+  getItemTitle = (item: ServiceItemShape) => {
+    return item ? item.name : undefined;
   };
 
-  renderItem = (item: Item) => {
+  renderItem = (item: ServiceItemShape) => {
     const isItemSelected =
-      item &&
-      item.serviceItem &&
-      this.state.item &&
-      this.state.item.serviceItem &&
-      item.serviceItem.id === this.state.item.serviceItem.id;
-    return item && item.serviceItem ? (
+      item && this.state.serviceItem && item.id === this.state.serviceItem.id;
+    return item ? (
       <List.Item
-        key={item.serviceItem.id}
+        key={item.id}
         className={
           isItemSelected ? 'infinite-list-selected-item' : 'infinite-list-item'
         }
@@ -149,10 +116,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      item: { serviceItem /*serviceItemCondition*/ },
-      offer,
-    } = this.state;
+    const { serviceItem, offer } = this.state;
 
     const {
       match: {
@@ -194,27 +158,11 @@ class ServiceItemListPage extends React.Component<Props, State> {
                 {serviceItem && serviceItem.name ? serviceItem.name : undefined}
               </div>
               <div className="service-container">
-              <div className="service-price">0.123 €</div>
+                <div className="service-price">0.123 €</div>
                 {serviceItem && serviceItem.description
                   ? serviceItem.description
                   : 'No description'}
               </div>
-
-              {/* {serviceItem && (
-                <div className="service-container">
-                  <SyntaxHighlighter language="json" style={docco}>
-                    {JSON.stringify(serviceItem, undefined, 4)}
-                  </SyntaxHighlighter>
-                </div>
-              )}
-
-              {serviceItemCondition && (
-                <div className="service-container">
-                  <SyntaxHighlighter language="json" style={docco}>
-                    {JSON.stringify(serviceItemCondition, undefined, 4)}
-                  </SyntaxHighlighter>
-                </div>
-              )} */}
             </Col>
           </Row>
         </Content>

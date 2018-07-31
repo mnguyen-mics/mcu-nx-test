@@ -38,8 +38,8 @@ import ApiTokenListPage from '../containers/Settings/ProfileSettings/ApiToken/Li
 import EditApiTokenPage from '../containers/Settings/ProfileSettings/ApiToken/Edit/EditApiTokenPage';
 import SubscribedOffersListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/SubscribedOffersListPage';
 import ServiceItemListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/ServiceItemListPage';
-import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
-import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
+// import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
+// import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -318,18 +318,18 @@ export const settingsDefinition: NavigatorDefinition = {
     contentComponent: ServiceItemListPage,
     requiredFeature: 'servicesSettings.subscribed_offers',
   },
-  settingsServiceCatalog: {
-    path: '/settings/services/service_catalog',
-    layout: 'settings',
-    contentComponent: ServiceCatalogPage,
-    requiredFeature: 'servicesSettings.my_service_catalog',
-  },
-  settingsMyOffers: {
-    path: '/settings/services/my_offers',
-    layout: 'settings',
-    contentComponent: MyOffersPage,
-    requiredFeature: 'servicesSettings.my_offers',
-  },
+  // settingsServiceCatalog: {
+  //   path: '/settings/services/service_catalog',
+  //   layout: 'settings',
+  //   contentComponent: ServiceCatalogPage,
+  //   requiredFeature: 'servicesSettings.my_service_catalog',
+  // },
+  // settingsMyOffers: {
+  //   path: '/settings/services/my_offers',
+  //   layout: 'settings',
+  //   contentComponent: MyOffersPage,
+  //   requiredFeature: 'servicesSettings.my_offers',
+  // },
 };
 
 export const settingsRoutes: NavigatorRoute[] = generateRoutesFromDefinition(

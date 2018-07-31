@@ -128,7 +128,7 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
       },
       {
         intlMessage: messages.creditedAccount,
-        key: 'credited_account_id',
+        key: 'credited_account_name',
         isHideable: false,
         render: (text: string, record: ServiceItemOfferResource) => {
           return <span>{text}</span>;
@@ -161,11 +161,7 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
               separator={<McsIcon type="chevron-right" />}
             >
               <Breadcrumb.Item>
-                <Link
-                  to={`/v2/o/${organisationId}/settings/services/subscribed_offers`}
-                >
-                  <FormattedMessage {...messages.subscribedOffersTitle} />
-                </Link>
+                <FormattedMessage {...messages.subscribedOffersTitle} />
               </Breadcrumb.Item>
             </Breadcrumb>
           </Row>

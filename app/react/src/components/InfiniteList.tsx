@@ -85,27 +85,30 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
       },
     } = this.props;
 
-    const { data, first, size } = this.state;
+    const { data, first, size, loading } = this.state;
 
-    this.setState({
-      loading: true,
-    });
-    const prevData = data;
-    return this.props
-      .fetchData(organisationId, offerId, { page: first, pageSize: size })
-      .then(res => {
-        this.setState({
-          data: prevData.concat(res),
-          loading: false,
-          hasMore: res.length === size,
-          first: first + size,
-        });
-      })
-      .catch(err => {
-        this.setState({
-          loading: false,
-        });
+    if (!loading) {
+      this.setState({
+        loading: true,
       });
+      const prevData = data;
+      return this.props
+        .fetchData(organisationId, offerId, { page: first, pageSize: size })
+        .then(res => {
+          this.setState({
+            data: prevData.concat(res),
+            loading: false,
+            hasMore: res.length === size,
+            first: first + size,
+          });
+        })
+        .catch(err => {
+          this.setState({
+            loading: false,
+          });
+        });
+    }
+    return Promise.resolve();
   };
 
   onSearch = (searchValue: string) => {
@@ -135,7 +138,7 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
     const { intl } = this.props;
     const { data, loading, hasMore, initialLoading } = this.state;
     return (
-      <div className="infinite-container" style={{ maxHeight: '600px' }}>
+      <div className="infinite-container" style={{ maxHeight: '650px' }}>
         <InfiniteScroll
           initialLoad={false}
           loadMore={this.handleInfiniteOnLoad}

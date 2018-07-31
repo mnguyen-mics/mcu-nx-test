@@ -125,18 +125,18 @@ const serviceSettingsDefinition: NavigatorMenuDefinition = {
       ),
       translation: messages.subscribedOffersSettingsList,
     },
-    {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsServiceCatalog,
-      ),
-      translation: messages.serviceCatalogSettingsList,
-    },
-    {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsMyOffers,
-      ),
-      translation: messages.offersSettingsList,
-    },
+    // {
+    //   ...generateMissingdefinitionItemFromRoute(
+    //     settingsDefinition.settingsServiceCatalog,
+    //   ),
+    //   translation: messages.serviceCatalogSettingsList,
+    // },
+    // {
+    //   ...generateMissingdefinitionItemFromRoute(
+    //     settingsDefinition.settingsMyOffers,
+    //   ),
+    //   translation: messages.offersSettingsList,
+    // },
   ],
 };
 

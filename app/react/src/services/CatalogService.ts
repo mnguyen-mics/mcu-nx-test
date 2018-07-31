@@ -1,4 +1,4 @@
-import { ServiceItemConditionsShape } from './../models/servicemanagement/PublicServiceItemResource';
+// import { ServiceItemConditionsShape } from './../models/servicemanagement/PublicServiceItemResource';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
@@ -19,9 +19,10 @@ export interface GetOfferOptions extends PaginatedApiParam {
   keywords?: string;
 }
 
-interface GetServiceItemConditionsOptions extends PaginatedApiParam {
+interface GetServiceItemOptions extends PaginatedApiParam {
   orderBy?: string;
   keywords?: string;
+  locale?: Locale;
 }
 
 export interface GetServiceOptions extends PaginatedApiParam {
@@ -37,6 +38,24 @@ export interface GetServiceOptions extends PaginatedApiParam {
 }
 
 const CatalogService = {
+  getServices(
+    organisationId: string,
+    options: GetServiceOptions = {},
+  ): Promise<DataListResponse<ServiceItemPublicResource>> {
+    const endpoint = `subscribed_services/${organisationId}/services`;
+    const params = {
+      ...options,
+      root: options.root,
+      parent_category_id: options.parentCategoryId,
+      service_family: options.serviceFamily,
+      service_type: options.serviceType,
+      locale: options.locale,
+      category_type: options.categoryType,
+      category_subtype: options.categorySubtype,
+    };
+    return ApiService.getRequest(endpoint, params);
+  },
+  
   getCategoryTree(
     organisationId: string,
     options: GetServiceOptions = {},
@@ -83,20 +102,14 @@ const CatalogService = {
     );
   },
 
-  getServices(
-    organisationId: string,
-    options: GetServiceOptions = {},
+  getSubscribedServiceItems(
+    customerOrgId: string,
+    offerId: string,
+    options: GetServiceItemOptions = {}
   ): Promise<DataListResponse<ServiceItemPublicResource>> {
-    const endpoint = `subscribed_services/${organisationId}/services`;
+    const endpoint = `subscribed_services/${customerOrgId}/offers/${offerId}/service_items`;
     const params = {
-      ...options,
-      root: options.root,
-      parent_category_id: options.parentCategoryId,
-      service_family: options.serviceFamily,
-      service_type: options.serviceType,
-      locale: options.locale,
-      category_type: options.categoryType,
-      category_subtype: options.categorySubtype,
+      ...options
     };
     return ApiService.getRequest(endpoint, params);
   },
@@ -137,32 +150,6 @@ const CatalogService = {
     }) as Promise<DataListResponse<AudienceSegmentServiceItemPublicResource>>;
   },
 
-  // Service Item Conditions
-
-  getServiceItemConditions(
-    offerId: string,
-    options: GetServiceItemConditionsOptions = {},
-  ): Promise<DataListResponse<ServiceItemConditionsShape>> {
-    const endpoint = `service_offers/${offerId}/service_item_conditions`;
-    const params = {
-      ...options,
-      order_by: options.orderBy,
-    };
-    return ApiService.getRequest(endpoint, params);
-  },
-
-  getServiceItemConditionsForOrg(
-    customerOrgId: string,
-    offerId: string,
-    options: GetServiceItemConditionsOptions = {},
-  ): Promise<DataListResponse<ServiceItemConditionsShape>> {
-    const endpoint = `subscribed_services/${customerOrgId}/offers/${offerId}/service_item_conditions`;
-    const params = {
-      ...options,
-      order_by: options.orderBy,
-    };
-    return ApiService.getRequest(endpoint, params);
-  },
 };
 
 export default CatalogService;
