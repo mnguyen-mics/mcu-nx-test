@@ -183,7 +183,7 @@ class TriggerFormSection extends React.Component<Props, State> {
         {isExistingGoal(this.props.formValues.goal) ? (
           <FormCodeSnippet
             language="html"
-            codeSnippet={`<img style="display:none" src="https://events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
+            codeSnippet={`<img style="display:none" src="//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
               datamart.token
             }&$goal_id=${this.props.formValues.goal.id}" />`}
             copyToClipboard={true}
