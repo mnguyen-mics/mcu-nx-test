@@ -13,7 +13,7 @@ import { MultipleImageField } from '../domain';
 const messages = defineMessages({
   uploadMessage: {
     id: 'creative.create.loader.upload.message',
-    defaultMessage: 'is above 200kB! You can only upload image files with the following format .jpg,.jpeg,.png,.gif with a maximum size of 200kB',
+    defaultMessage: 'is above 200kB! You can only upload image files with the following format .jpg,.jpeg,.png,.gif,.svg with a maximum size of 200kB',
   },
   uploadText: {
     id: 'creative.create.loader.upload.text',

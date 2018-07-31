@@ -168,7 +168,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             {
               disabled: this.props.disabled,
               buttonText: 'Upload File',
-              accept: '.jpg,.jpeg,.png,.gif',
+              accept: '.jpg,.jpeg,.png,.gif,.svg',
               noUploadModal: this.props.noUploadModal,
             },
           );
@@ -290,7 +290,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             {
               disabled: this.props.disabled,
               buttonText: 'Upload File',
-              accept: '.jpg,.jpeg,.png,.gif',
+              accept: '.jpg,.jpeg,.png,.gif,.svg',
               noUploadModal: this.props.noUploadModal,
             },
           );
