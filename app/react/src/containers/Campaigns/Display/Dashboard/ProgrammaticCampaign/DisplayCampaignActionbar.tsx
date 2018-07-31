@@ -31,6 +31,9 @@ import { ReportView } from '../../../../../models/ReportView';
 import GoalService from '../../../../../services/GoalService';
 import { GoalsCampaignRessource } from './domain';
 import { Index } from '../../../../../utils';
+import { injectDrawer } from '../../../../../components/Drawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 
 interface DisplayCampaignActionBarProps {
   campaign: {
@@ -56,7 +59,8 @@ interface DisplayCampaignActionBarState {
 type JoinedProps = DisplayCampaignActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps &
-  TranslationProps;
+  TranslationProps &
+  InjectedDrawerProps;
 
 // type ReportViewReponse = CancelablePromise<ReportView>;
 
@@ -313,6 +317,10 @@ class DisplayCampaignActionbar extends React.Component<
     }
   };
 
+  componentWillReceiveProps(nextProps: JoinedProps) {
+    const {} = this.props;
+  }
+
   render() {
     const {
       match: {
@@ -441,11 +449,29 @@ class DisplayCampaignActionbar extends React.Component<
     };
 
     const onClick = (event: any) => {
+      const {
+        match: {
+          params: { campaignId },
+        },
+      } = this.props;
+
       switch (event.key) {
         case 'ARCHIVED':
           return campaign.items ? handleArchiveGoal(campaign.items.id) : null;
         case 'DUPLICATE':
           return this.duplicateCampaign();
+        case 'HISTORY':
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(
+            ResourceTimelinePage,
+            {
+              additionalProps: {
+                resourceName: 'DISPLAY_CAMPAIGN',
+                resourceId: campaignId,
+                handleClose: () => this.props.closeNextDrawer(),
+              },
+              size: 'small',
+            }
+          );
         default:
           return () => {
             log.error('onclick error');
@@ -461,6 +487,9 @@ class DisplayCampaignActionbar extends React.Component<
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archiveCampaign} />
         </Menu.Item>
+        <Menu.Item key="HISTORY">
+          <FormattedMessage {...messages.history} />
+        </Menu.Item>
       </Menu>
     );
   };
@@ -470,4 +499,5 @@ export default compose<JoinedProps, DisplayCampaignActionBarProps>(
   withRouter,
   injectIntl,
   withTranslations,
+  injectDrawer,
 )(DisplayCampaignActionbar);

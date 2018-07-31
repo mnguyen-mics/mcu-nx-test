@@ -305,4 +305,8 @@ export default defineMessages({
     id: 'display.campaign.actionbar.adserving.emptyAds',
     defaultMessage: 'There is no ads attached to your campaign.'
   },
+  history: {
+    id: 'display.campaign.actionbar.history',
+    defaultMessage: 'History',
+  },
 }) as { [key: string]: { id: string; defaultMessage: string } };
