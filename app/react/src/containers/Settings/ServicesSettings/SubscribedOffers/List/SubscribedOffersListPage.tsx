@@ -51,6 +51,30 @@ export const messages = defineMessages({
     id: 'settings.services.subscribed.offers.list.unknown.offer',
     defaultMessage: 'Unknown offer',
   },
+  serviceItemNoDescription: {
+    id: 'settings.subscribedOffers.service.item.no.description.',
+    defaultMessage: 'There is no description provided for this service item.',
+  },
+  serviceItemPriceSimulatorText: {
+    id: 'settings.subscribedOffers.service.item.price.simulator.text',
+    defaultMessage: 'In order to simulate your service price, please enter an impression cost value. The more the impression cost is the more the service price will be.',
+  },
+  serviceItemPriceSimulatorInputPlaceholder: {
+    id: 'settings.subscribedOffers.service.item.price.simulator.input.placeholder',
+    defaultMessage: 'Impression cost (€)',
+  },
+  serviceItemPrice: {
+    id: 'settings.subscribedOffers.service.item.price',
+    defaultMessage: 'Service price:',
+  },
+  serviceItemPricePlaceholder: {
+    id: 'settings.subscribedOffers.service.item.price.placeholder',
+    defaultMessage: 'Enter an impression cost to see your service price.',
+  },
+  invalidImpressionCost: {
+    id: 'settings.subscribedOffers.service.item.price.invalid.impression.cost',
+    defaultMessage: 'Impression cost is invalid, please use numbers.',
+  },
 });
 
 interface RouterProps {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { List, Layout, Row, Col, Breadcrumb } from 'antd';
+import { List, Layout, Row, Col, Breadcrumb, Input } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 import ButtonStyleless from '../../../../../components/ButtonStyleless';
@@ -17,6 +17,8 @@ import InfiniteList, {
 import {
   ServiceItemShape,
   ServiceItemOfferResource,
+  ServiceItemConditionsShape,
+  isLinearServiceItemConditionsResource,
 } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { McsIcon } from '../../../../../components';
 import { messages } from './SubscribedOffersListPage';
@@ -25,7 +27,9 @@ const { Content } = Layout;
 
 interface State {
   serviceItem?: ServiceItemShape;
+  serviceItemCondition?: ServiceItemConditionsShape;
   offer?: ServiceItemOfferResource;
+  price: string;
 }
 
 type Props = RouteComponentProps<{ organisationId: string; offerId: string }> &
@@ -35,7 +39,9 @@ type Props = RouteComponentProps<{ organisationId: string; offerId: string }> &
 class ServiceItemListPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      price: props.intl.formatMessage(messages.serviceItemPricePlaceholder),
+    };
   }
 
   componentDidMount() {
@@ -79,14 +85,30 @@ class ServiceItemListPage extends React.Component<Props, State> {
       });
   };
 
+  onItemClick = (item: ServiceItemShape) => () => {
+    this.storeItemData(item);
+  };
+
   storeItemData = (item: ServiceItemShape) => {
     this.setState({
       serviceItem: item,
     });
-  };
-
-  onItemClick = (item: ServiceItemShape) => () => {
-    this.storeItemData(item);
+    const {
+      match: {
+        params: { organisationId, offerId },
+      },
+      intl,
+    } = this.props;
+    CatalogService.getSubscribedServiceItemConditions(
+      organisationId,
+      offerId,
+      item.id,
+    ).then(resp => {
+      this.setState({
+        serviceItemCondition: resp.data[0],
+        price: intl.formatMessage(messages.serviceItemPricePlaceholder),
+      });
+    });
   };
 
   getItemTitle = (item: ServiceItemShape) => {
@@ -115,8 +137,29 @@ class ServiceItemListPage extends React.Component<Props, State> {
     );
   };
 
+  onChange = (e: any) => {
+    const { serviceItemCondition } = this.state;
+    const { intl } = this.props;
+    if (
+      serviceItemCondition &&
+      isLinearServiceItemConditionsResource(serviceItemCondition)
+    ) {
+      const isValidValue =
+        e.target.value && /^[0-9]+(\.[0-9]{1,2})?$/i.test(e.target.value);
+      this.setState({
+        price: isValidValue
+          ? `${intl.formatMessage(messages.serviceItemPrice)} ${parseFloat(
+              e.target.value,
+            ) *
+              serviceItemCondition.percent_value +
+              serviceItemCondition.fixed_value} €`
+          : intl.formatMessage(messages.invalidImpressionCost),
+      });
+    }
+  };
+
   render() {
-    const { serviceItem, offer } = this.state;
+    const { serviceItem, offer, price } = this.state;
 
     const {
       match: {
@@ -158,10 +201,19 @@ class ServiceItemListPage extends React.Component<Props, State> {
                 {serviceItem && serviceItem.name ? serviceItem.name : undefined}
               </div>
               <div className="service-container">
-                <div className="service-price">0.123 €</div>
+                <div className="service-price">{price}</div>
                 {serviceItem && serviceItem.description
                   ? serviceItem.description
-                  : 'No description'}
+                  : intl.formatMessage(messages.serviceItemNoDescription)}
+                <br />
+                {intl.formatMessage(messages.serviceItemPriceSimulatorText)}
+                <br />
+                <Input
+                  addonBefore={intl.formatMessage(
+                    messages.serviceItemPriceSimulatorInputPlaceholder,
+                  )}
+                  onChange={this.onChange}
+                />
               </div>
             </Col>
           </Row>

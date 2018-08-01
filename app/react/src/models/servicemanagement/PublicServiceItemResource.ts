@@ -104,7 +104,7 @@ interface ServiceItemConditionsResource {
 interface LinearServiceItemConditionsResource
   extends ServiceItemConditionsResource {
   currency: string;
-  percent_value: string;
+  percent_value: number;
   fixed_value: number;
   min_value: number;
 }
@@ -121,4 +121,15 @@ export interface ServiceAgreement {
   id: string;
   version: string;
   offers: ServiceItemOfferResource[];
+}
+
+export function isLinearServiceItemConditionsResource(
+  serviceItemCondition: ServiceItemConditionsShape,
+): serviceItemCondition is LinearServiceItemConditionsResource {
+  return (
+    (serviceItemCondition as LinearServiceItemConditionsResource)
+      .percent_value !== undefined &&
+    (serviceItemCondition as LinearServiceItemConditionsResource)
+      .fixed_value !== undefined
+  );
 }

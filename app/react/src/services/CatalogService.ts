@@ -9,7 +9,8 @@ import {
   ServiceCategorySubType,
   ServiceItemOfferResource,
   ServiceCategoryPublicResource,
-  ServiceItemPublicResource,
+  ServiceItemShape,
+  ServiceItemConditionsShape,
   AudienceSegmentServiceItemPublicResource,
 } from '../models/servicemanagement/PublicServiceItemResource';
 import { Locale } from '../models/Locale';
@@ -41,7 +42,7 @@ const CatalogService = {
   getServices(
     organisationId: string,
     options: GetServiceOptions = {},
-  ): Promise<DataListResponse<ServiceItemPublicResource>> {
+  ): Promise<DataListResponse<ServiceItemShape>> {
     const endpoint = `subscribed_services/${organisationId}/services`;
     const params = {
       ...options,
@@ -55,7 +56,7 @@ const CatalogService = {
     };
     return ApiService.getRequest(endpoint, params);
   },
-  
+
   getCategoryTree(
     organisationId: string,
     options: GetServiceOptions = {},
@@ -105,18 +106,25 @@ const CatalogService = {
   getSubscribedServiceItems(
     customerOrgId: string,
     offerId: string,
-    options: GetServiceItemOptions = {}
-  ): Promise<DataListResponse<ServiceItemPublicResource>> {
+    options: GetServiceItemOptions = {},
+  ): Promise<DataListResponse<ServiceItemShape>> {
     const endpoint = `subscribed_services/${customerOrgId}/offers/${offerId}/service_items`;
-    const params = {
-      ...options
-    };
-    return ApiService.getRequest(endpoint, params);
+    return ApiService.getRequest(endpoint, options);
+  },
+
+  getSubscribedServiceItemConditions(
+    customerOrgId: string,
+    offerId: string,
+    serviceItemId: string,
+    options: GetServiceItemOptions = {},
+  ): Promise<DataListResponse<ServiceItemConditionsShape>> {
+    const endpoint = `subscribed_services/${customerOrgId}/offers/${offerId}/service_items/${serviceItemId}/service_item_conditions`;
+    return ApiService.getRequest(endpoint, options);
   },
 
   getService(
     serviceId: string,
-  ): Promise<DataResponse<ServiceItemPublicResource>> {
+  ): Promise<DataResponse<ServiceItemShape>> {
     return ApiService.getRequest(`service_items/${serviceId}`);
   },
 
@@ -149,7 +157,6 @@ const CatalogService = {
       serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'],
     }) as Promise<DataListResponse<AudienceSegmentServiceItemPublicResource>>;
   },
-
 };
 
 export default CatalogService;
