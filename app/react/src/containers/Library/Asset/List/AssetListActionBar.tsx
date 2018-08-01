@@ -110,7 +110,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
       name: 'file',
       multiple: true,
       action: '/',
-      accept: '.jpg,.jpeg,.png,.gif',
+      accept: '.jpg,.jpeg,.png,.gif,.svg',
       beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
         this.checkIfSizeOK(file);
         const newFileList = [
