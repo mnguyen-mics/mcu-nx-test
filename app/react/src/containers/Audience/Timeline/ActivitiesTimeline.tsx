@@ -38,6 +38,7 @@ interface ActivitiesTimelineProps {
 interface State {
   activities: Activities;
   nextDate?: string;
+  activityCountOnOldestDate: number;
 }
 
 type Props = ActivitiesTimelineProps &
@@ -55,6 +56,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         items: [],
         byDay: {},
       },
+      activityCountOnOldestDate: 0,
     };
   }
 
@@ -103,10 +105,10 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     identifierId: string,
     dataSourceHasChanged: boolean = false,
   ) => {
-    const { nextDate } = this.state;
+    const { nextDate, activityCountOnOldestDate } = this.state;
     const params =
       nextDate && !dataSourceHasChanged
-        ? { live: true, limit: 10, to: nextDate }
+        ? { live: true, limit: 10 + activityCountOnOldestDate, to: nextDate }
         : { live: true, limit: 10 };
     this.setState(
       (prevState: any) => {
@@ -124,7 +126,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
             this.setState(prevState => {
               const newData = dataSourceHasChanged
                 ? response.data
-                : prevState.activities.items.concat(response.data);
+                : prevState.activities.items.concat(response.data.slice(activityCountOnOldestDate));
               const nextState = {
                 activities: {
                   ...prevState.activities,
@@ -144,9 +146,11 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                   response.data[response.data.length - 1]
                     ? moment(
                         response.data[response.data.length - 1].$ts,
-                      ).format('YYYY-MM-DD')
+                      ).add(1, 'day').format('YYYY-MM-DD')
                     : undefined,
+                activityCountOnOldestDate: 0,
               };
+              nextState.activityCountOnOldestDate = nextState.activities.byDay[Object.keys(nextState.activities.byDay)[Object.keys(nextState.activities.byDay).length - 1]].length
               return nextState;
             });
           })
