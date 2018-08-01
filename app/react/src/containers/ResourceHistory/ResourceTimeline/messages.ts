@@ -16,13 +16,21 @@ const messages: {
     defaultMessage: 'See More',
   },
   noEventsLeft: {
-    id: 'timeline.events.button.noEventsLeft',
+    id: 'timeline.events.noEventsLeft',
     defaultMessage: 'No Events Left',
   },
   noEvents: {
-    id: 'timeline.events.button.noEvents',
+    id: 'timeline.events.noEvents',
     defaultMessage: 'No Events for this resource in the last 6 months',
     // use 'resource' ?
+  },
+  expandEvents: {
+    id: 'timeline.events.card.expandEvents',
+    defaultMessage: 'see more',
+  },
+  reduceEvents: {
+    id: 'timeline.events.card.reduceEvents',
+    defaultMessage: 'see less',
   },
 });
 

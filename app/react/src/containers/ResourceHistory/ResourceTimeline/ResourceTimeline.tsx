@@ -10,7 +10,7 @@ import ResourceHistoryService from "../../../services/ResourceHistoryService";
 import messages from './messages';
 import { McsIcon } from '../../../components';
 import { compose } from 'recompose';
-import { withRouter } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router';
 import HistoryEventCard from './HistoryEventCard';
 
 export interface Events {
@@ -20,10 +20,12 @@ export interface Events {
   byDay: {
     [date: string]: HistoryEventShape[];
   };
+  byTime: {
+    [time: string]: HistoryEventShape[];
+  }
 }
 
 export interface ResourceTimelineProps {
-  organisationId: string;
   resourceName: ResourceName;
   resourceId: string;
 }
@@ -34,6 +36,7 @@ interface State {
 }
 
 type Props = ResourceTimelineProps &
+  RouteComponentProps<{ organisationId: string}> &
   InjectedIntlProps;
 
 class ResourceTimeline extends React.Component<Props, State> {
@@ -45,13 +48,16 @@ class ResourceTimeline extends React.Component<Props, State> {
         hasItems: false,
         items: [],
         byDay: {},
+        byTime: {},
       },
     };
   }
 
   componentDidMount() {
     const {
-      organisationId,
+      match: {
+        params: { organisationId },
+      },
       resourceName,
       resourceId,
     } = this.props;
@@ -67,6 +73,12 @@ class ResourceTimeline extends React.Component<Props, State> {
       return moment(value[key]).format('YYYY-MM-DD');
     });
   };
+
+  groupByTime = (array: any[], key: any) => {
+    return lodash.groupBy(array, value => {
+      return moment(value[key]).format('YYYY-MM-DD HH:mm:ss');
+    });
+  }
 
   fetchEvents = (
     organisationId: string,
@@ -104,6 +116,7 @@ class ResourceTimeline extends React.Component<Props, State> {
                   hasItems: response.data.length === 10,
                   items: newData,
                   byDay: this.groupByDate(newData, 'timestamp'),
+                  byTime:  this.groupByTime(newData, 'timestamp')
                 },
               };
               return nextState;
@@ -117,6 +130,7 @@ class ResourceTimeline extends React.Component<Props, State> {
                   isLoading: false,
                   items: [],
                   byDay: {},
+                  byTime: {},
                 },
               };
               return nextState;
@@ -127,7 +141,9 @@ class ResourceTimeline extends React.Component<Props, State> {
 
   fetchNewEvents = (e: any) => {
     const {
-      organisationId,
+      match: {
+        params: { organisationId },
+      },
       resourceName,
       resourceId,
     } = this.props;
@@ -183,6 +199,8 @@ class ResourceTimeline extends React.Component<Props, State> {
   render() {
     const { events } = this.state;
 
+    const { resourceName } = this.props;
+
     const keys = Object.keys(events.byDay);
     return events.isLoading && !events.hasItems ? (
       <Col span={24} className="text-center">
@@ -195,6 +213,8 @@ class ResourceTimeline extends React.Component<Props, State> {
       >
         {keys.map(day => {
           const eventsOnDay = events.byDay[day];
+          const eventsOnTime = this.groupByTime(eventsOnDay, 'timestamp');
+
           const dayToFormattedMessage = this.renderDate(day);
           return (
             <div className="mcs-timeline" key={cuid()}>
@@ -204,7 +224,7 @@ class ResourceTimeline extends React.Component<Props, State> {
                 <div className="mcs-title">{dayToFormattedMessage}</div>
               </Timeline.Item>
               {eventsOnDay.length !== 0 &&
-                eventsOnDay.map((event: HistoryEventShape) => {
+                Object.keys(eventsOnTime).map(time => {
                   return (
                     <Timeline.Item
                       key={cuid()}
@@ -212,15 +232,17 @@ class ResourceTimeline extends React.Component<Props, State> {
                         <McsIcon
                           type="status"
                           className={
-                            event.type === 'ALERT_EVENT'
-                              ? 'mcs-timeline-dot alert' // todo
-                              : 'mcs-timeline-dot'
+                            // eventsOnTime[time][0].type === 'ALERT_EVENT'
+                            //   ? 'mcs-timeline-dot alert' // todo
+                            //   : 'mcs-timeline-dot'
+                            'mcs-timeline-dot'
                           }
                         />
                       }
                     >
                       <HistoryEventCard
-                        event={event}
+                        events={eventsOnTime[time]}
+                        resourceName={resourceName}
                       />
                     </Timeline.Item>
                   );

@@ -97,13 +97,13 @@ export function isHistoryEventAction(model: HistoryEventShape): model is History
 // }
 
 
-export function convertHistoryEventToSubtype(historyEvent: HistoryEventShape) {
-  if (isHistoryEventAction(historyEvent)) {
-    if (isHistoryCreateEvent(historyEvent)) {return historyEvent}
-    else if (isHistoryUpdateEvent(historyEvent)) {return historyEvent}
-    else {return historyEvent}
-  }
-  else {
-    return historyEvent
-  }
-}
+// export function convertHistoryEventToSubtype(historyEvent: HistoryEventShape) {
+//   if (isHistoryEventAction(historyEvent)) {
+//     if (isHistoryCreateEvent(historyEvent)) {return historyEvent}
+//     else if (isHistoryUpdateEvent(historyEvent)) {return historyEvent}
+//     else {return historyEvent}
+//   }
+//   else {
+//     return historyEvent
+//   }
+// }

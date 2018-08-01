@@ -1,9 +1,4 @@
 .mcs-history {
-    .mcs-subtitle {
-        font-weight: 500;
-        color: darken(@layout-content-background, 30%);
-        margin-bottom: 20px;
-    }
     .mcs-timeline {
         .mcs-title {
             font-size: 14px;
@@ -36,6 +31,23 @@
         margin-right: 0px;
         color: @info-color!important;
     }
+    .mcs-fields-list {
+        display: block;
+        float: left;
+        margin-top: 20px;
+        word-break: break-all;
+    }
+    .mcs-fields-list-item {
+        .name {
+            color: @info-color!important;
+            font-weight: bold;
+        }
+        .value {
+            color: @info-color!important;
+            font-weight: bold;
+            font-style: italic;
+        }
+    }
     .ant-timeline-item-pending {
         .mcs-title {
             font-size: 14px;
@@ -64,4 +76,3 @@
         }
     }
 }
-
