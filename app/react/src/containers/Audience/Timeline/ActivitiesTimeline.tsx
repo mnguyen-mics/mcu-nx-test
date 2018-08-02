@@ -136,7 +136,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                       d =>
                         d.$session_status === 'CLOSED_SESSION' ||
                         d.$session_status === 'NO_SESSION',
-                    ).length === 10,
+                    ).slice(activityCountOnOldestDate).length === 10,
                   items: newData,
                   byDay: this.groupByDate(newData, '$ts'),
                 },
