@@ -95,8 +95,8 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
   fetchActivityAnalyzer = (visitAnalyzerId: string) => {
     this.cancelablePromise = makeCancelable(
       Promise.all([
-        VisitAnalyzerService.getVisitAnalyzer(visitAnalyzerId),
-        VisitAnalyzerService.getVisitAnalyzerProperty(visitAnalyzerId),
+        VisitAnalyzerService.getInstanceById(visitAnalyzerId),
+        VisitAnalyzerService.getInstanceProperties(visitAnalyzerId),
       ]),
     );
 
