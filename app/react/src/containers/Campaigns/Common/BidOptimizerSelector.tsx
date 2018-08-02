@@ -90,7 +90,7 @@ class BidOptimizerSelector extends React.Component<Props, State> {
         }), {})
        }));
       Promise.all(res.data.map(bidOptimzer => {
-        return BidOptimizerService.getBidOptimizerProperty(bidOptimzer.id).then(propsRes => {
+        return BidOptimizerService.getInstanceProperties(bidOptimzer.id).then(propsRes => {
           const nameProp = propsRes.data.find(prop => prop.technical_name === 'name');
           const providerProp = propsRes.data.find(prop => prop.technical_name === 'provider');
           if (nameProp && providerProp){
@@ -141,7 +141,7 @@ class BidOptimizerSelector extends React.Component<Props, State> {
       },
     ];
 
-    const fetchBidOptimizer = (id: string) => BidOptimizerService.getBidOptimizer(id);
+    const fetchBidOptimizer = (id: string) => BidOptimizerService.getInstanceById(id);
 
     return (
       <BidOptimizerTableSelector

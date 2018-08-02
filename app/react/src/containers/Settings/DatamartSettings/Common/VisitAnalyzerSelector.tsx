@@ -90,7 +90,7 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
         }), {})
        }));
       Promise.all(res.data.map(bidOptimzer => {
-        return VisitAnalyzerService.getVisitAnalyzerProperty(bidOptimzer.id).then(propsRes => {
+        return VisitAnalyzerService.getInstanceProperties(bidOptimzer.id).then(propsRes => {
           const nameProp = propsRes.data.find(prop => prop.technical_name === 'name');
           const providerProp = propsRes.data.find(prop => prop.technical_name === 'provider');
           if (nameProp && providerProp){
@@ -141,7 +141,7 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
       },
     ];
 
-    const fetchVisitAnalyzer = (id: string) => VisitAnalyzerService.getVisitAnalyzer(id);
+    const fetchVisitAnalyzer = (id: string) => VisitAnalyzerService.getInstanceById(id);
 
     return (
       <VisitAnalyzerTableSelector

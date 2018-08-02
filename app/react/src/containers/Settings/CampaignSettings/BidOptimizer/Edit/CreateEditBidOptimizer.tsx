@@ -1,17 +1,20 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
-import PluginContent from '../../../../Plugin/Edit/PluginContent';
+import { withRouter, RouteComponentProps, Omit } from 'react-router';
 import BidOptimizerService from '../../../../../services/Library/BidOptimizerService';
 import {
   PluginProperty,
   BidOptimizer,
   PluginResource,
+  PluginInstance,
 } from '../../../../../models/Plugins';
 
 import messages from './messages';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
+
+const BidOptimizerPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<BidOptimizer>>
 
 interface BidOptimizerRouteParam {
   organisationId: string;
@@ -25,7 +28,6 @@ interface BidOptimizerForm {
 
 interface CreateBidOptimizerState {
   edition: boolean;
-  isLoading: boolean;
   initialValues?: BidOptimizerForm;
   selectedBidOptimizer?: PluginResource;
 }
@@ -37,76 +39,15 @@ type JoinedProps = InjectedNotificationProps &
 class CreateEditBidOptimizer extends React.Component<
   JoinedProps,
   CreateBidOptimizerState
-> {
+  > {
   constructor(props: JoinedProps) {
     super(props);
 
     this.state = {
       edition: props.match.params.bidOptimizerId ? true : false,
-      isLoading: true,
     };
   }
 
-  componentDidMount() {
-    const { edition } = this.state;
-    const { match: { params: { bidOptimizerId } } } = this.props;
-    if (edition && bidOptimizerId) {
-      this.fetchInitialValues(bidOptimizerId);
-    } else {
-      this.setState({
-        isLoading: false,
-      });
-    }
-  }
-
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const {
-      match: { params: { organisationId, bidOptimizerId } },
-    } = this.props;
-    const {
-      match: {
-        params: {
-          organisationId: nextOrganisationId,
-          bidOptimizerId: nextBidOptimizerId,
-        },
-      },
-    } = nextProps;
-
-    if (
-      (organisationId !== nextOrganisationId ||
-        bidOptimizerId !== nextBidOptimizerId) &&
-      nextBidOptimizerId
-    ) {
-      this.fetchInitialValues(nextBidOptimizerId);
-    }
-  }
-
-  fetchInitialValues = (bidOptimizerId: string) => {
-    const fetchBidOptimizer = BidOptimizerService.getBidOptimizer(
-      bidOptimizerId,
-    ).then(res => res.data);
-    const fetchBidOptimizerProperties = BidOptimizerService.getBidOptimizerProperty(
-      bidOptimizerId,
-    ).then(res => res.data);
-    this.setState(
-      {
-        isLoading: true,
-      },
-      () => {
-        Promise.all([fetchBidOptimizer, fetchBidOptimizerProperties]).then(
-          res => {
-            this.setState({
-              isLoading: false,
-              initialValues: {
-                plugin: res[0],
-                properties: res[1],
-              },
-            });
-          },
-        );
-      },
-    );
-  };
 
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
@@ -114,117 +55,71 @@ class CreateEditBidOptimizer extends React.Component<
     history.push(attributionModelUrl);
   };
 
-  saveOrCreatePluginInstance = (
+
+  onSaveOrCreatePluginInstance = (
     plugin: BidOptimizer,
     properties: PluginProperty[],
   ) => {
-    const { edition } = this.state;
 
     const {
       match: { params: { organisationId } },
       history,
-      notifyError,
     } = this.props;
-
-    // if edition update and redirect
-    if (edition) {
-      return this.setState({ isLoading: true }, () => {
-        BidOptimizerService.updateBidOptimizer(plugin.id, plugin)
-          .then(res => {
-            return this.updatePropertiesValue(
-              properties,
-              organisationId,
-              plugin.id,
-            );
-          })
-          .then(res => {
-            this.setState({ isLoading: false }, () => {
-              history.push(`/v2/o/${organisationId}/settings/campaigns/bid_optimizer`);
-            });
-          })
-          .catch(err => notifyError(err));
-      });
-    }
-    // if creation save and redirect
-    const formattedFormValues = {
-      name: plugin.name,
-      engine_artifact_id: '',
-      engine_group_id: '',
-    };
-    if (this.state.initialValues) {
-      formattedFormValues.engine_artifact_id = this.state.initialValues.plugin.artifact_id;
-      formattedFormValues.engine_group_id = this.state.initialValues.plugin.group_id;
-    }
-    return this.setState({ isLoading: true }, () => {
-      BidOptimizerService.createBidOptimizer(
-        organisationId,
-        formattedFormValues,
-      )
-        .then(res => res.data)
-        .then(res => {
-          return this.updatePropertiesValue(properties, organisationId, res.id);
-        })
-        .then(res => {
-          this.setState({ isLoading: false }, () => {
-            history.push(`/v2/o/${organisationId}/settings/campaigns/bid_optimizer`);
-          });
-        })
-        .catch(err => notifyError(err));
-    });
+    history.push(
+      `/v2/o/${organisationId}/settings/campaigns/bid_optimizer`
+    );
   };
 
-  updatePropertiesValue = (
-    properties: PluginProperty[],
+  createPluginInstance = (
     organisationId: string,
-    id: string,
-  ) => {
-    const propertiesPromises: Array<Promise<any>> = [];
-    properties.forEach(item => {
-      propertiesPromises.push(
-        BidOptimizerService.updateBidOptimizerProperty(
-          organisationId,
-          id,
-          item.technical_name,
-          item,
-        ),
-      );
-    });
-    return Promise.all(propertiesPromises);
-  };
+    plugin: PluginResource,
+    pluginInstance: BidOptimizer,
+  ): PluginInstance => {
+    const result: Omit<BidOptimizer, "id"> = {
+      // ...pluginInstance,
+      version_id: plugin.current_version_id,
+      engine_version_id: plugin.current_version_id,
+      version_value: pluginInstance.version_value,
+      engine_artifact_id: plugin.artifact_id,
+      artifact_id: plugin.artifact_id,
+      group_id: plugin.group_id,
+      engine_group_id: plugin.group_id,
+      organisation_id: organisationId,
+      name: pluginInstance.name
+    }
+    return result
+  }
 
-  onSelect = (bo: PluginResource) => {
-    this.setState({
-      initialValues: { plugin: bo },
-    });
-  };
 
   render() {
-    const { intl: { formatMessage }, match: { params: { bidOptimizerId } } } = this.props;
+    const { intl: { formatMessage }, match: { params: { bidOptimizerId } }, notifyError } = this.props;
 
-    const { isLoading } = this.state;
+
 
     const breadcrumbPaths = [
-      { name: bidOptimizerId
-        ? formatMessage(messages.bidOptimizerEditBreadcrumb, {
+      {
+        name: bidOptimizerId
+          ? formatMessage(messages.bidOptimizerEditBreadcrumb, {
             name:
               this.state.initialValues &&
               this.state.initialValues.plugin.name,
           })
-        : formatMessage(messages.bidOptimizerNewBreadcrumb), },
+          : formatMessage(messages.bidOptimizerNewBreadcrumb),
+      },
     ];
 
     return (
-      <PluginContent
+      <BidOptimizerPluginContent
         pluginType={'BID_OPTIMIZATION_ENGINE'}
         listTitle={messages.listTitle}
         listSubTitle={messages.listSubTitle}
         breadcrumbPaths={breadcrumbPaths}
-        saveOrCreatePluginInstance={this.saveOrCreatePluginInstance}
+        pluginInstanceService={BidOptimizerService}
+        pluginInstanceId={bidOptimizerId}
+        createPluginInstance={this.createPluginInstance}
+        onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}
-        onSelect={this.onSelect}
-        editionMode={this.state.edition}
-        initialValue={this.state.initialValues}
-        loading={isLoading}
+        notifyError={notifyError}
       />
     );
   }

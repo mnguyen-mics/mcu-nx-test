@@ -82,8 +82,8 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
   fetchBidOptimizer = (bidOptimizerId: string) => {
     this.cancelablePromise = makeCancelable(
       Promise.all([
-        BidOptimizerService.getBidOptimizer(bidOptimizerId),
-        BidOptimizerService.getBidOptimizerProperty(bidOptimizerId),
+        BidOptimizerService.getInstanceById(bidOptimizerId),
+        BidOptimizerService.getInstanceProperties(bidOptimizerId),
       ]),
     );
 
