@@ -150,7 +150,8 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                     : undefined,
                 activityCountOnOldestDate: 0,
               };
-              nextState.activityCountOnOldestDate = nextState.activities.byDay[Object.keys(nextState.activities.byDay)[Object.keys(nextState.activities.byDay).length - 1]].length
+            
+              nextState.activityCountOnOldestDate = (nextState.activities.byDay[Object.keys(nextState.activities.byDay)[Object.keys(nextState.activities.byDay).length - 1]] || []).length
               return nextState;
             });
           })
