@@ -53,11 +53,11 @@ export interface OTQLDataResult {
 export function isAggregateResult(
   rows: OTQLResultRowsShape,
 ): rows is OTQLAggregationResult[] {
-  return (rows as OTQLAggregationResult[])[0].aggregations !== undefined;
+  return !!(rows.length && (rows as OTQLAggregationResult[])[0].aggregations !== undefined);
 }
 
 export function isCountResult(
   rows: OTQLResultRowsShape,
 ): rows is OTQLCountResult[] {
-  return (rows as OTQLCountResult[])[0].count !== undefined;
+  return !!(rows.length && (rows as OTQLCountResult[])[0].count !== undefined);
 }
