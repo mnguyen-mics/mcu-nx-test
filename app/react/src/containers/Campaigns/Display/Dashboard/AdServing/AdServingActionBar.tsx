@@ -138,8 +138,11 @@ class AdServingActionBar extends React.Component<Props> {
 
     const downloadMenu = (
       <Menu onClick={this.getSnippet}>
-        <Menu.Item key="GOOGLE">
-          <FormattedMessage {...messages.google} />
+        <Menu.Item key="GOOGLE_DFP">
+          <FormattedMessage {...messages.googleDfp} />
+        </Menu.Item>
+        <Menu.Item key="GOOGLE_DBM">
+          <FormattedMessage {...messages.googleDbm} />
         </Menu.Item>
         <Menu.Item key="APX">
           <FormattedMessage {...messages.apx} />
