@@ -10,11 +10,9 @@ import {
   AttributionModelListFieldModel,
   INITIAL_GOAL_FORM_DATA,
   isAttributionSelectionResource,
-  isAttributionModelFormData,
 } from './domain';
 import { GoalResource } from '../../../../models/goal';
 import GoalService from '../../../../services/GoalService';
-import AttributionModelFormService from '../../../Settings/CampaignSettings/AttributionModel/Edit/AttributionModelFormService';
 import queryService from '../../../../services/QueryService';
 
 const GoalFormService = {
@@ -176,21 +174,7 @@ function getAttributionModelTasks(
 
   const tasks: Task[] = [];
   attributionModelFields.forEach(field => {
-    if (isAttributionModelFormData(field.model)) {
-      const attributionFormData = field.model;
-      tasks.push(() =>
-        AttributionModelFormService.saveOrCreatePluginInstance(
-          organisationId,
-          attributionFormData,
-        ).then(attribModelRes => {
-          return GoalService.linkAttributionModelToGoal(goalId, {
-            attribution_model_id: attribModelRes.data.id,
-            attribution_type: 'WITH_PROCESSOR',
-            default: field.meta.default,
-          });
-        }),
-      );
-    } else if (!isAttributionSelectionResource(field.model)) {
+    if (!isAttributionSelectionResource(field.model)) {
       const attribSelCreateRequest = field.model;
       if (attribSelCreateRequest.attribution_type === 'DIRECT') {
         tasks.push(() =>

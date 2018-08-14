@@ -21,7 +21,6 @@ import AttributionModelSelector, {
 import {
   AttributionModelListFieldModel,
   isAttributionSelectionResource,
-  isAttributionModelFormData,
   AttributionModelMetaData,
 } from '../domain';
 import {
@@ -39,15 +38,7 @@ const messages = defineMessages({
   sectionTitle: {
     id: 'goalEditor.section..attribution.model.title',
     defaultMessage: 'Attribution Models',
-  },
-  addNewAttributionModel: {
-    id: 'goalEditor.section..attribution.model.add.new',
-    defaultMessage: 'Add new attribution model',
-  },
-  editAttributionModel: {
-    id: 'goalEditor.section..attribution.model.edit',
-    defaultMessage: 'Edit',
-  },
+  },    
   addExistingAttributionModel: {
     id: 'goalEditor.section..attribution.model.add.existing',
     defaultMessage: 'Add existing attribution model',
@@ -94,93 +85,28 @@ class AttributionModelFormSection extends React.Component<
     };
   }
 
-  // openAttributionModelForm = (field?: AttributionModelListFieldModel) => {
-  //   const { openNextDrawer } = this.props;
-  //   const handleOnSave = (formData: AttributionModelFormData) => {
-  //     this.updateAttributionModels(formData, field && field.key);
-  //   };
-
-  //   const additionalProps: AttributionModelFormProps = {
-  //     save: handleOnSave,
-  //     breadcrumbPaths: [],
-  //     close: this.props.closeNextDrawer,
-  //   };
-
-  //   if (field) {
-  //     if (isAttributionModelFormData(field.model)) {
-  //       additionalProps.initialValues = field.model;
-  //     } else {
-  //       additionalProps.attributionId = field.model.attribution_model_id;
-  //     }
-  //   }
-
-  //   const options = {
-  //     additionalProps,
-  //   };
-
-  //   openNextDrawer<AttributionModelFormProps>(AttributionModelForm, options);
-  // };
-
-  // updateAttributionModels = (
-  //   formData: AttributionModelFormData,
-  //   fieldKey?: string,
-  // ) => {
-  //   const { fields, formChange } = this.props;
-
-  //   const newFields: AttributionModelListFieldModel[] = [];
-  //   if (fieldKey) {
-  //     fields.getAll().forEach(field => {
-  //       if (fieldKey === field.key) {
-  //         newFields.push({
-  //           key: fieldKey,
-  //           model: formData,
-  //           meta: this.buildFieldModelMeta(formData.plugin),
-  //         });
-  //       } else {
-  //         newFields.push(field);
-  //       }
-  //     });
-  //   } else {
-  //     newFields.push(...fields.getAll());
-  //     newFields.push({
-  //       key: cuid(),
-  //       model: formData,
-  //       meta: this.buildFieldModelMeta(formData.plugin),
-  //     });
-  //   }
-
-  //   formChange((fields as any).name, newFields);
-  //   this.props.closeNextDrawer();
-  // };
-
   updateExistingAttributionModels = (attributionModels: AttributionModel[]) => {
     const { fields, formChange } = this.props;
     const attributionModelIds = attributionModels.map(am => am.id);
     const keptFields: AttributionModelListFieldModel[] = [];
     if (fields && fields.getAll()) {
       fields.getAll().forEach(field => {
-        if (!isAttributionModelFormData(field.model)) {
-          if (attributionModelIds.includes(field.model.attribution_model_id)) {
-            keptFields.push(field);
-          } else if (field.model.attribution_type === 'DIRECT') {
-            keptFields.push(field);
-          }
-        } else if (isAttributionSelectionResource(field.model)) {
-          if (attributionModelIds.includes(field.model.id)) {
-            keptFields.push(field);
-          }
-        } else {
+
+        if (isAttributionSelectionResource(field.model) && attributionModelIds.includes(field.model.id)) {
+          keptFields.push(field);
+        } else if (attributionModelIds.includes(field.model.attribution_model_id)) {
+          keptFields.push(field);
+        } else if (field.model.attribution_type === 'DIRECT') {
           keptFields.push(field);
         }
+        
       });
     }
 
     const existingAttributionModelIds: string[] = [];
     if (fields && fields.getAll()) {
       fields.getAll().forEach(field => {
-        if (!isAttributionModelFormData(field.model)) {
-          existingAttributionModelIds.push(field.model.attribution_model_id);
-        }
+        existingAttributionModelIds.push(field.model.attribution_model_id);        
       });
     }
 
@@ -226,8 +152,7 @@ class AttributionModelFormSection extends React.Component<
     const selectedAttributionModelIds: string[] = [];
     if (fields && fields.getAll()) {
       fields.getAll().forEach(field => {
-        if (
-          !isAttributionModelFormData(field.model) &&
+        if (          
           field.model.attribution_model_id &&
           field.model.attribution_type === 'WITH_PROCESSOR'
         ) {
@@ -306,7 +231,6 @@ class AttributionModelFormSection extends React.Component<
          ${attributionModel.meta.artifact_id}`
           : 'DIRECT';
       };
-      // const edit = () => this.openAttributionModelForm(attributionModelField);
 
       const setDefaultAttributionModel = () => {
         const handleDefaultClick = () => {
@@ -343,11 +267,7 @@ class AttributionModelFormSection extends React.Component<
             />
           </span>
         );
-      };
-
-      // const cannotEdit =
-      //   !isAttributionModelFormData(attributionModelField.model) &&
-      //   attributionModelField.model.attribution_type === 'DIRECT';
+      };      
 
       return (
         <RecordElement
@@ -355,7 +275,6 @@ class AttributionModelFormSection extends React.Component<
           recordIconType="display"
           record={attributionModelField}
           title={getName}
-          // onEdit={cannotEdit ? undefined : edit}
           onRemove={removeField}
           additionalActionButtons={setDefaultAttributionModel}
         />
@@ -371,11 +290,7 @@ class AttributionModelFormSection extends React.Component<
       fields.getAll() &&
       fields
         .getAll()
-        .find(
-          f =>
-            !isAttributionModelFormData(f.model) &&
-            f.model.attribution_type === 'DIRECT',
-        );
+        .find(f => f.model.attribution_type === 'DIRECT');
 
     return (
       <div>
@@ -383,11 +298,6 @@ class AttributionModelFormSection extends React.Component<
           subtitle={messages.sectionSubtitle}
           title={messages.sectionTitle}
           dropdownItems={[
-            // {
-            //   id: messages.addNewAttributionModel.id,
-            //   message: messages.addNewAttributionModel,
-            //   onClick: this.openAttributionModelForm,
-            // },
             {
               id: messages.addExistingAttributionModel.id,
               message: messages.addExistingAttributionModel,

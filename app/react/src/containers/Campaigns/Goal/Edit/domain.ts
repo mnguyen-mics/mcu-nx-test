@@ -8,7 +8,6 @@ import {
   AttributionSelectionCreateRequest,
 } from './../../../../models/goal/AttributionSelectionResource';
 import { GoalResource, GoalCreateRequest } from '../../../../models/goal';
-import { AttributionModelFormData } from '../../../Settings/CampaignSettings/AttributionModel/Edit/domain';
 
 export type GoalResourceShape = GoalResource | Partial<GoalCreateRequest>;
 
@@ -53,8 +52,7 @@ export interface AttributionModelMetaData {
 
 export type AttributionModelShape =
   | AttributionSelectionResource
-  | AttributionSelectionCreateRequest
-  | AttributionModelFormData;
+  | AttributionSelectionCreateRequest;
 
 export type AttributionModelListFieldModel = FieldArrayModelWithMeta<
   AttributionModelShape,
@@ -65,12 +63,6 @@ export function isAttributionSelectionResource(
   model: AttributionModelShape,
 ): model is AttributionSelectionResource {
   return (model as AttributionSelectionResource).id !== undefined;
-}
-
-export function isAttributionModelFormData(
-  model: AttributionModelShape,
-): model is AttributionModelFormData {
-  return (model as AttributionModelFormData).plugin !== undefined;
 }
 
 export function isAttributionModelCreateRequest(
