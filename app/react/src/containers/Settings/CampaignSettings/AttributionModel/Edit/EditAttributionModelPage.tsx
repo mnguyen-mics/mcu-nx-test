@@ -2,17 +2,29 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { AttributionModelFormData } from './domain';
-import AttributionModelFormService from './AttributionModelFormService';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../../Notifications/injectNotifications';
-import AttributionModelForm from './AttributionModelForm';
+import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
+import { AttributionModel, PluginResource, PluginInstance, PluginProperty } from '../../../../../models/Plugins';
+import AttributionModelService from '../../../../../services/AttributionModelService';
+import { Omit } from '../../../../../utils/Types';
+
+const AttributionModelPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AttributionModel>>
 
 const messages = defineMessages({
-  attributionModelBreadcrumb: {
-    id: 'attributionmodel.create.breadcrumb.title',
+  listTitle: {
+    id: 'attributionmodel.edit.list.title',
+    defaultMessage: 'Attribution Models',
+  },
+  listSubTitle: {
+    id: 'attributionmodel.edit.list.subtitle',
     defaultMessage: 'New Attribution Model',
+  },
+  attributionModelNewBreadcrumb: {
+    id: 'attributionmodel.create.breadcrumb.newtitle',
+    defaultMessage: 'New Attribution Model',
+  },
+  attributionModelEditBreadcrumb: {
+    id: 'attributionmodel.create.breadcrumb.edittitle',
+    defaultMessage: 'Edit {name}',
   },
 });
 
@@ -21,49 +33,48 @@ interface AttributionModelRouteParam {
   attributionModelId?: string;
 }
 
-interface State {
-  isLoading: boolean;
-}
-
 type Props = RouteComponentProps<AttributionModelRouteParam> &
-  InjectedNotificationProps &
   InjectedIntlProps;
 
-class EditAttributionModelPage extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isLoading: false,
-    };
-  }
-
+class EditAttributionModelPage extends React.Component<Props> {
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/attribution_models`;
     history.push(attributionModelUrl);
   };
 
-  saveOrCreatePluginInstance = (formData: AttributionModelFormData) => {
+  saveOrCreatePluginInstance = (
+    plugin: AttributionModel,
+    properties: PluginProperty[],
+  ) => {
     const {
       match: { params: { organisationId } },
       history,
-      notifyError,
     } = this.props;
 
-    this.setState({ isLoading: true });
-    AttributionModelFormService.saveOrCreatePluginInstance(
-      organisationId,
-      formData,
-    )
-      .then(res => {
-        this.setState({ isLoading: false });
-        history.push(`/v2/o/${organisationId}/settings/campaigns/attribution_models`);
-      })
-      .catch(err => {
-        notifyError(err);
-        this.setState({ isLoading: false });
-      });
+    history.push(`/v2/o/${organisationId}/settings/campaigns/attribution_models`);
+
+    
   };
+
+  createPluginInstance = (
+    organisationId: string,
+    plugin: PluginResource,
+    pluginInstance: AttributionModel,
+  ): PluginInstance => {
+    const result: Omit<AttributionModel, "id"> = {
+      // ...pluginInstance,
+      version_id: plugin.current_version_id,
+      version_value: pluginInstance.version_value,
+      attribution_processor_id: plugin.id,
+      mode: pluginInstance.mode,
+      artifact_id: plugin.artifact_id,
+      group_id: plugin.group_id,
+      organisation_id: organisationId,
+      name: pluginInstance.name
+    }
+    return result
+  }
 
   render() {
     const {
@@ -71,24 +82,28 @@ class EditAttributionModelPage extends React.Component<Props, State> {
       match: { params: { attributionModelId } },
     } = this.props;
 
-    const { isLoading } = this.state;
-
-    const breadcrumbPaths = [
-      { name: formatMessage(messages.attributionModelBreadcrumb) },
-    ];
+    const breadcrumbPaths = (attributionModel?: AttributionModel) => [
+      { name: attributionModel ? 
+        formatMessage(messages.attributionModelEditBreadcrumb, { name: attributionModel.name }) 
+        : formatMessage(messages.attributionModelNewBreadcrumb) },
+    ];    
 
     return (
-      <AttributionModelForm
-        save={this.saveOrCreatePluginInstance}
-        close={this.redirect}
-        attributionId={attributionModelId}
+      <AttributionModelPluginContent
+        pluginType={'ATTRIBUTION_PROCESSOR'}
+        listTitle={messages.listTitle}
+        listSubTitle={messages.listSubTitle}
         breadcrumbPaths={breadcrumbPaths}
-        isLoading={isLoading}
+        pluginInstanceService={AttributionModelService}
+        pluginInstanceId={attributionModelId}
+        createPluginInstance={this.createPluginInstance}
+        onSaveOrCreatePluginInstance={this.saveOrCreatePluginInstance}
+        onClose={this.redirect}
       />
     );
   }
 }
 
-export default compose(withRouter, injectNotifications, injectIntl)(
+export default compose(withRouter, injectIntl)(
   EditAttributionModelPage,
 );
