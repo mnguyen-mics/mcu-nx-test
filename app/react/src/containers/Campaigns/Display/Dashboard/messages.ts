@@ -285,9 +285,13 @@ export default defineMessages({
     id: 'display.campaign.actionbar.adserving.download',
     defaultMessage: 'Get Your Snippets'
   },
-  google: {
-    id: 'display.campaign.actionbar.adserving.google',
-    defaultMessage: 'Google Tools (DBM, DFP, DCM)'
+  googleDfp: {
+    id: 'display.campaign.actionbar.adserving.google_dfp',
+    defaultMessage: 'Google DoubleClick For Publisher (DFP)'
+  },
+  googleDbm: {
+    id: 'display.campaign.actionbar.adserving.google_dbm',
+    defaultMessage: 'Google DoubleClick Bid Manager (DBM)'
   },
   apx: {
     id: 'display.campaign.actionbar.adserving.apx',

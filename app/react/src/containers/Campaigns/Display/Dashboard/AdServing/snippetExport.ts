@@ -4,12 +4,14 @@ import ExportService from "../../../../../services/ExportService";
 import { MessageValue, FormattedMessage } from 'react-intl';
 
 // tslint:disable-next-line no-invalid-template-strings 
-const GOOGLE_CLICK_MACRO = "%%CLICK_URL_ESC%%";
+const GOOGLE_DFP_CLICK_MACRO = "%%CLICK_URL_ESC%%";
+// tslint:disable-next-line no-invalid-template-strings 
+const GOOGLE_DBM_CLICK_MACRO = "${CLICK_URL_ENC}";
 // tslint:disable-next-line no-invalid-template-strings 
 const APX_CLICK_MACRO = "${CLICK_URL_ENC}";
 const NONE_MACRO = "/*INSERT HERE YOUR CLICK TRACKING URL*/"
 
-export type ExportType = 'GOOGLE' | 'APX' | 'NONE'
+export type ExportType = 'GOOGLE_DFP' | 'GOOGLE_DBM' | 'APX' | 'NONE'
 
 export function generateCsvData(organsationId: string, campaign: DisplayCampaignInfoResource , macro: ExportType, ads: AdInfoResource[], formatMessage: (messageDescriptor: FormattedMessage.MessageDescriptor, values?: {[key: string]: MessageValue}) => string) {
   const data = ads.map(ad => {
@@ -30,8 +32,10 @@ export function generateCsvData(organsationId: string, campaign: DisplayCampaign
 
 function generateMacro(macro: ExportType) {
   switch(macro) {
-    case 'GOOGLE':
-      return GOOGLE_CLICK_MACRO
+    case 'GOOGLE_DFP':
+      return GOOGLE_DFP_CLICK_MACRO
+    case 'GOOGLE_DBM':
+      return GOOGLE_DBM_CLICK_MACRO
     case 'APX':
       return APX_CLICK_MACRO
     default:
