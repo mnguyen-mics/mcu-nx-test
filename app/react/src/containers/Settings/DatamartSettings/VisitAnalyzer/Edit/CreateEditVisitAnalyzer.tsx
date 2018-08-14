@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import GenericPluginContent, { PluginInstanceForm, PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
+import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
 import VisitAnalyzerService from '../../../../../services/Library/VisitAnalyzerService';
-import * as actions from '../../../../../state/Notifications/actions';
 import {
   PluginProperty,
   VisitAnalyzer,
@@ -15,41 +13,19 @@ import {
 
 import messages from './messages';
 import { Omit } from '../../../../../utils/Types';
-import { PropertyResourceShape } from '../../../../../models/plugin';
 
 const VisitAnalyzerPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<VisitAnalyzer>>
 
-
-interface CreateVisitAnalyzerProps {
-  notifyError: (err?: any) => void;
-}
 interface VisitAnalyzerRouteParam {
   organisationId: string;
   visitAnalyzerId?: string;
 }
 
-interface VisitAnalyzerForm extends PluginInstanceForm<VisitAnalyzer> {
-  pluginInstance: VisitAnalyzer;
-  properties?: PropertyResourceShape[];
-}
-
-interface CreateVisitAnalyzerState {
-  initialValues?: VisitAnalyzerForm;
-  selectedVisitAnalyzer?: PluginResource;
-}
-
-
-type JoinedProps = CreateVisitAnalyzerProps & RouteComponentProps<VisitAnalyzerRouteParam> &
+type JoinedProps = RouteComponentProps<VisitAnalyzerRouteParam> &
   InjectedIntlProps;
 
-class CreateEditVisitAnalyzer extends React.Component<
-  JoinedProps,
-  CreateVisitAnalyzerState
-  > {
-  constructor(props: JoinedProps) {
-    super(props);
-  }
-
+class CreateEditVisitAnalyzer extends React.Component<JoinedProps> {
+  
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/settings/datamart/visit_analyzers`;
@@ -88,24 +64,16 @@ class CreateEditVisitAnalyzer extends React.Component<
     return result
   }
 
-
-
-
   render() {
     const {
       intl: { formatMessage },
       match: { params: { visitAnalyzerId } },
-      notifyError,
     } = this.props;
 
-    const breadcrumbPaths = [
+    const breadcrumbPaths = (visitAnalyzer?: VisitAnalyzer) => [
       {
-        name: visitAnalyzerId
-          ? formatMessage(messages.visitAnalyzerEditBreadcrumb, {
-            name:
-              this.state.initialValues &&
-              this.state.initialValues.pluginInstance.name,
-          })
+        name: visitAnalyzer
+          ? formatMessage(messages.visitAnalyzerEditBreadcrumb, { name: visitAnalyzer.name })
           : formatMessage(messages.visitAnalyzerBreadcrumb),
       },
     ];
@@ -121,15 +89,12 @@ class CreateEditVisitAnalyzer extends React.Component<
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}
-        notifyError={notifyError}
       />
     );
   }
 }
 
 export default compose(
-  injectIntl,
   withRouter,
-  // withDrawer,
-  connect(undefined, { notifyError: actions.notifyError }),
+  injectIntl,
 )(CreateEditVisitAnalyzer);

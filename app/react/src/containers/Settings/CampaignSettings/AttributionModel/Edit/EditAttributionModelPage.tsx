@@ -2,9 +2,6 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../../Notifications/injectNotifications';
 import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
 import { AttributionModel, PluginResource, PluginInstance, PluginProperty } from '../../../../../models/Plugins';
 import AttributionModelService from '../../../../../services/AttributionModelService';
@@ -21,9 +18,13 @@ const messages = defineMessages({
     id: 'attributionmodel.edit.list.subtitle',
     defaultMessage: 'New Attribution Model',
   },
-  attributionModelBreadcrumb: {
-    id: 'attributionmodel.edit.list.subtitle',
+  attributionModelNewBreadcrumb: {
+    id: 'attributionmodel.create.breadcrumb.newtitle',
     defaultMessage: 'New Attribution Model',
+  },
+  attributionModelEditBreadcrumb: {
+    id: 'attributionmodel.create.breadcrumb.edittitle',
+    defaultMessage: 'Edit {name}',
   },
 });
 
@@ -32,22 +33,10 @@ interface AttributionModelRouteParam {
   attributionModelId?: string;
 }
 
-interface State {
-  isLoading: boolean;
-}
-
 type Props = RouteComponentProps<AttributionModelRouteParam> &
-  InjectedNotificationProps &
   InjectedIntlProps;
 
-class EditAttributionModelPage extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isLoading: false,
-    };
-  }
-
+class EditAttributionModelPage extends React.Component<Props> {
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/attribution_models`;
@@ -91,11 +80,12 @@ class EditAttributionModelPage extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
       match: { params: { attributionModelId } },
-      notifyError,
     } = this.props;
 
-    const breadcrumbPaths = [
-      { name: formatMessage(messages.attributionModelBreadcrumb) },
+    const breadcrumbPaths = (attributionModel?: AttributionModel) => [
+      { name: attributionModel ? 
+        formatMessage(messages.attributionModelEditBreadcrumb, { name: attributionModel.name }) 
+        : formatMessage(messages.attributionModelNewBreadcrumb) },
     ];    
 
     return (
@@ -109,12 +99,11 @@ class EditAttributionModelPage extends React.Component<Props, State> {
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.saveOrCreatePluginInstance}
         onClose={this.redirect}
-        notifyError={notifyError}
       />
     );
   }
 }
 
-export default compose(withRouter, injectNotifications, injectIntl)(
+export default compose(withRouter, injectIntl)(
   EditAttributionModelPage,
 );

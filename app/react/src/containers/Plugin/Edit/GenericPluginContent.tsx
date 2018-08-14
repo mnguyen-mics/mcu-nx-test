@@ -22,6 +22,7 @@ import { Path } from '../../../components/ActionBar';
 import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../models/plugin';
+import { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 
 const formId = 'pluginForm';
 
@@ -38,10 +39,9 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
   pluginType: PluginType;
   listTitle: FormattedMessage.MessageDescriptor;
   listSubTitle: FormattedMessage.MessageDescriptor;
-  breadcrumbPaths: Path[];
+  breadcrumbPaths: (pluginInstance?: T) => Path[];
   pluginInstanceService: PluginInstanceService<T>;
   pluginInstanceId?: string;
-  notifyError: (err?: any) => void;
   onClose: () => void;
   onSaveOrCreatePluginInstance: (
     pluginInstance: T,
@@ -77,7 +77,7 @@ function initEmptyPluginSelection() {
 }
 
 type JoinedProps<T extends PluginInstance> = PluginContentOuterProps<T> &
-  RouteComponentProps<RouterProps>;
+  RouteComponentProps<RouterProps> & InjectedNotificationProps;
 
 class PluginContent<T extends PluginInstance> extends React.Component<JoinedProps<T>, PluginContentState<T>> {
   constructor(props: JoinedProps<T>) {
@@ -413,7 +413,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
       </div>
     ) : pluginProperties.length || pluginInstanceId ? (
       <EditContentLayout
-        paths={breadcrumbPaths}
+        paths={breadcrumbPaths(initialValues && initialValues.pluginInstance)}
         items={sidebarItems}
         scrollId={formId}
         {...actionbarProps}
@@ -435,7 +435,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
         />
       </EditContentLayout>
     ) : (
-          <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+          <EditContentLayout 
+            paths={breadcrumbPaths(initialValues && initialValues.pluginInstance)} 
+            {...actionbarProps}
+          >
             <PluginEditSelector
               onSelect={this.onSelectPlugin}
               availablePlugins={this.state.availablePlugins}

@@ -11,7 +11,6 @@ import {
 } from '../../../../../models/Plugins';
 
 import messages from './messages';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
 
 const BidOptimizerPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<BidOptimizer>>
@@ -21,33 +20,12 @@ interface BidOptimizerRouteParam {
   bidOptimizerId?: string;
 }
 
-interface BidOptimizerForm {
-  plugin: any;
-  properties?: PluginProperty[];
-}
-
-interface CreateBidOptimizerState {
-  edition: boolean;
-  initialValues?: BidOptimizerForm;
-  selectedBidOptimizer?: PluginResource;
-}
-
-type JoinedProps = InjectedNotificationProps &
-  RouteComponentProps<BidOptimizerRouteParam> &
+type JoinedProps = RouteComponentProps<BidOptimizerRouteParam> &
   InjectedIntlProps;
 
 class CreateEditBidOptimizer extends React.Component<
-  JoinedProps,
-  CreateBidOptimizerState
+  JoinedProps
   > {
-  constructor(props: JoinedProps) {
-    super(props);
-
-    this.state = {
-      edition: props.match.params.bidOptimizerId ? true : false,
-    };
-  }
-
 
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
@@ -92,18 +70,14 @@ class CreateEditBidOptimizer extends React.Component<
 
 
   render() {
-    const { intl: { formatMessage }, match: { params: { bidOptimizerId } }, notifyError } = this.props;
+    const { intl: { formatMessage }, match: { params: { bidOptimizerId } } } = this.props;
 
 
 
-    const breadcrumbPaths = [
+    const breadcrumbPaths = (bidOptimizer?: BidOptimizer) => [
       {
-        name: bidOptimizerId
-          ? formatMessage(messages.bidOptimizerEditBreadcrumb, {
-            name:
-              this.state.initialValues &&
-              this.state.initialValues.plugin.name,
-          })
+        name: bidOptimizer
+          ? formatMessage(messages.bidOptimizerEditBreadcrumb, { name: bidOptimizer.name })
           : formatMessage(messages.bidOptimizerNewBreadcrumb),
       },
     ];
@@ -119,7 +93,6 @@ class CreateEditBidOptimizer extends React.Component<
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}
-        notifyError={notifyError}
       />
     );
   }
@@ -128,5 +101,4 @@ class CreateEditBidOptimizer extends React.Component<
 export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
-  injectNotifications,
 )(CreateEditBidOptimizer);

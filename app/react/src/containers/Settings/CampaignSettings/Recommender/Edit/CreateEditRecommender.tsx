@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import RecommenderService from '../../../../../services/Library/RecommenderService';
-import * as actions from '../../../../../state/Notifications/actions';
 import {
   PluginProperty,
   Recommender,
@@ -22,43 +20,17 @@ interface RecommenderRouteParam {
   recommenderId?: string;
 }
 
-interface RecommenderForm {
-  plugin: any;
-  properties?: PluginProperty[];
-}
-
-interface CreateRecommenderState {
-  edition: boolean;
-  initialValues?: RecommenderForm;
-  selectedRecommender?: PluginResource;
-}
-
-interface CreateRecommenderProps {
-  notifyError: (err?: any) => void;
-}
-
-type JoinedProps = CreateRecommenderProps &
-  RouteComponentProps<RecommenderRouteParam> &
+type JoinedProps = RouteComponentProps<RecommenderRouteParam> &
   InjectedIntlProps;
 
-class CreateEditRecommender extends React.Component<
-  JoinedProps,
-  CreateRecommenderState
-  > {
-  constructor(props: JoinedProps) {
-    super(props);
-
-    this.state = {
-      edition: props.match.params.recommenderId ? true : false,
-    };
-  }
-
-
+class CreateEditRecommender extends React.Component<JoinedProps> {
+  
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/recommenders`;
     history.push(attributionModelUrl);
   };
+
   onSaveOrCreatePluginInstance = (
     plugin: Recommender,
     properties: PluginProperty[],
@@ -93,17 +65,13 @@ class CreateEditRecommender extends React.Component<
 
 
   render() {
-    const { intl: { formatMessage }, match: { params: { recommenderId } }, notifyError } = this.props;
+    const { intl: { formatMessage }, match: { params: { recommenderId } } } = this.props;
 
 
-    const breadcrumbPaths = [
+    const breadcrumbPaths = (recommender?: Recommender) => [
       {
-        name: recommenderId
-          ? formatMessage(messages.recommenderEditBreadcrumb, {
-            name:
-              this.state.initialValues &&
-              this.state.initialValues.plugin.name,
-          })
+        name: recommender
+          ? formatMessage(messages.recommenderEditBreadcrumb, { name: recommender.name })
           : formatMessage(messages.recommenderNewBreadcrumb),
       },
     ];
@@ -119,7 +87,6 @@ class CreateEditRecommender extends React.Component<
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}
-        notifyError={notifyError}
       />
     );
   }
@@ -128,6 +95,4 @@ class CreateEditRecommender extends React.Component<
 export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
-  // withDrawer,
-  connect(undefined, { notifyError: actions.notifyError }),
 )(CreateEditRecommender);
