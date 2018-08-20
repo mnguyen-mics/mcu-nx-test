@@ -15,6 +15,7 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { Export } from '../../../../models/exports/exports';
 import messages from './messages';
+import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 const initialState = {
   loading: false,
@@ -109,17 +110,18 @@ class ExportContent extends React.Component<
       match: { params: { organisationId } },
     } = this.props;
 
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<Export>> = [
+      {
+        key: 'action',
+        actions: () => [
+          // { translationKey: 'EDIT', callback: this.onClickEdit },
+          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+        ],
+      },
+    ]
 
     const columnsDefinitions = {
-      actionsColumnsDefinition: [
-        {
-          key: 'action',
-          actions: [
-            // { translationKey: 'EDIT', callback: this.onClickEdit },
-            { translationKey: 'ARCHIVE', callback: this.onClickArchive },
-          ],
-        },
-      ],
+      actionsColumnsDefinition,
 
       dataColumnsDefinition: [
         {

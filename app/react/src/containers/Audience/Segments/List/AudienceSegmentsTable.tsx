@@ -45,6 +45,7 @@ import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -632,10 +633,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<AudienceSegmentResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: this.editSegment,

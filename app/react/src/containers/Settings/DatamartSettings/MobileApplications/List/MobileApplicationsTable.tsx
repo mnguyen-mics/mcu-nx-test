@@ -12,6 +12,7 @@ import { Filter } from '../../Common/domain';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
+import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 
 export interface MobileApplicationsTableProps {
   isFetchingMobileApplications: boolean;
@@ -93,10 +94,10 @@ class MobileApplicationsTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<ChannelResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             intlMessage: messages.editMobileApplication,
             callback: onEditMobileApplication,

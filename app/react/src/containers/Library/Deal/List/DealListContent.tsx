@@ -16,6 +16,7 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import messages from './messages';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 const initialState = {
   loading: false,
@@ -114,10 +115,10 @@ class DealListContent extends React.Component<
   render() {
     const { match: { params: { organisationId } } } = this.props;
 
-    const actionsColumnsDefinition = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<DealsListResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           { translationKey: 'EDIT', callback: this.onClickEdit },
           { translationKey: 'ARCHIVE', callback: this.onClickArchive },
         ],

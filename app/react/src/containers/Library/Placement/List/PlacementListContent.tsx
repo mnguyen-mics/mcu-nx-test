@@ -15,6 +15,7 @@ import {
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { PlacementListResource } from '../../../../models/placement/PlacementListResource';
 import messages from './messages';
+import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 const initialState = {
   loading: false,
@@ -109,10 +110,10 @@ class PlacementListContent extends React.Component<
   render() {
     const { match: { params: { organisationId } } } = this.props;
 
-    const actionsColumnsDefinition = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<PlacementListResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           { translationKey: 'EDIT', callback: this.onClickEdit },
           { translationKey: 'ARCHIVE', callback: this.onClickArchive },
         ],

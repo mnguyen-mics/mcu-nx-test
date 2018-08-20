@@ -41,6 +41,7 @@ import { MultiSelectProps } from '../../../../components/MultiSelect';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 const messages = defineMessages({
   labelFilterBy: {
@@ -345,10 +346,10 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<GoalResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: this.handleEditGoal,

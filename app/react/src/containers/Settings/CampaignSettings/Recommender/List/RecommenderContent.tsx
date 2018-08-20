@@ -16,6 +16,7 @@ import {
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { PluginProperty, Recommender, PluginVersionResource } from '../../../../../models/Plugins';
 import messages from './messages';
+import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 
 const { Content } = Layout;
 
@@ -134,10 +135,10 @@ class RecommenderContent extends React.Component<
   render() {
     const { match: { params: { organisationId } }, history } = this.props;
 
-    const actionsColumnsDefinition = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<RecommenderInterface>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           { translationKey: 'EDIT', callback: this.onClickEdit },
           { translationKey: 'ARCHIVE', callback: this.onClickArchive },
         ],

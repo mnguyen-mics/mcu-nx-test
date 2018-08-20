@@ -27,7 +27,7 @@ import { withTranslations } from '../../../Helpers/index';
 import { TranslationProps } from '../../../Helpers/withTranslations';
 import { MapStateToProps, MapDispatchToProps } from './NativeListPage';
 import CreativeService from '../../../../services/CreativeService';
-import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
+import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 interface NativeCreativesTableProps
   extends MapStateToProps,
@@ -225,10 +225,10 @@ class NativeCreativesTable extends React.Component<
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<DisplayAdResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: this.editNativeCreatives,

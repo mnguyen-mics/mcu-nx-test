@@ -12,7 +12,7 @@ import McsIcon from '../../../../../components/McsIcon';
 import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
-import { ExtendedTableRowSelection } from '../../../../../components/TableView/TableView';
+import { ExtendedTableRowSelection, ActionsColumnDefinition, ActionDefinition } from '../../../../../components/TableView/TableView';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
 
 export interface UpdateMessage {
@@ -253,7 +253,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
     ];
 
 
-    const actions = []
+    const actions:  Array<ActionDefinition<AdGroupResource>> = []
 
     if (this.props.campaign && this.props.campaign.model_version !== 'V2014_06') {
       actions.push({
@@ -266,10 +266,10 @@ class DisplayCampaignAdGroupTable extends React.Component<
         }, )
     }
 
-    const actionColumns = [
+    const actionColumns:  Array<ActionsColumnDefinition<AdGroupResource>> = [
       {
         key: 'action',
-        actions: actions
+        actions: () => actions
       },
     ];
 

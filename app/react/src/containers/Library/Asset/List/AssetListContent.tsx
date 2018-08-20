@@ -16,6 +16,7 @@ import {
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import AssetListActionBar from './AssetListActionBar'
 import messages from './messages';
+import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 const { Content } = Layout;
 
@@ -104,10 +105,10 @@ class AssetListContent extends React.Component<
   };
 
   render() {
-    const actionsColumnsDefinition = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<AssetFileResource>> = [
       {
         key: 'action',
-        actions: [{ translationKey: 'ARCHIVE', callback: this.onClickArchive }],
+        actions: () => [{ translationKey: 'ARCHIVE', callback: this.onClickArchive }],
       },
     ];
 
