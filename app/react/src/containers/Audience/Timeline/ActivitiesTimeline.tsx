@@ -99,6 +99,18 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     });
   };
 
+  removeDuplicatesFromResponse = (data: Activity[], prevActivities: Activity[]) => {
+    const sortedData = data.map(activity => {
+      return {...activity, $events: activity.$events.sort((a, b) => b.$ts - a.$ts)}
+    });
+    const sortedPrevActivities = prevActivities.map(activity => {
+      return {...activity, $events: activity.$events.sort((a, b) => b.$ts - a.$ts)}
+    });
+    return prevActivities.length > 0
+      ? lodash.differenceWith(sortedData, sortedPrevActivities, lodash.isEqual)
+      : data;
+  };
+
   fetchActivities = (
     datamartId: string,
     identifierType: string,
@@ -123,37 +135,36 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       () =>
         takeLatestActivities(datamartId, identifierType, identifierId, params)
           .then(response => {
-            this.setState(prevState => {
-              const newData = dataSourceHasChanged
-                ? response.data
-                : prevState.activities.items.concat(response.data.slice(activityCountOnOldestDate));
-              const nextState = {
-                activities: {
-                  ...prevState.activities,
-                  isLoading: false,
-                  hasItems:
-                    response.data.filter(
-                      d =>
-                        d.$session_status === 'CLOSED_SESSION' ||
-                        d.$session_status === 'NO_SESSION',
-                    ).slice(activityCountOnOldestDate).length === 10,
-                  items: newData,
-                  byDay: this.groupByDate(newData, '$ts'),
-                },
-                nextDate:
-                  newData.length % 10 === 0 &&
-                  response.data &&
-                  response.data[response.data.length - 1]
-                    ? moment(
-                        response.data[response.data.length - 1].$ts,
-                      ).add(1, 'day').format('YYYY-MM-DD')
-                    : undefined,
-                activityCountOnOldestDate: 0,
-              };
-            
-              nextState.activityCountOnOldestDate = (nextState.activities.byDay[Object.keys(nextState.activities.byDay)[Object.keys(nextState.activities.byDay).length - 1]] || []).length
-              return nextState;
-            });
+          takeLatestActivities(datamartId, identifierType, identifierId, {...params, limit: params.limit + 1})
+            .then(extendedResponse => {
+                this.setState(prevState => {
+                  const newData = dataSourceHasChanged
+                    ? response.data
+                    : prevState.activities.items.concat(this.removeDuplicatesFromResponse(response.data, prevState.activities.items));
+                  const nextState = {
+                    activities: {
+                      ...prevState.activities,
+                      isLoading: false,
+                      hasItems:
+                        response.count !== extendedResponse.count,
+                      items: newData,
+                      byDay: this.groupByDate(newData, '$ts'),
+                    },
+                    nextDate:
+                    response.count !== extendedResponse.count &&
+                      response.data &&
+                      response.data[response.data.length - 1]
+                        ? moment(
+                            response.data[response.data.length - 1].$ts,
+                          ).add(1, 'day').format('YYYY-MM-DD')
+                        : undefined,
+                    activityCountOnOldestDate: 0,
+                  };
+                
+                  nextState.activityCountOnOldestDate = (nextState.activities.byDay[Object.keys(nextState.activities.byDay)[Object.keys(nextState.activities.byDay).length - 1]] || []).length
+                  return nextState;
+                });
+              });
           })
           .catch(err => {
             this.setState(prevState => {
