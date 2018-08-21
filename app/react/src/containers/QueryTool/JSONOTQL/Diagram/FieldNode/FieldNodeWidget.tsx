@@ -11,7 +11,6 @@ import { FieldNodeFormDataValues, FORM_ID } from '../../Edit/domain';
 import { compose } from 'recompose';
 import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
-import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
 import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import { FormattedMessage } from 'react-intl';
@@ -23,7 +22,6 @@ interface FieldNodeWidgetProps {
   treeNodeOperations: TreeNodeOperations;
   lockGlobalInteraction: (lock: boolean) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
-  query: ObjectTreeExpressionNodeShape | undefined
 }
 
 interface MapStateToProps {
