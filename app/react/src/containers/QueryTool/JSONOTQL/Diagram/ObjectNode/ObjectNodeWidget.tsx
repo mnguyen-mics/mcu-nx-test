@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
+import { DiagramEngine } from 'storm-react-diagrams';
 import { compose } from 'recompose';
 import ObjectNodeModel from './ObjectNodeModel';
 import { WindowBodyPortal } from '../../../../../components';
@@ -20,6 +20,7 @@ import { frequencyModeMessageMap } from '../../messages';
 import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 
 interface ObjectNodeWidgetProps {
   node: ObjectNodeModel;
@@ -200,42 +201,9 @@ class ObjectNodeWidget extends React.Component<Props, State> {
         }}
       >
         {renderedObjectNode}
-        <div
-            style={{
-              position: 'absolute',
-              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
-              left: 0,
-            }}
-          >
-            <PortWidget name="left" node={this.props.node} />
-          </div>
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
-            }}
-          >
-            <PortWidget name="top" node={this.props.node} />
-          </div>
-          <div
-            style={{
-              position: 'absolute',
-              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
-              left: (node.getSize().width - node.getSize().borderWidth / 2),
-            }}
-          >
-            <PortWidget name="right" node={this.props.node} />
-          </div>
-          <div
-            style={{
-              position: 'absolute',
-              top: (node.getSize().height - node.getSize().borderWidth / 2),
-              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
-            }}
-          >
-            <PortWidget name="bottom" node={this.props.node} />
-          </div>
+        
+        <FourAnchorPortWidget node={node} />
+        
         {this.state.focus && (
           <WindowBodyPortal>
             <div className="query-builder">

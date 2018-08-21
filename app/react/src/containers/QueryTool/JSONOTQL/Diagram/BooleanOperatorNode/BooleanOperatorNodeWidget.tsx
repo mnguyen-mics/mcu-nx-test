@@ -8,6 +8,7 @@ import WindowBodyPortal from '../../../../../components/WindowBodyPortal';
 import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import { compose } from 'recompose';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 
 const addinTarget = {
   canDrop() {
@@ -108,42 +109,9 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
           onClick={onClick}
         >
           {node.objectOrGroupNode.boolean_operator}
-          <div
-            style={{
-              position: 'absolute',
-              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
-              left: 0,
-            }}
-          >
-            <PortWidget name="left" node={this.props.node} />
-          </div>
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
-            }}
-          >
-            <PortWidget name="top" node={this.props.node} />
-          </div>
-          <div
-            style={{
-              position: 'absolute',
-              top: (node.getSize().height + node.getSize().borderWidth / 2) / 2,
-              left: (node.getSize().width - node.getSize().borderWidth / 2),
-            }}
-          >
-            <PortWidget name="right" node={this.props.node} />
-          </div>
-          <div
-            style={{
-              position: 'absolute',
-              top: (node.getSize().height - node.getSize().borderWidth / 2),
-              left: (node.getSize().width + node.getSize().borderWidth / 2) / 2,
-            }}
-          >
-            <PortWidget name="bottom" node={this.props.node} />
-          </div>
+          
+          <FourAnchorPortWidget node={node} />
+
         </span>
 
         {this.state.focus && (
