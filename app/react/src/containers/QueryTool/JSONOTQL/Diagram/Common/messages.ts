@@ -18,4 +18,21 @@ export default defineMessages({
     defaultMessage: 'Group'
   },
 
+  AND: {
+    id: 'querytool.boolean.and',
+    defaultMessage: 'And'
+  },
+  AND_NOT: {
+    id: 'querytool.boolean.and_not',
+    defaultMessage: 'And Not'
+  },
+  OR: {
+    id: 'querytool.boolean.or',
+    defaultMessage: 'Or'
+  },
+  OR_NOT: {
+    id: 'querytool.boolean.or_not',
+    defaultMessage: 'Or Not'
+  },
+
 })

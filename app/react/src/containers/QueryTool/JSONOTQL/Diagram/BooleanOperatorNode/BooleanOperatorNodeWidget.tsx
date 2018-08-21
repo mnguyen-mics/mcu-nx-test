@@ -7,15 +7,18 @@ import { TreeNodeOperations } from '../../domain';
 import WindowBodyPortal from '../../../../../components/WindowBodyPortal';
 import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import { compose } from 'recompose';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import { FormattedMessage } from 'react-intl';
 import messages from '../Common/messages';
+import { QueryBooleanOperator } from '../../../../../models/datamart/graphdb/QueryDocument';
 
 const addinTarget = {
   canDrop() {
-    return false
-   },
+    return false;
+  },
 };
 
 interface DroppedItemProps {
@@ -30,7 +33,11 @@ interface BooleanOperatorNodeWidgetProps {
   lockGlobalInteraction: (lock: boolean) => void;
 }
 
-type Props = DroppedItemProps & BooleanOperatorNodeWidgetProps & InjectedThemeColorsProps;
+type OperatorName = 'AND' | 'OR' | 'AND_NOT' | 'OR_NOT';
+
+type Props = DroppedItemProps &
+  BooleanOperatorNodeWidgetProps &
+  InjectedThemeColorsProps;
 interface State {
   hover: boolean;
   focus: boolean;
@@ -55,14 +62,17 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
     this.left = viewportOffset ? viewportOffset.left : 0;
   };
 
-  changeBooleanOperator = (operator: 'AND' | 'OR', negation: boolean) => () => {
+  changeBooleanOperator = (operator: {
+    booleanOperator: QueryBooleanOperator;
+    negation: boolean;
+  }) => () => {
     const { node, treeNodeOperations, lockGlobalInteraction } = this.props;
     lockGlobalInteraction(false);
     this.setState({ focus: false });
     return treeNodeOperations.updateNode(node.treeNodePath, {
       ...node.objectOrGroupNode,
-      negation: negation,
-      boolean_operator: operator,
+      negation: operator.negation,
+      boolean_operator: operator.booleanOperator,
     });
   };
 
@@ -90,130 +100,130 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
     let backgroundColor = '#ffffff';
 
     if (this.state.hover) {
-      backgroundColor = node.getColor()
-    } 
+      backgroundColor = node.getColor();
+    }
 
     const opacity = isDragging ? 0.3 : 1;
 
-    return connectDropTarget &&
-    connectDropTarget(
-      <div id={this.id} ref={setRef} style={{opacity}}>
-        <span
-          className="boolean-node"
-          style={{
-            ...node.getSize(),
-            backgroundColor: backgroundColor,
-            color: this.state.hover ? '#ffffff' : node.getColor(),
-            borderColor: node.getColor(),
-          }}
-          onMouseEnter={onHover('enter')}
-          onMouseLeave={onHover('leave')}
-          onClick={onClick}
-        >
-          {node.objectOrGroupNode.boolean_operator}
-          
-          <FourAnchorPortWidget node={node} />
+    const operators: {
+      readonly [key in OperatorName]: {
+        booleanOperator: QueryBooleanOperator;
+        negation: boolean;
+      }
+    } = {
+      AND: { booleanOperator: 'AND', negation: false },
+      AND_NOT: { booleanOperator: 'AND', negation: true },
+      OR: { booleanOperator: 'OR', negation: false },
+      OR_NOT: { booleanOperator: 'OR', negation: true },
+    };
 
-        </span>
+    return (
+      connectDropTarget &&
+      connectDropTarget(
+        <div id={this.id} ref={setRef} style={{ opacity }}>
+          <span
+            className="boolean-node"
+            style={{
+              ...node.getSize(),
+              backgroundColor: backgroundColor,
+              color: this.state.hover ? '#ffffff' : node.getColor(),
+              borderColor: node.getColor(),
+            }}
+            onMouseEnter={onHover('enter')}
+            onMouseLeave={onHover('leave')}
+            onClick={onClick}
+          >
+            {node.objectOrGroupNode.boolean_operator}
 
-        {this.state.focus && (
-          <WindowBodyPortal>
-            <div className="query-builder">
-              <div
-                onClick={onClick}
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'black',
-                  zIndex: 1000,
-                  opacity: 0.6,
-                }}
-              />
-              <span
-                className="boolean-node"
-                style={{
-                  ...node.getSize(),
-                  backgroundColor: node.getColor(),
-                  color: '#ffffff',
-                  borderColor: node.getColor(),
-                  top: this.top - node.getSize().height * ((1 - zoomRatio) / 2),
-                  left:
-                    this.left - node.getSize().width * ((1 - zoomRatio) / 2),
-                  position: 'absolute',
-                  zIndex: 1002,
-                  transform: `scale(${zoomRatio})`,
-                }}
-              >
-                {node.objectOrGroupNode.boolean_operator}
-              </span>
-              <CSSTransition
-                timeout={500}
-                classNames={'fade'}
-                in={this.state.focus}
-              >
+            <FourAnchorPortWidget node={node} />
+          </span>
+
+          {this.state.focus && (
+            <WindowBodyPortal>
+              <div className="query-builder">
                 <div
-                  className="boolean-menu"
+                  onClick={onClick}
                   style={{
-                    top: this.top,
-                    left: this.left + node.getSize().width * zoomRatio,
-                    zIndex: 1001,
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'black',
+                    zIndex: 1000,
+                    opacity: 0.6,
+                  }}
+                />
+                <span
+                  className="boolean-node"
+                  style={{
+                    ...node.getSize(),
+                    backgroundColor: node.getColor(),
+                    color: '#ffffff',
+                    borderColor: node.getColor(),
+                    top:
+                      this.top - node.getSize().height * ((1 - zoomRatio) / 2),
+                    left:
+                      this.left - node.getSize().width * ((1 - zoomRatio) / 2),
+                    position: 'absolute',
+                    zIndex: 1002,
+                    transform: `scale(${zoomRatio})`,
                   }}
                 >
+                  {node.objectOrGroupNode.boolean_operator}
+                </span>
+                <CSSTransition
+                  timeout={500}
+                  classNames={'fade'}
+                  in={this.state.focus}
+                >
                   <div
-                    onClick={this.changeBooleanOperator(
-                      node.objectOrGroupNode.boolean_operator === 'AND'
-                        ? 'OR'
-                        : 'AND',
-                      false,
-                    )}
-                    className="boolean-menu-item"
+                    className="boolean-menu"
+                    style={{
+                      top: this.top,
+                      left: this.left + node.getSize().width * zoomRatio,
+                      zIndex: 1001,
+                    }}
                   >
-                    {node.objectOrGroupNode.boolean_operator === 'AND'
-                      ? 'OR'
-                      : 'AND'}
+                    {
+                      Object.keys(operators)
+                      .filter((opName: OperatorName) => {
+                        return (
+                          operators[opName].booleanOperator !==
+                            this.props.node.objectOrGroupNode
+                              .boolean_operator ||
+                          operators[opName].negation !==
+                            (this.props.node.objectOrGroupNode.negation ||
+                              false)
+                        );
+                      })
+                      .map((opName: OperatorName) => {
+                        return (
+                          <div
+                            onClick={this.changeBooleanOperator(
+                              operators[opName]
+                            )}
+                            className="boolean-menu-item"
+                            key={opName}
+                          >
+                            <FormattedMessage {...messages[opName]} />
+                          </div>
+                        );
+                      })
+                    }
+                    <div
+                      onClick={this.removeGroup}
+                      className="boolean-menu-item"
+                    >
+                      <FormattedMessage {...messages.remove} />
+                    </div>
                   </div>
-                  <div
-                    onClick={this.changeBooleanOperator(
-                      'AND',
-                      node.objectOrGroupNode.boolean_operator === 'AND' &&
-                      node.objectOrGroupNode.negation === true
-                        ? false
-                        : true,
-                    )}
-                    className="boolean-menu-item"
-                  >
-                    {node.objectOrGroupNode.boolean_operator === 'AND' &&
-                    node.objectOrGroupNode.negation === true
-                      ? 'AND'
-                      : 'AND NOT'}
-                  </div>
-                  <div
-                    onClick={this.changeBooleanOperator(
-                      'OR',
-                      node.objectOrGroupNode.boolean_operator === 'OR' &&
-                      node.objectOrGroupNode.negation === true
-                        ? false
-                        : true,
-                    )}
-                    className="boolean-menu-item"
-                  >
-                    {node.objectOrGroupNode.boolean_operator === 'OR' &&
-                    node.objectOrGroupNode.negation === true
-                      ? 'OR'
-                      : 'OR NOT'}
-                  </div>
-                  <div onClick={this.removeGroup} className="boolean-menu-item">
-                    <FormattedMessage {...messages.remove} />
-                  </div>
-                </div>
-              </CSSTransition>
-            </div>
-          </WindowBodyPortal>
-        )}
-      </div>
+                </CSSTransition>
+              </div>
+            </WindowBodyPortal>
+          )}
+        </div>,
+      )
     );
   }
 }
@@ -226,8 +236,8 @@ export default compose<Props, BooleanOperatorNodeWidgetProps>(
     addinTarget,
     (connect, monitor) => ({
       connectDropTarget: connect.dropTarget(),
-      isDragging: !!monitor.getItemType()
+      isDragging: !!monitor.getItemType(),
     }),
   ),
-  injectThemeColors
+  injectThemeColors,
 )(BooleanOperatorNodeWidget);
