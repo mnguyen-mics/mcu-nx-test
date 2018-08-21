@@ -1,7 +1,7 @@
 import * as React from 'react';
 import cuid from 'cuid';
 import { CSSTransition } from 'react-transition-group';
-import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
+import { DiagramEngine } from 'storm-react-diagrams';
 import BooleanOperatorNodeModel from './BooleanOperatorNodeModel';
 import { TreeNodeOperations } from '../../domain';
 import WindowBodyPortal from '../../../../../components/WindowBodyPortal';
@@ -146,22 +146,6 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
                 }}
               >
                 {node.objectOrGroupNode.boolean_operator}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top:
-                      ((node.getSize().height +
-                        node.getSize().borderWidth / 2) /
-                        2) *
-                      zoomRatio,
-                    left:
-                      ((node.getSize().width + node.getSize().borderWidth / 2) /
-                        2) *
-                      zoomRatio,
-                  }}
-                >
-                  <PortWidget name="center" node={this.props.node} />
-                </div>
               </span>
               <CSSTransition
                 timeout={500}
