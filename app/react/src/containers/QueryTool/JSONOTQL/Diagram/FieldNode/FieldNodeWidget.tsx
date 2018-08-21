@@ -14,6 +14,8 @@ import { connect } from 'react-redux';
 import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
 import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
+import { FormattedMessage } from 'react-intl';
+import messages from '../Common/messages';
 
 interface FieldNodeWidgetProps {
   node: FieldNodeModel;
@@ -294,10 +296,10 @@ class FieldNodeWidget extends React.Component<Props, State> {
                   }}
                 >
                   <div onClick={triggerEdit} className="boolean-menu-item">
-                    Edit
+                    <FormattedMessage {...messages.edit} />
                   </div>
                   <div onClick={this.removeNode} className="boolean-menu-item">
-                    Remove
+                    <FormattedMessage {...messages.remove} />
                   </div>
                 </div>
               </div>

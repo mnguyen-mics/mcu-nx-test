@@ -15,12 +15,13 @@ import {
   generateFormDataFromObjectNode,
   FrequencyConverter,
 } from '../../Edit/domain';
-import { injectIntl, InjectedIntlProps,  } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage,  } from 'react-intl';
 import { frequencyModeMessageMap } from '../../messages';
 import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
+import messages from '../Common/messages';
 
 interface ObjectNodeWidgetProps {
   node: ObjectNodeModel;
@@ -252,10 +253,10 @@ class ObjectNodeWidget extends React.Component<Props, State> {
                 {/* Uncomment when feature is ready */}
                 {/* <div onClick={this.toggleCollapsed} className='boolean-menu-item'>Collapse</div> */}
                 <div onClick={this.editNode} className="boolean-menu-item">
-                  Edit
+                  <FormattedMessage {...messages.edit} />
                 </div>
                 <div onClick={this.removeNode} className="boolean-menu-item">
-                  Remove
+                <FormattedMessage {...messages.remove} />
                 </div>
               </div>
             </div>

@@ -25,6 +25,8 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
+import messages from '../Common/messages';
+import { FormattedMessage } from 'react-intl';
 
 interface PlusNodeProps {
   node: PlusNodeModel;
@@ -280,14 +282,14 @@ class PlusNodeWidget extends React.Component<
                       onClick={this.addObjectNode}
                       className="boolean-menu-item"
                     >
-                      Object
+                      <FormattedMessage {...messages.object} />
                     </div>
                   )}
                   {(node.root ||
                     (node.objectOrGroupNode &&
                       node.objectOrGroupNode.type === 'GROUP')) && (
                     <div onClick={this.addGroup} className="boolean-menu-item">
-                      Group
+                      <FormattedMessage {...messages.group} />
                     </div>
                   )}
                 </div>

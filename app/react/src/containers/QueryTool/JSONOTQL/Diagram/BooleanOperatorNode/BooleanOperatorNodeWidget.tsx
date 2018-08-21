@@ -9,6 +9,8 @@ import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import { compose } from 'recompose';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
+import { FormattedMessage } from 'react-intl';
+import messages from '../Common/messages';
 
 const addinTarget = {
   canDrop() {
@@ -204,7 +206,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
                       : 'OR NOT'}
                   </div>
                   <div onClick={this.removeGroup} className="boolean-menu-item">
-                    Remove
+                    <FormattedMessage {...messages.remove} />
                   </div>
                 </div>
               </CSSTransition>
