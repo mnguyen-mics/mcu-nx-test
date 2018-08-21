@@ -94,13 +94,13 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           prevState => ({
             fetchingObjectTypes: false,
             objectTypes: objectTypes
-              .map(OType => ({
-                ...OType,
-                fields: OType.fields.sort((fieldA, fieldB) =>
+              .map(oType => ({
+                ...oType,
+                fields: oType.fields.sort((fieldA, fieldB) =>
                   fieldA.name.localeCompare(fieldB.name),
                 ),
               }))
-              .sort((OtypeA, OTypeB) => OtypeA.name.localeCompare(OTypeB.name)),
+              .sort((otypeA, oTypeB) => otypeA.name.localeCompare(oTypeB.name)),
             queryHistory: {
               past: [],
               present: this.props.queryDocument
@@ -279,6 +279,17 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
     const enableUndo = this.state.queryHistory.past.length > 0;
     const enableRedo = this.state.queryHistory.future.length > 0;
 
+    const computedSchema =  objectTypes.length
+    ? computeSchemaModel(
+        objectTypes,
+        {
+          ...objectTypes.find(ot => ot.name === 'UserPoint')!,
+          closestParentType: '',
+        },
+        '',
+      )
+    : undefined
+
     return (
       <Layout className={editionLayout ? 'edit-layout' : ''}>
         {renderActionBar(
@@ -293,16 +304,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           className={`mcs-content-container ${editionLayout ? 'flex-basic' : ''}`}
           style={{ padding: 0, overflow: 'hidden' }}
         >
-          <JSONQLBuilderContext.Provider value={{ query: query as any, schema: objectTypes.length
-                  ? computeSchemaModel(
-                      objectTypes,
-                      {
-                        ...objectTypes.find(ot => ot.name === 'UserPoint')!,
-                        closestParentType: '',
-                      },
-                      '',
-                    )
-                  : undefined as any }}>
+          <JSONQLBuilderContext.Provider value={{ query: query, schema: computedSchema }}>
             <JSONQLBuilder
               objectTypes={objectTypes}
               query={query}
@@ -319,18 +321,6 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
               queryResult={queryResult}
               datamartId={this.props.datamartId}
               organisationId={organisationId}
-              computedSchema={
-                objectTypes.length
-                  ? computeSchemaModel(
-                      objectTypes,
-                      {
-                        ...objectTypes.find(ot => ot.name === 'UserPoint')!,
-                        closestParentType: '',
-                      },
-                      '',
-                    )
-                  : undefined
-              }
             />
           </JSONQLBuilderContext.Provider>
         </Layout.Content>

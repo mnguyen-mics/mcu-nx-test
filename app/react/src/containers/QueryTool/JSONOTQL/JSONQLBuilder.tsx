@@ -29,7 +29,6 @@ import {
   createLink,
   toNodeList,
   buildLinkList,
-  SchemaItem,
 } from './domain';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import CounterList from './CounterList';
@@ -38,6 +37,7 @@ import SchemaVizualizer from './SchemaVisualizer/SchemaVizualizer';
 import { ButtonStyleless, McsIcon } from '../../../components';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import { JSONQLBuilderContext } from './JSONQLBuilderContext';
 
 export interface QueryResult {
   loading: boolean;
@@ -56,7 +56,6 @@ export interface JSONQLBuilderProps {
   runQuery: () => void;
   datamartId: string;
   organisationId: string;
-  computedSchema?: SchemaItem;
 }
 
 interface State {
@@ -303,7 +302,6 @@ class JSONQLBuilder extends React.Component<Props, State> {
       query,
       datamartId,
       organisationId,
-      computedSchema,
     } = this.props;
 
     const { viewSchema } = this.state;
@@ -340,7 +338,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
           </div>
         </Col>
         <Col span={viewSchema ? 6 : 24} className="schema-visualizer">
-          <SchemaVizualizer data={computedSchema} />
+          <JSONQLBuilderContext.Consumer>{({ schema }) => <SchemaVizualizer schema={schema} />}</JSONQLBuilderContext.Consumer>
         </Col>
       </div>
     );

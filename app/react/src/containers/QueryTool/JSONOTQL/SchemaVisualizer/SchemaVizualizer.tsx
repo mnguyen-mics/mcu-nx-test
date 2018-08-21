@@ -6,7 +6,7 @@ import FieldNode from './FieldNode';
 const TreeNode = Tree.TreeNode;
 
 export interface SchemaVizualizerProps {
-  data?: SchemaItem;
+  schema?: SchemaItem;
 }
 
 export default class SchemaVizualizer extends React.Component<
@@ -14,8 +14,7 @@ export default class SchemaVizualizer extends React.Component<
   any
 > {
   render() {
-    const { data } = this.props;
-
+    const { schema } = this.props;
     const loop = (gData: SchemaItem, objectType?: string) =>
       gData &&
       gData.fields.map(
@@ -35,6 +34,6 @@ export default class SchemaVizualizer extends React.Component<
         },
       );
 
-    return data ? <Tree>{loop(data)}</Tree> : null;
+    return schema ? (<Tree>{loop(schema)}</Tree>) : null;
   }
 }
