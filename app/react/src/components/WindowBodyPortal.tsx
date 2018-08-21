@@ -2,37 +2,7 @@
 import * as React from 'react';
 import {createPortal} from 'react-dom';
 
-// export default createReactClass({
-
-//   componentDidMount: function() {
-//     this.popup = document.createElement("div");
-//     document.body.appendChild(this.popup);
-//     this._renderLayer();
-//   },
-
-//   componentDidUpdate: function() {
-//     this._renderLayer();
-//   },
-
-
-//   componentWillUnmount: function() {
-//     DOM.unmountComponentAtNode(this.popup);
-//     document.body.removeChild(this.popup);
-//   },
-
-
-//   _renderLayer: function() {
-//     DOM.render(this.props.children, this.popup);
-//   },
-
-//   render: function() {
-//     // Render a placeholder
-//     return <div />
-//   }
-
-// });
-
-export default class Modal extends React.Component<any> {
+export default class WindowBodyPortal extends React.Component<any> {
   el = document.createElement('div')
 
   constructor(props: any) {

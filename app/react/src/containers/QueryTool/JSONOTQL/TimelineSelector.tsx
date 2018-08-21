@@ -51,7 +51,7 @@ class TimelineSelector extends React.Component<Props, State> {
     const { organisationId, datamartId, query, stale } = this.props;
     const { results } = this.state;
     const queryDocument: QueryDocument = {
-      operations: [{ directives: [{name: 'select'}], selections: [] }],
+      operations: [{ directives: [{name: 'select'}], selections: [{ name: 'id' }] }],
       from: 'UserPoint',
       where: query,
     };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { McsIcon, ButtonStyleless, RenderInBody } from '../../../components';
+import { McsIcon, ButtonStyleless, WindowBodyPortal } from '../../../components';
 import { Icon } from 'antd';
 
 export interface UndoRedoProps {
@@ -60,7 +60,7 @@ export default class BuilderMenu extends React.Component<
           </ButtonStyleless>
         </div>
         {viewHelp && (
-          <RenderInBody>
+          <WindowBodyPortal>
             <div className="overview-modal">
               <div onClick={openCloseModal} className="overlay" />
               <div className="mcs-modal">
@@ -88,7 +88,7 @@ export default class BuilderMenu extends React.Component<
                 </div>
               </div>
             </div>
-          </RenderInBody>
+          </WindowBodyPortal>
         )}
       </div>
     );

@@ -3,7 +3,7 @@ import cuid from 'cuid';
 import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import FieldNodeModel from './FieldNodeModel';
 import FieldNodeComparisonRenderer from './FieldNodeComparisonRenderer';
-import { RenderInBody, McsIcon, ButtonStyleless } from '../../../../../components';
+import { WindowBodyPortal, McsIcon, ButtonStyleless } from '../../../../../components';
 import { TreeNodeOperations } from '../../domain';
 import FieldNodeFormWrapper from '../../Edit/Sections/Field/FieldNodeFormWrapper';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
@@ -216,9 +216,9 @@ class FieldNodeWidget extends React.Component<Props, State> {
             onSubmit={onSubmit}
             idToAttachDropDowns={this.wrapperId}
           />
-          <RenderInBody>
+          <WindowBodyPortal>
             <div ref={this.setSelectRef} id={this.wrapperId} />
-          </RenderInBody>
+          </WindowBodyPortal>
         </div>
       );
     };
@@ -281,7 +281,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
             <PortWidget name="bottom" node={this.props.node} />
           </div>
           {this.state.focus && (
-            <RenderInBody>
+            <WindowBodyPortal>
               <div className="query-builder full-screen">
                 <div
                   onClick={onFocus}
@@ -335,7 +335,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
                   </div>
                 </div>
               </div>
-            </RenderInBody>
+            </WindowBodyPortal>
           )}
         </div>
       );

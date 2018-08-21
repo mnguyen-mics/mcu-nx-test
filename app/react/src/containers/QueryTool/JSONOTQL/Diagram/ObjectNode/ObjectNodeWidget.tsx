@@ -3,7 +3,7 @@ import cuid from 'cuid';
 import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import { compose } from 'recompose';
 import ObjectNodeModel from './ObjectNodeModel';
-import { RenderInBody } from '../../../../../components';
+import { WindowBodyPortal } from '../../../../../components';
 import { TreeNodeOperations, DragAndDropInterface, computeSchemaPathFromQueryPath, computeAdditionalNode, SchemaItem } from '../../domain';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
@@ -237,7 +237,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
             <PortWidget name="bottom" node={this.props.node} />
           </div>
         {this.state.focus && (
-          <RenderInBody>
+          <WindowBodyPortal>
             <div className="query-builder">
               <div
                 onClick={onFocus}
@@ -291,7 +291,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
                 </div>
               </div>
             </div>
-          </RenderInBody>
+          </WindowBodyPortal>
         )}
       </div>
     );

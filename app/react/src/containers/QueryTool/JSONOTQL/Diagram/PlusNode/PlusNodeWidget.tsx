@@ -11,7 +11,7 @@ import {
   computeAdditionalNode,
   SchemaItem,
 } from '../../domain';
-import { McsIcon, RenderInBody } from '../../../../../components';
+import { McsIcon, WindowBodyPortal } from '../../../../../components';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import ObjectNodeForm, { ObjectNodeFormProps } from '../../Edit/ObjectNodeForm';
 import {
@@ -263,7 +263,7 @@ class PlusNodeWidget extends React.Component<
           </div>
 
           {this.state.focus && (
-            <RenderInBody>
+            <WindowBodyPortal>
               <div className="query-builder">
                 <div
                   onClick={handleClickOnPlus}
@@ -326,7 +326,7 @@ class PlusNodeWidget extends React.Component<
                   )}
                 </div>
               </div>
-            </RenderInBody>
+            </WindowBodyPortal>
           )}
         </div>,
       )

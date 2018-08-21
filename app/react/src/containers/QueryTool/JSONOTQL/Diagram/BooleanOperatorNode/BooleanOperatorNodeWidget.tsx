@@ -4,7 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import BooleanOperatorNodeModel from './BooleanOperatorNodeModel';
 import { TreeNodeOperations } from '../../domain';
-import RenderInBody from '../../../../../components/RenderInBody';
+import WindowBodyPortal from '../../../../../components/WindowBodyPortal';
 import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import { compose } from 'recompose';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
@@ -147,7 +147,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
         </span>
 
         {this.state.focus && (
-          <RenderInBody>
+          <WindowBodyPortal>
             <div className="query-builder">
               <div
                 onClick={onClick}
@@ -257,7 +257,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
                 </div>
               </CSSTransition>
             </div>
-          </RenderInBody>
+          </WindowBodyPortal>
         )}
       </div>
     );
