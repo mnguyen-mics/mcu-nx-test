@@ -37,7 +37,6 @@ import AudienceSegmentService from '../../../../../../services/AudienceSegmentSe
 import {
   FORM_ID,
   FieldNodeFormData,
-  ObjectNodeFormData,
   SUPPORTED_FIELD_TYPES,
 } from '../../domain';
 import messages from '../../messages';
@@ -65,8 +64,10 @@ export interface FieldNodeFormProps {
   idToAttachDropDowns?: string;
 }
 
+interface FormValues { fieldNodeForm: FieldNodeFormData[] | FieldNodeFormData }
+
 interface MapStateToProps {
-  formValues: ObjectNodeFormData;
+  formValues:  FormValues;
 }
 
 type Props = FieldNodeFormProps &
@@ -91,16 +92,12 @@ type FieldComparisonGenerator = ComparisonValues<any> & {
 class FieldNodeForm extends React.Component<Props> {
   componentDidMount() {
     // if no default value compute it
-    const { formValues, expressionIndex, formChange, name } = this.props;
+    const {  formValues, expressionIndex, formChange, name } = this.props;
 
     const field = this.getField(formValues, expressionIndex);
-    if (
-      formValues.fieldNodeForm &&
-      (((formValues.fieldNodeForm as any).field &&
-        !(formValues.fieldNodeForm as any).comparison) ||
-        (formValues.fieldNodeForm.length &&
-          !formValues.fieldNodeForm[expressionIndex!].comparison))
-    ) {
+
+
+    if (field && !field.comparison) {
       const fieldName = field ? field.field : undefined;
       const fieldType = this.getSelectedFieldType(fieldName);
       formChange(
@@ -136,19 +133,20 @@ class FieldNodeForm extends React.Component<Props> {
   }
 
   getField = (
-    formValues: ObjectNodeFormData,
+    formValues: FormValues,
     index?: number,
   ): FieldNodeFormData | undefined => {
-    if (index !== undefined) {
-      return formValues.fieldNodeForm &&
-        formValues.fieldNodeForm.length &&
-        formValues.fieldNodeForm[index]
-        ? formValues.fieldNodeForm[index]
-        : undefined;
+    
+    const { fieldNodeForm } = formValues;
+
+    if (Array.isArray(fieldNodeForm)) {
+      if (index !== undefined && fieldNodeForm[index]) {
+        return fieldNodeForm[index]
+      }
+    } else {
+      return fieldNodeForm
     }
-    return formValues.fieldNodeForm
-      ? ((formValues as any).fieldNodeForm as FieldNodeFormData)
-      : undefined;
+    return undefined
   };
 
   getAvailableFields = (): OptionProps[] => {

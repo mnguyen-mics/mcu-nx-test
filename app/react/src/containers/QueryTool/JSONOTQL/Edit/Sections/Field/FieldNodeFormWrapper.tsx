@@ -7,13 +7,11 @@ import {
   ConfigProps,
   reduxForm,
   InjectedFormProps,
-  getFormValues,
 } from 'redux-form';
 import { FieldNodeFormDataValues, FORM_ID } from '../../domain';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import FieldNodeForm from './FieldNodeForm';
 import { Omit } from '../../../../../../utils/Types';
 
@@ -25,18 +23,13 @@ export interface FieldNodeFormWrapperProps
   idToAttachDropDowns?: string;
 }
 
-interface MapStateToProps {
-  formValues: FieldNodeFormDataValues;
-}
-
 type Props = InjectedFormProps<
   FieldNodeFormDataValues,
   FieldNodeFormWrapperProps
 > &
   FieldNodeFormWrapperProps &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }> &
-  MapStateToProps;
+  RouteComponentProps<{ organisationId: string }>;
 
 
 class FieldNodeFormWrapper extends React.Component<Props, any> {
@@ -76,14 +69,9 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  formValues: getFormValues(FORM_ID)(state),
-});
-
 export default compose<Props, FieldNodeFormWrapperProps>(
   injectIntl,
   withRouter,
-  connect(mapStateToProps),
   reduxForm({
     form: FORM_ID,
     enableReinitialize: true,
