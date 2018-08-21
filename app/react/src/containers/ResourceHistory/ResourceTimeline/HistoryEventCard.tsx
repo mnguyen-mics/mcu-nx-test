@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import lodash from 'lodash';
 import moment from 'moment';
-import { HistoryEventShape, isHistoryUpdateEvent, isHistoryCreateEvent, isHistoryDeleteEvent, ResourceName } from '../../../models/resourceHistory/ResourceHistory';
+import { HistoryEventShape, isHistoryUpdateEvent, isHistoryCreateEvent, isHistoryDeleteEvent } from '../../../models/resourceHistory/ResourceHistory';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router';
-import { Row, Icon, Col } from 'antd';
+import { Row, Icon } from 'antd';
 import { Card } from '../../../components/Card';
-import { McsIcon, ButtonStyleless } from '../../../components';
+import { ButtonStyleless } from '../../../components';
 import messages from './messages';
+import { FieldToMessageFormatMap } from './domain';
 
 interface HistoryEventCardProps {
   events: HistoryEventShape[];
-  resourceName: ResourceName;
+  messagesProps: FieldToMessageFormatMap;
 }
 
 type Props = HistoryEventCardProps &
@@ -28,22 +30,56 @@ class HistoryEventCard extends React.Component<Props, State> {
       showMore: false,
     };
   }
+  
+  renderField = (field: string) => {
+    const { messagesProps } = this.props;
+    const fieldToSnakeCase = lodash.snakeCase(field);
+    return messagesProps[fieldToSnakeCase]
+      ? <span className="name"><FormattedMessage {...messagesProps[fieldToSnakeCase].message} /></span>
+      : <span className="unknown-name"><FormattedMessage {...messages.unknownField} /></span>;
+  }
+
+  renderValue = (field: string, value: string) => {
+    const { messagesProps } = this.props;
+    const fieldToSnakeCase = lodash.snakeCase(field);
+
+    return value
+      ? <span className="value">
+          {messagesProps[fieldToSnakeCase].formatValue(value)}
+        </span>
+      : <span className="empty-value"><FormattedMessage {...messages.noValue} /></span>;
+  }
+
+  // formatValue = (messagesProps: FieldToMessageFormatMap, fieldToSnakeCase: string, value: string) => {
+  //   switch (messagesProps[fieldToSnakeCase].formattingFunction(value).type) {
+  //     case 'STRING':
+  //       return value;
+  //     case 'INTEGER':
+  //       return value;
+  //     case 'FLOAT':
+  //       return formatMetric(value, '0.00');
+  //     case 'MESSAGE':
+  //       return <FormattedMessage {...messagesProps[fieldToSnakeCase].formattingFunction(value).value}/>;
+  //   }
+  // }
 
   renderMultiEdit = (events: HistoryEventShape[]) => {
     return events.map(event => {
       return isHistoryUpdateEvent(event) &&
         <div className="mcs-fields-list-item">
-          <span className="name">{event.field_changed} </span>
-          from
-          <span className="value"> {event.old_value} </span>
-          to
-          <span className="value"> {event.new_value}</span>
+          <FormattedMessage
+            {...{...messages.fieldInMultiEditList, values: {
+              field: this.renderField(event.field_changed),
+              oldValue: this.renderValue(event.field_changed, event.old_value),
+              newValue: this.renderValue(event.field_changed, event.new_value),
+            }}}
+          />
         </div>
     });
   }
 
   render() {
-    const { events, resourceName } = this.props;
+    const { events, messagesProps } = this.props;
     const { showMore } = this.state;
 
     const toggleDetails = () => {
@@ -56,55 +92,82 @@ class HistoryEventCard extends React.Component<Props, State> {
       <Card>
         <Row className="section">
           {events.length > 1
-            ? <Col>
-              <div style={{float: 'left'}}>{`${events[0].user_identification.user_name} has edited several fields.`}</div>
-              <div className="section-cta">
-                <ButtonStyleless
-                  onClick={toggleDetails}
-                  className="mcs-card-inner-action"
-                >
-                  {!showMore ? (
-                    <span>
-                      <McsIcon type="chevron" />{' '}
-                      <FormattedMessage {...messages.expandEvents} />
-                    </span>
-                  ) : (
-                    <span>
-                      <McsIcon className="icon-inverted" type="chevron" />{' '}
-                      <FormattedMessage {...messages.reduceEvents} />
-                    </span>
-                  )}
-                </ButtonStyleless>
-              </div>
+            ? <Row>
+                <div style={{float: 'left'}}>
+                  <FormattedMessage
+                    {...{...messages.severalFieldsEdited, values: {
+                      userName: events[0].user_identification.user_name
+                    }}}
+                  />
+                </div>
+                <div className="section-cta">
+                  <ButtonStyleless
+                    onClick={toggleDetails}
+                    className="mcs-card-inner-action"
+                  >
+                    {!showMore ? (
+                      <span>
+                        <FormattedMessage {...messages.expandEvents} />
+                      </span>
+                    ) : (
+                      <span>
+                        <FormattedMessage {...messages.reduceEvents} />
+                      </span>
+                    )}
+                  </ButtonStyleless>
+                </div>
                 {showMore && (
                   <div className="mcs-fields-list">
                     {this.renderMultiEdit(events)}
                   </div>
                 )}
-              </Col>
+              </Row>
             : <div>
                 {events.map(event => {
                   return isHistoryCreateEvent(event)
-                    ? <div>{`${event.user_identification.user_name} created the ${resourceName}.`}</div>
+                    ? <div className="mcs-fields-list-item">
+                        <FormattedMessage
+                          {...{...messages.resourceCreated, values: {
+                            userName: event.user_identification.user_name,
+                            resourceName: <span className="name"><FormattedMessage {...messagesProps.historyResourceName.message} /></span>,
+                          }}}
+                        />
+                      </div>
                     : isHistoryUpdateEvent(event)
                       ? <div className="mcs-fields-list-item">
-                          {`${event.user_identification.user_name} changed `}
-                          <span className="name">{event.field_changed} </span>
-                          from
-                          <span className="value"> {event.old_value} </span>
-                          to
-                          <span className="value"> {event.new_value}</span>
+                          <FormattedMessage
+                            {...{...messages.singleFieldEdited, values: {
+                              userName: event.user_identification.user_name,
+                              field: this.renderField(event.field_changed),
+                              oldValue: this.renderValue(event.field_changed, event.old_value),
+                              newValue: this.renderValue(event.field_changed, event.new_value),
+                            }}}
+                          />
                         </div>
-                      : isHistoryDeleteEvent(event)
-                        ? <div>{`${event.user_identification.user_name}`}</div>
-                        : <div/>
+                      : isHistoryDeleteEvent(event) &&
+                        <div>
+                          <FormattedMessage
+                            {...{...messages.resourceDeleted, values: {
+                              userName: event.user_identification.user_name,
+                              resourceName: <span className="name"><FormattedMessage {...messagesProps.historyResourceName.message} /></span>,
+                            }}}
+                          />
+                        </div>
                 })}
               </div>
           }
         </Row>
-        <Row className="border-top sm-footer timed-footer text-left">
+        <Row style={{padding: '15px 0px 0px', fontWeight: 'bold',}} className="timed-footer text-left">
           <span>
-            <Icon type="clock-circle-o" /> {moment(events[0].timestamp).format("MMMM Do [at] HH:mm:ss")}
+            <Icon type="clock-circle-o" style={{paddingRight: '5px'}}/> 
+            <FormattedMessage
+              {...{...messages.date, values: {
+                day: moment(events[0].timestamp).format("Do"),
+                month: moment(events[0].timestamp).format("MMMM"),
+                time: moment(events[0].timestamp).format("HH:mm:ss"),
+              }}}
+            />
+            {/* {moment(events[0].timestamp).format("MMMM Do [at] HH:mm:ss")} */}
           </span>
         </Row>
       </Card>

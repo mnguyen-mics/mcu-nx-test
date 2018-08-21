@@ -1,21 +1,22 @@
 import * as React from 'react';
 import ActionBar from '../../../components/ActionBar';
 import { McsIcon } from '../../../components';
+import { FieldToMessageFormatMap } from './domain';
 
 export interface ResourceTimelineActionBarProps {
-  resourceName: string;
   handleClose: () => void;
+  messagesProps: FieldToMessageFormatMap;
 }
 
 export default class ResourceTimelineActionBar extends React.Component<ResourceTimelineActionBarProps, any> {
   render() {
     const {
-      resourceName,
       handleClose,
+      messagesProps,
     } = this.props;
 
     return (
-      <ActionBar edition={true} paths={[{name: `${resourceName} History`},]}>
+      <ActionBar edition={true} paths={[{name: {...messagesProps.historyTitle.message}},]}>
           <McsIcon
             type="close"
             className="close-icon"

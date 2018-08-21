@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Col, Spin, Timeline, Icon } from 'antd';
-import cuid from 'cuid';
 import lodash from 'lodash';
 import moment from 'moment';
 import { InjectedIntlProps, FormattedMessage, injectIntl } from "react-intl";
@@ -12,6 +11,7 @@ import { McsIcon } from '../../../components';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import HistoryEventCard from './HistoryEventCard';
+import { FieldToMessageFormatMap } from './domain';
 
 export interface Events {
   isLoading: boolean;
@@ -28,11 +28,13 @@ export interface Events {
 export interface ResourceTimelineProps {
   resourceName: ResourceName;
   resourceId: string;
+  messagesProps: FieldToMessageFormatMap;
 }
 
 interface State {
   events: Events;
   nextTime?: string;
+  eventCountOnOldestTime: number;
 }
 
 type Props = ResourceTimelineProps &
@@ -50,6 +52,7 @@ class ResourceTimeline extends React.Component<Props, State> {
         byDay: {},
         byTime: {},
       },
+      eventCountOnOldestTime: 0,
     };
   }
 
@@ -85,10 +88,10 @@ class ResourceTimeline extends React.Component<Props, State> {
     resourceName: ResourceName,
     resourceId: string,
   ) => {
-    const { nextTime } = this.state;
+    const { nextTime, eventCountOnOldestTime } = this.state;
     const params = nextTime
-      ? { resource_name: resourceName, resource_id: resourceId, to: nextTime }
-      : { resource_name: resourceName, resource_id: resourceId };
+      ? { resource_name: resourceName, resource_id: resourceId, limit: 10 + eventCountOnOldestTime, to: nextTime }
+      : { resource_name: resourceName, resource_id: resourceId, limit: 10 };
     this.setState(
       (prevState: any) => {
         const nextState = {
@@ -104,23 +107,39 @@ class ResourceTimeline extends React.Component<Props, State> {
           organisationId,
           params,
         )
-          .then(response => {
-            this.setState(prevState => {
-              const newData = prevState.events.items.concat(response.data.map(rhr => {
-                return rhr.events
-              }).reduce((x,y) => x.concat(y), []));
-              const nextState = {
-                events: {
-                  ...prevState.events,
-                  isLoading: false,
-                  hasItems: response.data.length === 10,
-                  items: newData,
-                  byDay: this.groupByDate(newData, 'timestamp'),
-                  byTime:  this.groupByTime(newData, 'timestamp')
-                },
-              };
-              return nextState;
-            });
+        .then(response => {
+          ResourceHistoryService.getResourceHistory(
+            organisationId,
+            {...params, limit: params.limit + 1},
+          )
+            .then(extendedResponse => {
+              this.setState(prevState => {
+                const newData = prevState.events.items.concat(response.data.slice(eventCountOnOldestTime).map(rhr => {
+                  return rhr.events
+                }).reduce((x,y) => x.concat(y), []));
+                const nextState = {
+                  events: {
+                    ...prevState.events,
+                    isLoading: false,
+                    hasItems: response.count !== extendedResponse.count,
+                    items: newData,
+                    byDay: this.groupByDate(newData, 'timestamp'),
+                    byTime:  this.groupByTime(newData, 'timestamp')
+                  },
+                  nextTime:
+                    response.count !== extendedResponse.count &&
+                    response.data &&
+                    response.data[response.data.length - 1]
+                      ? moment(
+                          response.data[response.data.length - 1].events[response.data[response.data.length - 1].events.length - 1].timestamp,
+                        ).format('x')
+                      : undefined,
+                  eventCountOnOldestTime: 0,
+                };
+                nextState.eventCountOnOldestTime = nextState.events.byTime[Object.keys(nextState.events.byTime)[Object.keys(nextState.events.byTime).length - 1]].length;
+                return nextState;
+              });
+            })
           })
           .catch(err => {
             this.setState(prevState => {
@@ -132,6 +151,7 @@ class ResourceTimeline extends React.Component<Props, State> {
                   byDay: {},
                   byTime: {},
                 },
+                eventCountOnOldestTime: 0,
               };
               return nextState;
             });
@@ -199,7 +219,7 @@ class ResourceTimeline extends React.Component<Props, State> {
   render() {
     const { events } = this.state;
 
-    const { resourceName } = this.props;
+    const { messagesProps } = this.props;
 
     const keys = Object.keys(events.byDay);
     return events.isLoading && !events.hasItems ? (
@@ -217,7 +237,7 @@ class ResourceTimeline extends React.Component<Props, State> {
 
           const dayToFormattedMessage = this.renderDate(day);
           return (
-            <div className="mcs-timeline" key={cuid()}>
+            <div className="mcs-timeline" key={day}>
               <Timeline.Item
                 dot={<Icon type="flag" className="mcs-timeline-dot" />}
               >
@@ -227,7 +247,7 @@ class ResourceTimeline extends React.Component<Props, State> {
                 Object.keys(eventsOnTime).map(time => {
                   return (
                     <Timeline.Item
-                      key={cuid()}
+                      key={`${day}_${time}`}
                       dot={
                         <McsIcon
                           type="status"
@@ -242,7 +262,7 @@ class ResourceTimeline extends React.Component<Props, State> {
                     >
                       <HistoryEventCard
                         events={eventsOnTime[time]}
-                        resourceName={resourceName}
+                        messagesProps={messagesProps}
                       />
                     </Timeline.Item>
                   );

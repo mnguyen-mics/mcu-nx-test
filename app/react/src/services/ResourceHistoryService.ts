@@ -12,6 +12,7 @@ export interface GetGenericHistoryOptions {
   user_id?: number;
   from?: string;
   to?: string;
+  limit?: number;
   result_size?: number;
 }
 

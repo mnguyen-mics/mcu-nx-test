@@ -32,8 +32,8 @@
         color: @info-color!important;
     }
     .mcs-fields-list {
-        display: block;
-        float: left;
+        padding-left: 10px;
+        text-align: left;
         margin-top: 20px;
         word-break: break-all;
     }
@@ -42,8 +42,17 @@
             color: @info-color!important;
             font-weight: bold;
         }
+        .unknown-name {
+            color: @warning-color;
+            font-weight: bold;
+        }
         .value {
             color: @info-color!important;
+            font-weight: bold;
+            font-style: italic;
+        }
+        .empty-value {
+            color: @warning-color;
             font-weight: bold;
             font-style: italic;
         }

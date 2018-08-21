@@ -21,8 +21,7 @@ const messages: {
   },
   noEvents: {
     id: 'timeline.events.noEvents',
-    defaultMessage: 'No Events for this resource in the last 6 months',
-    // use 'resource' ?
+    defaultMessage: 'No Events in the last 6 months',
   },
   expandEvents: {
     id: 'timeline.events.card.expandEvents',
@@ -31,6 +30,38 @@ const messages: {
   reduceEvents: {
     id: 'timeline.events.card.reduceEvents',
     defaultMessage: 'see less',
+  },
+  resourceCreated: {
+    id: 'timeline.events.card.resourceCreated',
+    defaultMessage: '{userName} created the {resourceName}.',
+  },
+  singleFieldEdited: {
+    id: 'timeline.events.card.singleEdit',
+    defaultMessage: '{userName} changed {field} from {oldValue} to {newValue}.',
+  },
+  severalFieldsEdited: {
+    id: 'timeline.events.card.multiEdit.summary',
+    defaultMessage: '{userName} has edited several fields.',
+  },
+  fieldInMultiEditList: {
+    id: 'timeline.events.card.multiEdit.item',
+    defaultMessage: '{field} from {oldValue} to {newValue}',
+  },
+  resourceDeleted: {
+    id: 'timeline.events.card.resourceDeleted',
+    defaultMessage: '{userName} deleted the {resourceName}.',
+  },
+  noValue: {
+    id: 'timeline.events.card.field.noValue',
+    defaultMessage: 'nothing',
+  },
+  unknownField: {
+    id: 'timeline.events.card.edit.field',
+    defaultMessage: 'Unknown Field',
+  },
+  date: {
+    id: 'timeline.events.card.date',
+    defaultMessage: ' {month} {day} at {time}',
   },
 });
 
