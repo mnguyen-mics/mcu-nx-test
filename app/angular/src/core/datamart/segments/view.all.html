@@ -39,6 +39,13 @@
             Name
             <span ng-show="sortType == 'name'"><span ng-show="reverseSort">▼</span><span ng-show="!reverseSort">▲</span></span>
           </th>
+
+          <th ng-click="sortType = 'provider_name'; reverseSort = !reverseSort">
+            Provider
+            <span ng-show="sortType == 'provider_name'"><span ng-show="reverseSort">▼</span><span ng-show="!reverseSort">▲</span></span>
+          </th>
+
+
           <th ng-click="sortType = 'technical_name'; reverseSort = !reverseSort">
             Technical Name
             <span ng-show="sortType == 'technical_name'"><span ng-show="reverseSort">▼</span><span ng-show="!reverseSort">▲</span></span>
@@ -56,6 +63,7 @@
       <tbody>
       <tr ng-click="detailsAudienceSegment(segment, $event)" ng-repeat="segment in filteredSegments() | orderBy:sortType:reverseSort |offset: (currentPage - 1)*itemsPerPage | limitTo: itemsPerPage">
         <td>{{segment.name}}</td>
+        <td>{{segment.provider_name}}</td>
         <td>{{segment.technical_name}}</td>
         <td>{{segment.type}}</td>
         <td class="metrics " ng-repeat="metricValue in audienceSegmentStats.getRow(segment.id) track by $index">

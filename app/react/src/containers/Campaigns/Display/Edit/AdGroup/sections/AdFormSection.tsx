@@ -22,14 +22,10 @@ import {
 import { Index } from '../../../../../../utils/index';
 import CreativeService from '../../../../../../services/CreativeService';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
-import { DisplayCreativeCreatorProps } from '../../../../../Creative/DisplayAds/Edit/DisplayCreativeCreator';
-import { DisplayCreativeCreator } from '../../../../../Creative/DisplayAds/Edit/index';
 import CreativeCardSelector, {
   CreativeCardSelectorProps,
 } from '../../../../Common/CreativeCardSelector';
-import DisplayCreativeFormLoader, {
-  DisplayCreativeFormLoaderProps,
-} from '../../../../../Creative/DisplayAds/Edit/DisplayCreativeFormLoader';
+
 import {
   DisplayCreativeFormData,
   isDisplayAdResource,
@@ -140,37 +136,6 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     formChange((fields as any).name, newFields);
   };
 
-  openCreativeForm = (field?: AdFieldModel) => {
-    const handleOnSubmit = (formData: DisplayCreativeFormData) => {
-      this.updateAds(formData, field && field.key);
-      this.props.closeNextDrawer();
-    };
-
-    const additionalProps: DisplayCreativeCreatorProps = {
-      onSubmit: handleOnSubmit,
-      actionBarButtonText: messages.addNewCreative,
-      breadCrumbPaths: [],
-      close: this.props.closeNextDrawer,
-    };
-
-    const options = {
-      additionalProps,
-    };
-
-    let FormComponent = DisplayCreativeCreator;
-
-    if (field) {
-      if (!isDisplayCreativeFormData(field.model)) {
-        FormComponent = DisplayCreativeFormLoader;
-        (additionalProps as DisplayCreativeFormLoaderProps).creativeId =
-          field.model.creative_id;
-      } else {
-        additionalProps.initialValues = field.model;
-      }
-    }
-
-    this.props.openNextDrawer(FormComponent, options);
-  };
 
   openCreativeCardSelector = () => {
     const { fields } = this.props;
@@ -258,10 +223,6 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     };
 
     const removeField = () => fields.remove(data.fieldIndex);
-    const handleEdit = () => {
-      const field = fields.get(data.fieldIndex);
-      this.openCreativeForm(field);
-    };
 
     const auditStatus = isDisplayAdResource(data.creativeResource)
       ? data.creativeResource.audit_status
@@ -274,12 +235,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
             <div style={shapeStyle} />
             <div className="dimensions">{data.creativeResource.format}</div>
           </Col>
-          <Col className="inline buttons" span={6}>
-            <ButtonStyleless onClick={handleEdit}>
-              <McsIcon className="button" type="pen" />
-            </ButtonStyleless>
-
-            <div className="button-separator" />
+          <Col className="inline buttons" span={4}>
 
             <ButtonStyleless onClick={removeField}>
               <McsIcon className="button" type="delete" />
@@ -337,11 +293,6 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
       <div>
         <FormSection
           dropdownItems={[
-            {
-              id: messages.dropdownNew.id,
-              message: messages.dropdownNew,
-              onClick: this.openCreativeForm,
-            },
             {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,

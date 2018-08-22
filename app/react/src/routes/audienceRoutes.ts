@@ -5,9 +5,7 @@ import {
 
 import { EditAudienceSegmentPage } from '../containers/Audience/Segments/Edit';
 
-import {
-  AudienceSegmentPage,
-} from '../containers/Audience/Segments/Dashboard';
+import { AudienceSegmentPage } from '../containers/Audience/Segments/Dashboard';
 
 import AudienceFeedPage from '../containers/Audience/Segments/Edit/AudienceFeedForm/AudienceFeedPage';
 
@@ -15,16 +13,19 @@ import {
   AudiencePartitionsPage,
 } from '../containers/Audience/Partitions/List';
 
-import {
-  TimelinePage,
-} from '../containers/Audience/Timeline';
+import TimelinePage from '../containers/Audience/Timeline/TimelinePage';
 
 import Partition from '../containers/Audience/Partitions/Dashboard/Partition';
 import AudiencePartitionPage from '../containers/Audience/Partitions/Edit/AudiencePartitionPage';
 
-import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
-import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
+import AudienceDashboardPage from '../containers/Audience/Dashboard/AudienceDashboardPage';
 
+import {
+  NavigatorRoute,
+  NavigatorDefinition,
+  generateRoutesFromDefinition,
+} from './domain';
+import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
 
 export const audienceDefinition: NavigatorDefinition = {
   audienceSegmentList: {
@@ -33,85 +34,101 @@ export const audienceDefinition: NavigatorDefinition = {
     contentComponent: AudienceSegmentsTable,
     actionBarComponent: SegmentsActionbar,
     requiredFeature: 'audience.segments',
-    requireDatamart: true
+    requireDatamart: true,
   },
   audienceSegmentCreation: {
     path: '/audience/segments/create',
     layout: 'edit',
     editComponent: EditAudienceSegmentPage,
     requiredFeature: 'audience.segments',
-    requireDatamart: true
+    requireDatamart: true,
   },
   audienceSegmentEdit: {
     path: '/audience/segments/:segmentId/edit',
     layout: 'edit',
     editComponent: EditAudienceSegmentPage,
     requiredFeature: 'audience.segments',
-    requireDatamart: true
+    requireDatamart: true,
   },
   audienceSegmentDashboard: {
     path: '/audience/segments/:segmentId',
     layout: 'main',
     contentComponent: AudienceSegmentPage,
     requiredFeature: 'audience.segments',
-    requireDatamart: true
+    requireDatamart: true,
   },
   feedCreate: {
     path: '/audience/segments/:segmentId/feeds/create',
     layout: 'edit',
     editComponent: AudienceFeedPage,
     requiredFeature: 'audience.segments',
-    requireDatamart: true
+    requireDatamart: true,
   },
   feedEdit: {
     path: '/audience/segments/:segmentId/feeds/:feedType/:feedId/edit',
     layout: 'edit',
     editComponent: AudienceFeedPage,
     requiredFeature: 'audience.segments',
-    requireDatamart: true
+    requireDatamart: true,
   },
   audiencePartitionsList: {
     path: '/audience/partitions',
     layout: 'main',
     contentComponent: AudiencePartitionsPage,
     requiredFeature: 'audience.partitions',
-    requireDatamart: true
+    requireDatamart: true,
   },
   audiencePartitionsEdit: {
     path: '/audience/partitions/:partitionId/edit',
     layout: 'edit',
     editComponent: AudiencePartitionPage,
     requiredFeature: 'audience.partitions',
-    requireDatamart: true
+    requireDatamart: true,
   },
   audiencePartitionsCreate: {
     path: '/audience/partitions/create',
     layout: 'edit',
     editComponent: AudiencePartitionPage,
     requiredFeature: 'audience.partitions',
-    requireDatamart: true
+    requireDatamart: true,
   },
   audiencePartitionsDashboard: {
     path: '/audience/partitions/:partitionId',
     layout: 'main',
     contentComponent: Partition,
     requiredFeature: 'audience.partitions',
-    requireDatamart: true
+    requireDatamart: true,
   },
   audienceSegmentBuilder: {
     path: '/audience/segment-builder',
     layout: 'main',
     contentComponent: SegmentBuilderPage,
     requiredFeature: 'audience.segment_builder',
-    requireDatamart: true
+    requireDatamart: true,
   },
   audienceTimeline: {
-    path: '/audience/timeline/:identifierType?/:identifierId?',
+    path: '/audience/timeline/:identifierType/:identifierId',
     layout: 'main',
     contentComponent: TimelinePage,
     requiredFeature: 'audience.monitoring',
-    requireDatamart: true
+    requireDatamart: true,
   },
-}
+  audienceTimelineHome: {
+    path: '/audience/timeline',
+    layout: 'main',
+    contentComponent: TimelinePage,
+    requiredFeature: 'audience.monitoring',
+    requireDatamart: true,
+  },
+  audienceDashboard: {
+    path: '/audience/dashboard',
+    layout: 'main',
+    contentComponent: AudienceDashboardPage,
+    requiredFeature: 'audience.dashboard',
+    requireDatamart: true
+  }
+};
 
-export const audienceRoutes: NavigatorRoute[] = generateRoutesFromDefinition(audienceDefinition);
+export const audienceRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
+  audienceDefinition,
+);

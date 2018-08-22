@@ -4,61 +4,36 @@ import { Layout, Row } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { FormTitle } from '../../../../components/Form';
 import {
-  MenuSubList,
+  MenuList,
 } from '../../../../components/FormMenu';
 import messages from './../../DisplayAds/Edit/messages';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
-import { Submenu } from '../../../../components/FormMenu/MenuSubList';
+import { IVIDENCE_AD_RENDERER, QUANTUM_AD_RENDERER, NATIVE_AD_RENDERER } from './domain';
 
 const { Content } = Layout;
 
-const nativeIvidenceAdRendererId = '1032';
-const nativeQuantumAdRendererId = '1047';
+
 
 export interface NativeCreativeRendererSelectorProps {
   onSelect: (adRendererId: string) => void;
   close: () => void;
 }
 
-interface State {
-  adRendererSubmenu: Submenu[];
-}
-
 type Props = NativeCreativeRendererSelectorProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class NativeCreativeRendererSelector extends React.Component<Props, State> {
+class NativeCreativeRendererSelector extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      adRendererSubmenu: [],
-    };
   }
-
-  renderNativeSubmenu = () => {
-    const {
-      onSelect,
-      intl: { formatMessage },
-    } = this.props;
-
-    return [
-      {
-        title: formatMessage(messages.creativeTypeQuantum),
-        select: () => onSelect(nativeQuantumAdRendererId),
-      },
-      {
-        title: formatMessage(messages.creativeTypeIvidence),
-        select: () => onSelect(nativeIvidenceAdRendererId),
-      },
-    ];
-  };
 
   render() {
     const {
       intl: { formatMessage },
+      onSelect
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -70,6 +45,8 @@ class NativeCreativeRendererSelector extends React.Component<Props, State> {
         },
       ],
     };
+
+    const select = (id: string) => () => onSelect(id) 
 
     return (
       <Layout>
@@ -84,13 +61,17 @@ class NativeCreativeRendererSelector extends React.Component<Props, State> {
               {
                 <Row style={{ width: '650px', display: 'inline-block' }}>
                   <Row className="menu">
-                    <MenuSubList
+                    <MenuList 
                       title={formatMessage(messages.creativeTypeNative)}
-                      subtitles={[
-                        formatMessage(messages.creativeTypeQuantum),
-                        formatMessage(messages.creativeTypeIvidence),
-                      ]}
-                      submenu={this.renderNativeSubmenu()}
+                      select={select(NATIVE_AD_RENDERER)}
+                    />
+                    <MenuList 
+                      title={formatMessage(messages.creativeTypeQuantum)}
+                      select={select(QUANTUM_AD_RENDERER)}
+                    />
+                    <MenuList 
+                      title={formatMessage(messages.creativeTypeIvidence)}
+                      select={select(IVIDENCE_AD_RENDERER)}
                     />
                   </Row>
                 </Row>

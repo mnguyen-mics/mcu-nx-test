@@ -55,12 +55,13 @@
       <div class="col-md-12">
         <h4>Properties</h4>
 
-        <div ng-repeat="property in properties">
+        <div ng-repeat="property in properties|orderBy:['-value.origin', 'value.technical_name']">
           <mcs-number-property ng-disabled="disabledEdition" property="property.value" ng-if="property.value.property_type == 'INT'"></mcs-number-property>
           <mcs-url-property ng-disabled="disabledEdition" property="property.value" ng-if="property.value.property_type == 'URL'"></mcs-url-property>
           <mcs-data-file-property ng-disabled="disabledEdition" property="property.value" ng-if="property.value.property_type == 'DATA_FILE'"></mcs-data-file-property>
           <mcs-asset-property ng-disabled="disabledEdition" property="property.value" ng-if="property.value.property_type == 'ASSET'"></mcs-asset-property>
           <mcs-text-property ng-disabled="disabledEdition" property="property.value" ng-if="property.value.property_type == 'STRING'"></mcs-text-property>
+          <mcs-boolean-property ng-disabled="disabledEdition" property="property.value" ng-if="property.value.property_type == 'BOOLEAN'"></mcs-boolean-property>
         </div>
       </div>
     </div>

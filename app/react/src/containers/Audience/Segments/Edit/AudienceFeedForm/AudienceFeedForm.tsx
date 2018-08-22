@@ -32,7 +32,8 @@ export interface CreateAudienceFeedProps<T = any> {
 
 type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
   RouteComponentProps<EditAudienceSegmentParam> &
-  InjectedIntlProps & InjectedNotificationProps;
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 class CreateAudienceFeed<T> extends React.Component<
   JoinedProps<T>,
@@ -44,7 +45,7 @@ class CreateAudienceFeed<T> extends React.Component<
     this.state = {
       edition: props.edition,
       isLoading: false,
-      initialValues: props.initialValues
+      initialValues: props.initialValues,
     };
   }
 
@@ -57,9 +58,7 @@ class CreateAudienceFeed<T> extends React.Component<
   };
 
   onSave = (audienceFeed: any, properties: PluginProperty[]) => {
-    const {
-      onSave,
-    } = this.props;
+    const { onSave } = this.props;
 
     const returnValue = {
       plugin: audienceFeed,

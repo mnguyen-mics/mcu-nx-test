@@ -1,3 +1,4 @@
+import { Activity } from '../models/timeline/timeline';
 import {
   UserSegmentResource,
   UserProfileResource,
@@ -24,7 +25,7 @@ const UserDataService = {
     identifierType: string,
     identifierId: string,
     options: object = {},
-  ): Promise<DataResponse<UserProfileResource>> {
+  ): Promise<DataResponse<UserProfileResource> | undefined> {
     const endpoint =
       identifierType !== 'user_point_id'
         ? `datamarts/${datamartId}/user_profiles/${identifierType}=${identifierId}`
@@ -34,8 +35,16 @@ const UserDataService = {
       ...options,
     };
 
-    return ApiService.getRequest(endpoint, params);
-
+    return ApiService.getRequest<DataResponse<UserProfileResource> | undefined>(
+      endpoint,
+      params,
+    ).catch(error => {
+      // api send 404 when channel doesn't exist
+      if (error && error.error === 'Resource Not Found') {
+        return Promise.resolve(undefined);
+      }
+      throw error;
+    });
   },
 
   getSegments(
@@ -54,7 +63,21 @@ const UserDataService = {
       ...options,
     };
 
-    return ApiService.getRequest(endpoint, params);
+    return ApiService.getRequest<DataListResponse<UserSegmentResource>>(
+      endpoint,
+      params,
+    ).catch(error => {
+      // api send 404 when segments don't exist
+      if (error && error.error === 'Resource Not Found') {
+        const result: DataListResponse<UserSegmentResource> = {
+          data: [],
+          status: 'ok',
+          count: 0,
+        };
+        return Promise.resolve(result);
+      }
+      throw error;
+    });
   },
 
   getIdentifiers(
@@ -73,16 +96,29 @@ const UserDataService = {
       ...options,
     };
 
-    return ApiService.getRequest(endpoint, params);
+    return ApiService.getRequest<DataListResponse<UserIdentifierShape>>(
+      endpoint,
+      params,
+    ).catch(error => {
+      // api send 404 when identifiers don't exist
+      if (error && error.error === 'Resource Not Found') {
+        const result: DataListResponse<UserIdentifierShape> = {
+          data: [],
+          status: 'ok',
+          count: 0,
+        };
+        return Promise.resolve(result);
+      }
+      throw error;
+    });
   },
 
   getActivities(
-    organisationId: string,
     datamartId: string,
     identifierType: string,
     identifierId: string,
     options: object = {},
-  ) {
+  ): Promise<DataListResponse<Activity>> {
     const endpoint =
       identifierType !== 'user_point_id'
         ? `datamarts/${datamartId}/user_timelines/${identifierType}=${identifierId}/user_activities`
@@ -92,10 +128,18 @@ const UserDataService = {
       ...options,
     };
 
-    return ApiService.getRequest(endpoint, params).catch(error => {
-      // api send 404 when activities doesn't exist
+    return ApiService.getRequest<DataListResponse<Activity>>(
+      endpoint,
+      params,
+    ).catch(error => {
+      // api send 404 when activities don't exist
       if (error && error.error === 'Resource Not Found') {
-        return Promise.resolve({ data: [] });
+        const result: DataListResponse<Activity> = {
+          data: [],
+          status: 'ok',
+          count: 0,
+        };
+        return Promise.resolve(result);
       }
       throw error;
     });
@@ -104,17 +148,18 @@ const UserDataService = {
   getChannel(
     datamartId: string,
     channelId: string,
-  ): Promise<DataResponse<ChannelResource>> {
+  ): Promise<DataResponse<ChannelResource> | undefined> {
     const endpoint = `datamarts/${datamartId}/channels/${channelId}`;
 
-    return ApiService.getRequest(endpoint);
-    // return ApiService.getRequest(endpoint, {}).catch(error => {
-    //   // api send 404 when channel doesn't exist
-    //   if (error && error.error === 'Resource Not Found') {
-    //     return Promise.resolve({ data: {} });
-    //   }
-    //   throw error;
-    // });
+    return ApiService.getRequest<DataResponse<ChannelResource> | undefined>(
+      endpoint,
+    ).catch(error => {
+      // api send 404 when channel doesn't exist
+      if (error && error.error === 'Resource Not Found') {
+        return Promise.resolve(undefined);
+      }
+      throw error;
+    });
   },
 };
 

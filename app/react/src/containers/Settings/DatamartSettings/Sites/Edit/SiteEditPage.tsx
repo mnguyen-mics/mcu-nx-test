@@ -52,13 +52,11 @@ type Props = InjectedIntlProps &
 class SiteEditPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+
     this.state = {
       loading: true, // default true to avoid render x2 on mounting
       siteData: INITIAL_SITE_FORM_DATA,
-      selectedDatamartId:
-        props.workspace(props.match.params.organisationId).datamarts.length > 1
-          ? ''
-          : props.datamart.id,
+      selectedDatamartId: props.match.params.datamartId,
     };
   }
 
@@ -77,16 +75,16 @@ class SiteEditPage extends React.Component<Props, State> {
 
     if (siteId) {
       const getSites = ChannelService.getChannel(
-        this.props.datamart.id,
+        this.state.selectedDatamartId,
         siteId,
       );
       const getEventRules = ChannelService.getEventRules(
-        this.props.datamart.id,
+        this.state.selectedDatamartId,
         siteId,
         organisationId,
       );
       const getAliases = ChannelService.getAliases(
-        this.props.datamart.id,
+        this.state.selectedDatamartId,
         siteId,
         organisationId,
       );
@@ -293,7 +291,7 @@ class SiteEditPage extends React.Component<Props, State> {
     generateSavingPromise()
       .then(() => {
         hideSaveInProgress();
-        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/sites`;
+        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/sites?datamartId=${this.state.selectedDatamartId}`;
         history.push(mobileApplicationUrl);
       })
       .catch(err => {
@@ -314,7 +312,7 @@ class SiteEditPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/sites`;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/sites?datamartId=${this.state.selectedDatamartId}`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
@@ -351,7 +349,7 @@ class SiteEditPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle1,
-        path: `/v2/o/${organisationId}/settings/datamart/sites`,
+        path: `/v2/o/${organisationId}/settings/datamart/sites?datamartId=${this.state.selectedDatamartId}`,
       },
       {
         name: mobileName,

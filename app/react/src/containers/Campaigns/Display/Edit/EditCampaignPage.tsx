@@ -18,7 +18,10 @@ import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
+import { injectDatamart, InjectedDatamartProps } from '../../../Datamart'
+import DisplayCampaignSelector from './DisplayCampaignSelector';
+import { DisplayCampaignSubType } from '../../../../models/campaign/constants';
+import DisplayAdServingCampaignForm from './DisplayAdServingCampaignForm';
 
 interface State {
   displayCampaignFormData: DisplayCampaignFormData;
@@ -34,7 +37,7 @@ class EditCampaignPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      loading: true, // default true to avoid render x2 on mounting
+      loading: true, // default true to avoid render x2 on mounting,
       displayCampaignFormData: INITIAL_DISPLAY_CAMPAIGN_FORM_DATA,
     };
   }
@@ -138,7 +141,10 @@ class EditCampaignPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const { loading, displayCampaignFormData } = this.state;
+    const {
+      loading,
+      displayCampaignFormData,
+    } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -161,15 +167,37 @@ class EditCampaignPage extends React.Component<Props, State> {
       },
     ];
 
-    return (
-      <DisplayCampaignForm
-        initialValues={displayCampaignFormData}
-        onSubmit={this.save}
-        close={this.onClose}
-        breadCrumbPaths={breadcrumbPaths}
-        onSubmitFail={this.onSubmitFail}
-      />
-    );
+    const onSelect = (e: DisplayCampaignSubType) => this.setState({ displayCampaignFormData: {
+      ...displayCampaignFormData,
+      campaign: {
+        ...displayCampaignFormData.campaign,
+        subtype: e
+      }
+    } })
+
+    if (!displayCampaignFormData.campaign.subtype) return <DisplayCampaignSelector onSelect={onSelect} close={this.onClose} />
+
+    switch (displayCampaignFormData.campaign.subtype) {
+      case 'PROGRAMMATIC':
+        return (<DisplayCampaignForm
+          initialValues={displayCampaignFormData}
+          onSubmit={this.save}
+          close={this.onClose}
+          breadCrumbPaths={breadcrumbPaths}
+          onSubmitFail={this.onSubmitFail}
+        />)
+      case 'AD_SERVING':
+          return <DisplayAdServingCampaignForm
+            initialValues={displayCampaignFormData}
+            onSubmit={this.save}
+            close={this.onClose}
+            breadCrumbPaths={breadcrumbPaths}
+            onSubmitFail={this.onSubmitFail}
+          />;
+      case 'TRACKING':
+          return 'This feature is not supported yet!';
+    }
+
   }
 }
 

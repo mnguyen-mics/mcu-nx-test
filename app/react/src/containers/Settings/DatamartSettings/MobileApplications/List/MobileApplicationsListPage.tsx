@@ -170,7 +170,7 @@ class MobileApplicationsListPage extends React.Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/mobile_application/${
+      `/v2/o/${organisationId}/settings/datamart/${mobileApplication.datamart_id}/mobile_application/${
         mobileApplication.id
       }/edit`,
     );
@@ -182,10 +182,15 @@ class MobileApplicationsListPage extends React.Component<
         params: { organisationId },
       },
       datamart,
+      location: {search}
     } = this.props;
 
     this.setState({ filter: newFilter });
-    this.fetchMobileApplications(organisationId, datamart.id, newFilter);
+    const filters = parseSearch(
+      search,
+      this.getSearchSetting(organisationId),
+    );
+    this.fetchMobileApplications(organisationId, filters.datamartId ? filters.datamartId : datamart.id, newFilter);
   };
 
   /**
@@ -206,7 +211,7 @@ class MobileApplicationsListPage extends React.Component<
       if (filter.keywords) {
         return {
           ...options,
-          name: filter.keywords,
+          keywords: filter.keywords,
         };
       }
       return options;

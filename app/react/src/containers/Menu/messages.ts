@@ -7,6 +7,10 @@ export default defineMessages({
         id: 'menu.audience.title',
         defaultMessage: 'Audience',
     },
+    audienceDashboard: {
+        id: 'menu.audience.dashboard',
+        defaultMessage: 'Dashboard',
+    },
     audienceSegment: {
         id: 'menu.audience.segments',
         defaultMessage: 'Segments',

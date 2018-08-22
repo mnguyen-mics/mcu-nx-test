@@ -6,8 +6,8 @@ import { WrappedFieldProps } from 'redux-form';
 import FormRadio from './FormRadio';
 
 export interface FormRadioGroupProps {
-  RadioGroupProps?: RadioGroupProps;
-  elements: Array<RadioProps & { id: string, title: string }>;
+  radioGroupProps?: RadioGroupProps;
+  elements: Array<RadioProps & { id?: string, title: string }>;
   elementClassName?: string;
   groupClassName?: string;
 }

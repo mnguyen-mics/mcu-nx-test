@@ -49,6 +49,7 @@ class FormAlertInput extends React.Component<JoinedProps, State> {
       type,
       input,
       meta,
+      small
     } = this.props;
 
     let validateStatus = 'success' as
@@ -93,6 +94,7 @@ class FormAlertInput extends React.Component<JoinedProps, State> {
           help={meta.touched && (meta.warning || meta.error)}
           helpToolTipProps={helpToolTipProps}
           validateStatus={validateStatus}
+          small={small}
           {...formItemProps}
         >
           <InputComponent id={input.name} {...input} {...newInputProps} />

@@ -114,7 +114,7 @@ class FormDataFileDrawer extends React.Component<
       case 'json':
         return 'json';
       case 'html':
-        return 'handebars';
+        return 'html';
       default:
         return 'text';
     }

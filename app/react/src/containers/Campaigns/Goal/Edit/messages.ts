@@ -37,7 +37,15 @@ export default defineMessages({
   },
   sectionTitle2: {
     id: 'goalSimpleEditor.section.title2',
-    defaultMessage: 'Attribution Window',
+    defaultMessage: 'Conversion Value',
+  },
+  sectionTitle3: {
+    id: 'goalSimpleEditor.section.title3',
+    defaultMessage: 'Trigger',
+  },
+  sectionTitle4: {
+    id: 'goalSimpleEditor.section.title4',
+    defaultMessage: 'Attribution Models',
   },
 
   /*
@@ -122,5 +130,4 @@ export default defineMessages({
     id: 'goalSimpleEditor.section2.row2.tooltip',
     defaultMessage: 'Attribution Window is in Days and can be between 0 and 30 days.',
   },
-
 });

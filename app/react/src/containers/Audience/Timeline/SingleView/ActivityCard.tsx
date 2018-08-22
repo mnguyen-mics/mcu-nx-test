@@ -17,6 +17,8 @@ import UserDataService from '../../../../services/UserDataService';
 import messages from '../messages';
 import log from '../../../../utils/Logger';
 import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { TimelinePageParams } from '../TimelinePage';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
 
@@ -24,7 +26,9 @@ interface State {
   siteName?: string;
 }
 
-type Props = ActivityCardProps & InjectedIntlProps;
+type Props = ActivityCardProps &
+  InjectedIntlProps &
+  RouteComponentProps<TimelinePageParams>;
 
 class ActivityCard extends React.Component<Props, State> {
   getChannelPromise: CancelablePromise<any> | undefined = undefined;
@@ -49,9 +53,11 @@ class ActivityCard extends React.Component<Props, State> {
       this.getChannelPromise = makeCancelable(
         UserDataService.getChannel(this.props.datamartId, id),
       );
-      this.getChannelPromise.promise.then(response => {
-        this.setState({ siteName: `${prefix}: ${response.data.name}` });
-      }).catch(err => log.error(err));
+      this.getChannelPromise.promise
+        .then(response => {
+          this.setState({ siteName: `${prefix}: ${response.data.name}` });
+        })
+        .catch(err => log.error(err));
     } else {
       this.setState(prevState => {
         const nextState = {
@@ -92,6 +98,28 @@ class ActivityCard extends React.Component<Props, State> {
     this.getChannelInformation(activity);
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      datamartId,
+      activity,
+    } = this.props;
+    const {
+      match: {
+        params: { organisationId: prevOrganisationId },
+      },
+      datamartId: prevDatamartId,
+    } = prevProps;
+    if (
+      organisationId !== prevOrganisationId ||
+      datamartId !== prevDatamartId
+    ) {
+      this.getChannelInformation(activity);
+    }
+  }
+
   getAgentInfoFromAgentId = (userAgentId: string) => {
     const { identifiers } = this.props;
     const identif = {
@@ -104,7 +132,7 @@ class ActivityCard extends React.Component<Props, State> {
           identif.items.USER_AGENT.find((element: any) => {
             return element.vector_id === userAgentId;
           })
-      : null;
+      : undefined;
   };
 
   diplayVisitDuration = (activity: Activity) => {
@@ -154,7 +182,7 @@ class ActivityCard extends React.Component<Props, State> {
         </span>
       ) : null;
 
-    const device = agent && agent.device ? agent.device : null;
+    const device = agent && agent.device ? agent.device : undefined;
     const longitude =
       activity && activity.$location ? activity.$location.$latlon[1] : 0;
     const latitude =
@@ -189,4 +217,7 @@ class ActivityCard extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, ActivityCardProps>(injectIntl)(ActivityCard);
+export default compose<Props, ActivityCardProps>(
+  injectIntl,
+  withRouter,
+)(ActivityCard);

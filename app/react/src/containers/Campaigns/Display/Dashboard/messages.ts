@@ -280,5 +280,29 @@ export default defineMessages({
   editionNotAllowed: {
     id: 'display.campaign.actionbar.edition.not.allowed',
     defaultMessage: 'Edition on this campaign is deprecated, you must use navigator legacy to edit this campaign.'
-  }
+  },
+  adServingDownload: {
+    id: 'display.campaign.actionbar.adserving.download',
+    defaultMessage: 'Get Your Snippets'
+  },
+  googleDfp: {
+    id: 'display.campaign.actionbar.adserving.google_dfp',
+    defaultMessage: 'Google DoubleClick For Publisher (DFP)'
+  },
+  googleDbm: {
+    id: 'display.campaign.actionbar.adserving.google_dbm',
+    defaultMessage: 'Google DoubleClick Bid Manager (DBM)'
+  },
+  apx: {
+    id: 'display.campaign.actionbar.adserving.apx',
+    defaultMessage: 'App Nexus'
+  },
+  none: {
+    id: 'display.campaign.actionbar.adserving.none',
+    defaultMessage: 'Other'
+  },
+  emptyAds: {
+    id: 'display.campaign.actionbar.adserving.emptyAds',
+    defaultMessage: 'There is no ads attached to your campaign.'
+  },
 }) as { [key: string]: { id: string; defaultMessage: string } };

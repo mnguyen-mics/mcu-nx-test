@@ -135,7 +135,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
       // Examples
       rowsToUpload.push([
         'www.website-example.com',
-        'EXACT_URL',
+        'PATTERN',
         'WEB_BROWSER',
       ]);
       rowsToUpload.push(['123456789', 'EXACT_APPLICATION_ID', 'APPLICATION']);

@@ -121,7 +121,7 @@ function readOverlap(datafile: Blob) {
 function formatOverlapResponse(overlapResult: OverlapFileResource, segmentId: string): Promise<Data | null> {
   const topOverlaps: OverlapItemResult[] = overlapResult.overlaps.sort((a, b) => {
     return a.overlap_number > b.overlap_number ? -1 : 1;
-  }); // select 20 biggest overlpas
+  }); // sort overlaps
 
   const topSegments = topOverlaps.map(overlap => {
     return overlapResult.segments.find(
@@ -141,7 +141,7 @@ function formatOverlapResponse(overlapResult: OverlapFileResource, segmentId: st
   return Promise.all(promises)
     .then(segmentResources => {
       const formattedvalues: FormattedOverlapData[] = [];
-
+      const segmentSourceSize =  overlapResult.segments.find(seg => seg.segment_id.toString() === segmentId)!.segment_size
       topOverlaps.forEach(to => {
         const isInOverlap = segmentResources.find(sr => sr ? sr.id === to.segment_intersect_with.toString() : false);
         if (isInOverlap) {
@@ -150,6 +150,7 @@ function formatOverlapResponse(overlapResult: OverlapFileResource, segmentId: st
           formattedvalues.push({
             ...to,
             segment_source_id: to.segment_source_id.toString(),
+            segment_source_size: segmentSourceSize,
             segment_intersect_with: {
               id: to.segment_intersect_with.toString(),
               name: isInOverlap.name,

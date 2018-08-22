@@ -1,4 +1,4 @@
-import { Workspace } from "../organisation/organisation";
+import { UserWorkspaceResource } from "../directory/UserProfileResource";
 
 export interface ChannelResource {
     creation_ts: number;
@@ -105,7 +105,7 @@ export interface ConnectedUser {
     last_name: string;
     email: string;
     locale: string;
-    workspaces: Workspace[];
+    workspaces: UserWorkspaceResource[];
     default_workspace: number;
 }
 

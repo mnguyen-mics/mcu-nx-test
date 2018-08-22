@@ -32,18 +32,19 @@ define(['./module'], function (module) {
 
       $scope.administrator = currentWorkspace.administrator;
 
-      var params = {organisation_id: currentWorkspace.organisation_id};
+      var params = { organisation_id: currentWorkspace.organisation_id };
       if ($scope.administrator) {
-        params = {administration_id: currentWorkspace.organisation_id};
+        params = { administration_id: currentWorkspace.organisation_id };
       }
 
-      Restangular.all('email_campaigns').getList(params).then(function (emailCampaigns) {
-        $scope.emailCampaigns = emailCampaigns;
-      });
+      $scope.emailCampaigns = [];
+      // Restangular.all('email_campaigns').getList(params).then(function (emailCampaigns) {
+      //   $scope.emailCampaigns = emailCampaigns;
+      // });
 
-      $scope.$watch('reportDateRange', function () {
-        updateStatistics($scope, CampaignAnalyticsReportService, currentWorkspace.organisation_id);
-      });
+      // $scope.$watch('reportDateRange', function () {
+      //   updateStatistics($scope, CampaignAnalyticsReportService, currentWorkspace.organisation_id);
+      // });
 
       var buildAllCampaignsExportHeaders = function (report) {
         var headers = ["Status", "Name"];
@@ -59,7 +60,7 @@ define(['./module'], function (module) {
       };
 
       $scope.buildAllCampaignsExportData = function () {
-        return CampaignAnalyticsReportService.allCampaigns().then(function (report) {
+        return CampaignAnalyticsReportService.allCampaigns(Session.getCurrentWorkspace().organisation_id).then(function (report) {
           var dataExport = [
             ["All Campaigns"],
             ["From " + $scope.reportDateRange.startDate.format("DD-MM-YYYY"), "To " + $scope.reportDateRange.endDate.format("DD-MM-YYYY")],

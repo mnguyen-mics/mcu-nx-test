@@ -36,13 +36,14 @@
           Properties
           <button class="mics-btn mics-btn-add" ng-click="addProperty()">Add Property</button>
         </h3>
-        <div ng-repeat="property in emailTemplateCtn.properties">
+        <div ng-repeat="property in emailTemplateCtn.properties|orderBy:['-value.origin', 'value.technical_name']">
           <mcs-number-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" property="property.value" ng-if="property.value.property_type == 'INT'"></mcs-number-property>
           <mcs-url-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" property="property.value" ng-if="property.value.property_type == 'URL'"></mcs-url-property>
           <mcs-pixel-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" property="property.value" ng-if="property.value.property_type == 'PIXEL_TAG'"></mcs-pixel-property>
           <mcs-data-file-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" property="property.value" ng-if="property.value.property_type == 'DATA_FILE'"></mcs-data-file-property>
           <mcs-asset-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" property="property.value" ng-if="property.value.property_type == 'ASSET'"></mcs-asset-property>
           <mcs-text-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" property="property.value" ng-if="property.value.property_type == 'STRING'"></mcs-text-property>
+          <mcs-boolean-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" property="property.value" ng-if="property.value.property_type == 'BOOLEAN'"></mcs-boolean-property>
           <mcs-recommender-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" property="property.value" ng-if="property.value.property_type == 'RECOMMENDER'"></mcs-recommender-property>
           <mcs-ad-layout-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" plugin-id="emailTemplateCtn.value.renderer_plugin_id" plugin-version-id="emailTemplateCtn.value.renderer_version_id" property="property.value" organisation-id="organisationId" ng-if="property.value.property_type == 'AD_LAYOUT'"></mcs-ad-layout-property>
           <mcs-style-sheet-property ng-disabled="property.value.origin == 'PLUGIN_STATIC'" property="property.value" organisation-id="organisationId" ng-if="property.value.property_type == 'STYLE_SHEET'"></mcs-style-sheet-property>

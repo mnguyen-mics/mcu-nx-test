@@ -22,6 +22,7 @@
     'library.catalog',
     'library.ad_layouts',
     'library.stylesheets',
+    'library.zone',
     'library.assets',
     'library.exports',
     'datastudio.query_tool',

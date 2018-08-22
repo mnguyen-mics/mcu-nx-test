@@ -25,5 +25,6 @@ export const INITIAL_SITE_FORM_DATA: SiteFormData = {
 
 export interface EditSiteRouteMatchParam {
   organisationId: string;
+  datamartId: string;
   siteId: string;
 }

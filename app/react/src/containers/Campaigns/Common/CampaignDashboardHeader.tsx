@@ -8,11 +8,17 @@ interface Props {
     name: string;
     status: CampaignStatus;
   };
+  showStatus?: boolean
 }
 
 class CampaignDashboardHeader extends React.Component<Props> {
+
+  static defaultProps = {
+    showStatus: true,
+  }
+
   render() {
-    const { campaign } = this.props;
+    const { campaign, showStatus } = this.props;
 
     const campaignStatus = campaign && (
       <CampaignStatusIndicator status={campaign.status} />
@@ -21,7 +27,7 @@ class CampaignDashboardHeader extends React.Component<Props> {
     return (
       <ContentHeader
         title={campaign && campaign.name}
-        subTitle={campaignStatus}
+        subTitle={showStatus ? campaignStatus : null}
         loading={!campaign}
       />
     );

@@ -24,14 +24,12 @@ import ScrollspySider, {
 import messages from './messages';
 import { DisplayCampaignFormData } from './domain';
 import { Omit } from '../../../../utils/Types';
-import GeneralFormSection from './Sections/GeneralFormSection';
+import GeneralFormSection from './Sections/Programmatic/GeneralFormSection';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import GoalFormSection, {
-  GoalFormSectionProps,
-} from './Sections/GoalFormSection';
+import GoalFormSection, { GoalFormSectionProps } from './Sections/Programmatic/GoalFormSection';
 import AdGroupFormSection, {
   AdGroupFormSectionProps,
-} from './Sections/AdGroupFormSection';
+} from './Sections/Programmatic/AdGroupFormSection';
 import * as SessionSelectors from '../../../../state/Session/selectors';
 
 const Content = Layout.Content as React.ComponentClass<

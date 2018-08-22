@@ -25,4 +25,8 @@ export default defineMessages({
     id: 'native.creative.form.error.message',
     defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
   },
+  successfulSaving: {
+    id: 'native.creative.form.success.message',
+    defaultMessage: 'Your creative has successfully been saved!',
+  }
 });

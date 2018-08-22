@@ -6,15 +6,15 @@ import CreativeService from '../../../../services/CreativeService';
 import PluginService from '../../../../services/PluginService';
 import PluginEditForm from '../../../Plugin/Edit/PluginEditForm';
 import { EditContentLayout } from '../../../../components/Layout';
-import {
-  PluginVersionResource,
-} from '../../../../models/Plugins';
+import { PluginVersionResource } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import { DataResponse } from '../../../../services/ApiService';
 
 import messages from './messages';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../models/plugin';
 
@@ -45,7 +45,7 @@ type JoinedProps = InjectedNotificationProps &
 class CreateEmailTemplate extends React.Component<
   JoinedProps,
   CreateEmailTemplateState
-  > {
+> {
   constructor(props: JoinedProps) {
     super(props);
 
@@ -61,23 +61,30 @@ class CreateEmailTemplate extends React.Component<
       match: {
         params: { organisationId, creativeId },
       },
-      notifyError
+      notifyError,
     } = this.props;
 
-    this.setState(() => { return { isLoading: true } });
-
-    const promise = edition && creativeId ? this.fetchInitialValues(creativeId) : this.fetchCreationValue(organisationId);
-
-    promise.then(() => {
-      this.setState(() => {
-        return { isLoading: false };
-      })
-    }).catch(err => {
-      notifyError(err);
-      this.setState(() => {
-        return { isLoading: false };
-      });
+    this.setState(() => {
+      return { isLoading: true };
     });
+
+    const promise =
+      edition && creativeId
+        ? this.fetchInitialValues(creativeId)
+        : this.fetchCreationValue(organisationId);
+
+    promise
+      .then(() => {
+        this.setState(() => {
+          return { isLoading: false };
+        });
+      })
+      .catch(err => {
+        notifyError(err);
+        this.setState(() => {
+          return { isLoading: false };
+        });
+      });
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
@@ -85,7 +92,7 @@ class CreateEmailTemplate extends React.Component<
       match: {
         params: { organisationId, creativeId },
       },
-      notifyError
+      notifyError,
     } = this.props;
     const {
       match: {
@@ -101,22 +108,29 @@ class CreateEmailTemplate extends React.Component<
         creativeId !== nextEmailTemplateId) &&
       nextEmailTemplateId
     ) {
-      this.setState(() => { return { isLoading: true } });
-      this.fetchInitialValues(nextEmailTemplateId).then(() => {
-        this.setState(() => {
-          return { isLoading: false };
-        })
-      }).catch(err => {
-        notifyError(err);
-        this.setState(() => {
-          return { isLoading: false };
-        });
+      this.setState(() => {
+        return { isLoading: true };
       });
+      this.fetchInitialValues(nextEmailTemplateId)
+        .then(() => {
+          this.setState(() => {
+            return { isLoading: false };
+          });
+        })
+        .catch(err => {
+          notifyError(err);
+          this.setState(() => {
+            return { isLoading: false };
+          });
+        });
     }
   }
 
-  promisesValues = (properties: PropertyResourceShape[], pLayoutRes: DataResponse<PluginLayout> | null) => {
-
+  promisesValues = (
+    properties: PropertyResourceShape[],
+    pLayoutRes: DataResponse<PluginLayout> | null,
+    lastVersion?: PluginVersionResource,
+  ) => {
     const modifiedProperties = properties
       .sort(a => {
         return a.writable === false ? -1 : 1;
@@ -125,9 +139,9 @@ class CreateEmailTemplate extends React.Component<
         return prop.technical_name === 'template_file' &&
           prop.property_type === 'DATA_FILE'
           ? {
-            ...prop,
-            value: { ...prop.value, acceptedFile: 'text/html' },
-          }
+              ...prop,
+              value: { ...prop.value, acceptedFile: 'text/html' },
+            }
           : prop;
       });
 
@@ -136,17 +150,17 @@ class CreateEmailTemplate extends React.Component<
         ...prevState,
         isLoading: false,
         initialValues: {
-          properties: modifiedProperties
+          properties: modifiedProperties,
         },
+        emailTemplateRenderer: lastVersion,
       };
 
-
-      if (pLayoutRes !== null && pLayoutRes.status !== "error") {
+      if (pLayoutRes !== null && pLayoutRes.status !== 'error') {
         nextState.pluginLayout = pLayoutRes.data;
-      };
+      }
 
       return nextState;
-    })
+    });
   };
 
   fetchCreationValue = (organisationId: string): Promise<any> => {
@@ -160,47 +174,46 @@ class CreateEmailTemplate extends React.Component<
         ).then(res1 => res1.data),
         PluginService.getLocalizedPluginLayout(
           CreativeRendererId,
-          lastVersion.id
-        )
+          lastVersion.id,
+        ),
       ]).then(results => {
-        this.promisesValues(results[0], results[1]);
+        this.promisesValues(results[0], results[1], lastVersion);
         return results;
-      })
+      });
     });
-  }
+  };
 
   fetchInitialValues = (emailTemplateId: string): Promise<any> => {
     return PluginService.getPluginVersions(CreativeRendererId).then(res => {
+      return CreativeService.getEmailTemplate(emailTemplateId).then(
+        resultGetEmailTemplate => {
+          return Promise.all([
+            CreativeService.getEmailTemplateProperties(emailTemplateId).then(
+              res1 => res1.data,
+            ),
+            PluginService.getLocalizedPluginLayout(
+              resultGetEmailTemplate.data.renderer_plugin_id,
+              resultGetEmailTemplate.data.renderer_version_id,
+            ),
+          ]).then(results => {
+            this.promisesValues(results[0], results[1]);
 
-      return CreativeService.getEmailTemplate(
-        emailTemplateId,
-      ).then(resultGetEmailTemplate => {
-        return Promise.all([
-          CreativeService.getEmailTemplateProperties(
-            emailTemplateId,
-          ).then(res1 => res1.data),
-          PluginService.getLocalizedPluginLayout(
-            resultGetEmailTemplate.data.renderer_plugin_id,
-            resultGetEmailTemplate.data.renderer_version_id
-          )
-        ]).then(results => {
-          this.promisesValues(results[0], results[1]);
-  
-          this.setState(prevState => {
-            const nextState: CreateEmailTemplateState = {
-              ...prevState,
-              initialValues: {
-                plugin: resultGetEmailTemplate.data,
-                ...prevState.initialValues,
-              },
-            };
-  
-            return nextState;
+            this.setState(prevState => {
+              const nextState = {
+                ...prevState,
+                initialValues: {
+                  properties: prevState.initialValues
+                    ? prevState.initialValues.properties
+                    : [],
+                  plugin: resultGetEmailTemplate.data,
+                },
+              };
+              return nextState;
+            });
+            return results;
           });
-  
-          return results;
-        });      
-      });
+        },
+      );
     });
   };
 
@@ -219,9 +232,10 @@ class CreateEmailTemplate extends React.Component<
     plugin: EmailTemplateResource,
     properties: PropertyResourceShape[],
   ) => {
-
     const {
-      match: { params: { organisationId, creativeId } },
+      match: {
+        params: { organisationId, creativeId },
+      },
       history,
       notifyError,
     } = this.props;
@@ -255,6 +269,7 @@ class CreateEmailTemplate extends React.Component<
       formattedFormValues.editor_artifact_id = 'default-editor';
       formattedFormValues.editor_group_id = 'com.mediarithmics.template.email';
     }
+
     return this.setState({ isLoading: true }, () => {
       CreativeService.createEmailTemplate(organisationId, formattedFormValues)
         .then(res => res.data)
@@ -275,7 +290,9 @@ class CreateEmailTemplate extends React.Component<
     organisationId: string,
     id: string,
   ) => {
-    const propertiesPromises: Array<Promise<DataResponse<PropertyResourceShape>>> = [];
+    const propertiesPromises: Array<
+      Promise<DataResponse<PropertyResourceShape>>
+    > = [];
     properties.forEach(item => {
       propertiesPromises.push(
         CreativeService.updateEmailTemplateProperty(
@@ -308,7 +325,9 @@ class CreateEmailTemplate extends React.Component<
 
   render() {
     const {
-      match: { params: { organisationId, creativeId } },
+      match: {
+        params: { organisationId, creativeId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -318,25 +337,29 @@ class CreateEmailTemplate extends React.Component<
       { name: formatMessage(messages.emailTemplateBreadCrumb) },
     ];
 
-    const sections: Array<{ sectionId: string, title: { id: string; defaultMessage: string; } }> =
-      this.state.pluginLayout === undefined ?
-        [{
-          sectionId: 'properties',
-          title: messages.menuProperties,
-        },
-        ] :
-        this.state.pluginLayout.sections.map(section => {
-          return {
-            sectionId: section.title,
-            title: { id: section.title, defaultMessage: section.title },
-          }
-        });
+    const sections: Array<{
+      sectionId: string;
+      title: { id: string; defaultMessage: string };
+    }> =
+      this.state.pluginLayout === undefined
+        ? [
+            {
+              sectionId: 'properties',
+              title: messages.menuProperties,
+            },
+          ]
+        : this.state.pluginLayout.sections.map(section => {
+            return {
+              sectionId: section.title,
+              title: { id: section.title, defaultMessage: section.title },
+            };
+          });
 
     const sidebarItems = [
       {
         sectionId: 'general',
         title: messages.menuGeneralInformation,
-      }
+      },
     ].concat(sections);
 
     const formId = 'pluginForm';
@@ -345,54 +368,56 @@ class CreateEmailTemplate extends React.Component<
       (this.state.initialValues &&
         this.state.initialValues.properties &&
         this.state.initialValues.properties.length) ||
-        !!creativeId
+      !!creativeId
         ? {
-          formId,
-          message: messages.save,
-          onClose: this.redirect,
-        }
+            formId,
+            message: messages.save,
+            onClose: this.redirect,
+          }
         : {
-          formId,
-          onClose: this.redirect,
-        };
+            formId,
+            onClose: this.redirect,
+          };
 
     return isLoading ? (
       <div style={{ display: 'flex', flex: 1 }}>
         <Loading className="loading-full-screen" />
       </div>
     ) : (
-        <EditContentLayout
-          paths={breadcrumbPaths}
-          items={sidebarItems}
-          scrollId={formId}
-          {...actionbarProps}
-        >
-          <PluginEditForm
-            editionMode={!!creativeId}
-            organisationId={organisationId}
-            save={this.saveOrCreatePluginInstance}
-            pluginProperties={
-              (this.state.initialValues && this.state.initialValues.properties) ||
-              []
-            }
-            disableFields={isLoading}
-            pluginLayout={this.state.pluginLayout}
-            isLoading={isLoading}
-            pluginVersionId={
-              (this.state.emailTemplateRenderer &&
-                this.state.emailTemplateRenderer.id) ||
-              ''
-            }
-            formId={formId}
-            initialValues={this.formatInitialValues(this.state.initialValues)}
-            showGeneralInformation={true}
-            showTechnicalName={true}
-          />
-        </EditContentLayout>
-      );
+      <EditContentLayout
+        paths={breadcrumbPaths}
+        items={sidebarItems}
+        scrollId={formId}
+        {...actionbarProps}
+      >
+        <PluginEditForm
+          editionMode={!!creativeId}
+          organisationId={organisationId}
+          save={this.saveOrCreatePluginInstance}
+          pluginProperties={
+            (this.state.initialValues && this.state.initialValues.properties) ||
+            []
+          }
+          disableFields={isLoading}
+          pluginLayout={this.state.pluginLayout}
+          isLoading={isLoading}
+          pluginVersionId={
+            (this.state.emailTemplateRenderer &&
+              this.state.emailTemplateRenderer.id) ||
+            ''
+          }
+          formId={formId}
+          initialValues={this.formatInitialValues(this.state.initialValues)}
+          showGeneralInformation={true}
+          showTechnicalName={true}
+        />
+      </EditContentLayout>
+    );
   }
 }
 
-export default compose(injectIntl, withRouter, injectNotifications)(
-  CreateEmailTemplate,
-);
+export default compose(
+  injectIntl,
+  withRouter,
+  injectNotifications,
+)(CreateEmailTemplate);

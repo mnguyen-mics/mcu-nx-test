@@ -19,24 +19,33 @@ import {
   DisplayCreativeFormData,
   DISPLAY_CREATIVE_FORM,
   isDisplayAdResource,
+  EditDisplayCreativeRouteMatchParams,
 } from '../domain';
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
+import { RouteComponentProps } from 'react-router';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
 }
 
-type Props = ValidatorProps & InjectedIntlProps & MapStateProps;
+export interface GeneralFormSectionProps {
+  small?: boolean;
+}
+
+type Props = ValidatorProps &
+  GeneralFormSectionProps &
+  InjectedIntlProps &
+  MapStateProps &
+  RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
 
 interface State {
   displayAdvancedSection: boolean;
-  displayWarning: boolean;
 }
 class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { displayAdvancedSection: false, displayWarning: false };
+    this.state = { displayAdvancedSection: false };
   }
 
   toggleAdvancedSection = () => {
@@ -64,6 +73,7 @@ class GeneralFormSection extends React.Component<Props, State> {
       intl: { formatMessage },
       fieldValidators: { isRequired },
       initialValue: { creative },
+      small
     } = this.props;
 
     let isDisabled = false;
@@ -74,7 +84,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         creative.audit_status === 'AUDIT_PENDING';
     }
 
-    const CreativeFormatEditorField: FieldCtor<{ disabled?: boolean }> = Field;
+    const CreativeFormatEditorField: FieldCtor<{ disabled?: boolean, small?: boolean }> = Field;
 
     return (
       <div>
@@ -103,12 +113,14 @@ class GeneralFormSection extends React.Component<Props, State> {
               messages.creativeCreationGeneralNameFieldHelper,
             ),
           }}
+          small={small}
         />
         <CreativeFormatEditorField
           name="creative.format"
           component={DisplayCreativeFormatEditor}
           validate={[this.isCreativeFormatValid()]}
           disabled={isDisabled}
+          small={small}
         />
         <FormInputField
           name="creative.destination_domain"
@@ -118,7 +130,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             label: formatMessage(
               messages.creativeCreationGeneralDomainFieldTitle,
             ),
-            required: true,
+            required: small,
           }}
           inputProps={{
             placeholder: formatMessage(
@@ -131,6 +143,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               messages.creativeCreationGeneralDomainFieldHelper,
             ),
           }}
+          small={small}
         />
         <div>
           <ButtonStyleless
@@ -163,6 +176,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 placeholder: formatMessage(
                   messages.creativeCreationAdvancedTechnicalFieldPlaceholder,
                 ),
+                disabled: isDisabled,
               }}
               helpToolTipProps={{
                 title: formatMessage(
@@ -172,6 +186,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               iconType="warning"
               type="warning"
               message={formatMessage(messages.warningOnTokenEdition)}
+              small={small}
             />
           </div>
         </div>
@@ -180,7 +195,7 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
+export default compose<Props, GeneralFormSectionProps>(
   injectIntl,
   withValidators,
   connect((state: any, ownProps: Props) => ({

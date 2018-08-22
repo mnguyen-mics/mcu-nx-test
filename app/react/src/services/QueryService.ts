@@ -4,17 +4,25 @@ import { OTQLResult } from '../models/datamart/graphdb/OTQLResult';
 import { QueryDocument } from '../models/datamart/graphdb/QueryDocument';
 
 const QueryService = {
-  getQuery(datamartId: string, queryId: string): Promise<DataResponse<QueryResource>> {
+  getQuery(
+    datamartId: string,
+    queryId: string,
+  ): Promise<DataResponse<QueryResource>> {
     const endpoint = `datamarts/${datamartId}/queries/${queryId}`;
     return ApiService.getRequest(endpoint);
   },
-
-  createQuery(datamartId: string, query: Partial<QueryResource>): Promise<DataResponse<QueryResource>> {
+  createQuery(
+    datamartId: string,
+    query: Partial<QueryResource>,
+  ): Promise<DataResponse<QueryResource>> {
     const endpoint = `datamarts/${datamartId}/queries`;
     return ApiService.postRequest(endpoint, query);
   },
-
-  updateQuery(datamartId: string, queryId: string, query: Partial<QueryResource>): Promise<DataResponse<QueryResource>> {
+  updateQuery(
+    datamartId: string,
+    queryId: string,
+    query: Partial<QueryResource>,
+  ): Promise<DataResponse<QueryResource>> {
     const endpoint = `datamarts/${datamartId}/queries/${queryId}`;
     return ApiService.putRequest(endpoint, query);
   },

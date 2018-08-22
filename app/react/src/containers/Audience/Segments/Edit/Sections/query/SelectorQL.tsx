@@ -1,29 +1,31 @@
 import * as React from 'react';
 import ReactAngular from '../../../../../ReactAngular/ReactAngular';
 
-
 export interface AngularWidgetProps {
   datamartId: string;
   organisationId: string;
   queryContainer: any;
 }
 
-interface AngularWidgetState {
-  QueryContainer: any,
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'mcs-query-tool': any;
+    }
+  }
 }
-
-declare global { namespace JSX { interface IntrinsicElements {"mcs-query-tool": any } } }
-
 
 const ReactAngularJS = ReactAngular as any;
 
-export default class AngularWidget extends React.Component<AngularWidgetProps, AngularWidgetState> {
-
+export default class AngularWidget extends React.Component<AngularWidgetProps> {
   constructor(props: AngularWidgetProps) {
     super(props);
-    
-    (window as any).angular.element(document.body).injector().get('core/common/auth/Session').init(`o${this.props.organisationId}d${this.props.datamartId}`);
-   
+
+    (window as any).angular
+      .element(document.body)
+      .injector()
+      .get('core/common/auth/Session')
+      .init(`o${this.props.organisationId}d${this.props.datamartId}`);
   }
 
   render() {
@@ -36,7 +38,13 @@ export default class AngularWidget extends React.Component<AngularWidgetProps, A
         }}
       >
         <div>
-        <mcs-query-tool query-container="container" statistics-enabled="false" selected-values-enabled="true" datamart-id="datamartId" organisation-id="organisationId" />
+          <mcs-query-tool
+            query-container="container"
+            statistics-enabled="true"
+            selected-values-enabled="true"
+            datamart-id="datamartId"
+            organisation-id="organisationId"
+          />
         </div>
       </ReactAngularJS>
     ) : null;

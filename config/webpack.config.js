@@ -53,6 +53,10 @@ const configFactory = (isProduction, customFontPath, lintFailOnError) => {
           }),
         },
         {
+          test: /\.css$/,
+          use: [ 'style-loader', 'css-loader' ]
+        },
+        {
           test: /\.(jpe?g|png|gif|svg)$/i,
           use: [
             {

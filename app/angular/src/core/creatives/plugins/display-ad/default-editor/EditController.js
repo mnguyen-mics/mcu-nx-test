@@ -29,9 +29,20 @@ define(['./module'], function (module) {
       $scope.$on("display-ad:loaded", function () {
         // The parent controller has loaded the creative, you can use it now (check DisplayAdService)
         $log.info("display-ad:loaded");
-        $scope.iabAdSizes = _.map(IabService.getAdSizes($scope.displayAd.subtype), function (size) {
-          return size.format;
+        IabService.getAdSizes($scope.displayAd.subtype, $scope.organisationId).then(function(formats) {
+          $scope.iabAdSizes = formats;
+          if (formats.indexOf($scope.displayAd.format) > -1) {
+            $scope.isCustomFormat = false;
+          } else {
+            $scope.isCustomFormat = true;
+          }
+          
         });
+
+        var quantumTagProp = _.find($scope.properties, function(prop) { return prop.value.technical_name === "quantum_tag"; });          
+        var quantumHash = quantumTagProp.value.value.value.match(/ah: "(.*?)"/)[1];
+        $scope.quantumAdPreviewUrl = "http://s3.amazonaws.com/static.elasticad.net/nativedemo/apxcreativepreview.html?ean-test-native=true&ean-testall-native=true&ean-isinpreview=1&ean-test-hash=" + quantumHash;
+
       });
 
       $scope.takeScreenshot = function (creativeId) {
@@ -94,6 +105,11 @@ define(['./module'], function (module) {
         }
         return warnings;
       };
+
+      $scope.isQuantumAdRenderer = function() {
+        return $scope.displayAd.renderer_artifact_id === "quantum-native-script";
+      };
+      
     }
   ]);
 });

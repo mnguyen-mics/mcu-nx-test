@@ -1,8 +1,14 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import PluginService from '../PluginService';
 import { PluginProperty, Recommender } from '../../models/Plugins';
+import PluginInstanceService from '../PluginInstanceService';
 
-const recommenderService = {
+class RecommenderService extends PluginInstanceService<Recommender> {
+  
+  constructor() {
+    super('recommenders');
+  };
+
   getRecommenders(organisationId: string, options: object = {}): Promise<DataListResponse<Recommender>> {
     const endpoint = 'recommenders';
 
@@ -12,12 +18,14 @@ const recommenderService = {
     };
 
     return ApiService.getRequest(endpoint, params);
-  },
+  };
+
   getRecommenderProperty(id: string, options: object = {}): Promise<DataListResponse<PluginProperty>> {
     const endpoint = `recommenders/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
-  },
+  };
+
   deleteRecommender(id: string, options: object = {}) {
     const endpoint = `recommenders/${id}`;
 
@@ -25,7 +33,8 @@ const recommenderService = {
       ...options,
     };
     return ApiService.deleteRequest(endpoint, params);
-  },
+  };
+
   getRecommender(id: string, options: object = {}): Promise<DataResponse<Recommender>> {
     const endpoint = `recommenders/${id}`;
 
@@ -33,7 +42,8 @@ const recommenderService = {
       ...options,
     };
     return ApiService.getRequest(endpoint, params);
-  },
+  };
+
   createRecommender(organisationId: string, options: object = {}): Promise<DataResponse<Recommender>> {
     const endpoint = `recommenders?organisation_id=${organisationId}`;
 
@@ -42,7 +52,8 @@ const recommenderService = {
     };
 
     return ApiService.postRequest(endpoint, params);
-  },
+  };
+
   updateRecommender(id: string, options: object = {}): Promise<DataResponse<Recommender>> {
     const endpoint = `recommenders/${id}`;
 
@@ -51,12 +62,14 @@ const recommenderService = {
     };
 
     return ApiService.putRequest(endpoint, params);
-  },
+  };
+
   updateRecommenderProperty(
     organisationId: string, id: string, technicalName: string, params: object = {}): Promise<DataResponse<PluginProperty> | void> {
     const endpoint = `recommenders/${id}/properties/technical_name=${technicalName}`;
     return PluginService.handleSaveOfProperties(params, organisationId, 'recommenders', id, endpoint);
-  },
+  };
+
 };
 
-export default recommenderService;
+export default new RecommenderService();

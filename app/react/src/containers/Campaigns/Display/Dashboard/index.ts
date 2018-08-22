@@ -1,4 +1,4 @@
-import DisplayCampaignPage from './Campaign/DisplayCampaignPage';
+import DisplayCampaignPage from './DisplayCampaign';
 
 import AdGroupPage from './AdGroup/AdGroupPage';
 

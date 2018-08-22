@@ -15,8 +15,8 @@ import DatamartEditPage from '../containers/Settings/DatamartSettings/Datamarts/
 import { BidOptimizerContent } from '../containers/Settings/CampaignSettings/BidOptimizer/List';
 import { CreateEditBidOptimizer } from '../containers/Settings/CampaignSettings/BidOptimizer/Edit';
 
-import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List';
-import { CreateEditAttributionModel } from '../containers/Settings/CampaignSettings/AttributionModel/Edit';
+import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List'
+import EditAttributionModelPage from '../containers/Settings/CampaignSettings/AttributionModel/Edit/EditAttributionModelPage'
 
 import { EmailRouterContent } from '../containers/Settings/CampaignSettings/EmailRouter/List';
 import { CreateEditEmailRouter } from '../containers/Settings/CampaignSettings/EmailRouter/Edit';
@@ -44,7 +44,6 @@ export const settingsDefinition: NavigatorDefinition = {
   */
 
   // sites
-
   settingsDatamartSitesList: {
     path: '/settings/datamart/sites',
     layout: 'settings',
@@ -62,7 +61,7 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   settingsDatamartSitesEdition: {
-    path: '/settings/datamart/sites/:siteId/edit',
+    path: '/settings/datamart/:datamartId/sites/:siteId/edit',
     layout: 'edit',
     editComponent: SiteEditPage,
     requiredFeature: 'datamartSettings.sites',
@@ -85,7 +84,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
   settingsDatamartMobileAppEdition: {
-    path: '/settings/datamart/mobile_application/:mobileApplicationId/edit',
+    path: '/settings/datamart/:datamartId/mobile_application/:mobileApplicationId/edit',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
     requiredFeature: 'datamartSettings.mobile_applications',
@@ -138,9 +137,7 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   /*
-
   ORGANISATION SETTINGS
-
   */
 
   // labels
@@ -180,7 +177,6 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   /*
-
   ACCOUNT SETTINGS
   
   */
@@ -249,18 +245,17 @@ export const settingsDefinition: NavigatorDefinition = {
     path:
       '/settings/campaigns/attribution_models/:attributionModelId(\\d+)/edit',
     layout: 'edit',
-    editComponent: CreateEditAttributionModel,
+    editComponent: EditAttributionModelPage,
     requiredFeature: 'campaignsSettings.attribution_models',
   },
   settingsCampaignAttributionModelCreation: {
     path: '/settings/campaigns/attribution_models/create',
     layout: 'edit',
-    editComponent: CreateEditAttributionModel,
+    editComponent: EditAttributionModelPage,
     requiredFeature: 'campaignsSettings.attribution_models',
   },
 
   // email routers
-
   settingsCampaignEmailRouterList: {
     path: '/settings/campaigns/email_routers',
     layout: 'settings',
@@ -281,7 +276,6 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   // recommenders
-
   settingsCampaignRecommenderList: {
     path: '/settings/campaigns/recommenders',
     layout: 'settings',

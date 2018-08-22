@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import DisplayCreativeFormLoader from '../../DisplayAds/Edit/DisplayCreativeFormLoader';
 import NativeCreativeCreator from './NativeCreativeCreator';
 import messages from './messages';
 import {
@@ -16,6 +15,7 @@ import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import NativeCreativeFormLoader from './NativeCreativeFormLoader';
 
 interface State {
   loading: boolean;
@@ -54,7 +54,31 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     }
   }
 
-  redirect = () => {
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      match: {
+        params: { nativeId },
+      },
+    } = this.props;
+    const {
+      match: {
+        params: { nativeId: nextNativeId },
+      },
+    } = nextProps;
+    if (nextNativeId && nativeId !== nextNativeId) {
+      CreativeService.getCreative(nextNativeId)
+        .then(resp => resp.data)
+        .then(nativeData => {
+          this.setState({
+            nativeName: nativeData.name
+              ? nativeData.name
+              : `creative ${nativeData.id}`,
+          });
+        });
+    }
+  }
+
+  redirect = (createdId?: string) => {
     const {
       history,
       location: { state },
@@ -63,10 +87,14 @@ class EditNativeCreativePage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const url =
+    let url =
       state && state.from
         ? state.from
         : `/v2/o/${organisationId}/creatives/native`;
+
+    if (createdId) {
+      url = `/v2/o/${organisationId}/creatives/native/edit/${createdId}`
+    }
 
     history.push(url);
   };
@@ -89,9 +117,13 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     });
 
     DisplayCreativeFormService.saveDisplayCreative(organisationId, nativeData)
-      .then(() => {
+      .then((createdId) => {
         hideSaveInProgress();
-        this.redirect();
+        this.setState({
+          loading: false
+        })
+        this.redirect(createdId);
+        message.success(intl.formatMessage(messages.successfulSaving))
       })
       .catch(err => {
         hideSaveInProgress();
@@ -152,7 +184,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     }
 
     return nativeId ? (
-      <DisplayCreativeFormLoader {...props} creativeId={nativeId} />
+      <NativeCreativeFormLoader {...props} creativeId={nativeId} />
     ) : (
       <NativeCreativeCreator {...props} />
     );

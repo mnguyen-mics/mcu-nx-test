@@ -35,6 +35,9 @@
 
     .presentation {
       display: flex;
+      display: -moz-flex;
+      display: -webkit-flex;
+      display: -ms-flex;
       flex-wrap: wrap;
       align-items: stretch;
       justify-content: space-between;
@@ -50,14 +53,23 @@
       }
 
       .presentation-item {
-        flex: 0 0 45%;
-        justify-content: center;
+        
         background-color: #ffffff;
         border: @border-width-base @border-style-base @border-color-base;
         border-radius: @border-radius-sm @border-radius-sm;
-        display: flex;
-        align-items: center;
+
+        position: relative;
+        flex-basis: calc(45%);
         .content {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          display: -webkit-flex;
+          justify-content: center;
+          align-items: center;
           .icon {
             font-size: 10em;
           }
@@ -507,5 +519,13 @@
 
   .double-select-separator {
     width: 8%;
+  }
+}
+
+.ant-form-vertical {
+  .form-field-wrapper {
+    .ant-form-item-label {
+      white-space: initial;
+    }
   }
 }

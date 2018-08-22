@@ -48,7 +48,7 @@ export default defineMessages({
   uploadMessage: {
     id: 'assets.modal.upload.message',
     defaultMessage: `You can upload one or multiple file at the time.
-You can only upload image files with the following format .jpg,.jpeg,.png,.gif with a maximum size of 200kB`,
+You can only upload image files with the following format .jpg,.jpeg,.png,.gif,.svg with a maximum size of 200kB`,
   },
   uploadTitle: {
     id: 'assets.modal.upload.title',

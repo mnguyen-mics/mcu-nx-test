@@ -22,3 +22,10 @@ export interface QueryResource {
   query_language: QueryLanguage;
   query_text?: string;
 }
+
+export interface UserCompartment {
+  id: string;
+  name: string;
+  token: string;
+  default: boolean;
+}

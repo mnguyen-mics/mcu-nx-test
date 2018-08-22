@@ -38,4 +38,8 @@ const operation = (
   return operationMap[chosenOperation](propertyValue, targetValue);
 };
 
+export const IVIDENCE_AD_RENDERER = '1032';
+export const QUANTUM_AD_RENDERER = '1047';
+export const NATIVE_AD_RENDERER = '1075';
+
 export default operation;

@@ -36,7 +36,7 @@
     <div class="row">
       <div class="col-md-12">
         <h3>Version Properties</h3>
-        <div ng-repeat="property in properties">
+        <div ng-repeat="property in properties|orderBy:['-value.origin', 'value.technical_name']">
           <mcs-number-property ng-disabled="disabledEdition || property.origin == 'PLUGIN_STATIC'" property="property" ng-if="property.property_type == 'INT'"></mcs-number-property>
           <mcs-url-property ng-disabled="disabledEdition || property.origin == 'PLUGIN_STATIC'" property="property" ng-if="property.property_type == 'URL'"></mcs-url-property>
           <mcs-pixel-property ng-disabled="disabledEdition || property.origin == 'PLUGIN_STATIC'" property="property" ng-if="property.property_type == 'PIXEL_TAG'"></mcs-pixel-property>

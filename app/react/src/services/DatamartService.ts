@@ -1,5 +1,5 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { DatamartResource } from '../models/datamart/DatamartResource';
+import { DatamartResource, UserCompartment } from '../models/datamart/DatamartResource';
 import { EventRules } from '../models/settings/settings';
 
 
@@ -42,6 +42,10 @@ const datamartServices = {
     const endpoint = `datamarts/${datamartId}/event_rules/${eventRuleId}`;
     return ApiService.deleteRequest(endpoint)
   },
+  getUserCompartments(datamartId: string): Promise<DataListResponse<UserCompartment>> {
+    const endpoint = `datamarts/${datamartId}/user_account_compartments`;
+    return ApiService.getRequest(endpoint)
+  }
 }
 
 export default datamartServices;

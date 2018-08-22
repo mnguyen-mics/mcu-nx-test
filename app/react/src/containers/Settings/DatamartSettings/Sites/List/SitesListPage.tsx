@@ -130,7 +130,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/sites/${site.id}/edit`,
+      `/v2/o/${organisationId}/settings/datamart/${site.datamart_id}/sites/${site.id}/edit`,
     );
   };
 
@@ -140,10 +140,16 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         params: { organisationId },
       },
       datamart,
+      location: {
+        search
+      }
     } = this.props;
-
     this.setState({ filter: newFilter });
-    this.fetchSites(organisationId, datamart.id, newFilter);
+    const filters = parseSearch(
+      search,
+      this.getSearchSetting(organisationId),
+    );
+    this.fetchSites(organisationId, filters.datamartId ? filters.datamartId : datamart.id, newFilter);
   };
 
   fetchSites = (organisationId: string, datamartId: string, filter: Filter) => {
@@ -156,7 +162,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       if (filter.keywords) {
         return {
           ...options,
-          name: filter.keywords,
+          keywords: filter.keywords,
         };
       }
       return options;

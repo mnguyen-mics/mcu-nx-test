@@ -80,5 +80,13 @@ export default defineMessages({
   editionNotAllowed: {
     id: 'display.campaigns.table.edition.not.allowed',
     defaultMessage: 'Edition on this campaign is deprecated, you must use navigator legacy to edit this campaign'
+  },
+  creativeName: {
+    id: 'campaignEditor.export.adserver.creativeName',
+    defaultMessage: 'Creative Name',
+  },
+  snippet: {
+    id: 'campaignEditor.export.adserver.snippet',
+    defaultMessage: 'Snippet',
   }
 });

@@ -15,14 +15,14 @@ define(['./module'], function (module) {
       // redirect to v2
       $location.path(Session.getV2WorkspacePrefixUrl() + '/creatives/display');
 
-        // Pagination
+      // Pagination
       $scope.currentPageCreative = 1;
       $scope.itemsPerPage = 10;
       // Archived
       $scope.displayArchived = false;
       var options = {
-        max_results: 300,
-        organisation_id: Session.getCurrentWorkspace().organisation_id,
+        max_results: 3000,
+        organisation_id: $scope.organisationId,
         creative_type: 'DISPLAY_AD'
       };
       // Identify administrator
@@ -37,11 +37,11 @@ define(['./module'], function (module) {
       // Quick Creative Upload Options
       $scope.pluploadOptions = {
         multi_selection: true,
-        url: configuration.ADS_UPLOAD_URL + "?organisation_id=" + Session.getCurrentWorkspace().organisation_id,
+        url: configuration.ADS_UPLOAD_URL + "?organisation_id=" + $scope.organisationId,
         filters: {
           mime_types: [
-            {title: "Image files", extensions: "jpg,jpeg,png,gif"},
-            {title: "Flash files", extensions: "swf"}
+            { title: "Image files", extensions: "jpg,jpeg,png,gif" },
+            { title: "Flash files", extensions: "swf" }
           ],
           max_file_size: "200kb"
         }
@@ -54,7 +54,7 @@ define(['./module'], function (module) {
       };
       // Creative Edit Url
       $scope.getEditUrlForCreative = _.memoize(function (creative) {
-        var result = {url: ""};
+        var result = { url: "" };
         var editorPromise = creativePluginService.getEditor(creative.editor_group_id, creative.editor_artifact_id);
         editorPromise.then(function success(editor) {
           result.url = editor.getEditPath(creative);
@@ -74,9 +74,7 @@ define(['./module'], function (module) {
         // uncomment to filter archived
         options.archived = newValue;
 
-        Restangular.all('creatives').getList(options).then(function (creatives) {
-          $scope.creatives = creatives;
-        });
+        $scope.creatives = Restangular.all('display_ads').getList(options).$object;
       });
 
       /**

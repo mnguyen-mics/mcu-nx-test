@@ -5,7 +5,7 @@ define(['./module', 'lodash'], function (module, _) {
     '$scope', '$uibModalInstance', '$document', '$log', 'core/campaigns/DisplayCampaignService', "Restangular", 'core/common/auth/Session',
     function ($scope, $uibModalInstance, $document, $log, DisplayCampaignService, Restangular, Session) {
 
-      var params = {organisation_id: Session.getCurrentWorkspace().organisation_id};
+      var params = {organisation_id: Session.getCurrentWorkspace().organisation_id, max_results : 1000};
       $log.log("display ChooseExistingCampaignController");
       Restangular.all('campaigns').getList(params).then(function (campaigns) {
         $scope.availableCampaigns = campaigns;
