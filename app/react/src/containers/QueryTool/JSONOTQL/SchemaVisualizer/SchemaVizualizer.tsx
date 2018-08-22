@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tree } from 'antd';
-import { SchemaItem } from '../domain';
+import { SchemaItem, isSchemaItem, isFieldInfoEnfancedResource } from '../domain';
 import FieldNode from './FieldNode';
 
 const TreeNode = Tree.TreeNode;
@@ -20,17 +20,15 @@ export default class SchemaVizualizer extends React.Component<
       gData.fields.map(
         (item): React.ReactNode => {
           if (
-            (item as SchemaItem).fields &&
-            (item as SchemaItem).fields.length
+            isSchemaItem(item)
           ) {
-            const itemSchema = item as SchemaItem;
             return (
-              <TreeNode selectable={false} key={itemSchema.id} title={<FieldNode id={itemSchema.id} item={itemSchema} type="object" />}>
-                {loop(itemSchema, itemSchema.schemaType)}
+              <TreeNode selectable={false} key={item.id} title={<FieldNode id={item.id} item={item} type="object" />}>
+                {loop(item, item.schemaType)}
               </TreeNode>
             );
           }
-          return <TreeNode selectable={false} key={item.id} title={<FieldNode id={item.id} type="field" schemaType={objectType} item={item as SchemaItem} />} />;
+          return isFieldInfoEnfancedResource(item) && <TreeNode selectable={false} key={item.id} title={<FieldNode id={item.id} type="field" schemaType={objectType} item={item} />} />;
         },
       );
 

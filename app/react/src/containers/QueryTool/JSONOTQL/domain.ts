@@ -497,12 +497,20 @@ export interface SchemaItem {
   type: ObjectLikeType;
   name: string;
   schemaType?: string;
-  fields: Array<FieldInfoResource | SchemaItem>
+  fields: Array<FieldInfoEnhancedResource | SchemaItem | FieldInfoResource>
   closestParentType: string;
   path?: string
 }
 
-export const extractFieldType = (field: FieldInfoResource) => field.field_type.match(/\w+/)![0] as string
+export function isSchemaItem(item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource): item is SchemaItem {
+  return (item as SchemaItem).fields && (item as SchemaItem).fields.length > 0
+}
+
+export function isFieldInfoEnfancedResource(item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource): item is FieldInfoEnhancedResource {
+  return !isSchemaItem(item) && (item as FieldInfoEnhancedResource).closestParentType !== undefined;
+}
+
+export const extractFieldType = (field: FieldInfoEnhancedResource) => field.field_type.match(/\w+/)![0] as string
 
 export function computeSchemaModel(
   objectTypes: ObjectLikeTypeInfoResource[],
@@ -513,15 +521,16 @@ export function computeSchemaModel(
   return {
     ...initialObjectType,
     fields: initialObjectType.fields.filter(field => {
-      const match = extractFieldType(field as FieldInfoResource);
+      const match = extractFieldType(field as FieldInfoEnhancedResource);
       if (onlyIndexed) {
         if (objectTypes.map(ot => ot.name).includes(match)) return true;
-        return (field as FieldInfoResource).directives && (field as FieldInfoResource).directives.length &&  (field as FieldInfoResource).directives.find(f => f.name === 'TreeIndex')
+        return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex')
       }
       return true
     }).map((field, index) => {
-      const match = extractFieldType(field as FieldInfoResource);
+      const match = extractFieldType(field as FieldInfoEnhancedResource);
       const newPath = `${path}${path ? '.' : ''}${index}`;
+
       if (
         match &&
         objectTypes.map(ot => ot.name).includes(match)
@@ -539,18 +548,30 @@ export function computeSchemaModel(
   };
 }
 
+export interface FieldInfoEnhancedResource extends FieldInfoResource {
+  closestParentType: string;
+  path: string;
+}
+
 interface DragAndDropCommonInterface {
   name: string;
   objectSource: string
-  type: 'field' | 'object';
   path: string;
-  item: SchemaItem;
-  fieldType?: string | null;
-  schemaType?: string | null;
 }
 
+interface DragAndDropFieldInterface extends DragAndDropCommonInterface {
+  type: 'field';
+  fieldType: string;
+  item: FieldInfoEnhancedResource;
+}
 
-export type DragAndDropInterface = DragAndDropCommonInterface;
+interface DragAndDropObjectdInterface extends DragAndDropCommonInterface {
+  type: 'object';
+  schemaType: string;
+  item: SchemaItem;
+}
+
+export type DragAndDropInterface = DragAndDropFieldInterface |DragAndDropObjectdInterface;
 
 export function computeSchemaPathFromQueryPath(query: ObjectTreeExpressionNodeShape | undefined, path: number[] , schema: SchemaItem | undefined) {
  

@@ -5,29 +5,52 @@ import {
   DragSourceConnector,
   DragSourceMonitor,
 } from 'react-dnd';
-import { DragAndDropInterface, SchemaItem, extractFieldType } from '../domain';
+import { DragAndDropInterface, SchemaItem, extractFieldType, FieldInfoEnhancedResource } from '../domain';
 import { McsIcon } from '../../../../components';
 
-export interface FieldNodeProps {
-  id: string;
+export type FieldNodeProps = FieldNodeObjectProps | FieldNodeFieldProps;
+
+
+interface FieldNodeObjectProps extends FieldNodeCommonProps {
+  type: 'object';
   item: SchemaItem;
-  type: 'object' | 'field';
+}
+
+interface FieldNodeFieldProps extends FieldNodeCommonProps {
+  type: 'field';
+  item: FieldInfoEnhancedResource;
+}
+
+interface FieldNodeCommonProps {
+  id: string;
   connectDragSource?: ConnectDragSource
   isDragging?: boolean;
   isDropped?: boolean;
   schemaType?: string;
 }
 
+
 const fieldSource = {
 	beginDrag(props: FieldNodeProps) {
-    const draggedObject: DragAndDropInterface = {
-      name: props.item.name,
-      objectSource: props.item.closestParentType!,
-      schemaType: props.schemaType,
-      type: props.type,
-      path: props.item.path!,
-      item: props.item,
-      fieldType: props.type === 'field' ? extractFieldType(props.item as any) : undefined
+    let draggedObject: DragAndDropInterface;
+    if (props.type === 'field') {
+      draggedObject = {
+        name: props.item.name,
+        objectSource: props.item.closestParentType!,
+        type: props.type,
+        path: props.item.path!,
+        item: props.item,
+        fieldType: extractFieldType(props.item)
+      }
+    } else {
+      draggedObject = {
+        name: props.item.name,
+        objectSource: props.item.closestParentType!,
+        schemaType: props.schemaType!,
+        type: props.type,
+        path: props.item.path!,
+        item: props.item,
+      }
     }
 		return draggedObject
 	},
@@ -35,11 +58,11 @@ const fieldSource = {
 
 class FieldNode extends React.Component<FieldNodeProps, any> {
   render() {
-    const { item, isDragging, connectDragSource } = this.props;
+    const { item, isDragging, connectDragSource, type } = this.props;
     return connectDragSource &&
     connectDragSource(
       <div className={`field-node-item ${isDragging ? 'dragging' : ''}`}>
-        <div>{item.name} <span className="field-type">{item.schemaType ? item.schemaType : (item as any).field_type} <McsIcon type="dots" /></span></div>
+        <div>{item.name} <span className="field-type">{type === 'object' ? (item as SchemaItem).schemaType : (item as FieldInfoEnhancedResource).field_type} <McsIcon type="dots" /></span></div>
       </div>,
     );
   }
