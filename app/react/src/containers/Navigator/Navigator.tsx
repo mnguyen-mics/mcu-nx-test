@@ -173,7 +173,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             <div className="drawer-wrapper">
               <DrawerManager />
             </div>
-
             <LayoutManager
               layout={route.layout}              
               organisationSelector={OrgSelector}
@@ -182,6 +181,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
               {...comps}
               {...props}
             />
+            <div id="mcs-edit-modal" />
           </div>
         );
       };
@@ -200,7 +200,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             <div className="drawer-wrapper">
               <DrawerManager />
             </div>
-
             <LayoutManager
               layout={route.layout}              
               organisationSelector={OrgSelector}
@@ -209,6 +208,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
               {...comps}
               {...props}
             />
+            <div id="mcs-edit-modal" />
           </div>
         );
       };
