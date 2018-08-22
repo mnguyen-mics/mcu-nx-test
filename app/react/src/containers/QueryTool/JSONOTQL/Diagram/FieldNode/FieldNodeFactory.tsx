@@ -3,15 +3,20 @@ import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
 import FieldNodeWidget from './FieldNodeWidget';
 import FieldNodeModel from './FieldNodeModel';
 import { TreeNodeOperations } from '../../domain';
+import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 
 export default class FieldNodeFactory extends AbstractNodeFactory<
   FieldNodeModel
 > {
   treeNodeOperations: TreeNodeOperations;
+  objectTypes: ObjectLikeTypeInfoResource[];
+  lockGlobalInteraction: (lock: boolean) => void
 
-  constructor(_treeNodeOperations: TreeNodeOperations) {
+  constructor(_treeNodeOperations: TreeNodeOperations,  _objectTypes: ObjectLikeTypeInfoResource[], _lockGlobalInteraction: (lock: boolean) => void) {
     super('field-node');
     this.treeNodeOperations = _treeNodeOperations;
+    this.objectTypes = _objectTypes;
+    this.lockGlobalInteraction = _lockGlobalInteraction;
   }
 
   generateReactWidget(
@@ -21,11 +26,13 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
     if (node.extras.collapsed) {
       return <div />;
     }
-    return React.createElement(FieldNodeWidget, {
+    return (React.createElement(FieldNodeWidget, {
       node: node,
       diagramEngine: diagramEngine,
       treeNodeOperations: this.treeNodeOperations,
-    });
+      objectTypes: this.objectTypes,
+      lockGlobalInteraction: this.lockGlobalInteraction,
+    })) 
   }
 
   getNewInstance(initialConfig?: any): FieldNodeModel {

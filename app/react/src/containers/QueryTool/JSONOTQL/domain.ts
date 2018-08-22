@@ -7,8 +7,9 @@ import { ObjectNodeModel } from './Diagram/ObjectNode';
 import {
   ObjectTreeExpressionNodeShape,
   FieldNode,
+  ObjectNode,
 } from '../../../models/datamart/graphdb/QueryDocument';
-import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType } from '../../../models/datamart/graphdb/RuntimeSchema';
 
 export const MIN_X = 100;
 export const MIN_Y = 100;
@@ -208,12 +209,12 @@ export class UpdateOperation implements Operation {
   execute(
     treeNode: ObjectTreeExpressionNodeShape,
   ): ObjectTreeExpressionNodeShape | undefined {
-    if (isLeafNode(treeNode)) {
-      return treeNode;
-    }
-
     if (this.path.length === 0) {
       return this.node;
+    }
+
+    if (isLeafNode(treeNode)) {
+      return treeNode;
     }
 
     const [head, ...tail] = this.path;
@@ -313,15 +314,15 @@ export function buildNodeModelBTree(
       objectNode.objectTypeInfo = objectType;
 
       const field = objectType.fields.find(f => f.name === treeNode.field)!;
+      const fieldType = field.field_type.match(/\w+/)![0]
       const nextObjectType = objectTypes.find(
-        ot => field.field_type.indexOf(ot.name) > -1,
+        ot => fieldType === ot.name,
       )!;
-
       const hidePlusNode = !hasTypeChild(nextObjectType, objectTypes);
       return {
         node: objectNode,
         down: treeNode.expressions
-          .slice()
+          .slice() 
           .reverse()
           .reduce(
             (acc, expr, index) => {
@@ -348,6 +349,7 @@ export function buildNodeModelBTree(
 
     case 'FIELD':
       const fieldNode = new FieldNodeModel(treeNode, treeNodePath);
+      fieldNode.objectTypeInfo = objectType;
       return {
         node: fieldNode,
       };
@@ -447,16 +449,16 @@ export function buildLinkList(nodeBTree: NodeModelBTree): LinkModel[] {
     ...(nodeBTree.right
       ? [
           createLink(
-            nodeBTree.node.ports.center,
-            nodeBTree.right.node.ports.center,
+            nodeBTree.node.ports.right,
+            nodeBTree.right.node.ports.left,
           ),
         ]
       : []),
     ...(nodeBTree.down
       ? [
           createLink(
-            nodeBTree.node.ports.center,
-            nodeBTree.down.node.ports.center,
+            nodeBTree.node.ports.bottom,
+            nodeBTree.down.node.ports.top,
           ),
         ]
       : []),
@@ -482,4 +484,179 @@ export function applyTranslation(
     x: position.x + tx,
     y: position.y + ty,
   };
+}
+
+
+export interface FieldEnhancedInfo extends FieldInfoResource {
+  closestParentType: string;
+}
+
+export interface SchemaItem {
+  id: string;
+  runtime_schema_id: string;
+  type: ObjectLikeType;
+  name: string;
+  schemaType?: string;
+  fields: Array<FieldInfoEnhancedResource | SchemaItem | FieldInfoResource>
+  closestParentType: string;
+  path?: string
+}
+
+export function isSchemaItem(item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource): item is SchemaItem {
+  return (item as SchemaItem).fields && (item as SchemaItem).fields.length > 0
+}
+
+export function isFieldInfoEnfancedResource(item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource): item is FieldInfoEnhancedResource {
+  return !isSchemaItem(item) && (item as FieldInfoEnhancedResource).closestParentType !== undefined;
+}
+
+export const extractFieldType = (field: FieldInfoEnhancedResource) => field.field_type.match(/\w+/)![0] as string
+
+export function computeSchemaModel(
+  objectTypes: ObjectLikeTypeInfoResource[],
+  initialObjectType: SchemaItem,
+  path: string,
+  onlyIndexed: boolean = true
+): SchemaItem {
+  return {
+    ...initialObjectType,
+    fields: initialObjectType.fields.filter(field => {
+      const match = extractFieldType(field as FieldInfoEnhancedResource);
+      if (onlyIndexed) {
+        if (objectTypes.map(ot => ot.name).includes(match)) return true;
+        return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex')
+      }
+      return true
+    }).map((field, index) => {
+      const match = extractFieldType(field as FieldInfoEnhancedResource);
+      const newPath = `${path}${path ? '.' : ''}${index}`;
+
+      if (
+        match &&
+        objectTypes.map(ot => ot.name).includes(match)
+      ) {
+        const newInitialObject: SchemaItem =  {...objectTypes.find(ot => ot.name === match)!, schemaType: match, name: field.name, closestParentType: initialObjectType.type, path: newPath}
+        return computeSchemaModel(
+          objectTypes,
+          newInitialObject,
+          newPath
+        );
+      } else {
+        return {...field, closestParentType: initialObjectType.name,  path: newPath};
+      }
+    }),
+  };
+}
+
+export interface FieldInfoEnhancedResource extends FieldInfoResource {
+  closestParentType: string;
+  path: string;
+}
+
+interface DragAndDropCommonInterface {
+  name: string;
+  objectSource: string
+  path: string;
+}
+
+interface DragAndDropFieldInterface extends DragAndDropCommonInterface {
+  type: 'field';
+  fieldType: string;
+  item: FieldInfoEnhancedResource;
+}
+
+interface DragAndDropObjectdInterface extends DragAndDropCommonInterface {
+  type: 'object';
+  schemaType: string;
+  item: SchemaItem;
+}
+
+export type DragAndDropInterface = DragAndDropFieldInterface |DragAndDropObjectdInterface;
+
+export function computeSchemaPathFromQueryPath(query: ObjectTreeExpressionNodeShape | undefined, path: number[] , schema: SchemaItem | undefined) {
+ 
+  function computeElementInPath(_query: ObjectTreeExpressionNodeShape | undefined, _path: number[], elements: string[] = []): string[] {
+    if (!_query) {
+      return elements;
+    }
+    const _elements = _query.type !== 'GROUP' ? [...elements, _query.field] : elements
+    if (_path.length === 0 || isLeafNode(_query!)) {
+      return _elements;
+    }
+    const [head, ...tail] = _path;
+    return computeElementInPath((_query as ObjectNode).expressions[head], tail, _elements);
+  }
+
+  function computePathFromElement(_schema: SchemaItem | undefined, _path: string[], elements: number[] = []): number[] {
+    if (!_schema) {
+      return elements;
+    }
+    if (!_path.length) {
+      return elements;
+    }
+    if (!_schema.fields.length) {
+      return elements;
+    }
+    const [head, ...tail] = _path;
+    const fieldIndex =_schema.fields.findIndex(field => field.name === head)!;
+    const _elements = [...elements, fieldIndex];
+    return computePathFromElement(_schema.fields[fieldIndex] as SchemaItem, tail, _elements);
+  }
+  
+  const newPath = computeElementInPath(query, path);
+  const newElementPath = computePathFromElement(schema, newPath);
+  return newElementPath;
+  
+}
+
+export function computeAdditionalNode(additionalNodePath: number[], offset: number, schema: SchemaItem | undefined) {
+  function computeElementFromPath(_additionalNodePath: number[], _offset: number, _schema: SchemaItem | undefined, _query?: ObjectTreeExpressionNodeShape[]): ObjectTreeExpressionNodeShape[] | undefined {
+    if (!_schema) {
+      return _query
+    }
+
+    if (_additionalNodePath.length === 0) {
+      return _query;
+    }
+    
+    const [head, ...tail] = _additionalNodePath;
+    let _newOffset = _offset;
+    if (_newOffset > 0) {
+      _newOffset = _newOffset -1;
+      return computeElementFromPath(tail, _newOffset, _schema.fields[head] as SchemaItem)
+    }
+
+    const _newQueryNode: ObjectTreeExpressionNodeShape = (_schema.fields[head] as SchemaItem).fields && (_schema.fields[head] as SchemaItem).fields.length ? {
+      type: 'OBJECT',
+      field: _schema.fields[head].name,
+      expressions: [],
+      boolean_operator: 'OR',
+    } : {
+      type: 'FIELD',
+      field: _schema.fields[head].name,
+    }
+
+    const _newQuery =  _query ? [..._query, _newQueryNode] : [_newQueryNode]
+    return computeElementFromPath(tail, _newOffset, _schema.fields[head] as SchemaItem, _newQuery)
+  }
+
+  const generatedQuery = computeElementFromPath(additionalNodePath, offset, schema);
+  
+
+
+  if (generatedQuery) {
+
+    const reversedArray: ObjectTreeExpressionNodeShape[] = [];
+    for (let i = 0; i < generatedQuery.length; i++) {
+      reversedArray.push(generatedQuery[generatedQuery.length - 1 - i]);
+    }
+
+    const builtUpQuery = reversedArray
+      .reduce((acc: ObjectTreeExpressionNodeShape, val) => {
+        return acc ? {...val, expressions: [acc]} : val;
+      }, undefined)
+    
+    return builtUpQuery;
+  }
+  return generatedQuery;
 }

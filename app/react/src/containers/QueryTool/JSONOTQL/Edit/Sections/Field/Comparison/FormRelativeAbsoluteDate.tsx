@@ -11,6 +11,35 @@ const InputGroup = Input.Group;
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../../../../../../../components/Form/FormFieldWrapper';
 import { RadioChangeEvent } from 'antd/lib/radio';
+import { defineMessages, FormattedMessage } from 'react-intl';
+
+const messages = defineMessages({
+  absolute: {
+    id: 'datepicker.label.absolute',
+    defaultMessage: 'Absolute'
+  },
+  relative: {
+    id: 'datepicker.label.relative',
+    defaultMessage: 'Relative'
+  },
+  days: {
+    id: 'datepicker.label.days',
+    defaultMessage: 'Days'
+  },
+  month: {
+    id: 'datepicker.label.month',
+    defaultMessage: 'Month'
+  },
+  year: {
+    id: 'datepicker.label.year',
+    defaultMessage: 'Year'
+  },
+  ago: {
+    id: 'datepicker.label.ago',
+    defaultMessage: 'Ago'
+  }
+ 
+})
 
 export interface FormRelativeAbsoluteDateProps  extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
@@ -129,8 +158,8 @@ export default class FormRelativeAbsoluteDate extends React.Component<
       >
         <div style={{ marginBottom: 20 }}>
           <RadioGroup style={{ width: '100%' }} defaultValue={this.state.datePickerType} onChange={onRadioChange}>
-            <RadioButton style={{ width: '50%' }} value="ABSOLUTE">ABSOLUTE</RadioButton>
-            <RadioButton style={{ width: '50%' }} value="RELATIVE">RELATIVE</RadioButton>
+            <RadioButton style={{ width: '50%' }} value="ABSOLUTE"><FormattedMessage {...messages.absolute} /></RadioButton>
+            <RadioButton style={{ width: '50%' }} value="RELATIVE"><FormattedMessage {...messages.relative} /></RadioButton>
           </RadioGroup>
         </div>
         <div>
@@ -147,14 +176,14 @@ export default class FormRelativeAbsoluteDate extends React.Component<
                   <InputNumber style={{ width: '100%' }} defaultValue={1} value={value as number} onChange={this.onValueChange} />
                 </Col>
                 <Col span={7}>
-                <Select defaultValue={this.state.relativePeriod} onChange={onPeriodChange}>
-                  <Select.Option value="d">Days</Select.Option>
-                  <Select.Option value="M">Months</Select.Option>
-                  <Select.Option value="y">Years</Select.Option>
+                <Select defaultValue={this.state.relativePeriod} onChange={onPeriodChange} getPopupContainer={this.props.datePickerProps && this.props.datePickerProps.getCalendarContainer}>
+                  <Select.Option value="d"><FormattedMessage {...messages.days} /></Select.Option>
+                  <Select.Option value="M"><FormattedMessage {...messages.month} /></Select.Option>
+                  <Select.Option value="y"><FormattedMessage {...messages.year} /></Select.Option>
                 </Select>
                 </Col>
                 <Col span={2} style={{ height: 40, lineHeight: '40px' }}>
-                  Ago
+                  <FormattedMessage {...messages.ago} />
                 </Col>
               </InputGroup>
           </div>}

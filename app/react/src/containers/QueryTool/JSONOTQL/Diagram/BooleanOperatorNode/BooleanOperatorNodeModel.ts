@@ -18,7 +18,10 @@ export default class BooleanOperatorNodeModel extends NodeModel implements Query
       throw new Error('Missing parameters');
     }
 
-    this.addPort(new SimplePortModel('center'));
+    this.addPort(new SimplePortModel('right'));
+    this.addPort(new SimplePortModel('left'));
+    this.addPort(new SimplePortModel('bottom'));
+    this.addPort(new SimplePortModel('top'));
 
     this.objectOrGroupNode = objectOrGroupNode;
     this.treeNodePath = treeNodePath;
