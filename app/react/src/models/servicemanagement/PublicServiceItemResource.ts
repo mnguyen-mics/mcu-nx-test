@@ -58,12 +58,30 @@ export interface AdexInventoryServiceItemPublicResource
   ad_exchange_id: string;
 }
 
+export interface BaseServiceItemPublicResource
+  extends ServiceItemPublicResource {
+  service_type: string;
+}
+
+export interface AdExchangeHubInventoryServiceItemPublicResource
+  extends ServiceItemPublicResource {
+    ad_exchange_hub_key: string;
+}
+
+export interface KeywordListInventoryAccessPublicResource
+  extends ServiceItemPublicResource {
+    keyword_list_id: string;
+}
+
 export type ServiceItemShape =
   | AudienceSegmentServiceItemPublicResource
   | DisplayNetworkServiceItemPublicResource
   | PlacementListServiceItemPublicResource
   | DealListServiceItemPublicResource
-  | AdexInventoryServiceItemPublicResource;
+  | AdexInventoryServiceItemPublicResource
+  | AdExchangeHubInventoryServiceItemPublicResource
+  | BaseServiceItemPublicResource
+  | KeywordListInventoryAccessPublicResource;
 
 export interface ServiceCategoryPublicResource {
   id: string;
@@ -87,6 +105,7 @@ export interface ServiceItemOfferResource {
   name: string;
   custom: boolean;
   credited_account_id: string;
+  credited_account_name: string;
   provider_id: string;
   provider_name: string;
 }

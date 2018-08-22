@@ -57,11 +57,13 @@ export const messages = defineMessages({
   },
   serviceItemPriceSimulatorText: {
     id: 'settings.subscribedOffers.service.item.price.simulator.text',
-    defaultMessage: 'In order to simulate your service price, please enter an impression cost value. The more the impression cost is the more the service price will be.',
+    defaultMessage:
+      'In order to simulate your service price, please enter an impression cost value.',
   },
   serviceItemPriceSimulatorInputPlaceholder: {
-    id: 'settings.subscribedOffers.service.item.price.simulator.input.placeholder',
-    defaultMessage: 'Impression cost (€)',
+    id:
+      'settings.subscribedOffers.service.item.price.simulator.input.placeholder',
+    defaultMessage: 'Usage cost (€)',
   },
   serviceItemPrice: {
     id: 'settings.subscribedOffers.service.item.price',
@@ -74,6 +76,14 @@ export const messages = defineMessages({
   invalidImpressionCost: {
     id: 'settings.subscribedOffers.service.item.price.invalid.impression.cost',
     defaultMessage: 'Impression cost is invalid, please use numbers.',
+  },
+  usagePrice: {
+    id: 'settings.subscribedOffers.service.item.price.chart.usage_price',
+    defaultMessage: 'Usage Price',
+  },
+  usageCost: {
+    id: 'settings.subscribedOffers.service.item.price.chart.usage_cost',
+    defaultMessage: 'Usage Cost',
   },
 });
 

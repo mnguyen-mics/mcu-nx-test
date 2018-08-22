@@ -138,7 +138,7 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
     const { intl } = this.props;
     const { data, loading, hasMore, initialLoading } = this.state;
     return (
-      <div className="infinite-container" style={{ maxHeight: '650px' }}>
+      <div className="infinite-container" style={{ maxHeight: '600px' }}>
         <InfiniteScroll
           initialLoad={false}
           loadMore={this.handleInfiniteOnLoad}

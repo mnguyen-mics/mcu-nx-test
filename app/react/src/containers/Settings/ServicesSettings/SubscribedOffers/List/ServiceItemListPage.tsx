@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { List, Layout, Row, Col, Breadcrumb, Input } from 'antd';
+import { List, Layout, Row, Col, Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 import ButtonStyleless from '../../../../../components/ButtonStyleless';
@@ -22,8 +22,15 @@ import {
 } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { McsIcon } from '../../../../../components';
 import { messages } from './SubscribedOffersListPage';
+import { StackedLinePlot } from '../../../../../components/StackedAreaPlot';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
+import ServiceItem from './ServiceItem';
 
 const { Content } = Layout;
+
+const ServiceItemPriceChartJS = StackedLinePlot as any;
 
 interface State {
   serviceItem?: ServiceItemShape;
@@ -34,6 +41,7 @@ interface State {
 
 type Props = RouteComponentProps<{ organisationId: string; offerId: string }> &
   InjectedIntlProps &
+  InjectedThemeColorsProps &
   InjectedNotificationProps;
 
 class ServiceItemListPage extends React.Component<Props, State> {
@@ -137,36 +145,56 @@ class ServiceItemListPage extends React.Component<Props, State> {
     );
   };
 
-  onChange = (e: any) => {
-    const { serviceItemCondition } = this.state;
-    const { intl } = this.props;
-    if (
-      serviceItemCondition &&
-      isLinearServiceItemConditionsResource(serviceItemCondition)
-    ) {
-      const isValidValue =
-        e.target.value && /^[0-9]+(\.[0-9]{1,2})?$/i.test(e.target.value);
-      this.setState({
-        price: isValidValue
-          ? `${intl.formatMessage(messages.serviceItemPrice)} ${parseFloat(
-              e.target.value,
-            ) *
-              serviceItemCondition.percent_value +
-              serviceItemCondition.fixed_value} €`
-          : intl.formatMessage(messages.invalidImpressionCost),
-      });
-    }
-  };
-
   render() {
-    const { serviceItem, offer, price } = this.state;
+    const { serviceItem, offer, serviceItemCondition } = this.state;
 
     const {
       match: {
         params: { organisationId },
       },
+      colors,
       intl,
     } = this.props;
+
+    const optionsForChart = {
+      xKey: 'cost',
+      yKeys: [{ key: 'usage_price', message: messages.usagePrice }],
+      colors: [colors['mcs-primary']],
+    };
+
+    const generateDataSource = () => {
+      if (
+        serviceItemCondition &&
+        isLinearServiceItemConditionsResource(serviceItemCondition)
+      ) {
+        const dataSource = [];
+        const Xconst =
+          (serviceItemCondition.min_value - serviceItemCondition.fixed_value) /
+          serviceItemCondition.percent_value;
+        const toTwoDecimals = (val: number) => {
+          return Math.round(val * 100) / 100;
+        };
+        let counter = 1;
+        for (const i of [5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5]) {
+          if (counter <= 6) {
+            dataSource.push({
+              usage_price: toTwoDecimals(serviceItemCondition.min_value),
+              cost: toTwoDecimals(Xconst - 10 * i),
+            });
+          } else {
+            dataSource.push({
+              usage_price:
+              toTwoDecimals(serviceItemCondition.percent_value * (Xconst + 10 * i) +
+                serviceItemCondition.fixed_value),
+              cost: toTwoDecimals(Xconst + 10 * i),
+            });
+          }
+          counter++;
+        }
+        return dataSource;
+      }
+      return [{ usage_price: 0, cost: 0 }];
+    };
 
     return (
       <div className="ant-layout">
@@ -201,18 +229,16 @@ class ServiceItemListPage extends React.Component<Props, State> {
                 {serviceItem && serviceItem.name ? serviceItem.name : undefined}
               </div>
               <div className="service-container">
-                <div className="service-price">{price}</div>
-                {serviceItem && serviceItem.description
-                  ? serviceItem.description
-                  : intl.formatMessage(messages.serviceItemNoDescription)}
+                <ServiceItem
+                  serviceItemCondition={serviceItemCondition}
+                  serviceItem={serviceItem}
+                />
                 <br />
-                {intl.formatMessage(messages.serviceItemPriceSimulatorText)}
                 <br />
-                <Input
-                  addonBefore={intl.formatMessage(
-                    messages.serviceItemPriceSimulatorInputPlaceholder,
-                  )}
-                  onChange={this.onChange}
+                <ServiceItemPriceChartJS
+                  identifier="servicePriceChart"
+                  dataset={generateDataSource()}
+                  options={optionsForChart}
                 />
               </div>
             </Col>
@@ -227,4 +253,5 @@ export default compose(
   withRouter,
   injectIntl,
   injectNotifications,
+  injectThemeColors,
 )(ServiceItemListPage);
