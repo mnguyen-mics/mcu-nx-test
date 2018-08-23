@@ -75,7 +75,7 @@ class DefaultSelect extends React.Component<
 
     const optionsToDisplay = options!.map(option => (
       <Option key={option.value} {...option}>
-        {option.title}
+        {option.title || option.children}
       </Option>
     ));
 

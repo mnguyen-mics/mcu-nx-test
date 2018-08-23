@@ -42,5 +42,4 @@ export interface AdGroupCreateRequest {
 
 export interface AdGroupResource extends AdGroupCreateRequest {
   id: string;
-  status: AdGroupStatus;
 }

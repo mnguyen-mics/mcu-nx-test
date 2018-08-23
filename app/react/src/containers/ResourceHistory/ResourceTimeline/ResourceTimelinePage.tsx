@@ -5,7 +5,7 @@ import { ResourceName } from '../../../models/resourceHistory/ResourceHistory';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import ResourceTimelineActionBar from './ResourceTimelineActionBar';
-import { FieldToMessageFormatMap } from './domain';
+import { FormatProperty } from './domain';
 
 const { Content } = Layout
 
@@ -13,7 +13,7 @@ export interface ResourceTimelinePageProps {
   resourceName: ResourceName;
   resourceId: string;
   handleClose: () => void;
-  messagesProps: FieldToMessageFormatMap;
+  formatProperty: FormatProperty;
 }
 
 type Props =
@@ -37,18 +37,18 @@ class ResourceTimelinePage extends React.Component<Props, State> {
       resourceName,
       resourceId,
       handleClose,
-      messagesProps,
+      formatProperty,
     } = this.props;
     return (
       <div className="ant-layout edit-layout">
-        <ResourceTimelineActionBar handleClose={handleClose} messagesProps={messagesProps}/>
+        <ResourceTimelineActionBar handleClose={handleClose} formatProperty={formatProperty}/>
         <div className="ant-layout">
           <Content className="mcs-content-container p-t-40">
             <Row className="mcs-history">
               <ResourceTimeline
                 resourceName={resourceName}
                 resourceId={resourceId}
-                messagesProps={messagesProps}
+                formatProperty={formatProperty}
               />
             </Row>
           </Content>

@@ -1,8 +1,6 @@
 import { FormattedMessage } from "react-intl";
 
-export type FieldToMessageFormatMap = {
-  [propertyName: string]: {
-    message: FormattedMessage.MessageDescriptor,
-    formatValue: (value: string | number) => React.ReactNode
-  }
+export type FormatProperty = (p: string, v?: string) => {
+  message: FormattedMessage.MessageDescriptor,
+  formattedValue?: React.ReactNode
 };

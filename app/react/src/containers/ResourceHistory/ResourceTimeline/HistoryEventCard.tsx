@@ -9,11 +9,11 @@ import { Row, Icon } from 'antd';
 import { Card } from '../../../components/Card';
 import { ButtonStyleless } from '../../../components';
 import messages from './messages';
-import { FieldToMessageFormatMap } from './domain';
+import { FormatProperty } from './domain';
 
 interface HistoryEventCardProps {
   events: HistoryEventShape[];
-  messagesProps: FieldToMessageFormatMap;
+  formatProperty: FormatProperty;
 }
 
 type Props = HistoryEventCardProps &
@@ -32,36 +32,25 @@ class HistoryEventCard extends React.Component<Props, State> {
   }
   
   renderField = (field: string) => {
-    const { messagesProps } = this.props;
+    const { formatProperty } = this.props;
     const fieldToSnakeCase = lodash.snakeCase(field);
-    return messagesProps[fieldToSnakeCase]
-      ? <span className="name"><FormattedMessage {...messagesProps[fieldToSnakeCase].message} /></span>
-      : <span className="unknown-name"><FormattedMessage {...messages.unknownField} /></span>;
+    return formatProperty(fieldToSnakeCase)
+      ? <span className="name"><FormattedMessage {...formatProperty(fieldToSnakeCase).message} /></span>
+      : <span className="unknown-name"> field </span>;
   }
 
   renderValue = (field: string, value: string) => {
-    const { messagesProps } = this.props;
+    const { formatProperty } = this.props;
     const fieldToSnakeCase = lodash.snakeCase(field);
 
     return value
-      ? <span className="value">
-          {messagesProps[fieldToSnakeCase].formatValue(value)}
-        </span>
+      ? formatProperty(fieldToSnakeCase, value)
+        ? <span className="value">
+            {formatProperty(fieldToSnakeCase, value).formattedValue}
+          </span>
+        : <span className="empty-value"> value </span>
       : <span className="empty-value"><FormattedMessage {...messages.noValue} /></span>;
   }
-
-  // formatValue = (messagesProps: FieldToMessageFormatMap, fieldToSnakeCase: string, value: string) => {
-  //   switch (messagesProps[fieldToSnakeCase].formattingFunction(value).type) {
-  //     case 'STRING':
-  //       return value;
-  //     case 'INTEGER':
-  //       return value;
-  //     case 'FLOAT':
-  //       return formatMetric(value, '0.00');
-  //     case 'MESSAGE':
-  //       return <FormattedMessage {...messagesProps[fieldToSnakeCase].formattingFunction(value).value}/>;
-  //   }
-  // }
 
   renderMultiEdit = (events: HistoryEventShape[]) => {
     return events.map(event => {
@@ -79,7 +68,7 @@ class HistoryEventCard extends React.Component<Props, State> {
   }
 
   render() {
-    const { events, messagesProps } = this.props;
+    const { events, formatProperty } = this.props;
     const { showMore } = this.state;
 
     const toggleDetails = () => {
@@ -129,7 +118,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                         <FormattedMessage
                           {...{...messages.resourceCreated, values: {
                             userName: event.user_identification.user_name,
-                            resourceName: <span className="name"><FormattedMessage {...messagesProps.historyResourceName.message} /></span>,
+                            resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message} /></span>,
                           }}}
                         />
                       </div>
@@ -149,7 +138,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                           <FormattedMessage
                             {...{...messages.resourceDeleted, values: {
                               userName: event.user_identification.user_name,
-                              resourceName: <span className="name"><FormattedMessage {...messagesProps.historyResourceName.message} /></span>,
+                              resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message} /></span>,
                             }}}
                           />
                         </div>

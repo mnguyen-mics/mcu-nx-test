@@ -11,7 +11,7 @@ import { McsIcon } from '../../../components';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import HistoryEventCard from './HistoryEventCard';
-import { FieldToMessageFormatMap } from './domain';
+import { FormatProperty } from './domain';
 
 export interface Events {
   isLoading: boolean;
@@ -28,7 +28,7 @@ export interface Events {
 export interface ResourceTimelineProps {
   resourceName: ResourceName;
   resourceId: string;
-  messagesProps: FieldToMessageFormatMap;
+  formatProperty: FormatProperty;
 }
 
 interface State {
@@ -219,7 +219,7 @@ class ResourceTimeline extends React.Component<Props, State> {
   render() {
     const { events } = this.state;
 
-    const { messagesProps } = this.props;
+    const { formatProperty } = this.props;
 
     const keys = Object.keys(events.byDay);
     return events.isLoading && !events.hasItems ? (
@@ -262,7 +262,7 @@ class ResourceTimeline extends React.Component<Props, State> {
                     >
                       <HistoryEventCard
                         events={eventsOnTime[time]}
-                        messagesProps={messagesProps}
+                        formatProperty={formatProperty}
                       />
                     </Timeline.Item>
                   );
