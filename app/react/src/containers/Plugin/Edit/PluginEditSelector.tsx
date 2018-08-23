@@ -42,8 +42,9 @@ class PluginEditSelector<T extends PluginResource> extends React.Component<Plugi
                 <Row className="menu">
                   {this.props.availablePlugins.map(item => {
                     return <MenuList
-                      title={item.artifact_id}
+                      title={item.plugin_layout ? item.plugin_layout.metadata.display_name : item.artifact_id}
                       key={item.id}
+                      subtitles={item.plugin_layout ? [item.plugin_layout.metadata.description] : undefined}
                       select={this.onSelect(item)}
                     />;
                   })}

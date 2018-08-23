@@ -111,18 +111,25 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
             ) :
             null;
 
-        return (
-            <div id={pluginLayoutSection.title}>
-                <Row type="flex" align="middle" justify="space-between" className="section-header">
-                    <FormTitle
-                        title={{ id: `section.${pluginLayoutSection.title}.title`, defaultMessage: pluginLayoutSection.title }}
-                        subtitle={{ id: `section.${pluginLayoutSection.sub_title}.subTitle`, defaultMessage: pluginLayoutSection.sub_title }}
-                    />
-                </Row>
-                {returnedFields}
-                {advancedFields}
-            </div>
-        );
+        if (returnedFields.length !== 0 || advancedFields !== null) {
+            return (
+                <div id={pluginLayoutSection.title}>
+                    <Row type="flex" align="middle" justify="space-between" className="section-header">
+                        <FormTitle
+                            title={{ id: `section.${pluginLayoutSection.title}.title`, defaultMessage: pluginLayoutSection.title }}
+                            subtitle={{ id: `section.${pluginLayoutSection.sub_title}.subTitle`, defaultMessage: pluginLayoutSection.sub_title }}
+                        />
+                    </Row>
+                    {returnedFields}
+                    {advancedFields}
+                </div>
+            );
+        }
+        else {
+            return (
+                <div id={pluginLayoutSection.title} />
+            );
+        }
     }
 
 }

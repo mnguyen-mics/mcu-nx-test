@@ -1,6 +1,8 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import PluginInstanceService from '../PluginInstanceService';
 import { VisitAnalyzer } from '../../models/Plugins';
+import PluginService from '../PluginService';
+import { PluginLayout } from '../../models/plugin/PluginLayout';
 
 class VisitAnalyzerService extends PluginInstanceService<VisitAnalyzer> {
   constructor() {
@@ -30,7 +32,18 @@ class VisitAnalyzerService extends PluginInstanceService<VisitAnalyzer> {
     return ApiService.deleteRequest(endpoint, options);
   };
 
-
+  getLocalizedPluginLayout(pInstanceId: string): Promise<DataResponse<PluginLayout> | null> {
+    return this.getInstanceById(pInstanceId).then(res => {
+      const visitAnalyzer = res.data;
+      return PluginService.findPluginFromVersionId(visitAnalyzer.version_id).then(pluginResourceRes => {
+        const pluginResource = pluginResourceRes.data;
+        return PluginService.getLocalizedPluginLayout(
+          pluginResource.id,
+          visitAnalyzer.version_id
+        );
+      });
+    });
+  }
  
  }
 

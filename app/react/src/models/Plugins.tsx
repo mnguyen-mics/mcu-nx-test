@@ -1,3 +1,5 @@
+import { PluginLayout } from "./plugin/PluginLayout";
+
 export interface PluginResource {
   id: string;
   organisation_id: string;
@@ -6,6 +8,7 @@ export interface PluginResource {
   artifact_id: string;
   current_version_id: string;
   plugin_id?: string;
+  plugin_layout?: PluginLayout;
 }
 
 export interface PluginProperty {

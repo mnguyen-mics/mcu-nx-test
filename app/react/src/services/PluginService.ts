@@ -29,6 +29,12 @@ const pluginService = {
     const endpoint = `plugins/${pluginId}/versions`;
     return ApiService.getRequest(endpoint, params);
   },
+  findPluginFromVersionId(
+    versionId: string,
+  ): Promise<DataResponse<PluginResource>> {
+    const endpoint = `plugins/version/${versionId}`;
+    return ApiService.getRequest(endpoint);
+  },
   getPluginVersion(
     pluginId: string,
     versionId: string,

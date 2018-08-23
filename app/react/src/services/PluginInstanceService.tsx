@@ -2,6 +2,7 @@ import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginInstance } from '../models/Plugins';
 import pluginService from './PluginService';
+import { PluginLayout } from '../models/plugin/PluginLayout';
 
 abstract class PluginInstanceService<T extends PluginInstance> {
   constructor(public entityPath: string) {}
@@ -67,6 +68,8 @@ abstract class PluginInstanceService<T extends PluginInstance> {
 
     return ApiService.postRequest(endpoint, params);
   }
+
+  abstract getLocalizedPluginLayout(pInstanceId: string): Promise<DataResponse<PluginLayout> | null>
 }
 
 export default PluginInstanceService;

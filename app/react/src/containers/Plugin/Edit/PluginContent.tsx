@@ -73,6 +73,7 @@ type JoinedProps = PluginContentOuterProps &
 class PluginContent extends React.Component<JoinedProps, PluginContentState> {
   constructor(props: JoinedProps) {
     super(props);
+
     this.state = {
       plugin: initEmptyPluginSelection(),
       isLoading: true,
@@ -121,10 +122,28 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         })
           .then(res => res.data)
           .then((response: PluginResource[]) => {
-            this.setState({
-              availablePlugins: response,
-              isLoading: false,
-            });
+            const pluginsWithLayouts = response.map(pResourceWoutLayout => {
+              return PluginService.getLocalizedPluginLayout(
+                pResourceWoutLayout.plugin_id
+                  ? pResourceWoutLayout.plugin_id
+                  : pResourceWoutLayout.id,
+                pResourceWoutLayout.current_version_id
+              ).then(res => {
+                if (res !== null && res.status !== "error") {
+                  return { ...pResourceWoutLayout, plugin_layout: res.data };
+                }
+                else {
+                  return pResourceWoutLayout;
+                }
+              })
+            })
+
+            Promise.all(pluginsWithLayouts).then(availablePluginsResponse => {
+              this.setState({
+                availablePlugins: availablePluginsResponse,
+                isLoading: false,
+              });
+            })
           });
       },
     );
@@ -153,7 +172,9 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
             );
             const promise2 = PluginService.getLocalizedPluginLayout(
               plugin.id,
-              lastVersion.id
+              plugin.current_version_id
+                ? plugin.current_version_id
+                : lastVersion.id
             );
             return Promise.all([promise1, promise2]);
           })
@@ -263,14 +284,14 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
     const actionbarProps =
       pluginProperties.length || editionMode
         ? {
-            formId,
-            message: messages.save,
-            onClose: onClose,
-          }
+          formId,
+          message: messages.save,
+          onClose: onClose,
+        }
         : {
-            formId,
-            onClose: onClose,
-          };
+          formId,
+          onClose: onClose,
+        };
 
     return isLoading || loading ? (
       <div style={{ display: 'flex', flex: 1 }}>
@@ -289,7 +310,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           save={this.createPlugin}
           pluginProperties={pluginProperties}
           disableFields={(isLoading || disableFields) ? true : false}
-          pluginLayout={this.state.pluginLayout !== undefined ? this.state.pluginLayout : undefined}
+          pluginLayout={this.state.pluginLayout}
           isLoading={isLoading}
           pluginVersionId={plugin.id}
           formId={formId}
@@ -300,15 +321,15 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         />
       </EditContentLayout>
     ) : (
-      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-        <PluginEditSelector
-          onSelect={this.onSelectPlugin}
-          availablePlugins={this.state.availablePlugins}
-          listTitle={this.props.listTitle}
-          listSubTitle={this.props.listSubTitle}
-        />
-      </EditContentLayout>
-    );
+          <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+            <PluginEditSelector
+              onSelect={this.onSelectPlugin}
+              availablePlugins={this.state.availablePlugins}
+              listTitle={this.props.listTitle}
+              listSubTitle={this.props.listSubTitle}
+            />
+          </EditContentLayout>
+        );
   }
 }
 
