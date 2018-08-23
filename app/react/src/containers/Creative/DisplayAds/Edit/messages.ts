@@ -171,15 +171,15 @@ export default defineMessages({
   },
   creativeTypeImage: {
     id: 'creatives.type.image',
-    defaultMessage: 'Image Creative'
+    defaultMessage: 'Banner'
   },
   creativeTypeHtml: {
     id: 'creatives.type.html',
-    defaultMessage: 'Html Creative'
+    defaultMessage: 'Html'
   },
   creativeTypeSkin: {
     id: 'creatives.type.skin',
-    defaultMessage: 'Image Skins'
+    defaultMessage: 'Skins'
   },
   creativeTypeNative: {
     id: 'creatives.type.native',
