@@ -87,4 +87,4 @@ Getting started
 * Make sure all prerequisites are fulfilled
 * `npm install`
 * `bower install`
-* `grunt` or `grunt serve`
+* `npm start`
