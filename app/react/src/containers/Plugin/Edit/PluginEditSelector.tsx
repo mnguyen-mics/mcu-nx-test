@@ -2,7 +2,7 @@ import * as React from 'react';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Layout, Row } from 'antd';
 
-import { PluginResource } from '../../../models/Plugins';
+import { LayoutablePlugin } from '../../../models/Plugins';
 import { FormTitle } from '../../../components/Form';
 import { MenuList } from '../../../components/FormMenu';
 
@@ -15,7 +15,7 @@ interface PluginEditSelectorProps<T> {
   listSubTitle: FormattedMessage.MessageDescriptor;
 }
 
-class PluginEditSelector<T extends PluginResource> extends React.Component<PluginEditSelectorProps<T> & InjectedIntlProps> {
+class PluginEditSelector<T extends LayoutablePlugin> extends React.Component<PluginEditSelectorProps<T> & InjectedIntlProps> {
 
   onSelect = (item: T) => () => {
     this.props.onSelect(item);
@@ -42,9 +42,9 @@ class PluginEditSelector<T extends PluginResource> extends React.Component<Plugi
                 <Row className="menu">
                   {this.props.availablePlugins.map(item => {
                     return <MenuList
-                      title={item.plugin_layout ? item.plugin_layout.metadata.display_name : item.artifact_id}
+                      title={item.pluginLayout ? item.pluginLayout.metadata.display_name : item.artifact_id}
                       key={item.id}
-                      subtitles={item.plugin_layout ? [item.plugin_layout.metadata.description] : undefined}
+                      subtitles={item.pluginLayout ? [item.pluginLayout.metadata.description] : undefined}
                       select={this.onSelect(item)}
                     />;
                   })}

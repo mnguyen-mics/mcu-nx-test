@@ -124,13 +124,11 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
           .then((response: PluginResource[]) => {
             const pluginsWithLayouts = response.map(pResourceWoutLayout => {
               return PluginService.getLocalizedPluginLayout(
-                pResourceWoutLayout.plugin_id
-                  ? pResourceWoutLayout.plugin_id
-                  : pResourceWoutLayout.id,
+                pResourceWoutLayout.id,
                 pResourceWoutLayout.current_version_id
               ).then(res => {
                 if (res !== null && res.status !== "error") {
-                  return { ...pResourceWoutLayout, plugin_layout: res.data };
+                  return { ...pResourceWoutLayout, pluginLayout: res.data };
                 }
                 else {
                   return pResourceWoutLayout;
