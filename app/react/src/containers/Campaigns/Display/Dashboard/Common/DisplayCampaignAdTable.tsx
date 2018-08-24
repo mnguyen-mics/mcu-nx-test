@@ -16,7 +16,7 @@ import {
 } from '../../../../../models/campaign/display/index';
 import { Popover } from '../../../../../components/PopupContainers/index';
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
-import { ExtendedTableRowSelection } from '../../../../../components/TableView/TableView';
+import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 
 interface DisplayCampaignAdTableProps {
   isFetching: boolean;
@@ -310,21 +310,12 @@ class DisplayCampaignAdTable extends React.Component<
         render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
         sorter: (a: any, b: any) => sorter(a, b, 'impressions_cost'),
       },
-      // TODO UNCOMMENT WHEN BACKEND IS FIXED
-      // {
-      //   translationKey: 'CPA',
-      //   key: 'cpa',
-      //   isVisibleByDefault: true,
-      //   isHideable: true,
-      //   render: text => renderMetricData(text, '0,0.00', 'EUR'),
-      //   sorter: (a, b) => sorter(a, b, 'cpa'),
-      // },
     ];
 
-    const actionColumns = [
+    const actionColumns:  Array<ActionsColumnDefinition<AdResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: this.editCampaign,

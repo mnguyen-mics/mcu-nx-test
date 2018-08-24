@@ -35,7 +35,7 @@ import { DisplayCampaignResource } from '../../../../models/campaign/display/Dis
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
 import { MapDispatchToProps, MapStateToProps } from './DisplayCampaignsPage';
-import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
+import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { FilterParams } from './DisplayCampaignsActionbar';
 
 interface DisplayCampaignsTableProps
@@ -390,10 +390,10 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       // },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<DisplayCampaignResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: this.editCampaign,

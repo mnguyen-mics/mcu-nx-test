@@ -5,6 +5,7 @@ import moment from 'moment';
 import { EmptyTableView, TableView } from '../../../../components/TableView/index';
 import { Label } from '../../../Labels/Labels';
 import messages from './messages';
+import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 export interface Filters {
   currentPage?: number;
@@ -64,10 +65,10 @@ function LabelsTable(props: LabelsTableProps) {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<Label>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             intlMessage: messages.editLabel,
             callback: onLabelEdit,

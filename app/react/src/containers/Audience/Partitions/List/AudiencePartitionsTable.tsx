@@ -11,7 +11,7 @@ import { AudiencePartitionResource } from '../../../../models/audiencePartition/
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { DataListResponse } from '../../../../services/ApiService';
 import { PartitionFilterParams } from './AudiencePartitionsPage';
-import { DataColumnDefinition } from '../../../../components/TableView/TableView';
+import { DataColumnDefinition, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
@@ -146,10 +146,10 @@ class AudiencePartitionsTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<AudiencePartitionResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: onEdit,

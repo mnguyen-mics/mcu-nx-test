@@ -15,6 +15,7 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import messages from './messages';
+import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 
 const { Content } = Layout;
 
@@ -153,10 +154,10 @@ class VisitAnalyzerContent extends Component<
   render() {
     const { match: { params: { organisationId } }, history } = this.props;
 
-    const actionsColumnsDefinition = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<VisitAnalyzer>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           { translationKey: 'EDIT', callback: this.onClickEdit },
           { translationKey: 'ARCHIVE', callback: this.onClickArchive },
         ],

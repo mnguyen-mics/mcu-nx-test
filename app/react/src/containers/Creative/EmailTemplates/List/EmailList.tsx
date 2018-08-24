@@ -28,7 +28,7 @@ import { withTranslations } from '../../../Helpers/index';
 import { TranslationProps } from '../../../Helpers/withTranslations';
 import { MapStateToProps, MapDispatchToProps } from './EmailListPage';
 import CreativeService from '../../../../services/CreativeService';
-import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
+import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 interface CreativeEmailsTableProps extends MapStateToProps, MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
@@ -236,10 +236,10 @@ class CreativeEmailsTable extends React.Component<
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<EmailTemplateResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'SEND_TEST',
             callback: this.viewTestModal,

@@ -210,7 +210,7 @@ class BlastTable extends React.Component<Props> {
     const actionColumns: Array<ActionsColumnDefinition<BlastData>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: this.editBlast,
