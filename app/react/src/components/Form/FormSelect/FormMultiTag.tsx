@@ -59,7 +59,6 @@ const FormMultiTag: React.SFC<Props> = props => {
         onChange={input.onChange as () => any}
         onFocus={input.onFocus as () => any}
         value={input.value || []}
-        tokenSeparators={[',']}
         {...selectProps}
       >{optionsToDisplay}
       </Select>
