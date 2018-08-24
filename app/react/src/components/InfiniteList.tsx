@@ -19,8 +19,8 @@ const messages = defineMessages({
 const InputSearch = Input.Search;
 
 export interface InfiniteListFilters {
-  page: number;
-  pageSize: number;
+  page?: number;
+  pageSize?: number;
   keywords?: string;
 }
 
@@ -120,8 +120,6 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
 
     this.props
       .fetchData(organisationId, offerId, {
-        page: initialPage,
-        pageSize: initialPageSize,
         keywords: searchValue,
       })
       .then(res => {
