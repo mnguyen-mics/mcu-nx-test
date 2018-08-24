@@ -135,7 +135,7 @@ export default defineMessages({
   },
   creativeCreationGeneralDomainFieldHelper: {
     id: 'creatives.create.section.general.field.domain.helper',
-    defaultMessage: 'This is the final redirect location domain (without http or params) eg: destination.mybrand.com',
+    defaultMessage: 'This is the domain of the Advertiser (without http or params) eg: mybrand.com.\n It\'ll be checked during Creative Audit and for the creative whitelisting/blacklisting by Publishers on SSPs.',
   },
   creativeSiderMenuCreativeType: {
     id: 'creatives.sider.menu.creativeType',
