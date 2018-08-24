@@ -323,12 +323,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     });
   };
 
-  onSegmentTypeSelect = (segmentType: AudienceSegmentType) => {
+  onSegmentTypeSelect = (segmentType: AudienceSegmentType, queryLang: QueryLanguage = 'OTQL') => {
     const queryLanguage: QueryLanguage =
       this.state.selectedDatamart &&
       this.state.selectedDatamart.storage_model_version === 'v201506'
         ? 'SELECTORQL'
-        : 'OTQL';
+        : queryLang;
     if (segmentType === 'USER_PIXEL') {
       this.setState({
         audienceSegmentFormData: {
