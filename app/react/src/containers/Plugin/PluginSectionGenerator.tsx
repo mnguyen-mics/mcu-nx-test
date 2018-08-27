@@ -112,6 +112,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
             null;
 
         return (
+            (returnedFields.length > 0 || advancedFields) &&
             <div id={pluginLayoutSection.title}>
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
@@ -122,9 +123,9 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                 {returnedFields}
                 {advancedFields}
             </div>
+
         );
     }
-
 }
 
 export default compose<JoinedProps, PluginSectionGeneratorProps>(
