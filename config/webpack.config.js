@@ -11,7 +11,7 @@ const configFactory = (isProduction, customFontPath, lintFailOnError) => {
       'style-less': paths.appStyleLess,
       'react-vendors': Object.keys(pkg.dependencies),
     },
-
+    devtool: 'eval',
     module: {
       rules: [
         {
