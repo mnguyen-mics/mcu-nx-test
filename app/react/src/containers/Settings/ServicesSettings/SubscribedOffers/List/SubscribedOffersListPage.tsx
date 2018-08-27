@@ -111,12 +111,12 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
     };
   }
 
-  fetchOffers = (organisationId: string, filter: Filters) => {
+  fetchOffers = (organisationId: string, filters: Filters) => {
     this.setState({
       loading: true,
     });
     const options = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      ...getPaginatedApiParam(filters.currentPage, filters.pageSize),
     };
     CatalogService.getSubscribedOffers(organisationId, options)
       .then(resp => {

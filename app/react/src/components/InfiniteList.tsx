@@ -123,13 +123,20 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
         keywords: searchValue,
       })
       .then(res => {
-        this.setState({
-          data: res,
-          loading: false,
-          hasMore: res.length === initialPageSize,
-          first: initialPageSize + 1,
-        });
+        if (res[0]) {
+          this.setState({
+            data: res,
+            loading: false,
+            hasMore: res.length === initialPageSize,
+            first: initialPageSize + 1,
+          });
+          this.props.storeItemData(res[0]);
+        }
       });
+  };
+
+  onChange = (e: any) => {
+    this.onSearch(e.target.value);
   };
 
   render() {
@@ -162,6 +169,7 @@ class InfiniteList<T> extends React.Component<Props<T>, State<T>> {
                 placeholder={intl.formatMessage(messages.searchBarPlaceholder)}
                 onSearch={this.onSearch}
                 className="infinite-scroll-searchbar"
+                onChange={this.onChange}
               />
               <List
                 dataSource={data}

@@ -1,4 +1,3 @@
-// import { ServiceItemConditionsShape } from './../models/servicemanagement/PublicServiceItemResource';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
