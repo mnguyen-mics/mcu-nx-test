@@ -163,10 +163,6 @@ class ServiceItemListPage extends React.Component<Props, State> {
       colors: [colors['mcs-primary']],
     };
 
-    const twoDecimals = (val: number) => {
-      return Math.round(val * 100) / 100;
-    };
-
     const servicePrice = (usageCost: number) => {
       if (
         serviceItemCondition &&
@@ -198,8 +194,8 @@ class ServiceItemListPage extends React.Component<Props, State> {
           100000000,
         ]) {
           dataSource.push({
-            usage_price: twoDecimals(servicePrice(i)),
-            cost: Math.round(Math.log(i)/Math.log(10)),
+            usage_price: Math.round(servicePrice(i) * 100) / 100,
+            cost: Math.round(Math.log(i) / Math.log(10)),
           });
         }
         return dataSource;
@@ -237,7 +233,12 @@ class ServiceItemListPage extends React.Component<Props, State> {
             </Col>
             <Col span={18} className="mcs-settings-card-separator">
               <div className="mcs-card-title service-container-header">
-                {serviceItem && serviceItem.name ? serviceItem.name : undefined}
+                {serviceItem && serviceItem.name
+                  ? `${serviceItem.name} `
+                  : undefined}
+                {serviceItem && serviceItem.type
+                  ? `(${serviceItem.type})`
+                  : undefined}
               </div>
               <div className="service-container">
                 <ServiceItem
