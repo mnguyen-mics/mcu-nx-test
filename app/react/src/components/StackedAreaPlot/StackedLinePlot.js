@@ -94,7 +94,7 @@ class StackedAreaPlot extends Component {
   }
 
   createLineCrosshair(plot) {
-    const { options: { xKey, yKeys } } = this.props;
+    const { options: { xKey, yKeys, xLabel } } = this.props;
     const crosshair = {};
     const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
 
@@ -121,7 +121,7 @@ class StackedAreaPlot extends Component {
       });
 
       const tooltipContent = {
-        xLabel: navInfo.datum[xKey],
+        xLabel: xLabel ? `${xLabel} : 10e${navInfo.datum[xKey]}` : `${navInfo.datum[xKey]}`,
         entries: entries,
       };
 
@@ -322,6 +322,8 @@ StackedAreaPlot.propTypes = {
     endAngle: PropTypes.number,
     yKeys: PropTypes.arrayOf(PropTypes.object),
     xKey: PropTypes.string,
+    xLabel: PropTypes.string,
+    colors: PropTypes.arrayOf(PropTypes.object)
   }).isRequired,
 };
 

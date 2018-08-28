@@ -157,9 +157,27 @@ class ServiceItemListPage extends React.Component<Props, State> {
     } = this.props;
 
     const optionsForChart = {
-      xKey: 'cost',
+      xKey: ['cost'],
+      xLabel: intl.formatMessage(messages.usageCost),
       yKeys: [{ key: 'usage_price', message: messages.usagePrice }],
       colors: [colors['mcs-primary']],
+    };
+
+    const twoDecimals = (val: number) => {
+      return Math.round(val * 100) / 100;
+    };
+
+    const servicePrice = (usageCost: number) => {
+      if (
+        serviceItemCondition &&
+        isLinearServiceItemConditionsResource(serviceItemCondition)
+      ) {
+        return (
+          serviceItemCondition.percent_value * usageCost +
+          serviceItemCondition.fixed_value
+        );
+      }
+      return 0;
     };
 
     const generateDataSource = () => {
@@ -168,28 +186,21 @@ class ServiceItemListPage extends React.Component<Props, State> {
         isLinearServiceItemConditionsResource(serviceItemCondition)
       ) {
         const dataSource = [];
-        const Xconst =
-          (serviceItemCondition.min_value - serviceItemCondition.fixed_value) /
-          serviceItemCondition.percent_value;
-        const toTwoDecimals = (val: number) => {
-          return Math.round(val * 100) / 100;
-        };
-        let counter = 1;
-        for (const i of [5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5]) {
-          if (counter <= 6) {
-            dataSource.push({
-              usage_price: toTwoDecimals(serviceItemCondition.min_value),
-              cost: toTwoDecimals(Xconst - 10 * i),
-            });
-          } else {
-            dataSource.push({
-              usage_price:
-              toTwoDecimals(serviceItemCondition.percent_value * (Xconst + 10 * i) +
-                serviceItemCondition.fixed_value),
-              cost: toTwoDecimals(Xconst + 10 * i),
-            });
-          }
-          counter++;
+        for (const i of [
+          0,
+          10,
+          100,
+          1000,
+          10000,
+          100000,
+          1000000,
+          10000000,
+          100000000,
+        ]) {
+          dataSource.push({
+            usage_price: twoDecimals(servicePrice(i)),
+            cost: Math.round(Math.log(i)/Math.log(10)),
+          });
         }
         return dataSource;
       }
