@@ -228,7 +228,7 @@ class AutomationsListTable extends Component {
     const actionColumns = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: this.editAutomation,
