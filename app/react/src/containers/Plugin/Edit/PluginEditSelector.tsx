@@ -42,9 +42,14 @@ class PluginEditSelector<T extends LayoutablePlugin> extends React.Component<Plu
                 <Row className="menu">
                   {this.props.availablePlugins.map(item => {
                     return <MenuList
-                      title={item.pluginLayout ? item.pluginLayout.metadata.display_name : item.artifact_id}
+                      title={(item.plugin_layout && item.plugin_layout.metadata && item.plugin_layout.metadata.display_name) ?
+                        item.plugin_layout.metadata.display_name :
+                        item.artifact_id}
                       key={item.id}
-                      subtitles={item.pluginLayout ? [item.pluginLayout.metadata.description] : undefined}
+                      icon_path={item.layout_icon_path}
+                      subtitles={(item.plugin_layout && item.plugin_layout.metadata && item.plugin_layout.metadata.description) ?
+                        [item.plugin_layout.metadata.description] :
+                        undefined}
                       select={this.onSelect(item)}
                     />;
                   })}

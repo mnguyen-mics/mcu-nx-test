@@ -10,6 +10,10 @@ const assetFileService = {
     };
     return ApiService.getRequest(endpoint, params);
   },
+  getAssetFile(id: string): Promise<DataResponse<AssetFileResource>> {
+    const endpoint = `asset_files/${id}`;
+    return ApiService.getRequest(endpoint);
+  },
   deleteAssetsFile(id: string, options: object = {}) {
     const endpoint = `asset_files/${id}`;
     const params = {

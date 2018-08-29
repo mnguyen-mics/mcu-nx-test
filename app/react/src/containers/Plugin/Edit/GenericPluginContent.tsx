@@ -24,6 +24,7 @@ import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../models/plugin';
 import { InjectedNotificationProps } from '../../Notifications/injectNotifications';
+import assetFileService from '../../../services/Library/AssetsFilesService';
 
 const formId = 'pluginForm';
 
@@ -141,12 +142,26 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
               return PluginService.getLocalizedPluginLayout(
                 pResourceWoutLayout.id,
                 pResourceWoutLayout.current_version_id
-              ).then(res => {                
+              ).then(res => {
                 if (res !== null && res.status !== "error") {
-                  return { ...pResourceWoutLayout, pluginLayout: res.data };
+                  if (res.data.metadata.small_icon_asset_id) {
+                    return assetFileService.getAssetFile(res.data.metadata.small_icon_asset_id)
+                      .then(res2 => {
+                        if (res2 !== null && res2.status !== "error") {
+                          return {
+                            ...pResourceWoutLayout,
+                            plugin_layout: res.data,
+                            layout_icon_path: `${(window as any).MCS_CONSTANTS.ASSETS_URL}${res2.data.file_path}`
+                          };
+                        }
+                        return { ...pResourceWoutLayout, plugin_layout: res.data };
+                      })
+
+                  }
+                  else return Promise.resolve({ ...pResourceWoutLayout, plugin_layout: res.data });
                 }
                 else {
-                  return pResourceWoutLayout;
+                  return Promise.resolve({ ...pResourceWoutLayout });
                 }
               })
             })
