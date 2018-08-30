@@ -90,20 +90,3 @@ export function isHistoryDeleteEvent(model: HistoryEventShape): model is History
 export function isHistoryEventAction(model: HistoryEventShape): model is HistoryEventActionShape {
   return model.event_type === 'ACTION';
 }
-// function f(rhr : ResourceHistoryResource) {
-//   switch (rhr.events[0].type) {
-//     case ''
-//   }
-// }
-
-
-// export function convertHistoryEventToSubtype(historyEvent: HistoryEventShape) {
-//   if (isHistoryEventAction(historyEvent)) {
-//     if (isHistoryCreateEvent(historyEvent)) {return historyEvent}
-//     else if (isHistoryUpdateEvent(historyEvent)) {return historyEvent}
-//     else {return historyEvent}
-//   }
-//   else {
-//     return historyEvent
-//   }
-// }
