@@ -15,6 +15,6 @@ export function formatToFormattingFunction (
     case 'STRING': return value;
     case 'FLOAT': return formatMetric(value, '0.00');
     case 'INTEGER': return formatMetric(value, '0');
-    case 'MESSAGE': return <FormattedMessage {...messageMap ? {...messageMap[value]} : {id: 'ff', defaultMessage: 'fff'}}/> 
+    case 'MESSAGE': return messageMap ? <FormattedMessage {...messageMap[value]}/> : value;
   }
 };

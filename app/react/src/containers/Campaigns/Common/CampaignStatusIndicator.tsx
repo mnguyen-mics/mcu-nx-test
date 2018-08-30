@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { FormattedMessage, defineMessages } from 'react-intl';
 import { CampaignStatus } from '../../../models/campaign/constants/index';
+import formatCampaignProperty from '../../../messages/campaign/display/campaignMessages';
 
 export interface Props {
   status: CampaignStatus;
@@ -14,7 +14,7 @@ class CampaignStatusIndicator extends React.Component<Props> {
         <div className={status.toLowerCase()} />
         <span className="divider">|</span>
         <div className="status-value">
-          <FormattedMessage {...messages[status]} />
+          {formatStatus(status)}
         </div>
       </div>
     );
@@ -23,23 +23,6 @@ class CampaignStatusIndicator extends React.Component<Props> {
 
 export default CampaignStatusIndicator;
 
-const messages: {
-  [status in CampaignStatus]: FormattedMessage.MessageDescriptor
-} = defineMessages({
-  ACTIVE: {
-    id: 'campaign-status-active',
-    defaultMessage: 'Active',
-  },
-  PENDING: {
-    id: 'campaign-status-pending',
-    defaultMessage: 'Pending',
-  },
-  PAUSED: {
-    id: 'campaign-status-paused',
-    defaultMessage: 'Paused',
-  },
-  ARCHIVED: {
-    id: 'campaign-status-archived',
-    defaultMessage: 'Archived',
-  },
-});
+function formatStatus(status: CampaignStatus): React.ReactNode {
+  return formatCampaignProperty('status', status).formattedValue;
+}

@@ -34,7 +34,7 @@ import { Index } from '../../../../../utils';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
-import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
+import formatCampaignProperty from '../../../../../messages/campaign/display/campaignMessages';
 
 interface DisplayCampaignActionBarProps {
   campaign: {
@@ -469,7 +469,7 @@ class DisplayCampaignActionbar extends React.Component<
                 resourceName: 'DISPLAY_CAMPAIGN',
                 resourceId: campaignId,
                 handleClose: () => this.props.closeNextDrawer(),
-                formatProperty: formatAdGroupProperty,
+                formatProperty: formatCampaignProperty,
               },
               size: 'small',
             }
@@ -483,14 +483,14 @@ class DisplayCampaignActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
+        <Menu.Item key="HISTORY">
+          <FormattedMessage {...messages.history} />
+        </Menu.Item>
         {campaign.items && campaign.items.model_version === 'V2014_06' ? null : <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
         </Menu.Item>}
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archiveCampaign} />
-        </Menu.Item>
-        <Menu.Item key="HISTORY">
-          <FormattedMessage {...messages.history} />
         </Menu.Item>
       </Menu>
     );

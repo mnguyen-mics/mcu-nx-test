@@ -34,9 +34,11 @@ class HistoryEventCard extends React.Component<Props, State> {
   renderField = (field: string) => {
     const { formatProperty } = this.props;
     const fieldToSnakeCase = lodash.snakeCase(field);
-    return formatProperty(fieldToSnakeCase)
-      ? <span className="name"><FormattedMessage {...formatProperty(fieldToSnakeCase).message} /></span>
-      : <span className="unknown-name"> field </span>;
+    return <span className="name"> {
+      formatProperty(fieldToSnakeCase).message
+        ? <FormattedMessage {...formatProperty(fieldToSnakeCase).message} />
+        : field
+      } </span>;
   }
 
   renderValue = (field: string, value: string) => {
@@ -44,11 +46,7 @@ class HistoryEventCard extends React.Component<Props, State> {
     const fieldToSnakeCase = lodash.snakeCase(field);
 
     return value
-      ? formatProperty(fieldToSnakeCase, value)
-        ? <span className="value">
-            {formatProperty(fieldToSnakeCase, value).formattedValue}
-          </span>
-        : <span className="empty-value"> value </span>
+      ? <span className="value"> {formatProperty(fieldToSnakeCase, value).formattedValue || value} </span>
       : <span className="empty-value"><FormattedMessage {...messages.noValue} /></span>;
   }
 
@@ -118,7 +116,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                         <FormattedMessage
                           {...{...messages.resourceCreated, values: {
                             userName: event.user_identification.user_name,
-                            resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message} /></span>,
+                            resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message || messages.defaultResourceName} /></span>,
                           }}}
                         />
                       </div>
@@ -138,7 +136,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                           <FormattedMessage
                             {...{...messages.resourceDeleted, values: {
                               userName: event.user_identification.user_name,
-                              resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message} /></span>,
+                              resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message || messages.defaultResourceName} /></span>,
                             }}}
                           />
                         </div>
@@ -156,7 +154,6 @@ class HistoryEventCard extends React.Component<Props, State> {
                 time: moment(events[0].timestamp).format("HH:mm:ss"),
               }}}
             />
-            {/* {moment(events[0].timestamp).format("MMMM Do [at] HH:mm:ss")} */}
           </span>
         </Row>
       </Card>

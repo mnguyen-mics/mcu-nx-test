@@ -2,6 +2,7 @@ import * as React from 'react';
 import ActionBar from '../../../components/ActionBar';
 import { McsIcon } from '../../../components';
 import { FormatProperty } from './domain';
+import messages from './messages';
 
 export interface ResourceTimelineActionBarProps {
   handleClose: () => void;
@@ -16,7 +17,7 @@ export default class ResourceTimelineActionBar extends React.Component<ResourceT
     } = this.props;
 
     return (
-      <ActionBar edition={true} paths={[{name: {...formatProperty('history_title').message}},]}>
+      <ActionBar edition={true} paths={[{name: {...formatProperty('history_title').message || messages.defaultTitle}},]}>
           <McsIcon
             type="close"
             className="close-icon"

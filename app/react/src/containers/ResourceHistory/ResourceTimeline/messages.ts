@@ -3,6 +3,14 @@ import { FormattedMessage, defineMessages } from "react-intl";
 const messages: {
   [propertyName: string]: FormattedMessage.MessageDescriptor
 } = defineMessages({
+  defaultTitle: {
+    id: 'timeline.title',
+    defaultMessage: 'History'
+  },
+  defaultResourceName: {
+    id: 'timeline.resourceName',
+    defaultMessage: 'Resource',
+  },
   today: {
     id: 'timeline.events.title.today',
     defaultMessage: 'Today',

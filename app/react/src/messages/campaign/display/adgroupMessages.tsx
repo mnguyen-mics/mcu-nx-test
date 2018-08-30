@@ -8,7 +8,8 @@ import {
   TargetedDevice,
   TargetedOperatingSystem,
   TargetedBrowserFamily,
-  TargetedConnectionType
+  TargetedConnectionType,
+  AdGroupStatus
 } from "../../../models/campaign/constants";
 
 type ExtraKeys = 'duration';
@@ -18,15 +19,32 @@ const budgetPeriodMessages: {
 } = defineMessages({
   DAY: {
     id: 'adgroup.fields.maxBudgetPeriod.day',
-    defaultMessage: 'Up. Per Day',
+    defaultMessage: 'Per Day',
   },
   WEEK: {
     id: 'adgroup.fields.maxBudgetPeriod.week',
-    defaultMessage: 'Up. Per Week',
+    defaultMessage: 'Per Week',
   },
   MONTH: {
     id: 'adgroup.fields.maxBudgetPeriod.month',
-    defaultMessage: 'Up. Per Month',
+    defaultMessage: 'Per Month',
+  },
+});
+
+const adGroupStatusMessages: {
+  [key in AdGroupStatus]: FormattedMessage.MessageDescriptor
+} = defineMessages({
+  ACTIVE: {
+    id: 'adgroup.fields.status.active',
+    defaultMessage: 'Active'
+  },
+  PENDING: {
+    id: 'adgroup.fields.status.pending',
+    defaultMessage: 'Pending'
+  },
+  PAUSED: {
+    id: 'adgroup.fields.status.paused',
+    defaultMessage: 'Paused'
   },
 });
 
@@ -35,19 +53,19 @@ const targetedOperatingSystemMessages: {
 } = defineMessages({
   ALL: {
     id: 'adgroup.fields.targetedOperatingSystems.all',
-    defaultMessage: 'Up. All'
+    defaultMessage: 'All'
   },
   IOS: {
     id: 'adgroup.fields.targetedOperatingSystems.ios',
-    defaultMessage: 'Up. iOS'
+    defaultMessage: 'iOS'
   },
   ANDROID: {
     id: 'adgroup.fields.targetedOperatingSystems.android',
-    defaultMessage: 'Up. Android'
+    defaultMessage: 'Android'
   },
   WINDOWS_PHONE: {
     id: 'adgroup.fields.targetedOperatingSystems.windowsPhone',
-    defaultMessage: 'Up. Windows Phone'
+    defaultMessage: 'Windows Phone'
   },
 });
 
@@ -56,11 +74,11 @@ const targetedMediaMessages: {
 } = defineMessages({
   WEB: {
     id: 'adgroup.fields.targetedMedias.web',
-    defaultMessage: 'Up. Website',
+    defaultMessage: 'Website',
   },
   MOBILE_APP: {
     id: 'adgroup.fields.targetedMedias.mobileApp',
-    defaultMessage: 'Up. Mobile App',
+    defaultMessage: 'Mobile App',
   },
 });
 
@@ -69,23 +87,23 @@ const targetedDeviceMessages : {
 } = defineMessages({
   ALL: {
     id: 'adgroup.fields.targetedDevices.all',
-    defaultMessage: 'Up. All',
+    defaultMessage: 'All',
   },
   ONLY_DESKTOP: {
     id: 'adgroup.fields.targetedDevices.onlyDesktop',
-    defaultMessage: 'Up. Desktop',
+    defaultMessage: 'Desktop',
   },
   ONLY_MOBILE: {
     id: 'adgroup.fields.targetedDevices.onlyMobile',
-    defaultMessage: 'Up. Mobile',
+    defaultMessage: 'Mobile',
   },
   ONLY_TABLET: {
     id: 'adgroup.fields.targetedDevices.onlyTablet',
-    defaultMessage: 'Up. Tablet',
+    defaultMessage: 'Tablet',
   },
   MOBILE_AND_TABLET: {
     id: 'adgroup.fields.targetedDevices.mobileAndTablet',
-    defaultMessage: 'Up. Mobile and Tablet',
+    defaultMessage: 'Mobile and Tablet',
   }
 });
 
@@ -94,31 +112,31 @@ const targetedBrowserFamilyMessages : {
 } = defineMessages({
   ALL: {
     id: 'adgroup.fields.targetedBrowserFamilies.all',
-    defaultMessage: 'Up. All',
+    defaultMessage: 'All',
   },
   CHROME: {
     id: 'adgroup.fields.targetedBrowserFamilies.chrome',
-    defaultMessage: 'Up. Chrome',
+    defaultMessage: 'Chrome',
   },
   INTERNET_EXPLORER: {
     id: 'adgroup.fields.targetedBrowserFamilies.internetExplorer',
-    defaultMessage: 'Up. Internet Explorer',
+    defaultMessage: 'Internet Explorer',
   },
   MICROSOFT_EDGE: {
     id: 'adgroup.fields.targetedBrowserFamilies.microsoftEdge',
-    defaultMessage: 'Up. Microsoft Edge',
+    defaultMessage: 'Microsoft Edge',
   },
   FIREFOX: {
     id: 'adgroup.fields.targetedBrowserFamilies.firefox',
-    defaultMessage: 'Up. Firefox',
+    defaultMessage: 'Firefox',
   },
   SAFARI: {
     id: 'adgroup.fields.targetedBrowserFamilies.safari',
-    defaultMessage: 'Up. Safari',
+    defaultMessage: 'Safari',
   },
   OPERA: {
     id: 'adgroup.fields.targetedBrowserFamilies.opera',
-    defaultMessage: 'Up. Opera',
+    defaultMessage: 'Opera',
   },
 });
 
@@ -127,27 +145,27 @@ const targetedConnectionTypeMessages : {
 } = defineMessages({
   ALL: {
     id: 'adgroup.fields.targetedConnectionTypes.all',
-    defaultMessage: 'Up. All'
+    defaultMessage: 'All'
   },
   ETHERNET: {
     id: 'adgroup.fields.targetedConnectionTypes.ethernet',
-    defaultMessage: 'Up. Ethernet'
+    defaultMessage: 'Ethernet'
   },
   WIFI: {
     id: 'adgroup.fields.targetedConnectionTypes.wifi',
-    defaultMessage: 'Up. Wifi'
+    defaultMessage: 'Wifi'
   },
   CELLULAR_NETWORK_2G: {
     id: 'adgroup.fields.targetedConnectionTypes.cellularNetwork2G',
-    defaultMessage: 'Up. 2G'
+    defaultMessage: '2G'
   },
   CELLULAR_NETWORK_3G: {
     id: 'adgroup.fields.targetedConnectionTypes.cellularNetwork3G',
-    defaultMessage: 'Up. 3G'
+    defaultMessage: '3G'
   },
   CELLULAR_NETWORK_4G: {
     id: 'adgroup.fields.targetedConnectionTypes.cellularNetwork4G',
-    defaultMessage: 'Up. 4G'
+    defaultMessage: '4G'
   },
 });
 
@@ -156,115 +174,115 @@ const adGroupPropertiesMessageMap: {
 } = defineMessages({
   id: {
     id: 'adgroup.fields.id',
-    defaultMessage: 'Up. ID',
+    defaultMessage: 'ID',
   },
   name: {
     id: 'adgroup.fields.name',
-    defaultMessage: 'Up. Ad Group Name',
+    defaultMessage: 'Ad Group Name',
   },
   technical_name: {
     id: 'adgroup.fields.technicalName',
-    defaultMessage: 'Up. Technical Name',
+    defaultMessage: 'Technical Name',
   },
   visibility: {
     id: 'adgroup.fields.visibility',
-    defaultMessage: 'Up. Visibility',
+    defaultMessage: 'Visibility',
   },
   bid_optimizer_id: {
     id: 'adgroup.fields.bidOptimizerId',
-    defaultMessage: 'Up. Bid Optimizer ID',
+    defaultMessage: 'Bid Optimizer ID',
   },
   bid_optimization_objective_type: {
     id: 'adgroup.fields.bidOptimizationObjectiveType',
-    defaultMessage: 'Up. Bid Optimization Objective Type',
+    defaultMessage: 'Bid Optimization Objective Type',
   },
   bid_optimization_use_user_data: {
     id: 'adgroup.fields.bidOptimizationUseUserData',
-    defaultMessage: 'Up. Bid Optimization Use User Data',
+    defaultMessage: 'Bid Optimization Use User Data',
   },
   bid_optimization_objective_value: {
     id: 'adgroup.fields.bidOptimizationObjectiveValue',
-    defaultMessage: 'Up. Bid Optimization Objective Value',
+    defaultMessage: 'Bid Optimization Objective Value',
   },
   viewability_min_score: {
     id: 'adgroup.fields.viewabilityMinScore',
-    defaultMessage: 'Up. Viewability Min Score',
+    defaultMessage: 'Viewability Min Score',
   },
   viewability_use_third_party_data: {
     id: 'adgroup.fields.viewabilityUseThirdPartyData',
-    defaultMessage: 'Up. Viewability Use Third Party Data',
+    defaultMessage: 'Viewability Use Third Party Data',
   },
   ab_selection: {
     id: 'adgroup.fields.abSelection',
-    defaultMessage: 'Up. Ab Selection',
+    defaultMessage: 'Ab Selection',
   },
   ab_selection_min: {
     id: 'adgroup.fields.abSelectionMin',
-    defaultMessage: 'Up. Ab Selection Min',
+    defaultMessage: 'Ab Selection Min',
   },
   ab_selection_max: {
     id: 'adgroup.fields.abSelectionMax',
-    defaultMessage: 'Up. Ab Selection Max',
+    defaultMessage: 'Ab Selection Max',
   },
   start_date: {
     id: 'adgroup.fields.startDate',
-    defaultMessage: 'Up. Start date',
+    defaultMessage: 'Start date',
   },
   end_date: {
     id: 'adgroup.fields.endDate',
-    defaultMessage: 'Up. End date',
+    defaultMessage: 'End date',
   },
   max_bid_price: {
     id: 'adgroup.fields.maxBidPrice',
-    defaultMessage: 'Up. Max Bid Price',
+    defaultMessage: 'Max Bid Price',
   },
   per_day_impression_capping: {
     id: 'adgroup.fields.perDayImpressionCapping',
-    defaultMessage: 'Up. Daily Impression Capping',
+    defaultMessage: 'Daily Impression Capping',
   },
   total_impression_capping: {
     id: 'adgroup.fields.totalImpressionCapping',
-    defaultMessage: 'Up. Total Impression Capping',
+    defaultMessage: 'Total Impression Capping',
   },
   budget_relative_to_campaign: {
     id: 'adgroup.fields.budgetRelativeToCampaign',
-    defaultMessage: 'Up. Budget Relative To Campaign',
+    defaultMessage: 'Budget Relative To Campaign',
   },
   total_budget: {
     id: 'adgroup.fields.totalBudget',
-    defaultMessage: 'Up. Total Budget',
+    defaultMessage: 'Total Budget',
   },
   max_budget_per_period: {
     id: 'adgroup.fields.maxBudgetPerPeriod',
-    defaultMessage: 'Up. Budget Split',
+    defaultMessage: 'Budget Split',
   },
   max_budget_period: {
     id: 'adgroup.fields.maxBudgetPeriod',
-    defaultMessage: 'Up. Budget Split Period',
+    defaultMessage: 'Budget Split Period',
   },
   status: {
     id: 'adgroup.fields.status',
-    defaultMessage: 'Up. Status',
+    defaultMessage: 'Status',
   },
   targeted_operating_systems: {
     id: 'adgroup.fields.targetedOperatingSystems',
-    defaultMessage: 'Up. Operating System',
+    defaultMessage: 'Operating System',
   },
   targeted_medias: {
     id: 'adgroup.fields.targetedMedias',
-    defaultMessage: 'Up. Media Type',
+    defaultMessage: 'Media Type',
   },
   targeted_devices: {
     id: 'adgroup.fields.targetedDevices',
-    defaultMessage: 'Up. Device Type',
+    defaultMessage: 'Device Type',
   },
   targeted_browser_families: {
     id: 'adgroup.fields.targetedBrowserFamilies',
-    defaultMessage: 'Up. Browser',
+    defaultMessage: 'Browser',
   },
   targeted_connection_types: {
     id: 'adgroup.fields.targetedConnectionTypes',
-    defaultMessage: 'Up. Connection Type',
+    defaultMessage: 'Connection Type',
   },
   /*
   ==============================================================================
@@ -273,17 +291,17 @@ const adGroupPropertiesMessageMap: {
   */
   duration: {
     id: 'adgroup.fields.duration',
-    defaultMessage: 'Up. Duration',
+    defaultMessage: 'Duration',
   },
 
 
   history_title: {
     id: 'adgroup.resourceHistory.title',
-    defaultMessage: 'Up. Ad Group History',
+    defaultMessage: 'Ad Group History',
   },
   history_resource_name: {
     id: 'adgroup.resourceHistory.name',
-    defaultMessage: 'Up. Ad Group',
+    defaultMessage: 'Ad Group',
   },
 });
 
@@ -318,7 +336,10 @@ const adGroupPropertiesFormatMap: {
     format: 'MESSAGE',
     messageMap: budgetPeriodMessages,
   },
-  status: { format: 'STRING' },
+  status: {
+    format: 'MESSAGE',
+    messageMap: adGroupStatusMessages,
+  },
   targeted_operating_systems: {
     format: 'MESSAGE',
     messageMap: targetedOperatingSystemMessages,
@@ -355,7 +376,7 @@ function formatAdGroupProperty(property: keyof AdGroupResource | ExtraKeys | Hi
 } {
   return {
     message: adGroupPropertiesMessageMap[property],
-    formattedValue: value
+    formattedValue: (value && adGroupPropertiesFormatMap[property])
       ? formatToFormattingFunction(value, adGroupPropertiesFormatMap[property].format, adGroupPropertiesFormatMap[property].messageMap)
       : undefined,
   }

@@ -12,6 +12,10 @@ import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display/index';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
+import { injectDrawer } from '../../../../../components/Drawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -26,7 +30,8 @@ type JoinedProps = AdGroupActionbarProps &
     organisationId: string;
     campaignId: string;
     adGroupId: string;
-  }>;
+  }> &
+  InjectedDrawerProps;
 
 class AdGroupActionbar extends React.Component<JoinedProps> {
   buildActionElement = () => {
@@ -100,11 +105,30 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     };
 
     const onClick = (event: any) => {
+      const {
+        match: {
+          params: { adGroupId },
+        },
+      } = this.props;
+
       switch (event.key) {
         case 'ARCHIVED':
           return adGroup && handleArchiveGoal(adGroup.id);
         case 'DUPLICATE':
           return this.duplicateAdGroup();
+          case 'HISTORY':
+            return this.props.openNextDrawer<ResourceTimelinePageProps>(
+              ResourceTimelinePage,
+              {
+                additionalProps: {
+                  resourceName: 'AD_GROUP',
+                  resourceId: adGroupId,
+                  handleClose: () => this.props.closeNextDrawer(),
+                  formatProperty: formatAdGroupProperty,
+                },
+                size: 'small',
+              }
+            );
         default:
           return () => {
             //
@@ -114,6 +138,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
     const addMenu = (
       <Menu onClick={onClick}>
+        <Menu.Item key="HISTORY">
+          <FormattedMessage {...messages.history} />
+        </Menu.Item>
         {displayCampaign && displayCampaign.model_version !== 'V2014_06' ? <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
         </Menu.Item> : null}
@@ -186,4 +213,5 @@ export default compose<JoinedProps, AdGroupActionbarProps>(
   injectIntl,
   withRouter,
   connect(mapStateToProps, mapDispatchToProps),
+  injectDrawer,
 )(AdGroupActionbar);
