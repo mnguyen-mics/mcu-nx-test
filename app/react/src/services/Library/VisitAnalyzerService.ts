@@ -32,7 +32,7 @@ class VisitAnalyzerService extends PluginInstanceService<VisitAnalyzer> {
     return ApiService.deleteRequest(endpoint, options);
   };
 
-  getLocalizedPluginLayout(pInstanceId: string): Promise<DataResponse<PluginLayout> | null> {
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.getInstanceById(pInstanceId).then(res => {
       const visitAnalyzer = res.data;
       return PluginService.findPluginFromVersionId(visitAnalyzer.version_id).then(pluginResourceRes => {

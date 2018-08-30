@@ -36,7 +36,7 @@ class AttributionModelService extends PluginInstanceService<AttributionModel> {
     return ApiService.deleteRequest(endpoint);
   };
 
-  getLocalizedPluginLayout(pInstanceId: string): Promise<DataResponse<PluginLayout> | null> {
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.getInstanceById(pInstanceId).then(res => {
       const attributionModel = res.data;
       return PluginService.findPluginFromVersionId(attributionModel.attribution_processor_id).then(pluginResourceRes => {

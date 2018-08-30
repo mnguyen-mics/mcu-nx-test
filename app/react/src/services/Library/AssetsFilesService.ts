@@ -1,5 +1,6 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import { AssetFileResource } from '../../models/assets/assets';
+import log from '../../utils/Logger';
 
 const assetFileService = {
   getAssetsFiles(organisationId: string, options: object = {}): Promise<DataListResponse<AssetFileResource>> {
@@ -10,9 +11,14 @@ const assetFileService = {
     };
     return ApiService.getRequest(endpoint, params);
   },
-  getAssetFile(id: string): Promise<DataResponse<AssetFileResource>> {
+  getAssetFile(id: string): Promise<AssetFileResource | null> {
     const endpoint = `asset_files/${id}`;
-    return ApiService.getRequest(endpoint);
+    return ApiService.getRequest<DataResponse<AssetFileResource>>(endpoint)
+      .then(res => { return res.data })
+      .catch(err => {
+        log.warn("Cannot retrieve asset file", err);
+        return null;
+      });
   },
   deleteAssetsFile(id: string, options: object = {}) {
     const endpoint = `asset_files/${id}`;

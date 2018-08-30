@@ -71,7 +71,7 @@ class RecommenderService extends PluginInstanceService<Recommender> {
     return PluginService.handleSaveOfProperties(params, organisationId, 'recommenders', id, endpoint);
   };
 
-  getLocalizedPluginLayout(pInstanceId: string): Promise<DataResponse<PluginLayout> | null> {
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.getInstanceById(pInstanceId).then(res => {
       const recommender = res.data;
       return PluginService.findPluginFromVersionId(recommender.version_id).then(pluginResourceRes => {

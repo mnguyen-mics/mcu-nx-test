@@ -83,25 +83,23 @@ class FeedCard extends React.Component<Props, FeedCardState> {
           PluginService.getLocalizedPluginLayout(
             res.data.id,
             res.data.current_version_id
-          ).then(res2 => {
-            if ((res2 !== null) && (res2.status !== "error" && res2.data.metadata.small_icon_asset_id)) {
+          ).then(resultPluginLayout => {
+            if ((resultPluginLayout !== null) && resultPluginLayout.metadata.small_icon_asset_id) {
               assetFileService.getAssetFile(
-                res2.data.metadata.small_icon_asset_id
-              ).then(res3 => {
-                if (res3 !== null && res3.status !== "error") {
-                  this.setState({
-                    cardHeaderTitle: (res2.data.metadata && res2.data.metadata.display_name) ? res2.data.metadata.display_name : undefined,
-                    cardHeaderThumbnail: res3.data.file_path,
-                  });
-                }
+                resultPluginLayout.metadata.small_icon_asset_id
+              ).then(resultAssetFile => {
+                this.setState({
+                  cardHeaderTitle: resultPluginLayout.metadata.display_name,
+                  cardHeaderThumbnail: resultAssetFile ? resultAssetFile.file_path : undefined,
+                });
               }
               )
             }
           }
           )
         }
-
-      });
+      }
+      );
   }
 
   // fetch pluginLayout to render image and title

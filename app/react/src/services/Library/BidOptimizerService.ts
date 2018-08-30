@@ -42,7 +42,7 @@ class BidOptimizerService extends PluginInstanceService<BidOptimizer> {
     });
   };
 
-  getLocalizedPluginLayout(pInstanceId: string): Promise<DataResponse<PluginLayout> | null> {
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.getInstanceById(pInstanceId).then(res => {
       const bidOptimizer = res.data;
       return PluginService.findPluginFromVersionId(bidOptimizer.engine_version_id).then(pluginResourceRes => {
