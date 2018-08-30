@@ -24,6 +24,7 @@ import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../models/plugin';
 import { InjectedNotificationProps } from '../../Notifications/injectNotifications';
+import assetFileService from '../../../services/Library/AssetsFilesService';
 
 const formId = 'pluginForm';
 
@@ -141,15 +142,20 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
               return PluginService.getLocalizedPluginLayout(
                 pResourceWoutLayout.id,
                 pResourceWoutLayout.current_version_id
-              ).then(res => {                
-                if (res !== null && res.status !== "error") {
-                  return { ...pResourceWoutLayout, pluginLayout: res.data };
+              ).then(resultPluginLayout => {
+                if (resultPluginLayout !== null) {
+                  return assetFileService.getAssetFile(resultPluginLayout.metadata.small_icon_asset_id)
+                    .then(resultAssetFile => {
+                      return {
+                        ...pResourceWoutLayout,
+                        plugin_layout: resultPluginLayout,
+                        layout_icon_path: (resultAssetFile !== null) ? `${(window as any).MCS_CONSTANTS.ASSETS_URL}${resultAssetFile.file_path}` : undefined
+                      };
+                    });
                 }
-                else {
-                  return pResourceWoutLayout;
-                }
-              })
-            })
+                return Promise.resolve({ ...pResourceWoutLayout});
+              });
+            });
 
             Promise.all(pluginsWithLayouts).then(availablePluginsResponse => {
               this.setState({
@@ -170,13 +176,13 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
 
   fetchInitialValues = (pInstanceId: string) => {
     const { pluginInstanceService, notifyError } = this.props
-    const fetchPluginInstance = pluginInstanceService.getInstanceById(
+    const promisePluginInstance = pluginInstanceService.getInstanceById(
       pInstanceId,
     ).then(res => res.data);
-    const fetchPluginInstanceProperties = pluginInstanceService.getInstanceProperties(
+    const promiseInstanceProperties = pluginInstanceService.getInstanceProperties(
       pInstanceId,
     ).then(res => res.data);
-    const pLayout = pluginInstanceService.getLocalizedPluginLayout(
+    const promisePluginLayout = pluginInstanceService.getLocalizedPluginLayout(
       pInstanceId,
     );
     this.setState(
@@ -184,26 +190,26 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
         isLoading: true,
       },
       () => {
-        Promise.all([fetchPluginInstance, fetchPluginInstanceProperties, pLayout]).then(
-          res => {
+        Promise.all([promisePluginInstance, promiseInstanceProperties, promisePluginLayout]).then(
+          result => {
+            const [resultPluginInstance, resultInstanceProperties, resultPluginLayout] = result;
             const initialValues: PluginInstanceForm<T> = {
-              pluginInstance: res[0],
-              properties: res[1],
+              pluginInstance: resultPluginInstance,
+              properties: resultInstanceProperties,
             }
-            const pLayoutRes = res[2]
-            if (pLayoutRes !== null && pLayoutRes.status !== "error") {
+            if (resultPluginLayout !== null) {
               this.setState({
                 isLoading: false,
                 initialValues: initialValues,
-                pluginProperties: res[1],
-                pluginLayout: pLayoutRes.data,
+                pluginProperties: resultInstanceProperties,
+                pluginLayout: resultPluginLayout,
               });
             }
             else {
               this.setState({
                 isLoading: false,
                 initialValues: initialValues,
-                pluginProperties: res[1],
+                pluginProperties: resultInstanceProperties,
               });
             }
           },
@@ -312,31 +318,31 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
         PluginService.getPluginVersions(plugin.id)
           .then(res => {
             const lastVersion = res.data[res.data.length - 1];
-            const promise1 = PluginService.getPluginVersionProperty(
+            const promiseVersionProperty = PluginService.getPluginVersionProperty(
               plugin.id,
               plugin.current_version_id
                 ? plugin.current_version_id
                 : lastVersion.id,
             );
-            const promise2 = PluginService.getLocalizedPluginLayout(
+            const promisePluginLayout = PluginService.getLocalizedPluginLayout(
               plugin.id,
               plugin.current_version_id
                 ? plugin.current_version_id
                 : lastVersion.id
             );
-            return Promise.all([promise1, promise2]);
+            return Promise.all([promiseVersionProperty, promisePluginLayout]);
           })
-          .then(([res1, res2]) => {
-            if (res2 !== null && res2.status !== "error") {
+          .then(([resultVersionProperty, resultPluginLayout]) => {
+            if (resultPluginLayout !== null) {
               this.setState({
-                pluginProperties: res1.data,
-                pluginLayout: res2.data,
+                pluginProperties: resultVersionProperty.data,
+                pluginLayout: resultPluginLayout,
                 isLoading: false,
               });
             }
             else {
               this.setState({
-                pluginProperties: res1.data,
+                pluginProperties: resultVersionProperty.data,
                 isLoading: false,
               });
             }

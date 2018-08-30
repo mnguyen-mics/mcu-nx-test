@@ -36,7 +36,7 @@ class EmailRouterService extends PluginInstanceService<EmailRouter> {
     return ApiService.deleteRequest(endpoint, params);
   };
 
-  getLocalizedPluginLayout(pInstanceId: string): Promise<DataResponse<PluginLayout> | null> {
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.getInstanceById(pInstanceId).then(res => {
       const emailRouter = res.data;
       return PluginService.findPluginFromVersionId(emailRouter.version_id).then(pluginResourceRes => {

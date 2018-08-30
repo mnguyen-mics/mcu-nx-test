@@ -127,8 +127,8 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
                 pResourceWoutLayout.id,
                 pResourceWoutLayout.current_version_id
               ).then(res => {
-                if (res !== null && res.status !== "error") {
-                  return { ...pResourceWoutLayout, pluginLayout: res.data };
+                if (res !== null) {
+                  return { ...pResourceWoutLayout, pluginLayout: res };
                 }
                 else {
                   return pResourceWoutLayout;
@@ -162,31 +162,31 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
         PluginService.getPluginVersions(plugin.id)
           .then(res => {
             const lastVersion = res.data[res.data.length - 1];
-            const promise1 = PluginService.getPluginVersionProperty(
+            const promiseVersionProperty = PluginService.getPluginVersionProperty(
               plugin.id,
               plugin.current_version_id
                 ? plugin.current_version_id
                 : lastVersion.id,
             );
-            const promise2 = PluginService.getLocalizedPluginLayout(
+            const promisePluginLayout = PluginService.getLocalizedPluginLayout(
               plugin.id,
               plugin.current_version_id
                 ? plugin.current_version_id
                 : lastVersion.id
             );
-            return Promise.all([promise1, promise2]);
+            return Promise.all([promiseVersionProperty, promisePluginLayout]);
           })
-          .then(([res1, res2]) => {
-            if (res2 !== null && res2.status !== "error") {
+          .then(([resultVersionProperty, resultPluginLayout]) => {
+            if (resultPluginLayout !== null) {
               this.setState({
-                pluginProperties: res1.data,
-                pluginLayout: res2.data,
+                pluginProperties: resultVersionProperty.data,
+                pluginLayout: resultPluginLayout,
                 isLoading: false,
               });
             }
             else {
               this.setState({
-                pluginProperties: res1.data,
+                pluginProperties: resultVersionProperty.data,
                 isLoading: false,
               });
             }

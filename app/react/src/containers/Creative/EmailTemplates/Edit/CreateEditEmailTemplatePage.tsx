@@ -128,7 +128,7 @@ class CreateEmailTemplate extends React.Component<
 
   promisesValues = (
     properties: PropertyResourceShape[],
-    pLayoutRes: DataResponse<PluginLayout> | null,
+    pLayoutRes: PluginLayout | null,
     lastVersion?: PluginVersionResource,
   ) => {
     const modifiedProperties = properties
@@ -155,8 +155,8 @@ class CreateEmailTemplate extends React.Component<
         emailTemplateRenderer: lastVersion,
       };
 
-      if (pLayoutRes !== null && pLayoutRes.status !== 'error') {
-        nextState.pluginLayout = pLayoutRes.data;
+      if (pLayoutRes !== null) {
+        nextState.pluginLayout = pLayoutRes;
       }
 
       return nextState;
