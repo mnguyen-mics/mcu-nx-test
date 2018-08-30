@@ -17,6 +17,14 @@ export default defineMessages({
     id: 'goals.stats.delete',
     defaultMessage: 'Delete'
   },
+  pause: {
+    id: 'goals.status.pause',
+    defaultMessage: 'Pause Goal'
+  },
+  activate: {
+    id: 'goals.status.activate',
+    defaultMessage: 'Activate Goal'
+  },
   archiveGoalModalTitle: {
     id: 'goals.stats.archive.modal.title',
     defaultMessage: 'Are you sure you want to archive this Goal?'

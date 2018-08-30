@@ -92,9 +92,7 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
-
-      this.fetchGoal(goalId, filter);
+      this.fetchGoal(goalId);
     }
   }
 
@@ -125,13 +123,12 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, DATE_SEARCH_SETTINGS);
-        this.fetchGoal(nextGoalId, filter);
+        this.fetchGoal(nextGoalId);
       }
     }
   }
 
-  fetchGoal = (goalId: string, options: object) => {
+  fetchGoal = (goalId: string) => {
     return GoalService.getGoal(goalId)
       .then(res => res.data)
       .then(res => {
@@ -208,6 +205,7 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
       <div className="ant-layout">
         <GoalActionbar
           goal={this.state.goalObject.item}
+          fetchGoal={this.fetchGoal}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">

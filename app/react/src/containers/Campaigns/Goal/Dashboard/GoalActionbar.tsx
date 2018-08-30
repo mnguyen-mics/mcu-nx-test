@@ -20,6 +20,7 @@ import injectNotifications, {
 
 interface ExportActionbarProps {
   goal?: GoalResource;
+  fetchGoal: (id: string) => any
 }
 
 interface ExportActionbarState {
@@ -59,6 +60,24 @@ class ExportsActionbar extends React.Component<
     });
   };
 
+  changeCampaignStatus = () => {
+    const {
+      fetchGoal,
+      goal,
+      notifyError
+    } = this.props;
+    if (goal) {
+      const promise = goal.status === 'ACTIVE' ? GoalService.updateGoal(goal.id, { status: 'PAUSED' }) : GoalService.updateGoal(goal.id, { status: 'ACTIVE' })
+      return promise.then(res => {
+        return fetchGoal(goal.id)
+      })
+      .catch(err => {
+        return notifyError(err)
+      })
+    }
+    return;
+  }
+
   render() {
     const {
       match: {
@@ -80,6 +99,9 @@ class ExportsActionbar extends React.Component<
 
     return (
       <Actionbar path={breadcrumbPaths}>
+        {goal && <Button type="primary" className="mcs-primary" onClick={this.changeCampaignStatus}>
+            {goal.status === 'ACTIVE' ? <div><McsIcon type="pause" /><FormattedMessage {...messages.pause} /></div> : <div><McsIcon type="play" /><FormattedMessage {...messages.activate} /></div> }
+        </Button>}
         <Button onClick={this.editCampaign}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.edit} />

@@ -8,7 +8,10 @@
     new_query_id: string;
     organisation_id?: string;
     archived: boolean;
+    status: GoalStatus;
 }
+
+export type GoalStatus = 'PAUSED' | 'ACTIVE';
 
 export interface GoalResource extends GoalCreateRequest {
   id: string;
