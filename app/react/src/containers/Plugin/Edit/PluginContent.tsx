@@ -8,6 +8,7 @@ import PluginEditForm from './PluginEditForm';
 import {
   PluginResource,
   PluginType,
+  LayoutablePlugin,
 } from '../../../models/Plugins';
 import PluginService from '../../../services/PluginService';
 import * as actions from '../../../state/Notifications/actions';
@@ -19,6 +20,7 @@ import { Path } from '../../../components/ActionBar';
 import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../models/plugin';
+import assetFileService from '../../../services/Library/AssetsFilesService';
 
 const formId = 'pluginForm';
 
@@ -53,7 +55,7 @@ interface PluginContentState {
   isLoading: boolean;
   pluginProperties: PropertyResourceShape[];
   pluginLayout?: PluginLayout;
-  availablePlugins: PluginResource[];
+  availablePlugins: LayoutablePlugin[];
 }
 
 function initEmptyPluginSelection() {
@@ -126,15 +128,23 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
               return PluginService.getLocalizedPluginLayout(
                 pResourceWoutLayout.id,
                 pResourceWoutLayout.current_version_id
-              ).then(res => {
-                if (res !== null) {
-                  return { ...pResourceWoutLayout, pluginLayout: res };
+              ).then(resultPluginLayout => {
+                if (resultPluginLayout !== null && resultPluginLayout.metadata && resultPluginLayout.metadata.small_icon_asset_id) {
+                  return assetFileService.getAssetFile(resultPluginLayout.metadata.small_icon_asset_id)
+                    .then(resultAssetFile => {
+                      return {
+                        ...pResourceWoutLayout,
+                        plugin_layout: resultPluginLayout,
+                        layout_icon_path: (resultAssetFile !== null) ? `${(window as any).MCS_CONSTANTS.ASSETS_URL}${resultAssetFile.file_path}` : undefined
+                      };
+                    });
                 }
-                else {
-                  return pResourceWoutLayout;
-                }
-              })
-            })
+                return Promise.resolve({
+                  ...pResourceWoutLayout,
+                  plugin_layout: (resultPluginLayout !== null) ? resultPluginLayout : undefined
+                });
+              });
+            });
 
             Promise.all(pluginsWithLayouts).then(availablePluginsResponse => {
               this.setState({

@@ -143,7 +143,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
                 pResourceWoutLayout.id,
                 pResourceWoutLayout.current_version_id
               ).then(resultPluginLayout => {
-                if (resultPluginLayout !== null) {
+                if (resultPluginLayout !== null && resultPluginLayout.metadata && resultPluginLayout.metadata.small_icon_asset_id) {
                   return assetFileService.getAssetFile(resultPluginLayout.metadata.small_icon_asset_id)
                     .then(resultAssetFile => {
                       return {
@@ -153,7 +153,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
                       };
                     });
                 }
-                return Promise.resolve({ ...pResourceWoutLayout});
+                return Promise.resolve({
+                  ...pResourceWoutLayout,
+                  plugin_layout: (resultPluginLayout !== null) ? resultPluginLayout : undefined
+                });
               });
             });
 
