@@ -129,7 +129,7 @@ class PluginContent extends React.Component<JoinedProps, PluginContentState> {
                 pResourceWoutLayout.id,
                 pResourceWoutLayout.current_version_id
               ).then(resultPluginLayout => {
-                if (resultPluginLayout !== null && resultPluginLayout.metadata.small_icon_asset_id) {
+                if (resultPluginLayout !== null && resultPluginLayout.metadata && resultPluginLayout.metadata.small_icon_asset_id) {
                   return assetFileService.getAssetFile(resultPluginLayout.metadata.small_icon_asset_id)
                     .then(resultAssetFile => {
                       return {
