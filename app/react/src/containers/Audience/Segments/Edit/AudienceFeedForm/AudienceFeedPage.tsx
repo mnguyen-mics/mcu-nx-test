@@ -6,8 +6,8 @@ import injectNotifications, { InjectedNotificationProps } from '../../../../Noti
 import AudienceFeedForm from './AudienceFeedForm';
 import { Loading } from '../../../../../components';
 import { AudienceFeedFormService } from './AudienceFeedFormService';
-import { AudienceFeedFormModel } from './domain';
-import AudienceFeedSelector, { FeedType } from './AudienceFeedSelector';
+import { AudienceFeedFormModel, FeedRouteParams, FeedType } from './domain';
+import AudienceFeedSelector from './AudienceFeedSelector';
 import { EditContentLayout } from '../../../../../components/Layout';
 import messages from '../messages';
 import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
@@ -16,7 +16,7 @@ import AudienceSegmentService from '../../../../../services/AudienceSegmentServi
 export interface AudienceFeedPageProps {
 }
 
-type JoinedProps = AudienceFeedPageProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string, segmentId: string, feedId: string, feedType: FeedType }> & InjectedNotificationProps
+type JoinedProps = AudienceFeedPageProps & InjectedIntlProps & RouteComponentProps<FeedRouteParams> & InjectedNotificationProps
 
 interface AudienceFeedPageState {
   loading: boolean;
@@ -102,40 +102,12 @@ class AudienceFeedPage extends React.Component<JoinedProps, AudienceFeedPageStat
 
   save = (formData: AudienceFeedFormModel) => {
     const {
-      match: { params: { feedType, segmentId, organisationId } },
+      match: { params: { segmentId, organisationId } },
       history,
-      notifyError
     } = this.props;
 
-    const type: FeedType = feedType ? feedType : this.state.type!;
-    if (type === 'tag') {
-      this.setState({ loading: true })
-      return AudienceFeedFormService.saveOrCreateTagFeed(
-        organisationId,
-        segmentId,
-        formData,
-        this.state.edition
-      )
-        .then(() => history.push({ pathname: `/v2/o/${organisationId}/audience/segments/${segmentId}`, state: { scrollToFeed: true } }))
-        .catch((err) => {
-          this.setState({ loading: false })
-          notifyError(err)
-        })
-    } else if (type === 'external') {
-      this.setState({ loading: true })
-      return AudienceFeedFormService.saveOrCreateExternalFeed(
-        organisationId,
-        segmentId,
-        formData,
-        this.state.edition
-      )
-        .then(() => history.push({ pathname: `/v2/o/${organisationId}/audience/segments/${segmentId}`, state: { scrollToFeed: true } }))
-        .catch((err) => {
-          this.setState({ loading: false })
-          notifyError(err)
-        })
-    }
-    return;
+    history.push({ pathname: `/v2/o/${organisationId}/audience/segments/${segmentId}`, state: { scrollToFeed: true } })
+    
   }
 
   onClose = () => {
@@ -205,13 +177,11 @@ class AudienceFeedPage extends React.Component<JoinedProps, AudienceFeedPageStat
 
     return (
       <AudienceFeedForm
-        initialValues={this.state.initialValue}
-        edition={this.state.edition}
         onClose={this.onClose}
+        initialValues={this.state.initialValue}
         onSave={this.save}
-        type={type}
-        identifier={type}
         breadcrumbPaths={breadcrumbPaths}
+        type={type}
       />
     );
   }

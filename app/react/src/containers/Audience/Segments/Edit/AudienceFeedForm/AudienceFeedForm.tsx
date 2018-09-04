@@ -1,61 +1,44 @@
 import * as React from 'react';
-import { compose } from 'recompose';
+import { compose, Omit } from 'recompose';
 import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import PluginContent from '../../../../Plugin/Edit/PluginContent';
 import * as actions from '../../../../../state/Notifications/actions';
-import { PluginProperty, PluginType } from '../../../../../models/Plugins';
+import { PluginProperty, PluginType, AudienceExternalFeed, AudienceTagFeed, PluginResource, PluginInstance } from '../../../../../models/Plugins';
 
 import messages from '../messages';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-import { EditAudienceSegmentParam } from '../domain';
-import { AudienceFeedFormModel, PluginAudienceFeedInterface } from './domain';
+import { AudienceFeedFormModel, FeedRouteParams } from './domain';
 import { Path } from '../../../../../components/ActionBar';
+import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
+import AudienceTagFeedService from '../../../../../services/AudienceTagFeedService';
+import AudienceExternalFeedServices from '../../../../../services/AudienceExternalFeedService';
 
 
-interface CreateAudienceFeedState {
-  edition: boolean;
-  isLoading: boolean;
-  initialValues?: AudienceFeedFormModel;
-}
+const AudienceExternalFeedPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AudienceExternalFeed>>
+const AudienceTagFeedPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AudienceTagFeed>>
+
 
 export interface CreateAudienceFeedProps<T = any> {
   initialValues?: AudienceFeedFormModel;
   onClose: () => void;
   onSave: (a: T) => void;
-  edition: boolean;
   type: PluginType;
-  identifier: string | null;
   breadcrumbPaths: Path[];
 }
 
 type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
-  RouteComponentProps<EditAudienceSegmentParam> &
+  RouteComponentProps<FeedRouteParams> &
   InjectedIntlProps &
   InjectedNotificationProps;
 
 class CreateAudienceFeed<T> extends React.Component<
-  JoinedProps<T>,
-  CreateAudienceFeedState
+  JoinedProps<T>
   > {
   constructor(props: JoinedProps<T>) {
     super(props);
-
-    this.state = {
-      edition: props.edition,
-      isLoading: false,
-      initialValues: props.initialValues,
-    };
   }
 
-
-
-  onSelect = (model: PluginAudienceFeedInterface) => {
-    this.setState({
-      initialValues: { plugin: model },
-    });
-  };
 
   onSave = (audienceFeed: any, properties: PluginProperty[]) => {
     const { onSave } = this.props;
@@ -68,26 +51,94 @@ class CreateAudienceFeed<T> extends React.Component<
     return onSave(returnValue as any)
   }
 
-  render() {
-    const { breadcrumbPaths } = this.props;
-    const { isLoading } = this.state;
+  createTagFeedPluginInstance = (
+    organisationId: string,
+    plugin: PluginResource,
+    pluginInstance: AudienceTagFeed,
+  ): PluginInstance => {
+    //
+    // Change any here to the approriate value when AudienceTag returns the version_id
+    //
+    const result: any = {
+      // ...pluginInstance,
+      current_version_id: pluginInstance.version_value,
+      artifact_id: plugin.artifact_id,
+      group_id: plugin.group_id,
+      organisation_id: organisationId,
+      plugin_type: "AUDIENCE_SEGMENT_TAG_FEED"
+    }
+    return result
+  }
 
-    return (
-      <PluginContent
-        pluginType={this.props.type}
-        listTitle={this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED' ? messages.listTagTitle : messages.listExternalTitle}
-        listSubTitle={this.props.type === 'AUDIENCE_SEGMENT_TAG_FEED' ? messages.listTagSubTitle : messages.listExternalSubTitle}
-        breadcrumbPaths={breadcrumbPaths}
-        saveOrCreatePluginInstance={this.onSave}
-        onClose={this.props.onClose}
-        onSelect={this.onSelect}
-        editionMode={this.props.edition}
-        initialValue={this.state.initialValues}
-        loading={isLoading}
-        showGeneralInformation={false}
-        disableFields={this.state.initialValues && (this.state.initialValues.plugin.status === 'ACTIVE' || this.state.initialValues.plugin.status === 'PUBLISHED')}
-      />
-    );
+  createExternalFeedPluginInstance = (
+    organisationId: string,
+    plugin: PluginResource,
+    pluginInstance: AudienceExternalFeed,
+  ): PluginInstance => {
+ 
+    const { match: { params: { segmentId } } } = this.props;
+    
+    const result: Omit<AudienceExternalFeed, "id"> = {
+      // ...pluginInstance,
+      version_id: plugin.current_version_id,
+      version_value: pluginInstance.version_value,
+      artifact_id: plugin.artifact_id,
+      group_id: plugin.group_id,
+      organisation_id: organisationId,
+      audience_segment_id: segmentId,
+      status: "INITIAL"
+    }
+    return result
+  }
+
+  render() {
+    const { breadcrumbPaths, type, onClose, initialValues, match: { params: { segmentId, feedId,  } } } = this.props;
+
+    const paths = () => breadcrumbPaths
+
+    
+
+    if (type === 'AUDIENCE_SEGMENT_TAG_FEED') {
+
+      const audienceTagFeedService = new AudienceTagFeedService(segmentId);
+
+      return (
+        <AudienceTagFeedPluginContent
+          pluginType={'AUDIENCE_SEGMENT_TAG_FEED'}
+          listTitle={messages.listTagTitle}
+          listSubTitle={messages.listTagSubTitle}
+          breadcrumbPaths={paths}
+          pluginInstanceService={audienceTagFeedService}
+          pluginInstanceId={feedId}
+          createPluginInstance={this.createTagFeedPluginInstance}
+          onSaveOrCreatePluginInstance={this.onSave}
+          onClose={onClose}
+          showGeneralInformation={false}
+          disableFields={initialValues && (initialValues.plugin.status === 'ACTIVE' || initialValues.plugin.status === 'PUBLISHED')}
+        />
+      ) 
+    }
+
+    if (type === "AUDIENCE_SEGMENT_EXTERNAL_FEED") {
+      const audienceExternalFeedService = new AudienceExternalFeedServices(segmentId);
+      return (
+        <AudienceExternalFeedPluginContent
+          pluginType={'AUDIENCE_SEGMENT_EXTERNAL_FEED'}
+          listTitle={messages.listExternalTitle}
+          listSubTitle={messages.listExternalSubTitle}
+          breadcrumbPaths={paths}
+          pluginInstanceService={audienceExternalFeedService}
+          pluginInstanceId={feedId}
+          createPluginInstance={this.createExternalFeedPluginInstance}
+          onSaveOrCreatePluginInstance={this.onSave}
+          onClose={onClose}
+          showGeneralInformation={false}
+          disableFields={initialValues && (initialValues.plugin.status === 'ACTIVE' || initialValues.plugin.status === 'PUBLISHED')}
+        />
+      )
+    }
+
+    return null
   }
 }
 

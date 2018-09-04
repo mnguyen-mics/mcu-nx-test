@@ -3,6 +3,7 @@ import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { MenuPresentational } from '../../../../../components/FormMenu';
+import { FeedType } from './domain';
 
 const { Content } = Layout;
 
@@ -24,8 +25,6 @@ const messages = defineMessages({
     defaultMessage: 'Or',
   },
 });
-
-export type FeedType = 'tag' | 'external'
 
 class AudienceFeedSelector extends React.Component<AudienceFeedSelectorProps> {
   onSelect = (feedType: FeedType) => () => {
