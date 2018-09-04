@@ -177,7 +177,7 @@ class StackedAreaPlot extends Component {
 
     const yKeys = options.yKeys.map(item => item.key);
     const xScale = new Plottable.Scales.Linear();
-    const yScale = new Plottable.Scales.Linear();
+    const yScale = new Plottable.Scales.ModifiedLog();
 
     const colorScale = new Plottable.Scales.Color();
     colorScale.range(options.colors);
