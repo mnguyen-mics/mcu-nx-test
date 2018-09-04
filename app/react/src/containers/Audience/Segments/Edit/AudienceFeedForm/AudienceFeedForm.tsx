@@ -8,10 +8,10 @@ import { PluginProperty, PluginType, AudienceExternalFeed, AudienceTagFeed, Plug
 
 import messages from '../messages';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-import { AudienceFeedFormModel, PluginAudienceFeedInterface, FeedRouteParams } from './domain';
+import { AudienceFeedFormModel, FeedRouteParams } from './domain';
 import { Path } from '../../../../../components/ActionBar';
 import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
-import AudienceTagFeedService from '../../../../../services/AudienceTagFeedServices';
+import AudienceTagFeedService from '../../../../../services/AudienceTagFeedService';
 import AudienceExternalFeedServices from '../../../../../services/AudienceExternalFeedService';
 
 
@@ -39,13 +39,6 @@ class CreateAudienceFeed<T> extends React.Component<
     super(props);
   }
 
-
-
-  onSelect = (model: PluginAudienceFeedInterface) => {
-    this.setState({
-      initialValues: { plugin: model },
-    });
-  };
 
   onSave = (audienceFeed: any, properties: PluginProperty[]) => {
     const { onSave } = this.props;
