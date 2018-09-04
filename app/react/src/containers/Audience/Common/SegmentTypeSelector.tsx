@@ -79,7 +79,7 @@ class SegmentTypeSelector extends React.Component<Props> {
                           <MenuList
                             key={item.value}
                             title={item.title}
-                            select={this.onSelect(item.value)}
+                            select={this.onSelect(item.value, true)}
                           />
                         );
                       })}
