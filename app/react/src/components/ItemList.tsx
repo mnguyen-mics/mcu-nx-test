@@ -39,7 +39,7 @@ interface EmptyTableProps {
 }
 
 export interface ItemListProps<T = any> extends ViewComponentWithFiltersProps<T> {
-  fetchList: (organisationId: string, filter: Filters, isInitialFetch?: boolean) => void;
+  fetchList: (organisationId: string, filters: Filters, isInitialFetch?: boolean) => void;
   dataSource: T[];
   total: number;
   pageSettings: PageSetting[];
@@ -67,9 +67,9 @@ class ItemList<T> extends React.Component<Props<T>> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, pageSettings);
+      const filters = parseSearch(search, pageSettings);
 
-      fetchList(organisationId, filter, true);
+      fetchList(organisationId, filters, true);
     }
   }
 
@@ -108,8 +108,8 @@ class ItemList<T> extends React.Component<Props<T>> {
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, pageSettings);
-        fetchList(nextOrganisationId, filter, false);
+        const filters = parseSearch(nextSearch, pageSettings);
+        fetchList(nextOrganisationId, filters, false);
       }
     }
   }

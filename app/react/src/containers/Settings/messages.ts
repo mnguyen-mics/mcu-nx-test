@@ -16,6 +16,14 @@ const messages = defineMessages({
   labels: {
     id: 'settings.tab.title.labels',
     defaultMessage: 'Labels'
+  },
+  myServiceOffersTitle: {
+    id: 'settings.my.service.offers.title',
+    defaultMessage: 'My Service Offers'
+  },
+  myServiceCatalogTitle: {
+    id: 'settings.my.service.catalog.title',
+    defaultMessage: 'My Service Catalog'
   }
 });
 
