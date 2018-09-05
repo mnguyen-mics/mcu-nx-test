@@ -148,11 +148,11 @@ const campaignPropertiesMessageMap: {
   */
   history_title: {
     id: 'campaign.resourceHistory.title',
-    defaultMessage: 'Campaign History',
+    defaultMessage: 'Display Campaign History',
   },
   history_resource_name: {
     id: 'campaign.resourceHistory.name',
-    defaultMessage: 'Campaign',
+    defaultMessage: 'Display Campaign',
   },
 });
 

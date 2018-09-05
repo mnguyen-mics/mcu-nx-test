@@ -19,6 +19,9 @@ import {
 import { EmailBlastStatus } from '../../../../models/campaign/email';
 import { EmailCampaignDashboardRouteMatchParam } from './constants';
 import { ClickParam } from 'antd/lib/menu';
+import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import formatEmailBlastProperty from '../../../../messages/campaign/email/emailBlastMessages';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
@@ -74,7 +77,8 @@ export interface BlastTableProps {
 
 type Props = BlastTableProps &
   InjectedIntlProps &
-  RouteComponentProps<EmailCampaignDashboardRouteMatchParam>;
+  RouteComponentProps<EmailCampaignDashboardRouteMatchParam> &
+  InjectedDrawerProps;
 
 const BlastTableView = TableView as React.ComponentClass<
   TableViewProps<BlastData>
@@ -125,6 +129,21 @@ class BlastTable extends React.Component<Props> {
 
     return <Menu onClick={handleOnClick}>{menuItems}</Menu>;
   };
+
+  openHistoryDrawer = (record: BlastData) => {
+    this.props.openNextDrawer<ResourceTimelinePageProps>(
+      ResourceTimelinePage,
+      {
+        additionalProps: {
+          resourceName: 'EMAIL_BLAST',
+          resourceId: record.id,
+          handleClose: () => this.props.closeNextDrawer(),
+          formatProperty: formatEmailBlastProperty,
+        },
+        size: 'small',
+      }
+    )
+  }
 
   render() {
     const {
@@ -216,6 +235,10 @@ class BlastTable extends React.Component<Props> {
             callback: this.editBlast,
           },
           {
+            translationKey: 'HISTORY',
+            callback: this.openHistoryDrawer,
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.props.archiveBlast,
           },
@@ -234,6 +257,6 @@ class BlastTable extends React.Component<Props> {
   }
 }
 
-export default compose<Props, BlastTableProps>(withRouter, injectIntl)(
+export default compose<Props, BlastTableProps>(withRouter, injectIntl, injectDrawer)(
   BlastTable,
 );

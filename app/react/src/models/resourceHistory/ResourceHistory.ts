@@ -2,6 +2,7 @@ export type ResourceName =
   'AD_GROUP' |
   'DISPLAY_AD' |
   'DISPLAY_CAMPAIGN' |
+  'EMAIL_BLAST' |
   'EMAIL_CAMPAIGN' |
   'EMAIL_TEMPLATE' |
   'VIDEO_AD'

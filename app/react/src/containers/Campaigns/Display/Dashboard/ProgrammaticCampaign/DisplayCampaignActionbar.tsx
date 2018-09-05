@@ -34,7 +34,7 @@ import { Index } from '../../../../../utils';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
-import formatCampaignProperty from '../../../../../messages/campaign/display/campaignMessages';
+import formatCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
 
 interface DisplayCampaignActionBarProps {
   campaign: {
@@ -317,10 +317,6 @@ class DisplayCampaignActionbar extends React.Component<
       });
     }
   };
-
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const {} = this.props;
-  }
 
   render() {
     const {

@@ -23,7 +23,7 @@ import {
   EditDisplayCampaignRouteMatchParam,
   DisplayCampaignFormData,
 } from '../../domain';
-import formatCampaignProperty from '../../../../../../messages/campaign/display/campaignMessages';
+import formatCampaignProperty from '../../../../../../messages/campaign/display/displayCampaignMessages';
 
 interface MapStateToProps {
   initialFormValues: Partial<DisplayCampaignFormData>;

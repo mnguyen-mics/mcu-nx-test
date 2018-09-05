@@ -132,7 +132,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                           />
                         </div>
                       : isHistoryDeleteEvent(event) &&
-                        <div>
+                        <div className="mcs-fields-list-item">
                           <FormattedMessage
                             {...{...messages.resourceDeleted, values: {
                               userName: event.user_identification.user_name,

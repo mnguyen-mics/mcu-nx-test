@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CampaignStatus } from '../../../models/campaign/constants/index';
-import formatCampaignProperty from '../../../messages/campaign/display/campaignMessages';
+import formatCampaignProperty from '../../../messages/campaign/display/displayCampaignMessages';
 
 export interface Props {
   status: CampaignStatus;

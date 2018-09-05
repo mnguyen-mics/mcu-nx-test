@@ -108,38 +108,51 @@ class ResourceTimeline extends React.Component<Props, State> {
           params,
         )
         .then(response => {
-          ResourceHistoryService.getResourceHistory(
-            organisationId,
-            {...params, limit: params.limit + 1},
-          )
-            .then(extendedResponse => {
-              this.setState(prevState => {
-                const newData = prevState.events.items.concat(response.data.slice(eventCountOnOldestTime).map(rhr => {
-                  return rhr.events
-                }).reduce((x,y) => x.concat(y), []));
-                const nextState = {
-                  events: {
-                    ...prevState.events,
-                    isLoading: false,
-                    hasItems: response.count !== extendedResponse.count,
-                    items: newData,
-                    byDay: this.groupByDate(newData, 'timestamp'),
-                    byTime:  this.groupByTime(newData, 'timestamp')
-                  },
-                  nextTime:
-                    response.count !== extendedResponse.count &&
-                    response.data &&
-                    response.data[response.data.length - 1]
-                      ? moment(
-                          response.data[response.data.length - 1].events[response.data[response.data.length - 1].events.length - 1].timestamp,
-                        ).format('x')
-                      : undefined,
-                  eventCountOnOldestTime: 0,
-                };
-                nextState.eventCountOnOldestTime = nextState.events.byTime[Object.keys(nextState.events.byTime)[Object.keys(nextState.events.byTime).length - 1]].length;
-                return nextState;
-              });
-            })
+          response.count === 0
+            ? this.setState(
+              {
+                events: {
+                  isLoading: false,
+                  hasItems: false,
+                  items: [],
+                  byDay: {},
+                  byTime: {},
+                },
+                eventCountOnOldestTime: 0,
+              }
+            )
+            : ResourceHistoryService.getResourceHistory(
+                organisationId,
+                {...params, limit: params.limit + 1},
+              )
+                .then(extendedResponse => {
+                  this.setState(prevState => {
+                    const newData = prevState.events.items.concat(response.data.slice(eventCountOnOldestTime).map(rhr => {
+                      return rhr.events
+                    }).reduce((x,y) => x.concat(y), []));
+                    const nextState = {
+                      events: {
+                        ...prevState.events,
+                        isLoading: false,
+                        hasItems: response.count !== extendedResponse.count,
+                        items: newData,
+                        byDay: this.groupByDate(newData, 'timestamp'),
+                        byTime:  this.groupByTime(newData, 'timestamp')
+                      },
+                      nextTime:
+                        response.count !== extendedResponse.count &&
+                        response.data &&
+                        response.data[response.data.length - 1]
+                          ? moment(
+                              response.data[response.data.length - 1].events[response.data[response.data.length - 1].events.length - 1].timestamp,
+                            ).format('x')
+                          : undefined,
+                      eventCountOnOldestTime: 0,
+                    };
+                    nextState.eventCountOnOldestTime = nextState.events.byTime[Object.keys(nextState.events.byTime)[Object.keys(nextState.events.byTime).length - 1]].length;
+                    return nextState;
+                  });
+                })
           })
           .catch(err => {
             this.setState(prevState => {

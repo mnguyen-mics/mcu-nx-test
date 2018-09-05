@@ -223,5 +223,6 @@
   "SEND_TEST": "Envoie d'un BAT",
   "REPORT": "Rapport DSP",
   "CREATE": "Créer",
-  "ID": "Id"
+  "ID": "Id",
+  "HISTORY": "Historique"
 }

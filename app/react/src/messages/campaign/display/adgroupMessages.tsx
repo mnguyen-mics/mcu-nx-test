@@ -1,4 +1,3 @@
-// import * as React from 'react';
 import { defineMessages, FormattedMessage } from "react-intl";
 import { AdGroupResource } from "../../../models/campaign/display";
 import { HistoryKeys, formatToFormattingFunction, ValueFormat } from '../../resourcehistory/utils';
