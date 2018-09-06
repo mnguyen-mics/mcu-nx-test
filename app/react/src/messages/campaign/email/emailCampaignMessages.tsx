@@ -85,7 +85,7 @@ const emailCampaignPropertiesFormatMap: {
   archived: { format: 'STRING' },
   organisation_id: { format: 'STRING' },
   name: { format: 'STRING' },
-  creation_ts: { format: 'STRING' },
+  creation_ts: { format: 'TIMESTAMP' },
   editor_versionid: { format: 'STRING' },
   editor_version_value: { format: 'STRING' },
   editor_groupid: { format: 'STRING' },

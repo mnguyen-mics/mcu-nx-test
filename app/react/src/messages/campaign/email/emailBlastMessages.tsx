@@ -94,7 +94,7 @@ const emailBlastPropertiesFormatMap: {
 } = {
   id: { format: 'STRING' },
   blast_name: { format: 'STRING' },
-  send_date: { format: 'STRING' },
+  send_date: { format: 'TIMESTAMP' },
   // provider ??
   subject_line: { format: 'STRING' },
   from_email: { format: 'STRING' },
