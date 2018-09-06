@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import lodash from 'lodash';
 import moment from 'moment';
-import { HistoryEventShape, isHistoryUpdateEvent, isHistoryCreateEvent, isHistoryDeleteEvent } from '../../../models/resourceHistory/ResourceHistory';
+import { HistoryEventShape, isHistoryUpdateEvent, isHistoryCreateEvent, isHistoryDeleteEvent, HistoryEventActionShape } from '../../../models/resourceHistory/ResourceHistory';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router';
 import { Row, Icon } from 'antd';
@@ -65,6 +65,10 @@ class HistoryEventCard extends React.Component<Props, State> {
     });
   }
 
+  findCreateEventIndex = (events: HistoryEventShape[]) => {
+    return events.findIndex(event => event.type === 'CREATE_EVENT')
+  }
+
   render() {
     const { events, formatProperty } = this.props;
     const { showMore } = this.state;
@@ -80,11 +84,17 @@ class HistoryEventCard extends React.Component<Props, State> {
         <Row className="section">
           {events.length > 1
             ? <Row>
-                <div style={{float: 'left'}}>
+                <div style={{float: 'left'}} className="mcs-fields-list-item">
                   <FormattedMessage
-                    {...{...messages.severalFieldsEdited, values: {
-                      userName: events[0].user_identification.user_name
-                    }}}
+                    {...this.findCreateEventIndex(events) > -1
+                      ? {...messages.resourceCreated, values: {
+                          userName: (events[0] as HistoryEventActionShape).user_identification.user_name,
+                          resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message || messages.defaultResourceName} /></span>,
+                        }}
+                      : {...messages.severalFieldsEdited, values: {
+                          userName: events[0].user_identification.user_name
+                        }}
+                    }
                   />
                 </div>
                 <div className="section-cta">

@@ -80,7 +80,6 @@ export function isHistoryCreateEvent(model: HistoryEventShape): model is History
 }
 
 export function isHistoryUpdateEvent(model: HistoryEventShape): model is HistoryUpdateEventResource {
-  // return (model as HistoryUpdateEventResource).old_value !== undefined;
   return model.type === 'UPDATE_EVENT';
 }
 

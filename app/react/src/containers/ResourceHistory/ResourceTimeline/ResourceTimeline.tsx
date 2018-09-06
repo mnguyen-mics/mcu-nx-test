@@ -90,8 +90,8 @@ class ResourceTimeline extends React.Component<Props, State> {
   ) => {
     const { nextTime, eventCountOnOldestTime } = this.state;
     const params = nextTime
-      ? { resource_name: resourceName, resource_id: resourceId, limit: 10 + eventCountOnOldestTime, to: nextTime }
-      : { resource_name: resourceName, resource_id: resourceId, limit: 10 };
+      ? { resource_name: resourceName, resource_id: resourceId, max_results: 10 + eventCountOnOldestTime, to: nextTime }
+      : { resource_name: resourceName, resource_id: resourceId, max_results: 10 };
     this.setState(
       (prevState: any) => {
         const nextState = {
@@ -123,7 +123,7 @@ class ResourceTimeline extends React.Component<Props, State> {
             )
             : ResourceHistoryService.getResourceHistory(
                 organisationId,
-                {...params, limit: params.limit + 1},
+                {...params, max_results: params.max_results + 1},
               )
                 .then(extendedResponse => {
                   this.setState(prevState => {
