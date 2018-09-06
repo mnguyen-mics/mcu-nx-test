@@ -181,6 +181,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       organisationId,
       pluginVersionId,
       pluginProperties,
+      disableFields
     } = this.props;
 
     return pluginLayout.sections.map((section, index) => {
@@ -194,6 +195,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
             pluginLayoutSection={section}
             organisationId={organisationId}
             pluginProperties={pluginProperties}
+            disableFields={disableFields}
             pluginVersionId={pluginVersionId}
           />
           {hrBooleanCondition ? <hr /> : null}

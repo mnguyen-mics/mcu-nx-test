@@ -18,6 +18,7 @@ interface PluginSectionGeneratorProps {
     pluginLayoutSection: PluginLayoutSectionResource;
     pluginVersionId: string;
     noUploadModal?: () => void;
+    disableFields: boolean;
     small?: boolean;
 }
 
@@ -44,6 +45,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
             pluginVersionId,
             pluginProperties,
             noUploadModal,
+            disableFields,
             small
         } = this.props;
 
@@ -57,6 +59,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                         pluginLayoutFieldDefinition={field}
                         organisationId={organisationId}
                         pluginVersionId={pluginVersionId}
+                        disabled={disableFields}
                         small={small}
                         {...noUploadModal}
                     />
