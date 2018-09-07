@@ -23,7 +23,10 @@ export default class PlusNodeModel extends NodeModel
   ) {
     super('plus-node');
 
-    this.addPort(new SimplePortModel('center'));
+    this.addPort(new SimplePortModel('right'));
+    this.addPort(new SimplePortModel('left'));
+    this.addPort(new SimplePortModel('bottom'));
+    this.addPort(new SimplePortModel('top'));
 
     if (objectOrGroupNode !== undefined && treeNodePath !== undefined) {
       this.objectOrGroupNode = objectOrGroupNode;

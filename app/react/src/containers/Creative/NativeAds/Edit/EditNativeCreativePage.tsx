@@ -78,7 +78,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     }
   }
 
-  redirect = (createdId?: string) => {
+  redirect = () => {
     const {
       history,
       location: { state },
@@ -87,17 +87,26 @@ class EditNativeCreativePage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    let url =
+    const url =
       state && state.from
         ? state.from
         : `/v2/o/${organisationId}/creatives/native`;
 
-    if (createdId) {
-      url = `/v2/o/${organisationId}/creatives/native/edit/${createdId}`
-    }
-
     history.push(url);
   };
+
+  redirectWithCreatedId = (createdId: string) => {
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const url = `/v2/o/${organisationId}/creatives/native/edit/${createdId}`;
+
+    history.push(url);
+  }
 
   onSave = (nativeData: NativeCreativeFormData) => {
     const {
@@ -122,7 +131,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
         this.setState({
           loading: false
         })
-        this.redirect(createdId);
+        this.redirectWithCreatedId(createdId);
         message.success(intl.formatMessage(messages.successfulSaving))
       })
       .catch(err => {

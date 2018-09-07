@@ -34,18 +34,21 @@ export interface ActionDefinition<T> {
   callback: (record: T) => void;
 }
 
+export type ActionsRenderer<T> = (record: T) => Array<ActionDefinition<T>>;
+
 export interface ActionsColumnDefinition<T> extends ColumnProps<T> {
   key: string;
-  actions: Array<ActionDefinition<T>>;
+  actions: ActionsRenderer<T>;
 }
 
-export interface ExtendedTableRowSelection<T = any> extends TableRowSelection<T> {
+export interface ExtendedTableRowSelection<T = any>
+  extends TableRowSelection<T> {
   selectedRowKeys?: string[];
   allRowsAreSelected?: boolean;
   selectAllItemIds?: () => void;
   unselectAllItemIds?: () => void;
   onSelect?: () => void;
-} 
+}
 
 export interface TableViewProps<T> extends TableProps<T> {
   columns?: Array<DataColumnDefinition<T>>;
@@ -125,14 +128,17 @@ class TableView<
       });
   };
 
-  renderActionsMenu = (actions: Array<ActionDefinition<T>>, record: T) => {
+  renderActionsMenu = (
+    actions: (record: T) => Array<ActionDefinition<T>>,
+    record: T,
+  ) => {
     const onClick = (item: ClickParam) => {
-      actions[parseInt(item.key, 0)].callback(record);
+      actions(record)[parseInt(item.key, 0)].callback(record);
     };
 
     return (
       <Menu onClick={onClick} className="mcs-dropdown-actions">
-        {actions.map((action, index) => {
+        {actions(record).map((action, index) => {
           return (
             <Menu.Item key={index.toString()}>
               <a>
@@ -211,6 +217,7 @@ class TableView<
   }
 }
 
-export default compose(withTranslations, injectIntl)(
-  TableView,
-) as React.ComponentClass<TableViewProps<any>>;
+export default compose(
+  withTranslations,
+  injectIntl,
+)(TableView) as React.ComponentClass<TableViewProps<any>>;

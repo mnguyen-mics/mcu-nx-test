@@ -7,7 +7,7 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-import { Layout, Button } from 'antd';
+import { Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
@@ -20,6 +20,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { Link } from 'react-router-dom';
+import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 
 const { Content } = Layout;
 
@@ -98,7 +99,7 @@ class DatamartsListPage extends React.Component<
     );
   };
 
-  onClickSUR = (datamart: DatamartResource) => () => {
+  onClickSUR = (datamart: DatamartResource) => {
     const {
       history,
       match: {
@@ -114,11 +115,11 @@ class DatamartsListPage extends React.Component<
   };
 
   render() {
-    const { intl, match: { params: { organisationId } } } = this.props;
-    const actionsColumnsDefinition = [
+    const { match: { params: { organisationId } } } = this.props;
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<DatamartResource>> = [
       {
         key: 'action',
-        actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
+        actions: (record: DatamartResource) =>  record.id === '1048' ? [{ translationKey: 'EDIT', callback: this.onClickEdit}, {callback: this.onClickSUR, intlMessage: messagesMap.serviceUsageReport }] : [{ translationKey: 'EDIT', callback: this.onClickEdit}]
       },
     ];
 
@@ -139,17 +140,6 @@ class DatamartsListPage extends React.Component<
       {
         intlMessage: messages.datamartToken,
         key: 'token',
-        isVisibleByDefault: true,
-        isHideable: false,
-      },
-      {
-        key: 'service_usage_report',
-        render: (value: string, record: DatamartResource) =>
-          record.id === '1048' ? (
-            <Button type="primary" onClick={this.onClickSUR(record)}>
-              {intl.formatMessage(messagesMap.serviceUsageReport)}
-            </Button>
-          ) : null,
         isVisibleByDefault: true,
         isHideable: false,
       },

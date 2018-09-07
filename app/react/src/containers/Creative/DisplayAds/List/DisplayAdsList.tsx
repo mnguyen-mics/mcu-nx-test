@@ -24,7 +24,7 @@ import CreativeService from '../../../../services/CreativeService';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
 import { MapDispatchToProps, MapStateToProps } from './DisplayAdsPage';
-import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
+import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 interface DisplayAdsListProps extends MapStateToProps, MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
@@ -216,10 +216,10 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<DisplayAdResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: this.editCreativeDisplay,

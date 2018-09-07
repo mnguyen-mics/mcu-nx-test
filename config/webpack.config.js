@@ -11,8 +11,8 @@ const configFactory = (isProduction, customFontPath, lintFailOnError) => {
       'style-less': paths.appStyleLess,
       'react-vendors': Object.keys(pkg.dependencies),
     },
-
     module: {
+      noParse: /(mapbox-gl)\.js$/,
       rules: [
         {
           test: /\.js$/,
@@ -51,6 +51,10 @@ const configFactory = (isProduction, customFontPath, lintFailOnError) => {
           loader: ExtractTextPlugin.extract({
             use: ['css-loader', 'less-loader'],
           }),
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,

@@ -12,6 +12,7 @@ import { Filter } from '../../Common/domain';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
+import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 
 export interface SitesTableProps {
   isFetchingSites: boolean;
@@ -93,10 +94,10 @@ class SitesTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<ChannelResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             intlMessage: messages.editSite,
             callback: onEditSite,

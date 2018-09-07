@@ -25,6 +25,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { connect } from 'react-redux';
+import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 
 const { Content } = Layout;
 
@@ -254,10 +255,10 @@ class ApiTokenListPage extends React.Component<Props, State> {
 
     const { isModalVisible, loading, saving } = this.state;
 
-    const actionsColumnsDefinition = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<ApiToken>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           { translationKey: 'EDIT', callback: this.onClickEdit },
           { intlMessage: messages.deleteApiToken, callback: this.onDelete },
         ],

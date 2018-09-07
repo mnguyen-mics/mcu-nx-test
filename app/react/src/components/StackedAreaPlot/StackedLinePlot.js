@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Plottable from 'plottable';
+import * as Plottable from 'plottable';
 
 import { ChartTooltip, BasicTooltip } from '../ChartTooltip/index.ts';
 
@@ -94,7 +94,7 @@ class StackedAreaPlot extends Component {
   }
 
   createLineCrosshair(plot) {
-    const { options: { xKey, yKeys } } = this.props;
+    const { options: { xKey, yKeys, xLabel } } = this.props;
     const crosshair = {};
     const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
 
@@ -121,7 +121,7 @@ class StackedAreaPlot extends Component {
       });
 
       const tooltipContent = {
-        xLabel: navInfo.datum[xKey],
+        xLabel: xLabel ? `${xLabel} : 10e${navInfo.datum[xKey]}` : `${navInfo.datum[xKey]}`,
         entries: entries,
       };
 
@@ -176,20 +176,15 @@ class StackedAreaPlot extends Component {
     }
 
     const yKeys = options.yKeys.map(item => item.key);
-    const xScale = new Plottable.Scales.Time().padProportion(0);
-    const yScale = new Plottable.Scales.Linear()
-      .addIncludedValuesProvider(() => { return [0]; })
-      .addPaddingExceptionsProvider(() => { return [0]; })
-      .padProportion(0.2);
+    const xScale = new Plottable.Scales.Linear();
+    const yScale = new Plottable.Scales.ModifiedLog();
 
     const colorScale = new Plottable.Scales.Color();
     colorScale.range(options.colors);
     colorScale.domain(yKeys);
 
     const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
-    const yAxis = new Plottable.Axes.Numeric(yScale, 'left').showEndTickLabels(false);
-
-    xAxis.formatter(Plottable.Formatters.multiTime());
+    const yAxis = new Plottable.Axes.Numeric(yScale, 'left');
 
     const plts = [];
     const pnts = [];
@@ -327,6 +322,8 @@ StackedAreaPlot.propTypes = {
     endAngle: PropTypes.number,
     yKeys: PropTypes.arrayOf(PropTypes.object),
     xKey: PropTypes.string,
+    xLabel: PropTypes.string,
+    colors: PropTypes.arrayOf(PropTypes.object)
   }).isRequired,
 };
 

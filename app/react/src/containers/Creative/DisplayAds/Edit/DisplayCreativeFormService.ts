@@ -37,9 +37,8 @@ const DisplayCreativeFormService = {
       ]).then(res => {
         const properties = res[0].data;
         const pLayoutRes = res[1];
-        const pLayout = (pLayoutRes !== null && pLayoutRes.status !== "error") ?
-          pLayoutRes.data
-          :
+        const pLayout = (pLayoutRes !== null) ?
+          pLayoutRes :
           undefined;
 
         const creative: Partial<DisplayAdShape> = {
@@ -79,9 +78,8 @@ const DisplayCreativeFormService = {
       ]).then(res => {
         const plugin = res[0];
         const pLayoutRes = res[1];
-        const pLayout = (pLayoutRes !== null && pLayoutRes.status !== "error") ?
-          pLayoutRes.data
-          :
+        const pLayout = (pLayoutRes !== null) ?
+          pLayoutRes :
           undefined;
         const formData: DisplayCreativeFormData = {
           creative,
@@ -163,7 +161,7 @@ const DisplayCreativeFormService = {
       })
     }
 
-    return Promise.all((repeatFields || []).map(field => {
+    return Promise.all((repeatFields || []).map(field => {
 
       const imageProperty: AssetPropertyCreationResource = {
         technical_name: 'image',
@@ -180,14 +178,14 @@ const DisplayCreativeFormService = {
         ...formData.properties,
         image: imageProperty
       }
-    
+
       return getImageFormat(field.file).then((i) => {
         const creative: DisplayAdShape = {
           ...formData.creative,
           destination_domain: formData.creative.destination_domain,
           name: field.name,
           format: i as string
-          
+
         }
 
         const newFormData: DisplayCreativeFormData = {

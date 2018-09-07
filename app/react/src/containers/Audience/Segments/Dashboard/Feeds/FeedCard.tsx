@@ -11,6 +11,8 @@ import { compose } from 'recompose';
 import { Modal, Dropdown, Menu } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Link } from 'react-router-dom';
+import PluginService from '../../../../../services/PluginService';
+import assetFileService from '../../../../../services/Library/AssetsFilesService';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -22,6 +24,8 @@ export interface FeedCardProps {
 
 interface FeedCardState {
   isLoading: boolean
+  cardHeaderTitle?: string;
+  cardHeaderThumbnail?: string;
 }
 
 type Props = FeedCardProps & InjectedNotificationProps & InjectedIntlProps;
@@ -66,6 +70,36 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     this.state = {
       isLoading: false
     }
+  }
+
+  componentDidMount() {
+    const {
+      feed
+    } = this.props;
+
+    PluginService.findPluginFromVersionId(feed.version_id)
+      .then(res => {
+        if ((res !== null) && (res.status !== "error")) {
+          PluginService.getLocalizedPluginLayout(
+            res.data.id,
+            res.data.current_version_id
+          ).then(resultPluginLayout => {
+            if ((resultPluginLayout !== null) && resultPluginLayout.metadata.small_icon_asset_id) {
+              assetFileService.getAssetFile(
+                resultPluginLayout.metadata.small_icon_asset_id
+              ).then(resultAssetFile => {
+                this.setState({
+                  cardHeaderTitle: resultPluginLayout.metadata.display_name,
+                  cardHeaderThumbnail: resultAssetFile ? resultAssetFile.file_path : undefined,
+                });
+              }
+              )
+            }
+          }
+          )
+        }
+      }
+      );
   }
 
   // fetch pluginLayout to render image and title
@@ -188,7 +222,9 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     } = this.props;
 
     const {
-      isLoading
+      isLoading,
+      cardHeaderTitle,
+      cardHeaderThumbnail
     } = this.state
 
 
@@ -268,8 +304,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
         </div>
         <div className="wrapper">
           <div className="card-header">
-            {/* <img className="image-title" src="http://via.placeholder.com/45x45" /> */}
-            <div className="title">{feed.artifact_id}</div>
+            {cardHeaderThumbnail ? <img className="image-title" src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${cardHeaderThumbnail}`} /> : undefined}
+            <div className="title">{cardHeaderTitle ? cardHeaderTitle : feed.artifact_id}</div>
           </div>
           <div className="content">
             <div><McsIcon type="status" className={this.generateStatusColor()} /> {feed.status}</div>

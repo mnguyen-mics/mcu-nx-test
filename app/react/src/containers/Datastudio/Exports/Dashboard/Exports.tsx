@@ -200,7 +200,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         execution.id
       }/files/technical_name=${
         execution.result.output_files[0]
-      }?access_token=${encodeURI(getCookie('access_token'))}`;
+      }?access_token=${encodeURIComponent(getCookie('access_token'))}`;
     }
   };
 

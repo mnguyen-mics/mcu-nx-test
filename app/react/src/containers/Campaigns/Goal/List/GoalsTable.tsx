@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Icon, Modal } from 'antd';
+import { Icon, Modal, Tooltip } from 'antd';
 import {
   FormattedMessage,
   defineMessages,
@@ -41,6 +41,9 @@ import { MultiSelectProps } from '../../../../components/MultiSelect';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import { McsIcon } from '../../../../components';
+import withTranslations, { TranslationProps } from '../../../Helpers/withTranslations';
 
 const messages = defineMessages({
   labelFilterBy: {
@@ -105,7 +108,7 @@ type GoalsTableProps = MapStateToProps &
   MapDispatchToProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<{ organisationId: string }> & TranslationProps;
 
 class GoalsTable extends React.Component<GoalsTableProps> {
   componentDidMount() {
@@ -258,6 +261,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       labels,
       intl,
       workspace,
+      translations,
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
@@ -317,6 +321,18 @@ class GoalsTable extends React.Component<GoalsTableProps> {
 
     const dataColumns = [
       {
+        translationKey: "STATUS",
+        key: 'status',
+        isHideable: false,
+        render: (text: string, record: GoalResource) => (
+          <Tooltip placement="top" title={translations[text]}>
+            <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
+              <McsIcon type="status" />
+            </span>
+          </Tooltip>
+        ),
+      },
+      {
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
@@ -345,10 +361,10 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<GoalResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           {
             translationKey: 'EDIT',
             callback: this.handleEditGoal,
@@ -476,6 +492,7 @@ const mapDispatchToProps = {
 export default compose<GoalsTableProps, {}>(
   injectIntl,
   withRouter,
+  withTranslations,
   injectNotifications,
   connect(
     mapStateToProps,

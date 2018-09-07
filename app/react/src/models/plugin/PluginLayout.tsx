@@ -17,7 +17,8 @@ export interface PluginLayoutFieldResource {
   label: string,
   tooltip?: string,
   enum?: PluginLayoutEnumResource[],
-  max_length?: number
+  max_length?: number,
+  required?: boolean
 }
 
 export type PluginLayoutField =

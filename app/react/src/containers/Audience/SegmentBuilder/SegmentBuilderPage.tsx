@@ -176,9 +176,9 @@ class SegmentBuilderPage extends React.Component<Props> {
     };
 
     // TODO DatamartSelector could render React.Children({ selectedDatamart })
-
+    const style: React.CSSProperties = { height: '100%', display: 'flex' };
     return (
-      <div style={{ height: '100%', display: 'flex' }}>
+      <div style={style}>
         {!selectedDatamart && (
           <DatamartSelector
             onSelectDatamart={handleOnSelectDatamart}

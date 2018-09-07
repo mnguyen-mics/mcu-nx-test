@@ -8,10 +8,12 @@ export default class BooleanOperatorNodeFactory extends AbstractNodeFactory<
   BooleanOperatorNodeModel
 > {
   treeNodeOperations: TreeNodeOperations;
+  lockGlobalInteraction: (lock: boolean) => void
 
-  constructor(_treeNodeOperations: TreeNodeOperations) {
+  constructor(_treeNodeOperations: TreeNodeOperations, _lockGlobalInteraction: (lock: boolean) => void) {
     super('boolean-operator-node');
     this.treeNodeOperations = _treeNodeOperations;
+    this.lockGlobalInteraction = _lockGlobalInteraction;
   }
 
   generateReactWidget(
@@ -25,6 +27,7 @@ export default class BooleanOperatorNodeFactory extends AbstractNodeFactory<
       node: node,
       diagramEngine: diagramEngine,
       treeNodeOperations: this.treeNodeOperations,
+      lockGlobalInteraction: this.lockGlobalInteraction
     });
   }
 

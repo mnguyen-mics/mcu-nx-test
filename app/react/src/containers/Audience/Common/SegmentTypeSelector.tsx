@@ -4,6 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
 import { MenuList, MenuPresentational } from '../../../components/FormMenu';
 import { AudienceSegmentType } from '../../../models/audiencesegment';
+import { QueryLanguage } from '../../../models/datamart/DatamartResource';
 
 const { Content } = Layout;
 
@@ -27,7 +28,7 @@ const messages = defineMessages({
 });
 
 interface SegmentTypeSelectorProps {
-  onSelect: (item: AudienceSegmentType) => any;
+  onSelect: (item: AudienceSegmentType, queryLanguage: QueryLanguage) => any;
   segmentTypesToDisplay: Array<{ title: string; value: AudienceSegmentType }>;
 }
 
@@ -35,7 +36,7 @@ type Props = SegmentTypeSelectorProps;
 
 class SegmentTypeSelector extends React.Component<Props> {
   onSelect = (item: AudienceSegmentType, expertQuery: boolean = false) => () => {
-    this.props.onSelect(item);
+    this.props.onSelect(item, expertQuery ? 'OTQL' : 'JSON_OTQL');
   };
 
   render() {
@@ -78,7 +79,7 @@ class SegmentTypeSelector extends React.Component<Props> {
                           <MenuList
                             key={item.value}
                             title={item.title}
-                            select={this.onSelect(item.value)}
+                            select={this.onSelect(item.value, true)}
                           />
                         );
                       })}

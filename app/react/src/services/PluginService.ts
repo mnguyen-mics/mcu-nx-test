@@ -29,6 +29,12 @@ const pluginService = {
     const endpoint = `plugins/${pluginId}/versions`;
     return ApiService.getRequest(endpoint, params);
   },
+  findPluginFromVersionId(
+    versionId: string,
+  ): Promise<DataResponse<PluginResource>> {
+    const endpoint = `plugins/version/${versionId}`;
+    return ApiService.getRequest(endpoint);
+  },
   getPluginVersion(
     pluginId: string,
     versionId: string,
@@ -121,7 +127,7 @@ const pluginService = {
             };
             ApiService.putRequest(endpoint, newParams);
           },
-        );
+          );
       }
       return Promise.resolve();
     } else if (params.property_type === 'NATIVE_IMAGE') {
@@ -177,7 +183,7 @@ const pluginService = {
           };
           return ApiService.putRequest(endpoint, newParams) as Promise<
             DataResponse<PropertyResourceShape>
-          >;
+            >;
         });
       } else if (params.value.fileName && params.value.fileContent) {
         // create
@@ -197,7 +203,7 @@ const pluginService = {
           };
           return ApiService.putRequest(endpoint, newParams) as Promise<
             DataResponse<PropertyResourceShape>
-          >;
+            >;
         });
       } else if (
         !params.value.fileName &&
@@ -219,9 +225,10 @@ const pluginService = {
 
     return ApiService.putRequest(endpoint, params);
   },
-  getLocalizedPluginLayout(pluginId: string, pluginVersionId: string, locale: string = "en-US"): Promise<DataResponse<PluginLayout> | null> {
+  getLocalizedPluginLayout(pluginId: string, pluginVersionId: string, locale: string = "en-US"): Promise<PluginLayout | null> {
     const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties_layout?locale=${locale}`;
     return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint)
+      .then(res => { return res.data })
       .catch(err => {
         log.warn("Cannot retrieve plugin layout", err);
         return null;

@@ -1,6 +1,10 @@
 .mcs-form-container {
   padding-top: 20px;
 
+  &.no-padding {
+    padding-top: 0px;
+  }
+
   .intermediate-title {
     font-size: 1.1em;
     font-weight: bold;
@@ -109,9 +113,19 @@
       justify-content: space-between;
       .selector {
         padding: 0 20px 0 0;
+        flex: 0;
+      }
+      .image-title{
+        margin: 0 10px 0 0;
+        width: 37px;
+        height: 37px;
+        float: left;
       }
       .content {
         padding: 20px 0 20px 50px;
+        flex-grow: 1;
+        flex: 1;
+        -webkit-flex-grow: 1;
         .title {
           font-size: 1.1em;
           font-weight: bold;
@@ -121,6 +135,8 @@
           font-size: 1em;
           letter-spacing: 0.4px;
           color: @text-color-secondary;
+         
+
         }
       }
       .content.alone {

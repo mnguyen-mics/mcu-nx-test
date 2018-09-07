@@ -181,18 +181,24 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       organisationId,
       pluginVersionId,
       pluginProperties,
+      disableFields
     } = this.props;
 
     return pluginLayout.sections.map((section, index) => {
+      const indexCondition = index !== pluginLayout.sections.length - 1;
+      const fieldsCondition = section.fields !== null && section.fields.length !== 0;
+      const advancedFieldsCondition = section.advanced_fields !== null && section.advanced_fields.length !== 0;
+      const hrBooleanCondition = indexCondition && (fieldsCondition || advancedFieldsCondition);
       return (
         <div key={section.title}>
           <PluginSectionGenerator
             pluginLayoutSection={section}
             organisationId={organisationId}
             pluginProperties={pluginProperties}
+            disableFields={disableFields}
             pluginVersionId={pluginVersionId}
           />
-          {index !== pluginLayout.sections.length - 1 ? <hr /> : null}
+          {hrBooleanCondition ? <hr /> : null}
         </div>
       );
     });

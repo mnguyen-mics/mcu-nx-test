@@ -2,6 +2,7 @@ import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import PluginService from '../PluginService';
 import { PluginProperty, Recommender } from '../../models/Plugins';
 import PluginInstanceService from '../PluginInstanceService';
+import { PluginLayout } from '../../models/plugin/PluginLayout';
 
 class RecommenderService extends PluginInstanceService<Recommender> {
   
@@ -69,6 +70,20 @@ class RecommenderService extends PluginInstanceService<Recommender> {
     const endpoint = `recommenders/${id}/properties/technical_name=${technicalName}`;
     return PluginService.handleSaveOfProperties(params, organisationId, 'recommenders', id, endpoint);
   };
+
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
+    return this.getInstanceById(pInstanceId).then(res => {
+      const recommender = res.data;
+      return PluginService.findPluginFromVersionId(recommender.version_id).then(pluginResourceRes => {
+        const pluginResource = pluginResourceRes.data;
+        return PluginService.getLocalizedPluginLayout(
+          pluginResource.id,
+          recommender.version_id
+        );
+      });
+    });
+  }
+
 
 };
 

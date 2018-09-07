@@ -1,6 +1,8 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import { BidOptimizer } from '../../models/Plugins';
 import PluginInstanceService from '../PluginInstanceService';
+import PluginService from '../PluginService';
+import { PluginLayout } from '../../models/plugin/PluginLayout';
 
 class BidOptimizerService extends PluginInstanceService<BidOptimizer> {
   constructor() {
@@ -39,6 +41,19 @@ class BidOptimizerService extends PluginInstanceService<BidOptimizer> {
       return { ...res.data, id };
     });
   };
+
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
+    return this.getInstanceById(pInstanceId).then(res => {
+      const bidOptimizer = res.data;
+      return PluginService.findPluginFromVersionId(bidOptimizer.engine_version_id).then(pluginResourceRes => {
+        const pluginResource = pluginResourceRes.data;
+        return PluginService.getLocalizedPluginLayout(
+          pluginResource.id,
+          bidOptimizer.engine_version_id
+        );
+      });      
+    });
+  }
 
 };
 

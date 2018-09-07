@@ -15,6 +15,7 @@ import {
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import messages from './messages';
+import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
 const initialState = {
   loading: false,
@@ -109,10 +110,10 @@ class KeywordListContent extends React.Component<
   render() {
     const { match: { params: { organisationId } } } = this.props;
 
-    const actionsColumnsDefinition = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<KeywordListResource>> = [
       {
         key: 'action',
-        actions: [
+        actions: () => [
           { translationKey: 'EDIT', callback: this.onClickEdit },
           { translationKey: 'ARCHIVE', callback: this.onClickArchive },
         ],

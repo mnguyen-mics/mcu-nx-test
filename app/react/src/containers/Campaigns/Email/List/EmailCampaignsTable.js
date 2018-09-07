@@ -141,7 +141,7 @@ function EmailCampaignsTable({
   const actionColumns = [
     {
       key: 'action',
-      actions: [
+      actions: () => [
         {
           intlMessage: messages.editCampaign,
           callback: onEditCampaign,

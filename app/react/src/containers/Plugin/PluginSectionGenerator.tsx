@@ -18,6 +18,7 @@ interface PluginSectionGeneratorProps {
     pluginLayoutSection: PluginLayoutSectionResource;
     pluginVersionId: string;
     noUploadModal?: () => void;
+    disableFields: boolean;
     small?: boolean;
 }
 
@@ -44,6 +45,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
             pluginVersionId,
             pluginProperties,
             noUploadModal,
+            disableFields,
             small
         } = this.props;
 
@@ -57,6 +59,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                         pluginLayoutFieldDefinition={field}
                         organisationId={organisationId}
                         pluginVersionId={pluginVersionId}
+                        disabled={disableFields}
                         small={small}
                         {...noUploadModal}
                     />
@@ -112,6 +115,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
             null;
 
         return (
+            (returnedFields.length > 0 || advancedFields) &&
             <div id={pluginLayoutSection.title}>
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
@@ -122,9 +126,9 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                 {returnedFields}
                 {advancedFields}
             </div>
+
         );
     }
-
 }
 
 export default compose<JoinedProps, PluginSectionGeneratorProps>(
