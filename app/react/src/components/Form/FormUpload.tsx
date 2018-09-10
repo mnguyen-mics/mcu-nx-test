@@ -14,9 +14,10 @@ import { FormFieldWrapper } from './index';
 export interface FormUploadProps {
   formItemProps?: FormItemProps;
   inputProps?: UploadProps;
-  helpToolTipProps: TooltipProps;
+  helpToolTipProps?: TooltipProps;
   buttonText: string;
   noUploadModal?: () => void;
+  disabled?: boolean;
   small?: boolean;
 }
 
@@ -55,6 +56,7 @@ class FormUpload extends React.Component<JoinedProps, State> {
       formItemProps,
       inputProps,
       helpToolTipProps,
+      disabled,
       small,
     } = this.props;
 
@@ -97,13 +99,10 @@ class FormUpload extends React.Component<JoinedProps, State> {
         small={small}
         {...formItemProps}
       >
-        <Upload fileList={fileList} {...inputProps} {...uploadDetailProps}>
+        <Upload fileList={fileList} {...inputProps} {...uploadDetailProps} disabled={disabled}>
           <Button
-            onClick={
-              inputProps && inputProps.disabled
-                ? this.props.noUploadModal
-                : undefined
-            }
+            onClick={this.props.noUploadModal}
+            disabled={disabled}
           >
             <Icon type="upload" /> {this.props.buttonText}
           </Button>

@@ -13,6 +13,7 @@ export interface FormTagSelectProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
   selectProps?: RestrictedSelectProps & { options: Array<{ label: string, value: string }> };
   small?: boolean;
+  disabled?: boolean;
   valueAsString?: boolean;
 }
 
@@ -25,6 +26,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
     meta,
     selectProps,
     small,
+    disabled
   } = props;
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
@@ -72,6 +74,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
         onChange={onChange}
         onFocus={input.onFocus as () => any}
         value={value}
+        disabled={disabled}
       >{optionsToDisplay}
       </Select>
     </FormFieldWrapper>

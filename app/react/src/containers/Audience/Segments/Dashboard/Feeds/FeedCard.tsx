@@ -55,6 +55,10 @@ const messages = defineMessages({
     id: 'audienceFeed.card.actions.edit',
     defaultMessage: 'Edit'
   },
+  view: {
+    id: 'audienceFeed.card.actions.view',
+    defaultMessage: 'View'
+  },
   delete: {
     id: 'audienceFeed.card.actions.delete',
     defaultMessage: 'Delete'

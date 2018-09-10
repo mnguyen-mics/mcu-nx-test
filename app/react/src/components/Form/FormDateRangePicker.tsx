@@ -16,6 +16,7 @@ export interface FormDateRangePickerProps extends FormFieldWrapperProps {
   unixTimestamp?: boolean;
   startDateFieldName?: string;
   endDateFieldName?: string;
+  disabled?: boolean;
   small?: boolean;
 }
 
@@ -130,6 +131,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
       endDateFieldName,
       unixTimestamp,
       small,
+      disabled
     } = this.props;
 
     // TODO properly handle required/validation case
@@ -178,6 +180,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
               {...{value:startDateValue}}
               onChange={this.updateStartDate}
               disabledDate={this.disabledStartDate}
+              disabled={disabled}
               format={DEFAULT_DATE_FORMAT}
             />
           </div>
@@ -193,6 +196,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
               {...{value:endDateValue}}
               onChange={this.updateEndDate}
               disabledDate={this.disabledEndDate}
+              disabled={disabled}
               format={DEFAULT_DATE_FORMAT}
             />
           </div>

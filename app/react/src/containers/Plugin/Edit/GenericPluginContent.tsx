@@ -56,6 +56,7 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
   ) => PluginInstance;
 
   showGeneralInformation?: boolean;
+  showedMessage?: React.ReactNode;
   disableFields?: boolean;
 }
 
@@ -396,6 +397,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
       onClose,
       pluginInstanceId,
       showGeneralInformation,
+      showedMessage,
       disableFields
     } = this.props;
 
@@ -443,7 +445,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
       pluginProperties.length || pluginInstanceId
         ? {
           formId,
-          message: messages.save,
+          message: !disableFields ? messages.save : undefined,
           onClose: onClose,
         }
         : {
@@ -473,6 +475,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
           pluginVersionId={plugin.id}
           formId={formId}
           initialValues={this.formatInitialValues(initialValues)}
+          showedMessage={showedMessage}
           showGeneralInformation={
             showGeneralInformation !== undefined ? showGeneralInformation : true
           }

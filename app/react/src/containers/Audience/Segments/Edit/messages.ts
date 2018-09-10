@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+  audienceFeedWarningMessage: {
+    id: 'audience.warning',
+    defaultMessage : 'You cannot edit an active plugin. Pause it in order to edit it.'
+  },
   audienceSegmentBreadCrumb: {
     id: 'audience.segment.actionbar.breadcrumb.label',
     defaultMessage: 'New Audience Segment',
