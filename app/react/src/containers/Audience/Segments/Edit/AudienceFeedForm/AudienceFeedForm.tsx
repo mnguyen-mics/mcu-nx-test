@@ -110,7 +110,7 @@ class CreateAudienceFeed<T> extends React.Component<
     const paths = () => breadcrumbPaths
 
     const showedMessage = initialValues && initialValues.plugin.status === 'ACTIVE' ?
-      (<Alert message={formatMessage(messages.audienceFeedWarningMessage)} type="warning" style={{margin: "30px"}}/>) :
+      (<Alert message={formatMessage(messages.audienceFeedWarningMessage)} type="warning"/>) :
       undefined;
 
     if (type === 'AUDIENCE_SEGMENT_TAG_FEED') {
