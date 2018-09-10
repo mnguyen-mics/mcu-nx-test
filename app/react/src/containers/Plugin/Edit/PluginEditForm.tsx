@@ -9,7 +9,7 @@ import {
 import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { FormTitle, withValidators, FieldCtor } from '../../../components/Form';
+import { FormTitle, withValidators, FieldCtor, FormFieldWrapper } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
@@ -246,7 +246,12 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
           <Content
             className="mcs-content-container mcs-form-container ad-group-form" id={formId}
           >
-            {showedMessage}
+            <Row>
+              <span className="ant-col-3" />
+              <FormFieldWrapper>
+                {showedMessage}
+              </FormFieldWrapper>
+            </Row>
             {showGeneralInformation ? <div><div id={'general'}>
               <Row
                 type="flex"
