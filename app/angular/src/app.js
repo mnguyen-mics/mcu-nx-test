@@ -43,7 +43,9 @@ define(['app-setup', 'angularAMD', 'jquery'],
             // if (!$location.url().match('/v2')) {
               // $location.path('/init-session');
             // } else {
-              Session.init($stateParams.organisationId).then(function () {
+              var re = /v2\/o\/([\d]+)\//i;
+              var $organisation_id = $location.url().match(re)[1];
+              Session.init($organisation_id).then(function () {
                 if (!$location.url().match('/v2')) {
                   $location.path(AuthenticationService.popPendingPath());
                 }
