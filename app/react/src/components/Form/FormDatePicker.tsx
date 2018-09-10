@@ -14,6 +14,7 @@ export interface FormDatePickerProps extends FormFieldWrapperProps {
   datePickerProps: DatePickerProps;
   small?: boolean;
   unixTimestamp?: boolean;
+  disabled?: boolean;
   isoDate?: boolean;
 }
 
@@ -60,6 +61,7 @@ const FormDatePicker: React.SFC<
         {...props.input}
         value={value}
         onChange={onChange}
+        disabled={props.disabled}
         {...props.datePickerProps}
       />
     </FormFieldWrapper>

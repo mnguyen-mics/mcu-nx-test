@@ -13,7 +13,7 @@ import { Path } from '../../../../../components/ActionBar';
 import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
 import AudienceTagFeedService from '../../../../../services/AudienceTagFeedService';
 import AudienceExternalFeedServices from '../../../../../services/AudienceExternalFeedService';
-
+import { Alert } from 'antd';
 
 const AudienceExternalFeedPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AudienceExternalFeed>>
 const AudienceTagFeedPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AudienceTagFeed>>
@@ -92,11 +92,26 @@ class CreateAudienceFeed<T> extends React.Component<
   }
 
   render() {
-    const { breadcrumbPaths, type, onClose, initialValues, match: { params: { segmentId, feedId,  } } } = this.props;
+    const { breadcrumbPaths,
+      type,
+      onClose,
+      initialValues,
+      match: { 
+        params: { 
+          segmentId, 
+          feedId,  
+        } 
+      },
+      intl: {
+        formatMessage
+      }
+    } = this.props;
 
     const paths = () => breadcrumbPaths
 
-    
+    const showedMessage = initialValues && initialValues.plugin.status === 'ACTIVE' ?
+      (<Alert message={formatMessage(messages.audienceFeedWarningMessage)} type="warning" style={{margin: "30px"}}/>) :
+      undefined;
 
     if (type === 'AUDIENCE_SEGMENT_TAG_FEED') {
 
@@ -114,6 +129,7 @@ class CreateAudienceFeed<T> extends React.Component<
           onSaveOrCreatePluginInstance={this.onSave}
           onClose={onClose}
           showGeneralInformation={false}
+          showedMessage={showedMessage}
           disableFields={initialValues && (initialValues.plugin.status === 'ACTIVE' || initialValues.plugin.status === 'PUBLISHED')}
         />
       ) 
@@ -133,6 +149,7 @@ class CreateAudienceFeed<T> extends React.Component<
           onSaveOrCreatePluginInstance={this.onSave}
           onClose={onClose}
           showGeneralInformation={false}
+          showedMessage={showedMessage}
           disableFields={initialValues && (initialValues.plugin.status === 'ACTIVE' || initialValues.plugin.status === 'PUBLISHED')}
         />
       )

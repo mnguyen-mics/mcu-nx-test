@@ -10,13 +10,14 @@ interface OptionProps {
 export interface FormCheckboxGroupProps {
     options: OptionProps[];
     valueAsString?: boolean;
+    disabled?:boolean;
 }
 
 const CheckboxGroup = Checkbox.Group;
 
 const FormCheckboxGroup: React.SFC<FormCheckboxGroupProps & WrappedFieldProps> = props => {
 
-    const { options, input } = props;
+    const { options, input, disabled } = props;
 
     const defaultValue = 
     input.value === ''
@@ -36,6 +37,7 @@ const FormCheckboxGroup: React.SFC<FormCheckboxGroupProps & WrappedFieldProps> =
         <CheckboxGroup
             options={options}
             defaultValue={defaultValue}
+            disabled={disabled}
             onChange={onChange}
         />
     );

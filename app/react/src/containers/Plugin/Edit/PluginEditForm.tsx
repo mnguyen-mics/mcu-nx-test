@@ -44,6 +44,7 @@ interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
   formId: string;
   initialValues: any;
   showGeneralInformation: boolean;
+  showedMessage?: React.ReactNode;
   showTechnicalName?: boolean;
 }
 
@@ -214,6 +215,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       disableFields,
       showTechnicalName,
       showGeneralInformation,
+      showedMessage,
       pluginLayout
     } = this.props;
 
@@ -244,6 +246,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
           <Content
             className="mcs-content-container mcs-form-container ad-group-form" id={formId}
           >
+            {showedMessage}
             {showGeneralInformation ? <div><div id={'general'}>
               <Row
                 type="flex"

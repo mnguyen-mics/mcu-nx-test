@@ -27,6 +27,7 @@ export interface FormDataFileProps {
   helpToolTipProps: TooltipProps;
   buttonText: string;
   accept: AcceptedFile;
+  disabled?: boolean;
   small?: boolean;
 }
 
@@ -153,7 +154,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
   };
 
   render() {
-    const { meta, input } = this.props;
+    const { meta, input, disabled } = this.props;
 
     const { canEdit } = this.state;
 
@@ -243,7 +244,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
         <Col span={24}>
           {!canEdit ? (
             <span>
-              <Button onClick={click}>
+              <Button onClick={click} disabled={disabled}>
                 <FormattedMessage {...messages.datafileFileSelect} />
               </Button>
             </span>

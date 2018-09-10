@@ -15,6 +15,7 @@ export interface FormCodeEditProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
   inputProps?: AceEditorProps;
   helpToolTipProps?: TooltipProps;
+  disabled?: boolean;
   small?: boolean;
 }
 
@@ -44,6 +45,7 @@ const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => 
         onFocus={onFocus}
         width={'100%'}
         onChange={props.input.onChange}
+        readOnly={props.disabled}
         showPrintMargin={false}
       />
     </FormFieldWrapper>

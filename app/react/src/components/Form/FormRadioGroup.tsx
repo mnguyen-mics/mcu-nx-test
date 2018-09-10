@@ -9,6 +9,7 @@ export interface FormRadioGroupProps {
   radioGroupProps?: RadioGroupProps;
   elements: Array<RadioProps & { id?: string, title: string }>;
   elementClassName?: string;
+  disabled?: boolean;
   groupClassName?: string;
 }
 
@@ -16,7 +17,7 @@ const RadioGroup = Radio.Group;
 
 const FormRadioGroup: React.SFC<FormRadioGroupProps & WrappedFieldProps> = props => {
 
-  const { elementClassName, groupClassName, elements, input } = props;
+  const { elementClassName, groupClassName, elements, input, disabled } = props;
 
   const elementsToMap = elements.map(element => (
     <FormRadio
@@ -36,6 +37,7 @@ const FormRadioGroup: React.SFC<FormRadioGroupProps & WrappedFieldProps> = props
       className={groupClassName}
       onChange={onChange}
       value={input.value}
+      disabled={disabled}
     >{elementsToMap}
     </RadioGroup>
   );
