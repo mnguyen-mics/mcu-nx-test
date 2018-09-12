@@ -141,7 +141,7 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
         return false;
       },
       onChange: (info: UploadChangeParam) => {
-        if (disabled) {
+        if (!disabled) {
           const newFields = fields.getAll();
           if (info.file.size <= maxFileSize) {
             newFields.push({
