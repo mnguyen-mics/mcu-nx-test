@@ -1,12 +1,12 @@
 import { 
   ResourceHistoryResource,
-  ResourceName,
+  ResourceType,
   EventType,
 } from "../models/resourceHistory/ResourceHistory";
 import ApiService, { DataListResponse } from "./ApiService";
 
 export interface GetGenericHistoryOptions {
-  resource_name?: ResourceName;
+  resource_type?: ResourceType;
   resource_id?: string;
   event_type?: EventType;
   user_id?: number;
@@ -16,7 +16,7 @@ export interface GetGenericHistoryOptions {
 }
 
 export interface GetResourceHistoryOptions extends GetGenericHistoryOptions {
-  resource_name: ResourceName;
+  resource_type: ResourceType;
   resource_id: string;
 }
 

@@ -135,7 +135,7 @@ class BlastTable extends React.Component<Props> {
       ResourceTimelinePage,
       {
         additionalProps: {
-          resourceName: 'EMAIL_BLAST',
+          resourceType: 'EMAIL_BLAST',
           resourceId: record.id,
           handleClose: () => this.props.closeNextDrawer(),
           formatProperty: formatEmailBlastProperty,

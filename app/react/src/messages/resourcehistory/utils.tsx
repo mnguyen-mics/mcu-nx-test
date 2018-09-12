@@ -3,7 +3,7 @@ import moment from 'moment';
 import { formatMetric } from "../../utils/MetricHelper";
 import { FormattedMessage } from "react-intl";
 
-export type HistoryKeys = 'history_title' | 'history_resource_name';
+export type HistoryKeys = 'history_title' | 'history_resource_type';
 
 export type ValueFormat = 'STRING' | 'INTEGER' | 'FLOAT' | 'DATE' | 'TIMESTAMP' | 'MESSAGE';
 

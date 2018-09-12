@@ -89,7 +89,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                     {...this.findCreateEventIndex(events) > -1
                       ? {...messages.resourceCreated, values: {
                           userName: (events[0] as HistoryEventActionShape).user_identification.user_name,
-                          resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message || messages.defaultResourceName} /></span>,
+                          resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
                         }}
                       : {...messages.severalFieldsEdited, values: {
                           userName: events[0].user_identification.user_name
@@ -126,7 +126,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                         <FormattedMessage
                           {...{...messages.resourceCreated, values: {
                             userName: event.user_identification.user_name,
-                            resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message || messages.defaultResourceName} /></span>,
+                            resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
                           }}}
                         />
                       </div>
@@ -146,7 +146,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                           <FormattedMessage
                             {...{...messages.resourceDeleted, values: {
                               userName: event.user_identification.user_name,
-                              resourceName: <span className="name"><FormattedMessage {...formatProperty('history_resource_name').message || messages.defaultResourceName} /></span>,
+                              resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
                             }}}
                           />
                         </div>

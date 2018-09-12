@@ -4,7 +4,7 @@ import lodash from 'lodash';
 import moment from 'moment';
 import { InjectedIntlProps, FormattedMessage, injectIntl } from "react-intl";
 
-import { ResourceName, HistoryEventShape } from "../../../models/resourceHistory/ResourceHistory";
+import { ResourceType, HistoryEventShape } from "../../../models/resourceHistory/ResourceHistory";
 import ResourceHistoryService from "../../../services/ResourceHistoryService";
 import messages from './messages';
 import { McsIcon } from '../../../components';
@@ -26,7 +26,7 @@ export interface Events {
 }
 
 export interface ResourceTimelineProps {
-  resourceName: ResourceName;
+  resourceType: ResourceType;
   resourceId: string;
   formatProperty: FormatProperty;
 }
@@ -61,13 +61,13 @@ class ResourceTimeline extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      resourceName,
+      resourceType,
       resourceId,
     } = this.props;
 
     this.fetchEvents(
       organisationId,
-      resourceName,
+      resourceType,
       resourceId);
   }
 
@@ -85,13 +85,13 @@ class ResourceTimeline extends React.Component<Props, State> {
 
   fetchEvents = (
     organisationId: string,
-    resourceName: ResourceName,
+    resourceType: ResourceType,
     resourceId: string,
   ) => {
     const { nextTime, eventCountOnOldestTime } = this.state;
     const params = nextTime
-      ? { resource_name: resourceName, resource_id: resourceId, max_results: 10 + eventCountOnOldestTime, to: nextTime }
-      : { resource_name: resourceName, resource_id: resourceId, max_results: 10 };
+      ? { resource_type: resourceType, resource_id: resourceId, max_results: 10 + eventCountOnOldestTime, to: nextTime }
+      : { resource_type: resourceType, resource_id: resourceId, max_results: 10 };
     this.setState(
       (prevState: any) => {
         const nextState = {
@@ -177,13 +177,13 @@ class ResourceTimeline extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      resourceName,
+      resourceType,
       resourceId,
     } = this.props;
     e.preventDefault();
     this.fetchEvents(
       organisationId,
-      resourceName,
+      resourceType,
       resourceId,
     );
   };

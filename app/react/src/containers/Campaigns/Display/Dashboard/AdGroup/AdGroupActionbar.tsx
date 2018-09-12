@@ -121,7 +121,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
               ResourceTimelinePage,
               {
                 additionalProps: {
-                  resourceName: 'AD_GROUP',
+                  resourceType: 'AD_GROUP',
                   resourceId: adGroupId,
                   handleClose: () => this.props.closeNextDrawer(),
                   formatProperty: formatAdGroupProperty,

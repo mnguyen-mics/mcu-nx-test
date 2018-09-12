@@ -80,8 +80,8 @@ const emailBlastPropertiesMessageMap: {
     id: 'emailBlast.resourceHistory.title',
     defaultMessage: 'Email Blast History',
   },
-  history_resource_name: {
-    id: 'emailBlast.resourceHistory.name',
+  history_resource_type: {
+    id: 'emailBlast.resourceHistory.type',
     defaultMessage: 'Email Blast',
   },
 });
@@ -112,7 +112,7 @@ const emailBlastPropertiesFormatMap: {
   ==============================================================================
   */
   history_title: { format: 'STRING' },
-  history_resource_name: { format: 'STRING' },
+  history_resource_type: { format: 'STRING' },
 }
 
 function formatEmailBlastProperty(property: keyof EmailBlastResource | HistoryKeys, value?: string): {

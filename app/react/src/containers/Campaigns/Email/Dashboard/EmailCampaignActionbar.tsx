@@ -149,7 +149,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
             ResourceTimelinePage,
             {
               additionalProps: {
-                resourceName: 'EMAIL_CAMPAIGN',
+                resourceType: 'EMAIL_CAMPAIGN',
                 resourceId: campaignId,
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatCampaignProperty,

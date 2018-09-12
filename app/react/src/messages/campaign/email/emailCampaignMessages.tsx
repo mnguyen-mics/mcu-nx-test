@@ -68,8 +68,8 @@ const emailCampaignPropertiesMessageMap: {
     id: 'emailCampaign.resourceHistory.title',
     defaultMessage: 'Email Campaign History',
   },
-  history_resource_name: {
-    id: 'emailCampaign.resourceHistory.name',
+  history_resource_type: {
+    id: 'emailCampaign.resourceHistory.type',
     defaultMessage: 'Email Campaign',
   },
 });
@@ -99,7 +99,7 @@ const emailCampaignPropertiesFormatMap: {
   ==============================================================================
   */
   history_title: { format: 'STRING' },
-  history_resource_name: { format: 'STRING' },
+  history_resource_type: { format: 'STRING' },
 }
 
 function formatCampaignProperty(property: keyof EmailCampaignResource | HistoryKeys, value?: string): {

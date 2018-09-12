@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ResourceTimeline from './ResourceTimeline';
 import { Layout, Row } from 'antd';
-import { ResourceName } from '../../../models/resourceHistory/ResourceHistory';
+import { ResourceType } from '../../../models/resourceHistory/ResourceHistory';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import ResourceTimelineActionBar from './ResourceTimelineActionBar';
@@ -10,7 +10,7 @@ import { FormatProperty } from './domain';
 const { Content } = Layout
 
 export interface ResourceTimelinePageProps {
-  resourceName: ResourceName;
+  resourceType: ResourceType;
   resourceId: string;
   handleClose: () => void;
   formatProperty: FormatProperty;
@@ -34,7 +34,7 @@ class ResourceTimelinePage extends React.Component<Props, State> {
     
   render() {
     const {
-      resourceName,
+      resourceType,
       resourceId,
       handleClose,
       formatProperty,
@@ -46,7 +46,7 @@ class ResourceTimelinePage extends React.Component<Props, State> {
           <Content className="mcs-content-container p-t-40">
             <Row className="mcs-history">
               <ResourceTimeline
-                resourceName={resourceName}
+                resourceType={resourceType}
                 resourceId={resourceId}
                 formatProperty={formatProperty}
               />

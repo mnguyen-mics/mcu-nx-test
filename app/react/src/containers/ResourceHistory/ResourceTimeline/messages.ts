@@ -7,8 +7,8 @@ const messages: {
     id: 'timeline.title',
     defaultMessage: 'History'
   },
-  defaultResourceName: {
-    id: 'timeline.resourceName',
+  defaultResourceType: {
+    id: 'timeline.resourceType',
     defaultMessage: 'Resource',
   },
   today: {
@@ -41,7 +41,7 @@ const messages: {
   },
   resourceCreated: {
     id: 'timeline.events.card.resourceCreated',
-    defaultMessage: '{userName} created the {resourceName}.',
+    defaultMessage: '{userName} created the {resourceType}.',
   },
   singleFieldEdited: {
     id: 'timeline.events.card.singleEdit',
@@ -57,7 +57,7 @@ const messages: {
   },
   resourceDeleted: {
     id: 'timeline.events.card.resourceDeleted',
-    defaultMessage: '{userName} deleted the {resourceName}.',
+    defaultMessage: '{userName} deleted the {resourceType}.',
   },
   noValue: {
     id: 'timeline.events.card.field.noValue',

@@ -462,7 +462,7 @@ class DisplayCampaignActionbar extends React.Component<
             ResourceTimelinePage,
             {
               additionalProps: {
-                resourceName: 'DISPLAY_CAMPAIGN',
+                resourceType: 'DISPLAY_CAMPAIGN',
                 resourceId: campaignId,
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatCampaignProperty,

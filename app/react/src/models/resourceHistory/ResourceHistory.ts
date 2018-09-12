@@ -1,4 +1,4 @@
-export type ResourceName = 
+export type ResourceType = 
   'AD_GROUP' |
   'DISPLAY_AD' |
   'DISPLAY_CAMPAIGN' |
@@ -19,7 +19,7 @@ export type HistoryEventType =
 
 
 export interface ResourceHistoryResource {
-  resource_name: ResourceName;
+  resource_type: ResourceType;
   resource_id: string;
   events: HistoryEventShape[];
 }

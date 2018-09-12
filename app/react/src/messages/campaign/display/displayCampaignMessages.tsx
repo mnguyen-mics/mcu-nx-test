@@ -150,8 +150,8 @@ const campaignPropertiesMessageMap: {
     id: 'campaign.resourceHistory.title',
     defaultMessage: 'Display Campaign History',
   },
-  history_resource_name: {
-    id: 'campaign.resourceHistory.name',
+  history_resource_type: {
+    id: 'campaign.resourceHistory.type',
     defaultMessage: 'Display Campaign',
   },
 });
@@ -198,7 +198,7 @@ const campaignPropertiesFormatMap: {
   ==============================================================================
   */
   history_title: { format: 'STRING' },
-  history_resource_name: { format: 'STRING' },
+  history_resource_type: { format: 'STRING' },
 }
 
 function formatCampaignProperty(property: keyof DisplayCampaignResource | HistoryKeys, value?: string): {

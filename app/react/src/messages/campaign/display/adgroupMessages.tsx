@@ -298,8 +298,8 @@ const adGroupPropertiesMessageMap: {
     id: 'adgroup.resourceHistory.title',
     defaultMessage: 'Ad Group History',
   },
-  history_resource_name: {
-    id: 'adgroup.resourceHistory.name',
+  history_resource_type: {
+    id: 'adgroup.resourceHistory.type',
     defaultMessage: 'Ad Group',
   },
 });
@@ -366,7 +366,7 @@ const adGroupPropertiesFormatMap: {
   */
   duration: { format: 'STRING' },
   history_title: { format: 'STRING' },
-  history_resource_name: { format: 'STRING' },
+  history_resource_type: { format: 'STRING' },
 }
 
 function formatAdGroupProperty(property: keyof AdGroupResource | ExtraKeys | HistoryKeys, value?: string): {
