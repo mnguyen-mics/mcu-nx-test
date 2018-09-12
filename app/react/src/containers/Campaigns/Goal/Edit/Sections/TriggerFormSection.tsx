@@ -77,6 +77,10 @@ const messages = defineMessages({
     defaultMessage:
       "You can't trigger via pixel because your goal already has a trigger via query.",
   },
+  configureDatamartToken: {
+    id: 'edit.goal.form.section.pixel.configureDatamartToken',
+    defaultMessage: 'The datamart token needs to be configured on the datamart.'
+  }
 });
 
 interface MapStateToProps {
@@ -141,8 +145,8 @@ class TriggerFormSection extends React.Component<Props, State> {
         queryContainer={this.state.queryContainerCopy}
       />
     ) : (
-      <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
-    );
+          <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
+        );
   };
 
   updateQueryContainerAndCloseEditMode = () => {
@@ -180,23 +184,32 @@ class TriggerFormSection extends React.Component<Props, State> {
     } = this.props;
     return (
       <div>
-        {isExistingGoal(this.props.formValues.goal) ? (
-          <FormCodeSnippet
-            language="html"
-            codeSnippet={`<img style="display:none" src="//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
-              datamart.token
-            }&$goal_id=${this.props.formValues.goal.id}" />`}
-            copyToClipboard={true}
-            helpToolTipProps={{
-              title: formatMessage(messages.triggerPixelHelpTooltip),
-            }}
-          />
-        ) : (
-          <Alert
-            message={formatMessage(messages.newGoalPixelSection)}
-            type="warning"
-          />
-        )}
+        {isExistingGoal(this.props.formValues.goal) ?
+          (datamart.token ?
+            (
+              <FormCodeSnippet
+                language="html"
+                codeSnippet={`<img style="display:none" src="//events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
+                  datamart.token
+                  }&$goal_id=${this.props.formValues.goal.id}" />`}
+                copyToClipboard={true}
+                helpToolTipProps={{
+                  title: formatMessage(messages.triggerPixelHelpTooltip),
+                }}
+              />
+            ) :
+            (
+              <Alert
+                message={formatMessage(messages.configureDatamartToken)}
+                type="warning"
+              />
+            )
+          ) : (
+            <Alert
+              message={formatMessage(messages.newGoalPixelSection)}
+              type="warning"
+            />
+          )}
       </div>
     );
   };
@@ -266,13 +279,13 @@ class TriggerFormSection extends React.Component<Props, State> {
                     </Button>
                   </div>
                 ) : (
-                  <Button onClick={this.switchEditMode}>
-                    <FormattedMessage
-                      id="edit.goal.form.section.trigger.button.trigger"
-                      defaultMessage="Edit trigger"
-                    />
-                  </Button>
-                ))}
+                    <Button onClick={this.switchEditMode}>
+                      <FormattedMessage
+                        id="edit.goal.form.section.trigger.button.trigger"
+                        defaultMessage="Edit trigger"
+                      />
+                    </Button>
+                  ))}
             </div>
           </Col>
         </Row>
