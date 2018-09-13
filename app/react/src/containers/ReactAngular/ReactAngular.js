@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+
 // inpired by https://www.npmjs.com/package/react-angular
 
 class ReactAngular extends Component {
 
+  AngularSession = window.angular.element(document.body).injector().get('core/common/auth/Session');
+
   constructor(props) {
     super(props);
+    console.log(this.props.scenarioContainer);
     if (window.angular) {
       this.state = {
+        sessionInitialized: true,
         angular: window.angular
       };
     }
@@ -34,6 +39,8 @@ class ReactAngular extends Component {
     $compile(this.$element)(this.$scope);
     this.$element.data('$scope', this.$scope);
     $rootScope.$evalAsync();
+
+    this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`).then(() => this.setState({ sessionInitialized: true }))
   }
 
 
@@ -49,7 +56,7 @@ class ReactAngular extends Component {
       return this.$element;
     };
 
-    if (children) {
+    if (children && this.state.sessionInitialized ) {
       if (!React.isValidElement(children)) {
         throw new Error(`Only one child is allowed in AngularTemplate.
           Found ${children.length}: ${children.map(({ type }) => type).join(', ')}.`);
@@ -63,7 +70,6 @@ class ReactAngular extends Component {
 
       return child;
     }
-
     return React.createElement(wrapperTag, {
       ...wrapperAttrs,
       ref,

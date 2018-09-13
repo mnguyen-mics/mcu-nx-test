@@ -14,7 +14,7 @@ export interface QueryContainer {
 }
 
 interface AngularQueryToolWidgetState {
-  queryContainer: QueryContainer,
+  sessionInitialized: boolean,
 }
 
 declare global { namespace JSX { interface IntrinsicElements { "mcs-query-tool": any } } }
@@ -30,16 +30,17 @@ export default class AngularQueryToolWidget extends React.Component<AngularQuery
 
   constructor(props: AngularQueryToolWidgetProps) {
     super(props);
-    this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`)
+    this.state = { sessionInitialized: false }
     this.queryContainer = new this.AngularQueryContainer(this.props.datamartId)
   }
 
   componentDidMount() {
     this.props.setStateWithQueryContainer(this.queryContainer);
+    this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`).then(() => this.setState({ sessionInitialized: true }))
   }
 
   render() {
-    return this.AngularQueryContainer ? (
+    return this.AngularQueryContainer && this.state.sessionInitialized ? (
       <ReactAngularJS
         scope={{
           container: this.queryContainer,

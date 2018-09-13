@@ -27,7 +27,7 @@ export default class AngularWidget extends React.Component<
 > {
   constructor(props: AngularWidgetProps) {
     super(props);
-
+    
     (window as any).angular
       .element(document.body)
       .injector()
