@@ -72,8 +72,15 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
   }
 
   componentDidMount() {
-    const { match: { params: { placementListId } } } = this.props;
+    const {
+      match: {
+        params: { placementListId },
+      },
+    } = this.props;
     if (placementListId) {
+      this.setState({
+        loading: true,
+      });
       PlacementListService.getPlacementList(placementListId)
         .then(placementListData => placementListData.data)
         .then(placementList => {
@@ -90,6 +97,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
                       createFieldArrayModel(placementDescriptor),
                   ),
                 },
+                loading: false,
               });
             });
         });
@@ -97,7 +105,12 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
   }
 
   close = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const url = `/v2/o/${organisationId}/library/placementlist`;
 
@@ -106,7 +119,9 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
 
   save = (formData: PlacementListFormData) => {
     const {
-      match: { params: { placementListId, organisationId } },
+      match: {
+        params: { placementListId, organisationId },
+      },
       intl,
     } = this.props;
     const { placementList: initialPlacementListData } = this.state;
@@ -146,7 +161,9 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
   render() {
     const {
       intl: { formatMessage },
-      match: { params: { organisationId, placementListId } },
+      match: {
+        params: { organisationId, placementListId },
+      },
     } = this.props;
     const { placementList, loading } = this.state;
 
