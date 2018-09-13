@@ -10,7 +10,6 @@ class ReactAngular extends Component {
 
   constructor(props) {
     super(props);
-    console.log(this.props.scenarioContainer);
     if (window.angular) {
       this.state = {
         sessionInitialized: true,
@@ -40,7 +39,7 @@ class ReactAngular extends Component {
     this.$element.data('$scope', this.$scope);
     $rootScope.$evalAsync();
 
-    this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`).then(() => this.setState({ sessionInitialized: true }))
+    this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`).then(() => this.setState({ sessionInitialized: true }));
   }
 
 
