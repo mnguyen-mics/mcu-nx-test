@@ -44,5 +44,5 @@ function generateMacro(macro: ExportType) {
 }
  
 function generateSnippet(creativeId: string, width: number, height: number, type: ExportType, campaignId: string, adGroupId: string) {
-  return `<iframe src="//ads.mediarithmics.com/ads/render?ctx=LIVE&rid=${creativeId}&clktr=${generateMacro(type)}&cid=${campaignId}&gid=${adGroupId}" width="${width}" height="${height}" frameborder="0" scrolling="no"></iframe>`
+  return `<iframe src="https://ads.mediarithmics.com/ads/render?ctx=LIVE&rid=${creativeId}&clktr=${generateMacro(type)}&cid=${campaignId}&gid=${adGroupId}" width="${width}" height="${height}" frameborder="0" scrolling="no"></iframe>`
 }
