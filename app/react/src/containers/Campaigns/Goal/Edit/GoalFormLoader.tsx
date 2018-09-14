@@ -45,7 +45,7 @@ class GoalFormLoader extends React.Component<Props, State> {
           loading: false,
           goalFormData: {
             ...goalData,
-            attributionModels: INITIAL_GOAL_FORM_DATA.attributionModels,
+            attributionModels: goalData.attributionModels,
           },
         });
       })
