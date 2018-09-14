@@ -1,5 +1,11 @@
 import * as React from 'react';
 import ReactAngular from '../../../ReactAngular/ReactAngular';
+import { FormattedMessage } from 'react-intl';
+
+const messageProps = {
+  id: 'automation.form.scenario-container.undefined',
+  defaultMessage: 'Undefined scenario container'
+}
 
 export interface AngularWidgetProps {
   scenarioContainer: any;
@@ -36,7 +42,7 @@ export default class AngularWidget extends React.Component<
   }
 
   render() {
-    return (
+    return this.props.scenarioContainer ? (
       <ReactAngularJS
         scope={{
           scenarioContainer: this.props.scenarioContainer,
@@ -46,6 +52,8 @@ export default class AngularWidget extends React.Component<
           <mcs-scenario scenario-container="scenarioContainer" />
         </div>
       </ReactAngularJS>
-    );
+    ) : (
+      <FormattedMessage {...messageProps} />
+    ); 
   }
 }
