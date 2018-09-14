@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ReactAngular from '../../../ReactAngular/ReactAngular';
-import { Spin } from 'antd';
 
 export interface AngularWidgetProps {
   scenarioContainer: any;
@@ -37,7 +36,7 @@ export default class AngularWidget extends React.Component<
   }
 
   render() {
-    return this.props.scenarioContainer ? (
+    return (
       <ReactAngularJS
         scope={{
           scenarioContainer: this.props.scenarioContainer,
@@ -47,8 +46,6 @@ export default class AngularWidget extends React.Component<
           <mcs-scenario scenario-container="scenarioContainer" />
         </div>
       </ReactAngularJS>
-    ) : (
-      <Spin />
     );
   }
 }

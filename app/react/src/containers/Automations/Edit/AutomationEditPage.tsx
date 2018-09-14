@@ -76,7 +76,7 @@ class EditAutomationPage extends React.Component<Props, State> {
       }
     })
     .catch((err: any) => {
-      console.log("error", err)
+      this.props.notifyError(err);
     })
     
 
