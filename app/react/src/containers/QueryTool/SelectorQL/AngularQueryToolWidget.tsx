@@ -1,6 +1,7 @@
 import * as React from 'react';
 import ReactAngular from '../../ReactAngular/ReactAngular';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
+import { Spin } from 'antd';
 
 
 export interface AngularQueryToolWidgetProps {
@@ -50,6 +51,6 @@ export default class AngularQueryToolWidget extends React.Component<AngularQuery
       >
         <mcs-query-tool query-container="container" statistics-enabled="true" selected-values-enabled="true" datamart-id="datamartId" organisation-id="organisationId" />
       </ReactAngularJS>
-    ) : 'error';
+    ) : <Spin />;
   }
 }

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Spin from 'antd';
 
 
 // inpired by https://www.npmjs.com/package/react-angular
 
 class ReactAngular extends Component {
 
-  AngularSession = window.angular.element(document.body).injector().get('core/common/auth/Session');
+  AngularSession = window.angular.element(window.document.body).injector().get('core/common/auth/Session');
 
   constructor(props) {
     super(props);
@@ -39,7 +40,7 @@ class ReactAngular extends Component {
     this.$element.data('$scope', this.$scope);
     $rootScope.$evalAsync();
 
-    this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`).then(() => this.setState({ sessionInitialized: true }));
+    this.AngularSession.init(`o${this.props.scope.organisationId}d${this.props.scope.datamartId}`).then(() => this.setState({ sessionInitialized: true }));
   }
 
 
@@ -55,7 +56,10 @@ class ReactAngular extends Component {
       return this.$element;
     };
 
-    if (children && this.state.sessionInitialized ) {
+    if (!this.state.sessionInitialized) {
+      return <Spin />;
+    }
+    if (children) {
       if (!React.isValidElement(children)) {
         throw new Error(`Only one child is allowed in AngularTemplate.
           Found ${children.length}: ${children.map(({ type }) => type).join(', ')}.`);
@@ -69,6 +73,7 @@ class ReactAngular extends Component {
 
       return child;
     }
+
     return React.createElement(wrapperTag, {
       ...wrapperAttrs,
       ref,

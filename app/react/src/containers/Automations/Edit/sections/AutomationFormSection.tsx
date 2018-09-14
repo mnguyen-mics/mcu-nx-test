@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ReactAngular from '../../../ReactAngular/ReactAngular';
+import { Spin } from 'antd';
 
 export interface AngularWidgetProps {
   scenarioContainer: any;
@@ -47,7 +48,7 @@ export default class AngularWidget extends React.Component<
         </div>
       </ReactAngularJS>
     ) : (
-      'error'
+      <Spin />
     );
   }
 }
