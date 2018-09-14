@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ReactAngular from '../../../../../ReactAngular/ReactAngular';
-import { Spin } from 'antd';
 
 export interface AngularWidgetProps {
   queryContainer: any;
@@ -24,7 +23,7 @@ export default class AngularWidget extends React.Component<AngularWidgetProps> {
   }
 
   render() {
-    return this.props.queryContainer ? (
+    return (
       <ReactAngularJS
         scope={{
           container: this.props.queryContainer,
@@ -34,8 +33,6 @@ export default class AngularWidget extends React.Component<AngularWidgetProps> {
           <mcs-query-read-only-view query-container="container" />
         </div>
       </ReactAngularJS>
-    ) : (
-      <Spin />
     );
   }
 }

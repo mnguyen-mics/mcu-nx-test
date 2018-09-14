@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Spin from 'antd';
 
 
 // inpired by https://www.npmjs.com/package/react-angular
@@ -56,9 +55,6 @@ class ReactAngular extends Component {
       return this.$element;
     };
 
-    if (!this.state.sessionInitialized) {
-      return <Spin />;
-    }
     if (children) {
       if (!React.isValidElement(children)) {
         throw new Error(`Only one child is allowed in AngularTemplate.

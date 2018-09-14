@@ -41,9 +41,11 @@ class EditAutomationPage extends React.Component<Props, State> {
     .injector()
     .get('core/scenarios/ScenarioContainer');
 
-  state: any = {
+  state: State = {
     loading: true,
-    automationFormData: {},
+    automationFormData: {
+      automation: {}
+    },
     scenarioContainer: {}
   };
 
