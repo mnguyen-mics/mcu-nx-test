@@ -43,6 +43,10 @@ const messages: {
     id: 'timeline.events.card.resourceCreated',
     defaultMessage: '{userName} created the {resourceType}.',
   },
+  initialFieldValue: {
+    id: 'timeline.events.card.initialFieldValue',
+    defaultMessage: '{field} set to {newValue}'
+  },
   singleFieldEdited: {
     id: 'timeline.events.card.singleEdit',
     defaultMessage: '{userName} changed {field} from {oldValue} to {newValue}.',

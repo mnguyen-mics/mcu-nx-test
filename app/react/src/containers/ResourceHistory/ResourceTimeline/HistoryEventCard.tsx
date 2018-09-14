@@ -50,16 +50,22 @@ class HistoryEventCard extends React.Component<Props, State> {
       : <span className="empty-value"><FormattedMessage {...messages.noValue} /></span>;
   }
 
-  renderMultiEdit = (events: HistoryEventShape[]) => {
+  renderMultiEdit = (events: HistoryEventShape[], isCreationCard: boolean) => {
     return events.map(event => {
       return isHistoryUpdateEvent(event) &&
         <div className="mcs-fields-list-item">
           <FormattedMessage
-            {...{...messages.fieldInMultiEditList, values: {
-              field: this.renderField(event.field_changed),
-              oldValue: this.renderValue(event.field_changed, event.old_value),
-              newValue: this.renderValue(event.field_changed, event.new_value),
-            }}}
+            {...isCreationCard
+              ? {...messages.initialFieldValue, values: {
+                field: this.renderField(event.field_changed),
+                newValue: this.renderValue(event.field_changed, event.new_value),
+              }}
+              : {...messages.fieldInMultiEditList, values: {
+                  field: this.renderField(event.field_changed),
+                  oldValue: this.renderValue(event.field_changed, event.old_value),
+                  newValue: this.renderValue(event.field_changed, event.new_value),
+                }}
+            }
           />
         </div>
     });
@@ -115,7 +121,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                 </div>
                 {showMore && (
                   <div className="mcs-fields-list">
-                    {this.renderMultiEdit(events)}
+                    {this.renderMultiEdit(events, this.findCreateEventIndex(events) > -1)}
                   </div>
                 )}
               </Row>
