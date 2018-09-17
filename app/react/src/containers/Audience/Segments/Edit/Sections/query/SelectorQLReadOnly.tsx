@@ -1,8 +1,14 @@
 import * as React from 'react';
 import ReactAngular from '../../../../../ReactAngular/ReactAngular';
+import { FormattedMessage } from 'react-intl';
 
 export interface AngularWidgetProps {
   queryContainer: any;
+}
+
+const messageProps = {
+  id: 'selector-ql.query-container.undefined',
+  defaultMessage: 'Undefined Query container'
 }
 
 declare global {
@@ -23,7 +29,7 @@ export default class AngularWidget extends React.Component<AngularWidgetProps> {
   }
 
   render() {
-    return (
+    return this.props.queryContainer ? (
       <ReactAngularJS
         scope={{
           container: this.props.queryContainer,
@@ -33,6 +39,8 @@ export default class AngularWidget extends React.Component<AngularWidgetProps> {
           <mcs-query-read-only-view query-container="container" />
         </div>
       </ReactAngularJS>
+    ) : (
+      <FormattedMessage {...messageProps} />
     );
   }
 }
