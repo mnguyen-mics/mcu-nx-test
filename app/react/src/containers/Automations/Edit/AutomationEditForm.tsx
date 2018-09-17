@@ -75,6 +75,7 @@ class AutomationEditForm extends React.Component<Props> {
           scenarioContainer={this.props.scenarioContainer}
           organisationId={this.props.match.params.organisationId}
           datamartId={datamart.id}
+          initialValues={this.props.initialValues}
         />
       ),
     });
