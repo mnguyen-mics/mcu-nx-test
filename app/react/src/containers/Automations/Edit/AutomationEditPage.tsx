@@ -56,7 +56,11 @@ class EditAutomationPage extends React.Component<Props, State> {
     this.state = {
       loading: false,
       automationFormData: INITIAL_AUTOMATION_DATA,
-      scenarioContainer: {}
+      scenarioContainer: {
+        scenario: {
+          id: undefined
+        }
+      }
     }
   }
 
@@ -79,6 +83,7 @@ class EditAutomationPage extends React.Component<Props, State> {
     })
     .catch((err: any) => {
       this.props.notifyError(err);
+      this.setState({ loading: false });
     })
     
 
