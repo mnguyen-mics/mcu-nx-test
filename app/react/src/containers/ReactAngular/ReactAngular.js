@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 // inpired by https://www.npmjs.com/package/react-angular
 
 class ReactAngular extends Component {
+
+  AngularSession = window.angular.element(window.document.body).injector().get('core/common/auth/Session');
+
   constructor(props) {
     super(props);
     if (window.angular) {
@@ -35,6 +38,8 @@ class ReactAngular extends Component {
     $compile(this.$element)(this.$scope);
     this.$element.data('$scope', this.$scope);
     $rootScope.$evalAsync();
+
+    this.AngularSession.init(`o${this.props.scope.organisationId}d${this.props.scope.datamartId}`).then(() => this.setState({ sessionInitialized: true }));
   }
 
 
