@@ -1,8 +1,14 @@
 import * as React from 'react';
 import ReactAngular from '../../../../../ReactAngular/ReactAngular';
+import { FormattedMessage } from 'react-intl';
 
 export interface AngularWidgetProps {
   queryContainer: any;
+}
+
+const messageProps = {
+  id: 'selector-ql.query-container.undefined',
+  defaultMessage: 'Undefined Query container'
 }
 
 declare global {
@@ -34,7 +40,7 @@ export default class AngularWidget extends React.Component<AngularWidgetProps> {
         </div>
       </ReactAngularJS>
     ) : (
-      'error'
+      <FormattedMessage {...messageProps} />
     );
   }
 }

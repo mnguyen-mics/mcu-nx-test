@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+
 // inpired by https://www.npmjs.com/package/react-angular
 
 class ReactAngular extends Component {
-
   constructor(props) {
     super(props);
     if (window.angular) {
       this.state = {
+        sessionInitialized: true,
         angular: window.angular
       };
     }
@@ -75,7 +76,7 @@ ReactAngular.propTypes = {
   isolate: PropTypes.bool,
   scope: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   wrapperTag: PropTypes.string,
-  wrapperAttrs: PropTypes.shape({}),
+  wrapperAttrs: PropTypes.shape({})
 };
 
 ReactAngular.defaultProps = {

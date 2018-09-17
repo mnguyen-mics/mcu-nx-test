@@ -7,10 +7,6 @@ export interface AngularWidgetProps {
   datamartId: string;
 }
 
-interface AngularWidgetState {
-  QueryContainer: any;
-}
-
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -21,22 +17,13 @@ declare global {
 
 const ReactAngularJS = ReactAngular as any;
 
-export default class AngularWidget extends React.Component<
-  AngularWidgetProps,
-  AngularWidgetState
-> {
+export default class AngularWidget extends React.Component<AngularWidgetProps> {
   constructor(props: AngularWidgetProps) {
     super(props);
-
-    (window as any).angular
-      .element(document.body)
-      .injector()
-      .get('core/common/auth/Session')
-      .init(`o${props.organisationId}d${props.datamartId}`);
   }
 
   render() {
-    return this.props.scenarioContainer ? (
+    return (
       <ReactAngularJS
         scope={{
           scenarioContainer: this.props.scenarioContainer,
@@ -46,8 +33,6 @@ export default class AngularWidget extends React.Component<
           <mcs-scenario scenario-container="scenarioContainer" />
         </div>
       </ReactAngularJS>
-    ) : (
-      'error'
     );
   }
 }

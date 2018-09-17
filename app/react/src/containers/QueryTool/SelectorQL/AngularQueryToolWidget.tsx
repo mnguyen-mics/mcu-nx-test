@@ -1,6 +1,13 @@
 import * as React from 'react';
 import ReactAngular from '../../ReactAngular/ReactAngular';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
+import { FormattedMessage } from 'react-intl';
+import { Spin } from 'antd';
+
+const messageProps = {
+  id: 'query-tool.widget.angular-query.undefined',
+  defaultMessage: 'Undefined angular query container'
+}
 
 
 export interface AngularQueryToolWidgetProps {
@@ -14,7 +21,8 @@ export interface QueryContainer {
 }
 
 interface AngularQueryToolWidgetState {
-  queryContainer: QueryContainer,
+  sessionInitialized: boolean,
+  queryContainerInitialized: boolean
 }
 
 declare global { namespace JSX { interface IntrinsicElements { "mcs-query-tool": any } } }
@@ -30,16 +38,33 @@ export default class AngularQueryToolWidget extends React.Component<AngularQuery
 
   constructor(props: AngularQueryToolWidgetProps) {
     super(props);
-    this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`)
-    this.queryContainer = new this.AngularQueryContainer(this.props.datamartId)
+    this.state = { sessionInitialized: false, queryContainerInitialized: false }
   }
 
   componentDidMount() {
     this.props.setStateWithQueryContainer(this.queryContainer);
+    this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`)
+      .then(() => {
+        this.setState({ sessionInitialized: true })
+      })
+      .then(() => {
+        this.queryContainer = new this.AngularQueryContainer(this.props.datamartId)
+        this.setState({
+          queryContainerInitialized: true
+        })
+      })
+      .catch(() => this.setState({
+        sessionInitialized: true,
+        queryContainerInitialized: true
+      }))
   }
 
   render() {
-    return this.AngularQueryContainer ? (
+    if (!this.state.sessionInitialized) {
+      return <Spin />
+    }
+
+    return this.state.queryContainerInitialized ? (
       <ReactAngularJS
         scope={{
           container: this.queryContainer,
@@ -49,6 +74,8 @@ export default class AngularQueryToolWidget extends React.Component<AngularQuery
       >
         <mcs-query-tool query-container="container" statistics-enabled="true" selected-values-enabled="true" datamart-id="datamartId" organisation-id="organisationId" />
       </ReactAngularJS>
-    ) : 'error';
+    ) : (
+      <FormattedMessage {...messageProps} />
+    );
   }
 }

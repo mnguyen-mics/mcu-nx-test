@@ -41,24 +41,53 @@ class EditAutomationPage extends React.Component<Props, State> {
     .injector()
     .get('core/scenarios/ScenarioContainer');
 
+  state: State = {
+    loading: true,
+    automationFormData: {
+      automation: {}
+    },
+    scenarioContainer: {}
+  };
+
+  AngularSession = (window as any).angular.element(document.body).injector().get('core/common/auth/Session');
+
   constructor(props: Props) {
     super(props);
-    const ScenarioContainer = this.scenarioContainer;
     this.state = {
-      loading: true,
+      loading: false,
       automationFormData: INITIAL_AUTOMATION_DATA,
-      scenarioContainer: new ScenarioContainer(props.match.params.automationId),
-    };
+      scenarioContainer: {
+        scenario: {
+          id: undefined
+        }
+      }
+    }
   }
 
   componentDidMount() {
     const { match: { params: { automationId } } } = this.props;
-
-    if (automationId) {
-      this.fetchInitialData(automationId);
-    } else {
+    this.setState({ loading: true })
+    const ScenarioContainer = this.scenarioContainer;
+    this.AngularSession.init(this.props.match.params.organisationId)
+    .then(() => {
+      this.setState({
+        scenarioContainer: new ScenarioContainer(this.props.match.params.automationId),
+      })
+    })
+    .then(() => {
+      if (automationId) {
+        this.fetchInitialData(automationId);
+      } else {
+        this.setState({ loading: false });
+      }
+    })
+    .catch((err: any) => {
+      this.props.notifyError(err);
       this.setState({ loading: false });
-    }
+    })
+    
+
+   
   }
 
   fetchInitialData = (automationId: string) => {
