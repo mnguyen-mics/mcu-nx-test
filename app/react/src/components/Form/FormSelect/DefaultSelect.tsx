@@ -8,6 +8,7 @@ import { SelectProps, OptionProps } from 'antd/lib/select';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
 import { Omit } from '../../../utils/Types';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 export type RestrictedSelectProps = Omit<
   SelectProps,
@@ -23,6 +24,13 @@ export interface DefaultSelectProps extends FormFieldWrapperProps {
 }
 
 const Option = Select.Option;
+
+const messages = defineMessages({
+  defaultValue: {
+    id: 'select.form.defaultValue',
+    defaultMessage: '- Select One -'
+  }
+})
 
 class DefaultSelect extends React.Component<
   DefaultSelectProps & WrappedFieldProps
@@ -94,7 +102,9 @@ class DefaultSelect extends React.Component<
           onFocus={input.onFocus as () => any}
           value={input.value}
           disabled={disabled}
+          defaultActiveFirstOption={true}
         >
+          <Option value={''}><FormattedMessage {...messages.defaultValue} /></Option>
           {optionsToDisplay}
         </Select>
       </FormFieldWrapper>
