@@ -1,4 +1,5 @@
 import * as React from 'react';
+import lodash from 'lodash'
 import { Omit, connect } from 'react-redux';
 import {
   reduxForm,
@@ -26,6 +27,7 @@ import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/
 import FieldNodeSection, {
   FieldNodeSectionProps,
 } from './Sections/FieldNodeSection';
+import { typesTrigger } from '../domain';
 
 const { Content } = Layout;
 
@@ -35,6 +37,7 @@ export interface ObjectNodeFormProps
   breadCrumbPaths: Path[];
   objectType: ObjectLikeTypeInfoResource;
   objectTypes: ObjectLikeTypeInfoResource[];
+  isTrigger: boolean;
 }
 
 interface MapStateToProps {
@@ -59,8 +62,26 @@ class ObjectNodeForm extends React.Component<Props> {
    * We use a regexp to extract the type
    * A TreeIndex directive means it is queryable (ie indexed)
    */
-  getQueryableObjectTypes = () => {
+
+  filterAvailableFields(objectType: ObjectLikeTypeInfoResource): boolean {
+    return lodash.flatMap(objectType.directives, d => d.arguments.map(a =>
+      Object.values(typesTrigger).includes(a.value.replace(/[^a-zA-Z]+/g,'')))).reduce((acc: boolean, val: boolean) => {return acc || val}, false)
+  }
+
+  getQueryableObjectTypes = (isTrigger: boolean) => {
     const { objectType, objectTypes } = this.props;
+
+    if(isTrigger && objectType.name==="UserPoint"){
+      const filteredObjectTypes = objectTypes.filter(o => this.filterAvailableFields(o))
+      return objectType.fields.filter(field => {
+        const found = filteredObjectTypes.find(ot => {
+          const match = field.field_type.match(/\w+/);
+          return !!(match && match[0] === ot.name);
+        });
+        return !!found;
+      });
+    }
+
     return objectType.fields.filter(field => {
       const found = objectTypes.find(ot => {
         const match = field.field_type.match(/\w+/);
@@ -113,6 +134,8 @@ class ObjectNodeForm extends React.Component<Props> {
       close,
       change,
       formValues,
+      isTrigger,
+      objectType,
     } = this.props;
 
     const genericFieldArrayProps = {
@@ -136,23 +159,26 @@ class ObjectNodeForm extends React.Component<Props> {
       change('fieldNodeForm', []);
     };
 
+    const hasField = formValues && formValues.objectNodeForm.field;
+    const showFieldNodeForm = hasField;
+
     const sections: McsFormSection[] = [];
     sections.push({
       id: 'objectNode',
       title: messages.objectNodeTitle,
       component: (
         <ObjectNodeSection
-          objectTypeFields={this.getQueryableObjectTypes()}
+          objectTypeFields={this.getQueryableObjectTypes(isTrigger)}
+          objectType={objectType}
+          selectedObjectType={hasField ? this.getSelectedObjectType() : undefined}
           onSelect={resetFieldNodeForm}
+          isTrigger={isTrigger}
         />
       ),
     });
 
     const onBooleanOperatorChange = (value: QueryBooleanOperator) =>
       change('objectNodeForm.boolean_operator', value);
-
-    const hasField = formValues && formValues.objectNodeForm.field;
-    const showFieldNodeForm = hasField;
 
     if (showFieldNodeForm) {
       sections.push({

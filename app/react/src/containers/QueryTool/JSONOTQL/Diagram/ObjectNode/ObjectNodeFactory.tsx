@@ -29,14 +29,15 @@ export default class ObjectNodeFactory extends AbstractNodeFactory<
       return <div />;
     }
     return <JSONQLBuilderContext.Consumer>{
-      ({query, schema}) => React.createElement(ObjectNodeWidget, {
+      ({query, schema, isTrigger}) => React.createElement(ObjectNodeWidget, {
         node: node,
         diagramEngine: diagramEngine,
         treeNodeOperations: this.treeNodeOperations,
         objectTypes: this.objectTypes,
         lockGlobalInteraction: this.lockGlobalInteraction,
         query: query,
-        schema: schema
+        schema: schema,
+        isTrigger: isTrigger,
       })}
     </JSONQLBuilderContext.Consumer>
   }

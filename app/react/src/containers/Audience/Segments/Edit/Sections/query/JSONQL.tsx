@@ -22,6 +22,7 @@ class JSONQLInputEditor extends React.Component<JSONQLInputEditorProps & Wrapped
           datamartId={this.props.inputProps.datamartId}
           {...this.props.inputProps}
           onChange={this.props.input.onChange}
+          isTrigger={this.props.inputProps.isTrigger}
         />
     );
   }

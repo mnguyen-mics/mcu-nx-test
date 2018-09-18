@@ -15,6 +15,23 @@ export interface ObjectLikeTypeResource {
   name: string;
 }
 
+export interface ObjectLikeTypeDirectiveResource {
+  id: string;
+  type: ObjectLikeType;
+  name: string;
+}
+
+export interface DirectiveArgumentResource {
+  id: string;
+  directiveId: string;
+  name: string;
+  value: string;
+}
+
+export interface ObjectLikeTypeDirectiveInfoResource extends ObjectLikeTypeDirectiveResource {
+  arguments: DirectiveArgumentResource[];
+}
+
 export interface FieldResource {
   id: string;
   object_like_type_id: string;
@@ -38,6 +55,7 @@ export interface FieldInfoResource extends FieldResource {
 
 export interface ObjectLikeTypeInfoResource extends ObjectLikeTypeResource {
   fields: FieldInfoResource[],
+  directives: ObjectLikeTypeDirectiveInfoResource[];
 }
 
 type GTypes =

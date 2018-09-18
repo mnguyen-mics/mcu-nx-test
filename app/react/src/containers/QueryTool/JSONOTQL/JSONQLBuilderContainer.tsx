@@ -17,7 +17,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { computeSchemaModel } from './domain';
+import { computeFinalSchemaItem } from './domain';
 import { JSONQLBuilderContext } from './JSONQLBuilderContext';
 
 export interface JSONQLBuilderContainerProps {
@@ -29,6 +29,7 @@ export interface JSONQLBuilderContainerProps {
     datamartId: string,
   ) => React.ReactNode;
   editionLayout?: boolean;
+  isTrigger?: boolean;
 }
 
 interface State {
@@ -44,14 +45,14 @@ interface State {
 }
 
 type Props = JSONQLBuilderContainerProps &
-  InjectedIntlProps &
-  InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string }>;
+InjectedIntlProps &
+InjectedNotificationProps &
+RouteComponentProps<{ organisationId: string }>;
 
 class JSONQLBuilderContainer extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-
+    
     this.state = {
       fetchingObjectTypes: false,
       staleQueryResult: false,
@@ -66,195 +67,172 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       },
     };
   }
-
+  
   componentDidMount() {
     const { datamartId, queryId } = this.props;
     this.loadData(datamartId, queryId);
   }
-
+  
   componentWillReceiveProps(nextProps: Props) {
     const { datamartId, queryId } = this.props;
     const { datamartId: nextDatamartId, queryId: nextQueryId } = nextProps;
-
+    
     if (nextDatamartId !== datamartId || queryId !== nextQueryId) {
       this.loadData(nextDatamartId, nextQueryId);
     }
   }
-
+  
   loadData(datamartId: string, queryId?: string) {
     this.setState({ fetchingObjectTypes: true });
     Promise.all([
       this.fetchObjectTypes(datamartId),
       queryId
-        ? QueryService.getQuery(datamartId, queryId).then(res => res.data)
-        : Promise.resolve(null),
+      ? QueryService.getQuery(datamartId, queryId).then(res => res.data)
+      : Promise.resolve(null),
     ])
-      .then(([objectTypes, eventualQuery]) => {
-        this.setState(
-          prevState => ({
-            fetchingObjectTypes: false,
-            objectTypes: objectTypes
-              .map(oType => ({
-                ...oType,
-                fields: oType.fields.sort((fieldA, fieldB) =>
-                  fieldA.name.localeCompare(fieldB.name),
-                ),
-              }))
-              .sort((otypeA, oTypeB) => otypeA.name.localeCompare(oTypeB.name)),
-            queryHistory: {
-              past: [],
-              present: this.props.queryDocument
-                ? this.props.queryDocument.where
-                : undefined,
-              future: [],
-            },
-          }),
-          () => {
-            this.runQuery(datamartId);
-          },
-        );
-      })
-      .catch(err => {
-        this.props.notifyError(err);
-        this.setState({ fetchingObjectTypes: false });
-      });
-  }
-
-  fetchObjectTypes = (
-    datamartId: string,
-  ): Promise<ObjectLikeTypeInfoResource[]> => {
-    return RuntimeSchemaService.getRuntimeSchemas(datamartId).then(
-      schemaRes => {
-        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-        if (!liveSchema) return [];
-        return RuntimeSchemaService.getObjectTypes(
-          datamartId,
-          liveSchema.id,
-        ).then(objectRes => {
-          return Promise.all(
-            objectRes.data.map(object => {
-              return RuntimeSchemaService.getFields(
-                datamartId,
-                liveSchema.id,
-                object.id,
-              )
-                .then(fieldRes => {
-                  return Promise.all(
-                    fieldRes.data.map(field => {
-                      return RuntimeSchemaService.getFieldDirectives(
-                        datamartId,
-                        liveSchema.id,
-                        object.id,
-                        field.id,
-                      ).then(dirRes => ({ ...field, directives: dirRes.data }));
-                    }),
-                  );
-                })
-                .then(fields => ({ ...object, fields }));
-            }),
-          );
-        });
-      },
-    );
-  };
-
-  handleUpdateQuery = (query: ObjectTreeExpressionNodeShape | undefined) => {
-    this.setState(prevState => {
-      const newPresent = query;
-      return {
+    .then(([objectTypes, eventualQuery]) => {
+      this.setState(
+        prevState => ({
+          fetchingObjectTypes: false,
+          objectTypes: objectTypes
+          .map(oType => ({
+            ...oType,
+            fields: oType.fields.sort((fieldA, fieldB) =>
+            fieldA.name.localeCompare(fieldB.name),
+          ),
+        }))
+        .sort((otypeA, oTypeB) => otypeA.name.localeCompare(oTypeB.name)),
         queryHistory: {
-          past: [
-            ...prevState.queryHistory.past,
-            prevState.queryHistory.present,
-          ],
-          present: newPresent,
+          past: [],
+          present: this.props.queryDocument
+          ? this.props.queryDocument.where
+          : undefined,
           future: [],
         },
-        staleQueryResult: true,
-        queryResult: {
-          ...prevState.queryResult,
-          error: undefined,
-        },
-      };
-    });
-  };
+      }),
+      () => {
+        this.runQuery(datamartId);
+      },
+    );
+  })
+  .catch(err => {
+    this.props.notifyError(err);
+    this.setState({ fetchingObjectTypes: false });
+  });
+}
 
-  handleUndo = () => {
-    this.setState(prevState => {
-      const {
-        queryHistory: { past, present, future },
-      } = prevState;
-      const previous = past[past.length - 1];
-      const newPast = past.slice(0, past.length - 1);
-      return {
-        queryHistory: {
-          past: newPast,
-          present: previous,
-          future: [present!, ...future],
-        },
-        staleQueryResult: true,
-        queryResult: {
-          ...prevState.queryResult,
-          error: undefined,
-        },
-      };
-    });
-  };
+fetchObjectTypes = (
+  datamartId: string,
+): Promise<ObjectLikeTypeInfoResource[]> => {
+  return RuntimeSchemaService.getRuntimeSchemas(datamartId).then(
+    schemaRes => {
+      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+      if (!liveSchema) return [];
+      return Promise.resolve(RuntimeSchemaService.getObjectTypeInfoResources(
+        datamartId,
+        liveSchema.id)
+      )
+    }
+  );
+};
 
-  handleRedo = () => {
-    this.setState(prevState => {
-      const {
-        queryHistory: { past, present, future },
-      } = prevState;
-      const next = future[0];
-      const newFuture = future.slice(1);
-      return {
-        queryHistory: {
-          past: [...past, present!],
-          present: next,
-          future: newFuture,
-        },
-        staleQueryResult: true,
-        queryResult: {
-          ...prevState.queryResult,
-          error: undefined,
-        },
-      };
-    });
-  };
-
-  runQuery = (_datamartId?: string) => {
-    const { datamartId } = this.props;
-    const queryDocument: QueryDocument = {
-      operations: [{ directives: [{ name: 'count' }], selections: [] }],
-      from: 'UserPoint',
-      where: this.state.queryHistory.present,
-    };
-    this.setState({
-      staleQueryResult: false,
+handleUpdateQuery = (query: ObjectTreeExpressionNodeShape | undefined) => {
+  this.setState(prevState => {
+    const newPresent = query;
+    return {
+      queryHistory: {
+        past: [
+          ...prevState.queryHistory.past,
+          prevState.queryHistory.present,
+        ],
+        present: newPresent,
+        future: [],
+      },
+      staleQueryResult: true,
       queryResult: {
-        loading: true,
+        ...prevState.queryResult,
+        error: undefined,
+      },
+    };
+  });
+};
+
+handleUndo = () => {
+  this.setState(prevState => {
+    const {
+      queryHistory: { past, present, future },
+    } = prevState;
+    const previous = past[past.length - 1];
+    const newPast = past.slice(0, past.length - 1);
+    return {
+      queryHistory: {
+        past: newPast,
+        present: previous,
+        future: [present!, ...future],
+      },
+      staleQueryResult: true,
+      queryResult: {
+        ...prevState.queryResult,
+        error: undefined,
+      },
+    };
+  });
+};
+
+handleRedo = () => {
+  this.setState(prevState => {
+    const {
+      queryHistory: { past, present, future },
+    } = prevState;
+    const next = future[0];
+    const newFuture = future.slice(1);
+    return {
+      queryHistory: {
+        past: [...past, present!],
+        present: next,
+        future: newFuture,
+      },
+      staleQueryResult: true,
+      queryResult: {
+        ...prevState.queryResult,
+        error: undefined,
+      },
+    };
+  });
+};
+
+runQuery = (_datamartId?: string) => {
+  const { datamartId } = this.props;
+  const queryDocument: QueryDocument = {
+    operations: [{ directives: [{ name: 'count' }], selections: [] }],
+    from: 'UserPoint',
+    where: this.state.queryHistory.present,
+  };
+  this.setState({
+    staleQueryResult: false,
+    queryResult: {
+      loading: true,
+    },
+  });
+  QueryService.runJSONOTQLQuery(datamartId, queryDocument)
+  .then(res => {
+    this.setState({
+      queryResult: {
+        loading: false,
+        otqlResult: res.data,
       },
     });
-    QueryService.runJSONOTQLQuery(datamartId, queryDocument)
-      .then(res => {
-        this.setState({
-          queryResult: {
-            loading: false,
-            otqlResult: res.data,
-          },
-        });
-      })
-      .catch(error => {
-        this.setState({
-          queryResult: {
-            loading: false,
-            error,
-          },
-        });
-      });
-  };
-
+  })
+  .catch(error => {
+    this.setState({
+      queryResult: {
+        loading: false,
+        error,
+      },
+    });
+  });
+};
+  
   render() {
     const {
       editionLayout,
@@ -263,6 +241,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      isTrigger,
     } = this.props;
     const {
       fetchingObjectTypes,
@@ -271,27 +250,25 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       queryResult,
       staleQueryResult,
     } = this.state;
-
+    
     if (fetchingObjectTypes) {
       return <Loading className="loading-full-screen" />;
     }
-
+    
     const enableUndo = this.state.queryHistory.past.length > 0;
     const enableRedo = this.state.queryHistory.future.length > 0;
-
+    
     const computedSchema =  objectTypes.length
-    ? computeSchemaModel(
-        objectTypes,
-        {
-          ...objectTypes.find(ot => ot.name === 'UserPoint')!,
-          closestParentType: '',
-        },
-        '',
-      )
+    ? computeFinalSchemaItem(
+      objectTypes,
+      'UserPoint',
+      !isTrigger,
+      isTrigger ? isTrigger : false
+    )
     : undefined
-
-    return (
-      <Layout className={editionLayout ? 'edit-layout' : ''}>
+      
+      return (
+        <Layout className={editionLayout ? 'edit-layout' : ''}>
         {renderActionBar(
           {
             operations: [{ directives: [], selections: [{ name: 'id' }] }],
@@ -301,39 +278,40 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           datamartId,
         )}
         <Layout.Content
-          className={`mcs-content-container ${editionLayout ? 'flex-basic' : ''}`}
-          style={{ padding: 0, overflow: 'hidden' }}
+        className={`mcs-content-container ${editionLayout ? 'flex-basic' : ''}`}
+        style={{ padding: 0, overflow: 'hidden' }}
         >
-          <JSONQLBuilderContext.Provider value={{ query: query, schema: computedSchema }}>
-            <JSONQLBuilder
-              objectTypes={objectTypes}
-              query={query}
-              updateQuery={this.handleUpdateQuery}
-              undoRedo={{
-                enableUndo: enableUndo,
-                enableRedo: enableRedo,
-                handleUndo: this.handleUndo,
-                handleRedo: this.handleRedo,
-              }}
-              edition={editionLayout}
-              runQuery={this.runQuery}
-              staleQueryResult={staleQueryResult}
-              queryResult={queryResult}
-              datamartId={this.props.datamartId}
-              organisationId={organisationId}
-            />
-          </JSONQLBuilderContext.Provider>
+        <JSONQLBuilderContext.Provider value={{ query: query, schema: computedSchema , isTrigger: this.props.isTrigger ? true : false }}>
+        <JSONQLBuilder
+        objectTypes={objectTypes}
+        query={query}
+        updateQuery={this.handleUpdateQuery}
+        undoRedo={{
+          enableUndo: enableUndo,
+          enableRedo: enableRedo,
+          handleUndo: this.handleUndo,
+          handleRedo: this.handleRedo,
+        }}
+        edition={editionLayout}
+        runQuery={this.runQuery}
+        staleQueryResult={staleQueryResult}
+        queryResult={queryResult}
+        datamartId={this.props.datamartId}
+        organisationId={organisationId}
+        />
+        </JSONQLBuilderContext.Provider>
         </Layout.Content>
-      </Layout>
-    );
+        </Layout>
+      );
+    }
   }
-}
-
-export default compose<Props, JSONQLBuilderContainerProps>(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-  connect(state => ({
-    getWorkspace: SessionHelper.getWorkspace,
-  })),
-)(JSONQLBuilderContainer);
+  
+  export default compose<Props, JSONQLBuilderContainerProps>(
+    withRouter,
+    injectIntl,
+    injectNotifications,
+    connect(state => ({
+      getWorkspace: SessionHelper.getWorkspace,
+    })),
+  )(JSONQLBuilderContainer);
+  

@@ -18,6 +18,7 @@ export interface JSONQLPreviewProps {
   value?: string;
   onChange?: (e: string) => void;
   datamartId: string;
+  isTrigger?: boolean;
 }
 
 export interface View extends LoadingCounterValue {
@@ -77,6 +78,7 @@ class JSONQLPreview extends React.Component<Props> {
           renderActionBar: actionbar,
           editionLayout: true,
           queryDocument: value ? JSON.parse(value) : undefined,
+          isTrigger: this.props.isTrigger,
         },
       },
     );
