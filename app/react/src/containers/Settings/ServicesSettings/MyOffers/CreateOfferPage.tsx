@@ -8,7 +8,6 @@ import CreateOfferForm from './CreateOfferForm';
 import messages from '../../messages';
 import { OfferFormData } from '../domain';
 import CatalogService from '../../../../services/CatalogService';
-//import OrganisationService from '../../../../services/OrganisationService';
 
 export enum OfferType {
     Automatic,
