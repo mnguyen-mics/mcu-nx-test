@@ -3,34 +3,38 @@ import { compose } from 'recompose';
 import { List, Layout, Row, Col, Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
-import ButtonStyleless from '../../../../../components/ButtonStyleless';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import ButtonStyleless from '../../../../components/ButtonStyleless';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import CatalogService, {
-  GetServiceOptions,
-} from '../../../../../services/CatalogService';
+  GetServiceOptions, GetServiceItemsOptions,
+} from '../../../../services/CatalogService';
 import injectNotifications, {
   InjectedNotificationProps,
-} from '../../../../Notifications/injectNotifications';
+} from '../../../Notifications/injectNotifications';
 import InfiniteList, {
   InfiniteListFilters,
-} from '../../../../../components/InfiniteList';
+} from '../../../../components/InfiniteList';
 import {
   ServiceItemShape,
   ServiceItemOfferResource,
   ServiceItemConditionsShape,
   isLinearServiceItemConditionsResource,
-} from '../../../../../models/servicemanagement/PublicServiceItemResource';
-import { McsIcon } from '../../../../../components';
-import { messages } from './SubscribedOffersListPage';
-import { StackedLinePlot } from '../../../../../components/StackedAreaPlot';
+} from '../../../../models/servicemanagement/PublicServiceItemResource';
+import { McsIcon } from '../../../../components';
+import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
+import { StackedLinePlot } from '../../../../components/StackedAreaPlot';
 import injectThemeColors, {
   InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+} from '../../../Helpers/injectThemeColors';
 import ServiceItem from './ServiceItem';
 
 const { Content } = Layout;
 
 const ServiceItemPriceChartJS = StackedLinePlot as any;
+
+interface ServiceItemListPageProps {
+  offerOwnership: "my_offer" | "subscribed_offer";
+}
 
 interface State {
   serviceItem?: ServiceItemShape;
@@ -39,7 +43,8 @@ interface State {
   price: string;
 }
 
-type Props = RouteComponentProps<{ organisationId: string; offerId: string }> &
+type Props = ServiceItemListPageProps &
+  RouteComponentProps<{ organisationId: string; offerId: string }> &
   InjectedIntlProps &
   InjectedThemeColorsProps &
   InjectedNotificationProps;
@@ -57,34 +62,58 @@ class ServiceItemListPage extends React.Component<Props, State> {
       match: {
         params: { organisationId, offerId },
       },
+      offerOwnership,
     } = this.props;
+
     if (offerId) {
-      CatalogService.getSubscribedOffer(organisationId, offerId).then(resp => {
+      const offerPromise = (offerOwnership === "subscribed_offer") ?
+        CatalogService.getSubscribedOffer(organisationId, offerId) :
+        CatalogService.getMyOffer(organisationId, offerId);
+
+      offerPromise.then(resp => {
         this.setState({
-          offer: resp.data[0],
+          offer: resp.data,
         });
       });
     }
-  }
+  };
 
   fetchData = (
     organisationId: string,
     offerId: string,
     options: InfiniteListFilters,
   ) => {
-    const fecthOptions: GetServiceOptions = {
+    const {
+      offerOwnership
+    } = this.props;
+    const fetchOptions: GetServiceOptions = {
       first_result: options.page,
       max_results: options.pageSize,
+
     };
-    if (options.keywords) {
-      fecthOptions.keywords = options.keywords;
+    const fetchServiceItemOptions: GetServiceItemsOptions = {
+      first_result: options.page,
+      max_results: options.pageSize,
+      offer_id: offerId,
     }
 
-    return CatalogService.getSubscribedServiceItems(
-      organisationId,
-      offerId,
-      fecthOptions,
-    )
+    if (options.keywords) {
+      fetchOptions.keywords = options.keywords;
+      fetchServiceItemOptions.keywords = options.keywords;
+    }
+
+    const serviceItemsPromise = (offerOwnership === "subscribed_offer") ?
+      CatalogService.getSubscribedServiceItems(
+        organisationId,
+        offerId,
+        fetchOptions,
+      ) :
+      CatalogService.getServiceItems(
+        organisationId,
+        fetchServiceItemOptions
+      );
+
+    return serviceItemsPromise
       .then(resp => {
         return resp.data;
       })
@@ -98,6 +127,9 @@ class ServiceItemListPage extends React.Component<Props, State> {
   };
 
   storeItemData = (item: ServiceItemShape) => {
+    const {
+      offerOwnership
+    } = this.props;
     this.setState({
       serviceItem: item,
     });
@@ -107,11 +139,18 @@ class ServiceItemListPage extends React.Component<Props, State> {
       },
       intl,
     } = this.props;
-    CatalogService.getSubscribedServiceItemConditions(
-      organisationId,
-      offerId,
-      item.id,
-    ).then(resp => {
+
+    const serviceItemConditionsPromise = (offerOwnership === "subscribed_offer") ?
+      CatalogService.getSubscribedServiceItemConditions(
+        organisationId,
+        offerId,
+        item.id,
+      ) :
+      CatalogService.getServiceOffersServiceItemsConditions(
+        offerId
+      );
+
+    serviceItemConditionsPromise.then(resp => {
       this.setState({
         serviceItemCondition: resp.data[0],
         price: intl.formatMessage(messages.serviceItemPricePlaceholder),
@@ -141,8 +180,8 @@ class ServiceItemListPage extends React.Component<Props, State> {
         </ButtonStyleless>
       </List.Item>
     ) : (
-      <div />
-    );
+        <div />
+      );
   };
 
   render() {
@@ -154,6 +193,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
       },
       colors,
       intl,
+      offerOwnership,
     } = this.props;
 
     const optionsForChart = {
@@ -213,13 +253,27 @@ class ServiceItemListPage extends React.Component<Props, State> {
             >
               <Breadcrumb.Item>
                 <Link
-                  to={`/v2/o/${organisationId}/settings/services/subscribed_offers`}
+                  to={`/v2/o/${organisationId}/settings/services/${offerOwnership}s`}
                 >
-                  {intl.formatMessage(messages.subscribedOffersTitle)}
+                  {offerOwnership === "subscribed_offer" ?
+                    intl.formatMessage(messages.subscribedOffersTitle) :
+                    intl.formatMessage(messages.myOffersTitle)
+                  }
                 </Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
-                {offer ? offer.name : intl.formatMessage(messages.unknownOffer)}
+                {offer ?
+                  (
+                    <span style={{ lineHeight: "40px" }}>
+                      {offer.name}
+                    </span>
+                  ) :
+                  (
+                    <span style={{ lineHeight: "40px" }}>
+                      <FormattedMessage {...messages.unknownOffer} />
+                    </span>
+                  )
+                }
               </Breadcrumb.Item>
             </Breadcrumb>
           </Row>
@@ -261,7 +315,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, ServiceItemListPageProps>(
   withRouter,
   injectIntl,
   injectNotifications,

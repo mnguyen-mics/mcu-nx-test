@@ -47,9 +47,17 @@ export const messages = defineMessages({
     id: 'settings.services.subscribed.service.offers.title',
     defaultMessage: 'Subscribed Offers',
   },
+  myOffersTitle: {
+    id: 'settings.services.my.service.offers.title',
+    defaultMessage: 'My Offers',
+  },
   unknownOffer: {
     id: 'settings.services.subscribed.offers.list.unknown.offer',
     defaultMessage: 'Unknown offer',
+  },
+  addNewCondition: {
+    id: 'settings.services.myOffers.add.service_item.condition',
+    defaultMessage: 'Add new service item condition',
   },
   serviceItemNoDescription: {
     id: 'settings.subscribedOffers.service.item.no.description.',

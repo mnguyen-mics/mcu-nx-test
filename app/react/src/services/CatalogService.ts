@@ -37,6 +37,19 @@ export interface GetServiceOptions extends PaginatedApiParam {
   keywords?: string;
 }
 
+export interface GetServiceItemsOptions extends PaginatedApiParam {
+  locale?: Locale;
+  parent_categoryi_id?: string;
+  label_id?: string;
+  audience_segment_id?: string;
+  deal_list_id?: string;
+  placement_list_id?: string;
+  keywords_list_id?: string;
+  offer_id?: string;
+  keywords?: string;
+  order_by?: string;
+}
+
 const CatalogService = {
   getServices(
     organisationId: string,
@@ -127,6 +140,17 @@ const CatalogService = {
     return ApiService.getRequest(`service_items/${serviceId}`);
   },
 
+  getServiceItems(
+    organisationId: string,
+    options: GetServiceItemsOptions = {},
+  ): Promise<DataListResponse<ServiceItemShape>> {
+    return ApiService.getRequest(`service_items`,
+      {
+        organisation_id: organisationId,
+        ...options,
+      });
+  },
+
   getSubscribedOffers(
     customerOrgId: string,
     options: GetOfferOptions,
@@ -142,7 +166,7 @@ const CatalogService = {
   getSubscribedOffer(
     customerOrgId: string,
     offerId: string,
-  ): Promise<DataListResponse<ServiceItemOfferResource>> {
+  ): Promise<DataResponse<ServiceItemOfferResource>> {
     const endpoint = `subscribed_services/${customerOrgId}/offers/${offerId}`;
     return ApiService.getRequest(endpoint);
   },
@@ -155,6 +179,37 @@ const CatalogService = {
       ...options,
       serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'],
     }) as Promise<DataListResponse<AudienceSegmentServiceItemPublicResource>>;
+  },
+
+  getMyOffers(
+    options: PaginatedApiParam
+  ): Promise<DataListResponse<ServiceItemOfferResource>> {
+    const endpoint = `service_offers`;
+    return ApiService.getRequest(endpoint, options);
+  },
+
+  getMyOffer(
+    organisationId: string,
+    offerId: string,
+  ): Promise<DataResponse<ServiceItemOfferResource>> {
+    const endpoint = `service_offers/${offerId}?organisation_id=${organisationId}`;
+    return ApiService.getRequest(endpoint);
+  },
+
+  getServiceOffersServiceItemsConditions(
+    offerId: string,
+    options: GetServiceItemOptions = {},
+  ): Promise<DataListResponse<ServiceItemConditionsShape>> {
+    const endpoint = `service_offers/${offerId}/service_item_conditions`;
+    return ApiService.getRequest(endpoint, options);
+  },
+
+  createServiceOffer(
+    organisationId: string,
+    offer: Partial<ServiceItemOfferResource>
+  ): Promise<DataResponse<ServiceItemOfferResource>> {
+    const endpoint = `service_offers/?organisation_id=${organisationId}`;
+    return ApiService.postRequest(endpoint, { ...offer });
   },
 };
 
