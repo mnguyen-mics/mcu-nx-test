@@ -59,7 +59,7 @@ class OfferTypeSelector extends React.Component<Props> {
                                     <div className="presentation">
                                         <MenuPresentational
                                             title={formatMessage(messages.automaticOfferType)}
-                                            type="image"
+                                            type="automation"
                                             select={onTypeSelect(OfferType.Automatic)}
                                         />
                                         <div className="separator">
@@ -67,7 +67,7 @@ class OfferTypeSelector extends React.Component<Props> {
                                         </div>
                                         <MenuPresentational
                                             title={formatMessage(messages.manualOfferType)}
-                                            type="image"
+                                            type="pen"
                                             select={onTypeSelect(OfferType.Manual)}
                                         />
                                     </div>

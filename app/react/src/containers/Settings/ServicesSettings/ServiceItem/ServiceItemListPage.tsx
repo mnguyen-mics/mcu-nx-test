@@ -27,13 +27,14 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import ServiceItem from './ServiceItem';
+import { offerType } from '../domain';
 
 const { Content } = Layout;
 
 const ServiceItemPriceChartJS = StackedLinePlot as any;
 
 interface ServiceItemListPageProps {
-  offerOwnership: "my_offer" | "subscribed_offer";
+  offerOwnership: offerType;
 }
 
 interface State {
@@ -264,12 +265,12 @@ class ServiceItemListPage extends React.Component<Props, State> {
               <Breadcrumb.Item>
                 {offer ?
                   (
-                    <span style={{ lineHeight: "40px" }}>
+                    <span>
                       {offer.name}
                     </span>
                   ) :
                   (
-                    <span style={{ lineHeight: "40px" }}>
+                    <span>
                       <FormattedMessage {...messages.unknownOffer} />
                     </span>
                   )
