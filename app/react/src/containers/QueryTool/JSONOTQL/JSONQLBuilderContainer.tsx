@@ -281,7 +281,7 @@ runQuery = (_datamartId?: string) => {
         className={`mcs-content-container ${editionLayout ? 'flex-basic' : ''}`}
         style={{ padding: 0, overflow: 'hidden' }}
         >
-        <JSONQLBuilderContext.Provider value={{ query: query, schema: computedSchema , isTrigger: this.props.isTrigger ? true : false }}>
+        <JSONQLBuilderContext.Provider value={{ query: query, schema: computedSchema , isTrigger: !!this.props.isTrigger }}>
         <JSONQLBuilder
         objectTypes={objectTypes}
         query={query}

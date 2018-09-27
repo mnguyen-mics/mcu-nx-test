@@ -78,7 +78,7 @@ class ObjectNodeSection extends React.Component<Props> {
       selectedObjectType,
     } = this.props;
 
-    const showFrenquencyTrigger = isTrigger && selectedObjectType ? this.triggerModeFrequency(objectType, selectedObjectType) : true
+    const showFrenquencyTrigger = !!(isTrigger && selectedObjectType && this.triggerModeFrequency(objectType, selectedObjectType))
 
     const showEnableFrequency = !!(
       formValues.objectNodeForm.field &&
