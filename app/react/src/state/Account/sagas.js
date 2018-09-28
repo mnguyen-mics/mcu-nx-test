@@ -12,7 +12,6 @@ import {
 import {
   saveProfile,
 } from './actions';
-import { setOrgFeature } from '../Features/actions';
 
 function* updateRemoteProfile({ payload }) {
   try {
@@ -21,7 +20,6 @@ function* updateRemoteProfile({ payload }) {
     const response = yield call(SettingsService.putProfile, organisationId, userProfile);
     yield put(saveProfile.success(response));
     yield put(getConnectedUser.request());
-    yield put(setOrgFeature(global.window.MCS_CONSTANTS.FEATURES));
     yield put(addNotification({
       type: 'success',
     }));
