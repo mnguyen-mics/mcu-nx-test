@@ -83,52 +83,32 @@ const messages = defineMessages({
     defaultMessage: 'Automatic on',
   },
   sectionNewOfferSubtitle: {
-    id: 'offer.new.section.subtitle',
-    defaultMessage: 'Create a new offer',
+    id: 'offer.new.section.general.subtitle',
+    defaultMessage: 'Give your offer a name',
   },
   sectionNewOfferTitle: {
-    id: 'offer.new.section.title',
-    defaultMessage: 'New Offer',
+    id: 'offer.new.section.general.title',
+    defaultMessage: 'General Information',
   },
   sectionNewOfferNameLabel: {
-    id: 'offer.new.section.name.label',
+    id: 'offer.new.section.general.name.label',
     defaultMessage: 'Name',
   },
   sectionNewOfferNamePlaceholder: {
-    id: 'offer.new.section.name.placeholder',
-    defaultMessage: 'name',
+    id: 'offer.new.section.general.name.placeholder',
+    defaultMessage: 'Name',
   },
-  sectionNewOfferNameTooltip: {
-    id: 'offer.new.section.name.tooltip',
-    defaultMessage: 'Enter your offer name',
+  sectionServiceTypeTitle: {
+    id: 'offer.new.section.service_type.title',
+    defaultMessage: 'Service type',
   },
-  sectionNewOfferCustomLabel: {
-    id: 'offer.new.section.custom.label',
-    defaultMessage: 'Custom',
-  },
-  sectionNewOfferCustomTooltip: {
-    id: 'offer.new.section.custom.tooltip',
-    defaultMessage: 'Choose whether custom',
-  },
-  sectionNewOfferCreditedAccountIdLabel: {
-    id: 'offer.new.section.credited_account_id.label',
-    defaultMessage: 'Credited Account',
-  },
-  sectionNewOfferCreditedAccountIdPlaceholder: {
-    id: 'offer.new.section.credited_account_id.placeholder',
-    defaultMessage: 'name : organisation_id',
-  },
-  sectionNewOfferCreditedAccountIdTooltip: {
-    id: 'offer.new.section.credited_account_id.tooltip',
-    defaultMessage: 'Choose your credited account',
+  sectionServiceTypeSubtitle: {
+    id: 'offer.new.section.service_type.subtitle',
+    defaultMessage: 'Select the type of service you want to include in your offer.',
   },
   sectionNewOfferAutomaticOnLabel: {
-    id: 'offer.new.section.automatic_on.label',
+    id: 'offer.new.section.service_type.automatic_on.label',
     defaultMessage: 'Automatic on',
-  },
-  sectionNewOfferAutomaticOnTooltip: {
-    id: 'offer.new.section.automatic_on.tooltip',
-    defaultMessage: '...',
   },
   breadcrumbTitle: {
     id: 'offer.new.breadcrumbTitle',

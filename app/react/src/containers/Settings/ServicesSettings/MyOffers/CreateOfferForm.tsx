@@ -93,9 +93,6 @@ class CreateOfferForm extends React.Component<Props, State> {
                                     messages.sectionNewOfferNamePlaceholder,
                                 ),
                             }}
-                            helpToolTipProps={{
-                                title: formatMessage(messages.sectionNewOfferNameTooltip),
-                            }}
                         />
                     </div>
                 </div>
@@ -128,8 +125,8 @@ class CreateOfferForm extends React.Component<Props, State> {
                 component: (
                     <div>
                         <FormSection
-                            subtitle={messages.sectionNewOfferSubtitle}
-                            title={messages.sectionNewOfferTitle}
+                            subtitle={messages.sectionServiceTypeSubtitle}
+                            title={messages.sectionServiceTypeTitle}
                         />
 
                         <div>
@@ -143,11 +140,6 @@ class CreateOfferForm extends React.Component<Props, State> {
                                     ),
                                 }}
                                 options={optionsAutomaticOn}
-                                helpToolTipProps={{
-                                    title: formatMessage(
-                                        messages.sectionNewOfferAutomaticOnTooltip,
-                                    ),
-                                }}
                             />
                         </div>
                     </div>
