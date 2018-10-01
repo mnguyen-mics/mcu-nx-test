@@ -105,9 +105,10 @@ export interface ServiceItemOfferResource {
   name: string;
   custom: boolean;
   credited_account_id: string;
-  credited_account_name: string;
+  credited_account_name?: string;
   provider_id: string;
-  provider_name: string;
+  provider_name?: string;
+  offer_type: string;
 }
 
 export type ServiceItemConditionsShape =

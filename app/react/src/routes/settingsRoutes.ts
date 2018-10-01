@@ -37,7 +37,10 @@ import EditUserPage from '../containers/Settings/OrganisationSettings/Users/Edit
 import ApiTokenListPage from '../containers/Settings/ProfileSettings/ApiToken/List/ApiTokenListPage';
 import EditApiTokenPage from '../containers/Settings/ProfileSettings/ApiToken/Edit/EditApiTokenPage';
 import SubscribedOffersListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/SubscribedOffersListPage';
-import ServiceItemListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/ServiceItemListPage';
+import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
+import SubscribedOfferServiceItemListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/SubscribedOfferServiceItemListPage';
+import MyOfferServiceItemListPage from '../containers/Settings/ServicesSettings/MyOffers/MyOfferServiceItemListPage';
+import CreateOfferPage from '../containers/Settings/ServicesSettings/MyOffers/CreateOfferPage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -311,13 +314,32 @@ export const settingsDefinition: NavigatorDefinition = {
     contentComponent: SubscribedOffersListPage,
     requiredFeature: 'servicesSettings.subscribed_offers',
   },
+  settingsMyOffersList: {
+    path: '/settings/services/my_offers',
+    layout: 'settings',
+    contentComponent: MyOffersPage,
+    requiredFeature: 'servicesSettings.my_offers',
+  },
   settingsSubscribedOfferServiceItemConditionList: {
     path:
       '/settings/services/subscribed_offers/:offerId/service_item_conditions',
     layout: 'settings',
-    contentComponent: ServiceItemListPage,
+    contentComponent: SubscribedOfferServiceItemListPage,
     requiredFeature: 'servicesSettings.subscribed_offers',
   },
+  settingsMyOfferServiceItemConditionList: {
+    path:
+      '/settings/services/my_offers/:offerId/service_item_conditions',
+    layout: 'settings',
+    contentComponent: MyOfferServiceItemListPage,
+    requiredFeature: 'servicesSettings.my_offers',
+  },
+  settingsMyOffersCreate: {
+    path: '/settings/services/my_offers/create',
+    layout: 'edit',
+    editComponent: CreateOfferPage,
+    requiredFeature: 'servicesSettings.my_offers',
+  },  
   // settingsServiceCatalog: {
   //   path: '/settings/services/service_catalog',
   //   layout: 'settings',

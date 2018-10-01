@@ -2,12 +2,12 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Input } from 'antd';
-import { messages } from './SubscribedOffersListPage';
+import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
 import {
   ServiceItemConditionsShape,
   isLinearServiceItemConditionsResource,
   ServiceItemShape,
-} from '../../../../../models/servicemanagement/PublicServiceItemResource';
+} from '../../../../models/servicemanagement/PublicServiceItemResource';
 
 interface ServiceItemProps {
   serviceItem?: ServiceItemShape;

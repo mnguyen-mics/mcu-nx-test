@@ -239,6 +239,10 @@ export default defineMessages({
         id: 'menu.subscribed.offers.list',
         defaultMessage: 'Subscribed Offers', 
     },
+    myOffersSettingsList: {
+        id: 'menu.my.offers.list',
+        defaultMessage: 'My Offers', 
+    },
     serviceCatalogSettingsList: {
         id: 'menu.service.catalog.list',
         defaultMessage: 'My Service Catalog', 
