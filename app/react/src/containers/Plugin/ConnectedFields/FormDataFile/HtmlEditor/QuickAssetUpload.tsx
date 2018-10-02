@@ -62,7 +62,7 @@ class QuickAssetUpload extends React.Component<
       )
         .then(item => item.data)
         .then(item => {
-          const imageUrl = `https://assets.mediarithmics.com${item.file_path}`;
+          const imageUrl = `https://assets.mediarithmics.com${item.path}`;
           this.setState({ loading: false, imageUrl: imageUrl });
           this.props.input.onChange(imageUrl);
           return false;
