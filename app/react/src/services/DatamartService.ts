@@ -45,6 +45,10 @@ const datamartServices = {
   getUserCompartments(datamartId: string): Promise<DataListResponse<UserCompartment>> {
     const endpoint = `datamarts/${datamartId}/user_account_compartments`;
     return ApiService.getRequest(endpoint)
+  },
+  getSources(datamartId: string): Promise<DataListResponse<DatamartResource>> {
+    const endpoint = `datamarts/${datamartId}/sources`;
+    return ApiService.getRequest(endpoint)
   }
 }
 

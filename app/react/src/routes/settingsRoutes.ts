@@ -41,6 +41,7 @@ import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOff
 import SubscribedOfferServiceItemListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/SubscribedOfferServiceItemListPage';
 import MyOfferServiceItemListPage from '../containers/Settings/ServicesSettings/MyOffers/MyOfferServiceItemListPage';
 import CreateOfferPage from '../containers/Settings/ServicesSettings/MyOffers/CreateOfferPage';
+import SourcesListPage from '../containers/Settings/DatamartSettings/Sources/List/SourcesListPage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -117,6 +118,13 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'settings',
     contentComponent: ServiceUsageReportListPage,
     requiredFeature: 'datamartSettings.service_usage_report',
+    requireDatamart: true,
+  },
+  settingsDatamartSources: {
+    path: '/settings/datamart/my_datamart/:datamartId/sources',
+    layout: 'settings',
+    contentComponent: SourcesListPage,
+    requiredFeature: 'datamartSettings.datamarts',
     requireDatamart: true,
   },
 
