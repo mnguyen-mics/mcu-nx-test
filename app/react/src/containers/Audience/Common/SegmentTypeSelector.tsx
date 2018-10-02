@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   listSubtitle: {
     id: 'audience.segment.form.segment.type.selector.list.subtitle',
-    defaultMessage: 'Chose your segment types',
+    defaultMessage: 'Choose your segment type',
   },
   segmentTypeOr: {
     id: 'audience.segment.form.segment.type.selector.or',

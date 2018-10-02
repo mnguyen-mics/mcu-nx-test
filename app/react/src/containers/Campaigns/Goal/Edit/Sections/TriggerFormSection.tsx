@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import _ from 'lodash';
-import cuid from 'cuid';
 import {
   injectIntl,
   InjectedIntlProps,
@@ -11,16 +10,10 @@ import {
 import { Button, Row, Col, Alert } from 'antd';
 import {
   FormSection,
-  FormRadioGroupField,
-  FormRadioGroup,
 } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
-import {
-  injectDatamart,
-  InjectedDatamartProps,
-} from '../../../../Datamart/index';
 import OTQLInputEditor, {
   OTQLInputEditorProps,
 } from '../../../../Audience/Segments/Edit/Sections/query/OTQL';
@@ -28,13 +21,14 @@ import { FieldCtor } from '../../../../../components/Form/index';
 import SelectorQL from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQL';
 import SelectorQLReadOnly from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQLReadOnly';
 import { Field, getFormValues } from 'redux-form';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { GoalFormData, isExistingGoal } from '../domain';
 import FormCodeSnippet from '../../../../../components/Form/FormCodeSnippet';
 import { FORM_ID } from '../GoalForm';
 import { connect } from 'react-redux';
 import JSONQL, { JSONQLInputEditorProps } from '../../../../Audience/Segments/Edit/Sections/query/JSONQL';
+import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 
 const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field;
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
@@ -47,15 +41,7 @@ const messages = defineMessages({
   sectionTitle1: {
     id: 'goalEditor.section.trigger.subtitle2',
     defaultMessage: 'Trigger',
-  },
-  formCheckBoxText1: {
-    id: 'goalEditor.section.trigger.formcheckbox.query',
-    defaultMessage: 'Trigger via query',
-  },
-  formCheckBoxText2: {
-    id: 'goalEditor.section.trigger.formcheckbox.pixel',
-    defaultMessage: 'Trigger via pixel',
-  },
+  },  
   triggerPixelHelpTooltip: {
     id: 'goalEditor.section.trigger.pixel.modal.title',
     defaultMessage:
@@ -97,13 +83,13 @@ interface State {
 
 interface TriggerFormSectionProps extends ReduxFormChangeProps {
   initialValues: Partial<GoalFormData>;
+  datamart: DatamartResource;
 }
 
 type Props = TriggerFormSectionProps &
 InjectedIntlProps &
 ValidatorProps &
 MapStateToProps &
-InjectedDatamartProps &
 RouteComponentProps<{ organisationId: string }>;
 
 class TriggerFormSection extends React.Component<Props, State> {
@@ -127,52 +113,44 @@ class TriggerFormSection extends React.Component<Props, State> {
     
     const { editQueryMode } = this.state;
 
-const otqlForm = 
-    <FormOTQL
-    name={'query.query_text'}
-    component={OTQLInputEditor}
-    formItemProps={{
-      label: intl.formatMessage(messages.audienceSegmentSectionQueryTitle),
-    }}
-    helpToolTipProps={{
-      title: intl.formatMessage(
-        messages.audienceSegmentCreationUserQueryFieldHelper,
-      ),
-    }}
-    />
+    const otqlForm = 
+      <FormOTQL
+        name={'query.query_text'}
+        component={OTQLInputEditor}
+        formItemProps={{
+          label: intl.formatMessage(messages.audienceSegmentSectionQueryTitle),
+        }}
+        helpToolTipProps={{
+          title: intl.formatMessage(
+            messages.audienceSegmentCreationUserQueryFieldHelper,
+          ),
+        }}
+      />
     
     const jsonOTQLForm = 
-    <FormJSONQL
-    name={'query.query_text'}
-    component={JSONQL}
-    inputProps={{
-      datamartId: datamart.id!,
-      isTrigger: true,
-    }}
-    />
+      <FormJSONQL
+        name={'query.query_text'}
+        component={JSONQL}
+        inputProps={{
+          datamartId: datamart.id!,
+          isTrigger: true,
+        }}
+      />
     
-    const selectorQLForm =
-    <SelectorQL
-    datamartId={datamart.id}
-    organisationId={organisationId}
-    queryContainer={this.state.queryContainerCopy}
-    />
-    
-    
-    return this.props.initialValues.query? 
-      (this.props.initialValues.query.query_language === 'SELECTORQL' ? (
-        editQueryMode ? 
-        selectorQLForm : <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
-      ) : (
-        this.props.initialValues.query.query_language === 'OTQL' ? otqlForm : jsonOTQLForm
-      )
-      ) : this.props.initialValues.queryLanguage ? 
-      (this.props.initialValues.queryLanguage === 'SELECTORQL' ? (
-        editQueryMode ? 
-        selectorQLForm : <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
-      ) : jsonOTQLForm) : jsonOTQLForm
+    const selectorQLForm = editQueryMode ?
+      <SelectorQL
+        datamartId={datamart.id}
+        organisationId={organisationId}
+        queryContainer={this.state.queryContainerCopy}
+      /> : <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
+
+    switch (this.props.formValues.queryLanguage) {
+      case 'SELECTORQL': return selectorQLForm;
+      case 'OTQL': return otqlForm;
+      case 'JSON_OTQL': return jsonOTQLForm;
+    }    
       
-    };
+  };
 
   updateQueryContainerAndCloseEditMode = () => {
     this.setState(
@@ -239,25 +217,9 @@ const otqlForm =
     );
   };
   
-  render() {
-    const {
-      intl: { formatMessage },
-    } = this.props;
+  render() {    
     
-    const radioOptions = [
-      {
-        title: formatMessage(messages.formCheckBoxText1),
-        value: 'QUERY',
-        id: cuid(),
-      },
-      {
-        title: formatMessage(messages.formCheckBoxText2),
-        value: 'PIXEL',
-        id: cuid(),
-      },
-    ];
-    
-    const pixelSectionVisible = this.props.formValues.triggerMode === 'PIXEL';
+    const pixelSectionVisible = this.props.formValues.triggerType === 'PIXEL';
     
     return (
       <div>
@@ -265,17 +227,6 @@ const otqlForm =
           subtitle={messages.sectionSubtitle1}
           title={messages.sectionTitle1}
         />
-        {!isExistingGoal(this.props.formValues.goal) && (
-          <Row style={{ paddingBottom: '24px' }}>
-            <Col span={24}>
-              <FormRadioGroupField
-                name="triggerMode"
-                component={FormRadioGroup}
-                elements={radioOptions}
-              />
-            </Col>
-          </Row>
-        )}
         <Row>
           <Col span={24}>
             {pixelSectionVisible
@@ -284,7 +235,7 @@ const otqlForm =
             <br />
             <div style={{ float: 'right' }}>
               {!pixelSectionVisible &&
-                this.props.formValues.queryLanguage !== 'OTQL' &&
+                this.props.formValues.queryLanguage === 'SELECTORQL' &&
                 (this.state.editQueryMode ? (
                   <div>
                     <Button
@@ -321,9 +272,9 @@ const otqlForm =
 
 export default compose<Props, TriggerFormSectionProps>(
   injectIntl,
+  withRouter,
   withValidators,
   connect(state => ({
     formValues: getFormValues(FORM_ID)(state),
   })),
-  injectDatamart,
 )(TriggerFormSection);

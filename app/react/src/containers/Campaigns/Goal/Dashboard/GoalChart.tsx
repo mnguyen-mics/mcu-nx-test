@@ -32,6 +32,7 @@ import { takeLatest } from '../../../../utils/ApiHelper';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 
 interface OverallStats {
@@ -61,6 +62,7 @@ interface RouterProps {
 
 type JoinedProps = InjectedIntlProps &
   InjectedThemeColorsProps &
+  InjectedNotificationProps &
   RouteComponentProps<RouterProps>;
 
 type OuterProps = {};
@@ -73,6 +75,16 @@ const overallPerformanceFetch = takeLatest(
   ReportService.getSingleConversionPerformanceReport,
 );
 
+const initialState: GoalStackedAreaChartState = {
+  key1: 'value',
+  key2: 'conversions',
+  data: {
+    items: [],
+    overall: [],
+    isLoading: true,
+  },
+};
+
 class GoalStackedAreaChart extends React.Component<
   JoinedProps,
   GoalStackedAreaChartState
@@ -80,15 +92,7 @@ class GoalStackedAreaChart extends React.Component<
   constructor(props: JoinedProps) {
     super(props);
 
-    this.state = {
-      key1: 'value',
-      key2: 'conversions',
-      data: {
-        items: [],
-        overall: [],
-        isLoading: true,
-      },
-    };
+    this.state = initialState;
   }
 
   componentDidMount() {
@@ -167,7 +171,10 @@ class GoalStackedAreaChart extends React.Component<
           overall: normalizeReportView(res[1]),
         },
       }),
-    );
+    ).catch(err => {
+      this.props.notifyError(err);
+      this.setState({ ...initialState, data: { ...initialState.data, isLoading: false } })
+    });
   };
 
   createLegend() {
@@ -340,4 +347,5 @@ export default compose<JoinedProps, OuterProps>(
   withRouter,
   injectIntl,
   injectThemeColors,
+  injectNotifications,
 )(GoalStackedAreaChart);

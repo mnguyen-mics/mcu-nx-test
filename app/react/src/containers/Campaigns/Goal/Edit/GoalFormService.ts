@@ -1,4 +1,3 @@
-import { QueryLanguage } from './../../../../models/datamart/DatamartResource';
 import {
   Task,
   executeTasksInSequence,
@@ -21,9 +20,11 @@ const GoalFormService = {
       GoalService.getGoal(goalId),
       GoalService.getAttributionModels(goalId),
     ]).then(([goalRes, attribModelRes]) => {
+      
       const goalFormData: GoalFormData = {
+        ...INITIAL_GOAL_FORM_DATA,
         goal: goalRes.data,
-        triggerMode: 'QUERY',
+        triggerType: goalRes.data.new_query_id ? 'QUERY': 'PIXEL',
         attributionModels: attribModelRes.data.map(attributionModel =>
           createFieldArrayModelWithMeta(attributionModel, {
             name: attributionModel.attribution_model_name,
@@ -33,41 +34,36 @@ const GoalFormService = {
           }),
         ),
       };
-
-      const QueryContainer = (window as any).angular
-        .element(document.body)
-        .injector()
-        .get('core/datamart/queries/QueryContainer');
-      if (goalRes.data.datamart_id && goalRes.data.new_query_id) {
+    
+      if (goalRes.data.new_query_id) {
         return queryService
           .getQuery(goalRes.data.datamart_id, goalRes.data.new_query_id)
           .then(r => r.data)
-          .then(res => {
+          .then(res => {            
+            goalFormData.query = res;
+            goalFormData.queryLanguage = res.query_language;
+
             if (res.query_language === 'SELECTORQL') {
+
+              const QueryContainer = (window as any).angular
+                .element(document.body)
+                .injector()
+                .get('core/datamart/queries/QueryContainer');
+
               return new QueryContainer(goalRes.data.datamart_id, res.id)
                 .load()
                 .then((queryContainer: any) => {
                   goalFormData.queryContainer = queryContainer;
-                  goalFormData.queryLanguage = res.query_language;
                   return goalFormData;
                 });
-            } else {
-              return {
-                ...goalFormData,
-                query: {
-                  query_text: res.query_text,
-                  query_language: res.query_language,
-                },
-              };
             }
+
+            return goalFormData;
           });
-      } else {
-        return {
-          ...goalFormData,
-          queryContainer: new QueryContainer(goalRes.data.datamart_id),
-          triggerMode: 'PIXEL',
-        };
       }
+      
+      return goalFormData;
+
     });
   },
 
@@ -80,7 +76,7 @@ const GoalFormService = {
 
     // save query if needed
     let goalDataToUpload = Promise.resolve(goalFormData.goal);
-    if (goalFormData.triggerMode === 'QUERY') {
+    if (goalFormData.triggerType === 'QUERY' && goalFormData.query) {
       if (goalFormData.queryLanguage === 'SELECTORQL') {
         goalDataToUpload = goalFormData.queryContainer
           .saveOrUpdate()
@@ -91,33 +87,18 @@ const GoalFormService = {
               new_query_id: queryId,
             };
           });
-      } else if (goalFormData.queryLanguage === 'OTQL') {
-        const datamartId = goalFormData.goal.datamart_id;
-        const query = {
-          query_text:
-            goalFormData.query && goalFormData.query.query_text
-              ? goalFormData.query.query_text
-              : '',
-          query_language: 'OTQL' as QueryLanguage,
-        };
-        if (datamartId) {
-          goalDataToUpload = goalDataToUpload.then(() => {
-            return queryService.createQuery(datamartId, query).then(resp => {
-              return {
-                ...goalFormData.goal,
-                new_query_id: resp.data.id,
-              };
-            });
-          });
-        }
+      } else {        
+        const query = { 
+          ...goalFormData.query,
+          query_language: goalFormData.queryLanguage,
+         };
+        goalDataToUpload = queryService.createQuery(goalFormData.goal.datamart_id!, query).then(resp => {
+          return {
+            ...goalFormData.goal,
+            new_query_id: resp.data.id,
+          };
+        });
       }
-    } else if (goalFormData.triggerMode === 'PIXEL') {
-      goalDataToUpload.then(() => {
-        return {
-          ...goalFormData.goal,
-          new_query_id: null,
-        };
-      });
     }
 
     return goalDataToUpload.then(goalData => {

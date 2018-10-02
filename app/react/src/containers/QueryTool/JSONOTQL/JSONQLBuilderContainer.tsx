@@ -128,10 +128,9 @@ fetchObjectTypes = (
     schemaRes => {
       const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
       if (!liveSchema) return [];
-      return Promise.resolve(RuntimeSchemaService.getObjectTypeInfoResources(
+      return RuntimeSchemaService.getObjectTypeInfoResources(
         datamartId,
         liveSchema.id)
-      )
     }
   );
 };

@@ -1,6 +1,5 @@
 import {
-  QueryLanguage,
-  QueryResource,
+  QueryResource, QueryLanguage, QueryCreateRequest,
 } from './../../../../models/datamart/DatamartResource';
 import { FieldArrayModelWithMeta } from './../../../../utils/FormHelper';
 import {
@@ -8,9 +7,10 @@ import {
   AttributionSelectionCreateRequest,
 } from './../../../../models/goal/AttributionSelectionResource';
 import { GoalResource, GoalCreateRequest } from '../../../../models/goal';
+import { GoalTriggerType } from '../../../../models/goal/GoalResource';
 
-export type GoalResourceShape = GoalResource | Partial<GoalCreateRequest>;
-
+export type GoalResourceShape = GoalResource | GoalCreateRequest;
+export type QueryResourceShape = QueryResource | QueryCreateRequest;
 export interface LookbackWindow {
   postView: number;
   postClick: number;
@@ -19,11 +19,19 @@ export interface LookbackWindow {
 export const INITIAL_GOAL_FORM_DATA: GoalFormData = {
   goal: {
     goal_value_currency: 'EUR',
-    status: 'PAUSED'
+    status: 'PAUSED',
+    name: '',
+    datamart_id: '',
+    archived: false
   },
   attributionModels: [],
-  triggerMode: 'QUERY',
-  queryContainer: {},
+  triggerType: 'QUERY',
+  queryLanguage: 'JSON_OTQL',
+  query: {
+    datamart_id: '',
+    query_language: 'JSON_OTQL',
+    query_text: '',
+  }
 };
 
 ///////////////////////////
@@ -33,15 +41,13 @@ export function isGoalResource(goal: GoalResourceShape): goal is GoalResource {
   return (goal as GoalResource).id !== undefined;
 }
 
-export type TriggerMode = 'QUERY' | 'PIXEL';
-
 export interface GoalFormData {
   goal: GoalResourceShape;
   attributionModels: AttributionModelListFieldModel[];
   queryContainer?: any;
-  queryLanguage?: QueryLanguage;
-  triggerMode: TriggerMode;
-  query?: QueryResource;
+  triggerType: GoalTriggerType;
+  query: QueryResourceShape;
+  queryLanguage: QueryLanguage;
 }
 
 export interface AttributionModelMetaData {

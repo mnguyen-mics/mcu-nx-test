@@ -31,6 +31,10 @@ export default defineMessages({
   ================================ SECTION TITLES ==============================
   ==============================================================================
   */
+  goalFormSiderMenuTriggerType: {
+    id: 'goal.form.sider.menu.trigger.type',
+    defaultMessage: 'Trigger Type',
+   },
   sectionTitle1: {
     id: 'goalSimpleEditor.section.title1',
     defaultMessage: 'General Information',

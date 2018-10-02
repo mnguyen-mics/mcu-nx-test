@@ -6,21 +6,23 @@ import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 import GoalFormService from './GoalFormService';
+import { Omit } from '../../../../utils/Types';
+import DatamartService from '../../../../services/DatamartService';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
-export interface GoalFormLoaderProps extends GoalFormProps {
+export interface GoalFormLoaderProps extends Omit<GoalFormProps, 'datamart'> {
   goalId: string;
 }
 
 interface State {
   goalFormData: GoalFormData;
+  datamart?: DatamartResource;
   loading: boolean;
 }
 
 type Props = GoalFormLoaderProps &
-  InjectedNotificationProps &
-  InjectedDatamartProps;
+  InjectedNotificationProps;
 
 class GoalFormLoader extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -41,13 +43,17 @@ class GoalFormLoader extends React.Component<Props, State> {
     const { goalId, notifyError } = this.props;
     GoalFormService.loadGoalData(goalId)
       .then(goalData => {
-        this.setState({
-          loading: false,
-          goalFormData: {
-            ...goalData,
-            attributionModels: goalData.attributionModels,
-          },
-        });
+        return DatamartService.getDatamart(goalData.goal.datamart_id!).then(datamartRes => {
+          this.setState({
+            loading: false,
+            goalFormData: {
+              ...goalData,
+              attributionModels: goalData.attributionModels,
+            },
+            datamart: datamartRes.data,
+          });
+          return datamartRes;
+        })
       })
       .catch(err => {
         this.setState({ loading: false });
@@ -57,15 +63,15 @@ class GoalFormLoader extends React.Component<Props, State> {
 
   render() {
     const { goalId, ...rest } = this.props;
-    const { loading } = this.state;
+    const { loading, datamart } = this.state;
 
-    if (loading) return <Loading className="loading-full-screen" />;
+    if (loading || !datamart) return <Loading className="loading-full-screen" />;
 
     return (
       <GoalForm
         {...rest}
         initialValues={this.state.goalFormData}
-        goalId={goalId}
+        datamart={datamart}
       />
     );
   }
@@ -73,5 +79,4 @@ class GoalFormLoader extends React.Component<Props, State> {
 
 export default compose<Props, GoalFormProps>(
   injectNotifications,
-  injectDatamart,
 )(GoalFormLoader);
