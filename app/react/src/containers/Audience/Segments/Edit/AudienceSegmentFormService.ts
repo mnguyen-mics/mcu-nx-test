@@ -32,13 +32,13 @@ export const AudienceSegmentFormService = {
         return response
       })
   },
+
   saveOrCreateAudienceSegment(
     organisationId: string,
     audienceSegmentFormData: AudienceSegmentFormData,
     queryLanguage?: QueryLanguage,
     queryContainer?: any,
   ): Promise<DataResponse<AudienceSegmentShape> | void> {
-
     switch (audienceSegmentFormData.audienceSegment.type) {
       case 'USER_LOOKALIKE':
         return createOrUpdateAudienceSegmentUserLookAlike(organisationId, audienceSegmentFormData)
@@ -49,11 +49,8 @@ export const AudienceSegmentFormService = {
       default:
         return Promise.resolve()
     }
-
   }
-
 }
-
 
 function createOrUpdateAudienceSegmentUserList(
   organisationId: string,

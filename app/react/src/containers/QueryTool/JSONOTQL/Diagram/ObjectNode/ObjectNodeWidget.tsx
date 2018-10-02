@@ -31,6 +31,7 @@ interface ObjectNodeWidgetProps {
   lockGlobalInteraction: (lock: boolean) => void;
   query?: ObjectTreeExpressionNodeShape;
   schema?: SchemaItem;
+  isTrigger: boolean;
 }
 
 interface State {
@@ -122,6 +123,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
             this.props.closeNextDrawer();
           },
           initialValues: generateFormDataFromObjectNode(node.objectNode),
+          isTrigger: this.props.isTrigger,
         },
         size: 'small',
       });

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedFormProps, ConfigProps } from 'redux-form';
-import { GoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
+import { GoalFormData, INITIAL_GOAL_FORM_DATA, isGoalResource } from './domain';
 import GoalForm, { GoalFormProps, FORM_ID } from './GoalForm';
 import DatamartService from '../../../../services/DatamartService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { DatamartResource } from '../../../../models/datamart/DatamartResource';
+import { DatamartResource, QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { Omit } from '../../../../utils/Types';
 import { Path } from '../../../../components/ActionBar';
 import { EditContentLayout } from '../../../../components/Layout';
@@ -17,6 +17,9 @@ import {
   injectWorkspace,
   InjectedWorkspaceProps,
 } from '../../../Datamart/index';
+import { Loading } from '../../../../components';
+import GoalTriggerTypeSelector from '../Common/GoalTriggerTypeSelector';
+import { GoalTriggerType } from '../../../../models/goal/GoalResource';
 
 export interface GoalFormContainerProps
   extends Omit<ConfigProps<GoalFormData>, 'form'> {
@@ -34,7 +37,9 @@ type Props = GoalFormContainerProps &
 
 interface State {
   selectedDatamart?: DatamartResource;
-  goalFormData: Partial<GoalFormData>;
+  initialValues: Partial<GoalFormData>;
+  loading: boolean;
+  showTriggerTypeSelector: boolean;
 }
 
 class GoalFormContainer extends React.Component<Props, State> {
@@ -42,20 +47,27 @@ class GoalFormContainer extends React.Component<Props, State> {
     super(props);
     this.state = {
       selectedDatamart: undefined,
-      goalFormData: INITIAL_GOAL_FORM_DATA,
+      initialValues: this.props.match.params.goalId ? this.props.initialValues : INITIAL_GOAL_FORM_DATA,
+      loading: false,
+      showTriggerTypeSelector: true,
     };
   }
 
   componentDidMount() {
     const { initialValues, workspace } = this.props;
 
-    if (initialValues.goal && initialValues.goal.datamart_id) {
+    if (initialValues.goal && isGoalResource(initialValues.goal)) {
+      this.setState({ loading: true });
       DatamartService.getDatamart(initialValues.goal.datamart_id)
-        .then(resp => {
-          this.onDatamartSelect(resp.data);
+        .then(resp => {          
+          this.setState({ 
+            loading: false, showTriggerTypeSelector: false,
+            selectedDatamart: resp.data
+           });
         })
         .catch(err => {
           this.props.notifyError(err);
+          this.setState({ loading: false });
         });
     } else if (workspace.datamarts.length === 1) {
       this.onDatamartSelect(workspace.datamarts[0]);
@@ -71,47 +83,56 @@ class GoalFormContainer extends React.Component<Props, State> {
     const defQuery = new QueryContainer(datamart.id);
     this.setState({
       selectedDatamart: datamart,
-      goalFormData: {
+      initialValues: {
+        ...initialValues,
         goal: {
-          ...initialValues.goal,
+          ...INITIAL_GOAL_FORM_DATA.goal,
           datamart_id: datamart.id,
         },
-        attributionModels: initialValues.attributionModels,
-        queryLanguage:
-          datamart.storage_model_version === 'v201506' ? 'SELECTORQL' : 'OTQL',
+        attributionModels: initialValues.attributionModels,        
         queryContainer: defQuery,
-        triggerMode: 'QUERY',
       },
     });
   };
 
+  handleTriggerTypeSelect = (triggerType: GoalTriggerType, queryLanguage?: QueryLanguage) => {
+    this.setState((prevState) => ({
+      ...prevState,
+      showTriggerTypeSelector: false,
+      initialValues: {
+        ...prevState.initialValues,
+        triggerType: triggerType,
+        queryLanguage,
+      }
+    }));
+  }
+
   render() {
     const {
-      initialValues,
       save,
       close,
       onSubmitFail,
       breadCrumbPaths,
       onSubmit,
-      workspace,
     } = this.props;
 
-    const { selectedDatamart, goalFormData } = this.state;
+    const { selectedDatamart, initialValues, loading, showTriggerTypeSelector } = this.state;
 
-    const isDatamartId =
-      initialValues && initialValues.goal && initialValues.goal.datamart_id;
+    if (loading) return <Loading className="loading-full-screen" />;
 
-    const formValues = isDatamartId ? initialValues : goalFormData;
+    const resetTriggerType = () => {
+      this.setState({ showTriggerTypeSelector: true });
+    }
 
-    return isDatamartId ||
-      workspace.datamarts.length === 1 ||
-      selectedDatamart ? (
+    return (!showTriggerTypeSelector && selectedDatamart) ? (
       <GoalForm
-        initialValues={formValues}
+        initialValues={initialValues}
         onSubmit={save ? save : onSubmit}
         close={close}
         breadCrumbPaths={breadCrumbPaths}
         onSubmitFail={onSubmitFail}
+        datamart={selectedDatamart}
+        goToTriggerTypeSelection={resetTriggerType}
       />
     ) : (
       <EditContentLayout
@@ -119,7 +140,11 @@ class GoalFormContainer extends React.Component<Props, State> {
         formId={FORM_ID}
         onClose={close}
       >
-        <DatamartSelector onSelect={this.onDatamartSelect} />
+        { showTriggerTypeSelector && selectedDatamart ? 
+          <GoalTriggerTypeSelector onSelect={this.handleTriggerTypeSelect} datamart={selectedDatamart} />
+          : <DatamartSelector onSelect={this.onDatamartSelect} />
+        }
+        
       </EditContentLayout>
     );
   }

@@ -36,6 +36,7 @@ interface PlusNodeProps {
   lockGlobalInteraction: (lock: boolean) => void;
   query?: ObjectTreeExpressionNodeShape;
   schema?: SchemaItem;
+  isTrigger: boolean;
 }
 
 interface DroppedItemProps {
@@ -131,6 +132,7 @@ class PlusNodeWidget extends React.Component<
             this.props.closeNextDrawer();
           },
           initialValues: QUERY_DOCUMENT_INITIAL_VALUE,
+          isTrigger: this.props.isTrigger,
         },
         size: 'small',
       });

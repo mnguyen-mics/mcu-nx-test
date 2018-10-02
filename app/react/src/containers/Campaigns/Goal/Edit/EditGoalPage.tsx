@@ -87,14 +87,13 @@ class EditGoalPage extends React.Component<Props, State> {
     this.setState({
       loading: true,
     });
-    GoalFormService.loadGoalData(goalId)
+    return GoalFormService.loadGoalData(goalId)
       .then(goalData => {
         this.setState({
-          goalFormData: {
-            ...goalData,
-          },
+          goalFormData: goalData,
           loading: false,
         });
+        return goalData;
       })
       .catch(err => {
         this.setState({ loading: false });
@@ -123,13 +122,16 @@ class EditGoalPage extends React.Component<Props, State> {
       loading: true,
     });
     GoalFormService.saveGoal(organisationId, goalFormData, initialGoalFormData)
-      .then(goalResource => {
-        hideSaveInProgress();
+      .then(goalResource => {        
         const goalUrl =
-          goalFormData.triggerMode === 'QUERY'
+          goalFormData.triggerType === 'QUERY'
             ? `/v2/o/${organisationId}/campaigns/goals/${goalResource.id}`
             : `/v2/o/${organisationId}/campaigns/goals/${goalResource.id}/edit`;
-        this.fetchData(goalResource.id);
+        if (goalFormData.triggerType === 'QUERY') {
+          hideSaveInProgress();
+        } else {
+          this.fetchData(goalResource.id).then(() => hideSaveInProgress());
+        }      
         history.push({
           pathname: goalUrl,
           state: { from: `${location.pathname}` },

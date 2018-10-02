@@ -38,7 +38,6 @@ import {
   GoalFormData,
 } from '../../../../Goal/Edit/domain';
 import GoalFormContainer, { GoalFormContainerProps } from '../../../../Goal/Edit/GoalFormContainer';
-import GoalForm, { GoalFormProps } from '../../../../Goal/Edit/GoalForm';
 import GoalFormLoader, {
   GoalFormLoaderProps,
 } from '../../../../Goal/Edit/GoalFormLoader';
@@ -150,7 +149,7 @@ class GoalFormSection extends React.Component<Props, State> {
             model: goalFormData,
             meta: {
               name: goalFormData.goal.name || '',
-              triggerMode: goalFormData.triggerMode,
+              triggerMode: goalFormData.triggerType,
             },
           });
         } else {
@@ -164,7 +163,7 @@ class GoalFormSection extends React.Component<Props, State> {
         model: goalFormData,
         meta: {
           name: goalFormData.goal.name || '',
-          triggerMode: goalFormData.triggerMode,
+          triggerMode: goalFormData.triggerType,
         },
       });
     }
@@ -193,7 +192,7 @@ class GoalFormSection extends React.Component<Props, State> {
       this.props.closeNextDrawer();
     };
 
-    const props: GoalFormProps = {
+    const props: GoalFormContainerProps = {
       breadCrumbPaths,
       close: this.props.closeNextDrawer,
       onSubmit: handleOnSubmit,
@@ -210,11 +209,7 @@ class GoalFormSection extends React.Component<Props, State> {
         ...INITIAL_GOAL_FORM_DATA,
       };
     } else if (isGoalFormData(field.model)) {
-      FormComponent = GoalForm;
-      props.initialValues = field.model;
-      if (isGoalResource(field.model.goal)) {
-        props.goalId = field.model.goal.id;
-      }
+      props.initialValues = field.model;      
     } else {
       // TODO fix this ugly cast
       FormComponent = GoalFormLoader;

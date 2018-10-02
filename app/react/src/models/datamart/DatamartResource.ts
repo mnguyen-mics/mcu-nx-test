@@ -14,13 +14,17 @@ export interface DatamartResource {
 type DatamartType = 'DATAMART' | 'CROSS_DATAMART';
 
 export type QueryLanguage = 'SELECTORQL' | 'OTQL' | 'JSON_OTQL';
-export interface QueryResource {
-  id: string;
+
+export interface QueryCreateRequest {
   datamart_id: string;
   major_version?: string;
   minor_version?: string;
   query_language: QueryLanguage;
-  query_text?: string;
+  query_text: string;
+}
+
+export interface QueryResource extends QueryCreateRequest {
+  id: string;
 }
 
 export interface UserCompartment {

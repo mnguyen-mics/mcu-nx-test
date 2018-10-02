@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import lodash from 'lodash'
 import {
   FormInput,
   FormSection,
@@ -22,13 +23,17 @@ import messages from '../messages';
 import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
 import { FORM_ID, ObjectNodeFormData } from '../domain';
-import { FieldResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
+import { FieldResource, ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { SelectValue } from 'antd/lib/select';
 import { frequencyModeMessageMap } from '../../messages';
+import { typesTrigger } from '../../domain';
 
 export interface ObjectNodeSectionProps {
   objectTypeFields: FieldResource[];
   onSelect: (value: SelectValue) => void;
+  isTrigger: boolean;
+  objectType: ObjectLikeTypeInfoResource;
+  selectedObjectType?: ObjectLikeTypeInfoResource;
 }
 
 interface MapStateToProps {
@@ -50,20 +55,36 @@ class ObjectNodeSection extends React.Component<Props> {
     }));
   };
 
+  triggerModeFrequency(objectType: ObjectLikeTypeInfoResource, selectedObjectType: ObjectLikeTypeInfoResource) : boolean {
+    if(objectType.name==="UserPoint"){
+      return !lodash.flatMap(selectedObjectType.directives, d => {
+        return d.arguments.map(a=>
+          Object.values(typesTrigger).includes(a.value.replace(/[^a-zA-Z]+/g,'')))
+      }).reduce((acc: boolean, val: boolean) => acc || val, false)
+    }else{
+      return true
+    }
+    
+  }
+
   render() {
     const {
       fieldValidators: { isRequired, isValidInteger },
       intl: { formatMessage },
       formValues,
-      objectTypeFields,
       onSelect,
+      isTrigger,
+      objectType,
+      selectedObjectType,
     } = this.props;
+
+    const showFrenquencyTrigger = !!(isTrigger && selectedObjectType && this.triggerModeFrequency(objectType, selectedObjectType))
 
     const showEnableFrequency = !!(
       formValues.objectNodeForm.field &&
-      objectTypeFields
+      objectType.fields
         .find(otf => formValues.objectNodeForm.field === otf.name)!
-        .field_type.startsWith('[')
+        .field_type.startsWith('[') && showFrenquencyTrigger
     );
     const showFrequency = formValues.frequency.enabled;
 

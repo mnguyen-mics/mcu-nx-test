@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import _ from 'lodash';
-import cuid from 'cuid';
 import {
   injectIntl,
   InjectedIntlProps,
@@ -11,16 +10,10 @@ import {
 import { Button, Row, Col, Alert } from 'antd';
 import {
   FormSection,
-  FormRadioGroupField,
-  FormRadioGroup,
 } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
-import {
-  injectDatamart,
-  InjectedDatamartProps,
-} from '../../../../Datamart/index';
 import OTQLInputEditor, {
   OTQLInputEditorProps,
 } from '../../../../Audience/Segments/Edit/Sections/query/OTQL';
@@ -28,13 +21,16 @@ import { FieldCtor } from '../../../../../components/Form/index';
 import SelectorQL from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQL';
 import SelectorQLReadOnly from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQLReadOnly';
 import { Field, getFormValues } from 'redux-form';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { GoalFormData, isExistingGoal } from '../domain';
 import FormCodeSnippet from '../../../../../components/Form/FormCodeSnippet';
 import { FORM_ID } from '../GoalForm';
 import { connect } from 'react-redux';
+import JSONQL, { JSONQLInputEditorProps } from '../../../../Audience/Segments/Edit/Sections/query/JSONQL';
+import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field;
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 
 const messages = defineMessages({
@@ -45,19 +41,11 @@ const messages = defineMessages({
   sectionTitle1: {
     id: 'goalEditor.section.trigger.subtitle2',
     defaultMessage: 'Trigger',
-  },
-  formCheckBoxText1: {
-    id: 'goalEditor.section.trigger.formcheckbox.query',
-    defaultMessage: 'Trigger via query',
-  },
-  formCheckBoxText2: {
-    id: 'goalEditor.section.trigger.formcheckbox.pixel',
-    defaultMessage: 'Trigger via pixel',
-  },
+  },  
   triggerPixelHelpTooltip: {
     id: 'goalEditor.section.trigger.pixel.modal.title',
     defaultMessage:
-      'Pixel for goal. Use this pixel url tracking to capture a conversion goal.',
+    'Pixel for goal. Use this pixel url tracking to capture a conversion goal.',
   },
   audienceSegmentSectionQueryTitle: {
     id: 'edit.goal.form.section.query.title',
@@ -66,7 +54,7 @@ const messages = defineMessages({
   audienceSegmentCreationUserQueryFieldHelper: {
     id: 'edit.goal.form.section.general.field.query.helper',
     defaultMessage:
-      'Start your query with "SELECT \\{ id \\} FROM UserPoint WHERE" and add your conditions after the WHERE clause.',
+    'Start your query with "SELECT \\{ id \\} FROM UserPoint WHERE" and add your conditions after the WHERE clause.',
   },
   newGoalPixelSection: {
     id: 'edit.goal.form.section.pixel.newGoal',
@@ -75,7 +63,7 @@ const messages = defineMessages({
   goalAlreadyHasQueryTrigger: {
     id: 'edit.goal.form.section.pixel.goal.has.query.trigger',
     defaultMessage:
-      "You can't trigger via pixel because your goal already has a trigger via query.",
+    "You can't trigger via pixel because your goal already has a trigger via query.",
   },
   configureDatamartToken: {
     id: 'edit.goal.form.section.pixel.configureDatamartToken',
@@ -95,14 +83,14 @@ interface State {
 
 interface TriggerFormSectionProps extends ReduxFormChangeProps {
   initialValues: Partial<GoalFormData>;
+  datamart: DatamartResource;
 }
 
 type Props = TriggerFormSectionProps &
-  InjectedIntlProps &
-  ValidatorProps &
-  MapStateToProps &
-  InjectedDatamartProps &
-  RouteComponentProps<{ organisationId: string }>;
+InjectedIntlProps &
+ValidatorProps &
+MapStateToProps &
+RouteComponentProps<{ organisationId: string }>;
 
 class TriggerFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -113,7 +101,7 @@ class TriggerFormSection extends React.Component<Props, State> {
       queryContainerCopy: undefined,
     };
   }
-
+  
   renderQueryField = () => {
     const {
       datamart,
@@ -122,10 +110,10 @@ class TriggerFormSection extends React.Component<Props, State> {
       },
       intl,
     } = this.props;
-
+    
     const { editQueryMode } = this.state;
 
-    return this.props.initialValues.queryLanguage !== 'SELECTORQL' ? (
+    const otqlForm = 
       <FormOTQL
         name={'query.query_text'}
         component={OTQLInputEditor}
@@ -138,15 +126,30 @@ class TriggerFormSection extends React.Component<Props, State> {
           ),
         }}
       />
-    ) : editQueryMode ? (
+    
+    const jsonOTQLForm = 
+      <FormJSONQL
+        name={'query.query_text'}
+        component={JSONQL}
+        inputProps={{
+          datamartId: datamart.id!,
+          isTrigger: true,
+        }}
+      />
+    
+    const selectorQLForm = editQueryMode ?
       <SelectorQL
         datamartId={datamart.id}
         organisationId={organisationId}
         queryContainer={this.state.queryContainerCopy}
-      />
-    ) : (
-          <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
-        );
+      /> : <SelectorQLReadOnly queryContainer={this.state.queryContainer} />
+
+    switch (this.props.formValues.queryLanguage) {
+      case 'SELECTORQL': return selectorQLForm;
+      case 'OTQL': return otqlForm;
+      case 'JSON_OTQL': return jsonOTQLForm;
+    }    
+      
   };
 
   updateQueryContainerAndCloseEditMode = () => {
@@ -213,44 +216,17 @@ class TriggerFormSection extends React.Component<Props, State> {
       </div>
     );
   };
-
-  render() {
-    const {
-      intl: { formatMessage },
-    } = this.props;
-
-    const radioOptions = [
-      {
-        title: formatMessage(messages.formCheckBoxText1),
-        value: 'QUERY',
-        id: cuid(),
-      },
-      {
-        title: formatMessage(messages.formCheckBoxText2),
-        value: 'PIXEL',
-        id: cuid(),
-      },
-    ];
-
-    const pixelSectionVisible = this.props.formValues.triggerMode === 'PIXEL';
-
+  
+  render() {    
+    
+    const pixelSectionVisible = this.props.formValues.triggerType === 'PIXEL';
+    
     return (
       <div>
         <FormSection
           subtitle={messages.sectionSubtitle1}
           title={messages.sectionTitle1}
         />
-        {!isExistingGoal(this.props.formValues.goal) && (
-          <Row style={{ paddingBottom: '24px' }}>
-            <Col span={24}>
-              <FormRadioGroupField
-                name="triggerMode"
-                component={FormRadioGroup}
-                elements={radioOptions}
-              />
-            </Col>
-          </Row>
-        )}
         <Row>
           <Col span={24}>
             {pixelSectionVisible
@@ -259,7 +235,7 @@ class TriggerFormSection extends React.Component<Props, State> {
             <br />
             <div style={{ float: 'right' }}>
               {!pixelSectionVisible &&
-                this.props.formValues.queryLanguage !== 'OTQL' &&
+                this.props.formValues.queryLanguage === 'SELECTORQL' &&
                 (this.state.editQueryMode ? (
                   <div>
                     <Button
@@ -296,9 +272,9 @@ class TriggerFormSection extends React.Component<Props, State> {
 
 export default compose<Props, TriggerFormSectionProps>(
   injectIntl,
+  withRouter,
   withValidators,
   connect(state => ({
     formValues: getFormValues(FORM_ID)(state),
   })),
-  injectDatamart,
 )(TriggerFormSection);

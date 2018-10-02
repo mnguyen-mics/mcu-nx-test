@@ -1,4 +1,5 @@
 import { PortModel, LinkModel, NodeModel } from 'storm-react-diagrams';
+import lodash from 'lodash'
 import { SimpleLinkModel } from './Diagram/Link';
 import { BooleanOperatorNodeModel } from './Diagram/BooleanOperatorNode';
 import { FieldNodeModel } from './Diagram/FieldNode';
@@ -9,7 +10,13 @@ import {
   FieldNode,
   ObjectNode,
 } from '../../../models/datamart/graphdb/QueryDocument';
-import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType, ObjectLikeTypeDirectiveInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { SchemaItem } from './domain';
+
+export enum typesTrigger {
+  "UserActivity",
+  "UserEvent"
+}
 
 export const MIN_X = 100;
 export const MIN_Y = 100;
@@ -497,9 +504,10 @@ export interface SchemaItem {
   type: ObjectLikeType;
   name: string;
   schemaType?: string;
-  fields: Array<FieldInfoEnhancedResource | SchemaItem | FieldInfoResource>
+  fields: Array<FieldInfoEnhancedResource | SchemaItem | FieldInfoResource>;
   closestParentType: string;
-  path?: string
+  path?: string;
+  directives: ObjectLikeTypeDirectiveInfoResource[]; 
 }
 
 export function isSchemaItem(item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource): item is SchemaItem {
@@ -512,42 +520,99 @@ export function isFieldInfoEnfancedResource(item: SchemaItem | FieldInfoEnhance
 
 export const extractFieldType = (field: FieldInfoEnhancedResource) => field.field_type.match(/\w+/)![0] as string
 
-export function computeSchemaModel(
+export function filterAvailableFields(schemaItem: SchemaItem): boolean{
+  return lodash.flatMap(schemaItem.directives, d => { 
+    return d.arguments.map(a =>
+      Object.values(typesTrigger).includes(a.value.replace(/[^a-zA-Z]+/g,'')))
+     }
+    ).reduce((acc: boolean, val: boolean) => {return acc || val}, false)
+}
+
+export function computeFinalSchemaItem(
   objectTypes: ObjectLikeTypeInfoResource[],
-  initialObjectType: SchemaItem,
-  path: string,
-  onlyIndexed: boolean = true
+  rootObjectTypeName: string,
+  onlyIndexed: boolean = true,
+  isTrigger: boolean,
+): SchemaItem {
+  const initialSchemaItem = buildSchemaItem(
+    objectTypes, 
+    {
+      ...objectTypes.find(ot => ot.name === rootObjectTypeName)!,
+      closestParentType: '',
+    }
+  )
+  const filteredSchemaItem = filterSchemaItem(initialSchemaItem, objectTypes, onlyIndexed, isTrigger)
+  return computeSchemaItemPath(filteredSchemaItem, objectTypes, '');
+}
+
+function buildSchemaItem(
+  objectTypes: ObjectLikeTypeInfoResource[],
+  rootObjectType: SchemaItem,
 ): SchemaItem {
   return {
-    ...initialObjectType,
-    fields: initialObjectType.fields.filter(field => {
+    ...rootObjectType,
+    fields: rootObjectType.fields.map(field => {
       const match = extractFieldType(field as FieldInfoEnhancedResource);
-      if (onlyIndexed) {
-        if (objectTypes.map(ot => ot.name).includes(match)) return true;
-        return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex')
-      }
-      return true
-    }).map((field, index) => {
-      const match = extractFieldType(field as FieldInfoEnhancedResource);
-      const newPath = `${path}${path ? '.' : ''}${index}`;
-
       if (
         match &&
         objectTypes.map(ot => ot.name).includes(match)
       ) {
-        const newInitialObject: SchemaItem =  {...objectTypes.find(ot => ot.name === match)!, schemaType: match, name: field.name, closestParentType: initialObjectType.type, path: newPath}
-        return computeSchemaModel(
+        const newRootObject: SchemaItem =  {...objectTypes.find(ot => ot.name === match)!, schemaType: match, name: field.name, closestParentType: rootObjectType.name}
+        return buildSchemaItem(
           objectTypes,
-          newInitialObject,
-          newPath
+          newRootObject,
         );
       } else {
-        return {...field, closestParentType: initialObjectType.name,  path: newPath};
+        return {...field, closestParentType: rootObjectType.name};
       }
     }),
   };
 }
 
+function filterSchemaItem(
+  schema: SchemaItem,
+  objectTypes: ObjectLikeTypeInfoResource[],
+  onlyIndexed: boolean,
+  isTrigger: boolean
+): SchemaItem {
+  return {
+    ...schema,
+    fields: schema.fields.filter(field => {
+      if(isTrigger){
+        if(isSchemaItem(field) && field.closestParentType==="UserPoint") return filterAvailableFields(field as SchemaItem)
+        else if(isFieldInfoEnfancedResource(field) && field.closestParentType==="UserPoint") return false
+        else return true
+      }else{
+        if(isFieldInfoEnfancedResource(field) && onlyIndexed){
+          const match = extractFieldType(field as FieldInfoEnhancedResource);
+          if (objectTypes.map(ot => ot.name).includes(match)) return true;
+          return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex')
+        } 
+      return true
+      }
+    }).map(field => {
+      if (isSchemaItem(field)) return filterSchemaItem(field as SchemaItem, objectTypes, onlyIndexed, isTrigger)
+      else return {...field, closestParentType: schema.name};
+    }),
+  };
+}
+
+function computeSchemaItemPath(
+  schema: SchemaItem,
+  objectTypes: ObjectLikeTypeInfoResource[],
+  path: string
+): SchemaItem {
+  return {
+    ...schema,
+    path: path,
+    fields: schema.fields.map((field, index) => {
+      const newPath = `${path}${path ? '.' : ''}${index}`;
+      if (isSchemaItem(field)) return computeSchemaItemPath(field as SchemaItem, objectTypes, newPath)
+      else return {...field, closestParentType: schema.name,  path: newPath};
+    }),
+  };
+}
+  
 export interface FieldInfoEnhancedResource extends FieldInfoResource {
   closestParentType: string;
   path: string;

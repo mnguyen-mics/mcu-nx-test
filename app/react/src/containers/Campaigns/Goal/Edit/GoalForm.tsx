@@ -30,6 +30,7 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../components/Layout/ScrollspySider';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -43,7 +44,8 @@ const AttributionModelFieldArray = FieldArray as new () => GenericFieldArray<
 export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  goalId?: string;
+  datamart: DatamartResource;
+  goToTriggerTypeSelection?: () => void;
 }
 
 type Props = InjectedFormProps<GoalFormData, GoalFormProps> &
@@ -57,8 +59,8 @@ class GoalForm extends React.Component<Props> {
     const {
       breadCrumbPaths,
       handleSubmit,
-      close, 
-      goalId,
+      close,
+      goToTriggerTypeSelection,
     } = this.props;
 
     const sections = {
@@ -92,6 +94,15 @@ class GoalForm extends React.Component<Props> {
       scrollId: FORM_ID,
     };
 
+    if (goToTriggerTypeSelection) {
+      sideBarProps.items.unshift({
+        sectionId: 'type',
+        title: messages.goalFormSiderMenuTriggerType,
+        onClick: goToTriggerTypeSelection,
+        type: 'validated',
+      });
+    }
+
     return (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
@@ -113,7 +124,6 @@ class GoalForm extends React.Component<Props> {
               <hr />
               <div id={sections.conversion_value.sectionId}>
                 <ConversionValueFormSection
-                  goalId={goalId}
                   initialValues={this.props.initialValues}
                   formChange={this.props.change}
                 />
@@ -123,6 +133,7 @@ class GoalForm extends React.Component<Props> {
                 <TriggerFormSection
                   initialValues={this.props.initialValues}
                   formChange={this.props.change}
+                  datamart={this.props.datamart}
                 />
               </div>
               <hr />

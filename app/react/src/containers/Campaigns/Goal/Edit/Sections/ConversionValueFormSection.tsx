@@ -51,7 +51,6 @@ interface State {
 
 interface ConversionValueFormSectionProps extends ReduxFormChangeProps {
   initialValues: Partial<GoalFormData>;
-  goalId?: string;
 }
 
 type Props = ConversionValueFormSectionProps &

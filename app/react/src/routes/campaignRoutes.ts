@@ -131,11 +131,15 @@ export const campaignsDefinition: NavigatorDefinition = {
     path: '/campaigns/goals/:goalId/edit',
     layout: 'edit',
     editComponent: EditGoalPage,
+    requiredFeature: 'campaigns.goals',
+    requireDatamart: true
   },
   goalCreation: {
     path: '/campaigns/goals/create',
     layout: 'edit',
     editComponent: EditGoalPage,
+    requiredFeature: 'campaigns.goals',
+    requireDatamart: true
   },
 };
 
