@@ -24,7 +24,7 @@ const pluginService = {
     return ApiService.getRequest<DataListResponse<PluginResource>>(endpoint, options).then(plugins => {
       if (!withArchivedPluginVersion) {
         return Promise.all(
-          plugins.data.map(p => 
+          plugins.data.map(p =>
             pluginService.getPluginVersion(p.id, p.current_version_id).then(pv => pv.data)
           )
         ).then(pluginVersions => {
@@ -36,7 +36,7 @@ const pluginService = {
         });
       }
       return plugins;
-    });    
+    });
   },
   getPluginVersions(
     pluginId: string,

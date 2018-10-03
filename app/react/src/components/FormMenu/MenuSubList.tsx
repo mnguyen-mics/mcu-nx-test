@@ -71,7 +71,7 @@ class MenuList extends Component<MenuListProps & InjectedNotificationProps, Menu
     const { fetching, fetchedMenu } = this.state;
 
     let displayMenu: Submenu[] = fetchedMenu;
-    if (Array.isArray(submenu)) {       
+    if (Array.isArray(submenu)) {
       displayMenu = submenu
     }
 
@@ -80,28 +80,28 @@ class MenuList extends Component<MenuListProps & InjectedNotificationProps, Menu
         <button className={this.state.open ? 'menu-item opened' : 'menu-item'} onClick={this.openMenuItem}>
           <div className={subtitles ? 'content' : 'content alone'}>
             <div className="title">{title}</div>
-            {subtitles ? <div className="subtitles">{ subtitles.map((subtitle, index) => {
+            {subtitles ? <div className="subtitles">{subtitles.map((subtitle, index) => {
               return index !== subtitles.length - 1 ? `${subtitle}, ` : subtitle;
-            }) }</div> : null}
+            })}</div> : null}
           </div>
           <div className="selector">
             <McsIcon type={this.state.open ? 'minus' : 'plus'} />
           </div>
         </button>
         <div className={`lines ${this.state.open ? 'opened' : 'closed'}`}>
-          { fetching &&  <div className="menu-item small">
-              <div className="content alone small text-center">
-                <Spin />
-              </div>
-            </div>     
+          {fetching && <div className="menu-item small">
+            <div className="content alone small text-center">
+              <Spin />
+            </div>
+          </div>
           }
           { !fetching && !displayMenu.length &&
             <div className="menu-item small">
               <div className="content alone small text-center">
                 <FormattedMessage id='sub-menu-empty' defaultMessage='Empty' />
               </div>
-          </div>
-          }         
+            </div>
+          }
           {!fetching && displayMenu.map(sub => {
             return (
               <button key={cuid()} className="menu-item small" onClick={sub.select}>

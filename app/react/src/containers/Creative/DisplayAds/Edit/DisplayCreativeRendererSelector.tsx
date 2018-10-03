@@ -54,7 +54,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
       externalAdRendererId,
       imageSkinsAdRendererId,
     ];
-    
+
     return PluginService.getPlugins({
       max_results: 1000,
       plugin_type: 'DISPLAY_AD_RENDERER',
