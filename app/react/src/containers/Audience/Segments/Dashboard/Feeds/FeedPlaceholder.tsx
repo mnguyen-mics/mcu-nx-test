@@ -10,6 +10,7 @@ export default class FeedPlaceholder extends React.Component<FeedPlaceholderProp
 
     return (
       <Card className="hoverable-card actionable-card compact feed-card">
+        <hr />
         <div className="wrapper">
           <div className="card-header">
             <div className="image-placeholder" />

@@ -300,6 +300,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     return (
       <Card className="hoverable-card actionable-card compact feed-card">
+        <hr />
         <div className="top-menu" id={this.id}>
           <Dropdown overlay={menu} trigger={['click']} getPopupContainer={popupContainer}>
             <a><McsIcon type="dots" /></a>

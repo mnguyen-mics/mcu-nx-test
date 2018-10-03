@@ -158,6 +158,7 @@ class MapPieChart extends React.Component<Props, State> {
 
     return (
       <Card title={title}>
+        <hr />
         {generateChart()}
         {this.state.queryResult && this.state.queryResult.length ? (
           <LegendChart

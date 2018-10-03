@@ -298,6 +298,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
               loading={isLoading}
             />
             <Card title={intl.formatMessage(messages.overview)}>
+              <hr />
               <PartitionTable
                 dataSource={userPartitionSegments}
                 columns={this.buildColumnDefinition()}

@@ -19,8 +19,16 @@ import log from '../../../../utils/Logger';
 import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { TimelinePageParams } from '../TimelinePage';
+import UserScenarioActivityCard from './UserScenarioActivityCard';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
+enum scenarioActivityTypes {
+  "USER_SCENARIO_START",
+  "USER_SCENARIO_STOP",
+  "USER_SCENARIO_NODE_ENTER",
+  "USER_SCENARIO_NODE_EXIT",
+  'USER_SCENARIO_NODE_MOVEMENT'
+}
 
 interface State {
   siteName?: string;
@@ -61,7 +69,7 @@ class ActivityCard extends React.Component<Props, State> {
     } else {
       this.setState(prevState => {
         const nextState = {
-          ...prevState,
+          ...prevState
         };
         switch (activity.$type) {
           case 'TOUCH':
@@ -127,11 +135,11 @@ class ActivityCard extends React.Component<Props, State> {
     };
     return userAgentId
       ? identif &&
-          identif.items &&
-          identif.items.USER_AGENT &&
-          identif.items.USER_AGENT.find((element: any) => {
-            return element.vector_id === userAgentId;
-          })
+      identif.items &&
+      identif.items.USER_AGENT &&
+      identif.items.USER_AGENT.find((element: any) => {
+        return element.vector_id === userAgentId;
+      })
       : undefined;
   };
 
@@ -169,51 +177,59 @@ class ActivityCard extends React.Component<Props, State> {
     return `${secs} ${formatMessage(messages.seconds)}`;
   };
 
-  render() {
-    const { activity } = this.props;
-
+  generateCardContent(activity: Activity) {
     const agent = this.getAgentInfoFromAgentId(activity.$user_agent_id);
-
-    const displayDuration = this.diplayVisitDuration(activity);
-    const renderDuration =
-      needToDisplayDurationFor.indexOf(activity.$type) > -1 ? (
-        <span>
-          <Icon type="clock-circle-o" /> {displayDuration || 0}
-        </span>
-      ) : null;
-
     const device = agent && agent.device ? agent.device : undefined;
     const longitude =
       activity && activity.$location ? activity.$location.$latlon[1] : 0;
     const latitude =
       activity && activity.$location ? activity.$location.$latlon[0] : 0;
     return (
-      <Card title={this.state.siteName} buttons={renderDuration}>
-        <Row>
-          <Device vectorId={activity.$user_agent_id} device={device} />
-          <Origin origin={activity.$origin} />
-          <Location longitude={longitude} latitude={latitude} />
-          <Topics topics={activity.$topics} />
-          <div>
-            {activity.$events
-              .sort((a, b) => {
-                return b.$ts - a.$ts;
-              })
-              .map(event => {
-                return (
-                  <EventActivity
-                    key={event.$event_name + event.$ts}
-                    event={event}
-                  />
-                );
-              })}
-          </div>
-        </Row>
-        <Row className="border-top sm-footer timed-footer text-right">
-          {moment(activity.$ts).format('H:mm:ss')}
-        </Row>
-      </Card>
-    );
+      <Row>
+        <Device vectorId={activity.$user_agent_id} device={device} />
+        <Origin origin={activity.$origin} />
+        <Location longitude={longitude} latitude={latitude} />
+        <Topics topics={activity.$topics} />
+        <div>
+          {activity.$events
+            .sort((a, b) => {
+              return b.$ts - a.$ts;
+            })
+            .map(event => {
+              return (
+                <EventActivity
+                  key={event.$event_name + event.$ts}
+                  event={event}
+                />
+              );
+            })}
+        </div>
+      </Row>)
+  }
+
+  render() {
+    const { activity } = this.props;
+    if (Object.values(scenarioActivityTypes).includes(activity.$type)) {
+      return (
+        <UserScenarioActivityCard activity={activity} />
+      )
+    } else {
+      const displayDuration = this.diplayVisitDuration(activity);
+      const renderDuration =
+        needToDisplayDurationFor.indexOf(activity.$type) > -1 ? (
+          <span>
+            <Icon type="clock-circle-o" /> {displayDuration || 0}
+          </span>
+        ) : null;
+      return (
+        <Card title={this.state.siteName} buttons={renderDuration}>
+          {this.generateCardContent(activity)}
+          <Row className="border-top sm-footer timed-footer text-right">
+            {moment(activity.$ts).format('H:mm:ss')}
+          </Row>
+        </Card>
+      );
+    }
   }
 }
 

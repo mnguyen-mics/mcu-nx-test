@@ -283,6 +283,7 @@ class CatalogContent extends React.Component<
     return (
       <div style={{ marginTop: 40 }}>
         <Card title={''} buttons={this.generateCatalogSelect()}>
+          <hr />
           {this.generateBreadcrumb()}
 
           <CategoryTable

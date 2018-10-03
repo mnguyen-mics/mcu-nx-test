@@ -299,6 +299,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
               }
             />
             <Card title={'Export Execution'}>
+              <hr />
               <TableView
                 dataSource={this.state.exportExecutions.items}
                 columns={this.buildColumnDefinition().dataColumnsDefinition}

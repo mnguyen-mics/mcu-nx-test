@@ -21,12 +21,22 @@ export interface Activity {
   $user_account_id: string;
   $user_agent_id: string;
   $app_id: string;
+  $node_id?: number;
+  $node_name?: string;
+  $scenario_name?: string;
+  $scenario_id?: number;
+  $previous_node_id?: number;
+  $previous_node_name?: string;
 }
 
 export interface ActivityCardProps {
   activity: Activity;
   datamartId: string;
   identifiers: IdentifiersProps;
+}
+
+export interface UserScenarioActivityCardProps {
+  activity: Activity;
 }
 
 export interface Property {

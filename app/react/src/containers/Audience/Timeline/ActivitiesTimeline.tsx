@@ -11,12 +11,14 @@ import { Identifier } from './Monitoring';
 import messages from './messages';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { McsIcon } from '../../../components';
+
 import ActivityCard from './SingleView/ActivityCard';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { TimelinePageParams } from './TimelinePage';
 import { takeLatest } from '../../../utils/ApiHelper';
+import { McsIconType } from '../../../components/McsIcon';
 
 const takeLatestActivities = takeLatest(UserDataService.getActivities);
 
@@ -111,6 +113,48 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       : data;
   };
 
+  generateScenarioMovementActivities(activities: Activity[]) {
+    
+    const nodeEnterActivities = activities.filter(a=>a.$type==="USER_SCENARIO_NODE_ENTER" && a.$previous_node_name!=="None")
+
+    const userScenarioActivities= lodash.flatMap(nodeEnterActivities,
+      (nodeEnterActivity) => {
+        const sameTsActivity = activities.filter(a=>a.$ts===nodeEnterActivity.$ts 
+          && a.$type==="USER_SCENARIO_NODE_EXIT" 
+          && a.$node_name === nodeEnterActivity.$previous_node_name) 
+        return sameTsActivity.map((nodeExitActivity) => {
+          return {
+            scenarioActivity: {...nodeEnterActivity, $type:"USER_SCENARIO_NODE_MOVEMENT"},
+            nodeEnterActivity: nodeEnterActivity,
+            nodeExitActivity: nodeExitActivity
+          }
+        })
+      }    
+    )
+
+    const { 
+      scenarioActivities,
+      nodeEnterActivitiesToBeRemoved, 
+      nodeExitActivitiesToBeRemoved,
+    } = userScenarioActivities.reduce((acc, current) => {
+      return {
+        scenarioActivities: [ ...acc.scenarioActivities, current.scenarioActivity ],
+        nodeEnterActivitiesToBeRemoved: [ ...acc.nodeEnterActivitiesToBeRemoved, current.nodeEnterActivity ],
+        nodeExitActivitiesToBeRemoved: [ ...acc.nodeExitActivitiesToBeRemoved, current.nodeExitActivity ],
+      }
+    }, { scenarioActivities: [], nodeEnterActivitiesToBeRemoved: [], nodeExitActivitiesToBeRemoved: []});
+
+    return lodash.difference(activities.concat(scenarioActivities), nodeEnterActivitiesToBeRemoved.concat(nodeExitActivitiesToBeRemoved))
+  }
+
+  orderScenarioActivities(a: Activity, b: Activity): number {
+    if(b.$ts - a.$ts === 0){
+      if(a.$type === "USER_SCENARIO_START"|| b.$type === "USER_SCENARIO_STOP") return 1
+      else if (b.$type === "USER_SCENARIO_START" || a.$type === "USER_SCENARIO_STOP") return -1
+      else return b.$ts - a.$ts
+    } else return b.$ts - a.$ts
+  }
+
   fetchActivities = (
     datamartId: string,
     identifierType: string,
@@ -141,6 +185,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                   const newData = dataSourceHasChanged
                     ? response.data
                     : prevState.activities.items.concat(this.removeDuplicatesFromResponse(response.data, prevState.activities.items));
+                  const activitiesToDisplay = this.generateScenarioMovementActivities(newData.slice(0)).sort((a, b) => this.orderScenarioActivities(a,b))
                   const nextState = {
                     activities: {
                       ...prevState.activities,
@@ -148,7 +193,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                       hasItems:
                         response.count !== extendedResponse.count,
                       items: newData,
-                      byDay: this.groupByDate(newData, '$ts'),
+                      byDay: this.groupByDate(activitiesToDisplay, '$ts'),
                     },
                     nextDate:
                     response.count !== extendedResponse.count &&
@@ -160,7 +205,6 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                         : undefined,
                     activityCountOnOldestDate: 0,
                   };
-                
                   nextState.activityCountOnOldestDate = (nextState.activities.byDay[Object.keys(nextState.activities.byDay)[Object.keys(nextState.activities.byDay).length - 1]] || []).length
                   return nextState;
                 });
@@ -234,6 +278,45 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     }
   };
 
+  findMcsType(activity: Activity): McsIconType {
+    switch (activity.$type) {
+      case "USER_SCENARIO_STOP":
+        return "close"
+      case "USER_SCENARIO_NODE_ENTER":
+        return "refresh"
+      case "USER_SCENARIO_NODE_EXIT":
+        return "refresh"
+      case "USER_SCENARIO_NODE_MOVEMENT":
+        return "refresh"
+      default:
+        return "status"
+    }
+  }
+
+  findClassName(activity: Activity) : string {
+    if(activity.$type === 'USER_SCENARIO_STOP'){
+      return 'mcs-timeline-dot red'
+    }else {
+      return (activity.$session_status === 'SESSION_SNAPSHOT'
+              ? 'mcs-timeline-dot live'
+              : 'mcs-timeline-dot')
+    }
+  }
+  renderType(activity: Activity) {
+    switch (activity.$type) {
+      case "USER_SCENARIO_START":
+        return (
+          <Icon type="flag" className="mcs-timeline-dot live"/>
+        )
+      default:
+        const mcsType = this.findMcsType(activity)
+        return (<McsIcon
+          type={mcsType}
+          className={this.findClassName(activity)}
+        />)
+    }
+  }
+
   render() {
     const { activities } = this.state;
     const { datamartId, identifiers } = this.props;
@@ -263,17 +346,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                   return (
                     <Timeline.Item
                       key={cuid()}
-                      dot={
-                        <McsIcon
-                          type="status"
-                          className={
-                            activity.$session_status === 'SESSION_SNAPSHOT'
-                              ? 'mcs-timeline-dot live'
-                              : 'mcs-timeline-dot'
-                          }
-                        />
-                      }
-                    >
+                      dot={this.renderType(activity)}>
                       <ActivityCard
                         activity={activity}
                         datamartId={datamartId}

@@ -231,6 +231,26 @@ const messages: {
     id: 'timeline.no.cookie.please.fill.infos',
     defaultMessage: 'There is no user linked to your browser, please select a user to continue',
   },
+  userScenarioStartContent: {
+    id: 'timeline.activity.scenario.start.content',
+    defaultMessage: 'Entered {scenarioName}',
+  },
+  userScenarioStopContent: {
+    id: 'timeline.activity.scenario.stop.content',
+    defaultMessage: 'Exited {scenarioName}',
+  },
+  userScenarioNodeEnterContent: {
+    id: 'timeline.activity.scenario.node.enter.content',
+    defaultMessage: 'Entered {scenarioNodeName} node within {scenarioName}',
+  },
+  userScenarioNodeExitContent: {
+    id: 'timeline.activity.scenario.node.exit.content',
+    defaultMessage: 'Exited {scenarioNodeName} node within {scenarioName}',
+  },
+  userScenarioNodeMovementContent: {
+    id: 'timeline.activity.scenario.node.movement.content',
+    defaultMessage: 'Moved from {scenarioOldNodeName} to {scenarioNodeName} within {scenarioName}',
+  },
 });
 
 export default messages;

@@ -401,6 +401,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
 
     return (
       <Card title={title} buttons={adGroupButtons}>
+        <hr />
         <DisplayCampaignAdGroupTable
           isFetching={isFetching || isUpdatingStatuses}
           isFetchingStat={isFetchingStat}
