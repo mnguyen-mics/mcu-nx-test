@@ -5,7 +5,6 @@ import {
   injectIntl,
   InjectedIntlProps,
   FormattedMessage,
-  defineMessages,
 } from 'react-intl';
 import { Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
@@ -20,7 +19,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { Link } from 'react-router-dom';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import { ActionsColumnDefinition, ActionsRenderer, ActionDefinition } from '../../../../../components/TableView/TableView';
 
 const { Content } = Layout;
 
@@ -29,17 +28,6 @@ const initialState = {
   data: [],
   total: 0,
 };
-
-const messagesMap = defineMessages({
-  serviceUsageReport: {
-    id: 'datamart.service_usage_report',
-    defaultMessage: 'View Service Usage Report',
-  },
-  noData: {
-    id: 'datamart.no.data.service_usage_report',
-    defaultMessage: 'There is no service usage report for this datamart.',
-  },
-});
 
 interface DatamartsListPageState {
   loading: boolean;
@@ -114,12 +102,43 @@ class DatamartsListPage extends React.Component<
     );
   };
 
+  onClickSources = (datamart: DatamartResource) => {
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    history.push(
+      `/v2/o/${organisationId}/settings/datamart/my_datamart/${
+      datamart.id
+      }/sources`,
+    );
+  }
+
   render() {
     const { match: { params: { organisationId } } } = this.props;
+
+
+    const renderActionColumnDefinition: ActionsRenderer<DatamartResource> = (record: DatamartResource) => {
+      const actionsDefinitions: Array<ActionDefinition<DatamartResource>>  = [];
+      actionsDefinitions.push({ translationKey: 'EDIT', callback: this.onClickEdit})
+      if (record.id === '1048') {
+        actionsDefinitions.push({callback: this.onClickSUR, intlMessage: messages.serviceUsageReport }) 
+      }
+      if (record.type === 'CROSS_DATAMART') {
+        actionsDefinitions.push({
+          callback: this.onClickSources, intlMessage: messages.viewDatamartSources
+        })
+      }
+      return actionsDefinitions;
+    }
+
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<DatamartResource>> = [
       {
         key: 'action',
-        actions: (record: DatamartResource) =>  record.id === '1048' ? [{ translationKey: 'EDIT', callback: this.onClickEdit}, {callback: this.onClickSUR, intlMessage: messagesMap.serviceUsageReport }] : [{ translationKey: 'EDIT', callback: this.onClickEdit}]
+        actions: renderActionColumnDefinition
       },
     ];
 
@@ -143,6 +162,13 @@ class DatamartsListPage extends React.Component<
         isVisibleByDefault: true,
         isHideable: false,
       },
+      {
+        intlMessage: messages.datamartType,
+        key: 'type',
+        isVisibleByDefault: true,
+        isHideable: false,
+        render: (value: string) => value === 'DATAMART' ? <FormattedMessage {...messages.typeStandard} /> : <FormattedMessage {...messages.typeXDatamart} />,
+      }
     ];
 
     const emptyTable: {

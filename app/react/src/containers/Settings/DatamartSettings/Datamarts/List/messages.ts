@@ -29,6 +29,30 @@ const messages = defineMessages({
     id: 'datamart.empty',
     defaultMessage: 'There are no datamarts set up.',
   },
+  datamartType: {
+    id: 'datamart.type',
+    defaultMessage: 'Type'
+  },
+  typeStandard: {
+    id: 'datamart.type.standard',
+    defaultMessage: 'Standard Datamart'
+  },
+  typeXDatamart: {
+    id: 'datamart.type.xdatamart',
+    defaultMessage: 'Cross-Datamart'
+  },
+  serviceUsageReport: {
+    id: 'datamart.service_usage_report',
+    defaultMessage: 'View Service Usage Report',
+  },
+  noData: {
+    id: 'datamart.no.data.service_usage_report',
+    defaultMessage: 'There is no service usage report for this datamart.',
+  },
+  viewDatamartSources: {
+    id: 'datamart.datamartSources',
+    defaultMessage: 'View Sources',
+  },
 });
 
 export default messages;
