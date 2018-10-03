@@ -18,9 +18,25 @@ interface GetPluginOptions extends PaginatedApiParam {
 const pluginService = {
   getPlugins(
     options: GetPluginOptions = {},
+    withArchivedPluginVersion: boolean = false,
   ): Promise<DataListResponse<PluginResource>> {
     const endpoint = 'plugins';
-    return ApiService.getRequest(endpoint, options);
+    return ApiService.getRequest<DataListResponse<PluginResource>>(endpoint, options).then(plugins => {
+      if (!withArchivedPluginVersion) {
+        return Promise.all(
+          plugins.data.map(p => 
+            pluginService.getPluginVersion(p.id, p.current_version_id).then(pv => pv.data)
+          )
+        ).then(pluginVersions => {
+          const archivedPVersion = pluginVersions.filter(pv => !!pv.archived);
+          return {
+            ...plugins,
+            data: plugins.data.filter(p => !archivedPVersion.find(apv => apv.id === p.current_version_id))
+          }
+        });
+      }
+      return plugins;
+    });    
   },
   getPluginVersions(
     pluginId: string,
