@@ -15,6 +15,7 @@ export type PropertyResourceShape = StringPropertyResource
 | IntPropertyResource
 | BooleanPropertyResource
 | AssetPropertyResource
+| AssetFilePropertyResource
 | AssetPropertyCreationResource
 | DataFilePropertyResource
 | AdLayoutPropertyResource
@@ -56,6 +57,11 @@ export interface BooleanPropertyResource extends PropertyResource {
 
 export interface AssetPropertyResource extends PropertyResource {
   property_type: 'ASSET';
+  value: { value: any };
+}
+
+export interface AssetFilePropertyResource extends PropertyResource {
+  property_type: 'ASSET_FILE';
   value: { value: any };
 }
 

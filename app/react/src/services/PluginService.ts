@@ -166,8 +166,8 @@ const pluginService = {
             ...params,
           };
           newParams.value = {
-            original_file_name: res.data.original_filename,
-            file_path: res.data.file_path,
+            original_file_name: res.data.original_name,
+            file_path: res.data.path,
             asset_id: res.data.id,
             require_display: true,
             height: res.data.height,

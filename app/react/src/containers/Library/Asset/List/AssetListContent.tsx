@@ -116,7 +116,7 @@ class AssetListContent extends React.Component<
       {
         translationKey: 'PREVIEW',
         intlMessage: messages.preview,
-        key: 'file_path',
+        key: 'path',
         isHideable: false,
         className: 'mcs-table-image-col',
         render: (text: string, record: AssetFileResource) => (
@@ -124,12 +124,12 @@ class AssetListContent extends React.Component<
             <a
               target="_blank"
               rel="noreferrer noopener"
-              href={`https://assets.mediarithmics.com${text}`}
+              href={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${text}`}
             >
               <span className="thumbnail-helper" />
               <img
-                src={`https://assets.mediarithmics.com${text}`}
-                alt={record.original_filename}
+                src={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${text}`}
+                alt={record.original_name}
               />
             </a>
           </div>
@@ -138,11 +138,11 @@ class AssetListContent extends React.Component<
       {
         translationKey: 'NAME',
         intlMessage: messages.name,
-        key: 'original_filename',
+        key: 'original_name',
         isHideable: false,
         render: (text: string, record: AssetFileResource) => (
           <a
-            href={`https://assets.mediarithmics.com${record.file_path}`}
+            href={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${record.path}`}
             rel="noreferrer noopener"
             target="_blank"
           >
