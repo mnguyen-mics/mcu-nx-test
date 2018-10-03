@@ -150,7 +150,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<JoinedProp
                       return {
                         ...pResourceWoutLayout,
                         plugin_layout: resultPluginLayout,
-                        layout_icon_path: (resultAssetFile !== null) ? `${(window as any).MCS_CONSTANTS.ASSETS_URL}${resultAssetFile.file_path}` : undefined
+                        layout_icon_path: (resultAssetFile !== null) ? `${(window as any).MCS_CONSTANTS.ASSETS_URL}${resultAssetFile.path}` : undefined
                       };
                     });
                 }

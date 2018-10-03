@@ -94,7 +94,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               ).then(resultAssetFile => {
                 this.setState({
                   cardHeaderTitle: resultPluginLayout.metadata.display_name,
-                  cardHeaderThumbnail: resultAssetFile ? resultAssetFile.file_path : undefined,
+                  cardHeaderThumbnail: resultAssetFile ? resultAssetFile.path : undefined,
                 });
               }
               )

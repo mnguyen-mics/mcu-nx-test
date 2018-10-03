@@ -145,157 +145,185 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
     const { fieldValidators: { isValidInteger, isValidDouble },
       organisationId } = this.props;
 
-    switch (fieldDefinition.property_type) {
-      case 'STRING':
-        return this.renderFieldBasedOnConfig(
-          FormInput,
-          `${fieldDefinition.technical_name}.value.value`,
-          fieldDefinition,
-        );
-      case 'URL':
-        return this.renderFieldBasedOnConfig(
-          FormInput,
-          `${fieldDefinition.technical_name}.value.url`,
-          fieldDefinition,
-        );
-      case 'ASSET':
-        return this.renderFieldBasedOnConfig(
-          FormUpload,
-          `${fieldDefinition.technical_name}.value`,
-          fieldDefinition,
-          [],
-          [],
-          {
-            disabled: this.props.disabled,
-            buttonText: 'Upload File',
-            accept: '.jpg,.jpeg,.png,.gif,.svg',
-            noUploadModal: this.props.noUploadModal,
-          },
-        );
-      case 'PIXEL_TAG':
-        return this.renderFieldBasedOnConfig(
-          FormInput,
-          `${fieldDefinition.technical_name}.value.value`,
-          fieldDefinition,
-          [],
-          [],
-          { rows: 4 },
-          { textArea: true },
-        );
-      case 'STYLE_SHEET':
-        return this.renderFieldBasedOnConfig(
-          FormStyleSheet,
-          `${fieldDefinition.technical_name}.value`,
-          fieldDefinition,
-          [],
-          [],
-          {},
-          {
-            disabled: this.props.disabled,
-            pluginVersionId: this.props.pluginVersionId,
-            organisationId: organisationId,
-          },
-        );
-      case 'AD_LAYOUT':
-        return this.renderFieldBasedOnConfig(
-          FormAdLayout,
-          `${fieldDefinition.technical_name}.value`,
-          fieldDefinition,
-          [],
-          [],
-          {},
-          {
-            disabled: this.props.disabled,
-            pluginVersionId: this.props.pluginVersionId,
-            organisationId: organisationId,
-          },
-        );
-      case 'BOOLEAN':
-        return this.renderFieldBasedOnConfig(
-          FormBoolean,
-          `${fieldDefinition.technical_name}.value.value`,
-          fieldDefinition,
-        );
-      // CHANGE TO IS VALID SCALA LONG
-      case 'LONG':
-        return this.renderFieldBasedOnConfig(
-          FormInput,
-          `${fieldDefinition.technical_name}.value.value`,
-          fieldDefinition,
-          [isValidDouble],
-        );
-      // CHANGE TO IS VALID SCALA INT
-      case 'INT':
-        return this.renderFieldBasedOnConfig(
-          FormInput,
-          `${fieldDefinition.technical_name}.value.value`,
-          fieldDefinition,
-          [isValidInteger],
-        );
-      // CHANGE TO IS VALID SCALA DOUBLE
-      case 'DOUBLE':
-        return this.renderFieldBasedOnConfig(
-          FormInput,
-          `${fieldDefinition.technical_name}.value.value`,
-          fieldDefinition,
-          [isValidDouble],
-        );
-      case 'DATA_FILE':
-        return this.renderFieldBasedOnConfig(
-          FormDataFile,
-          `${fieldDefinition.technical_name}.value`,
-          fieldDefinition,
-          [],
-          [],
-          {
-            buttonText: 'Upload File',
-            accept: (fieldDefinition.value as AcceptedFilePropertyResource)
-              .acceptedFile
-              ? (fieldDefinition.value as AcceptedFilePropertyResource)
+      switch (fieldDefinition.property_type) {
+        case 'STRING':
+          return this.renderFieldBasedOnConfig(
+            FormInput,
+            `${fieldDefinition.technical_name}.value.value`,
+            fieldDefinition,
+          );
+        case 'URL':
+          return this.renderFieldBasedOnConfig(
+            FormInput,
+            `${fieldDefinition.technical_name}.value.url`,
+            fieldDefinition,
+          );
+        case 'ASSET':
+          return this.renderFieldBasedOnConfig(
+            FormUpload,
+            `${fieldDefinition.technical_name}.value`,
+            fieldDefinition,
+            [],
+            [],
+            {
+              disabled: this.props.disabled,
+              buttonText: 'Upload File',
+              accept: '.jpg,.jpeg,.png,.gif,.svg',
+              noUploadModal: this.props.noUploadModal,
+            },
+          );
+          case 'ASSET_FILE':
+          return this.renderFieldBasedOnConfig(
+            FormUpload,
+            `${fieldDefinition.technical_name}.value`,
+            fieldDefinition,
+            [],
+            [],
+            {
+              disabled: this.props.disabled,
+              buttonText: 'Upload File',
+              accept: '.jpg,.jpeg,.png,.gif,.svg',
+              noUploadModal: this.props.noUploadModal,
+            },
+          );
+          case 'ASSET_FOLDER':
+          return this.renderFieldBasedOnConfig(
+            FormUpload,
+            `${fieldDefinition.technical_name}.value`,
+            fieldDefinition,
+            [],
+            [],
+            {
+              disabled: this.props.disabled,
+              buttonText: 'Upload File',
+              accept: '.jpg,.jpeg,.png,.gif,.svg',
+              noUploadModal: this.props.noUploadModal,
+            },
+          );
+        case 'PIXEL_TAG':
+          return this.renderFieldBasedOnConfig(
+            FormInput,
+            `${fieldDefinition.technical_name}.value.value`,
+            fieldDefinition,
+            [],
+            [],
+            { rows: 4 },
+            { textArea: true },
+          );
+        case 'STYLE_SHEET':
+          return this.renderFieldBasedOnConfig(
+            FormStyleSheet,
+            `${fieldDefinition.technical_name}.value`,
+            fieldDefinition,
+            [],
+            [],
+            {},
+            {
+              disabled: this.props.disabled,
+              pluginVersionId: this.props.pluginVersionId,
+              organisationId: organisationId,
+            },
+          );
+        case 'AD_LAYOUT':
+          return this.renderFieldBasedOnConfig(
+            FormAdLayout,
+            `${fieldDefinition.technical_name}.value`,
+            fieldDefinition,
+            [],
+            [],
+            {},
+            {
+              disabled: this.props.disabled,
+              pluginVersionId: this.props.pluginVersionId,
+              organisationId: organisationId,
+            },
+          );
+        case 'BOOLEAN':
+          return this.renderFieldBasedOnConfig(
+            FormBoolean,
+            `${fieldDefinition.technical_name}.value.value`,
+            fieldDefinition,
+          );
+        // CHANGE TO IS VALID SCALA LONG
+        case 'LONG':
+          return this.renderFieldBasedOnConfig(
+            FormInput,
+            `${fieldDefinition.technical_name}.value.value`,
+            fieldDefinition,
+            [isValidDouble],
+          );
+        // CHANGE TO IS VALID SCALA INT
+        case 'INT':
+          return this.renderFieldBasedOnConfig(
+            FormInput,
+            `${fieldDefinition.technical_name}.value.value`,
+            fieldDefinition,
+            [isValidInteger],
+          );
+        // CHANGE TO IS VALID SCALA DOUBLE
+        case 'DOUBLE':
+          return this.renderFieldBasedOnConfig(
+            FormInput,
+            `${fieldDefinition.technical_name}.value.value`,
+            fieldDefinition,
+            [isValidDouble],
+          );
+        case 'DATA_FILE':
+          return this.renderFieldBasedOnConfig(
+            FormDataFile,
+            `${fieldDefinition.technical_name}.value`,
+            fieldDefinition,
+            [],
+            [],
+            {
+              buttonText: 'Upload File',
+              accept: (fieldDefinition.value as AcceptedFilePropertyResource)
                 .acceptedFile
-              : '*',
-          },
-        );
-      case 'MODEL_ID':
-        return <div>MODEL_ID</div>;
-      case 'DATAMART_ID':
-        return <div>DATAMART_ID</div>;
-      case 'RECOMMENDER':
-        return <div>RECOMMENDER_ID</div>;
-      case 'NATIVE_DATA':
-        return this.renderFieldBasedOnConfig(
-          FormInput,
-          `${fieldDefinition.technical_name}.value.value`,
-          fieldDefinition,
-          this.getErrorValidatorForNativeFieldProperty(
-            fieldDefinition.value.type,
-          ),
-          this.getWarningValidatorForNativeFieldProperty(
-            fieldDefinition.value.type,
-          ),
-        );
-      case 'NATIVE_TITLE':
-        return this.renderFieldBasedOnConfig(
-          FormInput,
-          `${fieldDefinition.technical_name}.value.value`,
-          fieldDefinition,
-        );
-      case 'NATIVE_IMAGE':
-        return this.renderFieldBasedOnConfig(
-          FormUpload,
-          `${fieldDefinition.technical_name}.value`,
-          fieldDefinition,
-          [],
-          [],
-          {
-            disabled: this.props.disabled,
-            buttonText: 'Upload File',
-            accept: '.jpg,.jpeg,.png,.gif,.svg',
-            noUploadModal: this.props.noUploadModal,
-          },
-        );
-      default:
-        return <div>Please contact your support</div>;
+                ? (fieldDefinition.value as AcceptedFilePropertyResource)
+                    .acceptedFile
+                : '*',
+            },
+          );
+        case 'MODEL_ID':
+          return <div>MODEL_ID</div>;
+        case 'DATAMART_ID':
+          return <div>DATAMART_ID</div>;
+        case 'RECOMMENDER':
+          return <div>RECOMMENDER_ID</div>;
+        case 'NATIVE_DATA':
+          return this.renderFieldBasedOnConfig(
+            FormInput,
+            `${fieldDefinition.technical_name}.value.value`,
+            fieldDefinition,
+            this.getErrorValidatorForNativeFieldProperty(
+              fieldDefinition.value.type,
+            ),
+            this.getWarningValidatorForNativeFieldProperty(
+              fieldDefinition.value.type,
+            ),
+          );
+        case 'NATIVE_TITLE':
+          return this.renderFieldBasedOnConfig(
+            FormInput,
+            `${fieldDefinition.technical_name}.value.value`,
+            fieldDefinition,
+          );
+        case 'NATIVE_IMAGE':
+          return this.renderFieldBasedOnConfig(
+            FormUpload,
+            `${fieldDefinition.technical_name}.value`,
+            fieldDefinition,
+            [],
+            [],
+            {
+              disabled: this.props.disabled,
+              buttonText: 'Upload File',
+              accept: '.jpg,.jpeg,.png,.gif,.svg',
+              noUploadModal: this.props.noUploadModal,
+            },
+          );
+        default:
+          return <div>Please contact your support</div>;
     }
   }
 
