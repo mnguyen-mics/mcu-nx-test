@@ -11,7 +11,6 @@ import {
   CONNECTED_USER,
   FETCH_COOKIES,
   ANGULAR_LOADED_SUCCESS,
-  STORE_ORG_FEATURES,
 } from '../action-types';
 
 
@@ -21,7 +20,6 @@ function* watchInitializationSuccess() {
       take(LOAD_TRANSLATIONS.SUCCESS),
       take([FETCH_COOKIES.SUCCESS, FETCH_COOKIES.FAILURE]),
       take([CONNECTED_USER.SUCCESS, LOG_IN.FAILURE, CONNECTED_USER.FAILURE]),
-      take(STORE_ORG_FEATURES),
       take(ANGULAR_LOADED_SUCCESS),
     ]);
 
