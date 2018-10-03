@@ -124,11 +124,11 @@ class AssetListContent extends React.Component<
             <a
               target="_blank"
               rel="noreferrer noopener"
-              href={`https://assets.mediarithmics.com${text}`}
+              href={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${text}`}
             >
               <span className="thumbnail-helper" />
               <img
-                src={`https://assets.mediarithmics.com${text}`}
+                src={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${text}`}
                 alt={record.original_name}
               />
             </a>
@@ -142,7 +142,7 @@ class AssetListContent extends React.Component<
         isHideable: false,
         render: (text: string, record: AssetFileResource) => (
           <a
-            href={`https://assets.mediarithmics.com${record.path}`}
+            href={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${record.path}`}
             rel="noreferrer noopener"
             target="_blank"
           >
