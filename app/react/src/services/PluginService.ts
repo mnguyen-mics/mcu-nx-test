@@ -1,4 +1,4 @@
-import { Adlayout, StylesheetVersionResource } from './../models/Plugins';
+import { Adlayout, StylesheetVersionResource, PluginType } from './../models/Plugins';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PluginResource, PluginVersionResource } from '../models/Plugins';
@@ -9,7 +9,7 @@ import { PluginLayout } from '../models/plugin/PluginLayout';
 import log from '../utils/Logger';
 
 interface GetPluginOptions extends PaginatedApiParam {
-  plugin_type?: string;
+  plugin_type?: PluginType;
   artifact_id?: string;
   group_id?: string;
   organisation_id?: number;
