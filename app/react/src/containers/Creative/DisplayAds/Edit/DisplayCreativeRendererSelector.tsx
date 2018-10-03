@@ -54,28 +54,26 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
       externalAdRendererId,
       imageSkinsAdRendererId,
     ];
-    const adRendererSubmenu: Submenu[] = [];
-    PluginService.getPlugins({
+    
+    return PluginService.getPlugins({
       max_results: 1000,
       plugin_type: 'DISPLAY_AD_RENDERER',
-    })
-      .then(resp => resp.data)
+    }).then(resp => resp.data)
       .then(adRendererList => {
-        adRendererList
+        return adRendererList
           .filter(ad => !previousAdRendererIds.includes(ad.id))
-          .forEach(adRenderer => {
+          .map(adRenderer => {
             const separators = ['_', '-'];
             const formattedName = adRenderer.artifact_id
               .split(new RegExp(separators.join('|'), 'g'))
               .map(word => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' ');
-            return adRendererSubmenu.push({
+            return {
               title: formattedName,
               select: () => onSelect(adRenderer.id),
-            });
+            };
           });
       });
-    return adRendererSubmenu;
   };
 
   render() {
@@ -144,7 +142,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
                     subtitles={[
                       formatMessage(messages.allRendererListSubtitle),
                     ]}
-                    submenu={this.renderAdRendererSubmenu()}
+                    submenu={this.renderAdRendererSubmenu}
                   />
                 </Row>
               </Row>
