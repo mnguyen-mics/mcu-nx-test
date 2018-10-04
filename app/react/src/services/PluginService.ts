@@ -103,8 +103,13 @@ const pluginService = {
     objectId: string,
     endpoint: string,
   ): Promise<DataResponse<PropertyResourceShape> | void> {
-    if (params.property_type === 'ASSET') {
-      const uploadEndpoint = `asset_files?organisation_id=${organisationId}`;
+    if (params.property_type === 'ASSET' || params.property_type === 'ASSET_FILE' || params.property_type === 'ASSET_FOLDER') {
+      let uploadEndpoint = `asset_files?organisation_id=${organisationId}`;
+
+      if (params.property_type === 'ASSET_FOLDER') {
+        uploadEndpoint = `assets?organisation_id=${organisationId}`;
+      }
+
       if (params.value && params.value.length === 0) {
         return Promise.resolve();
       }
