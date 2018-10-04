@@ -107,7 +107,7 @@ const pluginService = {
       let uploadEndpoint = `asset_files?organisation_id=${organisationId}`;
 
       if (params.property_type === 'ASSET_FOLDER') {
-        uploadEndpoint = `assets?organisation_id=${organisationId}`;
+        uploadEndpoint = `assets?organisation_id=${organisationId}&asset_type=FOLDER`;
       }
 
       if (params.value && params.value.length === 0) {
