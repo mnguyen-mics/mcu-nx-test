@@ -172,7 +172,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               noUploadModal: this.props.noUploadModal,
             },
           );
-          case 'ASSET_FILE':
+        case 'ASSET_FILE':
           return this.renderFieldBasedOnConfig(
             FormUpload,
             `${fieldDefinition.technical_name}.value`,
@@ -186,7 +186,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               noUploadModal: this.props.noUploadModal,
             },
           );
-          case 'ASSET_FOLDER':
+        case 'ASSET_FOLDER':
           return this.renderFieldBasedOnConfig(
             FormUpload,
             `${fieldDefinition.technical_name}.value`,
@@ -196,7 +196,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             {
               disabled: this.props.disabled,
               buttonText: 'Upload File',
-              accept: '.jpg,.jpeg,.png,.gif,.svg',
+              accept: '.zip',
               noUploadModal: this.props.noUploadModal,
             },
           );
