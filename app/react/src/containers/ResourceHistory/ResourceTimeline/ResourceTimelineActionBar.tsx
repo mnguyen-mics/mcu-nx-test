@@ -9,7 +9,7 @@ export interface ResourceTimelineActionBarProps {
   formatProperty: FormatProperty;
 }
 
-export default class ResourceTimelineActionBar extends React.Component<ResourceTimelineActionBarProps, any> {
+export default class ResourceTimelineActionBar extends React.Component<ResourceTimelineActionBarProps> {
   render() {
     const {
       handleClose,

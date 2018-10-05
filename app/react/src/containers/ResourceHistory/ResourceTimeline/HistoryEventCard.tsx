@@ -54,19 +54,17 @@ class HistoryEventCard extends React.Component<Props, State> {
     return events.map(event => {
       return isHistoryUpdateEvent(event) &&
         <div className="mcs-fields-list-item">
-          <FormattedMessage
-            {...isCreationCard
-              ? {...messages.initialFieldValue, values: {
+          { isCreationCard
+            ? <FormattedMessage {...{...messages.initialFieldValue, values: {
+              field: this.renderField(event.field_changed),
+              newValue: this.renderValue(event.field_changed, event.new_value),
+            }}}/>
+            : <FormattedMessage {...{...messages.fieldInMultiEditList, values: {
                 field: this.renderField(event.field_changed),
+                oldValue: this.renderValue(event.field_changed, event.old_value),
                 newValue: this.renderValue(event.field_changed, event.new_value),
-              }}
-              : {...messages.fieldInMultiEditList, values: {
-                  field: this.renderField(event.field_changed),
-                  oldValue: this.renderValue(event.field_changed, event.old_value),
-                  newValue: this.renderValue(event.field_changed, event.new_value),
-                }}
-            }
-          />
+              }}}/>
+          }
         </div>
     });
   }
@@ -91,17 +89,15 @@ class HistoryEventCard extends React.Component<Props, State> {
           {events.length > 1
             ? <Row>
                 <div style={{float: 'left'}} className="mcs-fields-list-item">
-                  <FormattedMessage
-                    {...this.findCreateEventIndex(events) > -1
-                      ? {...messages.resourceCreated, values: {
-                          userName: (events[0] as HistoryEventActionShape).user_identification.user_name,
-                          resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
-                        }}
-                      : {...messages.severalFieldsEdited, values: {
-                          userName: events[0].user_identification.user_name
-                        }}
+                    { this.findCreateEventIndex(events) > -1
+                      ? <FormattedMessage {...{...messages.resourceCreated, values: {
+                        userName: (events[0] as HistoryEventActionShape).user_identification.user_name,
+                        resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
+                      }}} />
+                      : <FormattedMessage {...{...messages.severalFieldsEdited, values: {
+                        userName: events[0].user_identification.user_name
+                      }}} />
                     }
-                  />
                 </div>
                 <div className="section-cta">
                   <ButtonStyleless

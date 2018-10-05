@@ -19,17 +19,10 @@ export interface ResourceTimelinePageProps {
 type Props =
   ResourceTimelinePageProps &
   InjectedIntlProps;
-
-interface State {
-  isLoading: boolean;
-}
   
-class ResourceTimelinePage extends React.Component<Props, State> {
+class ResourceTimelinePage extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      isLoading: true,
-    }
   }
     
   render() {

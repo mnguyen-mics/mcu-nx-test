@@ -158,8 +158,8 @@ class ResourceTimeline extends React.Component<Props, State> {
             this.setState(prevState => {
               const nextState = {
                 events: {
-                  hasItems: false,
                   isLoading: false,
+                  hasItems: false,
                   items: [],
                   byDay: {},
                   byTime: {},
@@ -265,9 +265,6 @@ class ResourceTimeline extends React.Component<Props, State> {
                         <McsIcon
                           type="status"
                           className={
-                            // eventsOnTime[time][0].type === 'ALERT_EVENT'
-                            //   ? 'mcs-timeline-dot alert' // todo
-                            //   : 'mcs-timeline-dot'
                             'mcs-timeline-dot'
                           }
                         />
