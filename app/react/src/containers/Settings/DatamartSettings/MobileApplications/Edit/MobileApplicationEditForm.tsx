@@ -9,7 +9,6 @@ import {
   FieldArray,
 } from 'redux-form';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
@@ -30,7 +29,6 @@ import { McsFormSection } from '../../../../../utils/FormHelper';
 import VisitAnalyzerSection, {
   VisitAnalyzerSectionProps,
 } from '../../Common/VisitAnalyzerFormSection';
-import * as SessionSelectors from '../../../../../state/Session/selectors';
 import EventRulesSection, {
   EventRulesSectionProps,
 } from '../../Common/EventRulesSection';
@@ -48,10 +46,7 @@ export interface MobileApplicationEditFormProps
   extends Omit<ConfigProps<MobileApplicationFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-}
-
-interface MapStateToProps {
-  hasDatamarts: (organisationId: string) => boolean;
+  datamartId: string;
 }
 
 type Props = InjectedFormProps<
@@ -59,7 +54,6 @@ type Props = InjectedFormProps<
   MobileApplicationEditFormProps
 > &
   MobileApplicationEditFormProps &
-  MapStateToProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -100,6 +94,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
         <EventRulesFieldArray
           name="eventRulesFields"
           component={EventRulesSection}
+          datamartId={this.props.datamartId}
           {...genericFieldArrayProps}
         />
       ),
@@ -164,5 +159,4 @@ export default compose<Props, MobileApplicationEditFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
 )(MobileApplicationEditForm);

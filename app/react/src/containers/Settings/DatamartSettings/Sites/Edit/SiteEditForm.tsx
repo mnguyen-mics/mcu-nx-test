@@ -9,7 +9,6 @@ import {
   FieldArray,
 } from 'redux-form';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
@@ -35,8 +34,6 @@ import EventRulesSection, {
   EventRulesSectionProps,
 } from '../../Common/EventRulesSection';
 
-import * as SessionSelectors from '../../../../../state/Session/selectors';
-
 import DomainsField, { DomainFieldProps } from './Sections/DomainsField';
 
 const FormDomainFields = FieldArray as new () => GenericFieldArray<
@@ -61,6 +58,7 @@ export interface SiteEditFormProps
   extends Omit<ConfigProps<SiteFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
+  datamartId: string;
 }
 
 interface MapStateToProps {
@@ -117,6 +115,7 @@ class SiteEditForm extends React.Component<Props> {
         <EventRulesFieldArray
           name="eventRulesFields"
           component={EventRulesSection}
+          datamartId={this.props.datamartId}
           {...genericFieldArrayProps}
         />
       ),
@@ -181,5 +180,4 @@ export default compose<Props, SiteEditFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
 )(SiteEditForm);

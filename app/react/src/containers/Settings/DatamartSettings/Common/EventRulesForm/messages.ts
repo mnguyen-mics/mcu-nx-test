@@ -57,6 +57,26 @@ export default defineMessages({
         id: 'settings.form.eventRules.userIdentifier.destination.tooltip',
         defaultMessage : 'The destination where to copy the property'
     },
+    userIdInsertRuleHashFunctionSelectLabel: {
+        id: 'settings.form.eventRules.userIdentifier.hashfunction.select.label',
+        defaultMessage : 'Hash function'
+    },
+    userIdInsertRuleHashFunctionSelectTooltop: {
+        id: 'settings.form.eventRules.userIdentifier.hashfunction.select.tooltip',
+        defaultMessage : 'The hash function to use on the property value'
+    },
+    userIdInsertRuleCompartmentSelectLabel: {
+        id: 'settings.form.eventRules.userIdentifier.compartment.select.label',
+        defaultMessage : 'Compartment'
+    },
+    userIdInsertRuleCompartmentSelectTooltip: {
+        id: 'settings.form.eventRules.userIdentifier.compartment.select.tooltip',
+        defaultMessage : 'The user account compartment to use'
+    },
+    userIdInsertRuleCompartmentSelectDefault: {
+        id: 'settings.form.eventRules.userIdentifier.compartment.select.default',
+        defaultMessage : 'Default compartment'
+    },
     contentUriMatchPatternLabel: {
         id: 'settings.form.eventRules.uriMatch.destination.label',
         defaultMessage : 'URL Pattern'

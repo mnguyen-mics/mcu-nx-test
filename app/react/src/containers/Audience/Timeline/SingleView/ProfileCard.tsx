@@ -92,7 +92,7 @@ class ProfileCard extends React.Component<Props, State> {
     identifierId: string,
   ) => {
 
-    DatamartService.getUserCompartments(datamartId).then(res => {
+    DatamartService.getUserAccountCompartments(datamartId).then(res => {
       return Promise.all(
         res.data.map(userCompartiment => {
           return UserDataService.getProfile(
@@ -101,7 +101,7 @@ class ProfileCard extends React.Component<Props, State> {
             identifierType,
             identifierId,
             {
-              compartment_id: userCompartiment.id,
+              compartment_id: userCompartiment.compartment_id,
             },
           )
             .then(r => ({ profile: r ? r.data : {}, compartment: userCompartiment }))

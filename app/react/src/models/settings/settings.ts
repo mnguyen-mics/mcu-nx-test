@@ -64,6 +64,7 @@ export interface EventRuleUserIdentifierInsertion extends EventRuleResource {
     salt?: string | null;
     to_lower_case: boolean;
     validation_regexp?: string | null;
+    compartment_id?: string | null;
 }
 
 export interface EventRulePropertyToOriginCopy extends EventRuleResource {

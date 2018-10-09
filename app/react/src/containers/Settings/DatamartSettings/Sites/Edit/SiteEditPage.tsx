@@ -127,19 +127,16 @@ class SiteEditPage extends React.Component<Props, State> {
     message.error(intl.formatMessage(messages.errorFormMessage));
   };
 
-  save = (siteFormData: SiteFormData) => {
+  getDatamartId = () => {
     const {
       match: {
-        params: { organisationId, siteId },
+        params: { siteId },
       },
-      notifyError,
-      history,
-      intl,
       datamart,
     } = this.props;
 
     const { siteData, selectedDatamartId } = this.state;
-
+    
     let datamartId: string;
     if (siteId) {
       datamartId = siteData.site.datamart_id
@@ -148,6 +145,20 @@ class SiteEditPage extends React.Component<Props, State> {
     } else {
       datamartId = selectedDatamartId;
     }
+    return datamartId;
+  }
+
+  save = (siteFormData: SiteFormData) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      notifyError,
+      history,
+      intl,
+    } = this.props;
+    
+    const datamartId = this.getDatamartId();
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -187,12 +198,20 @@ class SiteEditPage extends React.Component<Props, State> {
           });
         } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);
+          const eventRuleBody = { ...erf.model, datamart_id: datamartId, site_id: site.id };
+          if (
+            eventRuleBody.type === 'USER_IDENTIFIER_INSERTION' && 
+            eventRuleBody.identifier_creation === 'USER_ACCOUNT' && 
+            !eventRuleBody.compartment_id
+          ) {
+            eventRuleBody.compartment_id = null;
+          }
           return ChannelService.updateEventRules(
             datamartId,
             site.id,
             organisationId,
             erf.model.id,
-            { ...erf.model, datamart_id: datamartId, site_id: site.id },
+            eventRuleBody,
           );
         }
         return Promise.resolve();
@@ -333,7 +352,7 @@ class SiteEditPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const { loading, siteData, selectedDatamartId } = this.state;
+    const { loading, siteData } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -362,13 +381,16 @@ class SiteEditPage extends React.Component<Props, State> {
       onClose: this.onClose,
     };
 
-    return selectedDatamartId ? (
+    const datamartId = this.getDatamartId();
+
+    return datamartId ? (
       <SiteEditForm
         initialValues={siteData}
         onSubmit={this.save}
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
+        datamartId={datamartId}
       />
     ) : (
       <Layout className="edit-layout">

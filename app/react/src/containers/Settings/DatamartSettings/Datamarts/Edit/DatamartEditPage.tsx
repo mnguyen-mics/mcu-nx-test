@@ -42,10 +42,10 @@ class DatamartEditPage extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
+  getDatamartId = () => {
     const {
       match: {
-        params: { datamartId: datamartIdFromURLParam, organisationId },
+        params: { datamartId: datamartIdFromURLParam },
       },
       location,
     } = this.props;
@@ -55,6 +55,18 @@ class DatamartEditPage extends React.Component<Props, State> {
 
     const datamartId =
       datamartIdFromURLParam || datamartIdFromLocState;
+
+    return datamartId;
+  }
+
+  componentDidMount() {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const datamartId = this.getDatamartId();
 
     if (datamartId) {
       const getSites = DatamartService.getDatamart(
@@ -114,7 +126,15 @@ class DatamartEditPage extends React.Component<Props, State> {
           return DatamartService.createEventRules(dmrt.id, { organisation_id: organisationId, properties: {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id} })
         } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);
-          return DatamartService.updateEventRules(dmrt.id, organisationId, erf.model.id, {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id})
+          const eventRuleBody = {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id};
+          if (
+            eventRuleBody.type === 'USER_IDENTIFIER_INSERTION' && 
+            eventRuleBody.identifier_creation === 'USER_ACCOUNT' && 
+            !eventRuleBody.compartment_id
+          ) {
+            eventRuleBody.compartment_id = null;
+          }
+          return DatamartService.updateEventRules(dmrt.id, organisationId, erf.model.id, eventRuleBody)
         }
         return Promise.resolve();
       });
@@ -201,6 +221,8 @@ class DatamartEditPage extends React.Component<Props, State> {
       },
     ];
 
+    const datamartId = this.getDatamartId();
+
     return (
       <DatamartEditForm
         initialValues={datamartFormData}
@@ -208,6 +230,7 @@ class DatamartEditPage extends React.Component<Props, State> {
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
+        datamartId={datamartId}
       />
     );
   }
