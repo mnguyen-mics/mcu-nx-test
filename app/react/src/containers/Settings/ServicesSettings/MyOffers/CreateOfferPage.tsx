@@ -6,8 +6,9 @@ import { compose } from 'recompose';
 import OfferTypeSelector from './OfferTypeSelector';
 import CreateOfferForm from './CreateOfferForm';
 import messages from '../../messages';
-import { OfferFormData } from '../domain';
-import CatalogService from '../../../../services/CatalogService';
+import { OfferFormData, INITIAL_SERVICE_OFFER_FORM_DATA } from '../domain';
+import ServiceOfferPageService from '../ServiceOfferPageService';
+import { Loading } from '../../../../components';
 
 export enum OfferType {
     Automatic,
@@ -23,7 +24,7 @@ interface State {
 interface CreateOfferPageProps {
 }
 
-type Props = RouteComponentProps<{ organisationId: string; }> &
+type Props = RouteComponentProps<{ organisationId: string; offerId?: string }> &
     CreateOfferPageProps &
     InjectedNotificationProps &
     InjectedIntlProps;
@@ -34,15 +35,34 @@ class CreateOfferPage extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            loading: false,
+            loading: true,
             offerType: undefined,
-            offerFormData: {
-                name: '',
-                custom: false,
-                credited_account_id: this.props.match.params.organisationId,
-            },
+            offerFormData: INITIAL_SERVICE_OFFER_FORM_DATA,
         };
     }
+
+    componentDidMount() {
+        const { match: { params: { organisationId, offerId } } } = this.props;
+
+        if (offerId) {
+            ServiceOfferPageService.loadOffer(organisationId, offerId)
+                .then(formData => {
+                    this.setState({
+                        loading: false,
+                        offerType: (formData.offer.automatic_on === null) ? OfferType.Manual : OfferType.Automatic,
+                        offerFormData: formData,
+                    });
+                })
+                .catch(err => {
+                    this.setState({ loading: false });
+                    this.props.notifyError(err);
+                })
+        } else {
+            this.setState({ loading: false });
+        }
+    }
+
+
 
     chooseOfferType = (offerType: OfferType) => {
         this.setState({ offerType: offerType });
@@ -53,46 +73,59 @@ class CreateOfferPage extends React.Component<Props, State> {
             history,
             location: { state },
             match: {
-                params: { organisationId },
+                params: { organisationId, offerId },
             },
         } = this.props;
+
+        const defaultRedirectUrl = offerId ?
+            `/v2/o/${organisationId}/settings/services/my_offers/${offerId}/service_item_conditions` :
+            `/v2/o/${organisationId}/settings/services/my_offers`;
 
         const url =
             state && state.from ?
                 state.from :
-                `/v2/o/${organisationId}/settings/services/my_offers`;
+                defaultRedirectUrl;
 
         history.push(url);
     }
 
     save = (offerFormData: OfferFormData) => {
+
         const {
             match: {
-                params: { organisationId }
+                params: {
+                    organisationId,
+                }
             },
             notifyError,
             history,
         } = this.props;
-        
+
+        const {offerFormData: initialOfferFormData} = this.state;
+
         this.setState({
             loading: true,
         });
 
-        return CatalogService.createServiceOffer(
+        ServiceOfferPageService.createOrUpdateServiceOffer(
             organisationId,
             offerFormData,
+            initialOfferFormData,
+        ).then(
+            returnedOfferId => {
+                const displayOfferUrl = `/v2/o/${organisationId}/settings/services/my_offers/${returnedOfferId}/service_item_conditions`;
+                this.setState({
+                    loading: false,
+                });
+                history.push(displayOfferUrl);
+            }
         )
-        .then(offer => {
-            const offerId = offer.data.id;
-            const displayOfferUrl = `/v2/o/${organisationId}/settings/services/my_offers/${offerId}/service_item_conditions`;
-            history.push(displayOfferUrl);
-        })
-        .catch(err => {
-            notifyError(err);
-            this.setState({
-                loading: false,
+            .catch(err => {
+                notifyError(err);
+                this.setState({
+                    loading: false,
+                });
             });
-        });
     };
 
     render() {
@@ -103,7 +136,12 @@ class CreateOfferPage extends React.Component<Props, State> {
         const {
             offerType,
             offerFormData,
+            loading,
         } = this.state;
+
+        if (loading) {
+            return <Loading className="loading-full-screen"/>;
+        }
 
         const breadcrumbPaths = [
             {
@@ -123,6 +161,7 @@ class CreateOfferPage extends React.Component<Props, State> {
             />
         }
         else {
+            
             return <CreateOfferForm
                 initialValues={offerFormData}
                 offerType={offerType}

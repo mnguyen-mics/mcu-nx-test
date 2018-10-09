@@ -4,14 +4,14 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Input } from 'antd';
 import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
 import {
-  ServiceItemConditionsShape,
+  ServiceItemConditionShape,
   isLinearServiceItemConditionsResource,
   ServiceItemShape,
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
 
 interface ServiceItemProps {
   serviceItem?: ServiceItemShape;
-  serviceItemCondition?: ServiceItemConditionsShape;
+  serviceItemCondition?: ServiceItemConditionShape;
 }
 
 interface State {

@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import { OfferType } from './CreateOfferPage';
 import { Layout } from 'antd';
 import { FormLayoutActionbar, ScrollspySider } from '../../../../components/Layout';
-import { Form, InjectedFormProps, reduxForm, ConfigProps } from 'redux-form';
+import { Form, InjectedFormProps, reduxForm, ConfigProps, FieldArray, GenericFieldArray, Field } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayoutActionbar';
 import messages from '../../messages';
@@ -16,6 +16,7 @@ import { Omit } from '../../../../utils/Types';
 import { OfferFormData } from '../domain';
 import { FormSection, FormInputField, FormInput, FormSelectField, DefaultSelect } from '../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../components/Form/withValidators';
+import ServiceItemsFormSection, { ServiceItemsFormSectionProps } from './sections/ServiceItemsFormSection';
 
 const Content = Layout.Content as React.ComponentClass<
     BasicProps & { id: string }
@@ -31,10 +32,13 @@ export interface OfferFormProps extends Omit<ConfigProps<OfferFormData>, 'form'>
     offerType: OfferType;
 }
 
-
+const ServiceItemsFieldArray = FieldArray as new () => GenericFieldArray<
+    Field,
+    ServiceItemsFormSectionProps
+    >;
 
 type Props = InjectedFormProps<OfferFormData, OfferFormProps> &
-    RouteComponentProps<{ organisationId: string }> &
+    RouteComponentProps<{ organisationId: string; offerId?: string }> &
     OfferFormProps &
     ValidatorProps &
     InjectedIntlProps;
@@ -57,8 +61,10 @@ class CreateOfferForm extends React.Component<Props, State> {
             breadCrumbPaths,
             offerType,
             close,
+            change,
             fieldValidators: { isRequired },
             intl: { formatMessage },
+            match: { params: { offerId } }
         } = this.props;
 
         const actionBarProps: FormLayoutActionbarProps = {
@@ -66,6 +72,11 @@ class CreateOfferForm extends React.Component<Props, State> {
             paths: breadCrumbPaths,
             message: messages.saveOffer,
             onClose: close,
+        };
+
+        const genericFieldArrayProps = {
+            formChange: change,
+            rerenderOnEveryChange: true,
         };
 
         const sections: McsFormSection[] = [];
@@ -81,7 +92,7 @@ class CreateOfferForm extends React.Component<Props, State> {
 
                     <div>
                         <FormInputField
-                            name="name"
+                            name="offer.name"
                             component={FormInput}
                             validate={[isRequired]}
                             formItemProps={{
@@ -89,6 +100,7 @@ class CreateOfferForm extends React.Component<Props, State> {
                                 required: true,
                             }}
                             inputProps={{
+                                disabled: (offerId !== undefined),
                                 placeholder: formatMessage(
                                     messages.sectionNewOfferNamePlaceholder,
                                 ),
@@ -131,7 +143,7 @@ class CreateOfferForm extends React.Component<Props, State> {
 
                         <div>
                             <FormSelectField
-                                name="automatic_on"
+                                name="offer.automatic_on"
                                 component={DefaultSelect}
                                 validate={[isRequired]}
                                 formItemProps={{
@@ -139,10 +151,23 @@ class CreateOfferForm extends React.Component<Props, State> {
                                         messages.sectionNewOfferAutomaticOnLabel,
                                     ),
                                 }}
+                                disabled={(offerId !== undefined)}
                                 options={optionsAutomaticOn}
                             />
                         </div>
                     </div>
+                ),
+            });
+        } else {
+            sections.push({
+                id: 'serviceItems',
+                title: messages.serviceItemsSection,
+                component: (
+                    <ServiceItemsFieldArray
+                        name="serviceConditionFields"
+                        component={ServiceItemsFormSection}
+                        {...genericFieldArrayProps}
+                    />
                 ),
             });
         }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { List, Layout, Row, Col, Breadcrumb } from 'antd';
+import { List, Layout, Row, Col, Breadcrumb, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 import ButtonStyleless from '../../../../components/ButtonStyleless';
@@ -17,7 +17,7 @@ import InfiniteList, {
 import {
   ServiceItemShape,
   ServiceItemOfferResource,
-  ServiceItemConditionsShape,
+  ServiceItemConditionShape,
   isLinearServiceItemConditionsResource,
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { McsIcon } from '../../../../components';
@@ -28,6 +28,7 @@ import injectThemeColors, {
 } from '../../../Helpers/injectThemeColors';
 import ServiceItem from './ServiceItem';
 import { offerType } from '../domain';
+import { ButtonProps } from 'antd/lib/button';
 
 const { Content } = Layout;
 
@@ -39,7 +40,7 @@ interface ServiceItemListPageProps {
 
 interface State {
   serviceItem?: ServiceItemShape;
-  serviceItemCondition?: ServiceItemConditionsShape;
+  serviceItemCondition?: ServiceItemConditionShape;
   offer?: ServiceItemOfferResource;
   price: string;
 }
@@ -147,7 +148,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
         offerId,
         item.id,
       ) :
-      CatalogService.getServiceOffersServiceItemsConditions(
+      CatalogService.getOfferConditions(
         offerId
       );
 
@@ -190,7 +191,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
     const {
       match: {
-        params: { organisationId },
+        params: { organisationId, offerId },
       },
       colors,
       intl,
@@ -244,6 +245,23 @@ class ServiceItemListPage extends React.Component<Props, State> {
       return [{ usage_price: 0, cost: 0 }];
     };
 
+    const submitButtonProps: ButtonProps = {
+      htmlType: 'submit',
+      onClick: () => { return null; },
+      type: 'primary',
+    };
+
+    const addedButton = (offerOwnership === "my_offer") ? 
+    (
+      <Link to={`/v2/o/${organisationId}/settings/services/my_offers/${offerId}/edit`}>
+        <Button {...submitButtonProps} className="mcs-primary" style={{ float: "right" }}>
+          <McsIcon type="plus" />
+          <FormattedMessage {...messages.myServiceOffersEdit} />
+        </Button>
+      </Link>
+    ) :
+    undefined;
+
     return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
@@ -275,6 +293,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
                     </span>
                   )
                 }
+                {addedButton}
               </Breadcrumb.Item>
             </Breadcrumb>
           </Row>

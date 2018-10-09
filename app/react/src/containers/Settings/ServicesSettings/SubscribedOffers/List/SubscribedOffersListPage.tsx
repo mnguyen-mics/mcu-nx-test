@@ -93,6 +93,10 @@ export const messages = defineMessages({
     id: 'settings.subscribedOffers.service.item.price.chart.usage_cost',
     defaultMessage: 'Usage Cost',
   },
+  myServiceOffersEdit: {
+    id: 'settings.myOffers.edit',
+    defaultMessage: 'Edit offer',
+  }
 });
 
 interface RouterProps {

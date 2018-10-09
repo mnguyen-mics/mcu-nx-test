@@ -9,8 +9,11 @@ import {
   ServiceItemOfferResource,
   ServiceCategoryPublicResource,
   ServiceItemShape,
-  ServiceItemConditionsShape,
+  ServiceItemConditionShape,
   AudienceSegmentServiceItemPublicResource,
+  LinearServiceItemConditionResource,
+  PluginServiceItemConditionResource,
+  ProvidedServiceItemConditionResource,
 } from '../models/servicemanagement/PublicServiceItemResource';
 import { Locale } from '../models/Locale';
 
@@ -129,7 +132,7 @@ const CatalogService = {
     offerId: string,
     serviceItemId: string,
     options: GetServiceItemOptions = {},
-  ): Promise<DataListResponse<ServiceItemConditionsShape>> {
+  ): Promise<DataListResponse<ServiceItemConditionShape>> {
     const endpoint = `subscribed_services/${customerOrgId}/offers/${offerId}/service_items/${serviceItemId}/service_item_conditions`;
     return ApiService.getRequest(endpoint, options);
   },
@@ -196,10 +199,10 @@ const CatalogService = {
     return ApiService.getRequest(endpoint);
   },
 
-  getServiceOffersServiceItemsConditions(
+  getOfferConditions(
     offerId: string,
     options: GetServiceItemOptions = {},
-  ): Promise<DataListResponse<ServiceItemConditionsShape>> {
+  ): Promise<DataListResponse<ServiceItemConditionShape>> {
     const endpoint = `service_offers/${offerId}/service_item_conditions`;
     return ApiService.getRequest(endpoint, options);
   },
@@ -208,9 +211,40 @@ const CatalogService = {
     organisationId: string,
     offer: Partial<ServiceItemOfferResource>
   ): Promise<DataResponse<ServiceItemOfferResource>> {
-    const endpoint = `service_offers/?organisation_id=${organisationId}`;
+    const endpoint = `service_offers?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, { ...offer });
   },
+
+  findServiceItem(
+    serviceItemId: string
+  ): Promise<DataResponse<ServiceItemShape>> {
+    const endpoint = `service_items/${serviceItemId}`;
+    return ApiService.getRequest(endpoint);
+  },
+
+  createServiceItemCondition(
+    serviceItemId: string,
+    serviceItemCondition: Partial<
+    LinearServiceItemConditionResource |
+    PluginServiceItemConditionResource |
+    ProvidedServiceItemConditionResource
+    >
+  ): Promise<DataResponse<
+  LinearServiceItemConditionResource |
+  PluginServiceItemConditionResource |
+  ProvidedServiceItemConditionResource
+  >> {
+    const endpoint = `service_items/${serviceItemId}/service_item_conditions`;
+    return ApiService.postRequest(endpoint, serviceItemCondition);
+  },
+
+  addConditionToOffer(
+    offerId: string,
+    conditionId: string,
+  ): Promise<DataResponse<{}>> {
+    const endpoint = `service_offers/${offerId}/service_item_conditions/${conditionId}`;
+    return ApiService.putRequest(endpoint, {});
+  }
 };
 
 export default CatalogService;

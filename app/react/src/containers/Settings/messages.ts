@@ -117,7 +117,11 @@ const messages = defineMessages({
   newOffer: {
     id: 'offer.new',
     defaultMessage: 'New Offer',
-  }
+  },
+  serviceItemsSection: {
+    id: 'offer.serviceItems',
+    defaultMessage: 'Service items',
+  },
 });
 
 export default messages;
