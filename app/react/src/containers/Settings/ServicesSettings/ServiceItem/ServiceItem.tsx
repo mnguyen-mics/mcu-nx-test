@@ -40,9 +40,9 @@ class ServiceItem extends React.Component<Props, State> {
       this.setState({
         price: isValidValue
           ? `${intl.formatMessage(messages.serviceItemPrice)} ${(
-              parseFloat(e.target.value) * serviceItemCondition.percent_value +
-              serviceItemCondition.fixed_value
-            ).toFixed(2)} €`
+            parseFloat(e.target.value) * serviceItemCondition.percent_value +
+            serviceItemCondition.fixed_value
+          ).toFixed(2)} €`
           : intl.formatMessage(messages.invalidImpressionCost),
       });
     }

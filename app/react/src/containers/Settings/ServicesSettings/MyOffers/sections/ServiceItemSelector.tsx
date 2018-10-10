@@ -14,83 +14,83 @@ import ServiceOfferPageService from '../../ServiceOfferPageService';
 const ServiceItemTableSelector: React.ComponentClass<TableSelectorProps<ServiceItemShape>> = TableSelector;
 
 export interface ServiceItemSelectorProps {
-    selectedServiceItemIds: string[];
-    save: (serviceItems: ServiceItemShape[]) => void;
-    close: () => void;
+  selectedServiceItemIds: string[];
+  save: (serviceItems: ServiceItemShape[]) => void;
+  close: () => void;
 }
 
 type Props = ServiceItemSelectorProps &
-    InjectedIntlProps &
-    RouteComponentProps<{ organisationId: string}>;
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class ServiceItemSelector extends React.Component<Props> {
-    saveServiceItems = (serviceItemIds: string[], serviceItems: ServiceItemShape[]) => {
-        this.props.save(serviceItems);
+  saveServiceItems = (serviceItemIds: string[], serviceItems: ServiceItemShape[]) => {
+    this.props.save(serviceItems);
+  }
+
+  fetchServiceItems = (filter: SearchFilter) => {
+    const {
+      match: {
+        params: {
+          organisationId,
+        },
+      },
+    } = this.props;
+
+    const options: GetServiceItemsOptions = {
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+    };
+
+    if (filter.keywords) {
+      options.keywords = filter.keywords
     }
 
-    fetchServiceItems = (filter: SearchFilter) => {
-        const {
-            match: {
-                params: {
-                    organisationId,
-                },
-            },
-        } = this.props;
-        
-        const options: GetServiceItemsOptions = {
-            ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-        };
+    return CatalogService.getServiceItems(organisationId, options);
+  }
 
-        if (filter.keywords) {
-            options.keywords = filter.keywords
-        }
+  render() {
+    const {
+      selectedServiceItemIds,
+      close,
+      intl: {
+        formatMessage,
+      },
+    } = this.props;
 
-        return CatalogService.getServiceItems(organisationId, options);
-    }
+    const columns: Array<DataColumnDefinition<ServiceItemShape>> = [
+      {
+        intlMessage: messages.serviceItemSelectorColumnName,
+        key: 'name',
+        render: (text, record) => <span>{record.name}</span>,
+      },
+      {
+        intlMessage: messages.serviceItemSelectorColumnType,
+        key: 'type',
+        render: (text, record) => <span>{ServiceOfferPageService.transformServiceType(record.type, formatMessage)}</span>,
+      },
+    ];
 
-    render() {
-        const {
-            selectedServiceItemIds,
-            close,
-            intl: {
-                formatMessage,
-            },
-        } = this.props;
+    const fetchServiceItem = (serviceItemId: string) => CatalogService.findServiceItem(serviceItemId);
 
-        const columns: Array<DataColumnDefinition<ServiceItemShape>> = [
-            {
-                intlMessage: messages.serviceItemSelectorColumnName,
-                key: 'name',
-                render: (text, record) => <span>{record.name}</span>,
-            },
-            {
-                intlMessage: messages.serviceItemSelectorColumnType,
-                key: 'type',
-                render: (text, record) => <span>{ServiceOfferPageService.transformServiceType(record.type, formatMessage)}</span>,
-            },
-        ];
-
-        const fetchServiceItem = (serviceItemId: string) => CatalogService.findServiceItem(serviceItemId);
-
-        return (
-            <ServiceItemTableSelector
-                actionBarTitle={formatMessage(messages.serviceItemSelectorTitle)}
-                displayFiltering={true}
-                searchPlaceholder={formatMessage(
-                    messages.serviceItemSelectorSearchPlaceholder,
-                )}
-                selectedIds={selectedServiceItemIds}
-                fetchDataList={this.fetchServiceItems}
-                fetchData={fetchServiceItem}
-                columnsDefinitions={columns}
-                save={this.saveServiceItems}
-                close={close}
-            />
-        );
-    }
+    return (
+      <ServiceItemTableSelector
+        actionBarTitle={formatMessage(messages.serviceItemSelectorTitle)}
+        displayFiltering={true}
+        searchPlaceholder={formatMessage(
+          messages.serviceItemSelectorSearchPlaceholder,
+        )}
+        selectedIds={selectedServiceItemIds}
+        fetchDataList={this.fetchServiceItems}
+        fetchData={fetchServiceItem}
+        columnsDefinitions={columns}
+        save={this.saveServiceItems}
+        close={close}
+      />
+    );
+  }
 }
 
 export default compose<Props, ServiceItemSelectorProps>(
-    withRouter,
-    injectIntl,
+  withRouter,
+  injectIntl,
 )(ServiceItemSelector);

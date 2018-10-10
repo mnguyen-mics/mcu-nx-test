@@ -66,12 +66,12 @@ export interface BaseServiceItemPublicResource
 
 export interface AdExchangeHubInventoryServiceItemPublicResource
   extends ServiceItemPublicResource {
-    ad_exchange_hub_key: string;
+  ad_exchange_hub_key: string;
 }
 
 export interface KeywordListInventoryAccessPublicResource
   extends ServiceItemPublicResource {
-    keyword_list_id: string;
+  keyword_list_id: string;
 }
 
 export type ServiceItemModel = FieldArrayModel<ServiceItemShape>;
@@ -152,7 +152,7 @@ export interface PluginServiceItemConditionResource
 }
 
 export interface ProvidedServiceItemConditionResource
-  extends ServiceItemConditionsResource {}
+  extends ServiceItemConditionsResource { }
 
 export interface ServiceAgreement {
   id: string;

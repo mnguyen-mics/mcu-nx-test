@@ -225,10 +225,10 @@ const CatalogService = {
   createServiceItemCondition(
     serviceItemId: string,
     serviceItemCondition: Partial<
-    LinearServiceItemConditionResource |
-    PluginServiceItemConditionResource |
-    ProvidedServiceItemConditionResource
-    >
+      LinearServiceItemConditionResource |
+      PluginServiceItemConditionResource |
+      ProvidedServiceItemConditionResource
+      >
   ): Promise<DataResponse<
   LinearServiceItemConditionResource |
   PluginServiceItemConditionResource |

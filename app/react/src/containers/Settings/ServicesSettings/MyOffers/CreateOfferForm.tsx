@@ -19,206 +19,206 @@ import withValidators, { ValidatorProps } from '../../../../components/Form/with
 import ServiceItemsFormSection, { ServiceItemsFormSectionProps } from './sections/ServiceItemsFormSection';
 
 const Content = Layout.Content as React.ComponentClass<
-    BasicProps & { id: string }
-    >;
+  BasicProps & { id: string }
+  >;
 
 interface State {
-    loading: boolean;
+  loading: boolean;
 }
 
 export interface OfferFormProps extends Omit<ConfigProps<OfferFormData>, 'form'> {
-    close: () => void;
-    breadCrumbPaths: Path[];
-    offerType: OfferType;
+  close: () => void;
+  breadCrumbPaths: Path[];
+  offerType: OfferType;
 }
 
 const ServiceItemsFieldArray = FieldArray as new () => GenericFieldArray<
-    Field,
-    ServiceItemsFormSectionProps
-    >;
+  Field,
+  ServiceItemsFormSectionProps
+  >;
 
 type Props = InjectedFormProps<OfferFormData, OfferFormProps> &
-    RouteComponentProps<{ organisationId: string; offerId?: string }> &
-    OfferFormProps &
-    ValidatorProps &
-    InjectedIntlProps;
+  RouteComponentProps<{ organisationId: string; offerId?: string }> &
+  OfferFormProps &
+  ValidatorProps &
+  InjectedIntlProps;
 
 export const FORM_ID = 'offerForm';
 
 class CreateOfferForm extends React.Component<Props, State> {
 
-    constructor(props: Props) {
-        super(props);
+  constructor(props: Props) {
+    super(props);
 
-        this.state = {
-            loading: false,
-        };
-    }
+    this.state = {
+      loading: false,
+    };
+  }
 
-    render() {
-        const {
-            handleSubmit,
-            breadCrumbPaths,
-            offerType,
-            close,
-            change,
-            fieldValidators: { isRequired },
-            intl: { formatMessage },
-            match: { params: { offerId } }
-        } = this.props;
+  render() {
+    const {
+      handleSubmit,
+      breadCrumbPaths,
+      offerType,
+      close,
+      change,
+      fieldValidators: { isRequired },
+      intl: { formatMessage },
+      match: { params: { offerId } }
+    } = this.props;
 
-        const actionBarProps: FormLayoutActionbarProps = {
-            formId: FORM_ID,
-            paths: breadCrumbPaths,
-            message: messages.saveOffer,
-            onClose: close,
-        };
+    const actionBarProps: FormLayoutActionbarProps = {
+      formId: FORM_ID,
+      paths: breadCrumbPaths,
+      message: messages.saveOffer,
+      onClose: close,
+    };
 
-        const genericFieldArrayProps = {
-            formChange: change,
-            rerenderOnEveryChange: true,
-        };
+    const genericFieldArrayProps = {
+      formChange: change,
+      rerenderOnEveryChange: true,
+    };
 
-        const sections: McsFormSection[] = [];
-        sections.push({
-            id: 'general',
-            title: messages.generalInformation,
-            component: (
-                <div>
-                    <FormSection
-                        subtitle={messages.sectionNewOfferSubtitle}
-                        title={messages.sectionNewOfferTitle}
-                    />
+    const sections: McsFormSection[] = [];
+    sections.push({
+      id: 'general',
+      title: messages.generalInformation,
+      component: (
+        <div>
+          <FormSection
+            subtitle={messages.sectionNewOfferSubtitle}
+            title={messages.sectionNewOfferTitle}
+          />
 
-                    <div>
-                        <FormInputField
-                            name="offer.name"
-                            component={FormInput}
-                            validate={[isRequired]}
-                            formItemProps={{
-                                label: formatMessage(messages.sectionNewOfferNameLabel),
-                                required: true,
-                            }}
-                            inputProps={{
-                                disabled: (offerId !== undefined),
-                                placeholder: formatMessage(
-                                    messages.sectionNewOfferNamePlaceholder,
-                                ),
-                            }}
-                        />
-                    </div>
-                </div>
-            ),
-        });
-        if (offerType === OfferType.Automatic) {
-
-            const optionsAutomaticOn = [
-                {
-                    value: "AUDIENCE_SEGMENT",
-                    title: "AUDIENCE_SEGMENT",
-                },
-                {
-                    value: "DEAL_LIST",
-                    title: "DEAL_LIST",
-                },
-                {
-                    value: "PLACEMENT_LIST",
-                    title: "PLACEMENT_LIST",
-                },
-                {
-                    value: "KEYWORDS_LIST",
-                    title: "KEYWORDS_LIST",
-                }
-            ];
-
-            sections.push({
-                id: 'automaticOn',
-                title: messages.automaticOn,
-                component: (
-                    <div>
-                        <FormSection
-                            subtitle={messages.sectionServiceTypeSubtitle}
-                            title={messages.sectionServiceTypeTitle}
-                        />
-
-                        <div>
-                            <FormSelectField
-                                name="offer.automatic_on"
-                                component={DefaultSelect}
-                                validate={[isRequired]}
-                                formItemProps={{
-                                    label: formatMessage(
-                                        messages.sectionNewOfferAutomaticOnLabel,
-                                    ),
-                                }}
-                                disabled={(offerId !== undefined)}
-                                options={optionsAutomaticOn}
-                            />
-                        </div>
-                    </div>
+          <div>
+            <FormInputField
+              name="offer.name"
+              component={FormInput}
+              validate={[isRequired]}
+              formItemProps={{
+                label: formatMessage(messages.sectionNewOfferNameLabel),
+                required: true,
+              }}
+              inputProps={{
+                disabled: (offerId !== undefined),
+                placeholder: formatMessage(
+                  messages.sectionNewOfferNamePlaceholder,
                 ),
-            });
-        } else {
-            sections.push({
-                id: 'serviceItems',
-                title: messages.serviceItemsSection,
-                component: (
-                    <ServiceItemsFieldArray
-                        name="serviceConditionFields"
-                        component={ServiceItemsFormSection}
-                        {...genericFieldArrayProps}
-                    />
-                ),
-            });
+              }}
+            />
+          </div>
+        </div>
+      ),
+    });
+    if (offerType === OfferType.Automatic) {
+
+      const optionsAutomaticOn = [
+        {
+          value: "AUDIENCE_SEGMENT",
+          title: "AUDIENCE_SEGMENT",
+        },
+        {
+          value: "DEAL_LIST",
+          title: "DEAL_LIST",
+        },
+        {
+          value: "PLACEMENT_LIST",
+          title: "PLACEMENT_LIST",
+        },
+        {
+          value: "KEYWORDS_LIST",
+          title: "KEYWORDS_LIST",
         }
+      ];
 
+      sections.push({
+        id: 'automaticOn',
+        title: messages.automaticOn,
+        component: (
+          <div>
+            <FormSection
+              subtitle={messages.sectionServiceTypeSubtitle}
+              title={messages.sectionServiceTypeTitle}
+            />
 
-
-        const sideBarProps: SidebarWrapperProps = {
-            items: sections.map(s => ({ sectionId: s.id, title: s.title })),
-            scrollId: FORM_ID,
-        };
-
-
-        const renderedSections = sections.map((section, index) => {
-            return (
-                <div key={section.id}>
-                    <div key={section.id} id={section.id}>
-                        {section.component}
-                    </div>
-                    {index !== sections.length - 1 && <hr />}
-                </div>
-            );
-        });
-
-        return (
-            <Layout className="edit-layout">
-                <FormLayoutActionbar {...actionBarProps} />
-                <Layout className={'ant-layout-has-sider'}>
-                    <ScrollspySider {...sideBarProps} />
-                    <Form
-                        className="edit-layout ant-layout"
-                        onSubmit={handleSubmit as any}
-                    >
-                        <Content
-                            id={FORM_ID}
-                            className="mcs-content-container mcs-form-container"
-                        >
-                            {renderedSections}
-                        </Content>
-                    </Form>
-                </Layout>
-            </Layout>
-        );
+            <div>
+              <FormSelectField
+                name="offer.automatic_on"
+                component={DefaultSelect}
+                validate={[isRequired]}
+                formItemProps={{
+                  label: formatMessage(
+                    messages.sectionNewOfferAutomaticOnLabel,
+                  ),
+                }}
+                disabled={(offerId !== undefined)}
+                options={optionsAutomaticOn}
+              />
+            </div>
+          </div>
+        ),
+      });
+    } else {
+      sections.push({
+        id: 'serviceItems',
+        title: messages.serviceItemsSection,
+        component: (
+          <ServiceItemsFieldArray
+            name="serviceConditionFields"
+            component={ServiceItemsFormSection}
+            {...genericFieldArrayProps}
+          />
+        ),
+      });
     }
+
+
+
+    const sideBarProps: SidebarWrapperProps = {
+      items: sections.map(s => ({ sectionId: s.id, title: s.title })),
+      scrollId: FORM_ID,
+    };
+
+
+    const renderedSections = sections.map((section, index) => {
+      return (
+        <div key={section.id}>
+          <div key={section.id} id={section.id}>
+            {section.component}
+          </div>
+          {index !== sections.length - 1 && <hr />}
+        </div>
+      );
+    });
+
+    return (
+      <Layout className="edit-layout">
+        <FormLayoutActionbar {...actionBarProps} />
+        <Layout className={'ant-layout-has-sider'}>
+          <ScrollspySider {...sideBarProps} />
+          <Form
+            className="edit-layout ant-layout"
+            onSubmit={handleSubmit as any}
+          >
+            <Content
+              id={FORM_ID}
+              className="mcs-content-container mcs-form-container"
+            >
+              {renderedSections}
+            </Content>
+          </Form>
+        </Layout>
+      </Layout>
+    );
+  }
 }
 
 export default compose<Props, OfferFormProps>(
-    injectIntl,
-    withValidators,
-    withRouter,
-    reduxForm({
-        form: FORM_ID,
-        enableReinitialize: true,
-    }),
+  injectIntl,
+  withValidators,
+  withRouter,
+  reduxForm({
+    form: FORM_ID,
+    enableReinitialize: true,
+  }),
 )(CreateOfferForm);

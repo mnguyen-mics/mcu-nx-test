@@ -74,10 +74,10 @@ const ServiceOfferPageService = {
           });
 
           return executeTasksInSequence(tasks)
-          .then(() => returnedOfferId);
-          });
+            .then(() => returnedOfferId);
         });
-    },
+    });
+  },
 
   loadOffer(organisationId: string, offerId: string): Promise<OfferFormData> {
     return CatalogService.getMyOffer(

@@ -18,119 +18,119 @@ export interface ServiceItemsFormSectionProps extends ReduxFormChangeProps { }
 
 
 type Props = InjectedIntlProps &
-    WrappedFieldArrayProps<ServiceConditionsModel> &
-    ServiceItemsFormSectionProps &
-    InjectedDrawerProps;
+  WrappedFieldArrayProps<ServiceConditionsModel> &
+  ServiceItemsFormSectionProps &
+  InjectedDrawerProps;
 
 class ServiceItemsFormSection extends React.Component<Props> {
 
-    updateServiceConditions = (serviceItems: ServiceItemShape[]) => {
-        const {
-            fields,
-            formChange
-        } = this.props;
+  updateServiceConditions = (serviceItems: ServiceItemShape[]) => {
+    const {
+      fields,
+      formChange
+    } = this.props;
 
-        const serviceItemIds = serviceItems.map(serviceItem => serviceItem.id);
+    const serviceItemIds = serviceItems.map(serviceItem => serviceItem.id);
 
-        const fieldServiceItemIds = fields
-            .getAll()
-            .map(field => field.model.service_item_id);
+    const fieldServiceItemIds = fields
+      .getAll()
+      .map(field => field.model.service_item_id);
 
-        const keptServiceConditions = fields
-            .getAll()
-            .filter(field => serviceItemIds.includes(field.model.service_item_id));
-        const addedServiceConditions = serviceItems
-            .filter(serviceItem => !fieldServiceItemIds.includes(serviceItem.id))
-            .map(serviceItem => ({
-                key: cuid(),
-                model: {id: "-1", service_item_id: serviceItem.id},
-                meta: {name: serviceItem.name, type: serviceItem.type || ""}
-            }));
+    const keptServiceConditions = fields
+      .getAll()
+      .filter(field => serviceItemIds.includes(field.model.service_item_id));
+    const addedServiceConditions = serviceItems
+      .filter(serviceItem => !fieldServiceItemIds.includes(serviceItem.id))
+      .map(serviceItem => ({
+        key: cuid(),
+        model: { id: "-1", service_item_id: serviceItem.id },
+        meta: { name: serviceItem.name, type: serviceItem.type || "" }
+      }));
 
-        formChange((fields as any).name, keptServiceConditions.concat(addedServiceConditions));
-        this.props.closeNextDrawer();        
+    formChange((fields as any).name, keptServiceConditions.concat(addedServiceConditions));
+    this.props.closeNextDrawer();
+  };
+
+  openServiceItemsSelector = () => {
+    const {
+      fields,
+    } = this.props;
+
+    const selectedServiceItemIds = fields
+      .getAll()
+      .map(field => field.model.service_item_id);
+
+    const serviceItemSelectorProps = {
+      selectedServiceItemIds,
+      close: this.props.closeNextDrawer,
+      save: this.updateServiceConditions,
     };
 
-    openServiceItemsSelector = () => {
-        const {
-            fields,
-        } = this.props;
-
-        const selectedServiceItemIds = fields
-            .getAll()
-            .map(field => field.model.service_item_id);
-
-        const serviceItemSelectorProps = {
-            selectedServiceItemIds,
-            close: this.props.closeNextDrawer,
-            save: this.updateServiceConditions,
-        };
-
-        const options = {
-            additionalProps: serviceItemSelectorProps,
-        };
-
-        this.props.openNextDrawer<ServiceItemSelectorProps>(
-            ServiceItemSelector,
-            options
-        );
+    const options = {
+      additionalProps: serviceItemSelectorProps,
     };
 
-    getServiceItemsRecords = () => {
-        const { 
-            fields,
-            intl: { formatMessage },
-        } = this.props;
+    this.props.openNextDrawer<ServiceItemSelectorProps>(
+      ServiceItemSelector,
+      options
+    );
+  };
 
-        const getServiceItemName = (serviceConditionField: ServiceConditionsModel) =>
-            serviceConditionField.meta.name;
-        
-        const getServiceItemServiceType = (serviceConditionField: ServiceConditionsModel) =>
-            ServiceOfferPageService.transformServiceType(serviceConditionField.meta.type, formatMessage);
+  getServiceItemsRecords = () => {
+    const {
+      fields,
+      intl: { formatMessage },
+    } = this.props;
 
-        return fields.getAll().map((serviceConditionField, index) => {
-            const removeRecord = () => fields.remove(index);
+    const getServiceItemName = (serviceConditionField: ServiceConditionsModel) =>
+      serviceConditionField.meta.name;
 
-            return (
-                <RecordElement
-                    key={index}
-                    recordIconType={'gears'}
-                    record={serviceConditionField}
-                    title={getServiceItemName}
-                    additionalData={getServiceItemServiceType}
-                    onRemove={removeRecord}
-                />
-            );
-        });
-    };
+    const getServiceItemServiceType = (serviceConditionField: ServiceConditionsModel) =>
+      ServiceOfferPageService.transformServiceType(serviceConditionField.meta.type, formatMessage);
 
-    render() {
-        const { intl: { formatMessage } } = this.props;
+    return fields.getAll().map((serviceConditionField, index) => {
+      const removeRecord = () => fields.remove(index);
 
-        return (
-            <div>
-                <FormSection
-                    button={{
-                        message: formatMessage(messages.serviceItemsBreadcrumbTitle),
-                        onClick: this.openServiceItemsSelector,
-                    }}
-                    subtitle={messages.serviceItemsSectionSubtitle}
-                    title={messages.serviceItemsSectionTitle}
-                />
-                <RelatedRecords
-                    emptyOption={{
-                        iconType: 'code',
-                        message: formatMessage(messages.contentSectionServiceItemsEmptyTitle)
-                    }}
-                >
-                    {this.getServiceItemsRecords()}
-                </RelatedRecords>
-            </div>
-        );
-    }
+      return (
+        <RecordElement
+          key={index}
+          recordIconType={'gears'}
+          record={serviceConditionField}
+          title={getServiceItemName}
+          additionalData={getServiceItemServiceType}
+          onRemove={removeRecord}
+        />
+      );
+    });
+  };
+
+  render() {
+    const { intl: { formatMessage } } = this.props;
+
+    return (
+      <div>
+        <FormSection
+          button={{
+            message: formatMessage(messages.serviceItemsBreadcrumbTitle),
+            onClick: this.openServiceItemsSelector,
+          }}
+          subtitle={messages.serviceItemsSectionSubtitle}
+          title={messages.serviceItemsSectionTitle}
+        />
+        <RelatedRecords
+          emptyOption={{
+            iconType: 'code',
+            message: formatMessage(messages.contentSectionServiceItemsEmptyTitle)
+          }}
+        >
+          {this.getServiceItemsRecords()}
+        </RelatedRecords>
+      </div>
+    );
+  }
 }
 
 export default compose<Props, ServiceItemsFormSectionProps>(
-    injectIntl,
-    injectDrawer,
+  injectIntl,
+  injectDrawer,
 )(ServiceItemsFormSection);

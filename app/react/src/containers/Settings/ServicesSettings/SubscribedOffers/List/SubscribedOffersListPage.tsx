@@ -166,7 +166,7 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/settings/services/subscribed_offers/${
               record.id
-            }/service_item_conditions`}
+              }/service_item_conditions`}
           >
             {text}
           </Link>
