@@ -53,7 +53,7 @@ class CreateEditVisitAnalyzer extends React.Component<JoinedProps> {
   ): PluginInstance => {
     const result: Omit<VisitAnalyzer, "id"> = {
       // ...pluginInstance,
-      version_id: plugin.current_version_id,
+      version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
       visit_analyzer_plugin_id: plugin.id,
       artifact_id: plugin.artifact_id,

@@ -1,7 +1,7 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginInstance } from '../models/Plugins';
-import pluginService from './PluginService';
+import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 
 abstract class PluginInstanceService<T extends PluginInstance> {
@@ -47,7 +47,7 @@ abstract class PluginInstanceService<T extends PluginInstance> {
     const endpoint = `${
       this.entityPath
     }/${id}/properties/technical_name=${technicalName}`;
-    return pluginService.handleSaveOfProperties(
+    return PluginService.handleSaveOfProperties(
       params,
       organisationId,
       this.entityPath,
