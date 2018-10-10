@@ -11,9 +11,6 @@ import {
   ServiceItemShape,
   ServiceItemConditionShape,
   AudienceSegmentServiceItemPublicResource,
-  LinearServiceItemConditionResource,
-  PluginServiceItemConditionResource,
-  ProvidedServiceItemConditionResource,
 } from '../models/servicemanagement/PublicServiceItemResource';
 import { Locale } from '../models/Locale';
 
@@ -224,16 +221,8 @@ const CatalogService = {
 
   createServiceItemCondition(
     serviceItemId: string,
-    serviceItemCondition: Partial<
-      LinearServiceItemConditionResource |
-      PluginServiceItemConditionResource |
-      ProvidedServiceItemConditionResource
-      >
-  ): Promise<DataResponse<
-  LinearServiceItemConditionResource |
-  PluginServiceItemConditionResource |
-  ProvidedServiceItemConditionResource
-  >> {
+    serviceItemCondition: Partial<ServiceItemConditionShape>
+  ): Promise<DataResponse<ServiceItemConditionShape>> {
     const endpoint = `service_items/${serviceItemId}/service_item_conditions`;
     return ApiService.postRequest(endpoint, serviceItemCondition);
   },

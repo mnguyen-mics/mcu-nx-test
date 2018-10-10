@@ -22,10 +22,6 @@ const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
   >;
 
-interface State {
-  loading: boolean;
-}
-
 export interface OfferFormProps extends Omit<ConfigProps<OfferFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
@@ -45,15 +41,7 @@ type Props = InjectedFormProps<OfferFormData, OfferFormProps> &
 
 export const FORM_ID = 'offerForm';
 
-class CreateOfferForm extends React.Component<Props, State> {
-
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      loading: false,
-    };
-  }
+class CreateOfferForm extends React.Component<Props> {
 
   render() {
     const {
