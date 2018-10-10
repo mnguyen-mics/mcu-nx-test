@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 const messages = defineMessages({
     serviceItemsBreadcrumbTitle: {
         id: 'offer.new.section.service_items.breadcrumb.title',
-        defaultMessage: 'Add existing Service Item',
+        defaultMessage: 'Add service item',
     },
     serviceItemsSectionSubtitle: {
         id: 'offer.new.section.service_items.subtitle',
@@ -28,6 +28,10 @@ const messages = defineMessages({
     serviceItemSelectorColumnName: {
         id: 'serviceItemSelector.column.name',
         defaultMessage: 'Name',
+    },
+    serviceItemSelectorColumnType: {
+        id: 'serviceItemSelector.column.type',
+        defaultMessage: 'Type',
     },
     serviceItemSelectorTitle: {
         id: 'serviceItemSelector.title',

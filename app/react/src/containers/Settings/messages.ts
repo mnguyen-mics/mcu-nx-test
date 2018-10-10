@@ -122,6 +122,26 @@ const messages = defineMessages({
     id: 'offer.serviceItems',
     defaultMessage: 'Service items',
   },
+  audience_segmentType: {
+    id: 'audience_segmentType',
+    defaultMessage: 'Audience segment',
+  },
+  inventory_access_display_networkType: {
+    id: 'inventory_access_display_networkType',
+    defaultMessage: 'Inventory access display network',
+  },
+  inventory_access_placement_listType: {
+    id: 'inventory_access_placement_listType',
+    defaultMessage: 'Inventory access placement list',
+  },
+  inventory_access_deal_listType: {
+    id: 'inventory_access_deal_listType',
+    defaultMessage: 'Inventory access deal list',
+  },
+  inventory_access_ad_exchangeType: {
+    id: 'inventory_access_ad_exchangeType',
+    defaultMessage: 'Inventory access ad exchange',
+  },
 });
 
 export default messages;

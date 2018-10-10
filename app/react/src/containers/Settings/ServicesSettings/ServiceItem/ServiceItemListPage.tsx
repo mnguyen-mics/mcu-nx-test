@@ -251,16 +251,16 @@ class ServiceItemListPage extends React.Component<Props, State> {
       type: 'primary',
     };
 
-    const addedButton = (offerOwnership === "my_offer") ? 
-    (
-      <Link to={`/v2/o/${organisationId}/settings/services/my_offers/${offerId}/edit`}>
-        <Button {...submitButtonProps} className="mcs-primary" style={{ float: "right" }}>
-          <McsIcon type="plus" />
-          <FormattedMessage {...messages.myServiceOffersEdit} />
-        </Button>
-      </Link>
-    ) :
-    undefined;
+    const addedButton = (offerOwnership === "my_offer") ?
+      (
+        <Link to={`/v2/o/${organisationId}/settings/services/my_offers/${offerId}/edit`}>
+          <Button {...submitButtonProps} className="mcs-primary" style={{ float: "right" }}>
+            <McsIcon type="plus" />
+            <FormattedMessage {...messages.myServiceOffersEdit} />
+          </Button>
+        </Link>
+      ) :
+      undefined;
 
     return (
       <div className="ant-layout">
@@ -271,28 +271,32 @@ class ServiceItemListPage extends React.Component<Props, State> {
               separator={<McsIcon type="chevron-right" />}
             >
               <Breadcrumb.Item>
-                <Link
-                  to={`/v2/o/${organisationId}/settings/services/${offerOwnership}s`}
-                >
-                  {offerOwnership === "subscribed_offer" ?
-                    intl.formatMessage(messages.subscribedOffersTitle) :
-                    intl.formatMessage(messages.myOffersTitle)
-                  }
-                </Link>
+                <span style={{ lineHeight: "40px" }}>
+                  <Link
+                    to={`/v2/o/${organisationId}/settings/services/${offerOwnership}s`}
+                  >
+                    {offerOwnership === "subscribed_offer" ?
+                      intl.formatMessage(messages.subscribedOffersTitle) :
+                      intl.formatMessage(messages.myOffersTitle)
+                    }
+                  </Link>
+                </span>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
-                {offer ?
-                  (
-                    <span>
-                      {offer.name}
-                    </span>
-                  ) :
-                  (
-                    <span>
-                      <FormattedMessage {...messages.unknownOffer} />
-                    </span>
-                  )
-                }
+                <span style={{ lineHeight: "40px" }}>
+                  {offer ?
+                    (
+                      <span>
+                        {offer.name}
+                      </span>
+                    ) :
+                    (
+                      <span>
+                        <FormattedMessage {...messages.unknownOffer} />
+                      </span>
+                    )
+                  }
+                </span>
                 {addedButton}
               </Breadcrumb.Item>
             </Breadcrumb>

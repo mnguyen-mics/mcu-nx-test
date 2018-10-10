@@ -1,5 +1,5 @@
 import * as React from 'react';
-import CatalogService from '../../../../../services/CatalogService';
+import CatalogService, { GetServiceItemsOptions } from '../../../../../services/CatalogService';
 import { ServiceItemShape } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { DataColumnDefinition } from '../../../../../components/TableView/TableView';
 import TableSelector, { TableSelectorProps } from '../../../../../components/ElementSelector/TableSelector';
@@ -9,6 +9,7 @@ import messages from './messages';
 import { compose } from 'recompose';
 import { SearchFilter } from '../../../../../components/ElementSelector';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
+import ServiceOfferPageService from '../../ServiceOfferPageService';
 
 const ServiceItemTableSelector: React.ComponentClass<TableSelectorProps<ServiceItemShape>> = TableSelector;
 
@@ -36,12 +37,12 @@ class ServiceItemSelector extends React.Component<Props> {
             },
         } = this.props;
         
-        const options: any = {
+        const options: GetServiceItemsOptions = {
             ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
         };
 
         if (filter.keywords) {
-            options.name = filter.keywords
+            options.keywords = filter.keywords
         }
 
         return CatalogService.getServiceItems(organisationId, options);
@@ -61,6 +62,11 @@ class ServiceItemSelector extends React.Component<Props> {
                 intlMessage: messages.serviceItemSelectorColumnName,
                 key: 'name',
                 render: (text, record) => <span>{record.name}</span>,
+            },
+            {
+                intlMessage: messages.serviceItemSelectorColumnType,
+                key: 'type',
+                render: (text, record) => <span>{ServiceOfferPageService.transformServiceType(record.type, formatMessage)}</span>,
             },
         ];
 

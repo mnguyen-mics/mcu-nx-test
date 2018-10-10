@@ -11,6 +11,7 @@ import messages from './messages';
 import ServiceItemSelector, { ServiceItemSelectorProps } from './ServiceItemSelector';
 import { ServiceConditionsModel } from '../../domain';
 import { ServiceItemShape } from '../../../../../models/servicemanagement/PublicServiceItemResource';
+import ServiceOfferPageService from '../../ServiceOfferPageService';
 
 export interface ServiceItemsFormSectionProps extends ReduxFormChangeProps { }
 
@@ -76,13 +77,16 @@ class ServiceItemsFormSection extends React.Component<Props> {
     };
 
     getServiceItemsRecords = () => {
-        const { fields } = this.props;
+        const { 
+            fields,
+            intl: { formatMessage },
+        } = this.props;
 
         const getServiceItemName = (serviceConditionField: ServiceConditionsModel) =>
             serviceConditionField.meta.name;
         
         const getServiceItemServiceType = (serviceConditionField: ServiceConditionsModel) =>
-            serviceConditionField.meta.type;
+            ServiceOfferPageService.transformServiceType(serviceConditionField.meta.type, formatMessage);
 
         return fields.getAll().map((serviceConditionField, index) => {
             const removeRecord = () => fields.remove(index);
@@ -90,7 +94,7 @@ class ServiceItemsFormSection extends React.Component<Props> {
             return (
                 <RecordElement
                     key={index}
-                    recordIconType={'chevron-right'}
+                    recordIconType={'gears'}
                     record={serviceConditionField}
                     title={getServiceItemName}
                     additionalData={getServiceItemServiceType}

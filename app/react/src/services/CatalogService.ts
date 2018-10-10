@@ -244,6 +244,22 @@ const CatalogService = {
   ): Promise<DataResponse<{}>> {
     const endpoint = `service_offers/${offerId}/service_item_conditions/${conditionId}`;
     return ApiService.putRequest(endpoint, {});
+  },
+
+  removeConditionFromOffer(
+    offerId: string,
+    conditionId: string,
+  ): Promise<DataResponse<{}>> {
+    const endpoint = `service_offers/${offerId}/service_item_conditions/${conditionId}`;
+    return ApiService.deleteRequest(endpoint);
+  },
+
+  deleteServiceItemCondition(
+    serviceItemId: string,
+    conditionId: string,
+  ): Promise<DataResponse<{}>> {
+    const endpoint = `service_items/${serviceItemId}/service_item_conditions/${conditionId}`;
+    return ApiService.deleteRequest(endpoint);
   }
 };
 
