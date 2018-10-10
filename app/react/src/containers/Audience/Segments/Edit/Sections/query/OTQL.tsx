@@ -10,6 +10,7 @@ export interface OTQLInputEditorProps {
   formItemProps?: FormItemProps;
   inputProps?: AceEditorProps;
   helpToolTipProps?: TooltipProps;
+  datamartId: string
 }
 
 class OTQLInputEditor extends React.Component<OTQLInputEditorProps & WrappedFieldProps> {
@@ -21,6 +22,7 @@ class OTQLInputEditor extends React.Component<OTQLInputEditorProps & WrappedFiel
       
         <OtqlConsole
           value={this.props.input.value}
+          datamartId={this.props.datamartId}
           {...this.props.inputProps}
           onChange={this.props.input.onChange}
           showPrintMargin={false}

@@ -152,6 +152,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                     messages.audienceSegmentCreationUserQueryFieldHelper,
                   ),
                 }}
+                datamartId={datamartId!}
               />,
             )
           : queryLanguage === 'JSON_OTQL'

@@ -33,3 +33,9 @@ export interface UserCompartment {
   token: string;
   default: boolean;
 }
+
+export interface AutoCompleteResource {
+  type: string,
+  object_type_name: string,
+  field_name: string
+}

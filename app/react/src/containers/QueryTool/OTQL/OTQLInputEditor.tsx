@@ -8,6 +8,7 @@ export interface Props {
   onRunQuery: (query: string) => void;
   onAbortQuery: () => void;
   runningQuery: boolean;
+  datamartId: string;
 }
 
 interface State {
@@ -78,6 +79,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
 
   render() {
     const { query } = this.state;
+    const { datamartId } = this.props;
 
     return (
       <Card
@@ -91,11 +93,12 @@ class OTQLInputEditor extends React.Component<Props, State> {
       >
         <OtqlConsole
           onChange={this.updateQuery}
+          datamartId={datamartId}
           value={query}
           showPrintMargin={false}
           height="250px"
           enableBasicAutocompletion={true}
-          enableLiveAutocompletion={true}
+          enableLiveAutocompletion={false}
         />
       </Card>
     );

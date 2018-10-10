@@ -84,7 +84,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   dismissError = () => this.setState({ error: null });
 
   render() {
-    const { intl } = this.props;
+    const { intl, datamartId } = this.props;
     const { error, queryResult, runningQuery, queryAborted } = this.state;
 
     const errorMsg = error && (
@@ -140,6 +140,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
             onRunQuery={this.runQuery}
             onAbortQuery={this.abortQuery}
             runningQuery={runningQuery}
+            datamartId={datamartId}
           />
           {queryResultRenderer}
         </Content>
