@@ -6,7 +6,7 @@ export interface PluginResource {
   plugin_type?: PluginType;
   group_id: string;
   artifact_id: string;
-  current_version_id: string;
+  current_version_id?: string;
 }
 
 export interface LayoutablePlugin extends PluginResource {

@@ -142,37 +142,47 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         })
           .then(res => res.data)
           .then((response: PluginResource[]) => {
-            const pluginsWithLayouts = response.map(pResourceWoutLayout => {
-              return PluginService.getLocalizedPluginLayout(
-                pResourceWoutLayout.id,
-                pResourceWoutLayout.current_version_id,
-              ).then(resultPluginLayout => {
-                if (
-                  resultPluginLayout !== null &&
-                  resultPluginLayout.metadata &&
-                  resultPluginLayout.metadata.small_icon_asset_id
-                ) {
-                  return assetFileService
-                    .getAssetFile(
-                      resultPluginLayout.metadata.small_icon_asset_id,
-                    )
-                    .then(resultAssetFile => {
-                      return {
-                        ...pResourceWoutLayout,
-                        plugin_layout: resultPluginLayout,
-                        layout_icon_path: (resultAssetFile !== null) ? `${(window as any).MCS_CONSTANTS.ASSETS_URL}${resultAssetFile.path}` : undefined
-                      };
-                    });
-                }
-                return Promise.resolve({
-                  ...pResourceWoutLayout,
-                  plugin_layout:
-                    resultPluginLayout !== null
-                      ? resultPluginLayout
-                      : undefined,
-                });
-              });
-            });
+            const pluginsWithLayouts = response.reduce((filteredPlugins, pResourceWoutLayout) => {
+              if (!pResourceWoutLayout.current_version_id) return filteredPlugins;
+
+              return [
+                ...filteredPlugins,
+                PluginService.getLocalizedPluginLayout(
+                  pResourceWoutLayout.id,
+                  pResourceWoutLayout.current_version_id,
+                ).then(resultPluginLayout => {
+                  if (
+                    resultPluginLayout !== null &&
+                    resultPluginLayout.metadata &&
+                    resultPluginLayout.metadata.small_icon_asset_id
+                  ) {
+                    return assetFileService
+                      .getAssetFile(
+                        resultPluginLayout.metadata.small_icon_asset_id,
+                      )
+                      .then(resultAssetFile => {
+                        return {
+                          ...pResourceWoutLayout,
+                          plugin_layout: resultPluginLayout,
+                          layout_icon_path:
+                            resultAssetFile !== null
+                              ? `${(window as any).MCS_CONSTANTS.ASSETS_URL}${
+                                  resultAssetFile.path
+                                }`
+                              : undefined,
+                        };
+                      });
+                  }
+                  return Promise.resolve({
+                    ...pResourceWoutLayout,
+                    plugin_layout:
+                      resultPluginLayout !== null
+                        ? resultPluginLayout
+                        : undefined,
+                  });
+                }),
+              ];
+            }, []);
 
             Promise.all(pluginsWithLayouts).then(availablePluginsResponse => {
               this.setState({

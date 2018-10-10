@@ -83,7 +83,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     PluginService.findPluginFromVersionId(feed.version_id)
       .then(res => {
-        if ((res !== null) && (res.status !== "error")) {
+        if (res !== null && res.status !== "error" && res.data.current_version_id) {
           PluginService.getLocalizedPluginLayout(
             res.data.id,
             res.data.current_version_id
