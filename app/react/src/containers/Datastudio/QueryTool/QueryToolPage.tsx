@@ -77,7 +77,7 @@ class QueryToolPage extends React.Component<Props> {
       datamartId: string,
     ) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
-        if (!query) return Promise.resolve();
+        if (!query) return Promise.reject(new Error("angular query container isn't loaded correctly"));
         return query.saveOrUpdate().then(queryResource => {
           const { name, technical_name, persisted } = segmentFormData;
           const userQuerySegment: Partial<UserQuerySegment> = {
@@ -102,7 +102,7 @@ class QueryToolPage extends React.Component<Props> {
         });
       };
       const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
-        if (!query) return Promise.resolve();
+        if (!query) return Promise.reject(new Error("angular query container isn't loaded correctly"));
         return query.saveOrUpdate().then(queryResource => {
           return ExportService.createExport(match.params.organisationId, {
             name: exportFormData.name,
