@@ -12,6 +12,9 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import HistoryEventCard from './HistoryEventCard';
 import { FormatProperty } from './domain';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
 
 export interface Events {
   isLoading: boolean;
@@ -39,7 +42,8 @@ interface State {
 
 type Props = ResourceTimelineProps &
   RouteComponentProps<{ organisationId: string}> &
-  InjectedIntlProps;
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 class ResourceTimeline extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -168,6 +172,7 @@ class ResourceTimeline extends React.Component<Props, State> {
               };
               return nextState;
             });
+            this.props.notifyError(err)
           }),
     );
   };
@@ -203,8 +208,8 @@ class ResourceTimeline extends React.Component<Props, State> {
     } else {
       return (
         <div className="mcs-title">
-          {events.hasItems ? (
-            <FormattedMessage {...messages.noEvents} />
+          {events.items.length === 0 ? (
+            <FormattedMessage {...messages.noHistory} />
           ) : (
             <FormattedMessage {...messages.noEventsLeft} />
           )}
@@ -289,4 +294,5 @@ class ResourceTimeline extends React.Component<Props, State> {
 export default compose<Props, ResourceTimelineProps>(
   withRouter,
   injectIntl,
+  injectNotifications,
 )(ResourceTimeline);

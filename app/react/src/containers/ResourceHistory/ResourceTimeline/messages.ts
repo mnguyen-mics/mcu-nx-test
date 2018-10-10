@@ -27,9 +27,9 @@ const messages: {
     id: 'timeline.events.noEventsLeft',
     defaultMessage: 'No Events Left',
   },
-  noEvents: {
-    id: 'timeline.events.noEvents',
-    defaultMessage: 'No Events in the last 6 months',
+  noHistory: {
+    id: 'timeline.events.noHistory',
+    defaultMessage: 'No historical data in the last 6 months',
   },
   expandEvents: {
     id: 'timeline.events.card.expandEvents',

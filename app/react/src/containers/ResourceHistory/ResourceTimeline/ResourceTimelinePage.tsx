@@ -2,8 +2,6 @@ import * as React from 'react';
 import ResourceTimeline from './ResourceTimeline';
 import { Layout, Row } from 'antd';
 import { ResourceType } from '../../../models/resourceHistory/ResourceHistory';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { compose } from 'recompose';
 import ResourceTimelineActionBar from './ResourceTimelineActionBar';
 import { FormatProperty } from './domain';
 
@@ -17,8 +15,7 @@ export interface ResourceTimelinePageProps {
 }
 
 type Props =
-  ResourceTimelinePageProps &
-  InjectedIntlProps;
+  ResourceTimelinePageProps;
   
 class ResourceTimelinePage extends React.Component<Props> {
   constructor(props: Props) {
@@ -52,6 +49,4 @@ class ResourceTimelinePage extends React.Component<Props> {
   }
 }
 
-export default compose<Props, ResourceTimelinePageProps>(
-  injectIntl,
-)(ResourceTimelinePage)
+export default ResourceTimelinePage

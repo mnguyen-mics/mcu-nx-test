@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import lodash from 'lodash';
 import moment from 'moment';
-import { HistoryEventShape, isHistoryUpdateEvent, isHistoryCreateEvent, isHistoryDeleteEvent, HistoryEventActionShape } from '../../../models/resourceHistory/ResourceHistory';
+import { HistoryEventShape, isHistoryUpdateEvent, isHistoryCreateEvent, isHistoryDeleteEvent } from '../../../models/resourceHistory/ResourceHistory';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router';
 import { Row, Icon } from 'antd';
@@ -91,7 +91,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                 <div style={{float: 'left'}} className="mcs-fields-list-item">
                     { this.findCreateEventIndex(events) > -1
                       ? <FormattedMessage {...{...messages.resourceCreated, values: {
-                        userName: (events[0] as HistoryEventActionShape).user_identification.user_name,
+                        userName: events[0].user_identification.user_name,
                         resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
                       }}} />
                       : <FormattedMessage {...{...messages.severalFieldsEdited, values: {
@@ -104,15 +104,10 @@ class HistoryEventCard extends React.Component<Props, State> {
                     onClick={toggleDetails}
                     className="mcs-card-inner-action"
                   >
-                    {!showMore ? (
-                      <span>
-                        <FormattedMessage {...messages.expandEvents} />
-                      </span>
-                    ) : (
-                      <span>
-                        <FormattedMessage {...messages.reduceEvents} />
-                      </span>
-                    )}
+                    {!showMore
+                      ? <FormattedMessage {...messages.expandEvents} />
+                      : <FormattedMessage {...messages.reduceEvents} />
+                    }
                   </ButtonStyleless>
                 </div>
                 {showMore && (
