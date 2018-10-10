@@ -119,7 +119,7 @@ class ServiceItemsFormSection extends React.Component<Props> {
         />
         <RelatedRecords
           emptyOption={{
-            iconType: 'code',
+            iconType: 'gears',
             message: formatMessage(messages.contentSectionServiceItemsEmptyTitle)
           }}
         >
