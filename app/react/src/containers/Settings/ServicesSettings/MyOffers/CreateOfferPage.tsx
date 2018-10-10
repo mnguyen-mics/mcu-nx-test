@@ -130,7 +130,7 @@ class CreateOfferPage extends React.Component<Props, State> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: { params: { organisationId, offerId} },
     } = this.props;
 
     const {
@@ -142,6 +142,12 @@ class CreateOfferPage extends React.Component<Props, State> {
     if (loading) {
       return <Loading className="loading-full-screen" />;
     }
+
+    const resetOfferType = (offerId === undefined) ?
+    () => {
+      this.setState({ offerType: undefined});
+    } :
+    undefined;
 
     const breadcrumbPaths = [
       {
@@ -168,6 +174,7 @@ class CreateOfferPage extends React.Component<Props, State> {
         onSubmit={this.save}
         close={this.redirect}
         breadCrumbPaths={breadcrumbPaths}
+        goToOfferTypeSelection={resetOfferType}
       />
     }
   }

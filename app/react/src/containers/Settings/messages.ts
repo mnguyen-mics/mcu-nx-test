@@ -142,6 +142,10 @@ const messages = defineMessages({
     id: 'inventory_access_ad_exchangeType',
     defaultMessage: 'Inventory access ad exchange',
   },
+  offerFormTypeSelection: {
+    id: 'offerForm.siderMenu.TypeSelection',
+    defaultMessage: 'Offer Type',
+  }
 });
 
 export default messages;

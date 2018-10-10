@@ -26,6 +26,7 @@ export interface OfferFormProps extends Omit<ConfigProps<OfferFormData>, 'form'>
   close: () => void;
   breadCrumbPaths: Path[];
   offerType: OfferType;
+  goToOfferTypeSelection?: () => void;
 }
 
 const ServiceItemsFieldArray = FieldArray as new () => GenericFieldArray<
@@ -48,6 +49,7 @@ class CreateOfferForm extends React.Component<Props> {
       handleSubmit,
       breadCrumbPaths,
       offerType,
+      goToOfferTypeSelection,
       close,
       change,
       fieldValidators: { isRequired },
@@ -166,6 +168,15 @@ class CreateOfferForm extends React.Component<Props> {
       items: sections.map(s => ({ sectionId: s.id, title: s.title })),
       scrollId: FORM_ID,
     };
+
+    if (goToOfferTypeSelection) {
+      sideBarProps.items.unshift({
+        sectionId: "type",
+        title: messages.offerFormTypeSelection,
+        onClick: goToOfferTypeSelection,
+        type: 'validated',
+      });
+    }
 
 
     const renderedSections = sections.map((section, index) => {
