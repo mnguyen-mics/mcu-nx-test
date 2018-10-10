@@ -125,6 +125,7 @@ class TriggerFormSection extends React.Component<Props, State> {
             messages.audienceSegmentCreationUserQueryFieldHelper,
           ),
         }}
+        datamartId={datamart.id!}
       />
     
     const jsonOTQLForm = 

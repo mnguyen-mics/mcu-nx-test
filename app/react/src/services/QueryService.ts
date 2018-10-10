@@ -1,7 +1,8 @@
-import ApiService, { DataResponse } from './ApiService';
-import { QueryResource } from '../models/datamart/DatamartResource';
+import ApiService, { DataResponse, DataListResponse } from './ApiService';
+import { QueryResource, AutoCompleteResource } from '../models/datamart/DatamartResource';
 import { OTQLResult } from '../models/datamart/graphdb/OTQLResult';
 import { QueryDocument } from '../models/datamart/graphdb/QueryDocument';
+import log from '../utils/Logger';
 
 const QueryService = {
   getQuery(
@@ -62,6 +63,27 @@ const QueryService = {
   ): Promise<DataResponse<{ total: number }>> {
     const endpoint = `datamarts/${datamartId}/query_executions`;
     return ApiService.postRequest(endpoint, {});
+  },
+
+  autocompleteOtqlQuery(
+    datamartId: string,
+    query: string,
+    row: number,
+    col: number
+  ): Promise<AutoCompleteResource[] | undefined> {
+    const endpoint = `datamarts/${datamartId}/query_autocomplete/otql`;
+    return ApiService.postRequest<DataListResponse<AutoCompleteResource>>(endpoint, {
+      query,
+      position: {
+        row: row,
+        col: col
+      }
+    })
+    .then((res) => res.data)
+    .catch(() => {
+      log.warn('cannot resolve autocompleters');
+      return undefined
+    });
   }
 };
 

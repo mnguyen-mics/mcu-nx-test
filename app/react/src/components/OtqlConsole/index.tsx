@@ -5,8 +5,10 @@ import CustomOtqlMode from './theme/CustomOtqlMode'
 
 import "./theme/style/otql.theme.js";
 import "brace/ext/language_tools";
+import QueryService from '../../services/QueryService';
 
 export interface OtqlConsoleProps extends AceEditorProps {
+  datamartId: string;
 }
 
 export default class OtqlConsole extends React.Component<OtqlConsoleProps, any> {
@@ -21,30 +23,31 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, any> 
     }
   }
 
+  findCompleters = (query: string, row: number, col: number) => {
+    return QueryService.autocompleteOtqlQuery(
+      this.props.datamartId,
+      query,
+      row,
+      col
+    )
+  }
+
   buildCustomCompleters = () => {
     return {
       identifierRegexps: [/[\@a-zA-Z_0-9]/],
-      getCompletions: (editor: any, session: any, pos: any, prefix:any, callback: any) => {
-        if (prefix.length === 0) {
-          callback(null, []);
-          return;
-        }
-        callback(null, [
-          { name: "SELECT", value: "SELECT", score: 1, meta: "" },
-          { name: "FROM", value: "FROM", score: 2, meta: "" },
-          { name: "@count", value: "@count", score: 3, meta: "directive" },
-          { name: "@avg", value: "@avg", score: 3, meta: "directive" },
-          { name: "@min", value: "@min", score: 3, meta: "directive" },
-          { name: "@max", value: "@max", score: 3, meta: "directive" },
-          { name: "@stats", value: "@stats", score: 3, meta: "directive" },
-          { name: "@cardinality", value: "@cardinality", score: 3, meta: "directive" },
-          { name: "@map", value: "@map", score: 3, meta: "directive" },
-          { name: "@histogram", value: "@histogram", score: 3, meta: "directive" },
-          { name: "@range", value: "@range", score: 3, meta: "directive" },
-          { name: "@geo", value: "@geo", score: 3, meta: "directive" },
-          { name: "@missing", value: "@missing", score: 3, meta: "directive" },
-          { name: "@filter", value: "@filter", score: 3, meta: "directive" },
-        ]);
+      getCompletions: (editor: any, session: any, pos: { row: number, column: number }, prefix:any, callback: any) => {
+        this.findCompleters(editor.getValue() as string, pos.row + 1, pos.column + 1)
+          .then(res => {
+            const valueFromServer = res ? res.map(r => ({ name: r.field_name, value: r.field_name, meta: r.type })) : []
+            callback(null, [
+              ...valueFromServer,
+              { name: "SELECT", value: "SELECT", score: 3, meta: "keyword" },
+              { name: "FROM", value: "FROM", score: 3, meta: "keyword" },
+              { name: "WHERE", value: "WHERE", score: 3, meta: "keyword" },
+              { name: "LIMIT", value: "LIMIT", score: 3, meta: "keyword" },
+            ]);
+          })
+       
       }
     };
   }
