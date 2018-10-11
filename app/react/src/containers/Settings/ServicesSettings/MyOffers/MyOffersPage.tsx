@@ -13,8 +13,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import McsIcon, { McsIconType } from '../../../../components/McsIcon';
 import ItemList from '../../../../components/ItemList';
-// Temporarilly removed button Add new
-// import Button, { ButtonProps } from 'antd/lib/button';
+import Button, { ButtonProps } from 'antd/lib/button';
 
 const { Content } = Layout;
 
@@ -123,14 +122,11 @@ class MyOffersPage extends React.Component<Props, State> {
       intlMessage: messages.empty,
     };
 
-    /*
-    Temporarilly removed button Add new
     const submitButtonProps: ButtonProps = {
       htmlType: 'submit',
       onClick: () => { return null; },
       type: 'primary',
     };
-    */
 
     return (
       <div className="ant-layout">
@@ -145,11 +141,10 @@ class MyOffersPage extends React.Component<Props, State> {
                   <FormattedMessage {...messages.myServiceOffersTitle} />
                 </span>
                 <Link to={`/v2/o/${organisationId}/settings/services/my_offers/create`}>
-                  {/* Temporarilly removed button Add new
                   <Button {...submitButtonProps} className="mcs-primary" style={{ float: "right" }}>
                     <McsIcon type="plus" />
                     <FormattedMessage {...messages.myServiceOffersAddNew} />
-    </Button>*/}
+                  </Button>
                 </Link>
               </Breadcrumb.Item>
             </Breadcrumb>

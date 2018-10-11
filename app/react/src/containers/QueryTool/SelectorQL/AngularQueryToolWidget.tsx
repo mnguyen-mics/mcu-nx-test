@@ -32,8 +32,8 @@ const ReactAngularJS = ReactAngular as any;
 
 export default class AngularQueryToolWidget extends React.Component<AngularQueryToolWidgetProps, AngularQueryToolWidgetState> {
 
-  AngularQueryContainer = (window as any).angular.element(document.body).injector().get('core/datamart/queries/QueryContainer');
-  AngularSession = (window as any).angular.element(document.body).injector().get('core/common/auth/Session');
+  AngularQueryContainer: any;
+  AngularSession: any;
   queryContainer: QueryContainer
 
   constructor(props: AngularQueryToolWidgetProps) {
@@ -41,14 +41,16 @@ export default class AngularQueryToolWidget extends React.Component<AngularQuery
     this.state = { sessionInitialized: false, queryContainerInitialized: false }
   }
 
-  componentDidMount() {
-    this.props.setStateWithQueryContainer(this.queryContainer);
+  componentDidMount() {        
+    this.AngularQueryContainer = (window as any).angular.element(document.body).injector().get('core/datamart/queries/QueryContainer');
+    this.AngularSession = (window as any).angular.element(document.body).injector().get('core/common/auth/Session');
     this.AngularSession.init(`o${this.props.organisationId}d${this.props.datamartId}`)
       .then(() => {
         this.setState({ sessionInitialized: true })
       })
       .then(() => {
         this.queryContainer = new this.AngularQueryContainer(this.props.datamartId)
+        this.props.setStateWithQueryContainer(this.queryContainer);
         this.setState({
           queryContainerInitialized: true
         })

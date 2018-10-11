@@ -53,7 +53,7 @@ class CreateEditEmailRouter extends React.Component<JoinedProps> {
   ): PluginInstance => {
     const result: Omit<EmailRouter, "id"> = {
       // ...pluginInstance,
-      version_id: plugin.current_version_id,
+      version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
       artifact_id: plugin.artifact_id,
       group_id: plugin.group_id,

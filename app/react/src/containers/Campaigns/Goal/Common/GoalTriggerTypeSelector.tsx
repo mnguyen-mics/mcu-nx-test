@@ -79,7 +79,7 @@ class GoalTriggerTypeSelector extends React.Component<Props> {
                     </div>
                     <MenuPresentational
                       title={intl.formatMessage(messages.triggerPixel)}
-                      type="code"
+                      type="user-pixel"
                       select={handleOnSelect('PIXEL')}
                     />
                   </div>

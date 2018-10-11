@@ -55,8 +55,8 @@ class CreateEditBidOptimizer extends React.Component<
   ): PluginInstance => {
     const result: Omit<BidOptimizer, "id"> = {
       // ...pluginInstance,
-      version_id: plugin.current_version_id,
-      engine_version_id: plugin.current_version_id,
+      version_id: pluginInstance.version_id,
+      engine_version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
       engine_artifact_id: plugin.artifact_id,
       artifact_id: plugin.artifact_id,

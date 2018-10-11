@@ -93,6 +93,10 @@ export const messages = defineMessages({
     id: 'settings.subscribedOffers.service.item.price.chart.usage_cost',
     defaultMessage: 'Usage Cost',
   },
+  myServiceOffersEdit: {
+    id: 'settings.myOffers.edit',
+    defaultMessage: 'Edit offer',
+  }
 });
 
 interface RouterProps {
@@ -162,7 +166,7 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/settings/services/subscribed_offers/${
               record.id
-            }/service_item_conditions`}
+              }/service_item_conditions`}
           >
             {text}
           </Link>

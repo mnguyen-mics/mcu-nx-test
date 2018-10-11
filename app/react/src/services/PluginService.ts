@@ -1,4 +1,8 @@
-import { Adlayout, StylesheetVersionResource } from './../models/Plugins';
+import {
+  Adlayout,
+  StylesheetVersionResource,
+  PluginType,
+} from './../models/Plugins';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PluginResource, PluginVersionResource } from '../models/Plugins';
@@ -7,20 +11,53 @@ import DataFileService from './DataFileService';
 import AssetsFilesService from './Library/AssetsFilesService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import log from '../utils/Logger';
+import { Omit } from '../utils/Types';
 
-interface GetPluginOptions extends PaginatedApiParam {
-  plugin_type?: string;
+// TODO Pagination is disabled for now waiting for an api param
+// to allow filtering of plugin without version and/or with current version not archived
+interface GetPluginOptions extends Omit<PaginatedApiParam, 'first_result'> {
+  plugin_type?: PluginType;
   artifact_id?: string;
   group_id?: string;
   organisation_id?: number;
 }
 
-const pluginService = {
+const PluginService = {
   getPlugins(
     options: GetPluginOptions = {},
+    withArchivedPluginVersion: boolean = false,
   ): Promise<DataListResponse<PluginResource>> {
     const endpoint = 'plugins';
-    return ApiService.getRequest(endpoint, options);
+    return ApiService.getRequest<DataListResponse<PluginResource>>(
+      endpoint,
+      options,
+    ).then(plugins => {
+      if (!withArchivedPluginVersion) {
+        return Promise.all(
+          plugins.data.reduce((filteredPlugins, p) => {
+            if (p.current_version_id) {
+              return [
+                ...filteredPlugins,
+                PluginService.getPluginVersion(p.id, p.current_version_id).then(
+                  pv => pv.data,
+                ),
+              ];
+            }
+            return filteredPlugins;
+          }, []),
+        ).then(pluginVersions => {
+          const archivedPVersion = pluginVersions.filter(pv => !!pv.archived);
+          return {
+            ...plugins,
+            data: plugins.data.filter(
+              p =>
+                !archivedPVersion.find(apv => apv.id === p.current_version_id),
+            ),
+          };
+        });
+      }
+      return plugins;
+    });
   },
   getPluginVersions(
     pluginId: string,
@@ -42,7 +79,11 @@ const pluginService = {
     const endpoint = `plugins/${pluginId}/versions/${versionId}`;
     return ApiService.getRequest(endpoint);
   },
-  getPluginVersionProperty(pluginId: string, pluginVersionId: string, params: object = {}): Promise<DataListResponse<PropertyResourceShape>> {
+  getPluginVersionProperty(
+    pluginId: string,
+    pluginVersionId: string,
+    params: object = {},
+  ): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties`;
     return ApiService.getRequest(endpoint, params);
   },
@@ -120,19 +161,19 @@ const pluginService = {
       if (fileValue !== null) {
         const formData = new FormData(); /* global FormData */
         formData.append('file', fileValue, fileValue.name);
-        return ApiService.postRequest(uploadEndpoint, formData)
-          .then((res: any) => {
+        return ApiService.postRequest(uploadEndpoint, formData).then(
+          (res: any) => {
             const newParams = {
               ...params,
             };
             newParams.value = {
-              original_file_name: res.data.original_filename,
-              file_path: res.data.file_path,
+              original_name: res.data.original_name,
+              path: res.data.path,
               asset_id: res.data.id,
             };
             ApiService.putRequest(endpoint, newParams);
           },
-          );
+        );
       }
       return Promise.resolve();
     } else if (params.property_type === 'NATIVE_IMAGE') {
@@ -188,7 +229,7 @@ const pluginService = {
           };
           return ApiService.putRequest(endpoint, newParams) as Promise<
             DataResponse<PropertyResourceShape>
-            >;
+          >;
         });
       } else if (params.value.fileName && params.value.fileContent) {
         // create
@@ -208,7 +249,7 @@ const pluginService = {
           };
           return ApiService.putRequest(endpoint, newParams) as Promise<
             DataResponse<PropertyResourceShape>
-            >;
+          >;
         });
       } else if (
         !params.value.fileName &&
@@ -230,15 +271,21 @@ const pluginService = {
 
     return ApiService.putRequest(endpoint, params);
   },
-  getLocalizedPluginLayout(pluginId: string, pluginVersionId: string, locale: string = "en-US"): Promise<PluginLayout | null> {
+  getLocalizedPluginLayout(
+    pluginId: string,
+    pluginVersionId: string,
+    locale: string = 'en-US',
+  ): Promise<PluginLayout | null> {
     const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties_layout?locale=${locale}`;
     return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint)
-      .then(res => { return res.data })
+      .then(res => {
+        return res.data;
+      })
       .catch(err => {
-        log.warn("Cannot retrieve plugin layout", err);
+        log.warn('Cannot retrieve plugin layout', err);
         return null;
       });
   },
 };
 
-export default pluginService;
+export default PluginService;

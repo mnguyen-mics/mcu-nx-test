@@ -55,6 +55,7 @@ export type McsIconType =
   'user' |
   'users' |
   'user-query' |
+  'user-pixel' |
   'user-list' |
   'video' |
   'warning';

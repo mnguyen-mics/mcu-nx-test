@@ -1,4 +1,5 @@
 import { Locale } from '../Locale';
+import { FieldArrayModel } from '../../utils/FormHelper';
 
 export type ServiceFamily = 'AUDIENCE_DATA' | 'DISPLAY_CAMPAIGN';
 export type ServiceType =
@@ -65,13 +66,15 @@ export interface BaseServiceItemPublicResource
 
 export interface AdExchangeHubInventoryServiceItemPublicResource
   extends ServiceItemPublicResource {
-    ad_exchange_hub_key: string;
+  ad_exchange_hub_key: string;
 }
 
 export interface KeywordListInventoryAccessPublicResource
   extends ServiceItemPublicResource {
-    keyword_list_id: string;
+  keyword_list_id: string;
 }
+
+export type ServiceItemModel = FieldArrayModel<ServiceItemShape>;
 
 export type ServiceItemShape =
   | AudienceSegmentServiceItemPublicResource
@@ -108,20 +111,34 @@ export interface ServiceItemOfferResource {
   credited_account_name?: string;
   provider_id: string;
   provider_name?: string;
-  offer_type: string;
+  automatic_on?: AutomaticRecordType;
 }
 
-export type ServiceItemConditionsShape =
-  | LinearServiceItemConditionsResource
-  | PluginServiceItemConditionsResource
-  | ProvidedServiceItemConditionsResource;
+export interface ServiceItemResource {
+  id: string;
+  locale: string;
+  name: string;
+  description: string;
+  provider_id: string;
+  category_id: string;
+  list_weight: number;
+  service_type: string;
+  reseller_agreement_id?: string;
+}
+
+export type AutomaticRecordType = "AUDIENCE_SEGMENT" | "DEAL_LIST" | "PLACEMENT_LIST" | "KEYWORDS_LIST";
+
+export type ServiceItemConditionShape =
+  | LinearServiceItemConditionResource
+  | PluginServiceItemConditionResource
+  | ProvidedServiceItemConditionResource;
 
 interface ServiceItemConditionsResource {
   id: string;
   service_item_id: string;
 }
 
-interface LinearServiceItemConditionsResource
+export interface LinearServiceItemConditionResource
   extends ServiceItemConditionsResource {
   currency: string;
   percent_value: number;
@@ -129,13 +146,13 @@ interface LinearServiceItemConditionsResource
   min_value: number;
 }
 
-interface PluginServiceItemConditionsResource
+export interface PluginServiceItemConditionResource
   extends ServiceItemConditionsResource {
   valuator_id: string;
 }
 
-interface ProvidedServiceItemConditionsResource
-  extends ServiceItemConditionsResource {}
+export interface ProvidedServiceItemConditionResource
+  extends ServiceItemConditionsResource { }
 
 export interface ServiceAgreement {
   id: string;
@@ -144,12 +161,12 @@ export interface ServiceAgreement {
 }
 
 export function isLinearServiceItemConditionsResource(
-  serviceItemCondition: ServiceItemConditionsShape,
-): serviceItemCondition is LinearServiceItemConditionsResource {
+  serviceItemCondition: ServiceItemConditionShape,
+): serviceItemCondition is LinearServiceItemConditionResource {
   return (
-    (serviceItemCondition as LinearServiceItemConditionsResource)
+    (serviceItemCondition as LinearServiceItemConditionResource)
       .percent_value !== undefined &&
-    (serviceItemCondition as LinearServiceItemConditionsResource)
+    (serviceItemCondition as LinearServiceItemConditionResource)
       .fixed_value !== undefined
   );
 }

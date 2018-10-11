@@ -43,3 +43,9 @@ export interface UserAccountCompartmentDatamartSelectionResource {
   token: string;
   name: string;
 }
+
+export interface AutoCompleteResource {
+  type: string,
+  object_type_name: string,
+  field_name: string
+}
