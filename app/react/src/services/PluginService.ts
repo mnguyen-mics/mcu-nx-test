@@ -167,8 +167,8 @@ const PluginService = {
               ...params,
             };
             newParams.value = {
-              original_file_name: res.data.original_filename,
-              file_path: res.data.file_path,
+              original_name: res.data.original_name,
+              path: res.data.path,
               asset_id: res.data.id,
             };
             ApiService.putRequest(endpoint, newParams);
