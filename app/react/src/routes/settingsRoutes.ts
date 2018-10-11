@@ -347,6 +347,12 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: CreateOfferPage,
     requiredFeature: 'servicesSettings.my_offers',
+  },
+  settingsMyOffersEdit: {
+    path: '/settings/services/my_offers/:offerId/edit',
+    layout: 'edit',
+    editComponent: CreateOfferPage,
+    requiredFeature: 'servicesSettings.my_offers',
   },  
   // settingsServiceCatalog: {
   //   path: '/settings/services/service_catalog',

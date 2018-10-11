@@ -4,14 +4,14 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Input } from 'antd';
 import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
 import {
-  ServiceItemConditionsShape,
+  ServiceItemConditionShape,
   isLinearServiceItemConditionsResource,
   ServiceItemShape,
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
 
 interface ServiceItemProps {
   serviceItem?: ServiceItemShape;
-  serviceItemCondition?: ServiceItemConditionsShape;
+  serviceItemCondition?: ServiceItemConditionShape;
 }
 
 interface State {
@@ -40,9 +40,9 @@ class ServiceItem extends React.Component<Props, State> {
       this.setState({
         price: isValidValue
           ? `${intl.formatMessage(messages.serviceItemPrice)} ${(
-              parseFloat(e.target.value) * serviceItemCondition.percent_value +
-              serviceItemCondition.fixed_value
-            ).toFixed(2)} €`
+            parseFloat(e.target.value) * serviceItemCondition.percent_value +
+            serviceItemCondition.fixed_value
+          ).toFixed(2)} €`
           : intl.formatMessage(messages.invalidImpressionCost),
       });
     }
