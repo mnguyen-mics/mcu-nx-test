@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 
@@ -19,7 +19,9 @@ import EventRulesForm, {
 } from './EventRulesForm/EventRulesForm';
 import { EventRuleUrlMatch } from '../../../../models/settings/settings';
 
-export interface EventRulesSectionProps extends ReduxFormChangeProps {}
+export interface EventRulesSectionProps extends ReduxFormChangeProps {
+  datamartId: string;
+}
 
 type Props = EventRulesSectionProps &
   WrappedFieldArrayProps<EventRuleFieldModel> &
@@ -59,6 +61,22 @@ const messages = defineMessages({
   sectionTitleCreateEventRule: {
     id: 'settings.form.eventRules.create',
     defaultMessage: 'Create Event Rules',
+  },
+  userIdInsertRecordTitle: {
+    id: 'settings.form.eventRules.record.title.user-id-insert',
+    defaultMessage: '{ruleType} - Property {propertyName} is hashed with {hashFunc} to be inserted as {identifierType} {optionnalCompartment}',
+  },
+  urlMatchRecordTitle: {
+    id: 'settings.form.eventRules.record.title.url-match',
+    defaultMessage: '{ruleType} - Matches {url}'
+  },
+  propToOrigCopyRecordTitle: {
+    id: 'settings.form.eventRules.record.title.prop-to-orig-copy',
+    defaultMessage: '{ruleType} - Property {propertyName} in {source} is copied to {dest}'
+  },
+  catalAutoMatchRecordTitle: {
+    id: 'settings.form.eventRules.record.title.catal-auto-match',
+    defaultMessage: '{ruleType} - {matchType}'
   },
 });
 
@@ -141,6 +159,7 @@ class EventRulesSection extends React.Component<Props> {
       onSubmit: this.updateEventRules,
       breadCrumbPaths: [{ name: 'Create Event Rule' }],
       initialValues: initialValues,
+      datamartId: this.props.datamartId
     };
 
     this.props.openNextDrawer<EventRulesFormProps>(EventRulesForm, {
@@ -192,6 +211,7 @@ class EventRulesSection extends React.Component<Props> {
         },
       ],
       initialValues: initialValues,
+      datamartId: this.props.datamartId
     };
 
     this.props.openNextDrawer<EventRulesFormProps>(EventRulesForm, {
@@ -202,24 +222,45 @@ class EventRulesSection extends React.Component<Props> {
   getEventRulesRecords = () => {
     const { fields } = this.props;
 
-    const getName = (field: EventRuleFieldModel) => {
+    const getRecordTitle = (field: EventRuleFieldModel) => {
       switch (field.model.type) {
         case 'CATALOG_AUTO_MATCH':
-          return `${field.model.type} - ${field.model.auto_match_type}`;
+          return <FormattedMessage
+            {...messages.catalAutoMatchRecordTitle}
+            values={{
+              ruleType: field.model.type,
+              matchType: <strong>{field.model.auto_match_type}</strong>,
+            }}
+          />;
         case 'PROPERTY_TO_ORIGIN_COPY':
-          return `${field.model.type} - Property ${
-            field.model.property_name
-          } in ${field.model.property_source} is copied to ${
-            field.model.destination
-          }`;
+          return <FormattedMessage
+            {...messages.propToOrigCopyRecordTitle}
+            values={{
+              ruleType: field.model.type,
+              propertyName: <strong>{field.model.property_name}</strong>,
+              source: <strong>{field.model.property_source}</strong>,
+              dest: <strong>{field.model.destination}</strong>,
+            }}
+          />;
         case 'URL_MATCH':
-          return `${field.model.type} - Matches ${field.model.pattern}`;
+          return <FormattedMessage
+            {...messages.urlMatchRecordTitle}
+            values={{
+              ruleType: field.model.type,
+              url: <strong>{field.model.pattern}</strong>,
+            }}
+          />;
         case 'USER_IDENTIFIER_INSERTION':
-          return `${field.model.type} - Property ${
-            field.model.property_source
-          } is hashed with ${field.model.hash_function} to insert ${
-            field.model.type
-          }`;
+          return <FormattedMessage
+            {...messages.userIdInsertRecordTitle}
+            values={{
+              ruleType: field.model.type,
+              propertyName: <strong>{field.model.property_source}</strong>,
+              hashFunc: <strong>{field.model.hash_function}</strong>,
+              identifierType: field.model.identifier_creation,
+              optionnalCompartment: field.model.compartment_id ? `(comp: ${field.model.compartment_id})` : ''
+            }}
+          />;
         default:
           return '';
       }
@@ -235,7 +276,7 @@ class EventRulesSection extends React.Component<Props> {
           key={field.key}
           recordIconType="optimization"
           record={field}
-          title={getName}
+          title={getRecordTitle}
           onRemove={removeField}
           onEdit={this.openEventRulesSelector}
         />

@@ -1,9 +1,9 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { DatamartResource, UserCompartment } from '../models/datamart/DatamartResource';
+import { DatamartResource, UserAccountCompartmentDatamartSelectionResource } from '../models/datamart/DatamartResource';
 import { EventRules } from '../models/settings/settings';
 
 
-const datamartServices = {
+const DatamartService = {
   getDatamarts(organisationId: string, options: object = {}): Promise<DataListResponse<DatamartResource>> {
     const endpoint = 'datamarts';
   
@@ -42,8 +42,8 @@ const datamartServices = {
     const endpoint = `datamarts/${datamartId}/event_rules/${eventRuleId}`;
     return ApiService.deleteRequest(endpoint)
   },
-  getUserCompartments(datamartId: string): Promise<DataListResponse<UserCompartment>> {
-    const endpoint = `datamarts/${datamartId}/user_account_compartments`;
+  getUserAccountCompartments(datamartId: string): Promise<DataListResponse<UserAccountCompartmentDatamartSelectionResource>> {
+    const endpoint = `datamarts/${datamartId}/compartments`;
     return ApiService.getRequest(endpoint)
   },
   getSources(datamartId: string): Promise<DataListResponse<DatamartResource>> {
@@ -52,4 +52,4 @@ const datamartServices = {
   }
 }
 
-export default datamartServices;
+export default DatamartService;

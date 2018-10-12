@@ -5,7 +5,7 @@ import { PAGINATION_SEARCH_SETTINGS, parseSearch, compareSearches } from '../../
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import datamartServices from '../../../../../services/DatamartService';
+import DatamartService from '../../../../../services/DatamartService';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { TableView, EmptyTableView } from '../../../../../components/TableView';
 import { Index } from '../../../../../utils';
@@ -127,13 +127,13 @@ class SourcesListPage extends React.Component<Props, State> {
       notifyError
     } = this.props;
     this.setState({ loading: true })
-    return datamartServices.getSources(datamartId)
+    return DatamartService.getSources(datamartId)
       .then(res => this.setState({ loading: false, dataSource: res.data, total: res.total || res.count }))
       .catch(err => { notifyError(err); this.setState({ loading: false })})
   }
 
   fetchDatamart = (datamartId: string) => {
-    return datamartServices.getDatamart(datamartId).then(res => this.setState({ datamart: res.data }))
+    return DatamartService.getDatamart(datamartId).then(res => this.setState({ datamart: res.data }))
   }
 
   public render() {

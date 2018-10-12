@@ -19,10 +19,12 @@ import FormLayoutActionbar, {
 import { EventRulesFormData } from '../domain';
 import { Omit } from '../../../../../utils/Types';
 import CatalogAutoMatch from './Sections/CatalogAutoMatch';
-import UserIdentifierinsertion from './Sections/UserIdentifierinsertion'; 
+import UserIdentifierinsertion from './Sections/UserIdentifierInsertion'; 
 import UriMatch from './Sections/UriMatch';
 import PropertyToOriginCopy from './Sections/PropertyToOriginCopy';
 import * as SessionSelectors from '../../../../../state/Session/selectors';
+import DatamartService from '../../../../../services/DatamartService';
+import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
 
 const messages = defineMessages({
   saveEventRules: {
@@ -44,6 +46,7 @@ export interface EventRulesFormProps
   extends Omit<ConfigProps<EventRulesFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
+  datamartId: string;
 }
 
 interface MapStateToProps {
@@ -59,9 +62,25 @@ type Props = InjectedFormProps<
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-const FORM_ID = 'eventRulesForm';
+export const FORM_ID = 'eventRulesForm';
 
-class EventRulesForm extends React.Component<Props> {
+interface State {
+  compartments: UserAccountCompartmentDatamartSelectionResource[];
+}
+
+class EventRulesForm extends React.Component<Props, State> {
+
+  constructor(props: Props) {
+    super(props);
+    this.state = { compartments: [] };
+  }
+
+  componentDidMount() {
+    DatamartService.getUserAccountCompartments(this.props.datamartId).then(res => {
+      this.setState({ compartments: res.data });
+    })
+  }
+
   render() {
     const {
       handleSubmit,
@@ -90,7 +109,7 @@ class EventRulesForm extends React.Component<Props> {
           case 'URL_MATCH':
             return <UriMatch />
           case 'USER_IDENTIFIER_INSERTION':
-            return <UserIdentifierinsertion />
+            return <UserIdentifierinsertion datamartId={this.props.datamartId}/>
         }
       }
       return <div>{intl.formatMessage(messages.error)}</div>

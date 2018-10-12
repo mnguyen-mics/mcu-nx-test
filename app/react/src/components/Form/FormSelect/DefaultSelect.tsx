@@ -21,6 +21,8 @@ export interface DefaultSelectProps extends FormFieldWrapperProps {
   options?: OptionProps[];
   disabled?: boolean;
   small?: boolean;
+  autoSetDefaultValue?: boolean;
+  defaultValueTitle?: string;
 }
 
 const Option = Select.Option;
@@ -40,14 +42,15 @@ class DefaultSelect extends React.Component<
     selectProps: {},
     options: [],
     disabled: false,
+    autoSetDefaultValue: true,
   };
 
   componentDidMount() {
-    this.setDefaultValue();
+    if (this.props.autoSetDefaultValue) this.setDefaultValue();
   }
 
   componentDidUpdate() {
-    this.setDefaultValue();
+    if (this.props.autoSetDefaultValue) this.setDefaultValue();
   }
 
   setDefaultValue = () => {
@@ -71,6 +74,7 @@ class DefaultSelect extends React.Component<
       options,
       selectProps,
       small,
+      defaultValueTitle,
     } = this.props;
 
     let validateStatus = 'success' as
@@ -86,6 +90,12 @@ class DefaultSelect extends React.Component<
         {option.title}
       </Option>
     ));
+
+    const defaultOption = (
+      <Option value={''}>
+        {defaultValueTitle || <FormattedMessage {...messages.defaultValue} />}
+      </Option>
+    )
 
     return (
       <FormFieldWrapper
@@ -104,7 +114,7 @@ class DefaultSelect extends React.Component<
           disabled={disabled}
           defaultActiveFirstOption={true}
         >
-          <Option value={''}><FormattedMessage {...messages.defaultValue} /></Option>
+          {defaultOption}
           {optionsToDisplay}
         </Select>
       </FormFieldWrapper>

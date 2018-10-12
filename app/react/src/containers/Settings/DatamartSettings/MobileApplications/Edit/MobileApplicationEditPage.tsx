@@ -124,19 +124,16 @@ class EditMobileAppPage extends React.Component<Props, State> {
     message.error(intl.formatMessage(messages.errorFormMessage));
   };
 
-  save = (mobileApplicationFormData: MobileApplicationFormData) => {
+  getDatamartId = () => {
     const {
       match: {
-        params: { organisationId, mobileApplicationId },
+        params: { mobileApplicationId },
       },
-      notifyError,
-      history,
-      intl,
       datamart,
     } = this.props;
 
     const { mobileApplicationData, selectedDatamartId } = this.state;
-
+    
     let datamartId: string;
     if (mobileApplicationId) {
       datamartId = mobileApplicationData.mobileapplication.datamart_id
@@ -145,6 +142,20 @@ class EditMobileAppPage extends React.Component<Props, State> {
     } else {
       datamartId = selectedDatamartId;
     }
+    return datamartId;
+  }
+
+  save = (mobileApplicationFormData: MobileApplicationFormData) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      notifyError,
+      history,
+      intl,
+    } = this.props;
+
+    const datamartId = this.getDatamartId();
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -185,16 +196,20 @@ class EditMobileAppPage extends React.Component<Props, State> {
             });
           } else if (startIds.includes(erf.model.id)) {
             savedIds.push(erf.model.id);
+            const eventRuleBody = { ...erf.model, datamart_id: datamartId, site_id: channel.id };
+            if (
+              eventRuleBody.type === 'USER_IDENTIFIER_INSERTION' && 
+              eventRuleBody.identifier_creation === 'USER_ACCOUNT' && 
+              !eventRuleBody.compartment_id
+            ) {
+              eventRuleBody.compartment_id = null;
+            }
             return ChannelService.updateEventRules(
               datamartId,
               channel.id,
               organisationId,
               erf.model.id,
-              {
-                ...erf.model,
-                datamart_id: datamartId,
-                site_id: channel.id,
-              },
+              eventRuleBody,
             );
           }
           return Promise.resolve();
@@ -300,7 +315,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const { loading, mobileApplicationData, selectedDatamartId } = this.state;
+    const { loading, mobileApplicationData } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -330,13 +345,16 @@ class EditMobileAppPage extends React.Component<Props, State> {
       onClose: this.onClose,
     };
 
-    return selectedDatamartId ? (
+    const datamartId = this.getDatamartId();
+
+    return datamartId ? (
       <MobileApplicationEditForm
         initialValues={mobileApplicationData}
         onSubmit={this.save}
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
+        datamartId={datamartId}
       />
     ) : (
       <Layout className="edit-layout">

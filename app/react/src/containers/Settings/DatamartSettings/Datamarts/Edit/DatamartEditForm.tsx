@@ -9,7 +9,6 @@ import {
   FieldArray,
 } from 'redux-form';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
@@ -30,7 +29,6 @@ import { McsFormSection } from '../../../../../utils/FormHelper';
 import EventRulesSection, {
     EventRulesSectionProps,
   } from '../../Common/EventRulesSection';
-import * as SessionSelectors from '../../../../../state/Session/selectors';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -45,15 +43,11 @@ export interface DatamartEditFormProps
   extends Omit<ConfigProps<DatamartFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-}
-
-interface MapStateToProps {
-  hasDatamarts: (organisationId: string) => boolean;
+  datamartId: string;
 }
 
 type Props = InjectedFormProps<DatamartFormData, DatamartEditFormProps> &
   DatamartEditFormProps &
-  MapStateToProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -89,6 +83,7 @@ class DatamartEditForm extends React.Component<Props> {
         <EventRulesFieldArray
           name="eventRulesFields"
           component={EventRulesSection}
+          datamartId={this.props.datamartId}
           {...genericFieldArrayProps}
         />
       ),
@@ -139,5 +134,4 @@ export default compose<Props, DatamartEditFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
 )(DatamartEditForm);

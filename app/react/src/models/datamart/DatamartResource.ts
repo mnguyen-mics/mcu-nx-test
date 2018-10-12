@@ -27,11 +27,21 @@ export interface QueryResource extends QueryCreateRequest {
   id: string;
 }
 
-export interface UserCompartment {
+export interface UserAccountCompartmentResource {
   id: string;
-  name: string;
+  organisation_id: string;
   token: string;
+  name: string;
+  archived: boolean;
+}
+
+export interface UserAccountCompartmentDatamartSelectionResource {
+  id: string;
+  datamart_id: string;
+  compartment_id: string;
   default: boolean;
+  token: string;
+  name: string;
 }
 
 export interface AutoCompleteResource {
