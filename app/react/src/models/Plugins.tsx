@@ -136,6 +136,7 @@ export interface AudienceTagFeed extends PluginInstance {
   id: string;
   status: Status;
   organisation_id: string;
+  version_id: string;
 }
 
 export interface Adlayout {
