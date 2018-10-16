@@ -30,7 +30,7 @@ import {
 } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment';
+import { AudienceSegmentResource, UserActivationSegment } from '../../../../models/audiencesegment';
 import ReportService from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
@@ -105,6 +105,14 @@ const messages = defineMessages({
     id: 'audience.table.filter.type',
     defaultMessage: 'Type',
   },
+  userActivationClickers: {
+    id: 'audience.table.useractivation.clickers',
+    defaultMessage: '{audienceSegmentName} - Clickers'
+  },
+  userActivationExposed: {
+    id: 'audience.table.useractivation.exposed',
+    defaultMessage: '{audienceSegmentName} - Exposed'
+  }
 });
 
 export interface AudienceSegmentsTableProps {}
@@ -492,6 +500,17 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
+    const formatUserActivationSegmentName = (record: UserActivationSegment): string => {
+      if(record.clickers) {
+        return intl.formatMessage(messages.userActivationClickers, {audienceSegmentName: record.name});
+      } else if (record.exposed){
+        return intl.formatMessage(messages.userActivationExposed, {audienceSegmentName: record.name});
+      } else {
+        // Not supposed to happen
+        return record.name;
+      }
+    }
+
     const dataColumns = [
       {
         translationKey: 'TYPE',
@@ -566,12 +585,12 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (text: string, record: AudienceSegmentResource) => (
+        render: (text: string, record: AudienceSegmentResource | UserActivationSegment) => (
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
           >
-            {text}
+            {record.type === 'USER_ACTIVATION' ? formatUserActivationSegmentName(record as UserActivationSegment) : text}
           </Link>
         ),
       },
