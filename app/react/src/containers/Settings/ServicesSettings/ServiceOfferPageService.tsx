@@ -58,18 +58,21 @@ const ServiceOfferPageService = {
 
           idsForConditionDeletion.forEach(id => {
             tasks.push(() => {
-              const conditionId = initialOfferFormData.serviceConditionFields
-                .filter(conditionField => conditionField.model.service_item_id === id)[0]
-                .model.id;
-              return CatalogService.removeConditionFromOffer(
-                returnedOfferId,
-                conditionId
-              ).then(res => {
-                return CatalogService.deleteServiceItemCondition(
-                  id,
+              const elementForConditionId = initialOfferFormData.serviceConditionFields
+                .find(conditionField => conditionField.model.service_item_id === id)
+              if (elementForConditionId !== undefined) {
+                const conditionId = elementForConditionId.model.id;
+                return CatalogService.removeConditionFromOffer(
+                  returnedOfferId,
                   conditionId
-                );
-              });
+                ).then(res => {
+                  return CatalogService.deleteServiceItemCondition(
+                    id,
+                    conditionId
+                  );
+                });
+              }
+              else return Promise.resolve();
             });
           });
 
