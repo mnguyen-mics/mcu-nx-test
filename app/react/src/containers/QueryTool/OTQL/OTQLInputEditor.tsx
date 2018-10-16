@@ -9,6 +9,7 @@ export interface Props {
   onAbortQuery: () => void;
   runningQuery: boolean;
   datamartId: string;
+  onQueryChange: (query: string) => void
 }
 
 interface State {
@@ -25,7 +26,10 @@ class OTQLInputEditor extends React.Component<Props, State> {
 
   updateQuery = (
     value: string /*event: React.ChangeEvent<HTMLTextAreaElement>*/,
-  ) => this.setState({ query: value });
+  ) => {
+    this.setState({ query: value });
+    this.props.onQueryChange(value)
+  }
 
   clearQuery = () => this.setState({ query: '' });
 
@@ -61,7 +65,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
 
     const handleOnRunButtonClick = () => onRunQuery(query!);
     const runButton = (
-      <Button type="primary" disabled={!query} onClick={handleOnRunButtonClick}>
+      <Button type="primary" className="m-l-5" disabled={!query} onClick={handleOnRunButtonClick}>
         <FormattedMessage
           id="query-tool-run-query"
           defaultMessage="Run Query"

@@ -16,6 +16,7 @@ import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmen
 import AudienceSegmentService from '../../../services/AudienceSegmentService';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
 import ExportService from '../../../services/Library/ExportService';
+import QueryService from '../../../services/QueryService';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -131,6 +132,39 @@ class QueryToolPage extends React.Component<Props> {
       );
     };
 
+    const OTQLActionbar = (
+      query: string,
+      datamartId: string,
+    ) => {
+      
+      const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
+        return QueryService.createQuery(datamartId, { datamart_id: datamartId, query_language: 'OTQL', query_text: query }).then(queryResource => {
+          return ExportService.createExport(match.params.organisationId, {
+            name: exportFormData.name,
+            output_format: exportFormData.outputFormat,
+            query_id: queryResource.data.id,
+            type: 'QUERY',
+          }).then(res => {
+            history.push(
+              `/v2/o/${match.params.organisationId}/datastudio/exports/${
+              res.data.id
+              }`,
+            );
+          });
+        });
+      };
+      return (
+        <SaveQueryAsActionBar
+          saveAsExort={saveAsExport}
+          breadcrumb={[
+            {
+              name: intl.formatMessage(messages.queryBuilder),
+            },
+          ]}
+        />
+      );
+    };
+
     return (
       <div style={{ height: '100%', display: 'flex' }}>
         {!selectedDatamart && (
@@ -148,6 +182,7 @@ class QueryToolPage extends React.Component<Props> {
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201709' && (
             <OTQLConsoleContainer
+              renderActionBar={OTQLActionbar}
               datamartId={selectedDatamart.id}
             />
           )}

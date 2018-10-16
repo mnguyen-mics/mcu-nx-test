@@ -9,7 +9,6 @@ import {
   defineMessages,
 } from 'react-intl';
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
-import ActionBar from '../../../components/ActionBar';
 import ContentHeader from '../../../components/ContentHeader';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import QueryService from '../../../services/QueryService';
@@ -24,6 +23,7 @@ const { Content } = Layout;
 
 export interface OTQLConsoleContainerProps {
   datamartId: string;
+  renderActionBar: (query: string, datamartId: string) => React.ReactNode;
 }
 
 interface State {
@@ -31,6 +31,7 @@ interface State {
   runningQuery: boolean;
   queryAborted: boolean;
   error: any | null;
+  query: string;
 }
 
 type Props =
@@ -49,6 +50,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       runningQuery: false,
       queryAborted: false,
       error: null,
+      query: ''
     };
   }
 
@@ -118,14 +120,12 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
           aborted={queryAborted}
         />
       );
+    
+    const onChange = (query: string) => this.setState({ query })
 
     return (
       <Layout>
-        <ActionBar
-          paths={[
-            { name: intl.formatMessage(messages.queryToolBreadcrumbLabel) },
-          ]}
-        />
+        {this.props.renderActionBar(this.state.query, datamartId)}
         <Content className="mcs-content-container">
           <ContentHeader
             title={
@@ -141,6 +141,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
             onAbortQuery={this.abortQuery}
             runningQuery={runningQuery}
             datamartId={datamartId}
+            onQueryChange={onChange}
           />
           {queryResultRenderer}
         </Content>
