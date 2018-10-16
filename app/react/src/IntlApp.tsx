@@ -2,6 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { addLocaleData, IntlProvider } from 'react-intl';
 
+import { Container } from 'inversify';
+import { Provider } from 'react-inversify';
+
 import enUS from 'antd/lib/locale-provider/en_US';
 import { LocaleProvider } from 'antd';
 
@@ -32,6 +35,7 @@ const formats = {
 };
 
 const IntlApp: React.SFC<IntlAppProps> = ({ locale, translations }) => {
+  const container = new Container();
   return (
     <IntlProvider
       locale={locale}
@@ -41,7 +45,9 @@ const IntlApp: React.SFC<IntlAppProps> = ({ locale, translations }) => {
     >
       <LocaleProvider locale={enUS}>
         <Router>
-          <Navigator />
+          <Provider container={container}>
+            <Navigator />
+          </Provider>
         </Router>
       </LocaleProvider>
     </IntlProvider>
