@@ -61,6 +61,12 @@ export interface UserPartitionSegment extends AudienceSegmentResource {
   type: 'USER_PARTITION';
 }
 
+export interface UserActivationSegment extends AudienceSegmentResource {
+  clickers: boolean;
+  exposed: boolean;
+  type: 'USER_ACTIVATION';
+}
+
 export type AudienceSegmentShape =
   | UserListSegment
   | UserQuerySegment
