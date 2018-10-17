@@ -54,9 +54,6 @@ const messages = defineMessages({
   },
 });
 
-export interface IKeywordListForm
-  extends React.Component<KeywordListFormProps, KeywordListFormState> {}
-
 export interface KeywordListFormProps
   extends Omit<ConfigProps<KeywordListFormData>, 'form'> {
   save: (formData: KeywordListFormData) => void;

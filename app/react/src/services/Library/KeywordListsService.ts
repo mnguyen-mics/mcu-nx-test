@@ -3,7 +3,8 @@ import { KeywordResource } from './../../models/keywordList/keywordList';
 import ApiService, { DataResponse, DataListResponse } from '../ApiService';
 import { KeywordListResource } from '../../models/keywordList/keywordList';
 
-export interface IKeywordService {
+
+export interface IKeywordListService {
   getKeywordLists: (
     organisationId: string,
     options?: object,
@@ -38,7 +39,7 @@ export interface IKeywordService {
 }
 
 @injectable()
-export class KeywordListService implements IKeywordService {
+export class KeywordListService implements IKeywordListService {
   getKeywordLists(
     organisationId: string,
     options: object = {},

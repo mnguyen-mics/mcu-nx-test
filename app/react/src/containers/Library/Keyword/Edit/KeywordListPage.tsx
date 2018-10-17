@@ -1,21 +1,23 @@
 import * as React from 'react';
 import { message } from 'antd';
 import { compose } from 'recompose';
+import { injectable } from 'inversify';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import KeywordListForm from './KeywordListForm';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { KeywordListFormData, INITIAL_KEYWORD_LIST_FORM_DATA } from './domain';
 import { Loading } from '../../../../components/index';
-import { IKeywordService } from '../../../../services/Library/KeywordListsService';
+import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
 import {
   lazyInject,
   SERVICE_IDENTIFIER,
 } from '../../../../services/inversify.config';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
-import KeywordListFormService from './KeywordListFormService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { keywordListFormService } from './KeywordListFormService';
+// import { IKeywordListFormService } from './KeywordListFormService';
 
 const messages = defineMessages({
   editKeywordList: {
@@ -53,12 +55,15 @@ type JoinedProps = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; keywordsListId: string }> &
   InjectedNotificationProps;
 
+@injectable()
 class KeywordListPage extends React.Component<
   JoinedProps,
   KeywordListPageState
 > {
   @lazyInject(SERVICE_IDENTIFIER.IKeywordListService)
-  private _keywordListService: IKeywordService;
+  private _keywordListService: IKeywordListService;
+  // @lazyInject(SERVICE_IDENTIFIER.IKeywordListFormService)
+  // private _keywordListFormService: IKeywordListFormService;
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -116,12 +121,13 @@ class KeywordListPage extends React.Component<
       isLoading: true,
     });
 
-    KeywordListFormService.saveKeywordList(
-      organisationId,
-      formData,
-      initialFormdata,
-      keywordsListId,
-    )
+    keywordListFormService
+      .saveKeywordList(
+        organisationId,
+        formData,
+        initialFormdata,
+        keywordsListId,
+      )
       .then(() => {
         hideSaveInProgress();
         this.close();

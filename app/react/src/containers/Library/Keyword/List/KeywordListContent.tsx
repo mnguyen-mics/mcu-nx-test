@@ -6,7 +6,7 @@ import { Modal } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
-import { IKeywordService } from '../../../../services/Library/KeywordListsService';
+import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
 import {
   lazyInject,
   SERVICE_IDENTIFIER,
@@ -44,7 +44,7 @@ class KeywordListContent extends React.Component<
   state = initialState;
 
   @lazyInject(SERVICE_IDENTIFIER.IKeywordListService)
-  private _keywordListService: IKeywordService;
+  private _keywordListService: IKeywordListService;
 
   archiveKeywordList = (keywordId: string) => {
     return this._keywordListService.deleteKeywordLists(keywordId);

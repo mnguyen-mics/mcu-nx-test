@@ -1,4 +1,5 @@
-import { IKeywordService } from '../../../../services/Library/KeywordListsService';
+import { injectable } from 'inversify';
+import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
 import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
 import {
   KeywordListFormData,
@@ -10,22 +11,23 @@ import {
   KeywordCreateRequest,
 } from '../../../../models/keywordList/keywordList';
 import {
-  lazyInject,
   SERVICE_IDENTIFIER,
+  lazyInject,
 } from '../../../../services/inversify.config';
 
-interface IKeywordListFormService {
+export interface IKeywordListFormService {
   saveKeywordList: (
     organisationId: string,
     formData: KeywordListFormData,
     initialFormData: KeywordListFormData,
     keywordListId?: string,
-  ) => void;
+  ) => Promise<any>;
 }
 
-class KeywordListFormService implements IKeywordListFormService {
+@injectable()
+export class KeywordListFormService implements IKeywordListFormService {
   @lazyInject(SERVICE_IDENTIFIER.IKeywordListService)
-  private _keywordListService: IKeywordService;
+  private _keywordListService: IKeywordListService;
 
   saveKeywordList(
     organisationId: string,
@@ -71,14 +73,14 @@ class KeywordListFormService implements IKeywordListFormService {
     const initialKeywordIds: string[] = [];
     initialKeywordFields.forEach(field => {
       if (hasId<KeywordResource, Partial<KeywordCreateRequest>>(field.model)) {
-        initialKeywordIds.push(field.model.id);
+        initialKeywordIds.push((field.model as any).id);
       }
     });
 
     const currentKeywordIds: string[] = [];
     keywordFields.forEach(field => {
       if (hasId<KeywordResource, Partial<KeywordCreateRequest>>(field.model)) {
-        currentKeywordIds.push(field.model.id);
+        currentKeywordIds.push((field.model as any).id);
       }
     });
 
@@ -110,12 +112,8 @@ class KeywordListFormService implements IKeywordListFormService {
   }
 }
 
-export function hasId<T extends { id: string }, Y>(
-  resource: T | Y,
-): resource is T {
+function hasId<T extends { id: string }, Y>(resource: T | Y): resource is T {
   return (resource as T).id !== undefined;
 }
 
-const KeywordFormService = new KeywordListFormService();
-
-export default KeywordFormService;
+export const keywordListFormService = new KeywordListFormService();

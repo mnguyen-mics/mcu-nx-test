@@ -1,19 +1,32 @@
 import getDecorators from 'inversify-inject-decorators';
 import { Container } from 'inversify';
-import 'reflect-metadata';
 import {
-  IKeywordService,
+  IKeywordListService,
   KeywordListService,
 } from './Library/KeywordListsService';
 
-export const SERVICE_IDENTIFIER = {
-  IKeywordListService: Symbol('KeywordListService'),
+// import {
+//   KeywordListFormService,
+//   IKeywordListFormService,
+// } from '../containers/Library/Keyword/Edit/KeywordListFormService';
+
+const SERVICE_IDENTIFIER = {
+  IKeywordListService: Symbol.for('KeywordListService'),
+  IKeywordListFormService: Symbol.for('KeywordListFormService'),
 };
 
+export { SERVICE_IDENTIFIER };
+
 const container = new Container();
+
 container
-  .bind<IKeywordService>(SERVICE_IDENTIFIER.IKeywordListService)
+  .bind<IKeywordListService>(SERVICE_IDENTIFIER.IKeywordListService)
   .to(KeywordListService);
+
+// container
+//   .bind<IKeywordListFormService>(SERVICE_IDENTIFIER.IKeywordListService)
+//   .to(KeywordListFormService);
+
 export const { lazyInject } = getDecorators(container);
 
-export default container;
+export default { container };
