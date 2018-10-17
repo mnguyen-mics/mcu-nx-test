@@ -6,10 +6,11 @@ import KeywordListForm from './KeywordListForm';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { KeywordListFormData, INITIAL_KEYWORD_LIST_FORM_DATA } from './domain';
 import { Loading } from '../../../../components/index';
-import KeywordService, {
-  IKeywordService,
-} from '../../../../services/Library/KeywordListsService';
-import { lazyInject } from '../../../../services/inversify.config';
+import { IKeywordService } from '../../../../services/Library/KeywordListsService';
+import {
+  lazyInject,
+  SERVICE_IDENTIFIER,
+} from '../../../../services/inversify.config';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
 import KeywordListFormService from './KeywordListFormService';
 import injectNotifications, {
@@ -56,7 +57,7 @@ class KeywordListPage extends React.Component<
   JoinedProps,
   KeywordListPageState
 > {
-  @lazyInject('keywordListService')
+  @lazyInject(SERVICE_IDENTIFIER.IKeywordListService)
   private _keywordListService: IKeywordService;
   constructor(props: JoinedProps) {
     super(props);
@@ -73,10 +74,12 @@ class KeywordListPage extends React.Component<
       },
     } = this.props;
     if (keywordsListId) {
-      this._keywordListService.getKeywordList(keywordsListId)
+      this._keywordListService
+        .getKeywordList(keywordsListId)
         .then(resp => resp.data)
         .then(keywordListFormdata => {
-          KeywordService.getKeywordListExpressions(keywordListFormdata.id)
+          this._keywordListService
+            .getKeywordListExpressions(keywordListFormdata.id)
             .then(res => res.data)
             .then(keywords => {
               this.setState({

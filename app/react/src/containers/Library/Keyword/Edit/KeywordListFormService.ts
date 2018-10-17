@@ -9,7 +9,10 @@ import {
   KeywordResource,
   KeywordCreateRequest,
 } from '../../../../models/keywordList/keywordList';
-import { lazyInject } from '../../../../services/inversify.config';
+import {
+  lazyInject,
+  SERVICE_IDENTIFIER,
+} from '../../../../services/inversify.config';
 
 interface IKeywordListFormService {
   saveKeywordList: (
@@ -21,7 +24,7 @@ interface IKeywordListFormService {
 }
 
 class KeywordListFormService implements IKeywordListFormService {
-  @lazyInject('keywordListService')
+  @lazyInject(SERVICE_IDENTIFIER.IKeywordListService)
   private _keywordListService: IKeywordService;
 
   saveKeywordList(

@@ -6,6 +6,7 @@ import { KeywordListResource } from '../../models/keywordList/keywordList';
 export interface IKeywordService {
   getKeywordLists: (
     organisationId: string,
+    options?: object,
   ) => Promise<DataListResponse<KeywordListResource>>;
   getKeywordList: (
     keywordListId: string,
@@ -32,7 +33,7 @@ export interface IKeywordService {
   ) => Promise<DataResponse<KeywordListResource>>;
   deleteKeywordLists: (
     keywordListId: string,
-    options: object,
+    options?: object,
   ) => Promise<DataResponse<KeywordListResource>>;
 }
 
@@ -106,7 +107,3 @@ export class KeywordListService implements IKeywordService {
     return ApiService.deleteRequest(endpoint, options);
   }
 }
-
-const KeywordService = new KeywordListService();
-
-export default KeywordService;
