@@ -11,7 +11,6 @@ import {
   FormSlider,
   withValidators,
 } from '../../../../../components/Form';
-import AudiencePartitionService from '../../../../../services/AudiencePartitionsService';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -29,6 +28,12 @@ import injectNotifications, {
 import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { Loading } from '../../../../../components';
+import { injectable } from 'inversify';
+import {
+  SERVICE_IDENTIFIER,
+  lazyInject,
+} from '../../../../../services/inversify.config';
+import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
 
 const FORM_ID = 'lookalikeForm';
 const { Content } = Layout;
@@ -59,10 +64,13 @@ const fieldGridConfig = {
   wrapperCol: { span: 19, offset: 1 },
 };
 
+@injectable()
 class AudienceLookalikeCreation extends React.Component<
   Props,
   AudienceLookalikeState
-  > {
+> {
+  @lazyInject(SERVICE_IDENTIFIER.IAudiencePartitionsService)
+  private _audiencePartitionsService: IAudiencePartitionsService;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -83,12 +91,13 @@ class AudienceLookalikeCreation extends React.Component<
       datamart,
       notifyError,
     } = this.props;
-    AudiencePartitionService.getPartitions(organisationId, {
-      first_result: 0,
-      max_results: 500,
-      status: ['PUBLISHED'],
-      datamart_id: datamart.id,
-    })
+    this._audiencePartitionsService
+      .getPartitions(organisationId, {
+        first_result: 0,
+        max_results: 500,
+        status: ['PUBLISHED'],
+        datamart_id: datamart.id,
+      })
       .then(res => res.data)
       .then(res => this.setState({ partitions: res, loading: false }))
       .catch(err => {
