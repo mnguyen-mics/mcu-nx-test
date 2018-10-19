@@ -37,70 +37,70 @@ class AudienceTagFeedService extends PluginInstanceService<AudienceTagFeed> {
   };
 
 
-    // START reimplementation of method
+  // START reimplementation of method
 
-    getInstanceById(id: string, options: object = {}): Promise<DataResponse<AudienceTagFeed>> {
-      const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}`;
-  
-      const params = {
-        ...options,
-      };
-      return ApiService.getRequest(endpoint, params);
-    }
-  
-    getInstanceProperties(
-      id: string,
-      options: object = {},
-    ): Promise<DataListResponse<PropertyResourceShape>> {
-      const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties`;
-  
-      return ApiService.getRequest(endpoint, options);
-    }
-  
-    updatePluginInstance(
-      id: string,
-      options: object = {},
-    ): Promise<DataResponse<AudienceTagFeed>> {
-      const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}`;
-  
-      const params = {
-        ...options,
-      };
-  
-      return ApiService.putRequest(endpoint, params);
-    }
-  
-    updatePluginInstanceProperty(
-      organisationId: string,
-      id: string,
-      technicalName: string,
-      params: object = {},
-    ): Promise<DataResponse<PropertyResourceShape> | void> {
-      const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties/technical_name=${technicalName}`;
-      return PluginService.handleSaveOfProperties(
-        params,
-        organisationId,
-        this.entityPath,
-        id,
-        endpoint,
-      );
-    }
-  
-    createPluginInstance(
-      organisationId: string,
-      options: object = {},
-    ): Promise<DataResponse<AudienceTagFeed>> {
-      const endpoint = `audience_segments/${this.segmentId}/tag_feeds?organisation_id=${organisationId}`;
-  
-      const params = {
-        ...options,
-      };
-  
-      return ApiService.postRequest(endpoint, params);
-    }
-  
-  
-    // STOP
+  getInstanceById(id: string, options: object = {}): Promise<DataResponse<AudienceTagFeed>> {
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}`;
+
+    const params = {
+      ...options,
+    };
+    return ApiService.getRequest(endpoint, params);
+  }
+
+  getInstanceProperties(
+    id: string,
+    options: object = {},
+  ): Promise<DataListResponse<PropertyResourceShape>> {
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties`;
+
+    return ApiService.getRequest(endpoint, options);
+  }
+
+  updatePluginInstance(
+    id: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceTagFeed>> {
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}`;
+
+    const params = {
+      ...options,
+    };
+
+    return ApiService.putRequest(endpoint, params);
+  }
+
+  updatePluginInstanceProperty(
+    organisationId: string,
+    id: string,
+    technicalName: string,
+    params: object = {},
+  ): Promise<DataResponse<PropertyResourceShape> | void> {
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties/technical_name=${technicalName}`;
+    return PluginService.handleSaveOfProperties(
+      params,
+      organisationId,
+      this.entityPath,
+      id,
+      endpoint,
+    );
+  }
+
+  createPluginInstance(
+    organisationId: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceTagFeed>> {
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds?organisation_id=${organisationId}`;
+
+    const params = {
+      ...options,
+    };
+
+    return ApiService.postRequest(endpoint, params);
+  }
+
+
+  // STOP
 
   // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
   getAudienceTagFeedProperties(id: string, options: object = {}) {
@@ -113,18 +113,14 @@ class AudienceTagFeedService extends PluginInstanceService<AudienceTagFeed> {
 
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.getInstanceById(pInstanceId).then(res => {
-      //
-      // to uncomment when version id is available on the instance
-      //
-      // const audienceTagFeed = res.data;
-      // return PluginService.findPluginFromVersionId(audienceTagFeed.version_id).then(pluginResourceRes => {
-      //   const pluginResource = pluginResourceRes.data;
-      //   return PluginService.getLocalizedPluginLayout(
-      //     pluginResource.id,
-      //     audienceTagFeed.version_id
-      //   );
-      // });
-      return null;      
+      const audienceTagFeed = res.data;
+      return PluginService.findPluginFromVersionId(audienceTagFeed.version_id).then(pluginResourceRes => {
+        const pluginResource = pluginResourceRes.data;
+        return PluginService.getLocalizedPluginLayout(
+          pluginResource.id,
+          audienceTagFeed.version_id
+        );
+      });
     });
   }
 

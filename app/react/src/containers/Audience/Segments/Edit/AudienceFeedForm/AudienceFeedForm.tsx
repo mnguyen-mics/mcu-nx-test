@@ -61,6 +61,7 @@ class CreateAudienceFeed<T> extends React.Component<
     //
     const result: any = {
       // ...pluginInstance,
+      version_id: pluginInstance.version_id,
       current_version_id: pluginInstance.version_value,
       artifact_id: plugin.artifact_id,
       group_id: plugin.group_id,
