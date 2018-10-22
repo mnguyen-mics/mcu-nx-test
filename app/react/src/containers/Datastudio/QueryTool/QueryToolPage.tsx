@@ -13,10 +13,18 @@ import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import { QueryContainer } from '../../QueryTool/SelectorQL/AngularQueryToolWidget';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
-import AudienceSegmentService from '../../../services/AudienceSegmentService';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
 import ExportService from '../../../services/Library/ExportService';
+<<<<<<< HEAD
 import QueryService from '../../../services/QueryService';
+=======
+import { injectable } from 'inversify';
+import {
+  lazyInject,
+  SERVICE_IDENTIFIER,
+} from '../../../services/inversify.config';
+import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
+>>>>>>> inject audienceSegmentService
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -35,9 +43,12 @@ const messages = defineMessages({
     id: 'query-builder-page-actionbar-title',
     defaultMessage: 'Query Tool',
   },
-})
+});
 
+@injectable()
 class QueryToolPage extends React.Component<Props> {
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
 
   getSelectedDatamart = () => {
     const { connectedUser, location } = this.props;
@@ -59,7 +70,7 @@ class QueryToolPage extends React.Component<Props> {
       );
     }
     return selectedDatamart;
-  }
+  };
 
   render() {
     const { intl, location, history, match } = this.props;
@@ -78,7 +89,10 @@ class QueryToolPage extends React.Component<Props> {
       datamartId: string,
     ) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
-        if (!query) return Promise.reject(new Error("angular query container isn't loaded correctly"));
+        if (!query)
+          return Promise.reject(
+            new Error("angular query container isn't loaded correctly"),
+          );
         return query.saveOrUpdate().then(queryResource => {
           const { name, technical_name, persisted } = segmentFormData;
           const userQuerySegment: Partial<UserQuerySegment> = {
@@ -90,20 +104,22 @@ class QueryToolPage extends React.Component<Props> {
             default_ttl: calculateDefaultTtl(segmentFormData),
             query_id: queryResource.id,
           };
-          return AudienceSegmentService.saveSegment(
-            match.params.organisationId,
-            userQuerySegment,
-          ).then(res => {
-            history.push(
-              `/v2/o/${match.params.organisationId}/audience/segments/${
-              res.data.id
-              }`,
-            );
-          });
+          return this._audienceSegmentService
+            .saveSegment(match.params.organisationId, userQuerySegment)
+            .then(res => {
+              history.push(
+                `/v2/o/${match.params.organisationId}/audience/segments/${
+                  res.data.id
+                }`,
+              );
+            });
         });
       };
       const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
-        if (!query) return Promise.reject(new Error("angular query container isn't loaded correctly"));
+        if (!query)
+          return Promise.reject(
+            new Error("angular query container isn't loaded correctly"),
+          );
         return query.saveOrUpdate().then(queryResource => {
           return ExportService.createExport(match.params.organisationId, {
             name: exportFormData.name,
@@ -113,7 +129,7 @@ class QueryToolPage extends React.Component<Props> {
           }).then(res => {
             history.push(
               `/v2/o/${match.params.organisationId}/datastudio/exports/${
-              res.data.id
+                res.data.id
               }`,
             );
           });
@@ -181,10 +197,14 @@ class QueryToolPage extends React.Component<Props> {
         )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201709' && (
+<<<<<<< HEAD
             <OTQLConsoleContainer
               renderActionBar={OTQLActionbar}
               datamartId={selectedDatamart.id}
             />
+=======
+            <OTQLConsoleContainer datamartId={selectedDatamart.id} />
+>>>>>>> inject audienceSegmentService
           )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201506' && (

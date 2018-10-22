@@ -13,7 +13,6 @@ import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
 
 import ExportService from '../../../../services/ExportService';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import ReportService from '../../../../services/ReportService';
 
 import { normalizeReportView } from '../../../../utils/MetricHelper';
@@ -23,9 +22,16 @@ import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { Index } from '../../../../utils';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 import McsMoment from '../../../../utils/McsMoment';
-
+import { injectable } from 'inversify';
+import {
+  lazyInject,
+  SERVICE_IDENTIFIER,
+} from '../../../../services/inversify.config';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 
 const messages = defineMessages({
   exportRunning: {
@@ -58,61 +64,6 @@ const messages = defineMessages({
   },
 });
 
-const fetchExportData = (
-  organisationId: string,
-  datamartId: string,
-  filter: Index<any>,
-) => {
-  const buildOptions = () => {
-    const options: Index<any> = {
-      first_result: 0,
-      max_results: 5000,
-    };
-
-    if (filter.keywords) {
-      options.name = filter.keywords;
-    }
-    if (datamartId) {
-      options.datamart_id = datamartId;
-    }
-    if (filter.type && filter.type.length > 0) {
-      options.type = filter.type;
-    }
-    return options;
-  };
-
-  const startDate = new McsMoment('now');
-  const endDate = new McsMoment('now');
-  const dimension = ['audience_segment_id'];
-
-  const apiResults = Promise.all([
-    AudienceSegmentService.getSegments(organisationId, buildOptions()),
-    ReportService.getAudienceSegmentReport(
-      organisationId,
-      startDate,
-      endDate,
-      dimension,
-    ),
-  ]);
-
-  return apiResults.then(results => {
-    const audienceSegments = normalizeArrayOfObject(results[0].data, 'id');
-    const performanceReport = normalizeArrayOfObject(
-      normalizeReportView(results[1].data.report_view),
-      'audience_segment_id',
-    );
-
-    const mergedData = Object.keys(audienceSegments).map(segmentId => {
-      return {
-        ...audienceSegments[segmentId],
-        ...performanceReport[segmentId],
-      };
-    });
-
-    return mergedData;
-  });
-};
-
 interface MapStateToProps {
   translations: any;
 }
@@ -127,7 +78,10 @@ interface State {
   exportIsRunning: boolean;
 }
 
+@injectable()
 class SegmentsActionbar extends React.Component<Props, State> {
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);
     this.state = { exportIsRunning: false };
@@ -160,7 +114,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
 
     const datamartId = filter.datamartId ? filter.datamartId : undefined;
 
-    fetchExportData(organisationId, datamartId, filter)
+    this.fetchExportData(organisationId, datamartId, filter)
       .then(data => {
         ExportService.exportAudienceSegments(
           organisationId,
@@ -178,6 +132,61 @@ class SegmentsActionbar extends React.Component<Props, State> {
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
       });
+  };
+
+  fetchExportData = (
+    organisationId: string,
+    datamartId: string,
+    filter: Index<any>,
+  ) => {
+    const buildOptions = () => {
+      const options: Index<any> = {
+        first_result: 0,
+        max_results: 5000,
+      };
+
+      if (filter.keywords) {
+        options.name = filter.keywords;
+      }
+      if (datamartId) {
+        options.datamart_id = datamartId;
+      }
+      if (filter.type && filter.type.length > 0) {
+        options.type = filter.type;
+      }
+      return options;
+    };
+
+    const startDate = new McsMoment('now');
+    const endDate = new McsMoment('now');
+    const dimension = ['audience_segment_id'];
+
+    const apiResults = Promise.all([
+      this._audienceSegmentService.getSegments(organisationId, buildOptions()),
+      ReportService.getAudienceSegmentReport(
+        organisationId,
+        startDate,
+        endDate,
+        dimension,
+      ),
+    ]);
+
+    return apiResults.then(results => {
+      const audienceSegments = normalizeArrayOfObject(results[0].data, 'id');
+      const performanceReport = normalizeArrayOfObject(
+        normalizeReportView(results[1].data.report_view),
+        'audience_segment_id',
+      );
+
+      const mergedData = Object.keys(audienceSegments).map(segmentId => {
+        return {
+          ...audienceSegments[segmentId],
+          ...performanceReport[segmentId],
+        };
+      });
+
+      return mergedData;
+    });
   };
 
   render() {
@@ -200,9 +209,11 @@ class SegmentsActionbar extends React.Component<Props, State> {
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={{
-          pathname: `/v2/o/${organisationId}/audience/segments/create`,
-        }}>
+        <Link
+          to={{
+            pathname: `/v2/o/${organisationId}/audience/segments/create`,
+          }}
+        >
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
             <FormattedMessage {...messages.newSegment} />

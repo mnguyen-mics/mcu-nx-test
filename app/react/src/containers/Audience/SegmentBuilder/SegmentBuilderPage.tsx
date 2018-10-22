@@ -8,7 +8,6 @@ import { compose } from 'recompose';
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
-import AudienceSegmentService from '../../../services/AudienceSegmentService';
 import ExportService from '../../../services/Library/ExportService';
 import { DatamartSelector } from '../../Datamart';
 import injectNotifications, {
@@ -21,6 +20,12 @@ import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQueryS
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
 import QueryService from '../../../services/QueryService';
+import {
+  SERVICE_IDENTIFIER,
+  lazyInject,
+} from '../../../services/inversify.config';
+import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
+import { injectable } from 'inversify';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -39,11 +44,13 @@ const messages = defineMessages({
   segmentBuilder: {
     id: 'segment-builder-page-actionbar-title',
     defaultMessage: 'Segment Builder',
-  }
-})
+  },
+});
 
+@injectable()
 class SegmentBuilderPage extends React.Component<Props> {
-
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
 
   render() {
     const { intl, connectedUser, location, history, match } = this.props;
@@ -92,7 +99,7 @@ class SegmentBuilderPage extends React.Component<Props> {
               default_ttl: calculateDefaultTtl(segmentFormData),
               query_id: res.data.id,
             };
-            return AudienceSegmentService.saveSegment(
+            return this._audienceSegmentService.saveSegment(
               match.params.organisationId,
               userQuerySegment,
             );
@@ -100,18 +107,21 @@ class SegmentBuilderPage extends React.Component<Props> {
           .then(res => {
             history.push(
               `/v2/o/${match.params.organisationId}/audience/segments/${
-              res.data.id
+                res.data.id
               }`,
             );
           });
       };
-      return <SaveQueryAsActionBar saveAsUserQuery={saveAsUserQuery} breadcrumb={
-        [
-          {
-            name: intl.formatMessage(messages.segmentBuilder),
-          },
-        ]
-      } />;
+      return (
+        <SaveQueryAsActionBar
+          saveAsUserQuery={saveAsUserQuery}
+          breadcrumb={[
+            {
+              name: intl.formatMessage(messages.segmentBuilder),
+            },
+          ]}
+        />
+      );
     };
 
     const selectorQLActionbar = (
@@ -119,7 +129,10 @@ class SegmentBuilderPage extends React.Component<Props> {
       datamartId: string,
     ) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
-        if (!query) return Promise.reject(new Error("angular query container isn't loaded correctly"));
+        if (!query)
+          return Promise.reject(
+            new Error("angular query container isn't loaded correctly"),
+          );
         return query.saveOrUpdate().then(queryResource => {
           const { name, technical_name, persisted } = segmentFormData;
           const userQuerySegment: Partial<UserQuerySegment> = {
@@ -131,20 +144,22 @@ class SegmentBuilderPage extends React.Component<Props> {
             default_ttl: calculateDefaultTtl(segmentFormData),
             query_id: queryResource.id,
           };
-          return AudienceSegmentService.saveSegment(
-            match.params.organisationId,
-            userQuerySegment,
-          ).then(res => {
-            history.push(
-              `/v2/o/${match.params.organisationId}/audience/segments/${
-              res.data.id
-              }`,
-            );
-          });
+          return this._audienceSegmentService
+            .saveSegment(match.params.organisationId, userQuerySegment)
+            .then(res => {
+              history.push(
+                `/v2/o/${match.params.organisationId}/audience/segments/${
+                  res.data.id
+                }`,
+              );
+            });
         });
       };
       const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
-        if (!query) return Promise.reject(new Error("angular query container isn't loaded correctly"));
+        if (!query)
+          return Promise.reject(
+            new Error("angular query container isn't loaded correctly"),
+          );
         return query.saveOrUpdate().then(queryResource => {
           return ExportService.createExport(match.params.organisationId, {
             name: exportFormData.name,
@@ -154,7 +169,7 @@ class SegmentBuilderPage extends React.Component<Props> {
           }).then(res => {
             history.push(
               `/v2/o/${match.params.organisationId}/datastudio/exports/${
-              res.data.id
+                res.data.id
               }`,
             );
           });
@@ -164,13 +179,11 @@ class SegmentBuilderPage extends React.Component<Props> {
         <SaveQueryAsActionBar
           saveAsUserQuery={saveAsUserQuery}
           saveAsExort={saveAsExport}
-          breadcrumb={
-            [
-              {
-                name: intl.formatMessage(messages.segmentBuilder),
-              },
-            ]
-          }
+          breadcrumb={[
+            {
+              name: intl.formatMessage(messages.segmentBuilder),
+            },
+          ]}
         />
       );
     };

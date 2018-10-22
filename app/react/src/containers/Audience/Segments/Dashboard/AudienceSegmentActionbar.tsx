@@ -25,8 +25,8 @@ import { SEGMENT_QUERY_SETTINGS, OverlapData } from './constants';
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { fetchOverlapAnalysis } from './OverlapServices';
 import { ClickParam } from 'antd/lib/menu';
+import { OverlapInterval } from './OverlapServices';
 
 export interface AudienceSegmentActionbarProps {
   segment: null | AudienceSegmentResource;
@@ -49,6 +49,7 @@ interface State {
 }
 
 class AudienceSegmentActionbar extends React.Component<Props, State> {
+  overlapInterval: OverlapInterval = new OverlapInterval();
   state = {
     overlapFetchIsRunning: false,
     overlap: undefined,
@@ -60,22 +61,37 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     // init
   };
 
+  fetchExportData = (
+    organisationId: string,
+    segmentId: string,
+    from: McsMoment,
+    to: McsMoment,
+  ) => {
+    const fetchCounters = this.fetchCounterView(organisationId, [
+      { name: 'audience_segment_id', value: segmentId },
+    ]);
+    const fetchDashboard = this.fetchDashboardView(organisationId, from, to, [
+      { name: 'audience_segment_id', value: segmentId },
+    ]);
+    const overlapData = this.overlapInterval
+      .fetchOverlapAnalysis(segmentId)
+      .then(res => this.formatOverlapData(res));
 
-  fetchExportData = (organisationId: string, segmentId: string, from: McsMoment, to: McsMoment) => {
-    const fetchCounters = this.fetchCounterView(organisationId, [{ name: 'audience_segment_id', value: segmentId }])
-    const fetchDashboard = this.fetchDashboardView(organisationId, from, to, [{ name: 'audience_segment_id', value: segmentId }])
-    const overlapData = fetchOverlapAnalysis(segmentId).then(res => this.formatOverlapData(res))
-
-    return Promise.all([fetchCounters, fetchDashboard, overlapData])
-  }
+    return Promise.all([fetchCounters, fetchDashboard, overlapData]);
+  };
 
   formatOverlapData = (data: OverlapData) => {
-    return data.data ? data.data.formattedOverlap.map(d => ({
-      xKey: d!.segment_intersect_with.name,
-      yKey: d!.segment_intersect_with.segment_size === 0 ? 0 : (d!.overlap_number / d!.segment_source_size) * 100,
-      segment_intersect_with: d!.segment_intersect_with.id
-    })) : []
-  }
+    return data.data
+      ? data.data.formattedOverlap.map(d => ({
+          xKey: d!.segment_intersect_with.name,
+          yKey:
+            d!.segment_intersect_with.segment_size === 0
+              ? 0
+              : (d!.overlap_number / d!.segment_source_size) * 100,
+          segment_intersect_with: d!.segment_intersect_with.id,
+        }))
+      : [];
+  };
 
   fetchCounterView = (organisationId: string, filters: Filter[]) => {
     return ReportService.getAudienceSegmentReport(
@@ -85,25 +101,37 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       ['day'],
       ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'],
       filters,
-    ).then(res => normalizeReportView(res.data.report_view))
+    ).then(res => normalizeReportView(res.data.report_view));
+  };
 
-  }
-
-  fetchDashboardView = (organisationId: string, from: McsMoment, to: McsMoment, filters: Filter[]) => {
+  fetchDashboardView = (
+    organisationId: string,
+    from: McsMoment,
+    to: McsMoment,
+    filters: Filter[],
+  ) => {
     return ReportService.getAudienceSegmentReport(
       organisationId,
       from,
       to,
       ['day'],
-      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'],
+      [
+        'user_points',
+        'user_accounts',
+        'emails',
+        'desktop_cookie_ids',
+        'user_point_additions',
+        'user_point_deletions',
+      ],
       filters,
-    ).then(res => normalizeReportView(res.data.report_view))
-
-  }
+    ).then(res => normalizeReportView(res.data.report_view));
+  };
 
   handleRunExport = () => {
     const {
-      match: { params: { organisationId, segmentId } },
+      match: {
+        params: { organisationId, segmentId },
+      },
       location: { search },
       intl: { formatMessage },
       segment,
@@ -126,49 +154,61 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
           formatMessage,
           segment,
         );
-      }).then(() => {
-        hideExportLoadingMsg()
+      })
+      .then(() => {
+        hideExportLoadingMsg();
         this.setState({ exportIsRunning: false });
       })
-      .catch((err) => {
-        hideExportLoadingMsg()
-        message.error('There was an error generating your export please try again.', 5)
+      .catch(err => {
+        hideExportLoadingMsg();
+        message.error(
+          'There was an error generating your export please try again.',
+          5,
+        );
         this.setState({ exportIsRunning: false });
-      })
+      });
   };
 
-
   onEditClick = () => {
-
     const {
-      match: { params: { organisationId, segmentId } },
+      match: {
+        params: { organisationId, segmentId },
+      },
       location,
-      history
+      history,
     } = this.props;
     const editUrl = `/v2/o/${organisationId}/audience/segments/${segmentId}/edit`;
-    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
-  }
+    history.push({
+      pathname: editUrl,
+      state: { from: `${location.pathname}${location.search}` },
+    });
+  };
 
   handleCreateNewFeed = () => {
     const {
-      match: { params: { organisationId, segmentId } },
+      match: {
+        params: { organisationId, segmentId },
+      },
       location,
-      history
+      history,
     } = this.props;
     const editUrl = `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/create`;
-    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
-  }
+    history.push({
+      pathname: editUrl,
+      state: { from: `${location.pathname}${location.search}` },
+    });
+  };
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
       datamart,
       segment,
-      onCalibrationClick
+      onCalibrationClick,
     } = this.props;
-
-
 
     const exportIsRunning = this.state.exportIsRunning;
 
@@ -207,14 +247,13 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
               datamart_id: datamart.id,
               organisation_id: organisationId,
             },
-          }
+          },
         },
       );
 
-    const onRecalibrateClick = () => onCalibrationClick()
+    const onRecalibrateClick = () => onCalibrationClick();
 
     let actionButton = null;
-
 
     if (
       segment &&
@@ -279,24 +318,22 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     const onMenuClick = (event: ClickParam) => {
       switch (event.key) {
         case 'FEED':
-          return this.handleCreateNewFeed()
+          return this.handleCreateNewFeed();
         case 'LOOKALIKE':
           return onClick();
         default:
           return () => ({});
       }
-    }
+    };
 
     const dropdowMenu = (
       <Menu onClick={onMenuClick}>
-        <Menu.Item key="FEED">
-          Add a Feed
-        </Menu.Item>
+        <Menu.Item key="FEED">Add a Feed</Menu.Item>
         <Menu.Item key="LOOKALIKE">
           <FormattedMessage {...segmentMessages.lookAlikeCreation} />
         </Menu.Item>
       </Menu>
-    )
+    );
 
     return (
       <Actionbar path={breadcrumbPaths}>

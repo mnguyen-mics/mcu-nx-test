@@ -2,8 +2,9 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import AudienceSegmentService, {
+import {
   UserSegmentImportJobExecutionResource,
+  IAudienceSegmentService,
 } from '../../../../services/AudienceSegmentService';
 import { EditAudienceSegmentParam } from '../Edit/domain';
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -20,6 +21,11 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import log from '../../../../utils/Logger';
+import { injectable } from 'inversify';
+import {
+  lazyInject,
+  SERVICE_IDENTIFIER,
+} from '../../../../services/inversify.config';
 
 export interface UserListImportCardProps {
   datamartId: string;
@@ -47,7 +53,10 @@ const ImportJobTableView = TableView as React.ComponentClass<
   TableViewProps<ImportExecutionsData>
 >;
 
+@injectable()
 class UserListImportCard extends React.Component<Props, State> {
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -61,12 +70,15 @@ class UserListImportCard extends React.Component<Props, State> {
   }
 
   refreshData = () => {
-    const { datamartId, match: { params: { segmentId } } } = this.props;
-    this.setState({ isLoading: true });
-    AudienceSegmentService.findUserListImportExecutionsBySegment(
+    const {
       datamartId,
-      segmentId,
-    )
+      match: {
+        params: { segmentId },
+      },
+    } = this.props;
+    this.setState({ isLoading: true });
+    this._audienceSegmentService
+      .findUserListImportExecutionsBySegment(datamartId, segmentId)
       .then(res => {
         this.setState({
           isLoading: false,

@@ -27,7 +27,7 @@ import { getTableDataSource } from '../../../../state/Campaigns/Display/selector
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import messages from '../messages';
-import DisplayCampaignFormService from '../Edit/DisplayCampaignFormService';
+import { displayCampaignFormService } from '../Edit/DisplayCampaignFormService';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { UpdateMessage } from '../Dashboard/ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import injectNotifications, {
@@ -103,7 +103,9 @@ class DisplayCampaignsPage extends React.Component<
   getAllCampaignsIds = () => {
     const {
       totalDisplayCampaigns,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       notifyError,
     } = this.props;
     const options: GetCampaignsOptions = {
@@ -127,7 +129,9 @@ class DisplayCampaignsPage extends React.Component<
       intl,
       dataSource,
       loadDisplayCampaignsDataSource,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
     const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
     if (dataSource.length === 1 && filter.currentPage !== 1) {
@@ -202,7 +206,8 @@ class DisplayCampaignsPage extends React.Component<
     formData: EditCampaignsFormData,
   ) => {
     const { notifyError, intl } = this.props;
-    return DisplayCampaignFormService.saveCampaigns(campaignsIds, formData)
+    return displayCampaignFormService
+      .saveCampaigns(campaignsIds, formData)
       .then(() => {
         this.props.closeNextDrawer();
         this.setState({
@@ -340,7 +345,9 @@ class DisplayCampaignsPage extends React.Component<
   handleStatusAction = (status: CampaignStatus) => {
     const {
       totalDisplayCampaigns,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       loadDisplayCampaignsDataSource,
       location: { search },
     } = this.props;
@@ -377,12 +384,18 @@ class DisplayCampaignsPage extends React.Component<
     });
     executeTasksInSequence(tasks)
       .then(() => {
-        this.setState({
-          isUpdatingStatuses: false,
-        }, () => {
-          const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
-          loadDisplayCampaignsDataSource(organisationId, filter);
-        });
+        this.setState(
+          {
+            isUpdatingStatuses: false,
+          },
+          () => {
+            const filter = parseSearch<FilterParams>(
+              search,
+              DISPLAY_SEARCH_SETTINGS,
+            );
+            loadDisplayCampaignsDataSource(organisationId, filter);
+          },
+        );
       })
       .catch((err: any) => {
         this.setState({
@@ -488,6 +501,9 @@ export default compose<DisplayCampaignsPageProps, JoinedProps>(
   withRouter,
   injectIntl,
   injectDrawer,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   injectNotifications,
 )(DisplayCampaignsPage);

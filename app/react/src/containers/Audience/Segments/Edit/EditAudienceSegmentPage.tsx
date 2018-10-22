@@ -26,7 +26,10 @@ import {
   QueryLanguage,
   DatamartResource,
 } from '../../../../models/datamart/DatamartResource';
-import { UserQuerySegment, AudienceSegmentType } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import {
+  UserQuerySegment,
+  AudienceSegmentType,
+} from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { Loading } from '../../../../components';
 import DatamartSelector from './../../Common/DatamartSelector';
 import { EditContentLayout } from '../../../../components/Layout';
@@ -34,7 +37,7 @@ import SegmentTypeSelector from '../../Common/SegmentTypeSelector';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import DatamartService from '../../../../services/DatamartService';
-import { AudienceSegmentFormService } from './AudienceSegmentFormService';
+import { audienceSegmentFormService } from './AudienceSegmentFormService';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -133,7 +136,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       .injector()
       .get('core/datamart/queries/QueryContainer');
     if (segmentId) {
-      AudienceSegmentFormService.loadSegmentInitialValue(segmentId)
+      audienceSegmentFormService
+        .loadSegmentInitialValue(segmentId)
         .then(initialData => {
           DatamartService.getDatamart(initialData.audienceSegment.datamart_id!)
             .then(datamartData => datamartData.data)
@@ -262,12 +266,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     );
 
     this.setState({ loading: true });
-    AudienceSegmentFormService.saveOrCreateAudienceSegment(
-      organisationId,
-      audienceSegmentFormData,
-      queryLanguage,
-      queryContainer,
-    )
+    audienceSegmentFormService
+      .saveOrCreateAudienceSegment(
+        organisationId,
+        audienceSegmentFormData,
+        queryLanguage,
+        queryContainer,
+      )
       .then(response => {
         hideSaveInProgress();
         if (!!response) {
@@ -323,7 +328,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     });
   };
 
-  onSegmentTypeSelect = (segmentType: AudienceSegmentType, queryLang: QueryLanguage = 'OTQL') => {
+  onSegmentTypeSelect = (
+    segmentType: AudienceSegmentType,
+    queryLang: QueryLanguage = 'OTQL',
+  ) => {
     const queryLanguage: QueryLanguage =
       this.state.selectedDatamart &&
       this.state.selectedDatamart.storage_model_version === 'v201506'

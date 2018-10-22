@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Tag, Tooltip } from 'antd';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import { injectable } from 'inversify';
+import {
+  lazyInject,
+  SERVICE_IDENTIFIER,
+} from '../../../../services/inversify.config';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 
 interface SegmentsTagProps {
   segmentId: string;
@@ -12,7 +17,10 @@ interface State {
   };
 }
 
+@injectable()
 class SegmentsTag extends React.Component<SegmentsTagProps, State> {
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: SegmentsTagProps) {
     super(props);
     this.state = {
@@ -23,7 +31,7 @@ class SegmentsTag extends React.Component<SegmentsTagProps, State> {
   }
 
   fetchSegmentData = (segmentId: string) => {
-    AudienceSegmentService.getSegment(segmentId).then(response => {
+    this._audienceSegmentService.getSegment(segmentId).then(response => {
       this.setState({
         segment: response.data,
       });

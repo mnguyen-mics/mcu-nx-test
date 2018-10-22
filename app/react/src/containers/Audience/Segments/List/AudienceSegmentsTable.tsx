@@ -29,7 +29,6 @@ import {
   normalizeReportView,
 } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import { AudienceSegmentResource, UserActivationSegment } from '../../../../models/audiencesegment';
 import ReportService from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
@@ -46,6 +45,8 @@ import { UserWorkspaceResource } from '../../../../models/directory/UserProfileR
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import { injectable } from 'inversify';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -140,8 +141,11 @@ interface State {
   hasItem: boolean;
 }
 
+@injectable()
 class AudienceSegmentsTable extends React.Component<Props, State> {
   cancellablePromises: Array<CancelablePromise<any>> = [];
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
 
   constructor(props: Props) {
     super(props);
@@ -197,11 +201,11 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       with_third_parties: true,
       ...getPaginatedApiParam(1, 1),
     };
-    return AudienceSegmentService.getSegments(organisationId, newFilters).then(
-      res => {
+    return this._audienceSegmentService
+      .getSegments(organisationId, newFilters)
+      .then(res => {
         this.setState({ hasItem: res.count !== 0 });
-      },
-    );
+      });
   };
 
   fetchAudienceSegments = (
@@ -209,18 +213,20 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     datamartId: string,
     filter: Index<any>,
   ) => {
-    return AudienceSegmentService.getSegments(
-      organisationId,
-      this.buildApiSearchFilters(filter, datamartId),
-    ).then(res => {
-      this.setState({
-        list: {
-          segments: res.data,
-          total: res.total ? res.total : res.count,
-          isLoading: false,
-        },
+    return this._audienceSegmentService
+      .getSegments(
+        organisationId,
+        this.buildApiSearchFilters(filter, datamartId),
+      )
+      .then(res => {
+        this.setState({
+          list: {
+            segments: res.data,
+            total: res.total ? res.total : res.count,
+            isLoading: false,
+          },
+        });
       });
-    });
   };
 
   fetchAudienceSegmentStatistics = (
@@ -652,7 +658,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<AudienceSegmentResource>> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<AudienceSegmentResource>
+    > = [
       {
         key: 'action',
         actions: () => [

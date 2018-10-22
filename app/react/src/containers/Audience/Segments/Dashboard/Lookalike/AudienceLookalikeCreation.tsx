@@ -25,7 +25,6 @@ import { UserLookalikeSegment } from '../../../../../models/audiencesegment/Audi
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { Loading } from '../../../../../components';
 import { injectable } from 'inversify';
@@ -34,6 +33,7 @@ import {
   lazyInject,
 } from '../../../../../services/inversify.config';
 import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
+import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 
 const FORM_ID = 'lookalikeForm';
 const { Content } = Layout;
@@ -71,6 +71,8 @@ class AudienceLookalikeCreation extends React.Component<
 > {
   @lazyInject(SERVICE_IDENTIFIER.IAudiencePartitionsService)
   private _audiencePartitionsService: IAudiencePartitionsService;
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -119,10 +121,8 @@ class AudienceLookalikeCreation extends React.Component<
       const formattedFormData = extension_factor
         ? { ...rest, extension_factor: extension_factor / 100 }
         : { ...rest };
-      AudienceSegmentService.createAudienceSegment(
-        organisationId,
-        formattedFormData,
-      )
+      this._audienceSegmentService
+        .createAudienceSegment(organisationId, formattedFormData)
         .then(res => res.data)
         .then(res => {
           this.setState({ loading: false }, () => {

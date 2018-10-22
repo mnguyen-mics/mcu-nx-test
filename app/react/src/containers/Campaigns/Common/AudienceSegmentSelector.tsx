@@ -7,8 +7,9 @@ import TableSelector, {
 } from '../../../components/ElementSelector/TableSelector';
 import { SearchFilter } from '../../../components/ElementSelector';
 import { DataColumnDefinition } from '../../../components/TableView/TableView';
-import AudienceSegmentService, {
+import {
   GetSegmentsOption,
+  IAudienceSegmentService,
 } from '../../../services/AudienceSegmentService';
 import { AudienceSegmentResource } from '../../../models/audiencesegment';
 import { formatMetric, normalizeReportView } from '../../../utils/MetricHelper';
@@ -19,10 +20,15 @@ import { UserWorkspaceResource } from '../../../models/directory/UserProfileReso
 import ReportService from '../../../services/ReportService';
 import McsMoment from '../../../utils/McsMoment';
 import { normalizeArrayOfObject } from '../../../utils/Normalizer';
+import { injectable } from 'inversify';
+import {
+  lazyInject,
+  SERVICE_IDENTIFIER,
+} from '../../../services/inversify.config';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentResource>
-  > = TableSelector;
+> = TableSelector;
 
 const messages = defineMessages({
   segmentSelectorTitle: {
@@ -68,7 +74,10 @@ type Props = AudienceSegmentSelectorProps &
   InjectedDatamartProps &
   RouteComponentProps<{ organisationId: string }>;
 
+@injectable()
 class AudienceSegmentSelector extends React.Component<Props, State> {
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -77,24 +86,28 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {	
-    const { match: { params: { organisationId } } } = this.props;	
-    this.setState({ fetchingReport: true });	
-    ReportService.getAudienceSegmentReport(	
-      organisationId,	
-      new McsMoment('now'),	
-      new McsMoment('now'),	
-      ['audience_segment_id'],	
-      undefined,	
-    ).then(resp => {	
-      this.setState({	
-        fetchingReport: false,	
-        reportBySegmentId: normalizeArrayOfObject(	
-          normalizeReportView(resp.data.report_view),	
-          'audience_segment_id',	
-        ),	
-      });	
-    });	
+  componentDidMount() {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+    this.setState({ fetchingReport: true });
+    ReportService.getAudienceSegmentReport(
+      organisationId,
+      new McsMoment('now'),
+      new McsMoment('now'),
+      ['audience_segment_id'],
+      undefined,
+    ).then(resp => {
+      this.setState({
+        fetchingReport: false,
+        reportBySegmentId: normalizeArrayOfObject(
+          normalizeReportView(resp.data.report_view),
+          'audience_segment_id',
+        ),
+      });
+    });
   }
 
   saveSegments = (
@@ -105,11 +118,15 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
   };
 
   fetchSegments = (filter: SearchFilter) => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const options: GetSegmentsOption = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-      persisted: true
+      persisted: true,
     };
 
     if (filter.keywords) {
@@ -120,15 +137,19 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       options.datamart_id = filter.datamartId;
     }
 
-    return AudienceSegmentService.getSegments(organisationId, options);
+    return this._audienceSegmentService.getSegments(organisationId, options);
   };
 
   fetchSegment = (segmentId: string) => {
-    return AudienceSegmentService.getSegment(segmentId);
+    return this._audienceSegmentService.getSegment(segmentId);
   };
 
   render() {
-    const { selectedSegmentIds, close, intl: { formatMessage } } = this.props;
+    const {
+      selectedSegmentIds,
+      close,
+      intl: { formatMessage },
+    } = this.props;
 
     const { fetchingReport, reportBySegmentId } = this.state;
 

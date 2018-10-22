@@ -33,7 +33,6 @@ import {
   FieldResource,
   ObjectLikeTypeInfoResource,
 } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
-import AudienceSegmentService from '../../../../../../services/AudienceSegmentService';
 import {
   FORM_ID,
   FieldNodeFormData,
@@ -44,6 +43,12 @@ import FormRelativeAbsoluteDate, {
   FormRelativeAbsoluteDateProps,
 } from './Comparison/FormRelativeAbsoluteDate';
 import constants, { ComparisonValues } from './contants';
+import { injectable } from 'inversify';
+import {
+  lazyInject,
+  SERVICE_IDENTIFIER,
+} from '../../../../../../services/inversify.config';
+import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -64,10 +69,12 @@ export interface FieldNodeFormProps {
   idToAttachDropDowns?: string;
 }
 
-interface FormValues { fieldNodeForm: FieldNodeFormData[] | FieldNodeFormData }
+interface FormValues {
+  fieldNodeForm: FieldNodeFormData[] | FieldNodeFormData;
+}
 
 interface MapStateToProps {
-  formValues:  FormValues;
+  formValues: FormValues;
 }
 
 type Props = FieldNodeFormProps &
@@ -89,13 +96,15 @@ type FieldComparisonGenerator = ComparisonValues<any> & {
   component: React.ReactNode;
 };
 
+@injectable()
 class FieldNodeForm extends React.Component<Props> {
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   componentDidMount() {
     // if no default value compute it
-    const {  formValues, expressionIndex, formChange, name } = this.props;
+    const { formValues, expressionIndex, formChange, name } = this.props;
 
     const field = this.getField(formValues, expressionIndex);
-
 
     if (field && !field.comparison) {
       const fieldName = field ? field.field : undefined;
@@ -136,17 +145,16 @@ class FieldNodeForm extends React.Component<Props> {
     formValues: FormValues,
     index?: number,
   ): FieldNodeFormData | undefined => {
-    
     const { fieldNodeForm } = formValues;
 
     if (Array.isArray(fieldNodeForm)) {
       if (index !== undefined && fieldNodeForm[index]) {
-        return fieldNodeForm[index]
+        return fieldNodeForm[index];
       }
     } else {
-      return fieldNodeForm
+      return fieldNodeForm;
     }
-    return undefined
+    return undefined;
   };
 
   getAvailableFields = (): OptionProps[] => {
@@ -426,11 +434,11 @@ class FieldNodeForm extends React.Component<Props> {
     } = this.props;
 
     const fetchListMethod = (keywords: string) =>
-      AudienceSegmentService.getSegments(organisationId, { keywords }).then(
-        res => res.data.map(r => ({ key: r.id, label: r.name })),
-      );
+      this._audienceSegmentService
+        .getSegments(organisationId, { keywords })
+        .then(res => res.data.map(r => ({ key: r.id, label: r.name })));
     const fetchSingleMethod = (id: string) =>
-      AudienceSegmentService.getSegment(id).then(res => ({
+      this._audienceSegmentService.getSegment(id).then(res => ({
         key: res.data.id,
         label: res.data.name,
       }));

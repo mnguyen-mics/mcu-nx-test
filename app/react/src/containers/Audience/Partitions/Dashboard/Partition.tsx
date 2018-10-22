@@ -15,7 +15,6 @@ import {
 } from '../../../../models/audiencePartition/AudiencePartitionResource';
 import { UserPartitionSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import QueryService from '../../../../services/QueryService';
 import ReportService from '../../../../services/ReportService';
 import { Index } from '../../../../utils';
@@ -36,6 +35,7 @@ import {
   SERVICE_IDENTIFIER,
 } from '../../../../services/inversify.config';
 import { IAudiencePartitionsService } from '../../../../services/AudiencePartitionsService';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 
 const { Content } = Layout;
 
@@ -104,6 +104,8 @@ const PartitionTable = TableView as React.ComponentClass<
 class Partition extends React.Component<JoinedProps, PartitionState> {
   @lazyInject(SERVICE_IDENTIFIER.IAudiencePartitionsService)
   private _audiencePartitionsService: IAudiencePartitionsService;
+  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -159,18 +161,20 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
           d => d.id === partitionRes.data.datamart_id,
         )!;
         return Promise.all([
-          AudienceSegmentService.getSegments(organisationId, {
-            audience_partition_id: partitionId,
-            type: 'USER_PARTITION',
-            max_results: 500,
-          }).then(segmentsRes => {
-            this.setState({
-              isLoading: false,
-              audiencePartition: partitionRes.data,
-              userPartitionSegments: segmentsRes.data as UserPartitionSegment[],
-            });
-            return segmentsRes;
-          }),
+          this._audienceSegmentService
+            .getSegments(organisationId, {
+              audience_partition_id: partitionId,
+              type: 'USER_PARTITION',
+              max_results: 500,
+            })
+            .then(segmentsRes => {
+              this.setState({
+                isLoading: false,
+                audiencePartition: partitionRes.data,
+                userPartitionSegments: segmentsRes.data as UserPartitionSegment[],
+              });
+              return segmentsRes;
+            }),
           Promise.all([
             this.fetchTotalUsers(datamart),
             ReportService.getAudienceSegmentReport(

@@ -23,7 +23,7 @@ import {
   injectDatamart,
   InjectedDatamartProps,
 } from '../../../../Datamart/index';
-import { fetchOverlapAnalysis, OverlapInterval } from '../OverlapServices';
+import { OverlapInterval } from '../OverlapServices';
 import { OverlapData } from '../constants';
 
 const VerticalBarChartJS = VerticalBarChart as any;
@@ -32,16 +32,14 @@ interface State {
   isFetchingOverlap: boolean;
 }
 
-type Props =
-  InjectedThemeColorsProps &
+type Props = InjectedThemeColorsProps &
   InjectedDatamartProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
   InjectedIntlProps;
 
 class Overlap extends React.Component<Props, State> {
-
-  overlapInterval: OverlapInterval = new OverlapInterval()
+  overlapInterval: OverlapInterval = new OverlapInterval();
 
   constructor(props: Props) {
     super(props);
@@ -50,46 +48,58 @@ class Overlap extends React.Component<Props, State> {
         hasOverlap: false,
         isRunning: false,
         isInError: false,
-        data: null
+        data: null,
       },
-      isFetchingOverlap: true
-    }
+      isFetchingOverlap: true,
+    };
   }
 
   componentDidMount() {
     const {
-      match: { params: { segmentId } },
+      match: {
+        params: { segmentId },
+      },
     } = this.props;
 
-    this.overlapInterval.fetchOverlapAnalysisLoop(segmentId).then(() => fetchOverlapAnalysis(segmentId)).then(res => this.setState({ data: res, isFetchingOverlap: false }));
+    this.overlapInterval
+      .fetchOverlapAnalysisLoop(segmentId)
+      .then(() => this.overlapInterval.fetchOverlapAnalysis(segmentId))
+      .then(res => this.setState({ data: res, isFetchingOverlap: false }));
   }
 
   componentWillReceiveProps(nextProps: Props) {
     const {
-      match: { params: { segmentId } },
+      match: {
+        params: { segmentId },
+      },
     } = this.props;
     const {
-      match: { params: { segmentId: nextSegmentId } },
+      match: {
+        params: { segmentId: nextSegmentId },
+      },
     } = nextProps;
 
     if (segmentId !== nextSegmentId) {
       this.setState({ isFetchingOverlap: true }, () => {
-        this.overlapInterval.fetchOverlapAnalysisLoop(nextSegmentId).then(() => fetchOverlapAnalysis(nextSegmentId)).then(res => this.setState({ data: res, isFetchingOverlap: false }));
-      })
+        this.overlapInterval
+          .fetchOverlapAnalysisLoop(nextSegmentId)
+          .then(() => this.overlapInterval.fetchOverlapAnalysis(nextSegmentId))
+          .then(res => this.setState({ data: res, isFetchingOverlap: false }));
+      });
     }
   }
 
   componentWillUnmount() {
-    this.overlapInterval.stopInterval()
+    this.overlapInterval.stopInterval();
   }
 
   renderStackedAreaCharts() {
     const { colors } = this.props;
     const { data, isFetchingOverlap } = this.state;
 
-    if (isFetchingOverlap) return <LoadingChart />
+    if (isFetchingOverlap) return <LoadingChart />;
 
-    const dataSource: Array<{ xKey: string, yKey: number }> = [];
+    const dataSource: Array<{ xKey: string; yKey: number }> = [];
 
     const overlapData = data.data;
     if (overlapData) {
@@ -97,10 +107,13 @@ class Overlap extends React.Component<Props, State> {
         if (item) {
           dataSource.push({
             xKey: item.segment_intersect_with.name,
-            yKey: item.segment_intersect_with.segment_size === 0 ? 0 : (item.overlap_number / item.segment_source_size) * 100
-          })
+            yKey:
+              item.segment_intersect_with.segment_size === 0
+                ? 0
+                : (item.overlap_number / item.segment_source_size) * 100,
+          });
         }
-      })
+      });
     }
 
     const optionsForChart = {
@@ -117,25 +130,31 @@ class Overlap extends React.Component<Props, State> {
         colors={{ base: colors['mcs-info'], hover: colors['mcs-warning'] }}
       />
     ) : (
-        <LoadingChart />
-      );
+      <LoadingChart />
+    );
   }
-
 
   renderModalExtend = () => {
     const {
       datamart,
-      match: { params: { organisationId, segmentId } },
+      match: {
+        params: { organisationId, segmentId },
+      },
       intl: { formatMessage },
     } = this.props;
 
     const createOv = () => {
-      this.setState({ isFetchingOverlap: true })
-      this.overlapInterval.createOverlapAnalysis(datamart.id, segmentId, organisationId)
+      this.setState({ isFetchingOverlap: true });
+      this.overlapInterval
+        .createOverlapAnalysis(datamart.id, segmentId, organisationId)
         .then(() => {
-          fetchOverlapAnalysis(segmentId).then(res => this.setState({ data: res, isFetchingOverlap: false }));
+          this.overlapInterval
+            .fetchOverlapAnalysis(segmentId)
+            .then(res =>
+              this.setState({ data: res, isFetchingOverlap: false }),
+            );
         });
-    }
+    };
 
     Modal.confirm({
       title: formatMessage(messages.modalOverlapContentTitle),
@@ -145,7 +164,7 @@ class Overlap extends React.Component<Props, State> {
         </div>
       ),
       onOk() {
-        createOv()
+        createOv();
       },
       onCancel() {
         //
@@ -154,15 +173,9 @@ class Overlap extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      colors,
-      intl,
-    } = this.props;
+    const { colors, intl } = this.props;
 
-    const {
-      data,
-      isFetchingOverlap
-    } = this.state;
+    const { data, isFetchingOverlap } = this.state;
 
     const options = [
       {
@@ -178,8 +191,8 @@ class Overlap extends React.Component<Props, State> {
             {isFetchingOverlap || !data.hasOverlap ? (
               <div />
             ) : (
-                <LegendChart identifier="LegendOverlap" options={options} />
-              )}
+              <LegendChart identifier="LegendOverlap" options={options} />
+            )}
           </Col>
           <Col span={12} className="text-right">
             {!isFetchingOverlap &&
@@ -195,17 +208,19 @@ class Overlap extends React.Component<Props, State> {
                 {data.hasOverlap ? (
                   <FormattedMessage {...messages.refresh} />
                 ) : (
-                    <FormattedMessage {...messages.createOverlap} />
-                  )}
+                  <FormattedMessage {...messages.createOverlap} />
+                )}
               </Button>
             )}
           </Col>
         </Row>
         {!data.hasOverlap && !isFetchingOverlap ? (
-          <EmptyCharts title={intl.formatMessage(messages.noAdditionDeletion)} />
+          <EmptyCharts
+            title={intl.formatMessage(messages.noAdditionDeletion)}
+          />
         ) : (
-            this.renderStackedAreaCharts()
-          )}
+          this.renderStackedAreaCharts()
+        )}
       </div>
     );
 
