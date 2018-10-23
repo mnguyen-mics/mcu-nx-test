@@ -34,7 +34,7 @@ import { injectable } from 'inversify';
 
 type DisplayCampaignId = string;
 
-interface IDisplayCampaignFormService {
+export interface IDisplayCampaignFormService {
   loadCampaign: (
     displayCampaignId: string,
     duplicate?: boolean,
@@ -62,7 +62,7 @@ interface IDisplayCampaignFormService {
 }
 
 @injectable()
-class DisplayCampaignFormService implements IDisplayCampaignFormService {
+export class DisplayCampaignFormService implements IDisplayCampaignFormService {
   @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   loadCampaign(
@@ -352,5 +352,3 @@ function getAdGroupTasks(
 
   return tasks;
 }
-
-export const displayCampaignFormService = new DisplayCampaignFormService();

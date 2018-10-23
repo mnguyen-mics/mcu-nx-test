@@ -17,8 +17,21 @@ import {
   lazyInject,
 } from '../../../../services/inversify.config';
 
+export interface IAudienceSegmentFormService {
+  loadSegmentInitialValue: (
+    segmentId: string,
+  ) => Promise<AudienceSegmentFormData>;
+
+  saveOrCreateAudienceSegment: (
+    organisationId: string,
+    audienceSegmentFormData: AudienceSegmentFormData,
+    queryLanguage?: QueryLanguage,
+    queryContainer?: any,
+  ) => Promise<DataResponse<AudienceSegmentShape> | void>;
+}
+
 @injectable()
-export class AudienceSegmentFormService {
+export class AudienceSegmentFormService implements IAudienceSegmentFormService {
   @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   loadSegmentInitialValue(segmentId: string): Promise<AudienceSegmentFormData> {
@@ -177,5 +190,3 @@ export class AudienceSegmentFormService {
     return technicalName;
   };
 }
-
-export const audienceSegmentFormService = new AudienceSegmentFormService();

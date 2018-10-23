@@ -9,8 +9,30 @@ import {
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { injectable } from 'inversify';
 
+export interface IAudienceFeedFormService {
+  loadTagInitialValue: (
+    segmentId: string,
+    feedId: string,
+  ) => Promise<AudienceFeedFormModel>;
+  loadExternalInitialValue: (
+    segmentId: string,
+    feedId: string,
+  ) => Promise<AudienceFeedFormModel>;
+  saveOrCreateTagFeed: (
+    organisationId: string,
+    segmentId: string,
+    formData: AudienceFeedFormModel,
+    edition: boolean,
+  ) => Promise<any>;
+  saveOrCreateExternalFeed: (
+    organisationId: string,
+    segmentId: string,
+    formData: AudienceFeedFormModel,
+    edition: boolean,
+  ) => Promise<any>;
+}
 @injectable()
-export class AudienceFeedFormService {
+export class AudienceFeedFormService implements IAudienceFeedFormService {
   @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   loadTagInitialValue(
@@ -148,5 +170,3 @@ const updateOrCreatePluginProperties = (
   }
   return executeTasksInSequence(propertiesPromises);
 };
-
-export const audienceFeedFormService = new AudienceFeedFormService();

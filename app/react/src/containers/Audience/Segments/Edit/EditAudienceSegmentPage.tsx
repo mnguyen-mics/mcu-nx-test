@@ -37,7 +37,10 @@ import SegmentTypeSelector from '../../Common/SegmentTypeSelector';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import DatamartService from '../../../../services/DatamartService';
-import { audienceSegmentFormService } from './AudienceSegmentFormService';
+import {
+  AudienceSegmentFormService,
+  IAudienceSegmentFormService,
+} from './AudienceSegmentFormService';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -69,6 +72,7 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class EditAudienceSegmentPage extends React.Component<Props, State> {
+  private _audienceSegmentFormService: IAudienceSegmentFormService = new AudienceSegmentFormService();
   constructor(props: Props) {
     super(props);
 
@@ -136,7 +140,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       .injector()
       .get('core/datamart/queries/QueryContainer');
     if (segmentId) {
-      audienceSegmentFormService
+      this._audienceSegmentFormService
         .loadSegmentInitialValue(segmentId)
         .then(initialData => {
           DatamartService.getDatamart(initialData.audienceSegment.datamart_id!)
@@ -266,7 +270,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     );
 
     this.setState({ loading: true });
-    audienceSegmentFormService
+    this._audienceSegmentFormService
       .saveOrCreateAudienceSegment(
         organisationId,
         audienceSegmentFormData,

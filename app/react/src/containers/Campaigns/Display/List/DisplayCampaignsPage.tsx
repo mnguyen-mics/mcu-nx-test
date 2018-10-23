@@ -27,7 +27,10 @@ import { getTableDataSource } from '../../../../state/Campaigns/Display/selector
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import messages from '../messages';
-import { displayCampaignFormService } from '../Edit/DisplayCampaignFormService';
+import {
+  DisplayCampaignFormService,
+  IDisplayCampaignFormService,
+} from '../Edit/DisplayCampaignFormService';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { UpdateMessage } from '../Dashboard/ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import injectNotifications, {
@@ -83,6 +86,7 @@ class DisplayCampaignsPage extends React.Component<
   JoinedProps,
   DisplayCampaignsPageState
 > {
+  private _displayCampaignFormService: IDisplayCampaignFormService = new DisplayCampaignFormService();
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -206,7 +210,7 @@ class DisplayCampaignsPage extends React.Component<
     formData: EditCampaignsFormData,
   ) => {
     const { notifyError, intl } = this.props;
-    return displayCampaignFormService
+    return this._displayCampaignFormService
       .saveCampaigns(campaignsIds, formData)
       .then(() => {
         this.props.closeNextDrawer();

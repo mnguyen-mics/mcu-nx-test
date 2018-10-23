@@ -2,6 +2,7 @@ import * as React from 'react';
 import { compose, Omit } from 'recompose';
 import { connect } from 'react-redux';
 import { injectable } from 'inversify';
+import { Alert } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import * as actions from '../../../../../state/Notifications/actions';
@@ -23,14 +24,8 @@ import { Path } from '../../../../../components/ActionBar';
 import GenericPluginContent, {
   PluginContentOuterProps,
 } from '../../../../Plugin/Edit/GenericPluginContent';
-import AudienceTagFeedService from '../../../../../services/AudienceTagFeedService';
-import { Alert } from 'antd';
-// import {
-//   lazyInject,
-//   SERVICE_IDENTIFIER,
-// } from '../../../../../services/inversify.config';
+import { AudienceTagFeedService } from '../../../../../services/AudienceTagFeedService';
 import {
-  // ,IAudienceExternalFeedService,
   AudienceExternalFeedService,
 } from '../../../../../services/AudienceExternalFeedService';
 
@@ -56,8 +51,6 @@ type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
 
 @injectable()
 class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
-  // @lazyInject(SERVICE_IDENTIFIER.IAudienceExternalFeedService)
-  // private _audienceExternalFeedService: IAudienceExternalFeedService;
   constructor(props: JoinedProps<T>) {
     super(props);
   }

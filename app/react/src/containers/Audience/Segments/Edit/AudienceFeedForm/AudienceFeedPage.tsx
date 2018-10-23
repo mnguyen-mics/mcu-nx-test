@@ -7,7 +7,10 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import AudienceFeedForm from './AudienceFeedForm';
 import { Loading } from '../../../../../components';
-import { audienceFeedFormService } from './AudienceFeedFormService';
+import {
+  AudienceFeedFormService,
+  IAudienceFeedFormService,
+} from './AudienceFeedFormService';
 import { AudienceFeedFormModel, FeedRouteParams, FeedType } from './domain';
 import AudienceFeedSelector from './AudienceFeedSelector';
 import { EditContentLayout } from '../../../../../components/Layout';
@@ -42,6 +45,7 @@ class AudienceFeedPage extends React.Component<
 > {
   @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+  private _audienceFeedFormService: IAudienceFeedFormService = new AudienceFeedFormService();
 
   constructor(props: JoinedProps) {
     super(props);
@@ -97,7 +101,7 @@ class AudienceFeedPage extends React.Component<
 
   fetchAudienceFeed = (segmentId: string, feedType: string, feedId: string) => {
     if (feedType === 'tag') {
-      audienceFeedFormService
+      this._audienceFeedFormService
         .loadTagInitialValue(segmentId, feedId)
         .then(res => this.setState({ initialValue: res, loading: false }))
         .catch(err => {
@@ -106,7 +110,7 @@ class AudienceFeedPage extends React.Component<
         });
     }
     if (feedType === 'external') {
-      audienceFeedFormService
+      this._audienceFeedFormService
         .loadExternalInitialValue(segmentId, feedId)
         .then(res => this.setState({ initialValue: res, loading: false }))
         .catch(err => {

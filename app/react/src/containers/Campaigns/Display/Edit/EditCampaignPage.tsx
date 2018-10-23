@@ -11,7 +11,10 @@ import {
   EditDisplayCampaignRouteMatchParam,
   INITIAL_DISPLAY_CAMPAIGN_FORM_DATA,
 } from './domain';
-import { displayCampaignFormService } from './DisplayCampaignFormService';
+import {
+  DisplayCampaignFormService,
+  IDisplayCampaignFormService,
+} from './DisplayCampaignFormService';
 import messages from './messages';
 import DisplayCampaignForm from './DisplayCampaignForm';
 import Loading from '../../../../components/Loading';
@@ -34,6 +37,7 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
+  private _displayCampaignFormService: IDisplayCampaignFormService = new DisplayCampaignFormService();
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -55,7 +59,7 @@ class EditCampaignPage extends React.Component<Props, State> {
     const campaignId = campaignIdFromURLParam || campaignIdFromLocState;
 
     if (campaignId) {
-      displayCampaignFormService
+      this._displayCampaignFormService
         .loadCampaign(campaignId, !!campaignIdFromLocState)
         .then(formData => {
           this.setState({
@@ -101,7 +105,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    return displayCampaignFormService
+    return this._displayCampaignFormService
       .saveCampaign(
         organisationId,
         displayCampaignFormData,
