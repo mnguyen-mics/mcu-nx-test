@@ -223,5 +223,6 @@
   "SEND_TEST": "Send a test Email",
   "REPORT": "DSP Report",
   "CREATE": "Create",
-  "ID": "Id"
+  "ID": "Id",
+  "HISTORY": "History"
 }

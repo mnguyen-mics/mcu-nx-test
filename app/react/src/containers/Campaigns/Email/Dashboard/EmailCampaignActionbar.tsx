@@ -24,6 +24,9 @@ import ReportService from '../../../../services/ReportService';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import log from '../../../../utils/Logger';
+import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import formatCampaignProperty from '../../../../messages/campaign/email/emailCampaignMessages';
+import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 
 export interface EmailCampaignActionbarProps {
   campaign?: EmailCampaignResource;
@@ -39,7 +42,8 @@ interface State {
 type Props = EmailCampaignActionbarProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EmailCampaignDashboardRouteMatchParam>;
+  RouteComponentProps<EmailCampaignDashboardRouteMatchParam> &
+  InjectedDrawerProps;
 
 class EmailCampaignActionbar extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -133,7 +137,26 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     };
 
     const onClick = (param: ClickParam) => {
+      const {
+        match: {
+          params: { campaignId },
+        },
+      } = this.props;
+
       switch (param.key) {
+        case 'HISTORY':
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(
+            ResourceTimelinePage,
+            {
+              additionalProps: {
+                resourceType: 'EMAIL_CAMPAIGN',
+                resourceId: campaignId,
+                handleClose: () => this.props.closeNextDrawer(),
+                formatProperty: formatCampaignProperty,
+              },
+              size: 'small',
+            }
+          );
         case 'ARCHIVED':
           return campaign && handleArchiveCampaign(campaign.id);
         default:
@@ -145,6 +168,9 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
 
     return (
       <Menu onClick={onClick}>
+        <Menu.Item key="HISTORY">
+          <FormattedMessage {...messages.history} />
+        </Menu.Item>
         <Menu.Item key="ARCHIVED">
           <FormattedMessage id="ARCHIVED" />
         </Menu.Item>
@@ -216,4 +242,5 @@ export default compose<Props, EmailCampaignActionbarProps>(
   withRouter,
   injectIntl,
   injectNotifications,
+  injectDrawer,
 )(EmailCampaignActionbar);

@@ -23,6 +23,7 @@ import {
   EditDisplayCampaignRouteMatchParam,
   DisplayCampaignFormData,
 } from '../../domain';
+import formatCampaignProperty from '../../../../../../messages/campaign/display/displayCampaignMessages';
 
 interface MapStateToProps {
   initialFormValues: Partial<DisplayCampaignFormData>;
@@ -70,7 +71,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralRow1Label),
+              label: formatMessage(formatCampaignProperty('name').message),
               required: true,
             }}
             inputProps={{
@@ -90,7 +91,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             validate={[isValidInteger]}
             formItemProps={{
               label: formatMessage(
-                messages.contentSectionGeneralAdvancedPartRow2Label,
+                formatCampaignProperty('total_impression_capping').message,
               ),
             }}
             inputProps={{
@@ -112,7 +113,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             validate={[isValidInteger]}
             formItemProps={{
               label: formatMessage(
-                messages.contentSectionGeneralAdvancedPartRow3Label,
+                formatCampaignProperty('per_day_impression_capping').message,
               ),
             }}
             inputProps={{
@@ -133,7 +134,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
               label: formatMessage(
-                messages.contentSectionGeneralAdvancedPartRow4Label,
+                formatCampaignProperty('total_budget').message,
               ),
             }}
             inputProps={{
@@ -155,7 +156,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
               label: formatMessage(
-                messages.contentSectionGeneralAdvancedPartRow5Label,
+                formatCampaignProperty('max_budget_per_period').message,
               ),
             }}
             inputProps={{
@@ -167,21 +168,15 @@ class GeneralFormSection extends React.Component<Props, State> {
                   options={[
                     {
                       value: 'DAY',
-                      title: formatMessage(
-                        messages.contentSectionGeneralRow5OptionDAY,
-                      ),
+                      children: formatCampaignProperty('max_budget_period', 'DAY').formattedValue,
                     },
                     {
                       value: 'WEEK',
-                      title: formatMessage(
-                        messages.contentSectionGeneralRow5OptionWEEK,
-                      ),
+                      children: formatCampaignProperty('max_budget_period', 'WEEK').formattedValue,
                     },
                     {
                       value: 'MONTH',
-                      title: formatMessage(
-                        messages.contentSectionGeneralRow5OptionMONTH,
-                      ),
+                      children: formatCampaignProperty('max_budget_period', 'MONTH').formattedValue,
                     },
                   ]}
                 />
@@ -223,7 +218,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               component={FormAlertInput}
               formItemProps={{
                 label: formatMessage(
-                  messages.contentSectionGeneralAdvancedPartRow1Label,
+                  formatCampaignProperty('technical_name').message,
                 ),
               }}
               inputProps={{

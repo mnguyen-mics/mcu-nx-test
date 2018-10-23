@@ -9,6 +9,10 @@ export default defineMessages({
     id: 'email.campaign.actionBar.email',
     defaultMessage: 'Email',
   },
+  history: {
+    id: 'email.campaign.actionBar.history',
+    defaultMessage: 'History',
+  },
   // Email Campaign
   emailSent: {
     id: 'email.metrics.email_sent',
