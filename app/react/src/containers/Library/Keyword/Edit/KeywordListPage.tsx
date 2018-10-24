@@ -80,6 +80,9 @@ class KeywordListPage extends React.Component<
       },
     } = this.props;
     if (keywordsListId) {
+      this.setState({
+        isLoading: true,
+      });
       this._keywordListService
         .getKeywordList(keywordsListId)
         .then(resp => resp.data)
@@ -96,8 +99,15 @@ class KeywordListPage extends React.Component<
                     createFieldArrayModel(keywordResource),
                   ),
                 },
+                isLoading: false,
               });
             });
+        })
+        .catch(err => {
+          this.setState({
+            isLoading: false,
+          });
+          this.props.notifyError(err);
         });
     }
   }
