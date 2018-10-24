@@ -115,5 +115,3 @@ export class KeywordListFormService implements IKeywordListFormService {
 function hasId<T extends { id: string }, Y>(resource: T | Y): resource is T {
   return (resource as T).id !== undefined;
 }
-
-export const keywordListFormService = new KeywordListFormService();

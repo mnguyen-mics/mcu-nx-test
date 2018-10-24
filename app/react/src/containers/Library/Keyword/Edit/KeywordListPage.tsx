@@ -16,8 +16,10 @@ import { createFieldArrayModel } from '../../../../utils/FormHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { keywordListFormService } from './KeywordListFormService';
-// import { IKeywordListFormService } from './KeywordListFormService';
+import {
+  KeywordListFormService,
+  IKeywordListFormService,
+} from './KeywordListFormService';
 
 const messages = defineMessages({
   editKeywordList: {
@@ -62,8 +64,7 @@ class KeywordListPage extends React.Component<
 > {
   @lazyInject(SERVICE_IDENTIFIER.IKeywordListService)
   private _keywordListService: IKeywordListService;
-  // @lazyInject(SERVICE_IDENTIFIER.IKeywordListFormService)
-  // private _keywordListFormService: IKeywordListFormService;
+  private _keywordListFormService: IKeywordListFormService = new KeywordListFormService();
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -121,7 +122,7 @@ class KeywordListPage extends React.Component<
       isLoading: true,
     });
 
-    keywordListFormService
+    this._keywordListFormService
       .saveKeywordList(
         organisationId,
         formData,

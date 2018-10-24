@@ -5,11 +5,6 @@ import {
   KeywordListService,
 } from './Library/KeywordListsService';
 
-// import {
-//   KeywordListFormService,
-//   IKeywordListFormService,
-// } from '../containers/Library/Keyword/Edit/KeywordListFormService';
-
 const SERVICE_IDENTIFIER = {
   IKeywordListService: Symbol.for('KeywordListService'),
   IKeywordListFormService: Symbol.for('KeywordListFormService'),
@@ -22,10 +17,6 @@ const container = new Container();
 container
   .bind<IKeywordListService>(SERVICE_IDENTIFIER.IKeywordListService)
   .to(KeywordListService);
-
-// container
-//   .bind<IKeywordListFormService>(SERVICE_IDENTIFIER.IKeywordListService)
-//   .to(KeywordListFormService);
 
 export const { lazyInject } = getDecorators(container);
 
