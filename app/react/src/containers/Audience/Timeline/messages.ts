@@ -47,6 +47,10 @@ const messages: {
     id: 'timeline.card.account.title',
     defaultMessage: 'User Account Id',
   },
+  unknownCompartmentName: {
+    id: 'timeline.card.user.account.unknown.compartment.name',
+    defaultMessage: 'Unknown compartment name',
+  },
   emptyAccount: {
     id: 'timeline.card.account.empty',
     defaultMessage: 'This user has no Account Information',

@@ -211,9 +211,10 @@ class Monitoring extends React.Component<Props, State> {
 
     const { identifier, identifiers, isModalVisible } = this.state;
 
-    const userPointId = identifiers.items.USER_POINT && identifiers.items.USER_POINT[0]
-    ? identifiers.items.USER_POINT[0].user_point_id
-    : ''
+    const userPointId =
+      identifiers.items.USER_POINT && identifiers.items.USER_POINT[0]
+        ? identifiers.items.USER_POINT[0].user_point_id
+        : '';
 
     return (
       <div className="ant-layout">
@@ -264,7 +265,10 @@ class Monitoring extends React.Component<Props, State> {
                     <div className="mcs-subtitle">
                       <FormattedMessage {...messages.identifiers} />
                     </div>
-                    <AccountIdCard identifiers={identifiers} />
+                    <AccountIdCard
+                      identifiers={identifiers}
+                      datamartId={datamartId}
+                    />
                     <DeviceCard identifiers={identifiers} />
                     <EmailCard identifiers={identifiers} />
                   </Col>
