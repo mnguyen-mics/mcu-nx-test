@@ -222,9 +222,6 @@ class ActivityCard extends React.Component<Props, State> {
           {JSON.stringify(activity, undefined, 4)}
         </SyntaxHighlighter>
       ),
-      onOk() {
-        //
-      },
     });
   };
 
