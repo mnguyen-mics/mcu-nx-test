@@ -1,7 +1,7 @@
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 const messages: {
-  [propertyName: string]: FormattedMessage.MessageDescriptor
+  [propertyName: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   lookUpUser: {
     id: 'timeline.actionbar.lookup',
@@ -175,8 +175,16 @@ const messages: {
     id: 'timeline.activity.events.json',
     defaultMessage: 'Event JSON',
   },
+  activityJson: {
+    id: 'timeline.activity.json',
+    defaultMessage: 'Activity JSON',
+  },
   eventJsonModalOkText: {
     id: 'timeline.activity.event.json.modal.ok.text',
+    defaultMessage: 'Close',
+  },
+  activityJsonModalOkText: {
+    id: 'timeline.activity.json.modal.ok.text',
     defaultMessage: 'Close',
   },
   less: {
@@ -227,9 +235,14 @@ const messages: {
     id: 'timeline.event.activity.view.json.button',
     defaultMessage: 'View JSON source',
   },
+  viewActivityJson: {
+    id: 'timeline.activity.view.json.button',
+    defaultMessage: 'View JSON source',
+  },
   pleaseFillInformations: {
     id: 'timeline.no.cookie.please.fill.infos',
-    defaultMessage: 'There is no user linked to your browser, please select a user to continue',
+    defaultMessage:
+      'There is no user linked to your browser, please select a user to continue',
   },
   userScenarioStartContent: {
     id: 'timeline.activity.scenario.start.content',
@@ -249,7 +262,8 @@ const messages: {
   },
   userScenarioNodeMovementContent: {
     id: 'timeline.activity.scenario.node.movement.content',
-    defaultMessage: 'Moved from {scenarioOldNodeName} to {scenarioNodeName} within {scenarioName}',
+    defaultMessage:
+      'Moved from {scenarioOldNodeName} to {scenarioNodeName} within {scenarioName}',
   },
 });
 
