@@ -9,4 +9,3 @@ export const PasswordRequirements = {
   min_length: 4,
   forbid_popular_passwords: true,
 };
-2
