@@ -7,7 +7,7 @@ import { PluginLayout } from '../models/plugin/PluginLayout';
 abstract class PluginInstanceService<T extends PluginInstance> {
   constructor(public entityPath: string) {}
 
-  getInstanceById(id: string, options: object = {}): Promise<DataResponse<T>> {
+  getInstanceById = (id: string, options: object = {}): Promise<DataResponse<T>> => {
     const endpoint = `${this.entityPath}/${id}`;
 
     const params = {
@@ -16,19 +16,19 @@ abstract class PluginInstanceService<T extends PluginInstance> {
     return ApiService.getRequest(endpoint, params);
   }
 
-  getInstanceProperties(
+  getInstanceProperties = (
     id: string,
     options: object = {},
-  ): Promise<DataListResponse<PropertyResourceShape>> {
+  ): Promise<DataListResponse<PropertyResourceShape>> => {
     const endpoint = `${this.entityPath}/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
   }
 
-  updatePluginInstance(
+  updatePluginInstance = (
     id: string,
     options: object = {},
-  ): Promise<DataResponse<T>> {
+  ): Promise<DataResponse<T>> => {
     const endpoint = `${this.entityPath}/${id}`;
 
     const params = {
@@ -38,12 +38,12 @@ abstract class PluginInstanceService<T extends PluginInstance> {
     return ApiService.putRequest(endpoint, params);
   }
 
-  updatePluginInstanceProperty(
+  updatePluginInstanceProperty = (
     organisationId: string,
     id: string,
     technicalName: string,
     params: object = {},
-  ): Promise<DataResponse<PropertyResourceShape> | void> {
+  ): Promise<DataResponse<PropertyResourceShape> | void> => {
     const endpoint = `${
       this.entityPath
     }/${id}/properties/technical_name=${technicalName}`;
@@ -56,10 +56,10 @@ abstract class PluginInstanceService<T extends PluginInstance> {
     );
   }
 
-  createPluginInstance(
+  createPluginInstance = (
     organisationId: string,
     options: object = {},
-  ): Promise<DataResponse<T>> {
+  ): Promise<DataResponse<T>> => {
     const endpoint = `${this.entityPath}?organisation_id=${organisationId}`;
 
     const params = {

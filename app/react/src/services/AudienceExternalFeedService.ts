@@ -102,7 +102,7 @@ export class AudienceExternalFeedService
     return ApiService.getRequest(endpoint, params);
   }
 
-  getInstanceProperties(
+  getInstanceProperties = (
     id: string,
     options: object = {},
   ): Promise<DataListResponse<PropertyResourceShape>> {
@@ -113,12 +113,11 @@ export class AudienceExternalFeedService
     return ApiService.getRequest(endpoint, options);
   }
 
-  updatePluginInstance(
+  updatePluginInstance = (
     id: string,
     options: object = {},
-  ): Promise<DataResponse<AudienceExternalFeed>> {
+  ): Promise<DataResponse<AudienceExternalFeed>> => {
     const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}`;
-
     const params = {
       ...options,
     };
@@ -126,7 +125,7 @@ export class AudienceExternalFeedService
     return ApiService.putRequest(endpoint, params);
   }
 
-  updatePluginInstanceProperty(
+  updatePluginInstanceProperty = (
     organisationId: string,
     id: string,
     technicalName: string,
@@ -144,7 +143,7 @@ export class AudienceExternalFeedService
     );
   }
 
-  createPluginInstance(
+  createPluginInstance = (
     organisationId: string,
     options: object = {},
   ): Promise<DataResponse<AudienceExternalFeed>> {

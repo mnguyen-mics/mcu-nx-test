@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 
 export interface FullScreenFormModalProps {
   opened?: boolean;
+  blurred?: boolean;
 }
 
 export default class FullScreenModal extends React.Component<FullScreenFormModalProps> {
@@ -14,11 +15,15 @@ export default class FullScreenModal extends React.Component<FullScreenFormModal
     this.el = document.createElement('div');
   }
 
-  setRootClassName = (remove?: boolean) => {
+  setRootClassName = (remove?: boolean, blurred?: boolean) => {
     const appRoot = document.getElementById('mcs-full-page');
-    if (appRoot && !remove)
+    if (appRoot && !remove && blurred)
+      appRoot.classList.add('form-modal-blurred-open')
+    if (appRoot && !remove && !blurred)
       appRoot.classList.add('form-modal-open')
-    if (appRoot && remove)
+    if (appRoot && remove && blurred)
+      appRoot.classList.remove('form-modal-blurred-open')
+    if (appRoot && remove && !blurred)
       appRoot.classList.remove('form-modal-open')
   }
 

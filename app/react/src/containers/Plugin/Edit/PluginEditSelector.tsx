@@ -46,13 +46,12 @@ class PluginEditSelector<T extends LayoutablePlugin> extends React.Component<Plu
                         item.plugin_layout.metadata.display_name :
                         item.artifact_id}
                       key={item.id}
-                      icon_path={(item.plugin_layout !== undefined) ?
-                        (window as any).MCS_CONSTANTS.ASSETS_URL+item.plugin_layout.metadata.small_icon_asset_url :
-                        undefined}
+                      
                       subtitles={(item.plugin_layout && item.plugin_layout.metadata && item.plugin_layout.metadata.description) ?
                         [item.plugin_layout.metadata.description] :
                         undefined}
                       select={this.onSelect(item)}
+                      icon_path={item.layout_icon_path}
                     />;
                   })}
                 </Row>
