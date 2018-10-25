@@ -2,12 +2,16 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   resetPasswordTitle: {
-    id: 'forgotPasswordForm.resetPassword',
-    defaultMessage: 'To reset your password please enter your email address.',
+    id: 'forgotPasswordForm.passwordTitle',
+    defaultMessage: 'Forgot your password ?',
   },
-  resetPasswordEmail: {
-    id: 'forgotPasswordForm.emaiPlaceholder',
-    defaultMessage: 'Your Email Address',
+  resetPasswordWrong: {
+    id: 'forgotPasswordForm.passwordWrong',
+    defaultMessage: 'Unknown email',
+  },
+  resetPasswordDescription: {
+    id: 'forgotPasswordForm.resetPassword',
+    defaultMessage: 'Having trouble logging in? Just type your email address bellow and we will sent you an email with a link to reset your password',
   },
   resetPasswordEmailRequired: {
     id: 'forgotPasswordForm.emaiRequired',
@@ -15,11 +19,11 @@ export default defineMessages({
   },
   resetPasswordSubmit: {
     id: 'forgotPasswordForm.resetPasswordSubmit',
-    defaultMessage: 'Reset Password',
+    defaultMessage: 'Continue',
   },
   resetPasswordBack: {
     id: 'forgotPasswordForm.backToLoginLink',
-    defaultMessage: 'Take me back to login',
+    defaultMessage: 'Cancel',
   },
   resetPasswordReturnToLogin: {
     id: 'forgotPasswordMailSent.returnToLogind',
@@ -31,6 +35,6 @@ export default defineMessages({
   },
   resetPasswordEmailSpan: {
     id: 'forgotPasswordMailSent.emailSpan',
-    defaultMessage: 'Can\'t find the email ? try checking your  spam folder.',
+    defaultMessage: 'Can\'t find the email ? try checking your spam folder.',
   },
 });

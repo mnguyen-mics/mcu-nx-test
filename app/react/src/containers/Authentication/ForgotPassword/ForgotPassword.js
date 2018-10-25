@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
-import { Form, Icon, Input, Button, Alert } from 'antd';
+import { Form, Input, Button, Alert } from 'antd';
 import logoUrl from '../../../assets/images/logo.png';
 import { sendPassword, passwordForgotReset } from '../../../state/ForgotPassword/actions';
 import messages from './messages';
@@ -17,7 +17,6 @@ class ForgotPassword extends Component {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
 
   componentWillUnmount() {
     this.props.passwordForgotReset();
@@ -36,47 +35,56 @@ class ForgotPassword extends Component {
     } = this.props;
 
     const hasFieldError = this.props.form.getFieldError('email');
-    const errorMsg = !hasFieldError && hasError ? <Alert type="error" style={{ marginBottom: 24 }} message={<FormattedMessage {...messages.resetPasswordTitle} />} /> : null;
+    const errorMsg = !hasFieldError && hasError ? <Alert type="error" className="login-error-message" style={{ marginBottom: 24 }} message={<FormattedMessage {...messages.resetPasswordWrong} />} /> : null;
 
     return (
       <div className="mcs-reset-password-container">
+        <div className="image-wrapper">
+          <img alt="mics-logo" className="reset-password-logo" src={logoUrl} />
+        </div>
+        <div className="reset-password-title">
+          <FormattedMessage {...messages.resetPasswordTitle} />
+        </div>
         <div className="reset-password-container-frame">
-          <div className="image-wrapper">
-            <img alt="mics-logo" className="reset-password-logo" src={logoUrl} />
-          </div>
           { !passwordSentSuccess &&
           <Form onSubmit={this.handleSubmit} className="reset-password-form">
             { errorMsg }
             <div className="reset-passwork-msg" >
-              <FormattedMessage {...messages.resetPasswordTitle} />
+              <FormattedMessage {...messages.resetPasswordDescription} />
+            </div>
+            <div className="password-text">
+              <FormattedMessage id="EMAIL" />
             </div>
             <FormItem>
               { getFieldDecorator('email', {
                 rules: [{ type: 'email', required: true, message: formatMessage(messages.resetPasswordEmailRequired) }],
               })(
-                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder={formatMessage(messages.resetPasswordEmail)} />,
+                <Input className="reset-password-input" />,
               )}
             </FormItem>
-            <Button type="primary" htmlType="submit" className="reset-password-button" loading={isRequesting}>
-              <FormattedMessage {...messages.resetPasswordSubmit} />
-            </Button>
-            <Link className="back-to-login" to="/login"><FormattedMessage {...messages.resetPasswordBack} /></Link>
+            <div className="two-buttons">
+              <Link to="/login" className="reset-password-button"><FormattedMessage {...messages.resetPasswordBack} /></Link>
+              <Button type="primary" htmlType="submit" className="mcs-primary reset-password-button" loading={isRequesting}>
+                <FormattedMessage {...messages.resetPasswordSubmit} />
+              </Button>
+            </div>
           </Form>
           }
           { passwordSentSuccess &&
           <div>
             <div>
-              <FormattedMessage {...messages.resetPasswordPasswordSent} />
-              <br />
-              <FormattedMessage {...messages.resetPasswordEmailSpan} />
+              <p className="reset-password-messages">
+                <FormattedMessage {...messages.resetPasswordPasswordSent} />
+              </p>
+              <p className="reset-password-messages">
+                <FormattedMessage {...messages.resetPasswordEmailSpan} />
+              </p>
             </div>
-            <br />
-            <Button type="primary" htmlType="button" className="reset-password-button">
+            <Button type="primary" htmlType="button" className="mcs-primary reset-password-button-whole">
               <Link to="/login"><FormattedMessage {...messages.resetPasswordReturnToLogin} /></Link>
             </Button>
           </div>
           }
-
         </div>
       </div>
     );
