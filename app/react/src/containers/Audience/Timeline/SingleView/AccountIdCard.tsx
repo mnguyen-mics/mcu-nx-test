@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { groupBy } from 'lodash';
-import { Tag, Tooltip, Row, Spin } from 'antd';
+import { Tag, Tooltip, Row } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Card } from '../../../../components/Card/index';
 import messages from '../messages';
@@ -63,6 +63,7 @@ class AccountIdCard extends React.Component<Props, State> {
     const handleShowMore = (visible: boolean) => () => {
       this.setState({ showMore: visible });
     };
+
     const userAccountsByCompartmentId = groupBy(
       identifiers.items.USER_ACCOUNT,
       'compartment_id',
@@ -72,7 +73,11 @@ class AccountIdCard extends React.Component<Props, State> {
         title={formatMessage(messages.accountTitle)}
         isLoading={identifiers.isLoading}
       >
-        {userAccountsByCompartmentId ? (
+        {Object.keys(userAccountsByCompartmentId).length === 0 ? (
+          <span>
+            <FormattedMessage {...messages.emptyAccount} />
+          </span>
+        ) : (
           Object.keys(userAccountsByCompartmentId).map(key => {
             const userAccountsLength = userAccountsByCompartmentId[key].length;
             const compartmentName = this.renderCompartmentName(key);
@@ -83,20 +88,19 @@ class AccountIdCard extends React.Component<Props, State> {
             return (
               <Row gutter={10} key={key} className="table-line border-top">
                 <div className="sub-title">{compartmentName}</div>
-                {accountsFormatted &&
-                  accountsFormatted.map(account => {
-                    return (
-                      <Tooltip
-                        key={account.user_account_id}
-                        placement="topRight"
-                        title={account.user_account_id}
-                      >
-                        <Tag className="card-tag alone">
-                          {account.user_account_id}
-                        </Tag>{' '}
-                      </Tooltip>
-                    );
-                  })}
+                {accountsFormatted.map(account => {
+                  return (
+                    <Tooltip
+                      key={account.user_account_id}
+                      placement="topRight"
+                      title={account.user_account_id}
+                    >
+                      <Tag className="card-tag alone">
+                        {account.user_account_id}
+                      </Tag>{' '}
+                    </Tooltip>
+                  );
+                })}
                 {userAccountsLength > 5 ? (
                   !this.state.showMore ? (
                     <div className="mcs-card-footer">
@@ -118,17 +122,9 @@ class AccountIdCard extends React.Component<Props, State> {
                     </div>
                   )
                 ) : null}
-                {(accountsFormatted.length === 0 ||
-                  identifiers.hasItems === false) && (
-                  <span>
-                    <FormattedMessage {...messages.emptyAccount} />
-                  </span>
-                )}
               </Row>
             );
           })
-        ) : (
-          <Spin />
         )}
       </Card>
     );

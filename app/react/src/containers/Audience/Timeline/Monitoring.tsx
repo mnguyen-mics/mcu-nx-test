@@ -198,7 +198,7 @@ class Monitoring extends React.Component<Props, State> {
     } = this.props;
     const datamartId = queryString.parse(location.search).datamartId
       ? queryString.parse(location.search).datamartId
-      : '';
+      : this.props.datamartId;
     history.push(
       `/v2/o/${organisationId}/audience/timeline/${identifier.type}/${
         identifier.id
