@@ -117,17 +117,17 @@ const ServiceOfferPageService = {
     if (type === "audience_segment") {
       return formatMessage(messages.audience_segmentType);
     }
-    else if (type === "inventory_access_display_network") {
-      return formatMessage(messages.inventory_access_display_networkType);
+    else if (type === "inventory_access_deal_list") {
+      return formatMessage(messages.inventory_access_deal_listType);
     }
     else if (type === "inventory_access_placement_list") {
       return formatMessage(messages.inventory_access_placement_listType);
     }
-    else if (type === "inventory_access_deal_list") {
-      return formatMessage(messages.inventory_access_deal_listType);
+    else if (type === "inventory_access_keyword_list") {
+      return formatMessage(messages.inventory_access_keyword_listType);
     }
-    else if (type === "inventory_access_ad_exchange") {
-      return formatMessage(messages.inventory_access_ad_exchangeType);
+    else if (type === "user_account_compartment") {
+      return formatMessage(messages.user_account_compartmentType);
     }
     else return type;
 

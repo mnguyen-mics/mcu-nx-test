@@ -48,6 +48,7 @@ export interface GetServiceItemsOptions extends PaginatedApiParam {
   offer_id?: string;
   keywords?: string;
   order_by?: string;
+  type?: string[];
 }
 
 const CatalogService = {
@@ -144,10 +145,22 @@ const CatalogService = {
     organisationId: string,
     options: GetServiceItemsOptions = {},
   ): Promise<DataListResponse<ServiceItemShape>> {
+    const emptyTypeOption = (options.type === undefined || options.type.length === 0) ?
+      {
+        type: [
+          "AUDIENCE_SEGMENT",
+          "INVENTORY_ACCESS_DEAL_LIST",
+          "INVENTORY_ACCESS_PLACEMENT_LIST",
+          "INVENTORY_ACCESS_KEYWORD_LIST",
+          "USER_ACCOUNT_COMPARTMENT"
+        ]
+      } :
+      undefined;
     return ApiService.getRequest(`service_items`,
       {
         organisation_id: organisationId,
         ...options,
+        ...emptyTypeOption
       });
   },
 

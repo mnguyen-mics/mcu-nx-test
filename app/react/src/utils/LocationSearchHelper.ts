@@ -122,6 +122,10 @@ export interface KeywordSearchSettings {
   keywords: string;
 }
 
+export interface TypeSearchSettings {
+  type: string[];
+}
+
 export const FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'statuses',

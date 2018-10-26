@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { Checkbox, Radio, Icon } from 'antd';
 import { omit } from 'lodash';
 import { connect } from 'react-redux';
@@ -19,7 +19,35 @@ import {
   PaginationSearchSettings,
   KeywordSearchSettings,
   DatamartSearchSettings,
+  TypeSearchSettings,
 } from '../../utils/LocationSearchHelper';
+
+const messages = defineMessages({
+  audienceSegment: {
+    id: 'typeSelector.audienceSegment',
+    defaultMessage: 'Audience Segment',
+  },
+  dealList: {
+    id: 'typeSelector.dealList',
+    defaultMessage: 'Deal List',
+  },
+  placementList: {
+    id: 'typeSelector.placementList',
+    defaultMessage: 'Placement List',
+  },
+  keywordList: {
+    id: 'typeSelector.keywordList',
+    defaultMessage: 'Keyword List',
+  },
+  userAccountCompartment: {
+    id: 'typeSelector.userAccountCompartment',
+    defaultMessage: 'User Account Compartment',
+  },
+  serviceType: {
+    id: 'typeSelector.serviceType',
+    defaultMessage: 'Service type',
+  }
+});
 
 export interface TableSelectorProps<T extends SelectableItem> {
   actionBarTitle: string;
@@ -35,6 +63,7 @@ export interface TableSelectorProps<T extends SelectableItem> {
   save: (selectedIds: string[], selectedElement: T[]) => void;
   close: () => void;
   displayDatamartSelector?: boolean;
+  displayTypeFilter?: boolean;
 }
 
 interface MapStateToProps {
@@ -44,6 +73,7 @@ interface MapStateToProps {
 interface State<T>
   extends PaginationSearchSettings,
   KeywordSearchSettings,
+  TypeSearchSettings,
   DatamartSearchSettings {
   selectedElementsById: { [elementId: string]: T };
   elementsById: { [elementId: string]: T };
@@ -55,7 +85,8 @@ interface State<T>
 
 type Props<T extends SelectableItem> = TableSelectorProps<T> &
   RouteComponentProps<{ organisationId: string }> &
-  MapStateToProps;
+  MapStateToProps &
+  InjectedIntlProps;
 
 class TableSelector<T extends SelectableItem> extends React.Component<
   Props<T>,
@@ -81,6 +112,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       currentPage: 1,
       keywords: '',
       datamartId: '',
+      type: []
     };
   }
 
@@ -123,19 +155,22 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       keywords,
       selectedElementsById,
       datamartId,
+      type
     } = this.state;
     const {
       currentPage: prevCurrentPage,
       pageSize: prevPageSize,
       keywords: prevKeywords,
       datamartId: prevDatamartId,
+      type: prevType
     } = prevState;
 
     if (
       currentPage !== prevCurrentPage ||
       pageSize !== prevPageSize ||
       keywords !== prevKeywords ||
-      datamartId !== prevDatamartId
+      datamartId !== prevDatamartId ||
+      type !== prevType
     ) {
       this.populateTable(Object.keys(selectedElementsById));
     }
@@ -171,11 +206,15 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   getFiltersOptions = () => {
     const {
       displayDatamartSelector,
+      displayTypeFilter,
       workspace,
       match: {
         params: { organisationId },
       },
+      intl
     } = this.props;
+
+    const filtersOptions: Array<MultiSelectProps<any>> = [];
 
     if (
       workspace(organisationId).datamarts.length > 1 &&
@@ -193,7 +232,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
           },
         ]);
 
-      return [
+      filtersOptions.push(
         {
           displayElement: (
             <div>
@@ -222,9 +261,59 @@ class TableSelector<T extends SelectableItem> extends React.Component<
             );
           },
         },
-      ];
+      );
     }
-    return [];
+
+    if (displayTypeFilter) {
+      filtersOptions.push(
+        {
+          displayElement: (
+            <div>
+              <FormattedMessage {...messages.serviceType} />
+              <Icon type="down" />
+            </div>
+          ),
+          selectedItems: this.state.type !== undefined ?
+            this.state.type.map((type: string) => ({
+              key: type,
+              value: type,
+            })) :
+            [],
+          items:
+            [
+              {
+                key: "AUDIENCE_SEGMENT",
+                value: intl.formatMessage(messages.audienceSegment),
+              },
+              {
+                key: "INVENTORY_ACCESS_DEAL_LIST",
+                value: intl.formatMessage(messages.dealList),
+              },
+              {
+                key: "INVENTORY_ACCESS_PLACEMENT_LIST",
+                value: intl.formatMessage(messages.placementList),
+              },
+              {
+                key: "INVENTORY_ACCESS_KEYWORD_LIST",
+                value: intl.formatMessage(messages.keywordList),
+              },
+              {
+                key: "USER_ACCOUNT_COMPARTMENT",
+                value: intl.formatMessage(messages.userAccountCompartment),
+              },
+            ],
+          getKey: (item: { key: string; value: string }) => item.key,
+          display: (item: { key: string; value: string }) => item.value,
+          handleMenuClick: (values: Array<{ key: string; value: string }>) =>
+            this.setState({
+              type: values.map(v => v.key),
+              currentPage: 1,
+            }),
+        }
+      );
+    };
+
+    return filtersOptions;
   };
 
   handleAdd = () => {
@@ -240,10 +329,10 @@ class TableSelector<T extends SelectableItem> extends React.Component<
 
   populateTable = (selectedIds: string[] = []) => {
     const { displayFiltering, defaultSelectedKey } = this.props;
-    const { currentPage, keywords, pageSize, datamartId } = this.state;
+    const { currentPage, keywords, pageSize, datamartId, type } = this.state;
 
     const filterOptions = displayFiltering
-      ? { currentPage, keywords, pageSize, datamartId }
+      ? { currentPage, keywords, pageSize, datamartId, type }
       : undefined;
     this.setState({ isLoading: true })
     return this.props
@@ -305,7 +394,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   };
 
   render() {
-    const { actionBarTitle, close, displayFiltering } = this.props;
+    const { actionBarTitle, close, displayFiltering, filtersOptions } = this.props;
     const {
       elementsById,
       allElementIds,
@@ -335,11 +424,11 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       pagination: pagination,
     };
 
-    const renderedTable = displayFiltering ? (
+    const renderedTable = (displayFiltering || filtersOptions !== undefined) ? (
       <TableViewFilters
         {...tableViewProps}
         searchOptions={this.getSearchOptions()}
-        filtersOptions={this.getFiltersOptions()}
+        filtersOptions={(filtersOptions !== undefined) ? filtersOptions : this.getFiltersOptions()}
       />
     ) : (
         <TableView {...tableViewProps} />
@@ -366,4 +455,5 @@ const mapStateToProps = (state: any) => ({
 export default compose<Props<any>, TableSelectorProps<any>>(
   connect(mapStateToProps, undefined),
   withRouter,
+  injectIntl,
 )(TableSelector);
