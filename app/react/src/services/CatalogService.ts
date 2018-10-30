@@ -44,7 +44,7 @@ export interface GetServiceItemsOptions extends PaginatedApiParam {
   audience_segment_id?: string;
   deal_list_id?: string;
   placement_list_id?: string;
-  keywords_list_id?: string;
+  keyword_list_id?: string;
   offer_id?: string;
   keywords?: string;
   order_by?: string;
