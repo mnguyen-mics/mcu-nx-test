@@ -242,8 +242,22 @@ class ServiceItemListPage extends React.Component<Props, State> {
         }
         return dataSource;
       }
-      return [{ usage_price: 0, cost: 0 }];
+      return undefined;
     };
+
+    const dataset = generateDataSource();
+
+    const priceChart = dataset ?
+      (
+        <ServiceItemPriceChartJS
+          identifier="servicePriceChart"
+          dataset={dataset}
+          options={optionsForChart}
+        />
+      ) :
+      undefined;
+
+      const hasPriceChart = priceChart !== undefined;
 
     const submitButtonProps: ButtonProps = {
       htmlType: 'submit',
@@ -322,14 +336,11 @@ class ServiceItemListPage extends React.Component<Props, State> {
                 <ServiceItem
                   serviceItemCondition={serviceItemCondition}
                   serviceItem={serviceItem}
+                  hasPriceChart={hasPriceChart}
                 />
                 <br />
                 <br />
-                <ServiceItemPriceChartJS
-                  identifier="servicePriceChart"
-                  dataset={generateDataSource()}
-                  options={optionsForChart}
-                />
+                {priceChart}
               </div>
             </Col>
           </Row>
