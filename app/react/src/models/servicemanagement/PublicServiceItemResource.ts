@@ -35,6 +35,12 @@ export interface AudienceSegmentServiceItemPublicResource
   datamart_id: string;
 }
 
+export interface UserAccountCompartmentServiceItemPublicResource
+  extends ServiceItemPublicResource {
+  type: 'user_account_compartment';
+  compartment_id: string;
+}
+
 export interface DisplayNetworkServiceItemPublicResource
   extends ServiceItemPublicResource {
   type: 'inventory_access_display_network';
@@ -71,6 +77,7 @@ export interface AdExchangeHubInventoryServiceItemPublicResource
 
 export interface KeywordListInventoryAccessPublicResource
   extends ServiceItemPublicResource {
+  type: 'inventory_access_keyword_list';
   keyword_list_id: string;
 }
 

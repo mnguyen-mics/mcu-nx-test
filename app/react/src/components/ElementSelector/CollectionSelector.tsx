@@ -35,6 +35,7 @@ interface State<T> {
   pageSize: number;
   currentPage: number;
   keywords: string;
+  type: string[];
 }
 
 class CollectionSelector<T extends SelectableItem> extends React.Component<
@@ -59,6 +60,7 @@ class CollectionSelector<T extends SelectableItem> extends React.Component<
       pageSize: 12,
       currentPage: 1,
       keywords: '',
+      type: [],
     };
   }
 
@@ -140,10 +142,10 @@ class CollectionSelector<T extends SelectableItem> extends React.Component<
 
   fetchNewData = (selectedIds: string[] = []) => {
     const { displayFiltering } = this.props;
-    const { currentPage, keywords, pageSize } = this.state;
+    const { currentPage, keywords, pageSize, type } = this.state;
 
     const filterOptions = displayFiltering
-      ? { currentPage, keywords, pageSize }
+      ? { currentPage, keywords, pageSize, type }
       : undefined;
     this.setState({ isLoading: true })
     return this.props
