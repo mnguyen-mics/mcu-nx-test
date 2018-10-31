@@ -9,9 +9,13 @@ export default defineMessages({
     id: 'forgotPasswordForm.passwordWrong',
     defaultMessage: 'Unknown email',
   },
+  emailText: {
+    id: 'forgotPasswordForm.email',
+    defaultMessage: 'EMAIL',
+  },
   resetPasswordDescription: {
     id: 'forgotPasswordForm.resetPassword',
-    defaultMessage: 'Having trouble logging in? Just type your email address bellow and we will sent you an email with a link to reset your password',
+    defaultMessage: 'Having trouble logging in? Just type your email address bellow and we will sent you an email with a link to reset your password.',
   },
   resetPasswordEmailRequired: {
     id: 'forgotPasswordForm.emaiRequired',
@@ -35,6 +39,6 @@ export default defineMessages({
   },
   resetPasswordEmailSpan: {
     id: 'forgotPasswordMailSent.emailSpan',
-    defaultMessage: 'Can\'t find the email ? try checking your spam folder.',
+    defaultMessage: 'Can\'t find the email ? Try checking your spam folder.',
   },
 });

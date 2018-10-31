@@ -8,6 +8,7 @@ import {
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
+
 import { compose } from 'recompose';
 import { FormComponentProps } from 'antd/lib/form';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
@@ -48,7 +49,8 @@ const messages = defineMessages({
   },
   standardSetPasswordError: {
     id: 'reset.set.password.error',
-    defaultMessage: 'Please make sure that the two passwords matches and that your password is at least 8 characters long.',
+    defaultMessage:
+      'Please make sure that the two passwords match and that your password is at least 8 characters long.',
   },
 });
 
@@ -115,7 +117,13 @@ class SetPassword extends React.Component<Props, State> {
       <Alert
         type="error"
         style={{ marginBottom: 24 }}
-        message={this.state.errorMessage === '' ? <FormattedMessage {...messages.standardSetPasswordError} /> : this.state.errorMessage }
+        message={
+          this.state.errorMessage === '' ? (
+            <FormattedMessage {...messages.standardSetPasswordError} />
+          ) : (
+            this.state.errorMessage
+          )
+        }
         className="login-error-message"
       />
     ) : null;
@@ -129,27 +137,25 @@ class SetPassword extends React.Component<Props, State> {
           <FormattedMessage {...messages.setPassword} />
         </div>
         <div className="reset-password-container-frame">
-          
           <Form onSubmit={this.handleSubmit} className="login-form">
             {errorMsg}
             <div className="password-text">
               <FormattedMessage {...messages.passwordFormTitle} />
             </div>
-            {<FormItem>
-              {getFieldDecorator('password1', {
-                rules: [
-                  {
-                    required: true,
-                    message: intl.formatMessage(defaultErrorMessages.required),
-                  },
-                ],
-              })(
-                <Input
-                  type="password"
-                  className="reset-password-input"
-                />,
-              )}
-            </FormItem>}
+            {
+              <FormItem>
+                {getFieldDecorator('password1', {
+                  rules: [
+                    {
+                      required: true,
+                      message: intl.formatMessage(
+                        defaultErrorMessages.required,
+                      ),
+                    },
+                  ],
+                })(<Input type="password" className="reset-password-input" />)}
+              </FormItem>
+            }
             <div className="password-text">
               <FormattedMessage {...messages.passwordFormTitle} />
             </div>
@@ -161,18 +167,17 @@ class SetPassword extends React.Component<Props, State> {
                     message: intl.formatMessage(defaultErrorMessages.required),
                   },
                 ],
-              })(
-                <Input
-                  type="password"
-                  className="reset-password-input"
-                />,
-              )}
+              })(<Input type="password" className="reset-password-input" />)}
             </FormItem>
             <div className="two-buttons">
               <Link to={'/login'} className="reset-password-button">
                 <FormattedMessage {...messages.revertologin} />
               </Link>
-              <Button type="primary" htmlType="submit" className="mcs-primary reset-password-button">
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="mcs-primary reset-password-button"
+              >
                 <FormattedMessage {...messages.setPassword} />
               </Button>
             </div>
