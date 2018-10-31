@@ -83,8 +83,8 @@ class SetPassword extends React.Component<Props, State> {
             .then(() => {
               history.push('/login');
             })
-            .catch((err: any) => {
-              this.setState({ isError: true, errorMessage: err.error });
+            .catch((errBack: any) => {
+              this.setState({ isError: true, errorMessage: errBack.error });
             });
         } else {
           this.setState({ isError: true, errorMessage: '' });
