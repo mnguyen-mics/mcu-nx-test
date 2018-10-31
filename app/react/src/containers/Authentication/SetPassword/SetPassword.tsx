@@ -18,9 +18,6 @@ import {
 import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 
-// Password requirements are currently hardcoded. But needs to be changed later on.
-import { PasswordRequirements } from './PasswordRequirements';
-
 const logoUrl = require('../../../assets/images/logo.png');
 
 export interface SetPasswordProps {}
@@ -33,20 +30,8 @@ type Props = SetPasswordProps &
 interface State {
   isRequesting: boolean;
   isError: boolean;
+  errorMessage: string;
 }
-
-const printPasswordRequirements = () => {
-  return (
-    <div className="login-error-message">
-      <p>Please make sure that:</p>
-      <p>- you typed twice the same passwords</p>
-      <p>- they contain at least {PasswordRequirements.min_length } characters long</p>
-      <p>- they contain at least {PasswordRequirements.min_digit_count} digit{PasswordRequirements.min_digit_count > 1 ? 's' : '' } </p>
-      <p>- they contain at least {PasswordRequirements.min_special_chars_count} special character{PasswordRequirements.min_special_chars_count > 1 ? 's' : '' } </p>
-      {PasswordRequirements.different_letter_case_needed === true ? <p>- they contain lowercase and uppercase characters</p> : '' }
-    </div>
-    );
-};
 
 const messages = defineMessages({
   setPassword: {
@@ -57,6 +42,14 @@ const messages = defineMessages({
     id: 'reset.set.password.rever.to.login',
     defaultMessage: 'Go Back To Login',
   },
+  passwordFormTitle: {
+    id: 'reset.set.password.form.title',
+    defaultMessage: 'PASSWORD',
+  },
+  standardSetPasswordError: {
+    id: 'reset.set.password.error',
+    defaultMessage: 'Please make sure that the two passwords matches and that your password is at least 8 characters long.',
+  },
 });
 
 class SetPassword extends React.Component<Props, State> {
@@ -65,6 +58,7 @@ class SetPassword extends React.Component<Props, State> {
     this.state = {
       isRequesting: false,
       isError: false,
+      errorMessage: '',
     };
   }
 
@@ -89,31 +83,24 @@ class SetPassword extends React.Component<Props, State> {
             .then(() => {
               history.push('/login');
             })
-            .catch(() => {
-              this.setState({ isError: true });
+            .catch((err: any) => {
+              this.setState({ isError: true, errorMessage: err.error });
             });
         } else {
-          this.setState({ isError: true });
+          this.setState({ isError: true, errorMessage: '' });
         }
       }
     });
   };
 
+  // checkPasswordValidity to be updated when new routes are created
   checkPasswordValidity = (password1: string, password2: string) => {
-    const upperAndLowerCases = (/[A-Z]/gm).test(password1) && (/[a-z]/gm).test(password1);
-    const specialCharsTab = password1.match(/[@#$%^&*()!_+\-=\[\]{};':"\\|,.<>\/?]/g);
-    const specialCharsNb = specialCharsTab ? specialCharsTab.length : 0;
-    if (password1 == null || password2 === null) {
+    if (password1 !== password2) {
       return false;
-    } if (password1 !== password2) {
+    } else if (password1.length < 8) {
       return false;
-    } if (password1.length < PasswordRequirements.min_length) {
-      return false;
-    } if (specialCharsNb < PasswordRequirements.min_special_chars_count) {
-      return false;
-    } if (!upperAndLowerCases && PasswordRequirements.different_letter_case_needed) {
-      return false; }
-        return true;
+    }
+    return true;
   };
 
   render() {
@@ -128,7 +115,7 @@ class SetPassword extends React.Component<Props, State> {
       <Alert
         type="error"
         style={{ marginBottom: 24 }}
-        message={printPasswordRequirements()}
+        message={this.state.errorMessage === '' ? <FormattedMessage {...messages.standardSetPasswordError} /> : this.state.errorMessage }
         className="login-error-message"
       />
     ) : null;
@@ -146,7 +133,7 @@ class SetPassword extends React.Component<Props, State> {
           <Form onSubmit={this.handleSubmit} className="login-form">
             {errorMsg}
             <div className="password-text">
-              <FormattedMessage id="PASSWORD" />
+              <FormattedMessage {...messages.passwordFormTitle} />
             </div>
             {<FormItem>
               {getFieldDecorator('password1', {
@@ -164,7 +151,7 @@ class SetPassword extends React.Component<Props, State> {
               )}
             </FormItem>}
             <div className="password-text">
-              <FormattedMessage id="PASSWORD" />
+              <FormattedMessage {...messages.passwordFormTitle} />
             </div>
             <FormItem>
               {getFieldDecorator('password2', {

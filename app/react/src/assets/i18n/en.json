@@ -28,7 +28,7 @@
   "BACK_TO_LOGIN": "Take me back to login",
   "RETURN_TO_LOGIN": "Return to Login",
   "PASSWORD_SENT": "We've sent you an email with a link to finish reseting your password.",
-  "EMAIL_SPAM": "Can't find the email ? try checking your  spam folder.",
+  "EMAIL_SPAM": "Can't find the email ? try checking your spam folder.",
   "CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this Campaign?",
   "CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY": "By archiving this Campaign all its activities will be suspended. You'll be able to recover it from the archived campaign filter.",
   "GOAL_MODAL_CONFIRM_ARCHIVED_TITLE": "Are you sure you want to archive this goal?",
