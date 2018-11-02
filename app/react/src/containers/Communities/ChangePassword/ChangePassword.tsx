@@ -18,6 +18,8 @@ import {
 } from '../../../utils/LocationSearchHelper';
 import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
+import CommunityService from '../../../services/CommunityServices';
+// import { CommunityPasswordRequirement } from '../../../models/communities';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
@@ -26,12 +28,13 @@ export interface SetPasswordProps {}
 type Props = SetPasswordProps &
   InjectedIntlProps &
   FormComponentProps &
-  RouteComponentProps<{}>;
+  RouteComponentProps<{communityToken: string}>;
 
 interface State {
   isRequesting: boolean;
   isError: boolean;
   errorMessage: string;
+  passwordRequirements: any;
 }
 
 const messages = defineMessages({
@@ -61,6 +64,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
       isRequesting: false,
       isError: false,
       errorMessage: '',
+      passwordRequirements: {},
     };
   }
 
@@ -68,11 +72,16 @@ class CommunityChangePassword extends React.Component<Props, State> {
     const {
       location: { search },
       history,
+      match: { params: {communityToken} },
     } = this.props;
     const filter = parseSearch(search, SET_PASSWORD_SEARCH_SETTINGS);
 
-    console.log('test');
-    console.log(filter);
+    CommunityService
+    .getCommunity(communityToken)
+    .then(response => {
+      const test = response.data[0];
+      console.log(test);
+    });
 
     e.preventDefault();
     this.setState({ isError: false });
