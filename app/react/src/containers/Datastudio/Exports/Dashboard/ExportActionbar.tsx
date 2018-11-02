@@ -47,7 +47,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
   }
 
 
-  editCampaign = () => {
+  editExport = () => {
     const {
       location,
       history,
@@ -59,7 +59,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
       },
     } = this.props;
 
-    const editUrl = `/${organisationId}/datastudio/exports/${exportId}/edit`;
+    const editUrl = `/v2/o/${organisationId}/datastudio/exports/${exportId}/edit`;
     history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
   }
 
@@ -105,10 +105,10 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
           <FormattedMessage {...messages.newExecution} />
         </Button>
 
-        {/* <Button onClick={this.editCampaign}>
+        <Button onClick={this.editExport}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.edit} />
-        </Button> */}
+        </Button>
 
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>

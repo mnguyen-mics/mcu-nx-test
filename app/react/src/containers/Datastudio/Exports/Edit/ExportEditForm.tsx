@@ -27,8 +27,9 @@ import OTQLInputEditor, { OTQLInputEditorProps } from '../../../Audience/Segment
 import SelectorQL from '../../../Audience/Segments/Edit/Sections/query/SelectorQL'
 import { Omit } from 'antd/lib/form/Form';
 import { ExportFormData } from './domain';
-import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
+import { injectDatamart } from '../../../Datamart';
 import { FieldCtor, FormSection } from '../../../../components/Form';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 const FORM_ID = 'exportForm';
 
@@ -69,6 +70,7 @@ interface ExportEditFormProps
   onClose: () => void;
   onSave: (formData: ExportFormData) => void;
   breadCrumbPaths: Path[];
+  datamart?: DatamartResource;
 }
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
@@ -76,8 +78,7 @@ const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
 type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   ExportEditFormProps &
   RouteComponentProps<{ organisationId: string; exportId: string }> &
-  InjectedIntlProps &
-  InjectedDatamartProps;
+  InjectedIntlProps;
 
 class PlacementListForm extends React.Component<Props> {
 
@@ -104,12 +105,13 @@ class PlacementListForm extends React.Component<Props> {
       intl
     } = this.props;
 
-    if (datamart.storage_model_version === 'v201506') {
-      return this.props.initialValues.query ? this.generateUserQueryTemplate(<SelectorQL datamartId={datamart.id} organisationId={organisationId} queryContainer={this.props.initialValues.query} />) : null
+    if (datamart!.storage_model_version === 'v201506') {
+      return this.props.initialValues.query ? this.generateUserQueryTemplate(<SelectorQL datamartId={datamart!.id} organisationId={organisationId} queryContainer={this.props.initialValues.query} />) : null
     } else {
       return this.generateUserQueryTemplate(<FormOTQL
         name={'query.query_text'}
         component={OTQLInputEditor}
+        datamartId={datamart!.id}
         formItemProps={{
           label: intl.formatMessage(messages.saveExport),
           required: true,
