@@ -10,7 +10,7 @@ import { addLocaleData, injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
-
+import Datalayer from './Datalayer';
 import LayoutManager from './Layout/LayoutManager';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
@@ -167,8 +167,9 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         } : route.layout === 'edit' ? {
           editComponent: route.editComponent,
         } : { contentComponent: route.contentComponent }
+        const datalayer = route.datalayer
         return (
-          <div>
+          <Datalayer datalayer={datalayer}>
             <Notifications />
             <div className="drawer-wrapper">
               <DrawerManager />
@@ -182,7 +183,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
               {...props}
             />
             <div id="mcs-edit-modal" />
-          </div>
+          </Datalayer>
         );
       };
 
@@ -194,8 +195,9 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         } : {
           editComponent: NoAccess,
         }
+        const datalayer = route.datalayer
         return (
-          <div>
+          <Datalayer datalayer={datalayer}>
             <Notifications />
             <div className="drawer-wrapper">
               <DrawerManager />
@@ -209,7 +211,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
               {...props}
             />
             <div id="mcs-edit-modal" />
-          </div>
+          </Datalayer>
         );
       };
       log.trace(`Available route : ${basePath}${route.path}`);

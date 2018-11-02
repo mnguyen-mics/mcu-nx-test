@@ -10,13 +10,19 @@ export const datastudioDefinition: NavigatorDefinition = {
     layout: 'main',
     contentComponent: QueryToolPage,
     requiredFeature: 'datastudio.query_tool',
-    requireDatamart: true
+    requireDatamart: true,
+    datalayer: {
+      page_title: ''
+    }
   },
   datastudioReport: {
     path: '/datastudio/report',
     layout: 'edit',
     editComponent: CreateReportPage,
-    requiredFeature: 'datastudio.report'
+    requiredFeature: 'datastudio.report',
+    datalayer: {
+      page_title: ''
+    }
   },
   // ========================================
   //           Exports
@@ -28,6 +34,9 @@ export const datastudioDefinition: NavigatorDefinition = {
     actionBarComponent: ExportsList.actionBarComponent,
     requiredFeature: 'datastudio.exports',
     requireDatamart: true,
+    datalayer: {
+      page_title: ''
+    }
   },
   datastudioExportDashboard: {
     path: '/datastudio/exports/:exportId(\\d+)',
@@ -35,6 +44,9 @@ export const datastudioDefinition: NavigatorDefinition = {
     contentComponent: Exports,
     requiredFeature: 'datastudio.exports',
     requireDatamart: true,
+    datalayer: {
+      page_title: ''
+    }
   },
 }
 
