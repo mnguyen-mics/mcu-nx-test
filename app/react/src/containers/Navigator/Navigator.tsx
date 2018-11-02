@@ -36,6 +36,8 @@ import NoAccess from './NoAccess';
 import { NavigatorRoute } from '../../routes/domain';
 import angularRedirect from '../../routes/angularRedirect'
 import RedirectAngular from './Route/RedirectAngular';
+import { CommunityChangePassword } from '../Communities/ChangePassword';
+import { CommunitySetPassword } from '../Communities/SetPassword';
 
 
 interface MapStateToProps {
@@ -232,13 +234,14 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
           <Route exact={true} path="/set-password" component={SetPassword} />
           <Route exact={true} path="/" render={renderRoute} />
 
+          <Route exact={true} path="/:communityToken/change-password" component={CommunityChangePassword} />
+          <Route exact={true} path="/:communityToken/set-password" component={CommunitySetPassword} />
+
           {routeMapping}
 
-          
           <Route exact={true} path="/login" render={loginRouteRender} />
           <Route exact={true} path="/logout" render={logoutRouteRender} />
           
-
           <Route
             exact={true}
             path="/v2/forgot_password"

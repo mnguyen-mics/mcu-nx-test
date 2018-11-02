@@ -87,7 +87,7 @@ define(['app-setup', 'angularAMD', 'jquery'],
           });
           $log.debug("parsed state from url : ", parsedStateFromUrl);
           if (!parsedStateFromUrl || !parsedStateFromUrl.publicUrl) {
-            if (!$location.url().match('/v2') && !$location.url().match('/login') && !$location.url().match('/set-password')) {
+            if (!$location.url().match('/v2') && !$location.url().match('/login') && !$location.url().match('/set-password') && !$location.url().match('/change-password')) {
               $log.debug("not a public url, go to login");
               AuthenticationService.pushPendingPath($location.url());
               // Redirect to login
@@ -96,13 +96,7 @@ define(['app-setup', 'angularAMD', 'jquery'],
           }
         }
 
-
-
-
         $rootScope.$on(LoginConstants.WORKSPACE_CHANGED, updateWorkspaces);
-
-
-
 
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
           var options = defaults(toState, {
