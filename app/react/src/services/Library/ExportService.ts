@@ -24,9 +24,13 @@ const ExportService = {
     const endpoint = `exports/${id}/executions`;
     return ApiService.getRequest(endpoint, options);
   },
-  createExport(organisationId: string, payload: ExportCreateResource): Promise<DataResponse<Export>> {
+  createExport(organisationId: string, payload: ExportCreateResource  | Partial<Export>): Promise<DataResponse<Export>> {
     const endpoint = `exports?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, payload)
+  },
+  updateExport(exportId: string, payload: ExportCreateResource | Partial<Export>): Promise<DataResponse<Export>> {
+    const endpoint = `exports/${exportId}`;
+    return ApiService.putRequest(endpoint, payload)
   },
   createExecution(id: string, option: object = {}): Promise<DataResponse<ExportExecution>> {
     const endpoint = `exports/${id}/executions`;
