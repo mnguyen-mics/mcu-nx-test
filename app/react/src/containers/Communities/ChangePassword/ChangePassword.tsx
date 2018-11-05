@@ -19,6 +19,7 @@ import {
 import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import CommunityService from '../../../services/CommunityServices';
+import { CommunityPasswordRequirement, CommunityResource } from '../../../models/communities';
 // import { CommunityPasswordRequirement } from '../../../models/communities';
 
 const logoUrl = require('../../../assets/images/logo.png');
@@ -34,7 +35,7 @@ interface State {
   isRequesting: boolean;
   isError: boolean;
   errorMessage: string;
-  passwordRequirements: any;
+  passwordRequirements?: CommunityResource[];
 }
 
 const messages = defineMessages({
@@ -58,35 +59,42 @@ const messages = defineMessages({
 });
 
 class CommunityChangePassword extends React.Component<Props, State> {
+
   constructor(props: Props) {
     super(props);
     this.state = {
       isRequesting: false,
       isError: false,
       errorMessage: '',
-      passwordRequirements: {},
     };
+  }
+  
+  componentDidMount() {
+    CommunityService.getCommunity(
+    this.props.match.params.communityToken,
+    ).then(response => {
+      this.setState({
+        passwordRequirements: response.data,
+      });
+    });
   }
 
   handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     const {
       location: { search },
       history,
-      match: { params: {communityToken} },
     } = this.props;
     const filter = parseSearch(search, SET_PASSWORD_SEARCH_SETTINGS);
-
-    CommunityService
-    .getCommunity(communityToken)
-    .then(response => {
-      const test = response.data[0];
-      console.log(test);
-    });
 
     e.preventDefault();
     this.setState({ isError: false });
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        if (this.state.passwordRequirements !== undefined) {
+          console.log('AAAA');
+        } else {
+          console.log('BBBB');
+        }
         if (this.checkPasswordValidity(values.password1, values.password2)) {
           // validate
           AuthService.resetPassword(

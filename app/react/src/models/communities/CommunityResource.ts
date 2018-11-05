@@ -1,8 +1,5 @@
-export type CommunityRenewalPurpose = 'PASSWORD_RENEWAL';
-export type CommunityRequirementPurpose = 'PASSWORD_REQUIREMENTS';
-
 export interface CommunityPasswordRenewal {
-    type: CommunityRenewalPurpose;
+    type: 'PASSWORD_RENEWAL';
     id: string;
     version?: string;
     community_id: string;
@@ -12,7 +9,7 @@ export interface CommunityPasswordRenewal {
 }   
 
 export interface CommunityPasswordRequirement {
-    type: CommunityRequirementPurpose;
+    type: 'PASSWORD_REQUIREMENTS';
     id: string;
     version?: string;
     community_id: number;
@@ -25,4 +22,4 @@ export interface CommunityPasswordRequirement {
     forbid_popular_passwords: boolean;
 }
 
-export type CommunityResource = [CommunityPasswordRenewal, CommunityPasswordRequirement];
+export type CommunityResource = CommunityPasswordRenewal | CommunityPasswordRequirement;
