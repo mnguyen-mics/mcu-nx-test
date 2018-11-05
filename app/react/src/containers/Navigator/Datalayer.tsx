@@ -60,7 +60,7 @@ class Datalayer extends React.Component<Props, any> {
   }
 
 
-  buildFinalDatalayer = (organisationId: string, path: string, dataLayer: any) => {
+  buildFinalDatalayer = (organisationId: string, path: string, dataLayer: DataLayerDefinition) => {
     return {
       ...dataLayer,
       organisation_id: organisationId,
