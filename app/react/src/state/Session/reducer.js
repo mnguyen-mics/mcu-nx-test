@@ -33,7 +33,7 @@ const session = (state = defaultSessionState, action) => {
         connectedUserLoaded: true,
         connectedUser: {
           ...action.payload,
-          workspaces: action.payload.workspaces
+          workspaces: action.payload.workspaces,
         },
       };
     case WORKSPACE.REQUEST:

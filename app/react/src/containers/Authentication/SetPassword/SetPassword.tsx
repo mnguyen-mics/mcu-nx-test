@@ -1,35 +1,40 @@
 import * as React from 'react';
-import { Form, Input, Icon, Button, Alert } from 'antd';
+import { Form, Input, Button, Alert } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
+
 import {
   injectIntl,
   InjectedIntlProps,
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
+
 import { compose } from 'recompose';
 import { FormComponentProps } from 'antd/lib/form';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { SET_PASSWORD_SEARCH_SETTINGS, parseSearch } from '../../../utils/LocationSearchHelper';
+import {
+  SET_PASSWORD_SEARCH_SETTINGS,
+  parseSearch,
+} from '../../../utils/LocationSearchHelper';
 import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 
 const logoUrl = require('../../../assets/images/logo.png');
+
 export interface SetPasswordProps {}
 
-type Props = SetPasswordProps & InjectedIntlProps & FormComponentProps & RouteComponentProps<{}>;
+type Props = SetPasswordProps &
+  InjectedIntlProps &
+  FormComponentProps &
+  RouteComponentProps<{}>;
 
 interface State {
   isRequesting: boolean;
   isError: boolean;
+  errorMessage: string;
 }
 
 const messages = defineMessages({
-  error: {
-    id: 'reset.set.password.error',
-    defaultMessage:
-      'Please make sure that the two passwords matches and that your password is at least 8 characters long.',
-  },
   setPassword: {
     id: 'reset.set.password.set.password',
     defaultMessage: 'Reset Your Password',
@@ -37,6 +42,15 @@ const messages = defineMessages({
   revertologin: {
     id: 'reset.set.password.rever.to.login',
     defaultMessage: 'Go Back To Login',
+  },
+  passwordFormTitle: {
+    id: 'reset.set.password.form.title',
+    defaultMessage: 'PASSWORD',
+  },
+  standardSetPasswordError: {
+    id: 'reset.set.password.error',
+    defaultMessage:
+      'Please make sure that the two passwords match and that your password is at least 8 characters long.',
   },
 });
 
@@ -46,12 +60,15 @@ class SetPassword extends React.Component<Props, State> {
     this.state = {
       isRequesting: false,
       isError: false,
+      errorMessage: '',
     };
   }
 
-
   handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
-    const { location: { search }, history}  = this.props;
+    const {
+      location: { search },
+      history,
+    } = this.props;
     const filter = parseSearch(search, SET_PASSWORD_SEARCH_SETTINGS);
 
     e.preventDefault();
@@ -60,19 +77,25 @@ class SetPassword extends React.Component<Props, State> {
       if (!err) {
         if (this.checkPasswordValidity(values.password1, values.password2)) {
           // validate
-          AuthService.resetPassword(filter.email, filter.token, values.password1)
+          AuthService.resetPassword(
+            filter.email,
+            filter.token,
+            values.password1,
+          )
             .then(() => {
-              history.push('/login')
-            }).catch(() => {
-              this.setState({isError: true})
+              history.push('/login');
             })
+            .catch((errBack: any) => {
+              this.setState({ isError: true, errorMessage: errBack.error });
+            });
         } else {
-          this.setState({ isError: true });
+          this.setState({ isError: true, errorMessage: '' });
         }
       }
     });
   };
 
+  // checkPasswordValidity to be updated when new routes are created
   checkPasswordValidity = (password1: string, password2: string) => {
     if (password1 !== password2) {
       return false;
@@ -94,51 +117,69 @@ class SetPassword extends React.Component<Props, State> {
       <Alert
         type="error"
         style={{ marginBottom: 24 }}
-        message={<FormattedMessage {...messages.error} />}
+        message={
+          this.state.errorMessage === '' ? (
+            <FormattedMessage {...messages.standardSetPasswordError} />
+          ) : (
+            this.state.errorMessage
+          )
+        }
+        className="login-error-message"
       />
     ) : null;
 
     return (
-      <div className="mcs-login-container">
-        <div className="login-frame">
+      <div className="mcs-reset-password-container">
+        <div className="image-wrapper">
+          <img alt="mics-logo" className="reset-password-logo" src={logoUrl} />
+        </div>
+        <div className="reset-password-title">
+          <FormattedMessage {...messages.setPassword} />
+        </div>
+        <div className="reset-password-container-frame">
           <Form onSubmit={this.handleSubmit} className="login-form">
-            <div className="image-wrapper">
-              <img
-                alt="mics-logo"
-                className="login-logo"
-                src={logoUrl}
-              />
-            </div>
             {errorMsg}
-            <FormItem>
-              {getFieldDecorator('password1', {
-                rules: [{ required: true, message: intl.formatMessage(defaultErrorMessages.required) }],
-              })(
-                <Input
-                  prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
-                  type="password"
-                  placeholder={'Password'}
-                />,
-              )}
-            </FormItem>
+            <div className="password-text">
+              <FormattedMessage {...messages.passwordFormTitle} />
+            </div>
+            {
+              <FormItem>
+                {getFieldDecorator('password1', {
+                  rules: [
+                    {
+                      required: true,
+                      message: intl.formatMessage(
+                        defaultErrorMessages.required,
+                      ),
+                    },
+                  ],
+                })(<Input type="password" className="reset-password-input" />)}
+              </FormItem>
+            }
+            <div className="password-text">
+              <FormattedMessage {...messages.passwordFormTitle} />
+            </div>
             <FormItem>
               {getFieldDecorator('password2', {
-                rules: [{ required: true, message: intl.formatMessage(defaultErrorMessages.required) }],
-              })(
-                <Input
-                  prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
-                  type="password"
-                  placeholder={'Password'}
-                />,
-              )}
+                rules: [
+                  {
+                    required: true,
+                    message: intl.formatMessage(defaultErrorMessages.required),
+                  },
+                ],
+              })(<Input type="password" className="reset-password-input" />)}
             </FormItem>
-            <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-              <FormattedMessage {...messages.setPassword} />
-            </Button>
-            <div style={{ width: '100%', marginTop: 20, textAlign: 'center' }}>
-              <Link to={'/login'}>
+            <div className="two-buttons">
+              <Link to={'/login'} className="reset-password-button">
                 <FormattedMessage {...messages.revertologin} />
               </Link>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="mcs-primary reset-password-button"
+              >
+                <FormattedMessage {...messages.setPassword} />
+              </Button>
             </div>
           </Form>
         </div>
