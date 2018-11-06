@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CampaignStatus } from '../../../models/campaign/constants/index';
-import formatCampaignProperty from '../../../messages/campaign/display/displayCampaignMessages';
+import formatDisplayCampaignProperty from '../../../messages/campaign/display/displayCampaignMessages';
 
 export interface Props {
   status: CampaignStatus;
@@ -24,5 +24,5 @@ class CampaignStatusIndicator extends React.Component<Props> {
 export default CampaignStatusIndicator;
 
 function formatStatus(status: CampaignStatus): React.ReactNode {
-  return formatCampaignProperty('status', status).formattedValue;
+  return formatDisplayCampaignProperty('status', status).formattedValue;
 }
