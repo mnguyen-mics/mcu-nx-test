@@ -20,7 +20,7 @@ import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import CommunityService from '../../../services/CommunityServices';
 import { CommunityPasswordRequirement } from '../../../models/communities';
-// import { CommunityPasswordRequirement } from '../../../models/communities';
+import { CheckPassword } from './CheckPassword';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
@@ -29,23 +29,24 @@ export interface SetPasswordProps {}
 type Props = SetPasswordProps &
   InjectedIntlProps &
   FormComponentProps &
-  RouteComponentProps<{communityToken: string}>;
+  RouteComponentProps<{ communityToken: string }>;
 
 interface State {
   isRequesting: boolean;
   isError: boolean;
-  errorMessage: string;
+  frontErrorMessages: string[];
+  backErrorMessage?: string;
   passwordRequirements?: CommunityPasswordRequirement;
 }
 
 const messages = defineMessages({
   setPassword: {
     id: 'reset.set.password.set.password',
-    defaultMessage: 'Reset Your Password',
+    defaultMessage: 'Change your password',
   },
   revertologin: {
     id: 'reset.set.password.rever.to.login',
-    defaultMessage: 'Go Back To Login',
+    defaultMessage: 'Go back to login',
   },
   passwordFormTitle: {
     id: 'reset.set.password.form.title',
@@ -54,31 +55,27 @@ const messages = defineMessages({
   standardSetPasswordError: {
     id: 'reset.set.password.error',
     defaultMessage:
-      'Please make sure that the two passwords match and that your password is at least 8 characters long.',
+      'Your password could not be changed, please try again later.',
   },
 });
 
 class CommunityChangePassword extends React.Component<Props, State> {
-
   constructor(props: Props) {
     super(props);
     this.state = {
       isRequesting: false,
       isError: false,
-      errorMessage: '',
+      frontErrorMessages: [],
     };
-  }
-  
-  componentDidMount() {
-    CommunityService.getCommunity(
-    this.props.match.params.communityToken,
-    ).then(response => {
-      response.data.forEach((dataType) => {
-        if (dataType.type === 'PASSWORD_REQUIREMENTS') {
-          this.setState({ passwordRequirements: dataType, })
-        }
-      })
-    });
+    CommunityService.getCommunity(this.props.match.params.communityToken).then(
+      response => {
+        response.data.forEach(dataType => {
+          if (dataType.type === 'PASSWORD_REQUIREMENTS') {
+            this.setState({ passwordRequirements: dataType });
+          }
+        });
+      },
+    );
   }
 
   handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -89,43 +86,49 @@ class CommunityChangePassword extends React.Component<Props, State> {
     const filter = parseSearch(search, SET_PASSWORD_SEARCH_SETTINGS);
 
     e.preventDefault();
-    this.setState({ isError: false });
+
     this.props.form.validateFields((err, values) => {
-      if (!err) {
-        const { passwordRequirements } = this.state;
-        if (passwordRequirements !== undefined) {
-          console.log(this.state.passwordRequirements);
-        } else {
-          console.log('BBBB');
-        }
-        if (this.checkPasswordValidity(values.password1, values.password2)) {
-          // validate
-          AuthService.resetPassword(
-            filter.email,
-            filter.token,
+      if (this.state.passwordRequirements !== undefined) {
+        if (!err) {
+          const isPasswordValid = CheckPassword(
             values.password1,
-          )
-            .then(() => {
-              history.push('/login');
-            })
-            .catch((errBack: any) => {
-              this.setState({ isError: true, errorMessage: errBack.error });
+            values.password2,
+            this.state.passwordRequirements,
+          );
+          if (isPasswordValid.isCompliant === true) {
+            // validate
+            AuthService.resetPassword(
+              filter.email,
+              filter.token,
+              values.password1,
+            )
+              .then(() => {
+                history.push('/login');
+              })
+              .catch((errBack: any) => {
+                this.setState({
+                  frontErrorMessages: isPasswordValid.errorMessages,
+                  isError: true,
+                  backErrorMessage: errBack.error,
+                });
+              });
+          } else if (isPasswordValid.errorMessages.length > 0) {
+            this.setState({
+              isError: true,
+              frontErrorMessages: isPasswordValid.errorMessages,
             });
-        } else {
-          this.setState({ isError: true, errorMessage: '' });
+          } else {
+            this.setState({
+              isError: true,
+            });
+          }
         }
+      } else {
+        this.setState({
+          isError: true,
+        });
       }
     });
-  };
-
-  // checkPasswordValidity to be updated when new routes are created
-  checkPasswordValidity = (password1: string, password2: string) => {
-    if (password1 !== password2) {
-      return false;
-    } else if (password1.length < 8) {
-      return false;
-    }
-    return true;
   };
 
   render() {
@@ -134,22 +137,33 @@ class CommunityChangePassword extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const { isError } = this.state;
+    const { isError, backErrorMessage, frontErrorMessages } = this.state;
 
-    const errorMsg = isError ? (
-      <Alert
-        type="error"
-        style={{ marginBottom: 24 }}
-        message={
-          this.state.errorMessage === '' ? (
-            <FormattedMessage {...messages.standardSetPasswordError} />
-          ) : (
-            this.state.errorMessage
-          )
-        }
-        className="login-error-message"
-      />
-    ) : null;
+    const frontErrorMsg =
+      isError && !backErrorMessage ? (
+        <Alert
+          type="error"
+          style={{ marginBottom: 24 }}
+          message={
+            frontErrorMessages.length === 0 ? (
+              <FormattedMessage {...messages.standardSetPasswordError} />
+            ) : (
+              frontErrorMessages.map((msg, index) => <li key={index}>{msg}</li>)
+            )
+          }
+          className="login-error-message"
+        />
+      ) : null;
+
+    const backErrorMsg =
+      isError && backErrorMessage ? (
+        <Alert
+          type="error"
+          style={{ marginBottom: 24 }}
+          message={backErrorMessage}
+          className="login-error-message"
+        />
+      ) : null;
 
     return (
       <div className="mcs-reset-password-container">
@@ -161,7 +175,8 @@ class CommunityChangePassword extends React.Component<Props, State> {
         </div>
         <div className="reset-password-container-frame">
           <Form onSubmit={this.handleSubmit} className="login-form">
-            {errorMsg}
+            {frontErrorMsg}
+            {backErrorMsg}
             <div className="password-text">
               <FormattedMessage {...messages.passwordFormTitle} />
             </div>
