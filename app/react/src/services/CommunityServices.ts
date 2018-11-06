@@ -6,8 +6,10 @@ const CommunityService = {
     communityToken: string,
   ): Promise<DataResponse<CommunityPasswordRequirement>> {
     const endpoint = `communities/technical_name=yellow-velvet/password_requirements`;
-
-    return ApiService.getRequest(endpoint);
+    const options = {
+        authenticated: false,
+    }
+    return ApiService.getRequest(endpoint, options);
   },
 };
 

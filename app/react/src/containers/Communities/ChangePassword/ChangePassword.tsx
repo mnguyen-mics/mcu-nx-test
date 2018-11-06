@@ -33,6 +33,7 @@ type Props = SetPasswordProps &
 
 interface State {
   fetchingPasswReq: boolean;
+  fetchingPasswReqFailure: boolean;
   isRequesting: boolean;
   isError: boolean;
   frontErrorMessages: string[];
@@ -65,6 +66,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
     super(props);
     this.state = {
       fetchingPasswReq: true,
+      fetchingPasswReqFailure: true,
       isRequesting: false,
       isError: false,
       frontErrorMessages: [],
@@ -72,12 +74,14 @@ class CommunityChangePassword extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    CommunityService.getCommunityPasswordRequirements(this.props.match.params.communityToken).then(
-      response => {
-        this.setState({ passwordRequirements: response.data, fetchingPasswReq: false });
-      },
-    ).catch(err => {
-      this.setState({ fetchingPasswReq: false });
+    console.log('AAA');
+    CommunityService.getCommunityPasswordRequirements(this.props.match.params.communityToken)
+    .then(response => {
+        this.setState({ passwordRequirements: response.data, fetchingPasswReq: false, fetchingPasswReqFailure: false, });
+      })
+    .catch((reason) => {
+      console.log('W');
+      console.log(reason)
     });
   }
 
@@ -98,7 +102,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
             values.password2,
             this.state.passwordRequirements,
           );
-          if (isPasswordValid.isCompliant === true) {
+          if (isPasswordValid.isCompliant && !this.state.fetchingPasswReqFailure) {
             // validate
             AuthService.resetPassword(
               filter.email,
