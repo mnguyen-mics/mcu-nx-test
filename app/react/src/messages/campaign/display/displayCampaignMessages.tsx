@@ -201,7 +201,7 @@ const campaignPropertiesFormatMap: {
   history_resource_type: { format: 'STRING' },
 }
 
-function formatCampaignProperty(property: keyof DisplayCampaignResource | HistoryKeys, value?: string): {
+function formatDisplayCampaignProperty(property: keyof DisplayCampaignResource | HistoryKeys, value?: string): {
   message: FormattedMessage.MessageDescriptor,
   formattedValue?: React.ReactNode,
 } {
@@ -213,4 +213,4 @@ function formatCampaignProperty(property: keyof DisplayCampaignResource | Histor
   }
 }
 
-export default formatCampaignProperty;
+export default formatDisplayCampaignProperty;

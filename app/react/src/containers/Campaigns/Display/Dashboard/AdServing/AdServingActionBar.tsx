@@ -11,13 +11,20 @@ import log from '../../../../../utils/Logger';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { generateCsvData, ExportType } from './snippetExport';
 import { ClickParam } from 'antd/lib/menu';
+import { injectDrawer } from '../../../../../components/Drawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
 
 export interface AdServingActionBarProps {
   campaign: DisplayCampaignInfoResource;
   archiveCampaign: (campaignId: string) => void
 }
 
-type Props = AdServingActionBarProps & RouteComponentProps<{ organisationId: string, campaignId: string }> & InjectedIntlProps;
+type Props = AdServingActionBarProps &
+RouteComponentProps<{ organisationId: string, campaignId: string }> &
+InjectedIntlProps &
+InjectedDrawerProps;
 
 class AdServingActionBar extends React.Component<Props> {
 
@@ -74,11 +81,30 @@ class AdServingActionBar extends React.Component<Props> {
     };
 
     const onClick = (event: any) => {
+      const {
+        match: {
+          params: { campaignId },
+        },
+      } = this.props;
+
       switch (event.key) {
         case 'ARCHIVED':
           return campaign ? handleArchiveCampaign(campaign.id) : null;
         case 'DUPLICATE':
           return this.duplicateCampaign();
+        case 'HISTORY':
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(
+            ResourceTimelinePage,
+            {
+              additionalProps: {
+                resourceType: 'DISPLAY_CAMPAIGN',
+                resourceId: campaignId,
+                handleClose: () => this.props.closeNextDrawer(),
+                formatProperty: formatDisplayCampaignProperty,
+              },
+              size: 'small',
+            }
+          );
         default:
           return () => {
             log.error('onclick error');
@@ -88,6 +114,9 @@ class AdServingActionBar extends React.Component<Props> {
 
     return (
       <Menu onClick={onClick}>
+        <Menu.Item key="HISTORY">
+          <FormattedMessage {...messages.history} />
+        </Menu.Item>
         {campaign && campaign.model_version === 'V2014_06' ? null : <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
         </Menu.Item>}
@@ -178,5 +207,6 @@ class AdServingActionBar extends React.Component<Props> {
 
 export default compose<Props, AdServingActionBarProps>(
   withRouter,
-  injectIntl
+  injectIntl,
+  injectDrawer,
 )(AdServingActionBar)

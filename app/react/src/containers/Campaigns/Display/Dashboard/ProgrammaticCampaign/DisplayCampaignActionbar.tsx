@@ -34,7 +34,7 @@ import { Index } from '../../../../../utils';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
-import formatCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
+import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
 
 interface DisplayCampaignActionBarProps {
   campaign: {
@@ -465,7 +465,7 @@ class DisplayCampaignActionbar extends React.Component<
                 resourceType: 'DISPLAY_CAMPAIGN',
                 resourceId: campaignId,
                 handleClose: () => this.props.closeNextDrawer(),
-                formatProperty: formatCampaignProperty,
+                formatProperty: formatDisplayCampaignProperty,
               },
               size: 'small',
             }
