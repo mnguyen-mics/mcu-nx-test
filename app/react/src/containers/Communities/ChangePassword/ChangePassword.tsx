@@ -19,7 +19,7 @@ import {
 import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import CommunityService from '../../../services/CommunityServices';
-import { CommunityPasswordRequirement, CommunityResource } from '../../../models/communities';
+import { CommunityPasswordRequirement } from '../../../models/communities';
 // import { CommunityPasswordRequirement } from '../../../models/communities';
 
 const logoUrl = require('../../../assets/images/logo.png');
@@ -35,7 +35,7 @@ interface State {
   isRequesting: boolean;
   isError: boolean;
   errorMessage: string;
-  passwordRequirements?: CommunityResource[];
+  passwordRequirements?: CommunityPasswordRequirement;
 }
 
 const messages = defineMessages({
@@ -73,9 +73,11 @@ class CommunityChangePassword extends React.Component<Props, State> {
     CommunityService.getCommunity(
     this.props.match.params.communityToken,
     ).then(response => {
-      this.setState({
-        passwordRequirements: response.data,
-      });
+      response.data.forEach((dataType) => {
+        if (dataType.type === 'PASSWORD_REQUIREMENTS') {
+          this.setState({ passwordRequirements: dataType, })
+        }
+      })
     });
   }
 
@@ -90,8 +92,9 @@ class CommunityChangePassword extends React.Component<Props, State> {
     this.setState({ isError: false });
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        if (this.state.passwordRequirements !== undefined) {
-          console.log('AAAA');
+        const { passwordRequirements } = this.state;
+        if (passwordRequirements !== undefined) {
+          console.log(this.state.passwordRequirements);
         } else {
           console.log('BBBB');
         }
