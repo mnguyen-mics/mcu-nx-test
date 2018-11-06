@@ -6,7 +6,6 @@ import {
   PUT_LOGO,
   GET_LOGO,
 } from '../action-types';
-import MicsTagServices from '../../services/MicsTagServices.ts';
 
 
 const defaultSessionState = {
@@ -30,7 +29,6 @@ const defaultSessionState = {
 const session = (state = defaultSessionState, action) => {
   switch (action.type) {
     case CONNECTED_USER.SUCCESS:
-      MicsTagServices.pushUserAccount(action.payload.id);
       return {
         ...state,
         connectedUserLoaded: true,

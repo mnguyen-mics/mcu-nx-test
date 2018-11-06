@@ -14,9 +14,16 @@ export default {
       (window as MicsWindow).mics.push("PageView",  datalayer ? datalayer : {})
     }
   },
-  pushUserAccount: (userAccountId: string): void => {
+  addUserAccountProperty: (userAccountId: string): void => {
     if ((window as MicsWindow).mics && (window as MicsWindow).mics.push) {
       (window as MicsWindow).mics.addProperty("$user_account_id", userAccountId)
+    }
+  },
+  setUserProperties: (user: { id: string }): void => {
+    if ((window as MicsWindow).mics && (window as MicsWindow).mics.push) {
+      (window as MicsWindow).mics.addProperty("$set_user_profile_properties", {
+        '$user_account_id': user.id
+      })
     }
   }
 }
