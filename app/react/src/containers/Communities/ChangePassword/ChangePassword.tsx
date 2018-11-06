@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Input, Button, Alert } from 'antd';
+import { Form, Row, Col, Input, Button, Alert, Spin } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
 
 import {
@@ -11,7 +11,7 @@ import {
 
 import { compose } from 'recompose';
 import { FormComponentProps } from 'antd/lib/form';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {
   SET_PASSWORD_SEARCH_SETTINGS,
   parseSearch,
@@ -20,7 +20,7 @@ import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import CommunityService from '../../../services/CommunityServices';
 import { CommunityPasswordRequirement } from '../../../models/communities';
-import { CheckPassword } from './CheckPassword';
+import { checkPasswordRequirements } from './CheckPassword';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
@@ -32,6 +32,7 @@ type Props = SetPasswordProps &
   RouteComponentProps<{ communityToken: string }>;
 
 interface State {
+  fetchingPasswReq: boolean;
   isRequesting: boolean;
   isError: boolean;
   frontErrorMessages: string[];
@@ -63,19 +64,21 @@ class CommunityChangePassword extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      fetchingPasswReq: true,
       isRequesting: false,
       isError: false,
       frontErrorMessages: [],
-    };
-    CommunityService.getCommunity(this.props.match.params.communityToken).then(
+    };   
+  }
+
+  componentDidMount() {
+    CommunityService.getCommunityPasswordRequirements(this.props.match.params.communityToken).then(
       response => {
-        response.data.forEach(dataType => {
-          if (dataType.type === 'PASSWORD_REQUIREMENTS') {
-            this.setState({ passwordRequirements: dataType });
-          }
-        });
+        this.setState({ passwordRequirements: response.data, fetchingPasswReq: false });
       },
-    );
+    ).catch(err => {
+      this.setState({ fetchingPasswReq: false });
+    });
   }
 
   handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -90,7 +93,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
     this.props.form.validateFields((err, values) => {
       if (this.state.passwordRequirements !== undefined) {
         if (!err) {
-          const isPasswordValid = CheckPassword(
+          const isPasswordValid = checkPasswordRequirements(
             values.password1,
             values.password2,
             this.state.passwordRequirements,
@@ -137,7 +140,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const { isError, backErrorMessage, frontErrorMessages } = this.state;
+    const { isError, backErrorMessage, frontErrorMessages, fetchingPasswReq } = this.state;
 
     const frontErrorMsg =
       isError && !backErrorMessage ? (
@@ -174,7 +177,8 @@ class CommunityChangePassword extends React.Component<Props, State> {
           <FormattedMessage {...messages.setPassword} />
         </div>
         <div className="reset-password-container-frame">
-          <Form onSubmit={this.handleSubmit} className="login-form">
+           { fetchingPasswReq && <Spin size="large" /> }
+           { !fetchingPasswReq && <Form onSubmit={this.handleSubmit} className="login-form">
             {frontErrorMsg}
             {backErrorMsg}
             <div className="password-text">
@@ -207,19 +211,23 @@ class CommunityChangePassword extends React.Component<Props, State> {
                 ],
               })(<Input type="password" className="reset-password-input" />)}
             </FormItem>
-            <div className="two-buttons">
-              <Link to={'/login'} className="reset-password-button">
-                <FormattedMessage {...messages.revertologin} />
-              </Link>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="mcs-primary reset-password-button"
-              >
-                <FormattedMessage {...messages.setPassword} />
-              </Button>
-            </div>
-          </Form>
+            <Row type="flex" align="middle" justify="center">
+              <Col span={12} className="reset-password-back-to-login">
+                <Link to={'/login'}>
+                  <FormattedMessage {...messages.revertologin} />
+                </Link>
+              </Col>
+              <Col span={12}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="mcs-primary reset-password-button"
+                >
+                  <FormattedMessage {...messages.setPassword} />
+                </Button>
+              </Col>
+            </Row>
+            </Form> }
         </div>
       </div>
     );

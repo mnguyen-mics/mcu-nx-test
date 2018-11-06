@@ -53,6 +53,7 @@ class Login extends Component {
       form: { getFieldDecorator },
       isRequesting,
       hasError,
+      error,
     } = this.props;
 
     const errorMsg = hasError ? (
@@ -157,11 +158,13 @@ Login.propTypes = {
   isRequesting: PropTypes.bool.isRequired,
   history: PropTypes.shape().isRequired,
   match: PropTypes.shape().isRequired,
+  error: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
   translations: state.translations,
   hasError: state.login.hasError,
+  error: state.login.error,
   isRequesting: state.login.isRequesting,
 });
 

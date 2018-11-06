@@ -39,11 +39,12 @@ const messages = defineMessages({
   },
 });
 
-export function CheckPassword(
+export function checkPasswordRequirements(
   password1: string,
   password2: string,
   passReq: CommunityPasswordRequirement,
 ): PasswordValidity {
+  
   const passwordCheckResult: PasswordValidity = {
     isCompliant: false,
     errorMessages: [],

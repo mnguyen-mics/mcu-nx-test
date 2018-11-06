@@ -1,11 +1,11 @@
-import ApiService, { DataListResponse } from './ApiService';
-import { CommunityResource } from '../models/communities';
+import ApiService, { DataResponse } from './ApiService';
+import { CommunityPasswordRequirement } from '../models/communities';
 
 const CommunityService = {
-  getCommunity(
+  getCommunityPasswordRequirements(
     communityToken: string,
-  ): Promise<DataListResponse<CommunityResource>> {
-    const endpoint = `communities/${communityToken}/security_policies`;
+  ): Promise<DataResponse<CommunityPasswordRequirement>> {
+    const endpoint = `communities/technical_name=yellow-velvet/password_requirements`;
 
     return ApiService.getRequest(endpoint);
   },
