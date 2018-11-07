@@ -152,6 +152,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
 
     const onSubmit = (val: FieldNodeFormDataValues) => {
       treeNodeOperations.updateNode(node.treeNodePath, val.fieldNodeForm);
+      this.props.lockGlobalInteraction(false);
       this.editNode(false);
     };
     const closeEdit = () => this.editNode(false);
