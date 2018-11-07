@@ -73,16 +73,19 @@ class CommunityChangePassword extends React.Component<Props, State> {
     };   
   }
 
+
   componentDidMount() {
-    console.log('AAA');
     CommunityService.getCommunityPasswordRequirements(this.props.match.params.communityToken)
-    .then(response => {
-        this.setState({ passwordRequirements: response.data, fetchingPasswReq: false, fetchingPasswReqFailure: false, });
-      })
-    .catch((reason) => {
-      console.log('W');
-      console.log(reason)
+    .then((response) => {
+      this.setState({ passwordRequirements: response.data, fetchingPasswReq: false, fetchingPasswReqFailure: false, });
+    })
+    .catch(() => {
+      this.setState({ isError: true, fetchingPasswReqFailure: true, })
     });
+  }
+
+  componentDidCatch() {
+    this.setState({ isError: true, fetchingPasswReqFailure: true, })
   }
 
   handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {

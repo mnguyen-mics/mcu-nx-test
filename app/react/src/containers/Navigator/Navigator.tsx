@@ -31,7 +31,6 @@ import OrgSelector from './OrgSelector';
 import errorMessages from './messages';
 import DrawerManager from '../../components/Drawer/DrawerManager';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
-import { getCookies } from '../../state/Session/actions';
 import NoAccess from './NoAccess';
 import { NavigatorRoute } from '../../routes/domain';
 import angularRedirect from '../../routes/angularRedirect'
@@ -45,7 +44,6 @@ interface MapStateToProps {
   initializationError: boolean;
   defaultWorkspaceOrganisationId?: string;
   workspaces: UserWorkspaceResource;
-  fetchCookies: () => void;
   setColorsStore: (mcsColors: { [key: string]: string }) => void;
   logOut: (action?: any, meta?: any) => void;
 }
@@ -69,7 +67,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
   }
 
   componentDidMount() {
-    this.props.fetchCookies();
     NavigatorService.isAdBlockOn()
       .then(() => {
         // Read theme colors in DOM and store them in redux for future usage
@@ -271,7 +268,6 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   logOut: loginActions.logOut,
   setColorsStore: setColorsStore,
-  fetchCookies: getCookies.request,
 };
 
 export default compose<JoinedProps, {}>(

@@ -82,7 +82,6 @@ function request(
   const requestHeaders = new Headers(options.headers || {});
   requestHeaders.append('X-Requested-By', 'mediarithmics-navigator');
 
-  console.log('options ' + options.authenticated);
   if (!options.localUrl && options.authenticated) {
     const token = AuthService.getAccessToken();
     if (token) {

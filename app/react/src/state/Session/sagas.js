@@ -9,6 +9,7 @@ import {
   GET_LOGO,
   FETCH_COOKIES,
   PUT_LOGO,
+  LOG_IN,
 } from '../action-types';
 
 import {
@@ -94,7 +95,7 @@ function* watchWorkspaceRequest() {
 }
 
 function* watchCookiesRequest() {
-  yield takeEvery(FETCH_COOKIES.REQUEST, fetchUserCookies);
+  yield takeEvery(LOG_IN.SUCCESS, fetchUserCookies);
 }
 
 function* watchLogoDownloadRequest() {
