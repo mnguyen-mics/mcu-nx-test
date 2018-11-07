@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
 import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
 import {
@@ -10,10 +10,7 @@ import {
   KeywordResource,
   KeywordCreateRequest,
 } from '../../../../models/keywordList/keywordList';
-import {
-  SERVICE_IDENTIFIER,
-  lazyInject,
-} from '../../../../services/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 export interface IKeywordListFormService {
   saveKeywordList: (
@@ -26,7 +23,8 @@ export interface IKeywordListFormService {
 
 @injectable()
 export class KeywordListFormService implements IKeywordListFormService {
-  @lazyInject(SERVICE_IDENTIFIER.IKeywordListService)
+  
+  @inject(TYPES.IKeywordListService)
   private _keywordListService: IKeywordListService;
 
   saveKeywordList(

@@ -9,8 +9,10 @@ import ItemList, { Filters } from '../../../../components/ItemList';
 import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
 import {
   lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../services/inversify.config';
+} from '../../../../config/inversify.config';
+import {
+  TYPES,
+} from '../../../../constants/types';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { KeywordListResource } from '../../../../models/keywordList/keywordList';
 import {
@@ -43,7 +45,7 @@ class KeywordListContent extends React.Component<
 > {
   state = initialState;
 
-  @lazyInject(SERVICE_IDENTIFIER.IKeywordListService)
+  @lazyInject(TYPES.IKeywordListService)
   private _keywordListService: IKeywordListService;
 
   archiveKeywordList = (keywordId: string) => {

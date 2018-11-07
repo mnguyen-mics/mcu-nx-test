@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { message } from 'antd';
 import { compose } from 'recompose';
-import { injectable } from 'inversify';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import KeywordListForm from './KeywordListForm';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -10,16 +9,15 @@ import { Loading } from '../../../../components/index';
 import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
 import {
   lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../services/inversify.config';
+} from '../../../../config/inversify.config';
+import {
+  TYPES,
+} from '../../../../constants/types';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import {
-  KeywordListFormService,
-  IKeywordListFormService,
-} from './KeywordListFormService';
+import { IKeywordListFormService } from './KeywordListFormService';
 
 const messages = defineMessages({
   editKeywordList: {
@@ -57,14 +55,17 @@ type JoinedProps = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; keywordsListId: string }> &
   InjectedNotificationProps;
 
-@injectable()
 class KeywordListPage extends React.Component<
   JoinedProps,
   KeywordListPageState
 > {
-  @lazyInject(SERVICE_IDENTIFIER.IKeywordListService)
+  
+  @lazyInject(TYPES.IKeywordListService)
   private _keywordListService: IKeywordListService;
-  private _keywordListFormService: IKeywordListFormService = new KeywordListFormService();
+  
+  @lazyInject(TYPES.IKeywordListFormService)
+  private _keywordListFormService: IKeywordListFormService;
+  
   constructor(props: JoinedProps) {
     super(props);
     this.state = {

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectable, inject } from 'inversify';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import CatalogService from '../../../../../../../services/CatalogService';
@@ -14,7 +13,8 @@ import { PlacementListResource } from '../../../../../../../models/placement/Pla
 import DealListsService from '../../../../../../../services/Library/DealListsService';
 import { DealsListResource } from '../../../../../../../models/dealList/dealList';
 import { IKeywordListService } from '../../../../../../../services/Library/KeywordListsService';
-import { SERVICE_IDENTIFIER } from '../../../../../../../services/inversify.config';
+import { TYPES } from '../../../../../../../constants/types';
+import { lazyInject } from '../../../../../../../config/inversify.config';
 import { KeywordListResource } from '../../../../../../../models/keywordList/keywordList';
 
 export interface DataLoadingContainer<T> {
@@ -37,17 +37,12 @@ type Props = InjectedDatamartProps &
 const provideInventoryCatalog = (
   Component: React.ComponentClass<InjectedInventoryCatalogProps>,
 ) => {
-  @injectable()
   class ProvidedComponent extends React.Component<Props, State> {
+    @lazyInject(TYPES.IKeywordListService)
     private _keywordListService: IKeywordListService;
 
-    public constructor(
-      props: Props,
-      @inject(SERVICE_IDENTIFIER.IKeywordListService)
-      _keywordListService: IKeywordListService,
-    ) {
+    public constructor(props: Props) {
       super(props);
-      this._keywordListService = _keywordListService;
       this.state = {
         inventoryCategoryTree: {
           data: [],
