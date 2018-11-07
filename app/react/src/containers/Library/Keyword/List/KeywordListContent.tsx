@@ -6,7 +6,13 @@ import { Modal } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
-import KeywordListsService from '../../../../services/Library/KeywordListsService';
+import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
+import {
+  lazyInject,
+} from '../../../../config/inversify.config';
+import {
+  TYPES,
+} from '../../../../constants/types';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { KeywordListResource } from '../../../../models/keywordList/keywordList';
 import {
@@ -39,8 +45,11 @@ class KeywordListContent extends React.Component<
 > {
   state = initialState;
 
+  @lazyInject(TYPES.IKeywordListService)
+  private _keywordListService: IKeywordListService;
+
   archiveKeywordList = (keywordId: string) => {
-    return KeywordListsService.deleteKeywordLists(keywordId);
+    return this._keywordListService.deleteKeywordLists(keywordId);
   };
 
   fetchKeywordList = (organisationId: string, filter: Filters) => {
@@ -48,15 +57,15 @@ class KeywordListContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      KeywordListsService.getKeywordLists(organisationId, options).then(
-        results => {
+      this._keywordListService
+        .getKeywordLists(organisationId, options)
+        .then(results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        },
-      );
+        });
     });
   };
 
@@ -64,7 +73,9 @@ class KeywordListContent extends React.Component<
     const {
       location: { search, pathname, state },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -108,9 +119,15 @@ class KeywordListContent extends React.Component<
   };
 
   render() {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<KeywordListResource>> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<KeywordListResource>
+    > = [
       {
         key: 'action',
         actions: () => [
@@ -160,4 +177,7 @@ class KeywordListContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(KeywordListContent);
+export default compose(
+  withRouter,
+  injectIntl,
+)(KeywordListContent);

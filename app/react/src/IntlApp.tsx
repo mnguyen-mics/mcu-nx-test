@@ -12,7 +12,6 @@ import Navigator from './containers/Navigator';
 import { HashRouter as Router } from 'react-router-dom';
 
 addLocaleData([...enLocaleData, ...frLocaleData]);
-
 interface IntlAppProps {
   locale?: string;
   translations: { [id: string]: string };

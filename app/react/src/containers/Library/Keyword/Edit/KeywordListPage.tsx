@@ -6,10 +6,18 @@ import KeywordListForm from './KeywordListForm';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { KeywordListFormData, INITIAL_KEYWORD_LIST_FORM_DATA } from './domain';
 import { Loading } from '../../../../components/index';
-import KeywordService from '../../../../services/Library/KeywordListsService';
+import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
+import {
+  lazyInject,
+} from '../../../../config/inversify.config';
+import {
+  TYPES,
+} from '../../../../constants/types';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
-import KeywordListFormService from './KeywordListFormService';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
+import { IKeywordListFormService } from './KeywordListFormService';
 
 const messages = defineMessages({
   editKeywordList: {
@@ -43,14 +51,21 @@ interface KeywordListPageState {
   isLoading: boolean;
 }
 
-type JoinedProps = 
-  InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string; keywordsListId: string }> & InjectedNotificationProps;
+type JoinedProps = InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string; keywordsListId: string }> &
+  InjectedNotificationProps;
 
 class KeywordListPage extends React.Component<
   JoinedProps,
   KeywordListPageState
-  > {
+> {
+  
+  @lazyInject(TYPES.IKeywordListService)
+  private _keywordListService: IKeywordListService;
+  
+  @lazyInject(TYPES.IKeywordListFormService)
+  private _keywordListFormService: IKeywordListFormService;
+  
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -60,12 +75,21 @@ class KeywordListPage extends React.Component<
   }
 
   componentDidMount() {
-    const { match: { params: { keywordsListId } } } = this.props;
+    const {
+      match: {
+        params: { keywordsListId },
+      },
+    } = this.props;
     if (keywordsListId) {
-      KeywordService.getKeywordList(keywordsListId)
+      this.setState({
+        isLoading: true,
+      });
+      this._keywordListService
+        .getKeywordList(keywordsListId)
         .then(resp => resp.data)
         .then(keywordListFormdata => {
-          KeywordService.getKeywordListExpressions(keywordListFormdata.id)
+          this._keywordListService
+            .getKeywordListExpressions(keywordListFormdata.id)
             .then(res => res.data)
             .then(keywords => {
               this.setState({
@@ -76,15 +100,24 @@ class KeywordListPage extends React.Component<
                     createFieldArrayModel(keywordResource),
                   ),
                 },
+                isLoading: false,
               });
             });
+        })
+        .catch(err => {
+          this.setState({
+            isLoading: false,
+          });
+          this.props.notifyError(err);
         });
     }
   }
 
   save = (formData: KeywordListFormData) => {
     const {
-      match: { params: { keywordsListId, organisationId } },
+      match: {
+        params: { keywordsListId, organisationId },
+      },
       intl,
       notifyError,
     } = this.props;
@@ -100,25 +133,32 @@ class KeywordListPage extends React.Component<
       isLoading: true,
     });
 
-    KeywordListFormService.saveKeywordList(
-      organisationId,
-      formData,
-      initialFormdata,
-      keywordsListId,
-    ).then(() => {
-      hideSaveInProgress();
-      this.close();
-      message.success(intl.formatMessage(messages.keywordListSaved));
-    })
+    this._keywordListFormService
+      .saveKeywordList(
+        organisationId,
+        formData,
+        initialFormdata,
+        keywordsListId,
+      )
+      .then(() => {
+        hideSaveInProgress();
+        this.close();
+        message.success(intl.formatMessage(messages.keywordListSaved));
+      })
       .catch(err => {
-        this.setState({ isLoading: false })
+        this.setState({ isLoading: false });
         notifyError(err);
-        hideSaveInProgress()
-      });;
+        hideSaveInProgress();
+      });
   };
 
   close = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const url = `/v2/o/${organisationId}/library/keywordslist`;
 
@@ -128,7 +168,9 @@ class KeywordListPage extends React.Component<
   render() {
     const {
       intl,
-      match: { params: { organisationId, keywordsListId } },
+      match: {
+        params: { organisationId, keywordsListId },
+      },
     } = this.props;
     const { keywordListFormData, isLoading } = this.state;
     if (isLoading) {
@@ -137,10 +179,10 @@ class KeywordListPage extends React.Component<
       const keywordListName =
         keywordsListId && keywordListFormData
           ? intl.formatMessage(messages.editKeywordList, {
-            name: keywordListFormData.name
-              ? keywordListFormData.name
-              : intl.formatMessage(messages.keywordList),
-          })
+              name: keywordListFormData.name
+                ? keywordListFormData.name
+                : intl.formatMessage(messages.keywordList),
+            })
           : intl.formatMessage(messages.newKeywordList);
       const breadcrumbPaths = [
         {

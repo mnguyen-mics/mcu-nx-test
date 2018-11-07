@@ -54,7 +54,7 @@ const messages = defineMessages({
   },
 });
 
-interface KeywordListFormProps
+export interface KeywordListFormProps
   extends Omit<ConfigProps<KeywordListFormData>, 'form'> {
   save: (formData: KeywordListFormData) => void;
   close: () => void;
@@ -62,7 +62,7 @@ interface KeywordListFormProps
 }
 interface KeywordListFormState {}
 
-type JoinedProps = KeywordListFormProps &
+export type JoinedProps = KeywordListFormProps &
   InjectedFormProps<KeywordListFormData, KeywordListFormProps>;
 
 class KeywordListForm extends React.Component<
