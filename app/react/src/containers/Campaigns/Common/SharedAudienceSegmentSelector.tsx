@@ -9,9 +9,10 @@ import { SearchFilter } from '../../../components/ElementSelector';
 import { DataColumnDefinition } from '../../../components/TableView/TableView';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
-import CatalogService from '../../../services/CatalogService';
+import CatalogService, { GetServiceOptions } from '../../../services/CatalogService';
 import { AudienceSegmentServiceItemPublicResource } from '../../../models/servicemanagement/PublicServiceItemResource';
 import { DataResponse } from '../../../services/ApiService';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentServiceItemPublicResource>
@@ -69,8 +70,17 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
   fetchSegments = (filter: SearchFilter) => {
     const { match: { params: { organisationId } } } = this.props;
 
+    const options: GetServiceOptions = {
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+    };
+
+    if (filter.keywords) {
+      options.keywords = filter.keywords;
+    }
+
     return CatalogService.getAudienceSegmentServices(
-      organisationId
+      organisationId,
+      options
     );
   };
 
@@ -92,7 +102,7 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
     return (
       <SegmentTableSelector
         actionBarTitle={formatMessage(messages.segmentSelectorTitle)}
-        displayFiltering={false}
+        displayFiltering={true}
         searchPlaceholder={formatMessage(
           messages.segmentSelectorSearchPlaceholder,
         )}
