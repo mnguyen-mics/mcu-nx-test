@@ -3,11 +3,13 @@ import { withRouter } from 'react-router-dom';
 import { Icon } from 'antd';
 
 import ContentHeader from '../../../../components/ContentHeader';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment';
+import { AudienceSegmentResource, UserActivationSegment } from '../../../../models/audiencesegment';
+import messages from './messages';
 import {
   InjectedIntlProps,
   defineMessages,
   FormattedMessage,
+  injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
 
@@ -18,7 +20,7 @@ export interface AudienceSegmentHeaderProps {
 
 type Props = AudienceSegmentHeaderProps & InjectedIntlProps;
 
-export const messages = defineMessages({
+export const localMessages = defineMessages({
   USER_ACTIVATION: {
     id: 'segment.type.USER_ACTIVATION',
     defaultMessage: 'User Activation',
@@ -45,10 +47,21 @@ export const messages = defineMessages({
   },
 });
 
-class AudienceSegmentHeader extends React.Component<Props> {
+class AudienceSegmentHeader extends React.Component<Props> {  
   render() {
-    const { segment, isLoading } = this.props;
+    const { segment, isLoading, intl } = this.props;
 
+    const formatUserActivationSegmentName = (record: UserActivationSegment): string => {
+      if(record.clickers) {
+        return intl.formatMessage(messages.userActivationClickers, {audienceSegmentName: record.name});
+      } else if (record.exposed){
+        return intl.formatMessage(messages.userActivationExposed, {audienceSegmentName: record.name});
+      } else {
+        // Not supposed to happen
+        return record.name;
+      }
+    }
+    
     let iconType = '';
 
     if (segment) {
@@ -75,7 +88,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
       <span>
         <Icon type={iconType} />{' '}
         <FormattedMessage
-          {...messages[(segment as AudienceSegmentResource).type]}
+          {...localMessages[(segment as AudienceSegmentResource).type]}
         />
       </span>
     ) : (
@@ -86,7 +99,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
       <ContentHeader
         title={
           segment
-            ? (segment as AudienceSegmentResource).name
+            ? ((segment as AudienceSegmentResource).type === 'USER_ACTIVATION' ? formatUserActivationSegmentName(segment as UserActivationSegment) : segment.name)
             : ''
         }
         subTitle={segmentType}
@@ -96,6 +109,6 @@ class AudienceSegmentHeader extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceSegmentHeaderProps>(withRouter)(
+export default compose<Props, AudienceSegmentHeaderProps>(withRouter, injectIntl)(
   AudienceSegmentHeader,
 );

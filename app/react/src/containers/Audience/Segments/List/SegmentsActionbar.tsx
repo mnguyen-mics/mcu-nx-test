@@ -26,6 +26,8 @@ import McsMoment from '../../../../utils/McsMoment';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { AudienceSegmentResource, UserActivationSegment } from '../../../../models/audiencesegment';
+
 
 const messages = defineMessages({
   exportRunning: {
@@ -56,6 +58,14 @@ const messages = defineMessages({
     id: 'audiencesegment.actionbar.userList',
     defaultMessage: 'User List',
   },
+  userActivationClickers: {
+    id: 'segment.dashboard.useractivation.clickers',
+    defaultMessage: '{audienceSegmentName} - Clickers'
+  },
+  userActivationExposed: {
+    id: 'segment.dashboard.useractivation.exposed',
+    defaultMessage: '{audienceSegmentName} - Exposed'
+  }
 });
 
 interface MapStateToProps {
@@ -82,6 +92,78 @@ class SegmentsActionbar extends React.Component<Props, State> {
 
   getSearchSetting = () => {
     return [...SEGMENTS_SEARCH_SETTINGS];
+  };
+
+  formatUserActivationSegmentName = (record: UserActivationSegment): string => {
+    const { intl } = this.props;
+    
+    if(record.clickers) {
+      return intl.formatMessage(messages.userActivationClickers, {audienceSegmentName: record.name});
+    } else if (record.exposed){
+      return intl.formatMessage(messages.userActivationExposed, {audienceSegmentName: record.name});
+    } else {
+      // Not supposed to happen
+      return record.name;
+    }
+  }
+  
+  fetchExportData = async (
+    organisationId: string,
+    datamartId: string,
+    filter: Index<any>,
+  ) => {
+    const buildOptions = () => {
+      const options: Index<any> = {
+        first_result: 0,
+        max_results: 5000,
+      };
+  
+      if (filter.keywords) {
+        options.name = filter.keywords;
+      }
+      if (datamartId) {
+        options.datamart_id = datamartId;
+      }
+      if (filter.type && filter.type.length > 0) {
+        options.type = filter.type;
+      }
+      return options;
+    };
+  
+    const startDate = new McsMoment('now');
+    const endDate = new McsMoment('now');
+    const dimension = ['audience_segment_id'];
+  
+    const results = await Promise.all([
+      this._audienceSegmentService.getSegments(organisationId, buildOptions()),
+      ReportService.getAudienceSegmentReport(
+        organisationId,
+        startDate,
+        endDate,
+        dimension,
+      ),
+    ]);
+  
+    const segmentsWithUpdatedName = results[0].data.map((res): AudienceSegmentResource => {
+      const name = res.type === "USER_ACTIVATION" ? this.formatUserActivationSegmentName(res as UserActivationSegment) : res.name;
+      return {...res, name}
+    });
+  
+  
+    const audienceSegments = normalizeArrayOfObject(segmentsWithUpdatedName, 'id');
+    const performanceReport = normalizeArrayOfObject(
+      normalizeReportView(results[1].data.report_view),
+      'audience_segment_id',
+    );
+  
+    const mergedData = Object.keys(audienceSegments).map(segmentId => {
+      return {
+        ...audienceSegments[segmentId],
+        ...performanceReport[segmentId],
+      };
+    });
+  
+    return mergedData;
   };
 
   handleRunExport = () => {
@@ -125,61 +207,6 @@ class SegmentsActionbar extends React.Component<Props, State> {
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
       });
-  };
-
-  fetchExportData = (
-    organisationId: string,
-    datamartId: string,
-    filter: Index<any>,
-  ) => {
-    const buildOptions = () => {
-      const options: Index<any> = {
-        first_result: 0,
-        max_results: 5000,
-      };
-
-      if (filter.keywords) {
-        options.name = filter.keywords;
-      }
-      if (datamartId) {
-        options.datamart_id = datamartId;
-      }
-      if (filter.type && filter.type.length > 0) {
-        options.type = filter.type;
-      }
-      return options;
-    };
-
-    const startDate = new McsMoment('now');
-    const endDate = new McsMoment('now');
-    const dimension = ['audience_segment_id'];
-
-    const apiResults = Promise.all([
-      this._audienceSegmentService.getSegments(organisationId, buildOptions()),
-      ReportService.getAudienceSegmentReport(
-        organisationId,
-        startDate,
-        endDate,
-        dimension,
-      ),
-    ]);
-
-    return apiResults.then(results => {
-      const audienceSegments = normalizeArrayOfObject(results[0].data, 'id');
-      const performanceReport = normalizeArrayOfObject(
-        normalizeReportView(results[1].data.report_view),
-        'audience_segment_id',
-      );
-
-      const mergedData = Object.keys(audienceSegments).map(segmentId => {
-        return {
-          ...audienceSegments[segmentId],
-          ...performanceReport[segmentId],
-        };
-      });
-
-      return mergedData;
-    });
   };
 
   render() {
