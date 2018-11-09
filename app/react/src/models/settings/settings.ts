@@ -1,5 +1,3 @@
-import { UserWorkspaceResource } from "../directory/UserProfileResource";
-
 export interface ChannelResource {
     creation_ts: number;
     datamart_id: string
@@ -90,30 +88,3 @@ export interface Aliases {
     site_id: string;
     name: string
 }
-
-export interface User {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    locale: string;
-    organisation_id: string;
-} 
-
-export interface ConnectedUser {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    locale: string;
-    workspaces: UserWorkspaceResource[];
-    default_workspace: number;
-}
-
-export type ApiToken = {
-    creation_date: number;
-    expiration_date: number;
-    id: string;
-    name: string;
-    value: string;
-};

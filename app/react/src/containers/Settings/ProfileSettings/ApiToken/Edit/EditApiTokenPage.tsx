@@ -5,10 +5,8 @@ import { compose } from 'recompose';
 import { message } from 'antd';
 import { connect } from 'react-redux';
 import { Loading } from '../../../../../components/index';
-import {
-  ConnectedUser,
-  ApiToken,
-} from '../../../../../models/settings/settings';
+import { UserProfileResource } from '../../../../../models/directory/UserProfileResource';
+import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
 import { notifyError } from '../../../../../state/Notifications/actions';
 import ApiTokenService from '../../../../../services/ApiTokenService';
 import EditApiTokenForm from './EditApiTokenForm';
@@ -48,11 +46,11 @@ interface EditApiTokenPageProps {}
 
 interface State {
   loading: boolean;
-  apiTokenData: Partial<ApiToken>;
+  apiTokenData: Partial<ApiTokenResource>;
 }
 
 interface MapStateToProps {
-  connectedUser: ConnectedUser;
+  connectedUser: UserProfileResource;
 }
 
 type Props = EditApiTokenPageProps &
@@ -99,7 +97,7 @@ class EditApiTokenPage extends React.Component<Props, State> {
     return history.push(url);
   };
 
-  save = (formData: Partial<ApiToken>) => {
+  save = (formData: Partial<ApiTokenResource>) => {
     const {
       match: {
         params: { organisationId, apiTokenId },

@@ -10,3 +10,12 @@ export interface UserWorkspaceResource {
 	datamarts: DatamartResource[];
 }
 
+export interface UserProfileResource {
+	id: string;
+	first_name: string;
+	last_name: string;
+	email: string;
+	locale: string;
+	workspaces: UserWorkspaceResource[];
+	default_workspace: number;
+}

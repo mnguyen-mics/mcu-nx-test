@@ -7,7 +7,7 @@ import { Loading } from '../../../../../components/index';
 import EditUserForm from './EditUserForm';
 import { INITIAL_USER_FORM_DATA } from './domain';
 import UsersService from '../../../../../services/UsersService';
-import { User } from '../../../../../models/settings/settings';
+import UserResource from '../../../../../models/directory/UserResource';
 import { notifyError } from '../../../../../state/Notifications/actions';
 
 const messages = defineMessages({
@@ -45,7 +45,7 @@ interface EditUserPageProps {}
 
 interface State {
   loading: boolean;
-  userData: Partial<User>;
+  userData: Partial<UserResource>;
 }
 
 type Props = EditUserPageProps &
@@ -91,7 +91,7 @@ class EditUserPage extends React.Component<Props, State> {
     return history.push(url);
   };
 
-  save = (formData: Partial<User>) => {
+  save = (formData: Partial<UserResource>) => {
     const {
       match: {
         params: { organisationId, userId },

@@ -1,37 +1,59 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
-import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Form, Input, Button, Alert } from 'antd';
-import logoUrl from '../../../assets/images/logo.png';
-import {
-  sendPassword,
-  passwordForgotReset,
-} from '../../../state/ForgotPassword/actions';
+import { FormComponentProps } from 'antd/lib/form';
 import messages from './messages';
+import AuthService from '../../../services/AuthService';
 
+const logoUrl = require('../../../assets/images/logo.png');
 const FormItem = Form.Item;
 
-class ForgotPassword extends Component {
-  constructor(props) {
+interface ForgotPasswordProps {}
+
+interface State {
+  hasError: boolean,
+  isRequesting: boolean,
+  passwordSentSuccess: boolean
+}
+
+type Props = ForgotPasswordProps & InjectedIntlProps & FormComponentProps
+
+class ForgotPassword extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = {
+      hasError: false,
+      isRequesting: false,
+      passwordSentSuccess: false,
+    }
   }
 
-  componentWillUnmount() {
-    this.props.passwordForgotReset();
-  }
+  handleSubmit = (e: React.FormEvent<any>) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.setState({ isRequesting: true })
+        AuthService
+          .sendPassword(values.email)
+          .then(() => {
+            this.setState({ passwordSentSuccess: true, isRequesting: false })
+          })
+          .catch(() => {
+            this.setState({ hasError: true, isRequesting: false})
+          });
+      }
+    });
+  };
 
   render() {
     const {
-      form: { getFieldDecorator },
-      isRequesting,
-      hasError,
-      passwordSentSuccess,
+      form: { getFieldDecorator },      
       intl: { formatMessage },
     } = this.props;
+
+    const { isRequesting, hasError, passwordSentSuccess } = this.state;
 
     const hasFieldError = this.props.form.getFieldError('email');
     const errorMsg =
@@ -114,48 +136,10 @@ class ForgotPassword extends Component {
         </div>
       </div>
     );
-  }
-
-  handleSubmit = e => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        this.props.sendPasswordRequest({
-          email: values.email,
-        });
-      }
-    });
-  };
+  } 
 }
 
-ForgotPassword.propTypes = {
-  form: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  hasError: PropTypes.bool.isRequired,
-  sendPasswordRequest: PropTypes.func.isRequired,
-  passwordForgotReset: PropTypes.func.isRequired,
-  isRequesting: PropTypes.bool.isRequired,
-  passwordSentSuccess: PropTypes.bool.isRequired,
-  intl: intlShape.isRequired,
-};
-
-const mapStateToProps = state => ({
-  hasError: state.forgotPassword.hasError,
-  isRequesting: state.forgotPassword.isRequesting,
-  passwordSentSuccess: state.forgotPassword.passwordSentSuccess,
-});
-
-const mapDispatchToProps = {
-  sendPasswordRequest: sendPassword.request,
-  passwordForgotReset: passwordForgotReset,
-};
-
-ForgotPassword = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+export default compose(
+  injectIntl,
+  Form.create(),
 )(ForgotPassword);
-
-ForgotPassword = Form.create()(ForgotPassword);
-
-ForgotPassword = compose(injectIntl)(ForgotPassword);
-
-export default ForgotPassword;

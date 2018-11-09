@@ -1,4 +1,4 @@
-import AuthService from '../services/AuthService';
+import AuthService from '../services/AuthService.ts';
 
 export function persistedState(store = {}, action) { // eslint-disable-line no-unused-vars
 

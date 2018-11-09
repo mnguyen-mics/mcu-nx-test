@@ -1,16 +1,17 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { compose } from 'recompose';
+import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
+import { FormattedMessage, defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { Form, Input, Button, Alert, Switch, Divider } from 'antd';
+import { FormComponentProps } from 'antd/lib/form';
 
 import log from '../../../utils/Logger';
 
-import logoUrl from '../../../assets/images/logo.png';
-
 import { logIn } from '../../../state/Login/actions';
+import { Credentials } from '../../../services/AuthService';
 
+const logoUrl = require('../../../assets/images/logo.png');
 const FormItem = Form.Item;
 
 const messages = defineMessages({
@@ -39,20 +40,72 @@ const messages = defineMessages({
     id: 'login.remember.me',
     defaultMessage: 'Remember me',
   },
+  emailRequired: {
+    id: 'login.email.required',
+    defaultMessage: 'Please input your email!',
+  },
+  passwordRequired: {
+    id: 'login.password.required',
+    defaultMessage: 'Please input your password!',
+  }
 });
 
-class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+interface LoginProps {}
+
+interface MapStateToProps {
+  isRequesting: boolean;
+  hasError: boolean;  
+}
+
+// see https://redux-actions.js.org/api/createaction 
+// for payloadCreator and metaCreator definitions
+interface MapDispatchToProps {
+  logInRequest: (
+    payloadCreator: Credentials & { remember: boolean }, 
+    metaCreator: { redirect: () => void }
+  ) => void;
+}
+
+type Props = 
+  LoginProps &
+  MapStateToProps &
+  MapDispatchToProps &
+  InjectedIntlProps &   
+  FormComponentProps & 
+  RouteComponentProps<{}>;
+
+class Login extends React.Component<Props> {
+
+  handleSubmit = (e: React.FormEvent<any>) => {
+    e.preventDefault();
+    const { from } = this.props.location.state || { from: { pathname: '/' } };
+    const { match } = this.props;
+
+    const redirect = () => {
+      log.debug(`Redirect from ${match.url} to ${from.pathname}`);
+      this.props.history.push(from);
+    };
+
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.props.logInRequest(
+          {
+            email: values.email,
+            password: values.password,
+            remember: values.remember,
+          },
+          { redirect },
+        );
+      }
+    });
+  };
 
   render() {
     const {
-      translations,
       form: { getFieldDecorator },
       isRequesting,
       hasError,
+      intl,
     } = this.props;
 
     const errorMsg = hasError ? (
@@ -78,7 +131,7 @@ class Login extends Component {
               <FormItem>
                 {getFieldDecorator('email', {
                   rules: [
-                    { required: true, message: translations.EMAL_REQUIRED },
+                    { required: true, message: intl.formatMessage(messages.emailRequired) },
                   ],
                 })(<Input className="login-input" />)}
               </FormItem>
@@ -88,7 +141,7 @@ class Login extends Component {
               <FormItem>
                 {getFieldDecorator('password', {
                   rules: [
-                    { required: true, message: translations.PASSWORD_REQURED },
+                    { required: true, message: intl.formatMessage(messages.passwordRequired) },
                   ],
                 })(<Input type="password" className="login-input" />)}
               </FormItem>
@@ -122,44 +175,9 @@ class Login extends Component {
       </div>
     );
   }
-
-  handleSubmit = e => {
-    e.preventDefault();
-    const { from } = this.props.location.state || { from: { pathname: '/' } };
-    const { match } = this.props;
-
-    const redirect = () => {
-      log.debug(`Redirect from ${match.url} to ${from.pathname}`);
-      this.props.history.push(from);
-    };
-
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        this.props.logInRequest(
-          {
-            email: values.email,
-            password: values.password,
-            remember: values.remember,
-          },
-          { redirect },
-        );
-      }
-    });
-  };
 }
 
-Login.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
-  form: PropTypes.shape().isRequired,
-  hasError: PropTypes.bool.isRequired,
-  location: PropTypes.shape().isRequired,
-  logInRequest: PropTypes.func.isRequired,
-  isRequesting: PropTypes.bool.isRequired,
-  history: PropTypes.shape().isRequired,
-  match: PropTypes.shape().isRequired,
-};
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   translations: state.translations,
   hasError: state.login.hasError,
   isRequesting: state.login.isRequesting,
@@ -169,13 +187,9 @@ const mapDispatchToProps = {
   logInRequest: logIn.request,
 };
 
-Login = withRouter(Login);
-
-Login = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+export default compose(
+  injectIntl,
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps),
+  Form.create(),
 )(Login);
-
-Login = Form.create()(Login);
-
-export default Login;

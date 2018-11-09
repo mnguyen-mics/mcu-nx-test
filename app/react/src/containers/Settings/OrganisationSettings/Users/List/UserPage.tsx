@@ -9,7 +9,7 @@ import ItemList, { Filters } from '../../../../../components/ItemList';
 import UsersService from '../../../../../services/UsersService';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import { User } from '../../../../../models/settings/settings';
+import UserResource from '../../../../../models/directory/UserResource';
 import messages from './messages';
 
 const { Content } = Layout;
@@ -22,7 +22,7 @@ const initialState = {
 
 interface UserListState {
   loading: boolean;
-  data: User[];
+  data: UserResource[];
   total: number;
 }
 
@@ -46,7 +46,7 @@ class UserList extends React.Component<
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       UsersService.getUsers(organisationId, options).then(
-        (results: { data: User[]; total?: number; count: number }) => {
+        (results: { data: UserResource[]; total?: number; count: number }) => {
           this.setState({
             loading: false,
             data: results.data,
@@ -57,7 +57,7 @@ class UserList extends React.Component<
     });
   };
 
-  onClickEdit = (user: User) => {
+  onClickEdit = (user: UserResource) => {
     // const {
     //   history,
     //   match: {

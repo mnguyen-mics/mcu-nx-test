@@ -1,8 +1,8 @@
 import ApiService, { DataResponse } from './ApiService';
-import { User } from '../models/settings/settings';
+import UserResource from '../models/directory/UserResource';
 
 const SettingsService = {
-  putProfile(organisationId: string, userProfile: User): Promise<DataResponse<User>> {
+  putProfile(organisationId: string, userProfile: UserResource): Promise<DataResponse<UserResource>> {
     const id = userProfile.id;
     const endpoint = `users/${id}?organisation_id=${organisationId}`;
   
