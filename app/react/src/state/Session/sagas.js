@@ -7,7 +7,6 @@ import OrganisationService from '../../services/OrganisationService.ts';
 import {
   WORKSPACE,
   GET_LOGO,
-  FETCH_COOKIES,
   PUT_LOGO,
   LOG_IN,
 } from '../action-types';
