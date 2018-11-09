@@ -2,6 +2,7 @@
 import { delay } from 'redux-saga';
 import { call, put, take, race, fork, all } from 'redux-saga/effects';
 import moment from 'moment';
+import MicsTagServices from '../../services/MicsTagServices.ts';
 
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
@@ -71,6 +72,8 @@ function* authorizeLoop(credentialsOrRefreshToken, useStoredAccessToken = false,
     }
     const connectedUser = yield call(AuthService.getConnectedUser);
     yield put(setOrgFeature(global.window.MCS_CONSTANTS.FEATURES));
+    MicsTagServices.addUserAccountProperty(connectedUser.id);
+    MicsTagServices.setUserProperties(connectedUser);
     yield put(getConnectedUser.success(connectedUser));
 
     // set global variable used by angular to run Session.init(organisationId) on stateChangeStart ui router hook

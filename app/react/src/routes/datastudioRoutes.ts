@@ -12,13 +12,13 @@ export const datastudioDefinition: NavigatorDefinition = {
     layout: 'main',
     contentComponent: QueryToolPage,
     requiredFeature: 'datastudio.query_tool',
-    requireDatamart: true
+    requireDatamart: true,
   },
   datastudioReport: {
     path: '/datastudio/report',
     layout: 'edit',
     editComponent: CreateReportPage,
-    requiredFeature: 'datastudio.report'
+    requiredFeature: 'datastudio.report',
   },
   // ========================================
   //           Exports
