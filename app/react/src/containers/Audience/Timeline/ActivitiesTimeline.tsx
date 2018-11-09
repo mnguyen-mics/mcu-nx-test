@@ -101,12 +101,21 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     });
   };
 
-  removeDuplicatesFromResponse = (data: Activity[], prevActivities: Activity[]) => {
+  removeDuplicatesFromResponse = (
+    data: Activity[],
+    prevActivities: Activity[],
+  ) => {
     const sortedData = data.map(activity => {
-      return {...activity, $events: activity.$events.sort((a, b) => b.$ts - a.$ts)}
+      return {
+        ...activity,
+        $events: activity.$events.sort((a, b) => b.$ts - a.$ts),
+      };
     });
     const sortedPrevActivities = prevActivities.map(activity => {
-      return {...activity, $events: activity.$events.sort((a, b) => b.$ts - a.$ts)}
+      return {
+        ...activity,
+        $events: activity.$events.sort((a, b) => b.$ts - a.$ts),
+      };
     });
     return prevActivities.length > 0
       ? lodash.differenceWith(sortedData, sortedPrevActivities, lodash.isEqual)
@@ -114,45 +123,79 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   };
 
   generateScenarioMovementActivities(activities: Activity[]) {
-    
-    const nodeEnterActivities = activities.filter(a=>a.$type==="USER_SCENARIO_NODE_ENTER" && a.$previous_node_name!=="None")
+    const nodeEnterActivities = activities.filter(
+      a =>
+        a.$type === 'USER_SCENARIO_NODE_ENTER' &&
+        a.$previous_node_name !== 'None',
+    );
 
-    const userScenarioActivities= lodash.flatMap(nodeEnterActivities,
-      (nodeEnterActivity) => {
-        const sameTsActivity = activities.filter(a=>a.$ts===nodeEnterActivity.$ts 
-          && a.$type==="USER_SCENARIO_NODE_EXIT" 
-          && a.$node_name === nodeEnterActivity.$previous_node_name) 
-        return sameTsActivity.map((nodeExitActivity) => {
+    const userScenarioActivities = lodash.flatMap(
+      nodeEnterActivities,
+      nodeEnterActivity => {
+        const sameTsActivity = activities.filter(
+          a =>
+            a.$ts === nodeEnterActivity.$ts &&
+            a.$type === 'USER_SCENARIO_NODE_EXIT' &&
+            a.$node_name === nodeEnterActivity.$previous_node_name,
+        );
+        return sameTsActivity.map(nodeExitActivity => {
           return {
-            scenarioActivity: {...nodeEnterActivity, $type:"USER_SCENARIO_NODE_MOVEMENT"},
+            scenarioActivity: {
+              ...nodeEnterActivity,
+              $type: 'USER_SCENARIO_NODE_MOVEMENT',
+            },
             nodeEnterActivity: nodeEnterActivity,
-            nodeExitActivity: nodeExitActivity
-          }
-        })
-      }    
-    )
+            nodeExitActivity: nodeExitActivity,
+          };
+        });
+      },
+    );
 
-    const { 
+    const {
       scenarioActivities,
-      nodeEnterActivitiesToBeRemoved, 
+      nodeEnterActivitiesToBeRemoved,
       nodeExitActivitiesToBeRemoved,
-    } = userScenarioActivities.reduce((acc, current) => {
-      return {
-        scenarioActivities: [ ...acc.scenarioActivities, current.scenarioActivity ],
-        nodeEnterActivitiesToBeRemoved: [ ...acc.nodeEnterActivitiesToBeRemoved, current.nodeEnterActivity ],
-        nodeExitActivitiesToBeRemoved: [ ...acc.nodeExitActivitiesToBeRemoved, current.nodeExitActivity ],
-      }
-    }, { scenarioActivities: [], nodeEnterActivitiesToBeRemoved: [], nodeExitActivitiesToBeRemoved: []});
+    } = userScenarioActivities.reduce(
+      (acc, current) => {
+        return {
+          scenarioActivities: [
+            ...acc.scenarioActivities,
+            current.scenarioActivity,
+          ],
+          nodeEnterActivitiesToBeRemoved: [
+            ...acc.nodeEnterActivitiesToBeRemoved,
+            current.nodeEnterActivity,
+          ],
+          nodeExitActivitiesToBeRemoved: [
+            ...acc.nodeExitActivitiesToBeRemoved,
+            current.nodeExitActivity,
+          ],
+        };
+      },
+      {
+        scenarioActivities: [],
+        nodeEnterActivitiesToBeRemoved: [],
+        nodeExitActivitiesToBeRemoved: [],
+      },
+    );
 
-    return lodash.difference(activities.concat(scenarioActivities), nodeEnterActivitiesToBeRemoved.concat(nodeExitActivitiesToBeRemoved))
+    return lodash.difference(
+      activities.concat(scenarioActivities),
+      nodeEnterActivitiesToBeRemoved.concat(nodeExitActivitiesToBeRemoved),
+    );
   }
 
   orderScenarioActivities(a: Activity, b: Activity): number {
-    if(b.$ts - a.$ts === 0){
-      if(a.$type === "USER_SCENARIO_START"|| b.$type === "USER_SCENARIO_STOP") return 1
-      else if (b.$type === "USER_SCENARIO_START" || a.$type === "USER_SCENARIO_STOP") return -1
-      else return b.$ts - a.$ts
-    } else return b.$ts - a.$ts
+    if (b.$ts - a.$ts === 0) {
+      if (a.$type === 'USER_SCENARIO_START' || b.$type === 'USER_SCENARIO_STOP')
+        return 1;
+      else if (
+        b.$type === 'USER_SCENARIO_START' ||
+        a.$type === 'USER_SCENARIO_STOP'
+      )
+        return -1;
+      else return b.$ts - a.$ts;
+    } else return b.$ts - a.$ts;
   }
 
   fetchActivities = (
@@ -179,36 +222,50 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       () =>
         takeLatestActivities(datamartId, identifierType, identifierId, params)
           .then(response => {
-          takeLatestActivities(datamartId, identifierType, identifierId, {...params, limit: params.limit + 1})
-            .then(extendedResponse => {
-                this.setState(prevState => {
-                  const newData = dataSourceHasChanged
-                    ? response.data
-                    : prevState.activities.items.concat(this.removeDuplicatesFromResponse(response.data, prevState.activities.items));
-                  const activitiesToDisplay = this.generateScenarioMovementActivities(newData.slice(0)).sort((a, b) => this.orderScenarioActivities(a,b))
-                  const nextState = {
-                    activities: {
-                      ...prevState.activities,
-                      isLoading: false,
-                      hasItems:
-                        response.count !== extendedResponse.count,
-                      items: newData,
-                      byDay: this.groupByDate(activitiesToDisplay, '$ts'),
-                    },
-                    nextDate:
+            takeLatestActivities(datamartId, identifierType, identifierId, {
+              ...params,
+              limit: params.limit + 1,
+            }).then(extendedResponse => {
+              this.setState(prevState => {
+                const newData = dataSourceHasChanged
+                  ? response.data
+                  : prevState.activities.items.concat(
+                      this.removeDuplicatesFromResponse(
+                        response.data,
+                        prevState.activities.items,
+                      ),
+                    );
+                const activitiesToDisplay = this.generateScenarioMovementActivities(
+                  newData.slice(0),
+                ).sort((a, b) => this.orderScenarioActivities(a, b));
+                const nextState = {
+                  activities: {
+                    ...prevState.activities,
+                    isLoading: false,
+                    hasItems: response.count !== extendedResponse.count,
+                    items: newData,
+                    byDay: this.groupByDate(activitiesToDisplay, '$ts'),
+                  },
+                  nextDate:
                     response.count !== extendedResponse.count &&
-                      response.data &&
-                      response.data[response.data.length - 1]
-                        ? moment(
-                            response.data[response.data.length - 1].$ts,
-                          ).add(1, 'day').format('YYYY-MM-DD')
-                        : undefined,
-                    activityCountOnOldestDate: 0,
-                  };
-                  nextState.activityCountOnOldestDate = (nextState.activities.byDay[Object.keys(nextState.activities.byDay)[Object.keys(nextState.activities.byDay).length - 1]] || []).length
-                  return nextState;
-                });
+                    response.data &&
+                    response.data[response.data.length - 1]
+                      ? moment(response.data[response.data.length - 1].$ts)
+                          .add(1, 'day')
+                          .format('YYYY-MM-DD')
+                      : undefined,
+                  activityCountOnOldestDate: 0,
+                };
+                nextState.activityCountOnOldestDate = (
+                  nextState.activities.byDay[
+                    Object.keys(nextState.activities.byDay)[
+                      Object.keys(nextState.activities.byDay).length - 1
+                    ]
+                  ] || []
+                ).length;
+                return nextState;
               });
+            });
           })
           .catch(err => {
             this.setState(prevState => {
@@ -280,40 +337,37 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   findMcsType(activity: Activity): McsIconType {
     switch (activity.$type) {
-      case "USER_SCENARIO_STOP":
-        return "close"
-      case "USER_SCENARIO_NODE_ENTER":
-        return "refresh"
-      case "USER_SCENARIO_NODE_EXIT":
-        return "refresh"
-      case "USER_SCENARIO_NODE_MOVEMENT":
-        return "refresh"
+      case 'USER_SCENARIO_STOP':
+        return 'close';
+      case 'USER_SCENARIO_NODE_ENTER':
+        return 'refresh';
+      case 'USER_SCENARIO_NODE_EXIT':
+        return 'refresh';
+      case 'USER_SCENARIO_NODE_MOVEMENT':
+        return 'refresh';
       default:
-        return "status"
+        return 'status';
     }
   }
 
-  findClassName(activity: Activity) : string {
-    if(activity.$type === 'USER_SCENARIO_STOP'){
-      return 'mcs-timeline-dot red'
-    }else {
-      return (activity.$session_status === 'SESSION_SNAPSHOT'
-              ? 'mcs-timeline-dot live'
-              : 'mcs-timeline-dot')
+  findClassName(activity: Activity): string {
+    if (activity.$type === 'USER_SCENARIO_STOP') {
+      return 'mcs-timeline-dot red';
+    } else {
+      return activity.$session_status === 'SESSION_SNAPSHOT'
+        ? 'mcs-timeline-dot live'
+        : 'mcs-timeline-dot';
     }
   }
   renderType(activity: Activity) {
     switch (activity.$type) {
-      case "USER_SCENARIO_START":
-        return (
-          <Icon type="flag" className="mcs-timeline-dot live"/>
-        )
+      case 'USER_SCENARIO_START':
+        return <Icon type="flag" className="mcs-timeline-dot live" />;
       default:
-        const mcsType = this.findMcsType(activity)
-        return (<McsIcon
-          type={mcsType}
-          className={this.findClassName(activity)}
-        />)
+        const mcsType = this.findMcsType(activity);
+        return (
+          <McsIcon type={mcsType} className={this.findClassName(activity)} />
+        );
     }
   }
 
@@ -344,9 +398,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
               {activityOnDay.length !== 0 &&
                 activityOnDay.map((activity: Activity) => {
                   return (
-                    <Timeline.Item
-                      key={cuid()}
-                      dot={this.renderType(activity)}>
+                    <Timeline.Item key={cuid()} dot={this.renderType(activity)}>
                       <ActivityCard
                         activity={activity}
                         datamartId={datamartId}
