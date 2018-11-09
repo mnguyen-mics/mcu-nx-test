@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Form, Input, Button, Alert } from 'antd';
+import { Form, Input, Button, Alert, Col, Row } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import messages from './messages';
 import AuthService from '../../../services/AuthService';
@@ -97,19 +97,23 @@ class ForgotPassword extends React.Component<Props, State> {
                   ],
                 })(<Input className="reset-password-input" />)}
               </FormItem>
-              <div className="two-buttons">
-                <Link to="/login" className="reset-password-button">
-                  <FormattedMessage {...messages.resetPasswordBack} />
-                </Link>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="mcs-primary reset-password-button"
-                  loading={isRequesting}
-                >
-                  <FormattedMessage {...messages.resetPasswordSubmit} />
-                </Button>
-              </div>
+              <Row type="flex" align="middle" justify="center">
+                <Col span={12} className="reset-password-back-to-login">
+                  <Link to={'/login'}>
+                    <FormattedMessage {...messages.resetPasswordBack} />
+                  </Link>
+                </Col>
+                <Col span={12}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="mcs-primary reset-password-button"
+                    loading={isRequesting}
+                  >
+                    <FormattedMessage {...messages.resetPasswordSubmit} />
+                  </Button>
+                </Col>
+              </Row>
             </Form>
           )}
           {passwordSentSuccess && (
@@ -125,7 +129,7 @@ class ForgotPassword extends React.Component<Props, State> {
               <Button
                 type="primary"
                 htmlType="button"
-                className="mcs-primary reset-password-button-whole"
+                className="mcs-primary reset-password-button"
               >
                 <Link to="/login">
                   <FormattedMessage {...messages.resetPasswordReturnToLogin} />
