@@ -39,7 +39,7 @@ const messages = defineMessages({
   },
 });
 
-export function checkPasswordRequirements(
+export function passwordChecker(
   password1: string,
   password2: string,
   passReq: CommunityPasswordRequirement,

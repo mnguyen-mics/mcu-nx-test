@@ -20,13 +20,13 @@ import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import CommunityService from '../../../services/CommunityServices';
 import { CommunityPasswordRequirement } from '../../../models/communities';
-import { checkPasswordRequirements } from './CheckPassword';
+import { passwordChecker } from '../Helpers/PasswordChecker';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
-export interface SetPasswordProps {}
+export interface ChangePasswordProps {}
 
-type Props = SetPasswordProps &
+type Props = ChangePasswordProps &
   InjectedIntlProps &
   FormComponentProps &
   RouteComponentProps<{ communityToken: string }>;
@@ -42,22 +42,22 @@ interface State {
 }
 
 const messages = defineMessages({
-  setPassword: {
-    id: 'reset.set.password.set.password',
+  changePassword: {
+    id: 'reset.change.password.set.password',
     defaultMessage: 'Change your password',
   },
   revertologin: {
-    id: 'reset.set.password.rever.to.login',
+    id: 'reset.change.password.rever.to.login',
     defaultMessage: 'Go back to login',
   },
   passwordFormTitle: {
-    id: 'reset.set.password.form.title',
+    id: 'reset.change.password.form.title',
     defaultMessage: 'PASSWORD',
   },
-  standardSetPasswordError: {
-    id: 'reset.set.password.error',
+  standardChangePasswordError: {
+    id: 'reset.change.password.error',
     defaultMessage:
-      'Your password could not be changed, please try again later.',
+      'Your password could not be set, please try again later.',
   },
 });
 
@@ -66,7 +66,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
     super(props);
     this.state = {
       fetchingPasswReq: true,
-      fetchingPasswReqFailure: true,
+      fetchingPasswReqFailure: false,
       isRequesting: false,
       isError: false,
       frontErrorMessages: [],
@@ -80,12 +80,12 @@ class CommunityChangePassword extends React.Component<Props, State> {
       this.setState({ passwordRequirements: response.data, fetchingPasswReq: false, fetchingPasswReqFailure: false, });
     })
     .catch(() => {
-      this.setState({ isError: true, fetchingPasswReqFailure: true, })
+      this.setState({ isError: true, fetchingPasswReqFailure: true, fetchingPasswReq: false, })
     });
   }
 
   componentDidCatch() {
-    this.setState({ isError: true, fetchingPasswReqFailure: true, })
+    this.setState({ isError: true, fetchingPasswReqFailure: true, fetchingPasswReq: false, })
   }
 
   handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -100,7 +100,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
     this.props.form.validateFields((err, values) => {
       if (this.state.passwordRequirements !== undefined) {
         if (!err) {
-          const isPasswordValid = checkPasswordRequirements(
+          const isPasswordValid = passwordChecker(
             values.password1,
             values.password2,
             this.state.passwordRequirements,
@@ -156,7 +156,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
           style={{ marginBottom: 24 }}
           message={
             frontErrorMessages.length === 0 ? (
-              <FormattedMessage {...messages.standardSetPasswordError} />
+              <FormattedMessage {...messages.standardChangePasswordError} />
             ) : (
               frontErrorMessages.map((msg, index) => <li key={index}>{msg}</li>)
             )
@@ -181,7 +181,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
           <img alt="mics-logo" className="reset-password-logo" src={logoUrl} />
         </div>
         <div className="reset-password-title">
-          <FormattedMessage {...messages.setPassword} />
+          <FormattedMessage {...messages.changePassword} />
         </div>
         <div className="reset-password-container-frame">
            { fetchingPasswReq && <Spin size="large" /> }
@@ -230,7 +230,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
                   htmlType="submit"
                   className="mcs-primary reset-password-button"
                 >
-                  <FormattedMessage {...messages.setPassword} />
+                  <FormattedMessage {...messages.changePassword} />
                 </Button>
               </Col>
             </Row>
