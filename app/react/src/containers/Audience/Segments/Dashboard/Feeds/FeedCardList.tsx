@@ -8,7 +8,6 @@ import FeedCard from './FeedCard';
 import FeedPlaceholder from './FeedPlaceholder';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import { injectable } from 'inversify';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -24,7 +23,6 @@ export interface FeedCardListState {
   shouldScrollWhenLoaded: boolean;
 }
 
-@injectable()
 class FeedCardList extends React.Component<Props, FeedCardListState> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;

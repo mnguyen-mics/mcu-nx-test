@@ -5,15 +5,28 @@ import {
   AudienceSegmentShape,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import DataFileService from '../../../../services/DataFileService';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
-import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 
+export interface IOverlapInterval {
+  fetchOverlapAnalysisLoop: (segmentId: string) => Promise<void>;
+  createOverlapAnalysis: (
+    datamartId: string,
+    segmentId: string,
+    organisationId: string,
+  ) => Promise<any>;
+  fetchOverlapAnalysis: (segmentId: string) => Promise<OverlapData>;
+  formatOverlapResponse: (
+    overlapResult: OverlapFileResource,
+    segmentId: string,
+  ) => Promise<Data | null>;
+}
+
 @injectable()
-export class OverlapInterval {
+export class OverlapInterval implements IOverlapInterval {
   interval: number = 0;
-  @lazyInject(TYPES.IAudienceSegmentService)
+  @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
   stopInterval() {

@@ -21,7 +21,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import log from '../../../../utils/Logger';
-import { injectable } from 'inversify';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 
@@ -51,7 +50,6 @@ const ImportJobTableView = TableView as React.ComponentClass<
   TableViewProps<ImportExecutionsData>
 >;
 
-@injectable()
 class UserListImportCard extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;

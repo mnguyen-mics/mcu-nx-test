@@ -13,7 +13,6 @@ import {
 import AudienceSegmentActionbar from './AudienceSegmentActionbar';
 import AudienceSegment from './AudienceSegment';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
-import { injectable } from 'inversify';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 
@@ -30,7 +29,6 @@ interface State {
   isLoading: boolean;
 }
 
-@injectable()
 class AudienceSegmentPage extends React.Component<Props, State> {
   interval: any = null;
   @lazyInject(TYPES.IAudienceSegmentService)

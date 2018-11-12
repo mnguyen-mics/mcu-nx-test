@@ -20,7 +20,6 @@ import { UserWorkspaceResource } from '../../../models/directory/UserProfileReso
 import ReportService from '../../../services/ReportService';
 import McsMoment from '../../../utils/McsMoment';
 import { normalizeArrayOfObject } from '../../../utils/Normalizer';
-import { injectable } from 'inversify';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 
@@ -72,7 +71,6 @@ type Props = AudienceSegmentSelectorProps &
   InjectedDatamartProps &
   RouteComponentProps<{ organisationId: string }>;
 
-@injectable()
 class AudienceSegmentSelector extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;

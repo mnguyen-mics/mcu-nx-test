@@ -16,7 +16,6 @@ import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmen
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
 import ExportService from '../../../services/Library/ExportService';
 import QueryService from '../../../services/QueryService';
-import { injectable } from 'inversify';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
@@ -40,7 +39,6 @@ const messages = defineMessages({
   },
 });
 
-@injectable()
 class QueryToolPage extends React.Component<Props> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Tag, Tooltip } from 'antd';
-import { injectable } from 'inversify';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -15,7 +14,6 @@ interface State {
   };
 }
 
-@injectable()
 class SegmentsTag extends React.Component<SegmentsTagProps, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;

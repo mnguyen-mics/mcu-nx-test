@@ -43,7 +43,6 @@ import FormRelativeAbsoluteDate, {
   FormRelativeAbsoluteDateProps,
 } from './Comparison/FormRelativeAbsoluteDate';
 import constants, { ComparisonValues } from './contants';
-import { injectable } from 'inversify';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
@@ -94,7 +93,6 @@ type FieldComparisonGenerator = ComparisonValues<any> & {
   component: React.ReactNode;
 };
 
-@injectable()
 class FieldNodeForm extends React.Component<Props> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;

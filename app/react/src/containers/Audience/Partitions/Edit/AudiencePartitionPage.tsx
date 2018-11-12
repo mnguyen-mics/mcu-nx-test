@@ -21,7 +21,6 @@ import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from './../../Common/DatamartSelector';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { IAudiencePartitionsService } from '../../../../services/AudiencePartitionsService';
-import { injectable } from 'inversify';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 
@@ -62,7 +61,7 @@ type JoinedProps = AudiencePartitionPageProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
 
-@injectable()
+
 class AudiencePartitionPage extends React.Component<
   JoinedProps,
   AudiencePartitionPageState

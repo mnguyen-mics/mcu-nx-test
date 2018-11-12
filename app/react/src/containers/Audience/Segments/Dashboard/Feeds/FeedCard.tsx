@@ -18,7 +18,6 @@ import { Link } from 'react-router-dom';
 import PluginService from '../../../../../services/PluginService';
 import assetFileService from '../../../../../services/Library/AssetsFilesService';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
-import { injectable } from 'inversify';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 
@@ -78,7 +77,6 @@ const messages = defineMessages({
   },
 });
 
-@injectable()
 class FeedCard extends React.Component<Props, FeedCardState> {
   id: string = cuid();
   @lazyInject(TYPES.IAudienceSegmentService)

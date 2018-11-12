@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose, Omit } from 'recompose';
 import { connect } from 'react-redux';
-import { injectable } from 'inversify';
 import { Alert } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -49,7 +48,6 @@ type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
   InjectedIntlProps &
   InjectedNotificationProps;
 
-@injectable()
 class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
   constructor(props: JoinedProps<T>) {
     super(props);

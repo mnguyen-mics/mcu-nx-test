@@ -23,7 +23,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import McsMoment from '../../../../utils/McsMoment';
-import { injectable } from 'inversify';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -73,7 +72,6 @@ interface State {
   exportIsRunning: boolean;
 }
 
-@injectable()
 class SegmentsActionbar extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;

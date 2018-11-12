@@ -10,7 +10,6 @@ import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import ExportService from '../../../../services/ExportService';
-
 import exportMessages from '../../../../common/messages/exportMessages';
 import segmentMessages from './messages';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment';
@@ -26,7 +25,9 @@ import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { ClickParam } from 'antd/lib/menu';
-import { OverlapInterval } from './OverlapServices';
+import { IOverlapInterval } from './OverlapServices';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 export interface AudienceSegmentActionbarProps {
   segment: null | AudienceSegmentResource;
@@ -49,13 +50,14 @@ interface State {
 }
 
 class AudienceSegmentActionbar extends React.Component<Props, State> {
-  overlapInterval: OverlapInterval = new OverlapInterval();
   state = {
     overlapFetchIsRunning: false,
     overlap: undefined,
     exportIsRunning: false,
     showLookalikeModal: false,
   };
+  @lazyInject(TYPES.IOverlapInterval)
+  private _overlapInterval: IOverlapInterval;
 
   hideExportLoadingMsg = () => {
     // init
@@ -73,7 +75,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     const fetchDashboard = this.fetchDashboardView(organisationId, from, to, [
       { name: 'audience_segment_id', value: segmentId },
     ]);
-    const overlapData = this.overlapInterval
+    const overlapData = this._overlapInterval
       .fetchOverlapAnalysis(segmentId)
       .then(res => this.formatOverlapData(res));
 

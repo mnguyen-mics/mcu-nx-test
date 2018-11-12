@@ -11,7 +11,6 @@ import { EditAdGroupRouteMatchParam } from '../../domain';
 import injectDatamart, {
   InjectedDatamartProps,
 } from '../../../../../../Datamart/injectDatamart';
-import { injectable } from 'inversify';
 import { IAudienceSegmentService } from '../../../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../../../constants/types';
 import { lazyInject } from '../../../../../../../config/inversify.config';
@@ -40,7 +39,6 @@ type Props = InjectedDatamartProps &
 const provideAudienceCatalog = (
   Component: React.ComponentClass<InjectedAudienceCatalogProps>,
 ) => {
-  @injectable()
   class ProvidedComponent extends React.Component<Props, State> {
     @lazyInject(TYPES.IAudienceSegmentService)
     private _audienceSegmentService: IAudienceSegmentService;

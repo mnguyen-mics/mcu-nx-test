@@ -48,7 +48,6 @@ import { UserWorkspaceResource } from '../../../../models/directory/UserProfileR
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
-import { injectable } from 'inversify';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -146,7 +145,6 @@ interface State {
   hasItem: boolean;
 }
 
-@injectable()
 class AudienceSegmentsTable extends React.Component<Props, State> {
   cancellablePromises: Array<CancelablePromise<any>> = [];
   @lazyInject(TYPES.IAudienceSegmentService)

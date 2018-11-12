@@ -1,4 +1,8 @@
 import {
+  OverlapInterval,
+  IOverlapInterval,
+} from './../containers/Audience/Segments/Dashboard/OverlapServices';
+import {
   IAudienceSegmentFormService,
   AudienceSegmentFormService,
 } from './../containers/Audience/Segments/Edit/AudienceSegmentFormService';
@@ -39,6 +43,7 @@ container
 container
   .bind<IAudiencePartitionsService>(TYPES.IAudiencePartitionsService)
   .to(AudiencePartitionsService);
+container.bind<IOverlapInterval>(TYPES.IOverlapInterval).to(OverlapInterval);
 
 export const { lazyInject } = getDecorators(container, false);
 

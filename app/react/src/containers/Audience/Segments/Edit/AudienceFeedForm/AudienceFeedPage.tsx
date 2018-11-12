@@ -17,7 +17,6 @@ import { EditContentLayout } from '../../../../../components/Layout';
 import messages from '../messages';
 import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
-import { injectable } from 'inversify';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 
@@ -36,7 +35,6 @@ interface AudienceFeedPageState {
   type?: FeedType;
 }
 
-@injectable()
 class AudienceFeedPage extends React.Component<
   JoinedProps,
   AudienceFeedPageState

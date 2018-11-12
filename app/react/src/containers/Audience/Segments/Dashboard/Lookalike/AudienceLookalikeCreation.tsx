@@ -27,7 +27,6 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { Loading } from '../../../../../components';
-import { injectable } from 'inversify';
 import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
@@ -62,7 +61,6 @@ const fieldGridConfig = {
   wrapperCol: { span: 19, offset: 1 },
 };
 
-@injectable()
 class AudienceLookalikeCreation extends React.Component<
   Props,
   AudienceLookalikeState

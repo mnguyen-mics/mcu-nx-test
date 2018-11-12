@@ -4,6 +4,7 @@ const TYPES = {
   IAudienceSegmentService: Symbol.for('audienceSegmentService'),
   IAudienceSegmentFormService: Symbol.for('audienceSegmentFormService'),
   IAudiencePartitionsService: Symbol.for('audiencePartitionsService'),
+  IOverlapInterval: Symbol.for('overlapInterval')
 };
 
 export { TYPES };

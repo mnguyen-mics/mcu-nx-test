@@ -21,7 +21,6 @@ import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
 import QueryService from '../../../services/QueryService';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
-import { injectable } from 'inversify';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 
@@ -45,7 +44,6 @@ const messages = defineMessages({
   },
 });
 
-@injectable()
 class SegmentBuilderPage extends React.Component<Props> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
