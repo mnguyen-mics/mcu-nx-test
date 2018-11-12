@@ -17,7 +17,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { User } from '../../../../models/settings/settings';
+import UserResource from '../../../../models/directory/UserResource';
 
 const { Content } = Layout;
 export interface ProfileSettingsPageProps {
@@ -77,7 +77,7 @@ class ProfileSettingsPage extends React.Component<
     );
   }
 
-  updateUserProfile = (e: User) => {
+  updateUserProfile = (e: UserResource) => {
     const {
       match: {
         params: { organisationId },

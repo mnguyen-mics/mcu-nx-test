@@ -23,7 +23,7 @@ import {
 import { Path } from '../../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { Omit } from 'antd/lib/form/Form';
-import { User } from '../../../../../models/settings/settings';
+import UserResource from '../../../../../models/directory/UserResource';
 
 const FORM_ID = 'userForm';
 
@@ -42,13 +42,13 @@ const messages = defineMessages({
   },
 });
 
-interface EditUserFormProps extends Omit<ConfigProps<Partial<User>>, 'form'> {
+interface EditUserFormProps extends Omit<ConfigProps<Partial<UserResource>>, 'form'> {
   onClose: () => void;
-  onSave: (formData: Partial<User>) => void;
+  onSave: (formData: Partial<UserResource>) => void;
   breadCrumbPaths: Path[];
 }
 
-type Props = InjectedFormProps<Partial<User>, EditUserFormProps> &
+type Props = InjectedFormProps<Partial<UserResource>, EditUserFormProps> &
   EditUserFormProps &
   RouteComponentProps<{ organisationId: string; userId: string }> &
   InjectedIntlProps;
@@ -117,7 +117,7 @@ class EditUserForm extends React.Component<Props> {
 export default compose<Props, EditUserFormProps>(
   withRouter,
   injectIntl,
-  reduxForm<Partial<User>, EditUserFormProps>({
+  reduxForm<Partial<UserResource>, EditUserFormProps>({
     form: FORM_ID,
     enableReinitialize: true,
   }),

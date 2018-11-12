@@ -1,11 +1,12 @@
 /* eslint-disable no-constant-condition */
+/* eslint-disable camelcase */
 import { delay } from 'redux-saga';
 import { call, put, take, race, fork, all } from 'redux-saga/effects';
 import moment from 'moment';
 import MicsTagServices from '../../services/MicsTagServices.ts';
 
 import log from '../../utils/Logger';
-import AuthService from '../../services/AuthService';
+import AuthService from '../../services/AuthService.ts';
 
 import {
   LOG_IN,
@@ -18,28 +19,27 @@ import { logIn } from './actions';
 import { getConnectedUser } from '../Session/actions';
 import { setOrgFeature } from '../Features/actions';
 
-
 function* authorize(credentialsOrRefreshToken) {
   const response = yield call(AuthService.createAccessToken, credentialsOrRefreshToken);
-  const { accessToken, expiresIn, refreshToken } = response;
-  yield call(AuthService.setAccessToken, accessToken);
+  const { access_token, expires_in, refresh_token } = response.data;
+  yield call(AuthService.setAccessToken, access_token);
   if (window.angular.element(global.document.body).injector()) {
-    window.angular.element(global.document.body).injector().get('Restangular').setDefaultHeaders({ Authorization: accessToken });
+    window.angular.element(global.document.body).injector().get('Restangular').setDefaultHeaders({ Authorization: access_token });
   }
-  yield call(AuthService.setAccessTokenExpirationDate, expiresIn);
+  yield call(AuthService.setAccessTokenExpirationDate, expires_in);
   // Update refresh token if API sent a new one
-  if (refreshToken) {
-    log.debug(`Store refresh token ${refreshToken}`);
-    yield call(AuthService.setRefreshToken, refreshToken);
+  if (refresh_token) {
+    log.debug(`Store refresh token ${refresh_token}`);
+    yield call(AuthService.setRefreshToken, refresh_token);
     const remember = yield call(AuthService.getRememberMe);
     if (remember) {
       yield call(AuthService.setRefreshTokenExpirationDate);
     } else {
-      yield call(AuthService.setRefreshTokenExpirationDate, expiresIn);
+      yield call(AuthService.setRefreshTokenExpirationDate, expires_in);
     }
   }
 
-  yield put(logIn.success(accessToken));
+  yield put(logIn.success(access_token));
   return response;
 }
 
