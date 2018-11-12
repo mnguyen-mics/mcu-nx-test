@@ -28,12 +28,10 @@ import injectNotifications, {
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { Loading } from '../../../../../components';
 import { injectable } from 'inversify';
-import {
-  SERVICE_IDENTIFIER,
-  lazyInject,
-} from '../../../../../services/inversify.config';
 import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const FORM_ID = 'lookalikeForm';
 const { Content } = Layout;
@@ -69,9 +67,9 @@ class AudienceLookalikeCreation extends React.Component<
   Props,
   AudienceLookalikeState
 > {
-  @lazyInject(SERVICE_IDENTIFIER.IAudiencePartitionsService)
+  @lazyInject(TYPES.IAudiencePartitionsService)
   private _audiencePartitionsService: IAudiencePartitionsService;
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);

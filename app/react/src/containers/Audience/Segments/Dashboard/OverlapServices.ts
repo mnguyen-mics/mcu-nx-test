@@ -6,16 +6,14 @@ import {
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import DataFileService from '../../../../services/DataFileService';
 import { injectable } from 'inversify';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 @injectable()
 export class OverlapInterval {
   interval: number = 0;
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
   stopInterval() {
@@ -173,12 +171,12 @@ export class OverlapInterval {
           seg => seg.segment_id.toString() === segmentId,
         )!.segment_size;
         topOverlaps.forEach(to => {
-          const isInOverlap = segmentResources.find(
-            sr => (sr ? sr.id === to.segment_intersect_with.toString() : false),
+          const isInOverlap = segmentResources.find(sr =>
+            sr ? sr.id === to.segment_intersect_with.toString() : false,
           );
           if (isInOverlap) {
-            const segmentInOverlap = topSegments.find(
-              ts => (ts ? ts.segment_id.toString() === isInOverlap.id : false),
+            const segmentInOverlap = topSegments.find(ts =>
+              ts ? ts.segment_id.toString() === isInOverlap.id : false,
             );
             const segmentSize = segmentInOverlap
               ? segmentInOverlap.segment_size

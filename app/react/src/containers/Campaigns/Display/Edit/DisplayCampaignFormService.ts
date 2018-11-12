@@ -25,12 +25,9 @@ import GoalFormService from '../../Goal/Edit/GoalFormService';
 import { EditCampaignsFormData } from './Campaign/MutiEdit/EditCampaignsForm';
 import operation from '../Edit/Campaign/domain';
 import GoalService from '../../../../services/GoalService';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../../../constants/types';
 
 type DisplayCampaignId = string;
 
@@ -63,7 +60,7 @@ export interface IDisplayCampaignFormService {
 
 @injectable()
 export class DisplayCampaignFormService implements IDisplayCampaignFormService {
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   loadCampaign(
     displayCampaignId: string,
@@ -306,9 +303,11 @@ function getGoalTasks(
     }
   });
 
-  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
-    tasks.push(() => DisplayCampaignService.deleteGoal(campaignId, id));
-  });
+  initialIds
+    .filter(id => !currentIds.includes(id))
+    .forEach(id => {
+      tasks.push(() => DisplayCampaignService.deleteGoal(campaignId, id));
+    });
 
   return tasks;
 }
@@ -346,9 +345,11 @@ function getAdGroupTasks(
     );
   });
 
-  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
-    tasks.push(() => DisplayCampaignService.deleteAdGroup(campaignId, id));
-  });
+  initialIds
+    .filter(id => !currentIds.includes(id))
+    .forEach(id => {
+      tasks.push(() => DisplayCampaignService.deleteAdGroup(campaignId, id));
+    });
 
   return tasks;
 }

@@ -12,12 +12,10 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import AudienceSegmentActionbar from './AudienceSegmentActionbar';
 import AudienceSegment from './AudienceSegment';
-import {
-  SERVICE_IDENTIFIER,
-  lazyInject,
-} from '../../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { injectable } from 'inversify';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 const { Content } = Layout;
 
@@ -35,7 +33,7 @@ interface State {
 @injectable()
 class AudienceSegmentPage extends React.Component<Props, State> {
   interval: any = null;
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
   constructor(props: Props) {

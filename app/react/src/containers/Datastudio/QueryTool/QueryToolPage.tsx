@@ -15,16 +15,11 @@ import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQueryS
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
 import ExportService from '../../../services/Library/ExportService';
-<<<<<<< HEAD
 import QueryService from '../../../services/QueryService';
-=======
 import { injectable } from 'inversify';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
->>>>>>> inject audienceSegmentService
+import { TYPES } from '../../../constants/types';
+import { lazyInject } from '../../../config/inversify.config';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -47,7 +42,7 @@ const messages = defineMessages({
 
 @injectable()
 class QueryToolPage extends React.Component<Props> {
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
   getSelectedDatamart = () => {
@@ -148,13 +143,13 @@ class QueryToolPage extends React.Component<Props> {
       );
     };
 
-    const OTQLActionbar = (
-      query: string,
-      datamartId: string,
-    ) => {
-      
+    const OTQLActionbar = (query: string, datamartId: string) => {
       const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
-        return QueryService.createQuery(datamartId, { datamart_id: datamartId, query_language: 'OTQL', query_text: query }).then(queryResource => {
+        return QueryService.createQuery(datamartId, {
+          datamart_id: datamartId,
+          query_language: 'OTQL',
+          query_text: query,
+        }).then(queryResource => {
           return ExportService.createExport(match.params.organisationId, {
             name: exportFormData.name,
             output_format: exportFormData.outputFormat,
@@ -163,7 +158,7 @@ class QueryToolPage extends React.Component<Props> {
           }).then(res => {
             history.push(
               `/v2/o/${match.params.organisationId}/datastudio/exports/${
-              res.data.id
+                res.data.id
               }`,
             );
           });
@@ -197,14 +192,10 @@ class QueryToolPage extends React.Component<Props> {
         )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201709' && (
-<<<<<<< HEAD
             <OTQLConsoleContainer
               renderActionBar={OTQLActionbar}
               datamartId={selectedDatamart.id}
             />
-=======
-            <OTQLConsoleContainer datamartId={selectedDatamart.id} />
->>>>>>> inject audienceSegmentService
           )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201506' && (

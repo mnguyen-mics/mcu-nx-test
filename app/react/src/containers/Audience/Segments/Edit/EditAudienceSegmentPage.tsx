@@ -37,10 +37,9 @@ import SegmentTypeSelector from '../../Common/SegmentTypeSelector';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import DatamartService from '../../../../services/DatamartService';
-import {
-  AudienceSegmentFormService,
-  IAudienceSegmentFormService,
-} from './AudienceSegmentFormService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -72,7 +71,8 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class EditAudienceSegmentPage extends React.Component<Props, State> {
-  private _audienceSegmentFormService: IAudienceSegmentFormService = new AudienceSegmentFormService();
+  @lazyInject(TYPES.IAudienceSegmentFormService)
+  private _audienceSegmentFormService: IAudienceSegmentFormService;
   constructor(props: Props) {
     super(props);
 

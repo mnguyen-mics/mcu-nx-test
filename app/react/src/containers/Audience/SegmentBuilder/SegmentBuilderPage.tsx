@@ -20,12 +20,10 @@ import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQueryS
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
 import QueryService from '../../../services/QueryService';
-import {
-  SERVICE_IDENTIFIER,
-  lazyInject,
-} from '../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
 import { injectable } from 'inversify';
+import { TYPES } from '../../../constants/types';
+import { lazyInject } from '../../../config/inversify.config';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -49,7 +47,7 @@ const messages = defineMessages({
 
 @injectable()
 class SegmentBuilderPage extends React.Component<Props> {
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
   render() {

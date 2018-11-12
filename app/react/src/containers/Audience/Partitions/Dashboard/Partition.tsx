@@ -30,12 +30,10 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import PartitionActionBar from './PartitionActionBar';
 import { injectable } from 'inversify';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../services/inversify.config';
 import { IAudiencePartitionsService } from '../../../../services/AudiencePartitionsService';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 const { Content } = Layout;
 
@@ -102,9 +100,9 @@ const PartitionTable = TableView as React.ComponentClass<
 
 @injectable()
 class Partition extends React.Component<JoinedProps, PartitionState> {
-  @lazyInject(SERVICE_IDENTIFIER.IAudiencePartitionsService)
+  @lazyInject(TYPES.IAudiencePartitionsService)
   private _audiencePartitionsService: IAudiencePartitionsService;
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: JoinedProps) {
     super(props);

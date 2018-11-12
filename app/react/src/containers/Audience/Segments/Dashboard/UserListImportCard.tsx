@@ -22,10 +22,8 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import log from '../../../../utils/Logger';
 import { injectable } from 'inversify';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../services/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 export interface UserListImportCardProps {
   datamartId: string;
@@ -55,7 +53,7 @@ const ImportJobTableView = TableView as React.ComponentClass<
 
 @injectable()
 class UserListImportCard extends React.Component<Props, State> {
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);

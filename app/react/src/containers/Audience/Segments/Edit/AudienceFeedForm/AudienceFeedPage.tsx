@@ -16,12 +16,10 @@ import AudienceFeedSelector from './AudienceFeedSelector';
 import { EditContentLayout } from '../../../../../components/Layout';
 import messages from '../messages';
 import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
-import {
-  SERVICE_IDENTIFIER,
-  lazyInject,
-} from '../../../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { injectable } from 'inversify';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 export interface AudienceFeedPageProps {}
 
@@ -43,7 +41,7 @@ class AudienceFeedPage extends React.Component<
   JoinedProps,
   AudienceFeedPageState
 > {
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   private _audienceFeedFormService: IAudienceFeedFormService = new AudienceFeedFormService();
 

@@ -11,13 +11,10 @@ import {
 import { compose } from 'recompose';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
-
 import ExportService from '../../../../services/ExportService';
 import ReportService from '../../../../services/ReportService';
-
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
-
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
@@ -27,11 +24,9 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import McsMoment from '../../../../utils/McsMoment';
 import { injectable } from 'inversify';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 const messages = defineMessages({
   exportRunning: {
@@ -80,7 +75,7 @@ interface State {
 
 @injectable()
 class SegmentsActionbar extends React.Component<Props, State> {
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);

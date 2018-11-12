@@ -20,12 +20,10 @@ import injectNotifications, {
 import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from './../../Common/DatamartSelector';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../services/inversify.config';
 import { IAudiencePartitionsService } from '../../../../services/AudiencePartitionsService';
 import { injectable } from 'inversify';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 const messages = defineMessages({
   editPartition: {
@@ -69,7 +67,7 @@ class AudiencePartitionPage extends React.Component<
   JoinedProps,
   AudiencePartitionPageState
 > {
-  @lazyInject(SERVICE_IDENTIFIER.IAudiencePartitionsService)
+  @lazyInject(TYPES.IAudiencePartitionsService)
   private _audiencePartitionsService: IAudiencePartitionsService;
   constructor(props: JoinedProps) {
     super(props);

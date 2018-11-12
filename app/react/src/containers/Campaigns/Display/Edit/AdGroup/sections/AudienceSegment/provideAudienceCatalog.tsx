@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-
 import CatalogService from '../../../../../../../services/CatalogService';
 import { AudienceSegmentResource } from '../../../../../../../models/audiencesegment';
 import {
@@ -13,11 +12,9 @@ import injectDatamart, {
   InjectedDatamartProps,
 } from '../../../../../../Datamart/injectDatamart';
 import { injectable } from 'inversify';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../../../../../services/AudienceSegmentService';
+import { TYPES } from '../../../../../../../constants/types';
+import { lazyInject } from '../../../../../../../config/inversify.config';
 
 export interface DataLoadingContainer<T> {
   data: T;
@@ -45,7 +42,7 @@ const provideAudienceCatalog = (
 ) => {
   @injectable()
   class ProvidedComponent extends React.Component<Props, State> {
-    @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+    @lazyInject(TYPES.IAudienceSegmentService)
     private _audienceSegmentService: IAudienceSegmentService;
     constructor(props: Props) {
       super(props);

@@ -9,11 +9,9 @@ import FeedPlaceholder from './FeedPlaceholder';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { injectable } from 'inversify';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 export interface FeedCardListProps {}
 
@@ -28,7 +26,7 @@ export interface FeedCardListState {
 
 @injectable()
 class FeedCardList extends React.Component<Props, FeedCardListState> {
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
   constructor(props: Props) {

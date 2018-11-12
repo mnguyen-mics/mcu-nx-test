@@ -21,10 +21,8 @@ import ReportService from '../../../services/ReportService';
 import McsMoment from '../../../utils/McsMoment';
 import { normalizeArrayOfObject } from '../../../utils/Normalizer';
 import { injectable } from 'inversify';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../services/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { lazyInject } from '../../../config/inversify.config';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentResource>
@@ -76,7 +74,7 @@ type Props = AudienceSegmentSelectorProps &
 
 @injectable()
 class AudienceSegmentSelector extends React.Component<Props, State> {
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);

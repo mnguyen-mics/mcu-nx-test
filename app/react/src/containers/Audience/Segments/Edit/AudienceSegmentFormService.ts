@@ -11,11 +11,8 @@ import {
   AudienceSegmentShape,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { DataResponse } from '../../../../services/ApiService';
-import { injectable } from 'inversify';
-import {
-  SERVICE_IDENTIFIER,
-  lazyInject,
-} from '../../../../services/inversify.config';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../../../constants/types';
 
 export interface IAudienceSegmentFormService {
   loadSegmentInitialValue: (
@@ -32,7 +29,7 @@ export interface IAudienceSegmentFormService {
 
 @injectable()
 export class AudienceSegmentFormService implements IAudienceSegmentFormService {
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   loadSegmentInitialValue(segmentId: string): Promise<AudienceSegmentFormData> {
     return this._audienceSegmentService.getSegment(segmentId).then(res => {

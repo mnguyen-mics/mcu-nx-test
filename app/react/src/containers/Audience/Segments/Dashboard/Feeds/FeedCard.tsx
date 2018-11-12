@@ -17,12 +17,10 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Link } from 'react-router-dom';
 import PluginService from '../../../../../services/PluginService';
 import assetFileService from '../../../../../services/Library/AssetsFilesService';
-import {
-  SERVICE_IDENTIFIER,
-  lazyInject,
-} from '../../../../../services/inversify.config';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { injectable } from 'inversify';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -83,7 +81,7 @@ const messages = defineMessages({
 @injectable()
 class FeedCard extends React.Component<Props, FeedCardState> {
   id: string = cuid();
-  @lazyInject(SERVICE_IDENTIFIER.IAudienceSegmentService)
+  @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
   constructor(props: Props) {

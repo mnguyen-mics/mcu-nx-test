@@ -32,10 +32,8 @@ import {
 import { PARTITIONS_SEARCH_SETTINGS } from './constants';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { injectable } from 'inversify';
-import {
-  lazyInject,
-  SERVICE_IDENTIFIER,
-} from '../../../../services/inversify.config';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -62,7 +60,7 @@ export interface PartitionFilterParams
 
 @injectable()
 class AudiencePartitionsPage extends React.Component<Props, State> {
-  @lazyInject(SERVICE_IDENTIFIER.IAudiencePartitionsService)
+  @lazyInject(TYPES.IAudiencePartitionsService)
   private _audiencePartitionsService: IAudiencePartitionsService;
   constructor(props: Props) {
     super(props);
