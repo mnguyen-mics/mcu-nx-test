@@ -1,11 +1,11 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { ApiToken } from '../models/settings/settings';
+import ApiTokenResource from '../models/directory/ApiTokenResource';
 
 const ApiTokenService = {
   getApiTokens(
     userId: string,
     organisationId: string,
-  ): Promise<DataListResponse<ApiToken>> {
+  ): Promise<DataListResponse<ApiTokenResource>> {
     const endpoint = `users/${userId}/api_tokens`;
     const options = {
       organisation_id: organisationId,
@@ -16,15 +16,15 @@ const ApiTokenService = {
     apiTokenId: string,
     userId: string,
     organisationId: string,
-  ): Promise<DataResponse<ApiToken>> {
+  ): Promise<DataResponse<ApiTokenResource>> {
     const endpoint = `users/${userId}/api_tokens/${apiTokenId}?organisation_id=${organisationId}`;
     return ApiService.getRequest(endpoint);
   },
   createApiToken(
     userId: string,
     organisationId: string,
-    body?: Partial<ApiToken>,
-  ): Promise<DataResponse<ApiToken>> {
+    body?: Partial<ApiTokenResource>,
+  ): Promise<DataResponse<ApiTokenResource>> {
     const endpoint = `users/${userId}/api_tokens?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, body);
   },
@@ -32,8 +32,8 @@ const ApiTokenService = {
     apiTokenId: string,
     userId: string,
     organisationId: string,
-    body: Partial<ApiToken>,
-  ): Promise<DataResponse<ApiToken>> {
+    body: Partial<ApiTokenResource>,
+  ): Promise<DataResponse<ApiTokenResource>> {
     const endpoint = `users/${userId}/api_tokens/${apiTokenId}?organisation_id=${organisationId}`;
     return ApiService.putRequest(endpoint, body);
   },
@@ -41,7 +41,7 @@ const ApiTokenService = {
     apiTokenId: string,
     userId: string,
     organisationId: string,
-  ): Promise<DataResponse<ApiToken>> {
+  ): Promise<DataResponse<ApiTokenResource>> {
     const endpoint = `users/${userId}/api_tokens/${apiTokenId}?organisation_id=${organisationId}`;
     return ApiService.deleteRequest(endpoint);
   },

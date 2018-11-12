@@ -1,15 +1,22 @@
-import lodash from 'lodash';
 import moment from 'moment';
 
 import LocalStorage from './LocalStorage';
-import ApiService from './ApiService.ts';
+import ApiService, { DataResponse } from './ApiService';
 import log from '../utils/Logger';
+
+import AccessTokenResource from '../models/directory/AccessTokenResource';
+import RefreshTokenResource from '../models/directory/RefreshTokenResource';
+import { UserProfileResource } from '../models/directory/UserProfileResource';
 
 const ACCESS_TOKEN = 'access_token';
 const ACCESS_TOKEN_EXPIRATION_DATE = 'access_token_expiration_date';
 const REFRESH_TOKEN = 'refresh_token';
 const REFRESH_TOKEN_EXPIRATION_DATE = 'refresh_token_expiration_date';
 const REMEMBER_ME = 'remember_me';
+
+// TODO To make AuthService injectable, we need to be able to do DI in sagas
+// I found a way by looking at this repo: https://github.com/Neufund/platform-frontend/tree/master
+// looking in redux-injectify.ts, sagasUtils.ts
 
 const getAccessToken = () => {
   return LocalStorage.getItem(ACCESS_TOKEN);
@@ -52,13 +59,13 @@ const getRememberMe = () => {
 };
 
 
-const setAccessToken = (token) => {
+const setAccessToken = (token: string) => {
   LocalStorage.setItem({
     [ACCESS_TOKEN]: token,
   });
 };
 
-const setAccessTokenExpirationDate = (expireIn) => {
+const setAccessTokenExpirationDate = (expireIn: number) => {
   let expirationDate = moment().add(1, 'hours');
   // let expirationDate = moment().add(2, 'seconds');
   if (expireIn) expirationDate = moment().add(expireIn, 'seconds');
@@ -67,19 +74,19 @@ const setAccessTokenExpirationDate = (expireIn) => {
   });
 };
 
-const setRefreshToken = (refreshToken) => {
+const setRefreshToken = (refreshToken: string) => {
   LocalStorage.setItem({
     [REFRESH_TOKEN]: refreshToken,
   });
 };
 
-const setRememberMe = ({ rememberMe }) => {
+const setRememberMe = ({ rememberMe }: { rememberMe: boolean }) => {
   LocalStorage.setItem({
     [REMEMBER_ME]: rememberMe,
   });
 };
 
-const setRefreshTokenExpirationDate = (expireIn) => {
+const setRefreshTokenExpirationDate = (expireIn: number) => {
   let expirationDate = moment().add(7, 'days');
   if (expireIn) expirationDate = moment().add(expireIn, 'seconds');
   LocalStorage.setItem({
@@ -95,7 +102,16 @@ const deleteCredentials = () => {
   LocalStorage.removeItem(REMEMBER_ME);
 };
 
-const createAccessToken = (credentialsOrRefreshToken) => {
+export interface Credentials {
+  email: string;
+  password: string;
+};
+
+export interface CredentialsOrRefreshToken extends Credentials {  
+  refreshToken: string;
+};
+
+const createAccessToken = (credentialsOrRefreshToken: CredentialsOrRefreshToken) => {
   const {
     email,
     password,
@@ -110,19 +126,16 @@ const createAccessToken = (credentialsOrRefreshToken) => {
 
   const endpoint = 'authentication/access_tokens';
 
-  return ApiService.postRequest(endpoint, body, null, null, { authenticated: false }).then((response) => {
-    const data = response.data;
-    return Object.keys(data).reduce((acc, key) => {
-      const keyInCamelCase = lodash.camelCase(key);
-      return {
-        ...acc,
-        [keyInCamelCase]: data[key],
-      };
-    }, {});
-  });
+  return ApiService.postRequest<DataResponse<AccessTokenResource>>(
+    endpoint, 
+    body, 
+    {}, 
+    {}, 
+    { authenticated: false }
+  );
 };
 
-const createRefreshToken = (credentials) => {
+const createRefreshToken = (credentials: Credentials) => {
   const {
     email,
     password,
@@ -135,7 +148,7 @@ const createRefreshToken = (credentials) => {
 
   const endpoint = 'authentication/refresh_tokens';
 
-  return ApiService.postRequest(endpoint, body, null, null, { authenticated: false }).then((response) => {
+  return ApiService.postRequest<DataResponse<RefreshTokenResource>>(endpoint, body, {}, {}, { authenticated: false }).then((response) => {
     return response.data.refresh_token;
   });
 };
@@ -144,27 +157,27 @@ const createRefreshToken = (credentials) => {
 const getConnectedUser = () => {
   const endpoint = 'connected_user';
 
-  return ApiService.getRequest(endpoint).then(res => res.data);
+  return ApiService.getRequest<DataResponse<UserProfileResource>>(endpoint).then(res => res.data);
 };
 
-const sendPassword = (email) => {
+const sendPassword = (email: string) => {
   const endpoint = 'authentication/send_password_reset_email';
 
   const body = {
     email,
   };
 
-  return ApiService.postRequest(endpoint, body, null, null, { authenticated: false });
+  return ApiService.postRequest(endpoint, body, {}, {}, { authenticated: false });
 };
 
-const resetPassword = (email, token, password) => {
+const resetPassword = (email: string, token: string, password: string) => {
   const endpoint = 'authentication/set_password';
   const body = {
     email,
     token,
     password
   };
-  return ApiService.postRequest(endpoint, body, null, null, { authenticated: false });
+  return ApiService.postRequest(endpoint, body, {}, {}, { authenticated: false });
 };
 
 export default {

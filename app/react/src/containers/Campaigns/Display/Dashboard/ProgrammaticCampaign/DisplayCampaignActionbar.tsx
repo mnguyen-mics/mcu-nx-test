@@ -31,6 +31,10 @@ import { ReportView } from '../../../../../models/ReportView';
 import GoalService from '../../../../../services/GoalService';
 import { GoalsCampaignRessource } from './domain';
 import { Index } from '../../../../../utils';
+import { injectDrawer } from '../../../../../components/Drawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
 
 interface DisplayCampaignActionBarProps {
   campaign: {
@@ -56,7 +60,8 @@ interface DisplayCampaignActionBarState {
 type JoinedProps = DisplayCampaignActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps &
-  TranslationProps;
+  TranslationProps &
+  InjectedDrawerProps;
 
 // type ReportViewReponse = CancelablePromise<ReportView>;
 
@@ -441,11 +446,30 @@ class DisplayCampaignActionbar extends React.Component<
     };
 
     const onClick = (event: any) => {
+      const {
+        match: {
+          params: { campaignId },
+        },
+      } = this.props;
+
       switch (event.key) {
         case 'ARCHIVED':
           return campaign.items ? handleArchiveGoal(campaign.items.id) : null;
         case 'DUPLICATE':
           return this.duplicateCampaign();
+        case 'HISTORY':
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(
+            ResourceTimelinePage,
+            {
+              additionalProps: {
+                resourceType: 'DISPLAY_CAMPAIGN',
+                resourceId: campaignId,
+                handleClose: () => this.props.closeNextDrawer(),
+                formatProperty: formatDisplayCampaignProperty,
+              },
+              size: 'small',
+            }
+          );
         default:
           return () => {
             log.error('onclick error');
@@ -455,6 +479,9 @@ class DisplayCampaignActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
+        <Menu.Item key="HISTORY">
+          <FormattedMessage {...messages.history} />
+        </Menu.Item>
         {campaign.items && campaign.items.model_version === 'V2014_06' ? null : <Menu.Item key="DUPLICATE">
           <FormattedMessage {...messages.duplicate} />
         </Menu.Item>}
@@ -470,4 +497,5 @@ export default compose<JoinedProps, DisplayCampaignActionBarProps>(
   withRouter,
   injectIntl,
   withTranslations,
+  injectDrawer,
 )(DisplayCampaignActionbar);

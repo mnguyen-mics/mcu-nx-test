@@ -139,6 +139,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
       },
       () => {
         this.props.node.extras.edition = edition;
+        this.props.lockGlobalInteraction(false);
         this.props.treeNodeOperations.updateLayout();
       },
     );

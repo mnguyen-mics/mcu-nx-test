@@ -66,6 +66,13 @@ export interface UserPoint {
   user_point_id: string;
 }
 
+export interface UserAccount {
+  compartment_id: number;
+  creation_ts: number;
+  type: 'USER_ACCOUNT';
+  user_account_id: string;
+}
+
 export type UserIdentifierShape = UserAgent | UserPoint;
 
 export type FormFactor = 'TABLET' | 'SMARTPHONE' | 'PERSONAL_COMPUTER';
@@ -86,7 +93,7 @@ export interface IdentifiersProps {
   isLoading: boolean;
   hasItems: boolean;
   items: {
-    USER_ACCOUNT: any[]; // type it better
+    USER_ACCOUNT: UserAccount[];
     USER_AGENT: UserAgent[];
     USER_EMAIL: any[]; // type it better
     USER_POINT: UserPoint[];

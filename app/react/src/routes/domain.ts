@@ -4,12 +4,16 @@ import { Omit } from "../utils/Types";
 
 export type LayoutTypes = 'main' | 'edit' | 'settings';
 
+export interface DataLayerDefinition {
+  [key: string]: any
+}
 export interface RouteDef {
   path: string;
   layout: LayoutTypes;
   requiredFeature?: string | string[];
   requireDatamart?: boolean;
   legacyPath?: boolean;
+  datalayer?: DataLayerDefinition
 }
 
 export interface RouteEdit extends RouteDef {

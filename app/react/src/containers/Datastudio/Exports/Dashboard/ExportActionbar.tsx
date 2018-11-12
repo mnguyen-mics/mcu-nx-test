@@ -45,9 +45,9 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
 
     this.setState({ exportIsRunning: isExportExecutionRunning })
   }
-  
 
-  editCampaign = () => {
+
+  editExport = () => {
     const {
       location,
       history,
@@ -59,8 +59,8 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
       },
     } = this.props;
 
-    const editUrl = `/${organisationId}/datastudio/exports/${exportId}/edit`;
-    history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}` } });
+    const editUrl = `/v2/o/${organisationId}/datastudio/exports/${exportId}/edit`;
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
   }
 
   runExecution = () => {
@@ -77,7 +77,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
         .then(res => this.setState({ exportIsRunning: true }))
         .then(res => this.props.onNewExecution())
     }
-    
+
   }
 
   render() {
@@ -105,10 +105,10 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
           <FormattedMessage {...messages.newExecution} />
         </Button>
 
-        {/* <Button onClick={this.editCampaign}>
+        <Button onClick={this.editExport}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.edit} />
-        </Button> */}
+        </Button>
 
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
@@ -119,7 +119,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     );
   }
 
- 
+
 
   duplicateCampaign = () => {
     const {
@@ -134,7 +134,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/datastudio/exports`;
-    history.push({ pathname: editUrl, state : { from: `${location.pathname}${location.search}`, exportId: exportId } });
+    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}`, exportId: exportId } });
   }
 
   buildMenu = () => {

@@ -18,6 +18,7 @@ import withNormalizer, {
 } from '../../../../../../components/Form/withNormalizer';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { EditDisplayCampaignRouteMatchParam } from '../../domain';
+import formatDisplayCampaignProperty from '../../../../../../messages/campaign/display/displayCampaignMessages';
 
 type Props = InjectedIntlProps &
   ValidatorProps &
@@ -59,7 +60,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(messages.contentSectionGeneralRow1Label),
+              label: formatMessage(formatDisplayCampaignProperty('name').message),
               required: true,
             }}
             inputProps={{
@@ -97,7 +98,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               component={FormAlertInput}
               formItemProps={{
                 label: formatMessage(
-                  messages.contentSectionGeneralAdvancedPartRow1Label,
+                  formatDisplayCampaignProperty('technical_name').message,
                 ),
               }}
               inputProps={{

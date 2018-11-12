@@ -17,10 +17,9 @@ import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import ApiTokenService from '../../../../../services/ApiTokenService';
-import {
-  ApiToken,
-  ConnectedUser,
-} from '../../../../../models/settings/settings';
+import { UserProfileResource } from '../../../../../models/directory/UserProfileResource';
+import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
+
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -134,7 +133,7 @@ const messages = defineMessages({
 
 interface State {
   loading: boolean;
-  data: ApiToken[];
+  data: ApiTokenResource[];
   total: number;
   isModalVisible: boolean;
   saving: boolean;
@@ -142,7 +141,7 @@ interface State {
 }
 
 interface MapStateToProps {
-  connectedUser: ConnectedUser;
+  connectedUser: UserProfileResource;
 }
 
 interface RouterProps {
@@ -178,7 +177,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
     });
   };
 
-  onClickEdit = (apiToken: ApiToken) => {
+  onClickEdit = (apiToken: ApiTokenResource) => {
     const {
       history,
       match: {
@@ -191,7 +190,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
     );
   };
 
-  onDelete = (apiToken: ApiToken) => {
+  onDelete = (apiToken: ApiTokenResource) => {
     const {
       intl,
       connectedUser,
@@ -255,7 +254,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
 
     const { isModalVisible, loading, saving } = this.state;
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<ApiToken>> = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<ApiTokenResource>> = [
       {
         key: 'action',
         actions: () => [
@@ -271,7 +270,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         key: 'name',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (value: string, record: ApiToken) => (
+        render: (value: string, record: ApiTokenResource) => (
           <Link
             to={`/v2/o/${organisationId}/settings/account/api_tokens/${
               record.id
@@ -293,7 +292,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         key: 'creation_date',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (value: string, record: ApiToken) =>
+        render: (value: string, record: ApiTokenResource) =>
           moment(parseInt(value, 10)).format('DD/MM/YYYY'),
       },
       {
@@ -301,7 +300,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         key: 'expiration_date',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (value: string, record: ApiToken) => {
+        render: (value: string, record: ApiTokenResource) => {
           const now = Date.now();
           const status =
             record.expiration_date - now < 2592000000 /* 1 month in millisec*/
@@ -327,7 +326,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         intlMessage: messages.emptyApiTokenList,
       };
 
-    const apiTokenModal = (apiTokenData: ApiToken) => {
+    const apiTokenModal = (apiTokenData: ApiTokenResource) => {
       const {
         intl: { formatMessage },
       } = this.props;

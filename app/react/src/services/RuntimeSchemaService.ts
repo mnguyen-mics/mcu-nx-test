@@ -126,7 +126,7 @@ const RuntimeSchemaService = {
       directiveId: string,
     ): Promise<DataListResponse<DirectiveArgumentResource>> {
       return ApiService.getRequest(
-        `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/directives/${directiveId}/inputValues`,
+        `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/directives/${directiveId}/arguments`,
       );
     },
     
@@ -138,7 +138,7 @@ const RuntimeSchemaService = {
       argumentId: string,
     ): Promise<DataResponse<DirectiveArgumentResource>> {
       return ApiService.getRequest(
-        `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/directives/${directiveId}/inputValues/${argumentId}`,
+        `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/directives/${directiveId}/arguments/${argumentId}`,
       );
     },
     

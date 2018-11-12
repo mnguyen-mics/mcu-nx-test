@@ -13,9 +13,7 @@
   "LOGOUT": "Logout",
   "EMAIL_ADDRESS": "Email Address",
   "EMAIL_PLACEHOLDER": "Email",
-  "EMAL_REQUIRED": "Please input your email!",
   "PASSWORD_PLACEHOLDER": "Password",
-  "PASSWORD_REQURED": "Please input your password!",
   "FORGOT_PASSWORD": "Forgot password",
   "SUBMIT": "Submit",
   "LOG_IN": "Log in",
@@ -222,5 +220,6 @@
   "SEND_TEST": "Send a test Email",
   "REPORT": "DSP Report",
   "CREATE": "Create",
-  "ID": "Id"
+  "ID": "Id",
+  "HISTORY": "History"
 }

@@ -16,7 +16,7 @@ import { McsFormSection } from '../../../../../utils/FormHelper';
 import { Path } from '../../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { Omit } from 'antd/lib/form/Form';
-import { ApiToken } from '../../../../../models/settings/settings';
+import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
 
 const FORM_ID = 'userForm';
 
@@ -36,13 +36,13 @@ const messages = defineMessages({
 });
 
 interface EditUserFormProps
-  extends Omit<ConfigProps<Partial<ApiToken>>, 'form'> {
+  extends Omit<ConfigProps<Partial<ApiTokenResource>>, 'form'> {
   onClose: () => void;
-  onSave: (formData: Partial<ApiToken>) => void;
+  onSave: (formData: Partial<ApiTokenResource>) => void;
   breadCrumbPaths: Path[];
 }
 
-type Props = InjectedFormProps<Partial<ApiToken>, EditUserFormProps> &
+type Props = InjectedFormProps<Partial<ApiTokenResource>, EditUserFormProps> &
   EditUserFormProps &
   RouteComponentProps<{ organisationId: string; userId: string }> &
   InjectedIntlProps;
@@ -111,7 +111,7 @@ class EditUserForm extends React.Component<Props> {
 export default compose<Props, EditUserFormProps>(
   withRouter,
   injectIntl,
-  reduxForm<Partial<ApiToken>, EditUserFormProps>({
+  reduxForm<Partial<ApiTokenResource>, EditUserFormProps>({
     form: FORM_ID,
     enableReinitialize: true,
   }),

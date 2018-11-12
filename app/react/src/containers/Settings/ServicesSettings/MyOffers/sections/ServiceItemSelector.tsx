@@ -23,7 +23,11 @@ type Props = ServiceItemSelectorProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class ServiceItemSelector extends React.Component<Props> {
+interface State {
+  searchFilter : SearchFilter;
+}
+
+class ServiceItemSelector extends React.Component<Props, State> {
   saveServiceItems = (serviceItemIds: string[], serviceItems: ServiceItemShape[]) => {
     this.props.save(serviceItems);
   }
@@ -44,6 +48,10 @@ class ServiceItemSelector extends React.Component<Props> {
     if (filter.keywords) {
       options.keywords = filter.keywords
     }
+
+    if (filter.type && filter.type.length !== 0) {
+      options.type = filter.type;
+    };
 
     return CatalogService.getServiceItems(organisationId, options);
   }
@@ -76,6 +84,7 @@ class ServiceItemSelector extends React.Component<Props> {
       <ServiceItemTableSelector
         actionBarTitle={formatMessage(messages.serviceItemSelectorTitle)}
         displayFiltering={true}
+        displayTypeFilter={true}
         searchPlaceholder={formatMessage(
           messages.serviceItemSelectorSearchPlaceholder,
         )}

@@ -1,7 +1,7 @@
 /* eslint-disable no-constant-condition */
 import { fork, put, take, all, race, call } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
-import AuthService from '../../services/AuthService';
+import AuthService from '../../services/AuthService.ts';
 
 import { appStartup } from './actions';
 

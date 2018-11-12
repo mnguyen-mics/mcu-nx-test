@@ -36,7 +36,7 @@ interface RouterProps {
 class ExportContent extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   ExportContentState
-> {
+  > {
   state = initialState;
 
   archiveExport = (exportId: string) => {
@@ -153,9 +153,9 @@ class ExportContent extends React.Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-      iconType: 'library',
-      intlMessage: messages.empty,
-    };
+        iconType: 'library',
+        intlMessage: messages.empty,
+      };
 
     return (
       <ItemList

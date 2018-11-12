@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { Row, Icon } from 'antd';
+import { Row, Icon, Modal } from 'antd';
 import moment from 'moment';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/styles/hljs';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import {
   Activity,
   ActivityCardProps,
@@ -20,14 +22,15 @@ import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { TimelinePageParams } from '../TimelinePage';
 import UserScenarioActivityCard from './UserScenarioActivityCard';
+import { ButtonStyleless } from '../../../../components';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
 enum scenarioActivityTypes {
-  "USER_SCENARIO_START",
-  "USER_SCENARIO_STOP",
-  "USER_SCENARIO_NODE_ENTER",
-  "USER_SCENARIO_NODE_EXIT",
-  'USER_SCENARIO_NODE_MOVEMENT'
+  'USER_SCENARIO_START',
+  'USER_SCENARIO_STOP',
+  'USER_SCENARIO_NODE_ENTER',
+  'USER_SCENARIO_NODE_EXIT',
+  'USER_SCENARIO_NODE_MOVEMENT',
 }
 
 interface State {
@@ -69,7 +72,7 @@ class ActivityCard extends React.Component<Props, State> {
     } else {
       this.setState(prevState => {
         const nextState = {
-          ...prevState
+          ...prevState,
         };
         switch (activity.$type) {
           case 'TOUCH':
@@ -135,11 +138,11 @@ class ActivityCard extends React.Component<Props, State> {
     };
     return userAgentId
       ? identif &&
-      identif.items &&
-      identif.items.USER_AGENT &&
-      identif.items.USER_AGENT.find((element: any) => {
-        return element.vector_id === userAgentId;
-      })
+          identif.items &&
+          identif.items.USER_AGENT &&
+          identif.items.USER_AGENT.find((element: any) => {
+            return element.vector_id === userAgentId;
+          })
       : undefined;
   };
 
@@ -204,25 +207,49 @@ class ActivityCard extends React.Component<Props, State> {
               );
             })}
         </div>
-      </Row>)
+      </Row>
+    );
   }
+
+  handleJSONViewModal = () => {
+    const { activity, intl } = this.props;
+    Modal.info({
+      title: intl.formatMessage(messages.activityJson),
+      okText: intl.formatMessage(messages.eventJsonModalOkText),
+      width: '650px',
+      content: (
+        <SyntaxHighlighter language="json" style={docco}>
+          {JSON.stringify(activity, undefined, 4)}
+        </SyntaxHighlighter>
+      ),
+    });
+  };
 
   render() {
     const { activity } = this.props;
     if (Object.values(scenarioActivityTypes).includes(activity.$type)) {
-      return (
-        <UserScenarioActivityCard activity={activity} />
-      )
+      return <UserScenarioActivityCard activity={activity} />;
     } else {
       const displayDuration = this.diplayVisitDuration(activity);
-      const renderDuration =
-        needToDisplayDurationFor.indexOf(activity.$type) > -1 ? (
-          <span>
-            <Icon type="clock-circle-o" /> {displayDuration || 0}
-          </span>
-        ) : null;
+      const buttons = (
+        <div className="timeline-activity-card-buttons">
+          {needToDisplayDurationFor.indexOf(activity.$type) > -1 ? (
+            <span>
+              <Icon type="clock-circle-o" /> {displayDuration || 0}
+              <br />
+            </span>
+          ) : null}
+          <ButtonStyleless
+            onClick={this.handleJSONViewModal}
+            className="mcs-card-inner-action"
+          >
+            <FormattedMessage {...messages.viewActivityJson} />
+          </ButtonStyleless>
+        </div>
+      );
+
       return (
-        <Card title={this.state.siteName} buttons={renderDuration}>
+        <Card title={this.state.siteName} buttons={buttons}>
           {this.generateCardContent(activity)}
           <Row className="border-top sm-footer timed-footer text-right">
             {moment(activity.$ts).format('H:mm:ss')}

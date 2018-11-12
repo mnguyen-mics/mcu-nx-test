@@ -12,6 +12,7 @@ import {
 interface ServiceItemProps {
   serviceItem?: ServiceItemShape;
   serviceItemCondition?: ServiceItemConditionShape;
+  hasPriceChart?: boolean;
 }
 
 interface State {
@@ -49,24 +50,38 @@ class ServiceItem extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, serviceItem } = this.props;
+    const { intl, serviceItem, hasPriceChart } = this.props;
+
+    const serviceItemElements = (hasPriceChart === true) ?
+      [
+        (
+          <div className="service-price">{this.state.price}</div>
+        ),
+        (
+        <div>
+          <div className="service-text">
+            {intl.formatMessage(messages.serviceItemPriceSimulatorText)}
+          </div>
+          <Input
+            addonBefore={intl.formatMessage(
+              messages.serviceItemPriceSimulatorInputPlaceholder,
+            )}
+            onChange={this.onChange}
+          />
+        </div>
+      )
+      ] :
+      [undefined, undefined];
+
     return (
       <div>
-        <div className="service-price">{this.state.price}</div>
+        {serviceItemElements[0]}
         <div className="service-text">
           {serviceItem && serviceItem.description
             ? serviceItem.description
             : intl.formatMessage(messages.serviceItemNoDescription)}
         </div>
-        <div className="service-text">
-          {intl.formatMessage(messages.serviceItemPriceSimulatorText)}
-        </div>
-        <Input
-          addonBefore={intl.formatMessage(
-            messages.serviceItemPriceSimulatorInputPlaceholder,
-          )}
-          onChange={this.onChange}
-        />
+        {serviceItemElements[1]}
       </div>
     );
   }

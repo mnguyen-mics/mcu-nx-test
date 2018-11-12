@@ -18,6 +18,7 @@ import DefaultSelect from '../../../../../../components/Form/FormSelect/DefaultS
 import { AdGroupResource } from '../../../../../../models/campaign/display';
 import { TargetedMedia } from '../../../../../../models/campaign/constants';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
+import formatAdGroupProperty from '../../../../../../messages/campaign/display/adgroupMessages';
 
 interface DeviceFormSectionProps
   extends WrappedFieldProps,
@@ -51,140 +52,123 @@ class DeviceFormSection extends React.Component<Props, State> {
   };
 
   operatingSystems = () => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
     return [
       {
         value: 'ALL',
-        title: formatMessage(messages.contentSectionDeviceOSAll),
+        children: formatAdGroupProperty('targeted_operating_systems', 'ALL').formattedValue,
       },
       {
         value: 'IOS',
-        title: formatMessage(messages.contentSectionDeviceOSiOS),
+        children: formatAdGroupProperty('targeted_operating_systems', 'IOS').formattedValue,
       },
       {
         value: 'ANDROID',
-        title: formatMessage(messages.contentSectionDeviceOSAndroid),
+        children: formatAdGroupProperty('targeted_operating_systems', 'ANDROID').formattedValue,
       },
       {
         value: 'WINDOWS_PHONE',
-        title: formatMessage(messages.contentSectionDeviceOSWindowsPhone),
+        children: formatAdGroupProperty('targeted_operating_systems', 'WINDOWS_PHONE').formattedValue,
       },
     ];
   };
 
   medias = () => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
     return [
       {
         value: 'WEB',
-        title: formatMessage(messages.contentSectionDeviceMediaTypeWebsite),
+        children: formatAdGroupProperty('targeted_medias', 'WEB').formattedValue,
       },
       {
         value: 'MOBILE_APP',
-        title: formatMessage(messages.contentSectionDeviceMediaTypeMobileApp),
+        children: formatAdGroupProperty('targeted_medias', 'MOBILE_APP').formattedValue,
       },
     ];
   };
 
   devices = () => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
     const { mediaValue } = this.state;
     return [
       {
         value: 'ALL',
-        title: formatMessage(messages.contentSectionDeviceTypeAll),
+        children: formatAdGroupProperty('targeted_devices', 'ALL').formattedValue,
         disabled: mediaValue === 'MOBILE_APP',
       },
       {
         value: 'ONLY_DESKTOP',
-        title: formatMessage(messages.contentSectionDeviceTypeDesktop),
+        children: formatAdGroupProperty('targeted_devices', 'ONLY_DESKTOP').formattedValue,
         disabled: mediaValue === 'MOBILE_APP',
       },
       {
         value: 'ONLY_MOBILE',
-        title: formatMessage(messages.contentSectionDeviceTypeMobile),
+        children: formatAdGroupProperty('targeted_devices', 'ONLY_MOBILE').formattedValue,
       },
       {
         value: 'ONLY_TABLET',
-        title: formatMessage(messages.contentSectionDeviceTypeTablet),
+        children: formatAdGroupProperty('targeted_devices', 'ONLY_TABLET').formattedValue,
       },
       {
         value: 'MOBILE_AND_TABLET',
-        title: formatMessage(messages.contentSectionDeviceTypeMobileAndTablet),
+        children: formatAdGroupProperty('targeted_devices', 'MOBILE_AND_TABLET').formattedValue,
       },
     ];
   };
 
   connectionTypes = () => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
     const { mediaValue } = this.state;
     return [
       {
         value: 'ALL',
-        title: formatMessage(messages.contentSectionDeviceConnectionTypeAll),
+        children: formatAdGroupProperty('targeted_connection_types', 'ALL').formattedValue,
       },
       {
         value: 'ETHERNET',
-        title: formatMessage(
-          messages.contentSectionDeviceConnectionTypeEthernet,
-        ),
+        children: formatAdGroupProperty('targeted_connection_types', 'ETHERNET').formattedValue,
         disabled: mediaValue === 'MOBILE_APP',
       },
       {
         value: 'WIFI',
-        title: formatMessage(messages.contentSectionDeviceConnectionTypeWifi),
+        children: formatAdGroupProperty('targeted_connection_types', 'WIFI').formattedValue,
       },
       {
         value: 'CELLULAR_NETWORK_2G',
-        title: formatMessage(messages.contentSectionDeviceConnectionType2G),
+        children: formatAdGroupProperty('targeted_connection_types', 'CELLULAR_NETWORK_2G').formattedValue,
       },
       {
         value: 'CELLULAR_NETWORK_3G',
-        title: formatMessage(messages.contentSectionDeviceConnectionType3G),
+        children: formatAdGroupProperty('targeted_connection_types', 'CELLULAR_NETWORK_3G').formattedValue,
       },
       {
         value: 'CELLULAR_NETWORK_4G',
-        title: formatMessage(messages.contentSectionDeviceConnectionType4G),
+        children: formatAdGroupProperty('targeted_connection_types', 'CELLULAR_NETWORK_4G').formattedValue,
       },
     ];
   };
 
   browserFamilies = () => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
     return [
       {
         value: 'ALL',
-        title: formatMessage(messages.contentSectionDeviceBrowserAll),
+        children: formatAdGroupProperty('targeted_browser_families', 'ALL').formattedValue,
       },
       {
         value: 'CHROME',
-        title: formatMessage(messages.contentSectionDeviceBrowserChrome),
+        children: formatAdGroupProperty('targeted_browser_families', 'CHROME').formattedValue,
       },
       {
         value: 'FIREFOX',
-        title: formatMessage(messages.contentSectionDeviceBrowserFirefox),
+        children: formatAdGroupProperty('targeted_browser_families', 'FIREFOX').formattedValue,
       },
       {
         value: 'SAFARI',
-        title: formatMessage(messages.contentSectionDeviceBrowserSafari),
+        children: formatAdGroupProperty('targeted_browser_families', 'SAFARI').formattedValue,
       },
       {
         value: 'INTERNET_EXPLORER',
-        title: formatMessage(messages.contentSectionDeviceBrowserIE),
+        children: formatAdGroupProperty('targeted_browser_families', 'INTERNET_EXPLORER').formattedValue,
       },
       {
         value: 'OPERA',
-        title: formatMessage(messages.contentSectionDeviceBrowserOpera),
+        children: formatAdGroupProperty('targeted_browser_families', 'OPERA').formattedValue,
       },
     ];
   };
@@ -221,7 +205,7 @@ class DeviceFormSection extends React.Component<Props, State> {
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(messages.contentSectionDeviceMediaTypeLabel),
+              label: formatMessage(formatAdGroupProperty('targeted_medias').message),
               required: true,
             }}
             helpToolTipProps={{
@@ -240,7 +224,7 @@ class DeviceFormSection extends React.Component<Props, State> {
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(messages.contentSectionDeviceTypeLabel),
+              label: formatMessage(formatAdGroupProperty('targeted_devices').message),
               required: true,
             }}
             helpToolTipProps={{
@@ -254,7 +238,7 @@ class DeviceFormSection extends React.Component<Props, State> {
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(messages.contentSectionDeviceOSLabel),
+              label: formatMessage(formatAdGroupProperty('targeted_operating_systems').message),
               required: true,
             }}
             helpToolTipProps={{
@@ -269,7 +253,7 @@ class DeviceFormSection extends React.Component<Props, State> {
             validate={[isRequired]}
             formItemProps={{
               label: formatMessage(
-                messages.contentSectionDeviceConnectionTypeLabel,
+                formatAdGroupProperty('targeted_connection_types').message,
               ),
               required: true,
             }}
@@ -286,7 +270,7 @@ class DeviceFormSection extends React.Component<Props, State> {
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(messages.contentSectionDeviceBrowserLabel),
+              label: formatMessage(formatAdGroupProperty('targeted_browser_families').message),
               required: true,
             }}
             helpToolTipProps={{

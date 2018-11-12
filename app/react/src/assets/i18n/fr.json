@@ -14,9 +14,7 @@
   "LOGOUT": "Déconnexion",
   "EMAIL_ADDRESS": "Adresse email",
   "EMAIL_PLACEHOLDER": "Entrez votre adresse email",
-  "EMAL_REQUIRED": "Merci d'entrer votre adresse email !",
   "PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
-  "PASSWORD_REQURED": "Merci d'entrez votre mot de passe !",
   "FORGOT_PASSWORD": "Mot de passe oublié ?",
   "SUBMIT": "Valider",
   "LOG_IN": "Se connecter",
@@ -223,5 +221,6 @@
   "SEND_TEST": "Envoie d'un BAT",
   "REPORT": "Rapport DSP",
   "CREATE": "Créer",
-  "ID": "Id"
+  "ID": "Id",
+  "HISTORY": "Historique"
 }

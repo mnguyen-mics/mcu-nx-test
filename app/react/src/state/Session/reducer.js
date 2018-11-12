@@ -7,6 +7,7 @@ import {
   GET_LOGO,
 } from '../action-types';
 
+
 const defaultSessionState = {
   workspace: {
     datamarts: [],
