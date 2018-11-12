@@ -195,13 +195,12 @@ class Overlap extends React.Component<Props, State> {
             )}
           </Col>
           <Col span={12} className="text-right">
-            {!isFetchingOverlap &&
-              data.hasOverlap && (
-                <span className="generated">
-                  <FormattedMessage {...messages.generated} />{' '}
-                  {moment(data.data ? data.data.date : 0).fromNow()}
-                </span>
-              )}{' '}
+            {!isFetchingOverlap && data.hasOverlap && (
+              <span className="generated">
+                <FormattedMessage {...messages.generated} />{' '}
+                {moment(data.data ? data.data.date : 0).fromNow()}
+              </span>
+            )}{' '}
             {!isFetchingOverlap && (
               <Button onClick={this.renderModalExtend}>
                 <McsIcon type="extend" />{' '}

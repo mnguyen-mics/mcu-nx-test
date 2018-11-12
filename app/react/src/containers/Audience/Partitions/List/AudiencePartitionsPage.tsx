@@ -269,25 +269,23 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
 
     const content = (
       <Content className="mcs-content-container">
-        {!initialFetching &&
-          !hasAudiencePartitions && (
-            <EmptyTableView
-              iconType="users"
-              intlMessage={messageMap.noPartitionYet}
-            />
-          )}
-        {!initialFetching &&
-          hasAudiencePartitions && (
-            <AudiencePartitionsTable
-              organisationId={params.organisationId}
-              filter={filter}
-              audiencePartitions={audiencePartitions}
-              fetchingPartitions={fetchingPartitions}
-              onChange={this.updateLocationSearch}
-              onArchive={handleOnArchive}
-              onEdit={this.editPartition}
-            />
-          )}
+        {!initialFetching && !hasAudiencePartitions && (
+          <EmptyTableView
+            iconType="users"
+            intlMessage={messageMap.noPartitionYet}
+          />
+        )}
+        {!initialFetching && hasAudiencePartitions && (
+          <AudiencePartitionsTable
+            organisationId={params.organisationId}
+            filter={filter}
+            audiencePartitions={audiencePartitions}
+            fetchingPartitions={fetchingPartitions}
+            onChange={this.updateLocationSearch}
+            onArchive={handleOnArchive}
+            onEdit={this.editPartition}
+          />
+        )}
       </Content>
     );
 

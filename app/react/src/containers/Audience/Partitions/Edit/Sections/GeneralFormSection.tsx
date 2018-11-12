@@ -22,7 +22,8 @@ import { AudiencePartitionFormData } from '../domain';
 const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'edit.partition.form.general.subtitle',
-    defaultMessage: 'Configure your partition, give it a name and select your model.',
+    defaultMessage:
+      'Configure your partition, give it a name and select your model.',
   },
   sectionTitleGeneral: {
     id: 'edit.partition.form.general.title',
@@ -46,11 +47,13 @@ const messages = defineMessages({
   },
   tootltipPartitionName: {
     id: 'edit.partition.general.infos.tooltip.name',
-    defaultMessage: 'The partition\'s name will help you identify it on the different screens.',
+    defaultMessage:
+      "The partition's name will help you identify it on the different screens.",
   },
   tootltipPartitionType: {
     id: 'edit.partition.general.infos.tooltip.type',
-    defaultMessage: 'The random type will assign randomly at the userpoint creation a userpoint to a partition. The clustering mode let\'s you define the clustering model.',
+    defaultMessage:
+      "The random type will assign randomly at the userpoint creation a userpoint to a partition. The clustering mode let's you define the clustering model.",
   },
   tootltipPartitionPartCount: {
     id: 'edit.partition.general.infos.tooltip.partCount',

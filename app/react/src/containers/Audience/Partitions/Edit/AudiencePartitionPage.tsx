@@ -61,7 +61,6 @@ type JoinedProps = AudiencePartitionPageProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
 
-
 class AudiencePartitionPage extends React.Component<
   JoinedProps,
   AudiencePartitionPageState

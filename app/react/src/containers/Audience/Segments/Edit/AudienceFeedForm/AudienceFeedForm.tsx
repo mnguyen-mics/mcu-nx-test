@@ -24,9 +24,7 @@ import GenericPluginContent, {
   PluginContentOuterProps,
 } from '../../../../Plugin/Edit/GenericPluginContent';
 import { AudienceTagFeedService } from '../../../../../services/AudienceTagFeedService';
-import {
-  AudienceExternalFeedService,
-} from '../../../../../services/AudienceExternalFeedService';
+import { AudienceExternalFeedService } from '../../../../../services/AudienceExternalFeedService';
 
 const AudienceExternalFeedPluginContent = GenericPluginContent as React.ComponentClass<
   PluginContentOuterProps<AudienceExternalFeed>
