@@ -84,16 +84,9 @@ class AudiencePartitionPage extends React.Component<
       this._audiencePartitionsService
         .getPartition(partitionId)
         .then(resp => resp.data)
-        .then(partitionFormdata => {
+        .then(partitionRes => {
           this.setState({
-            partitionFormData: {
-              name: partitionFormdata.name,
-              type: partitionFormdata.type,
-              part_count: partitionFormdata.part_count,
-              clustering_model_data_file_uri:
-                partitionFormdata.clustering_model_data_file_uri,
-              status: partitionFormdata.status,
-            },
+            partitionFormData: partitionRes,
             isLoading: false,
           });
         });
