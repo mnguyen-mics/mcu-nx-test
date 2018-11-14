@@ -22,7 +22,6 @@ import { AudienceFeedFormModel, FeedRouteParams } from './domain';
 import { Path } from '../../../../../components/ActionBar';
 import GenericPluginContent from '../../../../Plugin/Edit/GenericPluginContent';
 import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
-import { Alert } from 'antd';
 
 
 export interface CreateAudienceFeedProps<T = any> {

@@ -69,7 +69,7 @@ abstract class PluginInstanceService<T extends PluginInstance> {
     return ApiService.postRequest(endpoint, params);
   }
 
-  abstract getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null>
+  abstract getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> 
 }
 
 export default PluginInstanceService;

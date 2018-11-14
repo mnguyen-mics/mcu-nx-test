@@ -90,8 +90,8 @@ const messages = defineMessages({
 class FeedCard extends React.Component<Props, FeedCardState> {
   id: string = cuid();
   feedService: AudienceSegmentFeedService;
-  @lazyInject(TYPES.IAudienceSegmentService)
-  private _audienceSegmentService: IAudienceSegmentService;
+  // @lazyInject(TYPES.IAudienceSegmentService)
+  // private _audienceSegmentService: IAudienceSegmentService;
   
 
   constructor(props: Props) {
@@ -126,9 +126,9 @@ class FeedCard extends React.Component<Props, FeedCardState> {
                 cardHeaderThumbnail: resultPluginLayout.metadata.small_icon_asset_url,
               });
             }
-          });
+          })
         }
-    });
+      }).catch(() => this.setState({ isLoading: false }));
   }
 
   // fetch pluginLayout to render image and title

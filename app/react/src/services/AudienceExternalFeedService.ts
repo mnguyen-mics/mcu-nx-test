@@ -7,12 +7,12 @@ import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
 
 export interface IAudienceExternalFeedService {
-  getAudienceExternalFeeds: (
+  getAudienceFeeds: (
     organisationId: string,
     options: object,
   ) => Promise<DataListResponse<AudienceExternalFeed>>;
 
-  deleteAudienceExternalFeed: (
+  deleteAudienceFeed: (
     id: string,
     options: object,
   ) => Promise<DataResponse<any>>;
@@ -44,14 +44,14 @@ export interface IAudienceExternalFeedService {
     options: object,
   ) => Promise<DataResponse<AudienceExternalFeed>>;
 
-  getAudienceExternalFeedProperties: (
+  getAudienceFeedProperties: (
     id: string,
     options: object,
   ) => Promise<DataListResponse<any>>;
 
-  getLocalizedPluginLayout: (
+  getLocalizedPluginLayout(
     pInstanceId: string,
-  ) => Promise<PluginLayout | null>;
+  ): Promise<PluginLayout | null>;
 }
 
 @injectable()
@@ -64,10 +64,10 @@ export class AudienceExternalFeedService
     this.segmentId = segmentId;
   }
 
-  getAudienceFeeds(
+  getAudienceFeeds = (
     organisationId: string,
     options: object = {},
-  ): Promise<DataListResponse<AudienceExternalFeed>> {
+  ): Promise<DataListResponse<AudienceExternalFeed>> => {
     const endpoint = 'plugins';
 
     const params = {
@@ -79,10 +79,10 @@ export class AudienceExternalFeedService
     return ApiService.getRequest(endpoint, params);
   }
 
-  deleteAudienceFeed(
+  deleteAudienceFeed = (
     id: string,
     options: object = {},
-  ): Promise<DataResponse<any>> {
+  ): Promise<DataResponse<any>> => {
     const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}`;
 
     return ApiService.deleteRequest(endpoint, options);
@@ -90,10 +90,10 @@ export class AudienceExternalFeedService
 
   // START reimplementation of method
 
-  getInstanceById(
+  getInstanceById = (
     id: string,
     options: object = {},
-  ): Promise<DataResponse<AudienceExternalFeed>> {
+  ): Promise<DataResponse<AudienceExternalFeed>> => {
     const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}`;
 
     const params = {
@@ -105,7 +105,7 @@ export class AudienceExternalFeedService
   getInstanceProperties = (
     id: string,
     options: object = {},
-  ): Promise<DataListResponse<PropertyResourceShape>> {
+  ): Promise<DataListResponse<PropertyResourceShape>> => {
     const endpoint = `audience_segments/${
       this.segmentId
     }/external_feeds/${id}/properties`;
@@ -130,7 +130,7 @@ export class AudienceExternalFeedService
     id: string,
     technicalName: string,
     params: object = {},
-  ): Promise<DataResponse<PropertyResourceShape> | void> {
+  ): Promise<DataResponse<PropertyResourceShape> | void> => {
     const endpoint = `audience_segments/${
       this.segmentId
     }/external_feeds/${id}/properties/technical_name=${technicalName}`;
@@ -146,7 +146,7 @@ export class AudienceExternalFeedService
   createPluginInstance = (
     organisationId: string,
     options: object = {},
-  ): Promise<DataResponse<AudienceExternalFeed>> {
+  ): Promise<DataResponse<AudienceExternalFeed>> => {
     const endpoint = `audience_segments/${
       this.segmentId
     }/external_feeds?organisation_id=${organisationId}`;
@@ -161,7 +161,7 @@ export class AudienceExternalFeedService
   // STOP
 
   // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
-  getAudienceExternalFeedProperties(id: string, options: object = {}) {
+  getAudienceFeedProperties = (id: string, options: object = {}) => {
     const endpoint = `audience_segments/${
       this.segmentId
     }/external_feeds/${id}/properties`;
