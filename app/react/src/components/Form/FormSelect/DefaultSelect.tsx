@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Select } from 'antd';
-
+import cuid from 'cuid';
 // TS Interfaces
 import { WrappedFieldProps } from 'redux-form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
@@ -86,7 +86,7 @@ class DefaultSelect extends React.Component<
     if (meta && meta.touched && meta.warning) validateStatus = 'warning';
 
     const optionsToDisplay = options!.map(option => (
-      <Option key={option.value} {...option}>
+      <Option key={cuid()} {...option}>
         {option.title || option.children}
       </Option>
     ));

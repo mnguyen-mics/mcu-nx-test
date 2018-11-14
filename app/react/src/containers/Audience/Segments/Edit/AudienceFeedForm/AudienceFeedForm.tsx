@@ -1,23 +1,37 @@
 import * as React from 'react';
 import { compose, Omit } from 'recompose';
 import { connect } from 'react-redux';
+import { Alert } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import * as actions from '../../../../../state/Notifications/actions';
-import { PluginProperty, PluginType, AudienceExternalFeed, AudienceTagFeed, PluginResource, PluginInstance } from '../../../../../models/Plugins';
+import {
+  PluginProperty,
+  PluginType,
+  AudienceExternalFeed,
+  AudienceTagFeed,
+  PluginResource,
+  PluginInstance,
+} from '../../../../../models/Plugins';
 
 import messages from '../messages';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 import { AudienceFeedFormModel, FeedRouteParams } from './domain';
 import { Path } from '../../../../../components/ActionBar';
-import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
-import AudienceTagFeedService from '../../../../../services/AudienceTagFeedService';
-import AudienceExternalFeedServices from '../../../../../services/AudienceExternalFeedService';
-import { Alert } from 'antd';
+import GenericPluginContent, {
+  PluginContentOuterProps,
+} from '../../../../Plugin/Edit/GenericPluginContent';
+import { AudienceTagFeedService } from '../../../../../services/AudienceTagFeedService';
+import { AudienceExternalFeedService } from '../../../../../services/AudienceExternalFeedService';
 
-const AudienceExternalFeedPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AudienceExternalFeed>>
-const AudienceTagFeedPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AudienceTagFeed>>
-
+const AudienceExternalFeedPluginContent = GenericPluginContent as React.ComponentClass<
+  PluginContentOuterProps<AudienceExternalFeed>
+>;
+const AudienceTagFeedPluginContent = GenericPluginContent as React.ComponentClass<
+  PluginContentOuterProps<AudienceTagFeed>
+>;
 
 export interface CreateAudienceFeedProps<T = any> {
   initialValues?: AudienceFeedFormModel;
@@ -32,24 +46,21 @@ type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
   InjectedIntlProps &
   InjectedNotificationProps;
 
-class CreateAudienceFeed<T> extends React.Component<
-  JoinedProps<T>
-  > {
+class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
   constructor(props: JoinedProps<T>) {
     super(props);
   }
-
 
   onSave = (audienceFeed: any, properties: PluginProperty[]) => {
     const { onSave } = this.props;
 
     const returnValue = {
       plugin: audienceFeed,
-      properties: properties
-    }
+      properties: properties,
+    };
 
-    return onSave(returnValue as any)
-  }
+    return onSave(returnValue as any);
+  };
 
   createTagFeedPluginInstance = (
     organisationId: string,
@@ -66,20 +77,23 @@ class CreateAudienceFeed<T> extends React.Component<
       artifact_id: plugin.artifact_id,
       group_id: plugin.group_id,
       organisation_id: organisationId,
-      plugin_type: "AUDIENCE_SEGMENT_TAG_FEED"
-    }
-    return result
-  }
+      plugin_type: 'AUDIENCE_SEGMENT_TAG_FEED',
+    };
+    return result;
+  };
 
   createExternalFeedPluginInstance = (
     organisationId: string,
     plugin: PluginResource,
     pluginInstance: AudienceExternalFeed,
   ): PluginInstance => {
- 
-    const { match: { params: { segmentId } } } = this.props;
-    
-    const result: Omit<AudienceExternalFeed, "id"> = {
+    const {
+      match: {
+        params: { segmentId },
+      },
+    } = this.props;
+
+    const result: Omit<AudienceExternalFeed, 'id'> = {
       // ...pluginInstance,
       version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
@@ -87,35 +101,36 @@ class CreateAudienceFeed<T> extends React.Component<
       group_id: plugin.group_id,
       organisation_id: organisationId,
       audience_segment_id: segmentId,
-      status: "INITIAL"
-    }
-    return result
-  }
+      status: 'INITIAL',
+    };
+    return result;
+  };
 
   render() {
-    const { breadcrumbPaths,
+    const {
+      breadcrumbPaths,
       type,
       onClose,
       initialValues,
-      match: { 
-        params: { 
-          segmentId, 
-          feedId,  
-        } 
+      match: {
+        params: { segmentId, feedId },
       },
-      intl: {
-        formatMessage
-      }
+      intl: { formatMessage },
     } = this.props;
 
-    const paths = () => breadcrumbPaths
+    const paths = () => breadcrumbPaths;
 
-    const showedMessage = initialValues && initialValues.plugin.status === 'ACTIVE' ?
-      (<Alert message={formatMessage(messages.audienceFeedWarningMessage)} type="warning"/>) :
-      undefined;
+    const showedMessage =
+      initialValues && initialValues.plugin.status === 'ACTIVE' ? (
+        <Alert
+          message={formatMessage(messages.audienceFeedWarningMessage)}
+          type="warning"
+        />
+      ) : (
+        undefined
+      );
 
     if (type === 'AUDIENCE_SEGMENT_TAG_FEED') {
-
       const audienceTagFeedService = new AudienceTagFeedService(segmentId);
 
       return (
@@ -131,13 +146,19 @@ class CreateAudienceFeed<T> extends React.Component<
           onClose={onClose}
           showGeneralInformation={false}
           showedMessage={showedMessage}
-          disableFields={initialValues && (initialValues.plugin.status === 'ACTIVE' || initialValues.plugin.status === 'PUBLISHED')}
+          disableFields={
+            initialValues &&
+            (initialValues.plugin.status === 'ACTIVE' ||
+              initialValues.plugin.status === 'PUBLISHED')
+          }
         />
-      ) 
+      );
     }
 
-    if (type === "AUDIENCE_SEGMENT_EXTERNAL_FEED") {
-      const audienceExternalFeedService = new AudienceExternalFeedServices(segmentId);
+    if (type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED') {
+      const audienceExternalFeedService = new AudienceExternalFeedService(
+        segmentId,
+      );
       return (
         <AudienceExternalFeedPluginContent
           pluginType={'AUDIENCE_SEGMENT_EXTERNAL_FEED'}
@@ -151,12 +172,16 @@ class CreateAudienceFeed<T> extends React.Component<
           onClose={onClose}
           showGeneralInformation={false}
           showedMessage={showedMessage}
-          disableFields={initialValues && (initialValues.plugin.status === 'ACTIVE' || initialValues.plugin.status === 'PUBLISHED')}
+          disableFields={
+            initialValues &&
+            (initialValues.plugin.status === 'ACTIVE' ||
+              initialValues.plugin.status === 'PUBLISHED')
+          }
         />
-      )
+      );
     }
 
-    return null
+    return null;
   }
 }
 
@@ -164,5 +189,8 @@ export default compose<JoinedProps, CreateAudienceFeedProps>(
   injectIntl,
   injectNotifications,
   withRouter,
-  connect(undefined, { notifyError: actions.notifyError }),
+  connect(
+    undefined,
+    { notifyError: actions.notifyError },
+  ),
 )(CreateAudienceFeed);

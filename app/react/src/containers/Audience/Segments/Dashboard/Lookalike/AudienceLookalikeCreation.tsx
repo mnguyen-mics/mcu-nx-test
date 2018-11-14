@@ -11,7 +11,6 @@ import {
   FormSlider,
   withValidators,
 } from '../../../../../components/Form';
-import AudiencePartitionService from '../../../../../services/AudiencePartitionsService';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -26,9 +25,12 @@ import { UserLookalikeSegment } from '../../../../../models/audiencesegment/Audi
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import AudienceSegmentService from '../../../../../services/AudienceSegmentService';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { Loading } from '../../../../../components';
+import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
+import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const FORM_ID = 'lookalikeForm';
 const { Content } = Layout;
@@ -62,7 +64,11 @@ const fieldGridConfig = {
 class AudienceLookalikeCreation extends React.Component<
   Props,
   AudienceLookalikeState
-  > {
+> {
+  @lazyInject(TYPES.IAudiencePartitionsService)
+  private _audiencePartitionsService: IAudiencePartitionsService;
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -83,12 +89,13 @@ class AudienceLookalikeCreation extends React.Component<
       datamart,
       notifyError,
     } = this.props;
-    AudiencePartitionService.getPartitions(organisationId, {
-      first_result: 0,
-      max_results: 500,
-      status: ['PUBLISHED'],
-      datamart_id: datamart.id,
-    })
+    this._audiencePartitionsService
+      .getPartitions(organisationId, {
+        first_result: 0,
+        max_results: 500,
+        status: ['PUBLISHED'],
+        datamart_id: datamart.id,
+      })
       .then(res => res.data)
       .then(res => this.setState({ partitions: res, loading: false }))
       .catch(err => {
@@ -110,10 +117,8 @@ class AudienceLookalikeCreation extends React.Component<
       const formattedFormData = extension_factor
         ? { ...rest, extension_factor: extension_factor / 100 }
         : { ...rest };
-      AudienceSegmentService.createAudienceSegment(
-        organisationId,
-        formattedFormData,
-      )
+      this._audienceSegmentService
+        .createAudienceSegment(organisationId, formattedFormData)
         .then(res => res.data)
         .then(res => {
           this.setState({ loading: false }, () => {

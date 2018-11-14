@@ -4,8 +4,9 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { defineMessages } from 'react-intl';
 import { DataListResponse } from '../../../../services/ApiService';
-import AudiencePartitionsService, {
+import {
   GetPartitionOption,
+  IAudiencePartitionsService,
 } from '../../../../services/AudiencePartitionsService';
 import {
   AudiencePartitionResource,
@@ -30,6 +31,8 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { PARTITIONS_SEARCH_SETTINGS } from './constants';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -55,6 +58,8 @@ export interface PartitionFilterParams
 }
 
 class AudiencePartitionsPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IAudiencePartitionsService)
+  private _audiencePartitionsService: IAudiencePartitionsService;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -157,12 +162,11 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
   };
 
   checkIfHasPartitions = (organisationId: string) => {
-    return AudiencePartitionsService.getPartitions(
-      organisationId,
-      getPaginatedApiParam(1, 1),
-    ).then(res => {
-      this.setState({ hasAudiencePartitions: res.count !== 0 });
-    });
+    return this._audiencePartitionsService
+      .getPartitions(organisationId, getPaginatedApiParam(1, 1))
+      .then(res => {
+        this.setState({ hasAudiencePartitions: res.count !== 0 });
+      });
   };
 
   fetchPartitions = (
@@ -203,20 +207,22 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
 
     let promise;
     if (initialFetch) {
-      promise = AudiencePartitionsService.getPartitions(
-        organisationId,
-        getPaginatedApiParam(1, 1),
-      ).then(res => {
-        if (res.total === 0 || res.count === 0) {
-          this.setState({ hasAudiencePartitions: false });
-          return Promise.resolve(undefined);
-        }
-        this.setState({ hasAudiencePartitions: true });
-        return AudiencePartitionsService.getPartitions(organisationId, options);
-      });
+      promise = this._audiencePartitionsService
+        .getPartitions(organisationId, getPaginatedApiParam(1, 1))
+        .then(res => {
+          if (res.total === 0 || res.count === 0) {
+            this.setState({ hasAudiencePartitions: false });
+            return Promise.resolve(undefined);
+          }
+          this.setState({ hasAudiencePartitions: true });
+          return this._audiencePartitionsService.getPartitions(
+            organisationId,
+            options,
+          );
+        });
     } else {
       this.setState({ hasAudiencePartitions: true });
-      promise = AudiencePartitionsService.getPartitions(
+      promise = this._audiencePartitionsService.getPartitions(
         organisationId,
         options,
       );
@@ -263,25 +269,23 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
 
     const content = (
       <Content className="mcs-content-container">
-        {!initialFetching &&
-          !hasAudiencePartitions && (
-            <EmptyTableView
-              iconType="users"
-              intlMessage={messageMap.noPartitionYet}
-            />
-          )}
-        {!initialFetching &&
-          hasAudiencePartitions && (
-            <AudiencePartitionsTable
-              organisationId={params.organisationId}
-              filter={filter}
-              audiencePartitions={audiencePartitions}
-              fetchingPartitions={fetchingPartitions}
-              onChange={this.updateLocationSearch}
-              onArchive={handleOnArchive}
-              onEdit={this.editPartition}
-            />
-          )}
+        {!initialFetching && !hasAudiencePartitions && (
+          <EmptyTableView
+            iconType="users"
+            intlMessage={messageMap.noPartitionYet}
+          />
+        )}
+        {!initialFetching && hasAudiencePartitions && (
+          <AudiencePartitionsTable
+            organisationId={params.organisationId}
+            filter={filter}
+            audiencePartitions={audiencePartitions}
+            fetchingPartitions={fetchingPartitions}
+            onChange={this.updateLocationSearch}
+            onArchive={handleOnArchive}
+            onEdit={this.editPartition}
+          />
+        )}
       </Content>
     );
 

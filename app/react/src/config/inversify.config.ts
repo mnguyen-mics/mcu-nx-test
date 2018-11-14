@@ -1,3 +1,19 @@
+import {
+  OverlapInterval,
+  IOverlapInterval,
+} from './../containers/Audience/Segments/Dashboard/OverlapServices';
+import {
+  IAudienceSegmentFormService,
+  AudienceSegmentFormService,
+} from './../containers/Audience/Segments/Edit/AudienceSegmentFormService';
+import {
+  IAudiencePartitionsService,
+  AudiencePartitionsService,
+} from './../services/AudiencePartitionsService';
+import {
+  AudienceSegmentService,
+  IAudienceSegmentService,
+} from './../services/AudienceSegmentService';
 import getDecorators from 'inversify-inject-decorators';
 import { Container } from 'inversify';
 import {
@@ -5,8 +21,8 @@ import {
   KeywordListService,
 } from '../services/Library/KeywordListsService';
 import {
- IKeywordListFormService,
- KeywordListFormService,
+  IKeywordListFormService,
+  KeywordListFormService,
 } from '../containers/Library/Keyword/Edit/KeywordListFormService';
 import { TYPES } from '../constants/types';
 
@@ -18,6 +34,16 @@ container
 container
   .bind<IKeywordListFormService>(TYPES.IKeywordListFormService)
   .to(KeywordListFormService);
+container
+  .bind<IAudienceSegmentService>(TYPES.IAudienceSegmentService)
+  .to(AudienceSegmentService);
+container
+  .bind<IAudienceSegmentFormService>(TYPES.IAudienceSegmentFormService)
+  .to(AudienceSegmentFormService);
+container
+  .bind<IAudiencePartitionsService>(TYPES.IAudiencePartitionsService)
+  .to(AudiencePartitionsService);
+container.bind<IOverlapInterval>(TYPES.IOverlapInterval).to(OverlapInterval);
 
 export const { lazyInject } = getDecorators(container, false);
 
