@@ -1,0 +1,191 @@
+import AudienceTagFeedService from './AudienceTagFeedService';
+import AudienceExternalFeedService from './AudienceExternalFeedService';
+import AudienceSegmentService from './AudienceSegmentService';
+import PluginInstanceService from './PluginInstanceService';
+import { AudienceTagFeed, AudienceExternalFeed } from '../models/Plugins';
+import { DataListResponse, DataResponse } from './ApiService';
+import { PropertyResourceShape } from '../models/plugin';
+import { PluginLayout } from '../models/plugin/PluginLayout';
+
+type AudienceFeedType = 'EXTERNAL_FEED' | 'TAG_FEED';
+type AudienceFeed = AudienceTagFeed | AudienceExternalFeed;
+
+export default class AudienceSegmentFeedService extends PluginInstanceService<
+  AudienceFeed
+> {
+  service: AudienceTagFeedService | AudienceExternalFeedService;
+  type: AudienceFeedType;
+  segmentId: string;
+
+  constructor(segmentId: string, type: AudienceFeedType) {
+    super('audience_feed');
+    this.segmentId = segmentId;
+    this.type = type;
+    if (type === 'EXTERNAL_FEED') {
+      const audienceExtFeed = new AudienceExternalFeedService(segmentId);
+      this.service = audienceExtFeed;
+    }
+    if (type === 'TAG_FEED') {
+      const audienceTagFeed = new AudienceTagFeedService(segmentId);
+      this.service = audienceTagFeed;
+    }
+  }
+
+  getAudienceFeeds(
+    organisationId: string,
+    options: object = {},
+  ): Promise<DataListResponse<AudienceFeed>> {
+    return this.service.getAudienceFeeds(organisationId, options);
+  }
+
+  deleteAudienceFeed(
+    id: string,
+    options: object = {},
+  ): Promise<DataResponse<any>> {
+    return this.service.deleteAudienceFeed(id, options);
+  }
+
+  // START reimplementation of method
+
+  getInstanceById = (
+    id: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceFeed>> => {
+    return this.service.getInstanceById(id, options);
+  };
+
+  getInstanceProperties = (
+    id: string,
+    options: object = {},
+  ): Promise<DataListResponse<PropertyResourceShape>> => {
+    return this.service.getInstanceProperties(id, options);
+  };
+
+  updatePluginInstance = (
+    id: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceTagFeed>> => {
+    return this.service.updatePluginInstance(id, options);
+  };
+
+  updatePluginInstanceProperty = (
+    organisationId: string,
+    id: string,
+    technicalName: string,
+    params: object = {},
+  ): Promise<DataResponse<PropertyResourceShape> | void> => {
+    return this.service.updatePluginInstanceProperty(
+      organisationId,
+      id,
+      technicalName,
+      params,
+    );
+  };
+
+  createPluginInstance = (
+    organisationId: string,
+    options: object = {},
+  ): Promise<DataResponse<AudienceTagFeed>> => {
+    return this.service.createPluginInstance(organisationId, options);
+  };
+
+  // STOP
+
+  // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
+  getAudienceFeedProperties(id: string, options: object = {}) {
+    return this.service.getAudienceFeedProperties(id, options);
+  }
+
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
+    return this.service.getLocalizedPluginLayout(pInstanceId);
+  }
+
+  // reimplemention of audience segment service to make them type agnostic
+  getAudienceFeed(feedId: string, options: object = {}) {
+    return this.type === 'EXTERNAL_FEED'
+      ? AudienceSegmentService.getAudienceExternalFeed(
+          this.segmentId,
+          feedId,
+          options,
+        )
+      : AudienceSegmentService.getAudienceTagFeed(
+          this.segmentId,
+          feedId,
+          options,
+        );
+  }
+
+  createAudienceFeed(
+    audienceFeed: Partial<AudienceFeed>,
+    options: object = {},
+  ) {
+    return this.type === 'EXTERNAL_FEED'
+      ? AudienceSegmentService.createAudienceExternalFeeds(
+          this.segmentId,
+          audienceFeed,
+          options,
+        )
+      : AudienceSegmentService.createAudienceTagFeeds(
+          this.segmentId,
+          audienceFeed,
+          options,
+        );
+  }
+
+  updateAudienceFeed(
+    audienceFeedId: string,
+    audienceFeed: Partial<AudienceFeed>,
+    options: object = {},
+  ) {
+    return this.type === 'EXTERNAL_FEED'
+      ? AudienceSegmentService.updateAudienceExternalFeeds(
+          this.segmentId,
+          audienceFeedId,
+          audienceFeed,
+          options,
+        )
+      : AudienceSegmentService.updateAudienceTagFeeds(
+          this.segmentId,
+          audienceFeedId,
+          audienceFeed,
+          options,
+        );
+  }
+
+  getAudienceFeedProperty(feedId: string, options: object = {}) {
+    return this.type === 'EXTERNAL_FEED'
+      ? AudienceSegmentService.getAudienceExternalFeedProperty(
+          this.segmentId,
+          feedId,
+          options,
+        )
+      : AudienceSegmentService.getAudienceTagFeedProperty(
+          this.segmentId,
+          feedId,
+          options,
+        );
+  }
+
+  updateAudienceFeedProperty(
+    organisationId: string,
+    id: string,
+    technicalName: string,
+    params: object = {},
+  ) {
+    return this.type === 'EXTERNAL_FEED'
+      ? AudienceSegmentService.updateAudienceSegmentExternalFeedProperty(
+          organisationId,
+          this.segmentId,
+          id,
+          technicalName,
+          params,
+        )
+      : AudienceSegmentService.updateAudienceSegmentTagFeedProperty(
+          organisationId,
+          this.segmentId,
+          id,
+          technicalName,
+          params,
+        );
+  }
+}

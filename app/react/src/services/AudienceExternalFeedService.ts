@@ -64,7 +64,7 @@ export class AudienceExternalFeedService
     this.segmentId = segmentId;
   }
 
-  getAudienceExternalFeeds(
+  getAudienceFeeds(
     organisationId: string,
     options: object = {},
   ): Promise<DataListResponse<AudienceExternalFeed>> {
@@ -79,7 +79,7 @@ export class AudienceExternalFeedService
     return ApiService.getRequest(endpoint, params);
   }
 
-  deleteAudienceExternalFeed(
+  deleteAudienceFeed(
     id: string,
     options: object = {},
   ): Promise<DataResponse<any>> {

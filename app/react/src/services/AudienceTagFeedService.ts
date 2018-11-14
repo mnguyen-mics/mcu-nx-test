@@ -56,7 +56,7 @@ export class AudienceTagFeedService
     this.segmentId = segmentId;
   }
 
-  getAudienceTagFeeds(
+  getAudienceFeeds(
     organisationId: string,
     options: object = {},
   ): Promise<DataListResponse<AudienceTagFeed>> {
@@ -71,7 +71,7 @@ export class AudienceTagFeedService
     return ApiService.getRequest(endpoint, params);
   }
 
-  deleteAudienceTagFeed(
+  deleteAudienceFeed(
     id: string,
     options: object = {},
   ): Promise<DataResponse<any>> {

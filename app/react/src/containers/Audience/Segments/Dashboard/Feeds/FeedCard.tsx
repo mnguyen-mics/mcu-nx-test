@@ -22,8 +22,7 @@ import PluginCardModal, { PluginCardModalProps } from '../../../../Plugin/Edit/P
 import { PluginLayout } from '../../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../../models/plugin';
 import { withRouter, RouteComponentProps } from 'react-router';
-import AudienceTagFeedService from '../../../../../services/AudienceTagFeedService';
-import AudienceExternalFeedService from '../../../../../services/AudienceExternalFeedService';
+import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -90,8 +89,10 @@ const messages = defineMessages({
 
 class FeedCard extends React.Component<Props, FeedCardState> {
   id: string = cuid();
+  feedService: AudienceSegmentFeedService;
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+  
 
   constructor(props: Props) {
     super(props);
@@ -100,6 +101,10 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       isLoadingCard: true,
       opened: false,
       pluginProperties: []
+    }
+
+    if (this.props.feed) {
+      this.feedService = new AudienceSegmentFeedService(this.props.segmentId, this.props.feed.type);
     }
   }
 
@@ -129,7 +134,12 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   // fetch pluginLayout to render image and title
 
   renderActionButton = () => {
-    const { feed, onFeedUpdate, segmentId, notifyError, intl } = this.props;
+    const {
+      feed,
+      onFeedUpdate,
+      notifyError,
+      intl,
+    } = this.props;
 
     const editFeed = () => {
       const { type, ...formattedFeed } = feed;
@@ -142,38 +152,20 @@ class FeedCard extends React.Component<Props, FeedCardState> {
         };
       }
 
-      if (feed.type === 'EXTERNAL_FEED') {
-        this.setState({ isLoading: true });
-        return this._audienceSegmentService
-          .updateAudienceExternalFeeds(segmentId, feed.id, newFormattedFeed)
-          .then(res => res.data)
-          .then(res => {
-            this.setState({ isLoading: false }, () => {
-              onFeedUpdate({ ...res, type: 'EXTERNAL_FEED' });
-            });
+      this.setState({ isLoading: true })
+      return this.feedService.updateAudienceFeed(feed.id, newFormattedFeed)
+        .then(res => res.data)
+        .then(res => {
+          this.setState({ isLoading: false }, () => {
+            onFeedUpdate({ ...res, type: 'EXTERNAL_FEED' })
           })
-          .catch(err => {
-            this.setState({ isLoading: false });
-            notifyError(err);
-          });
-      }
-      if (feed.type === 'TAG_FEED') {
-        this.setState({ isLoading: true });
-        return this._audienceSegmentService
-          .updateAudienceTagFeeds(segmentId, feed.id, newFormattedFeed)
-          .then(res => res.data)
-          .then(res => {
-            this.setState({ isLoading: false }, () => {
-              onFeedUpdate({ ...res, type: 'TAG_FEED' });
-            });
-          })
-          .catch(err => {
-            this.setState({ isLoading: false });
-            notifyError(err);
-          });
-      }
-      return;
-    };
+
+        })
+        .catch(err => {
+          this.setState({ isLoading: false })
+          notifyError(err)
+        })
+    }
 
     switch (feed.status) {
       case 'ACTIVE':
@@ -242,28 +234,19 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   }
 
   getInitialValues = () => {
-    const { feed, segmentId } = this.props;
+    const { feed } = this.props;
 
-    const promise = feed.type === 'EXTERNAL_FEED' ? AudienceSegmentService.getAudienceExternalFeedProperty(segmentId, feed.id) : AudienceSegmentService.getAudienceTagFeedProperty(segmentId, feed.id)
-    return promise
-      .then(res => this.setState({ initialValue: { plugin: feed, properties: res.data.reduce((acc, val) => ({ ...acc, [val.technical_name]: { value: val.value } }), {}) } }))
+   
+    return this.feedService.getAudienceFeedProperty(feed.id)
+      .then((res) => this.setState({ initialValue: { plugin: feed, properties: res.data.reduce((acc, val) => ({ ...acc, [val.technical_name]: { value: val.value } }), {}) } }))
   }
 
   updatePropertiesValue = (
     properties: PropertyResourceShape[],
     organisationId: string,
     pluginInstanceId: string,
-    type: 'EXTERNAL_FEED' | 'TAG_FEED'
   ) => {
-
-    const {
-      segmentId,
-    } = this.props;
-
-    const audienceTagInstanceService = new AudienceTagFeedService(segmentId);
-    const audienceFeedInstanceService = new AudienceExternalFeedService(segmentId);
-
-    const updatePromise = type === 'EXTERNAL_FEED' ? audienceFeedInstanceService.updatePluginInstanceProperty : audienceTagInstanceService.updatePluginInstanceProperty
+    const updatePromise = this.feedService.updatePluginInstanceProperty
 
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
@@ -285,17 +268,12 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   ) => {
 
     const {
-      segmentId,
       notifyError,
       organisationId
     } = this.props;
 
-   
-
-    const externalFeedService =  new AudienceExternalFeedService(segmentId);
-    const tagFeedService = new AudienceTagFeedService(segmentId);
     // if edition update and redirect
-    const editPromise = pluginInstance.type === 'EXTERNAL_FEED' ? externalFeedService.updatePluginInstance : tagFeedService.updatePluginInstance
+    const editPromise = this.feedService.updatePluginInstance
     this.setState({ isLoadingCard: true });
     const {
       type,
@@ -309,8 +287,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       return this.updatePropertiesValue(
         properties,
         organisationId,
-        pluginInstance.id!,
-        pluginInstance.type
+        pluginInstance.id!
       );
     }).then(() => {
       this.setState({ isLoadingCard: false, opened: false })
@@ -350,36 +327,18 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     const removeFeed = () => {
       const onOk = () => {
-        if (feed.type === 'EXTERNAL_FEED') {
-          return this.setState({ isLoading: true }, () =>
-            this._audienceSegmentService
-              .deleteAudienceExternalFeeds(segmentId, feed.id)
-              .then(r => {
-                this.setState({ isLoading: false });
-                onFeedDelete(feed);
-              })
-              .catch(err => {
-                this.setState({ isLoading: false });
-                notifyError(err);
-              }),
-          );
-        }
-        if (feed.type === 'TAG_FEED') {
-          return this.setState({ isLoading: true }, () =>
-            this._audienceSegmentService
-              .deleteAudienceTagFeeds(segmentId, feed.id)
-              .then(r => {
-                this.setState({ isLoading: false });
-                onFeedDelete(feed);
-              })
-              .catch(err => {
-                this.setState({ isLoading: false });
-                notifyError(err);
-              }),
-          );
-        }
-        return;
-      };
+        return this.setState({ isLoading: true }, () => this.feedService.deleteAudienceFeed(feed.id)
+            .then(r => {
+              this.setState({ isLoading: false })
+              onFeedDelete(feed)
+            })
+            .catch(err => {
+              this.setState({ isLoading: false })
+              notifyError(err)
+            })
+          )
+      }
+
 
       Modal.confirm({
         title: intl.formatMessage(messages.modalTitle),
