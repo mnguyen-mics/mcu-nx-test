@@ -7,6 +7,7 @@ import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
 
 export interface IAudienceExternalFeedService {
+
   getAudienceFeeds: (
     organisationId: string,
     options: object,

@@ -1,11 +1,18 @@
-import {AudienceTagFeedService} from './AudienceTagFeedService';
 import AudienceExternalFeedService from './AudienceExternalFeedService';
-import {AudienceSegmentService} from './AudienceSegmentService';
+import {
+  AudienceSegmentService,
+  IAudienceSegmentService,
+} from './AudienceSegmentService';
 import PluginInstanceService from './PluginInstanceService';
 import { AudienceTagFeed, AudienceExternalFeed } from '../models/Plugins';
 import { DataListResponse, DataResponse } from './ApiService';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginLayout } from '../models/plugin/PluginLayout';
+import {
+  AudienceTagFeedService,
+} from './AudienceTagFeedService';
+import { lazyInject } from '../config/inversify.config';
+import { TYPES } from '../constants/types';
 
 type AudienceFeedType = 'EXTERNAL_FEED' | 'TAG_FEED';
 type AudienceFeed = AudienceTagFeed | AudienceExternalFeed;
@@ -17,11 +24,18 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
   type: AudienceFeedType;
   segmentId: string;
   audienceSegmentService: AudienceSegmentService;
-  constructor(segmentId: string, type: AudienceFeedType) {
+
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceService: IAudienceSegmentService;
+
+  constructor(
+    segmentId: string,
+    type: AudienceFeedType,
+  ) {
     super('audience_feed');
     this.segmentId = segmentId;
     this.type = type;
-    this.audienceSegmentService = new AudienceSegmentService()
+    this.audienceSegmentService = this._audienceService;
 
     if (type === 'EXTERNAL_FEED') {
       const audienceExtFeed = new AudienceExternalFeedService(segmentId);
@@ -38,14 +52,14 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
     options: object = {},
   ): Promise<DataListResponse<AudienceFeed>> => {
     return this.service.getAudienceFeeds(organisationId, options);
-  }
+  };
 
   deleteAudienceFeed = (
     id: string,
     options: object = {},
   ): Promise<DataResponse<any>> => {
     return this.service.deleteAudienceFeed(id, options);
-  }
+  };
 
   // START reimplementation of method
 
@@ -96,7 +110,7 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
   // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
   getAudienceFeedProperties = (id: string, options: object = {}) => {
     return this.service.getAudienceFeedProperties(id, options);
-  }
+  };
 
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.service.getLocalizedPluginLayout(pInstanceId);
@@ -115,7 +129,7 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
           feedId,
           options,
         );
-  }
+  };
 
   createAudienceFeed = (
     audienceFeed: Partial<AudienceFeed>,
@@ -132,7 +146,7 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
           audienceFeed,
           options,
         );
-  }
+  };
 
   updateAudienceFeed = (
     audienceFeedId: string,
@@ -152,7 +166,7 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
           audienceFeed,
           options,
         );
-  }
+  };
 
   getAudienceFeedProperty = (feedId: string, options: object = {}) => {
     return this.type === 'EXTERNAL_FEED'
@@ -166,7 +180,7 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
           feedId,
           options,
         );
-  }
+  };
 
   updateAudienceFeedProperty = (
     organisationId: string,
@@ -174,7 +188,6 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
     technicalName: string,
     params: object = {},
   ) => {
-
     return this.type === 'EXTERNAL_FEED'
       ? this.audienceSegmentService.updateAudienceSegmentExternalFeedProperty(
           organisationId,
@@ -190,5 +203,5 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
           technicalName,
           params,
         );
-  }
+  };
 }

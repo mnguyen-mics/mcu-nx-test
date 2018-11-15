@@ -5,7 +5,7 @@ import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
 
-interface IAudienceTagFeedService {
+export interface IAudienceTagFeedService {
   getAudienceFeeds: (
     organisationId: string,
     options: object,

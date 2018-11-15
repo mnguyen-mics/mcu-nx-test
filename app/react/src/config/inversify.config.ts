@@ -33,6 +33,14 @@ import {
   DisplayCampaignFormService,
 } from './../containers/Campaigns/Display/Edit/DisplayCampaignFormService';
 import { TYPES } from '../constants/types';
+import {
+  IAudienceExternalFeedService,
+  AudienceExternalFeedService,
+} from '../services/AudienceExternalFeedService';
+import {
+  IAudienceTagFeedService,
+  AudienceTagFeedService,
+} from '../services/AudienceTagFeedService';
 
 const container = new Container();
 
@@ -58,6 +66,12 @@ container.bind<IOverlapInterval>(TYPES.IOverlapInterval).to(OverlapInterval);
   container
   .bind<IDisplayCampaignFormService>(TYPES.IDisplayCampaignFormService)
   .to(DisplayCampaignFormService);
+container
+  .bind<IAudienceExternalFeedService>(TYPES.IAudienceExternalFeedService)
+  .to(AudienceExternalFeedService);
+container
+  .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
+  .toConstructor(AudienceTagFeedService);
 
 export const { lazyInject } = getDecorators(container, false);
 
