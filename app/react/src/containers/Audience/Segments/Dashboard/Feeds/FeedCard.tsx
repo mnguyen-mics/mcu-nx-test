@@ -16,7 +16,6 @@ import { Modal, Dropdown, Menu } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Link } from 'react-router-dom';
 import PluginService from '../../../../../services/PluginService';
-import assetFileService from '../../../../../services/Library/AssetsFilesService';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -90,35 +89,25 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   }
 
   componentDidMount() {
-    const { feed } = this.props;
+    const {
+      feed
+    } = this.props;
 
-    PluginService.findPluginFromVersionId(feed.version_id).then(res => {
-      if (
-        res !== null &&
-        res.status !== 'error' &&
-        res.data.current_version_id
-      ) {
-        PluginService.getLocalizedPluginLayout(
-          res.data.id,
-          res.data.current_version_id,
-        ).then(resultPluginLayout => {
-          if (
-            resultPluginLayout !== null &&
-            resultPluginLayout.metadata.small_icon_asset_id
-          ) {
-            assetFileService
-              .getAssetFile(resultPluginLayout.metadata.small_icon_asset_id)
-              .then(resultAssetFile => {
-                this.setState({
-                  cardHeaderTitle: resultPluginLayout.metadata.display_name,
-                  cardHeaderThumbnail: resultAssetFile
-                    ? resultAssetFile.path
-                    : undefined,
-                });
+    PluginService.findPluginFromVersionId(feed.version_id)
+      .then(res => {
+        if (res !== null && res.status !== "error" && res.data.current_version_id) {
+          PluginService.getLocalizedPluginLayout(
+            res.data.id,
+            res.data.current_version_id
+          ).then(resultPluginLayout => {
+            if (resultPluginLayout !== null) {
+              this.setState({
+                cardHeaderTitle: resultPluginLayout.metadata.display_name,
+                cardHeaderThumbnail: resultPluginLayout.metadata.small_icon_asset_url,
               });
-          }
-        });
-      }
+            }
+          });
+        }
     });
   }
 
@@ -326,9 +315,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             {cardHeaderThumbnail ? (
               <img
                 className="image-title"
-                src={`${
-                  (window as any).MCS_CONSTANTS.ASSETS_URL
-                }${cardHeaderThumbnail}`}
+                src={cardHeaderThumbnail}
               />
             ) : (
               undefined
