@@ -20,7 +20,7 @@ function ListActionbar({
 
   const breadcrumbPaths = [{
     name: translations.AUTOMATIONS_LIST,
-    url: `/v2/o/${organisationId}/automations`,
+    url: `/v2/o/${organisationId}/automations/list`,
   }];
 
 

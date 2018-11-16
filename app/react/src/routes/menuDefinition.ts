@@ -61,8 +61,17 @@ const campaignsMenuDefinition: NavigatorMenuDefinition = {
 const automationsMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'automation',
   translation: messages.automationTitle,
-  type: 'simple',
-  ...generateMissingdefinitionItemFromRoute(automationDefinition.automationsList),
+  type: 'multi',
+  subMenuItems: [
+    {
+      ...generateMissingdefinitionItemFromRoute(automationDefinition.automationsList),
+      translation: messages.automationList
+    },
+    {
+      ...generateMissingdefinitionItemFromRoute(automationDefinition.automationBuilder),
+      translation: messages.automationBuilder
+    },
+  ]
 }
 
 const analyticsMenuDefinition: NavigatorMenuDefinition = {

@@ -51,6 +51,14 @@ export default defineMessages({
         id: 'menu.automation.title',
         defaultMessage: 'Automations',
     },
+    automationList: {
+        id: 'menu.automation.list',
+        defaultMessage: 'List',
+    },
+    automationBuilder: {
+        id: 'menu.automation.builder',
+        defaultMessage: 'Builder',
+    },
 
 
     // CREATIVES
