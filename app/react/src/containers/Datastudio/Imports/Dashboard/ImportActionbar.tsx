@@ -82,7 +82,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
   };
 
   checkIfSizeOK = (file: UploadFile) => {
-    const maxFileSize = 1000;
+    const maxFileSize = 1000000;
     const {
       intl: { formatMessage },
     } = this.props;
@@ -141,7 +141,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       accept: '.jpg,.jpeg,.png,.gif,.svg',
       beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
         this.checkIfSizeOK(file);
-        this.setState({ importFile: importFile });
+        this.setState({ importFile: fileList });
         return false;
       },
       fileList: importFile,
