@@ -8,7 +8,8 @@ const TYPES = {
   IOverlapInterval: Symbol.for('overlapInterval'),
   IDisplayCampaignFormService: Symbol.for('displayCampaignFormService'),
   IAudienceTagFeedService: Symbol.for('audienceTagFeedService'),
-  IAudienceExternalFeedService: Symbol.for('audienceExternalFeedService')
+  IAudienceExternalFeedService: Symbol.for('audienceExternalFeedService'),
+  IImportService: Symbol.for('importService')
 };
 
 export { TYPES };

@@ -120,25 +120,6 @@ class ExportsActionbar extends React.Component<
     );
   }
 
-  duplicateCampaign = () => {
-    const {
-      location,
-      history,
-      match: {
-        params: { organisationId, exportId },
-      },
-    } = this.props;
-
-    const editUrl = `/v2/o/${organisationId}/datastudio/exports`;
-    history.push({
-      pathname: editUrl,
-      state: {
-        from: `${location.pathname}${location.search}`,
-        exportId: exportId,
-      },
-    });
-  };
-
   buildMenu = () => {
     const {
       exportObject,

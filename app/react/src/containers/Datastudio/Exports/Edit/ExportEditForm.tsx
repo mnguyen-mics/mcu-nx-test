@@ -53,16 +53,12 @@ const messages = defineMessages({
       'Create the query of objects your want to export from your Datamart',
   },
   saveExport: {
-    id: 'save.placement.list',
+    id: 'save.export',
     defaultMessage: 'Save',
   },
   editExport: {
     id: 'exports.form.edit.title',
     defaultMessage: 'Edit {name}',
-  },
-  newExoport: {
-    id: 'exports.form.new.title',
-    defaultMessage: 'New Export',
   },
 });
 
@@ -83,7 +79,8 @@ type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   RouteComponentProps<{ organisationId: string; exportId: string }> &
   InjectedIntlProps;
 
-class PlacementListForm extends React.Component<Props> {
+class ExportEditForm extends React.Component<Props> {
+
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
     return (
       <div>
@@ -206,4 +203,4 @@ export default compose<Props, ExportEditFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-)(PlacementListForm);
+)(ExportEditForm);

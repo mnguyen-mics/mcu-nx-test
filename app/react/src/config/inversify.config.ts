@@ -32,6 +32,7 @@ import {
   IDisplayCampaignFormService,
   DisplayCampaignFormService,
 } from './../containers/Campaigns/Display/Edit/DisplayCampaignFormService';
+import { IImportService, ImportService } from '../services/ImportService';
 import { TYPES } from '../constants/types';
 import {
   IAudienceExternalFeedService,
@@ -72,6 +73,7 @@ container
 container
   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
   .toConstructor(AudienceTagFeedService);
+container.bind<IImportService>(TYPES.IImportService).to(ImportService);
 
 export const { lazyInject } = getDecorators(container, false);
 

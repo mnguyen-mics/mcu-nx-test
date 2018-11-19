@@ -1,10 +1,16 @@
 import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage';
 import { CreateReportPage } from '../containers/Datastudio/Report/Edit';
 import Exports from '../containers/Datastudio/Exports/Dashboard/Exports';
+import Imports from '../containers/Datastudio/Imports/Dashboard/Imports';
 import ExportsList from '../containers/Datastudio/Exports/List';
-import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
+import ImportsList from '../containers/Datastudio/Imports/List';
+import {
+  NavigatorRoute,
+  NavigatorDefinition,
+  generateRoutesFromDefinition,
+} from './domain';
 import ExportEditPage from '../containers/Datastudio/Exports/Edit/ExportEditPage';
-
+import ImportEditPage from '../containers/Datastudio/Imports/Edit/ImportEditPage';
 
 export const datastudioDefinition: NavigatorDefinition = {
   datastudioQueryTool: {
@@ -51,7 +57,38 @@ export const datastudioDefinition: NavigatorDefinition = {
     editComponent: ExportEditPage,
     requiredFeature: 'datastudio.exports',
     requireDatamart: true,
-  }
-}
+  },
+  datastudioImportList: {
+    path: '/datastudio/imports',
+    layout: 'main',
+    contentComponent: ImportsList.contentComponent,
+    actionBarComponent: ImportsList.actionBarComponent,
+    requiredFeature: 'datastudio.imports',
+    requireDatamart: true,
+  },
+  datastudioImportEdition: {
+    path: '/datastudio/datamart/:datamartId/imports/:importId/edit',
+    layout: 'edit',
+    editComponent: ImportEditPage,
+    requiredFeature: 'datastudio.imports',
+    requireDatamart: true,
+  },
+  datastudioImportCreation: {
+    path: '/datastudio/imports/create',
+    layout: 'edit',
+    editComponent: ImportEditPage,
+    requiredFeature: 'datastudio.imports',
+    requireDatamart: true,
+  },
+  datastudioImportDashboard: {
+    path: '/datastudio/datamart/:datamartId/imports/:importId(\\d+)',
+    layout: 'main',
+    contentComponent: Imports,
+    requiredFeature: 'datastudio.imports',
+    requireDatamart: true,
+  },
+};
 
-export const datastudioRoutes: NavigatorRoute[] = generateRoutesFromDefinition(datastudioDefinition)
+export const datastudioRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
+  datastudioDefinition,
+);
