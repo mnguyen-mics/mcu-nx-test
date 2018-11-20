@@ -11,8 +11,8 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
-import JSONQLBuilderContainer from '../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
 import { UserProfileResource, UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
+import AutomationBuilderContainer from './AutomationBuilderContainer';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
@@ -75,6 +75,7 @@ class AutomationBuilderPage extends React.Component<Props> {
       } />;
     };
 
+    
 
     const style: React.CSSProperties = { height: '100%', display: 'flex' };
     return (
@@ -93,9 +94,9 @@ class AutomationBuilderPage extends React.Component<Props> {
       )}
       {selectedDatamart &&
         selectedDatamart.storage_model_version === 'v201709' && (
-          <JSONQLBuilderContainer
-            datamartId={selectedDatamart.id}
-            renderActionBar={jsonQLActionbar}
+          <AutomationBuilderContainer
+          datamartId={selectedDatamart.id}
+          renderActionBar={jsonQLActionbar}
           />
         )}
       {selectedDatamart &&
