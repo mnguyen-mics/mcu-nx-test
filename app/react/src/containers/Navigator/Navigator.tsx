@@ -95,6 +95,10 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
           );
         }
         this.props.setColorsStore(mcsColors);
+        document.addEventListener('unauthorizedEvent', (e) => { 
+          this.props.history.push('/logout');
+         }, false);
+    
       })
       .catch(() => this.setState({ adBlockOn: true }));
   }
