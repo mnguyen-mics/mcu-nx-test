@@ -9,30 +9,22 @@ import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/Run
 import {
   AddOperation,
   DeleteOperation,
-  MIN_X,
   NodeModelBTree,
   ROOT_NODE_POSITION,
   UpdateOperation,
-  applyTranslation,
-  buildNodeModelBTree,
-  computeNodeExtras,
-  layout,
-  setUniqueModelId,
   createLink,
-  toNodeList,
-  buildLinkList,
 } from '../../QueryTool/JSONOTQL/domain';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { Col } from 'antd';
 import { ButtonStyleless, McsIcon } from '../../../components';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import SimpleLinkFactory from '../../QueryTool/JSONOTQL/Diagram/Link/SimpleLinkFactory';
 import SimplePortFactory from '../../QueryTool/JSONOTQL/Diagram/Port/SimplePortFactory';
 import BuilderMenu, { UndoRedoProps } from '../../QueryTool/JSONOTQL/BuilderMenu';
 import AutomationNodeFactory from './AutomationNode/AutomationNodeFactory';
 import AutomationNodeModel from './AutomationNode/AutomationNodeModel';
 import AvailableNode from './NodeVisualizer/AvailableNode';
+import AutomationLinkFactory from './Link/AutomationLinkFactory';
 
 export interface QueryResult {
   loading: boolean;
@@ -74,7 +66,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       ),
     );
 
-    this.engine.registerLinkFactory(new SimpleLinkFactory());
+    this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
 
     this.state = {
@@ -182,7 +174,11 @@ class AutomationBuilder extends React.Component<Props, State> {
     rootNode.x = ROOT_NODE_POSITION.x;
     rootNode.y = ROOT_NODE_POSITION.y;
 
-    this.buildModelTree(this.props.query, rootNode, objectTypes, model);
+    const endNode = new AutomationNodeModel('close', 'End automation', '#ff5959');
+      endNode.x = ROOT_NODE_POSITION.x * 4;
+      endNode.y = ROOT_NODE_POSITION.y;
+
+    this.buildModelTree(this.props.query, rootNode, endNode, objectTypes, model);
 
     this.engine.setDiagramModel(model);
   }
@@ -202,7 +198,11 @@ class AutomationBuilder extends React.Component<Props, State> {
       rootNode.x = ROOT_NODE_POSITION.x;
       rootNode.y = ROOT_NODE_POSITION.y;
 
-      this.buildModelTree(nextQuery, rootNode, objectTypes, model);
+      const endNode = new AutomationNodeModel('close', 'End automation', '#ff5959');
+      endNode.x = ROOT_NODE_POSITION.x * 4;
+      endNode.y = ROOT_NODE_POSITION.y;
+
+      this.buildModelTree(nextQuery, rootNode, endNode, objectTypes, model);
 
       this.engine.setDiagramModel(model);
     }
@@ -211,39 +211,16 @@ class AutomationBuilder extends React.Component<Props, State> {
   buildModelTree(
     query: ObjectTreeExpressionNodeShape | undefined,
     rootNode: AutomationNodeModel,
+    endNode: AutomationNodeModel,
     objectTypes: ObjectLikeTypeInfoResource[],
     model: DiagramModel,
   ) {
-    const initialObjectType = objectTypes.find(ot => ot.name === 'UserPoint')!;
     model.addNode(rootNode);
-    if (query) {
-      const nodeBTree = buildNodeModelBTree(
-        query,
-        initialObjectType,
-        objectTypes,
-      );
-      setUniqueModelId(nodeBTree);
-      computeNodeExtras(nodeBTree);
-      layout(
-        nodeBTree,
-        applyTranslation(
-          ROOT_NODE_POSITION,
-          MIN_X,
-          (rootNode.getSize().height +
-            (rootNode.getSize().borderWidth || 0) * 2) /
-            2 -
-            (nodeBTree.node.getSize().height +
-              (nodeBTree.node.getSize().borderWidth || 0) * 2) /
-              2,
-        ),
-      );
-      model.addLink(
-        createLink(rootNode.ports.right, nodeBTree.node.ports.left),
-      );
-      toNodeList(nodeBTree).forEach(n => model.addNode(n));
-      buildLinkList(nodeBTree).forEach(l => model.addLink(l));
-      this.nodeBTreeCache = nodeBTree;
-    }
+    model.addNode(endNode);
+    model.addLink(
+      createLink(rootNode.ports.right, endNode.ports.left),
+    );
+  
   }
 
   render() {
