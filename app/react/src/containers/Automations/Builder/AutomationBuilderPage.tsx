@@ -12,13 +12,14 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import JSONQLBuilderContainer from '../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
+import { UserProfileResource, UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
 }
 
 interface MapStateToProps {
-  connectedUser: any;
+  connectedUser: UserProfileResource;
 }
 
 type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
@@ -49,16 +50,16 @@ class AutomationBuilderPage extends React.Component<Props> {
     let selectedDatamart: DatamartResource | undefined;
 
     const orgWp = connectedUser.workspaces.find(
-      (w: any) => w.organisation_id === this.props.match.params.organisationId,
+      (w: UserWorkspaceResource) => w.organisation_id === this.props.match.params.organisationId,
     );
 
     const datamartIdQueryString = queryString.parse(location.search).datamartId;
 
-    if (orgWp.datamarts && orgWp.datamarts.length === 1) {
+    if (orgWp !== undefined && orgWp.datamarts && orgWp.datamarts.length === 1) {
       selectedDatamart = orgWp.datamarts[0];
     }
 
-    if (datamartIdQueryString) {
+    if (datamartIdQueryString && orgWp !== undefined) {
       selectedDatamart = orgWp.datamarts.find(
         (d: DatamartResource) => d.id === datamartIdQueryString,
       );
