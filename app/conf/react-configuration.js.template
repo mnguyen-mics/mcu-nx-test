@@ -13,7 +13,7 @@
     'campaignsSettings.attribution_models',
     'campaignsSettings.email_routers',
     'campaignsSettings.recommenders',
-    'automations',
+    'automations.list',
     'creatives.display',
     'creatives.native',
     'creatives.email',
