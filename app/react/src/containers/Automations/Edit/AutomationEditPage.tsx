@@ -130,7 +130,7 @@ class EditAutomationPage extends React.Component<Props, State> {
       .then(res => {
         this.setState({ loading: false });
         this.props.history.push(
-          `/v2/o/${this.props.match.params.organisationId}/automations`,
+          `/v2/o/${this.props.match.params.organisationId}/automations/list`,
         );
       })
       .catch(err => {
@@ -141,7 +141,7 @@ class EditAutomationPage extends React.Component<Props, State> {
 
   onClose = () => {
     const { history, match: { params: { organisationId } } } = this.props;
-    history.push(`/v2/o/${organisationId}/automations`);
+    history.push(`/v2/o/${organisationId}/automations/list`);
   };
 
   render() {
@@ -150,7 +150,7 @@ class EditAutomationPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle,
-        path: `/v2/o/${organisationId}/automations`,
+        path: `/v2/o/${organisationId}/automations/list`,
       },
       {
         name: automationId ? intl.formatMessage(messages.breadcrumbEdit, { name: this.state.automationFormData.automation.name }) : messages.breadcrumbNew,
