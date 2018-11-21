@@ -8,10 +8,10 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<Automatio
   constructor() {
     super('automation-node');
   }
-  
+
   generateReactWidget(
     diagramEngine: DiagramEngine,
-    node:  AutomationNodeModel,
+    node: AutomationNodeModel,
   ): JSX.Element {
     if (node.extras.collapsed) {
       return <div />;

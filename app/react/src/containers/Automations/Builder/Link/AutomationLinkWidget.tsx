@@ -19,12 +19,11 @@ type Props = AutomationLinkProps & DroppedItemProps;
 
 const addinTarget = {
   canDrop() {
-   return false
+    return false;
   },
 };
 
-
- class AutomationLinkWidget extends React.Component<Props> {
+class AutomationLinkWidget extends React.Component<Props> {
   generateLink(extraProps: any, id: string | number): JSX.Element {
     const Bottom = (
       <path
@@ -83,10 +82,11 @@ const addinTarget = {
       );
     }
 
-    const opacity = isDragging ? 0.3 : 1; 
+    const opacity = isDragging ? 0.3 : 1;
 
-    return connectDropTarget &&
-    connectDropTarget(<g style={{ opacity }}>{paths}</g>);
+    return (
+      connectDropTarget && connectDropTarget(<g style={{ opacity }}>{paths}</g>)
+    );
   }
 }
 
@@ -105,7 +105,7 @@ export default compose<Props, AutomationLinkProps>(
     addinTarget,
     (connect, monitor) => ({
       connectDropTarget: connect.dropTarget(),
-      isDragging: !!monitor.getItemType()
+      isDragging: !!monitor.getItemType(),
     }),
   ),
-)(AutomationLinkWidget)
+)(AutomationLinkWidget);

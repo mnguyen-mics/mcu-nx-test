@@ -18,9 +18,9 @@ export interface AutomationBuilderContainerProps {
 }
 
 type Props = AutomationBuilderContainerProps &
-InjectedIntlProps &
-InjectedNotificationProps &
-RouteComponentProps<{ organisationId: string }>;
+  InjectedIntlProps &
+  InjectedNotificationProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class AutomationBuilderContainer extends React.Component<Props> {
   

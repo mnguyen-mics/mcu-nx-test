@@ -10,7 +10,10 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
-import { UserProfileResource, UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
+import {
+  UserProfileResource,
+  UserWorkspaceResource,
+} from '../../../models/directory/UserProfileResource';
 import AutomationBuilderContainer from './AutomationBuilderContainer';
 
 export interface AutomationBuilderPageRouteParams {
@@ -30,12 +33,10 @@ const messages = defineMessages({
   automationBuilder: {
     id: 'automation-builder-page-actionbar-title',
     defaultMessage: 'Automation Builder',
-  }
-})
+  },
+});
 
 class AutomationBuilderPage extends React.Component<Props> {
-
-
   render() {
     const { intl, connectedUser, location, history } = this.props;
 
@@ -49,12 +50,17 @@ class AutomationBuilderPage extends React.Component<Props> {
     let selectedDatamart: DatamartResource | undefined;
 
     const orgWp = connectedUser.workspaces.find(
-      (w: UserWorkspaceResource) => w.organisation_id === this.props.match.params.organisationId,
+      (w: UserWorkspaceResource) =>
+        w.organisation_id === this.props.match.params.organisationId,
     );
 
     const datamartIdQueryString = queryString.parse(location.search).datamartId;
 
-    if (orgWp !== undefined && orgWp.datamarts && orgWp.datamarts.length === 1) {
+    if (
+      orgWp !== undefined &&
+      orgWp.datamarts &&
+      orgWp.datamarts.length === 1
+    ) {
       selectedDatamart = orgWp.datamarts[0];
     }
 
@@ -73,8 +79,6 @@ class AutomationBuilderPage extends React.Component<Props> {
         ]
       } />;
     };
-
-    
 
     const style: React.CSSProperties = { height: '100%', display: 'flex' };
     return (
@@ -98,11 +102,21 @@ class AutomationBuilderPage extends React.Component<Props> {
           renderActionBar={automationActionBar}
           />
         )}
-      {selectedDatamart &&
-        selectedDatamart.storage_model_version === 'v201506' && (
-          history.push(`/v2/o/${this.props.match.params.organisationId}/automations/create`)
-        )}
-    </div>
+        {selectedDatamart &&
+          selectedDatamart.storage_model_version === 'v201709' && (
+            <AutomationBuilderContainer
+              datamartId={selectedDatamart.id}
+              renderActionBar={automationActionBar}
+            />
+          )}
+        {selectedDatamart &&
+          selectedDatamart.storage_model_version === 'v201506' &&
+          history.push(
+            `/v2/o/${
+              this.props.match.params.organisationId
+            }/automations/create`,
+          )}
+      </div>
     );
   }
 }
