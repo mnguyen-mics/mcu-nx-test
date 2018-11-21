@@ -28,6 +28,7 @@ export interface IAudienceFeedFormService {
     edition: boolean,
   ) => Promise<any>;
 }
+
 @injectable()
 export class AudienceFeedFormService implements IAudienceFeedFormService {
   @inject(TYPES.IAudienceSegmentService)
