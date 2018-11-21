@@ -28,6 +28,13 @@ export default class AutomationNodeModel extends NodeModel {
     this.color = color;
   }
 
+  getPosition = () => {
+    return {
+      x: this.x,
+      y: this.y,
+    };
+  }
+
   getSize() {
     return {
       width: 50,

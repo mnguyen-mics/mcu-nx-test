@@ -17,10 +17,16 @@ import AutomationNodeFactory from './AutomationNode/AutomationNodeFactory';
 import AutomationNodeModel from './AutomationNode/AutomationNodeModel';
 import AutomationLinkFactory from './Link/AutomationLinkFactory';
 import AvailableNodeVisualizer from './NodeVisualizer/AvailableNodeVisualizer';
+import {
+  StorylineNodeResource,
+  ScenarioNodeShape,
+} from '../../../models/automations/automations';
+import { McsIconType } from '../../../components/McsIcon';
 
 export interface AutomationBuilderProps {
   datamartId: string;
   organisationId: string;
+  automationData: StorylineNodeResource;
 }
 
 interface State {
@@ -47,28 +53,91 @@ class AutomationBuilder extends React.Component<Props, State> {
     };
   }
 
-  componentWillMount() {
-    const model = new DiagramModel();
-    model.setLocked(true);
+  buildAutomationModelTree = (
+    automationData: StorylineNodeResource,
+    model: DiagramModel,
+  ) => {
+    const generateNodeProperties = (
+      node: ScenarioNodeShape,
+    ): {
+      iconType: McsIconType;
+      color: string;
+    } => {
+      switch (node.type) {
+        case 'DISPLAY_CAMPAIGN':
+          return {
+            iconType: 'display',
+            color: '#0ba6e1',
+          };
+        case 'EMAIL_CAMPAIGN':
+          return {
+            iconType: 'email',
+            color: '#0ba6e1',
+          };
+        case 'QUERY_INPUT':
+        case 'ABN_NODE':
+          return {
+            iconType: 'question',
+            color: '#fbc02d',
+          };
+        case 'GOAL':
+          return {
+            iconType: 'check',
+            color: '#f9f9f9',
+          };
+        case 'FAILURE':
+          return {
+            iconType: 'close',
+            color: '#ff5959',
+          };
+        default:
+          return {
+            iconType: 'info',
+            color: '#fbc02d',
+          };
+      }
+    };
+
+
     const rootNode = new AutomationNodeModel(
-      'plus',
-      'User belongs to ### segment',
-      '#2ecc71',
+      generateNodeProperties(automationData.node).iconType,
+      `${automationData.node.name} - (type: ${automationData.node.type})`,
+      generateNodeProperties(automationData.node).color,
     );
     rootNode.root = true;
     rootNode.x = ROOT_NODE_POSITION.x;
     rootNode.y = ROOT_NODE_POSITION.y;
+    model.addNode(rootNode);
+    
 
-    const endNode = new AutomationNodeModel(
-      'close',
-      'End automation',
-      '#ff5959',
-    );
-    endNode.x = ROOT_NODE_POSITION.x * 4;
-    endNode.y = ROOT_NODE_POSITION.y;
 
-    this.buildModelTree(rootNode, endNode, model);
+    const layout = (currentNode: StorylineNodeResource, depth: number) => {
+      let acc = ROOT_NODE_POSITION.y;
+      currentNode.out_edges.forEach((child, index) => {
+        const storylineNode = new AutomationNodeModel(
+          generateNodeProperties(child.node).iconType,
+          `${child.node.name} - (type: ${child.node.type})`,
+          generateNodeProperties(child.node).color,
+        );
+        const shouldAccumulate = ROOT_NODE_POSITION.y * (index + 1) > acc;
+        if(shouldAccumulate) {
+          acc = acc + 150;
+        } 
+        storylineNode.x = ROOT_NODE_POSITION.x * 4 * depth;
+        // storylineNode.y =  shouldAccumulate ? : ;
+        model.addNode(storylineNode);
+        layout(child, depth + 1);
+      });
+    };
+    layout(automationData, 1);
 
+  };
+
+  componentWillMount() {
+    const { automationData } = this.props;
+    const model = new DiagramModel();
+    model.setLocked(true);
+    this.buildAutomationModelTree(automationData, model);
     this.engine.setDiagramModel(model);
   }
 

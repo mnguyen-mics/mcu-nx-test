@@ -9,12 +9,14 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import { RouteComponentProps, withRouter } from 'react-router';
 import AutomationBuilder from './AutomationBuilder';
+import { StorylineNodeResource } from '../../../models/automations/automations';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
   renderActionBar: (
     datamartId: string,
   ) => React.ReactNode;
+  automationData: StorylineNodeResource;
 }
 
 type Props = AutomationBuilderContainerProps &
@@ -40,6 +42,7 @@ class AutomationBuilderContainer extends React.Component<Props> {
       <AutomationBuilder
       datamartId={this.props.datamartId}
       organisationId={organisationId}
+      automationData={this.props.automationData}
       />
       </Layout.Content>
       </Layout>

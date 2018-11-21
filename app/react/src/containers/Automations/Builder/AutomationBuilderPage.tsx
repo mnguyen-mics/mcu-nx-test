@@ -15,6 +15,10 @@ import {
   UserWorkspaceResource,
 } from '../../../models/directory/UserProfileResource';
 import AutomationBuilderContainer from './AutomationBuilderContainer';
+import {
+  StorylineNodeResource,
+  EdgeHandler,
+} from '../../../models/automations/automations';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
@@ -22,6 +26,10 @@ export interface AutomationBuilderPageRouteParams {
 
 interface MapStateToProps {
   connectedUser: UserProfileResource;
+}
+
+interface State {
+  automationData?: StorylineNodeResource;
 }
 
 type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
@@ -36,7 +44,160 @@ const messages = defineMessages({
   },
 });
 
-class AutomationBuilderPage extends React.Component<Props> {
+class AutomationBuilderPage extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      automationData: undefined,
+    };
+  }
+  componentDidMount() {
+    const onVisit: EdgeHandler = 'ON_VISIT';
+    this.setState({
+      automationData: {
+        node: {
+          id: '001',
+          name: 'Start',
+          scenario_id: 'scenario_id_01',
+          type: 'DISPLAY_CAMPAIGN',
+          campaign_id: 'campaign_id_456',
+          ad_group_id: 'ad_group_id_789',
+        },
+        out_edges: [
+          {
+            node: {
+              id: '002',
+              name: 'WAIT 1',
+              scenario_id: 'scenario_id_01',
+              type: 'QUERY_INPUT',
+              query_id: 'query_id_1212',
+              evaluation_mode: '000',
+            },
+            in_edge: {
+              id: '222',
+              source_id: '33',
+              target_id: '44',
+              handler: onVisit,
+              scenario_id: 'scenario_id_004',
+            },
+            out_edges: [
+              {
+                node: {
+                  id: '003',
+                  name: 'IF',
+                  scenario_id: 'scenario_id_004',
+                  type: 'QUERY_INPUT',
+                  query_id: 'query_id_55',
+                  evaluation_mode: '000',
+                },
+                out_edges: [
+                  {
+                    node: {
+                      id: '004',
+                      name: 'Send Email',
+                      scenario_id: '14147',
+                      type: 'EMAIL_CAMPAIGN',
+                      campaign_id: '2525',
+                    },
+                    in_edge: {
+                      id: '222',
+                      source_id: '33',
+                      target_id: '44',
+                      handler: onVisit,
+                      scenario_id: 'scenario_id_004',
+                    },
+                    out_edges: [], // to continue
+                  },
+                  {
+                    node: {
+                      id: '005',
+                      name: 'End Node',
+                      scenario_id: 'scenario_id_0878',
+                      type: 'FAILURE',
+                    },
+                    in_edge: {
+                      id: '222',
+                      source_id: '33',
+                      target_id: '44',
+                      handler: onVisit,
+                      scenario_id: 'scenario_id_004',
+                    },
+                    out_edges: [],
+                  },
+                  
+                ],
+              },
+            ],
+          },
+          {
+            node: {
+              id: '002',
+              name: 'WAIT 2',
+              scenario_id: 'scenario_id_01',
+              type: 'QUERY_INPUT',
+              query_id: 'query_id_1212',
+              evaluation_mode: '000',
+            },
+            in_edge: {
+              id: '222',
+              source_id: '33',
+              target_id: '44',
+              handler: onVisit,
+              scenario_id: 'scenario_id_004',
+            },
+            out_edges: [
+              {
+                node: {
+                  id: '003',
+                  name: 'IF',
+                  scenario_id: 'scenario_id_004',
+                  type: 'QUERY_INPUT',
+                  query_id: 'query_id_55',
+                  evaluation_mode: '000',
+                },
+                out_edges: [
+                  {
+                    node: {
+                      id: '004',
+                      name: 'Send Email',
+                      scenario_id: '14147',
+                      type: 'EMAIL_CAMPAIGN',
+                      campaign_id: '2525',
+                    },
+                    in_edge: {
+                      id: '222',
+                      source_id: '33',
+                      target_id: '44',
+                      handler: onVisit,
+                      scenario_id: 'scenario_id_004',
+                    },
+                    out_edges: [],
+                  },
+                  {
+                    node: {
+                      id: '005',
+                      name: 'End Node',
+                      scenario_id: 'scenario_id_0878',
+                      type: 'FAILURE',
+                    },
+                    in_edge: {
+                      id: '222',
+                      source_id: '33',
+                      target_id: '44',
+                      handler: onVisit,
+                      scenario_id: 'scenario_id_004',
+                    },
+                    out_edges: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+  }
+
   render() {
     const { intl, connectedUser, location, history } = this.props;
 
@@ -95,18 +256,13 @@ class AutomationBuilderPage extends React.Component<Props> {
           }}
         />
       )}
-      {selectedDatamart &&
-        selectedDatamart.storage_model_version === 'v201709' && (
-          <AutomationBuilderContainer
-          datamartId={selectedDatamart.id}
-          renderActionBar={automationActionBar}
-          />
-        )}
         {selectedDatamart &&
-          selectedDatamart.storage_model_version === 'v201709' && (
+          selectedDatamart.storage_model_version === 'v201709' &&
+          this.state.automationData && (
             <AutomationBuilderContainer
               datamartId={selectedDatamart.id}
               renderActionBar={automationActionBar}
+              automationData={this.state.automationData}
             />
           )}
         {selectedDatamart &&

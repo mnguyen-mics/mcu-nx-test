@@ -29,7 +29,7 @@ export interface StorylineResource {
 
 export interface ScenarioNodeResource {
   id: string;
-  name: string | null;
+  name: string;
   scenario_id: string;
 }
 
@@ -48,8 +48,8 @@ export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
   query_id: string;
   evaluation_mode: string;
-  evaluation_period: string | null;
-  evaluation_period_unit: string | null;
+  evaluation_period?: string;
+  evaluation_period_unit?: string;
 }
 
 export interface ABNNodeResource extends ScenarioNodeResource {
@@ -62,9 +62,13 @@ export interface PluginNodeResource extends ScenarioNodeResource {
   artifact_id: string;
   group_id: string;
   id: string;
-  name: string | null;
+  name: string;
   scenario_id: string;
   scenario_node_processor_id: string;
+}
+
+export interface EndNodeResource extends ScenarioNodeResource{
+  type: 'FAILURE' | 'GOAL'
 }
 
 export type ScenarioNodeShape =
@@ -72,7 +76,8 @@ export type ScenarioNodeShape =
   | EmailCampaignNodeResource
   | QueryInputNodeResource
   | ABNNodeResource
-  | PluginNodeResource;
+  | PluginNodeResource
+  | EndNodeResource;
 
 export interface ScenarioEdgeResource {
   id: string;
@@ -82,8 +87,10 @@ export interface ScenarioEdgeResource {
   scenario_id: string;
 }
 
-export enum EdgeHandler {
-  'ON_VISIT',
-  'ON_GOAL',
-  'GOAL',
+export type EdgeHandler = 'ON_VISIT' | 'ON_GOAL' | 'GOAL';
+
+export interface StorylineNodeResource {
+  node: ScenarioNodeShape;
+  in_edge?: ScenarioEdgeResource;
+  out_edges: StorylineNodeResource[];
 }
