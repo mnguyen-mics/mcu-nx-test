@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { DiagramEngine } from 'storm-react-diagrams';
+import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import AutomationNodeModel from './AutomationNodeModel';
 import { McsIcon } from '../../../../components';
-import FourAnchorPortWidget from '../../../QueryTool/JSONOTQL/Diagram/Common/FourAnchorPortWidget';
+import { ROOT_NODE_POSITION } from '../../../QueryTool/JSONOTQL/domain';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -27,26 +27,57 @@ class AutomationNodeWidget extends React.Component<AutomationNodeProps> {
     const borderColor = node.getColor();
 
     return (
-      <div className="node-body">
-        <div ref={ref => this.setPosition(ref)}>
+      <div
+        className="node-body"
+        style={{ width: `${node.width}px`, height: `${node.height}px` }}
+      >
+        <div
+          className={'node-icon'}
+          style={{
+            width: node.getSize().width,
+            height: node.getSize().height,
+            borderWidth: node.getSize().borderWidth,
+            borderColor: borderColor,
+            float: 'left',
+            color: color,
+            backgroundColor: backgroundColor,
+          }}
+        >
+          <McsIcon type={node.iconType} />
+        </div>
+
+        <div className="node-content">{node.title}</div>
+
+        <div
+          style={{
+            position: 'absolute',
+            top: node.height / 2,
+            left: node.width / 2,
+          }}
+        >
+          <PortWidget name="center" node={this.props.node} />
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            top: node.height / 2,
+            left: node.width + 20,
+          }}
+        >
+          <PortWidget name="right" node={this.props.node} />
+        </div>
+        {(node.y !== ROOT_NODE_POSITION.y ||
+          node.x !== ROOT_NODE_POSITION.x) && (
           <div
-            className={'node-icon'}
             style={{
-              width: node.getSize().width,
-              height: node.getSize().height,
-              borderWidth: node.getSize().borderWidth,
-              borderColor: borderColor,
-              float: 'left',
-              color: color,
-              backgroundColor: backgroundColor,
+              position: 'absolute',
+              top: node.height / 2 - 6,
+              left: -10,
             }}
           >
-            <McsIcon type={node.iconType} />
+            <McsIcon type="chevron-right" className="arrow" />
           </div>
-
-          <FourAnchorPortWidget node={node} />
-        </div>
-        <div className="node-content">{node.title}</div>
+        )}
       </div>
     );
   }

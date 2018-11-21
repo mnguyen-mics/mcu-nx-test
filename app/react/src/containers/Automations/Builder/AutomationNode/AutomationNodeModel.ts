@@ -2,7 +2,6 @@ import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../../../QueryTool/JSONOTQL/Diagram/Port/SimplePortModel';
 import { McsIconType } from '../../../../components/McsIcon';
 
-
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
   negation = false;
@@ -15,17 +14,20 @@ export default class AutomationNodeModel extends NodeModel {
     iconType: McsIconType,
     title: string,
     color: string,
+    width: number,
+    height: number,
+    treeNodePath?: number[],
   ) {
     super('automation-node');
 
+    this.addPort(new SimplePortModel('center'));
     this.addPort(new SimplePortModel('right'));
-    this.addPort(new SimplePortModel('left'));
-    this.addPort(new SimplePortModel('bottom'));
-    this.addPort(new SimplePortModel('top'));
 
     this.iconType = iconType;
     this.title = title;
     this.color = color;
+    this.width = width;
+    this.height = height;
   }
 
   getPosition = () => {
@@ -41,9 +43,9 @@ export default class AutomationNodeModel extends NodeModel {
       height: 50,
       borderWidth: 2,
     };
-  };
+  }
 
   getColor() {
     return this.color;
-  };
+  }
 }

@@ -67,7 +67,25 @@ class AutomationBuilderPage extends React.Component<Props, State> {
           {
             node: {
               id: '002',
-              name: 'WAIT 1',
+              name: 'CASE 1',
+              scenario_id: 'scenario_id_01',
+              type: 'QUERY_INPUT',
+              query_id: 'query_id_1212',
+              evaluation_mode: '000',
+            },
+            in_edge: {
+              id: '222',
+              source_id: '33',
+              target_id: '44',
+              handler: onVisit,
+              scenario_id: 'scenario_id_004',
+            },
+            out_edges: [],
+          },
+          {
+            node: {
+              id: '002',
+              name: 'CASE 2',
               scenario_id: 'scenario_id_01',
               type: 'QUERY_INPUT',
               query_id: 'query_id_1212',
@@ -84,27 +102,41 @@ class AutomationBuilderPage extends React.Component<Props, State> {
               {
                 node: {
                   id: '003',
+                  name: 'DISP 1',
+                  scenario_id: 'scenario_id_004',
+                  type: 'DISPLAY_CAMPAIGN',
+                  campaign_id: 'campaign_id_456',
+                  ad_group_id: 'ad_group_id_789',
+                },
+                out_edges: [],
+              },
+              {
+                node: {
+                  id: '003',
+                  name: 'DISP 2',
+                  scenario_id: 'scenario_id_004',
+                  type: 'DISPLAY_CAMPAIGN',
+                  campaign_id: 'campaign_id_456',
+                  ad_group_id: 'ad_group_id_789',
+                },
+                out_edges: [],
+              },
+              {
+                node: {
+                  id: '003',
                   name: 'IF',
                   scenario_id: 'scenario_id_004',
                   type: 'QUERY_INPUT',
                   query_id: 'query_id_55',
                   evaluation_mode: '000',
                 },
-                in_edge: {
-                  id: '222',
-                  source_id: '002',
-                  target_id: '003',
-                  handler: onVisit,
-                  scenario_id: 'scenario_id_004',
-                },
                 out_edges: [
                   {
                     node: {
                       id: '004',
-                      name: 'Send Email',
+                      name: 'Goal',
                       scenario_id: '14147',
-                      type: 'EMAIL_CAMPAIGN',
-                      campaign_id: '2525',
+                      type: 'GOAL',
                     },
                     in_edge: {
                       id: '222',
@@ -113,12 +145,12 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                       handler: onVisit,
                       scenario_id: 'scenario_id_004',
                     },
-                    out_edges: [], // to continue
+                    out_edges: [],
                   },
                   {
                     node: {
                       id: '005',
-                      name: 'End Node',
+                      name: 'Fail',
                       scenario_id: 'scenario_id_0878',
                       type: 'FAILURE',
                     },
@@ -132,13 +164,24 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                     out_edges: [],
                   },
                 ],
+              },
+              {
+                node: {
+                  id: '003',
+                  name: 'IF',
+                  scenario_id: 'scenario_id_004',
+                  type: 'QUERY_INPUT',
+                  query_id: 'query_id_55',
+                  evaluation_mode: '000',
+                },
+                out_edges: [],
               },
             ],
           },
           {
             node: {
               id: '002',
-              name: 'WAIT 2',
+              name: 'CASE 3',
               scenario_id: 'scenario_id_01',
               type: 'QUERY_INPUT',
               query_id: 'query_id_1212',
@@ -151,60 +194,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
               handler: onVisit,
               scenario_id: 'scenario_id_004',
             },
-            out_edges: [
-              {
-                node: {
-                  id: '003',
-                  name: 'IF',
-                  scenario_id: 'scenario_id_004',
-                  type: 'QUERY_INPUT',
-                  query_id: 'query_id_55',
-                  evaluation_mode: '000',
-                },
-                in_edge: {
-                  id: '222',
-                  source_id: '33',
-                  target_id: '44',
-                  handler: onVisit,
-                  scenario_id: 'scenario_id_004',
-                },
-                out_edges: [
-                  {
-                    node: {
-                      id: '004',
-                      name: 'Send Email',
-                      scenario_id: '14147',
-                      type: 'EMAIL_CAMPAIGN',
-                      campaign_id: '2525',
-                    },
-                    in_edge: {
-                      id: '222',
-                      source_id: '33',
-                      target_id: '44',
-                      handler: onVisit,
-                      scenario_id: 'scenario_id_004',
-                    },
-                    out_edges: [],
-                  },
-                  {
-                    node: {
-                      id: '005',
-                      name: 'End Node',
-                      scenario_id: 'scenario_id_0878',
-                      type: 'FAILURE',
-                    },
-                    in_edge: {
-                      id: '222',
-                      source_id: '33',
-                      target_id: '44',
-                      handler: onVisit,
-                      scenario_id: 'scenario_id_004',
-                    },
-                    out_edges: [],
-                  },
-                ],
-              },
-            ],
+            out_edges: [],
           },
         ],
       },

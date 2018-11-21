@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { DiagramEngine, PointModel } from 'storm-react-diagrams';
+import { DiagramEngine, Toolkit } from 'storm-react-diagrams';
 import AutomationLinkModel from './AutomationLinkModel';
 import { compose } from 'recompose';
 import { DropTarget, ConnectDropTarget } from 'react-dnd';
-import { CustomNodeShape } from '../../../QueryTool/JSONOTQL/domain';
+import { AutomationLinkFactory } from '.';
 
 export interface AutomationLinkProps {
   link: AutomationLinkModel;
@@ -24,63 +24,113 @@ const addinTarget = {
 };
 
 class AutomationLinkWidget extends React.Component<Props> {
-  generateLink(extraProps: any, id: string | number): JSX.Element {
-    const Bottom = (
-      <path
-        strokeWidth="2"
-        stroke={`url(#${this.props.link.getID()})`}
-        {...extraProps}
-      />
+  refPaths: SVGPathElement[];
+
+  constructor(props: Props) {
+    super(props);
+    this.refPaths = [];
+  }
+
+  generateLink(
+    path: string,
+    extraProps: any,
+    id: string | number,
+  ): JSX.Element {
+    const props = this.props;
+
+    const Bottom = React.cloneElement(
+      (props.diagramEngine.getFactoryForLink(
+        this.props.link,
+      ) as AutomationLinkFactory).generateLinkSegment(
+        this.props.link,
+        this,
+        false,
+        path,
+      ),
+      {
+        ref: (ref: any) => ref && this.refPaths.push(ref),
+      },
     );
 
-    return <g key={'link-' + id}>{Bottom}</g>;
+    const Top = React.cloneElement(Bottom, {
+      ...extraProps,
+      strokeLinecap: 'round',
+      onMouseLeave: () => {
+        this.setState({ selected: false });
+      },
+      onMouseEnter: () => {
+        this.setState({ selected: true });
+      },
+      ref: null,
+      'data-linkid': this.props.link.getID(),
+      strokeOpacity: 0,
+      strokeWidth: 20,
+      onContextMenu: () => {
+        if (!this.props.diagramEngine.isModelLocked(this.props.link)) {
+          event!.preventDefault();
+          this.props.link.remove();
+        }
+      },
+    });
+
+    return (
+      <g key={'link-' + id}>
+        {Bottom}
+        {Top}
+      </g>
+    );
+  }
+
+  generatePoint(pointIndex: number): JSX.Element {
+    const x = this.props.link.points[pointIndex].x;
+    const y = this.props.link.points[pointIndex].y;
+    const onMouseLeave = () => this.setState({ selected: false });
+    const onMouseEnter = () => this.setState({ selected: true });
+    return (
+      <g key={'point-' + this.props.link.points[pointIndex].id}>
+        <circle cx={x} cy={y} r={5} className={`point automation-point`} />
+        <circle
+          onMouseLeave={onMouseLeave}
+          onMouseEnter={onMouseEnter}
+          data-id={this.props.link.points[pointIndex].id}
+          data-linkid={this.props.link.id}
+          cx={x}
+          cy={y}
+          r={15}
+          opacity={0}
+          className={'point automation-point'}
+        />
+      </g>
+    );
   }
 
   render() {
-    // ensure id is present for all points on the path
     const { link, isDragging, connectDropTarget } = this.props;
     const points = link.points;
     const paths: JSX.Element[] = [];
 
-    const targetPortParent = link
-      .getTargetPort()
-      .getParent() as CustomNodeShape;
-
-    const drawLink = !targetPortParent.extras.collapsed;
-    if (points.length === 2 && drawLink) {
-      let pointLeft = points[0];
-      let pointRight = points[1];
-
-      if (pointLeft.x > pointRight.x) {
-        pointLeft = points[1];
-        pointRight = points[0];
-      }
-
-      paths.push(
-        <defs key={this.props.link.getID()}>
-          <linearGradient
-            id={this.props.link.getID()}
-            x1={pointLeft.x}
-            y1={pointLeft.y}
-            x2={pointRight.x}
-            y2={pointRight.y}
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopColor={'#919191'} offset="0" />
-            <stop stopColor={'#919191'} offset="1" />
-          </linearGradient>
-        </defs>,
-      );
-
+    for (let j = 0; j < points.length - 1; j++) {
       paths.push(
         this.generateLink(
+          Toolkit.generateLinePath(points[j], points[j + 1]),
           {
-            d: generateLinePath(pointLeft, pointRight),
+            'data-linkid': this.props.link.id,
+            'data-point': j,
+            onMouseDown: (event: MouseEvent) => {
+              //
+            },
           },
-          '0',
+          j,
         ),
       );
     }
+
+    // for (let i = 1; i < points.length - 1; i++) {
+    //   paths.push(this.generatePoint(i));
+    // }
+    // if (this.props.link.targetPort === null) {
+    //   paths.push(this.generatePoint(points.length - 1));
+    // }
 
     const opacity = isDragging ? 0.3 : 1;
 
@@ -88,13 +138,6 @@ class AutomationLinkWidget extends React.Component<Props> {
       connectDropTarget && connectDropTarget(<g style={{ opacity }}>{paths}</g>)
     );
   }
-}
-
-function generateLinePath(
-  firstPoint: PointModel,
-  lastPoint: PointModel,
-): string {
-  return `M${firstPoint.x} ${firstPoint.y} L${lastPoint.x} ${lastPoint.y}`;
 }
 
 export default compose<Props, AutomationLinkProps>(

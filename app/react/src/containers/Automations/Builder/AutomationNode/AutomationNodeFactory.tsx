@@ -28,6 +28,8 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
       'plus',
       'User belongs to ### segment',
       '#2ecc71',
+      180,
+      90
     );
   }
 }

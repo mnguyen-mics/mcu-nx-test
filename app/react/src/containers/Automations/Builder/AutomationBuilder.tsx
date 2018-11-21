@@ -4,12 +4,9 @@ import {
   DiagramWidget,
   DiagramModel,
 } from 'storm-react-diagrams';
-import {
-  ROOT_NODE_POSITION,
-  createLink,
-} from '../../QueryTool/JSONOTQL/domain';
+import { ROOT_NODE_POSITION } from '../../QueryTool/JSONOTQL/domain';
 import { Col } from 'antd';
-import { ButtonStyleless, McsIcon } from '../../../components';
+import { McsIcon, ButtonStyleless } from '../../../components';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import SimplePortFactory from '../../QueryTool/JSONOTQL/Diagram/Port/SimplePortFactory';
@@ -22,6 +19,14 @@ import {
   ScenarioNodeShape,
 } from '../../../models/automations/automations';
 import { McsIconType } from '../../../components/McsIcon';
+import { AutomationLinkModel } from './Link';
+import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
+
+export interface QueryResult {
+  loading: boolean;
+  error?: any;
+  otqlResult?: OTQLResult;
+}
 
 export interface AutomationBuilderProps {
   datamartId: string;
@@ -63,14 +68,32 @@ class AutomationBuilder extends React.Component<Props, State> {
         this.generateNodeProperties(child.node).iconType,
         `${child.node.name} - (type: ${child.node.type})`,
         this.generateNodeProperties(child.node).color,
+        180,
+        90,
       );
       storylineNode.x = ROOT_NODE_POSITION.x + 300 * xAxisLocal;
       storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
       model.addNode(storylineNode);
-      if (child.in_edge)
-        model.addLink(
-          createLink(nodeModel.ports.right, storylineNode.ports.left),
+
+      if (node.out_edges.length > 0 && index === 0) {
+        const outLink = new AutomationLinkModel();
+        outLink.setSourcePort(nodeModel.ports.center);
+        outLink.setTargetPort(storylineNode.ports.center);
+        outLink.setColor('#afafaf');
+        model.addLink(outLink);
+      }
+      if (index !== 0) {
+        const link = new AutomationLinkModel();
+        link.setColor('#afafaf');
+        link.setSourcePort(nodeModel.ports.right);
+        link.setTargetPort(storylineNode.ports.center);
+        link.point(
+          nodeModel.x + nodeModel.width + 21.5,
+          storylineNode.y + storylineNode.height / 2,
         );
+        model.addLink(link);
+      }
+
       return this.buildAutomationTree(
         model,
         child,
@@ -120,6 +143,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           color: '#fbc02d',
         };
     }
+    //
   };
 
   startAutomationTree = (
@@ -130,11 +154,14 @@ class AutomationBuilder extends React.Component<Props, State> {
       this.generateNodeProperties(automationData.node).iconType,
       `${automationData.node.name} - (type: ${automationData.node.type})`,
       this.generateNodeProperties(automationData.node).color,
+      180,
+      90,
     );
-    rootNode.root = true;
+
     rootNode.x = ROOT_NODE_POSITION.x;
     rootNode.y = ROOT_NODE_POSITION.y;
     model.addNode(rootNode);
+    this.engine.installDefaultFactories();
     this.buildAutomationTree(model, automationData, rootNode, 0, 1);
   };
 
@@ -157,12 +184,12 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.setDiagramModel(model);
   }
 
+  onSchemaSelectorClick = () => {
+    this.setState({ viewSchema: !this.state.viewSchema });
+  };
+
   render() {
     const { viewSchema } = this.state;
-
-    const onSchemaSelectorClick = () =>
-      this.setState({ viewSchema: !viewSchema });
-
     return (
       <div className={`automation-builder`} ref={this.div}>
         <Col span={viewSchema ? 18 : 24} className={'diagram'}>
@@ -173,7 +200,10 @@ class AutomationBuilder extends React.Component<Props, State> {
             inverseZoom={true}
           />
           <div className="button-helpers top">
-            <ButtonStyleless onClick={onSchemaSelectorClick} className="helper">
+            <ButtonStyleless
+              onClick={this.onSchemaSelectorClick}
+              className="helper"
+            >
               <McsIcon
                 type={'chevron-right'}
                 style={
@@ -184,7 +214,7 @@ class AutomationBuilder extends React.Component<Props, State> {
                         transition: 'all 0.5ms ease',
                       }
                 }
-              />
+              />{' '}
             </ButtonStyleless>
           </div>
         </Col>
