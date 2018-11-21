@@ -8,7 +8,6 @@ import injectNotifications, {
 import AudienceFeedForm from './AudienceFeedForm';
 import { Loading } from '../../../../../components';
 import {
-  AudienceFeedFormService,
   IAudienceFeedFormService,
 } from './AudienceFeedFormService';
 import { AudienceFeedFormModel, FeedRouteParams, FeedType } from './domain';
@@ -41,7 +40,8 @@ class AudienceFeedPage extends React.Component<
 > {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
-  private _audienceFeedFormService: IAudienceFeedFormService = new AudienceFeedFormService();
+  @lazyInject(TYPES.IAudienceFeedFormService)
+  private _audienceFeedFormService: IAudienceFeedFormService;
 
   constructor(props: JoinedProps) {
     super(props);

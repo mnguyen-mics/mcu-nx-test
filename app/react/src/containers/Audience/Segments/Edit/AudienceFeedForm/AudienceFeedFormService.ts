@@ -3,9 +3,8 @@ import { executeTasksInSequence } from '../../../../../utils/FormHelper';
 import { DataResponse } from '../../../../../services/ApiService';
 import { AudienceFeedFormModel } from './domain';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../../constants/types';
-import { lazyInject } from '../../../../../config/inversify.config';
 
 export interface IAudienceFeedFormService {
   loadTagInitialValue: (
@@ -29,9 +28,10 @@ export interface IAudienceFeedFormService {
     edition: boolean,
   ) => Promise<any>;
 }
+
 @injectable()
 export class AudienceFeedFormService implements IAudienceFeedFormService {
-  @lazyInject(TYPES.IAudienceSegmentService)
+  @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   loadTagInitialValue(
     segmentId: string,

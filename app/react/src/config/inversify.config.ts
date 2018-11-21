@@ -1,4 +1,8 @@
 import {
+  IAudienceFeedFormService,
+  AudienceFeedFormService,
+} from './../containers/Audience/Segments/Edit/AudienceFeedForm/AudienceFeedFormService';
+import {
   OverlapInterval,
   IOverlapInterval,
 } from './../containers/Audience/Segments/Dashboard/OverlapServices';
@@ -37,6 +41,9 @@ container
 container
   .bind<IAudienceSegmentService>(TYPES.IAudienceSegmentService)
   .to(AudienceSegmentService);
+container
+  .bind<IAudienceFeedFormService>(TYPES.IAudienceFeedFormService)
+  .to(AudienceFeedFormService);
 container
   .bind<IAudienceSegmentFormService>(TYPES.IAudienceSegmentFormService)
   .to(AudienceSegmentFormService);
