@@ -96,7 +96,10 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         }
         this.props.setColorsStore(mcsColors);
         document.addEventListener('unauthorizedEvent', (e) => { 
-          this.props.history.push('/logout');
+          this.props.history.push({
+            pathname: '/logout', 
+            state: this.props.location.pathname
+          });
          }, false);
     
       })
@@ -153,7 +156,10 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     const logoutRouteRender = ({ history }: any) => {
       const redirectCb = () => {
-        history.push('/');
+        history.push({
+          pathname: '/', 
+            state: this.props.location.pathname
+        });
       };
       this.props.logOut(undefined, { redirectCb });
       return null;

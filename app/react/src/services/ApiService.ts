@@ -117,7 +117,12 @@ function request(
 
   const checkAndParse = (response: Response) => {
     const contentType = response.headers.get('Content-Type');
-
+    
+    if(response.status === 401) {
+      const event = new Event('unauthorizedEvent');
+      document.dispatchEvent(event);
+    }
+   
     if (
       contentType &&
       (contentType.indexOf('image/png') !== -1 ||
@@ -138,10 +143,6 @@ function request(
     // Considered as a json response by default
     return response.json().then(json => {
       if (!response.ok) {
-        if(response.status === 401) {
-          const event = new Event('unauthorizedEvent');
-          document.dispatchEvent(event);
-        }
         return Promise.reject(json);
       }
 
