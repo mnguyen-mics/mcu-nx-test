@@ -1,6 +1,16 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { AutomationResource, AutomationCreateResource } from '../models/automations/automations';
+import { AutomationResource, AutomationCreateResource, AutomationStatus } from '../models/automations/automations';
+import { PaginatedApiParam } from '../utils/ApiHelper';
 
+export interface GetAutomationsOptions extends PaginatedApiParam {
+  administration_id?: string;
+  scope?: string;
+  keywords?: string;
+  status?: AutomationStatus[];
+  archived?: boolean;
+  label_ids?: string[];
+  order_by?: string[];
+}
 
 const scenariosService = {
   getScenarios(organisationId: string, options: object = {}): Promise<DataListResponse<AutomationResource>> {

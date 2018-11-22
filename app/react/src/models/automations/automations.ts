@@ -3,8 +3,10 @@ export interface AutomationResource {
     name: string;
     datamart_id: string;
     organisation_id: string;
-    status: 'ACTIVE' | 'PENDING' | 'NEW'
+    status: AutomationStatus;
 }
+
+export type AutomationStatus = 'ACTIVE' | 'PENDING' | 'NEW' | 'PAUSED';
 
 export interface AutomationCreateResource {
     name: string;
