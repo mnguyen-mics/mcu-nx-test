@@ -133,57 +133,6 @@ class AutomationListPage extends React.Component<
     });
   };
 
-  makeAuditAction = (scenarios: AutomationResource[]) => {
-    this.setState({
-      isArchiving: true,
-    });
-    const tasks: Task[] = [];
-    scenarios.forEach(scenario => {
-      tasks.push(() => {scenario.id
-        return ScenarioService.updateScenario(scenario.id, {
-            id: scenario.id,
-            name: scenario.name,
-            status: 'PAUSED',
-            datamart_id: scenario.datamart_id,
-            organisation_id: scenario.organisation_id,
-        });
-      });
-    });
-    executeTasksInSequence(tasks)
-      .then(() => {
-        this.redirectAndNotify();
-        this.setState({
-          isArchiving: false,
-        });
-      })
-      .catch(err => {
-        this.props.notifyError(err);
-        this.setState({
-          isArchiving: false,
-        });
-      });
-  };
-
-  handleOk = () => {
-    const { selectedRowKeys, allRowsAreSelected } = this.state;
-    if (allRowsAreSelected) {
-      return this.getAllAutomations().then((allScenarios: AutomationResource[]) => {
-        this.makeAuditAction(allScenarios);
-      });
-    } else {
-        return this.getAllAutomations().then((allScenarios: AutomationResource[]) => {
-            const selectedScenarios = allScenarios.filter(scenario => selectedRowKeys.includes(scenario.id))
-            this.makeAuditAction(selectedScenarios);
-          });
-    }
-  };
-
-  handleCancel = () => {
-    this.setState({
-      visible: false,
-    });
-  };
-
   updateAutomationStatus = (
     scenario: AutomationResource,
     status: AutomationStatus,
@@ -325,8 +274,6 @@ class AutomationListPage extends React.Component<
 
     const multiEditProps = {
       visible: this.state.visible,
-      handleOk: this.handleOk,
-      handleCancel: this.handleCancel,
       handleStatusAction: this.handleStatusAction,
     };
 

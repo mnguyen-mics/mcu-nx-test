@@ -26,8 +26,6 @@ interface AutomationActionbarProps {
   rowSelection: ExtendedTableRowSelection;
   multiEditProps: {
     visible: boolean;
-    handleOk: () => any;
-    handleCancel: () => void;
     handleStatusAction: (status: AutomationStatus) => void;
   };
 } 
