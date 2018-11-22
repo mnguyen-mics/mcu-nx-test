@@ -47,7 +47,7 @@ class PluginEditSelector<T extends LayoutablePlugin> extends React.Component<Plu
                         item.artifact_id}
                       key={item.id}
                       icon_path={(item.plugin_layout !== undefined) ?
-                        item.plugin_layout.metadata.small_icon_asset_url :
+                        (window as any).MCS_CONSTANTS.ASSETS_URL+item.plugin_layout.metadata.small_icon_asset_url :
                         undefined}
                       subtitles={(item.plugin_layout && item.plugin_layout.metadata && item.plugin_layout.metadata.description) ?
                         [item.plugin_layout.metadata.description] :

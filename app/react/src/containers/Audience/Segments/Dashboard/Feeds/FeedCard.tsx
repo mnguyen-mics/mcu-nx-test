@@ -315,7 +315,9 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             {cardHeaderThumbnail ? (
               <img
                 className="image-title"
-                src={cardHeaderThumbnail}
+                src={`${
+                  (window as any).MCS_CONSTANTS.ASSETS_URL
+                  }${cardHeaderThumbnail}`}
               />
             ) : (
               undefined
