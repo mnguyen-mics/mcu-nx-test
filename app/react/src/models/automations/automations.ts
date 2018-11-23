@@ -6,7 +6,9 @@ export interface AutomationResource {
     status: AutomationStatus;
 }
 
-export type AutomationStatus = 'ACTIVE' | 'PENDING' | 'NEW' | 'PAUSED';
+export type AutomationStatus = 'NEW' | 'ACTIVE' | 'PAUSED';
+export const automationStatuses: string[] = ['NEW', 'ACTIVE', 'PAUSED'];
+
 
 export interface AutomationCreateResource {
     name: string;

@@ -17,9 +17,6 @@ import injectNotifications, { InjectedNotificationProps } from '../../Notificati
 import Dropdown from 'antd/lib/dropdown/dropdown';
 import messages from './messages';
 import Slider from '../../../components/Transition/Slide';
-import withTranslations from '../../Helpers/withTranslations';
-import { injectDrawer } from '../../../components/Drawer';
-
 
 interface AutomationActionbarProps {
   organisationId: string;
@@ -46,7 +43,6 @@ interface AutomationActionbarState {
   allAutomationsActivated: boolean;
   allAutomationsPaused: boolean;
 }
-
 class AutomationActionBar extends React.Component<JoinedProps, AutomationActionbarState> {
   
   constructor(props: JoinedProps) {
@@ -130,8 +126,6 @@ class AutomationActionBar extends React.Component<JoinedProps, AutomationActionb
 
 export default compose<JoinedProps, AutomationActionbarProps>(
   withRouter,
-  withTranslations,
-  injectDrawer,
   injectNotifications,
   injectIntl,
 )(AutomationActionBar);

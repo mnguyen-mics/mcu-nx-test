@@ -10,7 +10,7 @@ import { TranslationProps } from '../../Helpers/withTranslations';
 import { Label } from '../../Labels/Labels';
 import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
-import ScenarioService, { GetAutomationsOptions } from '../../../services/ScenarioService';
+import ScenarioService, { GetAutomationsOptions, SCENARIOS_SEARCH_SETTINGS } from '../../../services/ScenarioService';
 import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
 import { UpdateMessage } from '../../Campaigns/Display/Dashboard/ProgrammaticCampaign/DisplayCampaignAdGroupTable';
@@ -32,7 +32,7 @@ export interface MapDispatchToProps {
 export interface MapStateToProps {
     fetchAutomationList: (
         organisationId: string,
-        filer: FilterParams,
+        filter: FilterParams,
         bool?: boolean,
     ) => void;
     resetAutomationsTable: () => void;
@@ -90,8 +90,8 @@ class AutomationListPage extends React.Component<
       totalAutomations,
     } = this.props;
     const options: GetAutomationsOptions = {
+      organisation_id: organisationId,
       max_results: totalAutomations,
-      archived: false,
     };
     return ScenarioService.getScenarios(organisationId, options)
       .then(apiResp =>
@@ -112,7 +112,7 @@ class AutomationListPage extends React.Component<
         params: { organisationId },
       },
     } = this.props;
-    const filter = parseSearch<FilterParams>(search);
+    const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
     if (dataSource.length === 1 && filter.currentPage !== 1) {
       const newFilter = {
         ...filter,
@@ -203,9 +203,15 @@ class AutomationListPage extends React.Component<
       isUpdatingStatuses: true,
     });
 
+    const filter = parseSearch<FilterParams>(
+      search,
+      SCENARIOS_SEARCH_SETTINGS,
+    );
+
     const options: GetAutomationsOptions = {
+      organisation_id: organisationId,
       max_results: totalAutomations,
-      archived: false,
+      keywords: filter.keywords,
     };
     
     ScenarioService.getScenarios(organisationId, options)
@@ -225,9 +231,6 @@ class AutomationListPage extends React.Component<
                 isUpdatingStatuses: false,
               },
               () => {
-                const filter = parseSearch<FilterParams>(
-                  search
-                );
                 fetchAutomationList(organisationId, filter);
               },
             );

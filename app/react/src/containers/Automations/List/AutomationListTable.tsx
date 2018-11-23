@@ -1,22 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Layout, Tooltip } from 'antd';
+import { Layout, Tooltip, Icon } from 'antd';
 import { compose } from 'recompose';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import withTranslations, { TranslationProps } from '../../Helpers/withTranslations';
-import { AutomationResource } from '../../../models/automations/automations';
-import { updateSearch, compareSearches, isSearchValid, buildDefaultSearch, parseSearch, PAGINATION_SEARCH_SETTINGS } from '../../../utils/LocationSearchHelper';
+import { AutomationResource, AutomationStatus, automationStatuses } from '../../../models/automations/automations';
+import { updateSearch, compareSearches, isSearchValid, buildDefaultSearch, parseSearch } from '../../../utils/LocationSearchHelper';
 import { McsIcon } from '../../../components';
 import { EmptyTableView, TableViewFilters } from '../../../components/TableView';
 import { MapDispatchToProps, MapStateToProps } from './AutomationListPage';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
+import messages from './messages';
+import { SCENARIOS_SEARCH_SETTINGS } from '../../../services/ScenarioService';
 
 const { Content } = Layout;
-const SCENARIOS_SEARCH_SETTINGS = [
-  ...PAGINATION_SEARCH_SETTINGS,
-];
+
 interface AutomationsTableProps
   extends MapDispatchToProps,
   MapStateToProps {
@@ -146,6 +146,7 @@ class AutomationsListTable extends React.Component<JoinedProps> {
       location: {
         search,
       },
+      intl,
       isFetchingAutomations,
       dataSource,
       totalAutomations,
@@ -155,6 +156,16 @@ class AutomationsListTable extends React.Component<JoinedProps> {
     } = this.props;
 
     const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
+
+    const searchOptions = {
+      placeholder: intl.formatMessage(messages.searchScenarios),
+      onSearch: (value: string) =>
+        this.updateLocationSearch({
+          keywords: value,
+          currentPage: 1,
+        }),
+      defaultValue: filter.keywords,
+    };
 
     const pagination = {
       current: filter.currentPage,
@@ -217,6 +228,36 @@ class AutomationsListTable extends React.Component<JoinedProps> {
       },
     ];
 
+    const statusItems = automationStatuses.map(status => ({
+      key: status,
+      value: status,
+    }));
+
+    const filtersOptions = [
+      {
+        displayElement: (
+          <div>
+            <FormattedMessage id="STATUS" /> <Icon type="down" />
+          </div>
+        ),
+        selectedItems: filter.statuses.map((status: AutomationStatus) => ({
+          key: status,
+          value: status,
+        })),
+        items: statusItems,
+        getKey: (item: { key: AutomationStatus; value: AutomationStatus }) =>
+          item.key,
+        display: (item: { key: AutomationStatus; value: AutomationStatus }) =>
+          item.value,
+        handleMenuClick: (
+          values: Array<{ key: AutomationStatus; value: AutomationStatus }>,
+        ) =>
+          this.updateLocationSearch({
+            statuses: values.map(v => v.value),
+          }),
+      },
+    ];
+
     return (hasAutomations
       ? (
           <div className="ant-layout">
@@ -225,6 +266,8 @@ class AutomationsListTable extends React.Component<JoinedProps> {
                 <TableViewFilters
                   columns={dataColumns}
                   actionsColumnsDefinition={actionColumns}
+                  searchOptions={searchOptions}
+                  filtersOptions={filtersOptions}
                   dataSource={dataSource}
                   loading={isFetchingAutomations}
                   pagination={pagination}

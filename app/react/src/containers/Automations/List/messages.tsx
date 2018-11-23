@@ -25,5 +25,9 @@ export default defineMessages({
     id: 'automations.list.pauseAll',
     defaultMessage: 'Paused',
   },
+  searchScenarios: {
+    id: 'automations.list.search.placeholder',
+    defaultMessage: 'Search automation',
+  },
 }
 );
