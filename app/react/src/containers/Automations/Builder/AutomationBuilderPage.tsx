@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
-import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import { DatamartSelector } from '../../Datamart';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -65,7 +64,7 @@ class AutomationBuilderPage extends React.Component<Props> {
       );
     }
 
-    const jsonQLActionbar = (query: QueryDocument, datamartId: string) => {
+    const automationActionBar = (datamartId: string) => {
       return <SaveQueryAsActionBar breadcrumb={
         [
           {
@@ -96,7 +95,7 @@ class AutomationBuilderPage extends React.Component<Props> {
         selectedDatamart.storage_model_version === 'v201709' && (
           <AutomationBuilderContainer
           datamartId={selectedDatamart.id}
-          renderActionBar={jsonQLActionbar}
+          renderActionBar={automationActionBar}
           />
         )}
       {selectedDatamart &&
