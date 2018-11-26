@@ -7,7 +7,7 @@ export interface AutomationResource {
 }
 
 export type AutomationStatus = 'NEW' | 'ACTIVE' | 'PAUSED';
-export const automationStatuses: string[] = ['NEW', 'ACTIVE', 'PAUSED'];
+export const automationStatuses: AutomationStatus[] = ['NEW', 'ACTIVE', 'PAUSED'];
 
 
 export interface AutomationCreateResource {
