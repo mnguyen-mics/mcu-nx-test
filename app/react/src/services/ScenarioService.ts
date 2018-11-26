@@ -1,6 +1,22 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { AutomationResource, AutomationCreateResource } from '../models/automations/automations';
+import { AutomationResource, AutomationCreateResource, AutomationStatus } from '../models/automations/automations';
+import { PaginatedApiParam } from '../utils/ApiHelper';
+import { PAGINATION_SEARCH_SETTINGS, FILTERS_SEARCH_SETTINGS, KEYWORD_SEARCH_SETTINGS } from '../utils/LocationSearchHelper';
 
+export interface GetAutomationsOptions extends PaginatedApiParam {
+  organisation_id?: string;
+  keywords?: string;
+  status?: AutomationStatus[];
+  order_by?: string[];
+  first_result?: number;
+  max_results?: number;
+}
+
+export const SCENARIOS_SEARCH_SETTINGS = [
+  ...PAGINATION_SEARCH_SETTINGS,
+  ...FILTERS_SEARCH_SETTINGS,
+  ...KEYWORD_SEARCH_SETTINGS,
+];
 
 const scenariosService = {
   getScenarios(organisationId: string, options: object = {}): Promise<DataListResponse<AutomationResource>> {
