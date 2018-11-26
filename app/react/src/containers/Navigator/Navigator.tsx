@@ -96,10 +96,8 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         }
         this.props.setColorsStore(mcsColors);
         document.addEventListener('unauthorizedEvent', (e) => { 
-          this.props.history.push({
-            pathname: '/logout', 
-            state: this.props.location.pathname
-          });
+          AuthService.deleteCredentials();
+          this.props.history.push({pathname: '/'});
          }, false);
     
       })
@@ -137,7 +135,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     const basePath = '/v2/o/:organisationId(\\d+)';
     const homeUrl = `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
 
-    const renderRoute = ({ match }: any) => {
+    const renderRoute = ({ match, location }: RouteComponentProps<{ organisationId: string }>) => {
       const authenticated = AuthService.isAuthenticated();
       let redirectToUrl = '/login';
       if (authenticated) {
@@ -156,10 +154,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     const logoutRouteRender = ({ history }: any) => {
       const redirectCb = () => {
-        history.push({
-          pathname: '/', 
-            state: this.props.location.pathname
-        });
+        history.push('/');
       };
       this.props.logOut(undefined, { redirectCb });
       return null;
