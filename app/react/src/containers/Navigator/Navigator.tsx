@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import {
-  Switch,
-  Route,
-  Redirect,
-} from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { addLocaleData, injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import enLocaleData from 'react-intl/locale-data/en';
@@ -18,7 +14,7 @@ import { AuthenticatedRoute } from './Route';
 import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../Authentication/ForgotPassword';
 import { Login } from '../Authentication/Login';
-import { SetPassword } from '../Authentication/SetPassword'
+import { SetPassword } from '../Authentication/SetPassword';
 import routes from '../../routes/routes';
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
@@ -34,9 +30,8 @@ import { UserWorkspaceResource } from '../../models/directory/UserProfileResourc
 import { getCookies } from '../../state/Session/actions';
 import NoAccess from './NoAccess';
 import { NavigatorRoute } from '../../routes/domain';
-import angularRedirect from '../../routes/angularRedirect'
+import angularRedirect from '../../routes/angularRedirect';
 import RedirectAngular from './Route/RedirectAngular';
-
 
 interface MapStateToProps {
   initialized: boolean;
@@ -95,15 +90,17 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
           );
         }
         this.props.setColorsStore(mcsColors);
-        document.addEventListener('unauthorizedEvent', (e) => { 
-          AuthService.deleteCredentials();
-          this.props.history.push({pathname: '/'});
-         }, false);
-    
+        document.addEventListener(
+          'unauthorizedEvent',
+          e => {
+            AuthService.deleteCredentials();
+            this.props.history.push({ pathname: '/' });
+          },
+          false,
+        );
       })
       .catch(() => this.setState({ adBlockOn: true }));
   }
-
 
   render() {
     const {
@@ -111,7 +108,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       intl: { formatMessage },
       initialized,
       initializationError,
-
     } = this.props;
 
     if (this.state.adBlockOn) {
@@ -135,7 +131,10 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     const basePath = '/v2/o/:organisationId(\\d+)';
     const homeUrl = `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
 
-    const renderRoute = ({ match, location }: RouteComponentProps<{ organisationId: string }>) => {
+    const renderRoute = ({
+      match,
+      location,
+    }: RouteComponentProps<{ organisationId: string }>) => {
       const authenticated = AuthService.isAuthenticated();
       let redirectToUrl = '/login';
       if (authenticated) {
@@ -166,13 +165,18 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     const routeMapping = routes.map((route: NavigatorRoute, i) => {
       const authenticateRouteRender = (props: any) => {
-        const comps = route.layout === 'main' ? {
-          contentComponent: route.contentComponent,
-          actionBarComponent: route.actionBarComponent,
-        } : route.layout === 'edit' ? {
-          editComponent: route.editComponent,
-        } : { contentComponent: route.contentComponent }
-        const datalayer = route.datalayer
+        const comps =
+          route.layout === 'main'
+            ? {
+                contentComponent: route.contentComponent,
+                actionBarComponent: route.actionBarComponent,
+              }
+            : route.layout === 'edit'
+            ? {
+                editComponent: route.editComponent,
+              }
+            : { contentComponent: route.contentComponent };
+        const datalayer = route.datalayer;
         return (
           <Datalayer datalayer={datalayer}>
             <Notifications />
@@ -180,7 +184,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
               <DrawerManager />
             </div>
             <LayoutManager
-              layout={route.layout}              
+              layout={route.layout}
               organisationSelector={OrgSelector}
               showOrgSelector={nbWorkspaces > 0}
               orgSelectorSize={selectorSize}
@@ -193,14 +197,19 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       };
 
       const notAuthorizedRouteRender = (props: any) => {
-        const comps = route.layout === 'main' ? {
-          contentComponent: NoAccess,
-        } : route.layout === 'settings' ? {
-          contentComponent: NoAccess,
-        } : {
-          editComponent: NoAccess,
-        }
-        const datalayer = route.datalayer
+        const comps =
+          route.layout === 'main'
+            ? {
+                contentComponent: NoAccess,
+              }
+            : route.layout === 'settings'
+            ? {
+                contentComponent: NoAccess,
+              }
+            : {
+                editComponent: NoAccess,
+              };
+        const datalayer = route.datalayer;
         return (
           <Datalayer datalayer={datalayer}>
             <Notifications />
@@ -208,7 +217,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
               <DrawerManager />
             </div>
             <LayoutManager
-              layout={route.layout}              
+              layout={route.layout}
               organisationSelector={OrgSelector}
               showOrgSelector={nbWorkspaces > 0}
               orgSelectorSize={selectorSize}
@@ -235,30 +244,41 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     });
 
     return (
-        <Switch>
-          <Route exact={true} path="/set-password" component={SetPassword} />
-          <Route exact={true} path="/" render={renderRoute} />
+      <Switch>
+        <Route exact={true} path="/set-password" component={SetPassword} />
+        <Route exact={true} path="/" render={renderRoute} />
 
-          {routeMapping}
+        {routeMapping}
 
-          
-          <Route exact={true} path="/login" render={loginRouteRender} />
-          <Route exact={true} path="/logout" render={logoutRouteRender} />
-          
+        <Route exact={true} path="/login" render={loginRouteRender} />
+        <Route exact={true} path="/logout" render={logoutRouteRender} />
 
-          <Route
-            exact={true}
-            path="/v2/forgot_password"
-            component={ForgotPassword}
-          />
-          
-          {angularRedirect.map(redirect => {
-            const render = () => <RedirectAngular from={redirect.from} to={redirect.to} baseUrl={basePath} />;
-            return <Route key={redirect.from} exact={true} path={`${'/:orgDatamartSettings'}${redirect.from}`} render={render} />
-          })}
-          
-          <Route render={errorRouteRender} />
-        </Switch>
+        <Route
+          exact={true}
+          path="/v2/forgot_password"
+          component={ForgotPassword}
+        />
+
+        {angularRedirect.map(redirect => {
+          const render = () => (
+            <RedirectAngular
+              from={redirect.from}
+              to={redirect.to}
+              baseUrl={basePath}
+            />
+          );
+          return (
+            <Route
+              key={redirect.from}
+              exact={true}
+              path={`${'/:orgDatamartSettings'}${redirect.from}`}
+              render={render}
+            />
+          );
+        })}
+
+        <Route render={errorRouteRender} />
+      </Switch>
     );
   }
 }
@@ -281,5 +301,8 @@ const mapDispatchToProps = {
 export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(Navigator);
