@@ -4,9 +4,10 @@ import { BooleanOperatorNodeModel } from '../BooleanOperatorNode';
 import { FieldNodeModel } from '../FieldNode';
 import { PlusNodeModel } from '../PlusNode';
 import { ObjectNodeModel } from '../ObjectNode';
+import AutomationNodeModel from '../../../../Automations/Builder/AutomationNode/AutomationNodeModel';
 
 export interface FourAnchorPortWidgetProps {
-  node: BooleanOperatorNodeModel | FieldNodeModel | ObjectNodeModel | PlusNodeModel;
+  node: BooleanOperatorNodeModel | FieldNodeModel | ObjectNodeModel | PlusNodeModel | AutomationNodeModel;
 }
 
 export default class FourAnchorPortWidget extends React.Component<FourAnchorPortWidgetProps, any> {

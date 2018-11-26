@@ -5,14 +5,13 @@ import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
-import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import { DatamartSelector } from '../../Datamart';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
-import JSONQLBuilderContainer from '../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
 import { UserProfileResource, UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
+import AutomationBuilderContainer from './AutomationBuilderContainer';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
@@ -65,7 +64,7 @@ class AutomationBuilderPage extends React.Component<Props> {
       );
     }
 
-    const jsonQLActionbar = (query: QueryDocument, datamartId: string) => {
+    const automationActionBar = (datamartId: string) => {
       return <SaveQueryAsActionBar breadcrumb={
         [
           {
@@ -75,6 +74,7 @@ class AutomationBuilderPage extends React.Component<Props> {
       } />;
     };
 
+    
 
     const style: React.CSSProperties = { height: '100%', display: 'flex' };
     return (
@@ -93,9 +93,9 @@ class AutomationBuilderPage extends React.Component<Props> {
       )}
       {selectedDatamart &&
         selectedDatamart.storage_model_version === 'v201709' && (
-          <JSONQLBuilderContainer
-            datamartId={selectedDatamart.id}
-            renderActionBar={jsonQLActionbar}
+          <AutomationBuilderContainer
+          datamartId={selectedDatamart.id}
+          renderActionBar={automationActionBar}
           />
         )}
       {selectedDatamart &&
