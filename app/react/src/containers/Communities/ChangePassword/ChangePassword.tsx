@@ -145,7 +145,6 @@ class CommunityChangePassword extends React.Component<Props, State> {
       this.props.match.params.communityToken,
     )
       .then(response => {
-        console.log(response);
         this.setState({
           passwordRequirements: response.data,
           fetchingPasswReq: false,
@@ -155,7 +154,6 @@ class CommunityChangePassword extends React.Component<Props, State> {
         });
       })
       .catch(e => {
-        console.log(e);
         this.setState({
           isError: true,
           fetchingPasswReqFailure: true,
