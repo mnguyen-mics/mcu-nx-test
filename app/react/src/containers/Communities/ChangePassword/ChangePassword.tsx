@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Form, Row, Col, Input, Button, Alert, Spin } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
-// import * as lodash from 'lodash';
-// Test if debounce is needed or not
+import * as lodash from 'lodash';
 
 import {
   injectIntl,
@@ -13,7 +12,7 @@ import {
 
 import { compose } from 'recompose';
 import { FormComponentProps } from 'antd/lib/form';
-import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   SET_PASSWORD_SEARCH_SETTINGS,
   parseSearch,
@@ -22,7 +21,11 @@ import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import CommunityService from '../../../services/CommunityServices';
 import { CommunityPasswordRequirement } from '../../../models/communities';
-import { printPasswordRequirements, printPasswordMatching, globalValidity } from '../Helpers/PrintPasswordRequirements';
+import {
+  printPasswordRequirements,
+  printPasswordMatching,
+  globalValidity,
+} from '../Helpers/PrintPasswordRequirements';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
@@ -51,29 +54,28 @@ interface State {
 
 const messages = defineMessages({
   changePassword: {
-    id: 'reset.change.password.set.password',
+    id: 'change.password.set.password',
     defaultMessage: 'Change your password',
   },
   revertTologin: {
-    id: 'reset.change.password.revert.to.login',
+    id: 'change.password.revert.to.login',
     defaultMessage: 'Go back to login',
   },
   passwordFormTitle: {
-    id: 'reset.change.password.form.title',
+    id: 'change.password.form.title',
     defaultMessage: 'Password',
   },
   secondPasswordFormTitle: {
-    id: 'reset.change.second.password.form.title',
+    id: 'change.password.second.password.form.title',
     defaultMessage: 'Confirm your password',
   },
   passwordRequirementError: {
-    id: 'reset.change.requirement.error',
+    id: 'change.password.requirement.error',
     defaultMessage: 'Your passwords do not match the requirements',
   },
   standardChangePasswordError: {
-    id: 'reset.change.password.error',
-    defaultMessage:
-      'Your password could not be set, please try again later.',
+    id: 'change.password.password.error',
+    defaultMessage: 'Your password could not be set, please try again later.',
   },
 });
 
@@ -88,62 +90,86 @@ class CommunityChangePassword extends React.Component<Props, State> {
       frontErrorMessages: [],
       technicalName: props.match.params.communityToken,
     };
-    // this.requestValidityDebounced = lodash.debounce(this.requestValidityDebounced, 250);
-    // Test if debounce is needed or not
+    this.requestValidityDebounced = lodash.debounce(
+      this.requestValidityDebounced,
+      250,
+    );
   }
 
-  // persistEvent = (e: any) => {
-  //   e.persist();
-  //   e.preventDefault();
-  //   return e;
-  // };
+  persistEvent = (e: any) => {
+    e.persist();
+    e.preventDefault();
+    return e;
+  };
 
   requestValidityDebounced = (handler: any) => {
     handler.persist();
-    this.setState({ password1: handler.target.value, });
+    this.setState({ password1: handler.target.value });
     if (this.state.password2) {
-      this.setState({ arePasswordsMatching: printPasswordMatching(handler.target.value, this.state.password2)});
+      this.setState({
+        arePasswordsMatching: printPasswordMatching(
+          handler.target.value,
+          this.state.password2,
+        ),
+      });
     }
     if (this.state.passwordRequirements) {
       const req = this.state.passwordRequirements;
-      CommunityService.getCommunityPasswordValidity(this.state.technicalName, handler.target.value)
-      .then((response) => {
+      CommunityService.getCommunityPasswordValidity(
+        this.state.technicalName,
+        handler.target.value,
+      ).then(response => {
         this.setState({
           isPasswordValid: response.data,
           requirementPrint: printPasswordRequirements(req, response.data),
-        })
+        });
       });
     } else {
-      this.setState({ isError: true, })
+      this.setState({ isError: true });
     }
-  }
+  };
 
   checkMatch = (handler: any) => {
     handler.persist();
     this.setState({
       password2: handler.target.value,
-      arePasswordsMatching: printPasswordMatching(this.state.password1, handler.target.value),
+      arePasswordsMatching: printPasswordMatching(
+        this.state.password1,
+        handler.target.value,
+      ),
     });
-  }
+  };
 
   componentDidMount() {
-    CommunityService.getCommunityPasswordRequirements(this.props.match.params.communityToken)
-    .then((response) => {
-      this.setState({
-        passwordRequirements: response.data,
-        fetchingPasswReq: false,
-        fetchingPasswReqFailure: false,
-        requirementPrint: printPasswordRequirements(response.data),
-        arePasswordsMatching: printPasswordMatching(),
+    CommunityService.getCommunityPasswordRequirements(
+      this.props.match.params.communityToken,
+    )
+      .then(response => {
+        console.log(response);
+        this.setState({
+          passwordRequirements: response.data,
+          fetchingPasswReq: false,
+          fetchingPasswReqFailure: false,
+          requirementPrint: printPasswordRequirements(response.data),
+          arePasswordsMatching: printPasswordMatching(),
+        });
+      })
+      .catch(e => {
+        console.log(e);
+        this.setState({
+          isError: true,
+          fetchingPasswReqFailure: true,
+          fetchingPasswReq: false,
+        });
       });
-    })
-    .catch((e) => {
-      this.setState({ isError: true, fetchingPasswReqFailure: true, fetchingPasswReq: false, })
-    });
   }
 
   componentDidCatch() {
-    this.setState({ isError: true, fetchingPasswReqFailure: true, fetchingPasswReq: false, })
+    this.setState({
+      isError: true,
+      fetchingPasswReqFailure: true,
+      fetchingPasswReq: false,
+    });
   }
 
   handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -159,10 +185,18 @@ class CommunityChangePassword extends React.Component<Props, State> {
       if (this.state.passwordRequirements !== undefined) {
         if (!err) {
           const isPasswordValid = () => {
-            return (values.password1 === null || values.password2 === null || values.password1 !== values.password2) 
+            return (
+              values.password1 === null ||
+              values.password2 === null ||
+              values.password1 !== values.password2
+            );
           };
-  
-          if (isPasswordValid && !this.state.fetchingPasswReqFailure && globalValidity(this.state.isPasswordValid)) {
+
+          if (
+            isPasswordValid &&
+            !this.state.fetchingPasswReqFailure &&
+            globalValidity(this.state.isPasswordValid)
+          ) {
             // validate
             AuthService.resetPassword(
               filter.email,
@@ -220,19 +254,45 @@ class CommunityChangePassword extends React.Component<Props, State> {
           <FormattedMessage {...messages.changePassword} />
         </div>
         <div className="reset-password-container-frame">
-           { fetchingPasswReq && <Spin size="large" /> }
-           { !fetchingPasswReq && <Form onSubmit={this.handleSubmit} className="login-form">
-            {errorMsg}
-            <div className="reset-password-requirements">
-              {this.state.requirementPrint}
-              {this.state.arePasswordsMatching}
-            </div>
-            <div className="password-text">
-              <FormattedMessage {...messages.passwordFormTitle} />
-            </div>
-            {
+          {fetchingPasswReq && <Spin size="large" />}
+          {!fetchingPasswReq && (
+            <Form onSubmit={this.handleSubmit} className="login-form">
+              {errorMsg}
+              <div className="reset-password-requirements">
+                {this.state.requirementPrint}
+                {this.state.arePasswordsMatching}
+              </div>
+              <div className="password-text">
+                <FormattedMessage {...messages.passwordFormTitle} />
+              </div>
+              {
+                <FormItem>
+                  {getFieldDecorator('password1', {
+                    rules: [
+                      {
+                        required: true,
+                        message: intl.formatMessage(
+                          defaultErrorMessages.required,
+                        ),
+                      },
+                    ],
+                  })(
+                    <Input
+                      type="password"
+                      className="reset-password-input"
+                      onChange={lodash.flowRight(
+                        lodash.debounce(this.requestValidityDebounced, 1000),
+                        this.persistEvent,
+                      )}
+                    />,
+                  )}
+                </FormItem>
+              }
+              <div className="password-text">
+                <FormattedMessage {...messages.secondPasswordFormTitle} />
+              </div>
               <FormItem>
-                {getFieldDecorator('password1', {
+                {getFieldDecorator('password2', {
                   rules: [
                     {
                       required: true,
@@ -241,49 +301,36 @@ class CommunityChangePassword extends React.Component<Props, State> {
                       ),
                     },
                   ],
-                })(<Input
-                      type="password"
-                      className="reset-password-input"
-                      // onChange = {lodash.flowRight(lodash.debounce(this.requestValidityDebounced, 1000), this.persistEvent)}
-                      // Test is debounce is needed or not
-                      onChange={this.requestValidityDebounced}
-                    />)}
+                })(
+                  <Input
+                    type="password"
+                    className="reset-password-input"
+                    onChange={this.checkMatch}
+                  />,
+                )}
               </FormItem>
-            }
-            <div className="password-text">
-              <FormattedMessage {...messages.secondPasswordFormTitle} />
-            </div>
-            <FormItem>
-              {getFieldDecorator('password2', {
-                rules: [
-                  {
-                    required: true,
-                    message: intl.formatMessage(defaultErrorMessages.required),
-                  },
-                ],
-              })(<Input
-                type="password"
-                className="reset-password-input"
-                onChange={this.checkMatch}
-              />)}
-            </FormItem>
-            <Row type="flex" align="middle" justify="center">
-              <Col span={12} className="reset-password-back-to-login">
-                <Link to={'/login'}>
-                  <FormattedMessage {...messages.revertTologin} />
-                </Link>
-              </Col>
-              <Col span={12}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="mcs-primary reset-password-button"
-                >
-                  <FormattedMessage {...messages.changePassword} />
-                </Button>
-              </Col>
-            </Row>
-            </Form> }
+              <Row type="flex" align="middle" justify="center">
+                <Col span={12}>
+                  <Button
+                    type="ghost"
+                    className="reset-password-button"
+                    href='/'
+                  >
+                    <FormattedMessage {...messages.revertTologin} />
+                  </Button>
+                </Col>
+                <Col span={12}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="mcs-primary reset-password-button"
+                  >
+                    <FormattedMessage {...messages.changePassword} />
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
         </div>
       </div>
     );
