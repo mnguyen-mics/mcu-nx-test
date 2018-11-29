@@ -145,7 +145,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       return <Redirect to={redirectToUrl} />;
     };
     const loginRouteRender = () => {
-      const authenticated = AuthService.isAuthenticated();
+      const authenticated = AuthService.isAuthenticated() || AuthService.canAuthenticate();
       if (authenticated) return <Redirect to={homeUrl} />;
       this.props.logOut();
       return <Login />;
