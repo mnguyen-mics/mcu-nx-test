@@ -36,7 +36,6 @@ import { NavigatorRoute } from '../../routes/domain';
 import angularRedirect from '../../routes/angularRedirect'
 import RedirectAngular from './Route/RedirectAngular';
 import { CommunityChangePassword } from '../Communities/ChangePassword';
-import { CommunitySetPassword } from '../Communities/SetPassword';
 
 
 interface MapStateToProps {
@@ -234,7 +233,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
           <Route exact={true} path="/" render={renderRoute} />
 
           <Route exact={true} path="/:communityToken/change-password" component={CommunityChangePassword} />
-          <Route exact={true} path="/:communityToken/set-password" component={CommunitySetPassword} />
+          <Route exact={true} path="/:communityToken/set-password" component={CommunityChangePassword} />
 
           {routeMapping}
 

@@ -1,3 +1,5 @@
+
+// Deprecated -> For further dev, use ChangePassword component
 import * as React from 'react';
 import { Form, Input, Button, Alert, Row, Col } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';

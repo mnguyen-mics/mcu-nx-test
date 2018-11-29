@@ -20,12 +20,11 @@ import {
 import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import CommunityService from '../../../services/CommunityServices';
-import { CommunityPasswordRequirement } from '../../../models/communities';
 import {
-  printPasswordRequirements,
-  printPasswordMatching,
-  globalValidity,
-} from '../Helpers/PrintPasswordRequirements';
+  CommunityPasswordRequirement,
+  CommunityPasswordValidity,
+} from '../../../models/communities';
+import PasswReqChecker from '../Helpers/PasswReqChecker';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
@@ -39,23 +38,20 @@ type Props = ChangePasswordProps &
 interface State {
   fetchingPasswReq: boolean;
   fetchingPasswReqFailure: boolean;
-  isRequesting: boolean;
   isError: boolean;
-  password1?: string;
-  password2?: string;
-  isPasswordValid?: any;
-  arePasswordsMatching?: any;
-  requirementPrint?: any;
-  technicalName: string;
-  frontErrorMessages: string[];
   errorMessage?: string;
-  passwordRequirements?: CommunityPasswordRequirement;
+  passReq?: CommunityPasswordRequirement;
+  passVal?: CommunityPasswordValidity;
 }
 
 const messages = defineMessages({
   changePassword: {
-    id: 'change.password.set.password',
+    id: 'change.password.change.password',
     defaultMessage: 'Change your password',
+  },
+  setPassword: {
+    id: 'change.password.set.password',
+    defaultMessage: 'Set your password',
   },
   revertTologin: {
     id: 'change.password.revert.to.login',
@@ -85,10 +81,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
     this.state = {
       fetchingPasswReq: true,
       fetchingPasswReqFailure: false,
-      isRequesting: false,
       isError: false,
-      frontErrorMessages: [],
-      technicalName: props.match.params.communityToken,
     };
     this.requestValidityDebounced = lodash.debounce(
       this.requestValidityDebounced,
@@ -104,40 +97,16 @@ class CommunityChangePassword extends React.Component<Props, State> {
 
   requestValidityDebounced = (handler: any) => {
     handler.persist();
-    this.setState({ password1: handler.target.value });
-    if (this.state.password2) {
-      this.setState({
-        arePasswordsMatching: printPasswordMatching(
-          handler.target.value,
-          this.state.password2,
-        ),
-      });
-    }
-    if (this.state.passwordRequirements) {
-      const req = this.state.passwordRequirements;
+    if (this.state.passReq) {
       CommunityService.getCommunityPasswordValidity(
-        this.state.technicalName,
+        this.props.match.params.communityToken,
         handler.target.value,
       ).then(response => {
-        this.setState({
-          isPasswordValid: response.data,
-          requirementPrint: printPasswordRequirements(req, response.data),
-        });
+        this.setState({ passVal: response.data });
       });
     } else {
       this.setState({ isError: true });
     }
-  };
-
-  checkMatch = (handler: any) => {
-    handler.persist();
-    this.setState({
-      password2: handler.target.value,
-      arePasswordsMatching: printPasswordMatching(
-        this.state.password1,
-        handler.target.value,
-      ),
-    });
   };
 
   componentDidMount() {
@@ -146,28 +115,23 @@ class CommunityChangePassword extends React.Component<Props, State> {
     )
       .then(response => {
         this.setState({
-          passwordRequirements: response.data,
+          passReq: response.data,
           fetchingPasswReq: false,
           fetchingPasswReqFailure: false,
-          requirementPrint: printPasswordRequirements(response.data),
-          arePasswordsMatching: printPasswordMatching(),
         });
       })
       .catch(e => {
         this.setState({
           isError: true,
           fetchingPasswReqFailure: true,
+          errorMessage: messages.standardChangePasswordError.defaultMessage,
           fetchingPasswReq: false,
         });
       });
   }
 
-  componentDidCatch() {
-    this.setState({
-      isError: true,
-      fetchingPasswReqFailure: true,
-      fetchingPasswReq: false,
-    });
+  globalValidity(val?: CommunityPasswordValidity, p1?: string, p2?: string) {
+    return val && !Object.values(val).includes(false) && p1 && p2 && p1 === p2;
   }
 
   handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -180,47 +144,30 @@ class CommunityChangePassword extends React.Component<Props, State> {
     e.preventDefault();
 
     this.props.form.validateFields((err, values) => {
-      if (this.state.passwordRequirements !== undefined) {
-        if (!err) {
-          const isPasswordValid = () => {
-            return (
-              values.password1 === null ||
-              values.password2 === null ||
-              values.password1 !== values.password2
-            );
-          };
-
-          if (
-            isPasswordValid &&
-            !this.state.fetchingPasswReqFailure &&
-            globalValidity(this.state.isPasswordValid)
-          ) {
-            // validate
-            AuthService.resetPassword(
-              filter.email,
-              filter.token,
-              values.password1,
-            )
-              .then(() => {
-                history.push('/login');
-              })
-              .catch((errBack: any) => {
-                this.setState({
-                  isError: true,
-                  errorMessage: errBack.error,
-                });
-              });
-          } else {
+      if (
+        !err &&
+        !this.state.fetchingPasswReqFailure &&
+        this.globalValidity(
+          this.state.passVal,
+          values.password1,
+          values.password2,
+        )
+      ) {
+        // validate
+        AuthService.resetPassword(filter.email, filter.token, values.password1)
+          .then(() => {
+            history.push('/login');
+          })
+          .catch((errBack: any) => {
             this.setState({
               isError: true,
-              errorMessage: messages.passwordRequirementError.defaultMessage,
+              errorMessage: errBack.error,
             });
-          }
-        }
+          });
       } else {
         this.setState({
           isError: true,
-          errorMessage: messages.standardChangePasswordError.defaultMessage,
+          errorMessage: messages.passwordRequirementError.defaultMessage,
         });
       }
     });
@@ -232,33 +179,62 @@ class CommunityChangePassword extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const { isError, errorMessage, fetchingPasswReq } = this.state;
+    const {
+      isError,
+      errorMessage,
+      fetchingPasswReq,
+      passReq,
+      passVal,
+    } = this.state;
     const errorMsg =
       isError && errorMessage ? (
         <Alert
           type="error"
-          style={{ marginBottom: 24 }}
+          style={{ marginBottom: 15 }}
           message={errorMessage}
-          className="login-error-message"
         />
       ) : null;
+
+    const pageType = this.props.location.pathname.includes(
+      '/change-password',
+    ) ? (
+      <FormattedMessage {...messages.changePassword} />
+    ) : (
+      <FormattedMessage {...messages.setPassword} />
+    );
+
+    const p1 = this.props.form.getFieldValue('password1');
+    const p2 = this.props.form.getFieldValue('password2');
 
     return (
       <div className="mcs-reset-password-container">
         <div className="image-wrapper">
           <img alt="mics-logo" className="reset-password-logo" src={logoUrl} />
         </div>
-        <div className="reset-password-title">
-          <FormattedMessage {...messages.changePassword} />
-        </div>
+        <div className="reset-password-title">{pageType}</div>
         <div className="reset-password-container-frame">
           {fetchingPasswReq && <Spin size="large" />}
-          {!fetchingPasswReq && (
+          {!fetchingPasswReq && !passReq && (
+            <div>
+              {errorMsg}
+              <Row type="flex" align="middle" justify="center">
+                <Col span={24}>
+                  <Button
+                    type="ghost"
+                    className="reset-password-button"
+                    href="/"
+                  >
+                    <FormattedMessage {...messages.revertTologin} />
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          )}
+          {!fetchingPasswReq && passReq !== undefined && (
             <Form onSubmit={this.handleSubmit} className="login-form">
               {errorMsg}
               <div className="reset-password-requirements">
-                {this.state.requirementPrint}
-                {this.state.arePasswordsMatching}
+                <PasswReqChecker req={passReq} val={passVal} p1={p1} p2={p2} />
               </div>
               <div className="password-text">
                 <FormattedMessage {...messages.passwordFormTitle} />
@@ -279,7 +255,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
                       type="password"
                       className="reset-password-input"
                       onChange={lodash.flowRight(
-                        lodash.debounce(this.requestValidityDebounced, 1000),
+                        lodash.debounce(this.requestValidityDebounced, 250),
                         this.persistEvent,
                       )}
                     />,
@@ -299,20 +275,14 @@ class CommunityChangePassword extends React.Component<Props, State> {
                       ),
                     },
                   ],
-                })(
-                  <Input
-                    type="password"
-                    className="reset-password-input"
-                    onChange={this.checkMatch}
-                  />,
-                )}
+                })(<Input type="password" className="reset-password-input" />)}
               </FormItem>
               <Row type="flex" align="middle" justify="center">
                 <Col span={12}>
                   <Button
                     type="ghost"
                     className="reset-password-button"
-                    href='/'
+                    href="/"
                   >
                     <FormattedMessage {...messages.revertTologin} />
                   </Button>
@@ -322,8 +292,9 @@ class CommunityChangePassword extends React.Component<Props, State> {
                     type="primary"
                     htmlType="submit"
                     className="mcs-primary reset-password-button"
+                    disabled={!this.globalValidity(passVal, p1, p2)}
                   >
-                    <FormattedMessage {...messages.changePassword} />
+                    {pageType}
                   </Button>
                 </Col>
               </Row>
