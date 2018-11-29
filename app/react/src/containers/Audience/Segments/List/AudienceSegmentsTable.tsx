@@ -29,8 +29,10 @@ import {
   normalizeReportView,
 } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
-import { AudienceSegmentResource, UserActivationSegment } from '../../../../models/audiencesegment';
+import {
+  AudienceSegmentResource,
+  UserActivationSegment,
+} from '../../../../models/audiencesegment';
 import ReportService from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
@@ -46,6 +48,9 @@ import { UserWorkspaceResource } from '../../../../models/directory/UserProfileR
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -107,12 +112,12 @@ const messages = defineMessages({
   },
   userActivationClickers: {
     id: 'audience.table.useractivation.clickers',
-    defaultMessage: '{audienceSegmentName} - Clickers'
+    defaultMessage: '{audienceSegmentName} - Clickers',
   },
   userActivationExposed: {
     id: 'audience.table.useractivation.exposed',
-    defaultMessage: '{audienceSegmentName} - Exposed'
-  }
+    defaultMessage: '{audienceSegmentName} - Exposed',
+  },
 });
 
 export interface AudienceSegmentsTableProps {}
@@ -142,6 +147,8 @@ interface State {
 
 class AudienceSegmentsTable extends React.Component<Props, State> {
   cancellablePromises: Array<CancelablePromise<any>> = [];
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
 
   constructor(props: Props) {
     super(props);
@@ -197,11 +204,11 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       with_third_parties: true,
       ...getPaginatedApiParam(1, 1),
     };
-    return AudienceSegmentService.getSegments(organisationId, newFilters).then(
-      res => {
+    return this._audienceSegmentService
+      .getSegments(organisationId, newFilters)
+      .then(res => {
         this.setState({ hasItem: res.count !== 0 });
-      },
-    );
+      });
   };
 
   fetchAudienceSegments = (
@@ -209,18 +216,20 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     datamartId: string,
     filter: Index<any>,
   ) => {
-    return AudienceSegmentService.getSegments(
-      organisationId,
-      this.buildApiSearchFilters(filter, datamartId),
-    ).then(res => {
-      this.setState({
-        list: {
-          segments: res.data,
-          total: res.total ? res.total : res.count,
-          isLoading: false,
-        },
+    return this._audienceSegmentService
+      .getSegments(
+        organisationId,
+        this.buildApiSearchFilters(filter, datamartId),
+      )
+      .then(res => {
+        this.setState({
+          list: {
+            segments: res.data,
+            total: res.total ? res.total : res.count,
+            isLoading: false,
+          },
+        });
       });
-    });
   };
 
   fetchAudienceSegmentStatistics = (
@@ -500,16 +509,22 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
-    const formatUserActivationSegmentName = (record: UserActivationSegment): string => {
-      if(record.clickers) {
-        return intl.formatMessage(messages.userActivationClickers, {audienceSegmentName: record.name});
-      } else if (record.exposed){
-        return intl.formatMessage(messages.userActivationExposed, {audienceSegmentName: record.name});
+    const formatUserActivationSegmentName = (
+      record: UserActivationSegment,
+    ): string => {
+      if (record.clickers) {
+        return intl.formatMessage(messages.userActivationClickers, {
+          audienceSegmentName: record.name,
+        });
+      } else if (record.exposed) {
+        return intl.formatMessage(messages.userActivationExposed, {
+          audienceSegmentName: record.name,
+        });
       } else {
         // Not supposed to happen
         return record.name;
       }
-    }
+    };
 
     const dataColumns = [
       {
@@ -585,12 +600,17 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (text: string, record: AudienceSegmentResource | UserActivationSegment) => (
+        render: (
+          text: string,
+          record: AudienceSegmentResource | UserActivationSegment,
+        ) => (
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
           >
-            {record.type === 'USER_ACTIVATION' ? formatUserActivationSegmentName(record as UserActivationSegment) : text}
+            {record.type === 'USER_ACTIVATION'
+              ? formatUserActivationSegmentName(record as UserActivationSegment)
+              : text}
           </Link>
         ),
       },
@@ -652,7 +672,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<AudienceSegmentResource>> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<AudienceSegmentResource>
+    > = [
       {
         key: 'action',
         actions: () => [

@@ -24,12 +24,44 @@ import AdGroupFormService from './AdGroup/AdGroupFormService';
 import GoalFormService from '../../Goal/Edit/GoalFormService';
 import { EditCampaignsFormData } from './Campaign/MutiEdit/EditCampaignsForm';
 import operation from '../Edit/Campaign/domain';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import GoalService from '../../../../services/GoalService';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../../../constants/types';
 
 type DisplayCampaignId = string;
 
-const DisplayCampaignFormService = {
+export interface IDisplayCampaignFormService {
+  loadCampaign: (
+    displayCampaignId: string,
+    duplicate?: boolean,
+  ) => Promise<DisplayCampaignFormData>;
+
+  loadCampaignDependencies: (
+    displayCampaignId: string,
+    duplicate?: boolean,
+  ) => Promise<{
+    goalFields: GoalFieldModel[];
+    adGroupFields: AdGroupFieldModel[];
+  }>;
+
+  saveCampaign: (
+    organisationId: string,
+    formData: DisplayCampaignFormData,
+    initialFormData: DisplayCampaignFormData,
+    datamartId?: string,
+  ) => Promise<DisplayCampaignId>;
+
+  saveCampaigns: (
+    campaignIds: string[],
+    formData: EditCampaignsFormData,
+  ) => Promise<any>;
+}
+
+@injectable()
+export class DisplayCampaignFormService implements IDisplayCampaignFormService {
+  @inject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   loadCampaign(
     displayCampaignId: string,
     duplicate?: boolean,
@@ -38,17 +70,14 @@ const DisplayCampaignFormService = {
       DisplayCampaignService.getCampaignDisplay(displayCampaignId).then(
         extractData,
       ),
-      DisplayCampaignFormService.loadCampaignDependencies(
-        displayCampaignId,
-        duplicate,
-      ),
+      this.loadCampaignDependencies(displayCampaignId, duplicate),
     ]).then(([campaign, dependencies]) => {
       return {
         campaign: duplicate ? omit(campaign, 'id') : campaign,
         ...dependencies,
       };
     });
-  },
+  }
 
   loadCampaignDependencies(
     displayCampaignId: string,
@@ -100,7 +129,7 @@ const DisplayCampaignFormService = {
         };
       });
     });
-  },
+  }
 
   saveCampaign(
     organisationId: string,
@@ -122,7 +151,11 @@ const DisplayCampaignFormService = {
       ).then(res => {
         return datamartId
           ? executeTasksInSequence(
-              getExposedClickersTasks(organisationId, res.data.id, datamartId),
+              this.getExposedClickersTasks(
+                organisationId,
+                res.data.id,
+                datamartId,
+              ),
             ).then(() => {
               return res;
             })
@@ -153,7 +186,7 @@ const DisplayCampaignFormService = {
 
       return executeTasksInSequence(tasks).then(() => campaignId);
     });
-  },
+  }
 
   saveCampaigns(campaignIds: string[], formData: EditCampaignsFormData) {
     const tasks: Task[] = [];
@@ -182,35 +215,34 @@ const DisplayCampaignFormService = {
       });
     });
     return executeTasksInSequence(tasks);
-  },
-};
+  }
+  getExposedClickersTasks = (
+    organisationId: string,
+    campaignId: string,
+    datamartId: string,
+  ): Task[] => {
+    return [
+      () =>
+        this._audienceSegmentService.createAudienceSegment(organisationId, {
+          campaign_id: campaignId,
+          clickers: false,
+          datamart_id: datamartId,
+          exposed: true,
+          type: 'USER_ACTIVATION',
+        }),
+      () =>
+        this._audienceSegmentService.createAudienceSegment(organisationId, {
+          campaign_id: campaignId,
+          clickers: true,
+          datamart_id: datamartId,
+          exposed: false,
+          type: 'USER_ACTIVATION',
+        }),
+    ];
+  };
+}
 
 export default DisplayCampaignFormService;
-
-function getExposedClickersTasks(
-  organisationId: string,
-  campaignId: string,
-  datamartId: string,
-): Task[] {
-  return [
-    () =>
-      AudienceSegmentService.createAudienceSegment(organisationId, {
-        campaign_id: campaignId,
-        clickers: false,
-        datamart_id: datamartId,
-        exposed: true,
-        type: 'USER_ACTIVATION',
-      }),
-    () =>
-      AudienceSegmentService.createAudienceSegment(organisationId, {
-        campaign_id: campaignId,
-        clickers: true,
-        datamart_id: datamartId,
-        exposed: false,
-        type: 'USER_ACTIVATION',
-      }),
-  ];
-}
 
 function getGoalTasks(
   organisationId: string,
@@ -271,9 +303,11 @@ function getGoalTasks(
     }
   });
 
-  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
-    tasks.push(() => DisplayCampaignService.deleteGoal(campaignId, id));
-  });
+  initialIds
+    .filter(id => !currentIds.includes(id))
+    .forEach(id => {
+      tasks.push(() => DisplayCampaignService.deleteGoal(campaignId, id));
+    });
 
   return tasks;
 }
@@ -311,9 +345,11 @@ function getAdGroupTasks(
     );
   });
 
-  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
-    tasks.push(() => DisplayCampaignService.deleteAdGroup(campaignId, id));
-  });
+  initialIds
+    .filter(id => !currentIds.includes(id))
+    .forEach(id => {
+      tasks.push(() => DisplayCampaignService.deleteAdGroup(campaignId, id));
+    });
 
   return tasks;
 }

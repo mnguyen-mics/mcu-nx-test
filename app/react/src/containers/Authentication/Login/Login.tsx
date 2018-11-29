@@ -2,7 +2,12 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import {
+  FormattedMessage,
+  defineMessages,
+  injectIntl,
+  InjectedIntlProps,
+} from 'react-intl';
 import { Form, Input, Button, Alert, Switch, Divider } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 
@@ -47,35 +52,33 @@ const messages = defineMessages({
   passwordRequired: {
     id: 'login.password.required',
     defaultMessage: 'Please input your password!',
-  }
+  },
 });
 
 interface LoginProps {}
 
 interface MapStateToProps {
   isRequesting: boolean;
-  hasError: boolean;  
+  hasError: boolean;
 }
 
-// see https://redux-actions.js.org/api/createaction 
+// see https://redux-actions.js.org/api/createaction
 // for payloadCreator and metaCreator definitions
 interface MapDispatchToProps {
   logInRequest: (
-    payloadCreator: Credentials & { remember: boolean }, 
-    metaCreator: { redirect: () => void }
+    payloadCreator: Credentials & { remember: boolean },
+    metaCreator: { redirect: () => void },
   ) => void;
 }
 
-type Props = 
-  LoginProps &
+type Props = LoginProps &
   MapStateToProps &
   MapDispatchToProps &
-  InjectedIntlProps &   
-  FormComponentProps & 
+  InjectedIntlProps &
+  FormComponentProps &
   RouteComponentProps<{}>;
 
 class Login extends React.Component<Props> {
-
   handleSubmit = (e: React.FormEvent<any>) => {
     e.preventDefault();
     const { from } = this.props.location.state || { from: { pathname: '/' } };
@@ -131,7 +134,10 @@ class Login extends React.Component<Props> {
               <FormItem>
                 {getFieldDecorator('email', {
                   rules: [
-                    { required: true, message: intl.formatMessage(messages.emailRequired) },
+                    {
+                      required: true,
+                      message: intl.formatMessage(messages.emailRequired),
+                    },
                   ],
                 })(<Input className="login-input" />)}
               </FormItem>
@@ -141,7 +147,10 @@ class Login extends React.Component<Props> {
               <FormItem>
                 {getFieldDecorator('password', {
                   rules: [
-                    { required: true, message: intl.formatMessage(messages.passwordRequired) },
+                    {
+                      required: true,
+                      message: intl.formatMessage(messages.passwordRequired),
+                    },
                   ],
                 })(<Input type="password" className="login-input" />)}
               </FormItem>
@@ -190,6 +199,9 @@ const mapDispatchToProps = {
 export default compose(
   injectIntl,
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   Form.create(),
 )(Login);

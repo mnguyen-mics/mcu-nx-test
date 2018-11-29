@@ -29,6 +29,10 @@ function* loadAutomations({ payload }) {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
+    if (filter.keywords) { options.keywords = filter.keywords; }
+    if (filter.statuses.length > 0) {
+      options.status = filter.statuses;
+    }
     const initialOptions = {
       ...getPaginatedApiParam(1, 1),
     };

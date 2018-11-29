@@ -11,14 +11,17 @@ import {
   EditDisplayCampaignRouteMatchParam,
   INITIAL_DISPLAY_CAMPAIGN_FORM_DATA,
 } from './domain';
-import DisplayCampaignFormService from './DisplayCampaignFormService';
+import {
+  DisplayCampaignFormService,
+  IDisplayCampaignFormService,
+} from './DisplayCampaignFormService';
 import messages from './messages';
 import DisplayCampaignForm from './DisplayCampaignForm';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { injectDatamart, InjectedDatamartProps } from '../../../Datamart'
+import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import DisplayCampaignSelector from './DisplayCampaignSelector';
 import { DisplayCampaignSubType } from '../../../../models/campaign/constants';
 import DisplayAdServingCampaignForm from './DisplayAdServingCampaignForm';
@@ -34,6 +37,7 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
+  private _displayCampaignFormService: IDisplayCampaignFormService = new DisplayCampaignFormService();
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -44,7 +48,9 @@ class EditCampaignPage extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      match: { params: { campaignId: campaignIdFromURLParam } },
+      match: {
+        params: { campaignId: campaignIdFromURLParam },
+      },
       location,
     } = this.props;
 
@@ -53,10 +59,8 @@ class EditCampaignPage extends React.Component<Props, State> {
     const campaignId = campaignIdFromURLParam || campaignIdFromLocState;
 
     if (campaignId) {
-      DisplayCampaignFormService.loadCampaign(
-        campaignId,
-        !!campaignIdFromLocState,
-      )
+      this._displayCampaignFormService
+        .loadCampaign(campaignId, !!campaignIdFromLocState)
         .then(formData => {
           this.setState({
             loading: false,
@@ -79,7 +83,9 @@ class EditCampaignPage extends React.Component<Props, State> {
 
   save = (displayCampaignFormData: DisplayCampaignFormData) => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       notifyError,
       history,
       intl,
@@ -99,12 +105,13 @@ class EditCampaignPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    return DisplayCampaignFormService.saveCampaign(
-      organisationId,
-      displayCampaignFormData,
-      initialDisplayCampaignFormData,
-      datamart && datamart.id,
-    )
+    return this._displayCampaignFormService
+      .saveCampaign(
+        organisationId,
+        displayCampaignFormData,
+        initialDisplayCampaignFormData,
+        datamart && datamart.id,
+      )
       .then(campaignId => {
         hideSaveInProgress();
         const displayCampaignDashboardUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}`;
@@ -123,7 +130,9 @@ class EditCampaignPage extends React.Component<Props, State> {
     const {
       history,
       location,
-      match: { params: { campaignId, organisationId } },
+      match: {
+        params: { campaignId, organisationId },
+      },
     } = this.props;
 
     const defaultRedirectUrl = campaignId
@@ -137,14 +146,13 @@ class EditCampaignPage extends React.Component<Props, State> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      loading,
-      displayCampaignFormData,
-    } = this.state;
+    const { loading, displayCampaignFormData } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -167,37 +175,46 @@ class EditCampaignPage extends React.Component<Props, State> {
       },
     ];
 
-    const onSelect = (e: DisplayCampaignSubType) => this.setState({ displayCampaignFormData: {
-      ...displayCampaignFormData,
-      campaign: {
-        ...displayCampaignFormData.campaign,
-        subtype: e
-      }
-    } })
+    const onSelect = (e: DisplayCampaignSubType) =>
+      this.setState({
+        displayCampaignFormData: {
+          ...displayCampaignFormData,
+          campaign: {
+            ...displayCampaignFormData.campaign,
+            subtype: e,
+          },
+        },
+      });
 
-    if (!displayCampaignFormData.campaign.subtype) return <DisplayCampaignSelector onSelect={onSelect} close={this.onClose} />
+    if (!displayCampaignFormData.campaign.subtype)
+      return (
+        <DisplayCampaignSelector onSelect={onSelect} close={this.onClose} />
+      );
 
     switch (displayCampaignFormData.campaign.subtype) {
       case 'PROGRAMMATIC':
-        return (<DisplayCampaignForm
-          initialValues={displayCampaignFormData}
-          onSubmit={this.save}
-          close={this.onClose}
-          breadCrumbPaths={breadcrumbPaths}
-          onSubmitFail={this.onSubmitFail}
-        />)
-      case 'AD_SERVING':
-          return <DisplayAdServingCampaignForm
+        return (
+          <DisplayCampaignForm
             initialValues={displayCampaignFormData}
             onSubmit={this.save}
             close={this.onClose}
             breadCrumbPaths={breadcrumbPaths}
             onSubmitFail={this.onSubmitFail}
-          />;
+          />
+        );
+      case 'AD_SERVING':
+        return (
+          <DisplayAdServingCampaignForm
+            initialValues={displayCampaignFormData}
+            onSubmit={this.save}
+            close={this.onClose}
+            breadCrumbPaths={breadcrumbPaths}
+            onSubmitFail={this.onSubmitFail}
+          />
+        );
       case 'TRACKING':
-          return 'This feature is not supported yet!';
+        return 'This feature is not supported yet!';
     }
-
   }
 }
 

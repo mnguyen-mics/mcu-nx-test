@@ -75,7 +75,9 @@ function request(
 ) {
   const baseUrl = options.adminApi
     ? ADMIN_API_URL
-    : options.localUrl ? LOCAL_URL : API_URL;
+    : options.localUrl
+    ? LOCAL_URL
+    : API_URL;
 
   const url = `${baseUrl}${endpoint}${paramsToQueryString(options.params)}`;
 
@@ -117,6 +119,11 @@ function request(
 
   const checkAndParse = (response: Response) => {
     const contentType = response.headers.get('Content-Type');
+
+    if (response.status === 401) {
+      const event = new Event('unauthorizedEvent');
+      document.dispatchEvent(event);
+    }
 
     if (
       contentType &&

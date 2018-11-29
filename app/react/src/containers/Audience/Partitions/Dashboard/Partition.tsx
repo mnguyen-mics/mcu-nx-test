@@ -5,22 +5,34 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import Card from '../../../../components/Card/Card';
 import ContentHeader from '../../../../components/ContentHeader';
-import TableView, { DataColumnDefinition, TableViewProps } from '../../../../components/TableView/TableView';
-import { AudiencePartitionResource, AudiencePartitionStatus } from '../../../../models/audiencePartition/AudiencePartitionResource';
+import TableView, {
+  DataColumnDefinition,
+  TableViewProps,
+} from '../../../../components/TableView/TableView';
+import {
+  AudiencePartitionResource,
+  AudiencePartitionStatus,
+} from '../../../../models/audiencePartition/AudiencePartitionResource';
 import { UserPartitionSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import AudiencePartitionService from '../../../../services/AudiencePartitionsService';
-import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import QueryService from '../../../../services/QueryService';
 import ReportService from '../../../../services/ReportService';
 import { Index } from '../../../../utils';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
-import { InjectedWorkspaceProps, injectWorkspace } from '../../../Datamart/index';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import {
+  InjectedWorkspaceProps,
+  injectWorkspace,
+} from '../../../Datamart/index';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 import PartitionActionBar from './PartitionActionBar';
-
+import { IAudiencePartitionsService } from '../../../../services/AudiencePartitionsService';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 const { Content } = Layout;
 
@@ -86,6 +98,10 @@ const PartitionTable = TableView as React.ComponentClass<
 >;
 
 class Partition extends React.Component<JoinedProps, PartitionState> {
+  @lazyInject(TYPES.IAudiencePartitionsService)
+  private _audiencePartitionsService: IAudiencePartitionsService;
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -133,54 +149,62 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         params: { organisationId },
       },
     } = this.props;
-    this.setState({ isLoading: true, isLoadingStats: true });    
-    AudiencePartitionService.getPartition(partitionId).then(partitionRes => {
-      const datamart = workspace.datamarts.find(
-        d => d.id === partitionRes.data.datamart_id,
-      )!;
-      return Promise.all([
-        AudienceSegmentService.getSegments(organisationId, {
-          audience_partition_id: partitionId,
-          type: 'USER_PARTITION',
-          max_results: 500,
-        }).then(segmentsRes => {
-          this.setState({
-            isLoading: false,
-            audiencePartition: partitionRes.data,
-            userPartitionSegments: segmentsRes.data as UserPartitionSegment[],
-          });
-          return segmentsRes;
-        }),      
-        Promise.all([
-          this.fetchTotalUsers(datamart),
-          ReportService.getAudienceSegmentReport(
-            organisationId,
-            new McsMoment('now'),
-            new McsMoment('now'),
-            ['audience_segment_id'],
-            ['user_points'],
-          ),
-        ]).then(([total, reportViewRes]) => {
-          const normalized = normalizeReportView<{
-            audience_segment_id: number;
-            user_points: number;
-          }>(reportViewRes.data.report_view);
-        
-          this.setState({
-            isLoadingStats: false,
-            totalUserPoint: total,
-            statBySegmentId: normalizeArrayOfObject(normalized, 'audience_segment_id')
-          });
-          return reportViewRes;
-        }),
-      ]);
-    }).catch(err => {
-      this.props.notifyError(err);
-      this.setState({
-        isLoading: false,
-        isLoadingStats: false,
+    this.setState({ isLoading: true, isLoadingStats: true });
+    this._audiencePartitionsService
+      .getPartition(partitionId)
+      .then(partitionRes => {
+        const datamart = workspace.datamarts.find(
+          d => d.id === partitionRes.data.datamart_id,
+        )!;
+        return Promise.all([
+          this._audienceSegmentService
+            .getSegments(organisationId, {
+              audience_partition_id: partitionId,
+              type: 'USER_PARTITION',
+              max_results: 500,
+            })
+            .then(segmentsRes => {
+              this.setState({
+                isLoading: false,
+                audiencePartition: partitionRes.data,
+                userPartitionSegments: segmentsRes.data as UserPartitionSegment[],
+              });
+              return segmentsRes;
+            }),
+          Promise.all([
+            this.fetchTotalUsers(datamart),
+            ReportService.getAudienceSegmentReport(
+              organisationId,
+              new McsMoment('now'),
+              new McsMoment('now'),
+              ['audience_segment_id'],
+              ['user_points'],
+            ),
+          ]).then(([total, reportViewRes]) => {
+            const normalized = normalizeReportView<{
+              audience_segment_id: number;
+              user_points: number;
+            }>(reportViewRes.data.report_view);
+
+            this.setState({
+              isLoadingStats: false,
+              totalUserPoint: total,
+              statBySegmentId: normalizeArrayOfObject(
+                normalized,
+                'audience_segment_id',
+              ),
+            });
+            return reportViewRes;
+          }),
+        ]);
       })
-    });
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          isLoading: false,
+          isLoadingStats: false,
+        });
+      });
   };
 
   fetchTotalUsers = (datamart: DatamartResource): Promise<number> => {
@@ -199,7 +223,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       default:
         return Promise.resolve(0);
     }
-  };  
+  };
 
   publishPartition = () => {
     const {
@@ -218,13 +242,12 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       ...audiencePartition,
       status: publishedStatus,
     };
-    AudiencePartitionService.publishPartition(
-      partitionId,
-      publishedPartitionData,
-    ).then(resp => {
-      this.loadData(partitionId);
-      message.success(intl.formatMessage(messages.partitionPublished));
-    });
+    this._audiencePartitionsService
+      .publishPartition(partitionId, publishedPartitionData)
+      .then(resp => {
+        this.loadData(partitionId);
+        message.success(intl.formatMessage(messages.partitionPublished));
+      });
   };
 
   buildColumnDefinition = (): Array<
@@ -243,11 +266,11 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         key: 'users',
         isHideable: false,
         render: (text, record) => {
-          if (isLoadingStats){
-            return <i className="mcs-table-cell-loading" />; 
+          if (isLoadingStats) {
+            return <i className="mcs-table-cell-loading" />;
           }
           const value = statBySegmentId[record.id];
-          return value ? value.user_points : '-'
+          return value ? value.user_points : '-';
         },
       },
       {
@@ -255,16 +278,16 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         key: 'percentage',
         isHideable: false,
         render: (text, record) => {
-          if (isLoadingStats){
-            return <i className="mcs-table-cell-loading" />; 
+          if (isLoadingStats) {
+            return <i className="mcs-table-cell-loading" />;
           }
           const value = statBySegmentId[record.id];
           if (value && totalUserPoint) {
-            const percent = ((value.user_points / totalUserPoint) * 100)
-            return !isNaN(percent) ? `${percent.toFixed(2)} %`  : '-'
+            const percent = (value.user_points / totalUserPoint) * 100;
+            return !isNaN(percent) ? `${percent.toFixed(2)} %` : '-';
           }
           return '-';
-        }
+        },
       },
     ];
   };
@@ -281,7 +304,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
 
   render() {
     const { intl } = this.props;
-    const { isLoading, audiencePartition, userPartitionSegments  } = this.state;
+    const { isLoading, audiencePartition, userPartitionSegments } = this.state;
 
     const partitionName = audiencePartition ? audiencePartition.name : '';
 
@@ -293,10 +316,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <ContentHeader
-              title={partitionName}
-              loading={isLoading}
-            />
+            <ContentHeader title={partitionName} loading={isLoading} />
             <Card title={intl.formatMessage(messages.overview)}>
               <hr />
               <PartitionTable

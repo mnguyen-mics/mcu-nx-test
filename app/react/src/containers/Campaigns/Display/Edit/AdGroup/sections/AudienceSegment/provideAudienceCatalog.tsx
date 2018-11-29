@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-
-import AudienceSegmentService from '../../../../../../../services/AudienceSegmentService';
 import CatalogService from '../../../../../../../services/CatalogService';
 import { AudienceSegmentResource } from '../../../../../../../models/audiencesegment';
 import {
@@ -13,6 +11,9 @@ import { EditAdGroupRouteMatchParam } from '../../domain';
 import injectDatamart, {
   InjectedDatamartProps,
 } from '../../../../../../Datamart/injectDatamart';
+import { IAudienceSegmentService } from '../../../../../../../services/AudienceSegmentService';
+import { TYPES } from '../../../../../../../constants/types';
+import { lazyInject } from '../../../../../../../config/inversify.config';
 
 export interface DataLoadingContainer<T> {
   data: T;
@@ -35,8 +36,12 @@ type State = InjectedAudienceCatalogProps;
 type Props = InjectedDatamartProps &
   RouteComponentProps<EditAdGroupRouteMatchParam>;
 
-const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudienceCatalogProps>) => {
-  const providedComponent = class ProvidedComponent extends React.Component<Props, State> {
+const provideAudienceCatalog = (
+  Component: React.ComponentClass<InjectedAudienceCatalogProps>,
+) => {
+  class ProvidedComponent extends React.Component<Props, State> {
+    @lazyInject(TYPES.IAudienceSegmentService)
+    private _audienceSegmentService: IAudienceSegmentService;
     constructor(props: Props) {
       super(props);
       this.state = {
@@ -65,17 +70,21 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
       this.fetchAgeServiceItems();
       this.fetchOwnDatamartSegments();
     }
-  
+
     fetchDetailedTargetingData = () => {
-      const { match: { params: { organisationId } } } = this.props;
-  
+      const {
+        match: {
+          params: { organisationId },
+        },
+      } = this.props;
+
       this.setState(prevState => ({
         audienceCategoryTree: {
           ...prevState.audienceCategoryTree,
           loading: true,
         },
       }));
-  
+
       CatalogService.getCategoryTree(organisationId, {
         serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'],
       })
@@ -95,7 +104,7 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
                 )
                 .map(fetchServices),
             );
-  
+
             return Promise.all([servicesP, childrenCategoryP]).then(
               ([services, childrenCategory]) => {
                 return {
@@ -106,7 +115,7 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
               },
             );
           }
-  
+
           return Promise.all(
             categoryTree.map(category => {
               return fetchServices(category);
@@ -126,69 +135,83 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
           }));
         });
     };
-  
+
     fetchGenderServiceItems = () => {
-      const { match: { params: { organisationId } } } = this.props;
-  
+      const {
+        match: {
+          params: { organisationId },
+        },
+      } = this.props;
+
       this.setState(prevState => ({
         genderServiceItems: {
           ...prevState.genderServiceItems,
           loading: true,
         },
       }));
-  
+
       CatalogService.getAudienceSegmentServices(organisationId, {
         categorySubtype: ['AUDIENCE.GENDER'],
       })
-      .then(res => res.data)
-      .then(genderServiceItems => {
-        this.setState(prevState => ({
-          genderServiceItems: {
-            data: genderServiceItems,
-            loading: false,
-          },
-        }));
-      });
+        .then(res => res.data)
+        .then(genderServiceItems => {
+          this.setState(prevState => ({
+            genderServiceItems: {
+              data: genderServiceItems,
+              loading: false,
+            },
+          }));
+        });
     };
-  
+
     fetchAgeServiceItems = () => {
-      const { match: { params: { organisationId } } } = this.props;
-  
+      const {
+        match: {
+          params: { organisationId },
+        },
+      } = this.props;
+
       this.setState(prevState => ({
         ageServiceItems: {
           ...prevState.ageServiceItems,
           loading: true,
         },
       }));
-  
+
       CatalogService.getAudienceSegmentServices(organisationId, {
         categorySubtype: ['AUDIENCE.AGE'],
       })
-      .then(res => res.data)
-      .then(ageServiceItems => {
-        this.setState(prevState => ({
-          ageServiceItems: {
-            data: ageServiceItems,
-            loading: false,
-          },
-        }));
-      });
+        .then(res => res.data)
+        .then(ageServiceItems => {
+          this.setState(prevState => ({
+            ageServiceItems: {
+              data: ageServiceItems,
+              loading: false,
+            },
+          }));
+        });
     };
-  
+
     fetchOwnDatamartSegments = () => {
-      const { match: { params: { organisationId } }, datamart } = this.props;
-  
+      const {
+        match: {
+          params: { organisationId },
+        },
+        datamart,
+      } = this.props;
+
       this.setState(prevState => ({
         audienceSegments: {
           ...prevState.audienceSegments,
           loading: true,
         },
       }));
-  
-      AudienceSegmentService.getSegments(organisationId, {
-        max_results: 500,
-        datamart_id: datamart.id
-      })
+
+      this._audienceSegmentService
+        .getSegments(organisationId, {
+          max_results: 500,
+          datamart_id: datamart.id,
+        })
         .then(res => res.data)
         .then(audienceSegments => {
           this.setState(prevState => ({
@@ -199,15 +222,9 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
           }));
         });
     };
-  
+
     render() {
-      const {
-        datamart,
-        history,
-        location,
-        match,
-        ...rest
-      } = this.props
+      const { datamart, history, location, match, ...rest } = this.props;
 
       // with remove props used for the purpose of this HOC
       // then pass the rest to the resulting component
@@ -215,9 +232,8 @@ const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudience
       return <Component {...rest} {...this.state} />;
     }
   }
-
-  return providedComponent;
-}
+  return ProvidedComponent;
+};
 
 export default compose<Props, InjectedAudienceCatalogProps>(
   withRouter,

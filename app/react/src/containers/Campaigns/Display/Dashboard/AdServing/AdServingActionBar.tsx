@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { DisplayCampaignInfoResource, AdInfoResource } from '../../../../../models/campaign/display';
+import {
+  DisplayCampaignInfoResource,
+  AdInfoResource,
+} from '../../../../../models/campaign/display';
 import { Actionbar } from '../../../../Actionbar';
 import { Button, Dropdown, Icon, message, Menu, Modal } from 'antd';
 import { McsIcon } from '../../../../../components';
@@ -13,29 +16,42 @@ import { generateCsvData, ExportType } from './snippetExport';
 import { ClickParam } from 'antd/lib/menu';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import ResourceTimelinePage, {
+  ResourceTimelinePageProps,
+} from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
 
 export interface AdServingActionBarProps {
   campaign: DisplayCampaignInfoResource;
-  archiveCampaign: (campaignId: string) => void
+  archiveCampaign: (campaignId: string) => void;
 }
 
 type Props = AdServingActionBarProps &
-RouteComponentProps<{ organisationId: string, campaignId: string }> &
-InjectedIntlProps &
-InjectedDrawerProps;
+  RouteComponentProps<{ organisationId: string; campaignId: string }> &
+  InjectedIntlProps &
+  InjectedDrawerProps;
 
 class AdServingActionBar extends React.Component<Props> {
-
   getSnippet = (type: ClickParam) => {
-    const { campaign, intl: { formatMessage }, match: { params: { organisationId } } } = this.props;
+    const {
+      campaign,
+      intl: { formatMessage },
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     const ads: AdInfoResource[] = [];
     campaign.ad_groups.forEach(adGroup => {
-      return adGroup.ads.forEach(ad => ads.push(ad))
+      return adGroup.ads.forEach(ad => ads.push(ad));
     });
-    generateCsvData(organisationId, campaign, type.key as ExportType, ads, formatMessage)
-  }
+    generateCsvData(
+      organisationId,
+      campaign,
+      type.key as ExportType,
+      ads,
+      formatMessage,
+    );
+  };
 
   editCampaign = () => {
     const {
@@ -103,7 +119,7 @@ class AdServingActionBar extends React.Component<Props> {
                 formatProperty: formatDisplayCampaignProperty,
               },
               size: 'small',
-            }
+            },
           );
         default:
           return () => {
@@ -117,9 +133,11 @@ class AdServingActionBar extends React.Component<Props> {
         <Menu.Item key="HISTORY">
           <FormattedMessage {...messages.history} />
         </Menu.Item>
-        {campaign && campaign.model_version === 'V2014_06' ? null : <Menu.Item key="DUPLICATE">
-          <FormattedMessage {...messages.duplicate} />
-        </Menu.Item>}
+        {campaign && campaign.model_version === 'V2014_06' ? null : (
+          <Menu.Item key="DUPLICATE">
+            <FormattedMessage {...messages.duplicate} />
+          </Menu.Item>
+        )}
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archiveCampaign} />
         </Menu.Item>
@@ -180,20 +198,22 @@ class AdServingActionBar extends React.Component<Props> {
           <FormattedMessage {...messages.none} />
         </Menu.Item>
       </Menu>
-    )
+    );
 
     return (
       <Actionbar path={breadcrumbPaths}>
         <Dropdown overlay={downloadMenu} trigger={['click']}>
-          <Button className='mcs-primary' type="primary" >
+          <Button className="mcs-primary" type="primary">
             <McsIcon type="download" />
             <FormattedMessage {...messages.adServingDownload} />
           </Button>
         </Dropdown>
-        {(campaign && campaign.model_version === 'V2014_06') ? null : <Button onClick={this.editCampaign}>
-          <McsIcon type="pen" />
-          <FormattedMessage {...messages.editCampaign} />
-        </Button>}
+        {campaign && campaign.model_version === 'V2014_06' ? null : (
+          <Button onClick={this.editCampaign}>
+            <McsIcon type="pen" />
+            <FormattedMessage {...messages.editCampaign} />
+          </Button>
+        )}
 
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
@@ -209,4 +229,4 @@ export default compose<Props, AdServingActionBarProps>(
   withRouter,
   injectIntl,
   injectDrawer,
-)(AdServingActionBar)
+)(AdServingActionBar);

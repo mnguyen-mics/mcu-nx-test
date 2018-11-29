@@ -1,9 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import {Icon } from 'antd';
+import { Icon } from 'antd';
 import { compose } from 'recompose';
-import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import {
+  FormattedMessage,
+  defineMessages,
+  InjectedIntlProps,
+  injectIntl,
+} from 'react-intl';
 
 import { TableViewFilters } from '../../../../components/TableView/index';
 import { getWorkspace } from '../../../../state/Session/selectors';
@@ -11,7 +16,10 @@ import { AudiencePartitionResource } from '../../../../models/audiencePartition/
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { DataListResponse } from '../../../../services/ApiService';
 import { PartitionFilterParams } from './AudiencePartitionsPage';
-import { DataColumnDefinition, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import {
+  DataColumnDefinition,
+  ActionsColumnDefinition,
+} from '../../../../components/TableView/TableView';
 
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
@@ -29,16 +37,13 @@ export interface AudiencePartitionsTableProps {
 
 type Props = MapStateToProps & AudiencePartitionsTableProps & InjectedIntlProps;
 
-class AudiencePartitionTable extends TableViewFilters<AudiencePartitionResource> {}
+class AudiencePartitionTable extends TableViewFilters<
+  AudiencePartitionResource
+> {}
 
 class AudiencePartitionsTable extends React.Component<Props> {
   getFiltersOptions = () => {
-    const {
-      workspace,
-      filter,
-      organisationId,
-      onChange,
-    } = this.props;
+    const { workspace, filter, organisationId, onChange } = this.props;
 
     if (workspace(organisationId).datamarts.length > 1) {
       const datamartItems = workspace(organisationId)
@@ -103,7 +108,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: audiencePartitions ? audiencePartitions.total || audiencePartitions.count || 0 : 0,
+      total: audiencePartitions
+        ? audiencePartitions.total || audiencePartitions.count || 0
+        : 0,
       onChange: (page: number) =>
         onChange({
           currentPage: page,
@@ -115,7 +122,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns: Array<DataColumnDefinition<AudiencePartitionResource>> = [
+    const dataColumns: Array<
+      DataColumnDefinition<AudiencePartitionResource>
+    > = [
       {
         intlMessage: messageMap.columnName,
         key: 'name',
@@ -132,7 +141,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
         intlMessage: messageMap.columnType,
         key: 'audience_partition_type',
         isHideable: false,
-        render: (text, partition) => <span>{partition.audience_partition_type}</span>,
+        render: (text, partition) => (
+          <span>{partition.audience_partition_type}</span>
+        ),
       },
       {
         intlMessage: messageMap.columnPartCount,
@@ -146,7 +157,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<AudiencePartitionResource>> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<AudiencePartitionResource>
+    > = [
       {
         key: 'action',
         actions: () => [
@@ -208,5 +221,5 @@ const messageMap = defineMessages({
   searchPlaceholder: {
     id: 'audience.partitions.search.placeholder',
     defaultMessage: 'Search Audience Partitions',
-  }
+  },
 });
