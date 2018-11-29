@@ -1,17 +1,9 @@
 export interface AutomationResource {
-<<<<<<< 6fba27ed4671207f387c98c9c385c585077ac81e
     id: string;
     name: string;
     datamart_id: string;
     organisation_id: string;
     status: AutomationStatus;
-=======
-  id: string;
-  name: string;
-  datamart_id: string;
-  organisation_id: string;
-  status: 'ACTIVE' | 'PENDING' | 'NEW';
->>>>>>> making files prettier
 }
 
 export type AutomationStatus = 'NEW' | 'ACTIVE' | 'PAUSED';

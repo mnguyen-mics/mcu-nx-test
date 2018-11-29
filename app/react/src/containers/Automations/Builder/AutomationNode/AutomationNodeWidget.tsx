@@ -45,21 +45,7 @@ class AutomationNodeWidget extends React.Component<AutomationNodeProps> {
               backgroundColor: backgroundColor,
             }}
           >
-            <div
-              style={{
-                width: node.getSize().width,
-                height: node.getSize().height,
-                borderWidth: node.getSize().borderWidth,
-                borderColor: borderColor,
-                float: 'left',
-                color: color,
-                backgroundColor: backgroundColor,
-              }}
-            >
-              <McsIcon type={node.iconType} />
-            </div>
-
-            <FourAnchorPortWidget node={node} />
+            <McsIcon type={node.iconType} />
           </div>
 
           <FourAnchorPortWidget node={node} />

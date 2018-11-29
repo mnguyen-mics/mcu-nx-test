@@ -90,6 +90,13 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                   query_id: 'query_id_55',
                   evaluation_mode: '000',
                 },
+                in_edge: {
+                  id: '222',
+                  source_id: '002',
+                  target_id: '003',
+                  handler: onVisit,
+                  scenario_id: 'scenario_id_004',
+                },
                 out_edges: [
                   {
                     node: {
@@ -154,6 +161,13 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                   type: 'QUERY_INPUT',
                   query_id: 'query_id_55',
                   evaluation_mode: '000',
+                },
+                in_edge: {
+                    id: '222',
+                    source_id: '33',
+                    target_id: '44',
+                    handler: onVisit,
+                    scenario_id: 'scenario_id_004',
                 },
                 out_edges: [
                   {
