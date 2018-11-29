@@ -41,13 +41,9 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.engine.registerNodeFactory(
-      new AutomationNodeFactory(),
-    );
-
+    this.engine.registerNodeFactory(new AutomationNodeFactory());
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
-
     this.state = {
       viewSchema: true,
     };
@@ -57,27 +53,33 @@ class AutomationBuilder extends React.Component<Props, State> {
     model: DiagramModel,
     node: StorylineNodeResource,
     nodeModel: AutomationNodeModel,
-    xAxys: number, 
-    heightMax: number,    
-  ):number => {
-
+    xAxis: number,
+    maxHeight: number,
+  ): number => {
     return node.out_edges.reduce((acc, child, index) => {
-      const heightMaxLocal = index>0 ? acc+1 : acc
-      const xAxysLocal = xAxys + 1
+      const maxHeightLocal = index > 0 ? acc + 1 : acc;
+      const xAxisLocal = xAxis + 1;
       const storylineNode = new AutomationNodeModel(
         this.generateNodeProperties(child.node).iconType,
         `${child.node.name} - (type: ${child.node.type})`,
         this.generateNodeProperties(child.node).color,
       );
-
-      storylineNode.x = ROOT_NODE_POSITION.x + (300 * xAxysLocal);
-      storylineNode.y = ROOT_NODE_POSITION.y * heightMaxLocal;
+      storylineNode.x = ROOT_NODE_POSITION.x + 300 * xAxisLocal;
+      storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
       model.addNode(storylineNode);
-      if(child.in_edge) model.addLink(createLink(nodeModel.ports.right, storylineNode.ports.left));
-      return this.buildAutomationTree(model, child, storylineNode, xAxysLocal, heightMaxLocal)
-    }, heightMax)
-
-  }
+      if (child.in_edge)
+        model.addLink(
+          createLink(nodeModel.ports.right, storylineNode.ports.left),
+        );
+      return this.buildAutomationTree(
+        model,
+        child,
+        storylineNode,
+        xAxisLocal,
+        maxHeightLocal,
+      );
+    }, maxHeight);
+  };
 
   generateNodeProperties = (
     node: ScenarioNodeShape,
@@ -133,9 +135,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     rootNode.x = ROOT_NODE_POSITION.x;
     rootNode.y = ROOT_NODE_POSITION.y;
     model.addNode(rootNode);
-    
-    this.buildAutomationTree(model, automationData, rootNode, 0, 1)
-
+    this.buildAutomationTree(model, automationData, rootNode, 0, 1);
   };
 
   componentWillMount() {
@@ -153,9 +153,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
     model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
     model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
-
     this.startAutomationTree(automationData, model);
-
     this.engine.setDiagramModel(model);
   }
 
@@ -166,10 +164,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       this.setState({ viewSchema: !viewSchema });
 
     return (
-      <div
-        className={`automation-builder`}
-        ref={this.div}
-      >
+      <div className={`automation-builder`} ref={this.div}>
         <Col span={viewSchema ? 18 : 24} className={'diagram'}>
           <DiagramWidget
             diagramEngine={this.engine}

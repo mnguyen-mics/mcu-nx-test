@@ -33,7 +33,7 @@ export default class AutomationNodeModel extends NodeModel {
       x: this.x,
       y: this.y,
     };
-  }
+  };
 
   getSize() {
     return {
@@ -41,9 +41,9 @@ export default class AutomationNodeModel extends NodeModel {
       height: 50,
       borderWidth: 2,
     };
-  }
+  };
 
   getColor() {
     return this.color;
-  }
+  };
 }

@@ -9,7 +9,6 @@ interface AutomationNodeProps {
   diagramEngine: DiagramEngine;
 }
 
-
 class AutomationNodeWidget extends React.Component<AutomationNodeProps> {
   top: number = 0;
   left: number = 0;
@@ -21,18 +20,15 @@ class AutomationNodeWidget extends React.Component<AutomationNodeProps> {
   };
 
   render() {
-    const {
-      node,
-    } = this.props;
+    const { node } = this.props;
 
     const backgroundColor = node.getColor();
     const color = '#ffffff';
     const borderColor = node.getColor();
 
-    return (<div className="node-body">
-        <div
-          ref={ref => this.setPosition(ref)}
-        >
+    return (
+      <div className="node-body">
+        <div ref={ref => this.setPosition(ref)}>
           <div
             className={'node-icon'}
             style={{
@@ -49,10 +45,9 @@ class AutomationNodeWidget extends React.Component<AutomationNodeProps> {
           </div>
 
           <FourAnchorPortWidget node={node} />
-
         </div>
-        <div className="node-content">{node.title}</div>        
-        </div>
+        <div className="node-content">{node.title}</div>
+      </div>
     );
   }
 }

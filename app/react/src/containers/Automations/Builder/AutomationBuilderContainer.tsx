@@ -13,9 +13,7 @@ import { StorylineNodeResource } from '../../../models/automations/automations';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
-  renderActionBar: (
-    datamartId: string,
-  ) => React.ReactNode;
+  renderActionBar: (datamartId: string) => React.ReactNode;
   automationData: StorylineNodeResource;
 }
 
@@ -25,26 +23,25 @@ type Props = AutomationBuilderContainerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AutomationBuilderContainer extends React.Component<Props> {
-  
   render() {
     const {
       match: {
         params: { organisationId },
       },
     } = this.props;
-    
+
     return (
       <Layout>
-      <Layout.Content
-      className={`mcs-content-container`}
-      style={{ padding: 0, overflow: 'hidden' }}
-      >
-      <AutomationBuilder
-      datamartId={this.props.datamartId}
-      organisationId={organisationId}
-      automationData={this.props.automationData}
-      />
-      </Layout.Content>
+        <Layout.Content
+          className={`mcs-content-container`}
+          style={{ padding: 0, overflow: 'hidden' }}
+        >
+          <AutomationBuilder
+            datamartId={this.props.datamartId}
+            organisationId={organisationId}
+            automationData={this.props.automationData}
+          />
+        </Layout.Content>
       </Layout>
     );
   }

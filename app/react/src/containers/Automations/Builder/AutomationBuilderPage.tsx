@@ -131,7 +131,6 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                     },
                     out_edges: [],
                   },
-                  
                 ],
               },
             ],
@@ -163,11 +162,11 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                   evaluation_mode: '000',
                 },
                 in_edge: {
-                    id: '222',
-                    source_id: '33',
-                    target_id: '44',
-                    handler: onVisit,
-                    scenario_id: 'scenario_id_004',
+                  id: '222',
+                  source_id: '33',
+                  target_id: '44',
+                  handler: onVisit,
+                  scenario_id: 'scenario_id_004',
                 },
                 out_edges: [
                   {
@@ -246,30 +245,32 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     }
 
     const automationActionBar = (datamartId: string) => {
-      return <SaveQueryAsActionBar breadcrumb={
-        [
-          {
-            name: intl.formatMessage(messages.automationBuilder),
-          },
-        ]
-      } />;
+      return (
+        <SaveQueryAsActionBar
+          breadcrumb={[
+            {
+              name: intl.formatMessage(messages.automationBuilder),
+            },
+          ]}
+        />
+      );
     };
 
     const style: React.CSSProperties = { height: '100%', display: 'flex' };
     return (
       <div style={style}>
-      {!selectedDatamart && (
-        <DatamartSelector
-          onSelectDatamart={handleOnSelectDatamart}
-          actionbarProps={{
-            paths: [
-              {
-                name: intl.formatMessage(messages.automationBuilder),
-              },
-            ],
-          }}
-        />
-      )}
+        {!selectedDatamart && (
+          <DatamartSelector
+            onSelectDatamart={handleOnSelectDatamart}
+            actionbarProps={{
+              paths: [
+                {
+                  name: intl.formatMessage(messages.automationBuilder),
+                },
+              ],
+            }}
+          />
+        )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201709' &&
           this.state.automationData && (
