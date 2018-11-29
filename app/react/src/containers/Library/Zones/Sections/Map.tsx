@@ -43,7 +43,7 @@ interface State {
 class MapboxGl extends React.Component<JoinedProps, State> {
 
   map: Map | undefined;
-  mapContainer: HTMLDivElement | undefined;
+  mapContainer: string |Element;
   draw: any;
 
   constructor(props: JoinedProps) {

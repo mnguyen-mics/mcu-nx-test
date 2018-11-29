@@ -6,7 +6,6 @@ import FormDatePicker, { FormDatePickerProps } from './FormDatePicker';
 import FormFieldWrapper from './FormFieldWrapper';
 import FormRadio, { FormRadioProps } from './FormRadio';
 import FormRadioGroup, { FormRadioGroupProps } from './FormRadioGroup';
-import FormRangePicker from './FormRangePicker/index';
 import FormSection from './FormSection';
 import FormTitle from './FormTitle';
 import SwitchInput from './SwitchInput';
@@ -39,7 +38,6 @@ export default {
   FormFieldWrapper,
   FormRadio,
   FormRadioGroup,
-  FormRangePicker,
   FormDateRangePicker,
   FormSection,
   FormTextArea,
@@ -69,7 +67,6 @@ export {
   FormInput,
   FormBoolean,
   FormRadioGroup,
-  FormRangePicker,
   FormDateRangePicker,
   FormSection,
   FormTitle,

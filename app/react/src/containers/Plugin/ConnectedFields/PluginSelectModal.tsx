@@ -339,8 +339,8 @@ class PluginSelectModal extends React.Component<Props, State> {
                 onSelect={this.onIdChange}
                 value={this.state.id}
               >
-                {elements.map(({ disabled, value, title }) => (
-                  <Option {...{ disabled, value, title }} key={value}>
+                {elements.map(({ disabled, value, title, key }) => (
+                  <Option {...{ disabled, value, title }} key={key}>
                     {title}
                   </Option>
                 ))}
@@ -356,8 +356,8 @@ class PluginSelectModal extends React.Component<Props, State> {
                 onChange={this.onVersionChange}
                 value={this.state.selectedVersion}
               >
-                {pluginVersions.map(({ disabled, value, title }) => (
-                  <Option {...{ disabled, value, title }} key={value}>
+                {pluginVersions.map(({ disabled, value, title, key }) => (
+                  <Option {...{ disabled, value, title }} key={key}>
                     {title}
                   </Option>
                 ))}

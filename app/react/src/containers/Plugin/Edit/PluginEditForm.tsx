@@ -4,6 +4,7 @@ import {
   reduxForm,
   InjectedFormProps,
   Field,
+  GenericField,
   ConfigProps,
 } from 'redux-form';
 import { compose } from 'recompose';
@@ -137,7 +138,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
   renderTechnicalName = () => {
     const { intl } = this.props;
-    const InputField: FieldCtor<FormInputProps> = Field;
+    const InputField: FieldCtor<FormInputProps> = Field as new () => GenericField<FormInputProps>;
     return (
       <div>
         <ButtonStyleless
@@ -219,7 +220,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       pluginLayout
     } = this.props;
 
-    const InputField: FieldCtor<FormInputProps> = Field;
+    const InputField: FieldCtor<FormInputProps> = Field as new() => GenericField<FormInputProps>;
     const fieldProps: FormInputProps = {
       formItemProps: {
         label: formatMessage(messages.sectionGeneralName),

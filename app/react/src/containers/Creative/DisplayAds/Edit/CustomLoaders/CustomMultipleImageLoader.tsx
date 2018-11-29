@@ -81,7 +81,7 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
     )
   }
 
-  removeItem = (id: number) => {
+  removeItem = (id: string) => {
     const {
       fields,
       formChange,

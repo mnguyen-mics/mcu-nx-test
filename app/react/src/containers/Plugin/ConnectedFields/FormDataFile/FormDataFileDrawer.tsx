@@ -173,7 +173,7 @@ class FormDataFileDrawer extends React.Component<
       this.setState({ fileSelectorValue: e.target.value });
     };
 
-    const onFileSelectorValidate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onFileSelectorValidate = () => {
       const { fileSelectorValue } = this.state;
 
       if (fileSelectorValue) {

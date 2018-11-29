@@ -431,7 +431,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         filtersOptions={(filtersOptions !== undefined) ? filtersOptions : this.getFiltersOptions()}
       />
     ) : (
-        <TableView {...tableViewProps} />
+        <TableView {...tableViewProps as any} />
       );
 
     return (

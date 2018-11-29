@@ -14,6 +14,7 @@ import {
   Field,
   Form,
   ConfigProps,
+  GenericField,
 } from 'redux-form';
 import { EditContentLayout } from '../../../../../components/Layout';
 import { Omit } from '../../../../../utils/Types';
@@ -21,7 +22,7 @@ import { injectDrawer } from '../../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 const { Content } = Layout;
 
-const FormCodeField: FieldCtor<FormCodeEditProps> = Field;
+const FormCodeField: FieldCtor<FormCodeEditProps> = Field as new () => GenericField<FormCodeEditProps>;
 
 export interface CodeAreaProps extends Omit<ConfigProps<any>, 'form'> {}
 

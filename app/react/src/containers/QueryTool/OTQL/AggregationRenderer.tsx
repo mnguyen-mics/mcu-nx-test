@@ -254,7 +254,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
                 {aggregations.buckets.length > 0 && (
                   <Select.OptGroup label="Buckets">
                     {aggregations.buckets.map((bucket, index) => (
-                      <Select.Option key={index} value={index.toString()}>{`${
+                      <Select.Option key={index.toString()} value={index.toString()}>{`${
                         bucket.fieldName
                       } @${bucket.type}`}</Select.Option>
                     ))}

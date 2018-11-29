@@ -139,7 +139,7 @@ class ItemList<T> extends React.Component<Props<T>> {
         intlMessage,
       },
       additionnalComponent,
-      ...rest,
+      ...rest
     } = this.props;
 
     if (!rest.dataSource.length && !rest.loading && !additionnalComponent) {

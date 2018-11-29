@@ -130,7 +130,7 @@ class TableViewFilters<T> extends React.Component<ViewComponentWithFiltersProps<
         <Row className="mcs-table-body">
           <Col span={24}>
             <TableView
-              {...this.props}
+              {...this.props as any}
               visibilitySelectedColumns={this.state.visibilitySelectedColumns}
             />
           </Col>

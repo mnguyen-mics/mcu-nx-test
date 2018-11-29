@@ -15,7 +15,7 @@ import ScrollspySider, {
 import { McsFormSection } from '../../../../utils/FormHelper';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { AudiencePartitionFormData } from './domain';
-import { Omit } from 'antd/lib/form/Form';
+import { Omit } from '../../../../utils/Types';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }

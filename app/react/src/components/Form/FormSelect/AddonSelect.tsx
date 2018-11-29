@@ -30,7 +30,7 @@ class AddonSelect extends React.Component<
     );
 
     const optionsToDisplay = filteredOptions.map(option => (
-      <Option key={option.value} {...option}>
+      <Option key={option.key} {...option}>
         {option.title || option.children}
       </Option>
     ));
