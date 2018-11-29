@@ -17,6 +17,8 @@ import AutomationNodeFactory from './AutomationNode/AutomationNodeFactory';
 import AutomationNodeModel from './AutomationNode/AutomationNodeModel';
 import AvailableNode from './NodeVisualizer/AvailableNode';
 import AutomationLinkFactory from './Link/AutomationLinkFactory';
+import DropNodeFactory from './DropNode/DropNodeFactory';
+
 
 export interface AutomationBuilderProps {
   datamartId: string;
@@ -35,10 +37,9 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.engine.registerNodeFactory(
-      new AutomationNodeFactory(),
-    );
-
+    
+    this.engine.registerNodeFactory(new AutomationNodeFactory());
+    this.engine.registerNodeFactory(new DropNodeFactory());
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
 
