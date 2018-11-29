@@ -43,6 +43,7 @@ class AutomationBuilder extends React.Component<Props, State> {
 
     this.engine.registerNodeFactory(new DropNodeFactory());
     this.engine.registerNodeFactory(new AutomationNodeFactory());
+    this.engine.registerNodeFactory(new DropNodeFactory());
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
