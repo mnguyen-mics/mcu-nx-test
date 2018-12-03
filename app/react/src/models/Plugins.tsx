@@ -11,7 +11,6 @@ export interface PluginResource {
 
 export interface LayoutablePlugin extends PluginResource {
   plugin_layout?: PluginLayout;
-  layout_icon_path?: string;
 }
 
 export interface PluginProperty {
