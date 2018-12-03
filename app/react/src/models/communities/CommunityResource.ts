@@ -1,4 +1,4 @@
-export interface CommunityPasswordRequirement {
+export interface PasswordRequirementResource {
     type: 'PASSWORD_REQUIREMENTS';
     id: string;
     version?: string;
@@ -12,7 +12,7 @@ export interface CommunityPasswordRequirement {
     forbid_popular_passwords: boolean;
 }
 
-export interface CommunityPasswordValidity {
+export interface PasswordValidityResource {
     is_long_enough: boolean,
     has_enough_digits: boolean,
     has_enough_special_chars: boolean,

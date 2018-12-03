@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Form, Row, Col, Input, Button, Alert, Spin } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
-import * as lodash from 'lodash';
 
 import {
   injectIntl,
@@ -21,8 +20,8 @@ import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import CommunityService from '../../../services/CommunityServices';
 import {
-  CommunityPasswordRequirement,
-  CommunityPasswordValidity,
+  PasswordRequirementResource,
+  PasswordValidityResource,
 } from '../../../models/communities';
 import PasswReqChecker from '../Helpers/PasswReqChecker';
 
@@ -40,8 +39,8 @@ interface State {
   fetchingPasswReqFailure: boolean;
   isError: boolean;
   errorMessage?: string;
-  passReq?: CommunityPasswordRequirement;
-  passVal?: CommunityPasswordValidity;
+  passReq?: PasswordRequirementResource;
+  passVal?: PasswordValidityResource;
 }
 
 const messages = defineMessages({
@@ -83,30 +82,22 @@ class CommunityChangePassword extends React.Component<Props, State> {
       fetchingPasswReqFailure: false,
       isError: false,
     };
-    this.requestValidityDebounced = lodash.debounce(
-      this.requestValidityDebounced,
-      250,
-    );
   }
 
-  persistEvent = (e: any) => {
-    e.persist();
-    e.preventDefault();
-    return e;
-  };
-
-  requestValidityDebounced = (handler: any) => {
-    handler.persist();
-    if (this.state.passReq) {
-      CommunityService.getCommunityPasswordValidity(
-        this.props.match.params.communityToken,
-        handler.target.value,
-      ).then(response => {
-        this.setState({ passVal: response.data });
-      });
-    } else {
-      this.setState({ isError: true });
-    }
+  requestValidity = (handler: any) => {
+    CommunityService.getCommunityPasswordValidity(
+      this.props.match.params.communityToken,
+      handler.target.value,
+    )
+    .then(response => {
+      this.setState({ passVal: response.data });
+    })
+    .catch(() =>
+      this.setState({
+        isError: true,
+        errorMessage: messages.standardChangePasswordError.defaultMessage,
+      }),
+    );
   };
 
   componentDidMount() {
@@ -130,7 +121,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
       });
   }
 
-  globalValidity(val?: CommunityPasswordValidity, p1?: string, p2?: string) {
+  passwordValidity(val?: PasswordValidityResource, p1?: string, p2?: string) {
     return val && !Object.values(val).includes(false) && p1 && p2 && p1 === p2;
   }
 
@@ -147,7 +138,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
       if (
         !err &&
         !this.state.fetchingPasswReqFailure &&
-        this.globalValidity(
+        this.passwordValidity(
           this.state.passVal,
           values.password1,
           values.password2,
@@ -190,7 +181,8 @@ class CommunityChangePassword extends React.Component<Props, State> {
       isError && errorMessage ? (
         <Alert
           type="error"
-          style={{ marginBottom: 15 }}
+          className="login-error-message"
+          style={{ marginBottom: 15, paddingLeft: 5, }}
           message={errorMessage}
         />
       ) : null;
@@ -254,10 +246,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
                     <Input
                       type="password"
                       className="reset-password-input"
-                      onChange={lodash.flowRight(
-                        lodash.debounce(this.requestValidityDebounced, 250),
-                        this.persistEvent,
-                      )}
+                      onChange={this.requestValidity}
                     />,
                   )}
                 </FormItem>
@@ -292,7 +281,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
                     type="primary"
                     htmlType="submit"
                     className="mcs-primary reset-password-button"
-                    disabled={!this.globalValidity(passVal, p1, p2)}
+                    disabled={!this.passwordValidity(passVal, p1, p2)}
                   >
                     {pageType}
                   </Button>

@@ -1,11 +1,11 @@
 import ApiService, { DataResponse } from './ApiService';
-import { CommunityPasswordRequirement, CommunityPasswordValidity } from '../models/communities';
+import { PasswordRequirementResource, PasswordValidityResource } from '../models/communities';
 
 const CommunityService = {
 
   getCommunityPasswordRequirements(
     technicalName: string,
-  ): Promise<DataResponse<CommunityPasswordRequirement>> {
+  ): Promise<DataResponse<PasswordRequirementResource>> {
     const endpoint = `communities/technical_name=${technicalName}/password_requirements`;
     const options = {
         authenticated: false,
@@ -16,7 +16,7 @@ const CommunityService = {
   getCommunityPasswordValidity(
     technicalName: string,
     password: string,
-  ): Promise<DataResponse<CommunityPasswordValidity>> {
+  ): Promise<DataResponse<PasswordValidityResource>> {
     const body = {
       password: password
     };

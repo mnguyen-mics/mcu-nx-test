@@ -1,14 +1,14 @@
 import {
-  CommunityPasswordRequirement,
-  CommunityPasswordValidity,
+  PasswordRequirementResource,
+  PasswordValidityResource,
 } from '../../../models/communities';
 import React from 'react';
 import McsIcon from '../../../components/McsIcon';
 import { defineMessages } from 'react-intl';
 
 export interface PrintPasswordRequirementProps {
-  req: CommunityPasswordRequirement;
-  val?: CommunityPasswordValidity;
+  req: PasswordRequirementResource;
+  val?: PasswordValidityResource;
   p1?: string;
   p2?: string;
 }

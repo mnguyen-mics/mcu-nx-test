@@ -1,10 +1,10 @@
 import {
-  CommunityPasswordRequirement,
-  CommunityPasswordValidity,
+  PasswordRequirementResource,
+  PasswordValidityResource,
 
 } from './CommunityResource';
 
 export {
-  CommunityPasswordRequirement,
-  CommunityPasswordValidity,
+  PasswordRequirementResource,
+  PasswordValidityResource,
 };
