@@ -15,10 +15,9 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import SimplePortFactory from '../../QueryTool/JSONOTQL/Diagram/Port/SimplePortFactory';
 import AutomationNodeFactory from './AutomationNode/AutomationNodeFactory';
 import AutomationNodeModel from './AutomationNode/AutomationNodeModel';
-import AvailableNode from './NodeVisualizer/AvailableNode';
 import AutomationLinkFactory from './Link/AutomationLinkFactory';
 import DropNodeFactory from './DropNode/DropNodeFactory';
-
+import AvailableNodeVisualizer from './NodeVisualizer/AvailableNodeVisualizer';
 
 export interface AutomationBuilderProps {
   datamartId: string;
@@ -104,7 +103,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           </div>
         </Col>
         <Col span={viewSchema ? 6 : 24} className="available-nodes-visualizer">
-        <AvailableNode icon='chevron-right' title='Send email' color='#0ba6e1'/>
+          <AvailableNodeVisualizer/>
         </Col>
       </div>
     );

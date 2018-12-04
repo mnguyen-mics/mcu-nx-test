@@ -46,6 +46,8 @@ export interface PluginLayoutEnumResource {
 export interface PluginLayoutMetadataResource {
   large_icon_asset_id: string,
   small_icon_asset_id: string,
+  large_icon_asset_url?: string,
+  small_icon_asset_url?: string,
   display_name: string,
   description: string
 }
