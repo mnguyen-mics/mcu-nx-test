@@ -81,29 +81,6 @@ class AutomationLinkWidget extends React.Component<Props> {
     );
   }
 
-  generatePoint(pointIndex: number): JSX.Element {
-    const x = this.props.link.points[pointIndex].x;
-    const y = this.props.link.points[pointIndex].y;
-    const onMouseLeave = () => this.setState({ selected: false });
-    const onMouseEnter = () => this.setState({ selected: true });
-    return (
-      <g key={'point-' + this.props.link.points[pointIndex].id}>
-        <circle cx={x} cy={y} r={5} className={`point automation-point`} />
-        <circle
-          onMouseLeave={onMouseLeave}
-          onMouseEnter={onMouseEnter}
-          data-id={this.props.link.points[pointIndex].id}
-          data-linkid={this.props.link.id}
-          cx={x}
-          cy={y}
-          r={15}
-          opacity={0}
-          className={'point automation-point'}
-        />
-      </g>
-    );
-  }
-
   render() {
     const { link, isDragging, connectDropTarget } = this.props;
     const points = link.points;
@@ -116,21 +93,11 @@ class AutomationLinkWidget extends React.Component<Props> {
           {
             'data-linkid': this.props.link.id,
             'data-point': j,
-            onMouseDown: (event: MouseEvent) => {
-              //
-            },
           },
           j,
         ),
       );
     }
-
-    // for (let i = 1; i < points.length - 1; i++) {
-    //   paths.push(this.generatePoint(i));
-    // }
-    // if (this.props.link.targetPort === null) {
-    //   paths.push(this.generatePoint(points.length - 1));
-    // }
 
     const opacity = isDragging ? 0.3 : 1;
 

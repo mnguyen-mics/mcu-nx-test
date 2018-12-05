@@ -20,22 +20,13 @@ import {
 } from '../../../models/automations/automations';
 import { McsIconType } from '../../../components/McsIcon';
 import { AutomationLinkModel } from './Link';
-import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
-
-export interface QueryResult {
-  loading: boolean;
-  error?: any;
-  otqlResult?: OTQLResult;
-}
 
 export interface AutomationBuilderProps {
-  datamartId: string;
-  organisationId: string;
   automationData: StorylineNodeResource;
 }
 
 interface State {
-  viewSchema: boolean;
+  viewNodeSelector: boolean;
 }
 
 type Props = AutomationBuilderProps;
@@ -50,8 +41,27 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
-      viewSchema: true,
+      viewNodeSelector: true,
     };
+  }
+
+  componentWillMount() {
+    const { automationData } = this.props;
+    const model = new DiagramModel();
+    model.setLocked(true);
+    this.startAutomationTree(automationData, model);
+    this.engine.setDiagramModel(model);
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const { automationData } = this.props;
+    const model = new DiagramModel();
+    model.setLocked(this.engine.getDiagramModel().locked);
+    model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
+    model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
+    model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
+    this.startAutomationTree(automationData, model);
+    this.engine.setDiagramModel(model);
   }
 
   buildAutomationTree = (
@@ -130,7 +140,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       case 'GOAL':
         return {
           iconType: 'check',
-          color: '#f9f9f9',
+          color: '#18b577',
         };
       case 'FAILURE':
         return {
@@ -143,7 +153,6 @@ class AutomationBuilder extends React.Component<Props, State> {
           color: '#fbc02d',
         };
     }
-    //
   };
 
   startAutomationTree = (
@@ -157,7 +166,6 @@ class AutomationBuilder extends React.Component<Props, State> {
       180,
       90,
     );
-
     rootNode.x = ROOT_NODE_POSITION.x;
     rootNode.y = ROOT_NODE_POSITION.y;
     model.addNode(rootNode);
@@ -165,34 +173,15 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.buildAutomationTree(model, automationData, rootNode, 0, 1);
   };
 
-  componentWillMount() {
-    const { automationData } = this.props;
-    const model = new DiagramModel();
-    model.setLocked(true);
-    this.startAutomationTree(automationData, model);
-    this.engine.setDiagramModel(model);
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    const { automationData } = this.props;
-    const model = new DiagramModel();
-    model.setLocked(this.engine.getDiagramModel().locked);
-    model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
-    model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
-    model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
-    this.startAutomationTree(automationData, model);
-    this.engine.setDiagramModel(model);
-  }
-
-  onSchemaSelectorClick = () => {
-    this.setState({ viewSchema: !this.state.viewSchema });
+  onNodeSelectorClick = () => {
+    this.setState({ viewNodeSelector: !this.state.viewNodeSelector });
   };
 
   render() {
-    const { viewSchema } = this.state;
+    const { viewNodeSelector } = this.state;
     return (
       <div className={`automation-builder`} ref={this.div}>
-        <Col span={viewSchema ? 18 : 24} className={'diagram'}>
+        <Col span={viewNodeSelector ? 18 : 24} className={'diagram'}>
           <DiagramWidget
             diagramEngine={this.engine}
             allowCanvasZoom={true}
@@ -201,13 +190,13 @@ class AutomationBuilder extends React.Component<Props, State> {
           />
           <div className="button-helpers top">
             <ButtonStyleless
-              onClick={this.onSchemaSelectorClick}
+              onClick={this.onNodeSelectorClick}
               className="helper"
             >
               <McsIcon
                 type={'chevron-right'}
                 style={
-                  viewSchema
+                  viewNodeSelector
                     ? {}
                     : {
                         transform: 'rotate(180deg)',
@@ -218,7 +207,7 @@ class AutomationBuilder extends React.Component<Props, State> {
             </ButtonStyleless>
           </div>
         </Col>
-        <Col span={viewSchema ? 6 : 24} className="available-nodes-visualizer">
+        <Col span={viewNodeSelector ? 6 : 24} className="available-nodes-visualizer">
           <AvailableNodeVisualizer/>
         </Col>
       </div>

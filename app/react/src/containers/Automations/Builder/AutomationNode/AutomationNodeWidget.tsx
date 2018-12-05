@@ -13,12 +13,6 @@ class AutomationNodeWidget extends React.Component<AutomationNodeProps> {
   top: number = 0;
   left: number = 0;
 
-  setPosition = (node: HTMLDivElement | null) => {
-    const viewportOffset = node ? node.getBoundingClientRect() : null;
-    this.top = viewportOffset ? viewportOffset.top : 0;
-    this.left = viewportOffset ? viewportOffset.left : 0;
-  };
-
   render() {
     const { node } = this.props;
 
