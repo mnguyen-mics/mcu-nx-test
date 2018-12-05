@@ -1,8 +1,6 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable camelcase */
-import { delay } from 'redux-saga';
 import { call, put, take, race, fork, all } from 'redux-saga/effects';
-import moment from 'moment';
 import MicsTagServices from '../../services/MicsTagServices.ts';
 
 import log from '../../utils/Logger';
@@ -12,13 +10,13 @@ import {
   LOG_IN,
   LOG_OUT,
   CONNECTED_USER,
-  STORE_ORG_FEATURES,
-  ANGULAR_LOADED_SUCCESS,
+  STORE_ORG_FEATURES
 } from '../action-types';
 
 import { logIn } from './actions';
 import { getConnectedUser } from '../Session/actions';
 import { setOrgFeature } from '../Features/actions';
+
 
 function* authorize(credentialsOrRefreshToken) {
   const response = yield call(AuthService.createAccessToken, credentialsOrRefreshToken);
@@ -48,6 +46,7 @@ function* authorizeLoop(credentialsOrRefreshToken, isAuthenticated = false, canA
     }
     if (!isAuthenticated && canAuthenticate) {
       yield call(authorize, { refreshToken });
+      refreshToken = yield call(AuthService.getRefreshToken);
     } else if (isNewLogin) {
       refreshToken = yield call(AuthService.createRefreshToken, credentialsOrRefreshToken);
       yield call(authorize, { refreshToken });
@@ -60,9 +59,10 @@ function* authorizeLoop(credentialsOrRefreshToken, isAuthenticated = false, canA
     MicsTagServices.addUserAccountProperty(connectedUser.id);
     MicsTagServices.setUserProperties(connectedUser);
     yield put(getConnectedUser.success(connectedUser));
+    window.organisationId = connectedUser.workspaces[connectedUser.default_workspace].organisation_id; // eslint-disable-line no-undef
 
     // set global variable used by angular to run Session.init(organisationId) on stateChangeStart ui router hook
-    window.organisationId = connectedUser.workspaces[connectedUser.default_workspace].organisation_id; // eslint-disable-line no-undef
+    yield take();
   } catch (e) {
     log.error('Authorize error : ', e);
     yield call(AuthService.deleteCredentials);
@@ -71,15 +71,12 @@ function* authorizeLoop(credentialsOrRefreshToken, isAuthenticated = false, canA
 }
 
 function* authentication() {
-  yield take(ANGULAR_LOADED_SUCCESS);
   while (true) {
-
     const isAuthenticated = yield call(AuthService.isAuthenticated);
     const canAuthenticate = yield call(AuthService.canAuthenticate);
 
     let credentialsOrRefreshToken = null;
     let isNewLogin = false;
-
     // TODO check non expired storedRefreshToken
     // Is not logged in and has no refresh token
 
@@ -114,7 +111,6 @@ function* authentication() {
         signOutAction.meta.redirectCb();
       }
     }
-
   }
 }
 
