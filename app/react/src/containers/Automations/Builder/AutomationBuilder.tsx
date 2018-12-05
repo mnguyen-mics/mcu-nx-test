@@ -207,8 +207,11 @@ class AutomationBuilder extends React.Component<Props, State> {
             </ButtonStyleless>
           </div>
         </Col>
-        <Col span={viewNodeSelector ? 6 : 24} className="available-nodes-visualizer">
-          <AvailableNodeVisualizer/>
+        <Col
+          span={viewNodeSelector ? 6 : 24}
+          className="available-nodes-visualizer"
+        >
+          <AvailableNodeVisualizer />
         </Col>
       </div>
     );
