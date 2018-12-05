@@ -2,7 +2,6 @@ import moment from 'moment';
 
 import LocalStorage from './LocalStorage';
 import ApiService, { DataResponse } from './ApiService';
-import log from '../utils/Logger';
 
 import AccessTokenResource from '../models/directory/AccessTokenResource';
 import RefreshTokenResource from '../models/directory/RefreshTokenResource';
@@ -34,20 +33,17 @@ const getRefreshTokenExpirationDate = () => {
   return moment(0);
 };
 
+const isTokenExpired = (token: moment.MomentInput) => {
+  return moment().isAfter(token);
+}
+
 const isAuthenticated = () => {
-  const accessToken = getAccessToken();
-  const refreshTokenExpirationDate = getRefreshTokenExpirationDate();
-  const isAccessTokenNull = accessToken == null;
-  const isRefreshTokenExpired = moment().isAfter(refreshTokenExpirationDate);
-  if (isAccessTokenNull) {
-    log.debug('Access token not found');
-    return false;
-  } else if (isRefreshTokenExpired) {
-    log.debug('refresh token expired');
-    return false;
-  }
-  return true;
+  return !isTokenExpired(getAccessTokenExpirationDate());
 };
+
+const canAuthenticate = () => {
+  return !isTokenExpired(getRefreshTokenExpirationDate());
+}
 
 const getRefreshToken = () => {
   return LocalStorage.getItem(REFRESH_TOKEN);
@@ -66,7 +62,6 @@ const setAccessToken = (token: string) => {
 
 const setAccessTokenExpirationDate = (expireIn: number) => {
   let expirationDate = moment().add(1, 'hours');
-  // let expirationDate = moment().add(2, 'seconds');
   if (expireIn) expirationDate = moment().add(expireIn, 'seconds');
   LocalStorage.setItem({
     [ACCESS_TOKEN_EXPIRATION_DATE]: expirationDate.format('x'),
@@ -86,8 +81,8 @@ const setRememberMe = ({ rememberMe }: { rememberMe: boolean }) => {
 };
 
 const setRefreshTokenExpirationDate = (expireIn: number) => {
-  let expirationDate = moment().add(7, 'days');
-  if (expireIn) expirationDate = moment().add(expireIn, 'seconds');
+  let expirationDate = moment().add(expireIn, 'seconds');
+  if (getRememberMe()) expirationDate = moment().add(7, 'days');
   LocalStorage.setItem({
     [REFRESH_TOKEN_EXPIRATION_DATE]: expirationDate.format('x'),
   });
@@ -183,6 +178,7 @@ export default {
   getAccessToken,
   getAccessTokenExpirationDate,
   isAuthenticated,
+  canAuthenticate,
   getRefreshToken,
   getRefreshTokenExpirationDate,
   setAccessToken,
