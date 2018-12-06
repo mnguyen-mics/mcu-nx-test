@@ -123,6 +123,10 @@
         background-color: lighten(@info-color, 10%);
         border-color: lighten(@info-color, 10%);
     }
+    &:disabled {
+        border-color: @btn-default-border;
+        background-color: @disabled-color;
+    }
 }
 
 .ant-menu.ant-menu-vertical.ant-menu-sub.ant-menu-open {

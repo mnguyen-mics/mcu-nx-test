@@ -1,5 +1,7 @@
+
+// Deprecated -> For further dev, use ChangePassword component
 import * as React from 'react';
-import { Form, Input, Button, Alert } from 'antd';
+import { Form, Input, Button, Alert, Row, Col } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
 
 import {
@@ -169,18 +171,22 @@ class SetPassword extends React.Component<Props, State> {
                 ],
               })(<Input type="password" className="reset-password-input" />)}
             </FormItem>
-            <div className="two-buttons">
-              <Link to={'/login'} className="reset-password-button">
-                <FormattedMessage {...messages.revertologin} />
-              </Link>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="mcs-primary reset-password-button"
-              >
-                <FormattedMessage {...messages.setPassword} />
-              </Button>
-            </div>
+            <Row type="flex" align="middle" justify="center">
+              <Col span={12} className="reset-password-back-to-login">
+                <Link to={'/login'}>
+                  <FormattedMessage {...messages.revertologin} />
+                </Link>
+              </Col>
+              <Col span={12}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="mcs-primary reset-password-button"
+                >
+                  <FormattedMessage {...messages.setPassword} />
+                </Button>
+              </Col>
+            </Row>
           </Form>
         </div>
       </div>
