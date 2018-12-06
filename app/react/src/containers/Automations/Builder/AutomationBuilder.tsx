@@ -4,7 +4,7 @@ import {
   DiagramWidget,
   DiagramModel,
 } from 'storm-react-diagrams';
-import { ROOT_NODE_POSITION, createLink } from '../../QueryTool/JSONOTQL/domain';
+import { ROOT_NODE_POSITION } from '../../QueryTool/JSONOTQL/domain';
 import { Col } from 'antd';
 import { McsIcon, ButtonStyleless } from '../../../components';
 import { DragDropContext } from 'react-dnd';
@@ -17,15 +17,18 @@ import DropNodeFactory from './DropNode/DropNodeFactory';
 import AvailableNodeVisualizer from './NodeVisualizer/AvailableNodeVisualizer';
 import {
   StorylineNodeResource,
-  ScenarioNodeShape,
   EdgeHandler,
 } from '../../../models/automations/automations';
 import { McsIconType } from '../../../components/McsIcon';
-import { StorylineNodeModel, DropNode } from './domain';
+import { StorylineNodeModel, DropNode, AutomationNodeShape } from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
+import AutomationLinkModel from './Link/AutomationLinkModel';
 
 export interface AutomationBuilderProps {
-  automationData: StorylineNodeResource;
+  datamartId: string;
+  organisationId: string;
+  scenarioId: string;
+  automationData: StorylineNodeModel;
 }
 
 interface State {
@@ -41,13 +44,37 @@ class AutomationBuilder extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.engine.registerNodeFactory(new DropNodeFactory());
     this.engine.registerNodeFactory(new AutomationNodeFactory());
     this.engine.registerNodeFactory(new DropNodeFactory());
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
       viewNodeSelector: true,
+    };
+  }
+
+  convertToFrontData(automationData: StorylineNodeModel): StorylineNodeModel {
+    const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
+      (child, index) => {
+        const dropNode = new DropNode('1', child, automationData);
+        return {
+          node: dropNode,
+          in_edge: {
+            id: '1',
+            source_id: automationData.node.id,
+            target_id: child.node.id,
+            handler: 'ON_VISIT' as EdgeHandler,
+            scenario_id: this.props.scenarioId,
+          },
+          out_edges: [this.convertToFrontData(child)],
+        };
+      },
+    );
+
+    return {
+      node: automationData.node,
+      in_edge: automationData.in_edge,
+      out_edges: outEdges,
     };
   }
 
@@ -70,47 +97,23 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.setDiagramModel(model);
   }
 
-  convert(automationData: StorylineNodeResource) : StorylineNodeModel {
-    
-    const out_edges : StorylineNodeModel[] = automationData.out_edges.map((child,index) =>{
-      const dropNode = new DropNode(child, automationData);
-      return {
-        node: dropNode,
-        in_edge: {
-          id: "1",
-          source_id: automationData.node.id,
-          target_id: child.node.id,
-          handler: 'ON_VISIT' as EdgeHandler,
-          scenario_id: automationData.node.scenario_id,
-        },
-        out_edges: [child]
-      }
-    })
-    
-    return {
-      node: automationData.node,
-      in_edge: automationData.in_edge,
-      out_edges: out_edges,
-    }
-  }
-
   buildAutomationNode(
     nodeModel: StorylineNodeResource,
     xAxisLocal: number,
     maxHeightLocal: number,
   ): AutomationNodeModel {
     const storylineNode = new AutomationNodeModel(
-      this.generateNodeProperties(child.node).iconType,
-      `${child.node.name} - (type: ${child.node.type})`,
-      this.generateNodeProperties(child.node).color,
+      this.generateNodeProperties(nodeModel.node).iconType,
+      `${nodeModel.node.name} - (type: ${nodeModel.node.type})`,
+      this.generateNodeProperties(nodeModel.node).color,
       180,
       90,
     );
     return storylineNode;
   }
 
-  buildDropNode(maxHeightLocal: number, xAxisLocal: number): DropNodeModel {
-    return new DropNodeModel();
+  buildDropNode(height:number): DropNodeModel {
+    return new DropNodeModel(height);
   }
 
   drawAutomationTree = (
@@ -125,7 +128,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       const xAxisLocal = xAxis + 1;
       const storylineNode =
         child.node instanceof DropNode
-          ? this.buildDropNode(maxHeightLocal, xAxisLocal)
+          ? this.buildDropNode(ROOT_NODE_POSITION.y * maxHeightLocal)
           : this.buildAutomationNode(
               child as StorylineNodeResource,
               xAxisLocal,
@@ -134,10 +137,25 @@ class AutomationBuilder extends React.Component<Props, State> {
       storylineNode.x = ROOT_NODE_POSITION.x + 250 * xAxisLocal;
       storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
       model.addNode(storylineNode);
-      if (child.in_edge)
-        model.addLink(
-          createLink(nodeModel.ports.right, storylineNode.ports.left),
+      
+      if (node.out_edges.length > 0 && index === 0) {
+        const outLink = new AutomationLinkModel();
+        outLink.setSourcePort(nodeModel.ports.center);
+        outLink.setTargetPort(storylineNode.ports.center);
+        outLink.setColor('#afafaf');
+        model.addLink(outLink);
+      }
+      if (index !== 0) {
+        const link = new AutomationLinkModel();
+        link.setColor('#afafaf');
+        link.setSourcePort(nodeModel.ports.right);
+        link.setTargetPort(storylineNode.ports.center);
+        link.point(
+          nodeModel.x + nodeModel.width + 21.5,
+          storylineNode.y + nodeModel.height/2,
         );
+        model.addLink(link);
+      }
       return this.drawAutomationTree(
         model,
         child,
@@ -149,7 +167,7 @@ class AutomationBuilder extends React.Component<Props, State> {
   };
 
   generateNodeProperties = (
-    node: ScenarioNodeShape,
+    node: AutomationNodeShape,
   ): {
     iconType: McsIconType;
     color: string;
@@ -190,7 +208,7 @@ class AutomationBuilder extends React.Component<Props, State> {
   };
 
   startAutomationTree = (
-    automationData: StorylineNodeResource,
+    automationData: StorylineNodeModel,
     model: DiagramModel,
   ) => {
     const rootNode = new AutomationNodeModel(
@@ -200,6 +218,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       180,
       90,
     );
+    rootNode.root = true;
     rootNode.x = ROOT_NODE_POSITION.x;
     rootNode.y = ROOT_NODE_POSITION.y;
     model.addNode(rootNode);

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
 import DropNodeWidget from './DropNodeWidget';
 import DropNodeModel from './DropNodeModel';
+import { ROOT_NODE_POSITION } from '../../../QueryTool/JSONOTQL/domain';
 
 export default class DropNodeFactory extends AbstractNodeFactory<
   DropNodeModel
@@ -24,6 +25,6 @@ export default class DropNodeFactory extends AbstractNodeFactory<
   }
 
   getNewInstance(initialConfig?: any): DropNodeModel {
-    return new DropNodeModel();
+    return new DropNodeModel(ROOT_NODE_POSITION.y);
   }
 }

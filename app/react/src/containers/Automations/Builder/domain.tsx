@@ -1,20 +1,25 @@
 import {
   ScenarioNodeShape,
-  StorylineNodeResource,
   ScenarioEdgeResource,
+  StorylineResource,
 } from '../../../models/automations/automations';
 
 export type AutomationNodeShape = ScenarioNodeShape | DropNode;
 
 export class DropNode {
-  out_edges: StorylineNodeResource;
-  parent_id?: StorylineNodeResource;
+  id: string;
+  type: 'DROP_NODE';
+  name: 'DROPNODE';
+  outNode: StorylineNodeModel;
+  parentNode: StorylineNodeModel;
   constructor(
-    out_edge: StorylineNodeResource,
-    parent_id?: StorylineNodeResource,
+    id: string,
+    outNode: StorylineNodeModel,
+    parentNode: StorylineNodeModel,
   ) {
-    this.parent_id = parent_id;
-    this.out_edges = out_edge;
+    this.id = id;
+    this.parentNode = parentNode;
+    this.outNode = outNode;
   }
 }
 
@@ -28,6 +33,10 @@ export interface StorylineNodeModel {
  * Hardcoded data *
  ******************/
 
+export const storylineResourceData : StorylineResource = {
+  begin_node_id : '1'
+}
+
 export const beginNode: ScenarioNodeShape = {
   id: '1',
   name: 'begin node',
@@ -37,96 +46,77 @@ export const beginNode: ScenarioNodeShape = {
   ad_group_id: 'string',
 };
 
-export const edge: ScenarioEdgeResource = {
-  id: 'string',
-  source_id: 'string',
-  target_id: 'string',
-  handler: 'ON_VISIT',
-  scenario_id: 'string',
+export const node2: ScenarioNodeShape = {
+  id: '2',
+  name: 'node 2',
+  scenario_id: '1',
+  type: 'DISPLAY_CAMPAIGN',
+  campaign_id: 'string',
+  ad_group_id: 'string',
 };
 
-export const storylineResource: StorylineNodeResource = {
-  node: beginNode,
-  out_edges: [
-    {
-      node: beginNode,
-      in_edge: edge,
-      out_edges: [
-        {
-          node: beginNode,
-          in_edge: edge,
-          out_edges: [
-            {
-              node: beginNode,
-              in_edge: edge,
-              out_edges: [
-                {
-                  node: beginNode,
-                  in_edge: edge,
-                  out_edges: [
-                    {
-                      node: beginNode,
-                      in_edge: edge,
-                      out_edges: [],
-                    },
-                  ],
-                },
-                {
-                  node: beginNode,
-                  in_edge: edge,
-                  out_edges: [
-                    {
-                      node: beginNode,
-                      in_edge: edge,
-                      out_edges: [],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      node: beginNode,
-      in_edge: edge,
-      out_edges: [
-        {
-          node: beginNode,
-          in_edge: edge,
-          out_edges: [
-            {
-              node: beginNode,
-              in_edge: edge,
-              out_edges: [
-                {
-                  node: beginNode,
-                  in_edge: edge,
-                  out_edges: [
-                    {
-                      node: beginNode,
-                      in_edge: edge,
-                      out_edges: [],
-                    },
-                  ],
-                },
-                {
-                  node: beginNode,
-                  in_edge: edge,
-                  out_edges: [
-                    {
-                      node: beginNode,
-                      in_edge: edge,
-                      out_edges: [],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ],
+export const node3: ScenarioNodeShape = {
+  id: '3',
+  name: 'node 3',
+  scenario_id: '1',
+  type: 'DISPLAY_CAMPAIGN',
+  campaign_id: 'string',
+  ad_group_id: 'string',
 };
+
+export const node4: ScenarioNodeShape = {
+  id: '4',
+  name: 'node 4',
+  scenario_id: '1',
+  type: 'DISPLAY_CAMPAIGN',
+  campaign_id: 'string',
+  ad_group_id: 'string',
+};
+
+export const node5: ScenarioNodeShape = {
+  id: '5',
+  name: 'node 5',
+  scenario_id: '1',
+  type: 'DISPLAY_CAMPAIGN',
+  campaign_id: 'string',
+  ad_group_id: 'string',
+};
+
+export const storylineNodeData : ScenarioNodeShape[] = [
+  beginNode, node2, node3, node4, node5
+]
+
+export const edge12: ScenarioEdgeResource = {
+  id: 'string',
+  source_id: '1',
+  target_id: '2',
+  handler: 'ON_VISIT',
+  scenario_id: '1',
+};
+
+export const edge13: ScenarioEdgeResource = {
+  id: 'string',
+  source_id: '1',
+  target_id: '3',
+  handler: 'ON_VISIT',
+  scenario_id: '1',
+};
+
+export const edge34: ScenarioEdgeResource = {
+  id: 'string',
+  source_id: '3',
+  target_id: '4',
+  handler: 'ON_VISIT',
+  scenario_id: '1',
+};
+export const edge35: ScenarioEdgeResource = {
+  id: 'string',
+  source_id: '3',
+  target_id: '5',
+  handler: 'ON_VISIT',
+  scenario_id: '1',
+};
+
+export const storylineEdgeData : ScenarioEdgeResource[] = [
+  edge12, edge13, edge34, edge35
+]

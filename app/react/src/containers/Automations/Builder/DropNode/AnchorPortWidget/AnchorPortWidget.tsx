@@ -8,25 +8,26 @@ export interface AnchorPortWidgetProps {
 
 export default class AnchorPortWidget extends React.Component<AnchorPortWidgetProps, any> {
   public render() {
+    const { node } = this.props;
     return (
       <div>
         <div
             style={{
               position: 'absolute',
-              top: 0,
-              left: 0,
+              top: node.getSize().width*2 + node.getSize().borderWidth*4,
+              left: node.getSize().width/2,
             }}
           >
-            <PortWidget name="left" node={this.props.node} />
+            <PortWidget name="center" node={node} />
           </div>
           <div
             style={{
               position: 'absolute',
-              top: 0,
-              left: 0,
+              top: node.getSize().width + node.getSize().borderWidth,
+              left: node.getSize().width/2,
             }}
           >
-            <PortWidget name="right" node={this.props.node} />
+            <PortWidget name="right" node={node} />
           </div>
       </div>
     );
