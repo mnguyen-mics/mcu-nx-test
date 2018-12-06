@@ -33,6 +33,10 @@ const getRefreshTokenExpirationDate = () => {
   return moment(0);
 };
 
+const tokenExpiresIn = (tokenExpirationDate: moment.MomentInput) => {
+  return moment(tokenExpirationDate).diff(moment(), 'ms')
+}
+
 const isTokenExpired = (token: moment.MomentInput) => {
   return moment().isAfter(token);
 }
@@ -192,5 +196,6 @@ export default {
   getConnectedUser,
   deleteCredentials,
   sendPassword,
-  resetPassword
+  resetPassword,
+  tokenExpiresIn
 };

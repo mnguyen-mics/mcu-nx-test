@@ -1,5 +1,6 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable camelcase */
+import { delay } from 'redux-saga';
 import { call, put, take, race, fork, all } from 'redux-saga/effects';
 import MicsTagServices from '../../services/MicsTagServices.ts';
 
@@ -23,7 +24,7 @@ function* authorize(credentialsOrRefreshToken) {
   const { access_token, expires_in, refresh_token } = response.data;
   yield call(AuthService.setAccessToken, access_token);
   yield call(AuthService.setAccessTokenExpirationDate, expires_in);
-  if (window.angular.element(global.document.body).injector()) {
+  if (window.angular && window.angular.element(global.document.body).injector()) {
     window.angular.element(global.document.body).injector().get('Restangular').setDefaultHeaders({ Authorization: access_token });
   }
   // Update refresh token if API sent a new one
@@ -61,8 +62,18 @@ function* authorizeLoop(credentialsOrRefreshToken, isAuthenticated = false, canA
     yield put(getConnectedUser.success(connectedUser));
     window.organisationId = connectedUser.workspaces[connectedUser.default_workspace].organisation_id; // eslint-disable-line no-undef
 
+    while (true) {
+      let expiresIn;
+      // check expirein variable
+      expiresIn = AuthService.tokenExpiresIn(AuthService.getAccessTokenExpirationDate());
+      log.debug(`Will refresh access token in ${expiresIn} ms`);
+      yield call(delay, expiresIn);
+      const storedRefreshToken = yield call(AuthService.getRefreshToken);
+      log.debug(`Authorize user with refresh token ${storedRefreshToken}`);
+      const results = yield call(authorize, { refreshToken: storedRefreshToken });
+      expiresIn = results.data.expires_in;
+    }
     // set global variable used by angular to run Session.init(organisationId) on stateChangeStart ui router hook
-    yield take();
   } catch (e) {
     log.error('Authorize error : ', e);
     yield call(AuthService.deleteCredentials);

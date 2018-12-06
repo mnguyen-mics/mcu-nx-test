@@ -20,7 +20,7 @@ function* watchInitializationSuccess() {
       take(LOAD_TRANSLATIONS.SUCCESS),
       take([FETCH_COOKIES.SUCCESS, FETCH_COOKIES.FAILURE]),
       take([CONNECTED_USER.SUCCESS, LOG_IN.FAILURE, CONNECTED_USER.FAILURE]),
-      take(ANGULAR_LOADED_SUCCESS),
+      take(ANGULAR_LOADED_SUCCESS)
     ]);
 
   } else {
