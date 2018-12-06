@@ -15,7 +15,7 @@ import {
 
 
 function* watchInitializationSuccess() {
-  if (AuthService.isAuthenticated()) {
+  if (AuthService.isAuthenticated() || AuthService.canAuthenticate()) {
     yield all([
       take(LOAD_TRANSLATIONS.SUCCESS),
       take([FETCH_COOKIES.SUCCESS, FETCH_COOKIES.FAILURE]),

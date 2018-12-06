@@ -16,7 +16,6 @@ import PluginService from '../../../services/PluginService';
 import PluginInstanceService from '../../../services/PluginInstanceService';
 import * as actions from '../../../state/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
-// import log from '../../../../utils/Logger';
 import Loading from '../../../components/Loading';
 import messages from './messages';
 import { Path } from '../../../components/ActionBar';
@@ -24,7 +23,6 @@ import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../models/plugin';
 import { InjectedNotificationProps } from '../../Notifications/injectNotifications';
-import assetFileService from '../../../services/Library/AssetsFilesService';
 
 const formId = 'pluginForm';
 
@@ -151,28 +149,6 @@ class PluginContent<T extends PluginInstance> extends React.Component<
                   pResourceWoutLayout.id,
                   pResourceWoutLayout.current_version_id,
                 ).then(resultPluginLayout => {
-                  if (
-                    resultPluginLayout !== null &&
-                    resultPluginLayout.metadata &&
-                    resultPluginLayout.metadata.small_icon_asset_id
-                  ) {
-                    return assetFileService
-                      .getAssetFile(
-                        resultPluginLayout.metadata.small_icon_asset_id,
-                      )
-                      .then(resultAssetFile => {
-                        return {
-                          ...pResourceWoutLayout,
-                          plugin_layout: resultPluginLayout,
-                          layout_icon_path:
-                            resultAssetFile !== null
-                              ? `${(window as any).MCS_CONSTANTS.ASSETS_URL}${
-                                  resultAssetFile.path
-                                }`
-                              : undefined,
-                        };
-                      });
-                  }
                   return Promise.resolve({
                     ...pResourceWoutLayout,
                     plugin_layout:

@@ -1,21 +1,30 @@
-import * as React from 'react';
-import { McsIcon } from '../../../../components';
-import { McsIconType } from '../../../../components/McsIcon';
+import McsIcon, { McsIconType } from '../../../../components/McsIcon';
+import React from 'react';
+import { Col } from 'antd/lib/grid';
 
 interface AvailableNodeProps {
-  icon: McsIconType;
   title: string;
+  icon: McsIconType;
   color: string;
 }
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
   render() {
-    return <div className="available-node">
-    <div className="available-node-icon" style={{ backgroundColor: this.props.color }}>
-      <McsIcon type={this.props.icon} className="available-node-icon-gyph"/>
-     </div>
-    <div className="available-node-text">{this.props.title}</div>
-  </div>
+    const { title, icon, color } = this.props;
+
+    return (
+      <Col span={12}>
+        <div className="available-node">
+          <div
+            className="available-node-icon"
+            style={{ backgroundColor: color }}
+          >
+            <McsIcon type={icon} className="available-node-icon-gyph" />
+          </div>
+          <div className="available-node-text">{title}</div>
+        </div>
+      </Col>
+    );
   }
 }
 
