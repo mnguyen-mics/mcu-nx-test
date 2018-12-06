@@ -9,39 +9,29 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import { RouteComponentProps, withRouter } from 'react-router';
 import AutomationBuilder from './AutomationBuilder';
+import { StorylineNodeResource } from '../../../models/automations/automations';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
-  renderActionBar: (
-    datamartId: string,
-  ) => React.ReactNode;
+  renderActionBar: (datamartId: string) => React.ReactNode;
+  automationData: StorylineNodeResource;
 }
 
 type Props = AutomationBuilderContainerProps &
-InjectedIntlProps &
-InjectedNotificationProps &
-RouteComponentProps<{ organisationId: string }>;
+  InjectedIntlProps &
+  InjectedNotificationProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class AutomationBuilderContainer extends React.Component<Props> {
-  
   render() {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-    
     return (
       <Layout>
-      <Layout.Content
-      className={`mcs-content-container`}
-      style={{ padding: 0, overflow: 'hidden' }}
-      >
-      <AutomationBuilder
-      datamartId={this.props.datamartId}
-      organisationId={organisationId}
-      />
-      </Layout.Content>
+        <Layout.Content
+          className={`mcs-content-container`}
+          style={{ padding: 0, overflow: 'hidden' }}
+        >
+          <AutomationBuilder automationData={this.props.automationData} />
+        </Layout.Content>
       </Layout>
     );
   }

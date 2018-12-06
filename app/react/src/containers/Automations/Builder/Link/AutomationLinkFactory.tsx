@@ -23,4 +23,13 @@ export default class AutomationLinkFactory extends AbstractLinkFactory<
   getNewInstance(initialConfig?: any): AutomationLinkModel {
     return new AutomationLinkModel();
   }
+
+  generateLinkSegment(
+    model: AutomationLinkModel,
+    widget: any,
+    selected: boolean,
+    path: string,
+  ) {
+    return <path strokeWidth={model.width} stroke={model.color} d={path} />;
+  }
 }
