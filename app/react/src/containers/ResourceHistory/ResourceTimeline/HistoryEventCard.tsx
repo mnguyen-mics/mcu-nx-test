@@ -2,9 +2,20 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import lodash from 'lodash';
 import moment from 'moment';
-import { HistoryEventShape, isHistoryUpdateEvent, isHistoryCreateEvent, isHistoryDeleteEvent } from '../../../models/resourceHistory/ResourceHistory';
+import { 
+  HistoryEventShape, 
+  isHistoryUpdateEvent, 
+  isHistoryCreateEvent, 
+  isHistoryDeleteEvent, 
+  isHistoryCreateLinkEvent, 
+  isHistoryDeleteLinkEvent,
+  ResourceType,
+  ResourceLinkHelper,
+  isHistoryLinkEvent,
+  HistoryLinkEventResource
+} from '../../../models/resourceHistory/ResourceHistory';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import { withRouter } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Icon } from 'antd';
 import { Card } from '../../../components/Card';
 import { ButtonStyleless } from '../../../components';
@@ -12,15 +23,19 @@ import messages from './messages';
 import { FormatProperty } from './domain';
 
 interface HistoryEventCardProps {
+  resourceType: ResourceType;
   events: HistoryEventShape[];
   formatProperty: FormatProperty;
+  resourceLinkHelper?: ResourceLinkHelper;
 }
 
 type Props = HistoryEventCardProps &
-  InjectedIntlProps;
+            InjectedIntlProps &
+            RouteComponentProps<any>;
 
   interface State {
     showMore: boolean;
+    resourceName: string;
   }
 
 class HistoryEventCard extends React.Component<Props, State> {
@@ -28,7 +43,39 @@ class HistoryEventCard extends React.Component<Props, State> {
     super(props);
     this.state = {
       showMore: false,
+      resourceName: 'Untitled',
     };
+  }
+
+  componentDidMount() {
+    const { events, resourceLinkHelper } = this.props;
+
+    const event = events[0];
+
+    if(event && isHistoryCreateLinkEvent(event) || isHistoryDeleteLinkEvent(event)) {
+      const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
+      if(resourceHelper) {
+        resourceHelper.getName(event.resource_id)
+          .then(name => {
+            if(name){
+              this.setState(currentState => {
+                return {
+                  ...currentState,
+                  resourceName: name, 
+                }
+              });
+            }
+          })
+          .catch(() => {
+            this.setState(currentState => {
+              return {
+                ...currentState,
+                resourceName: '(deleted)', 
+              }
+            });
+          });
+      }
+    }
   }
   
   renderField = (field: string) => {
@@ -67,6 +114,48 @@ class HistoryEventCard extends React.Component<Props, State> {
           }
         </div>
     });
+  }
+
+  renderLinkEvent = (event: HistoryLinkEventResource) => {
+    const { formatProperty, resourceLinkHelper } = this.props;
+    const { resourceName } = this.state;
+
+    const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
+
+    if(!resourceHelper)
+      return;
+
+    const messageChild = isHistoryCreateLinkEvent(event) ? messages.resourceCreateLinkChild : messages.resourceDeleteLinkChild;
+    const messageParent = isHistoryCreateLinkEvent(event) ? messages.resourceCreateLinkParent : messages.resourceDeleteLinkParent;
+    const goToResource = () => {
+      resourceHelper.goToResource(event.resource_id)
+    };
+
+    return (
+      resourceHelper.direction === 'CHILD' ?
+        <FormattedMessage
+          {...{...messageChild, values: {
+            userName: event.user_identification.user_name,
+            resourceType: <span className="name">{resourceHelper.getType()}</span>,
+            resourceName: 
+              <span className="value cursor-pointer" onClick={goToResource}>
+                {resourceName}
+              </span>
+          }}}
+        />
+        :
+        <FormattedMessage
+          {...{...messageParent, values: {
+            userName: event.user_identification.user_name,
+            childResourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
+            parentResourceType:  <span className="name">{resourceHelper.getType()}</span>,
+            parentResourceName: 
+              <span className="value cursor-pointer" onClick={goToResource}>
+                {resourceName}
+              </span>,
+          }}}
+        />
+    );
   }
 
   findCreateEventIndex = (events: HistoryEventShape[]) => {
@@ -138,15 +227,19 @@ class HistoryEventCard extends React.Component<Props, State> {
                             }}}
                           />
                         </div>
-                      : isHistoryDeleteEvent(event) &&
-                        <div className="mcs-fields-list-item">
-                          <FormattedMessage
-                            {...{...messages.resourceDeleted, values: {
-                              userName: event.user_identification.user_name,
-                              resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
-                            }}}
-                          />
-                        </div>
+                      : isHistoryDeleteEvent(event)
+                        ? <div className="mcs-fields-list-item">
+                            <FormattedMessage
+                              {...{...messages.resourceDeleted, values: {
+                                userName: event.user_identification.user_name,
+                                resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
+                              }}}
+                            />
+                          </div>
+                        : isHistoryLinkEvent(event) &&
+                          <div className="mcs-fields-list-item">
+                            { this.renderLinkEvent(event) }
+                          </div>
                 })}
               </div>
           }

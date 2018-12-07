@@ -4,7 +4,7 @@ import lodash from 'lodash';
 import moment from 'moment';
 import { InjectedIntlProps, FormattedMessage, injectIntl } from "react-intl";
 
-import { ResourceType, HistoryEventShape } from "../../../models/resourceHistory/ResourceHistory";
+import { ResourceType, HistoryEventShape, ResourceLinkHelper } from "../../../models/resourceHistory/ResourceHistory";
 import ResourceHistoryService from "../../../services/ResourceHistoryService";
 import messages from './messages';
 import { McsIcon } from '../../../components';
@@ -32,6 +32,7 @@ export interface ResourceTimelineProps {
   resourceType: ResourceType;
   resourceId: string;
   formatProperty: FormatProperty;
+  resourceLinkHelper?: ResourceLinkHelper;
 }
 
 interface State {
@@ -237,7 +238,7 @@ class ResourceTimeline extends React.Component<Props, State> {
   render() {
     const { events } = this.state;
 
-    const { formatProperty } = this.props;
+    const { formatProperty, resourceType, resourceLinkHelper } = this.props;
 
     const keys = Object.keys(events.byDay);
     return events.isLoading && !events.hasItems ? (
@@ -276,8 +277,10 @@ class ResourceTimeline extends React.Component<Props, State> {
                       }
                     >
                       <HistoryEventCard
+                        resourceType={resourceType}
                         events={eventsOnTime[time]}
                         formatProperty={formatProperty}
+                        resourceLinkHelper={resourceLinkHelper}
                       />
                     </Timeline.Item>
                   );

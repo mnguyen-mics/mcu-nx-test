@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ResourceTimeline from './ResourceTimeline';
 import { Layout, Row } from 'antd';
-import { ResourceType } from '../../../models/resourceHistory/ResourceHistory';
+import { ResourceType, ResourceLinkHelper } from '../../../models/resourceHistory/ResourceHistory';
 import ResourceTimelineActionBar from './ResourceTimelineActionBar';
 import { FormatProperty } from './domain';
 
@@ -12,6 +12,7 @@ export interface ResourceTimelinePageProps {
   resourceId: string;
   handleClose: () => void;
   formatProperty: FormatProperty;
+  resourceLinkHelper?: ResourceLinkHelper;
 }
 
 type Props =
@@ -28,6 +29,7 @@ class ResourceTimelinePage extends React.Component<Props> {
       resourceId,
       handleClose,
       formatProperty,
+      resourceLinkHelper,
     } = this.props;
     return (
       <div className="ant-layout edit-layout">
@@ -39,6 +41,7 @@ class ResourceTimelinePage extends React.Component<Props> {
                 resourceType={resourceType}
                 resourceId={resourceId}
                 formatProperty={formatProperty}
+                resourceLinkHelper={resourceLinkHelper}
               />
             </Row>
           </Content>

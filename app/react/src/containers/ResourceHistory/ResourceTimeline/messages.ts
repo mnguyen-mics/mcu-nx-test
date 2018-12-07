@@ -75,6 +75,22 @@ const messages: {
     id: 'timeline.events.card.date',
     defaultMessage: ' {month} {day} at {time}',
   },
+  resourceCreateLinkChild: {
+    id: 'timeline.events.card.resourceCreateLinkChild',
+    defaultMessage: '{userName} added the {resourceType} : {resourceName}',
+  },
+  resourceDeleteLinkChild: {
+    id: 'timeline.events.card.resourceDeleteLinkChild',
+    defaultMessage: '{userName} removed the {resourceType} : {resourceName}',
+  },
+  resourceCreateLinkParent: {
+    id: 'timeline.events.card.resourceCreateLinkParent',
+    defaultMessage: '{userName} added this {childResourceType} in {parentResourceType} : {parentResourceName}',
+  },
+  resourceDeleteLinkParent: {
+    id: 'timeline.events.card.resourceDeleteLinkParent',
+    defaultMessage: '{userName} removed this {childResourceType} in {parentResourceType} : {parentResourceName}',
+  },
 });
 
 export default messages;

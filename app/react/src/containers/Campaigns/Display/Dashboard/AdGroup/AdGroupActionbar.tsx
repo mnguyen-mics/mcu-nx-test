@@ -16,6 +16,7 @@ import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
+import AudienceSegmentSelectionService from '../../../../../services/AudienceSegmentSelectionService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -34,6 +35,7 @@ type JoinedProps = AdGroupActionbarProps &
   InjectedDrawerProps;
 
 class AdGroupActionbar extends React.Component<JoinedProps> {
+
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
 
@@ -107,8 +109,13 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     const onClick = (event: any) => {
       const {
         match: {
-          params: { adGroupId },
+          params: { 
+            organisationId,
+            campaignId,
+            adGroupId 
+          },
         },
+        history
       } = this.props;
 
       switch (event.key) {
@@ -125,6 +132,26 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                   resourceId: adGroupId,
                   handleClose: () => this.props.closeNextDrawer(),
                   formatProperty: formatAdGroupProperty,
+                  resourceLinkHelper: {
+                    'AUDIENCE_SEGMENT_SELECTION': {
+                      direction: 'CHILD',
+                      getType: () => {
+                        return 'Segment';
+                      },
+                      getName: (id: string) => {
+                        return AudienceSegmentSelectionService.getAudienceSegmentSelection(campaignId, adGroupId, id)
+                        .then(response => {
+                          return response.data.name;
+                        });
+                      },
+                      goToResource: (id: string) => {
+                        return AudienceSegmentSelectionService.getAudienceSegmentSelection(campaignId, adGroupId, id)
+                        .then(response => {
+                          history.push(`/v2/o/${organisationId}/audience/segments/${response.data.audience_segment_id}`);
+                        });
+                      }
+                    }
+                  },
                 },
                 size: 'small',
               }
