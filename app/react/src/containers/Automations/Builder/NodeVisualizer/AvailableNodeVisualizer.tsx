@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { McsIconType } from '../../../../components/McsIcon';
-import { Row } from 'antd/lib/grid';
+import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
+
+const { TreeNode } = Tree;
 
 interface FakeNode {
   id: number;
@@ -90,42 +92,49 @@ class AvailableNodeVisualizer extends React.Component<{}, State> {
     });
   }
 
-  createGrid = (nodes: FakeNode[]): JSX.Element[] => {
-    return nodes.map(node => {
-      return (
-        <AvailableNode
-          key={node.id}
-          title={node.name}
-          icon={node.icon}
-          color={node.color}
-        />
-      );
-    });
+  createNodeGrid = (nodeType: string, nodes: FakeNode[]) => {
+    return (
+      <Tree defaultExpandAll={true} draggable={true} multiple={false}>
+        <TreeNode title={nodeType} key="0-0" selectable={false}>
+          {nodes.map(node => {
+            return (
+              <TreeNode
+                title={
+                  <AvailableNode
+                    key={node.id}
+                    title={node.name}
+                    icon={node.icon}
+                    color={node.color}
+                  />
+                }
+                key="0-0-0"
+              />
+            );
+          })}
+        </TreeNode>
+      </Tree>
+    );
+  };
+
+  onSelect = () => {
+    //
+  };
+
+  onExpand = () => {
+    //
   };
 
   render() {
     return (
       <div>
-        <Row>
-          <div className="available-node-category-header"> Actions </div>
-          <div className="available-node-grid">
-            {' '}
-            {this.createGrid(this.state.actionNodes)}{' '}
-          </div>
+        <Row className="available-node-visualizer-row">
+          {this.createNodeGrid('Actions', this.state.actionNodes)}
         </Row>
         <Row className="available-node-visualizer-row">
-          <div className="available-node-category-header"> Conditions </div>
-          <div className="available-node-grid">
-            {' '}
-            {this.createGrid(this.state.conditionNodes)}{' '}
-          </div>
+          {this.createNodeGrid('Conditions', this.state.conditionNodes)}
         </Row>
         <Row className="available-node-visualizer-row">
-          <div className="available-node-category-header"> Exits </div>
-          <div className="available-node-grid">
-            {' '}
-            {this.createGrid(this.state.exitsNodes)}{' '}
-          </div>
+          {this.createNodeGrid('Exits', this.state.exitsNodes)}
         </Row>
       </div>
     );
