@@ -79,14 +79,12 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
 
   updateSegments = (segments: AudienceSegmentResource[]) => {
     const { fields, formChange } = this.props;
-    const segmentIds = segments.map(s => s.id);
     const fieldSegmentIds = fields
       .getAll()
       .map(field => field.model.audience_segment_id);
 
     const keptSegments = fields
       .getAll()
-      .filter(field => segmentIds.includes(field.model.audience_segment_id));
     const addedSegments = segments
       .filter(s => !fieldSegmentIds.includes(s.id))
       .map(segment => ({
@@ -103,20 +101,14 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
   };
 
   openAudienceSegmentSelector = (type: 'first_party' | 'second_party') => () => {
-    const { fields } = this.props;
-
-    const selectedSegmentIds = fields
-      .getAll()
-      .map(field => field.model.audience_segment_id);
-
     const audienceSegmentSelectorProps = {
-      selectedSegmentIds,
+      selectedSegmentIds: [],
       close: this.props.closeNextDrawer,
       save: this.updateSegments,
     };
 
     const sharedAudienceSegmentSelectorProps = {
-      selectedSegmentIds,
+      selectedSegmentIds: [],
       close: this.props.closeNextDrawer,
       save: this.updateServices,
     };
@@ -143,14 +135,12 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
 
   updateServices = (segments: AudienceSegmentServiceItemPublicResource[]) => {
     const { fields, formChange } = this.props;
-    const segmentIds = segments.map(s => s.segment_id);
     const fieldSegmentIds = fields
       .getAll()
       .map(field => field.model.audience_segment_id);
 
     const keptSegments = fields
       .getAll()
-      .filter(field => segmentIds.includes(field.model.audience_segment_id));
     const addedSegments = segments
       .filter(s => !fieldSegmentIds.includes(s.segment_id))
       .map(segment => ({
