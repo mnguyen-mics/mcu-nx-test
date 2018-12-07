@@ -1,14 +1,17 @@
 export interface AutomationResource {
-    id: string;
-    name: string;
-    datamart_id: string;
-    organisation_id: string;
-    status: AutomationStatus;
+  id: string;
+  name: string;
+  datamart_id: string;
+  organisation_id: string;
+  status: AutomationStatus;
 }
 
 export type AutomationStatus = 'NEW' | 'ACTIVE' | 'PAUSED';
-export const automationStatuses: AutomationStatus[] = ['NEW', 'ACTIVE', 'PAUSED'];
-
+export const automationStatuses: AutomationStatus[] = [
+  'NEW',
+  'ACTIVE',
+  'PAUSED',
+];
 
 export interface AutomationCreateResource {
   name: string;
@@ -59,8 +62,8 @@ export interface PluginNodeResource extends ScenarioNodeResource {
   scenario_node_processor_id: string;
 }
 
-export interface EndNodeResource extends ScenarioNodeResource{
-  type: 'FAILURE' | 'GOAL'
+export interface EndNodeResource extends ScenarioNodeResource {
+  type: 'FAILURE' | 'GOAL';
 }
 
 export type ScenarioNodeShape =
