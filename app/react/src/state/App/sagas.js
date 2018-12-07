@@ -18,7 +18,7 @@ function* watchInitializationSuccess() {
     yield all([
       take(LOAD_TRANSLATIONS.SUCCESS),
       take([CONNECTED_USER.SUCCESS, LOG_IN.FAILURE, CONNECTED_USER.FAILURE]),
-      take(ANGULAR_LOADED_SUCCESS),
+      take(ANGULAR_LOADED_SUCCESS)
     ]);
 
   } else {

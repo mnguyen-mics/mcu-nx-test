@@ -130,8 +130,7 @@ class AuthenticatedRoute extends React.Component<Props> {
       errorRender,
     } = this.props;
 
-
-    const authenticated = (AuthService.isAuthenticated() || AuthService.canAuthenticate()) && connectedUserLoaded; // if access token is present
+    const authenticated = AuthService.isAuthenticated() && connectedUserLoaded; // if access token is present
     const renderRoute = (props: SubComponentProps) => {
       if (authenticated) {
 
@@ -145,6 +144,8 @@ class AuthenticatedRoute extends React.Component<Props> {
         }
 
         return <Error message={formatMessage(errorMessages.notFound)} />;
+      } else if (AuthService.canAuthenticate()) {
+        window.location.reload(); // Shouldn't happen since it can only occur if the access token is expired manually and the page is refreshed just after.
       }
       log.error(`Access denied to ${props.match.url}, redirect to login`);
       return (<Redirect to={{ pathname: '/login', state: { from: props.location } }} />);
