@@ -28,6 +28,10 @@ import {
   IKeywordListFormService,
   KeywordListFormService,
 } from '../containers/Library/Keyword/Edit/KeywordListFormService';
+import {
+  IDisplayCampaignFormService,
+  DisplayCampaignFormService,
+} from './../containers/Campaigns/Display/Edit/DisplayCampaignFormService';
 import { TYPES } from '../constants/types';
 
 const container = new Container();
@@ -51,6 +55,9 @@ container
   .bind<IAudiencePartitionsService>(TYPES.IAudiencePartitionsService)
   .to(AudiencePartitionsService);
 container.bind<IOverlapInterval>(TYPES.IOverlapInterval).to(OverlapInterval);
+  container
+  .bind<IDisplayCampaignFormService>(TYPES.IDisplayCampaignFormService)
+  .to(DisplayCampaignFormService);
 
 export const { lazyInject } = getDecorators(container, false);
 

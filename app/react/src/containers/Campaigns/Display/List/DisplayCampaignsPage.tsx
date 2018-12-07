@@ -28,7 +28,6 @@ import { DisplayCampaignResource } from '../../../../models/campaign/display/Dis
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import messages from '../messages';
 import {
-  DisplayCampaignFormService,
   IDisplayCampaignFormService,
 } from '../Edit/DisplayCampaignFormService';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
@@ -40,6 +39,8 @@ import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/ac
 import { Label } from '../../../Labels/Labels';
 import { TranslationProps } from '../../../Helpers/withTranslations';
 import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 export interface MapDispatchToProps {
   labels: Label[];
@@ -86,7 +87,10 @@ class DisplayCampaignsPage extends React.Component<
   JoinedProps,
   DisplayCampaignsPageState
 > {
-  private _displayCampaignFormService: IDisplayCampaignFormService = new DisplayCampaignFormService();
+  
+  @lazyInject(TYPES.IDisplayCampaignFormService)
+  private _displayCampaignFormService: IDisplayCampaignFormService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
