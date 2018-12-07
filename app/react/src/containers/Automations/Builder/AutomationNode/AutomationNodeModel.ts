@@ -1,6 +1,7 @@
 import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../../../QueryTool/JSONOTQL/Diagram/Port/SimplePortModel';
 import { McsIconType } from '../../../../components/McsIcon';
+import { StorylineNodeModel } from '../domain';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -8,9 +9,11 @@ export default class AutomationNodeModel extends NodeModel {
   iconType: McsIconType;
   title: string;
   color: string;
+  storylineNodeModel: StorylineNodeModel;
   root?: boolean;
 
   constructor(
+    storylineNodeModel: StorylineNodeModel,
     iconType: McsIconType,
     title: string,
     color: string,
@@ -28,6 +31,7 @@ export default class AutomationNodeModel extends NodeModel {
     this.color = color;
     this.width = width;
     this.height = height;
+    this.storylineNodeModel = storylineNodeModel;
   }
 
   getPosition = () => {

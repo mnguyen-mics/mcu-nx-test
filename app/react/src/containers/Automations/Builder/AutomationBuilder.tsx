@@ -20,7 +20,13 @@ import {
   EdgeHandler,
 } from '../../../models/automations/automations';
 import { McsIconType } from '../../../components/McsIcon';
-import { StorylineNodeModel, DropNode, AutomationNodeShape } from './domain';
+import {
+  StorylineNodeModel,
+  DropNode,
+  AutomationNodeShape,
+  DeleteNodeOperation,
+  AddNodeOperation,
+} from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 
@@ -29,6 +35,9 @@ export interface AutomationBuilderProps {
   organisationId: string;
   scenarioId: string;
   automationData: StorylineNodeModel;
+  updateAutomationData: (
+    automationData: StorylineNodeModel,
+  ) => StorylineNodeModel;
 }
 
 interface State {
@@ -84,6 +93,9 @@ class AutomationBuilder extends React.Component<Props, State> {
     model.setLocked(true);
     this.startAutomationTree(automationData, model);
     this.engine.setDiagramModel(model);
+    // uncomment one of them to test
+    // this.deleteNode('3');
+    this.addNode('1','2');    
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -97,12 +109,29 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.setDiagramModel(model);
   }
 
+  addNode(idParentNode: string, childNodeId:string): StorylineNodeModel {
+    return this.props.updateAutomationData(
+      new AddNodeOperation(idParentNode, childNodeId).execute(
+        this.props.automationData,
+      ),
+    );
+  }
+
+  deleteNode(idNodeToBeDeleted: string): StorylineNodeModel {
+    return this.props.updateAutomationData(
+      new DeleteNodeOperation(idNodeToBeDeleted).execute(
+        this.props.automationData,
+      ),
+    );
+  }
+
   buildAutomationNode(
     nodeModel: StorylineNodeResource,
     xAxisLocal: number,
     maxHeightLocal: number,
   ): AutomationNodeModel {
     const storylineNode = new AutomationNodeModel(
+      nodeModel,
       this.generateNodeProperties(nodeModel.node).iconType,
       `${nodeModel.node.name} - (type: ${nodeModel.node.type})`,
       this.generateNodeProperties(nodeModel.node).color,
@@ -112,7 +141,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     return storylineNode;
   }
 
-  buildDropNode(height:number): DropNodeModel {
+  buildDropNode(height: number): DropNodeModel {
     return new DropNodeModel(height);
   }
 
@@ -137,7 +166,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       storylineNode.x = ROOT_NODE_POSITION.x + 250 * xAxisLocal;
       storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
       model.addNode(storylineNode);
-      
+
       if (node.out_edges.length > 0 && index === 0) {
         const outLink = new AutomationLinkModel();
         outLink.setSourcePort(nodeModel.ports.center);
@@ -152,7 +181,7 @@ class AutomationBuilder extends React.Component<Props, State> {
         link.setTargetPort(storylineNode.ports.center);
         link.point(
           nodeModel.x + nodeModel.width + 21.5,
-          storylineNode.y + nodeModel.height/2,
+          storylineNode.y + nodeModel.height / 2,
         );
         model.addLink(link);
       }
@@ -212,6 +241,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     model: DiagramModel,
   ) => {
     const rootNode = new AutomationNodeModel(
+      automationData,
       this.generateNodeProperties(automationData.node).iconType,
       `${automationData.node.name} - (type: ${automationData.node.type})`,
       this.generateNodeProperties(automationData.node).color,
