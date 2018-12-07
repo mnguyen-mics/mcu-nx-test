@@ -34,7 +34,7 @@ const getRefreshTokenExpirationDate = () => {
 };
 
 const tokenExpiresIn = (tokenExpirationDate: moment.MomentInput) => {
-  return moment(tokenExpirationDate).diff(moment(), 'ms')
+  return moment(tokenExpirationDate).subtract('10', 'minutes').diff(moment(), 'ms')
 }
 
 const isTokenExpired = (token: moment.MomentInput) => {
