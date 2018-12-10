@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cuid from 'cuid';
 import { McsIconType } from '../../../../components/McsIcon';
 import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
@@ -75,8 +76,8 @@ const exitNode2: FakeNode = {
 };
 
 class AvailableNodeVisualizer extends React.Component<{}, State> {
-  constructor() {
-    super({});
+  constructor(props: {}) {
+    super(props);
     this.state = {
       actionNodes: [],
       conditionNodes: [],
@@ -94,8 +95,8 @@ class AvailableNodeVisualizer extends React.Component<{}, State> {
 
   createNodeGrid = (nodeType: string, nodes: FakeNode[]) => {
     return (
-      <Tree defaultExpandAll={true} multiple={false}>
-        <TreeNode title={nodeType} key="0-0" selectable={false}>
+      <Tree defaultExpandAll={true} multiple={false} draggable={false}>
+        <TreeNode title={nodeType} selectable={false}>
           {nodes.map(node => {
             return (
               <TreeNode
@@ -107,21 +108,13 @@ class AvailableNodeVisualizer extends React.Component<{}, State> {
                     color={node.color}
                   />
                 }
-                key="0-0-0"
+                key={cuid()}
               />
             );
           })}
         </TreeNode>
       </Tree>
     );
-  };
-
-  onSelect = () => {
-    //
-  };
-
-  onExpand = () => {
-    //
   };
 
   render() {

@@ -111,8 +111,12 @@
   .available-node-visualizer-row {
     margin-top: 35px;
     .ant-tree-node-selected,
-    .ant-tree-node-content-wrapper:hover {
-      background-color: #ffffff !important;
+    .ant-tree-node-content-wrapper {
+      font-size: 13px;
+      font-weight: 700;
+      &:hover {
+        background-color: #ffffff !important;
+      }
     }
     .ant-tree li ul {
       padding: 0px;
@@ -122,7 +126,8 @@
       margin-top: 25px;
       float: left;
       width: 50%;
-      span[draggable], span[draggable="true"] {
+      span[draggable],
+      span[draggable='true'] {
         border: 0px #ffffff solid;
       }
     }
