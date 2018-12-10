@@ -130,10 +130,9 @@ class ForgotPassword extends React.Component<Props, State> {
                 type="primary"
                 htmlType="button"
                 className="mcs-primary reset-password-button"
+                href="/"
               >
-                <Link to="/login">
-                  <FormattedMessage {...messages.resetPasswordReturnToLogin} />
-                </Link>
+                <FormattedMessage {...messages.resetPasswordReturnToLogin} />
               </Button>
             </div>
           )}
