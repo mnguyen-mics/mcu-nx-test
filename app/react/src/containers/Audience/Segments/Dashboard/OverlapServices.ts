@@ -21,6 +21,7 @@ export interface IOverlapInterval {
     overlapResult: OverlapFileResource,
     segmentId: string,
   ) => Promise<Data | null>;
+  stopInterval: () => void;
 }
 
 @injectable()
