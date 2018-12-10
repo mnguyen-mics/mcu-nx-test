@@ -24,6 +24,7 @@ import {
   PasswordValidityResource,
 } from '../../../models/communities';
 import PasswReqChecker from '../Helpers/PasswReqChecker';
+import { takeLatest } from '../../../utils/ApiHelper';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
@@ -74,6 +75,8 @@ const messages = defineMessages({
   },
 });
 
+const getLatestValidityCall = takeLatest(CommunityService.getCommunityPasswordValidity);
+
 class CommunityChangePassword extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -85,7 +88,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
   }
 
   requestValidity = (handler: any) => {
-    CommunityService.getCommunityPasswordValidity(
+    getLatestValidityCall(
       this.props.match.params.communityToken,
       handler.target.value,
     )
