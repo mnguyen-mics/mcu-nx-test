@@ -182,8 +182,7 @@ class OverviewContent extends React.Component<
             visitReportCountry: visitReportCountry,
           };
         });
-      })
-      .catch(console.error);
+      });
 
     this.setState(prevState => {
       return {
