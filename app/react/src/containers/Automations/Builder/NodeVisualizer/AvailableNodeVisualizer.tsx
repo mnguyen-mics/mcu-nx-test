@@ -94,7 +94,7 @@ class AvailableNodeVisualizer extends React.Component<{}, State> {
 
   createNodeGrid = (nodeType: string, nodes: FakeNode[]) => {
     return (
-      <Tree defaultExpandAll={true} draggable={true} multiple={false}>
+      <Tree defaultExpandAll={true} multiple={false}>
         <TreeNode title={nodeType} key="0-0" selectable={false}>
           {nodes.map(node => {
             return (
