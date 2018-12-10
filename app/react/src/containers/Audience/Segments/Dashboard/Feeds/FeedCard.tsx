@@ -15,9 +15,6 @@ import { compose } from 'recompose';
 import { Modal, Dropdown, Menu } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import PluginService from '../../../../../services/PluginService';
-import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
-import { TYPES } from '../../../../../constants/types';
-import { lazyInject } from '../../../../../config/inversify.config';
 import PluginCardModal, { PluginCardModalProps } from '../../../../Plugin/Edit/PluginCard/PluginCardModal'
 import { PluginLayout } from '../../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../../models/plugin';
@@ -124,6 +121,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               this.setState({
                 cardHeaderTitle: resultPluginLayout.metadata.display_name,
                 cardHeaderThumbnail: resultPluginLayout.metadata.small_icon_asset_url,
+                pluginLayout: resultPluginLayout,
+                isLoading: false
               });
             }
           })
