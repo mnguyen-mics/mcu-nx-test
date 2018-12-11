@@ -41,7 +41,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      automationData: this.buildAutomationTree(
+      automationData: this.buildAutomationTreeData(
         storylineResourceData,
         storylineNodeData,
         storylineEdgeData,
@@ -49,7 +49,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     };
   }
 
-  buildAutomationTree(
+  buildAutomationTreeData(
     storylineData: StorylineResource,
     nodeData: ScenarioNodeShape[],
     edgeData: ScenarioEdgeResource[],

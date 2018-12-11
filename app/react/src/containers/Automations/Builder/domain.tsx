@@ -165,27 +165,23 @@ export const node3: ScenarioNodeShape = {
   id: '3',
   name: 'node 3',
   scenario_id: '1',
-  type: 'DISPLAY_CAMPAIGN',
-  campaign_id: 'string',
-  ad_group_id: 'string',
+  query_id: '1',
+  type: 'QUERY_INPUT',
+  evaluation_mode: '',
 };
 
 export const node4: ScenarioNodeShape = {
   id: '4',
-  name: 'node 4',
+  name: 'success',
   scenario_id: '1',
-  type: 'DISPLAY_CAMPAIGN',
-  campaign_id: 'string',
-  ad_group_id: 'string',
+  type: 'GOAL',
 };
 
 export const node5: ScenarioNodeShape = {
   id: '5',
   name: 'node 5',
   scenario_id: '1',
-  type: 'DISPLAY_CAMPAIGN',
-  campaign_id: 'string',
-  ad_group_id: 'string',
+  type: 'FAILURE',
 };
 
 export const storylineNodeData : ScenarioNodeShape[] = [

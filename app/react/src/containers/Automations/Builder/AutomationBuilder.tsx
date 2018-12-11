@@ -141,8 +141,8 @@ class AutomationBuilder extends React.Component<Props, State> {
     return storylineNode;
   }
 
-  buildDropNode(height: number): DropNodeModel {
-    return new DropNodeModel(height);
+  buildDropNode(): DropNodeModel {
+    return new DropNodeModel();
   }
 
   drawAutomationTree = (
@@ -155,16 +155,24 @@ class AutomationBuilder extends React.Component<Props, State> {
     return node.out_edges.reduce((acc, child, index) => {
       const maxHeightLocal = index > 0 ? acc + 1 : acc;
       const xAxisLocal = xAxis + 1;
-      const storylineNode =
-        child.node instanceof DropNode
-          ? this.buildDropNode(ROOT_NODE_POSITION.y * maxHeightLocal)
-          : this.buildAutomationNode(
-              child as StorylineNodeResource,
-              xAxisLocal,
-              maxHeightLocal,
-            );
+      let storylineNode;
+      let linkPointHeight;
+      if (child.node instanceof DropNode) {
+        storylineNode = this.buildDropNode();
+        storylineNode.y =
+          ROOT_NODE_POSITION.y * maxHeightLocal + nodeModel.height / 2 - 10;
+        linkPointHeight = storylineNode.y + 10;
+      } else {
+        storylineNode = this.buildAutomationNode(
+          child as StorylineNodeResource,
+          xAxisLocal,
+          maxHeightLocal,
+        );
+        storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
+        linkPointHeight = storylineNode.y + nodeModel.height / 2;
+      }
       storylineNode.x = ROOT_NODE_POSITION.x + 250 * xAxisLocal;
-      storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
+
       model.addNode(storylineNode);
 
       if (node.out_edges.length > 0 && index === 0) {
@@ -179,10 +187,7 @@ class AutomationBuilder extends React.Component<Props, State> {
         link.setColor('#afafaf');
         link.setSourcePort(nodeModel.ports.right);
         link.setTargetPort(storylineNode.ports.center);
-        link.point(
-          nodeModel.x + nodeModel.width + 21.5,
-          storylineNode.y + nodeModel.height / 2,
-        );
+        link.point(nodeModel.x + nodeModel.width + 21.5, linkPointHeight);
         model.addLink(link);
       }
       return this.drawAutomationTree(

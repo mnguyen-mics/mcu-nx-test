@@ -7,12 +7,11 @@ export default class DropNodeModel extends NodeModel {
   negation = false;
   color:string;
 
-  constructor(height:number) {
+  constructor() {
     super('drop-node');
 
     this.addPort(new SimplePortModel('center'));
     this.addPort(new SimplePortModel('right'));
-    this.height = height;
 
     this.color = '#919191';
   }

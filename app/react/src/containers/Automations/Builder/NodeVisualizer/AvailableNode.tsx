@@ -1,19 +1,38 @@
 import McsIcon, { McsIconType } from '../../../../components/McsIcon';
 import React from 'react';
-import { Col } from 'antd/lib/grid';
+import {
+  ConnectDragSource,
+  DragSource,
+  DragSourceConnector,
+  DragSourceMonitor,
+} from 'react-dnd';
 
 interface AvailableNodeProps {
   title: string;
   icon: McsIconType;
   color: string;
+  connectDragSource?: ConnectDragSource;
+  isDragging?: boolean;
+  isDropped?: boolean;
 }
+
+const fieldSource = {
+  beginDrag(props: AvailableNodeProps) {
+    return {
+      title: props.title,
+      icon: props.icon,
+      color: props.color,
+    };
+  },
+};
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
   render() {
-    const { title, icon, color } = this.props;
+    const { title, icon, color, connectDragSource } = this.props;
 
     return (
-      <Col span={12}>
+      connectDragSource &&
+      connectDragSource(
         <div className="available-node">
           <div
             className="available-node-icon"
@@ -22,10 +41,16 @@ class AvailableNode extends React.Component<AvailableNodeProps> {
             <McsIcon type={icon} className="available-node-icon-gyph" />
           </div>
           <div className="available-node-text">{title}</div>
-        </div>
-      </Col>
-    );
+          </div>,
+    ));
   }
 }
 
-export default AvailableNode;
+export default DragSource(
+  () => 'automation-node',
+  fieldSource,
+  (connect: DragSourceConnector, monitor: DragSourceMonitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging(),
+  }),
+)(AvailableNode);
