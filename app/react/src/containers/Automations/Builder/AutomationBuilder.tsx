@@ -95,8 +95,19 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.setDiagramModel(model);
     // uncomment one of them to test
     // this.deleteNode('3');
-    this.addNode('1','2');    
+    this.addNode('1','2');
   }
+
+  componentDidUpdate() {
+    const { automationData } = this.props;
+    const model = new DiagramModel();
+    model.setLocked(this.engine.getDiagramModel().locked);
+    model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
+    model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
+    model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
+    this.startAutomationTree(automationData, model);
+    this.engine.setDiagramModel(model);
+  }	  
 
   componentWillReceiveProps(nextProps: Props) {
     const { automationData } = this.props;
