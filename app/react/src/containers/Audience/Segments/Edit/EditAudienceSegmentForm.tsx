@@ -5,6 +5,7 @@ import {
   ConfigProps,
   InjectedFormProps,
   Field,
+  GenericField,
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { InjectedIntlProps } from 'react-intl';
@@ -55,8 +56,8 @@ const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
 >;
 
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
-const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field;
+const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<OTQLInputEditorProps>;
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field as new () => GenericField<JSONQLInputEditorProps>;
 
 export interface AudienceSegmentFormProps
   extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {

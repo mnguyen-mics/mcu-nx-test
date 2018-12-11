@@ -15,7 +15,7 @@ import ScrollspySider, {
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import { Path } from '../../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
-import { Omit } from 'antd/lib/form/Form';
+import { Omit } from '../../../../../utils/Types';
 import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
 
 const FORM_ID = 'userForm';

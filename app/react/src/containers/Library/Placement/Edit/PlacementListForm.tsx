@@ -28,7 +28,7 @@ import {
 import { Path } from '../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import PlacementsFormSection from './Sections/PlacementsFormSection';
-import { Omit } from 'antd/lib/form/Form';
+import { Omit } from '../../../../utils/Types';
 import { PlacementList } from '../../../../models/placementList/PlacementList';
 
 const FORM_ID = 'placementListForm';

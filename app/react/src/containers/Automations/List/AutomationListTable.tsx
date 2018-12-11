@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout, Tooltip, Icon } from 'antd';
 import { compose } from 'recompose';
@@ -30,8 +29,7 @@ type JoinedProps = AutomationsTableProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AutomationsListTable extends React.Component<JoinedProps> {
-
-    static propTypes: { match: PropTypes.Validator<any>; location: PropTypes.Validator<any>; history: PropTypes.Validator<any>; translations: PropTypes.Validator<any>; hasAutomations: PropTypes.Validator<any>; isFetchingAutomationList: PropTypes.Validator<any>; dataSource: PropTypes.Validator<any>; totalAutomations: PropTypes.Validator<any>; fetchAutomationList: PropTypes.Validator<any>; resetAutomationsTable: PropTypes.Validator<any>; };
+    
   componentDidMount() {
     const {
       history,
