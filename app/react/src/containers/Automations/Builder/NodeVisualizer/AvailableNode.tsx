@@ -41,8 +41,9 @@ class AvailableNode extends React.Component<AvailableNodeProps> {
             <McsIcon type={icon} className="available-node-icon-gyph" />
           </div>
           <div className="available-node-text">{title}</div>
-          </div>,
-    ));
+        </div>,
+      )
+    );
   }
 }
 

@@ -44,7 +44,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
     return editableCampaignProperties.map(campaignProperty => {
       return {
         title: intl.formatMessage(
-          campaignPropertiesMessageMap[campaignProperty],
+          campaignPropertiesMessageMap[campaignProperty]!,
         ),
         value: campaignProperty,
         disabled: selected.includes(campaignProperty),

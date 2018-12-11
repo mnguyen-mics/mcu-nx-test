@@ -12,6 +12,7 @@ import {
   InjectedFormProps,
   Field,
   Form,
+  GenericField,
   ConfigProps,
 } from 'redux-form';
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
@@ -39,9 +40,9 @@ export interface ContentAreaProps extends ConfigProps<{}> {
   content: Content[];
 }
 
-const FormInputField: FieldCtor<FormInputProps> = Field;
-const FormTextAreaField: FieldCtor<FormTextAreaProps> = Field;
-const FormQuickUploadField: FieldCtor<QuickAssetUploadProps> = Field;
+const FormInputField: FieldCtor<FormInputProps> = Field as new () => GenericField<FormInputProps>;
+const FormTextAreaField: FieldCtor<FormTextAreaProps> = Field as new () => GenericField<FormTextAreaProps>;
+const FormQuickUploadField: FieldCtor<QuickAssetUploadProps> = Field as new () => GenericField<QuickAssetUploadProps>;
 
 const fieldGridConfig = {
   labelCol: { span: 3 },

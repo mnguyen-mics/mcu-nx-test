@@ -22,7 +22,7 @@ import {
 } from '../../../../../utils/FormHelper';
 import { Path } from '../../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
-import { Omit } from 'antd/lib/form/Form';
+import { Omit } from '../../../../../utils/Types';
 import UserResource from '../../../../../models/directory/UserResource';
 
 const FORM_ID = 'userForm';

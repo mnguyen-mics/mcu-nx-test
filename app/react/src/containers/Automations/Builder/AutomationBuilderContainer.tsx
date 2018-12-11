@@ -112,6 +112,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
         params: { organisationId },
       },
     } = this.props;
+
     return (
       <Layout>
         <Layout.Content

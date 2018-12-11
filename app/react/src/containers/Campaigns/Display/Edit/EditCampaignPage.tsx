@@ -12,7 +12,6 @@ import {
   INITIAL_DISPLAY_CAMPAIGN_FORM_DATA,
 } from './domain';
 import {
-  DisplayCampaignFormService,
   IDisplayCampaignFormService,
 } from './DisplayCampaignFormService';
 import messages from './messages';
@@ -25,6 +24,8 @@ import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import DisplayCampaignSelector from './DisplayCampaignSelector';
 import { DisplayCampaignSubType } from '../../../../models/campaign/constants';
 import DisplayAdServingCampaignForm from './DisplayAdServingCampaignForm';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 interface State {
   displayCampaignFormData: DisplayCampaignFormData;
@@ -37,7 +38,10 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
-  private _displayCampaignFormService: IDisplayCampaignFormService = new DisplayCampaignFormService();
+
+  @lazyInject(TYPES.IDisplayCampaignFormService)
+  private _displayCampaignFormService: IDisplayCampaignFormService;
+
   constructor(props: Props) {
     super(props);
     this.state = {

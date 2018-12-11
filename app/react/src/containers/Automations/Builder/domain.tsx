@@ -145,7 +145,7 @@ export const storylineResourceData : StorylineResource = {
 
 export const beginNode: ScenarioNodeShape = {
   id: '1',
-  name: 'begin node',
+  name: 'Begin node',
   scenario_id: '1',
   type: 'DISPLAY_CAMPAIGN',
   campaign_id: 'string',
@@ -164,10 +164,10 @@ export const node2: ScenarioNodeShape = {
 export const node3: ScenarioNodeShape = {
   id: '3',
   name: 'node 3',
-  scenario_id: '1',
   query_id: '1',
   type: 'QUERY_INPUT',
   evaluation_mode: '',
+  scenario_id: '1',
 };
 
 export const node4: ScenarioNodeShape = {

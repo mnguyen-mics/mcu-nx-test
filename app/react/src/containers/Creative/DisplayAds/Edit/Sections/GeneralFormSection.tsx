@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Field, getFormInitialValues, Validator } from 'redux-form';
+import { Field, getFormInitialValues, Validator, GenericField } from 'redux-form';
 import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
@@ -84,7 +84,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         creative.audit_status === 'AUDIT_PENDING';
     }
 
-    const CreativeFormatEditorField: FieldCtor<{ disabled?: boolean, small?: boolean }> = Field;
+    const CreativeFormatEditorField: FieldCtor<{ disabled?: boolean, small?: boolean }> = Field as new() => GenericField<{ disabled?: boolean, small?: boolean }>
 
     return (
       <div>

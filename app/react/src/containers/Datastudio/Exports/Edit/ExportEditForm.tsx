@@ -7,6 +7,7 @@ import {
   InjectedFormProps,
   ConfigProps,
   Field,
+  GenericField,
 } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -25,7 +26,7 @@ import { Path } from '../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import OTQLInputEditor, { OTQLInputEditorProps } from '../../../Audience/Segments/Edit/Sections/query/OTQL'
 import SelectorQL from '../../../Audience/Segments/Edit/Sections/query/SelectorQL'
-import { Omit } from 'antd/lib/form/Form';
+import { Omit } from '../../../../utils/Types';
 import { ExportFormData } from './domain';
 import { injectDatamart } from '../../../Datamart';
 import { FieldCtor, FormSection } from '../../../../components/Form';
@@ -73,7 +74,7 @@ interface ExportEditFormProps
   datamart?: DatamartResource;
 }
 
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
+const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field  as new () => GenericField<OTQLInputEditorProps>;
 
 type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   ExportEditFormProps &

@@ -37,7 +37,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
     label,
     renderFieldAction,
     small,
-    ...formInputProps,
+    ...formInputProps
   } = props;
 
 

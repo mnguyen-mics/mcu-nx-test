@@ -16,7 +16,7 @@ class EditContentLayout extends React.Component<EditContentLayoutProps> {
       scrollId,
       items,
       children,
-      ...rest,
+      ...rest
     } = this.props;
 
     const eventualSidebar = items && items.length && (

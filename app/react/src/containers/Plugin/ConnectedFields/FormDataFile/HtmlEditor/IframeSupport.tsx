@@ -26,7 +26,7 @@ export default class IframeSupport extends React.Component<IframeSupportProps, I
           scrolling="no"
           style={{ width: '100%', height: this.state.iframeHeight, margin: 0, padding: 0, border: 'none' }}
           ref={(e) => {
-            if (e) {
+            if (e && e.contentDocument && e.contentDocument.body && e.contentDocument.documentElement) {
               // get inner dimension and set it to global iframe
               e.contentDocument.body.innerHTML = this.props.content;
               const body = e.contentDocument.body,

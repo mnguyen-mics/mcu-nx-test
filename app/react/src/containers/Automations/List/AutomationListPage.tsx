@@ -13,7 +13,6 @@ import injectNotifications, { InjectedNotificationProps } from '../../Notificati
 import ScenarioService, { GetAutomationsOptions, SCENARIOS_SEARCH_SETTINGS } from '../../../services/ScenarioService';
 import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
-import { UpdateMessage } from '../../Campaigns/Display/Dashboard/ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import AutomationListTable from './AutomationListTable';
 import { getTableDataSource } from '../../../state/Automations/selectors';
 import * as AutomationsListActions from '../../../state/Automations/actions';
@@ -136,9 +135,6 @@ class AutomationListPage extends React.Component<
   updateAutomationStatus = (
     scenario: AutomationResource,
     status: AutomationStatus,
-    successMessage?: UpdateMessage,
-    errorMessage?: UpdateMessage,
-    undoBody?: { status: string },
   ) => {
     this.setState({
       isUpdatingStatuses: true,
@@ -151,7 +147,7 @@ class AutomationListPage extends React.Component<
         status: status,
         datamart_id: scenario.datamart_id,
         organisation_id: scenario.organisation_id,
-    }).then(response =>{
+    }).then(() =>{
         this.setState({
             isUpdatingStatuses: false,
             selectedRowKeys: [],

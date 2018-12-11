@@ -20,7 +20,7 @@ import OTQLInputEditor, {
 import { FieldCtor } from '../../../../../components/Form/index';
 import SelectorQL from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQL';
 import SelectorQLReadOnly from '../../../../../containers/Audience/Segments/Edit/Sections/query/SelectorQLReadOnly';
-import { Field, getFormValues } from 'redux-form';
+import { Field, getFormValues, GenericField } from 'redux-form';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { GoalFormData, isExistingGoal } from '../domain';
@@ -30,8 +30,8 @@ import { connect } from 'react-redux';
 import JSONQL, { JSONQLInputEditorProps } from '../../../../Audience/Segments/Edit/Sections/query/JSONQL';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 
-const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field;
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field;
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field as new () => GenericField<JSONQLInputEditorProps>;
+const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<OTQLInputEditorProps>;
 
 const messages = defineMessages({
   sectionSubtitle1: {

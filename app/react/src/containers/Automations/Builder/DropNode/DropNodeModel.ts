@@ -1,11 +1,10 @@
 import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../../../QueryTool/JSONOTQL/Diagram/Port/SimplePortModel';
 
-
 export default class DropNodeModel extends NodeModel {
   collapsed = false;
   negation = false;
-  color:string;
+  color: string;
 
   constructor() {
     super('drop-node');
@@ -29,9 +28,9 @@ export default class DropNodeModel extends NodeModel {
       height: 20,
       borderWidth: 1,
     };
-  };
+  }
 
   getColor() {
     return this.color;
-  };
+  }
 }

@@ -46,7 +46,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
 
     return editableAdGroupProperties.map(adGroupProperty => {
       return {
-        title: intl.formatMessage(adGroupPropertiesMessageMap[adGroupProperty]),
+        title: intl.formatMessage(adGroupPropertiesMessageMap[adGroupProperty]!),
         value: adGroupProperty,
         disabled: selected.includes(adGroupProperty),
       };

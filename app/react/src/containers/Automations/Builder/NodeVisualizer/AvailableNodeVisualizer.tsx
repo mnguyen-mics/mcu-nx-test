@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { McsIconType } from '../../../../components/McsIcon';
-import { Row } from 'antd/lib/grid';
-import AvailableNode from './AvailableNode';
-import Tree from 'antd/lib/tree';
 import cuid from 'cuid';
+import { McsIconType } from '../../../../components/McsIcon';
+import { Row, Tree } from 'antd';
+import AvailableNode from './AvailableNode';
+
 const { TreeNode } = Tree;
+
 interface FakeNode {
   id: number;
   name: string;
@@ -75,8 +76,8 @@ const exitNode2: FakeNode = {
 };
 
 class AvailableNodeVisualizer extends React.Component<{}, State> {
-  constructor() {
-    super({});
+  constructor(props: {}) {
+    super(props);
     this.state = {
       actionNodes: [],
       conditionNodes: [],

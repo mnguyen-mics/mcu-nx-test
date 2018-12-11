@@ -12,7 +12,7 @@ import {
 
 import messages from './messages';
 import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
-import { Omit } from 'antd/lib/form/Form';
+import { Omit } from '../../../../../utils/Types';
 
 const RecommenderPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<Recommender>>
 interface RecommenderRouteParam {
