@@ -17,10 +17,6 @@ import { ValidatorProps } from '../../../../components/Form/withValidators';
 import ColoredButton from '../../../../components/ColoredButton';
 import { ColorPalletteOption, getColorPalettes, rgbToHex, getPerceivedBrightness } from '../../../../utils/ColorHelpers';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
-import assetFileService from '../../../../services/Library/AssetsFilesService';
-
-// const logoUrl = require('../../../../assets/images/appnexuslogo.jpg');
-// const logoUrl = require('../../../../assets/images/rubiconlogo.jpg');
 
 
 const FORM_NAME = 'pluginForm';
@@ -74,8 +70,8 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       pluginLayout
     } = this.props;
 
-    if (pluginLayout && pluginLayout.metadata && pluginLayout.metadata.small_icon_asset_id) {
-      this.getData(pluginLayout.metadata.small_icon_asset_id);
+    if (pluginLayout && pluginLayout.metadata && pluginLayout.metadata.small_icon_asset_url) {
+      this.getData(pluginLayout.metadata.small_icon_asset_url);
     }
 
     document.addEventListener('mousedown', this.handleClick, false)
@@ -91,9 +87,9 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       pluginLayout: nextPluginLayout
     } = nextProps;
 
-    if (nextPluginLayout && nextPluginLayout.metadata) {
-      if (pluginLayout && pluginLayout.metadata.small_icon_asset_id !== nextPluginLayout.metadata.small_icon_asset_id || !pluginLayout && !!nextPluginLayout) {
-        this.getData(nextPluginLayout.metadata.small_icon_asset_id);
+    if (nextPluginLayout && nextPluginLayout.metadata && nextPluginLayout.metadata.small_icon_asset_url) {
+      if (pluginLayout && nextPluginLayout.metadata && pluginLayout.metadata.small_icon_asset_url !== nextPluginLayout.metadata.small_icon_asset_url || !pluginLayout && !!nextPluginLayout) {
+        this.getData(nextPluginLayout.metadata.small_icon_asset_url);
       }
     }
     
@@ -111,13 +107,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
     this.props.onClose();
   }
 
-  getData = (assetId: string) => { this.setState({ loading: true }); this.getImageUrl(assetId).then(result => { if (result) this.getPallette(`${(window as any).MCS_CONSTANTS.ASSETS_URL}${result.path}`)})}
-
-  getImageUrl = (assetId: string) => {
-    return assetFileService.getAssetFile(
-      assetId
-    ).then(result => {this.setState({ imageUrl: result ? result.path : '' }); return result})
-  }
+  getData = (assetUrl: string) => { this.setState({ loading: true, imageUrl: assetUrl }); this.getPallette(`${(window as any).MCS_CONSTANTS.ASSETS_URL}${assetUrl}`)};
 
 
   getPallette = (url: string) => {
