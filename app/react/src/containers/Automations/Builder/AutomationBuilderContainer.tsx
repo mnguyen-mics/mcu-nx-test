@@ -34,7 +34,7 @@ type Props = AutomationBuilderContainerProps &
 
 class AutomationBuilderContainer extends React.Component<Props> {
 
-  buildAutomationTree(
+  buildAutomationTreeData(
     storylineData: StorylineResource,
     nodeData: ScenarioNodeShape[],
     edgeData: ScenarioEdgeResource[],
@@ -88,7 +88,7 @@ class AutomationBuilderContainer extends React.Component<Props> {
         params: { organisationId },
       },
     } = this.props;
-    const automationData = this.buildAutomationTree(
+    const automationData = this.buildAutomationTreeData(
       storylineResourceData,
       storylineNodeData,
       storylineEdgeData,
