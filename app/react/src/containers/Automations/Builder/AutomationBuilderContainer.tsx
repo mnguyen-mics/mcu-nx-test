@@ -97,7 +97,9 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     };
   }
 
-  handleUpdateAutomationData = (newAutomationData: StorylineNodeModel) : StorylineNodeModel => {
+  handleUpdateAutomationData = (
+    newAutomationData: StorylineNodeModel,
+  ): StorylineNodeModel => {
     this.setState(prevState => {
       return {
         automationData: newAutomationData,

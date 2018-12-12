@@ -7,8 +7,27 @@ import { StorylineNodeModel } from '../domain';
 export default class AutomationNodeFactory extends AbstractNodeFactory<
   AutomationNodeModel
 > {
-  constructor() {
+  nodeOperations: {
+    addNode: (idParentNode: string, childNodeId: string) => StorylineNodeModel;
+    deleteNode: (id: string) => StorylineNodeModel;
+    updateLayout: () => void;
+  };
+  lockGlobalInteraction: (locked: boolean) => void;
+
+  constructor(
+    nodeOperations: {
+      addNode: (
+        idParentNode: string,
+        childNodeId: string,
+      ) => StorylineNodeModel;
+      deleteNode: (id: string) => StorylineNodeModel;
+      updateLayout: () => void,
+    },
+    _lockGlobalInteraction: (locked: boolean) => void,
+  ) {
     super('automation-node');
+    this.nodeOperations = nodeOperations;
+    this.lockGlobalInteraction = _lockGlobalInteraction;
   }
 
   generateReactWidget(
@@ -21,6 +40,8 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
     return React.createElement(AutomationNodeWidget, {
       node: node,
       diagramEngine: diagramEngine,
+      nodeOperations: this.nodeOperations,
+      lockGlobalInteraction: this.lockGlobalInteraction,
     });
   }
 
@@ -34,9 +55,10 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
         campaign_id: 'string',
         ad_group_id: 'string',
       },
-      out_edges: []
-    }
-    return new AutomationNodeModel(emptyNode,
+      out_edges: [],
+    };
+    return new AutomationNodeModel(
+      emptyNode,
       'plus',
       'User belongs to ### segment',
       '#2ecc71',
