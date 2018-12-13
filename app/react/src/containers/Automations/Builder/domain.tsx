@@ -5,6 +5,11 @@ import {
   StorylineResource,
 } from '../../../models/automations/automations';
 
+export interface TreeNodeOperations {
+    addNode: (parentNodeId: string, childNodeId: string) => void;
+    deleteNode: (nodeId: string) => void;
+    updateLayout: () => void;
+  }
 
 export type AutomationNodeShape = ScenarioNodeShape | DropNode;
 
@@ -51,6 +56,18 @@ export class AddNodeOperation implements NodeOperation{
       (child, index) => {
         if (child.node.id === childNodeId) {
           const id : string = cuid(); 
+          const inEdgeId: string = cuid();
+          const childNode : StorylineNodeModel= {
+            node: child.node,
+            in_edge: {
+              id: inEdgeId,
+              source_id: id,
+              target_id: child.node.id,
+              handler: 'GOAL',
+              scenario_id: child.in_edge!.scenario_id,
+            },
+            out_edges: child.out_edges,
+          }
           const newNode: StorylineNodeModel = {
             node: {
               id: id,
@@ -67,7 +84,7 @@ export class AddNodeOperation implements NodeOperation{
               handler: 'ON_VISIT',
               scenario_id: '1',
             },
-            out_edges: [child],
+            out_edges: [childNode],
           };
           return newNode;
         } else {
