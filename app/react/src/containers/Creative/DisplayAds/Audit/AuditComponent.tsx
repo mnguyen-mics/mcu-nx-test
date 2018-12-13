@@ -61,7 +61,7 @@ class AuditComponent extends React.Component<Props, State> {
     return (
       <div style={{ overflow: 'hidden' }}>
         <div>
-          <div className={'float-left'} style={{ lineHeight: '60px' }}>
+          <div className={'float-left'} style={{ lineHeight: '59px' }}>
             <AuditStatusRenderer auditStatus={creative.audit_status} />
           </div>
           <div className="left-part-margin">

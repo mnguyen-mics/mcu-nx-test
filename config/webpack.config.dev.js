@@ -1,6 +1,5 @@
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const paths = require('./paths');
 const configFactory = require('./webpack.config');
@@ -25,7 +24,6 @@ const devConfig = {
   plugins: [
     // not working till we remove grunt-webpack
     // new webpack.HotModuleReplacementPlugin(),
-    new HardSourceWebpackPlugin(),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml,
