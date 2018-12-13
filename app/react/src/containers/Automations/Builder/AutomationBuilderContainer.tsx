@@ -27,12 +27,27 @@ export interface AutomationBuilderContainerProps {
   renderActionBar: (datamartId: string) => React.ReactNode;
 }
 
+interface State {
+  automationData: StorylineNodeModel;
+}
+
 type Props = AutomationBuilderContainerProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class AutomationBuilderContainer extends React.Component<Props> {
+class AutomationBuilderContainer extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      automationData: this.buildAutomationTreeData(
+        storylineResourceData,
+        storylineNodeData,
+        storylineEdgeData,
+      ),
+    };
+  }
 
   buildAutomationTreeData(
     storylineData: StorylineResource,
@@ -82,17 +97,22 @@ class AutomationBuilderContainer extends React.Component<Props> {
     };
   }
 
+  handleUpdateAutomationData = (newAutomationData: StorylineNodeModel) : StorylineNodeModel => {
+    this.setState(prevState => {
+      return {
+        automationData: newAutomationData,
+      };
+    });
+    return newAutomationData;
+  };
+
   render() {
     const {
       match: {
         params: { organisationId },
       },
     } = this.props;
-    const automationData = this.buildAutomationTreeData(
-      storylineResourceData,
-      storylineNodeData,
-      storylineEdgeData,
-    );
+
     return (
       <Layout>
         <Layout.Content
@@ -102,8 +122,9 @@ class AutomationBuilderContainer extends React.Component<Props> {
           <AutomationBuilder
             datamartId={this.props.datamartId}
             organisationId={organisationId}
-            automationData={automationData}
+            automationData={this.state.automationData}
             scenarioId={storylineNodeData[0].scenario_id}
+            updateAutomationData={this.handleUpdateAutomationData}
           />
         </Layout.Content>
       </Layout>

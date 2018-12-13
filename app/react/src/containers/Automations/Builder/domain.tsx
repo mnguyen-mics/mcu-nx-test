@@ -1,8 +1,10 @@
+import cuid from 'cuid';
 import {
   ScenarioNodeShape,
   ScenarioEdgeResource,
   StorylineResource,
 } from '../../../models/automations/automations';
+
 
 export type AutomationNodeShape = ScenarioNodeShape | DropNode;
 
@@ -21,6 +23,110 @@ export class DropNode {
     this.parentNode = parentNode;
     this.outNode = outNode;
   }
+}
+
+export interface NodeOperation {
+  execute(automationData: StorylineNodeModel): StorylineNodeModel;
+}
+
+export class AddNodeOperation implements NodeOperation{
+  parentNodeId: string;
+  childNodeId: string;
+
+  constructor(parentNodeId: string, childNodeId: string){
+    this.childNodeId = childNodeId;
+    this.parentNodeId = parentNodeId;
+  }
+
+  execute(automationData: StorylineNodeModel):StorylineNodeModel{
+    return this.iterateData(automationData, this.parentNodeId, this.childNodeId);
+  }
+
+  iterateData(
+    automationData: StorylineNodeModel,
+    parentNodeId: string,
+    childNodeId: string,
+  ): StorylineNodeModel {
+    const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
+      (child, index) => {
+        if (child.node.id === childNodeId) {
+          const id : string = cuid(); 
+          const newNode: StorylineNodeModel = {
+            node: {
+              id: id,
+              name: 'title',
+              scenario_id: '1',
+              type: 'QUERY_INPUT',
+              query_id: 'string',
+              evaluation_mode: 'string',
+            },
+            in_edge: {
+              id: 'string',
+              source_id: parentNodeId,
+              target_id: id,
+              handler: 'ON_VISIT',
+              scenario_id: '1',
+            },
+            out_edges: [child],
+          };
+          return newNode;
+        } else {
+          return this.iterateData(child, parentNodeId, childNodeId);
+        }
+      },
+    );
+
+    return {
+      node: automationData.node,
+      in_edge: automationData.in_edge,
+      out_edges: outEdges,
+    };
+  }
+
+}
+
+export class DeleteNodeOperation implements NodeOperation{
+  idNodeToBeDeleted: string;
+
+  constructor(idNodeToBeDeleted: string){
+    this.idNodeToBeDeleted = idNodeToBeDeleted;
+  }
+
+  execute(automationData: StorylineNodeModel):StorylineNodeModel{
+    return this.iterateData(automationData, this.idNodeToBeDeleted);
+  }
+
+  iterateData(
+    automationData: StorylineNodeModel,
+    idNodeToBeDeleted: string,
+  ): StorylineNodeModel {
+    const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
+      (child, index) => {
+        if (child.node.id === idNodeToBeDeleted) {
+          const newNode: StorylineNodeModel = {
+            node: {
+              id: child.node.id,
+              name: 'END NODE',
+              scenario_id: '1',
+              type: 'FAILURE',
+            },
+            in_edge: child.in_edge,
+            out_edges: [],
+          };
+          return newNode;
+        } else {
+          return this.iterateData(child, idNodeToBeDeleted);
+        }
+      },
+    );
+
+    return {
+      node: automationData.node,
+      in_edge: automationData.in_edge,
+      out_edges: outEdges,
+    };
+  }
+
 }
 
 export interface StorylineNodeModel {

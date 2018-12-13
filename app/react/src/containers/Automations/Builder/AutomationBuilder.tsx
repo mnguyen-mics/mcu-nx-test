@@ -20,7 +20,13 @@ import {
   EdgeHandler,
 } from '../../../models/automations/automations';
 import { McsIconType } from '../../../components/McsIcon';
-import { StorylineNodeModel, DropNode, AutomationNodeShape } from './domain';
+import {
+  StorylineNodeModel,
+  DropNode,
+  AutomationNodeShape,
+  DeleteNodeOperation,
+  AddNodeOperation,
+} from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 
@@ -29,6 +35,9 @@ export interface AutomationBuilderProps {
   organisationId: string;
   scenarioId: string;
   automationData: StorylineNodeModel;
+  updateAutomationData: (
+    automationData: StorylineNodeModel,
+  ) => StorylineNodeModel;
 }
 
 interface State {
@@ -84,7 +93,21 @@ class AutomationBuilder extends React.Component<Props, State> {
     model.setLocked(true);
     this.startAutomationTree(automationData, model);
     this.engine.setDiagramModel(model);
+    // uncomment one of them to test
+    // this.deleteNode('3');
+    this.addNode('1','2');
   }
+
+  componentDidUpdate() {
+    const { automationData } = this.props;
+    const model = new DiagramModel();
+    model.setLocked(this.engine.getDiagramModel().locked);
+    model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
+    model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
+    model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
+    this.startAutomationTree(automationData, model);
+    this.engine.setDiagramModel(model);
+  }	  
 
   componentWillReceiveProps(nextProps: Props) {
     const { automationData } = this.props;
@@ -97,12 +120,29 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.setDiagramModel(model);
   }
 
+  addNode(idParentNode: string, childNodeId:string): StorylineNodeModel {
+    return this.props.updateAutomationData(
+      new AddNodeOperation(idParentNode, childNodeId).execute(
+        this.props.automationData,
+      ),
+    );
+  }
+
+  deleteNode(idNodeToBeDeleted: string): StorylineNodeModel {
+    return this.props.updateAutomationData(
+      new DeleteNodeOperation(idNodeToBeDeleted).execute(
+        this.props.automationData,
+      ),
+    );
+  }
+
   buildAutomationNode(
     nodeModel: StorylineNodeResource,
     xAxisLocal: number,
     maxHeightLocal: number,
   ): AutomationNodeModel {
     const storylineNode = new AutomationNodeModel(
+      nodeModel,
       this.generateNodeProperties(nodeModel.node).iconType,
       `${nodeModel.node.name} - (type: ${nodeModel.node.type})`,
       this.generateNodeProperties(nodeModel.node).color,
@@ -217,6 +257,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     model: DiagramModel,
   ) => {
     const rootNode = new AutomationNodeModel(
+      automationData,
       this.generateNodeProperties(automationData.node).iconType,
       `${automationData.node.name} - (type: ${automationData.node.type})`,
       this.generateNodeProperties(automationData.node).color,
