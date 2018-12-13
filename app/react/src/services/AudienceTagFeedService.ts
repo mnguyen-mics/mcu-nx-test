@@ -5,13 +5,13 @@ import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
 
-interface IAudienceTagFeedService {
-  getAudienceTagFeeds: (
+export interface IAudienceTagFeedService {
+  getAudienceFeeds: (
     organisationId: string,
     options: object,
   ) => Promise<DataListResponse<AudienceTagFeed>>;
 
-  deleteAudienceTagFeed: (
+  deleteAudienceFeed: (
     id: string,
     options: object,
   ) => Promise<DataResponse<any>>;
@@ -41,10 +41,10 @@ interface IAudienceTagFeedService {
     organisationId: string,
     options: object,
   ) => Promise<DataResponse<AudienceTagFeed>>;
-  getAudienceTagFeedProperties: (id: string, options: object) => Promise<any>;
-  getLocalizedPluginLayout: (
+  getAudienceFeedProperties: (id: string, options: object) => Promise<any>;
+  getLocalizedPluginLayout(
     pInstanceId: string,
-  ) => Promise<PluginLayout | null>;
+  ): Promise<PluginLayout | null>;
 }
 
 export class AudienceTagFeedService
@@ -56,7 +56,7 @@ export class AudienceTagFeedService
     this.segmentId = segmentId;
   }
 
-  getAudienceTagFeeds(
+  getAudienceFeeds(
     organisationId: string,
     options: object = {},
   ): Promise<DataListResponse<AudienceTagFeed>> {
@@ -71,7 +71,7 @@ export class AudienceTagFeedService
     return ApiService.getRequest(endpoint, params);
   }
 
-  deleteAudienceTagFeed(
+  deleteAudienceFeed(
     id: string,
     options: object = {},
   ): Promise<DataResponse<any>> {
@@ -82,10 +82,10 @@ export class AudienceTagFeedService
 
   // START reimplementation of method
 
-  getInstanceById(
+  getInstanceById = (
     id: string,
     options: object = {},
-  ): Promise<DataResponse<AudienceTagFeed>> {
+  ): Promise<DataResponse<AudienceTagFeed>> => {
     const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}`;
 
     const params = {
@@ -94,10 +94,10 @@ export class AudienceTagFeedService
     return ApiService.getRequest(endpoint, params);
   }
 
-  getInstanceProperties(
+  getInstanceProperties = (
     id: string,
     options: object = {},
-  ): Promise<DataListResponse<PropertyResourceShape>> {
+  ): Promise<DataListResponse<PropertyResourceShape>> => {
     const endpoint = `audience_segments/${
       this.segmentId
     }/tag_feeds/${id}/properties`;
@@ -105,10 +105,10 @@ export class AudienceTagFeedService
     return ApiService.getRequest(endpoint, options);
   }
 
-  updatePluginInstance(
+  updatePluginInstance = (
     id: string,
     options: object = {},
-  ): Promise<DataResponse<AudienceTagFeed>> {
+  ): Promise<DataResponse<AudienceTagFeed>> => {
     const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}`;
 
     const params = {
@@ -118,12 +118,12 @@ export class AudienceTagFeedService
     return ApiService.putRequest(endpoint, params);
   }
 
-  updatePluginInstanceProperty(
+  updatePluginInstanceProperty = (
     organisationId: string,
     id: string,
     technicalName: string,
     params: object = {},
-  ): Promise<DataResponse<PropertyResourceShape> | void> {
+  ): Promise<DataResponse<PropertyResourceShape> | void> => {
     const endpoint = `audience_segments/${
       this.segmentId
     }/tag_feeds/${id}/properties/technical_name=${technicalName}`;
@@ -136,10 +136,10 @@ export class AudienceTagFeedService
     );
   }
 
-  createPluginInstance(
+  createPluginInstance = (
     organisationId: string,
     options: object = {},
-  ): Promise<DataResponse<AudienceTagFeed>> {
+  ): Promise<DataResponse<AudienceTagFeed>> => {
     const endpoint = `audience_segments/${
       this.segmentId
     }/tag_feeds?organisation_id=${organisationId}`;
@@ -154,7 +154,7 @@ export class AudienceTagFeedService
   // STOP
 
   // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
-  getAudienceTagFeedProperties(id: string, options: object = {}) {
+  getAudienceFeedProperties = (id: string, options: object = {}) => {
     const endpoint = `audience_segments/${
       this.segmentId
     }/tag_feeds/${id}/properties`;

@@ -53,7 +53,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
 
         if (currentPluginProperty !== undefined) {
             return (
-                <Row>
+                <Row key={field.property_technical_name}>
                     <PluginFieldGenerator
                         definition={currentPluginProperty}
                         pluginLayoutFieldDefinition={field}

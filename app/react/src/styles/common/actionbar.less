@@ -33,6 +33,45 @@
   }
   .left-part-margin > div:last-child {
     margin-left: 0px;
+    margin-right: 0px;
+  }
+
+
+  .close-icon {
+    font-size: 2em;
+    vertical-align: middle;
+    // vertical-align: -webkit-baseline-middle;
+  }
+
+  
+  &.inverted {
+
+    .close-icon {
+      color: @text-color;
+      transition: 0.5s;
+    }
+    .close-icon:hover {
+      color: fade(@text-color, 80%);
+    }
+
+    
+
+    .mcs-breadcrumb-edit.ant-breadcrumb {
+      a {
+        transition: color 0.3s;
+        color: @text-color!important;
+      }
+      a:hover {
+        color: fade(@text-color, 80%) !important;
+      }
+      .ant-breadcrumb-link {
+        color: @text-color!important;
+      }
+      .ant-breadcrumb-separator {
+        margin: 0 8px;
+        color: @text-color!important;
+      }
+    }
   }
 
   .close-icon {

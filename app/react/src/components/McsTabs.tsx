@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tabs } from 'antd';
+import { TabsProps } from 'antd/lib/tabs';
 
 interface McsTabsItem {
   title: string;
@@ -8,7 +9,7 @@ interface McsTabsItem {
   key?: string;
 }
 
-interface McTabsProps {
+interface McTabsProps extends TabsProps {
   items: McsTabsItem[];
   isCard?: boolean;
 }
@@ -26,12 +27,12 @@ class McsTabs extends React.Component<McTabsProps> {
   }
 
   render() {
-    const { items } = this.props;
+    const { items, ...rest  } = this.props;
     const menuItems = this.buildMenuItems();
 
     return (
       <div >
-        <Tabs defaultActiveKey={items[0].title}>
+        <Tabs defaultActiveKey={items[0].title} {...rest}>
           {menuItems}
         </Tabs>
       </div>

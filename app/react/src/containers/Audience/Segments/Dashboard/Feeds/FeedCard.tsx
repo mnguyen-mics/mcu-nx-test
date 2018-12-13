@@ -14,11 +14,12 @@ import injectNotifications, {
 import { compose } from 'recompose';
 import { Modal, Dropdown, Menu } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { Link } from 'react-router-dom';
 import PluginService from '../../../../../services/PluginService';
-import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
-import { TYPES } from '../../../../../constants/types';
-import { lazyInject } from '../../../../../config/inversify.config';
+import PluginCardModal, { PluginCardModalProps } from '../../../../Plugin/Edit/PluginCard/PluginCardModal'
+import { PluginLayout } from '../../../../../models/plugin/PluginLayout';
+import { PropertyResourceShape } from '../../../../../models/plugin';
+import { withRouter, RouteComponentProps } from 'react-router';
+import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -36,9 +37,16 @@ interface FeedCardState {
   isLoading: boolean;
   cardHeaderTitle?: string;
   cardHeaderThumbnail?: string;
+  opened?: boolean;
+  pluginLayout?: PluginLayout;
+  isLoadingCard: boolean;
+  pluginProperties?: PropertyResourceShape[];
+  initialValue?: { plugin: any, properties: any }
 }
 
-type Props = FeedCardProps & InjectedNotificationProps & InjectedIntlProps;
+const FeedCardModal = PluginCardModal as React.ComponentClass<PluginCardModalProps<AudienceExternalFeedTyped | AudienceTagFeedTyped>>
+
+type Props = FeedCardProps & InjectedNotificationProps & InjectedIntlProps & RouteComponentProps<{}>;
 
 const messages = defineMessages({
   modalTitle: {
@@ -78,14 +86,23 @@ const messages = defineMessages({
 
 class FeedCard extends React.Component<Props, FeedCardState> {
   id: string = cuid();
-  @lazyInject(TYPES.IAudienceSegmentService)
-  private _audienceSegmentService: IAudienceSegmentService;
+  feedService: AudienceSegmentFeedService;
+  // @lazyInject(TYPES.IAudienceSegmentService)
+  // private _audienceSegmentService: IAudienceSegmentService;
+  
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      isLoading: false,
-    };
+      isLoading: true,
+      isLoadingCard: true,
+      opened: false,
+      pluginProperties: []
+    }
+
+    if (this.props.feed) {
+      this.feedService = new AudienceSegmentFeedService(this.props.segmentId, this.props.feed.type);
+    }
   }
 
   componentDidMount() {
@@ -104,17 +121,24 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               this.setState({
                 cardHeaderTitle: resultPluginLayout.metadata.display_name,
                 cardHeaderThumbnail: resultPluginLayout.metadata.small_icon_asset_url,
+                pluginLayout: resultPluginLayout,
+                isLoading: false
               });
             }
-          });
+          })
         }
-    });
+      }).catch(() => this.setState({ isLoading: false }));
   }
 
   // fetch pluginLayout to render image and title
 
   renderActionButton = () => {
-    const { feed, onFeedUpdate, segmentId, notifyError, intl } = this.props;
+    const {
+      feed,
+      onFeedUpdate,
+      notifyError,
+      intl,
+    } = this.props;
 
     const editFeed = () => {
       const { type, ...formattedFeed } = feed;
@@ -127,38 +151,20 @@ class FeedCard extends React.Component<Props, FeedCardState> {
         };
       }
 
-      if (feed.type === 'EXTERNAL_FEED') {
-        this.setState({ isLoading: true });
-        return this._audienceSegmentService
-          .updateAudienceExternalFeeds(segmentId, feed.id, newFormattedFeed)
-          .then(res => res.data)
-          .then(res => {
-            this.setState({ isLoading: false }, () => {
-              onFeedUpdate({ ...res, type: 'EXTERNAL_FEED' });
-            });
+      this.setState({ isLoading: true })
+      return this.feedService.updateAudienceFeed(feed.id, newFormattedFeed)
+        .then(res => res.data)
+        .then(res => {
+          this.setState({ isLoading: false }, () => {
+            onFeedUpdate({ ...res, type: 'EXTERNAL_FEED' })
           })
-          .catch(err => {
-            this.setState({ isLoading: false });
-            notifyError(err);
-          });
-      }
-      if (feed.type === 'TAG_FEED') {
-        this.setState({ isLoading: true });
-        return this._audienceSegmentService
-          .updateAudienceTagFeeds(segmentId, feed.id, newFormattedFeed)
-          .then(res => res.data)
-          .then(res => {
-            this.setState({ isLoading: false }, () => {
-              onFeedUpdate({ ...res, type: 'TAG_FEED' });
-            });
-          })
-          .catch(err => {
-            this.setState({ isLoading: false });
-            notifyError(err);
-          });
-      }
-      return;
-    };
+
+        })
+        .catch(err => {
+          this.setState({ isLoading: false })
+          notifyError(err)
+        })
+    }
 
     switch (feed.status) {
       case 'ACTIVE':
@@ -214,6 +220,84 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     }
   };
 
+  getPluginProperties = () => {
+    const {
+      feed,
+    } = this.props;
+
+
+    return PluginService.findPluginFromVersionId(feed.version_id)
+      .then(res => PluginService.getPluginVersionProperty(res.data.id, res.data.current_version_id!))
+      .then(res => this.setState({ pluginProperties: res.data }))
+      
+  }
+
+  getInitialValues = () => {
+    const { feed } = this.props;
+
+   
+    return this.feedService.getAudienceFeedProperty(feed.id)
+      .then((res) => this.setState({ initialValue: { plugin: feed, properties: res.data.reduce((acc, val) => ({ ...acc, [val.technical_name]: { value: val.value } }), {}) } }))
+  }
+
+  updatePropertiesValue = (
+    properties: PropertyResourceShape[],
+    organisationId: string,
+    pluginInstanceId: string,
+  ) => {
+    const updatePromise = this.feedService.updatePluginInstanceProperty
+
+    const propertiesPromises: Array<Promise<any>> = [];
+    properties.forEach(item => {
+      propertiesPromises.push(
+        updatePromise(
+          organisationId,
+          pluginInstanceId,
+          item.technical_name,
+          item,
+        ),
+      );
+    });
+    return Promise.all(propertiesPromises);
+  };
+
+  saveOrCreatePluginInstance = (
+    pluginInstance: AudienceTagFeedTyped | AudienceExternalFeedTyped,
+    properties: PropertyResourceShape[],
+  ) => {
+
+    const {
+      notifyError,
+      organisationId
+    } = this.props;
+
+    // if edition update and redirect
+    const editPromise = this.feedService.updatePluginInstance
+    this.setState({ isLoadingCard: true });
+    const {
+      type,
+      version_value,
+      version_id,
+      status,
+      ...newPluginInstance
+    } = pluginInstance;
+
+    return editPromise(pluginInstance.id!, newPluginInstance).then(() => {
+      return this.updatePropertiesValue(
+        properties,
+        organisationId,
+        pluginInstance.id!
+      );
+    }).then(() => {
+      this.setState({ isLoadingCard: false, opened: false })
+    })
+    .catch((err: any) => {
+      notifyError(err);
+      this.setState({ isLoadingCard: false });
+    });
+    
+  };
+
   render() {
     const {
       feed,
@@ -221,7 +305,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       segmentId,
       organisationId,
       notifyError,
-      intl,
+      history,
+      intl
     } = this.props;
 
     const { isLoading, cardHeaderTitle, cardHeaderThumbnail } = this.state;
@@ -241,36 +326,18 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     const removeFeed = () => {
       const onOk = () => {
-        if (feed.type === 'EXTERNAL_FEED') {
-          return this.setState({ isLoading: true }, () =>
-            this._audienceSegmentService
-              .deleteAudienceExternalFeeds(segmentId, feed.id)
-              .then(r => {
-                this.setState({ isLoading: false });
-                onFeedDelete(feed);
-              })
-              .catch(err => {
-                this.setState({ isLoading: false });
-                notifyError(err);
-              }),
-          );
-        }
-        if (feed.type === 'TAG_FEED') {
-          return this.setState({ isLoading: true }, () =>
-            this._audienceSegmentService
-              .deleteAudienceTagFeeds(segmentId, feed.id)
-              .then(r => {
-                this.setState({ isLoading: false });
-                onFeedDelete(feed);
-              })
-              .catch(err => {
-                this.setState({ isLoading: false });
-                notifyError(err);
-              }),
-          );
-        }
-        return;
-      };
+        return this.setState({ isLoading: true }, () => this.feedService.deleteAudienceFeed(feed.id)
+            .then(r => {
+              this.setState({ isLoading: false })
+              onFeedDelete(feed)
+            })
+            .catch(err => {
+              this.setState({ isLoading: false })
+              notifyError(err)
+            })
+          )
+      }
+
 
       Modal.confirm({
         title: intl.formatMessage(messages.modalTitle),
@@ -282,11 +349,26 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     if (isLoading) {
       return <FeedPlaceholder />;
     }
+    const openModal = () => {
+      if (!this.state.pluginLayout) {
+        return history.push(editFeed());
+      } else {
+        this.setState({ opened: true })
+        this.setState({ isLoadingCard: true })
+        return Promise.all([
+          this.getPluginProperties(),
+          this.getInitialValues(),
+        ])
+        .then(() => this.setState({ isLoadingCard: false }))
+        .catch((err) => { notifyError(err); this.setState({ opened: false })})
+      }
+      
+    }
 
     const menu = (
       <Menu>
         <Menu.Item key="0">
-          <Link to={editFeed()}>{intl.formatMessage(messages.edit)}</Link>
+          <a onClick={openModal}>{intl.formatMessage(messages.edit)}</a>
         </Menu.Item>
         <Menu.Item key="1">
           <a onClick={removeFeed}>{intl.formatMessage(messages.delete)}</a>
@@ -294,7 +376,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       </Menu>
     );
 
-    const popupContainer = () => document.getElementById(this.id)!;
+    const popupContainer = () => document.getElementById(this.id)!
+    const onClose = () => this.setState({ opened: false })
 
     return (
       <Card className="hoverable-card actionable-card compact feed-card">
@@ -334,12 +417,27 @@ class FeedCard extends React.Component<Props, FeedCardState> {
           </div>
           <div className="actions">{this.renderActionButton()}</div>
         </div>
-      </Card>
+        {this.state.opened && this.state.pluginLayout && this.state.pluginProperties && <FeedCardModal
+          editionMode={true}
+          disableFields={(feed.status === 'ACTIVE' || feed.status === 'PUBLISHED')}
+          initialValues={this.state.initialValue}
+          isLoading={this.state.isLoadingCard}
+          onClose={onClose}
+          opened={!!this.state.opened}
+          organisationId={organisationId}
+          plugin={feed}
+          pluginLayout={this.state.pluginLayout!}
+          pluginProperties={this.state.pluginProperties!}
+          pluginVersionId={feed.version_id}
+          save={this.saveOrCreatePluginInstance}
+        />}
+      </Card >
     );
   }
 }
 
 export default compose<Props, FeedCardProps>(
+  withRouter,
   injectIntl,
   injectNotifications,
 )(FeedCard);

@@ -62,7 +62,7 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, any> 
           mode="otql"
           theme="otql"
           ref={setAceEditorRef}
-          width='100%'
+          width='100%' 
         />
       </div>
     );
