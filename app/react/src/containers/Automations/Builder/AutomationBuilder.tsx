@@ -95,7 +95,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.setDiagramModel(model);
     // uncomment one of them to test
     // this.deleteNode('3');
-    this.addNode('1','2');
+    this.addNode('1', '2');
   }
 
   componentDidUpdate() {
@@ -107,7 +107,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
     this.startAutomationTree(automationData, model);
     this.engine.setDiagramModel(model);
-  }	  
+  }
 
   componentWillReceiveProps(nextProps: Props) {
     const { automationData } = this.props;
@@ -120,7 +120,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.setDiagramModel(model);
   }
 
-  addNode(idParentNode: string, childNodeId:string): StorylineNodeModel {
+  addNode(idParentNode: string, childNodeId: string): StorylineNodeModel {
     return this.props.updateAutomationData(
       new AddNodeOperation(idParentNode, childNodeId).execute(
         this.props.automationData,
@@ -173,6 +173,7 @@ class AutomationBuilder extends React.Component<Props, State> {
         storylineNode.y =
           ROOT_NODE_POSITION.y * maxHeightLocal + nodeModel.height / 2 - 10;
         linkPointHeight = storylineNode.y + 10;
+        storylineNode.x = 80 + ROOT_NODE_POSITION.x + 220 * xAxisLocal;
       } else {
         storylineNode = this.buildAutomationNode(
           child as StorylineNodeResource,
@@ -181,8 +182,8 @@ class AutomationBuilder extends React.Component<Props, State> {
         );
         storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
         linkPointHeight = storylineNode.y + nodeModel.height / 2;
+        storylineNode.x = ROOT_NODE_POSITION.x + 220 * xAxisLocal;
       }
-      storylineNode.x = ROOT_NODE_POSITION.x + 250 * xAxisLocal;
 
       model.addNode(storylineNode);
 
