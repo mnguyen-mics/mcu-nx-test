@@ -33,11 +33,9 @@ type InnerProps = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
-  searchInput: React.RefObject<Search>;
 
   constructor(props: InnerProps) {
     super(props);
-    this.searchInput = React.createRef<Search>();
     this.state = {
       search: '',
     };
@@ -102,7 +100,6 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
         <Row gutter={20} style={{ marginRight: 20, marginLeft: 20 }}>
           <Col span={24}>
             <Search
-              ref={this.searchInput}
               placeholder="Search Organisation"
               onSearch={this.onSearch}
               className="search-input"
@@ -110,49 +107,48 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
               autoFocus={true}
             />
           </Col>
-
-          <Row gutter={24}>
-            {showOrgs || this.state.search !== '' ? (
-              filteredWorkspaces && filteredWorkspaces.length ? (
-                filteredWorkspaces.map(item => (
-                  <Col span={24 / rowSize} key={item.organisation_id}>
-                    <ButtonStyleless
-                      onClick={this.onCardClick(item.organisation_id)}
-                      style={{ height: 134, marginBottom: 20, width: '100%' }}
+        </Row>
+        <Row gutter={20} style={{ marginRight: 20, marginLeft: 20 }}>
+          {showOrgs || this.state.search !== '' ? (
+            filteredWorkspaces && filteredWorkspaces.length ? (
+              filteredWorkspaces.map(item => (
+                <Col span={24 / rowSize} key={item.organisation_id}>
+                  <ButtonStyleless
+                    onClick={this.onCardClick(item.organisation_id)}
+                    style={{ height: 134, marginBottom: 20, width: '100%' }}
+                  >
+                    <Card
+                      hoverable={true}
+                      className="mcs-org-card"
+                      cover={
+                        <OrgLogo organisationId={item.organisation_id} />
+                      }
+                      style={{ height: '100%' }}
                     >
-                      <Card
-                        hoverable={true}
-                        className="mcs-org-card"
-                        cover={
-                          <OrgLogo organisationId={item.organisation_id} />
-                        }
-                        style={{ height: '100%' }}
-                      >
-                        <Meta
-                          className="mcs-card-body"
-                          description={item.organisation_name}
-                        />
-                      </Card>
-                    </ButtonStyleless>
-                  </Col>
-                ))
-              ) : (
-                <div className="mcs-no-results">
-                  <FormattedMessage
-                    id="orgSelector.noResult"
-                    defaultMessage="No Results"
-                  />
-                </div>
-              )
+                      <Meta
+                        className="mcs-card-body"
+                        description={item.organisation_name}
+                      />
+                    </Card>
+                  </ButtonStyleless>
+                </Col>
+              ))
             ) : (
-              <div>
+              <div className="mcs-no-results">
                 <FormattedMessage
-                  id="orgSelector.tooManyOrgs"
-                  defaultMessage="You have access to too many organisations, please use the search to narrow your selection down"
+                  id="orgSelector.noResult"
+                  defaultMessage="No Results"
                 />
               </div>
-            )}
-          </Row>
+            )
+          ) : (
+            <Col span={24}>
+              <FormattedMessage
+                id="orgSelector.tooManyOrgs"
+                defaultMessage="You have access to too many organisations, please use the search to narrow your selection down"
+              />
+            </Col>
+          )}
         </Row>
       </div>
     );

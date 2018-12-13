@@ -78,7 +78,7 @@ class NavigatorHeader extends React.Component<Props> {
                 <span className="launcher">
                   <Dropdown overlay={menu} trigger={['click']}>
                     <a>
-                      <Icon type="appstore" className="menu-icon" />
+                      <Icon type="appstore" className="menu-icon" theme="filled" />
                     </a>
                   </Dropdown>
                 </span>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { omit } from 'lodash';
 import Switch, { SwitchProps } from 'antd/lib/switch';
 import { WrappedFieldProps } from 'redux-form';
 
@@ -19,7 +20,13 @@ class FormSwitch extends React.Component<Props> {
     };
 
     return (
-      <Switch {...rest} {...input} checked={checked} onChange={onChange} disabled={disabled} />
+      <Switch
+        {...rest}
+        {...omit(input, ['onFocus', 'onBlur'])}
+        checked={checked}
+        onChange={onChange}
+        disabled={disabled}
+      />
     );
   }
 }
