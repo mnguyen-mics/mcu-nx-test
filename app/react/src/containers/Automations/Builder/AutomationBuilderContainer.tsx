@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Layout } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { Button, Layout } from 'antd';
+import {
+  injectIntl,
+  InjectedIntlProps,
+  defineMessages,
+  FormattedMessage,
+} from 'react-intl';
 import { connect } from 'react-redux';
 import * as SessionHelper from '../../../state/Session/selectors';
 import injectNotifications, {
@@ -21,6 +26,14 @@ import {
   storylineEdgeData,
   storylineNodeData,
 } from './domain';
+import ActionBar from '../../../components/ActionBar';
+
+const messages = defineMessages({
+  automationBuilder: {
+    id: 'automation.builder.action.bar.path',
+    defaultMessage: 'Automation Builder',
+  },
+});
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
@@ -113,10 +126,25 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      intl,
     } = this.props;
 
     return (
       <Layout>
+        <ActionBar
+          paths={[
+            {
+              name: intl.formatMessage(messages.automationBuilder),
+            },
+          ]}
+        >
+          <Button className="mcs-primary" type="primary">
+            <FormattedMessage
+              id="automation.builder.action.bar.save"
+              defaultMessage="Save"
+            />
+          </Button>
+        </ActionBar>
         <Layout.Content
           className={`mcs-content-container`}
           style={{ padding: 0, overflow: 'hidden' }}
