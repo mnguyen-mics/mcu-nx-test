@@ -66,13 +66,23 @@ export interface EndNodeResource extends ScenarioNodeResource {
   type: 'FAILURE' | 'GOAL';
 }
 
+export interface StartNodeResource extends ScenarioNodeResource {
+  type: 'START';
+}
+
+export interface WaitNodeResource extends ScenarioNodeResource {
+  type: 'WAIT';
+}
+
 export type ScenarioNodeShape =
   | DisplayCampaignNodeResource
   | EmailCampaignNodeResource
   | QueryInputNodeResource
   | ABNNodeResource
   | PluginNodeResource
-  | EndNodeResource;
+  | EndNodeResource
+  | StartNodeResource
+  | WaitNodeResource;
 
 export interface ScenarioEdgeResource {
   id: string;

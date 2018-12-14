@@ -7,6 +7,7 @@ import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { compose } from 'recompose';
 import DropTarget from 'react-dnd/lib/DropTarget';
 import { TreeNodeOperations } from '../domain';
+import { ScenarioNodeShape } from '../../../../models/automations/automations';
 
 
 interface DropNodeProps {
@@ -30,9 +31,11 @@ interface State {
 
 const addinTarget = {
   drop(props: Props, monitor: DropTargetMonitor) {
+    const item = monitor.getItem() as ScenarioNodeShape;
     props.treeNodeOperations.addNode(
       props.node.dropNode.parentNode.node.id,
       props.node.dropNode.outNode.node.id,
+      item
     );
   },
 };

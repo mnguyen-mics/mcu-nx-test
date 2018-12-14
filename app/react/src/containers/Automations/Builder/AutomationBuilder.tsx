@@ -18,6 +18,7 @@ import AvailableNodeVisualizer from './NodeVisualizer/AvailableNodeVisualizer';
 import {
   StorylineNodeResource,
   EdgeHandler,
+  ScenarioNodeShape,
 } from '../../../models/automations/automations';
 import { McsIconType } from '../../../components/McsIcon';
 import {
@@ -118,9 +119,9 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.repaintCanvas();
   }
 
-  addNode = (idParentNode: string, childNodeId: string): StorylineNodeModel => {
+  addNode = (idParentNode: string, childNodeId: string, node: ScenarioNodeShape): StorylineNodeModel => {
     return this.props.updateAutomationData(
-      new AddNodeOperation(idParentNode, childNodeId).execute(
+      new AddNodeOperation(idParentNode, childNodeId, node).execute(
         this.props.automationData,
       ),
     );
@@ -142,7 +143,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     const storylineNode = new AutomationNodeModel(
       nodeModel,
       this.generateNodeProperties(nodeModel.node).iconType,
-      `${nodeModel.node.name} - (type: ${nodeModel.node.type})`,
+      `${nodeModel.node.name}`, // - (type: ${nodeModel.node.type})`,
       this.generateNodeProperties(nodeModel.node).color,
       180,
       90,
@@ -242,6 +243,11 @@ class AutomationBuilder extends React.Component<Props, State> {
           iconType: 'close',
           color: '#ff5959',
         };
+      case 'START':
+        return {
+          iconType: 'check',
+          color: '#fbc02d',
+        };
       default:
         return {
           iconType: 'info',
@@ -257,7 +263,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     const rootNode = new AutomationNodeModel(
       automationData,
       this.generateNodeProperties(automationData.node).iconType,
-      `${automationData.node.name} - (type: ${automationData.node.type})`,
+      `${automationData.node.name}`, // - (type: ${automationData.node.type})`,
       this.generateNodeProperties(automationData.node).color,
       180,
       90,

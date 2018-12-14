@@ -8,7 +8,9 @@ import {
 } from 'react-dnd';
 
 interface AvailableNodeProps {
-  title: string;
+  id: string;
+  name: string;
+  type: string;
   icon: McsIconType;
   color: string;
   connectDragSource?: ConnectDragSource;
@@ -19,16 +21,18 @@ interface AvailableNodeProps {
 const fieldSource = {
   beginDrag(props: AvailableNodeProps) {
     return {
-      title: props.title,
+      id: props.id,
+      name: props.name,
       icon: props.icon,
       color: props.color,
+      type: props.type,
     };
   },
 };
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
   render() {
-    const { title, icon, color, connectDragSource } = this.props;
+    const { name, icon, color, connectDragSource } = this.props;
 
     return (
       connectDragSource &&
@@ -40,7 +44,7 @@ class AvailableNode extends React.Component<AvailableNodeProps> {
           >
             <McsIcon type={icon} className="available-node-icon-gyph" />
           </div>
-          <div className="available-node-text">{title}</div>
+          <div className="available-node-text">{name}</div>
         </div>,
       )
     );

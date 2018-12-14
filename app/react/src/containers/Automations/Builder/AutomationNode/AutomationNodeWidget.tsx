@@ -37,7 +37,7 @@ class AutomationNodeWidget extends React.Component<AutomationNodeProps> {
             backgroundColor: backgroundColor,
           }}
         >
-          <McsIcon type={node.iconType} />
+          <McsIcon type={node.iconType} className="available-node-icon-gyph" />
         </div>
 
         <div className="node-content">{node.title}</div>
