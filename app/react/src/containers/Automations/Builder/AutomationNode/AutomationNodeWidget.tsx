@@ -135,6 +135,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       </div>
     );
 
+    const nodeType = node.storylineNodeModel.node.type;
+
     return (
       <div id={this.id} onClick={onFocus}>
         {renderedAutomationNode}
@@ -220,9 +222,16 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 <div onClick={this.editNode} className="boolean-menu-item">
                   <FormattedMessage {...messages.edit} />
                 </div>
-                <div onClick={this.removeNode} className="boolean-menu-item">
-                  <FormattedMessage {...messages.remove} />
-                </div>
+                {nodeType !== 'START' &&
+                  nodeType !== 'GOAL' &&
+                  nodeType !== 'FAILURE' && (
+                    <div
+                      onClick={this.removeNode}
+                      className="boolean-menu-item"
+                    >
+                      <FormattedMessage {...messages.remove} />
+                    </div>
+                  )}
               </div>
             </div>
           </WindowBodyPortal>
