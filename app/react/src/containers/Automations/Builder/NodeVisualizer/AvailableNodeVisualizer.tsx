@@ -21,7 +21,7 @@ interface State {
 
 const fakeNode: ScenarioNodeShape = {
   id: cuid(),
-  name: 'Email campaign',
+  name: 'Send Email',
   type: 'EMAIL_CAMPAIGN',
   scenario_id: '1',
   campaign_id: '',
@@ -29,7 +29,7 @@ const fakeNode: ScenarioNodeShape = {
 
 const fakeNode2: ScenarioNodeShape = {
   id: cuid(),
-  name: 'Display campaign',
+  name: 'Display Advertising',
   type: 'DISPLAY_CAMPAIGN',
   campaign_id: '',
   scenario_id: '1',
