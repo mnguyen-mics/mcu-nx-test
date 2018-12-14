@@ -26,6 +26,7 @@ import {
   AutomationNodeShape,
   DeleteNodeOperation,
   AddNodeOperation,
+  TreeNodeOperations,
 } from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
@@ -54,13 +55,23 @@ class AutomationBuilder extends React.Component<Props, State> {
     super(props);
 
     this.engine.registerNodeFactory(new AutomationNodeFactory());
-    this.engine.registerNodeFactory(new DropNodeFactory());
+    this.engine.registerNodeFactory(
+      new DropNodeFactory(this.getTreeNodeOperations()),
+    );
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
       viewNodeSelector: true,
     };
   }
+
+  getTreeNodeOperations = (): TreeNodeOperations => {
+    return {
+      deleteNode: this.deleteNode,
+      addNode: this.addNode,
+      updateLayout: () => this.engine.repaintCanvas(),
+    };
+  };
 
   convertToFrontData(automationData: StorylineNodeModel): StorylineNodeModel {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
@@ -87,15 +98,12 @@ class AutomationBuilder extends React.Component<Props, State> {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { automationData } = this.props;
     const model = new DiagramModel();
     model.setLocked(true);
     this.startAutomationTree(automationData, model);
     this.engine.setDiagramModel(model);
-    // uncomment one of them to test
-    // this.deleteNode('3');
-    this.addNode('1','2');
   }
 
   componentDidUpdate() {
@@ -107,34 +115,24 @@ class AutomationBuilder extends React.Component<Props, State> {
     model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
     this.startAutomationTree(automationData, model);
     this.engine.setDiagramModel(model);
-  }	  
-
-  componentWillReceiveProps(nextProps: Props) {
-    const { automationData } = this.props;
-    const model = new DiagramModel();
-    model.setLocked(this.engine.getDiagramModel().locked);
-    model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
-    model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
-    model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
-    this.startAutomationTree(automationData, model);
-    this.engine.setDiagramModel(model);
+    this.engine.repaintCanvas();
   }
 
-  addNode(idParentNode: string, childNodeId:string): StorylineNodeModel {
+  addNode = (idParentNode: string, childNodeId: string): StorylineNodeModel => {
     return this.props.updateAutomationData(
       new AddNodeOperation(idParentNode, childNodeId).execute(
         this.props.automationData,
       ),
     );
-  }
+  };
 
-  deleteNode(idNodeToBeDeleted: string): StorylineNodeModel {
+  deleteNode = (idNodeToBeDeleted: string): StorylineNodeModel => {
     return this.props.updateAutomationData(
       new DeleteNodeOperation(idNodeToBeDeleted).execute(
         this.props.automationData,
       ),
     );
-  }
+  };
 
   buildAutomationNode(
     nodeModel: StorylineNodeResource,
@@ -152,8 +150,8 @@ class AutomationBuilder extends React.Component<Props, State> {
     return storylineNode;
   }
 
-  buildDropNode(): DropNodeModel {
-    return new DropNodeModel();
+  buildDropNode(dropNode: DropNode, height:number): DropNodeModel {
+    return new DropNodeModel(dropNode, height);
   }
 
   drawAutomationTree = (
@@ -169,7 +167,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       let storylineNode;
       let linkPointHeight;
       if (child.node instanceof DropNode) {
-        storylineNode = this.buildDropNode();
+        storylineNode = this.buildDropNode(child.node, nodeModel.height);
         storylineNode.y =
           ROOT_NODE_POSITION.y * maxHeightLocal + nodeModel.height / 2 - 10;
         linkPointHeight = storylineNode.y + 10;
