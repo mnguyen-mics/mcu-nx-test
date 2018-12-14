@@ -111,7 +111,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const renderedAutomationNode = (
       <div
         className="node-body"
-        style={{ width: `${node.width}px`, height: `${node.height}px` }}
+        style={{
+          width: `${node.getNodeSize().width}px`,
+          height: `${node.getNodeSize().height}px`,
+        }}
       >
         <div
           className={'node-icon'}
@@ -138,8 +141,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         <div
           style={{
             position: 'absolute',
-            top: node.height / 2,
-            left: node.width / 2,
+            top: node.getNodeSize().height / 2,
+            left: node.getNodeSize().width / 2,
           }}
         >
           <PortWidget name="center" node={this.props.node} />
@@ -147,8 +150,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         <div
           style={{
             position: 'absolute',
-            top: node.height / 2,
-            left: node.width + 20,
+            top: node.getNodeSize().height / 2,
+            left: node.getNodeSize().width + 20,
           }}
         >
           <PortWidget name="right" node={this.props.node} />
@@ -158,7 +161,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           <div
             style={{
               position: 'absolute',
-              top: node.height / 2 - 6,
+              top: node.getNodeSize().height / 2 - 6,
               left: -10,
             }}
           >
@@ -184,14 +187,18 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               <span
                 className="object-node no-hover"
                 style={{
-                  width: node.width,
-                  height: node.height,
+                  width: node.getNodeSize().width,
+                  height: node.getNodeSize().height,
                   borderRadius: 4,
                   fontWeight: 'bold',
                   color: '#ffffff',
                   borderColor: node.getColor(),
-                  top: this.top - node.height * ((1 - zoomRatio) / 2),
-                  left: this.left - node.width * ((1 - zoomRatio) / 2),
+                  top:
+                    this.top -
+                    node.getNodeSize().height * ((1 - zoomRatio) / 2),
+                  left:
+                    this.left -
+                    node.getNodeSize().width * ((1 - zoomRatio) / 2),
                   position: 'absolute',
                   zIndex: 1002,
                   transform: `scale(${zoomRatio})`,
@@ -204,7 +211,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 className="boolean-menu"
                 style={{
                   top: this.top,
-                  left: this.left + node.width * zoomRatio,
+                  left: this.left + node.getNodeSize().width * zoomRatio,
                   zIndex: 1001,
                 }}
               >

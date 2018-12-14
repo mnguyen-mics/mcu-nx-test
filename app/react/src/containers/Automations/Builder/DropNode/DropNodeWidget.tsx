@@ -9,7 +9,6 @@ import DropTarget from 'react-dnd/lib/DropTarget';
 import { TreeNodeOperations } from '../domain';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
 
-
 interface DropNodeProps {
   node: DropNodeModel;
   diagramEngine: DiagramEngine;
@@ -35,7 +34,7 @@ const addinTarget = {
     props.treeNodeOperations.addNode(
       props.node.dropNode.parentNode.node.id,
       props.node.dropNode.outNode.node.id,
-      item
+      item,
     );
   },
 };
@@ -49,7 +48,7 @@ class DropNodeWidget extends React.Component<Props, State> {
     super(props);
     this.state = {
       hover: false,
-    }
+    };
   }
 
   setPosition = (node: HTMLDivElement | null) => {
@@ -69,24 +68,26 @@ class DropNodeWidget extends React.Component<Props, State> {
 
     const opacity = isDragging ? 1 : 0;
 
-    return connectDropTarget &&
-    connectDropTarget (
-      <div>
-        <div
-          className={'drop-node'}
-          onMouseEnter={onHover('enter')}
-          onMouseLeave={onHover('leave')}
-          style={{
-            width: node.getSize().width,
-            height: node.getSize().height,
-            borderWidth: node.getSize().borderWidth,
-            borderColor: borderColor,
-            backgroundColor: backgroundColor,
-            opacity,
-          }}
-        />
-        <AnchorPortWidget node={node} />
-      </div>
+    return (
+      connectDropTarget &&
+      connectDropTarget(
+        <div>
+          <div
+            className={'drop-node'}
+            onMouseEnter={onHover('enter')}
+            onMouseLeave={onHover('leave')}
+            style={{
+              width: node.getNodeSize().width,
+              height: node.getNodeSize().height,
+              borderWidth: node.getNodeSize().borderWidth,
+              borderColor: borderColor,
+              backgroundColor: backgroundColor,
+              opacity,
+            }}
+          />
+          <AnchorPortWidget node={node} />
+        </div>,
+      )
     );
   }
 }

@@ -59,7 +59,10 @@ class AutomationBuilder extends React.Component<Props, State> {
       new DropNodeFactory(this.getTreeNodeOperations()),
     );
     this.engine.registerNodeFactory(
-      new AutomationNodeFactory(this.getTreeNodeOperations(), this.lockInteraction),
+      new AutomationNodeFactory(
+        this.getTreeNodeOperations(),
+        this.lockInteraction,
+      ),
     );
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
@@ -75,8 +78,8 @@ class AutomationBuilder extends React.Component<Props, State> {
       addNode: this.addNode,
       updateLayout: () => this.engine.repaintCanvas(),
     };
-  }
-  
+  };
+
   lockInteraction = (locked: boolean) => {
     this.setState({ locked: locked });
   };
@@ -126,7 +129,11 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.repaintCanvas();
   }
 
-  addNode = (idParentNode: string, childNodeId: string, node: ScenarioNodeShape): StorylineNodeModel => {
+  addNode = (
+    idParentNode: string,
+    childNodeId: string,
+    node: ScenarioNodeShape,
+  ): StorylineNodeModel => {
     return this.props.updateAutomationData(
       new AddNodeOperation(idParentNode, childNodeId, node).execute(
         this.props.automationData,
@@ -152,13 +159,11 @@ class AutomationBuilder extends React.Component<Props, State> {
       this.generateNodeProperties(nodeModel.node).iconType,
       `${nodeModel.node.name}`, // - (type: ${nodeModel.node.type})`,
       this.generateNodeProperties(nodeModel.node).color,
-      180,
-      90,
     );
     return storylineNode;
   }
 
-  buildDropNode(dropNode: DropNode, height:number): DropNodeModel {
+  buildDropNode(dropNode: DropNode, height: number): DropNodeModel {
     return new DropNodeModel(dropNode, height);
   }
 
@@ -175,9 +180,14 @@ class AutomationBuilder extends React.Component<Props, State> {
       let storylineNode;
       let linkPointHeight;
       if (child.node instanceof DropNode) {
-        storylineNode = this.buildDropNode(child.node, nodeModel.height);
+        storylineNode = this.buildDropNode(
+          child.node,
+          nodeModel.getNodeSize().height,
+        );
         storylineNode.y =
-          ROOT_NODE_POSITION.y * maxHeightLocal + nodeModel.height / 2 - 10;
+          ROOT_NODE_POSITION.y * maxHeightLocal +
+          nodeModel.getNodeSize().height / 2 -
+          10;
         linkPointHeight = storylineNode.y + 10;
         storylineNode.x = 80 + ROOT_NODE_POSITION.x + 220 * xAxisLocal;
       } else {
@@ -187,7 +197,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           maxHeightLocal,
         );
         storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
-        linkPointHeight = storylineNode.y + nodeModel.height / 2;
+        linkPointHeight = storylineNode.y + nodeModel.getNodeSize().height / 2;
         storylineNode.x = ROOT_NODE_POSITION.x + 220 * xAxisLocal;
       }
 
@@ -205,7 +215,10 @@ class AutomationBuilder extends React.Component<Props, State> {
         link.setColor('#afafaf');
         link.setSourcePort(nodeModel.ports.right);
         link.setTargetPort(storylineNode.ports.center);
-        link.point(nodeModel.x + nodeModel.width + 21.5, linkPointHeight);
+        link.point(
+          nodeModel.x + nodeModel.getNodeSize().width + 21.5,
+          linkPointHeight,
+        );
         model.addLink(link);
       }
       return this.drawAutomationTree(
@@ -273,8 +286,6 @@ class AutomationBuilder extends React.Component<Props, State> {
       this.generateNodeProperties(automationData.node).iconType,
       `${automationData.node.name}`, // - (type: ${automationData.node.type})`,
       this.generateNodeProperties(automationData.node).color,
-      180,
-      90,
     );
     rootNode.root = true;
     rootNode.x = ROOT_NODE_POSITION.x;

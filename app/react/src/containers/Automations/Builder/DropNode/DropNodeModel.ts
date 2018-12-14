@@ -26,7 +26,7 @@ export default class DropNodeModel extends NodeModel {
     };
   };
 
-  getSize() {
+  getNodeSize() {
     return {
       width: 20,
       height: 20,
