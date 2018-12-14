@@ -12,18 +12,14 @@ import {
 } from 'react-intl';
 import { injectDrawer } from '../../../../components/Drawer';
 import { compose } from 'recompose';
-import { StorylineNodeModel } from '../domain';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { TreeNodeOperations } from '../domain';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
   lockGlobalInteraction: (lock: boolean) => void;
   diagramEngine: DiagramEngine;
-  nodeOperations: {
-    addNode: (idParentNode: string, childNodeId: string) => StorylineNodeModel;
-    deleteNode: (id: string) => StorylineNodeModel;
-    updateLayout: () => void;
-  };
+  nodeOperations: TreeNodeOperations;
 }
 
 interface State {
@@ -69,7 +65,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       this.props.nodeOperations.deleteNode(
         this.props.node.storylineNodeModel.node.id,
       );
-      // this.props.nodeOperations.updateLayout();
     });
   };
 

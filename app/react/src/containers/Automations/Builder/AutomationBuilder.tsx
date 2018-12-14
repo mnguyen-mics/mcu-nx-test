@@ -54,19 +54,12 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-
-    const nodeOperations = {
-      addNode: this.addNode,
-      deleteNode: this.deleteNode,
-      updateLayout: () => this.engine.repaintCanvas(),
-    };
     this.engine.registerNodeFactory(
       new DropNodeFactory(this.getTreeNodeOperations()),
     );
     this.engine.registerNodeFactory(
-      new AutomationNodeFactory(nodeOperations, this.lockInteraction),
+      new AutomationNodeFactory(this.getTreeNodeOperations(), this.lockInteraction),
     );
-    this.engine.registerNodeFactory(new DropNodeFactory());
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
@@ -82,6 +75,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       updateLayout: () => this.engine.repaintCanvas(),
     };
   }
+  
   lockInteraction = (locked: boolean) => {
     this.setState({ locked: locked });
   };

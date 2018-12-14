@@ -2,27 +2,16 @@ import * as React from 'react';
 import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
 import AutomationNodeWidget from './AutomationNodeWidget';
 import AutomationNodeModel from './AutomationNodeModel';
-import { StorylineNodeModel } from '../domain';
+import { StorylineNodeModel, TreeNodeOperations } from '../domain';
 
 export default class AutomationNodeFactory extends AbstractNodeFactory<
   AutomationNodeModel
 > {
-  nodeOperations: {
-    addNode: (idParentNode: string, childNodeId: string) => StorylineNodeModel;
-    deleteNode: (id: string) => StorylineNodeModel;
-    updateLayout: () => void;
-  };
+  nodeOperations: TreeNodeOperations;
   lockGlobalInteraction: (locked: boolean) => void;
 
   constructor(
-    nodeOperations: {
-      addNode: (
-        idParentNode: string,
-        childNodeId: string,
-      ) => StorylineNodeModel;
-      deleteNode: (id: string) => StorylineNodeModel;
-      updateLayout: () => void,
-    },
+    nodeOperations: TreeNodeOperations,
     _lockGlobalInteraction: (locked: boolean) => void,
   ) {
     super('automation-node');
