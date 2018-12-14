@@ -189,7 +189,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           nodeModel.getNodeSize().height / 2 -
           10;
         linkPointHeight = storylineNode.y + 10;
-        storylineNode.x = 80 + ROOT_NODE_POSITION.x + 220 * xAxisLocal;
+        storylineNode.x = 80 + ROOT_NODE_POSITION.x + 180 * xAxisLocal;
       } else {
         storylineNode = this.buildAutomationNode(
           child as StorylineNodeResource,
@@ -198,7 +198,7 @@ class AutomationBuilder extends React.Component<Props, State> {
         );
         storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
         linkPointHeight = storylineNode.y + nodeModel.getNodeSize().height / 2;
-        storylineNode.x = ROOT_NODE_POSITION.x + 220 * xAxisLocal;
+        storylineNode.x = ROOT_NODE_POSITION.x + 180 * xAxisLocal;
       }
 
       model.addNode(storylineNode);
