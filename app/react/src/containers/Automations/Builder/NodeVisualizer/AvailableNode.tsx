@@ -1,4 +1,5 @@
 import McsIcon, { McsIconType } from '../../../../components/McsIcon';
+import cuid from 'cuid';
 import React from 'react';
 import {
   ConnectDragSource,
@@ -21,7 +22,7 @@ interface AvailableNodeProps {
 const fieldSource = {
   beginDrag(props: AvailableNodeProps) {
     return {
-      id: props.id,
+      id: cuid(),
       name: props.name,
       icon: props.icon,
       color: props.color,
