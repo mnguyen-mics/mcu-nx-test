@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { DatePicker } from 'antd';
+import { omit } from 'lodash';
 import moment from 'moment';
 
 // TS Interfaces
@@ -58,7 +59,7 @@ const FormDatePicker: React.SFC<
     >
       <DatePicker
         allowClear={false}
-        {...props.input}
+        {...omit(props.input, ['onBlur', 'onFocus'])}
         value={value}
         onChange={onChange}
         disabled={props.disabled}
