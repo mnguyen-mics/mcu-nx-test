@@ -44,6 +44,7 @@ export interface AutomationBuilderProps {
 
 interface State {
   viewNodeSelector: boolean;
+  locked: boolean;
 }
 
 type Props = AutomationBuilderProps;
@@ -54,15 +55,17 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-
-    this.engine.registerNodeFactory(new AutomationNodeFactory());
     this.engine.registerNodeFactory(
       new DropNodeFactory(this.getTreeNodeOperations()),
+    );
+    this.engine.registerNodeFactory(
+      new AutomationNodeFactory(this.getTreeNodeOperations(), this.lockInteraction),
     );
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
       viewNodeSelector: true,
+      locked: false,
     };
   }
 
@@ -72,6 +75,10 @@ class AutomationBuilder extends React.Component<Props, State> {
       addNode: this.addNode,
       updateLayout: () => this.engine.repaintCanvas(),
     };
+  }
+  
+  lockInteraction = (locked: boolean) => {
+    this.setState({ locked: locked });
   };
 
   convertToFrontData(automationData: StorylineNodeModel): StorylineNodeModel {
@@ -172,6 +179,7 @@ class AutomationBuilder extends React.Component<Props, State> {
         storylineNode.y =
           ROOT_NODE_POSITION.y * maxHeightLocal + nodeModel.height / 2 - 10;
         linkPointHeight = storylineNode.y + 10;
+        storylineNode.x = 80 + ROOT_NODE_POSITION.x + 220 * xAxisLocal;
       } else {
         storylineNode = this.buildAutomationNode(
           child as StorylineNodeResource,
@@ -180,8 +188,8 @@ class AutomationBuilder extends React.Component<Props, State> {
         );
         storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
         linkPointHeight = storylineNode.y + nodeModel.height / 2;
+        storylineNode.x = ROOT_NODE_POSITION.x + 220 * xAxisLocal;
       }
-      storylineNode.x = ROOT_NODE_POSITION.x + 250 * xAxisLocal;
 
       model.addNode(storylineNode);
 
@@ -292,8 +300,10 @@ class AutomationBuilder extends React.Component<Props, State> {
         <Col span={viewNodeSelector ? 18 : 24} className={'diagram'}>
           <DiagramWidget
             diagramEngine={this.engine}
-            allowCanvasZoom={true}
-            allowCanvasTranslation={true}
+            allowCanvasZoom={!this.state.locked}
+            allowCanvasTranslation={!this.state.locked}
+            // allowCanvasZoom={true}
+            // allowCanvasTranslation={true}
             inverseZoom={true}
           />
           <div className="button-helpers top">

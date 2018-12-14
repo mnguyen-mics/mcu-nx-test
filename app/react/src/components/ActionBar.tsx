@@ -15,6 +15,8 @@ export interface Path {
 export interface ActionBarProps extends BreadcrumbProps {
   edition?: boolean;
   paths: Path[];
+  backgroundColor?: string;
+  inverted?: boolean;
 }
 
 type Props = ActionBarProps & InjectedIntlProps;
@@ -38,14 +40,14 @@ class ActionBar extends React.Component<Props> {
   };
 
   render() {
-    const { edition, paths, intl, children, ...rest } = this.props;
-
+    const { edition, paths, intl, backgroundColor, inverted, children, ...rest } = this.props;
     return (
       <Row
         type="flex"
         align="middle"
         justify="space-between"
-        className={edition ? 'mcs-actionbar-edit' : 'mcs-actionbar'}
+        className={`${edition ? 'mcs-actionbar-edit' : 'mcs-actionbar'} ${ inverted ? 'inverted' : '' }`}
+        style={backgroundColor ? { backgroundColor } : {}}
       >
         <Breadcrumb
           className={edition ? 'mcs-breadcrumb-edit' : 'mcs-breadcrumb'}

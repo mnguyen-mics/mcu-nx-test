@@ -45,6 +45,8 @@ class DefaultSelect extends React.Component<
     autoSetDefaultValue: true,
   };
 
+  id: string = cuid();
+
   componentDidMount() {
     if (this.props.autoSetDefaultValue) this.setDefaultValue();
   }
@@ -96,6 +98,7 @@ class DefaultSelect extends React.Component<
         {defaultValueTitle || <FormattedMessage {...messages.defaultValue} />}
       </Option>
     )
+    const getRef = () => document.getElementById(this.id)!;
 
     return (
       <FormFieldWrapper
@@ -105,18 +108,20 @@ class DefaultSelect extends React.Component<
         small={small}
         {...formItemProps}
       >
-        <Select
-          {...selectProps}
-          onBlur={input.onBlur as () => any}
-          onChange={input.onChange as () => any}
-          onFocus={input.onFocus as () => any}
-          value={input.value}
-          disabled={disabled}
-          defaultActiveFirstOption={true}
-        >
-          {defaultOption}
-          {optionsToDisplay}
-        </Select>
+        <div id={this.id} style={{width: '100%'}}>
+          <Select
+            {...selectProps}
+            onBlur={input.onBlur as () => any}
+            onChange={input.onChange as () => any}
+            onFocus={input.onFocus as () => any}
+            value={input.value}
+            disabled={disabled}
+            getPopupContainer={getRef}
+          >
+            {defaultOption}
+            {optionsToDisplay}
+          </Select>
+        </div>
       </FormFieldWrapper>
     );
   }

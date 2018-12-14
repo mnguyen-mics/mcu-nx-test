@@ -51,11 +51,16 @@
       li {
         line-height: 30px;
         .ant-tree-node-content-wrapper {
+          vertical-align: middle !important;
           line-height: 30px;
           height: 30px;
           .ant-tree-title {
             line-height: 30px;
           }
+        }
+        .ant-tree-switcher-icon {
+          font-size: 17px !important;
+          vertical-align: bottom !important;
         }
       }
 
@@ -76,6 +81,7 @@
 
         .field-node-item {
           transition: 0.3s ease;
+          position: relative;
           &:hover {
             background-color: @hover-color;
             .icon {

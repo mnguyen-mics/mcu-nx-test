@@ -20,18 +20,9 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { AudienceFeedFormModel, FeedRouteParams } from './domain';
 import { Path } from '../../../../../components/ActionBar';
-import GenericPluginContent, {
-  PluginContentOuterProps,
-} from '../../../../Plugin/Edit/GenericPluginContent';
-import { AudienceTagFeedService } from '../../../../../services/AudienceTagFeedService';
-import { AudienceExternalFeedService } from '../../../../../services/AudienceExternalFeedService';
+import GenericPluginContent from '../../../../Plugin/Edit/GenericPluginContent';
+import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
 
-const AudienceExternalFeedPluginContent = GenericPluginContent as React.ComponentClass<
-  PluginContentOuterProps<AudienceExternalFeed>
->;
-const AudienceTagFeedPluginContent = GenericPluginContent as React.ComponentClass<
-  PluginContentOuterProps<AudienceTagFeed>
->;
 
 export interface CreateAudienceFeedProps<T = any> {
   initialValues?: AudienceFeedFormModel;
@@ -46,9 +37,15 @@ type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
   InjectedIntlProps &
   InjectedNotificationProps;
 
-class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
+class CreateAudienceFeed<T> extends React.Component<
+  JoinedProps<T>
+  > {
+
+  feedService: AudienceSegmentFeedService;
   constructor(props: JoinedProps<T>) {
     super(props);
+    const type = props.type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED' ? 'EXTERNAL_FEED' : 'TAG_FEED';
+    this.feedService = new AudienceSegmentFeedService(props.match.params.segmentId, type)
   }
 
   onSave = (audienceFeed: any, properties: PluginProperty[]) => {
@@ -112,8 +109,10 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
       type,
       onClose,
       initialValues,
-      match: {
-        params: { segmentId, feedId },
+      match: { 
+        params: { 
+          feedId,  
+        } 
       },
       intl: { formatMessage },
     } = this.props;
@@ -130,58 +129,23 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
         undefined
       );
 
-    if (type === 'AUDIENCE_SEGMENT_TAG_FEED') {
-      const audienceTagFeedService = new AudienceTagFeedService(segmentId);
-
-      return (
-        <AudienceTagFeedPluginContent
-          pluginType={'AUDIENCE_SEGMENT_TAG_FEED'}
+    return (
+      <GenericPluginContent
+          pluginType={type}
           listTitle={messages.listTagTitle}
           listSubTitle={messages.listTagSubTitle}
           breadcrumbPaths={paths}
-          pluginInstanceService={audienceTagFeedService}
+          pluginInstanceService={this.feedService}
           pluginInstanceId={feedId}
           createPluginInstance={this.createTagFeedPluginInstance}
           onSaveOrCreatePluginInstance={this.onSave}
           onClose={onClose}
           showGeneralInformation={false}
           showedMessage={showedMessage}
-          disableFields={
-            initialValues &&
-            (initialValues.plugin.status === 'ACTIVE' ||
-              initialValues.plugin.status === 'PUBLISHED')
-          }
-        />
-      );
-    }
-
-    if (type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED') {
-      const audienceExternalFeedService = new AudienceExternalFeedService(
-        segmentId,
-      );
-      return (
-        <AudienceExternalFeedPluginContent
-          pluginType={'AUDIENCE_SEGMENT_EXTERNAL_FEED'}
-          listTitle={messages.listExternalTitle}
-          listSubTitle={messages.listExternalSubTitle}
-          breadcrumbPaths={paths}
-          pluginInstanceService={audienceExternalFeedService}
-          pluginInstanceId={feedId}
-          createPluginInstance={this.createExternalFeedPluginInstance}
-          onSaveOrCreatePluginInstance={this.onSave}
-          onClose={onClose}
-          showGeneralInformation={false}
-          showedMessage={showedMessage}
-          disableFields={
-            initialValues &&
-            (initialValues.plugin.status === 'ACTIVE' ||
-              initialValues.plugin.status === 'PUBLISHED')
-          }
-        />
-      );
-    }
-
-    return null;
+          disableFields={initialValues && (initialValues.plugin.status === 'ACTIVE' || initialValues.plugin.status === 'PUBLISHED')}
+          isCardLayout={true}
+      />
+    )
   }
 }
 
