@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { DiagramEngine, Toolkit } from 'storm-react-diagrams';
 import AutomationLinkModel from './AutomationLinkModel';
-import { compose } from 'recompose';
-import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import { AutomationLinkFactory } from '.';
 
 export interface AutomationLinkProps {
@@ -10,18 +8,7 @@ export interface AutomationLinkProps {
   diagramEngine: DiagramEngine;
 }
 
-interface DroppedItemProps {
-  connectDropTarget?: ConnectDropTarget;
-  isDragging: boolean;
-}
-
-type Props = AutomationLinkProps & DroppedItemProps;
-
-const addinTarget = {
-  canDrop() {
-    return false;
-  },
-};
+type Props = AutomationLinkProps;
 
 class AutomationLinkWidget extends React.Component<Props> {
   refPaths: SVGPathElement[];
@@ -82,7 +69,7 @@ class AutomationLinkWidget extends React.Component<Props> {
   }
 
   render() {
-    const { link, isDragging, connectDropTarget } = this.props;
+    const { link } = this.props;
     const points = link.points;
     const paths: JSX.Element[] = [];
 
@@ -99,23 +86,8 @@ class AutomationLinkWidget extends React.Component<Props> {
       );
     }
 
-    const opacity = isDragging ? 0.3 : 1;
-
-    return (
-      connectDropTarget && connectDropTarget(<g style={{ opacity }}>{paths}</g>)
-    );
+    return (<g>{paths}</g>)
   }
 }
 
-export default compose<Props, AutomationLinkProps>(
-  DropTarget(
-    () => {
-      return 'none';
-    },
-    addinTarget,
-    (connect, monitor) => ({
-      connectDropTarget: connect.dropTarget(),
-      isDragging: !!monitor.getItemType(),
-    }),
-  ),
-)(AutomationLinkWidget);
+export default AutomationLinkWidget;
