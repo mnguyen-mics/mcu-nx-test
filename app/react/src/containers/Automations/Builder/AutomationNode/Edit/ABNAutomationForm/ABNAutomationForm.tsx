@@ -80,7 +80,6 @@ class ABNAutomationForm extends React.Component<Props> {
       message: localMessages.save,
       onClose: close,
     };
-
     const sections = this.buildFormSections();
 
     const renderedSections = sections.map((section, index) => {
