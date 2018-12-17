@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { Switch } from 'antd';
 import { compose } from 'recompose';
 
@@ -12,8 +12,13 @@ import McsIcon from '../../../../../components/McsIcon';
 import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
-import { ExtendedTableRowSelection, ActionsColumnDefinition, ActionDefinition } from '../../../../../components/TableView/TableView';
+import {
+  ExtendedTableRowSelection,
+  ActionsColumnDefinition,
+  ActionDefinition,
+} from '../../../../../components/TableView/TableView';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
+import { ButtonStyleless } from '../../../../../components';
 
 export interface UpdateMessage {
   title: string;
@@ -50,7 +55,7 @@ type JoinedProps = DisplayCampaignAdGroupTableProps &
 class DisplayCampaignAdGroupTable extends React.Component<
   JoinedProps,
   DisplayCampaignAdGroupTableState
-  > {
+> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -60,7 +65,9 @@ class DisplayCampaignAdGroupTable extends React.Component<
 
   editCampaign = (adgroup: AdGroupResource) => {
     const {
-      match: { params: { campaignId, organisationId } },
+      match: {
+        params: { campaignId, organisationId },
+      },
       history,
       location,
     } = this.props;
@@ -68,14 +75,16 @@ class DisplayCampaignAdGroupTable extends React.Component<
     history.push({
       pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${
         adgroup.id
-        }`,
+      }`,
       state: { from: `${location.pathname}${location.search}` },
     });
   };
 
   duplicateCampaign = (adGroup: AdGroupResource) => {
     const {
-      match: { params: { campaignId, organisationId } },
+      match: {
+        params: { campaignId, organisationId },
+      },
       history,
       location,
     } = this.props;
@@ -95,9 +104,12 @@ class DisplayCampaignAdGroupTable extends React.Component<
 
   render() {
     const {
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { campaignId },
+      },
       isFetching,
       isFetchingStat,
+      history,
       dataSet,
       rowSelection,
     } = this.props;
@@ -115,35 +127,38 @@ class DisplayCampaignAdGroupTable extends React.Component<
     };
 
     const changeAdGroupStatus = (record: AdGroupResource, checked: boolean) => {
-      const { updateAdGroup, intl: { formatMessage } } = this.props;
+      const {
+        updateAdGroup,
+        intl: { formatMessage },
+      } = this.props;
       const status: AdGroupStatus = checked ? 'ACTIVE' : 'PAUSED';
       const initialStatus = checked ? 'PAUSED' : 'ACTIVE';
       const successMessage = checked
         ? {
-          title: formatMessage(messages.notificationSuccess),
-          body: formatMessage(messages.notificationAdGroupActivationSuccess, {
-            name: record.name,
-          }),
-        }
+            title: formatMessage(messages.notificationSuccess),
+            body: formatMessage(messages.notificationAdGroupActivationSuccess, {
+              name: record.name,
+            }),
+          }
         : {
-          title: formatMessage(messages.notificationSuccess),
-          body: formatMessage(messages.notificationAdGroupPauseSuccess, {
-            name: record.name,
-          }),
-        };
+            title: formatMessage(messages.notificationSuccess),
+            body: formatMessage(messages.notificationAdGroupPauseSuccess, {
+              name: record.name,
+            }),
+          };
       const errorMessage = checked
         ? {
-          title: formatMessage(messages.notificationError),
-          body: formatMessage(messages.notificationAdGroupActivationError, {
-            name: record.name,
-          }),
-        }
+            title: formatMessage(messages.notificationError),
+            body: formatMessage(messages.notificationAdGroupActivationError, {
+              name: record.name,
+            }),
+          }
         : {
-          title: formatMessage(messages.notificationError),
-          body: formatMessage(messages.notificationAdGroupPauseError, {
-            name: record.name,
-          }),
-        };
+            title: formatMessage(messages.notificationError),
+            body: formatMessage(messages.notificationAdGroupPauseError, {
+              name: record.name,
+            }),
+          };
 
       updateAdGroup(
         record.id,
@@ -188,17 +203,23 @@ class DisplayCampaignAdGroupTable extends React.Component<
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (text: any, record: AdGroupResource) => (
-          <Link
-            className="mcs-campaigns-link"
-            to={`v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${
-              record.id
-              }`}
-          >
-            {text}
-          </Link>
-        ),
+        render: (text: any, record: AdGroupResource) => {
+          const toAdGroupDashboard = () => {
+            history.push({
+              pathname: `${campaignId}/adgroups/${
+                record.id
+              }`,
+              state: { from: `${location.pathname}${location.search}` },
+            });
+          };
+          return (
+            <ButtonStyleless onClick={toAdGroupDashboard}>
+              {text}
+            </ButtonStyleless>
+          );
+        },
       },
+
       {
         translationKey: 'IMPRESSIONS',
         key: 'impressions',
@@ -252,27 +273,30 @@ class DisplayCampaignAdGroupTable extends React.Component<
       // },
     ];
 
+    const actions: Array<ActionDefinition<AdGroupResource>> = [];
 
-    const actions:  Array<ActionDefinition<AdGroupResource>> = []
-
-    if (this.props.campaign && this.props.campaign.model_version !== 'V2014_06') {
-      actions.push({
-        translationKey: 'EDIT',
-        callback: this.editCampaign,
-      },
+    if (
+      this.props.campaign &&
+      this.props.campaign.model_version !== 'V2014_06'
+    ) {
+      actions.push(
+        {
+          translationKey: 'EDIT',
+          callback: this.editCampaign,
+        },
         {
           intlMessage: messages.duplicate,
           callback: this.duplicateCampaign,
-        }, )
+        },
+      );
     }
 
-    const actionColumns:  Array<ActionsColumnDefinition<AdGroupResource>> = [
+    const actionColumns: Array<ActionsColumnDefinition<AdGroupResource>> = [
       {
         key: 'action',
-        actions: () => actions
+        actions: () => actions,
       },
     ];
-
 
     const pagination = {
       pageSize: this.state.pageSize,
