@@ -98,7 +98,7 @@
     align-items: center;
     height: 70px;
     width: 180px;
-    border-color: #6e6e6e;
+    border-color: #dddddd;
     border-style: solid;
     border-width: 1px;
     background: white;
@@ -113,7 +113,7 @@
   }
 
   .available-node-visualizer-row {
-    margin-top: 35px;
+    margin-top: 25px;
     .ant-tree-node-selected,
     .ant-tree-node-content-wrapper {
       font-size: 13px;
@@ -138,6 +138,19 @@
     .ant-tree-node-content-wrapper {
       height: 100%;
       padding: 0px;
+    }
+  }
+
+  .available-node-visualizer-header {
+    margin-top: 10px;
+    padding: 0px 10px;
+    font-size: 13px;
+    .available-node-visualizer-title {
+      font-weight: 700;
+      color: rgba(0, 0, 0, 0.65);
+    }
+    .available-node-visualizer-subtitle {
+      color: #919191;
     }
   }
 
@@ -169,7 +182,6 @@
     padding-right: 15px;
     text-align: center;
   }
-
 
   .srd-diagram {
     height: inherit;
@@ -250,45 +262,44 @@
     }
   }
 
-    .boolean-menu {
-      position: absolute;
-      display: grid;
-      .boolean-menu-item {
-        background: rgba(0, 0, 0, 0.6);
-        border-radius: 3px;
-        color: #e6e6e6;
-        display: block;
-        float: left;
-        margin: 0 0 4px 8px;
-        padding: 6px 12px 6px 8px;
-        text-decoration: none;
-        -webkit-transition: -webkit-transform 85ms ease-in;
-        transition: -webkit-transform 85ms ease-in;
-        transition: transform 85ms ease-in;
-        transition: transform 85ms ease-in, -webkit-transform 85ms ease-in;
+  .boolean-menu {
+    position: absolute;
+    display: grid;
+    .boolean-menu-item {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 3px;
+      color: #e6e6e6;
+      display: block;
+      float: left;
+      margin: 0 0 4px 8px;
+      padding: 6px 12px 6px 8px;
+      text-decoration: none;
+      -webkit-transition: -webkit-transform 85ms ease-in;
+      transition: -webkit-transform 85ms ease-in;
+      transition: transform 85ms ease-in;
+      transition: transform 85ms ease-in, -webkit-transform 85ms ease-in;
 
-        cursor: pointer;
-        &:hover {
-          background: rgba(0, 0, 0, 0.8);
-          color: #fff;
-          -webkit-transform: translateX(5px);
-          transform: translateX(5px);
-        }
-      }
-    }
-    .object-node {
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      transition: box-shadow 300ms ease-in;
       cursor: pointer;
-
       &:hover {
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
-      }
-      &.no-hover:hover {
-        box-shadow: none;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        -webkit-transform: translateX(5px);
+        transform: translateX(5px);
       }
     }
   }
+  .object-node {
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: box-shadow 300ms ease-in;
+    cursor: pointer;
 
+    &:hover {
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+    &.no-hover:hover {
+      box-shadow: none;
+    }
+  }
+}

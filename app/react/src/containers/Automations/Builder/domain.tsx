@@ -176,14 +176,14 @@ export const storylineResourceData : StorylineResource = {
 
 export const beginNode: ScenarioNodeShape = {
   id: '1',
-  name: 'Begin node',
+  name: 'Enter automation',
   scenario_id: '1',
   type: 'START',
 };
 
 export const node4: ScenarioNodeShape = {
   id: '2',
-  name: 'Exit from automation',
+  name: 'Exit automation',
   scenario_id: '1',
   type: 'GOAL',
 };

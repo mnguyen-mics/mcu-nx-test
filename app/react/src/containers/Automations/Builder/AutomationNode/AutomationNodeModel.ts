@@ -17,8 +17,6 @@ export default class AutomationNodeModel extends NodeModel {
     iconType: McsIconType,
     title: string,
     color: string,
-    width: number,
-    height: number,
     treeNodePath?: number[],
   ) {
     super('automation-node');
@@ -29,8 +27,6 @@ export default class AutomationNodeModel extends NodeModel {
     this.iconType = iconType;
     this.title = title;
     this.color = color;
-    this.width = width;
-    this.height = height;
     this.storylineNodeModel = storylineNodeModel;
   }
 
@@ -46,6 +42,13 @@ export default class AutomationNodeModel extends NodeModel {
       width: 50,
       height: 50,
       borderWidth: 2,
+    };
+  }
+
+  getNodeSize() {
+    return {
+      width: 180,
+      height: 90,
     };
   }
 

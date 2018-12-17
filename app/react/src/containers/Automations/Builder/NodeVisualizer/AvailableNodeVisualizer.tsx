@@ -4,8 +4,21 @@ import { McsIconType } from '../../../../components/McsIcon';
 import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
 const { TreeNode } = Tree;
+
+const messages = defineMessages({
+  availableNodeTitle: {
+    id: 'automation.builder.availableNode.title',
+    defaultMessage: 'Automation Components',
+  },
+  availableNodeSubtitle: {
+    id: 'automation.builder.availableNode.subtitle',
+    defaultMessage:
+      'Drag and drop your components in the builder to create your automation.',
+  },
+});
 
 export interface FakeNode {
   node: ScenarioNodeShape;
@@ -21,7 +34,7 @@ interface State {
 
 const fakeNode: ScenarioNodeShape = {
   id: cuid(),
-  name: 'Email campaign',
+  name: 'Send Email',
   type: 'EMAIL_CAMPAIGN',
   scenario_id: '1',
   campaign_id: '',
@@ -29,7 +42,7 @@ const fakeNode: ScenarioNodeShape = {
 
 const fakeNode2: ScenarioNodeShape = {
   id: cuid(),
-  name: 'Display campaign',
+  name: 'Display Advertising',
   type: 'DISPLAY_CAMPAIGN',
   campaign_id: '',
   scenario_id: '1',
@@ -79,8 +92,10 @@ const conditionNode2: ScenarioNodeShape = {
 //   color: '#18b577',
 // };
 
-class AvailableNodeVisualizer extends React.Component<{}, State> {
-  constructor(props: {}) {
+type Props = InjectedIntlProps;
+
+class AvailableNodeVisualizer extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       actionNodes: [],
@@ -166,8 +181,17 @@ class AvailableNodeVisualizer extends React.Component<{}, State> {
   };
 
   render() {
+    const { intl } = this.props;
     return (
       <div>
+        <Row className="available-node-visualizer-header">
+          <div className="available-node-visualizer-title">
+            {intl.formatMessage(messages.availableNodeTitle)}
+          </div>
+          <div className="available-node-visualizer-subtitle">
+            {intl.formatMessage(messages.availableNodeSubtitle)}
+          </div>
+        </Row>
         <Row className="available-node-visualizer-row">
           {this.createNodeGrid('Actions', this.state.actionNodes)}
         </Row>
@@ -182,4 +206,4 @@ class AvailableNodeVisualizer extends React.Component<{}, State> {
   }
 }
 
-export default AvailableNodeVisualizer;
+export default injectIntl(AvailableNodeVisualizer);

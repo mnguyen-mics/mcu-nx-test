@@ -22,7 +22,7 @@ export const MIN_X = 100;
 export const MIN_Y = 100;
 export const ROOT_NODE_POSITION: Point = {
   x: 100,
-  y: 200,
+  y: 150,
 };
 
 export function createLink(source: PortModel, target: PortModel) {
