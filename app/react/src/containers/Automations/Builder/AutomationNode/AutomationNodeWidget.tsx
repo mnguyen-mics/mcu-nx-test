@@ -16,6 +16,7 @@ import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer'
 import { TreeNodeOperations } from '../domain';
 import { Icon } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
+import JSONQLPreview from '../../../QueryTool/JSONOTQL/JSONQLPreview';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -226,9 +227,17 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               >
                 {/* Uncomment when feature is ready */}
                 {/* <div onClick={this.toggleCollapsed} className='boolean-menu-item'>Collapse</div> */}
-                <div onClick={this.editNode} className="boolean-menu-item">
-                  <FormattedMessage {...messages.edit} />
-                </div>
+                {nodeType === 'START' ? (
+                  <JSONQLPreview
+                    datamartId={node.datamartId}
+                    isTrigger={true}
+                  />
+                ) : (
+                  <div onClick={this.editNode} className="boolean-menu-item">
+                    <FormattedMessage {...messages.edit} />
+                  </div>
+                )}
+
                 {nodeType !== 'START' &&
                   nodeType !== 'GOAL' &&
                   nodeType !== 'FAILURE' && (

@@ -7,8 +7,6 @@ import {
 import { ROOT_NODE_POSITION } from '../../QueryTool/JSONOTQL/domain';
 import { Col } from 'antd';
 import { McsIcon, ButtonStyleless } from '../../../components';
-import { DragDropContext } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 import SimplePortFactory from '../../QueryTool/JSONOTQL/Diagram/Port/SimplePortFactory';
 import AutomationNodeFactory from './AutomationNode/AutomationNodeFactory';
 import AutomationNodeModel from './AutomationNode/AutomationNodeModel';
@@ -32,6 +30,7 @@ import {
 } from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
+import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 
 export interface AutomationBuilderProps {
   datamartId: string;
@@ -156,6 +155,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     maxHeightLocal: number,
   ): AutomationNodeModel {
     const storylineNode = new AutomationNodeModel(
+      this.props.datamartId,
       nodeModel,
       `${nodeModel.node.name}`, // - (type: ${nodeModel.node.type})`,
       this.generateNodeProperties(nodeModel.node).color,
@@ -290,6 +290,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     model: DiagramModel,
   ) => {
     const rootNode = new AutomationNodeModel(
+      this.props.datamartId,
       automationData,
       `${automationData.node.name}`, // - (type: ${automationData.node.type})`,
       this.generateNodeProperties(automationData.node).color,
@@ -356,4 +357,4 @@ class AutomationBuilder extends React.Component<Props, State> {
   }
 }
 
-export default DragDropContext(HTML5Backend)(AutomationBuilder);
+export default withDragDropContext(AutomationBuilder);

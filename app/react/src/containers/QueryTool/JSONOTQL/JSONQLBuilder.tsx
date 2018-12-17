@@ -35,9 +35,8 @@ import CounterList from './CounterList';
 import { Col } from 'antd';
 import SchemaVizualizer from './SchemaVisualizer/SchemaVizualizer';
 import { ButtonStyleless, McsIcon } from '../../../components';
-import { DragDropContext } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 import { JSONQLBuilderContext } from './JSONQLBuilderContext';
+import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 
 export interface QueryResult {
   loading: boolean;
@@ -345,4 +344,4 @@ class JSONQLBuilder extends React.Component<Props, State> {
   }
 }
 
-export default DragDropContext(HTML5Backend)(JSONQLBuilder);
+export default withDragDropContext(JSONQLBuilder);
