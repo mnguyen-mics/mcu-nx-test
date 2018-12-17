@@ -27,6 +27,7 @@ import {
   AddNodeOperation,
   TreeNodeOperations,
   AntIcon,
+  UpdateNodeOperation,
 } from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
@@ -76,6 +77,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     return {
       deleteNode: this.deleteNode,
       addNode: this.addNode,
+      updateNode: this.updateNode ,
       updateLayout: () => this.engine.repaintCanvas(),
     };
   };
@@ -144,6 +146,14 @@ class AutomationBuilder extends React.Component<Props, State> {
   deleteNode = (idNodeToBeDeleted: string): StorylineNodeModel => {
     return this.props.updateAutomationData(
       new DeleteNodeOperation(idNodeToBeDeleted).execute(
+        this.props.automationData,
+      ),
+    );
+  };
+
+  updateNode = (id: string): StorylineNodeModel => {
+    return this.props.updateAutomationData(
+      new UpdateNodeOperation(id).execute(
         this.props.automationData,
       ),
     );

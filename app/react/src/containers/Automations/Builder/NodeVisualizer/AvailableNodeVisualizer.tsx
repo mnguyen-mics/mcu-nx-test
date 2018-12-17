@@ -26,6 +26,7 @@ export interface FakeNode {
   iconType?: McsIconType;
   iconAnt?: AntIcon;
   color: string;
+  branchNumber?: number;
 }
 
 interface State {
@@ -71,6 +72,7 @@ const conditionNode1: ScenarioNodeShape = {
   type: 'ABN_NODE',
   scenario_id: '1',
   edges_selection: {},
+  branch_number: 0
 };
 
 const conditionNode2: ScenarioNodeShape = {
@@ -121,11 +123,17 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
           color: '#0ba6e1',
         };
       case 'QUERY_INPUT':
+      return {
+        node: node,
+        iconType: 'question',
+        color: '#fbc02d',
+      };
       case 'ABN_NODE':
         return {
           node: node,
           iconAnt: 'fork',
           color: '#fbc02d',
+          branchNumber: node.branch_number
         };
       case 'GOAL':
         return {
@@ -175,6 +183,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
                     id={node.id}
                     type={node.type}
                     name={node.name}
+                    branchNumber={this.generateNodeProperties(node).branchNumber}
                     icon={this.generateNodeProperties(node).iconType}
                     iconAnt={this.generateNodeProperties(node).iconAnt}
                     color={this.generateNodeProperties(node).color}

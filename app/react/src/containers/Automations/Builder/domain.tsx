@@ -7,10 +7,15 @@ import {
 } from '../../../models/automations/automations';
 
 export interface TreeNodeOperations {
-    addNode: (parentNodeId: string, childNodeId: string, node: ScenarioNodeShape) => void;
-    deleteNode: (nodeId: string) => void;
-    updateLayout: () => void;
-  }
+  addNode: (
+    parentNodeId: string,
+    childNodeId: string,
+    node: ScenarioNodeShape,
+  ) => void;
+  deleteNode: (nodeId: string) => void;
+  updateNode: (nodeId: string) => void;
+  updateLayout: () => void;
+}
 
 export type AntIcon = 'flag' | 'fork' | 'clock-circle';
 
@@ -37,19 +42,27 @@ export interface NodeOperation {
   execute(automationData: StorylineNodeModel): StorylineNodeModel;
 }
 
-export class AddNodeOperation implements NodeOperation{
+export class AddNodeOperation implements NodeOperation {
   parentNodeId: string;
   childNodeId: string;
   node: ScenarioNodeShape;
 
-  constructor(parentNodeId: string, childNodeId: string, node: ScenarioNodeShape){
+  constructor(
+    parentNodeId: string,
+    childNodeId: string,
+    node: ScenarioNodeShape,
+  ) {
     this.childNodeId = childNodeId;
     this.parentNodeId = parentNodeId;
     this.node = node;
   }
 
-  execute(automationData: StorylineNodeModel):StorylineNodeModel{
-    return this.iterateData(automationData, this.parentNodeId, this.childNodeId);
+  execute(automationData: StorylineNodeModel): StorylineNodeModel {
+    return this.iterateData(
+      automationData,
+      this.parentNodeId,
+      this.childNodeId,
+    );
   }
 
   iterateData(
@@ -61,7 +74,7 @@ export class AddNodeOperation implements NodeOperation{
       (child, index) => {
         if (child.node.id === childNodeId) {
           const inEdgeId: string = cuid();
-          const childNode : StorylineNodeModel= {
+          const childNode: StorylineNodeModel = {
             node: child.node,
             in_edge: {
               id: inEdgeId,
@@ -71,26 +84,44 @@ export class AddNodeOperation implements NodeOperation{
               scenario_id: child.in_edge!.scenario_id,
             },
             out_edges: child.out_edges,
-          }
-          const newId = cuid();
-          const emptyNode: StorylineNodeModel = {
-            node: {
-              id: newId,
-              name: 'Exit from automation',
-              scenario_id: '1',
-              type: 'GOAL',
-            },
-            in_edge: {
-              id: cuid(),
-              source_id: this.node.id,
-              target_id: newId,
-              handler: 'GOAL',
-              scenario_id: child.in_edge!.scenario_id,
-            },
-            out_edges: [],
           };
-          const newOutEdges : StorylineNodeModel[] = this.node.type==="ABN_NODE" ? 
-          [childNode, emptyNode]: [childNode]
+          const newId = cuid();
+
+          const generateNewEmptyOutEdges = (
+            branchNumber: number,
+          ): StorylineNodeModel[] => {
+            const newEmptyOutEdges = [];
+            for (i = 0; i <= branchNumber; i++) {
+              const emptyNode: StorylineNodeModel = {
+                node: {
+                  id: newId,
+                  name: 'Exit from automation',
+                  scenario_id: '1',
+                  type: 'GOAL',
+                },
+                in_edge: {
+                  id: cuid(),
+                  source_id: this.node.id,
+                  target_id: newId,
+                  handler: 'GOAL',
+                  scenario_id: child.in_edge!.scenario_id,
+                },
+                out_edges: [],
+              };
+              newEmptyOutEdges.push(emptyNode);
+            }
+            return newEmptyOutEdges;
+          };
+          let newOutEdges: StorylineNodeModel[] = [];
+          if (this.node.type === 'ABN_NODE') {
+            const emptyNodes = generateNewEmptyOutEdges(
+              this.node.branch_number,
+            );
+            newOutEdges = [childNode].concat(emptyNodes);
+          } else {
+            newOutEdges = [childNode];
+          }
+
           const newNode: StorylineNodeModel = {
             node: this.node,
             in_edge: {
@@ -115,17 +146,16 @@ export class AddNodeOperation implements NodeOperation{
       out_edges: outEdges,
     };
   }
-
 }
 
-export class DeleteNodeOperation implements NodeOperation{
+export class DeleteNodeOperation implements NodeOperation {
   idNodeToBeDeleted: string;
 
-  constructor(idNodeToBeDeleted: string){
+  constructor(idNodeToBeDeleted: string) {
     this.idNodeToBeDeleted = idNodeToBeDeleted;
   }
 
-  execute(automationData: StorylineNodeModel):StorylineNodeModel{
+  execute(automationData: StorylineNodeModel): StorylineNodeModel {
     return this.iterateData(automationData, this.idNodeToBeDeleted);
   }
 
@@ -159,7 +189,49 @@ export class DeleteNodeOperation implements NodeOperation{
       out_edges: outEdges,
     };
   }
+}
 
+export class UpdateNodeOperation implements NodeOperation {
+  id: string;
+
+  constructor(id: string) {
+    this.id = id;
+  }
+
+  execute(automationData: StorylineNodeModel): StorylineNodeModel {
+    return this.iterateData(automationData, this.id);
+  }
+
+  iterateData(
+    automationData: StorylineNodeModel,
+    id: string,
+  ): StorylineNodeModel {
+    const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
+      (child, index) => {
+        if (child.node.id === id) {
+          const updatedNode: StorylineNodeModel = {
+            node: {
+              id: child.node.id,
+              name: 'END NODE',
+              scenario_id: '1',
+              type: 'FAILURE',
+            },
+            in_edge: child.in_edge,
+            out_edges: [],
+          };
+          return updatedNode;
+        } else {
+          return this.iterateData(child, id);
+        }
+      },
+    );
+
+    return {
+      node: automationData.node,
+      in_edge: automationData.in_edge,
+      out_edges: outEdges,
+    };
+  }
 }
 
 export interface StorylineNodeModel {
@@ -172,9 +244,9 @@ export interface StorylineNodeModel {
  * Hardcoded data *
  ******************/
 
-export const storylineResourceData : StorylineResource = {
-  begin_node_id : '1'
-}
+export const storylineResourceData: StorylineResource = {
+  begin_node_id: '1',
+};
 
 export const beginNode: ScenarioNodeShape = {
   id: '1',
@@ -231,9 +303,7 @@ export const node4: ScenarioNodeShape = {
 //   type: 'FAILURE',
 // };
 
-export const storylineNodeData : ScenarioNodeShape[] = [
-  beginNode, node4
-]
+export const storylineNodeData: ScenarioNodeShape[] = [beginNode, node4];
 
 export const edge12: ScenarioEdgeResource = {
   id: 'string',
@@ -266,6 +336,4 @@ export const edge12: ScenarioEdgeResource = {
 //   scenario_id: '1',
 // };
 
-export const storylineEdgeData : ScenarioEdgeResource[] = [
-  edge12
-]
+export const storylineEdgeData: ScenarioEdgeResource[] = [edge12];
