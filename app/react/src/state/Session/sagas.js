@@ -9,6 +9,7 @@ import {
   GET_LOGO,
   PUT_LOGO,
   LOG_IN,
+  CONNECTED_USER,
 } from '../action-types';
 
 import {
@@ -97,6 +98,10 @@ function* watchCookiesRequest() {
   yield takeEvery(LOG_IN.SUCCESS, fetchUserCookies);
 }
 
+function* watchConnectedUserRequest() {
+  yield takeEvery(CONNECTED_USER.SUCCESS, fetchUserCookies);
+}
+
 function* watchLogoDownloadRequest() {
   yield takeEvery(GET_LOGO.REQUEST, downloadLogo);
 }
@@ -110,4 +115,5 @@ export const sessionSagas = [
   fork(watchLogoDownloadRequest),
   fork(watchCookiesRequest),
   fork(watchLogoUploadRequest),
+  fork(watchConnectedUserRequest),
 ];
