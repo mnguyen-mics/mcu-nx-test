@@ -20,8 +20,11 @@ import JSONQLPreview from '../../../QueryTool/JSONOTQL/JSONQLPreview';
 import AutomationNodeForm, {
   AutomationNodeFormProps,
 } from './Edit/AutomationNodeForm';
-import { AutomationNodeFormData } from './Edit/domain';
-// import ObjectNodeForm, { ObjectNodeFormProps } from '../../../QueryTool/JSONOTQL/Edit/ObjectNodeForm';
+import {
+  AutomationNodeFormData,
+  isAbnNode,
+  isScenarioNodeShape,
+} from './Edit/domain';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -81,21 +84,31 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const { node, lockGlobalInteraction } = this.props;
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(false);
-
-      this.props.openNextDrawer<AutomationNodeFormProps>(AutomationNodeForm, {
-        additionalProps: {
-          close: this.props.closeNextDrawer,
-          breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
-          update: (e: AutomationNodeFormData) => {
-            // this.props.nodeOperations.updateNode(
-            //   node.treeNodePath,
-            //   generateObjectNodeFromFormData(e),
-            // );
-            this.props.closeNextDrawer();
+      const automationNode = isAbnNode(node.storylineNodeModel.node)
+        ? {
+            name: node.storylineNodeModel.node.name,
+            branch_number: node.storylineNodeModel.node.branch_number,
+          }
+        : {
+            name: node.storylineNodeModel.node.name,
+          };
+      if (isScenarioNodeShape(node.storylineNodeModel.node)) {
+        const scenarioNodeShade = node.storylineNodeModel.node;
+        this.props.openNextDrawer<AutomationNodeFormProps>(AutomationNodeForm, {
+          additionalProps: {
+            close: this.props.closeNextDrawer,
+            breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
+            onSubmit: (formData: AutomationNodeFormData) => {
+              this.props.nodeOperations.updateNode(scenarioNodeShade, formData);
+              this.props.closeNextDrawer();
+            },
+            initialValues: {
+              automationNode: automationNode,
+            },
           },
-        },
-        size: 'small',
-      });
+          size: 'small',
+        });
+      }
     });
   };
 
@@ -138,12 +151,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             backgroundColor: backgroundColor,
           }}
         >
-
-        { node.iconAnt ? <Icon type={node.iconAnt} className="available-node-icon-gyph"/> : 
-          <McsIcon type={node.icon as McsIconType} className="available-node-icon-gyph" />
-        }
-
-          
+          {node.iconAnt ? (
+            <Icon type={node.iconAnt} className="available-node-icon-gyph" />
+          ) : (
+            <McsIcon
+              type={node.icon as McsIconType}
+              className="available-node-icon-gyph"
+            />
+          )}
         </div>
 
         <div className="node-content">{node.title}</div>

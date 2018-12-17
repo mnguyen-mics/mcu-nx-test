@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { ButtonStyleless, McsIcon } from '../../../../../components';
+// import { ButtonStyleless, McsIcon } from '../../../../../components';
 import {
   FormInput,
   FormSection,
   FormInputField,
+  FormSlider,
+  FormSliderField,
 } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -13,6 +15,7 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../components/Form/withNormalizer';
+import { AutomationNodeFormData } from './domain';
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
@@ -31,13 +34,24 @@ export const messages = defineMessages({
     id: 'automation.builder.node.form.name',
     defaultMessage: 'Automation Node name',
   },
+  branchNumber: {
+    id: 'automation.builder.split.node.form.branch.number',
+    defaultMessage: 'Branchs',
+  },
   advancedSection: {
     id: 'automation.builder.node.advanced.section',
     defaultMessage: 'Advanced',
   },
 });
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+interface GeneralFormSectionProps {
+  initialValues: Partial<AutomationNodeFormData>;
+}
+
+type Props = GeneralFormSectionProps &
+  InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps;
 
 interface State {
   displayAdvancedSection: boolean;
@@ -82,9 +96,26 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
             small={true}
           />
+
+          {this.props.initialValues.automationNode !== undefined &&
+            this.props.initialValues.automationNode.branch_number !==
+              undefined && (
+              <FormSliderField
+                name="automationNode.branch_number"
+                component={FormSlider}
+                formItemProps={{
+                  label: formatMessage(messages.branchNumber),
+                  required: true,
+                }}
+                inputProps={{
+                  min: 2,
+                  max: 10,
+                }}
+              />
+            )}
         </div>
 
-        <div>
+        {/* <div>
           <ButtonStyleless
             className="optional-section-title"
             onClick={this.toggleAdvancedSection}
@@ -118,13 +149,13 @@ class GeneralFormSection extends React.Component<Props, State> {
               small={true}
             />
           </div>
-        </div>
+        </div> */}
       </div>
     );
   }
 }
 
-export default compose(
+export default compose<Props, GeneralFormSectionProps>(
   injectIntl,
   withValidators,
   withNormalizer,

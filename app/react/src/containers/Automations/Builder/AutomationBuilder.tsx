@@ -32,6 +32,7 @@ import {
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
+import { AutomationNodeFormData } from './AutomationNode/Edit/domain';
 
 export interface AutomationBuilderProps {
   datamartId: string;
@@ -77,7 +78,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     return {
       deleteNode: this.deleteNode,
       addNode: this.addNode,
-      updateNode: this.updateNode ,
+      updateNode: this.updateNode,
       updateLayout: () => this.engine.repaintCanvas(),
     };
   };
@@ -151,11 +152,12 @@ class AutomationBuilder extends React.Component<Props, State> {
     );
   };
 
-  updateNode = (id: string): StorylineNodeModel => {
+  updateNode = (
+    node: ScenarioNodeShape,
+    formData: AutomationNodeFormData,
+  ): StorylineNodeModel => {
     return this.props.updateAutomationData(
-      new UpdateNodeOperation(id).execute(
-        this.props.automationData,
-      ),
+      new UpdateNodeOperation(node, formData).execute(this.props.automationData),
     );
   };
 
@@ -246,7 +248,7 @@ class AutomationBuilder extends React.Component<Props, State> {
   generateNodeProperties = (
     node: AutomationNodeShape,
   ): {
-    color: string;    
+    color: string;
     iconType?: McsIconType;
     iconAnt?: AntIcon;
   } => {
@@ -284,9 +286,9 @@ class AutomationBuilder extends React.Component<Props, State> {
         };
       case 'WAIT':
         return {
-          iconAnt : 'clock-circle',
+          iconAnt: 'clock-circle',
           color: '#fbc02d',
-        }
+        };
       default:
         return {
           iconType: 'info',

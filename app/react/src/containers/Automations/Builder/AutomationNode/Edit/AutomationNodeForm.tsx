@@ -35,7 +35,6 @@ export interface AutomationNodeFormProps
   extends Omit<ConfigProps<AutomationNodeFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  update: (formData: AutomationNodeFormData) => void;
 }
 
 interface MapStateToProps {
@@ -60,7 +59,9 @@ class AutomationNodeForm extends React.Component<Props> {
     const general = {
       id: 'general',
       title: messages.sectionGeneralTitle,
-      component: <GeneralFormSection />,
+      component: (
+        <GeneralFormSection initialValues={this.props.initialValues} />
+      ),
     };
 
     sections.push(general);
@@ -69,13 +70,14 @@ class AutomationNodeForm extends React.Component<Props> {
   };
 
   render() {
-    const { breadCrumbPaths, handleSubmit, update, close } = this.props;
+    const { breadCrumbPaths, handleSubmit, close } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
       message: messages.save,
       onClose: close,
     };
+
     const sections = this.buildFormSections();
 
     const renderedSections = sections.map((section, index) => {
@@ -95,11 +97,11 @@ class AutomationNodeForm extends React.Component<Props> {
         <Layout className={'ant-layout-has-sider'}>
           <Form
             className="edit-layout ant-layout"
-            onSubmit={handleSubmit(update) as any}
+            onSubmit={handleSubmit}
           >
             <Content
               id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
+              className="mcs-content-container mcs-form-container automation-form"
             >
               {renderedSections}
             </Content>

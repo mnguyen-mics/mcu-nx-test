@@ -5,6 +5,10 @@ import {
   ScenarioEdgeResource,
   StorylineResource,
 } from '../../../models/automations/automations';
+import {
+  AutomationNodeFormData,
+  isAbnNode,
+} from './AutomationNode/Edit/domain';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -13,7 +17,10 @@ export interface TreeNodeOperations {
     node: ScenarioNodeShape,
   ) => void;
   deleteNode: (nodeId: string) => void;
-  updateNode: (nodeId: string) => void;
+  updateNode: (
+    node: ScenarioNodeShape,
+    formData: AutomationNodeFormData,
+  ) => void;
   updateLayout: () => void;
 }
 
@@ -24,7 +31,7 @@ export type AutomationNodeShape = ScenarioNodeShape | DropNode;
 export class DropNode {
   id: string;
   type: 'DROP_NODE';
-  name: 'DROPNODE';
+  name: string;
   outNode: StorylineNodeModel;
   parentNode: StorylineNodeModel;
   constructor(
@@ -115,7 +122,7 @@ export class AddNodeOperation implements NodeOperation {
           let newOutEdges: StorylineNodeModel[] = [];
           if (this.node.type === 'ABN_NODE') {
             const emptyNodes = generateNewEmptyOutEdges(
-              this.node.branch_number,
+              this.node.branch_number || 0,
             );
             newOutEdges = [childNode].concat(emptyNodes);
           } else {
@@ -192,14 +199,16 @@ export class DeleteNodeOperation implements NodeOperation {
 }
 
 export class UpdateNodeOperation implements NodeOperation {
-  id: string;
+  node: AutomationNodeShape;
+  formData: AutomationNodeFormData;
 
-  constructor(id: string) {
-    this.id = id;
+  constructor(node: ScenarioNodeShape, formData: AutomationNodeFormData) {
+    this.node = node;
+    this.formData = formData;
   }
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
-    return this.iterateData(automationData, this.id);
+    return this.iterateData(automationData, this.node.id);
   }
 
   iterateData(
@@ -210,19 +219,62 @@ export class UpdateNodeOperation implements NodeOperation {
       (child, index) => {
         if (child.node.id === id) {
           const updatedNode: StorylineNodeModel = {
-            node: {
-              id: child.node.id,
-              name: 'END NODE',
-              scenario_id: '1',
-              type: 'FAILURE',
-            },
+            node: isAbnNode(child.node)
+              ? {
+                  ...child.node,
+                  name: this.formData.automationNode.name,
+                  branch_number: this.formData.automationNode.branch_number,
+                }
+              : {
+                  ...child.node,
+                  name: this.formData.automationNode.name,
+                },
             in_edge: child.in_edge,
             out_edges: [],
           };
-          return updatedNode;
-        } else {
-          return this.iterateData(child, id);
-        }
+
+          const generateNewEmptyOutEdges = (
+            branchNumber: number,
+          ): StorylineNodeModel[] => {
+            const newEmptyOutEdges = [];
+            for (i = 0; i <= branchNumber; i++) {
+              const newId = cuid();
+              const emptyNode: StorylineNodeModel = {
+                node: {
+                  id: newId,
+                  name: 'Exit from automation',
+                  scenario_id: '1',
+                  type: 'GOAL',
+                },
+                in_edge: {
+                  id: cuid(),
+                  source_id: this.node.id,
+                  target_id: newId,
+                  handler: 'GOAL',
+                  scenario_id: child.in_edge!.scenario_id,
+                },
+                out_edges: [],
+              };
+              newEmptyOutEdges.push(emptyNode);
+            }
+            return newEmptyOutEdges;
+          };
+          let newOutEdges: StorylineNodeModel[] = [];
+          if (isAbnNode(this.node)) {
+            const branchNumber = this.formData.automationNode.branch_number
+              ? this.formData.automationNode.branch_number - 1
+              : 0;
+            const emptyNodes = generateNewEmptyOutEdges(branchNumber);
+            newOutEdges = emptyNodes;
+          } else {
+            newOutEdges = child.out_edges;
+          }
+
+          return {
+            ...updatedNode,
+            out_edges: newOutEdges,
+          };
+        } else return this.iterateData(child, id);
       },
     );
 
