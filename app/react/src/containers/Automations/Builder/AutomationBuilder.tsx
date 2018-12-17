@@ -28,6 +28,7 @@ import {
   DeleteNodeOperation,
   AddNodeOperation,
   TreeNodeOperations,
+  AntIcon,
 } from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
@@ -156,9 +157,10 @@ class AutomationBuilder extends React.Component<Props, State> {
   ): AutomationNodeModel {
     const storylineNode = new AutomationNodeModel(
       nodeModel,
-      this.generateNodeProperties(nodeModel.node).iconType,
       `${nodeModel.node.name}`, // - (type: ${nodeModel.node.type})`,
       this.generateNodeProperties(nodeModel.node).color,
+      this.generateNodeProperties(nodeModel.node).iconType,
+      this.generateNodeProperties(nodeModel.node).iconAnt,
     );
     return storylineNode;
   }
@@ -234,8 +236,9 @@ class AutomationBuilder extends React.Component<Props, State> {
   generateNodeProperties = (
     node: AutomationNodeShape,
   ): {
-    iconType: McsIconType;
-    color: string;
+    color: string;    
+    iconType?: McsIconType;
+    iconAnt?: AntIcon;
   } => {
     switch (node.type) {
       case 'DISPLAY_CAMPAIGN':
@@ -251,7 +254,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       case 'QUERY_INPUT':
       case 'ABN_NODE':
         return {
-          iconType: 'question',
+          iconAnt: 'fork',
           color: '#fbc02d',
         };
       case 'GOAL':
@@ -266,9 +269,14 @@ class AutomationBuilder extends React.Component<Props, State> {
         };
       case 'START':
         return {
-          iconType: 'check',
+          iconAnt: 'flag',
           color: '#fbc02d',
         };
+      case 'WAIT':
+        return {
+          iconAnt : 'clock-circle',
+          color: '#fbc02d',
+        }
       default:
         return {
           iconType: 'info',
@@ -283,9 +291,10 @@ class AutomationBuilder extends React.Component<Props, State> {
   ) => {
     const rootNode = new AutomationNodeModel(
       automationData,
-      this.generateNodeProperties(automationData.node).iconType,
       `${automationData.node.name}`, // - (type: ${automationData.node.type})`,
       this.generateNodeProperties(automationData.node).color,
+      this.generateNodeProperties(automationData.node).iconType,
+      this.generateNodeProperties(automationData.node).iconAnt,
     );
     rootNode.root = true;
     rootNode.x = ROOT_NODE_POSITION.x;

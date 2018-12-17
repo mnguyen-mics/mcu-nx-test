@@ -17,7 +17,7 @@ export default class AnchorPortWidget extends React.Component<
         <div
           style={{
             position: 'absolute',
-            top: 10,
+            top: 50,
             left: 10,
           }}
         >
@@ -26,7 +26,7 @@ export default class AnchorPortWidget extends React.Component<
         <div
           style={{
             position: 'absolute',
-            top: 10,
+            top: 50,
             left: 40,
           }}
         >

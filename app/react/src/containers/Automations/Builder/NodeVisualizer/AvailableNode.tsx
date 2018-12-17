@@ -7,16 +7,19 @@ import {
   DragSourceConnector,
   DragSourceMonitor,
 } from 'react-dnd';
+import { AntIcon } from '../domain';
+import { Icon } from 'antd';
 
 interface AvailableNodeProps {
   id: string;
   name: string;
   type: string;
-  icon: McsIconType;
   color: string;
   connectDragSource?: ConnectDragSource;
   isDragging?: boolean;
   isDropped?: boolean;
+  icon?: McsIconType;
+  iconAnt?: AntIcon;
 }
 
 const fieldSource = {
@@ -25,6 +28,7 @@ const fieldSource = {
       id: cuid(),
       name: props.name,
       icon: props.icon,
+      iconAnt: props.iconAnt,
       color: props.color,
       type: props.type,
     };
@@ -33,7 +37,7 @@ const fieldSource = {
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
   render() {
-    const { name, icon, color, connectDragSource } = this.props;
+    const { name, icon, color, connectDragSource, iconAnt } = this.props;
 
     return (
       connectDragSource &&
@@ -43,7 +47,9 @@ class AvailableNode extends React.Component<AvailableNodeProps> {
             className="available-node-icon"
             style={{ backgroundColor: color }}
           >
-            <McsIcon type={icon} className="available-node-icon-gyph" />
+          { iconAnt ? <Icon type={iconAnt} className="available-node-icon-gyph"/> : 
+          <McsIcon type={icon as McsIconType} className="available-node-icon-gyph" />
+        }
           </div>
           <div className="available-node-text">{name}</div>
         </div>,

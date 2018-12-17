@@ -1,22 +1,24 @@
 import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../../../QueryTool/JSONOTQL/Diagram/Port/SimplePortModel';
 import { McsIconType } from '../../../../components/McsIcon';
-import { StorylineNodeModel } from '../domain';
+import { StorylineNodeModel, AntIcon } from '../domain';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
   negation = false;
-  iconType: McsIconType;
   title: string;
   color: string;
   storylineNodeModel: StorylineNodeModel;
   root?: boolean;
+  icon?: McsIconType;
+  iconAnt?: AntIcon;  
 
   constructor(
     storylineNodeModel: StorylineNodeModel,
-    iconType: McsIconType,
     title: string,
     color: string,
+    iconType?: McsIconType,
+    iconAnt?: AntIcon,
     treeNodePath?: number[],
   ) {
     super('automation-node');
@@ -24,10 +26,11 @@ export default class AutomationNodeModel extends NodeModel {
     this.addPort(new SimplePortModel('center'));
     this.addPort(new SimplePortModel('right'));
 
-    this.iconType = iconType;
+    this.icon = iconType;
     this.title = title;
     this.color = color;
     this.storylineNodeModel = storylineNodeModel;
+    this.iconAnt = iconAnt;
   }
 
   getPosition = () => {

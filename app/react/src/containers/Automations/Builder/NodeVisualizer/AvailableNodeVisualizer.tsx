@@ -5,6 +5,7 @@ import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { AntIcon } from '../domain';
 
 const { TreeNode } = Tree;
 
@@ -22,7 +23,8 @@ const messages = defineMessages({
 
 export interface FakeNode {
   node: ScenarioNodeShape;
-  iconType: McsIconType;
+  iconType?: McsIconType;
+  iconAnt?: AntIcon;
   color: string;
 }
 
@@ -122,7 +124,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
       case 'ABN_NODE':
         return {
           node: node,
-          iconType: 'question',
+          iconAnt: 'fork',
           color: '#fbc02d',
         };
       case 'GOAL':
@@ -137,6 +139,12 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
           iconType: 'close',
           color: '#ff5959',
         };
+        case 'WAIT':
+        return {
+          node: node,
+          iconAnt : 'clock-circle',
+          color: '#fbc02d',
+        }
       default:
         return {
           node: node,
@@ -168,6 +176,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
                     type={node.type}
                     name={node.name}
                     icon={this.generateNodeProperties(node).iconType}
+                    iconAnt={this.generateNodeProperties(node).iconAnt}
                     color={this.generateNodeProperties(node).color}
                   />
                 }
