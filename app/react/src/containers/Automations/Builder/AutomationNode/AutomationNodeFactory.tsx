@@ -48,9 +48,9 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
     };
     return new AutomationNodeModel(
       emptyNode,
-      'plus',
       'User belongs to ### segment',
-      '#2ecc71'
+      '#2ecc71',
+      'plus',
     );
   }
 }

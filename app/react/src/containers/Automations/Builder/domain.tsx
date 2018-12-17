@@ -12,6 +12,8 @@ export interface TreeNodeOperations {
     updateLayout: () => void;
   }
 
+export type AntIcon = 'flag' | 'fork' | 'clock-circle';
+
 export type AutomationNodeShape = ScenarioNodeShape | DropNode;
 
 export class DropNode {

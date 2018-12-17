@@ -8,6 +8,9 @@ import { compose } from 'recompose';
 import DropTarget from 'react-dnd/lib/DropTarget';
 import { TreeNodeOperations } from '../domain';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../Helpers/injectThemeColors';
 
 interface DropNodeProps {
   node: DropNodeModel;
@@ -22,7 +25,7 @@ interface DroppedItemProps {
   isDragging: boolean;
 }
 
-type Props = DropNodeProps & DroppedItemProps;
+type Props = DropNodeProps & DroppedItemProps & InjectedThemeColorsProps;
 
 interface State {
   hover: boolean;
@@ -58,20 +61,30 @@ class DropNodeWidget extends React.Component<Props, State> {
   };
 
   render() {
-    const { node, connectDropTarget, isDragging } = this.props;
+    const { node, connectDropTarget, isDragging, isOver, colors } = this.props;
 
-    const backgroundColor = node.getColor();
-    const borderColor = node.getColor();
+    let backgroundColor = node.getColor();
+    let borderColor = node.getColor();
 
     const onHover = (type: 'enter' | 'leave') => () =>
       this.setState({ hover: type === 'enter' ? true : false });
+
+    if (isOver && isDragging) {
+      backgroundColor = colors['mcs-info'];
+      borderColor = colors['mcs-info'];
+    }
 
     const opacity = isDragging ? 1 : 0;
 
     return (
       connectDropTarget &&
       connectDropTarget(
-        <div>
+        <div className={'drop-container'}>
+          <div
+            className={'drop-area'}
+            onMouseEnter={onHover('enter')}
+            onMouseLeave={onHover('leave')}
+          >
           <div
             className={'drop-node'}
             onMouseEnter={onHover('enter')}
@@ -85,7 +98,8 @@ class DropNodeWidget extends React.Component<Props, State> {
               opacity,
             }}
           />
-          <AnchorPortWidget node={node} />
+            <AnchorPortWidget node={node} />
+          </div>
         </div>,
       )
     );
@@ -105,4 +119,5 @@ export default compose<Props, DropNodeProps>(
       isDragging: monitor.getItemType(),
     }),
   ),
+  injectThemeColors,
 )(DropNodeWidget);

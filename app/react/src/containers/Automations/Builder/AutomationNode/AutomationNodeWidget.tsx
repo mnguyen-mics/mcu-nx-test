@@ -14,6 +14,8 @@ import { injectDrawer } from '../../../../components/Drawer';
 import { compose } from 'recompose';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { TreeNodeOperations } from '../domain';
+import { Icon } from 'antd';
+import { McsIconType } from '../../../../components/McsIcon';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -128,7 +130,12 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             backgroundColor: backgroundColor,
           }}
         >
-          <McsIcon type={node.iconType} className="available-node-icon-gyph" />
+
+        { node.iconAnt ? <Icon type={node.iconAnt} className="available-node-icon-gyph"/> : 
+          <McsIcon type={node.icon as McsIconType} className="available-node-icon-gyph" />
+        }
+
+          
         </div>
 
         <div className="node-content">{node.title}</div>
