@@ -312,6 +312,76 @@ export class UpdateNodeOperation implements NodeOperation {
       (child, index) => {
         if (child.node.id === id) {
           const updatedNode: StorylineNodeModel = this.buildUpdatedNode(child);
+          
+          
+          // TODO : move this code in builUpdateNode
+
+
+          // const updatedNode: StorylineNodeModel = {
+          //   node: isAbnNode(child.node)
+          //     ? {
+          //         ...child.node,
+          //         name: this.formData.automationNode.name,
+          //         branch_number: this.formData.automationNode.branch_number,
+          //       }
+          //     : {
+          //         ...child.node,
+          //         name: this.formData.automationNode.name,
+          //       },
+          //   in_edge: child.in_edge,
+          //   out_edges: [],
+          // };
+
+          // const generateNewEmptyOutEdges = (
+          //   branchNumber: number,
+          // ): StorylineNodeModel[] => {
+          //   const newEmptyOutEdges = [];
+          //   for (i = 0; i <= branchNumber; i++) {
+          //     const newId = cuid();
+          //     const emptyNode: StorylineNodeModel = {
+          //       node: {
+          //         id: newId,
+          //         name: 'Exit from automation',
+          //         scenario_id: '1',
+          //         type: 'GOAL',
+          //       },
+          //       in_edge: {
+          //         id: cuid(),
+          //         source_id: this.node.id,
+          //         target_id: newId,
+          //         handler: 'GOAL',
+          //         scenario_id: child.in_edge!.scenario_id,
+          //       },
+          //       out_edges: [],
+          //     };
+          //     newEmptyOutEdges.push(emptyNode);
+          //   }
+          //   return newEmptyOutEdges;
+          // };
+          // let newOutEdges: StorylineNodeModel[] = [];
+          // if (isAbnNode(this.node)) {
+          //   const formBranchNumber = this.formData.automationNode.branch_number;
+          //   const nodeBranchNumber = this.node.branch_number;
+
+          //   if (formBranchNumber && nodeBranchNumber) {
+          //     const diff = formBranchNumber - nodeBranchNumber;
+          //     if (diff > 0) {
+          //       const newEmptyOutEdges = generateNewEmptyOutEdges(diff);
+          //       newOutEdges = child.out_edges.concat(newEmptyOutEdges);
+          //     } else if (diff === 0) {
+          //       newOutEdges = child.out_edges;
+          //     } else {
+          //       const childNodesLeft = child.out_edges.slice(
+          //         0,
+          //         formBranchNumber,
+          //       );
+          //       newOutEdges = childNodesLeft;
+          //     }
+          //   }
+          // } else {
+          //   newOutEdges = child.out_edges;
+          // }
+
           return {
             ...updatedNode,
             out_edges: this.generateOutEdges(child),
