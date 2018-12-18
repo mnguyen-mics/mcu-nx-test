@@ -66,7 +66,7 @@ const getDefaultDatamart = state => organisationId => {
 
 const hasDatamarts = state => organisationId => {
   const workspaces = getWorkspaces(state);
-  return workspaces[organisationId].datamarts.length > 0;
+  return workspaces && workspaces[organisationId] && workspaces[organisationId].datamarts.length > 0;
 };
 
 const hasWorkspace = state => organisationId => {

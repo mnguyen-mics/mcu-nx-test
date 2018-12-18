@@ -37,7 +37,7 @@ interface MapStateToProps {
   initialized: boolean;
   initializationError: boolean;
   defaultWorkspaceOrganisationId?: string;
-  workspaces: UserWorkspaceResource;
+  workspaces: {[orgid: number] : UserWorkspaceResource};
   setColorsStore: (mcsColors: { [key: string]: string }) => void;
   logOut: (action?: any, meta?: any) => void;
 }
@@ -103,6 +103,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
   render() {
     const {
       defaultWorkspaceOrganisationId,
+      workspaces,
       intl: { formatMessage },
       initialized,
       initializationError,
@@ -127,7 +128,10 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     }
 
     const basePath = '/v2/o/:organisationId(\\d+)';
-    const homeUrl = `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
+    const homeUrl = workspaces && defaultWorkspaceOrganisationId &&
+      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)] && workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts
+      && workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts.length > 0 ?
+      `/v2/o/${defaultWorkspaceOrganisationId}/audience/segments` : `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
 
     const renderRoute = ({
       match,
