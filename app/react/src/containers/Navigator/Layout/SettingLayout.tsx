@@ -173,7 +173,6 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
     const menu = (
       <NavigatorMenu
         mode={'vertical'}
-        collapsed={collapsed}
         onMenuItemClick={this.onMenuItemClick}
         className={'mcs-settings-main-menu'}
       />

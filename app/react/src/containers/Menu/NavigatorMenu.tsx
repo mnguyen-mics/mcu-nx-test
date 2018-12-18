@@ -24,7 +24,6 @@ const basePath = '/v2/o/:organisationId(\\d+)';
 
 export interface NavigatorMenuProps {
   mode: MenuMode;
-  collapsed: boolean;
   onMenuItemClick: () => void;
   className?: string;
 }
@@ -136,7 +135,6 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
     const {
       match: { params: { organisationId } },
       defaultDatamart,
-      collapsed,
     } = this.props;
 
     const baseUrl = `/v2/o/${organisationId}`;
@@ -174,11 +172,6 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
               }
               return (
                 <Menu.Item
-                  style={
-                    collapsed === true
-                      ? { display: 'none' }
-                      : { display: 'block' }
-                  }
                   key={subMenuItem.path}
                 >
                   <Link to={linkUrl}>
