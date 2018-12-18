@@ -5,7 +5,11 @@ import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Card } from '../../../../components/Card';
 import messages from './messages';
-import { EmailCampaignDashboardRouteMatchParam } from './constants';
+import {
+  EMAIL_DASHBOARD_SEARCH_SETTINGS,
+  EmailCampaignDashboardRouteMatchParam,
+  EmailDashboardSearchSettings
+} from './constants';
 import BlastTable, { BlastData } from './BlastTable';
 import { ReportViewResource } from '../../../../models/ReportView';
 import {
@@ -17,6 +21,10 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import log from '../../../../utils/Logger';
+import ReportService from '../../../../services/ReportService';
+import {parseSearch} from "../../../../utils/LocationSearchHelper";
+import {normalizeReportView} from "../../../../utils/MetricHelper";
+import {normalizeArrayOfObject} from "../../../../utils/Normalizer";
 
 export interface BlastCardProps {
   reportView?: ReportViewResource;
@@ -47,13 +55,32 @@ class BlastCard extends React.Component<Props, State> {
   }
 
   refreshData = () => {
-    const { match: { params: { campaignId } } } = this.props;
+    const {
+      location: { search },
+      match: {
+        params: { campaignId, organisationId }
+      }
+    } = this.props;
     this.setState({ isLoading: true });
-    EmailCampaignService.getBlasts(campaignId)
-      .then(res => {
+    const filter = parseSearch<EmailDashboardSearchSettings>(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
+    Promise.all([
+        ReportService.getEmailDeliveryReport(
+          organisationId,
+          filter.from,
+          filter.to,
+          ['campaign_id', 'sub_campaign_id']
+        ).then(report => {
+          return normalizeArrayOfObject(normalizeReportView(report.data.report_view), 'sub_campaign_id');
+        }),
+        EmailCampaignService.getBlasts(campaignId).then(res => res.data)
+    ])
+      .then(([deliveryReport, blastsData]) => {
         this.setState({
           isLoading: false,
-          blasts: res.data,
+          blasts: blastsData.map(b => ({
+            ...b,
+            ...deliveryReport[b.id],
+          })),
         });
       })
       .catch(err => {
