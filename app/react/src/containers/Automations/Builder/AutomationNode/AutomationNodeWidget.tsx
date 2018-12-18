@@ -28,6 +28,7 @@ interface AutomationNodeProps {
 interface State {
   focus: boolean;
   hover: boolean;
+  query?: string;
 }
 
 const messages = defineMessages({
@@ -95,6 +96,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     //   });
     // });
   };
+
+  handleQueryOnChange = (queryText: string) => {
+    this.setState({query: queryText});
+  } 
 
   render() {
     const { node } = this.props;
@@ -230,7 +235,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 {nodeType === 'START' ? (
                   <JSONQLPreview
                     datamartId={node.datamartId}
+                    value={this.state.query}
                     isTrigger={true}
+                    onChange={this.handleQueryOnChange}
                     context='AUTOMATION_BUILDER'
                   />
                 ) : (
