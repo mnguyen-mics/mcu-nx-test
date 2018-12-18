@@ -163,6 +163,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                   component={JSONQL}
                   inputProps={{
                     datamartId: datamartId!,
+                    context: 'GOALS',
                   }}
                 />,
               )

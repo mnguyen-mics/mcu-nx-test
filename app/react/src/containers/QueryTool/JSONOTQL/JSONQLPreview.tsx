@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { LoadingCounterValue } from '../../../components/Counter/Counter';
-import {
-  QueryDocument,
-} from '../../../models/datamart/graphdb/QueryDocument';
+import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import McsIcon from '../../../components/McsIcon';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
@@ -14,10 +12,13 @@ import JSONQLBuilderContainer, {
 } from './JSONQLBuilderContainer';
 import ActionBar from '../../../components/ActionBar';
 
+export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
+
 export interface JSONQLPreviewProps {
   value?: string;
   onChange?: (e: string) => void;
   datamartId: string;
+  context: JSONQLPreviewContext;
   isTrigger?: boolean;
 }
 
@@ -85,19 +86,31 @@ class JSONQLPreview extends React.Component<Props> {
   };
 
   render() {
-    return (
-      <div className="text-center m-t-20">
-        <Button onClick={this.openEditor}>
+    const { context } = this.props;
+
+    const displayMode =
+      context === 'AUTOMATION_BUILDER' ? (
+        <div onClick={this.openEditor} className="boolean-menu-item">
           {this.props.intl.formatMessage({
             id: 'jsonql.button.query.edit',
             defaultMessage: 'Edit Query',
           })}
-        </Button>
-      </div>
-    );
+        </div>
+      ) : (
+        <div className="text-center m-t-20">
+          <Button onClick={this.openEditor}>
+            {this.props.intl.formatMessage({
+              id: 'jsonql.button.query.edit',
+              defaultMessage: 'Edit Query',
+            })}
+          </Button>
+        </div>
+      );
+    return displayMode;
   }
 }
 
-export default compose<Props, JSONQLPreviewProps>(injectIntl, injectDrawer)(
-  JSONQLPreview,
-);
+export default compose<Props, JSONQLPreviewProps>(
+  injectIntl,
+  injectDrawer,
+)(JSONQLPreview);

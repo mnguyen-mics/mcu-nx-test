@@ -231,6 +231,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                   <JSONQLPreview
                     datamartId={node.datamartId}
                     isTrigger={true}
+                    context='AUTOMATION_BUILDER'
                   />
                 ) : (
                   <div onClick={this.editNode} className="boolean-menu-item">
