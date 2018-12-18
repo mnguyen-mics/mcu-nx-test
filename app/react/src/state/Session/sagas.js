@@ -8,7 +8,7 @@ import {
   WORKSPACE,
   GET_LOGO,
   PUT_LOGO,
-  LOG_IN,
+  CONNECTED_USER,
 } from '../action-types';
 
 import {
@@ -93,8 +93,8 @@ function* watchWorkspaceRequest() {
   yield takeEvery(WORKSPACE.REQUEST, fetchOrganisationWorkspace);
 }
 
-function* watchCookiesRequest() {
-  yield takeEvery(LOG_IN.SUCCESS, fetchUserCookies);
+function* watchConnectedUserRequest() {
+  yield takeEvery(CONNECTED_USER.SUCCESS, fetchUserCookies);
 }
 
 function* watchLogoDownloadRequest() {
@@ -108,6 +108,6 @@ function* watchLogoUploadRequest() {
 export const sessionSagas = [
   fork(watchWorkspaceRequest),
   fork(watchLogoDownloadRequest),
-  fork(watchCookiesRequest),
   fork(watchLogoUploadRequest),
+  fork(watchConnectedUserRequest),
 ];
