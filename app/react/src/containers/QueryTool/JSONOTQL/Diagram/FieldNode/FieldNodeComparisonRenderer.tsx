@@ -115,7 +115,7 @@ export default class FieldNodeComparisonRenderer extends React.Component<
 
   renderBooleanValues = (values: string[]) => {
     return values.reduce((acc, val, i) => {
-      return `${acc}${i !== 0 ? ', ' : ''}${val ? 'true' : 'false'}`;
+      return `${acc}${i !== 0 ? ', ' : ''}${val === 'true' ? 'true' : 'false'}`;
     }, '');
   };
 
