@@ -60,7 +60,7 @@
     "reselect": "^3.0.1",
     "storm-react-diagrams": "^5.2.1",
     "whatwg-fetch": "^2.0.4",
-    "xlsx": "^0.11.16"
+    "xlsx": "^0.14.1"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.6",
