@@ -98,7 +98,7 @@ export class AddNodeOperation implements NodeOperation {
             branchNumber: number,
           ): StorylineNodeModel[] => {
             const newEmptyOutEdges = [];
-            for (i = 0; i <= branchNumber; i++) {
+            for (i = 2; i <= branchNumber; i++) {
               const emptyNode: StorylineNodeModel = {
                 node: {
                   id: newId,
@@ -237,7 +237,7 @@ export class UpdateNodeOperation implements NodeOperation {
             branchNumber: number,
           ): StorylineNodeModel[] => {
             const newEmptyOutEdges = [];
-            for (i = 0; i <= branchNumber; i++) {
+            for (i = 1; i <= branchNumber; i++) {
               const newId = cuid();
               const emptyNode: StorylineNodeModel = {
                 node: {
@@ -261,11 +261,24 @@ export class UpdateNodeOperation implements NodeOperation {
           };
           let newOutEdges: StorylineNodeModel[] = [];
           if (isAbnNode(this.node)) {
-            const branchNumber = this.formData.automationNode.branch_number
-              ? this.formData.automationNode.branch_number - 1
-              : 0;
-            const emptyNodes = generateNewEmptyOutEdges(branchNumber);
-            newOutEdges = emptyNodes;
+            const formBranchNumber = this.formData.automationNode.branch_number;
+            const nodeBranchNumber = this.node.branch_number;
+
+            if (formBranchNumber && nodeBranchNumber) {
+              const diff = formBranchNumber - nodeBranchNumber;
+              if (diff > 0) {
+                const newEmptyOutEdges = generateNewEmptyOutEdges(diff);
+                newOutEdges = child.out_edges.concat(newEmptyOutEdges);
+              } else if (diff === 0) {
+                newOutEdges = child.out_edges;
+              } else {
+                const childNodesLeft = child.out_edges.slice(
+                  0,
+                  formBranchNumber,
+                );
+                newOutEdges = childNodesLeft;
+              }
+            }
           } else {
             newOutEdges = child.out_edges;
           }

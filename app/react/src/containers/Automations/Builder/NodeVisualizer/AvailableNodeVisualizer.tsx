@@ -72,7 +72,7 @@ const conditionNode1: ScenarioNodeShape = {
   type: 'ABN_NODE',
   scenario_id: '1',
   edges_selection: {},
-  branch_number: 0
+  branch_number: 2
 };
 
 const conditionNode2: ScenarioNodeShape = {
