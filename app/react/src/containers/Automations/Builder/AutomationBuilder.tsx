@@ -304,7 +304,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     const rootNode = new AutomationNodeModel(
       this.props.datamartId,
       automationData,
-      `${automationData.node.name}`, // - (type: ${automationData.node.type})`,
+      `${automationData.node.name}`,
       this.generateNodeProperties(automationData.node).color,
       this.generateNodeProperties(automationData.node).iconType,
       this.generateNodeProperties(automationData.node).iconAnt,

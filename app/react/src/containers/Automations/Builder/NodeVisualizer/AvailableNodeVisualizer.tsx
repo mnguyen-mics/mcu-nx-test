@@ -188,9 +188,6 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
         <Row className="available-node-visualizer-row">
           {this.createNodeGrid('Conditions', this.state.conditionNodes)}
         </Row>
-        {/* <Row className="available-node-visualizer-row">
-          {this.createNodeGrid('Exits', this.state.exitsNodes)}
-        </Row> */}
       </div>
     );
   }
