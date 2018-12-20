@@ -7,39 +7,39 @@ import {
   DragSourceConnector,
   DragSourceMonitor,
 } from 'react-dnd';
-import { AntIcon } from '../domain';
 import { Icon } from 'antd';
+import { ScenarioNodeShape } from '../../../../models/automations/automations';
+import { generateNodeProperties } from '../domain';
+import { isAbnNode } from '../AutomationNode/Edit/domain';
 
 interface AvailableNodeProps {
-  id: string;
-  name: string;
-  type: string;
-  color: string;
-  branchNumber?: number;
+  node: ScenarioNodeShape;
   connectDragSource?: ConnectDragSource;
   isDragging?: boolean;
   isDropped?: boolean;
-  icon?: McsIconType;
-  iconAnt?: AntIcon;
 }
 
 const fieldSource = {
   beginDrag(props: AvailableNodeProps) {
     return {
       id: cuid(),
-      name: props.name,
-      icon: props.icon,
-      iconAnt: props.iconAnt,
-      color: props.color,
-      type: props.type,
-      branch_number: props.branchNumber,
+      name: props.node.name,
+      icon: generateNodeProperties(props.node).iconType,
+      iconAnt: generateNodeProperties(props.node).iconAnt,
+      color: generateNodeProperties(props.node).color,
+      type: props.node.type,
+      branch_number: isAbnNode(props.node) ? props.node.branch_number : 0,
     };
   },
 };
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
   render() {
-    const { name, icon, color, connectDragSource, iconAnt } = this.props;
+    const { node, connectDragSource } = this.props;
+    const name = node.name;
+    const icon = generateNodeProperties(node).iconType;
+    const color = generateNodeProperties(node).color;
+    const iconAnt = generateNodeProperties(node).iconAnt;
 
     return (
       connectDragSource &&
@@ -49,9 +49,14 @@ class AvailableNode extends React.Component<AvailableNodeProps> {
             className="available-node-icon"
             style={{ backgroundColor: color }}
           >
-          { iconAnt ? <Icon type={iconAnt} className="available-node-icon-gyph"/> : 
-          <McsIcon type={icon as McsIconType} className="available-node-icon-gyph" />
-        }
+            {iconAnt ? (
+              <Icon type={iconAnt} className="available-node-icon-gyph" />
+            ) : (
+              <McsIcon
+                type={icon as McsIconType}
+                className="available-node-icon-gyph"
+              />
+            )}
           </div>
           <div className="available-node-text">{name}</div>
         </div>,

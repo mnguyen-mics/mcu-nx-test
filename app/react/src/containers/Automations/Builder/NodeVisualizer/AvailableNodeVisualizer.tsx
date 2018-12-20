@@ -5,7 +5,7 @@ import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { AntIcon, generateNodeProperties } from '../domain';
+import { AntIcon } from '../domain';
 
 const { TreeNode } = Tree;
 
@@ -21,7 +21,7 @@ const messages = defineMessages({
   },
 });
 
-export interface FakeNode {
+export interface AvailableNode {
   node: ScenarioNodeShape;
   iconType?: McsIconType;
   iconAnt?: AntIcon;
@@ -35,7 +35,7 @@ interface State {
   exitsNodes: ScenarioNodeShape[];
 }
 
-const fakeNode: ScenarioNodeShape = {
+const emailCampaignNode: ScenarioNodeShape = {
   id: cuid(),
   name: 'Send Email',
   type: 'EMAIL_CAMPAIGN',
@@ -43,7 +43,7 @@ const fakeNode: ScenarioNodeShape = {
   campaign_id: '',
 };
 
-const fakeNode2: ScenarioNodeShape = {
+const displayCampaignNode: ScenarioNodeShape = {
   id: cuid(),
   name: 'Display Advertising',
   type: 'DISPLAY_CAMPAIGN',
@@ -81,7 +81,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
 
   componentWillMount() {
     this.setState({
-      actionNodes: [fakeNode, fakeNode2],
+      actionNodes: [emailCampaignNode, displayCampaignNode],
       conditionNodes: [conditionNode1, conditionNode2],
       exitsNodes: [],
     });
@@ -97,13 +97,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
                 title={
                   <AvailableNode
                     key={node.id}
-                    id={node.id}
-                    type={node.type}
-                    name={node.name}
-                    branchNumber={generateNodeProperties(node).branchNumber}
-                    icon={generateNodeProperties(node).iconType}
-                    iconAnt={generateNodeProperties(node).iconAnt}
-                    color={generateNodeProperties(node).color}
+                    node={node}
                   />
                 }
                 key={cuid()}
