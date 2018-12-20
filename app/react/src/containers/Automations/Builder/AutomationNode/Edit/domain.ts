@@ -14,8 +14,18 @@ import { AdGroupResource, DisplayCampaignResource } from '../../../../../models/
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
 import { DefaultAutomationFormProps } from './DefaultForm/DefaultAutomationForm';
 import { DisplayCampaignAutomationFormProps } from './DisplayCampaignForm/DisplayCampaignAutomationForm';
-import { TemplateFieldModel, ConsentFieldModel, BlastFieldModel, RouterFieldModel } from '../../../../Campaigns/Email/Edit/domain';
-import { EmailBlastResource, EmailBlastCreateRequest, EmailCampaignCreateRequest, EmailCampaignResource } from '../../../../../models/campaign/email';
+import {
+  TemplateFieldModel,
+  ConsentFieldModel,
+  BlastFieldModel,
+  RouterFieldModel,
+} from '../../../../Campaigns/Email/Edit/domain';
+import {
+  EmailBlastResource,
+  EmailBlastCreateRequest,
+  EmailCampaignCreateRequest,
+  EmailCampaignResource,
+} from '../../../../../models/campaign/email';
 import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampaignAutomationForm';
 
 export interface DefaultFormData {
@@ -65,11 +75,11 @@ export function isScenarioNodeShape(
 }
 
 export function isAbnNode(node: AutomationNodeShape): node is ABNNodeResource {
-  return node.type==='ABN_NODE';
+  return node.type === 'ABN_NODE';
 }
 
 export function isDisplayCampaignNode(
   node: AutomationNodeShape,
 ): node is DisplayCampaignNodeResource {
-  return node.type==='DISPLAY_CAMPAIGN';
+  return node.type === 'DISPLAY_CAMPAIGN';
 }
