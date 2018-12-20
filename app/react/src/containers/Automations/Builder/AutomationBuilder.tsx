@@ -155,7 +155,9 @@ class AutomationBuilder extends React.Component<Props, State> {
     formData: AutomationFormDataType,
   ): StorylineNodeModel => {
     return this.props.updateAutomationData(
-      new UpdateNodeOperation(node, formData).execute(this.props.automationData),
+      new UpdateNodeOperation(node, formData).execute(
+        this.props.automationData,
+      ),
     );
   };
 

@@ -86,7 +86,7 @@ class AutomationLinkWidget extends React.Component<Props> {
       );
     }
 
-    return (<g>{paths}</g>)
+    return <g>{paths}</g>;
   }
 }
 
