@@ -59,6 +59,10 @@ export default defineMessages({
     id: 'segment.overlap.button.create',
     defaultMessage: 'Create Overlap Analysis'
   },
+  overlapFetchingError: {
+    id: 'segment.overlap.error',
+    defaultMessage: 'An unexpected error happened running your overlap. Please retry.'
+  },
   lookAlikeCreation: {
     id: 'segment.lookalike.button.create',
     defaultMessage: 'Create Lookalike'
