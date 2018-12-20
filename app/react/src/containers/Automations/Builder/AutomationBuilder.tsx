@@ -18,16 +18,14 @@ import {
   EdgeHandler,
   ScenarioNodeShape,
 } from '../../../models/automations/automations';
-import { McsIconType } from '../../../components/McsIcon';
 import {
   StorylineNodeModel,
   DropNode,
-  AutomationNodeShape,
   DeleteNodeOperation,
   AddNodeOperation,
   TreeNodeOperations,
-  AntIcon,
   UpdateNodeOperation,
+  generateNodeProperties,
 } from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
@@ -170,9 +168,9 @@ class AutomationBuilder extends React.Component<Props, State> {
       this.props.datamartId,
       nodeModel,
       `${nodeModel.node.name}`, // - (type: ${nodeModel.node.type})`,
-      this.generateNodeProperties(nodeModel.node).color,
-      this.generateNodeProperties(nodeModel.node).iconType,
-      this.generateNodeProperties(nodeModel.node).iconAnt,
+      generateNodeProperties(nodeModel.node).color,
+      generateNodeProperties(nodeModel.node).iconType,
+      generateNodeProperties(nodeModel.node).iconAnt,
     );
     return storylineNode;
   }
@@ -245,58 +243,6 @@ class AutomationBuilder extends React.Component<Props, State> {
     }, maxHeight);
   };
 
-  generateNodeProperties = (
-    node: AutomationNodeShape,
-  ): {
-    color: string;
-    iconType?: McsIconType;
-    iconAnt?: AntIcon;
-  } => {
-    switch (node.type) {
-      case 'DISPLAY_CAMPAIGN':
-        return {
-          iconType: 'display',
-          color: '#0ba6e1',
-        };
-      case 'EMAIL_CAMPAIGN':
-        return {
-          iconType: 'email',
-          color: '#0ba6e1',
-        };
-      case 'QUERY_INPUT':
-      case 'ABN_NODE':
-        return {
-          iconAnt: 'fork',
-          color: '#fbc02d',
-        };
-      case 'GOAL':
-        return {
-          iconType: 'check',
-          color: '#18b577',
-        };
-      case 'FAILURE':
-        return {
-          iconType: 'close',
-          color: '#ff5959',
-        };
-      case 'START':
-        return {
-          iconAnt: 'flag',
-          color: '#fbc02d',
-        };
-      case 'WAIT':
-        return {
-          iconAnt: 'clock-circle',
-          color: '#fbc02d',
-        };
-      default:
-        return {
-          iconType: 'info',
-          color: '#fbc02d',
-        };
-    }
-  };
-
   startAutomationTree = (
     automationData: StorylineNodeModel,
     model: DiagramModel,
@@ -305,9 +251,9 @@ class AutomationBuilder extends React.Component<Props, State> {
       this.props.datamartId,
       automationData,
       `${automationData.node.name}`,
-      this.generateNodeProperties(automationData.node).color,
-      this.generateNodeProperties(automationData.node).iconType,
-      this.generateNodeProperties(automationData.node).iconAnt,
+      generateNodeProperties(automationData.node).color,
+      generateNodeProperties(automationData.node).iconType,
+      generateNodeProperties(automationData.node).iconAnt,
     );
     rootNode.root = true;
     rootNode.x = ROOT_NODE_POSITION.x;

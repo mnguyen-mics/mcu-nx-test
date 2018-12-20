@@ -5,7 +5,7 @@ import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { AntIcon } from '../domain';
+import { AntIcon, generateNodeProperties } from '../domain';
 
 const { TreeNode } = Tree;
 
@@ -79,59 +79,6 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
     };
   }
 
-  generateNodeProperties = (node: ScenarioNodeShape): FakeNode => {
-    switch (node.type) {
-      case 'DISPLAY_CAMPAIGN':
-        return {
-          node: node,
-          iconType: 'display',
-          color: '#0ba6e1',
-        };
-      case 'EMAIL_CAMPAIGN':
-        return {
-          node: node,
-          iconType: 'email',
-          color: '#0ba6e1',
-        };
-      case 'QUERY_INPUT':
-      return {
-        node: node,
-        iconType: 'question',
-        color: '#fbc02d',
-      };
-      case 'ABN_NODE':
-        return {
-          node: node,
-          iconAnt: 'fork',
-          color: '#fbc02d',
-        };
-      case 'GOAL':
-        return {
-          node: node,
-          iconType: 'check',
-          color: '#18b577',
-        };
-      case 'FAILURE':
-        return {
-          node: node,
-          iconType: 'close',
-          color: '#ff5959',
-        };
-        case 'WAIT':
-        return {
-          node: node,
-          iconAnt: 'clock-circle',
-          color: '#fbc02d',
-        };
-      default:
-        return {
-          node: node,
-          iconType: 'info',
-          color: '#fbc02d',
-        };
-    }
-  };
-
   componentWillMount() {
     this.setState({
       actionNodes: [fakeNode, fakeNode2],
@@ -153,12 +100,10 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
                     id={node.id}
                     type={node.type}
                     name={node.name}
-                    branchNumber={
-                      this.generateNodeProperties(node).branchNumber
-                    }
-                    icon={this.generateNodeProperties(node).iconType}
-                    iconAnt={this.generateNodeProperties(node).iconAnt}
-                    color={this.generateNodeProperties(node).color}
+                    branchNumber={generateNodeProperties(node).branchNumber}
+                    icon={generateNodeProperties(node).iconType}
+                    iconAnt={generateNodeProperties(node).iconAnt}
+                    color={generateNodeProperties(node).color}
                   />
                 }
                 key={cuid()}

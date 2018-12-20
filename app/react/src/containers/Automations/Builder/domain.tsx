@@ -12,6 +12,7 @@ import {
   DisplayCampaignFormData,
   EmailCampaignAutomationFormData,
 } from './AutomationNode/Edit/domain';
+import { McsIconType } from '../../../components/McsIcon';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -437,3 +438,61 @@ export const edge12: ScenarioEdgeResource = {
 };
 
 export const storylineEdgeData: ScenarioEdgeResource[] = [edge12];
+
+export function generateNodeProperties(
+  node: AutomationNodeShape,
+): {
+  color: string;
+  iconType?: McsIconType;
+  iconAnt?: AntIcon;
+  branchNumber?: number;
+} {
+  switch (node.type) {
+    case 'DISPLAY_CAMPAIGN':
+      return {
+        iconType: 'display',
+        color: '#0ba6e1',
+      };
+    case 'EMAIL_CAMPAIGN':
+      return {
+        iconType: 'email',
+        color: '#0ba6e1',
+      };
+    case 'QUERY_INPUT':
+      return {
+        iconAnt: 'fork',
+        color: '#fbc02d',
+      };
+    case 'ABN_NODE':
+      return {
+        iconAnt: 'fork',
+        color: '#fbc02d',
+        branchNumber: node.branch_number,
+      };
+    case 'GOAL':
+      return {
+        iconType: 'check',
+        color: '#18b577',
+      };
+    case 'FAILURE':
+      return {
+        iconType: 'close',
+        color: '#ff5959',
+      };
+    case 'START':
+      return {
+        iconAnt: 'flag',
+        color: '#fbc02d',
+      };
+    case 'WAIT':
+      return {
+        iconAnt: 'clock-circle',
+        color: '#fbc02d',
+      };
+    default:
+      return {
+        iconType: 'info',
+        color: '#fbc02d',
+      };
+  }
+}
