@@ -107,7 +107,7 @@ export class OverlapInterval implements IOverlapInterval {
                 )
                 .then(formattedOverlapData => ({
                   ...formattedResponse,
-                  hasOverlap: true,
+                  hasOverlap: !!formattedOverlapData,
                   data: formattedOverlapData,
                 }))
                 .catch(() => ({
