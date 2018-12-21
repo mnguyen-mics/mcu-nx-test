@@ -6,6 +6,8 @@ import { StorylineNodeModel, AntIcon } from '../domain';
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
   negation = false;
+  datamartId: string;
+  iconType: McsIconType;
   title: string;
   color: string;
   storylineNodeModel: StorylineNodeModel;
@@ -13,7 +15,7 @@ export default class AutomationNodeModel extends NodeModel {
   icon?: McsIconType;
   iconAnt?: AntIcon;  
 
-  constructor(
+  constructor(datamartId: string,
     storylineNodeModel: StorylineNodeModel,
     title: string,
     color: string,
@@ -27,6 +29,7 @@ export default class AutomationNodeModel extends NodeModel {
     this.addPort(new SimplePortModel('right'));
 
     this.icon = iconType;
+    this.datamartId = datamartId;
     this.title = title;
     this.color = color;
     this.storylineNodeModel = storylineNodeModel;

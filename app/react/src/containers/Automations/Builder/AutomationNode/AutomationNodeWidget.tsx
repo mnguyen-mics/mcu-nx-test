@@ -16,6 +16,7 @@ import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer'
 import { TreeNodeOperations } from '../domain';
 import { Icon } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
+import JSONQLPreview from '../../../QueryTool/JSONOTQL/JSONQLPreview';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -27,6 +28,7 @@ interface AutomationNodeProps {
 interface State {
   focus: boolean;
   hover: boolean;
+  query?: string;
 }
 
 const messages = defineMessages({
@@ -94,6 +96,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     //   });
     // });
   };
+
+  handleQueryOnChange = (queryText: string) => {
+    this.setState({query: queryText});
+  } 
 
   render() {
     const { node } = this.props;
@@ -226,9 +232,20 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               >
                 {/* Uncomment when feature is ready */}
                 {/* <div onClick={this.toggleCollapsed} className='boolean-menu-item'>Collapse</div> */}
-                <div onClick={this.editNode} className="boolean-menu-item">
-                  <FormattedMessage {...messages.edit} />
-                </div>
+                {nodeType === 'START' ? (
+                  <JSONQLPreview
+                    datamartId={node.datamartId}
+                    value={this.state.query}
+                    isTrigger={true}
+                    onChange={this.handleQueryOnChange}
+                    context='AUTOMATION_BUILDER'
+                  />
+                ) : (
+                  <div onClick={this.editNode} className="boolean-menu-item">
+                    <FormattedMessage {...messages.edit} />
+                  </div>
+                )}
+
                 {nodeType !== 'START' &&
                   nodeType !== 'GOAL' &&
                   nodeType !== 'FAILURE' && (

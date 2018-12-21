@@ -135,6 +135,7 @@ class TriggerFormSection extends React.Component<Props, State> {
         inputProps={{
           datamartId: datamart.id!,
           isTrigger: true,
+          context: 'GOALS',
         }}
       />
     

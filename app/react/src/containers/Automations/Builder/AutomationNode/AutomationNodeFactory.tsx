@@ -47,6 +47,7 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
       out_edges: [],
     };
     return new AutomationNodeModel(
+      '1162',
       emptyNode,
       'User belongs to ### segment',
       '#2ecc71',
