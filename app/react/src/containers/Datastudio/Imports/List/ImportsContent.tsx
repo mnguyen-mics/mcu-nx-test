@@ -307,9 +307,9 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         ),
       },
       {
-        translationKey: 'content_type',
-        intlMessage: messages.contentType,
-        key: 'content_type',
+        translationKey: 'mime_type',
+        intlMessage: messages.mimeType,
+        key: 'mime_type',
         isHideable: false,
         render: (text: string, record: Import) => <span>{text}</span>,
       },

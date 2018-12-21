@@ -41,13 +41,13 @@ const messages = defineMessages({
     id: 'edit.import.general.infos.tooltip.encoding',
     defaultMessage: 'Choose the encoding.',
   },
-  labelImportContentType: {
-    id: 'edit.import.general.infos.label.content.type',
-    defaultMessage: 'Content-Type',
+  labelImportMimeType: {
+    id: 'edit.import.general.infos.label.mime.type',
+    defaultMessage: 'Mime-Type',
   },
-  tootltipImportContentType: {
-    id: 'edit.import.general.infos.tooltip.content.type',
-    defaultMessage: 'Choose the content-type.',
+  tootltipImportMimeType: {
+    id: 'edit.import.general.infos.tooltip.mime.type',
+    defaultMessage: 'Choose the mime-type.',
   },
   labelImportDocumentType: {
     id: 'edit.import.general.infos.label.dcoument.type',
@@ -115,6 +115,14 @@ class GeneralFormSection extends React.Component<Props, State> {
                 title: 'USER_ACTIVITY',
                 value: 'USER_ACTIVITY',
               },
+              {
+                title: 'USER_PROFILE',
+                value: 'USER_PROFILE',
+              },
+              {
+                title: 'USER_SEGMENT',
+                value: 'USER_SEGMENT',
+              },
             ]}
             formItemProps={{
               label: formatMessage(messages.labelImportDocumentType),
@@ -126,22 +134,26 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
           />
           <DefaultSelectField
-            name="content_type"
+            name="mime_type"
             component={DefaultSelect}
             validate={[isRequired]}
             options={[
               {
-                title: 'application/x-ndjson',
-                value: 'application/x-ndjson',
+                title: 'X_NDJSON',
+                value: 'X_NDJSON',
+              },
+              {
+                title: 'TEXT_CSV',
+                value: 'TEXT_CSV',
               },
             ]}
             formItemProps={{
-              label: formatMessage(messages.labelImportContentType),
+              label: formatMessage(messages.labelImportMimeType),
               colon: false,
               required: true,
             }}
             helpToolTipProps={{
-              title: formatMessage(messages.tootltipImportContentType),
+              title: formatMessage(messages.tootltipImportMimeType),
             }}
           />
           <DefaultSelectField

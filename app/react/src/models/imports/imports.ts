@@ -4,13 +4,13 @@ export interface Import {
   name: string;
   datafarm_key: string;
   encoding: string;
-  content_type: string;
+  mime_type: string;
 }
 
 export interface ImportCreateResource {
   name: string;
   encoding: string;
-  content_type: string
+  mime_type: string
 }
 
 export interface ImportExecution {

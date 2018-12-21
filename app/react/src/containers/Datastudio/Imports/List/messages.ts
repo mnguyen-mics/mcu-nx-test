@@ -33,9 +33,9 @@ export default defineMessages({
     id: 'imports.table.column.type',
     defaultMessage: 'Type',
   },
-  contentType: {
-    id: 'imports.table.column.content.type',
-    defaultMessage: 'Content Type',
+  mimeType: {
+    id: 'imports.table.column.mime.type',
+    defaultMessage: 'Mime-Type',
   },
   documentType: {
     id: 'imports.table.column.document.type',

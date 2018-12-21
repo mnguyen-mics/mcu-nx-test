@@ -82,11 +82,10 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
   };
 
   checkIfSizeOK = (file: UploadFile) => {
-    const maxFileSize = 1000000;
     const {
       intl: { formatMessage },
     } = this.props;
-    const isSizeOK = file.size < maxFileSize;
+    const isSizeOK = file.size / 1024 / 1024 < 100;
     if (!isSizeOK) {
       message.error(`${file.name} ${formatMessage(messages.uploadError)}`, 2);
     }
