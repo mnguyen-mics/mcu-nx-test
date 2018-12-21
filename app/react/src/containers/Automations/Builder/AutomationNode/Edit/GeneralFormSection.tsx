@@ -114,42 +114,6 @@ class GeneralFormSection extends React.Component<Props, State> {
               />
             )}
         </div>
-
-        {/* <div>
-          <ButtonStyleless
-            className="optional-section-title"
-            onClick={this.toggleAdvancedSection}
-          >
-            <McsIcon type="settings" />
-            <span className="step-title">
-              {formatMessage(messages.advancedSection)}
-            </span>
-            <McsIcon type="chevron" />
-          </ButtonStyleless>
-
-          <div
-            className={
-              !this.state.displayAdvancedSection
-                ? 'hide-section'
-                : 'optional-section-content'
-            }
-          >
-            <FormInputField
-              name="automationNode.technical_name"
-              component={FormInput}
-              formItemProps={{
-                label: formatMessage(messages.loremIpsum),
-              }}
-              inputProps={{
-                placeholder: formatMessage(messages.loremIpsum),
-              }}
-              helpToolTipProps={{
-                title: formatMessage(messages.loremIpsum),
-              }}
-              small={true}
-            />
-          </div>
-        </div> */}
       </div>
     );
   }
