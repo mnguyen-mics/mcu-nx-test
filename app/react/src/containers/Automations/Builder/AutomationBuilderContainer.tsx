@@ -1,12 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Button, Layout } from 'antd';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { message, Layout, Button } from 'antd';
 import { connect } from 'react-redux';
 import * as SessionHelper from '../../../state/Session/selectors';
 import injectNotifications, {
@@ -27,29 +21,31 @@ import {
   storylineNodeData,
 } from './domain';
 import ActionBar from '../../../components/ActionBar';
-
-const messages = defineMessages({
-  automationBuilder: {
-    id: 'automation.builder.action.bar.path',
-    defaultMessage: 'Automation Builder',
-  },
-});
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { messages } from './AutomationBuilderPage';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IScenarioService } from '../../../services/ScenarioService';
+import { isScenarioNodeShape } from './AutomationNode/Edit/domain';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
-  renderActionBar: (datamartId: string) => React.ReactNode;
 }
 
 interface State {
   automationData: StorylineNodeModel;
+  loading: boolean;
 }
 
 type Props = AutomationBuilderContainerProps &
-  InjectedIntlProps &
   InjectedNotificationProps &
+  InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AutomationBuilderContainer extends React.Component<Props, State> {
+  @lazyInject(TYPES.IScenarioService)
+  private _scenarioService: IScenarioService;
+
   constructor(props: Props) {
     super(props);
 
@@ -59,8 +55,51 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
         storylineNodeData,
         storylineEdgeData,
       ),
+      loading: false,
     };
   }
+
+  saveAutomation = () => {
+    const { intl, notifyError } = this.props;
+
+    const { automationData } = this.state;
+
+    const hideSaveInProgress = message.loading(
+      intl.formatMessage(messages.savingInProgress),
+      0,
+    );
+    this.setState({
+      loading: true,
+    });
+
+    if (isScenarioNodeShape(automationData.node)) {
+      this._scenarioService
+        .createScenarioNode(automationData.node)
+        .then(() => {
+          hideSaveInProgress();
+          this.close();
+          message.success(intl.formatMessage(messages.automationSaved));
+        })
+        .catch(err => {
+          this.setState({ loading: false });
+          notifyError(err);
+          hideSaveInProgress();
+        });
+    }
+  };
+
+  close = () => {
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const url = `/v2/o/${organisationId}/automations/list`;
+
+    return history.push(url);
+  };
 
   buildAutomationTreeData(
     storylineData: StorylineResource,
@@ -129,8 +168,8 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    return (
-      <Layout>
+    const renderActionBar = () => {
+      return (
         <ActionBar
           paths={[
             {
@@ -138,13 +177,23 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
             },
           ]}
         >
-          <Button className="mcs-primary" type="primary">
+          <Button
+            className="mcs-primary"
+            type="primary"
+            onClick={this.saveAutomation}
+          >
             <FormattedMessage
               id="automation.builder.action.bar.save"
-              defaultMessage="Save"
+              defaultMessage="Save As"
             />
           </Button>
         </ActionBar>
+      );
+    };
+
+    return (
+      <Layout>
+        {renderActionBar()}
         <Layout.Content
           className={`mcs-content-container`}
           style={{ padding: 0, overflow: 'hidden' }}

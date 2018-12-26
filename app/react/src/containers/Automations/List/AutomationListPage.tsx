@@ -17,9 +17,10 @@ import injectDrawer, {
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import ScenarioService, {
+import {
   GetAutomationsOptions,
   SCENARIOS_SEARCH_SETTINGS,
+  IScenarioService,
 } from '../../../services/ScenarioService';
 import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
@@ -27,6 +28,8 @@ import AutomationListTable from './AutomationListTable';
 import { getTableDataSource } from '../../../state/Automations/selectors';
 import * as AutomationsListActions from '../../../state/Automations/actions';
 import AutomationActionBar from './AutomationActionBar';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
 
 export interface MapDispatchToProps {
   labels: Label[];
@@ -73,6 +76,9 @@ class AutomationListPage extends React.Component<
   JoinedProps,
   AutomationListPageState
 > {
+  @lazyInject(TYPES.IScenarioService)
+  private _scenarioService: IScenarioService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -102,7 +108,8 @@ class AutomationListPage extends React.Component<
       organisation_id: organisationId,
       max_results: totalAutomations,
     };
-    return ScenarioService.getScenarios(organisationId, options)
+    return this._scenarioService
+      .getScenarios(organisationId, options)
       .then(apiResp => apiResp.data.map(scenarioResource => scenarioResource))
       .catch(err => {
         notifyError(err);
@@ -149,13 +156,14 @@ class AutomationListPage extends React.Component<
     });
     const { notifyError } = this.props;
 
-    return ScenarioService.updateScenario(scenario.id, {
-      id: scenario.id,
-      name: scenario.name,
-      status: status,
-      datamart_id: scenario.datamart_id,
-      organisation_id: scenario.organisation_id,
-    })
+    return this._scenarioService
+      .updateScenario(scenario.id, {
+        id: scenario.id,
+        name: scenario.name,
+        status: status,
+        datamart_id: scenario.datamart_id,
+        organisation_id: scenario.organisation_id,
+      })
       .then(() => {
         this.setState({
           isUpdatingStatuses: false,
@@ -217,36 +225,40 @@ class AutomationListPage extends React.Component<
       keywords: filter.keywords,
     };
 
-    ScenarioService.getScenarios(organisationId, options).then(apiResp => {
-      const scenariosToUpdate = allRowsAreSelected
-        ? apiResp.data
-        : selectedRowKeys
-        ? apiResp.data.filter(scenario => selectedRowKeys.includes(scenario.id))
-        : [];
-      const tasks: Task[] = [];
-      scenariosToUpdate.forEach(scenario => {
-        tasks.push(() => {
-          return this.updateAutomationStatus(scenario, status);
-        });
-      });
-      executeTasksInSequence(tasks)
-        .then(() => {
-          this.setState(
-            {
-              isUpdatingStatuses: false,
-            },
-            () => {
-              fetchAutomationList(organisationId, filter);
-            },
-          );
-        })
-        .catch((err: any) => {
-          this.setState({
-            isUpdatingStatuses: false,
+    this._scenarioService
+      .getScenarios(organisationId, options)
+      .then(apiResp => {
+        const scenariosToUpdate = allRowsAreSelected
+          ? apiResp.data
+          : selectedRowKeys
+          ? apiResp.data.filter(scenario =>
+              selectedRowKeys.includes(scenario.id),
+            )
+          : [];
+        const tasks: Task[] = [];
+        scenariosToUpdate.forEach(scenario => {
+          tasks.push(() => {
+            return this.updateAutomationStatus(scenario, status);
           });
-          this.props.notifyError(err);
         });
-    });
+        executeTasksInSequence(tasks)
+          .then(() => {
+            this.setState(
+              {
+                isUpdatingStatuses: false,
+              },
+              () => {
+                fetchAutomationList(organisationId, filter);
+              },
+            );
+          })
+          .catch((err: any) => {
+            this.setState({
+              isUpdatingStatuses: false,
+            });
+            this.props.notifyError(err);
+          });
+      });
   };
 
   render() {

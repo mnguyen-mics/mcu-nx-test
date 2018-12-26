@@ -1,3 +1,4 @@
+import { ScenarioNodeShape } from './../models/automations/automations';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   AutomationResource,
@@ -10,6 +11,7 @@ import {
   FILTERS_SEARCH_SETTINGS,
   KEYWORD_SEARCH_SETTINGS,
 } from '../utils/LocationSearchHelper';
+import { injectable } from 'inversify';
 
 export interface GetAutomationsOptions extends PaginatedApiParam {
   organisation_id?: string;
@@ -26,7 +28,30 @@ export const SCENARIOS_SEARCH_SETTINGS = [
   ...KEYWORD_SEARCH_SETTINGS,
 ];
 
-const scenariosService = {
+export interface IScenarioService {
+  getScenarios: (
+    organisationId: string,
+    options: object,
+  ) => Promise<DataListResponse<AutomationResource>>;
+  getScenario: (
+    scenarioId: string,
+    options?: object,
+  ) => Promise<DataResponse<AutomationResource>>;
+  createScenario: (
+    organisationId: string,
+    scenario: AutomationCreateResource,
+  ) => Promise<DataResponse<AutomationResource>>;
+  updateScenario: (
+    scenarioId: string,
+    scenario: AutomationResource,
+  ) => Promise<DataResponse<AutomationResource>>;
+  createScenarioNode: (
+    scenarioNode: ScenarioNodeShape,
+  ) => Promise<DataResponse<AutomationResource>>;
+}
+
+@injectable()
+export class ScenariosService implements IScenarioService {
   getScenarios(
     organisationId: string,
     options: object = {},
@@ -37,28 +62,33 @@ const scenariosService = {
       ...options,
     };
     return ApiService.getRequest(endpoint, params);
-  },
+  }
   getScenario(
     scenarioId: string,
     options: object = {},
   ): Promise<DataResponse<AutomationResource>> {
     const endpoint = `scenarios/${scenarioId}`;
     return ApiService.getRequest(endpoint, options);
-  },
+  }
   createScenario(
     organisationId: string,
     scenario: AutomationCreateResource,
   ): Promise<DataResponse<AutomationResource>> {
     const endpoint = `scenarios?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, scenario);
-  },
+  }
   updateScenario(
     scenarioId: string,
     scenario: AutomationResource,
   ): Promise<DataResponse<AutomationResource>> {
     const endpoint = `scenarios/${scenarioId}`;
     return ApiService.putRequest(endpoint, scenario);
-  },
-};
-
-export default scenariosService;
+  }
+  createScenarioNode(
+    scenarioId: string,
+    scenarioNode: ScenarioNodeShape,
+  ): Promise<DataResponse<AutomationResource>> {
+    const endpoint = `scenarios/${scenarioId}/storyline/nodes`;
+    return ApiService.postRequest(endpoint, scenarioNode);
+  }
+}

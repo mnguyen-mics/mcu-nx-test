@@ -55,6 +55,10 @@ import {
   DealListFormService,
 } from '../containers/Library/Deal/Edit/DealListFormService';
 import CompartmentService, { IComparmentService } from '../services/CompartmentService';
+import {
+  IScenarioService,
+  ScenariosService,
+} from '../services/ScenarioService';
 
 const container = new Container();
 
@@ -100,7 +104,9 @@ container
 container
   .bind<IComparmentService>(TYPES.ICompartmentService)
   .to(CompartmentService);
-
+container
+  .bind<IScenarioService>(TYPES.IScenarioService)
+  .toConstructor(ScenariosService);
 
 export const { lazyInject } = getDecorators(container, false);
 

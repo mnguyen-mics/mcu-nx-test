@@ -9,7 +9,6 @@ import { DatamartSelector } from '../../Datamart';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import {
   UserProfileResource,
   UserWorkspaceResource,
@@ -29,16 +28,27 @@ type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
   InjectedNotificationProps &
   InjectedIntlProps;
 
-const messages = defineMessages({
+export const messages = defineMessages({
   automationBuilder: {
-    id: 'automation-builder-page-actionbar-title',
+    id: 'automation.builder.page.actionbar.title',
     defaultMessage: 'Automation Builder',
+  },
+  savingInProgress: {
+    id: 'automation.builder.page.actionbar.save.in.progress',
+    defaultMessage: 'Saving in progress',
+  },
+  automationSaved: {
+    id: 'automation.builder.page.automation.saved',
+    defaultMessage: 'Automation Saved',
   },
 });
 
 class AutomationBuilderPage extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      loading: false,
+    };
   }
 
   render() {
@@ -74,18 +84,6 @@ class AutomationBuilderPage extends React.Component<Props> {
       );
     }
 
-    const automationActionBar = (datamartId: string) => {
-      return (
-        <SaveQueryAsActionBar
-          breadcrumb={[
-            {
-              name: intl.formatMessage(messages.automationBuilder),
-            },
-          ]}
-        />
-      );
-    };
-
     const style: React.CSSProperties = { height: '100%', display: 'flex' };
     return (
       <div style={style}>
@@ -103,10 +101,7 @@ class AutomationBuilderPage extends React.Component<Props> {
         )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201709' && (
-            <AutomationBuilderContainer
-              datamartId={selectedDatamart.id}
-              renderActionBar={automationActionBar}
-            />
+            <AutomationBuilderContainer datamartId={selectedDatamart.id} />
           )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201506' &&

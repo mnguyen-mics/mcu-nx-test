@@ -7,7 +7,6 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import * as NotificationActions from '../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../state/Features/selectors';
 import { EditAutomationParam, AutomationFormData } from './domain';
-import ScenarioService from '../../../services/ScenarioService';
 import AutomationEditForm from './AutomationEditForm';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import {
@@ -19,6 +18,9 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { Loading } from '../../../components';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IScenarioService } from '../../../services/ScenarioService';
 
 interface State {
   automationFormData: AutomationFormData;
@@ -53,6 +55,9 @@ class EditAutomationPage extends React.Component<Props, State> {
     .element(document.body)
     .injector()
     .get('core/common/auth/Session');
+
+  @lazyInject(TYPES.IScenarioService)
+  private _scenarioService: IScenarioService;
 
   constructor(props: Props) {
     super(props);
@@ -97,7 +102,8 @@ class EditAutomationPage extends React.Component<Props, State> {
   }
 
   fetchInitialData = (automationId: string) => {
-    return ScenarioService.getScenario(automationId)
+    return this._scenarioService
+      .getScenario(automationId)
       .then(res => res.data)
       .then(res =>
         this.setState({
@@ -119,12 +125,12 @@ class EditAutomationPage extends React.Component<Props, State> {
   save = (formData: AutomationFormData) => {
     const generatePromise = () => {
       if (this.props.match.params.automationId) {
-        return ScenarioService.updateScenario(
+        return this._scenarioService.updateScenario(
           this.props.match.params.automationId,
           formData.automation as AutomationResource,
         );
       }
-      return ScenarioService.createScenario(
+      return this._scenarioService.createScenario(
         this.props.match.params.organisationId,
         formData.automation as AutomationCreateResource,
       );
