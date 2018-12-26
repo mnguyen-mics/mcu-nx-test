@@ -4,11 +4,26 @@ import { Layout, Tooltip, Icon } from 'antd';
 import { compose } from 'recompose';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import withTranslations, { TranslationProps } from '../../Helpers/withTranslations';
-import { AutomationResource, AutomationStatus, automationStatuses } from '../../../models/automations/automations';
-import { updateSearch, compareSearches, isSearchValid, buildDefaultSearch, parseSearch } from '../../../utils/LocationSearchHelper';
+import withTranslations, {
+  TranslationProps,
+} from '../../Helpers/withTranslations';
+import {
+  AutomationResource,
+  AutomationStatus,
+  automationStatuses,
+} from '../../../models/automations/automations';
+import {
+  updateSearch,
+  compareSearches,
+  isSearchValid,
+  buildDefaultSearch,
+  parseSearch,
+} from '../../../utils/LocationSearchHelper';
 import { McsIcon } from '../../../components';
-import { EmptyTableView, TableViewFilters } from '../../../components/TableView';
+import {
+  EmptyTableView,
+  TableViewFilters,
+} from '../../../components/TableView';
 import { MapDispatchToProps, MapStateToProps } from './AutomationListPage';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
 import messages from './messages';
@@ -16,9 +31,7 @@ import { SCENARIOS_SEARCH_SETTINGS } from '../../../services/ScenarioService';
 
 const { Content } = Layout;
 
-interface AutomationsTableProps
-  extends MapDispatchToProps,
-  MapStateToProps {
+interface AutomationsTableProps extends MapDispatchToProps, MapStateToProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingStatuses: boolean;
 }
@@ -29,18 +42,12 @@ type JoinedProps = AutomationsTableProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AutomationsListTable extends React.Component<JoinedProps> {
-    
   componentDidMount() {
     const {
       history,
-      location: {
-        search,
-        pathname,
-      },
+      location: { search, pathname },
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
       fetchAutomationList,
     } = this.props;
@@ -52,41 +59,37 @@ class AutomationsListTable extends React.Component<JoinedProps> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
+      const filter = parseSearch<FilterParams>(
+        search,
+        SCENARIOS_SEARCH_SETTINGS,
+      );
       fetchAutomationList(organisationId, filter, true);
     }
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
     const {
-      location: {
-        search,
-      },
+      location: { search },
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
       history,
       fetchAutomationList,
     } = this.props;
 
     const {
-      location: {
-        pathname: nextPathname,
-        search: nextSearch,
-        state,
-      },
+      location: { pathname: nextPathname, search: nextSearch, state },
       match: {
-        params: {
-          organisationId: nextOrganisationId,
-        },
+        params: { organisationId: nextOrganisationId },
       },
     } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
+    ) {
       if (!isSearchValid(nextSearch, SCENARIOS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -94,7 +97,10 @@ class AutomationsListTable extends React.Component<JoinedProps> {
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch<FilterParams>(nextSearch, SCENARIOS_SEARCH_SETTINGS);
+        const filter = parseSearch<FilterParams>(
+          nextSearch,
+          SCENARIOS_SEARCH_SETTINGS,
+        );
         fetchAutomationList(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
@@ -107,23 +113,18 @@ class AutomationsListTable extends React.Component<JoinedProps> {
   editAutomation = (record: AutomationResource) => {
     const {
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
       history,
     } = this.props;
 
     history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`);
-  }
+  };
 
   updateLocationSearch = (params: any) => {
     const {
       history,
-      location: {
-        search: currentSearch,
-        pathname,
-      },
+      location: { search: currentSearch, pathname },
     } = this.props;
 
     const nextLocation = {
@@ -132,18 +133,14 @@ class AutomationsListTable extends React.Component<JoinedProps> {
     };
 
     history.push(nextLocation);
-  }
+  };
 
   render() {
     const {
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
-      location: {
-        search,
-      },
+      location: { search },
       intl,
       isFetchingAutomations,
       dataSource,
@@ -181,10 +178,11 @@ class AutomationsListTable extends React.Component<JoinedProps> {
           rowSelection.unselectAllItemIds();
         }
       },
-      onShowSizeChange: (current: number, size: number) => this.updateLocationSearch({
-        currentPage: 1,
-        pageSize: size,
-      }),
+      onShowSizeChange: (current: number, size: number) =>
+        this.updateLocationSearch({
+          currentPage: 1,
+          pageSize: size,
+        }),
     };
 
     const dataColumns = [
@@ -208,7 +206,8 @@ class AutomationsListTable extends React.Component<JoinedProps> {
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/automations/${record.id}/edit`}
-          >{text}
+          >
+            {text}
           </Link>
         ),
       },
@@ -221,7 +220,7 @@ class AutomationsListTable extends React.Component<JoinedProps> {
           {
             translationKey: 'EDIT',
             callback: this.editAutomation,
-          }
+          },
         ],
       },
     ];
@@ -256,32 +255,31 @@ class AutomationsListTable extends React.Component<JoinedProps> {
       },
     ];
 
-    return (hasAutomations
-      ? (
-          <div className="ant-layout">
-            <Content className="mcs-content-container">
-              <div className="mcs-table-container">
-                <TableViewFilters
-                  columns={dataColumns}
-                  actionsColumnsDefinition={actionColumns}
-                  searchOptions={searchOptions}
-                  filtersOptions={filtersOptions}
-                  dataSource={dataSource}
-                  loading={isFetchingAutomations}
-                  pagination={pagination}
-                  rowSelection={rowSelection}
-                />
-              </div>
-            </Content>
+    return hasAutomations ? (
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <div className="mcs-table-container">
+            <TableViewFilters
+              columns={dataColumns}
+              actionsColumnsDefinition={actionColumns}
+              searchOptions={searchOptions}
+              filtersOptions={filtersOptions}
+              dataSource={dataSource}
+              loading={isFetchingAutomations}
+              pagination={pagination}
+              rowSelection={rowSelection}
+            />
           </div>
-      )
-      : <EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />
+        </Content>
+      </div>
+    ) : (
+      <EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />
     );
   }
 }
 
 export default compose<JoinedProps, AutomationsTableProps>(
-    withRouter,
-    withTranslations,
-    injectIntl,
-  )(AutomationsListTable);
+  withRouter,
+  withTranslations,
+  injectIntl,
+)(AutomationsListTable);

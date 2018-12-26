@@ -4,13 +4,23 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { AutomationResource, AutomationStatus } from '../../../models/automations/automations';
+import {
+  AutomationResource,
+  AutomationStatus,
+} from '../../../models/automations/automations';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
 import { TranslationProps } from '../../Helpers/withTranslations';
 import { Label } from '../../Labels/Labels';
-import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
-import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
-import ScenarioService, { GetAutomationsOptions, SCENARIOS_SEARCH_SETTINGS } from '../../../services/ScenarioService';
+import injectDrawer, {
+  InjectedDrawerProps,
+} from '../../../components/Drawer/injectDrawer';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
+import ScenarioService, {
+  GetAutomationsOptions,
+  SCENARIOS_SEARCH_SETTINGS,
+} from '../../../services/ScenarioService';
 import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
 import AutomationListTable from './AutomationListTable';
@@ -29,12 +39,12 @@ export interface MapDispatchToProps {
 }
 
 export interface MapStateToProps {
-    fetchAutomationList: (
-        organisationId: string,
-        filter: FilterParams,
-        bool?: boolean,
-    ) => void;
-    resetAutomationsTable: () => void;
+  fetchAutomationList: (
+    organisationId: string,
+    filter: FilterParams,
+    bool?: boolean,
+  ) => void;
+  resetAutomationsTable: () => void;
 }
 
 const { Content } = Layout;
@@ -93,9 +103,7 @@ class AutomationListPage extends React.Component<
       max_results: totalAutomations,
     };
     return ScenarioService.getScenarios(organisationId, options)
-      .then(apiResp =>
-        apiResp.data.map(scenarioResource => scenarioResource),
-      )
+      .then(apiResp => apiResp.data.map(scenarioResource => scenarioResource))
       .catch(err => {
         notifyError(err);
       });
@@ -124,7 +132,7 @@ class AutomationListPage extends React.Component<
         state: state,
       });
     } else {
-        fetchAutomationList(organisationId, filter);
+      fetchAutomationList(organisationId, filter);
     }
     this.setState({
       visible: false,
@@ -142,18 +150,20 @@ class AutomationListPage extends React.Component<
     const { notifyError } = this.props;
 
     return ScenarioService.updateScenario(scenario.id, {
-        id: scenario.id,
-        name: scenario.name,
-        status: status,
-        datamart_id: scenario.datamart_id,
-        organisation_id: scenario.organisation_id,
-    }).then(() =>{
+      id: scenario.id,
+      name: scenario.name,
+      status: status,
+      datamart_id: scenario.datamart_id,
+      organisation_id: scenario.organisation_id,
+    })
+      .then(() => {
         this.setState({
-            isUpdatingStatuses: false,
-            selectedRowKeys: [],
-          });
+          isUpdatingStatuses: false,
+          selectedRowKeys: [],
+        });
         return null;
-    }).catch(error => {
+      })
+      .catch(error => {
         notifyError(error);
         this.setState({
           isUpdatingStatuses: false,
@@ -199,46 +209,44 @@ class AutomationListPage extends React.Component<
       isUpdatingStatuses: true,
     });
 
-    const filter = parseSearch<FilterParams>(
-      search,
-      SCENARIOS_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
 
     const options: GetAutomationsOptions = {
       organisation_id: organisationId,
       max_results: totalAutomations,
       keywords: filter.keywords,
     };
-    
-    ScenarioService.getScenarios(organisationId, options)
-      .then(apiResp => {
-        const scenariosToUpdate = allRowsAreSelected ? apiResp.data : 
-        (selectedRowKeys? apiResp.data.filter(scenario => selectedRowKeys.includes(scenario.id)) : []) 
-        const tasks: Task[] = [];
-        scenariosToUpdate.forEach(scenario => {
-          tasks.push(() => {
-            return this.updateAutomationStatus(scenario, status);
-          });
+
+    ScenarioService.getScenarios(organisationId, options).then(apiResp => {
+      const scenariosToUpdate = allRowsAreSelected
+        ? apiResp.data
+        : selectedRowKeys
+        ? apiResp.data.filter(scenario => selectedRowKeys.includes(scenario.id))
+        : [];
+      const tasks: Task[] = [];
+      scenariosToUpdate.forEach(scenario => {
+        tasks.push(() => {
+          return this.updateAutomationStatus(scenario, status);
         });
-        executeTasksInSequence(tasks)
-          .then(() => {
-            this.setState(
-              {
-                isUpdatingStatuses: false,
-              },
-              () => {
-                fetchAutomationList(organisationId, filter);
-              },
-            );
-          })
-          .catch((err: any) => {
-            this.setState({
+      });
+      executeTasksInSequence(tasks)
+        .then(() => {
+          this.setState(
+            {
               isUpdatingStatuses: false,
-            });
-            this.props.notifyError(err);
+            },
+            () => {
+              fetchAutomationList(organisationId, filter);
+            },
+          );
+        })
+        .catch((err: any) => {
+          this.setState({
+            isUpdatingStatuses: false,
           });
-      } 
-    );
+          this.props.notifyError(err);
+        });
+    });
   };
 
   render() {

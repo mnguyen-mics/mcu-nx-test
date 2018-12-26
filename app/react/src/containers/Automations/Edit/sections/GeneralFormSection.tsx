@@ -111,6 +111,8 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+)(GeneralFormSection);

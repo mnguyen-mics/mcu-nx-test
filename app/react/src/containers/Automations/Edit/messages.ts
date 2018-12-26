@@ -23,7 +23,8 @@ export default defineMessages({
   },
   errorFormMessage: {
     id: 'automation.edit.error',
-    defaultMessage: 'There was an error saving your scenario, please check the data you have inputed',
+    defaultMessage:
+      'There was an error saving your scenario, please check the data you have inputed',
   },
   sectionGeneralTitle: {
     id: 'automation.edit.section.general.title',

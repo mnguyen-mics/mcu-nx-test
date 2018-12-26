@@ -44,12 +44,15 @@ class EditAutomationPage extends React.Component<Props, State> {
   state: State = {
     loading: true,
     automationFormData: {
-      automation: {}
+      automation: {},
     },
-    scenarioContainer: {}
+    scenarioContainer: {},
   };
 
-  AngularSession = (window as any).angular.element(document.body).injector().get('core/common/auth/Session');
+  AngularSession = (window as any).angular
+    .element(document.body)
+    .injector()
+    .get('core/common/auth/Session');
 
   constructor(props: Props) {
     super(props);
@@ -58,36 +61,39 @@ class EditAutomationPage extends React.Component<Props, State> {
       automationFormData: INITIAL_AUTOMATION_DATA,
       scenarioContainer: {
         scenario: {
-          id: undefined
-        }
-      }
-    }
+          id: undefined,
+        },
+      },
+    };
   }
 
   componentDidMount() {
-    const { match: { params: { automationId } } } = this.props;
-    this.setState({ loading: true })
+    const {
+      match: {
+        params: { automationId },
+      },
+    } = this.props;
+    this.setState({ loading: true });
     const ScenarioContainer = this.scenarioContainer;
     this.AngularSession.init(this.props.match.params.organisationId)
-    .then(() => {
-      this.setState({
-        scenarioContainer: new ScenarioContainer(this.props.match.params.automationId),
+      .then(() => {
+        this.setState({
+          scenarioContainer: new ScenarioContainer(
+            this.props.match.params.automationId,
+          ),
+        });
       })
-    })
-    .then(() => {
-      if (automationId) {
-        this.fetchInitialData(automationId);
-      } else {
+      .then(() => {
+        if (automationId) {
+          this.fetchInitialData(automationId);
+        } else {
+          this.setState({ loading: false });
+        }
+      })
+      .catch((err: any) => {
+        this.props.notifyError(err);
         this.setState({ loading: false });
-      }
-    })
-    .catch((err: any) => {
-      this.props.notifyError(err);
-      this.setState({ loading: false });
-    })
-    
-
-   
+      });
   }
 
   fetchInitialData = (automationId: string) => {
@@ -140,12 +146,22 @@ class EditAutomationPage extends React.Component<Props, State> {
   };
 
   onClose = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     history.push(`/v2/o/${organisationId}/automations/list`);
   };
 
   render() {
-    const { match: { params: { organisationId, automationId } }, intl } = this.props;
+    const {
+      match: {
+        params: { organisationId, automationId },
+      },
+      intl,
+    } = this.props;
 
     const breadcrumbPaths = [
       {
@@ -153,7 +169,11 @@ class EditAutomationPage extends React.Component<Props, State> {
         path: `/v2/o/${organisationId}/automations/list`,
       },
       {
-        name: automationId ? intl.formatMessage(messages.breadcrumbEdit, { name: this.state.automationFormData.automation.name }) : messages.breadcrumbNew,
+        name: automationId
+          ? intl.formatMessage(messages.breadcrumbEdit, {
+              name: this.state.automationFormData.automation.name,
+            })
+          : messages.breadcrumbNew,
       },
     ];
 
