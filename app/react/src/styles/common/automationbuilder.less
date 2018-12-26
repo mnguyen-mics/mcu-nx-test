@@ -118,7 +118,6 @@
     display: flex;
     align-items: center;
     height: 70px;
-    width: 180px;
     border-color: #dddddd;
     border-style: solid;
     border-width: 1px;
@@ -151,6 +150,9 @@
       margin-top: 25px;
       float: left;
       width: 50%;
+      @media(max-width: 1650px) {
+        width: 100%
+      }
       span[draggable],
       span[draggable='true'] {
         border: 0px #ffffff solid;
@@ -158,6 +160,7 @@
     }
     .ant-tree-node-content-wrapper {
       height: 100%;
+      width: 80%;
       padding: 0px;
     }
   }
@@ -185,6 +188,7 @@
     left: 0;
     margin-left: 10px;
     border-radius: 50%;
+
   }
 
   .available-node-icon-gyph {
@@ -201,7 +205,7 @@
     font-weight: 700;
     color: #919191;
     position: absolute;
-    left: 80px;
+    left: 70px;
     padding-right: 15px;
     text-align: center;
   }
