@@ -4,7 +4,9 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Dropdown } from '../../../../components/PopupContainers';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import withTranslations, { TranslationProps } from '../../../Helpers/withTranslations';
+import withTranslations, {
+  TranslationProps,
+} from '../../../Helpers/withTranslations';
 import { Export } from '../../../../models/exports/exports';
 import modalMessages from '../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../Actionbar';
@@ -17,57 +19,52 @@ interface ExportActionbarProps {
   exportObject?: Export;
   archiveObject?: any;
   isExportExecutionRunning: boolean;
-  onNewExecution: () => void
+  onNewExecution: () => void;
 }
 
 interface ExportActionbarState {
   exportIsRunning: boolean;
 }
 
-type JoinedProps =
-  ExportActionbarProps &
-  RouteComponentProps<{ organisationId: string; exportId: string; }> &
+type JoinedProps = ExportActionbarProps &
+  RouteComponentProps<{ organisationId: string; exportId: string }> &
   InjectedIntlProps &
   TranslationProps;
 
-
-class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState> {
-
+class ExportsActionbar extends React.Component<
+  JoinedProps,
+  ExportActionbarState
+> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = { exportIsRunning: this.props.isExportExecutionRunning };
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
-    const {
-      isExportExecutionRunning,
-    } = nextProps;
+    const { isExportExecutionRunning } = nextProps;
 
-    this.setState({ exportIsRunning: isExportExecutionRunning })
+    this.setState({ exportIsRunning: isExportExecutionRunning });
   }
-
 
   editExport = () => {
     const {
       location,
       history,
       match: {
-        params: {
-          organisationId,
-          exportId,
-        },
+        params: { organisationId, exportId },
       },
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/datastudio/exports/${exportId}/edit`;
-    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}` } });
-  }
+    history.push({
+      pathname: editUrl,
+      state: { from: `${location.pathname}${location.search}` },
+    });
+  };
 
   runExecution = () => {
     const {
-      intl: {
-        formatMessage,
-      },
+      intl: { formatMessage },
     } = this.props;
 
     if (this.state.exportIsRunning) {
@@ -75,21 +72,17 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     } else if (this.props.exportObject) {
       ExportService.createExecution(this.props.exportObject.id)
         .then(res => this.setState({ exportIsRunning: true }))
-        .then(res => this.props.onNewExecution())
+        .then(res => this.props.onNewExecution());
     }
-
-  }
+  };
 
   render() {
     const {
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
       exportObject,
     } = this.props;
-
 
     const menu = this.buildMenu();
 
@@ -100,8 +93,16 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Button className="mcs-primary" type="primary" onClick={this.runExecution}>
-          {this.state.exportIsRunning ? <Icon type="loading" spin={true} /> : <McsIcon type="plus" />}
+        <Button
+          className="mcs-primary"
+          type="primary"
+          onClick={this.runExecution}
+        >
+          {this.state.exportIsRunning ? (
+            <Icon type="loading" spin={true} />
+          ) : (
+            <McsIcon type="plus" />
+          )}
           <FormattedMessage {...messages.newExecution} />
         </Button>
 
@@ -119,23 +120,24 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     );
   }
 
-
-
   duplicateCampaign = () => {
     const {
       location,
       history,
       match: {
-        params: {
-          organisationId,
-          exportId,
-        },
+        params: { organisationId, exportId },
       },
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/datastudio/exports`;
-    history.push({ pathname: editUrl, state: { from: `${location.pathname}${location.search}`, exportId: exportId } });
-  }
+    history.push({
+      pathname: editUrl,
+      state: {
+        from: `${location.pathname}${location.search}`,
+        exportId: exportId,
+      },
+    });
+  };
 
   buildMenu = () => {
     const {
@@ -176,7 +178,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
         </Menu.Item>
       </Menu>
     );
-  }
+  };
 }
 
 export default compose<JoinedProps, ExportActionbarProps>(

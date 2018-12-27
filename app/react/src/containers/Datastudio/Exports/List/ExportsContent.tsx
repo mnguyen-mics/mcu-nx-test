@@ -36,7 +36,7 @@ interface RouterProps {
 class ExportContent extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   ExportContentState
-  > {
+> {
   state = initialState;
 
   archiveExport = (exportId: string) => {
@@ -62,7 +62,9 @@ class ExportContent extends React.Component<
     const {
       location: { search, pathname, state },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -100,14 +102,21 @@ class ExportContent extends React.Component<
   };
 
   onClickEdit = (keyword: Export) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     history.push(`/${organisationId}/datastudio/exports/${keyword.id}/edit`);
   };
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<Export>> = [
@@ -118,7 +127,7 @@ class ExportContent extends React.Component<
           { translationKey: 'ARCHIVE', callback: this.onClickArchive },
         ],
       },
-    ]
+    ];
 
     const columnsDefinitions = {
       actionsColumnsDefinition,
@@ -133,7 +142,8 @@ class ExportContent extends React.Component<
             <Link
               className="mcs-campaigns-link"
               to={`/v2/o/${organisationId}/datastudio/exports/${record.id}`}
-            >{text}
+            >
+              {text}
             </Link>
           ),
         },
@@ -142,9 +152,7 @@ class ExportContent extends React.Component<
           intlMessage: messages.type,
           key: 'type',
           isHideable: false,
-          render: (text: string, record: Export) => (
-            <span>{text}</span>
-          ),
+          render: (text: string, record: Export) => <span>{text}</span>,
         },
       ],
     };
@@ -153,9 +161,9 @@ class ExportContent extends React.Component<
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-        iconType: 'library',
-        intlMessage: messages.empty,
-      };
+      iconType: 'library',
+      intlMessage: messages.empty,
+    };
 
     return (
       <ItemList
@@ -172,4 +180,7 @@ class ExportContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(ExportContent);
+export default compose(
+  withRouter,
+  injectIntl,
+)(ExportContent);

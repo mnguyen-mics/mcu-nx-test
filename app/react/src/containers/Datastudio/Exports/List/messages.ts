@@ -15,7 +15,8 @@ export default defineMessages({
   },
   exportsArchiveMessage: {
     id: 'exports.modal.archive.message',
-    defaultMessage: 'By archiving this Export it will stop campaigns using it. Are you sure?',
+    defaultMessage:
+      'By archiving this Export it will stop campaigns using it. Are you sure?',
   },
   exportsArchiveOk: {
     id: 'exports.modal.archive.ok',
@@ -35,7 +36,7 @@ export default defineMessages({
   },
   empty: {
     id: 'exports.table.empty',
-    defaultMessage: 'There is no Export List created yet! Click on New to get started',
+    defaultMessage:
+      'There is no Export List created yet! Click on New to get started',
   },
-})
-;
+});

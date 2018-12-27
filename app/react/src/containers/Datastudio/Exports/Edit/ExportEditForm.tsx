@@ -19,13 +19,13 @@ import FormLayoutActionbar, {
 import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../components/Layout/ScrollspySider';
-import {
-  McsFormSection,
-} from '../../../../utils/FormHelper';
+import { McsFormSection } from '../../../../utils/FormHelper';
 import { Path } from '../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
-import OTQLInputEditor, { OTQLInputEditorProps } from '../../../Audience/Segments/Edit/Sections/query/OTQL'
-import SelectorQL from '../../../Audience/Segments/Edit/Sections/query/SelectorQL'
+import OTQLInputEditor, {
+  OTQLInputEditorProps,
+} from '../../../Audience/Segments/Edit/Sections/query/OTQL';
+import SelectorQL from '../../../Audience/Segments/Edit/Sections/query/SelectorQL';
 import { Omit } from '../../../../utils/Types';
 import { ExportFormData } from './domain';
 import { injectDatamart } from '../../../Datamart';
@@ -36,8 +36,7 @@ const FORM_ID = 'exportForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
-  >;
-
+>;
 
 const messages = defineMessages({
   sectionTitleGeneral: {
@@ -50,7 +49,8 @@ const messages = defineMessages({
   },
   sectionSubTitleQuery: {
     id: 'exports.form.query.subtitle',
-    defaultMessage: 'Create the query of objects your want to export from your Datamart',
+    defaultMessage:
+      'Create the query of objects your want to export from your Datamart',
   },
   saveExport: {
     id: 'save.placement.list',
@@ -74,7 +74,9 @@ interface ExportEditFormProps
   datamart?: DatamartResource;
 }
 
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field  as new () => GenericField<OTQLInputEditorProps>;
+const FormOTQL: FieldCtor<
+  OTQLInputEditorProps
+> = Field as new () => GenericField<OTQLInputEditorProps>;
 
 type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   ExportEditFormProps &
@@ -82,7 +84,6 @@ type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   InjectedIntlProps;
 
 class PlacementListForm extends React.Component<Props> {
-
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
     return (
       <div>
@@ -92,38 +93,45 @@ class PlacementListForm extends React.Component<Props> {
         />
         {renderedSection}
       </div>
-    )
-  }
+    );
+  };
 
   buildQueryComponent = () => {
     const {
       datamart,
       match: {
-        params: {
-          organisationId
-        }
+        params: { organisationId },
       },
-      intl
+      intl,
     } = this.props;
 
     if (datamart!.storage_model_version === 'v201506') {
-      return this.props.initialValues.query ? this.generateUserQueryTemplate(<SelectorQL datamartId={datamart!.id} organisationId={organisationId} queryContainer={this.props.initialValues.query} />) : null
+      return this.props.initialValues.query
+        ? this.generateUserQueryTemplate(
+            <SelectorQL
+              datamartId={datamart!.id}
+              organisationId={organisationId}
+              queryContainer={this.props.initialValues.query}
+            />,
+          )
+        : null;
     } else {
-      return this.generateUserQueryTemplate(<FormOTQL
-        name={'query.query_text'}
-        component={OTQLInputEditor}
-        datamartId={datamart!.id}
-        formItemProps={{
-          label: intl.formatMessage(messages.saveExport),
-          required: true,
-        }}
-        helpToolTipProps={{
-          title: intl.formatMessage(messages.saveExport),
-        }}
-      />)
-
+      return this.generateUserQueryTemplate(
+        <FormOTQL
+          name={'query.query_text'}
+          component={OTQLInputEditor}
+          datamartId={datamart!.id}
+          formItemProps={{
+            label: intl.formatMessage(messages.saveExport),
+            required: true,
+          }}
+          helpToolTipProps={{
+            title: intl.formatMessage(messages.saveExport),
+          }}
+        />,
+      );
     }
-  }
+  };
 
   buildFormSections = () => {
     const sections: McsFormSection[] = [];
@@ -136,8 +144,8 @@ class PlacementListForm extends React.Component<Props> {
     const query = {
       id: 'query',
       title: messages.sectionTitleQuery,
-      component: this.buildQueryComponent()
-    }
+      component: this.buildQueryComponent(),
+    };
     sections.push(general);
     sections.push(query);
     return sections;

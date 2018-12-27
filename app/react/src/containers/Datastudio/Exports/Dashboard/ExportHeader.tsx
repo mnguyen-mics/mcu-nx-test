@@ -7,19 +7,14 @@ interface ExportHeaderProps {
 }
 
 const ExportHeader: React.SFC<ExportHeaderProps> = props => {
-
-  const {
-    object,
-  } = props;
+  const { object } = props;
 
   return (
     <ContentHeader
-      title={object && object.name || ''}
+      title={(object && object.name) || ''}
       loading={object && object.name ? false : true}
     />
-  )
-   
-
+  );
 };
 
 export default ExportHeader;
