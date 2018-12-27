@@ -50,6 +50,7 @@ export interface QueryInputNodeResource extends ScenarioNodeResource {
 export interface ABNNodeResource extends ScenarioNodeResource {
   type: 'ABN_NODE';
   edges_selection: { [nodeId: string]: { min: number; max: number } };
+  branch_number?: number;
 }
 
 export interface PluginNodeResource extends ScenarioNodeResource {

@@ -15,6 +15,7 @@ interface AvailableNodeProps {
   name: string;
   type: string;
   color: string;
+  branchNumber?: number;
   connectDragSource?: ConnectDragSource;
   isDragging?: boolean;
   isDropped?: boolean;
@@ -31,6 +32,7 @@ const fieldSource = {
       iconAnt: props.iconAnt,
       color: props.color,
       type: props.type,
+      branch_number: props.branchNumber,
     };
   },
 };
