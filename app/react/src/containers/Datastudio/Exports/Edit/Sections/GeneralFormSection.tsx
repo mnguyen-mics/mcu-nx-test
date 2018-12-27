@@ -29,7 +29,8 @@ const messages = defineMessages({
   },
   tootltipPlacementListName: {
     id: 'edit.placement.list.general.infos.tooltip.name',
-    defaultMessage: 'Give your Export a Name so you can find it back in the different screens.',
+    defaultMessage:
+      'Give your Export a Name so you can find it back in the different screens.',
   },
 });
 
@@ -81,12 +82,13 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
           />
         </div>
-        
       </div>
     );
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+)(GeneralFormSection);
