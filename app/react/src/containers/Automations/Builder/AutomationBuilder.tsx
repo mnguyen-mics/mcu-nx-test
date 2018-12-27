@@ -34,7 +34,6 @@ import { AutomationFormDataType } from './AutomationNode/Edit/domain';
 
 export interface AutomationBuilderProps {
   datamartId: string;
-  organisationId: string;
   scenarioId: string;
   automationData: StorylineNodeModel;
   updateAutomationData: (

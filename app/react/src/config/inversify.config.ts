@@ -57,7 +57,7 @@ import {
 import CompartmentService, { IComparmentService } from '../services/CompartmentService';
 import {
   IScenarioService,
-  ScenariosService,
+  ScenarioService,
 } from '../services/ScenarioService';
 
 const container = new Container();
@@ -106,7 +106,7 @@ container
   .to(CompartmentService);
 container
   .bind<IScenarioService>(TYPES.IScenarioService)
-  .toConstructor(ScenariosService);
+  .toConstructor(ScenarioService);
 
 export const { lazyInject } = getDecorators(container, false);
 

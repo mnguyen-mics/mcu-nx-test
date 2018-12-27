@@ -24,16 +24,29 @@ import {
   EmptyTableView,
   TableViewFilters,
 } from '../../../components/TableView';
-import { MapDispatchToProps, MapStateToProps } from './AutomationListPage';
+import { MapDispatchToProps } from './AutomationListPage';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
 import messages from './messages';
-import { SCENARIOS_SEARCH_SETTINGS } from '../../../services/ScenarioService';
+import {
+  SCENARIOS_SEARCH_SETTINGS,
+  IScenarioService,
+} from '../../../services/ScenarioService';
+import { Filters } from '../../../components/ItemList';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
 
 const { Content } = Layout;
 
-interface AutomationsTableProps extends MapDispatchToProps, MapStateToProps {
+interface AutomationsTableProps extends MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingStatuses: boolean;
+}
+
+interface State {
+  dataSource: AutomationResource[];
+  totalAutomations: number;
+  isLoading: boolean;
 }
 
 type JoinedProps = AutomationsTableProps &
@@ -41,7 +54,19 @@ type JoinedProps = AutomationsTableProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class AutomationsListTable extends React.Component<JoinedProps> {
+class AutomationsListTable extends React.Component<JoinedProps, State> {
+  @lazyInject(TYPES.IScenarioService)
+  private _scenarioService: IScenarioService;
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      dataSource: [],
+      totalAutomations: 0
+    };
+  }
+
   componentDidMount() {
     const {
       history,
@@ -49,7 +74,6 @@ class AutomationsListTable extends React.Component<JoinedProps> {
       match: {
         params: { organisationId },
       },
-      fetchAutomationList,
     } = this.props;
 
     if (!isSearchValid(search, SCENARIOS_SEARCH_SETTINGS)) {
@@ -63,7 +87,7 @@ class AutomationsListTable extends React.Component<JoinedProps> {
         search,
         SCENARIOS_SEARCH_SETTINGS,
       );
-      fetchAutomationList(organisationId, filter, true);
+      this.fetchAutomationList(organisationId, filter);
     }
   }
 
@@ -74,17 +98,14 @@ class AutomationsListTable extends React.Component<JoinedProps> {
         params: { organisationId },
       },
       history,
-      fetchAutomationList,
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch, state },
+      location: { pathname: nextPathname, search: nextSearch },
       match: {
         params: { organisationId: nextOrganisationId },
       },
     } = nextProps;
-
-    const checkEmptyDataSource = state && state.reloadDataSource;
 
     if (
       !compareSearches(search, nextSearch) ||
@@ -101,14 +122,27 @@ class AutomationsListTable extends React.Component<JoinedProps> {
           nextSearch,
           SCENARIOS_SEARCH_SETTINGS,
         );
-        fetchAutomationList(nextOrganisationId, filter, checkEmptyDataSource);
+        this.fetchAutomationList(nextOrganisationId, filter);
       }
     }
   }
 
-  componentWillUnmount() {
-    this.props.resetAutomationsTable();
-  }
+  fetchAutomationList = (organisationId: string, filter: Filters) => {
+    this.setState({ isLoading: true });
+
+    const options = {
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+    };
+    return this._scenarioService
+      .getScenarios(organisationId, options)
+      .then(res => {
+        this.setState({
+          isLoading: false,
+          dataSource: res.data,
+          totalAutomations: res.total || res.count,
+        });
+      });
+  };
 
   editAutomation = (record: AutomationResource) => {
     const {
@@ -142,13 +176,15 @@ class AutomationsListTable extends React.Component<JoinedProps> {
       },
       location: { search },
       intl,
-      isFetchingAutomations,
-      dataSource,
-      totalAutomations,
       translations,
-      hasAutomations,
       rowSelection,
     } = this.props;
+
+    const {
+      dataSource,
+      totalAutomations,
+      isLoading
+    } = this.state;
 
     const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
 
@@ -255,7 +291,7 @@ class AutomationsListTable extends React.Component<JoinedProps> {
       },
     ];
 
-    return hasAutomations ? (
+    return dataSource.length > 0 ? (
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <div className="mcs-table-container">
@@ -265,7 +301,7 @@ class AutomationsListTable extends React.Component<JoinedProps> {
               searchOptions={searchOptions}
               filtersOptions={filtersOptions}
               dataSource={dataSource}
-              loading={isFetchingAutomations}
+              loading={isLoading}
               pagination={pagination}
               rowSelection={rowSelection}
             />

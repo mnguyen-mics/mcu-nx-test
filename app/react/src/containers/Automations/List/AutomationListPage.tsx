@@ -3,7 +3,6 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import {
   AutomationResource,
   AutomationStatus,
@@ -22,11 +21,9 @@ import {
   SCENARIOS_SEARCH_SETTINGS,
   IScenarioService,
 } from '../../../services/ScenarioService';
-import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
+import { parseSearch } from '../../../utils/LocationSearchHelper';
 import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
 import AutomationListTable from './AutomationListTable';
-import { getTableDataSource } from '../../../state/Automations/selectors';
-import * as AutomationsListActions from '../../../state/Automations/actions';
 import AutomationActionBar from './AutomationActionBar';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
@@ -34,27 +31,9 @@ import { TYPES } from '../../../constants/types';
 export interface MapDispatchToProps {
   labels: Label[];
   translations: TranslationProps;
-  hasAutomations: boolean;
-  isFetchingAutomations: boolean;
-  isFetchingAutomationsStat: boolean;
-  dataSource: AutomationResource[];
-  totalAutomations: number;
-}
-
-export interface MapStateToProps {
-  fetchAutomationList: (
-    organisationId: string,
-    filter: FilterParams,
-    bool?: boolean,
-  ) => void;
-  resetAutomationsTable: () => void;
 }
 
 const { Content } = Layout;
-interface AutomationListPageProps {
-  totalAutomations: number;
-  dataSource: AutomationResource[];
-}
 
 interface AutomationListPageState {
   selectedRowKeys: string[];
@@ -64,11 +43,9 @@ interface AutomationListPageState {
   isArchiving: boolean;
 }
 
-type JoinedProps = AutomationListPageProps &
-  InjectedIntlProps &
+type JoinedProps = InjectedIntlProps &
   InjectedDrawerProps &
   MapDispatchToProps &
-  MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -93,57 +70,6 @@ class AutomationListPage extends React.Component<
   showModal = () => {
     this.setState({
       visible: true,
-    });
-  };
-
-  getAllAutomations = () => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      notifyError,
-      totalAutomations,
-    } = this.props;
-    const options: GetAutomationsOptions = {
-      organisation_id: organisationId,
-      max_results: totalAutomations,
-    };
-    return this._scenarioService
-      .getScenarios(organisationId, options)
-      .then(apiResp => apiResp.data.map(scenarioResource => scenarioResource))
-      .catch(err => {
-        notifyError(err);
-      });
-  };
-
-  redirectAndNotify = () => {
-    const {
-      location: { search, pathname, state },
-      history,
-      dataSource,
-      fetchAutomationList,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-    const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
-    if (dataSource.length === 1 && filter.currentPage !== 1) {
-      const newFilter = {
-        ...filter,
-        currentPage: filter.currentPage - 1,
-      };
-      fetchAutomationList(organisationId, filter);
-      history.replace({
-        pathname: pathname,
-        search: updateSearch(search, newFilter),
-        state: state,
-      });
-    } else {
-      fetchAutomationList(organisationId, filter);
-    }
-    this.setState({
-      visible: false,
-      selectedRowKeys: [],
     });
   };
 
@@ -205,11 +131,9 @@ class AutomationListPage extends React.Component<
 
   handleStatusAction = (status: AutomationStatus) => {
     const {
-      totalAutomations,
       match: {
         params: { organisationId },
       },
-      fetchAutomationList,
       location: { search },
     } = this.props;
     const { allRowsAreSelected, selectedRowKeys } = this.state;
@@ -221,7 +145,6 @@ class AutomationListPage extends React.Component<
 
     const options: GetAutomationsOptions = {
       organisation_id: organisationId,
-      max_results: totalAutomations,
       keywords: filter.keywords,
     };
 
@@ -248,7 +171,7 @@ class AutomationListPage extends React.Component<
                 isUpdatingStatuses: false,
               },
               () => {
-                fetchAutomationList(organisationId, filter);
+                this._scenarioService.getScenarios(organisationId, filter);
               },
             );
           })
@@ -268,18 +191,7 @@ class AutomationListPage extends React.Component<
       allRowsAreSelected,
     } = this.state;
 
-    const {
-      labels,
-      translations,
-      dataSource,
-      hasAutomations,
-      isFetchingAutomations,
-      isFetchingAutomationsStat,
-      totalAutomations,
-      removeNotification,
-      fetchAutomationList,
-      resetAutomationsTable,
-    } = this.props;
+    const { labels, translations } = this.props;
 
     const rowSelection = {
       selectedRowKeys,
@@ -299,14 +211,6 @@ class AutomationListPage extends React.Component<
     const reduxProps = {
       labels,
       translations,
-      dataSource,
-      hasAutomations,
-      isFetchingAutomations,
-      isFetchingAutomationsStat,
-      totalAutomations,
-      removeNotification,
-      fetchAutomationList,
-      resetAutomationsTable,
     };
 
     return (
@@ -330,26 +234,9 @@ class AutomationListPage extends React.Component<
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-  hasAutomations: state.automationsTable.automationsApi.hasItems,
-  isFetchingAutomationList: state.automationsTable.automationsApi.isFetching,
-  dataSource: getTableDataSource(state),
-  totalAutomations: state.automationsTable.automationsApi.total,
-});
-
-const mapDispatchToProps = {
-  fetchAutomationList: AutomationsListActions.fetchAutomations.request,
-  resetAutomationsTable: AutomationsListActions.resetAutomationsTable,
-};
-
-export default compose<AutomationListPageProps, JoinedProps>(
+export default compose<{}, JoinedProps>(
   withRouter,
   injectIntl,
   injectDrawer,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
   injectNotifications,
 )(AutomationListPage);

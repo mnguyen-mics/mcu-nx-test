@@ -1,3 +1,4 @@
+import { injectable } from 'inversify';
 import { ScenarioNodeShape } from './../models/automations/automations';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
@@ -11,7 +12,6 @@ import {
   FILTERS_SEARCH_SETTINGS,
   KEYWORD_SEARCH_SETTINGS,
 } from '../utils/LocationSearchHelper';
-import { injectable } from 'inversify';
 
 export interface GetAutomationsOptions extends PaginatedApiParam {
   organisation_id?: string;
@@ -46,12 +46,13 @@ export interface IScenarioService {
     scenario: AutomationResource,
   ) => Promise<DataResponse<AutomationResource>>;
   createScenarioNode: (
+    scenarioId: string,
     scenarioNode: ScenarioNodeShape,
   ) => Promise<DataResponse<AutomationResource>>;
 }
 
 @injectable()
-export class ScenariosService implements IScenarioService {
+export class ScenarioService implements IScenarioService {
   getScenarios(
     organisationId: string,
     options: object = {},
