@@ -151,11 +151,11 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
     const {
       history,
       match: {
-        params: { organisationId },
+        params: { organisationId, exportId },
       },
     } = this.props;
 
-    const url = `/v2/o/${organisationId}/datastudio/exports`;
+    const url = `/v2/o/${organisationId}/datastudio/exports/${exportId}`;
 
     return history.push(url);
   };
