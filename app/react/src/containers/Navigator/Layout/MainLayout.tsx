@@ -176,7 +176,6 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             <Logo mode={mode} />
             <NavigatorMenu
               mode={mode}
-              collapsed={collapsed}
               onMenuItemClick={this.onMenuItemClick}
             />
           </Sider>

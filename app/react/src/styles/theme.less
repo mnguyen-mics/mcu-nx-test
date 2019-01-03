@@ -57,6 +57,10 @@
 //** Tooltip arrow color
 @tooltip-arrow-color: @tooltip-bg;
 
+// reset font-variant because default is tabular-nums
+// and our LLCircularWeb-Book doesn't look good with this variant
+@font-variant-base      : normal;
+
 
 
 // ------------------------------------------------
@@ -93,7 +97,6 @@
 @text-color-dark        : fade(#fff, 91%);
 @text-color-secondary-dark: fade(#fff, 67%);
 @disabled-color-dark    : fade(#fff, 35%);
-@font-variant-base      : normal;
 @font-size-base         : 12px;
 @font-size-lg           : @font-size-base + 2px;
 @line-height-base       : 1.5;

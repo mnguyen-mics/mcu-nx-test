@@ -56,15 +56,15 @@ class CatalogItemTable extends React.Component<Props, any> {
         columns={[
           {
             title: intl.formatMessage(messages.brand),
-            dataIndex: 'properties.$brand',
+            render: (test, record) => record.properties.$brand
           },
           {
             title: intl.formatMessage(messages.title),
-            dataIndex: 'properties.$title',
+            render: (test, record) => record.properties.$title
           },
           {
             title: intl.formatMessage(messages.product_type),
-            dataIndex: 'properties.$product_type',
+            render: (test, record) => record.properties.$product_type
           },
           
         ]}
