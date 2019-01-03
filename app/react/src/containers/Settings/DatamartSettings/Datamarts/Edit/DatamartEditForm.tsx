@@ -29,6 +29,7 @@ import { McsFormSection } from '../../../../../utils/FormHelper';
 import EventRulesSection, {
     EventRulesSectionProps,
   } from '../../Common/EventRulesSection';
+import NameSectionForm from './Sections/NameSectionForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -44,6 +45,7 @@ export interface DatamartEditFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   datamartId: string;
+  isCrossDatamart: boolean;
 }
 
 type Props = InjectedFormProps<DatamartFormData, DatamartEditFormProps> &
@@ -54,13 +56,46 @@ type Props = InjectedFormProps<DatamartFormData, DatamartEditFormProps> &
 export const FORM_ID = 'datamartForm';
 
 class DatamartEditForm extends React.Component<Props> {
-  render() {
-    const { handleSubmit, breadCrumbPaths, close, change } = this.props;
+  
+  generateSections = (isCrossDatamart: boolean) => {
+    const sections: McsFormSection[] = [];
 
     const genericFieldArrayProps = {
-      formChange: change,
+      formChange: this.props.change,
       rerenderOnEveryChange: true,
     };
+
+    if(isCrossDatamart){
+      sections.push({
+        id: 'name',
+        title: messages.sectionNameTitle,
+        component: <NameSectionForm />,
+      });
+    }else{
+      sections.push({
+        id: 'general',
+        title: messages.sectionGeneralTitle,
+        component: <GeneralFormSection />,
+      });
+  
+      sections.push({
+        id: 'eventRules',
+        title: messages.sectionEventRulesTitle,
+        component: (
+          <EventRulesFieldArray
+            name="eventRulesFields"
+            component={EventRulesSection}
+            datamartId={this.props.datamartId}
+            {...genericFieldArrayProps}
+          />
+        ),
+      });
+    }
+    return sections;
+  }
+  
+  render() {
+    const { handleSubmit, breadCrumbPaths, close, isCrossDatamart } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -69,25 +104,7 @@ class DatamartEditForm extends React.Component<Props> {
       onClose: close,
     };
 
-    const sections: McsFormSection[] = [];
-    sections.push({
-      id: 'general',
-      title: messages.sectionGeneralTitle,
-      component: <GeneralFormSection />,
-    });
-
-    sections.push({
-      id: 'eventRules',
-      title: messages.sectionEventRulesTitle,
-      component: (
-        <EventRulesFieldArray
-          name="eventRulesFields"
-          component={EventRulesSection}
-          datamartId={this.props.datamartId}
-          {...genericFieldArrayProps}
-        />
-      ),
-    });
+    const sections = this.generateSections(isCrossDatamart);
 
     const sideBarProps: SidebarWrapperProps = {
       items: sections.map(s => ({ sectionId: s.id, title: s.title })),

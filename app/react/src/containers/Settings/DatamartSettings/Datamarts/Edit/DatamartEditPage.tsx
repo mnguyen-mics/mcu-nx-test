@@ -223,6 +223,8 @@ class DatamartEditPage extends React.Component<Props, State> {
 
     const datamartId = this.getDatamartId();
 
+    const isCrossDatamart = datamartFormData.datamart.type === 'CROSS_DATAMART';
+
     return (
       <DatamartEditForm
         initialValues={datamartFormData}
@@ -231,6 +233,7 @@ class DatamartEditPage extends React.Component<Props, State> {
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
         datamartId={datamartId}
+        isCrossDatamart={isCrossDatamart}
       />
     );
   }
