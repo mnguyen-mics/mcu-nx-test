@@ -27,8 +27,8 @@ import GeneralFormSection from './Sections/GeneralSectionForm';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 
 import EventRulesSection, {
-    EventRulesSectionProps,
-  } from '../../Common/EventRulesSection';
+  EventRulesSectionProps,
+} from '../../Common/EventRulesSection';
 import NameSectionForm from './Sections/NameSectionForm';
 
 const Content = Layout.Content as React.ComponentClass<
@@ -56,28 +56,27 @@ type Props = InjectedFormProps<DatamartFormData, DatamartEditFormProps> &
 export const FORM_ID = 'datamartForm';
 
 class DatamartEditForm extends React.Component<Props> {
-  
   generateSections = (isCrossDatamart: boolean) => {
-    const sections: McsFormSection[] = [];
+    const sections: McsFormSection[] = [
+      {
+        id: 'name',
+        title: messages.sectionNameTitle,
+        component: <NameSectionForm />,
+      },
+    ];
 
     const genericFieldArrayProps = {
       formChange: this.props.change,
       rerenderOnEveryChange: true,
     };
 
-    if(isCrossDatamart){
-      sections.push({
-        id: 'name',
-        title: messages.sectionNameTitle,
-        component: <NameSectionForm />,
-      });
-    }else{
+    if (!isCrossDatamart) {
       sections.push({
         id: 'general',
         title: messages.sectionGeneralTitle,
         component: <GeneralFormSection />,
       });
-  
+
       sections.push({
         id: 'eventRules',
         title: messages.sectionEventRulesTitle,
@@ -92,10 +91,15 @@ class DatamartEditForm extends React.Component<Props> {
       });
     }
     return sections;
-  }
-  
+  };
+
   render() {
-    const { handleSubmit, breadCrumbPaths, close, isCrossDatamart } = this.props;
+    const {
+      handleSubmit,
+      breadCrumbPaths,
+      close,
+      isCrossDatamart,
+    } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
