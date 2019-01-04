@@ -196,7 +196,7 @@ class ActivityCard extends React.Component<Props, State> {
         <div>
           {activity.$events
             .sort((a, b) => {
-              return b.$ts - a.$ts;
+              return (b.$ts || 0) - (a.$ts || 0);
             })
             .map(event => {
               return (

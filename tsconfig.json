@@ -23,5 +23,5 @@
     "experimentalDecorators": true,
     // "types": ["reflect-metadata"]
   },
-  "exclude": ["node_modules", "ts-build", "app/angular/bower_components"]
+  "exclude": ["node_modules", "ts-build", "app/angular", ".history", "dist"]
 }

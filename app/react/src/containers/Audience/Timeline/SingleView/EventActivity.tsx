@@ -7,13 +7,10 @@ import { docco } from 'react-syntax-highlighter/styles/hljs';
 import McsIcon from '../../../../components/McsIcon';
 import messages from '../messages';
 import { ButtonStyleless } from '../../../../components';
+import { UserActivityEventResource, AnyJson } from '../../../../models/datamart/UserActivityResource';
 
 interface EventActivityProps {
-  event: {
-    $event_name: string;
-    $properties: object;
-    $ts: number;
-  };
+  event: UserActivityEventResource;
 }
 
 interface State {
@@ -47,50 +44,40 @@ class EventActivity extends React.Component<Props, State> {
     });
   };
 
-  renderProperties = (object: any, isInitial = false) => {
-    let returnValue: any = <div />;
+  renderAnyJson = (json: AnyJson, isRoot = false): React.ReactNode => {
+    let returnValue: React.ReactNode = '';
+    if (!json) return (
+      <i className="empty">
+        <FormattedMessage {...messages.empty} />
+      </i>
+    );
 
-    if (typeof object === 'string' || typeof object === 'number') {
+    if (Array.isArray(json)) {
+      if (json.length === 0) return '[]';      
+      returnValue = json.map((o, i) => (
+        <div className="m-b-10" key={i}>{this.renderAnyJson(o)}</div>
+      )); 
+    } else if (typeof json === 'string' || typeof json === 'number' || typeof json === 'boolean') {
       returnValue = (
         <span>
-          <Tooltip title={object}>{object}</Tooltip>
+          <Tooltip title={json}>{json}</Tooltip>
         </span>
       );
-    }
-
-    if (Array.isArray(object)) {
-      if (object.length > 0) {
-        returnValue = object.map((o, i) => (
-          <div className="m-b-10" key={i}>
-            {this.renderProperties(o)}
-          </div>
-        ));
-      } else {
-        returnValue = '[]';
-      }
-    }
-
-    if (typeof object === 'object' && !Array.isArray(object)) {
-      returnValue = Object.keys(object).map(key => {
-        const value = object[key];
-        const generatedValue = (
+    } else {
+      // json is a JsonMap (ie: {  [key: string]: AnyJson; })
+      returnValue = Object.keys(json).map(key => {
+        return (
           <div key={key}>
             <Tooltip title={key}>
               <Tag className="card-tag">{key}</Tag>
             </Tooltip>
             &nbsp;:&nbsp;
-            {!value ? (
-              <i className="empty">
-                <FormattedMessage {...messages.empty} />
-              </i>
-            ) : (
-              this.renderProperties(value)
-            )}
+            {this.renderAnyJson(json[key])}
           </div>
         );
-        return generatedValue;
       });
-      returnValue = isInitial ? (
+
+      returnValue = isRoot ? (
         <div>{returnValue}</div>
       ) : (
         <Col
@@ -103,26 +90,14 @@ class EventActivity extends React.Component<Props, State> {
       );
     }
 
-    return isInitial ? (
-      <div className="event-properties-list-item">{returnValue}</div>
-    ) : (
-      returnValue
-    );
+    return isRoot ? <div className="event-properties-list-item">{returnValue}</div> : returnValue;
   };
 
   render() {
     const { event } = this.props;
     const { showMore } = this.state;
 
-    const changeVisibility = () => {
-      this.setState(prevState => {
-        const nextState = {
-          ...prevState,
-        };
-        nextState.showMore = !prevState.showMore;
-        return nextState;
-      });
-    };
+    const changeVisibility = () => this.setState({ showMore: !showMore });
 
     return (
       <Row className="section border-top">
@@ -132,38 +107,38 @@ class EventActivity extends React.Component<Props, State> {
         <Col span={19}>
           <div className="section-title">{event.$event_name}</div>
           <div className="section-cta">
-            {showMore && (
-              <ButtonStyleless
-                onClick={this.handleJSONViewModal}
-                className="mcs-card-inner-action"
-                style={{ marginRight: '10px' }}
-              >
-                <FormattedMessage {...messages.viewEventJson} />
-              </ButtonStyleless>
-            )}
-            {Object.keys(event.$properties).length !== 0 && (
-              <button
-                className="mcs-card-inner-action"
-                onClick={changeVisibility}
-              >
-                {!showMore ? (
-                  <span>
-                    <McsIcon type="chevron" />{' '}
-                    <FormattedMessage {...messages.detail} />
-                  </span>
-                ) : (
-                  <span>
-                    <McsIcon className="icon-inverted" type="chevron" />{' '}
-                    <FormattedMessage {...messages.less} />
-                  </span>
-                )}
-              </button>
-            )}
+            { event.$properties && showMore ? 
+              <div>
+                <ButtonStyleless
+                  onClick={this.handleJSONViewModal}
+                  className="mcs-card-inner-action"
+                  style={{ marginRight: '10px' }}
+                >
+                  <FormattedMessage {...messages.viewEventJson} />
+                </ButtonStyleless>
+                <button
+                  className="mcs-card-inner-action"
+                  onClick={changeVisibility}
+                >
+                  <McsIcon className="icon-inverted" type="chevron" />&nbsp;
+                  <FormattedMessage {...messages.less} />
+                </button>
+              </div> : 
+              <div>
+                <button
+                  className="mcs-card-inner-action"
+                  onClick={changeVisibility}
+                >
+                  <McsIcon type="chevron" />&nbsp;
+                  <FormattedMessage {...messages.detail} />
+                </button>
+              </div>
+            }            
           </div>
         </Col>
-        {showMore && (
+        { event.$properties && showMore && (
           <div className="event-properties-list">
-            {this.renderProperties(event.$properties, true)}
+            {this.renderAnyJson(event.$properties, true)}
           </div>
         )}
       </Row>

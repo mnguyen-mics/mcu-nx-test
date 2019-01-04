@@ -1,8 +1,9 @@
 import { Index } from '../../utils';
+import { UserActivityEventResource } from '../datamart/UserActivityResource';
 
 export interface Activity {
   $email_hash: string | object;
-  $events: EventProps[];
+  $events: UserActivityEventResource[];
   $location: {
     $latlon: string[];
   };
@@ -43,12 +44,6 @@ export interface Property {
   $referrer: string;
   $url: string;
   language: string;
-}
-
-export interface EventProps {
-  $event_name: string;
-  $properties: Property[];
-  $ts: number;
 }
 
 export interface UserAgent {
