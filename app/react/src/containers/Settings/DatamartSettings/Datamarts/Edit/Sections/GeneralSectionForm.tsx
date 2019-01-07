@@ -6,6 +6,8 @@ import {
   FormAlertInput,
   FormSection,
   FormAlertInputField,
+  FormInputField,
+  FormInput,
 } from '../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -14,7 +16,14 @@ import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+export interface GeneralFormSectionProps {
+  isCrossDatamart: boolean;
+}
+
+type Props = GeneralFormSectionProps &
+  InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps;
 
 interface State {
   displayAdvancedSection: boolean;
@@ -36,6 +45,7 @@ class GeneralFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      isCrossDatamart,
     } = this.props;
 
     return (
@@ -44,8 +54,24 @@ class GeneralFormSection extends React.Component<Props, State> {
           subtitle={messages.sectionGeneralSubTitle}
           title={messages.sectionGeneralTitle}
         />
-
-        <FormAlertInputField
+        <FormInputField
+          name="datamart.name"
+          component={FormInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.contentSectionNameLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(
+              messages.contentSectionGeneralTokenPlaceholder,
+            ),
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.contentSectionNameTooltip),
+          }}
+        />
+        {!isCrossDatamart && <FormAlertInputField
           name="datamart.token"
           component={FormAlertInput}
           validate={[isRequired]}
@@ -64,13 +90,13 @@ class GeneralFormSection extends React.Component<Props, State> {
           iconType="warning"
           type="warning"
           message={formatMessage(messages.warningOnTokenEdition)}
-        />
+        />}
       </div>
     );
   }
 }
 
-export default compose(
+export default compose<Props, GeneralFormSectionProps>(
   injectIntl,
   withValidators,
   withNormalizer,

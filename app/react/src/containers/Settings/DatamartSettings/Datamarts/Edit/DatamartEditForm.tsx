@@ -29,7 +29,6 @@ import { McsFormSection } from '../../../../../utils/FormHelper';
 import EventRulesSection, {
   EventRulesSectionProps,
 } from '../../Common/EventRulesSection';
-import NameSectionForm from './Sections/NameSectionForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -59,9 +58,9 @@ class DatamartEditForm extends React.Component<Props> {
   generateSections = (isCrossDatamart: boolean) => {
     const sections: McsFormSection[] = [
       {
-        id: 'name',
-        title: messages.sectionNameTitle,
-        component: <NameSectionForm />,
+        id: 'general',
+        title: messages.sectionGeneralTitle,
+        component: <GeneralFormSection isCrossDatamart={isCrossDatamart} />,
       },
     ];
 
@@ -71,12 +70,6 @@ class DatamartEditForm extends React.Component<Props> {
     };
 
     if (!isCrossDatamart) {
-      sections.push({
-        id: 'general',
-        title: messages.sectionGeneralTitle,
-        component: <GeneralFormSection />,
-      });
-
       sections.push({
         id: 'eventRules',
         title: messages.sectionEventRulesTitle,
