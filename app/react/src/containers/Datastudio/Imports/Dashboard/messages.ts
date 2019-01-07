@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+  id: {
+    id: 'imports.dashboard.table.column.id',
+    defaultMessage: 'ID',
+  },
   name: {
     id: 'imports.dashboard.table.name',
     defaultMessage: 'Name',
@@ -12,6 +16,14 @@ export default defineMessages({
   startDate: {
     id: 'imports.dashboard.table.startDate',
     defaultMessage: 'Start Date',
+  },
+  endDate: {
+    id: 'imports.dashboard.table.endDate',
+    defaultMessage: 'End Date',
+  },
+  progress: {
+    id: 'imports.table.column.progress',
+    defaultMessage: 'Progress',
   },
   archive: {
     id: 'imports.dashboard.actionbar.archive',
@@ -45,6 +57,10 @@ export default defineMessages({
   notStarted: {
     id: 'imports.dashboard.actionbar.notStarted',
     defaultMessage: 'Not Started',
+  },
+  notEnded: {
+    id: 'imports.dashboard.actionbar.notEnded',
+    defaultMessage: 'Not ended',
   },
   status: {
     id: 'imports.table.column.status',

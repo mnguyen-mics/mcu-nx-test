@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout } from 'antd';
+import { Layout, Progress } from 'antd';
 import { compose } from 'recompose';
 import moment from 'moment';
 import ImportHeader from './ImportHeader';
@@ -23,6 +23,9 @@ import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IImportService } from '../../../../services/ImportService';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../Helpers/injectThemeColors';
 
 const { Content } = Layout;
 
@@ -48,7 +51,9 @@ interface ImportRouteParams {
   importId: string;
 }
 
-type JoinedProps = RouteComponentProps<ImportRouteParams> & InjectedIntlProps;
+type JoinedProps = RouteComponentProps<ImportRouteParams> &
+  InjectedIntlProps &
+  InjectedThemeColorsProps;
 
 class Imports extends React.Component<JoinedProps, State> {
   fetchLoop = window.setInterval(() => {
@@ -194,6 +199,33 @@ class Imports extends React.Component<JoinedProps, State> {
     history.push(nextLocation);
   };
 
+  getExecutionInfo = (execution: ImportExecution) => {
+    const { colors } = this.props;
+    const tasks = execution.num_tasks ? parseInt(execution.num_tasks, 10) : 0;
+    const completedTasks = execution.completed_tasks
+      ? parseInt(execution.completed_tasks, 10)
+      : 0;
+    const setColor = (status: string) => {
+      switch (status) {
+        case 'RUNNING':
+        case 'PENDING':
+          return colors['mcs-primary'];
+        case 'SUCCESS':
+          return colors['mcs-success'];
+        case 'SUCCEEDED':
+          return colors['mcs-success'];
+        case 'FAILED':
+          return colors['mcs-error'];
+        default:
+          return colors['mcs-primary'];
+      }
+    };
+    return {
+      percent: tasks ? Math.round(completedTasks / tasks) : 0,
+      color: setColor(execution.status),
+    };
+  };
+
   buildColumnDefinition = () => {
     const {
       intl: { formatMessage },
@@ -201,16 +233,29 @@ class Imports extends React.Component<JoinedProps, State> {
 
     const dataColumns = [
       {
+        intlMessage: messages.id,
+        key: 'id',
+        isHideable: false,
+        render: (text: string) => text,
+      },
+      {
         intlMessage: messages.status,
         key: 'status',
         isHideable: false,
         render: (text: string) => text,
       },
       {
-        intlMessage: messages.creationDate,
-        key: 'creation_date',
+        intlMessage: messages.progress,
+        key: 'progress',
         isHideable: false,
-        render: (text: string) => moment(text).format('DD/MM/YYYY h:mm:ss'),
+        render: (text: string, record: ImportExecution) => (
+          // we should update ant design in order to have strokeColor prop
+          // currently we can't pass color 
+          // https://github.com/ant-design/ant-design/blob/master/components/progress/progress.tsx
+          <div>
+            <Progress percent={this.getExecutionInfo(record).percent} />
+          </div>
+        ),
       },
       {
         intlMessage: messages.startDate,
@@ -220,6 +265,21 @@ class Imports extends React.Component<JoinedProps, State> {
           text
             ? moment(text).format('DD/MM/YYYY h:mm:ss')
             : formatMessage(messages.notStarted),
+      },
+      {
+        intlMessage: messages.endDate,
+        key: 'end_date',
+        isHideable: false,
+        render: (text: string) =>
+          text
+            ? moment(text).format('DD/MM/YYYY h:mm:ss')
+            : formatMessage(messages.notEnded),
+      },
+      {
+        intlMessage: messages.creationDate,
+        key: 'submission_date',
+        isHideable: false,
+        render: (text: string) => moment(text).format('DD/MM/YYYY h:mm:ss'),
       },
     ];
 
@@ -293,4 +353,5 @@ class Imports extends React.Component<JoinedProps, State> {
 export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
+  injectThemeColors,
 )(Imports);

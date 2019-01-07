@@ -45,10 +45,6 @@ export default defineMessages({
     id: 'imports.table.column.id',
     defaultMessage: 'ID',
   },
-  progress: {
-    id: 'imports.table.column.progress',
-    defaultMessage: 'Progress',
-  },
   startTime: {
     id: 'imports.table.column.start.time',
     defaultMessage: 'Start Time',

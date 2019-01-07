@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Modal, Icon, Progress } from 'antd';
+import { Modal, Icon } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Filters } from '../../../../components/ItemList';
 import { getWorkspace } from '../../../../state/Session/selectors';
@@ -250,6 +250,19 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     return [...IMPORTS_SEARCH_SETTINGS];
   }
 
+  formatDocumentTypeText = (docType: string): string => {
+    switch (docType) {
+      case 'USER_ACTIVITY':
+        return 'User Activity';
+      case 'USER_PROFILE':
+        return 'User Profile';
+      case 'USER_SEGMENT':
+        return 'User Segment';
+      default:
+        return '';
+    }
+  };
+
   render() {
     const {
       location: { search },
@@ -259,7 +272,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
       },
     } = this.props;
 
-    const { /*total,*/ data, loading } = this.state;
+    const { data, loading } = this.state;
 
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<Import>> = [
       {
@@ -272,6 +285,13 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     ];
 
     const dataColumns = [
+      {
+        translationKey: 'id',
+        intlMessage: messages.id,
+        key: 'id',
+        isHideable: false,
+        render: (text: string, record: Import) => <span>{text}</span>,
+      },
       {
         translationKey: 'NAME',
         intlMessage: messages.name,
@@ -289,36 +309,13 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         ),
       },
       {
-        translationKey: 'id',
-        intlMessage: messages.id,
-        key: 'id',
-        isHideable: false,
-        render: (text: string, record: Import) => <span>{text}</span>,
-      },
-      {
-        translationKey: 'progress',
-        intlMessage: messages.progress,
-        key: 'progress',
-        isHideable: false,
-        render: (text: string, record: Import) => (
-          <div>
-            <Progress percent={record.datamart_id === '1001' ? 30 : 75} />
-          </div>
-        ),
-      },
-      {
-        translationKey: 'mime_type',
-        intlMessage: messages.mimeType,
-        key: 'mime_type',
-        isHideable: false,
-        render: (text: string, record: Import) => <span>{text}</span>,
-      },
-      {
         translationKey: 'document_type',
         intlMessage: messages.documentType,
         key: 'document_type',
         isHideable: false,
-        render: (text: string, record: Import) => <span>{text}</span>,
+        render: (text: string, record: Import) => (
+          <span>{this.formatDocumentTypeText(text)}</span>
+        ),
       },
     ];
 
@@ -333,12 +330,6 @@ class ImportContent extends React.Component<Props, ImportContentState> {
       key: d.id,
       value: d.name || d.token,
     }));
-    // .concat([
-    //   {
-    //     key: '',
-    //     value: 'All',
-    //   },
-    // ])
 
     const filtersOptions: Array<MultiSelectProps<any>> = [
       {

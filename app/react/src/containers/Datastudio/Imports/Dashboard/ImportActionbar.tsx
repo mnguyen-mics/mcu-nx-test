@@ -85,6 +85,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     const {
       intl: { formatMessage },
     } = this.props;
+    // 100Mo
     const isSizeOK = file.size / 1024 / 1024 < 100;
     if (!isSizeOK) {
       message.error(`${file.name} ${formatMessage(messages.uploadError)}`, 2);
@@ -101,12 +102,17 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
         params: { organisationId, datamartId, importId },
       },
       history,
+      importObject,
     } = this.props;
     const { importFile } = this.state;
-    if (importFile) {
+    if (importFile && importObject) {
       this.setState({ isLoading: true });
       const formData = new FormData();
-      formData.append('file', this.state.importFile as any, importFile[0].name);
+      formData.append('file', importFile[0] as any, importFile[0].name);
+      importObject.mime_type === 'TEXT_CSV'
+        ? formData.append('type', 'TEXT/CSV')
+        : formData.append('type', 'APPLICATION/X-NDJSON');
+
       this._importService
         .createImportExecution(datamartId, importId, formData)
         .then(item => {
@@ -116,7 +122,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
             importFile: [],
           });
           history.push(
-            `/v2/o/${organisationId}/datastudio/imports/${importId}?datmartId=${datamartId}`,
+            `/v2/o/${organisationId}/datastudio/datamart/${datamartId}/imports/${importId}`,
           );
         })
         .catch(err => {
@@ -137,7 +143,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       name: 'file',
       multiple: true,
       action: '/',
-      accept: '.jpg,.jpeg,.png,.gif,.svg',
+      accept: '.json,.csv,.ods',
       beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
         this.checkIfSizeOK(file);
         this.setState({ importFile: fileList });

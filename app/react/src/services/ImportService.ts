@@ -27,7 +27,7 @@ export interface IImportService {
   createImportExecution: (
     datamartId: string,
     importId: string,
-    file: FormData
+    file: FormData,
   ) => Promise<DataResponse<any>>;
   getImportExecutions: (
     datamartId: string,
@@ -76,15 +76,13 @@ export class ImportService implements IImportService {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}`;
     return ApiService.deleteRequest(endpoint);
   }
-
-  // WAITING FOR BACKEND PART
   createImportExecution(
     datamartId: string,
     importId: string,
-    file: FormData
+    file: FormData,
   ): Promise<DataResponse<any>> {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}/executions`;
-    return ApiService.postRequest(endpoint, {});
+    return ApiService.postRequest(endpoint, file);
   }
   getImportExecutions(
     datamartId: string,
