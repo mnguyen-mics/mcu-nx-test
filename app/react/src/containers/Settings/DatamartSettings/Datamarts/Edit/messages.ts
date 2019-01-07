@@ -1,13 +1,25 @@
 import { defineMessages } from "react-intl";
 
 export default defineMessages({
+    contentSectionNameLabel: {
+        id: 'settings.datamart.form.name.label',
+        defaultMessage: 'Name',
+    },
+    contentSectionNamePlaceholder: {
+        id: 'settings.datamart.form.name.placeholder',
+        defaultMessage: 'Datamart Name',
+    },
+    contentSectionNameTooltip: {
+        id: 'settings.datamart.form.name.tooltip',
+        defaultMessage: 'Give your Datamart a name to identify it.',
+    },
     sectionGeneralTitle: {
         id: 'settings.datamart.form.general.title',
         defaultMessage: 'General Information'
     },
     sectionGeneralSubTitle: {
         id: 'settings.datamart.form.general.subtitle',
-        defaultMessage: 'Modify your Datamart\'s token',
+        defaultMessage: 'Modify your Datamart\'s information',
     },
     contentSectionGeneralTokenLabel: {
         id: 'settings.datamart.form.general.token.label',
