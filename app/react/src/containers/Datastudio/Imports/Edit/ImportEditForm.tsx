@@ -19,8 +19,8 @@ import ScrollspySider, {
 import { McsFormSection } from '../../../../utils/FormHelper';
 import { Path } from '../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
-import { Omit } from 'antd/lib/form/Form';
 import { Import } from '../../../../models/imports/imports';
+import { Omit } from '../../../../utils/Types';
 
 const FORM_ID = 'importForm';
 
