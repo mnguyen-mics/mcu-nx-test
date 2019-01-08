@@ -51,6 +51,7 @@ import { ActionsColumnDefinition } from '../../../../components/TableView/TableV
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -509,23 +510,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
-    const formatUserActivationSegmentName = (
-      record: UserActivationSegment,
-    ): string => {
-      if (record.clickers) {
-        return intl.formatMessage(messages.userActivationClickers, {
-          audienceSegmentName: record.name,
-        });
-      } else if (record.exposed) {
-        return intl.formatMessage(messages.userActivationExposed, {
-          audienceSegmentName: record.name,
-        });
-      } else {
-        // Not supposed to happen
-        return record.name;
-      }
-    };
-
     const dataColumns = [
       {
         translationKey: 'TYPE',
@@ -608,9 +592,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
           >
-            {record.type === 'USER_ACTIVATION'
-              ? formatUserActivationSegmentName(record as UserActivationSegment)
-              : text}
+            <SegmentNameDisplay audienceSegmentResource={record}/>
           </Link>
         ),
       },

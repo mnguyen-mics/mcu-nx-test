@@ -7,7 +7,7 @@ import { AudienceSegmentResource } from '../../../../../models/audiencesegment';
 import { UserLookalikeSegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 
 export interface LookalikeStatusWarningProps {
-  segment: null | AudienceSegmentResource;
+  segment?: AudienceSegmentResource;
   isFetching: boolean;
 }
 

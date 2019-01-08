@@ -33,7 +33,7 @@ interface State {
 }
 
 export interface AudienceSegmentDashboardProps {
-  segment: AudienceSegmentResource | null;
+  segment?: AudienceSegmentResource;
   isLoading: boolean;
 }
 

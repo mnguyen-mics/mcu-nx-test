@@ -25,7 +25,7 @@ type Props = RouteComponentProps<{
   InjectedIntlProps;
 
 interface State {
-  segment: AudienceSegmentResource | null;
+  segment?: AudienceSegmentResource;
   isLoading: boolean;
 }
 
@@ -37,7 +37,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      segment: null,
+      segment: undefined,
       isLoading: true,
     };
   }

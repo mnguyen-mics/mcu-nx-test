@@ -107,12 +107,4 @@ export default defineMessages({
     id: 'segment.additiondeletions.nodata',
     defaultMessage: 'There is no data on the selected period!'
   },
-  userActivationClickers: {
-    id: 'segment.dashboard.useractivation.clickers',
-    defaultMessage: '{audienceSegmentName} - Clickers'
-  },
-  userActivationExposed: {
-    id: 'segment.dashboard.useractivation.exposed',
-    defaultMessage: '{audienceSegmentName} - Exposed'
-  }
 });

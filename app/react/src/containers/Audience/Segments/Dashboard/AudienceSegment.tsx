@@ -13,7 +13,7 @@ import { AudienceSegmentResource } from '../../../../models/audiencesegment';
 
 
 export interface AudienceSegmentProps {
-  segment: AudienceSegmentResource | null;
+  segment?: AudienceSegmentResource;
   isLoading: boolean;
 }
 

@@ -3,8 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { Icon } from 'antd';
 
 import ContentHeader from '../../../../components/ContentHeader';
-import { AudienceSegmentResource, UserActivationSegment } from '../../../../models/audiencesegment';
-import messages from './messages';
+import { AudienceSegmentResource } from '../../../../models/audiencesegment';
 import {
   InjectedIntlProps,
   defineMessages,
@@ -12,9 +11,10 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
+import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 
 export interface AudienceSegmentHeaderProps {
-  segment: AudienceSegmentResource | null;
+  segment?: AudienceSegmentResource;
   isLoading: boolean
 }
 
@@ -49,18 +49,8 @@ export const localMessages = defineMessages({
 
 class AudienceSegmentHeader extends React.Component<Props> {  
   render() {
-    const { segment, isLoading, intl } = this.props;
+    const { segment, isLoading } = this.props;
 
-    const formatUserActivationSegmentName = (record: UserActivationSegment): string => {
-      if(record.clickers) {
-        return intl.formatMessage(messages.userActivationClickers, {audienceSegmentName: record.name});
-      } else if (record.exposed){
-        return intl.formatMessage(messages.userActivationExposed, {audienceSegmentName: record.name});
-      } else {
-        // Not supposed to happen
-        return record.name;
-      }
-    }
     
     let iconType = '';
 
@@ -98,9 +88,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
     return (
       <ContentHeader
         title={
-          segment
-            ? ((segment as AudienceSegmentResource).type === 'USER_ACTIVATION' ? formatUserActivationSegmentName(segment as UserActivationSegment) : segment.name)
-            : ''
+          <SegmentNameDisplay audienceSegmentResource={segment}/>
         }
         subTitle={segmentType}
         loading={isLoading}

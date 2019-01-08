@@ -11,7 +11,7 @@ import {
   GetSegmentsOption,
   IAudienceSegmentService,
 } from '../../../services/AudienceSegmentService';
-import { AudienceSegmentResource, UserActivationSegment } from '../../../models/audiencesegment';
+import { AudienceSegmentResource } from '../../../models/audiencesegment';
 import { formatMetric, normalizeReportView } from '../../../utils/MetricHelper';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { Index } from '../../../utils';
@@ -22,6 +22,7 @@ import McsMoment from '../../../utils/McsMoment';
 import { normalizeArrayOfObject } from '../../../utils/Normalizer';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
+import SegmentNameDisplay from '../../Audience/Common/SegmentNameDisplay';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentResource>
@@ -48,14 +49,6 @@ const messages = defineMessages({
     id: 'segment-selector.column-cookieIds',
     defaultMessage: 'Desktop Cookie Ids',
   },
-  userActivationClickers: {
-    id: 'segment.dashboard.useractivation.clickers',
-    defaultMessage: '{audienceSegmentName} - Clickers'
-  },
-  userActivationExposed: {
-    id: 'segment.dashboard.useractivation.exposed',
-    defaultMessage: '{audienceSegmentName} - Exposed'
-  }
 });
 
 export interface AudienceSegmentSelectorProps {
@@ -166,24 +159,11 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       return formatMetric(metric, '0,0');
     };
 
-    const formatUserActivationSegmentName = (record: UserActivationSegment): string => {
-      const { intl } = this.props;
-      
-      if(record.clickers) {
-        return intl.formatMessage(messages.userActivationClickers, {audienceSegmentName: record.name});
-      } else if (record.exposed){
-        return intl.formatMessage(messages.userActivationExposed, {audienceSegmentName: record.name});
-      } else {
-        // Not supposed to happen
-        return record.name;
-      }
-    }
-
     const columns: Array<DataColumnDefinition<AudienceSegmentResource>> = [
       {
         intlMessage: messages.segmentSelectorColumnName,
         key: 'name',
-        render: (text, record) => <span>{record.type === "USER_ACTIVATION" ? formatUserActivationSegmentName(record as UserActivationSegment) : record.name }</span>,
+        render: (text, record) => <SegmentNameDisplay audienceSegmentResource={record}/>,
       },
       {
         intlMessage: messages.segmentSelectorColumnUserPoints,

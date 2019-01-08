@@ -30,7 +30,7 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 
 export interface AudienceSegmentActionbarProps {
-  segment: null | AudienceSegmentResource;
+  segment?: AudienceSegmentResource;
   isLoading: boolean;
   onCalibrationClick: () => void;
 }

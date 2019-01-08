@@ -157,12 +157,4 @@ export default defineMessages({
     id: 'queryDocument.fieldCondition.condition.GTE',
     defaultMessage: 'Is Greater Than Or Equals'
   },
-  userActivationClickers: {
-    id: 'segment.dashboard.useractivation.clickers',
-    defaultMessage: '{audienceSegmentName} - Clickers'
-  },
-  userActivationExposed: {
-    id: 'segment.dashboard.useractivation.exposed',
-    defaultMessage: '{audienceSegmentName} - Exposed'
-  }
 })

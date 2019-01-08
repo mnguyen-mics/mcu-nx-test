@@ -268,14 +268,6 @@ const messages: {
     id: 'timeline.activity.scenario.node.movement.content',
     defaultMessage:
       'Moved from {scenarioOldNodeName} to {scenarioNodeName} within {scenarioName}',
-  },
-  userActivationClickers: {
-    id: 'segment.dashboard.useractivation.clickers',
-    defaultMessage: '{audienceSegmentName} - Clickers'
-  },
-  userActivationExposed: {
-    id: 'segment.dashboard.useractivation.exposed',
-    defaultMessage: '{audienceSegmentName} - Exposed'
   }
 });
 

@@ -46,7 +46,7 @@ import constants, { ComparisonValues } from './contants';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
-import { AudienceSegmentResource, UserActivationSegment } from '../../../../../../models/audiencesegment';
+import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -430,27 +430,14 @@ class FieldNodeForm extends React.Component<Props> {
       idToAttachDropDowns,
     } = this.props;
 
-    const formatUserActivationSegmentName = (record: UserActivationSegment): string => {
-      if(record.clickers) {
-        return intl.formatMessage(messages.userActivationClickers, {audienceSegmentName: record.name});
-      } else if (record.exposed){
-        return intl.formatMessage(messages.userActivationExposed, {audienceSegmentName: record.name});
-      } else {
-        // Not supposed to happen
-        return record.name;
-      }
-    }
-    const formatSegmentName = (res: AudienceSegmentResource) => {
-      return res.type === "USER_ACTIVATION" ? formatUserActivationSegmentName(res as UserActivationSegment) : res.name;
-    }
     const fetchListMethod = (keywords: string) =>
       this._audienceSegmentService.getSegments(organisationId, { keywords }).then(
-        res => res.data.map(r => ({ key: r.id, label: formatSegmentName(r) })),
+        res => res.data.map(r => ({ key: r.id, label: <SegmentNameDisplay audienceSegmentResource={r}/> })),
       );
     const fetchSingleMethod = (id: string) =>
       this._audienceSegmentService.getSegment(id).then(res => ({
         key: res.data.id,
-        label: formatSegmentName(res.data),
+        label: <SegmentNameDisplay audienceSegmentResource={res.data}/>,
       }));
 
     let popUpProps = {};
