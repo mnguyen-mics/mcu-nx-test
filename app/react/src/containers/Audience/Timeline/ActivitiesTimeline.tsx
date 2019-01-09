@@ -108,13 +108,13 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     const sortedData = data.map(activity => {
       return {
         ...activity,
-        $events: activity.$events.sort((a, b) => b.$ts - a.$ts),
+        $events: activity.$events.sort((a, b) => (b.$ts || 0) - (a.$ts || 0)),
       };
     });
     const sortedPrevActivities = prevActivities.map(activity => {
       return {
         ...activity,
-        $events: activity.$events.sort((a, b) => b.$ts - a.$ts),
+        $events: activity.$events.sort((a, b) => (b.$ts || 0) - (a.$ts || 0)),
       };
     });
     return prevActivities.length > 0

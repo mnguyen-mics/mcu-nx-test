@@ -98,7 +98,7 @@ export class AddNodeOperation implements NodeOperation {
             branchNumber: number,
           ): StorylineNodeModel[] => {
             const newEmptyOutEdges = [];
-            for (i = 2; i <= branchNumber; i++) {
+            for (let i = 2; i <= branchNumber; i++) {
               const emptyNode: StorylineNodeModel = {
                 node: {
                   id: newId,
@@ -237,7 +237,7 @@ export class UpdateNodeOperation implements NodeOperation {
             branchNumber: number,
           ): StorylineNodeModel[] => {
             const newEmptyOutEdges = [];
-            for (i = 1; i <= branchNumber; i++) {
+            for (let i = 1; i <= branchNumber; i++) {
               const newId = cuid();
               const emptyNode: StorylineNodeModel = {
                 node: {
