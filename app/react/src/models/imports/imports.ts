@@ -5,12 +5,13 @@ export interface Import {
   datafarm_key: string;
   encoding: string;
   mime_type: string;
+  document_type: string; // 'USER_ACTIVITY' | 'USER_PROFILE' | 'USER_SEGMENT';
 }
 
 export interface ImportCreateResource {
   name: string;
   encoding: string;
-  mime_type: string
+  mime_type: string;
 }
 
 export interface ImportExecution {

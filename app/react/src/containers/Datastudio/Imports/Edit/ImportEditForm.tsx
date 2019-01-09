@@ -22,7 +22,7 @@ import GeneralFormSection from './Sections/GeneralFormSection';
 import { Import } from '../../../../models/imports/imports';
 import { Omit } from '../../../../utils/Types';
 
-const FORM_ID = 'importForm';
+export const FORM_ID = 'importForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }

@@ -4,4 +4,5 @@ export const INITIAL_IMPORTS_FORM_DATA: Partial<Import> = {
   name: '',
   encoding: '',
   mime_type: '',
+  document_type: '',
 };

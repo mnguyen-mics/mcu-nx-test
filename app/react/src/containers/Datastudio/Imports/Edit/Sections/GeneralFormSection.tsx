@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { getFormValues } from 'redux-form';
+import { connect } from 'react-redux';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
@@ -14,6 +16,8 @@ import {
   DefaultSelectField,
   DefaultSelect,
 } from '../../../../../components/Form';
+import { FORM_ID } from '../ImportEditForm';
+import { Import } from '../../../../../models/imports/imports';
 
 const messages = defineMessages({
   sectionTitleGeneral: {
@@ -59,7 +63,14 @@ const messages = defineMessages({
   },
 });
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+interface MapStateToProps {
+  formValues: Partial<Import>;
+}
+
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps &
+  MapStateToProps;
 
 interface State {
   displayAdvancedSection: boolean;
@@ -81,7 +92,38 @@ class GeneralFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      formValues,
     } = this.props;
+
+    const getDocumentTypeOptions = () => {
+      return [
+        {
+          title: 'User Segment',
+          value: 'USER_SEGMENT',
+        },
+        {
+          title: 'User Activity',
+          value: 'USER_ACTIVITY',
+        },
+        {
+          title: 'User Profile',
+          value: 'USER_PROFILE',
+        },
+      ];
+    };
+
+    const getMimeTypeOptions = () => {
+      return [
+        {
+          title: 'X_NDJSON',
+          value: 'X_NDJSON',
+        },
+        {
+          title: 'CSV',
+          value: 'TEXT_CSV',
+        },
+      ];
+    };
 
     return (
       <div>
@@ -110,20 +152,11 @@ class GeneralFormSection extends React.Component<Props, State> {
             name="document_type"
             component={DefaultSelect}
             validate={[isRequired]}
-            options={[
-              {
-                title: 'USER_ACTIVITY',
-                value: 'USER_ACTIVITY',
-              },
-              {
-                title: 'USER_PROFILE',
-                value: 'USER_PROFILE',
-              },
-              {
-                title: 'USER_SEGMENT',
-                value: 'USER_SEGMENT',
-              },
-            ]}
+            options={
+              formValues.mime_type === 'TEXT_CSV'
+                ? [getDocumentTypeOptions()[0]]
+                : getDocumentTypeOptions()
+            }
             formItemProps={{
               label: formatMessage(messages.labelImportDocumentType),
               colon: false,
@@ -137,16 +170,11 @@ class GeneralFormSection extends React.Component<Props, State> {
             name="mime_type"
             component={DefaultSelect}
             validate={[isRequired]}
-            options={[
-              {
-                title: 'X_NDJSON',
-                value: 'X_NDJSON',
-              },
-              {
-                title: 'TEXT_CSV',
-                value: 'TEXT_CSV',
-              },
-            ]}
+            options={
+              formValues.document_type === 'USER_SEGMENT'
+                ? getMimeTypeOptions()
+                : [getMimeTypeOptions()[0]]
+            }
             formItemProps={{
               label: formatMessage(messages.labelImportMimeType),
               colon: false,
@@ -181,8 +209,13 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  formValues: getFormValues(FORM_ID)(state),
+});
+
 export default compose(
   injectIntl,
   withValidators,
   withNormalizer,
+  connect(mapStateToProps),
 )(GeneralFormSection);
