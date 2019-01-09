@@ -155,7 +155,9 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
       },
     } = this.props;
 
-    const url = `/v2/o/${organisationId}/datastudio/exports/${exportId}`;
+    const url = exportId
+      ? `/v2/o/${organisationId}/datastudio/exports/${exportId}`
+      : `/v2/o/${organisationId}/datastudio/exports`;
 
     return history.push(url);
   };
