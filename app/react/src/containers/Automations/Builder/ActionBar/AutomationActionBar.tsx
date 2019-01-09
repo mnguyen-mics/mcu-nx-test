@@ -21,13 +21,15 @@ import { IScenarioService } from '../../../../services/ScenarioService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { AutomationResource } from '../../../../models/automations/automations';
 
 interface AutomationActionBarProps {
   datamartId: string;
-  automationData: StorylineNodeModel;
+  automationTreeData: StorylineNodeModel;
 }
 
 interface State {
+  automationData?: AutomationResource;
   isLoading: boolean;
   visible: boolean;
 }
@@ -54,15 +56,32 @@ class AutomationActionBar extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    const {
+      match: {
+        params: { scenarioId },
+      },
+    } = this.props;
+    if (scenarioId) {
+      this._scenarioService.getScenario(scenarioId).then(res => {
+        this.setState({
+          automationData: res.data,
+        });
+      });
+    }
+  }
+
   saveAutomation = (formData: AutomationSimpleFormData) => {
     const {
       intl,
       notifyError,
       match: {
-        params: { organisationId },
+        params: { organisationId, scenarioId },
       },
       datamartId,
     } = this.props;
+
+    const { automationData } = this.state;
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -72,15 +91,24 @@ class AutomationActionBar extends React.Component<Props, State> {
       isLoading: true,
     });
 
-    const newFormData = {
-      name: formData.name,
-      datamart_id: datamartId,
-    };
+    let saveOrCreateScenario;
 
-    this._scenarioService
-      .createScenario(organisationId, newFormData)
-      .then((automationRes) => {
+    if (scenarioId && automationData) {
+      saveOrCreateScenario = this._scenarioService.updateScenario(scenarioId, {
+        ...automationData,
+        ...formData,
+      });
+    } else {
+      saveOrCreateScenario = this._scenarioService.createScenario(
+        organisationId,
+        { name: formData.name, datamart_id: datamartId },
+      );
+    }
+
+    saveOrCreateScenario
+      .then(() => {
         hideSaveInProgress();
+        this.setState({ isLoading: false });
         this.redirect();
         message.success(intl.formatMessage(messages.automationSaved));
       })
@@ -89,21 +117,6 @@ class AutomationActionBar extends React.Component<Props, State> {
         notifyError(err);
         hideSaveInProgress();
       });
-
-    // if (isScenarioNodeShape(automationData.node)) {
-    //   this._scenarioService
-    //     .createScenarioNode(automationData.node)
-    //     .then(() => {
-    //       hideSaveInProgress();
-    //       this.close();
-    //       message.success(intl.formatMessage(messages.automationSaved));
-    //     })
-    //     .catch(err => {
-    //       this.setState({ loading: false });
-    //       notifyError(err);
-    //       hideSaveInProgress();
-    //     });
-    // }
   };
 
   redirect = () => {
@@ -129,10 +142,6 @@ class AutomationActionBar extends React.Component<Props, State> {
     const { intl, submit } = this.props;
 
     const { isLoading, visible } = this.state;
-
-    const handleOnSubmit = (formData: AutomationSimpleFormData) => {
-      this.setState({ isLoading: true });
-    };
 
     const handleOnOk = () => {
       submit(FORM_ID);
@@ -168,7 +177,7 @@ class AutomationActionBar extends React.Component<Props, State> {
             />
           }
         >
-          {visible && <AutomationSimpleForm onSubmit={handleOnSubmit} />}
+          {visible && <AutomationSimpleForm onSubmit={this.saveAutomation} />}
         </Modal>
       </ActionBar>
     );

@@ -106,7 +106,7 @@ container
   .to(CompartmentService);
 container
   .bind<IScenarioService>(TYPES.IScenarioService)
-  .toConstructor(ScenarioService);
+  .to(ScenarioService);
 
 export const { lazyInject } = getDecorators(container, false);
 

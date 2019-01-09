@@ -117,7 +117,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       <Layout>
         <AutomationActionBar
           datamartId={datamartId}
-          automationData={automationData}
+          automationTreeData={automationData}
         />
         <Layout.Content
           className={`mcs-content-container`}

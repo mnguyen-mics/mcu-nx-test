@@ -17,6 +17,7 @@ import AutomationBuilderContainer from './AutomationBuilderContainer';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
+  scenarioId: string;
 }
 
 interface MapStateToProps {

@@ -1,11 +1,23 @@
-import { DisplayCampaignFormData, ABNFormData, EmailCampaignAutomationFormData } from "../../containers/Automations/Builder/AutomationNode/Edit/domain";
+import {
+  DisplayCampaignFormData,
+  ABNFormData,
+  EmailCampaignAutomationFormData,
+} from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
+import { AutomationSimpleFormData } from './../../containers/Automations/Builder/ActionBar/AutomationSimpleForm';
 export interface AutomationResource {
   id: string;
   name: string;
   datamart_id: string;
   organisation_id: string;
   status: AutomationStatus;
+  technical_name?: string;
+}
+
+export function isAutomationResource(
+  automation: AutomationSimpleFormData,
+): automation is AutomationResource {
+  return (automation as AutomationResource).id !== undefined;
 }
 
 export type AutomationStatus = 'NEW' | 'ACTIVE' | 'PAUSED';
@@ -18,6 +30,7 @@ export const automationStatuses: AutomationStatus[] = [
 export interface AutomationCreateResource {
   name: string;
   datamart_id: string;
+  technical_name?: string;
 }
 
 export interface StorylineResource {
