@@ -162,7 +162,7 @@ class Imports extends React.Component<JoinedProps, State> {
     importId: string,
     options: object,
   ) => {
-    const fetchExport = this._importService
+    const fetchImport = this._importService
       .getImport(datamartId, importId)
       .then(res => res.data)
       .then(res =>
@@ -182,7 +182,7 @@ class Imports extends React.Component<JoinedProps, State> {
       )
       .catch(err => log(err));
 
-    return Promise.all([fetchExport, fetchImportExecutions]);
+    return Promise.all([fetchImport, fetchImportExecutions]);
   };
 
   updateLocationSearch = (params: Filters) => {
@@ -250,7 +250,7 @@ class Imports extends React.Component<JoinedProps, State> {
         isHideable: false,
         render: (text: string, record: ImportExecution) => (
           // we should update ant design in order to have strokeColor prop
-          // currently we can't pass color 
+          // currently we can't pass color
           // https://github.com/ant-design/ant-design/blob/master/components/progress/progress.tsx
           <div>
             <Progress percent={this.getExecutionInfo(record).percent} />

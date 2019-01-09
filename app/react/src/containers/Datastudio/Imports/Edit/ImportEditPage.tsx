@@ -31,11 +31,11 @@ const messages = defineMessages({
   },
   updateSuccess: {
     id: 'edit.imports.success.message',
-    defaultMessage: 'Imports successfully saved ',
+    defaultMessage: 'Import successfully saved ',
   },
   updateError: {
     id: 'edit.imports.list.error.message',
-    defaultMessage: 'Imports update failed ',
+    defaultMessage: 'Import update failed ',
   },
   savingInProgress: {
     id: 'form.saving.in.progress',
@@ -134,7 +134,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
     const {
       history,
       match: {
-        params: { importId, organisationId },
+        params: { importId, organisationId, datamartId },
       },
       intl,
     } = this.props;
@@ -154,27 +154,29 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
       this._importService
         .updateImport(importData.datamart_id, importId, formData)
         .then(() => {
-          redirectAndNotify(importId, true);
+          redirectAndNotify(importId);
         })
         .catch(err => {
-          redirectAndNotify(undefined);
+          redirectAndNotify();
         });
     } else if (selectedDatamart) {
       this._importService
         .createImport(selectedDatamart.id, formData)
         .then(createdImport => {
-          redirectAndNotify(createdImport.data.id, true);
+          redirectAndNotify(createdImport.data.id);
         })
         .catch(err => {
           redirectAndNotify();
         });
     }
 
-    const redirectAndNotify = (id?: string, success: boolean = false) => {
-      if (success) {
+    const redirectAndNotify = (id?: string) => {
+      if (id) {
         hideSaveInProgress();
         message.success(intl.formatMessage(messages.updateSuccess));
-        return history.push(`/v2/o/${organisationId}/datastudio/imports`);
+        return history.push(
+          `/v2/o/${organisationId}/datastudio/datamart/${datamartId}/imports/${id}`,
+        );
       } else {
         hideSaveInProgress();
         this.setState({
