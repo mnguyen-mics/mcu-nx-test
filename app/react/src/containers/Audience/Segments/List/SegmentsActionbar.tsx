@@ -26,7 +26,7 @@ import McsMoment from '../../../../utils/McsMoment';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { AudienceSegmentResource, UserActivationSegment } from '../../../../models/audiencesegment';
+import { UserActivationSegment } from '../../../../models/audiencesegment';
 
 
 const messages = defineMessages({
@@ -144,8 +144,8 @@ class SegmentsActionbar extends React.Component<Props, State> {
       ),
     ]);
   
-    const segmentsWithUpdatedName = results[0].data.map((res): AudienceSegmentResource => {
-      const name = res.type === "USER_ACTIVATION" ? this.formatUserActivationSegmentName(res as UserActivationSegment) : res.name;
+    const segmentsWithUpdatedName = results[0].data.map(res => {
+      const name = res.type === "USER_ACTIVATION" ? this.formatUserActivationSegmentName(res) : res.name;
       return {...res, name}
     });
   

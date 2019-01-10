@@ -3,7 +3,7 @@ import { Tag, Tooltip } from 'antd';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
@@ -16,7 +16,7 @@ type Props = SegmentsTagProps &
   InjectedIntlProps
 
 interface State {
-  segment?: AudienceSegmentResource;
+  segment?: AudienceSegmentShape;
 }
 
 class SegmentsTag extends React.Component<Props, State> {

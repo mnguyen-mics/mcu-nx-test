@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { Icon } from 'antd';
 
 import ContentHeader from '../../../../components/ContentHeader';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import {
   InjectedIntlProps,
   defineMessages,
@@ -14,7 +14,7 @@ import { compose } from 'recompose';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 
 export interface AudienceSegmentHeaderProps {
-  segment?: AudienceSegmentResource;
+  segment?: AudienceSegmentShape;
   isLoading: boolean
 }
 
@@ -55,20 +55,18 @@ class AudienceSegmentHeader extends React.Component<Props> {
     let iconType = '';
 
     if (segment) {
-      if ((segment as AudienceSegmentResource).type === 'USER_ACTIVATION') {
+      if (segment.type === 'USER_ACTIVATION') {
         iconType = 'rocket';
-      } else if ((segment as AudienceSegmentResource).type === 'USER_QUERY') {
+      } else if (segment.type === 'USER_QUERY') {
         iconType = 'database';
-      } else if ((segment as AudienceSegmentResource).type === 'USER_LIST') {
+      } else if (segment.type === 'USER_LIST') {
         iconType = 'solution';
-      } else if ((segment as AudienceSegmentResource).type === 'USER_PIXEL') {
-        iconType = 'global';
       } else if (
-        (segment as AudienceSegmentResource).type === 'USER_LOOKALIKE'
+        segment.type === 'USER_LOOKALIKE'
       ) {
         iconType = 'usergroup-add';
       } else if (
-        (segment as AudienceSegmentResource).type === 'USER_PARTITION'
+        segment.type === 'USER_PARTITION'
       ) {
         iconType = 'api';
       }
@@ -78,7 +76,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
       <span>
         <Icon type={iconType} />{' '}
         <FormattedMessage
-          {...localMessages[(segment as AudienceSegmentResource).type]}
+          {...localMessages[segment.type]}
         />
       </span>
     ) : (

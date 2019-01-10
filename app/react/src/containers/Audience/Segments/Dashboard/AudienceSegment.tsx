@@ -9,11 +9,11 @@ import LookalikeStatusWarning from './Lookalike/LookalikeStatusWarning';
 
 import { compose } from 'recompose';
 import { InjectedIntlProps } from 'react-intl';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 
 
 export interface AudienceSegmentProps {
-  segment?: AudienceSegmentResource;
+  segment?: AudienceSegmentShape;
   isLoading: boolean;
 }
 

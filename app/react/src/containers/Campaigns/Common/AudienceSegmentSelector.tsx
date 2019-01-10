@@ -11,7 +11,7 @@ import {
   GetSegmentsOption,
   IAudienceSegmentService,
 } from '../../../services/AudienceSegmentService';
-import { AudienceSegmentResource } from '../../../models/audiencesegment';
+import { AudienceSegmentResource, AudienceSegmentShape } from '../../../models/audiencesegment';
 import { formatMetric, normalizeReportView } from '../../../utils/MetricHelper';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { Index } from '../../../utils';
@@ -25,7 +25,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import SegmentNameDisplay from '../../Audience/Common/SegmentNameDisplay';
 
 const SegmentTableSelector: React.ComponentClass<
-  TableSelectorProps<AudienceSegmentResource>
+  TableSelectorProps<AudienceSegmentShape>
 > = TableSelector;
 
 const messages = defineMessages({
@@ -159,7 +159,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       return formatMetric(metric, '0,0');
     };
 
-    const columns: Array<DataColumnDefinition<AudienceSegmentResource>> = [
+    const columns: Array<DataColumnDefinition<AudienceSegmentShape>> = [
       {
         intlMessage: messages.segmentSelectorColumnName,
         key: 'name',

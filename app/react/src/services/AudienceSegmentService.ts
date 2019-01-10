@@ -1,7 +1,6 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import ReportService from './ReportService';
 import {
-  AudienceSegmentResource,
   AudienceSegmentType,
   UserQueryEvaluationMode,
   AudienceSegmentShape,
@@ -48,7 +47,7 @@ export interface IAudienceSegmentService {
   getSegments: (
     organisationId?: string,
     options?: GetSegmentsOption,
-  ) => Promise<DataListResponse<AudienceSegmentResource>>;
+  ) => Promise<DataListResponse<AudienceSegmentShape>>;
 
   getSegment: (
     segmentId: string,
@@ -194,7 +193,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   getSegments = (
     organisationId?: string,
     options: GetSegmentsOption = {},
-  ): Promise<DataListResponse<AudienceSegmentResource>> => {
+  ): Promise<DataListResponse<AudienceSegmentShape>> => {
     const endpoint = 'audience_segments';
     const params = {
       organisation_id: organisationId,

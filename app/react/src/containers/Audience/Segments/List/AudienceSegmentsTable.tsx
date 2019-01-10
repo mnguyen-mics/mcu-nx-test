@@ -31,7 +31,7 @@ import {
 import { compose } from 'recompose';
 import {
   AudienceSegmentResource,
-  UserActivationSegment,
+  AudienceSegmentShape,
 } from '../../../../models/audiencesegment';
 import ReportService from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
@@ -586,7 +586,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         isHideable: false,
         render: (
           text: string,
-          record: AudienceSegmentResource | UserActivationSegment,
+          record: AudienceSegmentShape,
         ) => (
           <Link
             className="mcs-campaigns-link"
