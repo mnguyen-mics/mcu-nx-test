@@ -41,6 +41,8 @@ export interface ScenarioNodeResource {
   id: string;
   name: string;
   scenario_id: string;
+  x?: number;
+  y?: number;
 }
 
 export interface DisplayCampaignNodeResource extends ScenarioNodeResource {
