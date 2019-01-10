@@ -46,6 +46,7 @@ import constants, { ComparisonValues } from './contants';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
+import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -430,13 +431,13 @@ class FieldNodeForm extends React.Component<Props> {
     } = this.props;
 
     const fetchListMethod = (keywords: string) =>
-      this._audienceSegmentService
-        .getSegments(organisationId, { keywords })
-        .then(res => res.data.map(r => ({ key: r.id, label: r.name })));
+      this._audienceSegmentService.getSegments(organisationId, { keywords }).then(
+        res => res.data.map(r => ({ key: r.id, label: <SegmentNameDisplay audienceSegmentResource={r}/> })),
+      );
     const fetchSingleMethod = (id: string) =>
       this._audienceSegmentService.getSegment(id).then(res => ({
         key: res.data.id,
-        label: res.data.name,
+        label: <SegmentNameDisplay audienceSegmentResource={res.data}/>,
       }));
 
     let popUpProps = {};

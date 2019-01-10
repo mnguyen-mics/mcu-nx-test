@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { SEGMENT_QUERY_SETTINGS } from './constants';
 import {
   isSearchValid,
@@ -25,7 +25,7 @@ type Props = RouteComponentProps<{
   InjectedIntlProps;
 
 interface State {
-  segment: AudienceSegmentResource | null;
+  segment?: AudienceSegmentShape;
   isLoading: boolean;
 }
 
@@ -37,7 +37,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      segment: null,
+      segment: undefined,
       isLoading: true,
     };
   }
@@ -87,9 +87,9 @@ class AudienceSegmentPage extends React.Component<Props, State> {
   onCalibrationClick = () => {
     const { segment } = this.state;
 
-    if (segment && (segment as AudienceSegmentResource).id) {
+    if (segment && segment.id) {
       this._audienceSegmentService
-        .recalibrateAudienceLookAlike((segment as AudienceSegmentResource).id)
+        .recalibrateAudienceLookAlike(segment.id)
         .then(res => {
           this.fetchAudienceSegment(segment.id).then(() => {
             this.refreshAudienceSegment(segment.id);

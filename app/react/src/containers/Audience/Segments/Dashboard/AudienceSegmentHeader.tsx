@@ -3,22 +3,24 @@ import { withRouter } from 'react-router-dom';
 import { Icon } from 'antd';
 
 import ContentHeader from '../../../../components/ContentHeader';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import {
   InjectedIntlProps,
   defineMessages,
   FormattedMessage,
+  injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
+import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 
 export interface AudienceSegmentHeaderProps {
-  segment: AudienceSegmentResource | null;
+  segment?: AudienceSegmentShape;
   isLoading: boolean
 }
 
 type Props = AudienceSegmentHeaderProps & InjectedIntlProps;
 
-export const messages = defineMessages({
+export const localMessages = defineMessages({
   USER_ACTIVATION: {
     id: 'segment.type.USER_ACTIVATION',
     defaultMessage: 'User Activation',
@@ -45,27 +47,26 @@ export const messages = defineMessages({
   },
 });
 
-class AudienceSegmentHeader extends React.Component<Props> {
+class AudienceSegmentHeader extends React.Component<Props> {  
   render() {
     const { segment, isLoading } = this.props;
 
+    
     let iconType = '';
 
     if (segment) {
-      if ((segment as AudienceSegmentResource).type === 'USER_ACTIVATION') {
+      if (segment.type === 'USER_ACTIVATION') {
         iconType = 'rocket';
-      } else if ((segment as AudienceSegmentResource).type === 'USER_QUERY') {
+      } else if (segment.type === 'USER_QUERY') {
         iconType = 'database';
-      } else if ((segment as AudienceSegmentResource).type === 'USER_LIST') {
+      } else if (segment.type === 'USER_LIST') {
         iconType = 'solution';
-      } else if ((segment as AudienceSegmentResource).type === 'USER_PIXEL') {
-        iconType = 'global';
       } else if (
-        (segment as AudienceSegmentResource).type === 'USER_LOOKALIKE'
+        segment.type === 'USER_LOOKALIKE'
       ) {
         iconType = 'usergroup-add';
       } else if (
-        (segment as AudienceSegmentResource).type === 'USER_PARTITION'
+        segment.type === 'USER_PARTITION'
       ) {
         iconType = 'api';
       }
@@ -75,7 +76,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
       <span>
         <Icon type={iconType} />{' '}
         <FormattedMessage
-          {...messages[(segment as AudienceSegmentResource).type]}
+          {...localMessages[segment.type]}
         />
       </span>
     ) : (
@@ -85,9 +86,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
     return (
       <ContentHeader
         title={
-          segment
-            ? (segment as AudienceSegmentResource).name
-            : ''
+          <SegmentNameDisplay audienceSegmentResource={segment}/>
         }
         subTitle={segmentType}
         loading={isLoading}
@@ -96,6 +95,6 @@ class AudienceSegmentHeader extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceSegmentHeaderProps>(withRouter)(
+export default compose<Props, AudienceSegmentHeaderProps>(withRouter, injectIntl)(
   AudienceSegmentHeader,
 );

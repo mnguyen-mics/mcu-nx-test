@@ -268,7 +268,7 @@ const messages: {
     id: 'timeline.activity.scenario.node.movement.content',
     defaultMessage:
       'Moved from {scenarioOldNodeName} to {scenarioNodeName} within {scenarioName}',
-  },
+  }
 });
 
 export default messages;

@@ -71,7 +71,8 @@ export type AudienceSegmentShape =
   | UserListSegment
   | UserQuerySegment
   | UserLookalikeSegment
-  | UserPartitionSegment;
+  | UserPartitionSegment
+  | UserActivationSegment;
 
 export interface OverlapJobResult extends PublicJobExecutionResource {
   external_model_name: 'PUBLIC_AUDIENCE_SEGMENT';

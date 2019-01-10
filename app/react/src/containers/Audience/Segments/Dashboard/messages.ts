@@ -110,5 +110,5 @@ export default defineMessages({
   noAdditionDeletion: {
     id: 'segment.additiondeletions.nodata',
     defaultMessage: 'There is no data on the selected period!'
-  }
+  },
 });
