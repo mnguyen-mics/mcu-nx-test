@@ -5,6 +5,10 @@ export default defineMessages({
     id: 'automation.edit.section1.title',
     defaultMessage: 'Automation',
   },
+  automationBuilder: {
+    id: 'automation.edit.page.actionbar.title',
+    defaultMessage: 'Automation Builder',
+  },
   breadcrumbTitle: {
     id: 'automation.edit.breadcrumb.title',
     defaultMessage: 'Automations',
@@ -61,5 +65,13 @@ export default defineMessages({
   contentSectionGeneralAdvancedPartTooltip: {
     id: 'automation.edit.section.general.advanced.tooltip',
     defaultMessage: 'Use the technical name for third party integrations.',
+  },
+  sectionAutomationPreviewTitle: {
+    id: 'automation.edit.section.automation.title',
+    defaultMessage: 'Automation',
+  },
+  sectionAutomationPreviewSubTitle: {
+    id: 'automation.edit.section.automation.subtitle',
+    defaultMessage: 'Build your automation',
   },
 });

@@ -23,7 +23,7 @@ export const automationDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: AutomationEditPage,
     requiredFeature: 'automations.list',
-    requireDatamart: true
+    requireDatamart: true,
   },
   automationBuilder: {
     path: '/automations/builder',

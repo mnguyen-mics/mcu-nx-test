@@ -21,11 +21,14 @@ import { Loading } from '../../../components';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IScenarioService } from '../../../services/ScenarioService';
+import { DatamartSelector } from '../../Datamart';
+import { DatamartResource } from '../../../models/datamart/DatamartResource';
 
 interface State {
   automationFormData: AutomationFormData;
   loading: boolean;
   scenarioContainer: any;
+  datamart?: DatamartResource;
 }
 
 interface MapStateProps {
@@ -169,6 +172,14 @@ class EditAutomationPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
+    const { datamart } = this.state;
+
+    const handleOnSelectDatamart = (selection: DatamartResource) => {
+      this.setState({
+        datamart: selection,
+      });
+    };
+
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle,
@@ -185,7 +196,7 @@ class EditAutomationPage extends React.Component<Props, State> {
 
     return this.state.loading ? (
       <Loading className="loading-full-screen" />
-    ) : (
+    ) : automationId || datamart ? (
       <AutomationEditForm
         initialValues={this.state.automationFormData}
         onSubmit={this.save}
@@ -193,6 +204,19 @@ class EditAutomationPage extends React.Component<Props, State> {
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
         scenarioContainer={this.state.scenarioContainer}
+        datamart={datamart}
+      />
+    ) : (
+      <DatamartSelector
+        onSelectDatamart={handleOnSelectDatamart}
+        actionbarProps={{
+          paths: [
+            {
+              name: intl.formatMessage(messages.automationBuilder),
+            },
+          ],
+          edition: true,
+        }}
       />
     );
   }

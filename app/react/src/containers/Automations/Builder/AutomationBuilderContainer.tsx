@@ -24,6 +24,9 @@ import AutomationActionBar from './ActionBar/AutomationActionBar';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
+  automationId?: string;
+  editionLayout?: boolean;
+  onClose?: () => void;
 }
 
 interface State {
@@ -109,28 +112,33 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { datamartId } = this.props;
+    const { datamartId, editionLayout, onClose } = this.props;
 
     const { automationData } = this.state;
-
     return (
-      <Layout>
-        <AutomationActionBar
-          datamartId={datamartId}
-          automationTreeData={automationData}
-        />
-        <Layout.Content
-          className={`mcs-content-container`}
-          style={{ padding: 0, overflow: 'hidden' }}
-        >
-          <AutomationBuilder
+      <div style={{ height: '100%', display: 'flex' }}>
+        <Layout className={editionLayout ? 'edit-layout' : ''}>
+          <AutomationActionBar
             datamartId={datamartId}
-            automationData={automationData}
-            scenarioId={storylineNodeData[0].scenario_id}
-            updateAutomationData={this.handleUpdateAutomationData}
+            automationTreeData={automationData}
+            edition={editionLayout}
+            onClose={onClose}
           />
-        </Layout.Content>
-      </Layout>
+          <Layout.Content
+            className={`mcs-content-container ${
+              editionLayout ? 'flex-basic' : ''
+            }`}
+            style={{ padding: 0, overflow: 'hidden' }}
+          >
+            <AutomationBuilder
+              datamartId={datamartId}
+              automationData={automationData}
+              scenarioId={storylineNodeData[0].scenario_id}
+              updateAutomationData={this.handleUpdateAutomationData}
+            />
+          </Layout.Content>
+        </Layout>
+      </div>
     );
   }
 }

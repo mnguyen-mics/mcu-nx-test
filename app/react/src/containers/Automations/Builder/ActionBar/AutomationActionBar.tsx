@@ -22,10 +22,13 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { AutomationResource } from '../../../../models/automations/automations';
+import { McsIcon } from '../../../../components';
 
 interface AutomationActionBarProps {
   datamartId: string;
   automationTreeData: StorylineNodeModel;
+  onClose?: () => void;
+  edition?: boolean;
 }
 
 interface State {
@@ -139,7 +142,7 @@ class AutomationActionBar extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, submit } = this.props;
+    const { intl, submit, edition, onClose } = this.props;
 
     const { isLoading, visible } = this.state;
 
@@ -149,6 +152,7 @@ class AutomationActionBar extends React.Component<Props, State> {
 
     return (
       <ActionBar
+        edition={edition}
         paths={[
           {
             name: intl.formatMessage(messages.automationBuilder),
@@ -165,6 +169,14 @@ class AutomationActionBar extends React.Component<Props, State> {
             defaultMessage="Save"
           />
         </Button>
+        {onClose && (
+          <McsIcon
+            type="close"
+            className="close-icon"
+            style={{ cursor: 'pointer' }}
+            onClick={onClose}
+          />
+        )}
         <Modal
           visible={visible}
           onOk={handleOnOk}

@@ -14,16 +14,19 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../components/Layout/ScrollspySider';
 import messages from './messages';
-import { AutomationFormData } from './domain';
+import { AutomationFormData, EditAutomationParam } from './domain';
 import { Omit } from '../../../utils/Types';
 import GeneralFormSection from './sections/GeneralFormSection';
 import { McsFormSection } from '../../../utils/FormHelper';
-import AngularWidget from './sections/AutomationFormSection';
-import injectDatamart, {
-  InjectedDatamartProps,
-} from '../../Datamart/injectDatamart';
 
 import * as SessionSelectors from '../../../state/Session/selectors';
+import AutomationPreviewFormSection from './sections/AutomationPreviewFormSection';
+import { DatamartResource } from '../../../models/datamart/DatamartResource';
+import AngularWidget from './sections/AutomationFormSection';
+import DatamartService from '../../../services/DatamartService';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IScenarioService } from '../../../services/ScenarioService';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -34,24 +37,59 @@ export interface AutomationEditFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   scenarioContainer: any;
+  datamart?: DatamartResource;
 }
 
 interface MapStateToProps {
   hasDatamarts: (organisationId: string) => boolean;
 }
 
+interface State {
+  datamartResource?: DatamartResource;
+}
+
 type Props = InjectedFormProps<AutomationFormData, AutomationEditFormProps> &
   AutomationEditFormProps &
   MapStateToProps &
   InjectedIntlProps &
-  InjectedDatamartProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<EditAutomationParam>;
 
 const FORM_ID = 'automationForm';
 
-class AutomationEditForm extends React.Component<Props> {
+class AutomationEditForm extends React.Component<Props, State> {
+  @lazyInject(TYPES.IScenarioService)
+  private _scenarioService: IScenarioService;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {};
+  }
+  componentDidMount() {
+    const {
+      match: {
+        params: { automationId },
+      },
+    } = this.props;
+    if (automationId) {
+      this._scenarioService.getScenario(automationId).then(res => {
+        DatamartService.getDatamart(res.data.datamart_id).then(resp => {
+          this.setState({
+            datamartResource: resp.data,
+          });
+        });
+      });
+    }
+  }
   render() {
     const { handleSubmit, breadCrumbPaths, close, datamart } = this.props;
+
+    const { datamartResource } = this.state;
+
+    const datamartToUse = datamart ? datamart : datamartResource;
+
+    const datamartStorageModelVersion = datamartToUse
+      ? datamartToUse.storage_model_version
+      : '';
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -70,12 +108,18 @@ class AutomationEditForm extends React.Component<Props> {
     sections.push({
       id: 'automation',
       title: messages.sectionTitle1,
-      component: (
-        <AngularWidget
-          scenarioContainer={this.props.scenarioContainer}
-          organisationId={this.props.match.params.organisationId}
-          datamartId={datamart.id}
-        />
+      component: datamartToUse ? (
+        datamartStorageModelVersion === 'v201709' ? (
+          <AutomationPreviewFormSection datamartId={datamartToUse.id} />
+        ) : (
+          <AngularWidget
+            scenarioContainer={this.props.scenarioContainer}
+            organisationId={this.props.match.params.organisationId}
+            datamartId={datamartToUse.id}
+          />
+        )
+      ) : (
+        <div />
       ),
     });
 
@@ -121,7 +165,6 @@ class AutomationEditForm extends React.Component<Props> {
 
 export default compose<Props, AutomationEditFormProps>(
   injectIntl,
-  injectDatamart,
   withRouter,
   reduxForm({
     form: FORM_ID,

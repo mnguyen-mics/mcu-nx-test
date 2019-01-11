@@ -39,6 +39,7 @@ export interface AutomationBuilderProps {
   updateAutomationData: (
     automationData: StorylineNodeModel,
   ) => StorylineNodeModel;
+  edition?: boolean;
 }
 
 interface State {
@@ -276,7 +277,12 @@ class AutomationBuilder extends React.Component<Props, State> {
   render() {
     const { viewNodeSelector } = this.state;
     return (
-      <div className={`automation-builder`} ref={this.div}>
+      <div
+        className={`automation-builder ${
+          this.props.edition ? 'edition-mode' : ''
+        }`}
+        ref={this.div}
+      >
         <Col span={viewNodeSelector ? 18 : 24} className={'diagram'}>
           <DiagramWidget
             diagramEngine={this.engine}
