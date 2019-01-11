@@ -1,0 +1,221 @@
+import * as React from 'react';
+import { compose } from 'recompose';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { getFormValues } from 'redux-form';
+import { connect } from 'react-redux';
+import withValidators, {
+  ValidatorProps,
+} from '../../../../../components/Form/withValidators';
+import withNormalizer, {
+  NormalizerProps,
+} from '../../../../../components/Form/withNormalizer';
+import {
+  FormInput,
+  FormSection,
+  FormInputField,
+  DefaultSelectField,
+  DefaultSelect,
+} from '../../../../../components/Form';
+import { FORM_ID } from '../ImportEditForm';
+import { Import } from '../../../../../models/imports/imports';
+
+const messages = defineMessages({
+  sectionTitleGeneral: {
+    id: 'edit.import.form.general.title',
+    defaultMessage: 'General Informations',
+  },
+  sectionSubTitleGeneral: {
+    id: 'edit.import.form.general.subtitle',
+    defaultMessage: 'Give your Import a name',
+  },
+  labelImportName: {
+    id: 'edit.import.general.infos.label.name',
+    defaultMessage: 'Import Name',
+  },
+  tootltipImportName: {
+    id: 'edit.import.general.infos.tooltip.name',
+    defaultMessage:
+      'Give your Import a Name so you can find it back in the different screens.',
+  },
+  labelImportEnconding: {
+    id: 'edit.import.general.infos.label.encoding',
+    defaultMessage: 'Encoding',
+  },
+  tootltipImportEncoding: {
+    id: 'edit.import.general.infos.tooltip.encoding',
+    defaultMessage: 'Choose the encoding.',
+  },
+  labelImportMimeType: {
+    id: 'edit.import.general.infos.label.mime.type',
+    defaultMessage: 'Mime-Type',
+  },
+  tootltipImportMimeType: {
+    id: 'edit.import.general.infos.tooltip.mime.type',
+    defaultMessage: 'Choose the mime-type.',
+  },
+  labelImportDocumentType: {
+    id: 'edit.import.general.infos.label.dcoument.type',
+    defaultMessage: 'Document Type',
+  },
+  tootltipImportDocumentType: {
+    id: 'edit.import.general.infos.tooltip.document.type',
+    defaultMessage: 'Choose the document type.',
+  },
+});
+
+interface MapStateToProps {
+  formValues: Partial<Import>;
+}
+
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps &
+  MapStateToProps;
+
+interface State {
+  displayAdvancedSection: boolean;
+}
+
+class GeneralFormSection extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { displayAdvancedSection: false };
+  }
+
+  toggleAdvancedSection = () => {
+    this.setState({
+      displayAdvancedSection: !this.state.displayAdvancedSection,
+    });
+  };
+
+  render() {
+    const {
+      fieldValidators: { isRequired },
+      intl: { formatMessage },
+      formValues,
+    } = this.props;
+
+    const getDocumentTypeOptions = () => {
+      return [
+        {
+          title: 'User Segment',
+          value: 'USER_SEGMENT',
+        },
+        {
+          title: 'User Activity',
+          value: 'USER_ACTIVITY',
+        },
+        {
+          title: 'User Profile',
+          value: 'USER_PROFILE',
+        },
+      ];
+    };
+
+    const getMimeTypeOptions = () => {
+      return [
+        {
+          title: 'X_NDJSON',
+          value: 'X_NDJSON',
+        },
+        {
+          title: 'CSV',
+          value: 'TEXT_CSV',
+        },
+      ];
+    };
+
+    return (
+      <div>
+        <FormSection
+          title={messages.sectionTitleGeneral}
+          subtitle={messages.sectionSubTitleGeneral}
+        />
+
+        <div>
+          <FormInputField
+            name="name"
+            component={FormInput}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(messages.labelImportName),
+              required: true,
+            }}
+            inputProps={{
+              placeholder: formatMessage(messages.labelImportName),
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.tootltipImportName),
+            }}
+          />
+          <DefaultSelectField
+            name="document_type"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            options={
+              formValues.mime_type === 'TEXT_CSV'
+                ? [getDocumentTypeOptions()[0]]
+                : getDocumentTypeOptions()
+            }
+            formItemProps={{
+              label: formatMessage(messages.labelImportDocumentType),
+              colon: false,
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.tootltipImportDocumentType),
+            }}
+          />
+          <DefaultSelectField
+            name="mime_type"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            options={
+              formValues.document_type === 'USER_SEGMENT'
+                ? getMimeTypeOptions()
+                : [getMimeTypeOptions()[0]]
+            }
+            formItemProps={{
+              label: formatMessage(messages.labelImportMimeType),
+              colon: false,
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.tootltipImportMimeType),
+            }}
+          />
+          <DefaultSelectField
+            name="encoding"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            options={[
+              {
+                title: 'utf-8',
+                value: 'utf-8',
+              },
+            ]}
+            formItemProps={{
+              label: formatMessage(messages.labelImportEnconding),
+              colon: false,
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.tootltipImportEncoding),
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = (state: any) => ({
+  formValues: getFormValues(FORM_ID)(state),
+});
+
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+  connect(mapStateToProps),
+)(GeneralFormSection);

@@ -137,6 +137,10 @@ export default defineMessages({
         id: 'menu.library.Exports',
         defaultMessage: 'Exports',
     },
+    libraryImports: {
+        id: 'menu.library.Imports',
+        defaultMessage: 'Imports',
+    },
 
     // DATA STUDIO
     dataStudioTitle: {

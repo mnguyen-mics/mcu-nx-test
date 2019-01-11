@@ -163,6 +163,10 @@ const datastudioMenuDefinition: NavigatorMenuDefinition = {
       ...generateMissingdefinitionItemFromRoute(datastudioDefinition.datastudioExportList),
       translation: messages.libraryExports,
     },
+    {
+      ...generateMissingdefinitionItemFromRoute(datastudioDefinition.datastudioImportList),
+      translation: messages.libraryImports,
+    },
   ]
 }
 
