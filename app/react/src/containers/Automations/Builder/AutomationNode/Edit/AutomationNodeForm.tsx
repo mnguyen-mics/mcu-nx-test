@@ -17,6 +17,14 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import { AutomationNodeFormData, FORM_ID } from './domain';
 import GeneralFormSection from './GeneralFormSection';
+import { ScenarioNodeShape } from '../../../../../models/automations/automations';
+import DisplayCampaignFormSection from './DisplayCampaignFormSection';
+import DeviceFormSection from '../../../../Campaigns/Display/Edit/AdGroup/sections/DeviceFormSection';
+import { AdFieldArray, BidOptimizerFieldArray, InventoryCatalogFieldArray, LocationTargetingFieldArray } from '../../../../Campaigns/Display/Edit/AdGroup/AdGroupForm';
+import { LocationTargetingFormSection } from '../../../../Campaigns/Display/Edit/AdGroup/sections/Location';
+import { InventoryCatalogFormSection } from '../../../../Campaigns/Display/Edit/AdGroup/sections/InventoryCatalog';
+import AdFormSection from '../../../../Campaigns/Display/Edit/AdGroup/sections/AdFormSection';
+import { BidOptimizerFormSection } from '../../../../Campaigns/Display/Edit/AdGroup/sections';
 
 const { Content } = Layout;
 
@@ -29,12 +37,17 @@ const messages = defineMessages({
     id: 'automation.builder.node.edition.form.general.title',
     defaultMessage: 'General Informations',
   },
+  sectionDisplayCampaignTitle: {
+    id: 'automation.builder.node.edition.form.display.title',
+    defaultMessage: 'Modify the parameters of the display campaign',
+  },
 });
 
 export interface AutomationNodeFormProps
   extends Omit<ConfigProps<AutomationNodeFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
+  node: ScenarioNodeShape;
 }
 
 interface MapStateToProps {
@@ -52,7 +65,7 @@ type Props = InjectedFormProps<
 
 class AutomationNodeForm extends React.Component<Props> {
   buildFormSections = () => {
-    const {} = this.props;
+    const { node } = this.props;
 
     const sections: McsFormSection[] = [];
 
@@ -64,7 +77,77 @@ class AutomationNodeForm extends React.Component<Props> {
       ),
     };
 
-    sections.push(general);
+    const displayCampaignSection = {
+      id: 'displayCampaign',
+      title: messages.sectionGeneralTitle,
+      component: (
+        <DisplayCampaignFormSection initialValues={this.props.initialValues} />
+      ),
+    };
+
+    const location = {
+      id: 'location',
+      title: messages.sectionTitleLocationTargeting,
+      component: (
+        <LocationTargetingFieldArray
+          name="locationFields"
+          component={LocationTargetingFormSection}
+          {...genericFieldArrayProps}
+        />
+      ),
+    };
+    const device = {
+      id: 'device',
+      title: messages.sectionTitleDevice,
+      component: (
+        <DeviceFormSection
+          formChange={this.props.change}
+          initialValues={this.props.initialValues.adGroup}
+        />
+      ),
+    };
+    const placementList = {
+      id: 'placementList',
+      title: messages.sectionTitlePlacement,
+      component: (
+        <InventoryCatalogFieldArray
+          name="inventoryCatalFields"
+          component={InventoryCatalogFormSection}
+          {...genericFieldArrayProps}
+        />
+      ),
+    };
+
+    const displayAd = {
+      id: 'display',
+      title: messages.sectionTitleAds,
+      component: (
+        <AdFieldArray
+          name="adFields"
+          component={AdFormSection}
+          {...genericFieldArrayProps}
+        />
+      ),
+    };
+
+    const bidOptimizer = {
+      id: 'bidOptimizer',
+      title: messages.sectionTitleOptimizer,
+      component: (
+        <BidOptimizerFieldArray
+          name="bidOptimizerFields"
+          component={BidOptimizerFormSection}
+          {...genericFieldArrayProps}
+        />
+      ),
+    };
+
+    console.log(node)
+
+    if(node.type==="DISPLAY_CAMPAIGN") {
+      console.log(true);
+      sections.push(displayCampaignSection);
+    }else sections.push(general);
 
     return sections;
   };

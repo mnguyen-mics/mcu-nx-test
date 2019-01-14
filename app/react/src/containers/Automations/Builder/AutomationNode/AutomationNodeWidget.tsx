@@ -93,13 +93,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             name: node.storylineNodeModel.node.name,
           };
       if (isScenarioNodeShape(node.storylineNodeModel.node)) {
-        const scenarioNodeShade = node.storylineNodeModel.node;
+        const scenarioNodeShape = node.storylineNodeModel.node;
         this.props.openNextDrawer<AutomationNodeFormProps>(AutomationNodeForm, {
           additionalProps: {
+            node: scenarioNodeShape,
             close: this.props.closeNextDrawer,
             breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
             onSubmit: (formData: AutomationNodeFormData) => {
-              this.props.nodeOperations.updateNode(scenarioNodeShade, formData);
+              this.props.nodeOperations.updateNode(scenarioNodeShape, formData);
               this.props.closeNextDrawer();
             },
             initialValues: {
