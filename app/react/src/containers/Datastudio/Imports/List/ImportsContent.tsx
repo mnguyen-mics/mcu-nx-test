@@ -28,6 +28,7 @@ import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { IMPORTS_SEARCH_SETTINGS } from './constants';
 import { Index } from '../../../../utils';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
+import {formatDocumentTypeText, formatMimeTypeText} from "../domain";
 
 interface ImportContentState {
   loading: boolean;
@@ -250,19 +251,6 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     return [...IMPORTS_SEARCH_SETTINGS];
   }
 
-  formatDocumentTypeText = (docType: string): string => {
-    switch (docType) {
-      case 'USER_ACTIVITY':
-        return 'User Activity';
-      case 'USER_PROFILE':
-        return 'User Profile';
-      case 'USER_SEGMENT':
-        return 'User Segment';
-      default:
-        return '';
-    }
-  };
-
   render() {
     const {
       location: { search },
@@ -314,7 +302,16 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         key: 'document_type',
         isHideable: false,
         render: (text: string, record: Import) => (
-          <span>{this.formatDocumentTypeText(text)}</span>
+          <span>{formatDocumentTypeText(text)}</span>
+        ),
+      },
+      {
+        translationKey: 'mime_type',
+        intlMessage: messages.mimeType,
+        key: 'mime_type',
+        isHideable: false,
+        render: (text: string, record: Import) => (
+          <span>{formatMimeTypeText(text)}</span>
         ),
       },
     ];

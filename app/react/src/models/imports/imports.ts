@@ -8,12 +8,6 @@ export interface Import {
   document_type: string; // 'USER_ACTIVITY' | 'USER_PROFILE' | 'USER_SEGMENT';
 }
 
-export interface ImportCreateResource {
-  name: string;
-  encoding: string;
-  mime_type: string;
-}
-
 export interface ImportExecution {
   completed_tasks: null | string;
   creation_date: number;
@@ -22,6 +16,8 @@ export interface ImportExecution {
   error: null | string;
   id: string;
   job_type: string;
+  import_mode: string;
+  import_type: string;
   num_tasks: null | string;
   organisation_id: string;
   parameters: object;

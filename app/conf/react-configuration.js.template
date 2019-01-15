@@ -28,6 +28,7 @@
     'datastudio.query_tool',
     'datastudio.report',
     'datastudio.exports',
+    'datastudio.imports',
     'organisationSettings.labels',
     'organisationSettings.users',
     'organisationSettings.settings',
