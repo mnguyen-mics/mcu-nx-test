@@ -35,7 +35,7 @@ import { AutomationFormDataType } from './AutomationNode/Edit/domain';
 export interface AutomationBuilderProps {
   datamartId: string;
   scenarioId: string;
-  automationData: StorylineNodeModel;
+  automationTreeData?: StorylineNodeModel;
   updateAutomationData: (
     automationData: StorylineNodeModel,
   ) => StorylineNodeModel;
@@ -111,21 +111,21 @@ class AutomationBuilder extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { automationData } = this.props;
+    const { automationTreeData } = this.props;
     const model = new DiagramModel();
     model.setLocked(true);
-    this.startAutomationTree(automationData, model);
+    this.startAutomationTree(automationTreeData, model);
     this.engine.setDiagramModel(model);
   }
 
   componentDidUpdate() {
-    const { automationData } = this.props;
+    const { automationTreeData } = this.props;
     const model = new DiagramModel();
     model.setLocked(this.engine.getDiagramModel().locked);
     model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
     model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
     model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
-    this.startAutomationTree(automationData, model);
+    this.startAutomationTree(automationTreeData, model);
     this.engine.setDiagramModel(model);
     this.engine.repaintCanvas();
   }
@@ -134,20 +134,24 @@ class AutomationBuilder extends React.Component<Props, State> {
     idParentNode: string,
     childNodeId: string,
     node: ScenarioNodeShape,
-  ): StorylineNodeModel => {
-    return this.props.updateAutomationData(
-      new AddNodeOperation(idParentNode, childNodeId, node).execute(
-        this.props.automationData,
-      ),
-    );
+  ): StorylineNodeModel | void => {
+    const { automationTreeData } = this.props;
+    if (automationTreeData) {
+      return this.props.updateAutomationData(
+        new AddNodeOperation(idParentNode, childNodeId, node).execute(
+          automationTreeData,
+        ),
+      );
+    }
   };
 
-  deleteNode = (idNodeToBeDeleted: string): StorylineNodeModel => {
-    return this.props.updateAutomationData(
-      new DeleteNodeOperation(idNodeToBeDeleted).execute(
-        this.props.automationData,
-      ),
-    );
+  deleteNode = (idNodeToBeDeleted: string): StorylineNodeModel | void => {
+    const { automationTreeData } = this.props;
+    if (automationTreeData) {
+      return this.props.updateAutomationData(
+        new DeleteNodeOperation(idNodeToBeDeleted).execute(automationTreeData),
+      );
+    }
   };
 
   updateNode = (
@@ -246,28 +250,30 @@ class AutomationBuilder extends React.Component<Props, State> {
   };
 
   startAutomationTree = (
-    automationData: StorylineNodeModel,
-    model: DiagramModel,
+    automationData?: StorylineNodeModel,
+    model?: DiagramModel,
   ) => {
-    const rootNode = new AutomationNodeModel(
-      this.props.datamartId,
-      automationData,
-      `${automationData.node.name}`,
-      generateNodeProperties(automationData.node).color,
-      generateNodeProperties(automationData.node).iconType,
-      generateNodeProperties(automationData.node).iconAnt,
-    );
-    rootNode.root = true;
-    rootNode.x = ROOT_NODE_POSITION.x;
-    rootNode.y = ROOT_NODE_POSITION.y;
-    model.addNode(rootNode);
-    this.drawAutomationTree(
-      model,
-      this.convertToFrontData(automationData),
-      rootNode,
-      0,
-      1,
-    );
+    if (automationData && automationData.node && model) {
+      const rootNode = new AutomationNodeModel(
+        this.props.datamartId,
+        automationData,
+        `${automationData.node.name}`,
+        generateNodeProperties(automationData.node).color,
+        generateNodeProperties(automationData.node).iconType,
+        generateNodeProperties(automationData.node).iconAnt,
+      );
+      rootNode.root = true;
+      rootNode.x = ROOT_NODE_POSITION.x;
+      rootNode.y = ROOT_NODE_POSITION.y;
+      model.addNode(rootNode);
+      this.drawAutomationTree(
+        model,
+        this.convertToFrontData(automationData),
+        rootNode,
+        0,
+        1,
+      );
+    }
   };
 
   onNodeSelectorClick = () => {

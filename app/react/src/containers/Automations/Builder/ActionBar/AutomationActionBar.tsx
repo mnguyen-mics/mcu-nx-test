@@ -8,16 +8,9 @@ import {
   AutomationBuilderPageRouteParams,
 } from '../AutomationBuilderPage';
 import ActionBar from '../../../../components/ActionBar';
-import { Button, Modal, message } from 'antd';
+import { Button, Modal } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
-import { StorylineNodeModel } from '../domain';
-import AutomationSimpleForm, {
-  AutomationSimpleFormData,
-  FORM_ID,
-} from './AutomationSimpleForm';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { IScenarioService } from '../../../../services/ScenarioService';
+import AutomationSimpleForm, { FORM_ID } from './AutomationSimpleForm';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -26,13 +19,13 @@ import { McsIcon } from '../../../../components';
 
 interface AutomationActionBarProps {
   datamartId: string;
-  automationTreeData: StorylineNodeModel;
+  automation?: AutomationResource;
+  saveOrUpdate: () => void;
   onClose?: () => void;
   edition?: boolean;
 }
 
 interface State {
-  automationData?: AutomationResource;
   isLoading: boolean;
   visible: boolean;
 }
@@ -48,9 +41,6 @@ type Props = AutomationActionBarProps &
   RouteComponentProps<AutomationBuilderPageRouteParams>;
 
 class AutomationActionBar extends React.Component<Props, State> {
-  @lazyInject(TYPES.IScenarioService)
-  private _scenarioService: IScenarioService;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -59,80 +49,13 @@ class AutomationActionBar extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    const {
-      match: {
-        params: { scenarioId },
-      },
-    } = this.props;
-    if (scenarioId) {
-      this._scenarioService.getScenario(scenarioId).then(res => {
-        this.setState({
-          automationData: res.data,
-        });
-      });
-    }
-  }
-
-  saveAutomation = (formData: AutomationSimpleFormData) => {
-    const {
-      intl,
-      notifyError,
-      match: {
-        params: { organisationId, scenarioId },
-      },
-      datamartId,
-    } = this.props;
-
-    const { automationData } = this.state;
-
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
-    this.setState({
-      isLoading: true,
-    });
-
-    let saveOrCreateScenario;
-
-    if (scenarioId && automationData) {
-      saveOrCreateScenario = this._scenarioService.updateScenario(scenarioId, {
-        ...automationData,
-        ...formData,
-      });
+  onSave = () => {
+    const { edition } = this.props;
+    if (edition) {
+      this.props.saveOrUpdate();
     } else {
-      saveOrCreateScenario = this._scenarioService.createScenario(
-        organisationId,
-        { name: formData.name, datamart_id: datamartId },
-      );
+      this.handleModal();
     }
-
-    saveOrCreateScenario
-      .then(() => {
-        hideSaveInProgress();
-        this.setState({ isLoading: false });
-        this.redirect();
-        message.success(intl.formatMessage(messages.automationSaved));
-      })
-      .catch((err: any) => {
-        this.setState({ isLoading: false });
-        notifyError(err);
-        hideSaveInProgress();
-      });
-  };
-
-  redirect = () => {
-    const {
-      history,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-
-    const url = `/v2/o/${organisationId}/automations/list`;
-
-    return history.push(url);
   };
 
   handleModal = () => {
@@ -142,7 +65,14 @@ class AutomationActionBar extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, submit, edition, onClose } = this.props;
+    const {
+      intl,
+      submit,
+      edition,
+      onClose,
+      automation,
+      saveOrUpdate,
+    } = this.props;
 
     const { isLoading, visible } = this.state;
 
@@ -157,17 +87,17 @@ class AutomationActionBar extends React.Component<Props, State> {
           {
             name: intl.formatMessage(messages.automationBuilder),
           },
+          {
+            name: automation
+              ? automation.name
+              : intl.formatMessage(messages.newAutomation),
+          },
         ]}
       >
-        <Button
-          className="mcs-primary"
-          type="primary"
-          onClick={this.handleModal}
-        >
-          <FormattedMessage
-            id="automation.builder.action.bar.save"
-            defaultMessage="Save"
-          />
+        <Button className="mcs-primary" type="primary" onClick={this.onSave}>
+          {edition
+            ? intl.formatMessage(messages.updateAutomation)
+            : intl.formatMessage(messages.saveAutomation)}
         </Button>
         {onClose && (
           <McsIcon
@@ -189,7 +119,7 @@ class AutomationActionBar extends React.Component<Props, State> {
             />
           }
         >
-          {visible && <AutomationSimpleForm onSubmit={this.saveAutomation} />}
+          {visible && <AutomationSimpleForm onSubmit={saveOrUpdate} />}
         </Modal>
       </ActionBar>
     );

@@ -7,30 +7,29 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import AutomationBuilder from './AutomationBuilder';
-import {
-  StorylineResource,
-  ScenarioEdgeResource,
-  ScenarioNodeShape,
-} from '../../../models/automations/automations';
+import { AutomationResource } from '../../../models/automations/automations';
 import {
   StorylineNodeModel,
-  AutomationNodeShape,
+  storylineNodeData,
   storylineResourceData,
   storylineEdgeData,
-  storylineNodeData,
+  buildAutomationTreeData,
 } from './domain';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import AutomationActionBar from './ActionBar/AutomationActionBar';
+import { AutomationFormData } from '../Edit/domain';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
-  automationId?: string;
+  automationTreeData?: StorylineNodeModel;
   editionLayout?: boolean;
+  saveOrUpdate: (formData: AutomationFormData | StorylineNodeModel) => void;
   onClose?: () => void;
 }
 
 interface State {
-  automationData: StorylineNodeModel;
+  automation?: AutomationResource;
+  automationTreeData?: StorylineNodeModel;
   loading: boolean;
 }
 
@@ -43,85 +42,45 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      automationData: this.buildAutomationTreeData(
-        storylineResourceData,
-        storylineNodeData,
-        storylineEdgeData,
-      ),
       loading: false,
-    };
-  }
-
-  buildAutomationTreeData(
-    storylineData: StorylineResource,
-    nodeData: ScenarioNodeShape[],
-    edgeData: ScenarioEdgeResource[],
-  ): StorylineNodeModel {
-    const node: AutomationNodeShape = nodeData.filter(
-      n => n.id === storylineData.begin_node_id,
-    )[0];
-    const outNodesId: string[] = edgeData
-      .filter(e => e.source_id === node.id)
-      .map(e => e.target_id);
-    const outNodes: ScenarioNodeShape[] = nodeData.filter(n =>
-      outNodesId.includes(n.id),
-    );
-
-    return {
-      node: node,
-      out_edges: outNodes.map(n =>
-        this.buildStorylineNodeModel(n, nodeData, edgeData, node),
-      ),
-    };
-  }
-
-  buildStorylineNodeModel(
-    node: ScenarioNodeShape,
-    nodeData: ScenarioNodeShape[],
-    edgeData: ScenarioEdgeResource[],
-    parentNode: AutomationNodeShape,
-  ): StorylineNodeModel {
-    const outNodesId: string[] = edgeData
-      .filter(e => e.source_id === node.id)
-      .map(e => e.target_id);
-    const outNodes: ScenarioNodeShape[] = nodeData.filter(n =>
-      outNodesId.includes(n.id),
-    );
-    const inEdge: ScenarioEdgeResource = edgeData.filter(
-      e => e.source_id === parentNode.id && e.target_id === node.id,
-    )[0];
-
-    return {
-      node: node,
-      in_edge: inEdge,
-      out_edges: outNodes.map(n =>
-        this.buildStorylineNodeModel(n, nodeData, edgeData, node),
-      ),
+      automationTreeData: !props.automationTreeData
+        ? buildAutomationTreeData(
+            storylineResourceData,
+            storylineNodeData,
+            storylineEdgeData,
+          )
+        : props.automationTreeData,
     };
   }
 
   handleUpdateAutomationData = (
     newAutomationData: StorylineNodeModel,
   ): StorylineNodeModel => {
-    this.setState(prevState => {
-      return {
-        automationData: newAutomationData,
-      };
+    this.setState({
+      automationTreeData: newAutomationData,
     });
     return newAutomationData;
+  };
+
+  saveOrUpdate = () => {
+    const { automationTreeData } = this.state;
+    if (automationTreeData) {
+      this.props.saveOrUpdate(automationTreeData);
+    }
   };
 
   render() {
     const { datamartId, editionLayout, onClose } = this.props;
 
-    const { automationData } = this.state;
+    const { automation, automationTreeData } = this.state;
     return (
       <div style={{ height: '100%', display: 'flex' }}>
         <Layout className={editionLayout ? 'edit-layout' : ''}>
           <AutomationActionBar
             datamartId={datamartId}
-            automationTreeData={automationData}
+            automation={automation}
             edition={editionLayout}
+            saveOrUpdate={this.saveOrUpdate}
             onClose={onClose}
           />
           <Layout.Content
@@ -132,7 +91,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
           >
             <AutomationBuilder
               datamartId={datamartId}
-              automationData={automationData}
+              automationTreeData={automationTreeData}
               scenarioId={storylineNodeData[0].scenario_id}
               updateAutomationData={this.handleUpdateAutomationData}
             />

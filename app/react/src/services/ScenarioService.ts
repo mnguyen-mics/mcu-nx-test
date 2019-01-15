@@ -3,7 +3,6 @@ import {
   ScenarioNodeShape,
   StorylineResource,
   StartNodeResource,
-  ScenarioNodeResource,
   ScenarioEdgeResource,
 } from './../models/automations/automations';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
@@ -66,12 +65,11 @@ export interface IScenarioService {
   ) => Promise<DataResponse<StartNodeResource>>;
   createScenarioBeginNode: (
     scenarioId: string,
-    storyline: StorylineResource,
+    storyline?: StorylineResource,
   ) => Promise<DataResponse<StartNodeResource>>;
   getScenarioNodes: (
     scenarioId: string,
-    scenarioNode: ScenarioNodeShape,
-  ) => Promise<DataListResponse<ScenarioNodeResource>>;
+  ) => Promise<DataListResponse<ScenarioNodeShape>>;
   createScenarioNode: (
     scenarioId: string,
     scenarioNode: ScenarioNodeShape,
@@ -164,7 +162,7 @@ export class ScenarioService implements IScenarioService {
   }
   createScenarioBeginNode(
     scenarioId: string,
-    storyline: StorylineResource,
+    storyline?: StorylineResource,
   ): Promise<DataResponse<StartNodeResource>> {
     const endpoint = `scenarios/${scenarioId}/storyline/begin`;
     return ApiService.postRequest(endpoint, storyline);
@@ -172,7 +170,7 @@ export class ScenarioService implements IScenarioService {
   // Storyline Nodes
   getScenarioNodes(
     scenarioId: string,
-  ): Promise<DataListResponse<ScenarioNodeResource>> {
+  ): Promise<DataListResponse<ScenarioNodeShape>> {
     const endpoint = `scenarios/${scenarioId}/storyline/nodes`;
     return ApiService.getRequest(endpoint);
   }

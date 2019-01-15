@@ -63,7 +63,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     this.state = {
       isLoading: false,
       dataSource: [],
-      totalAutomations: 0
+      totalAutomations: 0,
     };
   }
 
@@ -180,11 +180,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       rowSelection,
     } = this.props;
 
-    const {
-      dataSource,
-      totalAutomations,
-      isLoading
-    } = this.state;
+    const { dataSource, totalAutomations, isLoading } = this.state;
 
     const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
 
@@ -291,7 +287,9 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       },
     ];
 
-    return dataSource.length > 0 ? (
+    return dataSource.length === 0 && !isLoading ? (
+      <EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />
+    ) : (
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <div className="mcs-table-container">
@@ -308,8 +306,6 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
           </div>
         </Content>
       </div>
-    ) : (
-      <EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />
     );
   }
 }

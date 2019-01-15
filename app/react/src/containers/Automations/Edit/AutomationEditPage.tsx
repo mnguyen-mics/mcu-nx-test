@@ -23,6 +23,7 @@ import { TYPES } from '../../../constants/types';
 import { IScenarioService } from '../../../services/ScenarioService';
 import { DatamartSelector } from '../../Datamart';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
+import { buildAutomationTreeData } from '../Builder/domain';
 
 interface State {
   automationFormData: AutomationFormData;
@@ -105,12 +106,28 @@ class EditAutomationPage extends React.Component<Props, State> {
   }
 
   fetchInitialData = (automationId: string) => {
-    return this._scenarioService
-      .getScenario(automationId)
-      .then(res => res.data)
+    const automationPromise = this._scenarioService.getScenario(automationId);
+    const storylinePromise = this._scenarioService.getScenarioStoryline(
+      automationId,
+    );
+    const nodePromise = this._scenarioService.getScenarioNodes(automationId);
+    const edgePromise = this._scenarioService.getScenarioEdges(automationId);
+    return Promise.all([
+      automationPromise,
+      storylinePromise,
+      nodePromise,
+      edgePromise,
+    ])
       .then(res =>
         this.setState({
-          automationFormData: { automation: res },
+          automationFormData: {
+            automation: res[0].data,
+            automationTreeData: buildAutomationTreeData(
+              res[1].data,
+              res[2].data,
+              res[3].data,
+            ),
+          },
           loading: false,
         }),
       )

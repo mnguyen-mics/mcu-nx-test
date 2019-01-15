@@ -10,9 +10,13 @@ import { FormSection } from '../../../../components/Form';
 import AutomationBuilderContainer, {
   AutomationBuilderContainerProps,
 } from '../../Builder/AutomationBuilderContainer';
+import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
+import { StorylineNodeModel } from '../../Builder/domain';
+import { AutomationFormData } from '../domain';
 
-interface AutomationPreviewFormSectionProps {
+interface AutomationPreviewFormSectionProps extends ReduxFormChangeProps {
   datamartId: string;
+  formValues: Partial<AutomationFormData>;
 }
 
 type Props = AutomationPreviewFormSectionProps &
@@ -24,11 +28,17 @@ class AutomationPreviewFormSection extends React.Component<Props> {
     super(props);
   }
 
+  update = (treeData: StorylineNodeModel) => {
+    this.props.formChange('automation.automationTreeData', treeData);
+    this.props.closeNextDrawer();
+  };
+
   onClose = () => {
     this.props.closeNextDrawer();
   };
 
   openEditor = () => {
+    const { formValues } = this.props;
     this.props.openNextDrawer<AutomationBuilderContainerProps>(
       AutomationBuilderContainer,
       {
@@ -36,6 +46,11 @@ class AutomationPreviewFormSection extends React.Component<Props> {
           datamartId: this.props.datamartId,
           editionLayout: true,
           onClose: this.onClose,
+          automationTreeData:
+            formValues && formValues.automationTreeData
+              ? formValues.automationTreeData
+              : undefined,
+          saveOrUpdate: this.update,
         },
       },
     );

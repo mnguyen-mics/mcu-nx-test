@@ -81,7 +81,14 @@ class AutomationEditForm extends React.Component<Props, State> {
     }
   }
   render() {
-    const { handleSubmit, breadCrumbPaths, close, datamart } = this.props;
+    const {
+      handleSubmit,
+      breadCrumbPaths,
+      close,
+      datamart,
+      change,
+      initialValues
+    } = this.props;
 
     const { datamartResource } = this.state;
 
@@ -110,7 +117,11 @@ class AutomationEditForm extends React.Component<Props, State> {
       title: messages.sectionTitle1,
       component: datamartToUse ? (
         datamartStorageModelVersion === 'v201709' ? (
-          <AutomationPreviewFormSection datamartId={datamartToUse.id} />
+          <AutomationPreviewFormSection
+            datamartId={datamartToUse.id}
+            formValues={initialValues}
+            formChange={change}
+          />
         ) : (
           <AngularWidget
             scenarioContainer={this.props.scenarioContainer}

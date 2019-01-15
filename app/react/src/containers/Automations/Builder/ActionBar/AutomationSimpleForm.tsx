@@ -12,14 +12,13 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../../components/Form/withNormalizer';
-import {
-  AutomationCreateResource,
-  AutomationResource,
-} from '../../../../models/automations/automations';
+import { AutomationResource } from '../../../../models/automations/automations';
 
-export type AutomationSimpleFormData =
-  | AutomationCreateResource
-  | AutomationResource;
+// export type AutomationSimpleFormData =
+//   | AutomationCreateResource
+//   | AutomationResource;0
+
+export type AutomationSimpleFormData = Partial<AutomationResource>;
 
 const initialFormData: Partial<AutomationSimpleFormData> = {};
 

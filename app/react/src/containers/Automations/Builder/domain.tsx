@@ -496,3 +496,51 @@ export function generateNodeProperties(
       };
   }
 }
+
+export function buildAutomationTreeData(
+  storylineData: StorylineResource,
+  nodeData: ScenarioNodeShape[],
+  edgeData: ScenarioEdgeResource[],
+): StorylineNodeModel {
+  const node: AutomationNodeShape = nodeData.filter(
+    n => n.id === storylineData.begin_node_id,
+  )[0];
+  const outNodesId: string[] = edgeData
+    .filter(e => e.source_id === node.id)
+    .map(e => e.target_id);
+  const outNodes: ScenarioNodeShape[] = nodeData.filter(n =>
+    outNodesId.includes(n.id),
+  );
+
+  return {
+    node: node,
+    out_edges: outNodes.map(n =>
+      buildStorylineNodeModel(n, nodeData, edgeData, node),
+    ),
+  };
+}
+
+export function buildStorylineNodeModel(
+  node: ScenarioNodeShape,
+  nodeData: ScenarioNodeShape[],
+  edgeData: ScenarioEdgeResource[],
+  parentNode: AutomationNodeShape,
+): StorylineNodeModel {
+  const outNodesId: string[] = edgeData
+    .filter(e => e.source_id === node.id)
+    .map(e => e.target_id);
+  const outNodes: ScenarioNodeShape[] = nodeData.filter(n =>
+    outNodesId.includes(n.id),
+  );
+  const inEdge: ScenarioEdgeResource = edgeData.filter(
+    e => e.source_id === parentNode.id && e.target_id === node.id,
+  )[0];
+
+  return {
+    node: node,
+    in_edge: inEdge,
+    out_edges: outNodes.map(n =>
+      buildStorylineNodeModel(n, nodeData, edgeData, node),
+    ),
+  };
+}
