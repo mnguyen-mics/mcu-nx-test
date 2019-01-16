@@ -333,7 +333,7 @@ class Imports extends React.Component<JoinedProps, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <ImportHeader object={importObject.item && importObject.item} />
+            <ImportHeader object={importObject.item} />
             <Card title={'Import Execution'}>
               <hr />
               <TableView
