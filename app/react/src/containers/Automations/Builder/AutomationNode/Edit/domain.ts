@@ -4,15 +4,47 @@ import {
   ScenarioNodeShape,
   DisplayCampaignNodeResource,
 } from '../../../../../models/automations/automations';
+import {
+  LocationFieldModel,
+  AdFieldModel,
+  BidOptimizerFieldModel,
+  InventoryCatalFieldsModel,
+} from '../../../../Campaigns/Display/Edit/AdGroup/domain';
+import { AdGroupResource } from '../../../../../models/campaign/display';
+import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
+import { DefaultAutomationFormProps } from './DefaultForm/DefaultAutomationForm';
+import { DisplayCampaignAutomationFormProps } from './DisplayCampaignForm/DisplayCampaignAutomationForm';
 
-export interface AutomationNodeFormData {
+export interface DefaultFormData {
   automationNode: {
-    branch_number?: number;
     name: string;
-    campaign_id?: string;
-    ad_group_id?: string;
   };
 }
+
+export interface ABNFormData extends DefaultFormData {
+  automationNode: {
+    name: string;
+    branch_number: number;
+  };
+}
+
+export interface DisplayCampaignFormData extends DefaultFormData {
+  locationFields: LocationFieldModel[];
+  adGroup: Partial<AdGroupResource>;
+  adFields: AdFieldModel[];
+  bidOptimizerFields: BidOptimizerFieldModel[];
+  inventoryCatalFields: InventoryCatalFieldsModel[];
+}
+
+export type AutomationFormDataType =
+  | DefaultFormData
+  | ABNFormData
+  | DisplayCampaignFormData;
+
+export type AutomationFormPropsType =
+  | ABNAutomationFormProps
+  | DefaultAutomationFormProps
+  | DisplayCampaignAutomationFormProps;
 
 export const FORM_ID = 'automationNodeForm';
 
@@ -26,6 +58,8 @@ export function isAbnNode(node: AutomationNodeShape): node is ABNNodeResource {
   return (node as ABNNodeResource).branch_number !== undefined;
 }
 
-export function isDisplayCampaignNode(node: AutomationNodeShape): node is DisplayCampaignNodeResource {
+export function isDisplayCampaignNode(
+  node: AutomationNodeShape,
+): node is DisplayCampaignNodeResource {
   return (node as DisplayCampaignNodeResource).campaign_id !== undefined;
 }

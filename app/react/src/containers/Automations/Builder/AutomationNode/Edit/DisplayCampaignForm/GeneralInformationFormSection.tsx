@@ -7,38 +7,30 @@ import {
   FormInputField,
   FormAddonSelectField,
   AddonSelect,
-} from '../../../../../components/Form';
+} from '../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+} from '../../../../../../components/Form/withValidators';
 import withNormalizer, {
   NormalizerProps,
-} from '../../../../../components/Form/withNormalizer';
-import { AutomationNodeFormData } from './domain';
-import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
-import messages from '../../../../Campaigns/Display/Edit/messages';
-import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
+} from '../../../../../../components/Form/withNormalizer';
+import formatDisplayCampaignProperty from '../../../../../../messages/campaign/display/displayCampaignMessages';
+import messages from '../../../../../Campaigns/Display/Edit/messages';
+import formatAdGroupProperty from '../../../../../../messages/campaign/display/adgroupMessages';
+import { DisplayCampaignFormData } from '../domain';
 
 export const formMessages = defineMessages({
   sectionGeneralTitle: {
     id: 'automation.builder.node.edition.form.general.title',
-    defaultMessage: 'Global parameters',
+    defaultMessage: 'General information',
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.edition.form.general.subtitle',
-    defaultMessage: 'Modify the global paramaters of your display campaign',
-  },
-  loremIpsum: {
-    id: 'lorem.ipsum',
-    defaultMessage: 'Lorem Ipsum',
+    defaultMessage: 'Modify the general information of your display campaign',
   },
   automationNodeName: {
     id: 'automation.builder.node.form.name',
     defaultMessage: 'Automation Node name',
-  },
-  branchNumber: {
-    id: 'automation.builder.split.node.form.branch.number',
-    defaultMessage: 'Branchs',
   },
   advancedSection: {
     id: 'automation.builder.node.advanced.section',
@@ -46,11 +38,11 @@ export const formMessages = defineMessages({
   },
 });
 
-interface DisplayCampaignFormSectionProps {
-  initialValues: Partial<AutomationNodeFormData>;
+interface GeneralInformationFormSectionProps {
+  initialValues: Partial<DisplayCampaignFormData>;
 }
 
-type Props = DisplayCampaignFormSectionProps &
+type Props = GeneralInformationFormSectionProps &
   InjectedIntlProps &
   ValidatorProps &
   NormalizerProps;
@@ -59,7 +51,7 @@ interface State {
   displayAdvancedSection: boolean;
 }
 
-class DisplayCampaignFormSection extends React.Component<Props, State> {
+class GeneralInformationFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { displayAdvancedSection: false };
@@ -107,7 +99,8 @@ class DisplayCampaignFormSection extends React.Component<Props, State> {
             validate={[isValidInteger]}
             formItemProps={{
               label: formatMessage(
-                formatDisplayCampaignProperty('per_day_impression_capping').message,
+                formatDisplayCampaignProperty('per_day_impression_capping')
+                  .message,
               ),
             }}
             inputProps={{
@@ -129,7 +122,8 @@ class DisplayCampaignFormSection extends React.Component<Props, State> {
             validate={[isValidInteger]}
             formItemProps={{
               label: formatMessage(
-                formatDisplayCampaignProperty('total_impression_capping').message,
+                formatDisplayCampaignProperty('total_impression_capping')
+                  .message,
               ),
             }}
             inputProps={{
@@ -184,15 +178,24 @@ class DisplayCampaignFormSection extends React.Component<Props, State> {
                   options={[
                     {
                       value: 'DAY',
-                      children: formatDisplayCampaignProperty('max_budget_period', 'DAY').formattedValue,
+                      children: formatDisplayCampaignProperty(
+                        'max_budget_period',
+                        'DAY',
+                      ).formattedValue,
                     },
                     {
                       value: 'WEEK',
-                      children: formatDisplayCampaignProperty('max_budget_period', 'WEEK').formattedValue,
+                      children: formatDisplayCampaignProperty(
+                        'max_budget_period',
+                        'WEEK',
+                      ).formattedValue,
                     },
                     {
                       value: 'MONTH',
-                      children: formatDisplayCampaignProperty('max_budget_period', 'MONTH').formattedValue,
+                      children: formatDisplayCampaignProperty(
+                        'max_budget_period',
+                        'MONTH',
+                      ).formattedValue,
                     },
                   ]}
                 />
@@ -208,70 +211,15 @@ class DisplayCampaignFormSection extends React.Component<Props, State> {
               ),
             }}
           />
-    
-          <FormInputField
-            name="adGroup.total_budget"
-            component={FormInput}
-            validate={[isValidFloat, isNotZero]}
-            formItemProps={{
-              label: formatMessage(formatAdGroupProperty('total_budget').message),
-            }}
-            inputProps={{
-              suffix: <span>€</span>,
-              placeholder: formatMessage(
-                messages.contentSectionGeneralRow3Placeholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentSectionGeneralRow3Tooltip),
-            }}
-          />
-
-          <FormInputField
-            name="adGroup.max_budget_per_period"
-            component={FormInput}
-            validate={[isValidFloat, isNotZero]}
-            formItemProps={{
-              label: formatMessage(formatAdGroupProperty('max_budget_per_period').message),
-            }}
-            inputProps={{
-              suffix: <span>€</span>,
-              addonAfter: (
-                <FormAddonSelectField
-                  name="adGroup.max_budget_period"
-                  component={AddonSelect}
-                  options={[
-                    {
-                      value: 'DAY',
-                      children: formatAdGroupProperty('max_budget_period', 'DAY').formattedValue,
-                    },
-                    {
-                      value: 'WEEK',
-                      children: formatAdGroupProperty('max_budget_period', 'WEEK').formattedValue,
-                    },
-                    {
-                      value: 'MONTH',
-                      children: formatAdGroupProperty('max_budget_period', 'MONTH').formattedValue,
-                    },
-                  ]}
-                />
-              ),
-              placeholder: formatMessage(
-                messages.contentSectionGeneralRow2Placeholder,
-              ),
-              style: { width: '100%' },
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentSectionGeneralRow2Tooltip),
-            }}
-          />
 
           <FormInputField
             name="adGroup.max_bid_price"
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
-              label: formatMessage(formatAdGroupProperty('max_bid_price').message),
+              label: formatMessage(
+                formatAdGroupProperty('max_bid_price').message,
+              ),
             }}
             inputProps={{
               suffix: <span>€</span>,
@@ -283,15 +231,14 @@ class DisplayCampaignFormSection extends React.Component<Props, State> {
               title: formatMessage(messages.contentSectionGeneralRow5Tooltip),
             }}
           />
-
         </div>
       </div>
     );
   }
 }
 
-export default compose<Props, DisplayCampaignFormSectionProps>(
+export default compose<Props, GeneralInformationFormSectionProps>(
   injectIntl,
   withValidators,
   withNormalizer,
-)(DisplayCampaignFormSection);
+)(GeneralInformationFormSection);

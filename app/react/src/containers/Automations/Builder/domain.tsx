@@ -6,8 +6,9 @@ import {
   StorylineResource,
 } from '../../../models/automations/automations';
 import {
-  AutomationNodeFormData,
+  AutomationFormDataType,
   isAbnNode,
+  ABNFormData,
 } from './AutomationNode/Edit/domain';
 
 export interface TreeNodeOperations {
@@ -19,7 +20,7 @@ export interface TreeNodeOperations {
   deleteNode: (nodeId: string) => void;
   updateNode: (
     node: ScenarioNodeShape,
-    formData: AutomationNodeFormData,
+    formData: AutomationFormDataType,
   ) => void;
   updateLayout: () => void;
 }
@@ -200,9 +201,9 @@ export class DeleteNodeOperation implements NodeOperation {
 
 export class UpdateNodeOperation implements NodeOperation {
   node: AutomationNodeShape;
-  formData: AutomationNodeFormData;
+  formData: AutomationFormDataType;
 
-  constructor(node: ScenarioNodeShape, formData: AutomationNodeFormData) {
+  constructor(node: ScenarioNodeShape, formData: AutomationFormDataType) {
     this.node = node;
     this.formData = formData;
   }
@@ -223,7 +224,7 @@ export class UpdateNodeOperation implements NodeOperation {
               ? {
                   ...child.node,
                   name: this.formData.automationNode.name,
-                  branch_number: this.formData.automationNode.branch_number,
+                  branch_number: (this.formData as ABNFormData).automationNode.branch_number,
                 }
               : {
                   ...child.node,
@@ -261,7 +262,7 @@ export class UpdateNodeOperation implements NodeOperation {
           };
           let newOutEdges: StorylineNodeModel[] = [];
           if (isAbnNode(this.node)) {
-            const formBranchNumber = this.formData.automationNode.branch_number;
+            const formBranchNumber = (this.formData as ABNFormData).automationNode.branch_number;
             const nodeBranchNumber = this.node.branch_number;
 
             if (formBranchNumber && nodeBranchNumber) {

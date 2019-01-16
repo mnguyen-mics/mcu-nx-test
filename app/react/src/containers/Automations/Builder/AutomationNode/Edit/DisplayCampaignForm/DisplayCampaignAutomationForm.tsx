@@ -6,29 +6,34 @@ import {
   ConfigProps,
   getFormValues,
 } from 'redux-form';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '../../../../../../components/ActionBar';
 import { Layout, Form } from 'antd';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
-} from '../../../../../components/Layout/FormLayoutActionbar';
+} from '../../../../../../components/Layout/FormLayoutActionbar';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { McsFormSection } from '../../../../../utils/FormHelper';
-import { AutomationNodeFormData, FORM_ID } from './domain';
-import GeneralFormSection from './GeneralFormSection';
-import { ScenarioNodeShape } from '../../../../../models/automations/automations';
-import DisplayCampaignFormSection from './DisplayCampaignFormSection';
-import DeviceFormSection from '../../../../Campaigns/Display/Edit/AdGroup/sections/DeviceFormSection';
-import { AdFieldArray, BidOptimizerFieldArray, InventoryCatalogFieldArray, LocationTargetingFieldArray } from '../../../../Campaigns/Display/Edit/AdGroup/AdGroupForm';
-import { LocationTargetingFormSection } from '../../../../Campaigns/Display/Edit/AdGroup/sections/Location';
-import { InventoryCatalogFormSection } from '../../../../Campaigns/Display/Edit/AdGroup/sections/InventoryCatalog';
-import AdFormSection from '../../../../Campaigns/Display/Edit/AdGroup/sections/AdFormSection';
-import { BidOptimizerFormSection } from '../../../../Campaigns/Display/Edit/AdGroup/sections';
+import { McsFormSection } from '../../../../../../utils/FormHelper';
+import { FORM_ID, DisplayCampaignFormData } from '../domain';
+import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
+import GeneralInformationFormSection from './GeneralInformationFormSection';
+import {
+  LocationTargetingFieldArray,
+  InventoryCatalogFieldArray,
+  AdFieldArray,
+  BidOptimizerFieldArray,
+} from '../../../../../Campaigns/Display/Edit/AdGroup/AdGroupForm';
+import { LocationTargetingFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections/Location';
+import messages from '../../../../../Campaigns/Display/Edit/messages';
+import DeviceFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/DeviceFormSection';
+import { InventoryCatalogFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections/InventoryCatalog';
+import AdFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/AdFormSection';
+import { BidOptimizerFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections';
 
 const { Content } = Layout;
 
-const messages = defineMessages({
+const localMessages = defineMessages({
   save: {
     id: 'automation.builder.node.form.save.button',
     defaultMessage: 'Update',
@@ -43,45 +48,44 @@ const messages = defineMessages({
   },
 });
 
-export interface AutomationNodeFormProps
-  extends Omit<ConfigProps<AutomationNodeFormData>, 'form'> {
+export interface DisplayCampaignAutomationFormProps
+  extends Omit<ConfigProps<DisplayCampaignFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
   node: ScenarioNodeShape;
 }
 
 interface MapStateToProps {
-  formValues: AutomationNodeFormData;
+  formValues: DisplayCampaignFormData;
 }
 
 type Props = InjectedFormProps<
-  AutomationNodeFormData,
-  AutomationNodeFormProps
+  DisplayCampaignFormData,
+  DisplayCampaignAutomationFormProps
 > &
-  AutomationNodeFormProps &
+  DisplayCampaignAutomationFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
   MapStateToProps;
 
-class AutomationNodeForm extends React.Component<Props> {
+class DisplayCampaignAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const { node } = this.props;
+    const { change } = this.props;
+
+    const genericFieldArrayProps = {
+      formChange: change,
+      rerenderOnEveryChange: true,
+    };
 
     const sections: McsFormSection[] = [];
 
-    const general = {
-      id: 'general',
-      title: messages.sectionGeneralTitle,
-      component: (
-        <GeneralFormSection initialValues={this.props.initialValues} />
-      ),
-    };
-
     const displayCampaignSection = {
       id: 'displayCampaign',
-      title: messages.sectionGeneralTitle,
+      title: localMessages.sectionGeneralTitle,
       component: (
-        <DisplayCampaignFormSection initialValues={this.props.initialValues} />
+        <GeneralInformationFormSection
+          initialValues={this.props.initialValues}
+        />
       ),
     };
 
@@ -106,6 +110,7 @@ class AutomationNodeForm extends React.Component<Props> {
         />
       ),
     };
+
     const placementList = {
       id: 'placementList',
       title: messages.sectionTitlePlacement,
@@ -142,12 +147,12 @@ class AutomationNodeForm extends React.Component<Props> {
       ),
     };
 
-    console.log(node)
-
-    if(node.type==="DISPLAY_CAMPAIGN") {
-      console.log(true);
-      sections.push(displayCampaignSection);
-    }else sections.push(general);
+    sections.push(displayCampaignSection);
+    sections.push(location);
+    sections.push(device);
+    sections.push(placementList);
+    sections.push(displayAd);
+    sections.push(bidOptimizer);
 
     return sections;
   };
@@ -157,7 +162,7 @@ class AutomationNodeForm extends React.Component<Props> {
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
-      message: messages.save,
+      message: localMessages.save,
       onClose: close,
     };
 
@@ -178,10 +183,7 @@ class AutomationNodeForm extends React.Component<Props> {
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-          >
+          <Form className="edit-layout ant-layout" onSubmit={handleSubmit}>
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container automation-form"
@@ -199,7 +201,7 @@ const mapStateToProps = (state: any) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 
-export default compose<Props, AutomationNodeFormProps>(
+export default compose<Props, DisplayCampaignAutomationFormProps>(
   injectIntl,
   withRouter,
   connect(mapStateToProps),
@@ -207,4 +209,4 @@ export default compose<Props, AutomationNodeFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-)(AutomationNodeForm);
+)(DisplayCampaignAutomationForm);
