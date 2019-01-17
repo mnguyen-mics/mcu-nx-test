@@ -212,6 +212,76 @@ export class UpdateNodeOperation implements NodeOperation {
     return this.iterateData(automationData, this.node.id);
   }
 
+  buildUpdatedNode(storylineNode: StorylineNodeModel): StorylineNodeModel {
+    return {
+      node: isAbnNode(storylineNode.node)
+        ? {
+            ...storylineNode.node,
+            name: this.formData.automationNode.name,
+            branch_number: (this.formData as ABNFormData).automationNode
+              .branch_number,
+          }
+        : {
+            ...storylineNode.node,
+            name: this.formData.automationNode.name,
+          },
+      in_edge: storylineNode.in_edge,
+      out_edges: [],
+    };
+  }
+
+  generateOutEdges = (node: StorylineNodeModel): StorylineNodeModel[] => {
+    let newOutEdges: StorylineNodeModel[] = [];
+    if (isAbnNode(this.node)) {
+      const formBranchNumber = (this.formData as ABNFormData).automationNode
+        .branch_number;
+      const nodeBranchNumber = this.node.branch_number;
+      if (formBranchNumber && nodeBranchNumber) {
+        const diff = formBranchNumber - nodeBranchNumber;
+        if (diff > 0) {
+          const newEmptyOutEdges = this.generateNewEmptyOutEdges(diff, node);
+          newOutEdges = node.out_edges.concat(newEmptyOutEdges);
+        } else if (diff === 0) {
+          newOutEdges = node.out_edges;
+        } else {
+          const childNodesLeft = node.out_edges.slice(0, formBranchNumber);
+          newOutEdges = childNodesLeft;
+        }
+      }
+    } else {
+      newOutEdges = node.out_edges;
+    }
+    return newOutEdges;
+  };
+
+  generateNewEmptyOutEdges = (
+    branchNumber: number,
+    child: StorylineNodeModel,
+  ): StorylineNodeModel[] => {
+    const newEmptyOutEdges = [];
+    for (let i = 1; i <= branchNumber; i++) {
+      const newId = cuid();
+      const emptyNode: StorylineNodeModel = {
+        node: {
+          id: newId,
+          name: 'Exit from automation',
+          scenario_id: '1',
+          type: 'GOAL',
+        },
+        in_edge: {
+          id: cuid(),
+          source_id: this.node.id,
+          target_id: newId,
+          handler: 'GOAL',
+          scenario_id: child.in_edge!.scenario_id,
+        },
+        out_edges: [],
+      };
+      newEmptyOutEdges.push(emptyNode);
+    }
+    return newEmptyOutEdges;
+  };
+
   iterateData(
     automationData: StorylineNodeModel,
     id: string,
@@ -219,74 +289,10 @@ export class UpdateNodeOperation implements NodeOperation {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
         if (child.node.id === id) {
-          const updatedNode: StorylineNodeModel = {
-            node: isAbnNode(child.node)
-              ? {
-                  ...child.node,
-                  name: this.formData.automationNode.name,
-                  branch_number: (this.formData as ABNFormData).automationNode.branch_number,
-                }
-              : {
-                  ...child.node,
-                  name: this.formData.automationNode.name,
-                },
-            in_edge: child.in_edge,
-            out_edges: [],
-          };
-
-          const generateNewEmptyOutEdges = (
-            branchNumber: number,
-          ): StorylineNodeModel[] => {
-            const newEmptyOutEdges = [];
-            for (let i = 1; i <= branchNumber; i++) {
-              const newId = cuid();
-              const emptyNode: StorylineNodeModel = {
-                node: {
-                  id: newId,
-                  name: 'Exit from automation',
-                  scenario_id: '1',
-                  type: 'GOAL',
-                },
-                in_edge: {
-                  id: cuid(),
-                  source_id: this.node.id,
-                  target_id: newId,
-                  handler: 'GOAL',
-                  scenario_id: child.in_edge!.scenario_id,
-                },
-                out_edges: [],
-              };
-              newEmptyOutEdges.push(emptyNode);
-            }
-            return newEmptyOutEdges;
-          };
-          let newOutEdges: StorylineNodeModel[] = [];
-          if (isAbnNode(this.node)) {
-            const formBranchNumber = (this.formData as ABNFormData).automationNode.branch_number;
-            const nodeBranchNumber = this.node.branch_number;
-
-            if (formBranchNumber && nodeBranchNumber) {
-              const diff = formBranchNumber - nodeBranchNumber;
-              if (diff > 0) {
-                const newEmptyOutEdges = generateNewEmptyOutEdges(diff);
-                newOutEdges = child.out_edges.concat(newEmptyOutEdges);
-              } else if (diff === 0) {
-                newOutEdges = child.out_edges;
-              } else {
-                const childNodesLeft = child.out_edges.slice(
-                  0,
-                  formBranchNumber,
-                );
-                newOutEdges = childNodesLeft;
-              }
-            }
-          } else {
-            newOutEdges = child.out_edges;
-          }
-
+          const updatedNode: StorylineNodeModel = this.buildUpdatedNode(child);
           return {
             ...updatedNode,
-            out_edges: newOutEdges,
+            out_edges: this.generateOutEdges(child),
           };
         } else return this.iterateData(child, id);
       },

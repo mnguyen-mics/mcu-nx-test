@@ -55,11 +55,11 @@ export function isScenarioNodeShape(
 }
 
 export function isAbnNode(node: AutomationNodeShape): node is ABNNodeResource {
-  return (node as ABNNodeResource).branch_number !== undefined;
+  return node.type==='ABN_NODE';
 }
 
 export function isDisplayCampaignNode(
   node: AutomationNodeShape,
 ): node is DisplayCampaignNodeResource {
-  return (node as DisplayCampaignNodeResource).campaign_id !== undefined;
+  return node.type==='DISPLAY_CAMPAIGN';
 }

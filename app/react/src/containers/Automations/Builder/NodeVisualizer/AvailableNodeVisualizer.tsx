@@ -52,20 +52,6 @@ const fakeNode2: ScenarioNodeShape = {
   ad_group_id: '',
 };
 
-// const fakeNode3: FakeNode = {
-//   id: 3,
-//   name: 'Send Push',
-//   icon: 'tablet',
-//   color: '#0ba6e1',
-// };
-
-// const fakeNode4: FakeNode = {
-//   id: 4,
-//   name: 'HTTP Api',
-//   icon: 'settings',
-//   color: '#0ba6e1',
-// };
-
 const conditionNode1: ScenarioNodeShape = {
   id: cuid(),
   name: 'Split',
@@ -81,20 +67,6 @@ const conditionNode2: ScenarioNodeShape = {
   type: 'WAIT',
   scenario_id: '1',
 };
-
-// const exitNode1: FakeNode = {
-//   id: 7,
-//   name: 'Failure',
-//   icon: 'close',
-//   color: '#ff5959',
-// };
-
-// const exitNode2: FakeNode = {
-//   id: 8,
-//   name: 'Goal',
-//   icon: 'check',
-//   color: '#18b577',
-// };
 
 type Props = InjectedIntlProps;
 
@@ -150,9 +122,9 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
         case 'WAIT':
         return {
           node: node,
-          iconAnt : 'clock-circle',
+          iconAnt: 'clock-circle',
           color: '#fbc02d',
-        }
+        };
       default:
         return {
           node: node,
@@ -183,7 +155,9 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
                     id={node.id}
                     type={node.type}
                     name={node.name}
-                    branchNumber={this.generateNodeProperties(node).branchNumber}
+                    branchNumber={
+                      this.generateNodeProperties(node).branchNumber
+                    }
                     icon={this.generateNodeProperties(node).iconType}
                     iconAnt={this.generateNodeProperties(node).iconAnt}
                     color={this.generateNodeProperties(node).color}
