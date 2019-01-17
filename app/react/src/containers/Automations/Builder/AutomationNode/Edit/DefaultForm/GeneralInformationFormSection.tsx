@@ -73,7 +73,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
         <div className="automation-node-form">
           <FormInputField
-            name="automationNode.name"
+            name="name"
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{

@@ -18,7 +18,6 @@ import { Icon } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
 import JSONQLPreview from '../../../QueryTool/JSONOTQL/JSONQLPreview';
 import {
-  isAbnNode,
   isScenarioNodeShape,
   AutomationFormDataType,
   AutomationFormPropsType,
@@ -68,11 +67,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   getInitialValues = (props: Props): AutomationFormDataType => {
     switch (props.node.storylineNodeModel.node.type) {
       case 'DISPLAY_CAMPAIGN':
-        const formData = props.node.storylineNodeModel.node.formData;
-        return formData ? formData : {
-          automationNode: {
+        const dCFormData = props.node.storylineNodeModel.node.formData;
+        return dCFormData || {
             name: props.node.title,
-          },
           adGroup: {
             max_budget_period: 'DAY',
             targeted_operating_systems: 'ALL',
@@ -87,17 +84,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           inventoryCatalFields: [],
         };
       case 'ABN_NODE':
-        return {
-          automationNode: {
+        const abnFormData = props.node.storylineNodeModel.node.formData;
+        return abnFormData || {
             name: props.node.title,
-            branch_number: props.node.storylineNodeModel.node.branch_number, 
-          },
+            branch_number: 2, 
         };
       default:
         return {
-          automationNode: {
             name: props.node.title,
-          },
         };
     }
   };
@@ -121,14 +115,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const { node, lockGlobalInteraction } = this.props;
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(false);
-      const automationNode = isAbnNode(node.storylineNodeModel.node)
-        ? {
-            name: node.storylineNodeModel.node.name,
-            branch_number: node.storylineNodeModel.node.branch_number,
-          }
-        : {
-            name: node.storylineNodeModel.node.name,
-          };
       if (isScenarioNodeShape(node.storylineNodeModel.node)) {
         const scenarioNodeShape = node.storylineNodeModel.node;
 
@@ -146,10 +132,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 );
                 this.props.closeNextDrawer();
               },
-              initialValues: {
-                automationNode: automationNode,
-                ...this.state.initialValuesForm,
-              },
+              initialValues: this.state.initialValuesForm,
             },
             size: 'small',
           },
@@ -170,7 +153,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const borderColor = node.getColor();
 
     const onFocus = () => {
-      // this.props.lockGlobalInteraction(!this.state.focus);
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
       this.setState({ focus: !this.state.focus });
     };

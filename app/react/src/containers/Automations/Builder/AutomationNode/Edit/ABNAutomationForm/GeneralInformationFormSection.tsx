@@ -79,7 +79,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
         <div className="automation-node-form">
           <FormInputField
-            name="automationNode.name"
+            name="name"
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -92,11 +92,9 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             small={true}
           />
 
-          {this.props.initialValues.automationNode !== undefined &&
-            this.props.initialValues.automationNode.branch_number !==
-              undefined && (
+          {this.props.initialValues.branch_number !== undefined && (
               <FormSliderField
-                name="automationNode.branch_number"
+                name="branch_number"
                 component={FormSlider}
                 formItemProps={{
                   label: formatMessage(messages.branchNumber),

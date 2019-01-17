@@ -124,7 +124,7 @@ export class AddNodeOperation implements NodeOperation {
           let newOutEdges: StorylineNodeModel[] = [];
           if (this.node.type === 'ABN_NODE') {
             const emptyNodes = generateNewEmptyOutEdges(
-              this.node.branch_number || 0,
+              this.node.formData ? this.node.formData.branch_number : 2,
             );
             newOutEdges = [childNode].concat(emptyNodes);
           } else {
@@ -220,49 +220,47 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'DISPLAY_CAMPAIGN':
         nodeBody = {
           ...storylineNode.node,
-          name: this.formData.automationNode.name,
+          name: this.formData.name,
           formData: this.formData as DisplayCampaignFormData,
         };
         break;
       case 'ABN_NODE':
         nodeBody = {
           ...storylineNode.node,
-          name: this.formData.automationNode.name,
-          branch_number: (this.formData as ABNFormData).automationNode
-            .branch_number,
+          name: this.formData.name,
+          formData: this.formData as ABNFormData,
         };
         break;
       default:
         nodeBody = {
           ...storylineNode.node,
-          name: this.formData.automationNode.name,
+          name: this.formData.name,
         };
         break;
     }
     return {
       node: nodeBody,
       in_edge: storylineNode.in_edge,
-      out_edges: [],
+      out_edges: this.generateOutEdges(storylineNode),
     };
   }
 
   generateOutEdges = (node: StorylineNodeModel): StorylineNodeModel[] => {
     let newOutEdges: StorylineNodeModel[] = [];
     if (isAbnNode(this.node)) {
-      const formBranchNumber = (this.formData as ABNFormData).automationNode
-        .branch_number;
-      const nodeBranchNumber = this.node.branch_number;
-      if (formBranchNumber && nodeBranchNumber) {
-        const diff = formBranchNumber - nodeBranchNumber;
-        if (diff > 0) {
-          const newEmptyOutEdges = this.generateNewEmptyOutEdges(diff, node);
-          newOutEdges = node.out_edges.concat(newEmptyOutEdges);
-        } else if (diff === 0) {
-          newOutEdges = node.out_edges;
-        } else {
-          const childNodesLeft = node.out_edges.slice(0, formBranchNumber);
-          newOutEdges = childNodesLeft;
-        }
+      const formBranchNumber = (this.formData as ABNFormData).branch_number;
+      const nodeBranchNumber = this.node.formData
+        ? this.node.formData.branch_number
+        : 2;
+      const diff = formBranchNumber - nodeBranchNumber;
+      if (diff > 0) {
+        const newEmptyOutEdges = this.generateNewEmptyOutEdges(diff, node);
+        newOutEdges = node.out_edges.concat(newEmptyOutEdges);
+      } else if (diff === 0) {
+        newOutEdges = node.out_edges;
+      } else {
+        const childNodesLeft = node.out_edges.slice(0, formBranchNumber);
+        newOutEdges = childNodesLeft;
       }
     } else {
       newOutEdges = node.out_edges;

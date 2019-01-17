@@ -16,16 +16,11 @@ import { DefaultAutomationFormProps } from './DefaultForm/DefaultAutomationForm'
 import { DisplayCampaignAutomationFormProps } from './DisplayCampaignForm/DisplayCampaignAutomationForm';
 
 export interface DefaultFormData {
-  automationNode: {
-    name: string;
-  };
+  name: string;
 }
 
 export interface ABNFormData extends DefaultFormData {
-  automationNode: {
-    name: string;
-    branch_number: number;
-  };
+  branch_number: number;
 }
 
 export interface DisplayCampaignFormData extends DefaultFormData {

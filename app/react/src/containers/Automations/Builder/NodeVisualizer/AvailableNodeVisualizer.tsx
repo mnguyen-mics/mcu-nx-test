@@ -58,7 +58,6 @@ const conditionNode1: ScenarioNodeShape = {
   type: 'ABN_NODE',
   scenario_id: '1',
   edges_selection: {},
-  branch_number: 2
 };
 
 const conditionNode2: ScenarioNodeShape = {
@@ -105,7 +104,6 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
           node: node,
           iconAnt: 'fork',
           color: '#fbc02d',
-          branchNumber: node.branch_number
         };
       case 'GOAL':
         return {
