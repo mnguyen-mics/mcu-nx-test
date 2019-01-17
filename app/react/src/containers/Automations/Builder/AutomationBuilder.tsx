@@ -39,6 +39,7 @@ export interface AutomationBuilderProps {
   updateAutomationData: (
     automationData: StorylineNodeModel,
   ) => StorylineNodeModel;
+  updateQueryNode: (nodeId: string, queryText: string) => void;
   edition?: boolean;
 }
 
@@ -61,6 +62,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.registerNodeFactory(
       new AutomationNodeFactory(
         this.getTreeNodeOperations(),
+        this.props.updateQueryNode,
         this.lockInteraction,
       ),
     );
@@ -165,11 +167,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     );
   };
 
-  buildAutomationNode(
-    nodeModel: StorylineNodeResource,
-    xAxisLocal: number,
-    maxHeightLocal: number,
-  ): AutomationNodeModel {
+  buildAutomationNode(nodeModel: StorylineNodeResource): AutomationNodeModel {
     const storylineNode = new AutomationNodeModel(
       this.props.datamartId,
       nodeModel,
@@ -211,8 +209,6 @@ class AutomationBuilder extends React.Component<Props, State> {
       } else {
         storylineNode = this.buildAutomationNode(
           child as StorylineNodeResource,
-          xAxisLocal,
-          maxHeightLocal,
         );
         storylineNode.y = ROOT_NODE_POSITION.y * maxHeightLocal;
         linkPointHeight = storylineNode.y + nodeModel.getNodeSize().height / 2;

@@ -79,6 +79,7 @@ class AutomationBuilderPage extends React.Component<Props> {
       match: {
         params: { organisationId },
       },
+      location,
     } = this.props;
 
     const datamartId = queryString.parse(location.search).datamartId;
@@ -99,7 +100,12 @@ class AutomationBuilderPage extends React.Component<Props> {
       .then(automation => {
         const automationId = automation.data.id;
         this._scenarioService
-          .createScenarioBeginNode(automationId)
+          .createScenarioBeginNode(automationId, {
+            name: 'begin node',
+            scenario_id: automationId,
+            type: 'QUERY_INPUT',
+            query_id: '' // TO REPLACE
+          })
           .then(() => {
             const treeData = formData.automationTreeData;
             if (
@@ -155,15 +161,7 @@ class AutomationBuilderPage extends React.Component<Props> {
   };
 
   render() {
-    const {
-      connectedUser,
-      location,
-      intl,
-      history,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
+    const { connectedUser, location, intl, history } = this.props;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       history.push({
@@ -199,7 +197,7 @@ class AutomationBuilderPage extends React.Component<Props> {
       selectedDatamart &&
       selectedDatamart.storage_model_version === 'v201506'
     ) {
-      history.push(`v2/o/${organisationId}/automations/create`);
+      history.push(`create`);
     }
 
     return selectedDatamart ? (

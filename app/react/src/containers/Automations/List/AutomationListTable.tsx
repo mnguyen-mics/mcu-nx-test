@@ -21,7 +21,6 @@ import {
 } from '../../../utils/LocationSearchHelper';
 import { McsIcon } from '../../../components';
 import {
-  EmptyTableView,
   TableViewFilters,
 } from '../../../components/TableView';
 import { MapDispatchToProps } from './AutomationListPage';
@@ -30,6 +29,7 @@ import messages from './messages';
 import {
   SCENARIOS_SEARCH_SETTINGS,
   IScenarioService,
+  GetAutomationsOptions,
 } from '../../../services/ScenarioService';
 import { Filters } from '../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
@@ -130,9 +130,12 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
   fetchAutomationList = (organisationId: string, filter: Filters) => {
     this.setState({ isLoading: true });
 
-    const options = {
+    const options: GetAutomationsOptions = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
+    if (filter.keywords) {
+      options.keywords = filter.keywords;
+    }
     return this._scenarioService
       .getScenarios(organisationId, options)
       .then(res => {
@@ -287,9 +290,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       },
     ];
 
-    return dataSource.length === 0 && !isLoading ? (
-      <EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />
-    ) : (
+    return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <div className="mcs-table-container">

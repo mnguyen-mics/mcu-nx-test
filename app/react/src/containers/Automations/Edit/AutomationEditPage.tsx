@@ -47,14 +47,6 @@ class EditAutomationPage extends React.Component<Props, State> {
     .injector()
     .get('core/scenarios/ScenarioContainer');
 
-  state: State = {
-    loading: true,
-    automationFormData: {
-      automation: {},
-    },
-    scenarioContainer: {},
-  };
-
   AngularSession = (window as any).angular
     .element(document.body)
     .injector()
@@ -143,6 +135,7 @@ class EditAutomationPage extends React.Component<Props, State> {
   };
 
   save = (formData: AutomationFormData) => {
+    // TODO :
     const generatePromise = () => {
       if (this.props.match.params.automationId) {
         return this._scenarioService.updateScenario(

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { submit as rxfSubmit } from 'redux-form';
+import { submit as rxfSubmit, getFormValues } from 'redux-form';
 import { RouteComponentProps, withRouter } from 'react-router';
 import {
   messages,
@@ -10,17 +10,19 @@ import {
 import ActionBar from '../../../../components/ActionBar';
 import { Button, Modal } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
-import AutomationSimpleForm, { FORM_ID } from './AutomationSimpleForm';
+import AutomationSimpleForm, {
+  FORM_ID,
+  AutomationSimpleFormData,
+} from './AutomationSimpleForm';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { AutomationResource } from '../../../../models/automations/automations';
 import { McsIcon } from '../../../../components';
+import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../../Edit/domain';
 
 interface AutomationActionBarProps {
-  datamartId: string;
-  automation?: AutomationResource;
-  saveOrUpdate: () => void;
+  automationData?: Partial<AutomationFormData>;
+  saveOrUpdate: (formData?: AutomationFormData) => void;
   onClose?: () => void;
   edition?: boolean;
 }
@@ -34,10 +36,15 @@ interface MapDispatchToProps {
   submit: (formId: string) => void;
 }
 
+interface MapStateToProps {
+  formValues: AutomationSimpleFormData;
+}
+
 type Props = AutomationActionBarProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   MapDispatchToProps &
+  MapStateToProps &
   RouteComponentProps<AutomationBuilderPageRouteParams>;
 
 class AutomationActionBar extends React.Component<Props, State> {
@@ -49,7 +56,7 @@ class AutomationActionBar extends React.Component<Props, State> {
     };
   }
 
-  onSave = () => {
+  onClick = () => {
     const { edition } = this.props;
     if (edition) {
       this.props.saveOrUpdate();
@@ -64,15 +71,22 @@ class AutomationActionBar extends React.Component<Props, State> {
     });
   };
 
+  onSave = () => {
+    const { saveOrUpdate, automationData, formValues } = this.props;
+    const formData: AutomationFormData = {
+      automation: {
+        ...formValues,
+      },
+      automationTreeData:
+        automationData && automationData.automationTreeData
+          ? automationData.automationTreeData
+          : INITIAL_AUTOMATION_DATA.automationTreeData,
+    };
+    saveOrUpdate(formData);
+  };
+
   render() {
-    const {
-      intl,
-      submit,
-      edition,
-      onClose,
-      automation,
-      saveOrUpdate,
-    } = this.props;
+    const { intl, submit, edition, onClose, automationData } = this.props;
 
     const { isLoading, visible } = this.state;
 
@@ -88,13 +102,16 @@ class AutomationActionBar extends React.Component<Props, State> {
             name: intl.formatMessage(messages.automationBuilder),
           },
           {
-            name: automation
-              ? automation.name
-              : intl.formatMessage(messages.newAutomation),
+            name:
+              automationData &&
+              automationData.automation &&
+              automationData.automation.name
+                ? automationData.automation.name
+                : intl.formatMessage(messages.newAutomation),
           },
         ]}
       >
-        <Button className="mcs-primary" type="primary" onClick={this.onSave}>
+        <Button className="mcs-primary" type="primary" onClick={this.onClick}>
           {edition
             ? intl.formatMessage(messages.updateAutomation)
             : intl.formatMessage(messages.saveAutomation)}
@@ -119,17 +136,22 @@ class AutomationActionBar extends React.Component<Props, State> {
             />
           }
         >
-          {visible && <AutomationSimpleForm onSubmit={saveOrUpdate} />}
+          {visible && <AutomationSimpleForm onSubmit={this.onSave} />}
         </Modal>
       </ActionBar>
     );
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  formValues: getFormValues(FORM_ID)(state),
+});
+
 export default compose<Props, AutomationActionBarProps>(
   injectIntl,
   injectNotifications,
   withRouter,
+  connect(mapStateToProps),
   connect(
     undefined,
     { submit: rxfSubmit },

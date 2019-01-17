@@ -21,6 +21,7 @@ import {
   isScenarioNodeShape,
   AutomationFormDataType,
   AutomationFormPropsType,
+  isQueryInputNode,
 } from './Edit/domain';
 
 interface AutomationNodeProps {
@@ -28,6 +29,7 @@ interface AutomationNodeProps {
   lockGlobalInteraction: (lock: boolean) => void;
   diagramEngine: DiagramEngine;
   nodeOperations: TreeNodeOperations;
+  updateQueryNode: (nodeId: string, queryText: string) => void;
 }
 
 interface State {
@@ -158,8 +160,18 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     });
   };
 
+  getQuery = () => {
+    const node = this.props.node.storylineNodeModel.node;
+    if (isQueryInputNode(node)) {
+      return node.query_text;
+    }
+    return undefined;
+  };
+
   handleQueryOnChange = (queryText: string) => {
     this.setState({ query: queryText });
+    const { node } = this.props;
+    this.props.updateQueryNode(node.storylineNodeModel.node.id, queryText);
   };
 
   render() {
@@ -297,7 +309,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 {nodeType === 'START' ? (
                   <JSONQLPreview
                     datamartId={node.datamartId}
-                    value={this.state.query}
+                    value={this.getQuery()}
                     isTrigger={true}
                     onChange={this.handleQueryOnChange}
                     context="AUTOMATION_BUILDER"

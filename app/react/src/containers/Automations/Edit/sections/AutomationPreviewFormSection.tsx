@@ -11,12 +11,11 @@ import AutomationBuilderContainer, {
   AutomationBuilderContainerProps,
 } from '../../Builder/AutomationBuilderContainer';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
-import { StorylineNodeModel } from '../../Builder/domain';
-import { AutomationFormData } from '../domain';
+import { INITIAL_AUTOMATION_DATA, AutomationFormData } from '../domain';
 
 interface AutomationPreviewFormSectionProps extends ReduxFormChangeProps {
   datamartId: string;
-  formValues: Partial<AutomationFormData>;
+  automationFormData: Partial<AutomationFormData>;
 }
 
 type Props = AutomationPreviewFormSectionProps &
@@ -28,8 +27,8 @@ class AutomationPreviewFormSection extends React.Component<Props> {
     super(props);
   }
 
-  update = (treeData: StorylineNodeModel) => {
-    this.props.formChange('automation.automationTreeData', treeData);
+  update = (formData: AutomationFormData) => {
+    this.props.formChange('automationTreeData', formData.automationTreeData);
     this.props.closeNextDrawer();
   };
 
@@ -38,7 +37,7 @@ class AutomationPreviewFormSection extends React.Component<Props> {
   };
 
   openEditor = () => {
-    const { formValues } = this.props;
+    const { automationFormData } = this.props;
     this.props.openNextDrawer<AutomationBuilderContainerProps>(
       AutomationBuilderContainer,
       {
@@ -46,10 +45,9 @@ class AutomationPreviewFormSection extends React.Component<Props> {
           datamartId: this.props.datamartId,
           editionLayout: true,
           onClose: this.onClose,
-          automationTreeData:
-            formValues && formValues.automationTreeData
-              ? formValues.automationTreeData
-              : undefined,
+          automationFormData: automationFormData
+            ? automationFormData
+            : INITIAL_AUTOMATION_DATA,
           saveOrUpdate: this.update,
         },
       },

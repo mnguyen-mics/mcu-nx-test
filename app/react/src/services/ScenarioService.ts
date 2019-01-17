@@ -36,11 +36,11 @@ export const SCENARIOS_SEARCH_SETTINGS = [
 export interface IScenarioService {
   getScenarios: (
     organisationId: string,
-    options: object,
+    options: GetAutomationsOptions,
   ) => Promise<DataListResponse<AutomationResource>>;
   getScenario: (
     scenarioId: string,
-    options?: object,
+    options?: GetAutomationsOptions,
   ) => Promise<DataResponse<AutomationResource>>;
   createScenario: (
     organisationId: string,
@@ -65,7 +65,7 @@ export interface IScenarioService {
   ) => Promise<DataResponse<StartNodeResource>>;
   createScenarioBeginNode: (
     scenarioId: string,
-    storyline?: StorylineResource,
+    storyline: any,
   ) => Promise<DataResponse<StartNodeResource>>;
   getScenarioNodes: (
     scenarioId: string,
@@ -162,7 +162,7 @@ export class ScenarioService implements IScenarioService {
   }
   createScenarioBeginNode(
     scenarioId: string,
-    storyline?: StorylineResource,
+    storyline: any,
   ): Promise<DataResponse<StartNodeResource>> {
     const endpoint = `scenarios/${scenarioId}/storyline/begin`;
     return ApiService.postRequest(endpoint, storyline);

@@ -8,14 +8,17 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
   AutomationNodeModel
 > {
   nodeOperations: TreeNodeOperations;
+  updateQueryNode: (nodeId: string, queryText: string) => void;
   lockGlobalInteraction: (locked: boolean) => void;
 
   constructor(
     nodeOperations: TreeNodeOperations,
+    updateQueryNode: (nodeId: string, queryText: string) => void,
     _lockGlobalInteraction: (locked: boolean) => void,
   ) {
     super('automation-node');
     this.nodeOperations = nodeOperations;
+    this.updateQueryNode = updateQueryNode;
     this.lockGlobalInteraction = _lockGlobalInteraction;
   }
 
@@ -30,6 +33,7 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
       node: node,
       diagramEngine: diagramEngine,
       nodeOperations: this.nodeOperations,
+      updateQueryNode: this.updateQueryNode,
       lockGlobalInteraction: this.lockGlobalInteraction,
     });
   }

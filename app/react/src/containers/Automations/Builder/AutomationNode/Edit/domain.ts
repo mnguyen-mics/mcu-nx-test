@@ -3,6 +3,8 @@ import {
   ABNNodeResource,
   ScenarioNodeShape,
   DisplayCampaignNodeResource,
+  QueryInputNodeResource,
+  StartNodeResource,
 } from '../../../../../models/automations/automations';
 import {
   LocationFieldModel,
@@ -82,4 +84,14 @@ export function isDisplayCampaignNode(
   node: AutomationNodeShape,
 ): node is DisplayCampaignNodeResource {
   return node.type === 'DISPLAY_CAMPAIGN';
+}
+
+export function isQueryInputNode(
+  node: AutomationNodeShape,
+): node is QueryInputNodeResource | StartNodeResource {
+  return (
+    (node as QueryInputNodeResource | StartNodeResource).type ===
+      'QUERY_INPUT' ||
+    (node as QueryInputNodeResource | StartNodeResource).type === 'START'
+  );
 }

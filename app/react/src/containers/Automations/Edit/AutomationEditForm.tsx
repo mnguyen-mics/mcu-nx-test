@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
+import {
+  Form,
+  reduxForm,
+  InjectedFormProps,
+  ConfigProps,
+  getFormValues,
+} from 'redux-form';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Layout } from 'antd';
@@ -42,6 +48,7 @@ export interface AutomationEditFormProps
 
 interface MapStateToProps {
   hasDatamarts: (organisationId: string) => boolean;
+  formValues: AutomationFormData;
 }
 
 interface State {
@@ -87,7 +94,7 @@ class AutomationEditForm extends React.Component<Props, State> {
       close,
       datamart,
       change,
-      initialValues
+      formValues,
     } = this.props;
 
     const { datamartResource } = this.state;
@@ -119,7 +126,7 @@ class AutomationEditForm extends React.Component<Props, State> {
         datamartStorageModelVersion === 'v201709' ? (
           <AutomationPreviewFormSection
             datamartId={datamartToUse.id}
-            formValues={initialValues}
+            automationFormData={formValues}
             formChange={change}
           />
         ) : (
@@ -174,6 +181,11 @@ class AutomationEditForm extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  formValues: getFormValues(FORM_ID)(state),
+  hasDatamarts: SessionSelectors.hasDatamarts(state),
+});
+
 export default compose<Props, AutomationEditFormProps>(
   injectIntl,
   withRouter,
@@ -181,5 +193,5 @@ export default compose<Props, AutomationEditFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
+  connect(mapStateToProps),
 )(AutomationEditForm);
