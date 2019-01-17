@@ -1,3 +1,5 @@
+import { DisplayCampaignFormData } from "../../containers/Automations/Builder/AutomationNode/Edit/domain";
+
 export interface AutomationResource {
   id: string;
   name: string;
@@ -32,6 +34,7 @@ export interface DisplayCampaignNodeResource extends ScenarioNodeResource {
   type: 'DISPLAY_CAMPAIGN';
   campaign_id: string;
   ad_group_id: string;
+  formData?: DisplayCampaignFormData;
 }
 
 export interface EmailCampaignNodeResource extends ScenarioNodeResource {

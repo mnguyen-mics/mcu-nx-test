@@ -9,6 +9,7 @@ import {
   AutomationFormDataType,
   isAbnNode,
   ABNFormData,
+  DisplayCampaignFormData,
 } from './AutomationNode/Edit/domain';
 
 export interface TreeNodeOperations {
@@ -213,18 +214,33 @@ export class UpdateNodeOperation implements NodeOperation {
   }
 
   buildUpdatedNode(storylineNode: StorylineNodeModel): StorylineNodeModel {
+    let nodeBody: AutomationNodeShape;
+
+    switch (storylineNode.node.type) {
+      case 'DISPLAY_CAMPAIGN':
+        nodeBody = {
+          ...storylineNode.node,
+          name: this.formData.automationNode.name,
+          formData: this.formData as DisplayCampaignFormData,
+        };
+        break;
+      case 'ABN_NODE':
+        nodeBody = {
+          ...storylineNode.node,
+          name: this.formData.automationNode.name,
+          branch_number: (this.formData as ABNFormData).automationNode
+            .branch_number,
+        };
+        break;
+      default:
+        nodeBody = {
+          ...storylineNode.node,
+          name: this.formData.automationNode.name,
+        };
+        break;
+    }
     return {
-      node: isAbnNode(storylineNode.node)
-        ? {
-            ...storylineNode.node,
-            name: this.formData.automationNode.name,
-            branch_number: (this.formData as ABNFormData).automationNode
-              .branch_number,
-          }
-        : {
-            ...storylineNode.node,
-            name: this.formData.automationNode.name,
-          },
+      node: nodeBody,
       in_edge: storylineNode.in_edge,
       out_edges: [],
     };
@@ -334,47 +350,6 @@ export const node4: ScenarioNodeShape = {
   type: 'GOAL',
 };
 
-// export const beginNode: ScenarioNodeShape = {
-//   id: '1',
-//   name: 'Begin node',
-//   scenario_id: '1',
-//   type: 'DISPLAY_CAMPAIGN',
-//   campaign_id: 'string',
-//   ad_group_id: 'string',
-// };
-
-// export const node2: ScenarioNodeShape = {
-//   id: '2',
-//   name: 'node 2',
-//   scenario_id: '1',
-//   type: 'DISPLAY_CAMPAIGN',
-//   campaign_id: 'string',
-//   ad_group_id: 'string',
-// };
-
-// export const node3: ScenarioNodeShape = {
-//   id: '3',
-//   name: 'node 3',
-//   query_id: '1',
-//   type: 'QUERY_INPUT',
-//   evaluation_mode: '',
-//   scenario_id: '1',
-// };
-
-// export const node4: ScenarioNodeShape = {
-//   id: '4',
-//   name: 'success',
-//   scenario_id: '1',
-//   type: 'GOAL',
-// };
-
-// export const node5: ScenarioNodeShape = {
-//   id: '5',
-//   name: 'node 5',
-//   scenario_id: '1',
-//   type: 'FAILURE',
-// };
-
 export const storylineNodeData: ScenarioNodeShape[] = [beginNode, node4];
 
 export const edge12: ScenarioEdgeResource = {
@@ -384,28 +359,5 @@ export const edge12: ScenarioEdgeResource = {
   handler: 'ON_VISIT',
   scenario_id: '1',
 };
-
-// export const edge13: ScenarioEdgeResource = {
-//   id: 'string',
-//   source_id: '1',
-//   target_id: '3',
-//   handler: 'ON_VISIT',
-//   scenario_id: '1',
-// };
-
-// export const edge34: ScenarioEdgeResource = {
-//   id: 'string',
-//   source_id: '3',
-//   target_id: '4',
-//   handler: 'ON_VISIT',
-//   scenario_id: '1',
-// };
-// export const edge35: ScenarioEdgeResource = {
-//   id: 'string',
-//   source_id: '3',
-//   target_id: '5',
-//   handler: 'ON_VISIT',
-//   scenario_id: '1',
-// };
 
 export const storylineEdgeData: ScenarioEdgeResource[] = [edge12];

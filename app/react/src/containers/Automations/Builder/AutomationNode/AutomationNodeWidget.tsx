@@ -68,7 +68,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   getInitialValues = (props: Props): AutomationFormDataType => {
     switch (props.node.storylineNodeModel.node.type) {
       case 'DISPLAY_CAMPAIGN':
-        return {
+        const formData = props.node.storylineNodeModel.node.formData;
+        return formData ? formData : {
           automationNode: {
             name: props.node.title,
           },
