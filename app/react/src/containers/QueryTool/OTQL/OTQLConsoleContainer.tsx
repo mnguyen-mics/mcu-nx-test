@@ -11,7 +11,6 @@ import {
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
 import ContentHeader from '../../../components/ContentHeader';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
-import QueryService from '../../../services/QueryService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -23,6 +22,9 @@ import { computeFinalSchemaItem } from '../JSONOTQL/domain';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import RuntimeSchemaService from '../../../services/RuntimeSchemaService';
 import { Loading } from '../../../components';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IQueryService } from '../../../services/QueryService';
 
 const { Content, Sider } = Layout;
 
@@ -49,6 +51,9 @@ type Props = OTQLConsoleContainerProps &
 
 class OTQLConsoleContainer extends React.Component<Props, State> {
   asyncQuery: CancelablePromise<DataResponse<OTQLResult>>;
+
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
 
   constructor(props: Props) {
     super(props);
@@ -105,7 +110,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       queryResult: null,
     });
     this.asyncQuery = makeCancelable(
-      QueryService.runOTQLQuery(datamartId, otqlQuery),
+      this._queryService.runOTQLQuery(datamartId, otqlQuery),
     );
     this.asyncQuery.promise
       .then(result => {

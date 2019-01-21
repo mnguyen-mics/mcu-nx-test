@@ -1,3 +1,4 @@
+import { QueryService, IQueryService } from './../services/QueryService';
 import { AutomationFormService } from './../containers/Automations/Edit/AutomationFormService';
 import {
   IAudienceFeedFormService,
@@ -113,6 +114,7 @@ container
 container
   .bind<IAutomationFormService>(TYPES.IAutomationFormService)
   .to(AutomationFormService);
+container.bind<IQueryService>(TYPES.IQueryService).to(QueryService);
 
 export const { lazyInject } = getDecorators(container, false);
 

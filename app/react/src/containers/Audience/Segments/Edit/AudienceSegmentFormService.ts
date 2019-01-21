@@ -1,7 +1,6 @@
 import { IAudienceSegmentService } from './../../../../services/AudienceSegmentService';
 import moment from 'moment';
 import { AudienceSegmentFormData } from './domain';
-import QueryService from '../../../../services/QueryService';
 import {
   QueryResource,
   QueryLanguage,
@@ -13,6 +12,7 @@ import {
 import { DataResponse } from '../../../../services/ApiService';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../constants/types';
+import { IQueryService } from '../../../../services/QueryService';
 
 export interface IAudienceSegmentFormService {
   loadSegmentInitialValue: (
@@ -31,10 +31,13 @@ export interface IAudienceSegmentFormService {
 export class AudienceSegmentFormService implements IAudienceSegmentFormService {
   @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+  @inject(TYPES.IQueryService)
+  private _queryService: IQueryService;
   loadSegmentInitialValue(segmentId: string): Promise<AudienceSegmentFormData> {
     return this._audienceSegmentService.getSegment(segmentId).then(res => {
       if (res.data.type === 'USER_QUERY' && res.data.query_id) {
-        return QueryService.getQuery(res.data.datamart_id, res.data.query_id)
+        return this._queryService
+          .getQuery(res.data.datamart_id, res.data.query_id)
           .then(r => r.data)
           .then(r => {
             const formattedResponse: AudienceSegmentFormData = {
@@ -155,17 +158,22 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
       return queryContainer.saveOrUpdate() as Promise<QueryResource>;
     } else {
       if (audienceSegmentFormData.query && audienceSegmentFormData.query.id) {
-        return QueryService.updateQuery(
-          datamartId,
-          audienceSegmentFormData.query.id,
-          audienceSegmentFormData.query,
-        ).then(query => query.data);
+        return this._queryService
+          .updateQuery(
+            datamartId,
+            audienceSegmentFormData.query.id,
+            audienceSegmentFormData.query,
+          )
+          .then(query => query.data);
       }
-      return QueryService.createQuery(datamartId, {
-        query_language: queryLanguage,
-        query_text: (audienceSegmentFormData.query as QueryResource).query_text,
-        datamart_id: datamartId,
-      }).then(query => query.data);
+      return this._queryService
+        .createQuery(datamartId, {
+          query_language: queryLanguage,
+          query_text: (audienceSegmentFormData.query as QueryResource)
+            .query_text,
+          datamart_id: datamartId,
+        })
+        .then(query => query.data);
     }
   };
 

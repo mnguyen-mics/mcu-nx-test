@@ -155,7 +155,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     } = this.props;
 
     DatamartService.getDatamart(record.datamart_id).then(resp => {
-      if (resp.data.storage_model_version === 'v201709') {
+      if (resp.data.storage_model_version !== 'v201506') {
         history.push(
           `/v2/o/${organisationId}/automations/builder/${
             record.id

@@ -15,7 +15,6 @@ import {
 } from '../../../../models/audiencePartition/AudiencePartitionResource';
 import { UserPartitionSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import QueryService from '../../../../services/QueryService';
 import ReportService from '../../../../services/ReportService';
 import { Index } from '../../../../utils';
 import McsMoment from '../../../../utils/McsMoment';
@@ -33,6 +32,7 @@ import { IAudiencePartitionsService } from '../../../../services/AudiencePartiti
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import { IQueryService } from '../../../../services/QueryService';
 
 const { Content } = Layout;
 
@@ -100,8 +100,13 @@ const PartitionTable = TableView as React.ComponentClass<
 class Partition extends React.Component<JoinedProps, PartitionState> {
   @lazyInject(TYPES.IAudiencePartitionsService)
   private _audiencePartitionsService: IAudiencePartitionsService;
+
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -210,16 +215,15 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
   fetchTotalUsers = (datamart: DatamartResource): Promise<number> => {
     switch (datamart.storage_model_version) {
       case 'v201709':
-        return QueryService.runOTQLQuery(
-          datamart.id,
-          'select @count {} from UserPoint',
-        ).then(res => {
-          return res.data ? res.data.rows[0].count : 0;
-        });
+        return this._queryService
+          .runOTQLQuery(datamart.id, 'select @count {} from UserPoint')
+          .then(res => {
+            return res.data ? res.data.rows[0].count : 0;
+          });
       case 'v201506':
-        return QueryService.runSelectorQLQuery(datamart.id).then(
-          res => res.data.total,
-        );
+        return this._queryService
+          .runSelectorQLQuery(datamart.id)
+          .then(res => res.data.total);
       default:
         return Promise.resolve(0);
     }

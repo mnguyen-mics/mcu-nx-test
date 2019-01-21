@@ -19,10 +19,10 @@ import SelectorQLBuilderContainer from '../../QueryTool/SelectorQL/SelectorQLBui
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
-import QueryService from '../../../services/QueryService';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
+import { IQueryService } from '../../../services/QueryService';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -47,6 +47,9 @@ const messages = defineMessages({
 class SegmentBuilderPage extends React.Component<Props> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
 
   render() {
     const { intl, connectedUser, location, history, match } = this.props;
@@ -81,10 +84,11 @@ class SegmentBuilderPage extends React.Component<Props> {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
         const { name, technical_name, persisted } = segmentFormData;
 
-        return QueryService.createQuery(datamartId, {
-          query_language: 'JSON_OTQL',
-          query_text: JSON.stringify(query),
-        })
+        return this._queryService
+          .createQuery(datamartId, {
+            query_language: 'JSON_OTQL',
+            query_text: JSON.stringify(query),
+          })
           .then(res => {
             const userQuerySegment: Partial<UserQuerySegment> = {
               datamart_id: datamartId,

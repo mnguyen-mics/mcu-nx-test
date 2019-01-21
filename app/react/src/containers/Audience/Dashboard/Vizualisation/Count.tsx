@@ -1,8 +1,10 @@
 import * as React from 'react';
-import QueryService from '../../../../services/QueryService';
 import { Card } from '../../../../components/Card';
 import { isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
 import { formatMetric } from '../../../../utils/MetricHelper';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IQueryService } from '../../../../services/QueryService';
 
 export interface CountProps {
   queryId: string;
@@ -17,6 +19,9 @@ interface State {
 }
 
 export default class Count extends React.Component<CountProps, State> {
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
   constructor(props: CountProps) {
     super(props);
     this.state = {
@@ -43,10 +48,12 @@ export default class Count extends React.Component<CountProps, State> {
   fetchData = (datamartId: string, queryId: string): Promise<void> => {
     this.setState({ error: false, loading: true });
 
-    return QueryService.getQuery(datamartId, queryId)
+    return this._queryService
+      .getQuery(datamartId, queryId)
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          return QueryService.runOTQLQuery(datamartId, res.data.query_text)
+          return this._queryService
+            .runOTQLQuery(datamartId, res.data.query_text)
             .then(r => r.data)
             .then(r => {
               if (isCountResult(r.rows)) {
@@ -72,25 +79,20 @@ export default class Count extends React.Component<CountProps, State> {
         <hr />
         <div className="title">
           {this.state.loading ? (
-            <i
-              className="mcs-table-cell-loading"
-              style={{ maxWidth: '40%' }}
-            />
+            <i className="mcs-table-cell-loading" style={{ maxWidth: '40%' }} />
           ) : (
             this.props.title
           )}
         </div>
         <div className="count-result">
-          {
-            this.state.loading ? (
-              <i
+          {this.state.loading ? (
+            <i
               className="mcs-table-cell-loading-large"
               style={{ maxWidth: '100%' }}
             />
-            ) : (
-              formatMetric(this.state.queryResult, '0,0')
-            )
-          }
+          ) : (
+            formatMetric(this.state.queryResult, '0,0')
+          )}
         </div>
       </Card>
     );

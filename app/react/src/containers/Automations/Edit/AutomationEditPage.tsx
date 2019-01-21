@@ -84,7 +84,7 @@ class EditAutomationPage extends React.Component<Props, State> {
         })
         .then(() => {
           this._automationFormService
-            .loadInitialAutomationValues(automationId)
+            .loadInitialAutomationValues(automationId, 'v201506')
             .then(res => {
               this.setState({
                 automationFormData: res,
@@ -131,36 +131,21 @@ class EditAutomationPage extends React.Component<Props, State> {
     } = this.props;
     this.setState({ loading: true });
 
-    if (formData.automation.datamart_id) {
-      DatamartService.getDatamart(formData.automation.datamart_id).then(
-        resp => {
-          const storageModelVersion = resp.data.storage_model_version;
-          this._automationFormService
-            .saveOrCreateAutomation(
-              organisationId,
-              storageModelVersion,
-              formData,
-            )
-            .then(res => {
-              if (storageModelVersion !== 'v201709') {
-                this.state.scenarioContainer.saveOrUpdate(res.data);
-              }
-            })
-            .then(() => {
-              this.setState({ loading: false });
-              this.props.history.push(
-                `/v2/o/${
-                  this.props.match.params.organisationId
-                }/automations/list`,
-              );
-            })
-            .catch(err => {
-              this.setState({ loading: false });
-              this.props.notifyError(err.data);
-            });
-        },
-      );
-    }
+    this._automationFormService
+      .saveOrCreateAutomation(organisationId, 'v201506', formData)
+      .then(res => {
+        this.state.scenarioContainer.saveOrUpdate(res.data);
+      })
+      .then(() => {
+        this.setState({ loading: false });
+        this.props.history.push(
+          `/v2/o/${this.props.match.params.organisationId}/automations/list`,
+        );
+      })
+      .catch(err => {
+        this.setState({ loading: false });
+        this.props.notifyError(err.data);
+      });
   };
 
   onClose = () => {

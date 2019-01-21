@@ -5,11 +5,13 @@ import { TYPES } from '../../../constants/types';
 import { AutomationFormData } from './domain';
 import { buildAutomationTreeData } from '../Builder/domain';
 import { DataResponse } from '../../../services/ApiService';
-import { isScenarioNodeShape } from '../Builder/AutomationNode/Edit/domain';
+import { isScenarioNodeShape, isQueryInputNode } from '../Builder/AutomationNode/Edit/domain';
+import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 
 export interface IAutomationFormService {
   loadInitialAutomationValues: (
     automationId: string,
+    storageModelVersionId: string,
   ) => Promise<AutomationFormData>;
   saveOrCreateAutomation: (
     organsiationId: string,
@@ -24,6 +26,7 @@ export class AutomationFormService implements IAutomationFormService {
   private _scenarioService: IScenarioService;
   loadInitialAutomationValues(
     automationId: string,
+    storageModelVersion: string,
   ): Promise<AutomationFormData> {
     const automationPromise = this._scenarioService.getScenario(automationId);
     const storylinePromise = this._scenarioService.getScenarioStoryline(
@@ -31,21 +34,30 @@ export class AutomationFormService implements IAutomationFormService {
     );
     const nodePromise = this._scenarioService.getScenarioNodes(automationId);
     const edgePromise = this._scenarioService.getScenarioEdges(automationId);
-    return Promise.all([
-      automationPromise,
-      storylinePromise,
-      nodePromise,
-      edgePromise,
-    ]).then(res => {
-      return {
-        automation: res[0].data,
-        automationTreeData: buildAutomationTreeData(
-          res[1].data,
-          res[2].data,
-          res[3].data,
-        ),
-      };
-    });
+    if (storageModelVersion !== 'v201506') {
+      return Promise.all([
+        automationPromise,
+        storylinePromise,
+        nodePromise,
+        edgePromise,
+      ]).then(res => {
+        return {
+          automation: res[0].data,
+          automationTreeData: buildAutomationTreeData(
+            res[1].data,
+            res[2].data,
+            res[3].data,
+          ),
+        };
+      });
+    } else {
+      return Promise.all([automationPromise]).then(res => {
+        return {
+          automation: res[0].data,
+          automationTreeData: INITIAL_AUTOMATION_DATA.automationTreeData,
+        };
+      });
+    }
   }
 
   saveOrCreateAutomation(
@@ -65,11 +77,17 @@ export class AutomationFormService implements IAutomationFormService {
             formData.automation as AutomationResource,
           );
 
-    if (storageModelVersion !== 'v201709') {
+    if (storageModelVersion === 'v201506') {
       return saveOrCreatePromise();
     } else {
       return saveOrCreatePromise().then(createdAutomation => {
         const createdAutomationId = createdAutomation.data.id;
+        const beginNode = formData.automationTreeData.node;
+        if(isScenarioNodeShape(beginNode) && isQueryInputNode(beginNode)) {
+          if(beginNode.query_id) {
+            //
+          }
+        }
         return this._scenarioService
           .createScenarioBeginNode(createdAutomationId, {
             name: 'begin node',

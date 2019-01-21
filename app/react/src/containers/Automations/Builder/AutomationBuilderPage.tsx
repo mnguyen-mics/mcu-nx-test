@@ -89,7 +89,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     } = this.props;
     if (automationId) {
       this._automationFormService
-        .loadInitialAutomationValues(automationId)
+        .loadInitialAutomationValues(automationId, 'v201709')
         .then(res => {
           this.setState({
             automationFormData: res,
@@ -115,7 +115,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       });
     } else if (automationId !== prevAutomationId) {
       this._automationFormService
-        .loadInitialAutomationValues(automationId)
+        .loadInitialAutomationValues(automationId, 'v201709')
         .then(res => {
           this.setState({
             automationFormData: res,
@@ -154,46 +154,6 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         notifyError(err);
         hideSaveInProgress();
       });
-
-    // const saveAutomationPromise = this._scenarioService.createScenario(
-    //   organisationId,
-    //   { name: formData.automation.name || '', datamart_id: datamartId },
-    // );
-
-    // saveAutomationPromise.then(automation => {
-    //   const automationId = automation.data.id;
-    //   this._scenarioService
-    //     .createScenarioBeginNode(automationId, {
-    //       name: 'begin node',
-    //       scenario_id: automationId,
-    //       type: 'QUERY_INPUT',
-    //       query_id: '', // TO REPLACE
-    //     })
-    //     .then(() => {
-    //       const treeData = formData.automationTreeData;
-    //       if (
-    //         treeData &&
-    //         isScenarioNodeShape(treeData.node) &&
-    //         treeData.in_edge
-    //       ) {
-    //         const saveFirstNodePromise = this._scenarioService.createScenarioNode(
-    //           automationId,
-    //           treeData.node,
-    //         );
-    //         const saveFirstEdgePromise = this._scenarioService.createScenarioEdge(
-    //           automationId,
-    //           treeData.in_edge,
-    //         );
-    //         Promise.all([saveFirstNodePromise, saveFirstEdgePromise]).then(
-    //           () => {
-    //             treeData.out_edges.forEach((node, child) => {
-    //               // filter dropnodes
-    //             });
-    //           },
-    //         );
-    //       }
-    //     });
-    // });
   };
 
   redirect = () => {
