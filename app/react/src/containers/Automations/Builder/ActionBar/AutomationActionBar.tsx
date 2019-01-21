@@ -22,9 +22,10 @@ import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../../Edit/domain';
 
 interface AutomationActionBarProps {
   automationData?: Partial<AutomationFormData>;
-  saveOrUpdate: (formData?: AutomationFormData) => void;
+  saveOrUpdate: (formData: Partial<AutomationFormData>) => void;
   onClose?: () => void;
-  edition?: boolean;
+  editMode: boolean;
+  handleEditMode: () => void;
 }
 
 interface State {
@@ -57,12 +58,11 @@ class AutomationActionBar extends React.Component<Props, State> {
   }
 
   onClick = () => {
-    const { edition } = this.props;
-    if (edition) {
-      this.props.saveOrUpdate();
-    } else {
-      this.handleModal();
-    }
+    this.handleModal();
+  };
+
+  editAutomation = () => {
+    this.props.handleEditMode();
   };
 
   handleModal = () => {
@@ -74,9 +74,14 @@ class AutomationActionBar extends React.Component<Props, State> {
   onSave = () => {
     const { saveOrUpdate, automationData, formValues } = this.props;
     const formData: AutomationFormData = {
-      automation: {
-        ...formValues,
-      },
+      automation: automationData
+        ? {
+            ...automationData.automation,
+            ...formValues,
+          }
+        : {
+            ...formValues,
+          },
       automationTreeData:
         automationData && automationData.automationTreeData
           ? automationData.automationTreeData
@@ -86,7 +91,7 @@ class AutomationActionBar extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, submit, edition, onClose, automationData } = this.props;
+    const { intl, submit, onClose, automationData, editMode } = this.props;
 
     const { isLoading, visible } = this.state;
 
@@ -96,7 +101,6 @@ class AutomationActionBar extends React.Component<Props, State> {
 
     return (
       <ActionBar
-        edition={edition}
         paths={[
           {
             name: intl.formatMessage(messages.automationBuilder),
@@ -111,12 +115,20 @@ class AutomationActionBar extends React.Component<Props, State> {
           },
         ]}
       >
-        <Button className="mcs-primary" type="primary" onClick={this.onClick}>
-          {edition
-            ? intl.formatMessage(messages.updateAutomation)
-            : intl.formatMessage(messages.saveAutomation)}
-        </Button>
-        {onClose && (
+        {editMode ? (
+          <Button className="mcs-primary" type="primary" onClick={this.onClick}>
+            {intl.formatMessage(messages.saveAutomation)}
+          </Button>
+        ) : (
+          <Button
+            className="mcs-primary"
+            type="primary"
+            onClick={this.editAutomation}
+          >
+            <McsIcon type="pen" /> {intl.formatMessage(messages.editAutomation)}
+          </Button>
+        )}
+        {editMode && (
           <McsIcon
             type="close"
             className="close-icon"

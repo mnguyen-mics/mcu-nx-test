@@ -15,6 +15,7 @@ const TYPES = {
   IDealListFormService: Symbol.for('dealListFormService'),
   ICompartmentService: Symbol.for('compartmentService'),
   IScenarioService: Symbol.for('scenarioService'),
+  IAutomationFormService: Symbol.for('automationFormService'),
 };
 
 export { TYPES };

@@ -1,3 +1,4 @@
+import { AutomationFormService } from './../containers/Automations/Edit/AutomationFormService';
 import {
   IAudienceFeedFormService,
   AudienceFeedFormService,
@@ -59,6 +60,7 @@ import {
   IScenarioService,
   ScenarioService,
 } from '../services/ScenarioService';
+import { IAutomationFormService } from '../containers/Automations/Edit/AutomationFormService';
 
 const container = new Container();
 
@@ -91,6 +93,7 @@ container
   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
   .toConstructor(AudienceTagFeedService);
 container.bind<IImportService>(TYPES.IImportService).to(ImportService);
+container.bind<IScenarioService>(TYPES.IScenarioService).to(ScenarioService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
   .to(DisplayNetworkService);
@@ -107,6 +110,9 @@ container
 container
   .bind<IScenarioService>(TYPES.IScenarioService)
   .to(ScenarioService);
+container
+  .bind<IAutomationFormService>(TYPES.IAutomationFormService)
+  .to(AutomationFormService);
 
 export const { lazyInject } = getDecorators(container, false);
 

@@ -1,5 +1,6 @@
 import queryString from 'query-string';
 import * as React from 'react';
+import { message } from 'antd';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -16,18 +17,22 @@ import AutomationBuilderContainer from './AutomationBuilderContainer';
 import { DatamartSelector } from '../../Datamart';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
-import { IScenarioService } from '../../../services/ScenarioService';
-import { AutomationFormData } from '../Edit/domain';
-import { message } from 'antd';
-import { isScenarioNodeShape } from './AutomationNode/Edit/domain';
+import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
+
+import { IAutomationFormService } from '../Edit/AutomationFormService';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
-  scenarioId: string;
+  automationId: string;
 }
 
 interface MapStateToProps {
   connectedUser: UserProfileResource;
+}
+
+interface State {
+  isLoading: boolean;
+  automationFormData?: Partial<AutomationFormData>;
 }
 
 type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
@@ -60,16 +65,63 @@ export const messages = defineMessages({
     id: 'automation.builder.page.actionBar.update',
     defaultMessage: 'Update',
   },
+  editAutomation: {
+    id: 'automation.builder.page.actionBar.edit',
+    defaultMessage: 'Edit',
+  },
 });
 
-class AutomationBuilderPage extends React.Component<Props> {
-  @lazyInject(TYPES.IScenarioService)
-  private _scenarioService: IScenarioService;
+class AutomationBuilderPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IAutomationFormService)
+  private _automationFormService: IAutomationFormService;
   constructor(props: Props) {
     super(props);
     this.state = {
-      loading: false,
+      isLoading: false,
     };
+  }
+
+  componentDidMount() {
+    const {
+      match: {
+        params: { automationId },
+      },
+    } = this.props;
+    if (automationId) {
+      this._automationFormService
+        .loadInitialAutomationValues(automationId)
+        .then(res => {
+          this.setState({
+            automationFormData: res,
+          });
+        });
+    }
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      match: {
+        params: { automationId },
+      },
+    } = this.props;
+    const {
+      match: {
+        params: { automationId: prevAutomationId },
+      },
+    } = prevProps;
+    if (!automationId && automationId !== prevAutomationId) {
+      this.setState({
+        automationFormData: INITIAL_AUTOMATION_DATA,
+      });
+    } else if (automationId !== prevAutomationId) {
+      this._automationFormService
+        .loadInitialAutomationValues(automationId)
+        .then(res => {
+          this.setState({
+            automationFormData: res,
+          });
+        });
+    }
   }
 
   saveAutomation = (formData: AutomationFormData) => {
@@ -79,10 +131,7 @@ class AutomationBuilderPage extends React.Component<Props> {
       match: {
         params: { organisationId },
       },
-      location,
     } = this.props;
-
-    const datamartId = queryString.parse(location.search).datamartId;
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -91,60 +140,60 @@ class AutomationBuilderPage extends React.Component<Props> {
     this.setState({
       isLoading: true,
     });
-    const saveAutomationPromise = this._scenarioService.createScenario(
-      organisationId,
-      { name: formData.automation.name || '', datamart_id: datamartId },
-    );
 
-    saveAutomationPromise
-      .then(automation => {
-        const automationId = automation.data.id;
-        this._scenarioService
-          .createScenarioBeginNode(automationId, {
-            name: 'begin node',
-            scenario_id: automationId,
-            type: 'QUERY_INPUT',
-            query_id: '' // TO REPLACE
-          })
-          .then(() => {
-            const treeData = formData.automationTreeData;
-            if (
-              treeData &&
-              isScenarioNodeShape(treeData.node) &&
-              treeData.in_edge
-            ) {
-              const saveFirstNodePromise = this._scenarioService.createScenarioNode(
-                automationId,
-                treeData.node,
-              );
-              const saveFirstEdgePromise = this._scenarioService.createScenarioEdge(
-                automationId,
-                treeData.in_edge,
-              );
-              Promise.all([saveFirstNodePromise, saveFirstEdgePromise])
-                .then(() => {
-                  treeData.out_edges.forEach((node, child) => {
-                    // filter dropnodes
-                  });
-                  hideSaveInProgress();
-                  this.setState({ isLoading: false });
-                  this.redirect();
-                  message.success(intl.formatMessage(messages.automationSaved));
-                })
-                .catch(err => {
-                  //
-                });
-            }
-          })
-          .catch(err => {
-            //
-          });
+    this._automationFormService
+      .saveOrCreateAutomation(organisationId, 'v201709', formData)
+      .then(() => {
+        hideSaveInProgress();
+        this.setState({ isLoading: false });
+        this.redirect();
+        message.success(intl.formatMessage(messages.automationSaved));
       })
-      .catch((err: any) => {
+      .catch(err => {
         this.setState({ isLoading: false });
         notifyError(err);
         hideSaveInProgress();
       });
+
+    // const saveAutomationPromise = this._scenarioService.createScenario(
+    //   organisationId,
+    //   { name: formData.automation.name || '', datamart_id: datamartId },
+    // );
+
+    // saveAutomationPromise.then(automation => {
+    //   const automationId = automation.data.id;
+    //   this._scenarioService
+    //     .createScenarioBeginNode(automationId, {
+    //       name: 'begin node',
+    //       scenario_id: automationId,
+    //       type: 'QUERY_INPUT',
+    //       query_id: '', // TO REPLACE
+    //     })
+    //     .then(() => {
+    //       const treeData = formData.automationTreeData;
+    //       if (
+    //         treeData &&
+    //         isScenarioNodeShape(treeData.node) &&
+    //         treeData.in_edge
+    //       ) {
+    //         const saveFirstNodePromise = this._scenarioService.createScenarioNode(
+    //           automationId,
+    //           treeData.node,
+    //         );
+    //         const saveFirstEdgePromise = this._scenarioService.createScenarioEdge(
+    //           automationId,
+    //           treeData.in_edge,
+    //         );
+    //         Promise.all([saveFirstNodePromise, saveFirstEdgePromise]).then(
+    //           () => {
+    //             treeData.out_edges.forEach((node, child) => {
+    //               // filter dropnodes
+    //             });
+    //           },
+    //         );
+    //       }
+    //     });
+    // });
   };
 
   redirect = () => {
@@ -161,13 +210,31 @@ class AutomationBuilderPage extends React.Component<Props> {
   };
 
   render() {
-    const { connectedUser, location, intl, history } = this.props;
+    const {
+      connectedUser,
+      location,
+      intl,
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const { automationFormData } = this.state;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
-      history.push({
-        pathname: location.pathname,
-        search: queryString.stringify({ datamartId: selection.id }),
-      });
+      if (selection.storage_model_version === 'v201506') {
+        history.push(
+          `/v2/o/${organisationId}/automations/create?datamartId=${
+            selection.id
+          }`,
+        );
+      } else {
+        history.push({
+          pathname: location.pathname,
+          search: queryString.stringify({ datamartId: selection.id }),
+        });
+      }
     };
 
     let selectedDatamart: DatamartResource | undefined;
@@ -193,16 +260,10 @@ class AutomationBuilderPage extends React.Component<Props> {
       );
     }
 
-    if (
-      selectedDatamart &&
-      selectedDatamart.storage_model_version === 'v201506'
-    ) {
-      history.push(`create`);
-    }
-
     return selectedDatamart ? (
       <AutomationBuilderContainer
         datamartId={selectedDatamart.id}
+        automationFormData={automationFormData}
         saveOrUpdate={this.saveAutomation}
       />
     ) : (

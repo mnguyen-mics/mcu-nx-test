@@ -40,7 +40,7 @@ export interface AutomationBuilderProps {
     automationData: StorylineNodeModel,
   ) => StorylineNodeModel;
   updateQueryNode: (nodeId: string, queryText: string) => void;
-  edition?: boolean;
+  editMode: boolean;
 }
 
 interface State {
@@ -69,7 +69,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
-      viewNodeSelector: true,
+      viewNodeSelector: props.editMode,
       locked: false,
     };
   }
@@ -273,19 +273,21 @@ class AutomationBuilder extends React.Component<Props, State> {
   };
 
   onNodeSelectorClick = () => {
-    this.setState({ viewNodeSelector: !this.state.viewNodeSelector });
+    this.setState({
+      viewNodeSelector: !this.state.viewNodeSelector,
+    });
   };
 
   render() {
     const { viewNodeSelector } = this.state;
+    const { editMode } = this.props;
+
     return (
-      <div
-        className={`automation-builder ${
-          this.props.edition ? 'edition-mode' : ''
-        }`}
-        ref={this.div}
-      >
-        <Col span={viewNodeSelector ? 18 : 24} className={'diagram'}>
+      <div className={`automation-builder`} ref={this.div}>
+        <Col
+          span={viewNodeSelector || editMode ? 18 : 24}
+          className={'diagram'}
+        >
           <DiagramWidget
             diagramEngine={this.engine}
             allowCanvasZoom={!this.state.locked}
@@ -294,27 +296,29 @@ class AutomationBuilder extends React.Component<Props, State> {
             // allowCanvasTranslation={true}
             inverseZoom={true}
           />
-          <div className="button-helpers top">
-            <ButtonStyleless
-              onClick={this.onNodeSelectorClick}
-              className="helper"
-            >
-              <McsIcon
-                type={'chevron-right'}
-                style={
-                  viewNodeSelector
-                    ? {}
-                    : {
-                        transform: 'rotate(180deg)',
-                        transition: 'all 0.5ms ease',
-                      }
-                }
-              />{' '}
-            </ButtonStyleless>
-          </div>
+          {editMode && (
+            <div className="button-helpers top">
+              <ButtonStyleless
+                onClick={this.onNodeSelectorClick}
+                className="helper"
+              >
+                <McsIcon
+                  type={'chevron-right'}
+                  style={
+                    viewNodeSelector || editMode
+                      ? {}
+                      : {
+                          transform: 'rotate(180deg)',
+                          transition: 'all 0.5ms ease',
+                        }
+                  }
+                />{' '}
+              </ButtonStyleless>
+            </div>
+          )}
         </Col>
         <Col
-          span={viewNodeSelector ? 6 : 24}
+          span={viewNodeSelector || editMode ? 6 : 24}
           className="available-nodes-visualizer"
         >
           <AvailableNodeVisualizer />

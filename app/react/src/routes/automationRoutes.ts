@@ -1,5 +1,9 @@
 import AutomationEditPage from '../containers/Automations/Edit/AutomationEditPage';
-import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
+import {
+  NavigatorRoute,
+  NavigatorDefinition,
+  generateRoutesFromDefinition,
+} from './domain';
 import AutomationBuilderPage from '../containers/Automations/Builder/AutomationBuilderPage';
 import AutomationListPage from '../containers/Automations/List/AutomationListPage';
 
@@ -9,14 +13,14 @@ export const automationDefinition: NavigatorDefinition = {
     layout: 'main',
     contentComponent: AutomationListPage,
     requiredFeature: 'automations.list',
-    requireDatamart: true
+    requireDatamart: true,
   },
   automationsEdit: {
     path: '/automations/:automationId/edit',
     layout: 'edit',
     editComponent: AutomationEditPage,
     requiredFeature: 'automations.list',
-    requireDatamart: true
+    requireDatamart: true,
   },
   automationCreation: {
     path: '/automations/create',
@@ -30,8 +34,17 @@ export const automationDefinition: NavigatorDefinition = {
     layout: 'main',
     contentComponent: AutomationBuilderPage,
     requiredFeature: 'automations.builder',
-    requireDatamart: true
+    requireDatamart: true,
   },
-}
+  automationBuilderEdit: {
+    path: '/automations/builder/:automationId/edit',
+    layout: 'main',
+    contentComponent: AutomationBuilderPage,
+    requiredFeature: 'automations.builder',
+    requireDatamart: true,
+  },
+};
 
-export const automationRoutes: NavigatorRoute[] = generateRoutesFromDefinition(automationDefinition)
+export const automationRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
+  automationDefinition,
+);

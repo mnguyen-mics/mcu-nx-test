@@ -113,7 +113,7 @@ class AutomationActionBar extends React.Component<
 
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/v2/o/${organisationId}/automations/create`}>
+        <Link to={`/v2/o/${organisationId}/automations/builder`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
           </Button>

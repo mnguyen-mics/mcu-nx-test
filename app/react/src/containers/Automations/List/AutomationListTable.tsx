@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout, Tooltip, Icon } from 'antd';
 import { compose } from 'recompose';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
@@ -19,10 +19,8 @@ import {
   buildDefaultSearch,
   parseSearch,
 } from '../../../utils/LocationSearchHelper';
-import { McsIcon } from '../../../components';
-import {
-  TableViewFilters,
-} from '../../../components/TableView';
+import { McsIcon, ButtonStyleless } from '../../../components';
+import { TableViewFilters } from '../../../components/TableView';
 import { MapDispatchToProps } from './AutomationListPage';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
 import messages from './messages';
@@ -35,6 +33,7 @@ import { Filters } from '../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
+import DatamartService from '../../../services/DatamartService';
 
 const { Content } = Layout;
 
@@ -155,7 +154,17 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       history,
     } = this.props;
 
-    history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`);
+    DatamartService.getDatamart(record.datamart_id).then(resp => {
+      if (resp.data.storage_model_version === 'v201709') {
+        history.push(
+          `/v2/o/${organisationId}/automations/builder/${
+            record.id
+          }/edit?datamartId=${resp.data.id}`,
+        );
+      } else {
+        history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`);
+      }
+    });
   };
 
   updateLocationSearch = (params: any) => {
@@ -174,9 +183,6 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
 
   render() {
     const {
-      match: {
-        params: { organisationId },
-      },
       location: { search },
       intl,
       translations,
@@ -237,14 +243,16 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (text: string, record: AutomationResource) => (
-          <Link
-            className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/automations/${record.id}/edit`}
-          >
-            {text}
-          </Link>
-        ),
+        render: (text: string, record: AutomationResource) => {
+          const onNameclick = () => {
+            this.editAutomation(record);
+          };
+          return (
+            <ButtonStyleless onClick={onNameclick}>
+              <span className="mcs-automation-link">{text}</span>
+            </ButtonStyleless>
+          );
+        },
       },
     ];
 

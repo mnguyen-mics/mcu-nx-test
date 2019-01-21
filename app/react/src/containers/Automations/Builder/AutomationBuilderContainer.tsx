@@ -13,21 +13,23 @@ import AutomationActionBar from './ActionBar/AutomationActionBar';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { ScenarioNodeShape } from '../../../models/automations/automations';
 import { isQueryInputNode } from './AutomationNode/Edit/domain';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
   automationFormData?: Partial<AutomationFormData>;
-  editionLayout?: boolean;
   saveOrUpdate: (formData: Partial<AutomationFormData>) => void;
-  onClose?: () => void;
 }
 
 type Props = AutomationBuilderContainerProps &
   InjectedNotificationProps &
+  RouteComponentProps<AutomationBuilderPageRouteParams> &
   InjectedIntlProps;
 
 interface State {
   automationTreeData: StorylineNodeModel;
+  editMode: boolean;
 }
 
 class AutomationBuilderContainer extends React.Component<Props, State> {
@@ -39,6 +41,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
         props.automationFormData && props.automationFormData.automationTreeData
           ? props.automationFormData.automationTreeData
           : INITIAL_AUTOMATION_DATA.automationTreeData,
+      editMode: props.match.params.automationId ? false : true,
     };
   }
 
@@ -93,43 +96,37 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     });
   };
 
-  saveOrUpdate = (formData: AutomationFormData) => {
-    const { automationFormData, editionLayout } = this.props;
-    if (editionLayout && automationFormData) {
-      this.props.saveOrUpdate({
-        automation: automationFormData.automation,
-        automationTreeData: this.state.automationTreeData,
-      });
-    } else {
-      this.props.saveOrUpdate(formData);
-    }
+  handleEditMode = () => {
+    this.setState({
+      editMode: !this.state.editMode,
+    });
   };
 
   render() {
-    const {
-      datamartId,
-      editionLayout,
-      onClose,
-      automationFormData,
-    } = this.props;
-    const { automationTreeData } = this.state;
+    const { datamartId, automationFormData, saveOrUpdate } = this.props;
+    const { automationTreeData, editMode } = this.state;
 
     return (
       <div style={{ height: '100%', display: 'flex' }}>
-        <Layout className={editionLayout ? 'edit-layout' : ''}>
+        <Layout>
           <AutomationActionBar
             automationData={{
-              automation: automationFormData && automationFormData.automation,
+              automation:
+                automationFormData && automationFormData.automation
+                  ? {
+                      ...automationFormData.automation,
+                      datamart_id: datamartId,
+                    }
+                  : undefined,
               automationTreeData: automationTreeData,
             }}
-            edition={editionLayout}
-            saveOrUpdate={this.saveOrUpdate}
-            onClose={onClose}
+            saveOrUpdate={saveOrUpdate}
+            onClose={this.handleEditMode}
+            editMode={editMode}
+            handleEditMode={this.handleEditMode}
           />
           <Layout.Content
-            className={`mcs-content-container ${
-              editionLayout ? 'flex-basic' : ''
-            }`}
+            className={`mcs-content-container`}
             style={{ padding: 0, overflow: 'hidden' }}
           >
             <AutomationBuilder
@@ -138,6 +135,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
               scenarioId={storylineNodeData[0].scenario_id}
               updateAutomationData={this.handleUpdateAutomationData}
               updateQueryNode={this.handleQueryNodeData}
+              editMode={editMode}
             />
           </Layout.Content>
         </Layout>
@@ -149,6 +147,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
 export default compose<Props, AutomationBuilderContainerProps>(
   injectIntl,
   injectNotifications,
+  withRouter,
   connect(state => ({
     getWorkspace: SessionHelper.getWorkspace,
   })),
