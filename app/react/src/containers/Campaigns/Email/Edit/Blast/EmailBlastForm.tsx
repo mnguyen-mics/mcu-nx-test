@@ -34,7 +34,7 @@ import { Omit } from '../../../../../utils/Types';
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
 >;
-const BlastTemplateSectionFieldArray = FieldArray as new () => GenericFieldArray<
+export const BlastTemplateSectionFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   TemplateFormSectionProps
 >;

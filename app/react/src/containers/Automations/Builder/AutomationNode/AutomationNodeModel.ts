@@ -6,6 +6,7 @@ import DisplayCampaignAutomationForm from './Edit/DisplayCampaignForm/DisplayCam
 import ABNAutomationForm from './Edit/ABNAutomationForm/ABNAutomationForm';
 import DefaultAutomationForm from './Edit/DefaultForm/DefaultAutomationForm';
 import { AutomationFormPropsType } from './Edit/domain';
+import EmailCampaignAutomationForm from './Edit/EmailCampaignForm/EmailCampaignAutomationForm';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -44,6 +45,9 @@ export default class AutomationNodeModel extends NodeModel {
     switch (this.storylineNodeModel.node.type) {
       case 'DISPLAY_CAMPAIGN':
         this.editFormComponent = DisplayCampaignAutomationForm;
+        break;
+      case 'EMAIL_CAMPAIGN':
+        this.editFormComponent = EmailCampaignAutomationForm;
         break;
       case 'ABN_NODE':
         this.editFormComponent = ABNAutomationForm;

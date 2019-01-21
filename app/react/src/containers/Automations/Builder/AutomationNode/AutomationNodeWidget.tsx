@@ -69,7 +69,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'DISPLAY_CAMPAIGN':
         const dCFormData = props.node.storylineNodeModel.node.formData;
         return dCFormData || {
-            name: props.node.title,
+          name: props.node.title,
           adGroup: {
             max_budget_period: 'DAY',
             targeted_operating_systems: 'ALL',
@@ -83,6 +83,17 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           bidOptimizerFields: [],
           inventoryCatalFields: [],
         };
+      case 'EMAIL_CAMPAIGN':
+        const eCFormData = props.node.storylineNodeModel.node.formData;
+        return eCFormData || {
+          name: props.node.title,
+          blast: {},
+          campaign: {},
+          templateFields: [],
+          consentFields: [],
+          blastFields: [],
+          routerFields: [],
+        }
       case 'ABN_NODE':
         const abnFormData = props.node.storylineNodeModel.node.formData;
         return abnFormData || {
