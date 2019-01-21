@@ -21,13 +21,13 @@ import {
   isGoalSelectionResource,
 } from './domain';
 import AdGroupFormService from './AdGroup/AdGroupFormService';
-import GoalFormService from '../../Goal/Edit/GoalFormService';
 import { EditCampaignsFormData } from './Campaign/MutiEdit/EditCampaignsForm';
 import operation from '../Edit/Campaign/domain';
 import GoalService from '../../../../services/GoalService';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../constants/types';
+import { IGoalFormService } from '../../Goal/Edit/GoalFormService';
 
 type DisplayCampaignId = string;
 
@@ -62,6 +62,8 @@ export interface IDisplayCampaignFormService {
 export class DisplayCampaignFormService implements IDisplayCampaignFormService {
   @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+  @inject(TYPES.IGoalFormService)
+  private _goalFormService: IGoalFormService;
   loadCampaign(
     displayCampaignId: string,
     duplicate?: boolean,
@@ -169,7 +171,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
       const tasks: Task[] = [];
 
       tasks.push(
-        ...getGoalTasks(
+        ...this.getGoalTasks(
           organisationId,
           campaignId,
           formData.goalFields,
@@ -240,76 +242,71 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
         }),
     ];
   };
-}
-
-export default DisplayCampaignFormService;
-
-function getGoalTasks(
-  organisationId: string,
-  campaignId: string,
-  goalFields: GoalFieldModel[],
-  initialGoalFields: GoalFieldModel[],
-  datamartId?: string,
-): Task[] {
-  const initialIds: string[] = [];
-  initialGoalFields.forEach(field => {
-    if (isGoalSelectionResource(field.model)) {
-      initialIds.push(field.model.id);
-    }
-  });
-
-  const currentIds: string[] = [];
-  goalFields.forEach(field => {
-    if (isGoalSelectionResource(field.model)) {
-      currentIds.push(field.model.id);
-    }
-  });
-
-  const tasks: Task[] = [];
-  goalFields.forEach(field => {
-    if (isGoalFormData(field.model)) {
-      const goalFormData = field.model;
-
-      const fetchGoalInitialFormData = () => {
-        if (isExistingGoal(goalFormData.goal)) {
-          return GoalFormService.loadGoalData(goalFormData.goal.id);
-        }
-        return Promise.resolve(INITIAL_GOAL_FORM_DATA);
-      };
-
-      tasks.push(() =>
-        fetchGoalInitialFormData().then(initialGoalFormData => {
-          return GoalFormService.saveGoal(
-            organisationId,
-            goalFormData,
-            initialGoalFormData,
-          ).then(goalResource => {
-            return DisplayCampaignService.createGoal(campaignId, {
-              goal_id: goalResource.id,
-              goal_selection_type: 'CONVERSION',
-              default: true,
-            });
-          });
-        }),
-      );
-    } else if (!isGoalSelectionResource(field.model)) {
-      const goalSelectionCreateRequest = field.model;
-      tasks.push(() =>
-        DisplayCampaignService.createGoal(
-          campaignId,
-          goalSelectionCreateRequest,
-        ),
-      );
-    }
-  });
-
-  initialIds
-    .filter(id => !currentIds.includes(id))
-    .forEach(id => {
-      tasks.push(() => DisplayCampaignService.deleteGoal(campaignId, id));
+  getGoalTasks = (
+    organisationId: string,
+    campaignId: string,
+    goalFields: GoalFieldModel[],
+    initialGoalFields: GoalFieldModel[],
+    datamartId?: string,
+  ): Task[] => {
+    const initialIds: string[] = [];
+    initialGoalFields.forEach(field => {
+      if (isGoalSelectionResource(field.model)) {
+        initialIds.push(field.model.id);
+      }
     });
 
-  return tasks;
+    const currentIds: string[] = [];
+    goalFields.forEach(field => {
+      if (isGoalSelectionResource(field.model)) {
+        currentIds.push(field.model.id);
+      }
+    });
+
+    const tasks: Task[] = [];
+    goalFields.forEach(field => {
+      if (isGoalFormData(field.model)) {
+        const goalFormData = field.model;
+
+        const fetchGoalInitialFormData = () => {
+          if (isExistingGoal(goalFormData.goal)) {
+            return this._goalFormService.loadGoalData(goalFormData.goal.id);
+          }
+          return Promise.resolve(INITIAL_GOAL_FORM_DATA);
+        };
+
+        tasks.push(() =>
+          fetchGoalInitialFormData().then(initialGoalFormData => {
+            return this._goalFormService
+              .saveGoal(organisationId, goalFormData, initialGoalFormData)
+              .then(goalResource => {
+                return DisplayCampaignService.createGoal(campaignId, {
+                  goal_id: goalResource.id,
+                  goal_selection_type: 'CONVERSION',
+                  default: true,
+                });
+              });
+          }),
+        );
+      } else if (!isGoalSelectionResource(field.model)) {
+        const goalSelectionCreateRequest = field.model;
+        tasks.push(() =>
+          DisplayCampaignService.createGoal(
+            campaignId,
+            goalSelectionCreateRequest,
+          ),
+        );
+      }
+    });
+
+    initialIds
+      .filter(id => !currentIds.includes(id))
+      .forEach(id => {
+        tasks.push(() => DisplayCampaignService.deleteGoal(campaignId, id));
+      });
+
+    return tasks;
+  };
 }
 
 function getAdGroupTasks(

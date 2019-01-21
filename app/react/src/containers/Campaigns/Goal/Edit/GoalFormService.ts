@@ -21,7 +21,7 @@ export interface IGoalFormService {
   saveGoal: (
     organisationId: string,
     goalFormData: GoalFormData,
-    initialGoalFormData: GoalFormData,
+    initialGoalFormData?: GoalFormData,
   ) => Promise<GoalResource>;
 }
 

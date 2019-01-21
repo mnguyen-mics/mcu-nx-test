@@ -4,6 +4,7 @@ import {
   EmailCampaignAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
+import { QueryResource } from './../datamart/DatamartResource';
 import { AutomationSimpleFormData } from './../../containers/Automations/Builder/ActionBar/AutomationSimpleForm';
 export interface AutomationResource {
   id: string;
@@ -60,8 +61,7 @@ export interface EmailCampaignNodeResource extends ScenarioNodeResource {
 
 export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
-  query_id: string;
-  query_text: string;
+  formData: Partial<QueryResource>;
   evaluation_mode?: string;
   evaluation_period?: string;
   evaluation_period_unit?: string;
@@ -89,8 +89,7 @@ export interface EndNodeResource extends ScenarioNodeResource {
 
 export interface StartNodeResource extends ScenarioNodeResource {
   type: 'START';
-  query_id?: string;
-  query_text?: string;
+  formData: Partial<QueryResource>;
 }
 
 export interface WaitNodeResource extends ScenarioNodeResource {

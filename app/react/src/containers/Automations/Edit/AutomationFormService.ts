@@ -5,8 +5,12 @@ import { TYPES } from '../../../constants/types';
 import { AutomationFormData } from './domain';
 import { buildAutomationTreeData } from '../Builder/domain';
 import { DataResponse } from '../../../services/ApiService';
-import { isScenarioNodeShape, isQueryInputNode } from '../Builder/AutomationNode/Edit/domain';
+import {
+  isScenarioNodeShape,
+  isQueryInputNode,
+} from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
+// import { IQueryService } from '../../../services/QueryService';
 
 export interface IAutomationFormService {
   loadInitialAutomationValues: (
@@ -24,6 +28,9 @@ export interface IAutomationFormService {
 export class AutomationFormService implements IAutomationFormService {
   @inject(TYPES.IScenarioService)
   private _scenarioService: IScenarioService;
+  // @inject(TYPES.IQueryService)
+  // private _queryService: IQueryService;
+
   loadInitialAutomationValues(
     automationId: string,
     storageModelVersion: string,
@@ -82,11 +89,17 @@ export class AutomationFormService implements IAutomationFormService {
     } else {
       return saveOrCreatePromise().then(createdAutomation => {
         const createdAutomationId = createdAutomation.data.id;
+        const beginNodeDatamartId = formData.automation.datamart_id;
         const beginNode = formData.automationTreeData.node;
-        if(isScenarioNodeShape(beginNode) && isQueryInputNode(beginNode)) {
-          if(beginNode.query_id) {
-            //
-          }
+        if (isScenarioNodeShape(beginNode) && isQueryInputNode(beginNode) && beginNodeDatamartId) {
+          // const saveOrCreateQueryPromise = () =>
+          //   beginNode.query_id
+          //     ? this._queryService.updateQuery(
+          //       beginNodeDatamartId
+          //       beginNode.query_id,
+
+          //     )
+          //     : this._queryService.updateQuery();
         }
         return this._scenarioService
           .createScenarioBeginNode(createdAutomationId, {

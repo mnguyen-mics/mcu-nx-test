@@ -163,7 +163,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   getQuery = () => {
     const node = this.props.node.storylineNodeModel.node;
     if (isQueryInputNode(node)) {
-      return node.query_text;
+      return node.formData.query_text;
     }
     return undefined;
   };

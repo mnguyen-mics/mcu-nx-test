@@ -12,9 +12,11 @@ import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import GoalFormService from './GoalFormService';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IGoalFormService } from './GoalFormService';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -56,6 +58,9 @@ type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; goalId: string }>;
 
 class EditGoalPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IGoalFormService)
+  private _goalFormService: IGoalFormService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -87,7 +92,8 @@ class EditGoalPage extends React.Component<Props, State> {
     this.setState({
       loading: true,
     });
-    return GoalFormService.loadGoalData(goalId)
+    return this._goalFormService
+      .loadGoalData(goalId)
       .then(goalData => {
         this.setState({
           goalFormData: goalData,
@@ -121,8 +127,9 @@ class EditGoalPage extends React.Component<Props, State> {
     this.setState({
       loading: true,
     });
-    GoalFormService.saveGoal(organisationId, goalFormData, initialGoalFormData)
-      .then(goalResource => {        
+    this._goalFormService
+      .saveGoal(organisationId, goalFormData, initialGoalFormData)
+      .then(goalResource => {
         const goalUrl =
           goalFormData.triggerType === 'QUERY'
             ? `/v2/o/${organisationId}/campaigns/goals/${goalResource.id}`
@@ -131,7 +138,7 @@ class EditGoalPage extends React.Component<Props, State> {
           hideSaveInProgress();
         } else {
           this.fetchData(goalResource.id).then(() => hideSaveInProgress());
-        }      
+        }
         history.push({
           pathname: goalUrl,
           state: { from: `${location.pathname}` },

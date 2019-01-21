@@ -65,7 +65,10 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     ) {
       updatedBeginNode = {
         ...automationTreeData.node,
-        query_text: queryText,
+        formData: {
+          query_text: JSON.stringify(queryText),
+          query_language: 'JSON_OTQL',
+        },
       };
     }
     const iterate = (treeData: StorylineNodeModel): StorylineNodeModel => {

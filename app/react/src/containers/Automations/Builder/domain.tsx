@@ -418,6 +418,7 @@ export const beginNode: ScenarioNodeShape = {
   name: 'Enter automation',
   scenario_id: '1',
   type: 'START',
+  formData: {}
 };
 
 export const node4: ScenarioNodeShape = {

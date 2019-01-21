@@ -62,6 +62,10 @@ import {
   ScenarioService,
 } from '../services/ScenarioService';
 import { IAutomationFormService } from '../containers/Automations/Edit/AutomationFormService';
+import {
+  IGoalFormService,
+  GoalFormService,
+} from '../containers/Campaigns/Goal/Edit/GoalFormService';
 
 const container = new Container();
 
@@ -115,6 +119,7 @@ container
   .bind<IAutomationFormService>(TYPES.IAutomationFormService)
   .to(AutomationFormService);
 container.bind<IQueryService>(TYPES.IQueryService).to(QueryService);
+container.bind<IGoalFormService>(TYPES.IGoalFormService).to(GoalFormService);
 
 export const { lazyInject } = getDecorators(container, false);
 
