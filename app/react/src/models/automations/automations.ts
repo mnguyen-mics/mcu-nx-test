@@ -1,3 +1,5 @@
+import { DisplayCampaignFormData, ABNFormData } from "../../containers/Automations/Builder/AutomationNode/Edit/domain";
+
 export interface AutomationResource {
   id: string;
   name: string;
@@ -32,6 +34,7 @@ export interface DisplayCampaignNodeResource extends ScenarioNodeResource {
   type: 'DISPLAY_CAMPAIGN';
   campaign_id: string;
   ad_group_id: string;
+  formData?: DisplayCampaignFormData;
 }
 
 export interface EmailCampaignNodeResource extends ScenarioNodeResource {
@@ -50,7 +53,7 @@ export interface QueryInputNodeResource extends ScenarioNodeResource {
 export interface ABNNodeResource extends ScenarioNodeResource {
   type: 'ABN_NODE';
   edges_selection: { [nodeId: string]: { min: number; max: number } };
-  branch_number?: number;
+  formData?: ABNFormData;
 }
 
 export interface PluginNodeResource extends ScenarioNodeResource {

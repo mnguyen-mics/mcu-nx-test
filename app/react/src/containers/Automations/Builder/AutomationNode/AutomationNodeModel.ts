@@ -2,6 +2,10 @@ import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../../../QueryTool/JSONOTQL/Diagram/Port/SimplePortModel';
 import { McsIconType } from '../../../../components/McsIcon';
 import { StorylineNodeModel, AntIcon } from '../domain';
+import DisplayCampaignAutomationForm from './Edit/DisplayCampaignForm/DisplayCampaignAutomationForm';
+import ABNAutomationForm from './Edit/ABNAutomationForm/ABNAutomationForm';
+import DefaultAutomationForm from './Edit/DefaultForm/DefaultAutomationForm';
+import { AutomationFormPropsType } from './Edit/domain';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -11,11 +15,13 @@ export default class AutomationNodeModel extends NodeModel {
   title: string;
   color: string;
   storylineNodeModel: StorylineNodeModel;
+  editFormComponent: React.ComponentClass<AutomationFormPropsType>;
   root?: boolean;
   icon?: McsIconType;
-  iconAnt?: AntIcon;  
+  iconAnt?: AntIcon;
 
-  constructor(datamartId: string,
+  constructor(
+    datamartId: string,
     storylineNodeModel: StorylineNodeModel,
     title: string,
     color: string,
@@ -34,6 +40,18 @@ export default class AutomationNodeModel extends NodeModel {
     this.color = color;
     this.storylineNodeModel = storylineNodeModel;
     this.iconAnt = iconAnt;
+
+    switch (this.storylineNodeModel.node.type) {
+      case 'DISPLAY_CAMPAIGN':
+        this.editFormComponent = DisplayCampaignAutomationForm;
+        break;
+      case 'ABN_NODE':
+        this.editFormComponent = ABNAutomationForm;
+        break;
+      default:
+        this.editFormComponent = DefaultAutomationForm;
+        break;
+    }
   }
 
   getPosition = () => {

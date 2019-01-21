@@ -6,21 +6,22 @@ import {
   ConfigProps,
   getFormValues,
 } from 'redux-form';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '../../../../../../components/ActionBar';
 import { Layout, Form } from 'antd';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
-} from '../../../../../components/Layout/FormLayoutActionbar';
+} from '../../../../../../components/Layout/FormLayoutActionbar';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { McsFormSection } from '../../../../../utils/FormHelper';
-import { AutomationNodeFormData, FORM_ID } from './domain';
-import GeneralFormSection from './GeneralFormSection';
+import { McsFormSection } from '../../../../../../utils/FormHelper';
+import { FORM_ID, ABNFormData } from '../domain';
+import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
+import GeneralInformationFormSection from './GeneralInformationFormSection';
 
 const { Content } = Layout;
 
-const messages = defineMessages({
+const localMessages = defineMessages({
   save: {
     id: 'automation.builder.node.form.save.button',
     defaultMessage: 'Update',
@@ -29,43 +30,45 @@ const messages = defineMessages({
     id: 'automation.builder.node.edition.form.general.title',
     defaultMessage: 'General Informations',
   },
+  sectionDisplayCampaignTitle: {
+    id: 'automation.builder.node.edition.form.display.title',
+    defaultMessage: 'Modify the parameters of the display campaign',
+  },
 });
 
-export interface AutomationNodeFormProps
-  extends Omit<ConfigProps<AutomationNodeFormData>, 'form'> {
+export interface ABNAutomationFormProps
+  extends Omit<ConfigProps<ABNFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
+  node: ScenarioNodeShape;
 }
 
 interface MapStateToProps {
-  formValues: AutomationNodeFormData;
+  formValues: ABNFormData;
 }
 
 type Props = InjectedFormProps<
-  AutomationNodeFormData,
-  AutomationNodeFormProps
+  ABNFormData,
+  ABNAutomationFormProps
 > &
-  AutomationNodeFormProps &
+  ABNAutomationFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
   MapStateToProps;
 
-class AutomationNodeForm extends React.Component<Props> {
+class ABNAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const {} = this.props;
-
-    const sections: McsFormSection[] = [];
 
     const general = {
       id: 'general',
-      title: messages.sectionGeneralTitle,
+      title: localMessages.sectionGeneralTitle,
       component: (
-        <GeneralFormSection initialValues={this.props.initialValues} />
+        <GeneralInformationFormSection initialValues={this.props.initialValues} />
       ),
     };
 
-    sections.push(general);
-
+    const sections: McsFormSection[] = [general];
+    
     return sections;
   };
 
@@ -74,7 +77,7 @@ class AutomationNodeForm extends React.Component<Props> {
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
-      message: messages.save,
+      message: localMessages.save,
       onClose: close,
     };
 
@@ -116,7 +119,7 @@ const mapStateToProps = (state: any) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 
-export default compose<Props, AutomationNodeFormProps>(
+export default compose<Props, ABNAutomationFormProps>(
   injectIntl,
   withRouter,
   connect(mapStateToProps),
@@ -124,4 +127,4 @@ export default compose<Props, AutomationNodeFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-)(AutomationNodeForm);
+)(ABNAutomationForm);

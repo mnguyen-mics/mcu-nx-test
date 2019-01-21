@@ -32,7 +32,7 @@ import {
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
-import { AutomationNodeFormData } from './AutomationNode/Edit/domain';
+import { AutomationFormDataType } from './AutomationNode/Edit/domain';
 
 export interface AutomationBuilderProps {
   datamartId: string;
@@ -154,7 +154,7 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   updateNode = (
     node: ScenarioNodeShape,
-    formData: AutomationNodeFormData,
+    formData: AutomationFormDataType,
   ): StorylineNodeModel => {
     return this.props.updateAutomationData(
       new UpdateNodeOperation(node, formData).execute(this.props.automationData),

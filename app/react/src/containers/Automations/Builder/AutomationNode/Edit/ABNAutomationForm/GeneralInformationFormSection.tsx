@@ -1,21 +1,20 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-// import { ButtonStyleless, McsIcon } from '../../../../../components';
 import {
   FormInput,
   FormSection,
   FormInputField,
   FormSlider,
   FormSliderField,
-} from '../../../../../components/Form';
+} from '../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+} from '../../../../../../components/Form/withValidators';
 import withNormalizer, {
   NormalizerProps,
-} from '../../../../../components/Form/withNormalizer';
-import { AutomationNodeFormData } from './domain';
+} from '../../../../../../components/Form/withNormalizer';
+import { ABNFormData } from '../domain';
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
@@ -24,11 +23,7 @@ export const messages = defineMessages({
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.edition.form.general.subtitle',
-    defaultMessage: 'Lorem ipsum',
-  },
-  loremIpsum: {
-    id: 'lorem.ipsum',
-    defaultMessage: 'Lorem Ipsum',
+    defaultMessage: 'Modify the general information of the ABN Node',
   },
   automationNodeName: {
     id: 'automation.builder.node.form.name',
@@ -36,7 +31,7 @@ export const messages = defineMessages({
   },
   branchNumber: {
     id: 'automation.builder.split.node.form.branch.number',
-    defaultMessage: 'Branchs',
+    defaultMessage: 'Branches',
   },
   advancedSection: {
     id: 'automation.builder.node.advanced.section',
@@ -44,11 +39,11 @@ export const messages = defineMessages({
   },
 });
 
-interface GeneralFormSectionProps {
-  initialValues: Partial<AutomationNodeFormData>;
+interface GeneralInformationFormSectionProps {
+  initialValues: Partial<ABNFormData>;
 }
 
-type Props = GeneralFormSectionProps &
+type Props = GeneralInformationFormSectionProps &
   InjectedIntlProps &
   ValidatorProps &
   NormalizerProps;
@@ -57,7 +52,7 @@ interface State {
   displayAdvancedSection: boolean;
 }
 
-class GeneralFormSection extends React.Component<Props, State> {
+class GeneralInformationFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { displayAdvancedSection: false };
@@ -84,7 +79,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
         <div className="automation-node-form">
           <FormInputField
-            name="automationNode.name"
+            name="name"
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -97,11 +92,9 @@ class GeneralFormSection extends React.Component<Props, State> {
             small={true}
           />
 
-          {this.props.initialValues.automationNode !== undefined &&
-            this.props.initialValues.automationNode.branch_number !==
-              undefined && (
+          {this.props.initialValues.branch_number !== undefined && (
               <FormSliderField
-                name="automationNode.branch_number"
+                name="branch_number"
                 component={FormSlider}
                 formItemProps={{
                   label: formatMessage(messages.branchNumber),
@@ -119,8 +112,8 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, GeneralFormSectionProps>(
+export default compose<Props, GeneralInformationFormSectionProps>(
   injectIntl,
   withValidators,
   withNormalizer,
-)(GeneralFormSection);
+)(GeneralInformationFormSection);

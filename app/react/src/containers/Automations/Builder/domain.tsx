@@ -6,8 +6,10 @@ import {
   StorylineResource,
 } from '../../../models/automations/automations';
 import {
-  AutomationNodeFormData,
+  AutomationFormDataType,
   isAbnNode,
+  ABNFormData,
+  DisplayCampaignFormData,
 } from './AutomationNode/Edit/domain';
 
 export interface TreeNodeOperations {
@@ -19,7 +21,7 @@ export interface TreeNodeOperations {
   deleteNode: (nodeId: string) => void;
   updateNode: (
     node: ScenarioNodeShape,
-    formData: AutomationNodeFormData,
+    formData: AutomationFormDataType,
   ) => void;
   updateLayout: () => void;
 }
@@ -122,7 +124,7 @@ export class AddNodeOperation implements NodeOperation {
           let newOutEdges: StorylineNodeModel[] = [];
           if (this.node.type === 'ABN_NODE') {
             const emptyNodes = generateNewEmptyOutEdges(
-              this.node.branch_number || 0,
+              this.node.formData ? this.node.formData.branch_number : 2,
             );
             newOutEdges = [childNode].concat(emptyNodes);
           } else {
@@ -200,9 +202,9 @@ export class DeleteNodeOperation implements NodeOperation {
 
 export class UpdateNodeOperation implements NodeOperation {
   node: AutomationNodeShape;
-  formData: AutomationNodeFormData;
+  formData: AutomationFormDataType;
 
-  constructor(node: ScenarioNodeShape, formData: AutomationNodeFormData) {
+  constructor(node: ScenarioNodeShape, formData: AutomationFormDataType) {
     this.node = node;
     this.formData = formData;
   }
@@ -211,6 +213,89 @@ export class UpdateNodeOperation implements NodeOperation {
     return this.iterateData(automationData, this.node.id);
   }
 
+  buildUpdatedNode(storylineNode: StorylineNodeModel): StorylineNodeModel {
+    let nodeBody: AutomationNodeShape;
+
+    switch (storylineNode.node.type) {
+      case 'DISPLAY_CAMPAIGN':
+        nodeBody = {
+          ...storylineNode.node,
+          name: this.formData.name,
+          formData: this.formData as DisplayCampaignFormData,
+        };
+        break;
+      case 'ABN_NODE':
+        nodeBody = {
+          ...storylineNode.node,
+          name: this.formData.name,
+          formData: this.formData as ABNFormData,
+        };
+        break;
+      default:
+        nodeBody = {
+          ...storylineNode.node,
+          name: this.formData.name,
+        };
+        break;
+    }
+    return {
+      node: nodeBody,
+      in_edge: storylineNode.in_edge,
+      out_edges: this.generateOutEdges(storylineNode),
+    };
+  }
+
+  generateOutEdges = (node: StorylineNodeModel): StorylineNodeModel[] => {
+    let newOutEdges: StorylineNodeModel[] = [];
+    if (isAbnNode(this.node)) {
+      const formBranchNumber = (this.formData as ABNFormData).branch_number;
+      const nodeBranchNumber = this.node.formData
+        ? this.node.formData.branch_number
+        : 2;
+      const diff = formBranchNumber - nodeBranchNumber;
+      if (diff > 0) {
+        const newEmptyOutEdges = this.generateNewEmptyOutEdges(diff, node);
+        newOutEdges = node.out_edges.concat(newEmptyOutEdges);
+      } else if (diff === 0) {
+        newOutEdges = node.out_edges;
+      } else {
+        const childNodesLeft = node.out_edges.slice(0, formBranchNumber);
+        newOutEdges = childNodesLeft;
+      }
+    } else {
+      newOutEdges = node.out_edges;
+    }
+    return newOutEdges;
+  };
+
+  generateNewEmptyOutEdges = (
+    branchNumber: number,
+    child: StorylineNodeModel,
+  ): StorylineNodeModel[] => {
+    const newEmptyOutEdges = [];
+    for (let i = 1; i <= branchNumber; i++) {
+      const newId = cuid();
+      const emptyNode: StorylineNodeModel = {
+        node: {
+          id: newId,
+          name: 'Exit from automation',
+          scenario_id: '1',
+          type: 'GOAL',
+        },
+        in_edge: {
+          id: cuid(),
+          source_id: this.node.id,
+          target_id: newId,
+          handler: 'GOAL',
+          scenario_id: child.in_edge!.scenario_id,
+        },
+        out_edges: [],
+      };
+      newEmptyOutEdges.push(emptyNode);
+    }
+    return newEmptyOutEdges;
+  };
+
   iterateData(
     automationData: StorylineNodeModel,
     id: string,
@@ -218,74 +303,10 @@ export class UpdateNodeOperation implements NodeOperation {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
         if (child.node.id === id) {
-          const updatedNode: StorylineNodeModel = {
-            node: isAbnNode(child.node)
-              ? {
-                  ...child.node,
-                  name: this.formData.automationNode.name,
-                  branch_number: this.formData.automationNode.branch_number,
-                }
-              : {
-                  ...child.node,
-                  name: this.formData.automationNode.name,
-                },
-            in_edge: child.in_edge,
-            out_edges: [],
-          };
-
-          const generateNewEmptyOutEdges = (
-            branchNumber: number,
-          ): StorylineNodeModel[] => {
-            const newEmptyOutEdges = [];
-            for (let i = 1; i <= branchNumber; i++) {
-              const newId = cuid();
-              const emptyNode: StorylineNodeModel = {
-                node: {
-                  id: newId,
-                  name: 'Exit from automation',
-                  scenario_id: '1',
-                  type: 'GOAL',
-                },
-                in_edge: {
-                  id: cuid(),
-                  source_id: this.node.id,
-                  target_id: newId,
-                  handler: 'GOAL',
-                  scenario_id: child.in_edge!.scenario_id,
-                },
-                out_edges: [],
-              };
-              newEmptyOutEdges.push(emptyNode);
-            }
-            return newEmptyOutEdges;
-          };
-          let newOutEdges: StorylineNodeModel[] = [];
-          if (isAbnNode(this.node)) {
-            const formBranchNumber = this.formData.automationNode.branch_number;
-            const nodeBranchNumber = this.node.branch_number;
-
-            if (formBranchNumber && nodeBranchNumber) {
-              const diff = formBranchNumber - nodeBranchNumber;
-              if (diff > 0) {
-                const newEmptyOutEdges = generateNewEmptyOutEdges(diff);
-                newOutEdges = child.out_edges.concat(newEmptyOutEdges);
-              } else if (diff === 0) {
-                newOutEdges = child.out_edges;
-              } else {
-                const childNodesLeft = child.out_edges.slice(
-                  0,
-                  formBranchNumber,
-                );
-                newOutEdges = childNodesLeft;
-              }
-            }
-          } else {
-            newOutEdges = child.out_edges;
-          }
-
+          const updatedNode: StorylineNodeModel = this.buildUpdatedNode(child);
           return {
             ...updatedNode,
-            out_edges: newOutEdges,
+            out_edges: this.generateOutEdges(child),
           };
         } else return this.iterateData(child, id);
       },
@@ -327,47 +348,6 @@ export const node4: ScenarioNodeShape = {
   type: 'GOAL',
 };
 
-// export const beginNode: ScenarioNodeShape = {
-//   id: '1',
-//   name: 'Begin node',
-//   scenario_id: '1',
-//   type: 'DISPLAY_CAMPAIGN',
-//   campaign_id: 'string',
-//   ad_group_id: 'string',
-// };
-
-// export const node2: ScenarioNodeShape = {
-//   id: '2',
-//   name: 'node 2',
-//   scenario_id: '1',
-//   type: 'DISPLAY_CAMPAIGN',
-//   campaign_id: 'string',
-//   ad_group_id: 'string',
-// };
-
-// export const node3: ScenarioNodeShape = {
-//   id: '3',
-//   name: 'node 3',
-//   query_id: '1',
-//   type: 'QUERY_INPUT',
-//   evaluation_mode: '',
-//   scenario_id: '1',
-// };
-
-// export const node4: ScenarioNodeShape = {
-//   id: '4',
-//   name: 'success',
-//   scenario_id: '1',
-//   type: 'GOAL',
-// };
-
-// export const node5: ScenarioNodeShape = {
-//   id: '5',
-//   name: 'node 5',
-//   scenario_id: '1',
-//   type: 'FAILURE',
-// };
-
 export const storylineNodeData: ScenarioNodeShape[] = [beginNode, node4];
 
 export const edge12: ScenarioEdgeResource = {
@@ -377,28 +357,5 @@ export const edge12: ScenarioEdgeResource = {
   handler: 'ON_VISIT',
   scenario_id: '1',
 };
-
-// export const edge13: ScenarioEdgeResource = {
-//   id: 'string',
-//   source_id: '1',
-//   target_id: '3',
-//   handler: 'ON_VISIT',
-//   scenario_id: '1',
-// };
-
-// export const edge34: ScenarioEdgeResource = {
-//   id: 'string',
-//   source_id: '3',
-//   target_id: '4',
-//   handler: 'ON_VISIT',
-//   scenario_id: '1',
-// };
-// export const edge35: ScenarioEdgeResource = {
-//   id: 'string',
-//   source_id: '3',
-//   target_id: '5',
-//   handler: 'ON_VISIT',
-//   scenario_id: '1',
-// };
 
 export const storylineEdgeData: ScenarioEdgeResource[] = [edge12];

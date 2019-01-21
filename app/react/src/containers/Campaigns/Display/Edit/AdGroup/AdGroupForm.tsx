@@ -61,22 +61,22 @@ const AudienceCatalogFieldArray = FieldArray as new () => GenericFieldArray<
   AudienceCatalogFormSectionProps
 >;
 
-const LocationTargetingFieldArray = FieldArray as new () => GenericFieldArray<
+export const LocationTargetingFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   LocationTargetingFormSectionProps
 >;
 
-const AdFieldArray = FieldArray as new () => GenericFieldArray<
+export const AdFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   AdFormSectionProps
 >;
 
-const BidOptimizerFieldArray = FieldArray as new () => GenericFieldArray<
+export const BidOptimizerFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   BidOptimizerFormSectionProps
 >;
 
-const InventoryCatalogFieldArray = FieldArray as new () => GenericFieldArray<
+export const InventoryCatalogFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   InventoryCatalogFormSectionProps
 >;

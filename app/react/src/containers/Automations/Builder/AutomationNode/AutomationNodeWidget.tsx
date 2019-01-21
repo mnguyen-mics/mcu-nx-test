@@ -17,13 +17,10 @@ import { TreeNodeOperations } from '../domain';
 import { Icon } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
 import JSONQLPreview from '../../../QueryTool/JSONOTQL/JSONQLPreview';
-import AutomationNodeForm, {
-  AutomationNodeFormProps,
-} from './Edit/AutomationNodeForm';
 import {
-  AutomationNodeFormData,
-  isAbnNode,
   isScenarioNodeShape,
+  AutomationFormDataType,
+  AutomationFormPropsType,
 } from './Edit/domain';
 
 interface AutomationNodeProps {
@@ -36,6 +33,7 @@ interface AutomationNodeProps {
 interface State {
   focus: boolean;
   hover: boolean;
+  initialValuesForm: AutomationFormDataType;
   query?: string;
 }
 
@@ -62,8 +60,41 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     this.state = {
       focus: false,
       hover: false,
+      initialValuesForm: this.getInitialValues(props),
     };
   }
+
+  getInitialValues = (props: Props): AutomationFormDataType => {
+    switch (props.node.storylineNodeModel.node.type) {
+      case 'DISPLAY_CAMPAIGN':
+        const dCFormData = props.node.storylineNodeModel.node.formData;
+        return dCFormData || {
+            name: props.node.title,
+          adGroup: {
+            max_budget_period: 'DAY',
+            targeted_operating_systems: 'ALL',
+            targeted_medias: 'WEB',
+            targeted_devices: 'ALL',
+            targeted_connection_types: 'ALL',
+            targeted_browser_families: 'ALL',
+          },
+          locationFields: [],
+          adFields: [],
+          bidOptimizerFields: [],
+          inventoryCatalFields: [],
+        };
+      case 'ABN_NODE':
+        const abnFormData = props.node.storylineNodeModel.node.formData;
+        return abnFormData || {
+            name: props.node.title,
+            branch_number: 2, 
+        };
+      default:
+        return {
+            name: props.node.title,
+        };
+    }
+  };
 
   setPosition = (node: HTMLDivElement | null) => {
     const bodyPosition = document.body.getBoundingClientRect();
@@ -84,37 +115,35 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const { node, lockGlobalInteraction } = this.props;
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(false);
-      const automationNode = isAbnNode(node.storylineNodeModel.node)
-        ? {
-            name: node.storylineNodeModel.node.name,
-            branch_number: node.storylineNodeModel.node.branch_number,
-          }
-        : {
-            name: node.storylineNodeModel.node.name,
-          };
       if (isScenarioNodeShape(node.storylineNodeModel.node)) {
-        const scenarioNodeShade = node.storylineNodeModel.node;
-        this.props.openNextDrawer<AutomationNodeFormProps>(AutomationNodeForm, {
-          additionalProps: {
-            close: this.props.closeNextDrawer,
-            breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
-            onSubmit: (formData: AutomationNodeFormData) => {
-              this.props.nodeOperations.updateNode(scenarioNodeShade, formData);
-              this.props.closeNextDrawer();
+        const scenarioNodeShape = node.storylineNodeModel.node;
+
+        this.props.openNextDrawer<AutomationFormPropsType>(
+          node.editFormComponent,
+          {
+            additionalProps: {
+              node: scenarioNodeShape,
+              close: this.props.closeNextDrawer,
+              breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
+              onSubmit: (formData: AutomationFormDataType) => {
+                this.props.nodeOperations.updateNode(
+                  scenarioNodeShape,
+                  formData,
+                );
+                this.props.closeNextDrawer();
+              },
+              initialValues: this.state.initialValuesForm,
             },
-            initialValues: {
-              automationNode: automationNode,
-            },
+            size: 'small',
           },
-          size: 'small',
-        });
+        );
       }
     });
   };
 
   handleQueryOnChange = (queryText: string) => {
-    this.setState({query: queryText});
-  } 
+    this.setState({ query: queryText });
+  };
 
   render() {
     const { node } = this.props;
@@ -124,7 +153,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const borderColor = node.getColor();
 
     const onFocus = () => {
-      // this.props.lockGlobalInteraction(!this.state.focus);
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
       this.setState({ focus: !this.state.focus });
     };
@@ -255,7 +283,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                     value={this.state.query}
                     isTrigger={true}
                     onChange={this.handleQueryOnChange}
-                    context='AUTOMATION_BUILDER'
+                    context="AUTOMATION_BUILDER"
                   />
                 ) : (
                   <div onClick={this.editNode} className="boolean-menu-item">
