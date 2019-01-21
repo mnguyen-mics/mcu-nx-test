@@ -10,6 +10,7 @@ import {
   isAbnNode,
   ABNFormData,
   DisplayCampaignFormData,
+  EmailCampaignAutomationFormData,
 } from './AutomationNode/Edit/domain';
 
 export interface TreeNodeOperations {
@@ -222,6 +223,13 @@ export class UpdateNodeOperation implements NodeOperation {
           ...storylineNode.node,
           name: this.formData.name,
           formData: this.formData as DisplayCampaignFormData,
+        };
+        break;
+      case 'EMAIL_CAMPAIGN':
+        nodeBody = {
+          ...storylineNode.node,
+          name: this.formData.name,
+          formData: this.formData as EmailCampaignAutomationFormData,
         };
         break;
       case 'ABN_NODE':

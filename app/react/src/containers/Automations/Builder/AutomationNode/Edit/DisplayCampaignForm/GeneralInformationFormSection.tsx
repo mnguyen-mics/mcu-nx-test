@@ -93,6 +93,24 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           />
 
           <FormInputField
+            name="campaign.name"
+            component={FormInput}
+            validate={[isRequired]}
+            formItemProps={{
+              label: formatMessage(formatDisplayCampaignProperty('name').message),
+              required: true,
+            }}
+            inputProps={{
+              placeholder: formatMessage(
+                messages.campaignFormPlaceholderCampaignName,
+              ),
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
+            }}
+          />
+
+          <FormInputField
             name="campaign.per_day_impression_capping"
             component={FormInput}
             normalize={normalizeInteger}
@@ -141,11 +159,12 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           <FormInputField
             name="campaign.total_budget"
             component={FormInput}
-            validate={[isValidFloat, isNotZero]}
+            validate={[isValidFloat, isNotZero, isRequired]}
             formItemProps={{
               label: formatMessage(
                 formatDisplayCampaignProperty('total_budget').message,
               ),
+              required: true,
             }}
             inputProps={{
               suffix: <span>€</span>,
@@ -163,11 +182,12 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           <FormInputField
             name="campaign.max_budget_per_period"
             component={FormInput}
-            validate={[isValidFloat, isNotZero]}
+            validate={[isValidFloat, isNotZero, isRequired]}
             formItemProps={{
               label: formatMessage(
                 formatDisplayCampaignProperty('max_budget_per_period').message,
               ),
+              required: true,
             }}
             inputProps={{
               suffix: <span>€</span>,
@@ -215,11 +235,12 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           <FormInputField
             name="adGroup.max_bid_price"
             component={FormInput}
-            validate={[isValidFloat, isNotZero]}
+            validate={[isValidFloat, isNotZero, isRequired]}
             formItemProps={{
               label: formatMessage(
                 formatAdGroupProperty('max_bid_price').message,
               ),
+              required: true,
             }}
             inputProps={{
               suffix: <span>€</span>,

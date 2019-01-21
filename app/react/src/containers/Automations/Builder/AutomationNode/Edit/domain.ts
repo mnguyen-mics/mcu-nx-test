@@ -14,6 +14,9 @@ import { AdGroupResource } from '../../../../../models/campaign/display';
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
 import { DefaultAutomationFormProps } from './DefaultForm/DefaultAutomationForm';
 import { DisplayCampaignAutomationFormProps } from './DisplayCampaignForm/DisplayCampaignAutomationForm';
+import { TemplateFieldModel, ConsentFieldModel, BlastFieldModel, RouterFieldModel } from '../../../../Campaigns/Email/Edit/domain';
+import { EmailBlastResource, EmailBlastCreateRequest, EmailCampaignCreateRequest, EmailCampaignResource } from '../../../../../models/campaign/email';
+import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampaignAutomationForm';
 
 export interface DefaultFormData {
   name: string;
@@ -31,15 +34,26 @@ export interface DisplayCampaignFormData extends DefaultFormData {
   inventoryCatalFields: InventoryCatalFieldsModel[];
 }
 
+export interface EmailCampaignAutomationFormData extends DefaultFormData {
+  templateFields: TemplateFieldModel[];
+  consentFields: ConsentFieldModel[];
+  blastFields: BlastFieldModel[];
+  routerFields: RouterFieldModel[];
+  blast: Partial<EmailBlastCreateRequest> | EmailBlastResource;
+  campaign: Partial<EmailCampaignCreateRequest> | EmailCampaignResource;
+}
+
 export type AutomationFormDataType =
   | DefaultFormData
   | ABNFormData
-  | DisplayCampaignFormData;
+  | DisplayCampaignFormData
+  | EmailCampaignAutomationFormData;
 
 export type AutomationFormPropsType =
   | ABNAutomationFormProps
   | DefaultAutomationFormProps
-  | DisplayCampaignAutomationFormProps;
+  | DisplayCampaignAutomationFormProps
+  | EmailCampaignAutomationFormProps;
 
 export const FORM_ID = 'automationNodeForm';
 
