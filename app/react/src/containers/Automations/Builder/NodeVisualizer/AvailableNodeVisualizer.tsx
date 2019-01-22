@@ -68,23 +68,6 @@ const conditionNode2: ScenarioNodeShape = {
   scenario_id: '1',
 };
 
-<<<<<<< HEAD
-=======
-// const exitNode1: FakeNode = {npm
-//   id: 7,
-//   name: 'Failure',
-//   icon: 'close',
-//   color: '#ff5959',
-// };
-
-// const exitNode2: FakeNode = {
-//   id: 8,
-//   name: 'Goal',
-//   icon: 'check',
-//   color: '#18b577',
-// };
-
->>>>>>> MICS-LAB fix rebase bugs
 type Props = InjectedIntlProps;
 
 class AvailableNodeVisualizer extends React.Component<Props, State> {

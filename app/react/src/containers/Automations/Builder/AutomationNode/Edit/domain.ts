@@ -5,7 +5,6 @@ import {
   DisplayCampaignNodeResource,
   QueryInputNodeResource,
   StartNodeResource,
-  DisplayCampaignNodeResource,
   EndNodeResource,
 } from '../../../../../models/automations/automations';
 import {
@@ -96,12 +95,6 @@ export function isQueryInputNode(
       'QUERY_INPUT' ||
     (node as QueryInputNodeResource | StartNodeResource).type === 'START'
   );
-}
-
-export function isDisplayCampaignNode(
-  node: AutomationNodeShape,
-): node is DisplayCampaignNodeResource {
-  return node.type === 'DISPLAY_CAMPAIGN';
 }
 
 export function isEndNode(node: AutomationNodeShape): node is EndNodeResource {

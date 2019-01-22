@@ -159,12 +159,13 @@ class AutomationBuilder extends React.Component<Props, State> {
   updateNode = (
     node: ScenarioNodeShape,
     formData: AutomationFormDataType,
-  ): StorylineNodeModel => {
-    return this.props.updateAutomationData(
-      new UpdateNodeOperation(node, formData).execute(
-        this.props.automationData,
-      ),
-    );
+  ): StorylineNodeModel | void => {
+    const { automationTreeData } = this.props;
+    if (automationTreeData) {
+      return this.props.updateAutomationData(
+        new UpdateNodeOperation(node, formData).execute(automationTreeData),
+      );
+    }
   };
 
   buildAutomationNode(nodeModel: StorylineNodeResource): AutomationNodeModel {

@@ -72,6 +72,7 @@ export interface ABNNodeResource extends ScenarioNodeResource {
   type: 'ABN_NODE';
   edges_selection: { [nodeId: string]: { min: number; max: number } };
   formData?: ABNFormData;
+  branch_number?: number;
 }
 
 export interface PluginNodeResource extends ScenarioNodeResource {
