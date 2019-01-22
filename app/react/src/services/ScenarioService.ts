@@ -77,11 +77,11 @@ export interface IScenarioService {
   deleteScenarioNode: (
     scenarioId: string,
     scenarioNode: ScenarioNodeShape,
-  ) => Promise<DataResponse<AutomationResource>>;
+  ) => Promise<DataResponse<ScenarioNodeShape>>;
   updateScenarioNode: (
     scenarioId: string,
     scenarioNode: ScenarioNodeShape,
-  ) => Promise<DataResponse<AutomationResource>>;
+  ) => Promise<DataResponse<ScenarioNodeShape>>;
   getScenarioEdges: (
     scenarioId: string,
   ) => Promise<DataListResponse<ScenarioEdgeResource>>;
@@ -93,7 +93,7 @@ export interface IScenarioService {
     scenarioId: string,
     edgeId: string,
   ) => Promise<DataResponse<ScenarioEdgeResource>>;
-  updateScenarioEdges: (
+  updateScenarioEdge: (
     scenarioId: string,
     edgeId: string,
     scenarioEdge: ScenarioEdgeResource,
@@ -183,14 +183,14 @@ export class ScenarioService implements IScenarioService {
   }
   deleteScenarioNode(
     scenarioId: string,
-  ): Promise<DataResponse<AutomationResource>> {
+  ): Promise<DataResponse<ScenarioNodeShape>> {
     const endpoint = `scenarios/${scenarioId}/storyline/nodes`;
     return ApiService.deleteRequest(endpoint);
   }
   updateScenarioNode(
     scenarioId: string,
     scenarioNode: ScenarioNodeShape,
-  ): Promise<DataResponse<AutomationResource>> {
+  ): Promise<DataResponse<ScenarioNodeShape>> {
     const endpoint = `scenarios/${scenarioId}/storyline/nodes`;
     return ApiService.putRequest(endpoint, scenarioNode);
   }
@@ -215,7 +215,7 @@ export class ScenarioService implements IScenarioService {
     const endpoint = `scenarios/${scenarioId}/storyline/edges/${edgeId}`;
     return ApiService.deleteRequest(endpoint);
   }
-  updateScenarioEdges(
+  updateScenarioEdge(
     scenarioId: string,
     edgeId: string,
     scenarioEdge: ScenarioEdgeResource,

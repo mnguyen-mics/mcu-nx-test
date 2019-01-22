@@ -62,6 +62,7 @@ export interface EmailCampaignNodeResource extends ScenarioNodeResource {
 export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
   formData: Partial<QueryResource>;
+  query_id: string;
   evaluation_mode?: string;
   evaluation_period?: string;
   evaluation_period_unit?: string;
@@ -89,6 +90,7 @@ export interface EndNodeResource extends ScenarioNodeResource {
 
 export interface StartNodeResource extends ScenarioNodeResource {
   type: 'START';
+  query_id?: string;
   formData: Partial<QueryResource>;
 }
 

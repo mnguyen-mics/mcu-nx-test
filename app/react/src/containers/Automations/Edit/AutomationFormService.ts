@@ -3,14 +3,16 @@ import { IScenarioService } from './../../../services/ScenarioService';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../constants/types';
 import { AutomationFormData } from './domain';
-import { buildAutomationTreeData } from '../Builder/domain';
+import { buildAutomationTreeData, StorylineNodeModel } from '../Builder/domain';
 import { DataResponse } from '../../../services/ApiService';
 import {
-  isScenarioNodeShape,
   isQueryInputNode,
+  isDisplayCampaignNode,
+  isEndNode,
+  isScenarioNodeShape,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
-// import { IQueryService } from '../../../services/QueryService';
+import { IQueryService } from '../../../services/QueryService';
 
 export interface IAutomationFormService {
   loadInitialAutomationValues: (
@@ -28,8 +30,9 @@ export interface IAutomationFormService {
 export class AutomationFormService implements IAutomationFormService {
   @inject(TYPES.IScenarioService)
   private _scenarioService: IScenarioService;
-  // @inject(TYPES.IQueryService)
-  // private _queryService: IQueryService;
+
+  @inject(TYPES.IQueryService)
+  private _queryService: IQueryService;
 
   loadInitialAutomationValues(
     automationId: string,
@@ -87,60 +90,92 @@ export class AutomationFormService implements IAutomationFormService {
     if (storageModelVersion === 'v201506') {
       return saveOrCreatePromise();
     } else {
-      return saveOrCreatePromise().then(createdAutomation => {
-        const createdAutomationId = createdAutomation.data.id;
-        const beginNodeDatamartId = formData.automation.datamart_id;
-        const beginNode = formData.automationTreeData.node;
-        if (isScenarioNodeShape(beginNode) && isQueryInputNode(beginNode) && beginNodeDatamartId) {
-          // const saveOrCreateQueryPromise = () =>
-          //   beginNode.query_id
-          //     ? this._queryService.updateQuery(
-          //       beginNodeDatamartId
-          //       beginNode.query_id,
+      return saveOrCreatePromise()
+        .then(createdAutomation => {
+          const savedAutomationId = createdAutomation.data.id;
+          const datamartId = formData.automation.datamart_id;
 
-          //     )
-          //     : this._queryService.updateQuery();
-        }
-        return this._scenarioService
-          .createScenarioBeginNode(createdAutomationId, {
-            name: 'begin node',
-            scenario_id: createdAutomationId,
-            type: 'QUERY_INPUT',
-            query_id: '', // TO REPLACE
-          })
-          .then(() => {
-            const treeData = formData.automationTreeData;
-            if (
-              treeData &&
-              isScenarioNodeShape(treeData.node) &&
-              treeData.in_edge
-            ) {
-              const saveFirstNodePromise = this._scenarioService.createScenarioNode(
-                createdAutomationId,
-                treeData.node,
-              );
-              const saveFirstEdgePromise = this._scenarioService.createScenarioEdge(
-                createdAutomationId,
-                treeData.in_edge,
-              );
-              // return Promise.resolve();
-              Promise.all([saveFirstNodePromise, saveFirstEdgePromise])
-                .then(() => {
-                  treeData.out_edges.forEach((node, child) => {
-                    // filter dropnodes
-                    return Promise.resolve();
-                  });
-                })
-                .catch(err => {
-                  //
-                });
-            }
-            return Promise.resolve();
-          })
-          .catch(err => {
-            //
-          });
-      });
+          const treeData = formData.automationTreeData;
+          if (datamartId) {
+            this.iterate(datamartId, savedAutomationId, treeData);
+          }
+        })
+        .catch(err => {
+          // Automation save failed
+        });
     }
   }
+
+  iterate = (
+    datamartId: string,
+    automationId: string,
+    storylineNode: StorylineNodeModel,
+  ) => {
+    const node = storylineNode.node;
+    // filter dropnodes
+    if (isScenarioNodeShape(node)) {
+      if (isDisplayCampaignNode(node)) {
+        // waiting for jesus part
+      } else if (isQueryInputNode(node)) {
+        const saveOrCreateQueryPromise = node.formData.id
+          ? this._queryService.updateQuery(datamartId, node.formData.id, {
+              ...node.formData,
+            })
+          : this._queryService.createQuery(datamartId, {
+              ...node.formData,
+            });
+        saveOrCreateQueryPromise
+          .then(queryRes => {
+            const beginNodeId = node.id;
+            const saveOrCreateScenarioBeginNode = beginNodeId
+              ? this._scenarioService.updateScenarioNode(automationId, {
+                  ...node,
+                  query_id: queryRes.data.id,
+                })
+              : this._scenarioService.createScenarioNode(automationId, {
+                  ...node,
+                  query_id: queryRes.data.id,
+                });
+            return saveOrCreateScenarioBeginNode
+              .then(() => {
+                if (storylineNode.in_edge) {
+                  const edgeResource = storylineNode.in_edge;
+                  const edgePromise = edgeResource.id
+                    ? this._scenarioService.updateScenarioEdge(
+                        automationId,
+                        edgeResource.id,
+                        edgeResource,
+                      )
+                    : this._scenarioService.createScenarioEdge(
+                        automationId,
+                        edgeResource,
+                      );
+                  return edgePromise
+                    .then(() => {
+                      // ok
+                    })
+                    .catch(() => {
+                      // Edge save failed
+                    });
+                }
+                return;
+              })
+              .catch(err => {
+                // Begin node save failed
+              });
+
+            return;
+          })
+          .catch(err => {
+            // Query save failed
+          });
+      } else if (isEndNode(node)) {
+        //
+      }
+    }
+
+    storylineNode.out_edges.forEach((child, index) => {
+      this.iterate(datamartId, automationId, child);
+    });
+  };
 }
