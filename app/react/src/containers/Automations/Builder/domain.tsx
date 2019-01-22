@@ -13,6 +13,7 @@ import {
   EmailCampaignAutomationFormData,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
+import { QueryResource } from '../../../models/datamart/DatamartResource';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -24,6 +25,7 @@ export interface TreeNodeOperations {
   updateNode: (
     node: ScenarioNodeShape,
     formData: AutomationFormDataType,
+    initalFormData: AutomationFormDataType,
   ) => void;
   updateLayout: () => void;
 }
@@ -176,7 +178,10 @@ export class DeleteNodeOperation implements NodeOperation {
   ): StorylineNodeModel {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
-        if (child.node.id === idNodeToBeDeleted) {
+        if (
+          child.node.id === idNodeToBeDeleted &&
+          child.node.type === 'ABN_NODE'
+        ) {
           const newNode: StorylineNodeModel = {
             node: {
               id: child.node.id,
@@ -188,6 +193,15 @@ export class DeleteNodeOperation implements NodeOperation {
             out_edges: [],
           };
           return newNode;
+        } else if (
+          child.node.id === idNodeToBeDeleted &&
+          child.node.type !== 'ABN_NODE'
+        ) {
+          return {
+            node: child.out_edges[0].node,
+            in_edge: child.out_edges[0].in_edge,
+            out_edges: child.out_edges[0].out_edges,
+          };
         } else {
           return this.iterateData(child, idNodeToBeDeleted);
         }
@@ -205,10 +219,16 @@ export class DeleteNodeOperation implements NodeOperation {
 export class UpdateNodeOperation implements NodeOperation {
   node: AutomationNodeShape;
   formData: AutomationFormDataType;
+  initialFormData: AutomationFormDataType;
 
-  constructor(node: ScenarioNodeShape, formData: AutomationFormDataType) {
+  constructor(
+    node: ScenarioNodeShape,
+    formData: AutomationFormDataType,
+    initialFormData: AutomationFormDataType,
+  ) {
     this.node = node;
     this.formData = formData;
+    this.initialFormData = initialFormData;
   }
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
@@ -224,6 +244,7 @@ export class UpdateNodeOperation implements NodeOperation {
           ...storylineNode.node,
           name: this.formData.name,
           formData: this.formData as DisplayCampaignFormData,
+          initialFormData: this.initialFormData as DisplayCampaignFormData,
         };
         break;
       case 'EMAIL_CAMPAIGN':
@@ -231,6 +252,7 @@ export class UpdateNodeOperation implements NodeOperation {
           ...storylineNode.node,
           name: this.formData.name,
           formData: this.formData as EmailCampaignAutomationFormData,
+          // todo initial form values
         };
         break;
       case 'ABN_NODE':
@@ -238,6 +260,19 @@ export class UpdateNodeOperation implements NodeOperation {
           ...storylineNode.node,
           name: this.formData.name,
           formData: this.formData as ABNFormData,
+        };
+        break;
+      case 'QUERY_INPUT':
+        nodeBody = {
+          ...storylineNode.node,
+          name: this.formData.name,
+          formData: this.formData as Partial<QueryResource>,
+        };
+        break;
+      case 'START':
+        nodeBody = {
+          ...storylineNode.node,
+          formData: this.formData as Partial<QueryResource>,
         };
         break;
       default:
@@ -335,10 +370,6 @@ export interface StorylineNodeModel {
   out_edges: StorylineNodeModel[];
 }
 
-/******************
- * Hardcoded data *
- ******************/
-
 export const storylineResourceData: StorylineResource = {
   begin_node_id: '1',
 };
@@ -346,7 +377,7 @@ export const storylineResourceData: StorylineResource = {
 export const beginNode: ScenarioNodeShape = {
   id: '1',
   name: 'Enter automation',
-  scenario_id: '1',
+  scenario_id: '',
   type: 'START',
   formData: {},
 };
@@ -354,18 +385,18 @@ export const beginNode: ScenarioNodeShape = {
 export const node4: ScenarioNodeShape = {
   id: '2',
   name: 'Exit automation',
-  scenario_id: '1',
+  scenario_id: '',
   type: 'GOAL',
 };
 
 export const storylineNodeData: ScenarioNodeShape[] = [beginNode, node4];
 
 export const edge12: ScenarioEdgeResource = {
-  id: 'string',
+  id: '3',
   source_id: '1',
   target_id: '2',
   handler: 'ON_VISIT',
-  scenario_id: '1',
+  scenario_id: '',
 };
 
 export const storylineEdgeData: ScenarioEdgeResource[] = [edge12];
@@ -437,7 +468,7 @@ export function buildAutomationTreeData(
     n => n.id === storylineData.begin_node_id,
   )[0];
   const outNodesId: string[] = edgeData
-    .filter(e => e.source_id === node.id)
+    .filter(e => node && e.source_id === node.id)
     .map(e => e.target_id);
   const outNodes: ScenarioNodeShape[] = nodeData.filter(n =>
     outNodesId.includes(n.id),

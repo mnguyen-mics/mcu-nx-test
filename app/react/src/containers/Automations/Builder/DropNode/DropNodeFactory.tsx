@@ -3,6 +3,7 @@ import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
 import DropNodeWidget from './DropNodeWidget';
 import DropNodeModel from './DropNodeModel';
 import { TreeNodeOperations, StorylineNodeModel, DropNode } from '../domain';
+import { INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA } from '../AutomationNode/Edit/domain';
 
 export default class DropNodeFactory extends AbstractNodeFactory<
   DropNodeModel
@@ -37,6 +38,8 @@ export default class DropNodeFactory extends AbstractNodeFactory<
         type: 'DISPLAY_CAMPAIGN',
         campaign_id: 'string',
         ad_group_id: 'string',
+        formData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+        initialFormData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
       },
       out_edges: [],
     };
@@ -48,6 +51,8 @@ export default class DropNodeFactory extends AbstractNodeFactory<
         type: 'DISPLAY_CAMPAIGN',
         campaign_id: 'string',
         ad_group_id: 'string',
+        formData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+        initialFormData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
       },
       out_edges: [],
     };

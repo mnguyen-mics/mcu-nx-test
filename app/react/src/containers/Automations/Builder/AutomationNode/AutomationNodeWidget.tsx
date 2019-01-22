@@ -36,7 +36,6 @@ interface State {
   focus: boolean;
   hover: boolean;
   initialValuesForm: AutomationFormDataType;
-  query?: string;
 }
 
 const messages = defineMessages({
@@ -148,6 +147,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 this.props.nodeOperations.updateNode(
                   scenarioNodeShape,
                   formData,
+                  this.state.initialValuesForm
                 );
                 this.props.closeNextDrawer();
               },
@@ -162,14 +162,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   getQuery = () => {
     const node = this.props.node.storylineNodeModel.node;
-    if (isQueryInputNode(node)) {
-      return node.formData.query_text;
+    if (isQueryInputNode(node) && node.formData.query_text) {
+      return JSON.parse(node.formData.query_text);
     }
     return undefined;
   };
 
   handleQueryOnChange = (queryText: string) => {
-    this.setState({ query: queryText });
     const { node } = this.props;
     this.props.updateQueryNode(node.storylineNodeModel.node.id, queryText);
   };

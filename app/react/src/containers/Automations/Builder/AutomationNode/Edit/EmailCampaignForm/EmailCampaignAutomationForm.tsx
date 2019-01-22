@@ -17,7 +17,10 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { FORM_ID, EmailCampaignAutomationFormData } from '../domain';
 import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
-import { BlastFormSection, TemplateFormSection } from '../../../../../Campaigns/Email/Edit/Blast/Sections';
+import {
+  BlastFormSection,
+  TemplateFormSection,
+} from '../../../../../Campaigns/Email/Edit/Blast/Sections';
 import { BlastTemplateSectionFieldArray } from '../../../../../Campaigns/Email/Edit/Blast/EmailBlastForm';
 import GeneralInformationFormSection from './GeneralInformationSectionForm';
 
@@ -66,7 +69,6 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
     const { change } = this.props;
 
-
     const sections: McsFormSection[] = [];
 
     const displayCampaignSection = {
@@ -83,22 +85,19 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
     const senderInformation = {
       id: 'senderInformation',
       title: localMessages.sectionSenderInformationTitle,
-      component: (
-        <BlastFormSection small={true}/>
-      ),
+      component: <BlastFormSection small={true} />,
     };
-
 
     const emailTemplate = {
       id: 'emailTemplate',
       title: localMessages.sectionSenderInformationTitle,
-      component: (  
+      component: (
         <BlastTemplateSectionFieldArray
-        name="templateFields"
-        component={TemplateFormSection}
-        formChange={change}
-        rerenderOnEveryChange={true}
-      />
+          name="templateFields"
+          component={TemplateFormSection}
+          formChange={change}
+          rerenderOnEveryChange={true}
+        />
       ),
     };
 
@@ -135,7 +134,11 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form className="edit-layout ant-layout" onSubmit={handleSubmit} layout="vertical">
+          <Form
+            className="edit-layout ant-layout"
+            onSubmit={handleSubmit}
+            layout="vertical"
+          >
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container automation-form"

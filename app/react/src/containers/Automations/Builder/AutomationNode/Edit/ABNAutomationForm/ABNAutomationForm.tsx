@@ -47,10 +47,7 @@ interface MapStateToProps {
   formValues: ABNFormData;
 }
 
-type Props = InjectedFormProps<
-  ABNFormData,
-  ABNAutomationFormProps
-> &
+type Props = InjectedFormProps<ABNFormData, ABNAutomationFormProps> &
   ABNAutomationFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -58,17 +55,18 @@ type Props = InjectedFormProps<
 
 class ABNAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-
     const general = {
       id: 'general',
       title: localMessages.sectionGeneralTitle,
       component: (
-        <GeneralInformationFormSection initialValues={this.props.initialValues} />
+        <GeneralInformationFormSection
+          initialValues={this.props.initialValues}
+        />
       ),
     };
 
     const sections: McsFormSection[] = [general];
-    
+
     return sections;
   };
 
@@ -98,7 +96,11 @@ class ABNAutomationForm extends React.Component<Props> {
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form className="edit-layout ant-layout" onSubmit={handleSubmit}>
+          <Form
+            className="edit-layout ant-layout"
+            onSubmit={handleSubmit}
+            layout="vertical"
+          >
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container automation-form"

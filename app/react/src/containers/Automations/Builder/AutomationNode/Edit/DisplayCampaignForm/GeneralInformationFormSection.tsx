@@ -97,7 +97,9 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(formatDisplayCampaignProperty('name').message),
+              label: formatMessage(
+                formatDisplayCampaignProperty('name').message,
+              ),
               required: true,
             }}
             inputProps={{
@@ -202,6 +204,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                   options={[
                     {
                       value: 'DAY',
+                      key: 'DAY',
                       children: formatDisplayCampaignProperty(
                         'max_budget_period',
                         'DAY',
@@ -209,6 +212,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                     },
                     {
                       value: 'WEEK',
+                      key: 'WEEK',
                       children: formatDisplayCampaignProperty(
                         'max_budget_period',
                         'WEEK',
@@ -216,6 +220,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                     },
                     {
                       value: 'MONTH',
+                      key: 'MONTH',
                       children: formatDisplayCampaignProperty(
                         'max_budget_period',
                         'MONTH',

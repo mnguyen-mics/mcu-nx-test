@@ -6,6 +6,7 @@ import {
   QueryInputNodeResource,
   StartNodeResource,
   EndNodeResource,
+  EmailCampaignNodeResource,
 } from '../../../../../models/automations/automations';
 import {
   LocationFieldModel,
@@ -38,6 +39,25 @@ export interface DefaultFormData {
 export interface ABNFormData extends DefaultFormData {
   branch_number: number;
 }
+
+export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA = {
+  name: '',
+  locationFields: [],
+  adGroup: {},
+  adFields: [],
+  bidOptimizerFields: [],
+  inventoryCatalFields: [],
+};
+
+export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA = {
+  name: '',
+  templateFields: [],
+  consentFields: [],
+  blastFields: [],
+  routerFields: [],
+  blast: {},
+  campaign: {},
+};
 
 export interface DisplayCampaignFormData extends DefaultFormData {
   campaign: Partial<DisplayCampaignResource>;
@@ -85,6 +105,12 @@ export function isDisplayCampaignNode(
   node: AutomationNodeShape,
 ): node is DisplayCampaignNodeResource {
   return node.type === 'DISPLAY_CAMPAIGN';
+}
+
+export function isEmailCampaignNode(
+  node: AutomationNodeShape,
+): node is EmailCampaignNodeResource {
+  return node.type === 'EMAIL_CAMPAIGN';
 }
 
 export function isQueryInputNode(

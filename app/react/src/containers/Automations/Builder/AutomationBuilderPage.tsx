@@ -32,7 +32,7 @@ interface MapStateToProps {
 
 interface State {
   isLoading: boolean;
-  automationFormData?: Partial<AutomationFormData>;
+  automationFormData: Partial<AutomationFormData>;
 }
 
 type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
@@ -78,6 +78,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: false,
+      automationFormData: INITIAL_AUTOMATION_DATA
     };
   }
 

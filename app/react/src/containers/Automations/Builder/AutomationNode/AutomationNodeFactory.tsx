@@ -3,6 +3,7 @@ import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
 import AutomationNodeWidget from './AutomationNodeWidget';
 import AutomationNodeModel from './AutomationNodeModel';
 import { StorylineNodeModel, TreeNodeOperations } from '../domain';
+import { INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA } from './Edit/domain';
 
 export default class AutomationNodeFactory extends AbstractNodeFactory<
   AutomationNodeModel
@@ -47,6 +48,8 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
         type: 'DISPLAY_CAMPAIGN',
         campaign_id: 'string',
         ad_group_id: 'string',
+        formData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+        initialFormData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
       },
       out_edges: [],
     };

@@ -2,7 +2,6 @@ import { injectable } from 'inversify';
 import {
   ScenarioNodeShape,
   StorylineResource,
-  StartNodeResource,
   ScenarioEdgeResource,
 } from './../models/automations/automations';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
@@ -34,6 +33,7 @@ export const SCENARIOS_SEARCH_SETTINGS = [
 ];
 
 export interface IScenarioService {
+  /*****   AUTOMATION RESOURCE   *****/
   getScenarios: (
     organisationId: string,
     options: GetAutomationsOptions,
@@ -53,6 +53,7 @@ export interface IScenarioService {
   deleteScenario: (
     scenarioId: string,
   ) => Promise<DataResponse<AutomationResource>>;
+  /*****   STORYLINE RESOURCE   *****/
   getScenarioStoryline: (
     scenarioId: string,
   ) => Promise<DataResponse<StorylineResource>>;
@@ -60,19 +61,21 @@ export interface IScenarioService {
     scenarioId: string,
     storyline: StorylineResource,
   ) => Promise<DataResponse<StorylineResource>>;
+  /*****   BEGIN NODE RESOURCE   *****/
   getScenarioBeginNode: (
     scenarioId: string,
-  ) => Promise<DataResponse<StartNodeResource>>;
+  ) => Promise<DataResponse<StorylineResource>>;
   createScenarioBeginNode: (
     scenarioId: string,
     storyline: any,
-  ) => Promise<DataResponse<StartNodeResource>>;
+  ) => Promise<DataResponse<StorylineResource>>;
+  /*****   SCENARIO NODE RESOURCE   *****/
   getScenarioNodes: (
     scenarioId: string,
   ) => Promise<DataListResponse<ScenarioNodeShape>>;
   createScenarioNode: (
     scenarioId: string,
-    scenarioNode: ScenarioNodeShape,
+    scenarioNode: any,
   ) => Promise<DataResponse<ScenarioNodeShape>>;
   deleteScenarioNode: (
     scenarioId: string,
@@ -80,8 +83,10 @@ export interface IScenarioService {
   ) => Promise<DataResponse<ScenarioNodeShape>>;
   updateScenarioNode: (
     scenarioId: string,
-    scenarioNode: ScenarioNodeShape,
+    nodeId: string,
+    scenarioNode: any,
   ) => Promise<DataResponse<ScenarioNodeShape>>;
+  /*****   SCENARION EDGE RESOURCE   *****/
   getScenarioEdges: (
     scenarioId: string,
   ) => Promise<DataListResponse<ScenarioEdgeResource>>;
@@ -156,14 +161,14 @@ export class ScenarioService implements IScenarioService {
   }
   getScenarioBeginNode(
     scenarioId: string,
-  ): Promise<DataResponse<StartNodeResource>> {
+  ): Promise<DataResponse<StorylineResource>> {
     const endpoint = `scenarios/${scenarioId}/storyline/begin`;
     return ApiService.getRequest(endpoint);
   }
   createScenarioBeginNode(
     scenarioId: string,
     storyline: any,
-  ): Promise<DataResponse<StartNodeResource>> {
+  ): Promise<DataResponse<StorylineResource>> {
     const endpoint = `scenarios/${scenarioId}/storyline/begin`;
     return ApiService.postRequest(endpoint, storyline);
   }
@@ -189,9 +194,10 @@ export class ScenarioService implements IScenarioService {
   }
   updateScenarioNode(
     scenarioId: string,
+    nodeId: string,
     scenarioNode: ScenarioNodeShape,
   ): Promise<DataResponse<ScenarioNodeShape>> {
-    const endpoint = `scenarios/${scenarioId}/storyline/nodes`;
+    const endpoint = `scenarios/${scenarioId}/storyline/nodes/${nodeId}`;
     return ApiService.putRequest(endpoint, scenarioNode);
   }
   // Storyline Edges

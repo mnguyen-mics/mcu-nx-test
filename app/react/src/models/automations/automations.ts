@@ -50,13 +50,14 @@ export interface DisplayCampaignNodeResource extends ScenarioNodeResource {
   type: 'DISPLAY_CAMPAIGN';
   campaign_id: string;
   ad_group_id: string;
-  formData?: DisplayCampaignFormData;
+  formData: DisplayCampaignFormData;
+  initialFormData: DisplayCampaignFormData;
 }
 
 export interface EmailCampaignNodeResource extends ScenarioNodeResource {
   type: 'EMAIL_CAMPAIGN';
   campaign_id: string;
-  formData?: EmailCampaignAutomationFormData;
+  formData: EmailCampaignAutomationFormData;
 }
 
 export interface QueryInputNodeResource extends ScenarioNodeResource {

@@ -6,6 +6,10 @@ import AvailableNode from './AvailableNode';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { AntIcon } from '../domain';
+import {
+  INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
+  INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+} from '../AutomationNode/Edit/domain';
 
 const { TreeNode } = Tree;
 
@@ -39,8 +43,9 @@ const emailCampaignNode: ScenarioNodeShape = {
   id: cuid(),
   name: 'Send Email',
   type: 'EMAIL_CAMPAIGN',
-  scenario_id: '1',
+  scenario_id: '',
   campaign_id: '',
+  formData: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
 };
 
 const displayCampaignNode: ScenarioNodeShape = {
@@ -48,15 +53,17 @@ const displayCampaignNode: ScenarioNodeShape = {
   name: 'Display Advertising',
   type: 'DISPLAY_CAMPAIGN',
   campaign_id: '',
-  scenario_id: '1',
+  scenario_id: '',
   ad_group_id: '',
+  formData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+  initialFormData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
 };
 
 const conditionNode1: ScenarioNodeShape = {
   id: cuid(),
   name: 'Split',
   type: 'ABN_NODE',
-  scenario_id: '1',
+  scenario_id: '',
   edges_selection: {},
   branch_number: 2,
 };
@@ -65,7 +72,7 @@ const conditionNode2: ScenarioNodeShape = {
   id: cuid(),
   name: 'Wait',
   type: 'WAIT',
-  scenario_id: '1',
+  scenario_id: '',
 };
 
 type Props = InjectedIntlProps;

@@ -364,7 +364,7 @@ function getSegmentTasks(
   return tasks;
 }
 
-function getLocationTasks(
+export function getLocationTasks(
   campaignId: string,
   adGroupId: string,
   locationFields: LocationFieldModel[],
@@ -414,7 +414,7 @@ function getLocationTasks(
 }
 
 
-function getInventoryCatalogTask(
+export function getInventoryCatalogTask(
   campaignId: string,
   adGroupId: string,
   inventoryCatalFields: InventoryCatalFieldsModel[],
@@ -614,7 +614,7 @@ function getInventoryCatalogTask(
 
 
 
-function getAdTasks(
+export function getAdTasks(
   organisationId: string,
   campaignId: string,
   adGroupId: string,

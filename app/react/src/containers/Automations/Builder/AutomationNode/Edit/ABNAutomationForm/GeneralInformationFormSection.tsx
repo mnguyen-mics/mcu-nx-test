@@ -93,19 +93,19 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           />
 
           {this.props.initialValues.branch_number !== undefined && (
-              <FormSliderField
-                name="branch_number"
-                component={FormSlider}
-                formItemProps={{
-                  label: formatMessage(messages.branchNumber),
-                  required: true,
-                }}
-                inputProps={{
-                  min: 2,
-                  max: 10,
-                }}
-              />
-            )}
+            <FormSliderField
+              name="branch_number"
+              component={FormSlider}
+              formItemProps={{
+                label: formatMessage(messages.branchNumber),
+                required: true,
+              }}
+              inputProps={{
+                min: 2,
+                max: 10,
+              }}
+            />
+          )}
         </div>
       </div>
     );
