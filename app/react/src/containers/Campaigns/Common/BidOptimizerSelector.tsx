@@ -151,18 +151,26 @@ class BidOptimizerSelector extends React.Component<Props, State> {
         intlMessage: messages.bidOptimizerSelectorColumnType,
         key: 'type',
         render: (text, record) => {
-          if (metadataByBidOptmizerId[record.id].fetching)
-            return <i className="mcs-table-cell-loading" />;
-          return <span>{metadataByBidOptmizerId[record.id].type}</span>;
+          if (metadataByBidOptmizerId[record.id]) {
+            if (metadataByBidOptmizerId[record.id].fetching) {
+              return <i className="mcs-table-cell-loading" />;
+            }
+            return <span>{metadataByBidOptmizerId[record.id].type}</span>;
+          }
+          return '';
         },
       },
       {
         intlMessage: messages.bidOptimizerSelectorColumnProvider,
         key: 'provider',
         render: (text, record) => {
-          if (metadataByBidOptmizerId[record.id].fetching)
-            return <i className="mcs-table-cell-loading" />;
-          return <span>{metadataByBidOptmizerId[record.id].provider}</span>;
+          if (metadataByBidOptmizerId[record.id]) {
+            if (metadataByBidOptmizerId[record.id].fetching) {
+              return <i className="mcs-table-cell-loading" />;
+            }
+            return <span>{metadataByBidOptmizerId[record.id].provider}</span>;
+          }
+          return '';
         },
       },
     ];
