@@ -47,8 +47,8 @@ export interface BidOptimizerSelectorProps {
 
 interface State {
   metadataByBidOptmizerId: {
-    [id: string]: { type?: string, provider?: string, fetching: boolean; };
-  }
+    [id: string]: { type?: string; provider?: string; fetching: boolean };
+  };
 }
 
 type Props = BidOptimizerSelectorProps &
@@ -56,20 +56,26 @@ type Props = BidOptimizerSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class BidOptimizerSelector extends React.Component<Props, State> {
-
   constructor(props: Props) {
     super(props);
-    this.state = { 
-      metadataByBidOptmizerId: {}
-     };
+    this.state = {
+      metadataByBidOptmizerId: {},
+    };
   }
 
-  saveBidOptimizers = (bidOptimizerIds: string[], bidOptimizers: BidOptimizer[]) => {
+  saveBidOptimizers = (
+    bidOptimizerIds: string[],
+    bidOptimizers: BidOptimizer[],
+  ) => {
     this.props.save(bidOptimizers);
   };
 
   fetchBidOptimizers = (filter: SearchFilter) => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const options: any = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
@@ -79,42 +85,60 @@ class BidOptimizerSelector extends React.Component<Props, State> {
       options.name = filter.keywords;
     }
 
-    return BidOptimizerService.getBidOptimizers(organisationId, options).then(res => {
-      // fetch properties to update state
-      this.setState(() => ({ 
-        metadataByBidOptmizerId: res.data.reduce((acc, value) => ({
-          ...acc,
-          [value.id]: {
-            fetching: true
-          }
-        }), {})
-       }));
-      Promise.all(res.data.map(bidOptimzer => {
-        return BidOptimizerService.getInstanceProperties(bidOptimzer.id).then(propsRes => {
-          const nameProp = propsRes.data.find(prop => prop.technical_name === 'name');
-          const providerProp = propsRes.data.find(prop => prop.technical_name === 'provider');
-          if (nameProp && providerProp){
-            this.setState((prevState) => ({
-              metadataByBidOptmizerId: {
-                ...prevState.metadataByBidOptmizerId,
-                [bidOptimzer.id]: { 
-                  type: (nameProp as StringPropertyResource).value.value,
-                  provider: (providerProp as StringPropertyResource).value.value,
-                  fetching: false,
-                }
+    return BidOptimizerService.getBidOptimizers(organisationId, options).then(
+      res => {
+        // fetch properties to update state
+        this.setState(() => ({
+          metadataByBidOptmizerId: res.data.reduce(
+            (acc, value) => ({
+              ...acc,
+              [value.id]: {
+                fetching: true,
+              },
+            }),
+            {},
+          ),
+        }));
+        Promise.all(
+          res.data.map(bidOptimzer => {
+            return BidOptimizerService.getInstanceProperties(
+              bidOptimzer.id,
+            ).then(propsRes => {
+              const nameProp = propsRes.data.find(
+                prop => prop.technical_name === 'name',
+              );
+              const providerProp = propsRes.data.find(
+                prop => prop.technical_name === 'provider',
+              );
+              if (nameProp && providerProp) {
+                this.setState(prevState => ({
+                  metadataByBidOptmizerId: {
+                    ...prevState.metadataByBidOptmizerId,
+                    [bidOptimzer.id]: {
+                      type: (nameProp as StringPropertyResource).value.value,
+                      provider: (providerProp as StringPropertyResource).value
+                        .value,
+                      fetching: false,
+                    },
+                  },
+                }));
               }
-            }));
-          }
-        });
-      }));
+            });
+          }),
+        );
 
-      // return original list for TableSelector
-      return res;
-    });
+        // return original list for TableSelector
+        return res;
+      },
+    );
   };
 
   render() {
-    const { selectedBidOptimizerIds, close, intl: { formatMessage } } = this.props;
+    const {
+      selectedBidOptimizerIds,
+      close,
+      intl: { formatMessage },
+    } = this.props;
     const { metadataByBidOptmizerId } = this.state;
 
     const columns: Array<DataColumnDefinition<BidOptimizer>> = [
@@ -127,21 +151,24 @@ class BidOptimizerSelector extends React.Component<Props, State> {
         intlMessage: messages.bidOptimizerSelectorColumnType,
         key: 'type',
         render: (text, record) => {
-          if (metadataByBidOptmizerId[record.id].fetching) return <i className="mcs-table-cell-loading" />;
-          return <span>{metadataByBidOptmizerId[record.id].type}</span>
+          if (metadataByBidOptmizerId[record.id].fetching)
+            return <i className="mcs-table-cell-loading" />;
+          return <span>{metadataByBidOptmizerId[record.id].type}</span>;
         },
       },
       {
         intlMessage: messages.bidOptimizerSelectorColumnProvider,
         key: 'provider',
         render: (text, record) => {
-          if (metadataByBidOptmizerId[record.id].fetching) return <i className="mcs-table-cell-loading" />;
-          return <span>{metadataByBidOptmizerId[record.id].provider}</span>
+          if (metadataByBidOptmizerId[record.id].fetching)
+            return <i className="mcs-table-cell-loading" />;
+          return <span>{metadataByBidOptmizerId[record.id].provider}</span>;
         },
       },
     ];
 
-    const fetchBidOptimizer = (id: string) => BidOptimizerService.getInstanceById(id);
+    const fetchBidOptimizer = (id: string) =>
+      BidOptimizerService.getInstanceById(id);
 
     return (
       <BidOptimizerTableSelector
@@ -162,6 +189,7 @@ class BidOptimizerSelector extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, BidOptimizerSelectorProps>(withRouter, injectIntl)(
-  BidOptimizerSelector,
-);
+export default compose<Props, BidOptimizerSelectorProps>(
+  withRouter,
+  injectIntl,
+)(BidOptimizerSelector);
