@@ -43,7 +43,9 @@ import { DisplayNetworkSelectionCreateRequest } from '../../../../../../../model
 
 export interface InventoryCatalogFormSectionProps
   extends 
-    ReduxFormChangeProps {}
+    ReduxFormChangeProps {
+      small?: boolean;
+    }
 
 type Props = WrappedFieldArrayProps<InventoryCatalFieldsModel> &
   InjectedIntlProps &
@@ -494,6 +496,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
       keywordList,
       dealList,
       placementList,
+      small,
     } = this.props;
 
     const otherData = [
@@ -518,7 +521,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
 
         <Row>
           <Row className="audience-selection-notice">
-            <Col span={15} offset={4}>
+            <Col span={15} offset={small ? 0 : 4}>
               <FormattedMessage
                 {...inventoryCatalogMsgs.detailedTargetingNotice}
               />
@@ -554,6 +557,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               keywordList.data,
               placementList.data,
             )}
+            small={small}
           />
           <div className={showExclude ? '' : 'hide-section'}>
             <Row className="audience-selection-notice">
@@ -598,7 +602,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
             />
           </div>
           <Row className={showExclude ? 'hide-section' : ''}>
-            <Col span={3} offset={14}>
+            <Col span={3} offset={small ? 20 : 14}>
               <ButtonStyleless
                 onClick={this.toogleShowExclude}
                 className="action-button"

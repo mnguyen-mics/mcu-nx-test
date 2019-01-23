@@ -10,7 +10,7 @@ import {
   BidOptimizerFieldModel,
   InventoryCatalFieldsModel,
 } from '../../../../Campaigns/Display/Edit/AdGroup/domain';
-import { AdGroupResource } from '../../../../../models/campaign/display';
+import { AdGroupResource, DisplayCampaignResource } from '../../../../../models/campaign/display';
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
 import { DefaultAutomationFormProps } from './DefaultForm/DefaultAutomationForm';
 import { DisplayCampaignAutomationFormProps } from './DisplayCampaignForm/DisplayCampaignAutomationForm';
@@ -27,6 +27,7 @@ export interface ABNFormData extends DefaultFormData {
 }
 
 export interface DisplayCampaignFormData extends DefaultFormData {
+  campaign: Partial<DisplayCampaignResource>;
   locationFields: LocationFieldModel[];
   adGroup: Partial<AdGroupResource>;
   adFields: AdFieldModel[];

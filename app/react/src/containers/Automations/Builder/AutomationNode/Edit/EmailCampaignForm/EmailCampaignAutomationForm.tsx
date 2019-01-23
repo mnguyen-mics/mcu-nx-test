@@ -84,7 +84,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
       id: 'senderInformation',
       title: localMessages.sectionSenderInformationTitle,
       component: (
-        <BlastFormSection/>
+        <BlastFormSection small={true}/>
       ),
     };
 
@@ -135,7 +135,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form className="edit-layout ant-layout" onSubmit={handleSubmit}>
+          <Form className="edit-layout ant-layout" onSubmit={handleSubmit} layout="vertical">
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container automation-form"

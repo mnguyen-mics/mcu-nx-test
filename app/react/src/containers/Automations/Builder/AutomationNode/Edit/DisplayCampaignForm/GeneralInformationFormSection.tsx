@@ -108,6 +108,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
             }}
+            small={true}
           />
 
           <FormInputField
@@ -131,6 +132,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                 messages.contentSectionGeneralAdvancedPartRow3Tooltip,
               ),
             }}
+            small={true}
           />
 
           <FormInputField
@@ -154,6 +156,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                 messages.contentSectionGeneralAdvancedPartRow2Tooltip,
               ),
             }}
+            small={true}
           />
 
           <FormInputField
@@ -177,6 +180,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                 messages.contentSectionGeneralAdvancedPartRow4Tooltip,
               ),
             }}
+            small={true}
           />
 
           <FormInputField
@@ -230,6 +234,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                 messages.contentSectionGeneralAdvancedPartRow5Tooltip,
               ),
             }}
+            small={true}
           />
 
           <FormInputField
@@ -251,6 +256,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow5Tooltip),
             }}
+            small={true}
           />
         </div>
       </div>

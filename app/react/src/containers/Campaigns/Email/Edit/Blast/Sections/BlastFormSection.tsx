@@ -7,9 +7,13 @@ import withValidators, { ValidatorProps } from '../../../../../../components/For
 import FormInput from '../../../../../../components/Form/FormInput';
 import messages from '../../messages';
 
-class BlastFormSection extends React.Component<
-  InjectedIntlProps & ValidatorProps
-> {
+interface BlastFormSectionProps {
+  small?: boolean;
+}
+
+type Props = InjectedIntlProps & ValidatorProps & BlastFormSectionProps;
+
+class BlastFormSection extends React.Component<Props> {
 
   render() {
 
@@ -18,7 +22,8 @@ class BlastFormSection extends React.Component<
       fieldValidators: {
         isRequired,
         isValidEmail,
-       },
+      },
+      small,
     } = this.props;
 
     return (
@@ -41,6 +46,7 @@ class BlastFormSection extends React.Component<
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine),
           }}
+          small={small}
         />
         <FormInputField
           name="blast.from_email"
@@ -56,6 +62,7 @@ class BlastFormSection extends React.Component<
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperFromEmail),
           }}
+          small={small}
         />
         <FormInputField
           name="blast.from_name"
@@ -71,6 +78,7 @@ class BlastFormSection extends React.Component<
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperFromName),
           }}
+          small={small}
         />
         <FormInputField
           name="blast.reply_to"
@@ -86,13 +94,14 @@ class BlastFormSection extends React.Component<
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperReplyTo),
           }}
+          small={small}
         />
       </div>
     );
   }
 }
 
-export default compose(
+export default compose<Props, BlastFormSectionProps>(
   injectIntl,
   withValidators,
 )(BlastFormSection);

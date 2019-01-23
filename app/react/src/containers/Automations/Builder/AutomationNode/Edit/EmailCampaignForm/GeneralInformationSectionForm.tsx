@@ -147,6 +147,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
             }}
+            small={true}
           />
 
         <FormSelectField
@@ -169,6 +170,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           helpToolTipProps={{
             title: formatMessage(formMessages.emailEditorRouterSelectHelper),
           }}
+          small={true}
         />
 
         <FormSelectField
@@ -189,6 +191,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           helpToolTipProps={{
             title: formatMessage(formMessages.emailEditorProviderSelectHelper),
           }}
+          small={true}
         />
         
         </div>

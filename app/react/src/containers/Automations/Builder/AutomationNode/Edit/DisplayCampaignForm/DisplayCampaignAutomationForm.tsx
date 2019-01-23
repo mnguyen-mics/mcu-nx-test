@@ -95,6 +95,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       component: (
         <LocationTargetingFieldArray
           name="locationFields"
+          small={true}
           component={LocationTargetingFormSection}
           {...genericFieldArrayProps}
         />
@@ -106,6 +107,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       component: (
         <DeviceFormSection
           formChange={this.props.change}
+          small={true}
           initialValues={this.props.initialValues.adGroup}
         />
       ),
@@ -118,6 +120,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
         <InventoryCatalogFieldArray
           name="inventoryCatalFields"
           component={InventoryCatalogFormSection}
+          small={true}
           {...genericFieldArrayProps}
         />
       ),
@@ -183,7 +186,11 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form className="edit-layout ant-layout" onSubmit={handleSubmit}>
+          <Form
+            className="edit-layout ant-layout"
+            onSubmit={handleSubmit}
+            layout="vertical"
+          >
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container automation-form"
