@@ -16,7 +16,9 @@ import GeonameService, { Geoname } from '../../../../../../../services/GeonameSe
 const confirm = Modal.confirm;
 
 export interface LocationTargetingFormSectionProps
-  extends ReduxFormChangeProps {}
+  extends ReduxFormChangeProps {
+    small?: boolean;
+  }
 
 interface State {
   locationTargetingDisplayed: boolean;
@@ -220,6 +222,7 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
                 messages.contentSectionLocationTooltipMessage,
               )
             }}
+            small={this.props.small}
           >
             <LocationSelectionRenderer
               locationFields={allFields}

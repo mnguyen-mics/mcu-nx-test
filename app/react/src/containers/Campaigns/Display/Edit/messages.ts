@@ -330,7 +330,7 @@ export default defineMessages({
   },
   contentSectionGeneralRow5Tooltip: {
     id: 'adGroupEditor.section.general.row5.tooltip',
-    defaultMessage: 'Lorem ipsum',
+    defaultMessage: 'The max bid price is the max CPM you will pay during the auction',
   },
 
   /* Row 6 */

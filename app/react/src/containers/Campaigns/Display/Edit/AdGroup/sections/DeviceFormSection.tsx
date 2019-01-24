@@ -24,6 +24,7 @@ interface DeviceFormSectionProps
   extends WrappedFieldProps,
     ReduxFormChangeProps {
   initialValues: Partial<AdGroupResource>;
+  small?: boolean;
 }
 
 type Props = DeviceFormSectionProps &
@@ -190,6 +191,7 @@ class DeviceFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      small,
     } = this.props;
 
     return (
@@ -217,6 +219,7 @@ class DeviceFormSection extends React.Component<Props, State> {
               onSelect: this.onMediaChange,
             }}
             options={this.medias()}
+            small={small}
           />
 
           <FormSelectField
@@ -231,6 +234,7 @@ class DeviceFormSection extends React.Component<Props, State> {
               title: formatMessage(messages.contentSectionDeviceTypeTooltip),
             }}
             options={this.devices()}
+            small={small}
           />
 
           <FormSelectField
@@ -245,6 +249,7 @@ class DeviceFormSection extends React.Component<Props, State> {
               title: formatMessage(messages.contentSectionDeviceOSTooltip),
             }}
             options={this.operatingSystems()}
+            small={small}
           />
 
           <FormSelectField
@@ -263,6 +268,7 @@ class DeviceFormSection extends React.Component<Props, State> {
               ),
             }}
             options={this.connectionTypes()}
+            small={small}
           />
 
           <FormSelectField
@@ -277,6 +283,7 @@ class DeviceFormSection extends React.Component<Props, State> {
               title: formatMessage(messages.contentSectionDeviceBrowserTooltip),
             }}
             options={this.browserFamilies()}
+            small={small}
           />
         </div>
       </div>

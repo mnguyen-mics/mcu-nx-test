@@ -78,6 +78,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             targeted_connection_types: 'ALL',
             targeted_browser_families: 'ALL',
           },
+          campaign: {
+            model_version: 'V2017_09',
+            max_budget_period: 'DAY',
+            editor_version_id: '11',
+            time_zone: 'Europe/Paris',
+            type: 'DISPLAY'
+          },
           locationFields: [],
           adFields: [],
           bidOptimizerFields: [],
@@ -88,7 +95,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         return eCFormData || {
           name: props.node.title,
           blast: {},
-          campaign: {},
           templateFields: [],
           consentFields: [],
           blastFields: [],
