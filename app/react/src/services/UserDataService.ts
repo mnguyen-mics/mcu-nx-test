@@ -80,17 +80,38 @@ const UserDataService = {
     });
   },
 
+  getIdentifiersEndpoint(
+    identifierType: string,
+    datamartId: string,
+    identifierId: string,
+    compartmentId?: string,
+  ): string {
+    switch (identifierType) {
+      case 'user_point_id':
+        return `datamarts/${datamartId}/user_identifiers/${identifierId}`;
+      case 'user_account_id':
+        return compartmentId
+          ? `datamarts/${datamartId}/user_identifiers/compartment_id=${compartmentId}/${identifierType}=${identifierId}`
+          : `datamarts/${datamartId}/user_identifiers/${identifierType}=${identifierId}`;
+      default:
+        return `datamarts/${datamartId}/user_identifiers/${identifierType}=${identifierId}`;
+    }
+  },
+
   getIdentifiers(
     organisationId: string,
     datamartId: string,
     identifierType: string,
     identifierId: string,
+    compartmentId?: string,
     options: object = {},
   ): Promise<DataListResponse<UserIdentifierShape>> {
-    const endpoint =
-      identifierType !== 'user_point_id'
-        ? `datamarts/${datamartId}/user_identifiers/${identifierType}=${identifierId}`
-        : `datamarts/${datamartId}/user_identifiers/${identifierId}`;
+    const endpoint = UserDataService.getIdentifiersEndpoint(
+      identifierType,
+      datamartId,
+      identifierId,
+      compartmentId,
+    );
 
     const params = {
       ...options,

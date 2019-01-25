@@ -7,11 +7,17 @@ import { Actionbar } from '../../Actionbar';
 import McsIcon from '../../../components/McsIcon';
 import messages from './messages';
 import { Identifier } from './Monitoring';
+import {
+  UserAccountCompartmentDatamartSelectionResource,
+  DatamartResource,
+} from '../../../models/datamart/DatamartResource';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
 
 interface MonitoringActionBarProps {
+  selectedDatamart: DatamartResource;
+  compartments: UserAccountCompartmentDatamartSelectionResource[];
   isModalVisible: boolean;
   handleModal: (visible: boolean) => void;
   onIdentifierChange: (identifier: Identifier) => void;
@@ -24,6 +30,7 @@ type Props = MonitoringActionBarProps &
 interface State {
   identifierId: string;
   identifierType: string;
+  selectedCompartment?: string;
 }
 
 class MonitoringActionbar extends React.Component<Props, State> {
@@ -34,6 +41,12 @@ class MonitoringActionbar extends React.Component<Props, State> {
       identifierType: 'user_point_id',
     };
   }
+
+  updateCompartment = (compartmentId: string) => {
+    this.setState({
+      selectedCompartment: compartmentId,
+    });
+  };
 
   updateValue = (e: any) => {
     this.setState({
@@ -48,12 +61,23 @@ class MonitoringActionbar extends React.Component<Props, State> {
   };
 
   submitModal = () => {
-    const { identifierId, identifierType } = this.state;
+    const { identifierId, identifierType, selectedCompartment } = this.state;
     this.props.onIdentifierChange({
       id: identifierId,
       type: identifierType,
+      compartmentId: selectedCompartment,
     });
     this.props.handleModal(false);
+  };
+
+  createCompartmentOptions = () => {
+    const { compartments } = this.props;
+    const compartmentOptions = compartments.map(compartment => (
+      <Select.Option key={compartment.compartment_id}>
+        {compartment.compartment_id}
+      </Select.Option>
+    ));
+    return compartmentOptions;
   };
 
   render() {
@@ -64,6 +88,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
       intl: { formatMessage },
       isModalVisible,
       handleModal,
+      selectedDatamart,
     } = this.props;
 
     const { identifierId, identifierType } = this.state;
@@ -82,6 +107,24 @@ class MonitoringActionbar extends React.Component<Props, State> {
       e.persist();
       this.updateValue(e);
     };
+
+    const showCompartment =
+      this.state.identifierType === 'user_account_id' &&
+      selectedDatamart.datafarm !== 'DF_EU_LEGACY' &&
+      this.props.compartments.length > 0;
+
+    const compartmentDefaultValue = showCompartment && this.props.compartments.filter(c => c.default)[0]
+     ? this.props.compartments.filter(c => c.default)[0]
+     .compartment_id : undefined
+
+    const inputValueWidth = showCompartment ? '50%' : '70%';
+    const compartmentOptions = this.createCompartmentOptions();
+
+    const addOnAfterContent = showCompartment ? (
+      <span title="compartment id">comp. id</span>
+    ) : (
+      undefined
+    );
 
     return (
       <Actionbar path={breadcrumbPaths}>
@@ -119,9 +162,19 @@ class MonitoringActionbar extends React.Component<Props, State> {
             <Input
               name="value"
               placeholder="input your value"
-              style={{ width: '70%' }}
+              style={{ width: inputValueWidth }}
               onChange={onValueChange}
+              addonAfter={addOnAfterContent}
             />
+            {showCompartment && (
+                <Select
+                  style={{ width: '20%' }}
+                  defaultValue={compartmentDefaultValue}
+                  onChange={this.updateCompartment}
+                >
+                  {compartmentOptions}
+                </Select>
+              )}
           </InputGroup>
         </Modal>
         <Button

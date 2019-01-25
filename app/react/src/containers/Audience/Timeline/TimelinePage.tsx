@@ -118,7 +118,11 @@ class TimelinePage extends React.Component<JoinedProps> {
 
     return selectedDatamartId ? (
       <ErrorBoundary>
-        <Monitoring datamartId={selectedDatamartId} cookies={cookies} />
+        <Monitoring 
+        datamartId={selectedDatamartId} 
+        selectedDatamart={datamarts.find(d => d.id === selectedDatamartId)!}
+        cookies={cookies}
+        />
       </ErrorBoundary>
     ) : (
       <DatamartSelector

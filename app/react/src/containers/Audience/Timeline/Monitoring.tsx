@@ -22,12 +22,15 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { EmptyTableView } from '../../../components/TableView';
+import { DatamartResource, UserAccountCompartmentDatamartSelectionResource } from '../../../models/datamart/DatamartResource';
+import DatamartService from '../../../services/DatamartService';
 
 const { Content } = Layout;
 
 export interface Identifier {
   id: string;
   type: string;
+  compartmentId?: string;
 }
 
 interface MapStateToProps {
@@ -38,10 +41,12 @@ interface State {
   isModalVisible: boolean;
   identifier: Identifier;
   identifiers: IdentifiersProps;
+  compartments: UserAccountCompartmentDatamartSelectionResource[];  
 }
 
 interface MonitoringProps {
   datamartId: string;
+  selectedDatamart: DatamartResource;
   cookies: Cookies;
 }
 
@@ -69,23 +74,28 @@ class Monitoring extends React.Component<Props, State> {
           USER_POINT: [],
         },
       },
+      compartments: [],
     };
   }
 
   componentDidMount() {
     const {
+      location,
       match: {
         params: { organisationId, identifierType, identifierId },
       },
       datamartId,
     } = this.props;
+    
     const { identifier } = this.state;
+
     if (identifier.type && identifier.id) {
       this.fetchIdentifiersData(
         organisationId,
         datamartId,
         identifier.type,
         identifier.id,
+        queryString.parse(location.search).compartmentId,
       );
     } else if (identifierType && identifierId) {
       this.fetchIdentifiersData(
@@ -93,8 +103,10 @@ class Monitoring extends React.Component<Props, State> {
         datamartId,
         identifierType,
         identifierId,
+        queryString.parse(location.search).compartmentId,
       );
     }
+    this.fetchCompartments();    
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -121,9 +133,17 @@ class Monitoring extends React.Component<Props, State> {
           nextDatamartId,
           nextIdentifierType,
           nextIdentifierId,
+          queryString.parse(nextSearch).compartmentId,
         );
       }
     }
+    this.fetchCompartments();    
+  }
+
+  fetchCompartments = () => {
+    DatamartService.getUserAccountCompartments(this.props.datamartId).then(res => {
+      this.setState({ compartments: res.data })
+    })
   }
 
   fetchIdentifiersData = (
@@ -131,6 +151,7 @@ class Monitoring extends React.Component<Props, State> {
     datamartId: string,
     identifierType: string,
     identifierId: string,
+    compartmentId?: string,
   ) => {
     this.setState(prevState => {
       const nextState = {
@@ -146,6 +167,7 @@ class Monitoring extends React.Component<Props, State> {
       datamartId,
       identifierType,
       identifierId,
+      compartmentId,
     )
       .then(response => {
         this.setState((prevState: any) => {
@@ -199,15 +221,16 @@ class Monitoring extends React.Component<Props, State> {
     const datamartId = queryString.parse(location.search).datamartId
       ? queryString.parse(location.search).datamartId
       : this.props.datamartId;
+      
     history.push(
       `/v2/o/${organisationId}/audience/timeline/${identifier.type}/${
         identifier.id
-      }?datamartId=${datamartId}`,
+      }?datamartId=${datamartId}${identifier.compartmentId ? `&compartmentId=${identifier.compartmentId}`: ''}`,
     );
   };
 
   render() {
-    const { datamartId, cookies } = this.props;
+    const { datamartId, cookies, selectedDatamart } = this.props;
 
     const { identifier, identifiers, isModalVisible } = this.state;
 
@@ -219,6 +242,8 @@ class Monitoring extends React.Component<Props, State> {
     return (
       <div className="ant-layout">
         <MonitoringActionbar
+          selectedDatamart={selectedDatamart}
+          compartments={this.state.compartments}
           onIdentifierChange={this.onIdentifierChange}
           isModalVisible={isModalVisible}
           handleModal={this.handleModal}
