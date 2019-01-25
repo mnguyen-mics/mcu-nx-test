@@ -36,11 +36,15 @@ interface State {
   overlapFetchingError: boolean;
 }
 
+export interface OverlapProps {
+  datamartId: string;
+}
+
 type Props = InjectedThemeColorsProps &
   InjectedDatamartProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
-  InjectedIntlProps;
+  InjectedIntlProps & OverlapProps;
 
 class Overlap extends React.Component<Props, State> {
   @lazyInject(TYPES.IOverlapInterval)
@@ -143,7 +147,7 @@ class Overlap extends React.Component<Props, State> {
 
   renderModalExtend = () => {
     const {
-      datamart,
+      datamartId,
       match: {
         params: {organisationId, segmentId},
       },
@@ -153,7 +157,7 @@ class Overlap extends React.Component<Props, State> {
     const createOv = () => {
       this.setState({isFetchingOverlap: true});
       this._overlapInterval
-        .createOverlapAnalysis(datamart.id, segmentId, organisationId)
+        .createOverlapAnalysis(datamartId, segmentId, organisationId)
         .then(() => {
           this._overlapInterval
             .fetchOverlapAnalysis(segmentId)
@@ -234,7 +238,7 @@ class Overlap extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
+export default compose<Props, OverlapProps>(
   withRouter,
   injectIntl,
   injectThemeColors,
