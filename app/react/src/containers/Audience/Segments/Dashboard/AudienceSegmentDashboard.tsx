@@ -153,12 +153,13 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         title: intl.formatMessage(messages.additionDeletion),
         display: <AdditionDeletion isFetching={dashboard.isLoading} dataSource={dashboard.report} />,
       },
-      {
-        title: intl.formatMessage(messages.overlap),
-        display: <Overlap />,
-      },
+      
     ];
     if (segment) {
+      items.push({
+        title: intl.formatMessage(messages.overlap),
+        display: <Overlap datamartId={segment.datamart_id} />,
+      },)
       if (segment.type === 'USER_LIST') {
         items.push({
           title: intl.formatMessage(messages.imports),
