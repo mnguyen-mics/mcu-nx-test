@@ -19,8 +19,9 @@ import {
 import messages from '../messages';
 import { FormattedMessage } from 'react-intl';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
@@ -29,7 +30,8 @@ export interface DisplayCampaignProps {
 }
 
 type Props = DisplayCampaignProps &
-  RouteComponentProps<{ organisationId: string; campaignId: string }> & InjectedNotificationProps;
+  RouteComponentProps<{ organisationId: string; campaignId: string }> &
+  InjectedNotificationProps;
 
 class AdServing extends React.Component<Props> {
   componentDidMount() {
@@ -72,16 +74,19 @@ class AdServing extends React.Component<Props> {
   archiveCampaign = (campaignId: string) => {
     const {
       history,
-      match: { params: { organisationId } }
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
-    return DisplayCampaignService.updateCampaign(campaignId, {archived: true})
+    return DisplayCampaignService.updateCampaign(campaignId, { archived: true })
       .then(() => {
         history.push({
-          pathname: `/v2/o/${organisationId}/campaigns/display`
-        })
-      }).catch(err => {
-        this.props.notifyError(err)
+          pathname: `/v2/o/${organisationId}/campaigns/display`,
+        });
       })
+      .catch(err => {
+        this.props.notifyError(err);
+      });
   };
 
   public render() {
@@ -115,13 +120,17 @@ class AdServing extends React.Component<Props> {
             {adList.map(ad => {
               return <AdCard key={ad.id} ad={ad} />;
             })}
-            {adList.length === 0 ? 
+            {adList.length === 0 ? (
               <Row>
-                <Col span={24} className="mcs-table-view-empty" style={{ marginTop: 200 }}>
+                <Col
+                  span={24}
+                  className="mcs-table-view-empty"
+                  style={{ marginTop: 200 }}
+                >
                   <FormattedMessage {...messages.emptyAds} />
                 </Col>
-              </Row> 
-            : null }
+              </Row>
+            ) : null}
           </Content>
         </div>
       </div>
@@ -129,4 +138,7 @@ class AdServing extends React.Component<Props> {
   }
 }
 
-export default compose<Props, DisplayCampaignProps>(withRouter, injectNotifications)(AdServing);
+export default compose<Props, DisplayCampaignProps>(
+  withRouter,
+  injectNotifications,
+)(AdServing);
