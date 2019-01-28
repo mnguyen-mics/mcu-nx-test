@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { Layout, Tooltip, Icon } from 'antd';
+import { Layout, Tooltip, Icon, Modal } from 'antd';
 import { compose } from 'recompose';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
@@ -167,6 +167,58 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     });
   };
 
+  deleteAutomation = (record: AutomationResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search, pathname, state },
+      intl,
+      history,
+    } = this.props;
+
+    const { dataSource } = this.state;
+
+    const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
+    const deleteMethod = (automationId: string) => {
+      return this._scenarioService.deleteScenario(automationId);
+    };
+    const fetchMethod = () => {
+      if (dataSource.length === 1 && filter.currentPage !== 1) {
+        const newFilter = {
+          ...filter,
+          currentPage: filter.currentPage - 1,
+        };
+        this.fetchAutomationList(organisationId, filter);
+        history.replace({
+          pathname: pathname,
+          search: updateSearch(search, newFilter),
+          state: state,
+        });
+      }
+      this.fetchAutomationList(organisationId, filter);
+    };
+    Modal.confirm({
+      title: intl.formatMessage(messages.automationModalConfirmDeletionTitle),
+      content: intl.formatMessage(
+        messages.automationModalConfirmDeletionContent,
+      ),
+      iconType: 'exclamation-circle',
+      okText: intl.formatMessage(messages.deleteAutomation),
+      cancelText: intl.formatMessage(
+        messages.automationModalConfirmDeletionCancel,
+      ),
+      onOk() {
+        deleteMethod(record.id).then(() => {
+          fetchMethod();
+        });
+      },
+      onCancel() {
+        //
+      },
+    });
+  };
+
   updateLocationSearch = (params: any) => {
     const {
       history,
@@ -263,6 +315,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
           {
             translationKey: 'EDIT',
             callback: this.editAutomation,
+          },
+          {
+            intlMessage: messages.deleteAutomation,
+            callback: this.deleteAutomation,
           },
         ],
       },
