@@ -100,7 +100,10 @@ class AdServing extends React.Component<Props> {
     const adList: AdInfoResource[] = [];
     campaign.ad_groups.forEach(adgroup => {
       adgroup.ads.forEach(ad => {
-        adList.push(ad);
+        adList.push({
+          ...ad,
+          ad_group_id: adgroup.id,
+        });
       });
     });
     return (

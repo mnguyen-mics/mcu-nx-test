@@ -134,6 +134,7 @@ class AdCard extends React.Component<Props, State> {
     to: McsMoment,
     campaignId: string,
   ) => {
+    const { ad } = this.props;
     const lookbackWindow = to.toMoment().unix() - from.toMoment().unix();
     const dimensions =
       lookbackWindow > 172800
@@ -147,6 +148,10 @@ class AdCard extends React.Component<Props, State> {
         from,
         to,
         dimensions,
+        undefined,
+        {
+          ad_group_id: ad.ad_group_id,
+        },
       ),
     );
     this.cancelablePromises.push(getAdPerf);
