@@ -332,12 +332,24 @@ class JSONQLBuilder extends React.Component<Props, State> {
           <BuilderMenu undoRedo={this.props.undoRedo} />
           <div className="button-helpers top">
             <ButtonStyleless onClick={onSchemaSelectorClick} className="helper">
-              <McsIcon type={'chevron-right'} style={viewSchema ? {} : { transform: 'rotate(180deg)', transition: 'all 0.5ms ease' }} />
+              <McsIcon
+                type={'chevron-right'}
+                style={
+                  viewSchema
+                    ? {}
+                    : {
+                        transform: 'rotate(180deg)',
+                        transition: 'all 0.5ms ease',
+                      }
+                }
+              />
             </ButtonStyleless>
           </div>
         </Col>
         <Col span={viewSchema ? 6 : 24} className="schema-visualizer">
-          <JSONQLBuilderContext.Consumer>{({ schema }) => <SchemaVizualizer schema={schema} />}</JSONQLBuilderContext.Consumer>
+          <JSONQLBuilderContext.Consumer>
+            {({ schema }) => <SchemaVizualizer schema={schema} />}
+          </JSONQLBuilderContext.Consumer>
         </Col>
       </div>
     );
