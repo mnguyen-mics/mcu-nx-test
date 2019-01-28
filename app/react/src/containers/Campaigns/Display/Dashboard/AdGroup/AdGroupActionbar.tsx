@@ -17,6 +17,7 @@ import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDraw
 import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
 import AudienceSegmentSelectionService from '../../../../../services/AudienceSegmentSelectionService';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -83,7 +84,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
       state: {
         from: `${location.pathname}${location.search}`,
         adGroupId: adGroupId,
-      },
+      }
     });
   };
 
@@ -148,6 +149,25 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         return AudienceSegmentSelectionService.getAudienceSegmentSelection(campaignId, adGroupId, id)
                         .then(response => {
                           history.push(`/v2/o/${organisationId}/audience/segments/${response.data.audience_segment_id}`);
+                        });
+                      }
+                    }
+                    ,
+                    'KEYWORDS_LIST_SELECTION':{
+                      direction: 'CHILD',
+                      getType: () => {
+                        return 'Keywords list selection';
+                      },
+                      getName: (id: string) => {
+                        return DisplayCampaignService.getKeywordListSelection(campaignId, adGroupId, id)
+                        .then(response => {
+                          return response.data.name;
+                        });
+                      },
+                      goToResource: (id: string) => {
+                        return DisplayCampaignService.getKeywordListSelection(campaignId, adGroupId, id)
+                        .then(response => {
+                          history.push(`/v2/o/${organisationId}/library/keywordslist/${response.data.keyword_list_id}`);
                         });
                       }
                     }

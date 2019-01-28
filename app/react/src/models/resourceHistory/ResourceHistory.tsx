@@ -7,6 +7,7 @@ export type ResourceType =
   'EMAIL_TEMPLATE' |
   'VIDEO_AD' |
   'AUDIENCE_SEGMENT_SELECTION' | 
+  'KEYWORDS_LIST_SELECTION' | 
   'AUDIENCE_SEGMENT';
 
 export type EventType =

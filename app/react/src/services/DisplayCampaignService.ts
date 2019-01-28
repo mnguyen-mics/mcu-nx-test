@@ -346,6 +346,15 @@ const DisplayCampaignService = {
     return ApiService.getRequest(endpoint);
   },
 
+  getKeywordListSelection(
+    campaignId: string,
+    adGroupId: string,
+    id:string
+  ): Promise<DataResponse<KeywordListSelectionResource>> {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/keyword_lists/${id}`;
+    return ApiService.getRequest(endpoint);
+  },
+
   createKeywordList(
     campaignId: string,
     adGroupId: string,

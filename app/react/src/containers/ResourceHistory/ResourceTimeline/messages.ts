@@ -59,6 +59,10 @@ const messages: {
     id: 'timeline.events.card.multiEdit.item',
     defaultMessage: '{field} from {oldValue} to {newValue}',
   },
+  selectionAddedMultiEditList: {
+    id: 'timeline.events.card.multiEdit.selection.added',
+    defaultMessage: '{field} added : {value}',
+  },
   resourceDeleted: {
     id: 'timeline.events.card.resourceDeleted',
     defaultMessage: '{userName} deleted the {resourceType}.',
