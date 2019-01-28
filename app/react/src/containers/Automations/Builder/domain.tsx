@@ -9,11 +9,12 @@ import {
   AutomationFormDataType,
   isAbnNode,
   ABNFormData,
-  DisplayCampaignFormData,
+  DisplayCampaignAutomationFormData,
   EmailCampaignAutomationFormData,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
+import { IQueryService } from '../../../services/QueryService';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -138,7 +139,7 @@ export class AddNodeOperation implements NodeOperation {
           const newNode: StorylineNodeModel = {
             node: this.node,
             in_edge: {
-              id: 'string',
+              id: '',
               source_id: parentNodeId,
               target_id: this.node.id,
               handler: 'ON_VISIT',
@@ -243,8 +244,9 @@ export class UpdateNodeOperation implements NodeOperation {
         nodeBody = {
           ...storylineNode.node,
           name: this.formData.name,
-          formData: this.formData as DisplayCampaignFormData,
-          initialFormData: this.initialFormData as DisplayCampaignFormData,
+          formData: this.formData as DisplayCampaignAutomationFormData,
+          initialFormData: this
+            .initialFormData as DisplayCampaignAutomationFormData,
         };
         break;
       case 'EMAIL_CAMPAIGN':
@@ -459,11 +461,13 @@ export function generateNodeProperties(
   }
 }
 
-export function buildAutomationTreeData(
+export const buildAutomationTreeData = (
   storylineData: StorylineResource,
   nodeData: ScenarioNodeShape[],
   edgeData: ScenarioEdgeResource[],
-): StorylineNodeModel {
+  queryService: IQueryService,
+  datamartId?: string,
+): Promise<StorylineNodeModel> => {
   const node: AutomationNodeShape = nodeData.filter(
     n => n.id === storylineData.begin_node_id,
   )[0];
@@ -474,20 +478,39 @@ export function buildAutomationTreeData(
     outNodesId.includes(n.id),
   );
 
-  return {
-    node: node,
-    out_edges: outNodes.map(n =>
-      buildStorylineNodeModel(n, nodeData, edgeData, node),
-    ),
-  };
-}
+  if (
+    node.type === 'QUERY_INPUT' &&
+    node.query_id &&
+    datamartId &&
+    queryService
+  ) {
+    return queryService.getQuery(datamartId, node.query_id).then(res => {
+      return {
+        node: {
+          ...node,
+          formData: res.data,
+        },
+        out_edges: outNodes.map(n =>
+          buildStorylineNodeModel(n, nodeData, edgeData, node),
+        ),
+      };
+    });
+  } else {
+    return Promise.resolve({
+      node: node,
+      out_edges: outNodes.map(n =>
+        buildStorylineNodeModel(n, nodeData, edgeData, node),
+      ),
+    });
+  }
+};
 
 export function buildStorylineNodeModel(
   node: ScenarioNodeShape,
   nodeData: ScenarioNodeShape[],
   edgeData: ScenarioEdgeResource[],
   parentNode: AutomationNodeShape,
-): StorylineNodeModel {
+): any {
   const outNodesId: string[] = edgeData
     .filter(e => e.source_id === node.id)
     .map(e => e.target_id);

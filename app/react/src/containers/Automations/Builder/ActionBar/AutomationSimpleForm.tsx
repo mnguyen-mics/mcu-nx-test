@@ -16,8 +16,6 @@ import { AutomationResource } from '../../../../models/automations/automations';
 
 export type AutomationSimpleFormData = Partial<AutomationResource>;
 
-const initialFormData: Partial<AutomationSimpleFormData> = {};
-
 export const FORM_ID = 'automationSimpleForm';
 
 export interface FormProps
@@ -73,8 +71,7 @@ export default compose<Props, FormProps>(
   withValidators,
   withNormalizer,
   reduxForm({
-    form: FORM_ID,
-    initialValues: initialFormData,
+    form: FORM_ID
   }),
 )(AutomationSimleForm);
 

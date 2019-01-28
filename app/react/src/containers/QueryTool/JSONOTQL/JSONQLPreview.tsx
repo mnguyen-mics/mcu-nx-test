@@ -88,15 +88,21 @@ class JSONQLPreview extends React.Component<Props> {
   render() {
     const { context } = this.props;
 
-    return (
-      <div
-        onClick={this.openEditor}
-        className={context === 'AUTOMATION_BUILDER' ? 'boolean-menu-item' : ''}
-      >
+    return context === 'AUTOMATION_BUILDER' ? (
+      <div onClick={this.openEditor} className="boolean-menu-item">
         {this.props.intl.formatMessage({
           id: 'jsonql.button.query.edit',
           defaultMessage: 'Edit Query',
         })}
+      </div>
+    ) : (
+      <div className="text-center m-t-20">
+        <Button onClick={this.openEditor}>
+          {this.props.intl.formatMessage({
+            id: 'jsonql.button.query.edit',
+            defaultMessage: 'Edit Query',
+          })}
+        </Button>
       </div>
     );
   }

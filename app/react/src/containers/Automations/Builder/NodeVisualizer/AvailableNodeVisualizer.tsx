@@ -46,6 +46,7 @@ const emailCampaignNode: ScenarioNodeShape = {
   scenario_id: '',
   campaign_id: '',
   formData: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
+  initialFormData: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
 };
 
 const displayCampaignNode: ScenarioNodeShape = {

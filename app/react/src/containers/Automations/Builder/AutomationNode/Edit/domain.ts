@@ -27,7 +27,6 @@ import {
 import {
   EmailBlastResource,
   EmailBlastCreateRequest,
-  EmailCampaignCreateRequest,
   EmailCampaignResource,
 } from '../../../../../models/campaign/email';
 import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampaignAutomationForm';
@@ -40,32 +39,68 @@ export interface ABNFormData extends DefaultFormData {
   branch_number: number;
 }
 
-export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA = {
+export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
   name: '',
   locationFields: [],
   adGroup: {},
   adFields: [],
   bidOptimizerFields: [],
   inventoryCatalFields: [],
+  campaign: {
+    organisation_id: '',
+    name: '',
+    editor_version_id: '11',
+    currency_code: 'EUR',
+    technical_name: '',
+    subtype: 'PROGRAMMATIC',
+    max_bid_price: 0,
+    total_budget: 0,
+    max_budget_per_period: 0,
+    max_budget_period: 'WEEK',
+    total_impression_capping: 0,
+    per_day_impression_capping: 0,
+    time_zone: 'Europe/Paris',
+    model_version: 'V2017_09',
+    type: 'DISPLAY',
+  },
 };
 
-export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA = {
+export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormData = {
   name: '',
   templateFields: [],
   consentFields: [],
   blastFields: [],
   routerFields: [],
-  blast: {},
-  campaign: {},
+  blast: {
+    blast_name: '',
+    subject_line: '',
+    from_email: '',
+    from_name: '',
+    reply_to: '',
+    send_date: 0,
+    batch_size: 0,
+  },
+  campaign: {
+    organisation_id: '',
+    name: '',
+    creation_ts: '',
+    editor_versionid: '',
+    editor_version_value: '',
+    editor_groupid: '',
+    editor_artifact_id: '',
+    currency_code: '',
+    technical_name: '',
+    type: '',
+  },
 };
 
-export interface DisplayCampaignFormData extends DefaultFormData {
-  campaign: Partial<DisplayCampaignResource>;
+export interface DisplayCampaignAutomationFormData extends DefaultFormData {
   locationFields: LocationFieldModel[];
   adGroup: Partial<AdGroupResource>;
   adFields: AdFieldModel[];
   bidOptimizerFields: BidOptimizerFieldModel[];
   inventoryCatalFields: InventoryCatalFieldsModel[];
+  campaign: Partial<DisplayCampaignResource>;
 }
 
 export interface EmailCampaignAutomationFormData extends DefaultFormData {
@@ -73,14 +108,14 @@ export interface EmailCampaignAutomationFormData extends DefaultFormData {
   consentFields: ConsentFieldModel[];
   blastFields: BlastFieldModel[];
   routerFields: RouterFieldModel[];
-  blast: Partial<EmailBlastCreateRequest> | EmailBlastResource;
-  campaign: Partial<EmailCampaignCreateRequest> | EmailCampaignResource;
+  blast: EmailBlastCreateRequest | EmailBlastResource;
+  campaign: Partial<EmailCampaignResource>;
 }
 
 export type AutomationFormDataType =
   | DefaultFormData
   | ABNFormData
-  | DisplayCampaignFormData
+  | DisplayCampaignAutomationFormData
   | EmailCampaignAutomationFormData;
 
 export type AutomationFormPropsType =

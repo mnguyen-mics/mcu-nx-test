@@ -15,11 +15,14 @@ import { ScenarioNodeShape } from '../../../models/automations/automations';
 import { isQueryInputNode } from './AutomationNode/Edit/domain';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
+import { QueryLanguage } from '../../../models/datamart/DatamartResource';
+import { Loading } from '../../../components';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
   automationFormData?: Partial<AutomationFormData>;
   saveOrUpdate: (formData: Partial<AutomationFormData>) => void;
+  loading: boolean;
 }
 
 type Props = AutomationBuilderContainerProps &
@@ -45,6 +48,25 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     };
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const { automationFormData } = this.props;
+    const { automationFormData: prevAutomationFormData } = prevProps;
+    if (
+      automationFormData &&
+      prevAutomationFormData &&
+      automationFormData.automationTreeData &&
+      prevAutomationFormData.automationTreeData &&
+      automationFormData.automationTreeData.node &&
+      prevAutomationFormData.automationTreeData.node &&
+      prevAutomationFormData.automationTreeData.node.id !==
+        automationFormData.automationTreeData.node.id
+    ) {
+      this.setState({
+        automationTreeData: automationFormData.automationTreeData,
+      });
+    }
+  }
+
   // TODO: merge handleUpdateAutomationData and handleQueryNodeData
 
   handleUpdateAutomationData = (
@@ -67,7 +89,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
         ...automationTreeData.node,
         formData: {
           query_text: JSON.stringify(queryText),
-          query_language: 'JSON_OTQL',
+          query_language: 'JSON_OTQL' as QueryLanguage,
         },
       };
     }
@@ -76,7 +98,8 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
         if (child.node.id === nodeId) {
           const updatedNode = {
             ...child.node,
-            query_text: queryText,
+            query_text: JSON.stringify(queryText),
+            query_language: 'JSON_OTQL' as QueryLanguage,
           };
           return {
             node: updatedNode,
@@ -106,8 +129,17 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { datamartId, automationFormData, saveOrUpdate } = this.props;
+    const {
+      datamartId,
+      automationFormData,
+      saveOrUpdate,
+      loading,
+    } = this.props;
     const { automationTreeData, editMode } = this.state;
+
+    if (loading) {
+      return <Loading className="loading-full-screen" />;
+    }
 
     return (
       <div style={{ height: '100%', display: 'flex' }}>

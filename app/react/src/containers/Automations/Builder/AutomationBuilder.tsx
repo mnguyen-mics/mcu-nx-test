@@ -127,9 +127,11 @@ class AutomationBuilder extends React.Component<Props, State> {
     model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
     model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
     model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
-    this.startAutomationTree(automationTreeData, model);
-    this.engine.setDiagramModel(model);
-    this.engine.repaintCanvas();
+    setTimeout(() => {
+      this.startAutomationTree(automationTreeData, model);
+      this.engine.setDiagramModel(model);
+      this.engine.repaintCanvas();
+    }, 500);
   }
 
   addNode = (

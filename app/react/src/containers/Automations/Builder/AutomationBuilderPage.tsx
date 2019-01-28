@@ -78,7 +78,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: false,
-      automationFormData: INITIAL_AUTOMATION_DATA
+      automationFormData: INITIAL_AUTOMATION_DATA,
     };
   }
 
@@ -89,11 +89,15 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       },
     } = this.props;
     if (automationId) {
+      this.setState({
+        isLoading: true,
+      });
       this._automationFormService
         .loadInitialAutomationValues(automationId, 'v201709')
         .then(res => {
           this.setState({
             automationFormData: res,
+            isLoading: false,
           });
         });
     }
@@ -115,11 +119,15 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         automationFormData: INITIAL_AUTOMATION_DATA,
       });
     } else if (automationId !== prevAutomationId) {
+      this.setState({
+        isLoading: true,
+      });
       this._automationFormService
         .loadInitialAutomationValues(automationId, 'v201709')
         .then(res => {
           this.setState({
             automationFormData: res,
+            isLoading: false,
           });
         });
     }
@@ -181,7 +189,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const { automationFormData } = this.state;
+    const { automationFormData, isLoading } = this.state;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       if (selection.storage_model_version === 'v201506') {
@@ -226,6 +234,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         datamartId={selectedDatamart.id}
         automationFormData={automationFormData}
         saveOrUpdate={this.saveAutomation}
+        loading={isLoading}
       />
     ) : (
       <DatamartSelector

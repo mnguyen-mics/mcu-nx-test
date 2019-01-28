@@ -22,7 +22,11 @@ import {
   AutomationFormDataType,
   AutomationFormPropsType,
   isQueryInputNode,
+  INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+  INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
 } from './Edit/domain';
+import DisplayCampaignService from '../../../../services/DisplayCampaignService';
+import AdGroupFormService from '../../../Campaigns/Display/Edit/AdGroup/AdGroupFormService';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -35,7 +39,7 @@ interface AutomationNodeProps {
 interface State {
   focus: boolean;
   hover: boolean;
-  initialValuesForm: AutomationFormDataType;
+  initialValuesForm?: AutomationFormDataType;
 }
 
 const messages = defineMessages({
@@ -61,58 +65,56 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     this.state = {
       focus: false,
       hover: false,
-      initialValuesForm: this.getInitialValues(props),
     };
   }
 
-  getInitialValues = (props: Props): AutomationFormDataType => {
-    switch (props.node.storylineNodeModel.node.type) {
+  componentDidMount() {
+    const {
+      node: {
+        storylineNodeModel: { node },
+      },
+    } = this.props;
+    switch (node.type) {
       case 'DISPLAY_CAMPAIGN':
-        const dCFormData = props.node.storylineNodeModel.node.formData;
-        return dCFormData || {
-          name: props.node.title,
-          adGroup: {
-            max_budget_period: 'DAY',
-            targeted_operating_systems: 'ALL',
-            targeted_medias: 'WEB',
-            targeted_devices: 'ALL',
-            targeted_connection_types: 'ALL',
-            targeted_browser_families: 'ALL',
-          },
-          campaign: {
-            model_version: 'V2017_09',
-            max_budget_period: 'DAY',
-            editor_version_id: '11',
-            time_zone: 'Europe/Paris',
-            type: 'DISPLAY'
-          },
-          locationFields: [],
-          adFields: [],
-          bidOptimizerFields: [],
-          inventoryCatalFields: [],
-        };
+        return node.campaign_id && node.ad_group_id
+          ? DisplayCampaignService.getCampaignDisplay(node.campaign_id).then(
+              campaignResp => {
+                AdGroupFormService.loadAdGroup(
+                  node.campaign_id,
+                  node.ad_group_id,
+                ).then(adGroupResp => {
+                  this.setState({
+                    initialValuesForm: {
+                      campaign: campaignResp.data,
+                      name: node.name,
+                      locationFields: adGroupResp.locationFields,
+                      adGroup: adGroupResp.adGroup,
+                      adFields: adGroupResp.adFields,
+                      bidOptimizerFields: adGroupResp.bidOptimizerFields,
+                      inventoryCatalFields: adGroupResp.inventoryCatalFields,
+                    },
+                  });
+                });
+              },
+            )
+          : this.setState({
+              initialValuesForm: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+            });
       case 'EMAIL_CAMPAIGN':
-        const eCFormData = props.node.storylineNodeModel.node.formData;
-        return eCFormData || {
-          name: props.node.title,
-          blast: {},
-          templateFields: [],
-          consentFields: [],
-          blastFields: [],
-          routerFields: [],
-        }
+        const eCFormData = node.formData;
+        return eCFormData || INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA;
       case 'ABN_NODE':
-        const abnFormData = props.node.storylineNodeModel.node.formData;
-        return abnFormData || {
-            name: props.node.title,
-            branch_number: 2, 
-        };
+        const abnFormData = node.formData;
+        return (
+          abnFormData || {
+            name: '',
+            branch_number: 2,
+          }
+        );
       default:
-        return {
-            name: props.node.title,
-        };
+        return;
     }
-  };
+  }
 
   setPosition = (node: HTMLDivElement | null) => {
     const bodyPosition = document.body.getBoundingClientRect();
@@ -131,9 +133,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   editNode = () => {
     const { node, lockGlobalInteraction } = this.props;
+    const { initialValuesForm } = this.state;
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(false);
-      if (isScenarioNodeShape(node.storylineNodeModel.node)) {
+      if (
+        isScenarioNodeShape(node.storylineNodeModel.node) &&
+        initialValuesForm
+      ) {
         const scenarioNodeShape = node.storylineNodeModel.node;
 
         this.props.openNextDrawer<AutomationFormPropsType>(
@@ -147,7 +153,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 this.props.nodeOperations.updateNode(
                   scenarioNodeShape,
                   formData,
-                  this.state.initialValuesForm
+                  initialValuesForm,
                 );
                 this.props.closeNextDrawer();
               },
@@ -162,8 +168,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   getQuery = () => {
     const node = this.props.node.storylineNodeModel.node;
-    if (isQueryInputNode(node) && node.formData.query_text) {
-      return JSON.parse(node.formData.query_text);
+    if (isQueryInputNode(node)) {
+      if (node.formData.query_text) {
+        return JSON.parse(node.formData.query_text);
+      }
     }
     return undefined;
   };
@@ -305,7 +313,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               >
                 {/* Uncomment when feature is ready */}
                 {/* <div onClick={this.toggleCollapsed} className='boolean-menu-item'>Collapse</div> */}
-                {nodeType === 'START' ? (
+                {nodeType === 'START' || nodeType === 'QUERY_INPUT' ? (
                   <JSONQLPreview
                     datamartId={node.datamartId}
                     value={this.getQuery()}

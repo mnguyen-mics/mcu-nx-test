@@ -15,7 +15,7 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
-import { FORM_ID, DisplayCampaignFormData } from '../domain';
+import { FORM_ID, DisplayCampaignAutomationFormData } from '../domain';
 import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
 import {
@@ -49,18 +49,18 @@ const localMessages = defineMessages({
 });
 
 export interface DisplayCampaignAutomationFormProps
-  extends Omit<ConfigProps<DisplayCampaignFormData>, 'form'> {
+  extends Omit<ConfigProps<DisplayCampaignAutomationFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
   node: ScenarioNodeShape;
 }
 
 interface MapStateToProps {
-  formValues: DisplayCampaignFormData;
+  formValues: DisplayCampaignAutomationFormData;
 }
 
 type Props = InjectedFormProps<
-  DisplayCampaignFormData,
+DisplayCampaignAutomationFormData,
   DisplayCampaignAutomationFormProps
 > &
   DisplayCampaignAutomationFormProps &

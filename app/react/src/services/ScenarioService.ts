@@ -92,7 +92,7 @@ export interface IScenarioService {
   ) => Promise<DataListResponse<ScenarioEdgeResource>>;
   createScenarioEdge: (
     scenarioId: string,
-    scenarioEdge: ScenarioEdgeResource,
+    scenarioEdge: Partial<ScenarioEdgeResource>,
   ) => Promise<DataResponse<ScenarioEdgeResource>>;
   deleteScenarioEdge: (
     scenarioId: string,
@@ -209,7 +209,7 @@ export class ScenarioService implements IScenarioService {
   }
   createScenarioEdge(
     scenarioId: string,
-    scenarioEdge: ScenarioEdgeResource,
+    scenarioEdge: Partial<ScenarioEdgeResource>,
   ): Promise<DataResponse<ScenarioEdgeResource>> {
     const endpoint = `scenarios/${scenarioId}/storyline/edges`;
     return ApiService.postRequest(endpoint, scenarioEdge);

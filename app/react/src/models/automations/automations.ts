@@ -1,5 +1,5 @@
 import {
-  DisplayCampaignFormData,
+  DisplayCampaignAutomationFormData,
   ABNFormData,
   EmailCampaignAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
@@ -50,14 +50,15 @@ export interface DisplayCampaignNodeResource extends ScenarioNodeResource {
   type: 'DISPLAY_CAMPAIGN';
   campaign_id: string;
   ad_group_id: string;
-  formData: DisplayCampaignFormData;
-  initialFormData: DisplayCampaignFormData;
+  formData: DisplayCampaignAutomationFormData;
+  initialFormData: DisplayCampaignAutomationFormData;
 }
 
 export interface EmailCampaignNodeResource extends ScenarioNodeResource {
   type: 'EMAIL_CAMPAIGN';
   campaign_id: string;
   formData: EmailCampaignAutomationFormData;
+  initialFormData: EmailCampaignAutomationFormData;
 }
 
 export interface QueryInputNodeResource extends ScenarioNodeResource {

@@ -17,7 +17,7 @@ import withNormalizer, {
 import formatDisplayCampaignProperty from '../../../../../../messages/campaign/display/displayCampaignMessages';
 import messages from '../../../../../Campaigns/Display/Edit/messages';
 import formatAdGroupProperty from '../../../../../../messages/campaign/display/adgroupMessages';
-import { DisplayCampaignFormData } from '../domain';
+import { DisplayCampaignAutomationFormData } from '../domain';
 
 export const formMessages = defineMessages({
   sectionGeneralTitle: {
@@ -39,7 +39,7 @@ export const formMessages = defineMessages({
 });
 
 interface GeneralInformationFormSectionProps {
-  initialValues: Partial<DisplayCampaignFormData>;
+  initialValues: Partial<DisplayCampaignAutomationFormData>;
 }
 
 type Props = GeneralInformationFormSectionProps &

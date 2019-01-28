@@ -91,9 +91,25 @@ class AutomationActionBar extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, submit, onClose, automationData, editMode } = this.props;
+    const {
+      intl,
+      submit,
+      onClose,
+      automationData,
+      editMode,
+      match: {
+        params: { automationId },
+      },
+    } = this.props;
 
     const { isLoading, visible } = this.state;
+
+    const initialFormData: Partial<AutomationSimpleFormData> = {
+      name:
+        automationData && automationData.automation
+          ? automationData.automation.name
+          : '',
+    };
 
     const handleOnOk = () => {
       submit(FORM_ID);
@@ -117,7 +133,9 @@ class AutomationActionBar extends React.Component<Props, State> {
       >
         {editMode ? (
           <Button className="mcs-primary" type="primary" onClick={this.onClick}>
-            {intl.formatMessage(messages.saveAutomation)}
+            {automationId
+              ? intl.formatMessage(messages.updateAutomation)
+              : intl.formatMessage(messages.saveAutomation)}
           </Button>
         ) : (
           <Button
@@ -128,7 +146,7 @@ class AutomationActionBar extends React.Component<Props, State> {
             <McsIcon type="pen" /> {intl.formatMessage(messages.editAutomation)}
           </Button>
         )}
-        {editMode && (
+        {editMode && automationId && (
           <McsIcon
             type="close"
             className="close-icon"
@@ -148,7 +166,12 @@ class AutomationActionBar extends React.Component<Props, State> {
             />
           }
         >
-          {visible && <AutomationSimpleForm onSubmit={this.onSave} />}
+          {visible && (
+            <AutomationSimpleForm
+              onSubmit={this.onSave}
+              initialValues={initialFormData}
+            />
+          )}
         </Modal>
       </ActionBar>
     );
