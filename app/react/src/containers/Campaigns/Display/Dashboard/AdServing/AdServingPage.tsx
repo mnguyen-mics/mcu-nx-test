@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { Layout, Row, Col } from 'antd';
 import { Labels } from '../../../../Labels';
-import {
-  DisplayCampaignInfoResource,
-  AdInfoResource,
-} from '../../../../../models/campaign/display';
+import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
 import AdServingActionBar from './AdServingActionBar';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import AdCard from './AdCard';
+import AdCard, { AdCardProps } from './AdCard';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import {
   isSearchValid,
@@ -97,15 +94,17 @@ class AdServing extends React.Component<Props> {
       },
     } = this.props;
 
-    const adList: AdInfoResource[] = [];
-    campaign.ad_groups.forEach(adgroup => {
-      adgroup.ads.forEach(ad => {
-        adList.push({
-          ...ad,
-          ad_group_id: adgroup.id,
+    const adCardPropsList: AdCardProps[] = [];
+
+    campaign.ad_groups.map(adgroup => {
+      adgroup.ads.map(ad => {
+        adCardPropsList.push({
+          ad: ad,
+          adGroupId: adgroup.id
         });
       });
     });
+
     return (
       <div className="ant-layout">
         <AdServingActionBar
@@ -120,10 +119,14 @@ class AdServing extends React.Component<Props> {
               organisationId={organisationId}
               labellableType="DISPLAY_CAMPAIGN"
             />
-            {adList.map(ad => {
-              return <AdCard key={ad.id} ad={ad} />;
-            })}
-            {adList.length === 0 ? (
+            {adCardPropsList.map(adCardProp => (
+              <AdCard
+                key={adCardProp.ad.id}
+                ad={adCardProp.ad}
+                adGroupId={adCardProp.adGroupId}
+              />
+            ))}
+            {adCardPropsList.length === 0 && (
               <Row>
                 <Col
                   span={24}
@@ -133,7 +136,7 @@ class AdServing extends React.Component<Props> {
                   <FormattedMessage {...messages.emptyAds} />
                 </Col>
               </Row>
-            ) : null}
+            )}
           </Content>
         </div>
       </div>

@@ -36,6 +36,7 @@ const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
 
 export interface AdCardProps {
   ad: AdInfoResource;
+  adGroupId: string;
 }
 
 interface Stats {
@@ -134,7 +135,7 @@ class AdCard extends React.Component<Props, State> {
     to: McsMoment,
     campaignId: string,
   ) => {
-    const { ad } = this.props;
+    const { adGroupId } = this.props;
     const lookbackWindow = to.toMoment().unix() - from.toMoment().unix();
     const dimensions =
       lookbackWindow > 172800
@@ -150,7 +151,8 @@ class AdCard extends React.Component<Props, State> {
         dimensions,
         undefined,
         {
-          ad_group_id: ad.ad_group_id,
+          campaign_id: campaignId,
+          ad_group_id: adGroupId,
         },
       ),
     );
