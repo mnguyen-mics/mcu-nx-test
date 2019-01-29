@@ -51,51 +51,40 @@ class TimelineSelector extends React.Component<Props, State> {
 
   runQuery = () => {
     const { organisationId, datamartId, query, stale } = this.props;
-    const { results } = this.state;
     const queryDocument: QueryDocument = {
       operations: [{ directives: [], selections: [{ name: 'id' }] }],
       from: 'UserPoint',
       where: query,
     };
-    if (!stale && results && results.length) {
-      window.open(
-        `${
-          window.location.origin
-        }/#/v2/o/${organisationId}/audience/timeline/user_point_id/${
-          results[Math.floor(Math.random() * results.length)]
-        }?datamart_id=${datamartId}`,
-      );
-    } else {
-      this.setState({
-        loading: true,
-        error: false,
-        results: undefined,
-      });
-      QueryService.runJSONOTQLQuery(datamartId, queryDocument)
-        .then(res => {
-          if (res.data.rows.length !== 0) {
-            window.open(
-              `${
-                window.location.origin
-              }/#/v2/o/${organisationId}/audience/timeline/user_point_id/${
-                res.data.rows[Math.floor(Math.random() * res.data.rows.length)]
-              }?datamart_id=${datamartId}`,
-            );
-          }
-          this.setState({
-            loading: false,
-            error: false,
-            results: res.data.rows,
-          });
-        })
-        .catch(() => {
-          this.setState({
-            loading: false,
-            error: true,
-            results: undefined,
-          });
+    this.setState({
+      loading: true,
+      error: false,
+      results: undefined,
+    });
+    QueryService.runJSONOTQLQuery(datamartId, queryDocument)
+      .then(res => {
+        if (res.data.rows.length !== 0 && !stale) {
+          window.open(
+            `${
+              window.location.origin
+            }/#/v2/o/${organisationId}/audience/timeline/user_point_id/${
+              res.data.rows[Math.floor(Math.random() * res.data.rows.length)]
+            }?datamart_id=${datamartId}`,
+          );
+        }
+        this.setState({
+          loading: false,
+          error: false,
+          results: res.data.rows,
         });
-    }
+      })
+      .catch(() => {
+        this.setState({
+          loading: false,
+          error: true,
+          results: undefined,
+        });
+      });
   };
 
   render() {
