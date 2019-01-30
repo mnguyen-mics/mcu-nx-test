@@ -47,6 +47,7 @@ export interface AdInfoResource extends AdResource {
   creative_renderer_group_id: string;
   creative_renderer_artifact_id: string;
   creative_technical_name: string;
+  ad_group_id: string;
 }
 
 export interface AudienceSegmentSelectionInfoResource {

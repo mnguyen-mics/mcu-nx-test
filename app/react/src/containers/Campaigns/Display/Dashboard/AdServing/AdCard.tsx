@@ -1,17 +1,28 @@
 import * as React from 'react';
-import { Row, Col } from 'antd'
+import { Row, Col } from 'antd';
 import { Card } from '../../../../../components/Card';
 import { AdInfoResource } from '../../../../../models/campaign/display';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
-import { updateSearch, parseSearch, compareSearches } from '../../../../../utils/LocationSearchHelper';
+import McsDateRangePicker, {
+  McsDateRangeValue,
+} from '../../../../../components/McsDateRangePicker';
+import {
+  updateSearch,
+  parseSearch,
+  compareSearches,
+} from '../../../../../utils/LocationSearchHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { EmptyCharts, LoadingChart } from '../../../../../components/EmptyCharts';
+import {
+  EmptyCharts,
+  LoadingChart,
+} from '../../../../../components/EmptyCharts';
 import McsMoment from '../../../../../utils/McsMoment';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
 import StackedAreaPlotDoubleAxis from '../../../../../components/StackedAreaPlot/StackedAreaPlotDoubleAxis';
 import { LegendChart } from '../../../../../components/LegendChart';
 import ReportService from '../../../../../services/ReportService';
@@ -23,9 +34,9 @@ import { Index } from '../../../../../utils';
 const LegendChartTS = LegendChart as any;
 const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
 
-
 export interface AdCardProps {
   ad: AdInfoResource;
+  adGroupId: string;
 }
 
 interface Stats {
@@ -34,62 +45,135 @@ interface Stats {
 }
 
 interface State {
-  dataSource: Stats[],
-  loading: boolean
+  dataSource: Stats[];
+  loading: boolean;
 }
 
-type Props = AdCardProps & RouteComponentProps<{ organisationId: string, campaignId: string }> & InjectedIntlProps & InjectedThemeColorsProps;
+type Props = AdCardProps &
+  RouteComponentProps<{ organisationId: string; campaignId: string }> &
+  InjectedIntlProps &
+  InjectedThemeColorsProps;
 
 class AdCard extends React.Component<Props, State> {
-
   cancelablePromises: Array<CancelablePromise<any>> = [];
 
   constructor(props: Props) {
-    super(props)
+    super(props);
     this.state = {
       dataSource: [],
-      loading: true
-    }
+      loading: true,
+    };
   }
 
   componentDidMount() {
-    const { ad, match: { params: { organisationId, campaignId } }, location: {search} } = this.props;
+    const {
+      ad,
+      match: {
+        params: { organisationId, campaignId },
+      },
+      location: { search },
+    } = this.props;
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
-    this.fetchData(organisationId, ad.creative_id, filter.from, filter.to, campaignId)
+    this.fetchData(
+      organisationId,
+      ad.creative_id,
+      filter.from,
+      filter.to,
+      campaignId,
+    );
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    const { ad, match: { params: { organisationId, campaignId } }, location: {search} } = this.props;
-    const { ad: nextAd, match: { params: { organisationId: nextOrganisationId, campaignId: nextCampaignId } }, location: {search: nextSearch} } = nextProps;
-    if (ad.id !== nextAd.id || organisationId !== nextOrganisationId || !compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
+    const {
+      ad,
+      match: {
+        params: { organisationId, campaignId },
+      },
+      location: { search },
+    } = this.props;
+    const {
+      ad: nextAd,
+      match: {
+        params: {
+          organisationId: nextOrganisationId,
+          campaignId: nextCampaignId,
+        },
+      },
+      location: { search: nextSearch },
+    } = nextProps;
+    if (
+      ad.id !== nextAd.id ||
+      organisationId !== nextOrganisationId ||
+      !compareSearches(search, nextSearch) ||
+      campaignId !== nextCampaignId
+    ) {
       const filter = parseSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-      this.fetchData(nextOrganisationId, nextAd.creative_id, filter.from, filter.to, nextCampaignId)
+      this.fetchData(
+        nextOrganisationId,
+        nextAd.creative_id,
+        filter.from,
+        filter.to,
+        nextCampaignId,
+      );
     }
   }
 
-  filterValueForCampaign = (normalizedReport: Index<any>, campaignId: string) => {
-    return normalizedReport.filter((item: any) => item.campaign_id === campaignId);
-  }
+  filterValueForCampaign = (
+    normalizedReport: Index<any>,
+    campaignId: string,
+  ) => {
+    return normalizedReport.filter(
+      (item: any) => item.campaign_id === campaignId,
+    );
+  };
 
-  fetchData = (organisationId: string, creativeId: string, from: McsMoment, to: McsMoment, campaignId: string) => {
-    const lookbackWindow =
-    to.toMoment().unix() - from.toMoment().unix();
-    const dimensions = lookbackWindow > 172800 ? ['day', 'campaign_id'] : ['day,hour_of_day','campaign_id'];
-    const getAdPerf = makeCancelable(ReportService.getAdDeliveryReport(organisationId, 'creative_id', creativeId, from, to, dimensions));
-    this.cancelablePromises.push(getAdPerf)
-    this.setState({ loading: true })
+  fetchData = (
+    organisationId: string,
+    creativeId: string,
+    from: McsMoment,
+    to: McsMoment,
+    campaignId: string,
+  ) => {
+    const { adGroupId } = this.props;
+    const lookbackWindow = to.toMoment().unix() - from.toMoment().unix();
+    const dimensions =
+      lookbackWindow > 172800
+        ? ['day', 'campaign_id']
+        : ['day,hour_of_day', 'campaign_id'];
+    const getAdPerf = makeCancelable(
+      ReportService.getAdDeliveryReport(
+        organisationId,
+        'creative_id',
+        creativeId,
+        from,
+        to,
+        dimensions,
+        undefined,
+        {
+          campaign_id: campaignId,
+          ad_group_id: adGroupId,
+        },
+      ),
+    );
+    this.cancelablePromises.push(getAdPerf);
+    this.setState({ loading: true });
     getAdPerf.promise
-      .then(res => this.filterValueForCampaign(normalizeReportView(res.data.report_view), campaignId))
+      .then(res =>
+        this.filterValueForCampaign(
+          normalizeReportView(res.data.report_view),
+          campaignId,
+        ),
+      )
       .then(res => {
         const t = res as any;
         this.setState({
           loading: false,
-          dataSource: t
-        })
-      })
-  }
-  
+          dataSource: t,
+        });
+      });
+  };
+
   updateLocationSearch(params: McsDateRangeValue) {
     const {
       history,
@@ -109,7 +193,9 @@ class AdCard extends React.Component<Props, State> {
   }
 
   renderDatePicker() {
-    const { location: { search } } = this.props;
+    const {
+      location: { search },
+    } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
@@ -128,7 +214,9 @@ class AdCard extends React.Component<Props, State> {
   }
 
   createLegend() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const legends = [
       {
         key: 'impressions',
@@ -138,12 +226,10 @@ class AdCard extends React.Component<Props, State> {
         key: 'clicks',
         domain: formatMessage(messages.clicks),
       },
-
     ];
 
     return legends;
   }
-
 
   renderChart() {
     const { colors, ad } = this.props;
@@ -175,11 +261,15 @@ class AdCard extends React.Component<Props, State> {
           intlMessages={messages}
         />
       </div>
-    )
+    );
   }
 
   public render() {
-    const { ad, intl: { formatMessage }, colors } = this.props;
+    const {
+      ad,
+      intl: { formatMessage },
+      colors,
+    } = this.props;
     const { dataSource, loading } = this.state;
     const title = ad.name;
 
@@ -205,17 +295,19 @@ class AdCard extends React.Component<Props, State> {
             {dataSource && dataSource.length === 0 && loading ? (
               <div />
             ) : (
-                <LegendChartTS
-                  identifier={`chartLegend-${ad.id}`}
-                  options={legendOptions}
-                  legends={legends}
-                />
-              )}
+              <LegendChartTS
+                identifier={`chartLegend-${ad.id}`}
+                options={legendOptions}
+                legends={legends}
+              />
+            )}
           </Col>
         </Row>
         {loading ? <LoadingChart /> : null}
-        {(!dataSource.length && !loading) ? <EmptyCharts title={formatMessage(messages.noStatAvailable)} /> : null}
-        {(dataSource.length && !loading) ? this.renderChart() : null}
+        {!dataSource.length && !loading ? (
+          <EmptyCharts title={formatMessage(messages.noStatAvailable)} />
+        ) : null}
+        {dataSource.length && !loading ? this.renderChart() : null}
       </Card>
     );
   }
@@ -224,5 +316,5 @@ class AdCard extends React.Component<Props, State> {
 export default compose<Props, AdCardProps>(
   withRouter,
   injectIntl,
-  injectThemeColors
-)(AdCard)
+  injectThemeColors,
+)(AdCard);

@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { Layout, Row, Col } from 'antd';
 import { Labels } from '../../../../Labels';
-import {
-  DisplayCampaignInfoResource,
-  AdInfoResource,
-} from '../../../../../models/campaign/display';
+import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
 import AdServingActionBar from './AdServingActionBar';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -19,8 +16,10 @@ import {
 import messages from '../messages';
 import { FormattedMessage } from 'react-intl';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
+import { flatten } from 'plottable/build/src/utils/arrayUtils';
 
 const { Content } = Layout;
 
@@ -29,7 +28,8 @@ export interface DisplayCampaignProps {
 }
 
 type Props = DisplayCampaignProps &
-  RouteComponentProps<{ organisationId: string; campaignId: string }> & InjectedNotificationProps;
+  RouteComponentProps<{ organisationId: string; campaignId: string }> &
+  InjectedNotificationProps;
 
 class AdServing extends React.Component<Props> {
   componentDidMount() {
@@ -72,16 +72,19 @@ class AdServing extends React.Component<Props> {
   archiveCampaign = (campaignId: string) => {
     const {
       history,
-      match: { params: { organisationId } }
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
-    return DisplayCampaignService.updateCampaign(campaignId, {archived: true})
+    return DisplayCampaignService.updateCampaign(campaignId, { archived: true })
       .then(() => {
         history.push({
-          pathname: `/v2/o/${organisationId}/campaigns/display`
-        })
-      }).catch(err => {
-        this.props.notifyError(err)
+          pathname: `/v2/o/${organisationId}/campaigns/display`,
+        });
       })
+      .catch(err => {
+        this.props.notifyError(err);
+      });
   };
 
   public render() {
@@ -92,12 +95,14 @@ class AdServing extends React.Component<Props> {
       },
     } = this.props;
 
-    const adList: AdInfoResource[] = [];
-    campaign.ad_groups.forEach(adgroup => {
-      adgroup.ads.forEach(ad => {
-        adList.push(ad);
-      });
-    });
+    const adCards = flatten(
+      campaign.ad_groups.map(adgroup => {
+        return adgroup.ads.map(ad => (
+          <AdCard key={ad.id} ad={ad} adGroupId={adgroup.id} />
+        ));
+      }),
+    );
+
     return (
       <div className="ant-layout">
         <AdServingActionBar
@@ -112,16 +117,18 @@ class AdServing extends React.Component<Props> {
               organisationId={organisationId}
               labellableType="DISPLAY_CAMPAIGN"
             />
-            {adList.map(ad => {
-              return <AdCard key={ad.id} ad={ad} />;
-            })}
-            {adList.length === 0 ? 
+            {adCards}
+            {adCards.length === 0 && (
               <Row>
-                <Col span={24} className="mcs-table-view-empty" style={{ marginTop: 200 }}>
+                <Col
+                  span={24}
+                  className="mcs-table-view-empty"
+                  style={{ marginTop: 200 }}
+                >
                   <FormattedMessage {...messages.emptyAds} />
                 </Col>
-              </Row> 
-            : null }
+              </Row>
+            )}
           </Content>
         </div>
       </div>
@@ -129,4 +136,7 @@ class AdServing extends React.Component<Props> {
   }
 }
 
-export default compose<Props, DisplayCampaignProps>(withRouter, injectNotifications)(AdServing);
+export default compose<Props, DisplayCampaignProps>(
+  withRouter,
+  injectNotifications,
+)(AdServing);
