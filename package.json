@@ -187,6 +187,7 @@
     "node": ">=8.0.0"
   },
   "scripts": {
+    "extract-messages": "NODE_ENV=production babel app/react/src  --out-file /dev/null",
     "test": "grunt test",
     "i18n": "node scripts/i18n.js",
     "test:tslint": "tslint -c tslint.json 'app/react/src/**/*.{ts,tsx}'",
