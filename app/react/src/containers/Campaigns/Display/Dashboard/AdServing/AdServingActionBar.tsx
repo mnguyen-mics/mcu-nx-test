@@ -194,6 +194,9 @@ class AdServingActionBar extends React.Component<Props> {
         <Menu.Item key="APX">
           <FormattedMessage {...messages.apx} />
         </Menu.Item>
+        <Menu.Item key="SMART">
+          <FormattedMessage {...messages.smartAdServer} />
+        </Menu.Item>
         <Menu.Item key="NONE">
           <FormattedMessage {...messages.none} />
         </Menu.Item>

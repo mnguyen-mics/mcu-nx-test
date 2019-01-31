@@ -309,4 +309,8 @@ export default defineMessages({
     id: 'display.campaign.actionbar.history',
     defaultMessage: 'History',
   },
+  smartAdServer: {
+    id: 'display.campaign.actionbar.adserving.smart_ad_server',
+    defaultMessage: 'Smart Ad Server'
+  }
 }) as { [key: string]: { id: string; defaultMessage: string } };
