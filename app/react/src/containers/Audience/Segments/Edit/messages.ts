@@ -128,6 +128,10 @@ export default defineMessages({
     id: 'audience.segment.section2advancedPart.row1.codesnippetcopied',
     defaultMessage: 'Code snippet copied',
   },
+  configureAudienceSegmentTechnicalName: {
+    id: 'audience.segment.form.codesnippet.noTechnicalNameConfigured',
+    defaultMessage: 'The Audience Segment technical name needs to be configured.',
+  },
   // Default lifetime
   contentSectionGeneralAdvancedPartRow2Label: {
     id: 'audience.segment.section1.advancedPart.row2.label',

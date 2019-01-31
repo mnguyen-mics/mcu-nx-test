@@ -10,7 +10,7 @@ import {
 import { connect } from 'react-redux';
 import { InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout } from 'antd';
+import { Layout, Alert } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { compose } from 'recompose';
 
@@ -124,18 +124,18 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         );
       case 'USER_PIXEL':
         return (
-          datamart && (
+          (datamart && audienceSegmentFormData.audienceSegment.technical_name) ?(
             <FormCodeSnippet
               language="html"
               codeSnippet={`<img style="display:none" src="https://events.mediarithmics.com/v1/user_lists/pixel?$dat_token=${
                 datamart.token
-              }&$segtn=${encodeURIComponent(
-                this.props.audienceSegmentFormData.audienceSegment
-                  .technical_name || '',
-              )}" />`}
+              }&$segtn=${encodeURIComponent(audienceSegmentFormData.audienceSegment.technical_name)}" />`}
               copyToClipboard={true}
             />
-          )
+          ) : (   <Alert
+            message={intl.formatMessage(messages.configureAudienceSegmentTechnicalName)}
+            type="warning"
+          />)
         );
       case 'USER_QUERY':
         return queryLanguage === 'OTQL'
