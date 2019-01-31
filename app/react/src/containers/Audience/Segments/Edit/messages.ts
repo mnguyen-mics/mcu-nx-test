@@ -3,7 +3,8 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   audienceFeedWarningMessage: {
     id: 'audience.warning',
-    defaultMessage : 'You cannot edit an active plugin. Pause it in order to edit it.'
+    defaultMessage:
+      'You cannot edit an active plugin. Pause it in order to edit it.',
   },
   audienceSegmentBreadCrumb: {
     id: 'audience.segment.actionbar.breadcrumb.label',
@@ -130,7 +131,8 @@ export default defineMessages({
   },
   configureAudienceSegmentTechnicalName: {
     id: 'audience.segment.form.codesnippet.noTechnicalNameConfigured',
-    defaultMessage: 'The Audience Segment technical name needs to be configured.',
+    defaultMessage:
+      'The Audience Segment technical name needs to be configured.',
   },
   // Default lifetime
   contentSectionGeneralAdvancedPartRow2Label: {
