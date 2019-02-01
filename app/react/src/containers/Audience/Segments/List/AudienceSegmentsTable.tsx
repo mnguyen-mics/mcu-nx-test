@@ -584,15 +584,12 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (
-          text: string,
-          record: AudienceSegmentShape,
-        ) => (
+        render: (text: string, record: AudienceSegmentShape) => (
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
           >
-            <SegmentNameDisplay audienceSegmentResource={record}/>
+            <SegmentNameDisplay audienceSegmentResource={record} />
           </Link>
         ),
       },

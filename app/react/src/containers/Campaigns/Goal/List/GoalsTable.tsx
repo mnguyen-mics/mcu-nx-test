@@ -43,7 +43,9 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { McsIcon } from '../../../../components';
-import withTranslations, { TranslationProps } from '../../../Helpers/withTranslations';
+import withTranslations, {
+  TranslationProps,
+} from '../../../Helpers/withTranslations';
 
 const messages = defineMessages({
   labelFilterBy: {
@@ -108,7 +110,8 @@ type GoalsTableProps = MapStateToProps &
   MapDispatchToProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string }> & TranslationProps;
+  RouteComponentProps<{ organisationId: string }> &
+  TranslationProps;
 
 class GoalsTable extends React.Component<GoalsTableProps> {
   componentDidMount() {
@@ -321,7 +324,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
 
     const dataColumns = [
       {
-        translationKey: "STATUS",
+        translationKey: 'STATUS',
         key: 'status',
         isHideable: false,
         render: (text: string, record: GoalResource) => (

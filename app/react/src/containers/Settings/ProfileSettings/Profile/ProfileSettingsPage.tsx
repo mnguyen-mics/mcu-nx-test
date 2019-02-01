@@ -238,7 +238,10 @@ export default compose(
   injectIntl,
   injectNotifications,
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   reduxForm({
     form: 'userAccountEdit',
   }),

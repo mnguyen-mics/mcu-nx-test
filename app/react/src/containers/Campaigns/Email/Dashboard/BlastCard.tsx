@@ -8,7 +8,7 @@ import messages from './messages';
 import {
   EMAIL_DASHBOARD_SEARCH_SETTINGS,
   EmailCampaignDashboardRouteMatchParam,
-  EmailDashboardSearchSettings
+  EmailDashboardSearchSettings,
 } from './constants';
 import BlastTable, { BlastData } from './BlastTable';
 import { ReportViewResource } from '../../../../models/ReportView';
@@ -22,9 +22,9 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import log from '../../../../utils/Logger';
 import ReportService from '../../../../services/ReportService';
-import {parseSearch} from "../../../../utils/LocationSearchHelper";
-import {normalizeReportView} from "../../../../utils/MetricHelper";
-import {normalizeArrayOfObject} from "../../../../utils/Normalizer";
+import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
 export interface BlastCardProps {
   reportView?: ReportViewResource;
@@ -58,21 +58,27 @@ class BlastCard extends React.Component<Props, State> {
     const {
       location: { search },
       match: {
-        params: { campaignId, organisationId }
-      }
+        params: { campaignId, organisationId },
+      },
     } = this.props;
     this.setState({ isLoading: true });
-    const filter = parseSearch<EmailDashboardSearchSettings>(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
+    const filter = parseSearch<EmailDashboardSearchSettings>(
+      search,
+      EMAIL_DASHBOARD_SEARCH_SETTINGS,
+    );
     Promise.all([
-        ReportService.getEmailDeliveryReport(
-          organisationId,
-          filter.from,
-          filter.to,
-          ['campaign_id', 'sub_campaign_id']
-        ).then(report => {
-          return normalizeArrayOfObject(normalizeReportView(report.data.report_view), 'sub_campaign_id');
-        }),
-        EmailCampaignService.getBlasts(campaignId).then(res => res.data)
+      ReportService.getEmailDeliveryReport(
+        organisationId,
+        filter.from,
+        filter.to,
+        ['campaign_id', 'sub_campaign_id'],
+      ).then(report => {
+        return normalizeArrayOfObject(
+          normalizeReportView(report.data.report_view),
+          'sub_campaign_id',
+        );
+      }),
+      EmailCampaignService.getBlasts(campaignId).then(res => res.data),
     ])
       .then(([deliveryReport, blastsData]) => {
         this.setState({
@@ -91,7 +97,11 @@ class BlastCard extends React.Component<Props, State> {
   };
 
   handleUpdateStatus = (id: string, nextStatus: EmailBlastStatus) => {
-    const { match: { params: { campaignId } } } = this.props;
+    const {
+      match: {
+        params: { campaignId },
+      },
+    } = this.props;
     this.setState({ isLoading: true });
     EmailCampaignService.updateBlast(campaignId, id, { status: nextStatus })
       .then(res => {
@@ -128,7 +138,9 @@ class BlastCard extends React.Component<Props, State> {
   render() {
     const {
       intl,
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
     } = this.props;
 
     const { isLoading, blasts } = this.state;

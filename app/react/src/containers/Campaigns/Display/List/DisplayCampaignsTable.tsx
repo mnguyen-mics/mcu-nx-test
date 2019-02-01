@@ -35,12 +35,15 @@ import { DisplayCampaignResource } from '../../../../models/campaign/display/Dis
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
 import { MapDispatchToProps, MapStateToProps } from './DisplayCampaignsPage';
-import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import {
+  ExtendedTableRowSelection,
+  ActionsColumnDefinition,
+} from '../../../../components/TableView/TableView';
 import { FilterParams } from './DisplayCampaignsActionbar';
 
 interface DisplayCampaignsTableProps
   extends MapDispatchToProps,
-  MapStateToProps {
+    MapStateToProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingStatuses: boolean;
 }
@@ -179,7 +182,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
     } else {
       const editUrl = `/v2/o/${organisationId}/campaigns/display/${
         campaign.id
-        }/edit`;
+      }/edit`;
 
       history.push({
         pathname: editUrl,
@@ -390,7 +393,9 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       // },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<DisplayCampaignResource>> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<DisplayCampaignResource>
+    > = [
       {
         key: 'action',
         actions: () => [
@@ -473,8 +478,8 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-        <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
-      );
+      <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
+    );
   }
 }
 

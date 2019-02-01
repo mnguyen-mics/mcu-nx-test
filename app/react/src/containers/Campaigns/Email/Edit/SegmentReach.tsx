@@ -22,13 +22,11 @@ interface MapStateProps {
   defaultDatamart: (organisationId: string) => { id: string };
 }
 
-type Props =
-  SegmentReachProps &
+type Props = SegmentReachProps &
   MapStateProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 
 class SegmentReach extends React.Component<Props, State> {
-
   constructor(props: Props) {
     super(props);
     this.state = { count: 0 };
@@ -36,7 +34,9 @@ class SegmentReach extends React.Component<Props, State> {
 
   computeSegmentReach = (props: Props) => {
     const {
-      match: { params: { organisationId }},
+      match: {
+        params: { organisationId },
+      },
       defaultDatamart,
       segmentIds,
       providerTechnicalNames,
@@ -45,13 +45,17 @@ class SegmentReach extends React.Component<Props, State> {
     const datamartId = defaultDatamart(organisationId).id;
 
     if (segmentIds && segmentIds.length > 0) {
-      EmailCampaignService.computeSegmentReach(datamartId, segmentIds, providerTechnicalNames).then(count => {
+      EmailCampaignService.computeSegmentReach(
+        datamartId,
+        segmentIds,
+        providerTechnicalNames,
+      ).then(count => {
         this.setState({ count: count });
       });
     } else {
       this.setState({ count: 0 });
     }
-  }
+  };
 
   componentDidMount() {
     this.computeSegmentReach(this.props);
@@ -62,16 +66,17 @@ class SegmentReach extends React.Component<Props, State> {
   }
 
   render() {
-
     const { count } = this.state;
     const { segmentIds, providerTechnicalNames } = this.props;
 
     if (segmentIds && segmentIds.length > 0) {
-
       if (providerTechnicalNames && providerTechnicalNames.length === 0) {
         return (
           <div className="segment-user-reach">
-            <FormattedMessage id="missing-provider" defaultMessage="Please select a provider to have the potential reach number" />
+            <FormattedMessage
+              id="missing-provider"
+              defaultMessage="Please select a provider to have the potential reach number"
+            />
           </div>
         );
       }
@@ -79,15 +84,18 @@ class SegmentReach extends React.Component<Props, State> {
       if (count === 0) {
         return (
           <div className="segment-user-reach">
-            <FormattedMessage id="potential-reach-zero" defaultMessage="There are no email to reach" />
+            <FormattedMessage
+              id="potential-reach-zero"
+              defaultMessage="There are no email to reach"
+            />
           </div>
         );
       }
 
       return (
-        <div className="segment-user-reach">          
-          <FormattedMessage 
-            id="potential-reach" 
+        <div className="segment-user-reach">
+          <FormattedMessage
+            id="potential-reach"
             defaultMessage={`Potential Reach: {emailCountLabeled} 
               { emailCount, plural, one { email } other { emails }} `}
             values={{
@@ -97,8 +105,8 @@ class SegmentReach extends React.Component<Props, State> {
                 </span>
               ),
               emailCount: count,
-            }}    
-          />          
+            }}
+          />
         </div>
       );
     }
@@ -109,9 +117,7 @@ class SegmentReach extends React.Component<Props, State> {
 
 export default compose<Props, SegmentReachProps>(
   withRouter,
-  connect(
-    state => ({
-      defaultDatamart: getDefaultDatamart(state),
-    }),
-  ),
+  connect(state => ({
+    defaultDatamart: getDefaultDatamart(state),
+  })),
 )(SegmentReach);

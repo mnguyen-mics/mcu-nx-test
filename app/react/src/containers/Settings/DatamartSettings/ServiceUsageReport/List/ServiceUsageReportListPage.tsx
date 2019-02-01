@@ -89,7 +89,9 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
 
   fetchData = () => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
     } = this.props;
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -114,7 +116,9 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
 
   handleRunExport = () => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
       intl: { formatMessage },
     } = this.props;
