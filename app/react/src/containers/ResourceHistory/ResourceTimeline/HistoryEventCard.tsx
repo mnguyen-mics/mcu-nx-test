@@ -128,7 +128,9 @@ class HistoryEventCard extends React.Component<Props, State> {
     if(!resourceHelper)
       return;
       
-    const message = messages.selectionAddedMultiEditList ;
+    const message = isHistoryDeleteLinkEvent(event) ? 
+    messages.selectionRemovedMultiEditList
+    : messages.selectionAddedMultiEditList ;
     const goToResource = () => {
       resourceHelper.goToResource(event.resource_id)
     };
@@ -137,7 +139,7 @@ class HistoryEventCard extends React.Component<Props, State> {
     <div className="mcs-fields-list-item">
     { <FormattedMessage
           {...{...message, values: {
-            field: <span className="name">{resourceHelper.getType()}</span>,
+            selection: <span className="name">{resourceHelper.getType()}</span>,
             value: 
               <span className="value cursor-pointer" onClick={goToResource}>
                 {resourceName}

@@ -156,7 +156,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                     'KEYWORDS_LIST_SELECTION':{
                       direction: 'CHILD',
                       getType: () => {
-                        return 'Keywords list selection';
+                        return 'Keywords list';
                       },
                       getName: (id: string) => {
                         return DisplayCampaignService.getKeywordListSelection(campaignId, adGroupId, id)

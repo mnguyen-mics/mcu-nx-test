@@ -61,7 +61,11 @@ const messages: {
   },
   selectionAddedMultiEditList: {
     id: 'timeline.events.card.multiEdit.selection.added',
-    defaultMessage: '{field} added : {value}',
+    defaultMessage: '{selection} added : {value}',
+  },
+  selectionRemovedMultiEditList: {
+    id: 'timeline.events.card.multiEdit.selection.removed',
+    defaultMessage: '{selection} removed : {value}',
   },
   resourceDeleted: {
     id: 'timeline.events.card.resourceDeleted',
