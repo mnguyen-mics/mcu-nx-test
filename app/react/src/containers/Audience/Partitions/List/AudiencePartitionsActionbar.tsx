@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../components/PopupContainers/index';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { withTranslations } from '../../../Helpers';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
@@ -24,7 +24,9 @@ type Props = MapStateToProps &
 class AudiencePartitionsActionbar extends React.Component<Props> {
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       defaultDatamart,
       translations,
     } = this.props;
@@ -57,7 +59,7 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage id="NEW_PARTITION" />
@@ -75,5 +77,8 @@ const mapStateToProps = (state: any) => ({
 export default compose(
   withTranslations,
   withRouter,
-  connect(mapStateToProps, undefined),
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(AudiencePartitionsActionbar);

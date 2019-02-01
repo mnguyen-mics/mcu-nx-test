@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 
 import McsIcon from '../../../../components/McsIcon';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import {
   FormattedMessage,
   defineMessages,
@@ -50,7 +50,9 @@ class PartitionActionBar extends React.Component<
 > {
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl,
       partition,
       publishPartition,
@@ -71,7 +73,7 @@ class PartitionActionBar extends React.Component<
       },
     ];
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {partition && partition.status !== 'PUBLISHED' && (
           <Button
             className="mcs-primary"

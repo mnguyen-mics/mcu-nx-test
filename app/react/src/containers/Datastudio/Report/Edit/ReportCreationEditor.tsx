@@ -2,24 +2,46 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
 import { connect } from 'react-redux';
-import { Field, reduxForm, FieldArray, Form, GenericField, InjectedFormProps, getFormValues, isValid, GenericFieldArray } from 'redux-form';
+import {
+  Field,
+  reduxForm,
+  FieldArray,
+  Form,
+  GenericField,
+  InjectedFormProps,
+  getFormValues,
+  isValid,
+  GenericFieldArray,
+} from 'redux-form';
 import { compose } from 'recompose';
 import { Layout, Row, Button, Col } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { FormTitle, withValidators } from '../../../../components/Form';
-import FormDateRangePicker, { FormDateRangePickerProps } from '../../../../components/Form/FormDateRangePicker';
-import FormLinkedSelectInput, { FormLinkedSelectInputProps } from '../../../../components/Form/FormLinkedSelectInput';
-import DefaultSelect, { DefaultSelectProps } from '../../../../components/Form/FormSelect/DefaultSelect';
-import TagSelect, { FormTagSelectProps } from '../../../../components/Form/FormSelect/TagSelect';
+import FormDateRangePicker, {
+  FormDateRangePickerProps,
+} from '../../../../components/Form/FormDateRangePicker';
+import FormLinkedSelectInput, {
+  FormLinkedSelectInputProps,
+} from '../../../../components/Form/FormLinkedSelectInput';
+import DefaultSelect, {
+  DefaultSelectProps,
+} from '../../../../components/Form/FormSelect/DefaultSelect';
+import TagSelect, {
+  FormTagSelectProps,
+} from '../../../../components/Form/FormSelect/TagSelect';
 import messages from './messages';
 import ReportFilterFields from './ReportFilterFields';
-import TableView, { DataColumnDefinition } from '../../../../components/TableView/TableView';
+import TableView, {
+  DataColumnDefinition,
+} from '../../../../components/TableView/TableView';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
-import ReportCreationService, { FormValueInterface } from './ReportCreationService';
+import ReportCreationService, {
+  FormValueInterface,
+} from './ReportCreationService';
 import {
   typeOptions,
   availableDimensions,
@@ -50,8 +72,7 @@ interface State {
   noPreviewValues: boolean;
 }
 
-type JoinedProps =
-  ReportCreationEditorProps &
+type JoinedProps = ReportCreationEditorProps &
   InjectedIntlProps &
   InjectedFormProps &
   RouteComponentProps<any> &
@@ -61,14 +82,18 @@ type JoinedProps =
 
 const DefaultSelectField = Field as new () => GenericField<DefaultSelectProps>;
 const TagSelectField = Field as new () => GenericField<FormTagSelectProps>;
-const FormDateRangePickerField = Field as new () => GenericField<FormDateRangePickerProps>;
-const FormLinkedSelectInputField = Field as new () => GenericField<FormLinkedSelectInputProps>;
+const FormDateRangePickerField = Field as new () => GenericField<
+  FormDateRangePickerProps
+>;
+const FormLinkedSelectInputField = Field as new () => GenericField<
+  FormLinkedSelectInputProps
+>;
 const ReportCreationEditorFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
-  FormLinkedSelectInputProps>;
+  FormLinkedSelectInputProps
+>;
 
 class ReportCreationEditor extends React.Component<JoinedProps, State> {
-
   constructor(props: JoinedProps) {
     super(props);
 
@@ -84,16 +109,16 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     let loadingData = true;
     this.setState({ loadingData });
     ReportCreationService.exportReport(formValue, this.props.organisationId)
-      .then((res) => {
+      .then(res => {
         loadingData = false;
         this.setState({ loadingData });
       })
-      .catch((err) => {
+      .catch(err => {
         loadingData = false;
         this.setState({ loadingData });
         this.props.notifyError(err);
       });
-  }
+  };
 
   preview = () => {
     const { formValue } = this.props;
@@ -103,17 +128,17 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     this.setState({ loadingData });
 
     ReportCreationService.preview(formValue, organisationId)
-      .then((res) => {
+      .then(res => {
         this.setState(res);
         loadingData = false;
         this.setState({ loadingData });
       })
-      .catch((err) => {
+      .catch(err => {
         loadingData = false;
         this.setState({ loadingData });
         this.props.notifyError(err);
       });
-  }
+  };
 
   render() {
     const {
@@ -142,7 +167,9 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     if (this.state.noPreviewValues === true) {
       tablePreviewData = (
         <Row className="report-previewNoValues">
-          <p><FormattedMessage {...messages.previewSectionNoValues} /></p>
+          <p>
+            <FormattedMessage {...messages.previewSectionNoValues} />
+          </p>
         </Row>
       );
     }
@@ -161,8 +188,16 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
         >
           {/* this button enables submit on enter */}
           <button type="submit" style={{ display: 'none' }} />
-          <Actionbar path={[{ name: intl.formatMessage(messages.actionBarTitle) }]} edition={true}>
-            <Button type="primary" className="mcs-primary" htmlType="submit" loading={this.state.loadingData}>
+          <Actionbar
+            paths={[{ name: intl.formatMessage(messages.actionBarTitle) }]}
+            edition={true}
+          >
+            <Button
+              type="primary"
+              className="mcs-primary"
+              htmlType="submit"
+              loading={this.state.loadingData}
+            >
               <FormattedMessage {...messages.reportCreationSaveButton} />
             </Button>
             <McsIcon
@@ -181,13 +216,21 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                 <li>
                   <Link to={`${url}#general_information`}>
                     <McsIcon type="check-rounded-inverted" />
-                    <span className="step-title"><FormattedMessage {...messages.reportSiderMenuGeneralInformation} /></span>
+                    <span className="step-title">
+                      <FormattedMessage
+                        {...messages.reportSiderMenuGeneralInformation}
+                      />
+                    </span>
                   </Link>
                 </li>
                 <li>
                   <Link to={`${url}#detailed_information`}>
                     <McsIcon type="check-rounded-inverted" />
-                    <span className="step-title"><FormattedMessage {...messages.reportSiderMenuDetailedInformation} /></span>
+                    <span className="step-title">
+                      <FormattedMessage
+                        {...messages.reportSiderMenuDetailedInformation}
+                      />
+                    </span>
                   </Link>
                 </li>
               </Scrollspy>
@@ -196,7 +239,12 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
               <div id={'reportSteps'} className="ant-layout">
                 <Content className="mcs-content-container mcs-form-container">
                   <div id={'general_information'}>
-                    <Row type="flex" align="middle" justify="space-between" className="section-header">
+                    <Row
+                      type="flex"
+                      align="middle"
+                      justify="space-between"
+                      className="section-header"
+                    >
                       <FormTitle
                         title={messages.reportSectionGeneralTitle}
                         subtitle={messages.reportSectionGeneralSubTitle}
@@ -208,14 +256,29 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         component={DefaultSelect}
                         validate={[isRequired]}
                         options={typeOptions}
-                        formItemProps={{ label: intl.formatMessage(messages.reportSectionGeneralTypeLabel), colon: false, required: true }}
-                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionGeneralTypeTooltip) }}
+                        formItemProps={{
+                          label: intl.formatMessage(
+                            messages.reportSectionGeneralTypeLabel,
+                          ),
+                          colon: false,
+                          required: true,
+                        }}
+                        helpToolTipProps={{
+                          title: intl.formatMessage(
+                            messages.reportSectionGeneralTypeTooltip,
+                          ),
+                        }}
                       />
                     </Row>
                   </div>
                   <hr />
                   <div id={'detailed_information'}>
-                    <Row type="flex" align="middle" justify="space-between" className="section-header">
+                    <Row
+                      type="flex"
+                      align="middle"
+                      justify="space-between"
+                      className="section-header"
+                    >
                       <FormTitle
                         title={messages.reportSectionDetailedTitle}
                         subtitle={messages.reportSectionDetailedSubTitle}
@@ -227,42 +290,83 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         component={TagSelect}
                         validate={[isRequired]}
                         selectProps={{ options: availableDimensions }}
-                        formItemProps={{ label: intl.formatMessage(messages.reportSectionDetailedDimensionsLabel), colon: false, required: true }}
-                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionDetailedDimensionsTooltip) }}
+                        formItemProps={{
+                          label: intl.formatMessage(
+                            messages.reportSectionDetailedDimensionsLabel,
+                          ),
+                          colon: false,
+                          required: true,
+                        }}
+                        helpToolTipProps={{
+                          title: intl.formatMessage(
+                            messages.reportSectionDetailedDimensionsTooltip,
+                          ),
+                        }}
                       />
                       <TagSelectField
                         name="metrics"
                         component={TagSelect}
                         validate={[isRequired]}
                         selectProps={selectPropsMetrics}
-                        formItemProps={{ label: intl.formatMessage(messages.reportSectionDetailedMetricsLabel), colon: false, required: true }}
-                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionDetailedMetricsTooltip) }}
+                        formItemProps={{
+                          label: intl.formatMessage(
+                            messages.reportSectionDetailedMetricsLabel,
+                          ),
+                          colon: false,
+                          required: true,
+                        }}
+                        helpToolTipProps={{
+                          title: intl.formatMessage(
+                            messages.reportSectionDetailedMetricsTooltip,
+                          ),
+                        }}
                       />
                       <FormDateRangePickerField
                         name="duration"
                         component={FormDateRangePicker}
                         validate={[isRequired]}
                         formItemProps={{
-                          label: intl.formatMessage(messages.reportSectionDetailedDurationLabel),
+                          label: intl.formatMessage(
+                            messages.reportSectionDetailedDurationLabel,
+                          ),
                           colon: false,
                           required: true,
                         }}
-                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionDetailedDurationTooltip) }}
+                        helpToolTipProps={{
+                          title: intl.formatMessage(
+                            messages.reportSectionDetailedDurationTooltip,
+                          ),
+                        }}
                         allowPastDate={true}
                         startDatePickerProps={{
-                          placeholder: intl.formatMessage(messages.reportSectionDetailedDurationStartDatePlaceholder),
+                          placeholder: intl.formatMessage(
+                            messages.reportSectionDetailedDurationStartDatePlaceholder,
+                          ),
                         }}
                         endDatePickerProps={{
-                          placeholder: intl.formatMessage(messages.reportSectionDetailedDurationEndDatePlaceholder),
+                          placeholder: intl.formatMessage(
+                            messages.reportSectionDetailedDurationEndDatePlaceholder,
+                          ),
                         }}
                       />
                       <FormLinkedSelectInputField
                         name="filter"
                         component={FormLinkedSelectInput}
-                        formItemProps={{ label: intl.formatMessage(messages.reportSectionDetailedFilterLabel), colon: false }}
-                        helpToolTipProps={{ title: intl.formatMessage(messages.reportSectionDetailedFilterTooltip) }}
+                        formItemProps={{
+                          label: intl.formatMessage(
+                            messages.reportSectionDetailedFilterLabel,
+                          ),
+                          colon: false,
+                        }}
+                        helpToolTipProps={{
+                          title: intl.formatMessage(
+                            messages.reportSectionDetailedFilterTooltip,
+                          ),
+                        }}
                         leftFormSelectProps={{
-                          placeholder: intl.formatMessage(messages.reportSectionDetailedFilterLeftSelectPlaceholder),
+                          placeholder: intl.formatMessage(
+                            messages.reportSectionDetailedFilterLeftSelectPlaceholder,
+                          ),
                         }}
                         leftOptionsProps={linkedSelectOptions}
                       />
@@ -271,7 +375,9 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         component={ReportFilterFields}
                         formItemProps={{ colon: false }}
                         leftFormSelectProps={{
-                          placeholder: intl.formatMessage(messages.reportSectionDetailedFilterLeftSelectPlaceholder),
+                          placeholder: intl.formatMessage(
+                            messages.reportSectionDetailedFilterLeftSelectPlaceholder,
+                          ),
                         }}
                         leftOptionsProps={linkedSelectOptions}
                       />
@@ -306,9 +412,7 @@ const FORM_NAME = 'report';
 export default compose<JoinedProps, ReportCreationEditorProps>(
   injectIntl,
   withRouter,
-  reduxForm(
-    { form: FORM_NAME },
-  ),
+  reduxForm({ form: FORM_NAME }),
   withValidators,
   connect(
     state => ({

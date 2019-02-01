@@ -9,7 +9,7 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
@@ -91,7 +91,7 @@ class NativeActionBar extends React.Component<JoinedProps> {
     };
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <a onClick={newnativeLink}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}

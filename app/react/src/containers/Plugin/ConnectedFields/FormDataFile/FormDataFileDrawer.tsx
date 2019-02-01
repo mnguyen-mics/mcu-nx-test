@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout, Button, Select, Upload, Input } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { FormTitle } from '../../../../components/Form';
 import DataFileService from '../../../../services/DataFileService';
@@ -16,7 +16,7 @@ const Option = Select.Option;
 
 import AceEditor from 'react-ace';
 
-import 'brace/ext/searchbox'
+import 'brace/ext/searchbox';
 import 'brace/mode/java';
 import 'brace/mode/javascript';
 import 'brace/mode/python';
@@ -283,7 +283,7 @@ class FormDataFileDrawer extends React.Component<
     return (
       <Layout>
         <div className="edit-layout ant-layout">
-          <Actionbar path={[{ name: 'Add a Data File' }]} edition={true}>
+          <Actionbar paths={[{ name: 'Add a Data File' }]} edition={true}>
             <Button
               type="primary"
               className="mcs-primary"

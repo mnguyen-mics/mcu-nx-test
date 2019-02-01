@@ -28,7 +28,9 @@ class ActionBar extends React.Component<Props> {
         ? elt.name
         : this.props.intl.formatMessage(elt.name);
     const formatedElt = name
-      ? name.substr(0, 27) !== name ? `${name.substr(0, 27)}\u2026` : name
+      ? name.substr(0, 27) !== name
+        ? `${name.substr(0, 27)}\u2026`
+        : name
       : null;
     const item = elt.path ? (
       <Link to={elt.path}>{formatedElt}</Link>
@@ -40,13 +42,23 @@ class ActionBar extends React.Component<Props> {
   };
 
   render() {
-    const { edition, paths, intl, backgroundColor, inverted, children, ...rest } = this.props;
+    const {
+      edition,
+      paths,
+      intl,
+      backgroundColor,
+      inverted,
+      children,
+      ...rest
+    } = this.props;
     return (
       <Row
         type="flex"
         align="middle"
         justify="space-between"
-        className={`${edition ? 'mcs-actionbar-edit' : 'mcs-actionbar'} ${ inverted ? 'inverted' : '' }`}
+        className={`${edition ? 'mcs-actionbar-edit' : 'mcs-actionbar'} ${
+          inverted ? 'inverted' : ''
+        }`}
         style={backgroundColor ? { backgroundColor } : {}}
       >
         <Breadcrumb

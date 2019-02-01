@@ -2,40 +2,39 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
-import { Actionbar } from '../../Actionbar';
-import {RouteComponentProps} from 'react-router';
-import { InjectedIntlProps, injectIntl } from 'react-intl'
+import Actionbar from '../../../components/ActionBar';
+import { RouteComponentProps } from 'react-router';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 
 import messages from './messages';
 
-interface OverviewActionBarProps {
+interface OverviewActionBarProps {}
 
-}
-
-type JoinedProps = OverviewActionBarProps & RouteComponentProps<any> & InjectedIntlProps;
+type JoinedProps = OverviewActionBarProps &
+  RouteComponentProps<any> &
+  InjectedIntlProps;
 
 class OverviewActionBar extends Component<JoinedProps> {
   render() {
     const {
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
-      intl: {
-        formatMessage,
-      },
+      intl: { formatMessage },
     } = this.props;
 
-    const breadcrumbPaths = [{ name: formatMessage(messages.overview), url: `/v2/o/${organisationId}/analytics/overview` }];
+    const breadcrumbPaths = [
+      {
+        name: formatMessage(messages.overview),
+        url: `/v2/o/${organisationId}/analytics/overview`,
+      },
+    ];
 
-    return (
-      <Actionbar path={breadcrumbPaths} />
-    );
+    return <Actionbar paths={breadcrumbPaths} />;
   }
 }
 
 export default compose(
   injectIntl,
   withRouter,
-) (OverviewActionBar);
+)(OverviewActionBar);

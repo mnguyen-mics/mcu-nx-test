@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import messages from './messages';
 import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 import McsIcon from '../../../../components/McsIcon';
@@ -33,7 +33,7 @@ class ImportsActionbar extends React.Component<
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/datastudio/imports/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.newImport} />

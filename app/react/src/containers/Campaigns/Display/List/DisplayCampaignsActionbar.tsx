@@ -11,7 +11,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Dropdown } from '../../../../components/PopupContainers';
 import { withTranslations } from '../../../Helpers';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
 import CampaignService, {
@@ -268,7 +268,7 @@ class DisplayCampaignsActionbar extends React.Component<
     };
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/display/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
@@ -341,6 +341,9 @@ export default compose<JoinedProps, DisplayCampaignsActionbarProps>(
   withTranslations,
   injectDrawer,
   injectNotifications,
-  connect(mapStateToProps, undefined),
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
   injectIntl,
 )(DisplayCampaignsActionbar);

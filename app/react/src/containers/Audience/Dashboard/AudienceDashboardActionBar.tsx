@@ -1,32 +1,27 @@
 import * as React from 'react';
-import { Actionbar } from '../../Actionbar';
+import Actionbar from '../../../components/ActionBar';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 
-
-export interface AudienceDashboardActionBarProps {
-}
+export interface AudienceDashboardActionBarProps {}
 
 type Props = AudienceDashboardActionBarProps & InjectedIntlProps;
 
 const messages = defineMessages({
   dashboardTitle: {
     id: 'audience.dashboard.title',
-    defaultMessage: 'Dashboard'
+    defaultMessage: 'Dashboard',
   },
   refreshButton: {
     id: 'audience.dashboard.refresh',
-    defaultMessage: 'Refresh Dashboard'
-  }
-})
+    defaultMessage: 'Refresh Dashboard',
+  },
+});
 
 class AudienceDashboardActionBar extends React.Component<Props, any> {
   public render() {
-
     const {
-      intl: {
-        formatMessage
-      }
+      intl: { formatMessage },
     } = this.props;
 
     const breadcrumbPaths = [
@@ -35,16 +30,14 @@ class AudienceDashboardActionBar extends React.Component<Props, any> {
       },
     ];
 
-
     return (
-      
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {/* <Button type="primary" className="mcs-primary" ><FormattedMessage {...messages.refreshButton} /></Button> */}
       </Actionbar>
     );
   }
 }
 
-export default compose<Props, AudienceDashboardActionBarProps>(
-  injectIntl
-)(AudienceDashboardActionBar)
+export default compose<Props, AudienceDashboardActionBarProps>(injectIntl)(
+  AudienceDashboardActionBar,
+);

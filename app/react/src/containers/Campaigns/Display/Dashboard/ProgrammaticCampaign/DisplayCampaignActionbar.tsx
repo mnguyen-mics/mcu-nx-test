@@ -14,7 +14,7 @@ import {
   DisplayCampaignInfoResource,
 } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
-import { Actionbar } from '../../../../Actionbar';
+import Actionbar from '../../../../../components/ActionBar';
 import McsIcon from '../../../../../components/McsIcon';
 import ExportService from '../../../../../services/ExportService';
 import ReportService from '../../../../../services/ReportService';
@@ -370,7 +370,7 @@ class DisplayCampaignActionbar extends React.Component<
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {actionElement}
         <Button
           onClick={

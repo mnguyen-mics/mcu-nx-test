@@ -6,7 +6,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
 import { withTranslations } from '../../../Helpers';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar.tsx';
 import McsIcon from '../../../../components/McsIcon.tsx';
 
 import ExportService from '../../../../services/ExportService';
@@ -87,7 +87,12 @@ class EmailCampaignsActionbar extends Component {
   }
 
   handleRunExport() {
-    const { match: { params: { organisationId } }, translations } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      translations,
+    } = this.props;
 
     const filter = parseSearch(
       this.props.location.search,
@@ -123,7 +128,12 @@ class EmailCampaignsActionbar extends Component {
   }
 
   render() {
-    const { match: { params: { organisationId } }, translations } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      translations,
+    } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
 
@@ -135,7 +145,7 @@ class EmailCampaignsActionbar extends Component {
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/email/create`}>
           <Button type="primary" className="mcs-primary">
             <McsIcon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
@@ -156,8 +166,9 @@ EmailCampaignsActionbar.propTypes = {
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-EmailCampaignsActionbar = compose(withRouter, withTranslations)(
-  EmailCampaignsActionbar
-);
+EmailCampaignsActionbar = compose(
+  withRouter,
+  withTranslations,
+)(EmailCampaignsActionbar);
 
 export default EmailCampaignsActionbar;

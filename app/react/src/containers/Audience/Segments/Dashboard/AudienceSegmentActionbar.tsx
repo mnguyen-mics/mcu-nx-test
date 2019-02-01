@@ -6,7 +6,7 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import ExportService from '../../../../services/ExportService';
@@ -355,7 +355,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     );
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {actionButton}
         <Button onClick={this.onEditClick}>
           <McsIcon type="pen" />

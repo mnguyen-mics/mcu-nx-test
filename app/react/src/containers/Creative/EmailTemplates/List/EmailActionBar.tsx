@@ -9,7 +9,7 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import { withTranslations } from '../../../Helpers';
 import McsIcon from '../../../../components/McsIcon';
 import { RouteComponentProps } from 'react-router';
@@ -77,7 +77,7 @@ class EmailActionBar extends React.Component<JoinedProps> {
     );
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/email/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage id="NEW_EMAIL_TEMPLATE" />

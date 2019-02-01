@@ -3,37 +3,37 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { Actionbar } from '../../Actionbar';
+import Actionbar from '../../../components/ActionBar';
 import messages from './messages';
-
 
 export interface CatalogActionBarProps {}
 
 class CatalogActionBar extends React.Component<
-  CatalogActionBarProps & RouteComponentProps<{ organisationId: string }> & InjectedIntlProps,
+  CatalogActionBarProps &
+    RouteComponentProps<{ organisationId: string }> &
+    InjectedIntlProps,
   any
 > {
   render() {
     const {
       match: {
-          params: {
-          organisationId,
-          },
+        params: { organisationId },
       },
-      intl: {
-          formatMessage,
-      },
+      intl: { formatMessage },
     } = this.props;
 
-    const breadcrumbPaths = [{ name: formatMessage(messages.catalog), url: `/v2/o/${organisationId}/library/catalog` }];
+    const breadcrumbPaths = [
+      {
+        name: formatMessage(messages.catalog),
+        url: `/v2/o/${organisationId}/library/catalog`,
+      },
+    ];
 
-    return (
-      <Actionbar path={breadcrumbPaths} />
-    )
+    return <Actionbar paths={breadcrumbPaths} />;
   }
 }
 
 export default compose(
-    injectIntl,
-    withRouter,
-  )(CatalogActionBar);
+  injectIntl,
+  withRouter,
+)(CatalogActionBar);

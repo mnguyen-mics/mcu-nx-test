@@ -10,7 +10,7 @@ import {
 import { compose } from 'recompose';
 
 import { withTranslations } from '../../../Helpers';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 
 import ExportService from '../../../../services/ExportService';
@@ -154,7 +154,7 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/goals/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />
@@ -170,6 +170,8 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
   }
 }
 
-export default compose(withRouter, withTranslations, injectIntl)(
-  GoalsActionbar,
-);
+export default compose(
+  withRouter,
+  withTranslations,
+  injectIntl,
+)(GoalsActionbar);

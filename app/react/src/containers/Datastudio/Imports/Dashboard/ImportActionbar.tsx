@@ -9,7 +9,7 @@ import withTranslations, {
 } from '../../../Helpers/withTranslations';
 import { Import } from '../../../../models/imports/imports';
 import modalMessages from '../../../../common/messages/modalMessages';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import log from '../../../../utils/Logger';
 import messages from './messages';
@@ -218,7 +218,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {this.renderModal()}
         <Button
           className="mcs-primary"

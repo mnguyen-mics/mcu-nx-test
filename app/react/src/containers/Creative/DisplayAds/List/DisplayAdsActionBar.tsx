@@ -9,7 +9,7 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../components/PopupContainers';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { withTranslations } from '../../../Helpers';
 import { RouteComponentProps } from 'react-router';
@@ -124,7 +124,7 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
     };
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage id="NEW_DISPLAY_AD" />

@@ -3,7 +3,7 @@ import {
   DisplayCampaignInfoResource,
   AdInfoResource,
 } from '../../../../../models/campaign/display';
-import { Actionbar } from '../../../../Actionbar';
+import Actionbar from '../../../../../components/ActionBar';
 import { Button, Dropdown, Icon, message, Menu, Modal } from 'antd';
 import { McsIcon } from '../../../../../components';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
@@ -204,7 +204,7 @@ class AdServingActionBar extends React.Component<Props> {
     );
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Dropdown overlay={downloadMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="download" />

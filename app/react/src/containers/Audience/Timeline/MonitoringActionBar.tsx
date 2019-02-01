@@ -3,7 +3,7 @@ import { Input, Select, Button, Modal } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { Actionbar } from '../../Actionbar';
+import Actionbar from '../../../components/ActionBar';
 import McsIcon from '../../../components/McsIcon';
 import messages from './messages';
 import { Identifier } from './Monitoring';
@@ -113,9 +113,10 @@ class MonitoringActionbar extends React.Component<Props, State> {
       selectedDatamart.datafarm !== 'DF_EU_LEGACY' &&
       this.props.compartments.length > 0;
 
-    const compartmentDefaultValue = showCompartment && this.props.compartments.filter(c => c.default)[0]
-     ? this.props.compartments.filter(c => c.default)[0]
-     .compartment_id : undefined
+    const compartmentDefaultValue =
+      showCompartment && this.props.compartments.filter(c => c.default)[0]
+        ? this.props.compartments.filter(c => c.default)[0].compartment_id
+        : undefined;
 
     const inputValueWidth = showCompartment ? '50%' : '70%';
     const compartmentOptions = this.createCompartmentOptions();
@@ -127,7 +128,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
     );
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Modal
           title="Enter the user identifier you want to lookup"
           wrapClassName="vertical-center-modal"
@@ -167,14 +168,14 @@ class MonitoringActionbar extends React.Component<Props, State> {
               addonAfter={addOnAfterContent}
             />
             {showCompartment && (
-                <Select
-                  style={{ width: '20%' }}
-                  defaultValue={compartmentDefaultValue}
-                  onChange={this.updateCompartment}
-                >
-                  {compartmentOptions}
-                </Select>
-              )}
+              <Select
+                style={{ width: '20%' }}
+                defaultValue={compartmentDefaultValue}
+                onChange={this.updateCompartment}
+              >
+                {compartmentOptions}
+              </Select>
+            )}
           </InputGroup>
         </Modal>
         <Button

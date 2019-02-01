@@ -3,18 +3,14 @@ import lodash from 'lodash';
 import { Button, Icon, Menu, Modal, message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Dropdown } from '../../../../components/PopupContainers';
-import { 
-  injectIntl, 
-  InjectedIntlProps, 
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import withTranslations, {
   TranslationProps,
 } from '../../../Helpers/withTranslations';
 import { GoalResource } from '../../../../models/goal/index';
 import modalMessages from '../../../../common/messages/modalMessages';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import log from '../../../../utils/Logger';
 import messages from './messages';
@@ -40,7 +36,7 @@ import DisplayCampaignService from '../../../../services/DisplayCampaignService'
 
 interface ExportActionbarProps {
   goal?: GoalResource;
-  fetchGoal: (id: string) => any
+  fetchGoal: (id: string) => any;
 }
 
 interface ExportActionbarState {
@@ -57,17 +53,23 @@ type JoinedProps = ExportActionbarProps &
 const reportTypeExportOptions = [
   {
     reportType: 'SOURCE',
-    dimensions: ['marketing_channel', 'source', 'interaction_type']
-  },{
+    dimensions: ['marketing_channel', 'source', 'interaction_type'],
+  },
+  {
     reportType: 'CAMPAIGN',
-    dimensions: ['campaign_id', 'campaign_name', 'interaction_type']
-  },{
+    dimensions: ['campaign_id', 'campaign_name', 'interaction_type'],
+  },
+  {
     reportType: 'CREATIVE',
-    dimensions: ['creative_id', 'creative_name', 'interaction_type']
-  }
-]
+    dimensions: ['creative_id', 'creative_name', 'interaction_type'],
+  },
+];
 
-const fetchExportData = (organisationId: string, goalId: string, filter: Index<any>) => {
+const fetchExportData = (
+  organisationId: string,
+  goalId: string,
+  filter: Index<any>,
+) => {
   const startDate = filter.from;
   const endDate = filter.to;
 
@@ -77,47 +79,64 @@ const fetchExportData = (organisationId: string, goalId: string, filter: Index<a
     endDate,
     ['day'],
     ['value', 'price', 'conversions'],
-    [{name: 'goal_id', value: goalId}]
+    [{ name: 'goal_id', value: goalId }],
   );
 
-  const attributionPerformancePromises = GoalService.getAttributionModels(goalId).then(response => {
-    const promises = lodash.flatMap(response.data, attributionSelectionResource => {
-      return reportTypeExportOptions.map(reportTypeOptions => {
-        return ReportService.getConversionAttributionPerformance(
-          organisationId,
-          startDate,
-          endDate,
-          [],
-          reportTypeOptions.dimensions,
-          ['weighted_conversions', 'weighted_value', 'interaction_to_conversion_duration'],
-          [
-            {name: 'goal_id', value: goalId}, 
-            {name: 'attribution_model_id', value: attributionSelectionResource.id}
-          ]
-        )
-        .then(result => ({
-          ...result,
-          attribution_model_id: attributionSelectionResource.attribution_model_id,
-          attribution_model_name: attributionSelectionResource.attribution_model_name,
-          report_type: reportTypeOptions.reportType
-        }));
-      });
-    });
-    
-    return Promise.all(promises)
+  const attributionPerformancePromises = GoalService.getAttributionModels(
+    goalId,
+  ).then(response => {
+    const promises = lodash.flatMap(
+      response.data,
+      attributionSelectionResource => {
+        return reportTypeExportOptions.map(reportTypeOptions => {
+          return ReportService.getConversionAttributionPerformance(
+            organisationId,
+            startDate,
+            endDate,
+            [],
+            reportTypeOptions.dimensions,
+            [
+              'weighted_conversions',
+              'weighted_value',
+              'interaction_to_conversion_duration',
+            ],
+            [
+              { name: 'goal_id', value: goalId },
+              {
+                name: 'attribution_model_id',
+                value: attributionSelectionResource.id,
+              },
+            ],
+          ).then(result => ({
+            ...result,
+            attribution_model_id:
+              attributionSelectionResource.attribution_model_id,
+            attribution_model_name:
+              attributionSelectionResource.attribution_model_name,
+            report_type: reportTypeOptions.reportType,
+          }));
+        });
+      },
+    );
+
+    return Promise.all(promises);
   });
 
   return conversionPerformancePromise.then(conversionPerformanceResult => {
     return attributionPerformancePromises.then(attributionPerformanceResult => {
       return {
-        goalData: normalizeReportView(conversionPerformanceResult.data.report_view),
+        goalData: normalizeReportView(
+          conversionPerformanceResult.data.report_view,
+        ),
         attributionsData: attributionPerformanceResult.map(attribution => ({
           attribution_model_id: attribution.attribution_model_id,
           attribution_model_name: attribution.attribution_model_name,
           report_type: attribution.report_type,
-          normalized_report_view: normalizeReportView(attribution.data.report_view)
-        }))
-      }
+          normalized_report_view: normalizeReportView(
+            attribution.data.report_view,
+          ),
+        })),
+      };
     });
   });
 };
@@ -144,8 +163,7 @@ class ExportsActionbar extends React.Component<
       translations,
     } = this.props;
 
-    if(!goal)
-      return;
+    if (!goal) return;
 
     const filter = parseSearch(
       this.props.location.search,
@@ -161,12 +179,12 @@ class ExportsActionbar extends React.Component<
     fetchExportData(organisationId, goal.id, filter)
       .then(exportData => {
         ExportService.exportGoal(
-          organisationId, 
-          exportData.goalData, 
-          exportData.attributionsData, 
-          filter, 
-          translations, 
-          intl.formatMessage
+          organisationId,
+          exportData.goalData,
+          exportData.attributionsData,
+          filter,
+          translations,
+          intl.formatMessage,
         );
         this.setState({
           exportIsRunning: false,
@@ -198,22 +216,22 @@ class ExportsActionbar extends React.Component<
   };
 
   changeCampaignStatus = () => {
-    const {
-      fetchGoal,
-      goal,
-      notifyError
-    } = this.props;
+    const { fetchGoal, goal, notifyError } = this.props;
     if (goal) {
-      const promise = goal.status === 'ACTIVE' ? GoalService.updateGoal(goal.id, { status: 'PAUSED' }) : GoalService.updateGoal(goal.id, { status: 'ACTIVE' })
-      return promise.then(res => {
-        return fetchGoal(goal.id)
-      })
-      .catch(err => {
-        return notifyError(err)
-      })
+      const promise =
+        goal.status === 'ACTIVE'
+          ? GoalService.updateGoal(goal.id, { status: 'PAUSED' })
+          : GoalService.updateGoal(goal.id, { status: 'ACTIVE' });
+      return promise
+        .then(res => {
+          return fetchGoal(goal.id);
+        })
+        .catch(err => {
+          return notifyError(err);
+        });
     }
     return;
-  }
+  };
 
   render() {
     const {
@@ -223,7 +241,6 @@ class ExportsActionbar extends React.Component<
       goal,
       intl,
     } = this.props;
-
 
     const exportIsRunning = this.state.exportIsRunning;
 
@@ -238,10 +255,26 @@ class ExportsActionbar extends React.Component<
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
-        {goal && <Button type="primary" className="mcs-primary" onClick={this.changeCampaignStatus}>
-            {goal.status === 'ACTIVE' ? <div><McsIcon type="pause" /><FormattedMessage {...messages.pause} /></div> : <div><McsIcon type="play" /><FormattedMessage {...messages.activate} /></div> }
-        </Button>}
+      <Actionbar paths={breadcrumbPaths}>
+        {goal && (
+          <Button
+            type="primary"
+            className="mcs-primary"
+            onClick={this.changeCampaignStatus}
+          >
+            {goal.status === 'ACTIVE' ? (
+              <div>
+                <McsIcon type="pause" />
+                <FormattedMessage {...messages.pause} />
+              </div>
+            ) : (
+              <div>
+                <McsIcon type="play" />
+                <FormattedMessage {...messages.activate} />
+              </div>
+            )}
+          </Button>
+        )}
 
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
@@ -282,7 +315,7 @@ class ExportsActionbar extends React.Component<
           okText: formatMessage(modalMessages.confirm),
           cancelText: formatMessage(modalMessages.cancel),
           onOk() {
-            return GoalService.updateGoal(goal.id, {...goal, archived: true})
+            return GoalService.updateGoal(goal.id, { ...goal, archived: true })
               .then(() => {
                 const editUrl = `/v2/o/${organisationId}/campaigns/goals`;
                 history.push({
