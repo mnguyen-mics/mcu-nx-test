@@ -150,7 +150,10 @@ class BlastCard extends React.Component<Props, State> {
         to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/create`}
       >
         <Button type="primary">
-          <FormattedMessage id="NEW_EMAIL_BLAST" />
+          <FormattedMessage
+            id="NEW_EMAIL_BLAST"
+            defaultMessage="New Email Blast"
+          />
         </Button>
       </Link>
     );

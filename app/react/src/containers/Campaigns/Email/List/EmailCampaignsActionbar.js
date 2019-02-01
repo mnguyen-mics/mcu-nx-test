@@ -148,12 +148,13 @@ class EmailCampaignsActionbar extends Component {
       <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/email/create`}>
           <Button type="primary" className="mcs-primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage id="NEW_CAMPAIGN" defaultMessage="New Campaign" />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage id="EXPORT" defaultMessage="Export" />
         </Button>
       </Actionbar>
     );

@@ -127,7 +127,11 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
       <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_DISPLAY_AD" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage
+              id="NEW_DISPLAY_AD"
+              defaultMessage="New Display Ad"
+            />
           </Button>
         </Link>
 
@@ -140,7 +144,7 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="ARCHIVE" />
+              <FormattedMessage id="ARCHIVE" defaultMessage="Archive" />
             </Button>
           }
         />

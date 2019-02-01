@@ -38,14 +38,14 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
           <Link
             to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=RANDOM_SPLIT`}
           >
-            <FormattedMessage id="RANDOM_SPLIT" />
+            <FormattedMessage id="RANDOM_SPLIT" defaultMessage="Random Split" />
           </Link>
         </Menu.Item>
         <Menu.Item key="CLUSTERING">
           <Link
             to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=CLUSTERING`}
           >
-            <FormattedMessage id="CLUSTERING" />
+            <FormattedMessage id="CLUSTERING" defaultMessage="Clustering" />
           </Link>
         </Menu.Item>
       </Menu>
@@ -62,7 +62,11 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
       <Actionbar paths={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_PARTITION" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage
+              id="NEW_PARTITION"
+              defaultMessage="New Partition"
+            />
           </Button>
         </Dropdown>
       </Actionbar>

@@ -168,7 +168,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
           style={{ float: 'right', bottom: '10px' }}
         >
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage id="EXPORT" defaultMessage="Export" />
         </Button>
 
         <hr className="mcs-separator" />

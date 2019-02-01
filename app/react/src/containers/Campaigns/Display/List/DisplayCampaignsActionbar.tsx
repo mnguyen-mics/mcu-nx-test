@@ -271,13 +271,14 @@ class DisplayCampaignsActionbar extends React.Component<
       <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/display/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage id="NEW_CAMPAIGN" defaultMessage="New Campaign" />
           </Button>
         </Link>
 
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage id="EXPORT" defaultMessage="Export" />
         </Button>
 
         <Slider
@@ -289,7 +290,7 @@ class DisplayCampaignsActionbar extends React.Component<
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="ARCHIVE" />
+              <FormattedMessage id="ARCHIVE" defaultMessage="Archive" />
             </Button>
           }
         />
@@ -317,7 +318,7 @@ class DisplayCampaignsActionbar extends React.Component<
               className="button-slider button-glow"
             >
               <McsIcon type="pen" />
-              <FormattedMessage id="EDIT" />
+              <FormattedMessage id="EDIT" defaultMessage="Edit" />
             </Button>
           }
         />

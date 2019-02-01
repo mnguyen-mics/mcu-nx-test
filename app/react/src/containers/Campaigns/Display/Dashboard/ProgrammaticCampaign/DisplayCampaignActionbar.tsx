@@ -378,7 +378,7 @@ class DisplayCampaignActionbar extends React.Component<
           }
         >
           <McsIcon type="download" />
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage id="EXPORT" defaultMessage="Export" />
         </Button>
 
         {campaign && campaign.model_version !== 'V2014_06' && (

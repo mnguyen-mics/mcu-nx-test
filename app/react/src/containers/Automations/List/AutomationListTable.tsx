@@ -353,7 +353,8 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       {
         displayElement: (
           <div>
-            <FormattedMessage id="STATUS" /> <Icon type="down" />
+            <FormattedMessage id="STATUS" defaultMessage="Status" />{' '}
+            <Icon type="down" />
           </div>
         ),
         selectedItems: filter.statuses.map((status: AutomationStatus) => ({

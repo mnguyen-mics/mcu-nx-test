@@ -158,12 +158,12 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
         <Link to={`/v2/o/${organisationId}/campaigns/goals/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />
-            <FormattedMessage id="NEW_GOAL" />
+            <FormattedMessage id="NEW_GOAL" defaultMessage="New Goal" />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage id="EXPORT" defaultMessage="Export" />
         </Button>
       </Actionbar>
     );

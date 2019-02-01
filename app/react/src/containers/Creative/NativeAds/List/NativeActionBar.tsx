@@ -107,7 +107,7 @@ class NativeActionBar extends React.Component<JoinedProps> {
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="ARCHIVE" />
+              <FormattedMessage id="ARCHIVE" defaultMessage="Archive" />
             </Button>
           }
         />

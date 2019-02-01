@@ -80,7 +80,11 @@ class EmailActionBar extends React.Component<JoinedProps> {
       <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/email/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_EMAIL_TEMPLATE" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage
+              id="NEW_EMAIL_TEMPLATE"
+              defaultMessage="New Email Template"
+            />
           </Button>
         </Link>
         <Slider
@@ -92,7 +96,7 @@ class EmailActionBar extends React.Component<JoinedProps> {
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="ARCHIVE" />
+              <FormattedMessage id="ARCHIVE" defaultMessage="Archive" />
             </Button>
           }
         />

@@ -115,7 +115,11 @@ class AutomationActionBar extends React.Component<
       <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/automation-builder`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage
+              id="NEW_AUTOMATION"
+              defaultMessage="New Automation"
+            />
           </Button>
         </Link>
         <Slider

@@ -112,13 +112,16 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     const activeCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={activateCampaign}>
         <McsIcon type="play" />
-        <FormattedMessage id="ACTIVATE_CAMPAIGN" />
+        <FormattedMessage
+          id="ACTIVATE_CAMPAIGN"
+          defaultMessage="Activate Campaign"
+        />
       </Button>
     );
     const pauseCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={pauseCampaign}>
         <McsIcon type="pause" />
-        <FormattedMessage id="PAUSE_CAMPAIGN" />
+        <FormattedMessage id="PAUSE_CAMPAIGN" defaultMessage="Pause Campaign" />
       </Button>
     );
 
@@ -246,7 +249,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
           <FormattedMessage {...messages.history} />
         </Menu.Item>
         <Menu.Item key="ARCHIVED">
-          <FormattedMessage id="ARCHIVED" />
+          <FormattedMessage id="ARCHIVED" defaultMessage="Archived" />
         </Menu.Item>
       </Menu>
     );
@@ -298,12 +301,12 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
           }
         >
           <McsIcon type="download" />
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage id="EXPORT" defaultMessage="Export" />
         </Button>
         <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
           <Button>
             <Icon type="edit" />
-            <FormattedMessage id="EDIT" />
+            <FormattedMessage id="EDIT" defaultMessage="Edit" />
           </Button>
         </Link>
         <Dropdown overlay={menu} trigger={['click']}>
