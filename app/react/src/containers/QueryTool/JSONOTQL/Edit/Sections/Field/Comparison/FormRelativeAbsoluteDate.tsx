@@ -106,13 +106,13 @@ export default class FormRelativeAbsoluteDate extends React.Component<
     return 0;
   }
 
-  onValueChange = (e: number | string) => {
+  onValueChange = (e: number | undefined) => {
     if (!isNaN(e as number)) {
       return this.generateRelativeValue(e);
     }
   }
 
-  generateRelativeValue = (value: number | string) => {
+  generateRelativeValue = (value: number | undefined) => {
     return this.props.input.onChange([`now-${value}${this.state.relativePeriod}/${this.state.relativePeriod}`])
   }
 
