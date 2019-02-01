@@ -119,11 +119,6 @@ class KeywordListContent extends React.Component<
   };
 
   render() {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
 
     const actionsColumnsDefinition: Array<
       ActionsColumnDefinition<KeywordListResource>
@@ -146,7 +141,7 @@ class KeywordListContent extends React.Component<
         render: (text: string, record: KeywordListResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`v2/o/${organisationId}/library/keywordslist/${record.id}/edit`}
+            to={`keywordslist/${record.id}/edit`}
           >
             {text}
           </Link>
