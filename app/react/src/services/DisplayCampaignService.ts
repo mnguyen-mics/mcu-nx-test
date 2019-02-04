@@ -467,11 +467,20 @@ const DisplayCampaignService = {
   },
 
   // ADEX
-  getDisplayNetwork(
+  getDisplayNetworks(
     campaignId: string,
     adGroupId: string,
   ): Promise<DataListResponse<DisplayNetworkSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/display_networks`;
+    return ApiService.getRequest(endpoint);
+  },
+
+  getDisplayNetwork(
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+  ): Promise<DataResponse<DisplayNetworkSelectionResource>> {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/display_networks/${id}`;
     return ApiService.getRequest(endpoint);
   },
 

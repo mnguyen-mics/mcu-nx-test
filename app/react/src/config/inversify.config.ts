@@ -42,6 +42,10 @@ import {
   IAudienceTagFeedService,
   AudienceTagFeedService,
 } from '../services/AudienceTagFeedService';
+import {
+  IDisplayNetworkService,
+  DisplayNetworkService
+} from '../services/DisplayNetworkService';
 
 const container = new Container();
 
@@ -76,6 +80,9 @@ container
 container
   .bind<IImportService>(TYPES.IImportService)
   .to(ImportService);
+container
+  .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
+  .to(DisplayNetworkService)
 
 export const { lazyInject } = getDecorators(container, false);
 

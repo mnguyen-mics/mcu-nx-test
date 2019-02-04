@@ -23,6 +23,9 @@ import DisplayCampaignService from '../../../../../services/DisplayCampaignServi
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
 import CreativeService from '../../../../../services/CreativeService';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { IDisplayNetworkService } from '../../../../../services/DisplayNetworkService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -41,6 +44,10 @@ type JoinedProps = AdGroupActionbarProps &
   InjectedDrawerProps;
 
 class AdGroupActionbar extends React.Component<JoinedProps> {
+
+  @lazyInject(TYPES.IDisplayNetworkService)
+  private _displayNetworkService: IDisplayNetworkService;
+
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
 
@@ -196,6 +203,26 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         );
                       });
                     },
+                  },
+                  DISPLAY_NETWORK_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return <FormattedMessage {...resourceHistoryMessages.displayNetworkResourceType} />;
+                    },
+                    getName: (id: string) => {
+                      return DisplayCampaignService.getDisplayNetwork(campaignId, adGroupId, id)
+                      .then(displayNetworkSelectionResponse => {
+                        return this._displayNetworkService.getDisplayNetwork(
+                          displayNetworkSelectionResponse.data.display_network_id,
+                          organisationId
+                        ).then(displayNetworkResponse => {
+                          return displayNetworkResponse.data.name;
+                        })
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return;
+                    }
                   },
                   AD: {
                     direction: 'CHILD',

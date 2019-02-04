@@ -15,6 +15,14 @@ const messages: {
     id: 'timeline.resourceType.creative',
     defaultMessage: 'Creative',
   },
+  segmentResourceType: {
+    id: 'timeline.resourceType.segment',
+    defaultMessage: 'Segment',
+  },
+  displayNetworkResourceType: {
+    id: 'timeline.resourceType.displayNetwork',
+    defaultMessage: 'Display Network',
+  },
   keywordsListResourceType: {
     id: 'timeline.resourceType.keywordsList',
     defaultMessage: 'Keywords List',

@@ -9,7 +9,8 @@ export type ResourceType =
   'AUDIENCE_SEGMENT_SELECTION' |
   'KEYWORDS_LIST_SELECTION' |
   'AD' |
-  'AUDIENCE_SEGMENT';
+  'AUDIENCE_SEGMENT' |
+  'DISPLAY_NETWORK_SELECTION';
 
 export type EventType =
   'CREATE_EVENT' |
