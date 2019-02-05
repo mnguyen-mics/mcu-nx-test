@@ -108,7 +108,6 @@ class PlacementListContent extends React.Component<
   };
 
   render() {
-    const { match: { params: { organisationId } } } = this.props;
 
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<PlacementListResource>> = [
       {
@@ -129,7 +128,7 @@ class PlacementListContent extends React.Component<
         render: (text: string, record: PlacementListResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`v2/o/${organisationId}/library/placementlist/${record.id}/edit`}
+            to={`placementlist/${record.id}/edit`}
           >
             {text}
           </Link>

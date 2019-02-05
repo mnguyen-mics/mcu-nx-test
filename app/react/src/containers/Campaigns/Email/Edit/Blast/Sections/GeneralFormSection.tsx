@@ -86,7 +86,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             format: 'DD/MM/YYYY HH:mm',
             showTime: { format: 'HH:mm' },
             placeholder: formatMessage(messages.emailBlastEditorDatePickerPlaceholderSentDate),
-            disabledDate: current => current && current.isBefore(moment.now()),
+            disabledDate: current => current ? current.isBefore(moment.now()) : false,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorDatePickerHelperSentDate),
