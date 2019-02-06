@@ -82,7 +82,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         )[0].children;
 
         const mcsColors: { [key: string]: string } = {};
-        for (const elemt of elemts) {
+        for (const elemt of [...elemts]) {
           mcsColors[elemt.className] = rgb2hex(
             (global as any).window.getComputedStyle(elemt)['background-color'],
           );
