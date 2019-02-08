@@ -27,6 +27,10 @@ const messages: {
     id: 'timeline.resourceType.keywordsList',
     defaultMessage: 'Keywords List',
   },
+  dealListResourceType: {
+    id: 'timeline.resourceType.dealList',
+    defaultMessage: 'Deal List',
+  },
   today: {
     id: 'timeline.events.title.today',
     defaultMessage: 'Today',

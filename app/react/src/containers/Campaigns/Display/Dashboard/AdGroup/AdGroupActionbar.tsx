@@ -18,7 +18,6 @@ import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
-import AudienceSegmentSelectionService from '../../../../../services/AudienceSegmentSelectionService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
 import CreativeService from '../../../../../services/CreativeService';
@@ -26,6 +25,7 @@ import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edi
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IDisplayNetworkService } from '../../../../../services/DisplayNetworkService';
+import DealListsService from '../../../../../services/Library/DealListsService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -134,115 +134,98 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
           return adGroup && handleArchiveGoal(adGroup.id);
         case 'DUPLICATE':
           return this.duplicateAdGroup();
-        case 'HISTORY':
-          return this.props.openNextDrawer<ResourceTimelinePageProps>(
-            ResourceTimelinePage,
-            {
-              additionalProps: {
-                resourceType: 'AD_GROUP',
-                resourceId: adGroupId,
-                handleClose: () => this.props.closeNextDrawer(),
-                formatProperty: formatAdGroupProperty,
-                resourceLinkHelper: {
-                  AUDIENCE_SEGMENT_SELECTION: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return 'Segment';
+          case 'HISTORY':
+            return this.props.openNextDrawer<ResourceTimelinePageProps>(
+              ResourceTimelinePage,
+              {
+                additionalProps: {
+                  resourceType: 'AD_GROUP',
+                  resourceId: adGroupId,
+                  handleClose: () => this.props.closeNextDrawer(),
+                  formatProperty: formatAdGroupProperty,
+                  resourceLinkHelper: {
+                    'AUDIENCE_SEGMENT_SELECTION': {
+                      direction: 'CHILD',
+                      getType: () => {
+                        return <FormattedMessage {...resourceHistoryMessages.segmentResourceType} />;
+                      },
+                      getName: (id: string) => {
+                        return DisplayCampaignService.getAudienceSegmentSelection(campaignId, adGroupId, id)
+                        .then(response => {
+                          return response.data.name;
+                        });
+                      },
+                      goToResource: (id: string) => {
+                        return DisplayCampaignService.getAudienceSegmentSelection(campaignId, adGroupId, id)
+                        .then(response => {
+                          history.push(`/v2/o/${organisationId}/audience/segments/${response.data.audience_segment_id}`);
+                        });
+                      }
                     },
-                    getName: (id: string) => {
-                      return AudienceSegmentSelectionService.getAudienceSegmentSelection(
-                        campaignId,
-                        adGroupId,
-                        id,
-                      ).then(response => {
-                        return response.data.name;
-                      });
+                    'KEYWORDS_LIST_SELECTION': {
+                      direction: 'CHILD',
+                      getType: () => {
+                        return <FormattedMessage {...resourceHistoryMessages.keywordsListResourceType} />;
+                      },
+                      getName: (id: string) => {
+                        return DisplayCampaignService.getKeywordListSelection(campaignId, adGroupId, id)
+                        .then(response => {
+                          return response.data.name;
+                        });
+                      },
+                      goToResource: (id: string) => {
+                        return DisplayCampaignService.getKeywordListSelection(
+                          campaignId,
+                          adGroupId,
+                          id,
+                        ).then(response => {
+                          history.push(
+                            `/v2/o/${organisationId}/library/keywordslist/${
+                              response.data.keyword_list_id
+                            }/edit`,
+                          );
+                        });
+                      },
                     },
-                    goToResource: (id: string) => {
-                      return AudienceSegmentSelectionService.getAudienceSegmentSelection(
-                        campaignId,
-                        adGroupId,
-                        id,
-                      ).then(response => {
-                        history.push(
-                          `/v2/o/${organisationId}/audience/segments/${
-                            response.data.audience_segment_id
-                          }`,
+                    DISPLAY_NETWORK_SELECTION: {
+                      direction: 'CHILD',
+                      getType: () => {
+                        return <FormattedMessage {...resourceHistoryMessages.displayNetworkResourceType} />;
+                      },
+                      getName: (id: string) => {
+                        return DisplayCampaignService.getDisplayNetwork(campaignId, adGroupId, id)
+                        .then(displayNetworkSelectionResponse => {
+                          return this._displayNetworkService.getDisplayNetwork(
+                            displayNetworkSelectionResponse.data.display_network_id,
+                            organisationId
+                          ).then(displayNetworkResponse => {
+                            return displayNetworkResponse.data.name;
+                          })
+                        });
+                      },
+                      goToResource: (id: string) => {
+                        return;
+                      }
+                    },
+                    AD: {
+                      direction: 'CHILD',
+                      getType: () => {
+                        return (
+                          <FormattedMessage
+                            {...resourceHistoryMessages.creativeResourceType}
+                          />
                         );
-                      });
-                    },
-                  },
-                  KEYWORDS_LIST_SELECTION: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.keywordsListResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return DisplayCampaignService.getKeywordListSelection(
-                        campaignId,
-                        adGroupId,
-                        id,
-                      ).then(response => {
-                        return response.data.name;
-                      });
-                    },
-                    goToResource: (id: string) => {
-                      return DisplayCampaignService.getKeywordListSelection(
-                        campaignId,
-                        adGroupId,
-                        id,
-                      ).then(response => {
-                        history.push(
-                          `/v2/o/${organisationId}/library/keywordslist/${
-                            response.data.keyword_list_id
-                          }/edit`,
-                        );
-                      });
-                    },
-                  },
-                  DISPLAY_NETWORK_SELECTION: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return <FormattedMessage {...resourceHistoryMessages.displayNetworkResourceType} />;
-                    },
-                    getName: (id: string) => {
-                      return DisplayCampaignService.getDisplayNetwork(campaignId, adGroupId, id)
-                      .then(displayNetworkSelectionResponse => {
-                        return this._displayNetworkService.getDisplayNetwork(
-                          displayNetworkSelectionResponse.data.display_network_id,
-                          organisationId
-                        ).then(displayNetworkResponse => {
-                          return displayNetworkResponse.data.name;
-                        })
-                      });
-                    },
-                    goToResource: (id: string) => {
-                      return;
-                    }
-                  },
-                  AD: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.creativeResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return DisplayCampaignService.getAd(
-                        campaignId,
-                        adGroupId,
-                        id,
-                      ).then(adResponse => {
-                        return CreativeService.getCreative(
-                          adResponse.data.creative_id,
-                        ).then(creativeResponse => {
-                          return creativeResponse.data.name;
+                      },
+                      getName: (id: string) => {
+                        return DisplayCampaignService.getAd(
+                          campaignId,
+                          adGroupId,
+                          id,
+                        ).then(adResponse => {
+                          return CreativeService.getCreative(
+                            adResponse.data.creative_id,
+                          ).then(creativeResponse => {
+                            return creativeResponse.data.name;
                         });
                       });
                     },
@@ -282,6 +265,27 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       });
                     },
                   },
+                    'DEAL_LIST_SELECTION': {
+                      direction: 'CHILD',
+                      getType: () => {
+                        return <FormattedMessage {...resourceHistoryMessages.dealListResourceType} />;
+                      },
+                      getName: (id: string) => {
+                        return DisplayCampaignService.getDealListSelection(campaignId, adGroupId, id)
+                          .then(response => {
+                            return DealListsService.getDealList(organisationId, response.data.deal_list_id)
+                              .then(res => {
+                                return res.data.name
+                              })
+                          });
+                      },
+                      goToResource: (id: string) => {
+                        return DisplayCampaignService.getDealListSelection(campaignId, adGroupId, id)
+                          .then(response => {
+                            history.push(`/v2/o/${organisationId}/library/deallist/${response.data.deal_list_id}/edit`)
+                          })
+                      },
+                    },
                 },
               },
               size: 'small',

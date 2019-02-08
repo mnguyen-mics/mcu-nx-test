@@ -1,16 +1,19 @@
-export type ResourceType = 
+// try to keep this alphabetically ordered, easier to search
+export type ResourceType =
+  'AD' |
   'AD_GROUP' |
+  'AUDIENCE_SEGMENT' |
+  'AUDIENCE_SEGMENT_SELECTION' |
+  'DEAL_LIST' |
+  'DEAL_LIST_SELECTION' |
   'DISPLAY_AD' |
   'DISPLAY_CAMPAIGN' |
+  'DISPLAY_NETWORK_SELECTION' |
   'EMAIL_BLAST' |
   'EMAIL_CAMPAIGN' |
   'EMAIL_TEMPLATE' |
-  'VIDEO_AD' |
-  'AUDIENCE_SEGMENT_SELECTION' |
   'KEYWORDS_LIST_SELECTION' |
-  'AD' |
-  'AUDIENCE_SEGMENT' |
-  'DISPLAY_NETWORK_SELECTION';
+  'VIDEO_AD';
 
 export type EventType =
   'CREATE_EVENT' |
@@ -20,7 +23,7 @@ export type EventType =
   'DELETE_LINK_EVENT' |
   'ALERT_EVENT';
 
-export type HistoryEventType = 
+export type HistoryEventType =
   'ACTION' |
   'ALERT';
 
