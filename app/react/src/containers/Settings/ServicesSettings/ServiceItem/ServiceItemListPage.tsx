@@ -11,9 +11,8 @@ import CatalogService, {
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import InfiniteList, {
-  InfiniteListFilters,
-} from '../../../../components/InfiniteList';
+import { InfiniteList } from '@mediarithmics-private/mcs-components-library';
+import { InfiniteListFilters } from '@mediarithmics-private/mcs-components-library/lib/components/InfiniteList';
 import {
   ServiceItemShape,
   ServiceItemOfferResource,
