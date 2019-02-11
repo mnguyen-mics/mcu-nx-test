@@ -206,15 +206,13 @@ class DisplayCampaignAdGroupTable extends React.Component<
         render: (text: any, record: AdGroupResource) => {
           const toAdGroupDashboard = () => {
             history.push({
-              pathname: `${campaignId}/adgroups/${
-                record.id
-              }`,
+              pathname: `${campaignId}/adgroups/${record.id}`,
               state: { from: `${location.pathname}${location.search}` },
             });
           };
           return (
             <ButtonStyleless onClick={toAdGroupDashboard}>
-              {text}
+              <a>{text}</a>
             </ButtonStyleless>
           );
         },
