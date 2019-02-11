@@ -62,7 +62,7 @@ class ForgotPassword extends React.Component<Props, State> {
           type="error"
           className="login-error-message"
           style={{ marginBottom: 24 }}
-          message={<FormattedMessage {...messages.resetPasswordWrong} />}
+          message={<FormattedMessage {...messages.authenticationError} />}
         />
       ) : null;
 
