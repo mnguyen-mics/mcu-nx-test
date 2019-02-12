@@ -2,7 +2,36 @@ Mediarithmics Navigator
 =======================
 
 This is the repository for [Navigator](https://navigator.mediarithmics.com/), the application used by our customers.  
-If you need to learn mode about how the Navigator loads its plugins checkout the [Navigator Loading Documentation](https://github.com/MEDIARITHMICS/mediarithmics-navigator/blob/master/NAVIGATOR_LOADING.md)
+If you need to learn more about how the Navigator loads its plugins checkout the [Navigator Loading Documentation](https://github.com/MEDIARITHMICS/mediarithmics-navigator/blob/master/NAVIGATOR_LOADING.md)
+
+Project structure
+-------------
+
+### app/angular/src
+The application is coded with React but small parts using Angular still remain (Navigator V1 was made with Angular) and that is what `angular/src` is about.
+
+### app/conf
+This is where you can configure your React app (available features, global constants, etc ...). You will have to create a Git ignored `app/conf/app-configuration.js` file to modify these constants. (see below)
+
+### app/react/src
+Almost everything you need to know about navigator is here. Let's focus on few parts :
+
+#### components
+All our custom components are here but not for long: we are currently migrating them to [an external library](https://github.com/MEDIARITHMICS/ux-components) to be able to use them in different projects. They are mostly built from Ant Design components.
+#### containers
+Containers are made with components and correspond to the Navigator parts. 
+#### models
+This is where we type our resources. See [typescript basic types for more details](https://www.typescriptlang.org/docs/handbook/basic-types.html)
+#### routes
+Declare here your new routes.
+#### services
+Our CRUD methods to communicate with our API. 
+#### state
+Everything that is Redux related is here (actions, reducers etc ...). For more details, see [the ofifcial redux documentation](https://redux.js.org/introduction/getting-started) and [the redux saga one](https://redux-saga.js.org/).
+#### styles
+We are using LESS in order to generate Navigator style sheets. See the [less documentation for details](http://lesscss.org/).
+#### utils
+A list of usefull methods and helpers that can be used in different parts of Navigator.
 
 Prerequisites
 -------------
@@ -88,3 +117,17 @@ Getting started
 * `npm install`
 * `bower install`
 * `npm start`
+
+Usefull tools
+---------------
+
+We recommand you to use [Visual Studio Code](https://code.visualstudio.com/) with these extensions :
+* Auto Import
+* ES Lint
+* Git History
+* Git Lens
+* HTML snippets
+* Prettier
+* TS Lint
+
+Also we strongly recommand you to download the React and Redux extensions for your favorite web browser. Here are the links for [React Developer Tools for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) and [Redux DevTools for Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=fr).
