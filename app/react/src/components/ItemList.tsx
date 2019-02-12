@@ -19,6 +19,7 @@ export interface Filters {
   pageSize?: number;
   status?: string[];
   keywords?: string;
+  archived?: boolean;
 }
 
 interface RouterParams {

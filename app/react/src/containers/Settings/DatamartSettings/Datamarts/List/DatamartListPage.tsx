@@ -9,7 +9,7 @@ import {
 import { Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
+import { PAGINATION_SEARCH_SETTINGS, ARCHIVED_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import DatamartService from '../../../../../services/DatamartService';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
@@ -55,6 +55,7 @@ class DatamartsListPage extends React.Component<
     this.setState({ loading: true }, () => {
       const options = {
         allow_administrator: true,
+        archived: filter.archived,
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       DatamartService.getDatamarts(organisationId, options)
@@ -200,7 +201,7 @@ class DatamartsListPage extends React.Component<
             total={this.state.total}
             columns={dataColumnsDefinition}
             actionsColumnsDefinition={actionsColumnsDefinition}
-            pageSettings={PAGINATION_SEARCH_SETTINGS}
+            pageSettings={[...PAGINATION_SEARCH_SETTINGS,...ARCHIVED_SEARCH_SETTINGS]}
             emptyTable={emptyTable}
             additionnalComponent={additionnalComponent}
           />
