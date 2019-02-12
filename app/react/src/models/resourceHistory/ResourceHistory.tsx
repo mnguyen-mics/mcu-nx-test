@@ -49,7 +49,7 @@ export type ResourceLinkDirection =
 export type ResourceLinkHelper = {
   [propertyName in ResourceType]?: {
     direction: ResourceLinkDirection,
-    getType: () => string,
+    getType: () => React.ReactNode,
     getName: (id: string) => Promise<string>,
     goToResource: (id: string) => void
   }

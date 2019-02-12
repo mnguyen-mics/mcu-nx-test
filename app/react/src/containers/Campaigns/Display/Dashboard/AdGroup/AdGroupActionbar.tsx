@@ -18,6 +18,7 @@ import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../Res
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
 import AudienceSegmentSelectionService from '../../../../../services/AudienceSegmentSelectionService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages'; 
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -156,7 +157,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                     'KEYWORDS_LIST_SELECTION':{
                       direction: 'CHILD',
                       getType: () => {
-                        return 'Keywords list';
+                        return <FormattedMessage {...resourceHistoryMessages.keywordsListResourceType} />;
                       },
                       getName: (id: string) => {
                         return DisplayCampaignService.getKeywordListSelection(campaignId, adGroupId, id)
@@ -167,7 +168,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       goToResource: (id: string) => {
                         return DisplayCampaignService.getKeywordListSelection(campaignId, adGroupId, id)
                         .then(response => {
-                          history.push(`/v2/o/${organisationId}/library/keywordslist/${response.data.keyword_list_id}`);
+                          history.push(`/v2/o/${organisationId}/library/keywordslist/${response.data.keyword_list_id}/edit`);
                         });
                       }
                     }

@@ -8,8 +8,12 @@ const messages: {
     defaultMessage: 'History'
   },
   defaultResourceType: {
-    id: 'timeline.resourceType',
+    id: 'timeline.defaultResourceType',
     defaultMessage: 'Resource',
+  },
+  keywordsListResourceType: {
+    id: 'timeline.resourceType.keywordsList',
+    defaultMessage: 'Keywords List',
   },
   today: {
     id: 'timeline.events.title.today',

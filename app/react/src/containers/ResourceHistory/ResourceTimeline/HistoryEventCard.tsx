@@ -114,12 +114,12 @@ class HistoryEventCard extends React.Component<Props, State> {
         </div>
         : isHistoryLinkEvent(event) &&
         <div className="mcs-fields-list-item">
-          { this.renderLinkEventInACard(event) }
+          { this.renderLinkEventInMultiEdit(event) }
         </div>
     });
   }
 
-  renderLinkEventInACard = (event: HistoryLinkEventResource) => {
+  renderLinkEventInMultiEdit = (event: HistoryLinkEventResource) => {
     const {  resourceLinkHelper } = this.props;
     const { resourceName } = this.state;
 
