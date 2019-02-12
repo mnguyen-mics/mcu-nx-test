@@ -5,9 +5,9 @@ export default defineMessages({
     id: 'forgotPasswordForm.passwordTitle',
     defaultMessage: 'Forgot your password ?',
   },
-  resetPasswordWrong: {
-    id: 'forgotPasswordForm.passwordWrong',
-    defaultMessage: 'Unknown email',
+  authenticationError: {
+    id: 'forgotPasswordForm.authentication-error',
+    defaultMessage: 'Authentication error',
   },
   emailText: {
     id: 'forgotPasswordForm.email',
