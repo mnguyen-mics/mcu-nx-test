@@ -257,7 +257,7 @@ class DisplayCampaignAdTable extends React.Component<
             });
           };
           return (
-            <ButtonStyleless onClick={editCreative}>{text}</ButtonStyleless>
+            <ButtonStyleless onClick={editCreative}><a>{text}</a></ButtonStyleless>
           );
         },
       },

@@ -104,7 +104,7 @@ class PlacementListContent extends React.Component<
   onClickEdit = (placement: PlacementListResource) => {
     const { history } = this.props;
 
-    history.push(`/library/placementlist/${placement.id}/edit`);
+    history.push(`placementlist/${placement.id}/edit`);
   };
 
   render() {
