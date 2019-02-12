@@ -114,7 +114,7 @@ Getting started
 
 * Clone the navigator project
 * Make sure all prerequisites are fulfilled
-* Follow the first 3 steps of the [`Adding and using the library in client project`](https://github.com/MEDIARITHMICS/ux-components/tree/master/mcs-react-components#adding-and-using-the-library-in-client-project) section
+* Follow the first 3 steps of the [Adding and using the library in client project](https://github.com/MEDIARITHMICS/ux-components/tree/master/mcs-react-components#adding-and-using-the-library-in-client-project) section
 * `npm install`
 * `bower install`
 * `npm start`
