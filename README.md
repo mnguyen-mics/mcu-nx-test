@@ -114,6 +114,7 @@ Getting started
 
 * Clone the navigator project
 * Make sure all prerequisites are fulfilled
+* Follow the first 3 steps of the [`Adding and using the library in client project`](https://github.com/MEDIARITHMICS/ux-components/tree/master/mcs-react-components#adding-and-using-the-library-in-client-project) section
 * `npm install`
 * `bower install`
 * `npm start`
@@ -121,7 +122,7 @@ Getting started
 Useful tools
 ---------------
 
-We recommand you use [Visual Studio Code](https://code.visualstudio.com/) with these extensions:
+We recommend you use [Visual Studio Code](https://code.visualstudio.com/) with these extensions:
 * Auto Import
 * ES Lint
 * Git History
@@ -130,4 +131,4 @@ We recommand you use [Visual Studio Code](https://code.visualstudio.com/) with t
 * Prettier
 * TS Lint
 
-Also we strongly recommand you download the React and Redux extensions for your favorite web browser. Here are the links for [React Developer Tools for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) and [Redux DevTools for Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=fr).
+Also we strongly recommend you download the React and Redux extensions for your favorite web browser. Here are the links for [React Developer Tools for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) and [Redux DevTools for Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=fr).
