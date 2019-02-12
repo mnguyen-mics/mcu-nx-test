@@ -7,6 +7,7 @@ export type ResourceType =
   'EMAIL_TEMPLATE' |
   'VIDEO_AD' |
   'AUDIENCE_SEGMENT_SELECTION' | 
+  'KEYWORDS_LIST_SELECTION' | 
   'AUDIENCE_SEGMENT';
 
 export type EventType =
@@ -48,7 +49,7 @@ export type ResourceLinkDirection =
 export type ResourceLinkHelper = {
   [propertyName in ResourceType]?: {
     direction: ResourceLinkDirection,
-    getType: () => string,
+    getType: () => React.ReactNode,
     getName: (id: string) => Promise<string>,
     goToResource: (id: string) => void
   }

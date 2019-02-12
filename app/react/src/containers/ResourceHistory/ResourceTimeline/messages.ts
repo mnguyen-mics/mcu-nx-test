@@ -8,8 +8,12 @@ const messages: {
     defaultMessage: 'History'
   },
   defaultResourceType: {
-    id: 'timeline.resourceType',
+    id: 'timeline.defaultResourceType',
     defaultMessage: 'Resource',
+  },
+  keywordsListResourceType: {
+    id: 'timeline.resourceType.keywordsList',
+    defaultMessage: 'Keywords List',
   },
   today: {
     id: 'timeline.events.title.today',
@@ -58,6 +62,14 @@ const messages: {
   fieldInMultiEditList: {
     id: 'timeline.events.card.multiEdit.item',
     defaultMessage: '{field} from {oldValue} to {newValue}',
+  },
+  selectionAddedMultiEditList: {
+    id: 'timeline.events.card.multiEdit.selection.added',
+    defaultMessage: '{selection} added : {value}',
+  },
+  selectionRemovedMultiEditList: {
+    id: 'timeline.events.card.multiEdit.selection.removed',
+    defaultMessage: '{selection} removed : {value}',
   },
   resourceDeleted: {
     id: 'timeline.events.card.resourceDeleted',
