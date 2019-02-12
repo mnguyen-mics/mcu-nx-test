@@ -14,7 +14,7 @@ The application is coded with React but small parts using Angular still remain (
 This is where you can configure your React app (available features, global constants, etc ...). You will have to create a Git ignored `app/conf/app-configuration.js` file to modify these constants. (see below)
 
 ### app/react/src
-Almost everything you need to know about navigator is here. Let's focus on few parts :
+Almost everything you need to know about navigator is here. Let's focus on a few parts :
 
 #### components
 All our custom components are here but not for long: we are currently migrating them to [an external library](https://github.com/MEDIARITHMICS/ux-components) to be able to use them in different projects. They are mostly built from Ant Design components.
@@ -31,7 +31,7 @@ Everything that is Redux related is here (actions, reducers etc ...). For more d
 #### styles
 We are using LESS in order to generate Navigator style sheets. See the [less documentation for details](http://lesscss.org/).
 #### utils
-A list of usefull methods and helpers that can be used in different parts of Navigator.
+A list of useful methods and helpers that can be used in different parts of Navigator.
 
 Prerequisites
 -------------
@@ -118,10 +118,10 @@ Getting started
 * `bower install`
 * `npm start`
 
-Usefull tools
+Useful tools
 ---------------
 
-We recommand you to use [Visual Studio Code](https://code.visualstudio.com/) with these extensions :
+We recommand you use [Visual Studio Code](https://code.visualstudio.com/) with these extensions:
 * Auto Import
 * ES Lint
 * Git History
@@ -130,4 +130,4 @@ We recommand you to use [Visual Studio Code](https://code.visualstudio.com/) wit
 * Prettier
 * TS Lint
 
-Also we strongly recommand you to download the React and Redux extensions for your favorite web browser. Here are the links for [React Developer Tools for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) and [Redux DevTools for Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=fr).
+Also we strongly recommand you download the React and Redux extensions for your favorite web browser. Here are the links for [React Developer Tools for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) and [Redux DevTools for Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=fr).
