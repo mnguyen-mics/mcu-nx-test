@@ -1,6 +1,6 @@
 import { PropertyResourceShape } from './../../../../models/plugin/index';
 import { DisplayAdCreateRequest } from './../../../../models/creative/CreativeResource';
-import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
+import { DisplayAdResource, CreativeResourceShape } from '../../../../models/creative/CreativeResource';
 import { PluginVersionResource } from '../../../../models/Plugins';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -31,6 +31,12 @@ export interface EditDisplayCreativeRouteMatchParams {
 
 export function isDisplayAdResource(
   creative: DisplayAdShape,
+): creative is DisplayAdResource {
+  return (creative as DisplayAdResource).id !== undefined;
+}
+
+export function creativeIsDisplayAdResource(
+  creative: CreativeResourceShape,
 ): creative is DisplayAdResource {
   return (creative as DisplayAdResource).id !== undefined;
 }

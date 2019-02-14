@@ -42,6 +42,10 @@ import {
   IAudienceTagFeedService,
   AudienceTagFeedService,
 } from '../services/AudienceTagFeedService';
+import {
+  ICreativeService,
+  CreativeService
+} from '../services/CreativeService';
 
 const container = new Container();
 
@@ -73,7 +77,12 @@ container
 container
   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
   .toConstructor(AudienceTagFeedService);
-container.bind<IImportService>(TYPES.IImportService).to(ImportService);
+container
+  .bind<IImportService>(TYPES.IImportService)
+  .to(ImportService);
+container
+  .bind<ICreativeService>(TYPES.ICreativeService)
+  .to(CreativeService);
 
 export const { lazyInject } = getDecorators(container, false);
 
