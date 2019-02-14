@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cuid from 'cuid'
 import { Select } from 'antd';
 import { SelectValue } from 'antd/lib/select';
 import { FormItemProps } from 'antd/lib/form/FormItem';
@@ -18,6 +19,8 @@ export interface FormTagSelectProps extends FormFieldWrapperProps {
 }
 
 const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
+
+  const id: string = cuid();
 
   const {
     formItemProps,
@@ -58,6 +61,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
   ));
 
   const onBlur = () => input.onBlur(undefined);
+  const getPopupContainer = () => document.getElementById(id)!
 
   return (
     <FormFieldWrapper
@@ -65,18 +69,22 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
       helpToolTipProps={helpToolTipProps}
       validateStatus={validateStatus}
       small={small}
+      
       {...formItemProps}
     >
-      <Select
-        {...selectProps}
-        mode={mode}
-        onBlur={onBlur}
-        onChange={onChange}
-        onFocus={input.onFocus as () => any}
-        value={value}
-        disabled={disabled}
-      >{optionsToDisplay}
-      </Select>
+      <div id={id}>
+        <Select
+          {...selectProps}
+          mode={mode}
+          onBlur={onBlur}
+          onChange={onChange}
+          onFocus={input.onFocus as () => any}
+          value={value}
+          disabled={disabled}
+          getPopupContainer={getPopupContainer}
+        >{optionsToDisplay}
+        </Select>
+      </div>
     </FormFieldWrapper>
   );
 };
