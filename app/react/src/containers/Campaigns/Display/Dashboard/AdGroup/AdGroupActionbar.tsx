@@ -21,9 +21,7 @@ import formatAdGroupProperty from '../../../../../messages/campaign/display/adgr
 import AudienceSegmentSelectionService from '../../../../../services/AudienceSegmentSelectionService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
-import { TYPES } from '../../../../../constants/types';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { ICreativeService } from '../../../../../services/CreativeService';
+import CreativeService from '../../../../../services/CreativeService';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
 
 interface AdGroupActionbarProps {
@@ -43,9 +41,6 @@ type JoinedProps = AdGroupActionbarProps &
   InjectedDrawerProps;
 
 class AdGroupActionbar extends React.Component<JoinedProps> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService;
-
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
 
@@ -217,11 +212,11 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         adGroupId,
                         id,
                       ).then(adResponse => {
-                        return this._creativeService
-                          .getCreative(adResponse.data.creative_id)
-                          .then(creativeResponse => {
-                            return creativeResponse.data.name;
-                          });
+                        return CreativeService.getCreative(
+                          adResponse.data.creative_id,
+                        ).then(creativeResponse => {
+                          return creativeResponse.data.name;
+                        });
                       });
                     },
                     goToResource: (id: string) => {
@@ -230,33 +225,33 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         adGroupId,
                         id,
                       ).then(adResponse => {
-                        return this._creativeService
-                          .getCreative(adResponse.data.creative_id)
-                          .then(creativeResponse => {
-                            if (
-                              creativeIsDisplayAdResource(creativeResponse.data)
-                            ) {
-                              if (creativeResponse.data.subtype === 'NATIVE') {
-                                return history.push(
-                                  `/v2/o/${organisationId}/creatives/native/edit/${
-                                    creativeResponse.data.id
-                                  }`,
-                                );
-                              } else {
-                                return history.push(
-                                  `/v2/o/${organisationId}/creatives/display/edit/${
-                                    creativeResponse.data.id
-                                  }`,
-                                );
-                              }
+                        return CreativeService.getCreative(
+                          adResponse.data.creative_id,
+                        ).then(creativeResponse => {
+                          if (
+                            creativeIsDisplayAdResource(creativeResponse.data)
+                          ) {
+                            if (creativeResponse.data.subtype === 'NATIVE') {
+                              return history.push(
+                                `/v2/o/${organisationId}/creatives/native/edit/${
+                                  creativeResponse.data.id
+                                }`,
+                              );
                             } else {
                               return history.push(
-                                `/v2/o/${organisationId}/creatives/email/edit/${
+                                `/v2/o/${organisationId}/creatives/display/edit/${
                                   creativeResponse.data.id
                                 }`,
                               );
                             }
-                          });
+                          } else {
+                            return history.push(
+                              `/v2/o/${organisationId}/creatives/email/edit/${
+                                creativeResponse.data.id
+                              }`,
+                            );
+                          }
+                        });
                       });
                     },
                   },

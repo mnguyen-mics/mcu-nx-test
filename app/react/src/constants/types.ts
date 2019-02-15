@@ -9,8 +9,7 @@ const TYPES = {
   IDisplayCampaignFormService: Symbol.for('displayCampaignFormService'),
   IAudienceTagFeedService: Symbol.for('audienceTagFeedService'),
   IAudienceExternalFeedService: Symbol.for('audienceExternalFeedService'),
-  IImportService: Symbol.for('importService'),
-  ICreativeService: Symbol.for('creativeService')
+  IImportService: Symbol.for('importService')
 };
 
 export { TYPES };
