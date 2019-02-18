@@ -104,20 +104,28 @@ const messages: {
     defaultMessage: ' {month} {day} at {time}',
   },
   resourceCreateLinkChild: {
-    id: 'timeline.events.card.resourceCreateLinkChild',
-    defaultMessage: '{userName} added the {resourceType} : {resourceName}',
+    id: 'timeline.events.card.selection.resourceCreateLinkChild',
+    defaultMessage: '{userName} added the {resourceType} : {resourceName}.',
   },
   resourceDeleteLinkChild: {
-    id: 'timeline.events.card.resourceDeleteLinkChild',
-    defaultMessage: '{userName} removed the {resourceType} : {resourceName}',
+    id: 'timeline.events.card.selection.resourceDeleteLinkChild',
+    defaultMessage: '{userName} removed the {resourceType} : {resourceName}.',
   },
   resourceCreateLinkParent: {
-    id: 'timeline.events.card.resourceCreateLinkParent',
-    defaultMessage: '{userName} added this {childResourceType} in {parentResourceType} : {parentResourceName}',
+    id: 'timeline.events.card.selection.resourceCreateLinkParent',
+    defaultMessage: '{userName} added this {childResourceType} in {parentResourceType} : {parentResourceName}.',
   },
   resourceDeleteLinkParent: {
-    id: 'timeline.events.card.resourceDeleteLinkParent',
-    defaultMessage: '{userName} removed this {childResourceType} in {parentResourceType} : {parentResourceName}',
+    id: 'timeline.events.card.selection.resourceDeleteLinkParent',
+    defaultMessage: '{userName} removed this {childResourceType} in {parentResourceType} : {parentResourceName}.',
+  },
+  deleted: {
+    id: 'timeline.events.card.selection.deleted',
+    defaultMessage: '(deleted)',
+  },
+  fetchingData: {
+    id: 'timeline.events.card.selection.fetching',
+    defaultMessage: '(fetching...)',
   },
 });
 

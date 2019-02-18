@@ -173,7 +173,7 @@ class ResourceTimeline extends React.Component<Props, State> {
               };
               return nextState;
             });
-            this.props.notifyError(err)
+            this.props.notifyError(err);
           }),
     );
   };

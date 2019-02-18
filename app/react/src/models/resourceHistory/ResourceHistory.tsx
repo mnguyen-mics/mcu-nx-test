@@ -12,6 +12,7 @@ export type ResourceType =
   'EMAIL_BLAST' |
   'EMAIL_CAMPAIGN' |
   'EMAIL_TEMPLATE' |
+  'KEYWORDS_LIST' |
   'KEYWORDS_LIST_SELECTION' |
   'VIDEO_AD';
 

@@ -98,7 +98,7 @@ const AdGroupFormService = {
       DisplayCampaignService.getKeywordList(displayCampaignId, adGroupId).then(
         extractDataList,
       ),
-      DisplayCampaignService.getDealsList(displayCampaignId, adGroupId).then(
+      DisplayCampaignService.getDealsLists(displayCampaignId, adGroupId).then(
         extractDataList,
       ),
       DisplayCampaignService.getAdex(displayCampaignId, adGroupId).then(

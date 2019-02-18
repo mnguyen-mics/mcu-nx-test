@@ -111,15 +111,6 @@ const DisplayCampaignService = {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
     return ApiService.getRequest(endpoint);
   },
-  
-  getAudienceSegmentSelection(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ): Promise<DataResponse<AudienceSegmentSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
-    return ApiService.getRequest(endpoint);
-  },
 
   // TODO delete, use getAudienceSegments instead
   getAudiences(
@@ -402,21 +393,12 @@ const DisplayCampaignService = {
   },
 
   // DEAL LIST
-  getDealsList(
+  getDealsLists(
     campaignId: string,
     adGroupId: string,
   ): Promise<DataListResponse<DealsListSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/deal_lists`;
     return ApiService.getRequest(endpoint);
-  },
-
-  getDealListSelection(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ): Promise<DataResponse<DealsListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/deal_lists/${id}`;
-    return ApiService.getRequest(endpoint)
   },
 
   createDealsList(

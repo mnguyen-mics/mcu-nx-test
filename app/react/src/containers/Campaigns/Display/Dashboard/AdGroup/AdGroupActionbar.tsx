@@ -18,7 +18,6 @@ import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
 import CreativeService from '../../../../../services/CreativeService';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
@@ -26,6 +25,12 @@ import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IDisplayNetworkService } from '../../../../../services/DisplayNetworkService';
 import DealListsService from '../../../../../services/Library/DealListsService';
+import ResourceHistoryService from '../../../../../services/ResourceHistoryService';
+import { ResourceType, isHistoryLinkEvent } from '../../../../../models/resourceHistory/ResourceHistory';
+import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
+import { IKeywordListService } from '../../../../../services/Library/KeywordListsService';
+import lodash from 'lodash';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -47,6 +52,12 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
   @lazyInject(TYPES.IDisplayNetworkService)
   private _displayNetworkService: IDisplayNetworkService;
+  
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.IKeywordListService)
+  private _keywordsListService: IKeywordListService;
 
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
@@ -102,6 +113,18 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     });
   };
 
+  getLinkedResourceIdInSelection = (organisationId: string, selectionType: ResourceType, selectionId: string, linkedResourceType: ResourceType) => {
+
+    const params = { resource_type: selectionType, resource_id: selectionId, max_results: 10 } // Let's keep 10 for now, selections shouldn't have many events anyway.
+
+    return ResourceHistoryService.getResourceHistory(organisationId, params)
+      .then(response => {
+        return lodash.flatMap(response.data, (rhr => {
+          return rhr.events.map(event => (isHistoryLinkEvent(event) && event.resource_type === linkedResourceType) ? event.resource_id : '');
+        })).join('');
+      });
+  };
+
   buildMenu = () => {
     const { adGroup, archiveAdGroup, intl, displayCampaign } = this.props;
 
@@ -124,7 +147,11 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     const onClick = (event: any) => {
       const {
         match: {
-          params: { organisationId, campaignId, adGroupId },
+          params: { 
+            organisationId,
+            campaignId,
+            adGroupId 
+          },
         },
         history,
       } = this.props;
@@ -150,15 +177,18 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         return <FormattedMessage {...resourceHistoryMessages.segmentResourceType} />;
                       },
                       getName: (id: string) => {
-                        return DisplayCampaignService.getAudienceSegmentSelection(campaignId, adGroupId, id)
-                        .then(response => {
-                          return response.data.name;
-                        });
+                        return this.getLinkedResourceIdInSelection(organisationId, 'AUDIENCE_SEGMENT_SELECTION', id, 'AUDIENCE_SEGMENT')
+                          .then(audienceSegmentId => {
+                            return this._audienceSegmentService.getSegment(audienceSegmentId)
+                              .then(response => {
+                                return response.data.name;
+                              });
+                          });
                       },
                       goToResource: (id: string) => {
-                        return DisplayCampaignService.getAudienceSegmentSelection(campaignId, adGroupId, id)
-                        .then(response => {
-                          history.push(`/v2/o/${organisationId}/audience/segments/${response.data.audience_segment_id}`);
+                        return this.getLinkedResourceIdInSelection(organisationId, 'AUDIENCE_SEGMENT_SELECTION', id, 'AUDIENCE_SEGMENT')
+                        .then(audienceSegmentId => {
+                          history.push(`/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`);
                         });
                       }
                     },
@@ -168,22 +198,18 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         return <FormattedMessage {...resourceHistoryMessages.keywordsListResourceType} />;
                       },
                       getName: (id: string) => {
-                        return DisplayCampaignService.getKeywordListSelection(campaignId, adGroupId, id)
-                        .then(response => {
-                          return response.data.name;
+                        return this.getLinkedResourceIdInSelection(organisationId, 'KEYWORDS_LIST_SELECTION', id, 'KEYWORDS_LIST')
+                        .then(keywordsListId => {
+                          return this._keywordsListService.getKeywordList(keywordsListId)
+                            .then(response => {
+                              return response.data.name;
+                            })
                         });
                       },
                       goToResource: (id: string) => {
-                        return DisplayCampaignService.getKeywordListSelection(
-                          campaignId,
-                          adGroupId,
-                          id,
-                        ).then(response => {
-                          history.push(
-                            `/v2/o/${organisationId}/library/keywordslist/${
-                              response.data.keyword_list_id
-                            }/edit`,
-                          );
+                        return this.getLinkedResourceIdInSelection(organisationId, 'KEYWORDS_LIST_SELECTION', id, 'KEYWORDS_LIST')
+                        .then(keywordsListId => {
+                          history.push(`/v2/o/${organisationId}/library/keywordslist/${keywordsListId}/edit`);
                         });
                       },
                     },
@@ -271,19 +297,19 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         return <FormattedMessage {...resourceHistoryMessages.dealListResourceType} />;
                       },
                       getName: (id: string) => {
-                        return DisplayCampaignService.getDealListSelection(campaignId, adGroupId, id)
-                          .then(response => {
-                            return DealListsService.getDealList(organisationId, response.data.deal_list_id)
+                        return this.getLinkedResourceIdInSelection(organisationId, 'DEAL_LIST_SELECTION', id, 'DEAL_LIST')
+                          .then(dealListId => {
+                            return DealListsService.getDealList(organisationId, dealListId)
                               .then(res => {
-                                return res.data.name
+                                return res.data.name;
                               })
                           });
                       },
                       goToResource: (id: string) => {
-                        return DisplayCampaignService.getDealListSelection(campaignId, adGroupId, id)
-                          .then(response => {
-                            history.push(`/v2/o/${organisationId}/library/deallist/${response.data.deal_list_id}/edit`)
-                          })
+                        return this.getLinkedResourceIdInSelection(organisationId, 'DEAL_LIST_SELECTION', id, 'DEAL_LIST')
+                          .then(dealListId => {
+                            history.push(`/v2/o/${organisationId}/library/deallist/${dealListId}/edit`)
+                          });
                       },
                     },
                 },
