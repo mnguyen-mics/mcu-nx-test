@@ -73,7 +73,9 @@ container
 container
   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
   .toConstructor(AudienceTagFeedService);
-container.bind<IImportService>(TYPES.IImportService).to(ImportService);
+container
+  .bind<IImportService>(TYPES.IImportService)
+  .to(ImportService);
 
 export const { lazyInject } = getDecorators(container, false);
 

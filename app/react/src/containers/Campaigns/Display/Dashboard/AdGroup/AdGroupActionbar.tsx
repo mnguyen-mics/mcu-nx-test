@@ -14,11 +14,15 @@ import { DisplayCampaignInfoResource } from '../../../../../models/campaign/disp
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import ResourceTimelinePage, {
+  ResourceTimelinePageProps,
+} from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
 import AudienceSegmentSelectionService from '../../../../../services/AudienceSegmentSelectionService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
-import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages'; 
+import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
+import CreativeService from '../../../../../services/CreativeService';
+import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -37,12 +41,12 @@ type JoinedProps = AdGroupActionbarProps &
   InjectedDrawerProps;
 
 class AdGroupActionbar extends React.Component<JoinedProps> {
-
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
 
     const onClickElement = (status: AdGroupStatus) =>
-      adGroup && updateAdGroup(adGroup.id, {
+      adGroup &&
+      updateAdGroup(adGroup.id, {
         status,
       });
 
@@ -76,7 +80,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     const {
       location,
       history,
-      match: { params: { organisationId, campaignId, adGroupId } },
+      match: {
+        params: { organisationId, campaignId, adGroupId },
+      },
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`;
@@ -85,7 +91,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
       state: {
         from: `${location.pathname}${location.search}`,
         adGroupId: adGroupId,
-      }
+      },
     });
   };
 
@@ -111,13 +117,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     const onClick = (event: any) => {
       const {
         match: {
-          params: { 
-            organisationId,
-            campaignId,
-            adGroupId 
-          },
+          params: { organisationId, campaignId, adGroupId },
         },
-        history
+        history,
       } = this.props;
 
       switch (event.key) {
@@ -125,58 +127,139 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
           return adGroup && handleArchiveGoal(adGroup.id);
         case 'DUPLICATE':
           return this.duplicateAdGroup();
-          case 'HISTORY':
-            return this.props.openNextDrawer<ResourceTimelinePageProps>(
-              ResourceTimelinePage,
-              {
-                additionalProps: {
-                  resourceType: 'AD_GROUP',
-                  resourceId: adGroupId,
-                  handleClose: () => this.props.closeNextDrawer(),
-                  formatProperty: formatAdGroupProperty,
-                  resourceLinkHelper: {
-                    'AUDIENCE_SEGMENT_SELECTION': {
-                      direction: 'CHILD',
-                      getType: () => {
-                        return 'Segment';
-                      },
-                      getName: (id: string) => {
-                        return AudienceSegmentSelectionService.getAudienceSegmentSelection(campaignId, adGroupId, id)
-                        .then(response => {
-                          return response.data.name;
+        case 'HISTORY':
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(
+            ResourceTimelinePage,
+            {
+              additionalProps: {
+                resourceType: 'AD_GROUP',
+                resourceId: adGroupId,
+                handleClose: () => this.props.closeNextDrawer(),
+                formatProperty: formatAdGroupProperty,
+                resourceLinkHelper: {
+                  AUDIENCE_SEGMENT_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return 'Segment';
+                    },
+                    getName: (id: string) => {
+                      return AudienceSegmentSelectionService.getAudienceSegmentSelection(
+                        campaignId,
+                        adGroupId,
+                        id,
+                      ).then(response => {
+                        return response.data.name;
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return AudienceSegmentSelectionService.getAudienceSegmentSelection(
+                        campaignId,
+                        adGroupId,
+                        id,
+                      ).then(response => {
+                        history.push(
+                          `/v2/o/${organisationId}/audience/segments/${
+                            response.data.audience_segment_id
+                          }`,
+                        );
+                      });
+                    },
+                  },
+                  KEYWORDS_LIST_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.keywordsListResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return DisplayCampaignService.getKeywordListSelection(
+                        campaignId,
+                        adGroupId,
+                        id,
+                      ).then(response => {
+                        return response.data.name;
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return DisplayCampaignService.getKeywordListSelection(
+                        campaignId,
+                        adGroupId,
+                        id,
+                      ).then(response => {
+                        history.push(
+                          `/v2/o/${organisationId}/library/keywordslist/${
+                            response.data.keyword_list_id
+                          }/edit`,
+                        );
+                      });
+                    },
+                  },
+                  AD: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.creativeResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return DisplayCampaignService.getAd(
+                        campaignId,
+                        adGroupId,
+                        id,
+                      ).then(adResponse => {
+                        return CreativeService.getCreative(
+                          adResponse.data.creative_id,
+                        ).then(creativeResponse => {
+                          return creativeResponse.data.name;
                         });
-                      },
-                      goToResource: (id: string) => {
-                        return AudienceSegmentSelectionService.getAudienceSegmentSelection(campaignId, adGroupId, id)
-                        .then(response => {
-                          history.push(`/v2/o/${organisationId}/audience/segments/${response.data.audience_segment_id}`);
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return DisplayCampaignService.getAd(
+                        campaignId,
+                        adGroupId,
+                        id,
+                      ).then(adResponse => {
+                        return CreativeService.getCreative(
+                          adResponse.data.creative_id,
+                        ).then(creativeResponse => {
+                          if (
+                            creativeIsDisplayAdResource(creativeResponse.data)
+                          ) {
+                            if (creativeResponse.data.subtype === 'NATIVE') {
+                              return history.push(
+                                `/v2/o/${organisationId}/creatives/native/edit/${
+                                  creativeResponse.data.id
+                                }`,
+                              );
+                            } else {
+                              return history.push(
+                                `/v2/o/${organisationId}/creatives/display/edit/${
+                                  creativeResponse.data.id
+                                }`,
+                              );
+                            }
+                          } else {
+                            return history.push(
+                              `/v2/o/${organisationId}/creatives/email/edit/${
+                                creativeResponse.data.id
+                              }`,
+                            );
+                          }
                         });
-                      }
-                    }
-                    ,
-                    'KEYWORDS_LIST_SELECTION':{
-                      direction: 'CHILD',
-                      getType: () => {
-                        return <FormattedMessage {...resourceHistoryMessages.keywordsListResourceType} />;
-                      },
-                      getName: (id: string) => {
-                        return DisplayCampaignService.getKeywordListSelection(campaignId, adGroupId, id)
-                        .then(response => {
-                          return response.data.name;
-                        });
-                      },
-                      goToResource: (id: string) => {
-                        return DisplayCampaignService.getKeywordListSelection(campaignId, adGroupId, id)
-                        .then(response => {
-                          history.push(`/v2/o/${organisationId}/library/keywordslist/${response.data.keyword_list_id}/edit`);
-                        });
-                      }
-                    }
+                      });
+                    },
                   },
                 },
-                size: 'small',
-              }
-            );
+              },
+              size: 'small',
+            },
+          );
         default:
           return () => {
             //
@@ -189,9 +272,11 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
         <Menu.Item key="HISTORY">
           <FormattedMessage {...messages.history} />
         </Menu.Item>
-        {displayCampaign && displayCampaign.model_version !== 'V2014_06' ? <Menu.Item key="DUPLICATE">
-          <FormattedMessage {...messages.duplicate} />
-        </Menu.Item> : null}
+        {displayCampaign && displayCampaign.model_version !== 'V2014_06' ? (
+          <Menu.Item key="DUPLICATE">
+            <FormattedMessage {...messages.duplicate} />
+          </Menu.Item>
+        ) : null}
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archiveAdGroup} />
         </Menu.Item>
@@ -206,7 +291,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
       adGroup,
       displayCampaign,
       intl: { formatMessage },
-      match: { params: { organisationId, campaignId, adGroupId } },
+      match: {
+        params: { organisationId, campaignId, adGroupId },
+      },
       location,
     } = this.props;
 
@@ -230,17 +317,19 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     return (
       <Actionbar path={breadcrumbPaths}>
         {actionElement}
-        {displayCampaign && displayCampaign.model_version !== 'V2014_06' ? <Link
-          to={{
-            pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`,
-            state: { from: `${location.pathname}${location.search}` },
-          }}
-        >
-          <Button>
-            <McsIcon type="pen" />
-            <FormattedMessage {...messages.editAdGroup} />
-          </Button>
-        </Link> : null}
+        {displayCampaign && displayCampaign.model_version !== 'V2014_06' ? (
+          <Link
+            to={{
+              pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adGroupId}`,
+              state: { from: `${location.pathname}${location.search}` },
+            }}
+          >
+            <Button>
+              <McsIcon type="pen" />
+              <FormattedMessage {...messages.editAdGroup} />
+            </Button>
+          </Link>
+        ) : null}
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
             <Icon type="ellipsis" />
@@ -260,6 +349,9 @@ const mapDispatchToProps = {};
 export default compose<JoinedProps, AdGroupActionbarProps>(
   injectIntl,
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   injectDrawer,
 )(AdGroupActionbar);

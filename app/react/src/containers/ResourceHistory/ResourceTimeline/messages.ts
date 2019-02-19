@@ -11,6 +11,10 @@ const messages: {
     id: 'timeline.defaultResourceType',
     defaultMessage: 'Resource',
   },
+  creativeResourceType: {
+    id: 'timeline.resourceType.creative',
+    defaultMessage: 'Creative',
+  },
   keywordsListResourceType: {
     id: 'timeline.resourceType.keywordsList',
     defaultMessage: 'Keywords List',

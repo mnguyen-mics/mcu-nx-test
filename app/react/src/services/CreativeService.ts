@@ -80,10 +80,10 @@ const CreativeService = {
     >;
   },
 
-  getDisplayAd(
-    displayAdId: string,
-  ): Promise<DataResponse<DisplayAdResource>> {
-    return CreativeService.getCreative(displayAdId) as Promise<DataResponse<DisplayAdResource>>;
+  getDisplayAd(displayAdId: string): Promise<DataResponse<DisplayAdResource>> {
+    return CreativeService.getCreative(displayAdId) as Promise<
+      DataResponse<DisplayAdResource>
+    >;
   },
 
   getCreativeFormats(
@@ -151,7 +151,13 @@ const CreativeService = {
     params: object = {},
   ): Promise<DataResponse<any> | any> {
     const endpoint = `display_ads/${id}/renderer_properties/technical_name=${technicalName}`;
-    return PluginService.handleSaveOfProperties(params, organisationId, 'display_ads', id, endpoint);
+    return PluginService.handleSaveOfProperties(
+      params,
+      organisationId,
+      'display_ads',
+      id,
+      endpoint,
+    );
   },
 
   updateEmailTemplateProperty(
@@ -161,7 +167,13 @@ const CreativeService = {
     params: object = {},
   ): Promise<DataResponse<any> | any> {
     const endpoint = `email_templates/${id}/renderer_properties/technical_name=${technicalName}`;
-    return PluginService.handleSaveOfProperties(params, organisationId, 'email_templates', id, endpoint);
+    return PluginService.handleSaveOfProperties(
+      params,
+      organisationId,
+      'email_templates',
+      id,
+      endpoint,
+    );
   },
 
   getCreativeRendererProperties(
@@ -178,13 +190,17 @@ const CreativeService = {
     return ApiService.getRequest(endpoint);
   },
 
-  getEmailTemplateLocalizedPluginLayout(creativeId: string, locale: string = "en-US"): Promise<DataResponse<PluginLayout> | null> {
+  getEmailTemplateLocalizedPluginLayout(
+    creativeId: string,
+    locale: string = 'en-US',
+  ): Promise<DataResponse<PluginLayout> | null> {
     const endpoint = `email_templates/${creativeId}/properties_layout?locale=${locale}`;
-    return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint)
-      .catch(err => {
-        log.warn("Cannot retrieve plugin layout", err);
+    return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint).catch(
+      err => {
+        log.warn('Cannot retrieve plugin layout', err);
         return null;
-      });
+      },
+    );
   },
 
   getAuditStatus(

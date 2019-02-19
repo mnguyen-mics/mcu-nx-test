@@ -196,6 +196,15 @@ const DisplayCampaignService = {
   },
 
   /* AD SERVICES */
+  getAd(
+    campaignId: string,
+    adGroupId: string,
+    adId: string
+  ): Promise<DataResponse<AdResource>> {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${adId}`;
+    return ApiService.getRequest(endpoint);
+  },
+
   getAds(
     campaignId: string,
     adGroupId: string,
