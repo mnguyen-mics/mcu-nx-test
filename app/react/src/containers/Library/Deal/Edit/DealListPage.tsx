@@ -7,7 +7,9 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { DealListFormData, INITIAL_DEAL_LIST_FORM_DATA } from './domain';
 import { Loading } from '../../../../components/index';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 import { TYPES } from '../../../../constants/types';
 import { IDealsListService } from '../../../../services/Library/DealListsService';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -45,14 +47,11 @@ interface DealListPageState {
   isLoading: boolean;
 }
 
-type JoinedProps = 
-  InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string; dealListId: string }> & InjectedNotificationProps;
+type JoinedProps = InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string; dealListId: string }> &
+  InjectedNotificationProps;
 
-class DealListPage extends React.Component<
-  JoinedProps,
-  DealListPageState
-> {
+class DealListPage extends React.Component<JoinedProps, DealListPageState> {
   @lazyInject(TYPES.IDealsListService)
   private _dealsListService: IDealsListService;
 
@@ -68,30 +67,40 @@ class DealListPage extends React.Component<
   }
 
   componentDidMount() {
-    const { match: { params: { organisationId, dealListId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId, dealListId },
+      },
+    } = this.props;
     if (dealListId) {
-      this._dealsListService.getDealList(organisationId, dealListId)
+      this._dealsListService
+        .getDealList(organisationId, dealListId)
         .then(resp => resp.data)
         .then(dealListFormdata => {
-          this._dealsListService.getDeals(organisationId, { deal_list_id: dealListFormdata.id })
-            .then(r => this.setState({
-              isLoading: false,
-              dealListFormData: {
-                ...dealListFormdata,
-                deals: r.data.map(d => createFieldArrayModel(d))
-              }
-            }))
+          this._dealsListService
+            .getDeals(organisationId, { deal_list_id: dealListFormdata.id })
+            .then(r =>
+              this.setState({
+                isLoading: false,
+                dealListFormData: {
+                  ...dealListFormdata,
+                  deals: r.data.map(d => createFieldArrayModel(d)),
+                },
+              }),
+            );
         });
     } else {
-      this.setState({ isLoading: false })
+      this.setState({ isLoading: false });
     }
   }
 
   save = (formData: DealListFormData) => {
     const {
-      match: { params: { dealListId, organisationId } },
+      match: {
+        params: { dealListId, organisationId },
+      },
       intl,
-      notifyError
+      notifyError,
     } = this.props;
 
     const { dealListFormData: initialFormdata } = this.state;
@@ -105,25 +114,27 @@ class DealListPage extends React.Component<
       isLoading: true,
     });
 
-    this._dealListFormService.saveDealList(
-      organisationId,
-      formData,
-      initialFormdata,
-      dealListId,
-    ).then(() => {
-      hideSaveInProgress();
-      this.close();
-      message.success(intl.formatMessage(messages.dealListSaved));
-    })
-    .catch(err => {
-      this.setState({ isLoading: false })
-      notifyError(err);
-      hideSaveInProgress()
-    });
+    this._dealListFormService
+      .saveDealList(organisationId, formData, initialFormdata, dealListId)
+      .then(() => {
+        hideSaveInProgress();
+        this.close();
+        message.success(intl.formatMessage(messages.dealListSaved));
+      })
+      .catch(err => {
+        this.setState({ isLoading: false });
+        notifyError(err);
+        hideSaveInProgress();
+      });
   };
 
   close = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const url = `/v2/o/${organisationId}/library/deallist`;
 
@@ -133,7 +144,9 @@ class DealListPage extends React.Component<
   render() {
     const {
       intl,
-      match: { params: { organisationId, dealListId } },
+      match: {
+        params: { organisationId, dealListId },
+      },
     } = this.props;
     const { dealListFormData, isLoading } = this.state;
     if (isLoading) {
