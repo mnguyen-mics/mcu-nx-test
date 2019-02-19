@@ -18,7 +18,8 @@ import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
-import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
+import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages'; 
+import GeonameService from '../../../../../services/GeonameService';
 import CreativeService from '../../../../../services/CreativeService';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
 import { TYPES } from '../../../../../constants/types';
@@ -130,7 +131,6 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
       resource_id: selectionId,
       max_results: 10,
     }; // Let's keep 10 for now, selections shouldn't have many events anyway.
-
     return ResourceHistoryService.getResourceHistory(
       organisationId,
       params,
@@ -412,9 +412,32 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                     goToResource: (id: string) => {
                       return
                     }
-
-
-                  }
+                  },
+                  LOCATION_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return 'Location';
+                    },
+                    getName: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'LOCATION_SELECTION',
+                        id,
+                        'GEONAME_SELECTION',
+                      )
+                      .then(geonameId => {
+                        return GeonameService.getGeoname(geonameId)
+                        .then(res => {
+                          return res.data.name;
+                        });
+                    
+                      });
+                      
+                    },
+                    goToResource: (id: string) => {
+                      return;
+                    }
+                  },
                 },
               },
               size: 'small',

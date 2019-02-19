@@ -22,6 +22,9 @@ export type ResourceType =
   'AD' |
   'AD_EXCHANGE' |
   'AD_EXCHANGE_SELECTION' |
+  'GEONAME' |
+  'LOCATION_SELECTION' |
+  'GEONAME_SELECTION' |
   'AUDIENCE_SEGMENT';
 
 export type EventType =

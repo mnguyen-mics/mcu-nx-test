@@ -301,6 +301,14 @@ const DisplayCampaignService = {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
     return ApiService.deleteRequest(endpoint);
   },
+  getLocation(
+    campaignId: string,
+    adGroupId: string,
+    id: string,
+  ): Promise<DataResponse<LocationSelectionResource>> {
+    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
+    return ApiService.getRequest(endpoint);
+  },
   getLocations(
     campaignId: string,
     adGroupId: string,
