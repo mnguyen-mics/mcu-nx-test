@@ -211,8 +211,10 @@ export class AutomationFormService implements IAutomationFormService {
             node.initialFormData,
             node.campaign_id,
           );
-          saveOrCreateCampaignPromise.then(() => {
-            this.saveOrCreateNode(automationId, storylineNode).then(res => {
+          saveOrCreateCampaignPromise.then(campaignId => {
+            this.saveOrCreateNode(automationId, storylineNode, {
+              campaign_id: campaignId,
+            }).then(res => {
               this.saveOrCreateEdges(automationId, {
                 source_id: parentNodeId,
                 target_id: res.data.id,
@@ -268,7 +270,7 @@ export class AutomationFormService implements IAutomationFormService {
     automationId: string,
     storylineNode: StorylineNodeModel,
     campaignIds?: {
-      ad_group_id: string;
+      ad_group_id?: string;
       campaign_id: string;
     },
     queryId?: string,
@@ -297,7 +299,7 @@ export class AutomationFormService implements IAutomationFormService {
         x: node.x,
         y: node.y,
         type: node.type,
-        campaign_id: node.campaign_id,
+        campaign_id: campaignIds ? campaignIds.campaign_id : undefined,
       };
       resourceId = node.campaign_id;
     } else if (isQueryInputNode(node)) {
@@ -444,32 +446,28 @@ export class AutomationFormService implements IAutomationFormService {
       );
     }
 
-    return createOrUpdateCampaignPromise
-      .then(savedCampaignRes => {
-        const savedCampaignId = savedCampaignRes.data.id;
+    return createOrUpdateCampaignPromise.then(savedCampaignRes => {
+      const savedCampaignId = savedCampaignRes.data.id;
 
-        const tasks: Task[] = [];
+      const tasks: Task[] = [];
 
-        tasks.push(
-          ...getRouterTasks(
-            savedCampaignId,
-            formData.routerFields,
-            initialFormData.routerFields,
-          ),
-          ...getBlastTasks(
-            savedCampaignId,
-            formData.blastFields,
-            initialFormData.blastFields,
-          ),
-        );
+      tasks.push(
+        ...getRouterTasks(
+          savedCampaignId,
+          formData.routerFields,
+          initialFormData.routerFields,
+        ),
+        ...getBlastTasks(
+          savedCampaignId,
+          formData.blastFields,
+          initialFormData.blastFields,
+        ),
+      );
 
-        executeTasksInSequence(tasks).then(() => {
-          return savedCampaignId;
-        });
-      })
-      .then(savedCampaignId => {
+      return executeTasksInSequence(tasks).then(() => {
         return savedCampaignId;
       });
+    });
   };
 }
 

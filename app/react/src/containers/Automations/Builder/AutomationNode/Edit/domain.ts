@@ -83,14 +83,13 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
   campaign: {
     organisation_id: '',
     name: '',
-    creation_ts: '',
-    editor_versionid: '',
+    editor_versionid: '17',
     editor_version_value: '',
     editor_groupid: '',
     editor_artifact_id: '',
-    currency_code: '',
+    currency_code: 'EUR',
     technical_name: '',
-    type: '',
+    type: 'EMAIL',
   },
 };
 

@@ -27,6 +27,7 @@ import {
 } from './Edit/domain';
 import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import AdGroupFormService from '../../../Campaigns/Display/Edit/AdGroup/AdGroupFormService';
+import EmailCampaignFormService from '../../../Campaigns/Email/Edit/EmailCampaignFormService';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -101,8 +102,25 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               initialValuesForm: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
             });
       case 'EMAIL_CAMPAIGN':
-        const eCFormData = node.formData;
-        return eCFormData || INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA;
+        return node.campaign_id
+          ? EmailCampaignFormService.loadCampaign(node.campaign_id).then(
+              campaignResp => {
+                this.setState({
+                  initialValuesForm: {
+                    name: node.name,
+                    campaign: campaignResp.campaign,
+                    templateFields: [],
+                    consentFields: [],
+                    blastFields: campaignResp.blastFields,
+                    routerFields: campaignResp.routerFields,
+                    blast: {},
+                  },
+                });
+              },
+            )
+          : this.setState({
+              initialValuesForm: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
+            });
       case 'ABN_NODE':
         const abnFormData = node.formData;
         return (
