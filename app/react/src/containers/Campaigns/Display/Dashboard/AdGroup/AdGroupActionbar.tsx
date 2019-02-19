@@ -24,11 +24,11 @@ import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edi
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IDisplayNetworkService } from '../../../../../services/DisplayNetworkService';
-import DealListsService from '../../../../../services/Library/DealListsService';
 import ResourceHistoryService from '../../../../../services/ResourceHistoryService';
 import { ResourceType, isHistoryLinkEvent } from '../../../../../models/resourceHistory/ResourceHistory';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { IKeywordListService } from '../../../../../services/Library/KeywordListsService';
+import { IDealsListService } from '../../../../../services/Library/DealListsService';
 import lodash from 'lodash';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 
@@ -58,6 +58,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
   @lazyInject(TYPES.IKeywordListService)
   private _keywordsListService: IKeywordListService;
+
+  @lazyInject(TYPES.IDealsListService)
+  private _dealsListService: IDealsListService;
 
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
@@ -299,7 +302,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       getName: (id: string) => {
                         return this.getLinkedResourceIdInSelection(organisationId, 'DEAL_LIST_SELECTION', id, 'DEAL_LIST')
                           .then(dealListId => {
-                            return DealListsService.getDealList(organisationId, dealListId)
+                            return this._dealsListService.getDealList(organisationId, dealListId)
                               .then(res => {
                                 return res.data.name;
                               })

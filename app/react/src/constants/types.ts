@@ -11,6 +11,8 @@ const TYPES = {
   IAudienceExternalFeedService: Symbol.for('audienceExternalFeedService'),
   IImportService: Symbol.for('importService'),
   IDisplayNetworkService: Symbol.for('displayNetworkService'),
+  IDealsListService: Symbol.for('dealsListService'),
+  IDealListFormService: Symbol.for('dealListFormService'),
 };
 
 export { TYPES };

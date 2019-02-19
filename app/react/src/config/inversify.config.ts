@@ -46,6 +46,14 @@ import {
   IDisplayNetworkService,
   DisplayNetworkService
 } from '../services/DisplayNetworkService';
+import {
+  IDealsListService,
+  DealsListService,
+} from '../services/Library/DealListsService';
+import {
+  IDealListFormService,
+  DealListFormService,
+} from '../containers/Library/Deal/Edit/DealListFormService';
 
 const container = new Container();
 
@@ -68,7 +76,7 @@ container
   .bind<IAudiencePartitionsService>(TYPES.IAudiencePartitionsService)
   .to(AudiencePartitionsService);
 container.bind<IOverlapInterval>(TYPES.IOverlapInterval).to(OverlapInterval);
-  container
+container
   .bind<IDisplayCampaignFormService>(TYPES.IDisplayCampaignFormService)
   .to(DisplayCampaignFormService);
 container
@@ -83,6 +91,10 @@ container
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
   .to(DisplayNetworkService)
+container.bind<IDealsListService>(TYPES.IDealsListService).to(DealsListService);
+container
+  .bind<IDealListFormService>(TYPES.IDealListFormService)
+  .to(DealListFormService);
 
 export const { lazyInject } = getDecorators(container, false);
 

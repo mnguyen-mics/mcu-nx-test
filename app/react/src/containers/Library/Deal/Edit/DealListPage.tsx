@@ -6,10 +6,12 @@ import DealListForm from './DealListForm';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DealListFormData, INITIAL_DEAL_LIST_FORM_DATA } from './domain';
 import { Loading } from '../../../../components/index';
-import DealListsService from '../../../../services/Library/DealListsService';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
-import DealListFormService from './DealListFormService';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import { TYPES } from '../../../../constants/types';
+import { IDealsListService } from '../../../../services/Library/DealListsService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { IDealListFormService } from './DealListFormService';
 
 const messages = defineMessages({
   editKeywordList: {
@@ -51,6 +53,12 @@ class DealListPage extends React.Component<
   JoinedProps,
   DealListPageState
 > {
+  @lazyInject(TYPES.IDealsListService)
+  private _dealsListService: IDealsListService;
+
+  @lazyInject(TYPES.IDealListFormService)
+  private _dealListFormService: IDealListFormService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -62,10 +70,10 @@ class DealListPage extends React.Component<
   componentDidMount() {
     const { match: { params: { organisationId, dealListId } } } = this.props;
     if (dealListId) {
-      DealListsService.getDealList(organisationId, dealListId)
+      this._dealsListService.getDealList(organisationId, dealListId)
         .then(resp => resp.data)
         .then(dealListFormdata => {
-          DealListsService.getDeals(organisationId, { deal_list_id: dealListFormdata.id })
+          this._dealsListService.getDeals(organisationId, { deal_list_id: dealListFormdata.id })
             .then(r => this.setState({
               isLoading: false,
               dealListFormData: {
@@ -97,7 +105,7 @@ class DealListPage extends React.Component<
       isLoading: true,
     });
 
-    DealListFormService.saveDealList(
+    this._dealListFormService.saveDealList(
       organisationId,
       formData,
       initialFormdata,
