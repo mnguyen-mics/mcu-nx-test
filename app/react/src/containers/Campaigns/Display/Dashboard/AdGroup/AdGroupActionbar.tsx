@@ -25,12 +25,14 @@ import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IDisplayNetworkService } from '../../../../../services/DisplayNetworkService';
 import ResourceHistoryService from '../../../../../services/ResourceHistoryService';
-import { ResourceType, isHistoryLinkEvent } from '../../../../../models/resourceHistory/ResourceHistory';
+import {
+  ResourceType,
+  isHistoryLinkEvent,
+} from '../../../../../models/resourceHistory/ResourceHistory';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { IKeywordListService } from '../../../../../services/Library/KeywordListsService';
 import { IDealsListService } from '../../../../../services/Library/DealListsService';
 import lodash from 'lodash';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -116,16 +118,33 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     });
   };
 
-  getLinkedResourceIdInSelection = (organisationId: string, selectionType: ResourceType, selectionId: string, linkedResourceType: ResourceType) => {
+  getLinkedResourceIdInSelection = (
+    organisationId: string,
+    selectionType: ResourceType,
+    selectionId: string,
+    linkedResourceType: ResourceType,
+  ) => {
+    const params = {
+      resource_type: selectionType,
+      resource_id: selectionId,
+      max_results: 10,
+    }; // Let's keep 10 for now, selections shouldn't have many events anyway.
 
-    const params = { resource_type: selectionType, resource_id: selectionId, max_results: 10 } // Let's keep 10 for now, selections shouldn't have many events anyway.
-
-    return ResourceHistoryService.getResourceHistory(organisationId, params)
-      .then(response => {
-        return lodash.flatMap(response.data, (rhr => {
-          return rhr.events.map(event => (isHistoryLinkEvent(event) && event.resource_type === linkedResourceType) ? event.resource_id : '');
-        })).join('');
-      });
+    return ResourceHistoryService.getResourceHistory(
+      organisationId,
+      params,
+    ).then(response => {
+      return lodash
+        .flatMap(response.data, rhr => {
+          return rhr.events.map(event =>
+            isHistoryLinkEvent(event) &&
+            event.resource_type === linkedResourceType
+              ? event.resource_id
+              : '',
+          );
+        })
+        .join('');
+    });
   };
 
   buildMenu = () => {
@@ -150,11 +169,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     const onClick = (event: any) => {
       const {
         match: {
-          params: { 
-            organisationId,
-            campaignId,
-            adGroupId 
-          },
+          params: { organisationId, adGroupId },
         },
         history,
       } = this.props;
@@ -164,68 +179,98 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
           return adGroup && handleArchiveGoal(adGroup.id);
         case 'DUPLICATE':
           return this.duplicateAdGroup();
-          case 'HISTORY':
-            return this.props.openNextDrawer<ResourceTimelinePageProps>(
-              ResourceTimelinePage,
-              {
-                additionalProps: {
-                  resourceType: 'AD_GROUP',
-                  resourceId: adGroupId,
-                  handleClose: () => this.props.closeNextDrawer(),
-                  formatProperty: formatAdGroupProperty,
-                  resourceLinkHelper: {
-                    'AUDIENCE_SEGMENT_SELECTION': {
-                      direction: 'CHILD',
-                      getType: () => {
-                        return <FormattedMessage {...resourceHistoryMessages.segmentResourceType} />;
-                      },
-                      getName: (id: string) => {
-                        return this.getLinkedResourceIdInSelection(organisationId, 'AUDIENCE_SEGMENT_SELECTION', id, 'AUDIENCE_SEGMENT')
-                          .then(audienceSegmentId => {
-                            return this._audienceSegmentService.getSegment(audienceSegmentId)
-                              .then(response => {
-                                return response.data.name;
-                              });
+        case 'HISTORY':
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(
+            ResourceTimelinePage,
+            {
+              additionalProps: {
+                resourceType: 'AD_GROUP',
+                resourceId: adGroupId,
+                handleClose: () => this.props.closeNextDrawer(),
+                formatProperty: formatAdGroupProperty,
+                resourceLinkHelper: {
+                  AUDIENCE_SEGMENT_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.segmentResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'AUDIENCE_SEGMENT_SELECTION',
+                        id,
+                        'AUDIENCE_SEGMENT',
+                      ).then(audienceSegmentId => {
+                        return this._audienceSegmentService
+                          .getSegment(audienceSegmentId)
+                          .then(response => {
+                            return response.data.name;
                           });
-                      },
-                      goToResource: (id: string) => {
-                        return this.getLinkedResourceIdInSelection(organisationId, 'AUDIENCE_SEGMENT_SELECTION', id, 'AUDIENCE_SEGMENT')
-                        .then(audienceSegmentId => {
-                          history.push(`/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`);
-                        });
-                      }
+                      });
                     },
-                    'KEYWORDS_LIST_SELECTION': {
-                      direction: 'CHILD',
-                      getType: () => {
-                        return <FormattedMessage {...resourceHistoryMessages.keywordsListResourceType} />;
-                      },
-                      getName: (id: string) => {
-                        return this.getLinkedResourceIdInSelection(organisationId, 'KEYWORDS_LIST_SELECTION', id, 'KEYWORDS_LIST')
-                        .then(keywordsListId => {
-                          return this._keywordsListService.getKeywordList(keywordsListId)
-                            .then(response => {
-                              return response.data.name;
-                            })
-                        });
-                      },
-                      goToResource: (id: string) => {
-                        return this.getLinkedResourceIdInSelection(organisationId, 'KEYWORDS_LIST_SELECTION', id, 'KEYWORDS_LIST')
-                        .then(keywordsListId => {
-                          history.push(`/v2/o/${organisationId}/library/keywordslist/${keywordsListId}/edit`);
-                        });
-                      },
+                    goToResource: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'AUDIENCE_SEGMENT_SELECTION',
+                        id,
+                        'AUDIENCE_SEGMENT',
+                      ).then(audienceSegmentId => {
+                        history.push(
+                          `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
+                        );
+                      });
                     },
+                  },
+                  KEYWORDS_LIST_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.keywordsListResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'KEYWORDS_LIST_SELECTION',
+                        id,
+                        'KEYWORDS_LIST',
+                      ).then(keywordsListId => {
+                        return this._keywordsListService
+                          .getKeywordList(keywordsListId)
+                          .then(response => {
+                            return response.data.name;
+                          });
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'KEYWORDS_LIST_SELECTION',
+                        id,
+                        'KEYWORDS_LIST',
+                      ).then(keywordsListId => {
+                        history.push(
+                          `/v2/o/${organisationId}/library/keywordslist/${keywordsListId}/edit`,
+                          );
+                      });
+                    },
+                  },
                     DISPLAY_NETWORK_SELECTION: {
                       direction: 'CHILD',
                       getType: () => {
                         return <FormattedMessage {...resourceHistoryMessages.displayNetworkResourceType} />;
                       },
                       getName: (id: string) => {
-                        return DisplayCampaignService.getDisplayNetwork(campaignId, adGroupId, id)
-                        .then(displayNetworkSelectionResponse => {
+                        return this.getLinkedResourceIdInSelection(organisationId, 'DISPLAY_NETWORK_SELECTION', id, 'DISPLAY_NETWORK')
+                        .then(displayNetworkId => {
                           return this._displayNetworkService.getDisplayNetwork(
-                            displayNetworkSelectionResponse.data.display_network_id,
+                            displayNetworkId,
                             organisationId
                           ).then(displayNetworkResponse => {
                             return displayNetworkResponse.data.name;
@@ -236,85 +281,102 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         return;
                       }
                     },
-                    AD: {
-                      direction: 'CHILD',
-                      getType: () => {
-                        return (
-                          <FormattedMessage
-                            {...resourceHistoryMessages.creativeResourceType}
-                          />
-                        );
-                      },
-                      getName: (id: string) => {
-                        return DisplayCampaignService.getAd(
-                          campaignId,
-                          adGroupId,
-                          id,
-                        ).then(adResponse => {
-                          return CreativeService.getCreative(
-                            adResponse.data.creative_id,
-                          ).then(creativeResponse => {
+                  AD: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.creativeResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'AD',
+                        id,
+                        'CREATIVE',
+                      ).then(adId => {
+                        return CreativeService.getCreative(adId).then(
+                          creativeResponse => {
                             return creativeResponse.data.name;
-                        });
+                          },
+                        );
                       });
                     },
                     goToResource: (id: string) => {
-                      return DisplayCampaignService.getAd(
-                        campaignId,
-                        adGroupId,
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'AD',
                         id,
-                      ).then(adResponse => {
-                        return CreativeService.getCreative(
-                          adResponse.data.creative_id,
-                        ).then(creativeResponse => {
-                          if (
-                            creativeIsDisplayAdResource(creativeResponse.data)
-                          ) {
-                            if (creativeResponse.data.subtype === 'NATIVE') {
-                              return history.push(
-                                `/v2/o/${organisationId}/creatives/native/edit/${
-                                  creativeResponse.data.id
-                                }`,
-                              );
+                        'CREATIVE',
+                      ).then(adId => {
+                        return CreativeService.getCreative(adId).then(
+                          creativeResponse => {
+                            if (
+                              creativeIsDisplayAdResource(creativeResponse.data)
+                            ) {
+                              if (creativeResponse.data.subtype === 'NATIVE') {
+                                return history.push(
+                                  `/v2/o/${organisationId}/creatives/native/edit/${
+                                    creativeResponse.data.id
+                                  }`,
+                                );
+                              } else {
+                                return history.push(
+                                  `/v2/o/${organisationId}/creatives/display/edit/${
+                                    creativeResponse.data.id
+                                  }`,
+                                );
+                              }
                             } else {
                               return history.push(
-                                `/v2/o/${organisationId}/creatives/display/edit/${
+                                `/v2/o/${organisationId}/creatives/email/edit/${
                                   creativeResponse.data.id
                                 }`,
                               );
                             }
-                          } else {
-                            return history.push(
-                              `/v2/o/${organisationId}/creatives/email/edit/${
-                                creativeResponse.data.id
-                              }`,
-                            );
-                          }
-                        });
+                          },
+                        );
                       });
                     },
                   },
-                    'DEAL_LIST_SELECTION': {
-                      direction: 'CHILD',
-                      getType: () => {
-                        return <FormattedMessage {...resourceHistoryMessages.dealListResourceType} />;
-                      },
-                      getName: (id: string) => {
-                        return this.getLinkedResourceIdInSelection(organisationId, 'DEAL_LIST_SELECTION', id, 'DEAL_LIST')
-                          .then(dealListId => {
-                            return this._dealsListService.getDealList(organisationId, dealListId)
-                              .then(res => {
-                                return res.data.name;
-                              })
-                          });
-                      },
-                      goToResource: (id: string) => {
-                        return this.getLinkedResourceIdInSelection(organisationId, 'DEAL_LIST_SELECTION', id, 'DEAL_LIST')
-                          .then(dealListId => {
-                            history.push(`/v2/o/${organisationId}/library/deallist/${dealListId}/edit`)
-                          });
-                      },
+                  DEAL_LIST_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.dealListResourceType}
+                        />
+                      );
                     },
+                    getName: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'DEAL_LIST_SELECTION',
+                        id,
+                        'DEAL_LIST',
+                      ).then(dealListId => {
+                        return this._dealsListService
+                          .getDealList(organisationId, dealListId)
+                          .then(res => {
+                            return res.data.name;
+                          });
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'DEAL_LIST_SELECTION',
+                        id,
+                        'DEAL_LIST',
+                      ).then(dealListId => {
+                        history.push(
+                          `/v2/o/${organisationId}/library/deallist/${dealListId}/edit`,
+                        );
+                      });
+                    },
+                  },
                 },
               },
               size: 'small',
