@@ -115,8 +115,8 @@ class GeneralFormSection extends React.Component<Props, State> {
     const getMimeTypeOptions = () => {
       return [
         {
-          title: 'X_NDJSON',
-          value: 'X_NDJSON',
+          title: 'New Line Delimited JSON',
+          value: 'APPLICATION_X_NDJSON',
         },
         {
           title: 'CSV',

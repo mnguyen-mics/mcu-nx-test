@@ -13,7 +13,7 @@ export function formatDocumentTypeText(docType: string): string {
 
 export function formatMimeTypeText(docType: string): string {
   switch (docType) {
-    case 'X_NDJSON':
+    case 'APPLICATION_X_NDJSON':
       return 'NDJSON';
     case 'TEXT_CSV':
       return 'CSV';

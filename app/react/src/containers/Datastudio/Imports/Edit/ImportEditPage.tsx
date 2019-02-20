@@ -134,7 +134,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
     const {
       history,
       match: {
-        params: { importId, organisationId, datamartId },
+        params: { importId, organisationId },
       },
       intl,
     } = this.props;
@@ -154,7 +154,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
       this._importService
         .updateImport(importData.datamart_id, importId, formData)
         .then(() => {
-          redirectAndNotify(importId);
+          redirectAndNotify(importId, importData.datamart_id);
         })
         .catch(err => {
           redirectAndNotify();
@@ -163,19 +163,19 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
       this._importService
         .createImport(selectedDatamart.id, formData)
         .then(createdImport => {
-          redirectAndNotify(createdImport.data.id);
+          redirectAndNotify(createdImport.data.id, selectedDatamart.id);
         })
         .catch(err => {
           redirectAndNotify();
         });
     }
 
-    const redirectAndNotify = (id?: string) => {
+    const redirectAndNotify = (id?: string, selectedDatamartId?: string) => {
       if (id) {
         hideSaveInProgress();
         message.success(intl.formatMessage(messages.updateSuccess));
         return history.push(
-          `/v2/o/${organisationId}/datastudio/datamart/${datamartId}/imports/${id}`,
+          `/v2/o/${organisationId}/datastudio/datamart/${selectedDatamartId}/imports/${id}`,
         );
       } else {
         hideSaveInProgress();
