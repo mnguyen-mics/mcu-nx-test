@@ -96,7 +96,19 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     this.setState({ isModalOpen: !this.state.isModalOpen, importFile: [] });
   };
 
-  handleOnImportButton = () => {
+  onFileUpdate = (file: any) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.onload = (fileLoadedEvent: any) => {
+        const textFromFileLoaded = fileLoadedEvent.target.result;
+        return resolve(textFromFileLoaded);
+      };
+
+      fileReader.readAsText(file, 'UTF-8');
+    });
+  };
+
+  handleOnImportButton = async () => {
     const {
       match: {
         params: { organisationId, datamartId, importId },
@@ -108,10 +120,13 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     if (importFile && importObject) {
       this.setState({ isLoading: true });
       const formData = new FormData();
-      formData.append('file', importFile[0] as any, importFile[0].name);
-      importObject.mime_type === 'TEXT_CSV'
-        ? formData.append('type', 'TEXT/CSV')
-        : formData.append('type', 'APPLICATION/X-NDJSON');
+
+      const file = importFile[0];
+      const fileContent = await this.onFileUpdate(file)
+      const formattedFile = new Blob([fileContent as any], { type: importObject.mime_type === "TEXT_CSV" ? "text/csv" : "application/x-ndjson" })
+      formData.append('file', formattedFile, file.name);
+      if (importObject.mime_type === 'TEXT_CSV') { formData.append('type', 'text/csv') }
+      if (importObject.mime_type === 'APPLICATION_X_NDJSON') { formData.append('type', 'application/x-ndjson') }
 
       this._importService
         .createImportExecution(datamartId, importId, formData)
@@ -141,9 +156,9 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
 
     const props = {
       name: 'file',
-      multiple: true,
+      multiple: false,
       action: '/',
-      accept: '.json,.csv,.ods',
+      accept: '.ndjson,.csv',
       beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
         this.checkIfSizeOK(file);
         this.setState({ importFile: fileList });
