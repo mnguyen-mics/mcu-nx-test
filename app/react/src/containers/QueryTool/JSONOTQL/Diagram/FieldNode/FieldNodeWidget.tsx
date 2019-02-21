@@ -157,7 +157,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
     };
     const closeEdit = () => this.editNode(false);
     const onMouseOver = () => this.props.lockGlobalInteraction(true);
-    const onMouseLeave = () => this.props.lockGlobalInteraction(false)
+    const onMouseLeave = () => this.props.lockGlobalInteraction(false);
 
     return (
       <div

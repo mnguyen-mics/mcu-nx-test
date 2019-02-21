@@ -7,6 +7,7 @@ import {
   ObjectLikeTypeDirectiveResource,
   DirectiveArgumentResource,
   ObjectLikeTypeInfoResource,
+  SchemaDecoratorResource,
 } from '../models/datamart/graphdb/RuntimeSchema';
 
 const RuntimeSchemaService = {
@@ -83,13 +84,15 @@ const RuntimeSchemaService = {
             ).then(fieldRes => {
               return Promise.all(
                 fieldRes.data.map(field => {
-                  return RuntimeSchemaService.getFieldDirectives(
+                  return Promise.all([RuntimeSchemaService.getFieldDirectives(
                     datamartId,
                     runtimeSchemaId,
                     object.id,
                     field.id,
-                  ).then(dirRes => {
-                    return Promise.all(dirRes.data.map(dir => {
+                  ),
+                  RuntimeSchemaService.getFieldDecorator(datamartId, runtimeSchemaId, object.name, field.name)
+                ]).then(dirRes => {
+                    return Promise.all(dirRes[0].data.map(dir => {
                       return RuntimeSchemaService.getFieldDirectiveArguments(
                         datamartId,
                         runtimeSchemaId,
@@ -102,7 +105,10 @@ const RuntimeSchemaService = {
                           arguments: fieldDirArgs.data,
                         };
                       });
-                    })).then((fieldDirectives) => ({ ...field, directives: fieldDirectives }));
+                    })).then((fieldDirectives) => {
+                      const decorator = dirRes[1]; 
+                      return {...field, directives: fieldDirectives, decorator: decorator ? decorator.data : undefined} 
+                    });
                   })
                 }),
               );
@@ -225,7 +231,51 @@ const RuntimeSchemaService = {
         `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/fields/${fieldId}/directives/${directiveId}/arguments/${argumentId}`,
       );
     },
+    getFieldDecorator(
+      datamartId: string,
+      runtimeSchemaId: string,
+      objectTypeName: string,
+      fieldName: string,
+    ): Promise<DataResponse<SchemaDecoratorResource> | undefined> {
+      return new Promise((resolve, reject) => {
+        const decorator = findInFakeData(datamartId, runtimeSchemaId, objectTypeName, fieldName);
+        if (decorator) {
+          return resolve({ status: "ok", data: decorator})
+        }
+        return resolve(undefined)
+        
+      })
+    }
   };
   
   export default RuntimeSchemaService;
-  
+
+  const findInFakeData = (datamartId: string, runtimeSchemaId: string, objectTypeName: string, fieldName: string) => {
+    return fakeData.find(f => f.datamart_id === datamartId && f.schema_id === runtimeSchemaId && f.object_name === objectTypeName && f.field_name === fieldName)
+  }
+
+  const fakeData: SchemaDecoratorResource[] = [
+    {
+
+      datamart_id: "1162",
+      schema_id: "268",
+      field_name: "activity_events",
+      help_text: "ceci est un evenement",
+      label: "Evenement",
+      hidden: false,
+      id: "1",
+      language: "EN_us",
+      object_name: "UserPoint"
+    },
+    {
+      datamart_id: "1162",
+      schema_id: "268",
+      field_name: "app_id",
+      help_text: "this is the channel id used by the user",
+      label: "Application Identifier",
+      hidden: false,
+      id: "1",
+      language: "EN_us",
+      object_name: "ActivityEvent"
+    }
+  ]

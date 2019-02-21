@@ -10,7 +10,7 @@ import {
   FieldNode,
   ObjectNode,
 } from '../../../models/datamart/graphdb/QueryDocument';
-import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType, ObjectLikeTypeDirectiveInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType, ObjectLikeTypeDirectiveInfoResource, SchemaDecoratorResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { SchemaItem } from './domain';
 
 export enum typesTrigger {
@@ -498,16 +498,19 @@ export interface FieldEnhancedInfo extends FieldInfoResource {
   closestParentType: string;
 }
 
+type Field = FieldInfoEnhancedResource | SchemaItem | FieldInfoResource
+
 export interface SchemaItem {
   id: string;
   runtime_schema_id: string;
   type: ObjectLikeType;
   name: string;
   schemaType?: string;
-  fields: Array<FieldInfoEnhancedResource | SchemaItem | FieldInfoResource>;
+  fields: Field[];
   closestParentType: string;
   path?: string;
-  directives: ObjectLikeTypeDirectiveInfoResource[]; 
+  directives: ObjectLikeTypeDirectiveInfoResource[];
+  decorator?: SchemaDecoratorResource;
 }
 
 export function isSchemaItem(item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource): item is SchemaItem {
@@ -557,7 +560,7 @@ function buildSchemaItem(
         match &&
         objectTypes.map(ot => ot.name).includes(match)
       ) {
-        const newRootObject: SchemaItem =  {...objectTypes.find(ot => ot.name === match)!, schemaType: match, name: field.name, closestParentType: rootObjectType.name}
+        const newRootObject: SchemaItem =  {...objectTypes.find(ot => ot.name === match)!, schemaType: match, name: field.name, closestParentType: rootObjectType.name, decorator: field.decorator}
         return buildSchemaItem(
           objectTypes,
           newRootObject,
@@ -567,6 +570,12 @@ function buildSchemaItem(
       }
     }),
   };
+}
+
+function checkIfHidden(
+  field: Field
+): boolean {
+  return field.decorator ? !field.decorator.hidden : true;
 }
 
 function filterSchemaItem(
@@ -579,19 +588,20 @@ function filterSchemaItem(
     ...schema,
     fields: schema.fields.filter(field => {
       if(isTrigger){
-        if(isSchemaItem(field) && field.closestParentType==="UserPoint") return filterAvailableFields(field as SchemaItem)
-        else if(isFieldInfoEnfancedResource(field) && field.closestParentType==="UserPoint") return false
-        else return true
+        if(isSchemaItem(field) && field.closestParentType==="UserPoint") return filterAvailableFields(field as SchemaItem) && checkIfHidden(field)
+        else if(isFieldInfoEnfancedResource(field) && field.closestParentType==="UserPoint") return false && checkIfHidden(field)
+        else return true && checkIfHidden(field)
       }else{
         if(isFieldInfoEnfancedResource(field) && onlyIndexed){
           const match = extractFieldType(field as FieldInfoEnhancedResource);
-          if (objectTypes.map(ot => ot.name).includes(match)) return true;
-          return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex')
+          if (objectTypes.map(ot => ot.name).includes(match)) return true && checkIfHidden(field);
+          return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex') && checkIfHidden(field)
         } 
-      return true
+      return true && checkIfHidden(field)
       }
     }).map(field => {
       if (isSchemaItem(field)) return filterSchemaItem(field as SchemaItem, objectTypes, onlyIndexed, isTrigger)
+     
       else return {...field, closestParentType: schema.name};
     }),
   };

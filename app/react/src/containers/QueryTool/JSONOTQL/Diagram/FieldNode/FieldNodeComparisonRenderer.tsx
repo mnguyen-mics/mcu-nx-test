@@ -139,6 +139,9 @@ export default class FieldNodeComparisonRenderer extends React.Component<
       ? node.fieldNode.comparison.operator
       : null;
 
+    const fieldInfo = node.objectTypeInfo.fields.find(f => f.name === node.fieldNode.field);
+    const fieldName = fieldInfo && fieldInfo.decorator && fieldInfo.decorator.label ? fieldInfo.decorator.label : node.fieldNode.field
+
     return (
       <div className="comparison">
         <div
@@ -147,7 +150,7 @@ export default class FieldNodeComparisonRenderer extends React.Component<
           }}
           className="fieldname"
         >
-          {node.fieldNode.field}
+          {fieldName}
         </div>
         <div>
           <span className="operator">

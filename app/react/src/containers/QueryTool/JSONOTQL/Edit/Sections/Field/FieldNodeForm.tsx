@@ -30,8 +30,8 @@ import {
   TimeComparisonOperator,
 } from '../../../../../../models/datamart/graphdb/QueryDocument';
 import {
-  FieldInfoResource,
   ObjectLikeTypeInfoResource,
+  FieldInfoResource,
 } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import {
   FORM_ID,
@@ -162,7 +162,7 @@ class FieldNodeForm extends React.Component<Props> {
       .filter(field =>
         SUPPORTED_FIELD_TYPES.find(t => field.field_type.indexOf(t) > -1),
       )
-      .map(i => ({ value: i.name, title: i.name }));
+      .map(i => ({ value: i.name, title: i.decorator ? i.decorator.label : i.name }));
   };
 
   getSelectedFieldType = (fieldName: string | undefined) => {

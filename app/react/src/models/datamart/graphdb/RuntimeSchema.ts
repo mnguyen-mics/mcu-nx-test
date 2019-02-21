@@ -53,8 +53,21 @@ export interface FieldDirectiveInfoResource extends FieldDirectiveResource {
   arguments: DirectiveArgumentResource[];
 }
 
+export interface SchemaDecoratorResource {
+  id: string;
+  hidden: boolean;
+  label: string;
+  help_text?: string;
+  object_name: string;
+  field_name: string;
+  language: string;
+  schema_id: string;
+  datamart_id: string;
+}
+
 export interface FieldInfoResource extends FieldResource {
   directives: FieldDirectiveInfoResource[];
+  decorator?: SchemaDecoratorResource;
 }
 
 export interface ObjectLikeTypeInfoResource extends ObjectLikeTypeResource {
