@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout, Progress } from 'antd';
+import { Layout, Progress, Tooltip } from 'antd';
 import { compose } from 'recompose';
 import moment from 'moment';
 import ImportHeader from './ImportHeader';
@@ -26,6 +26,7 @@ import { IImportService } from '../../../../services/ImportService';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
+import { McsIcon } from '../../../../components';
 
 const { Content } = Layout;
 
@@ -242,7 +243,11 @@ class Imports extends React.Component<JoinedProps, State> {
         intlMessage: messages.status,
         key: 'status',
         isHideable: false,
-        render: (text: string) => text,
+        render: (text: string, record: ImportExecution) => (
+          <div>
+            {text} {record.result.total_failure > 0 ? <span>- with errors <Tooltip placement="top" title={record.error && record.error.message}><McsIcon type="question" /></Tooltip></span> : undefined}
+          </div>
+        ),
       },
       {
         intlMessage: messages.progress,
@@ -253,7 +258,7 @@ class Imports extends React.Component<JoinedProps, State> {
           // currently we can't pass color
           // https://github.com/ant-design/ant-design/blob/master/components/progress/progress.tsx
           <div>
-            <Progress percent={this.getExecutionInfo(record).percent} />
+            <Progress percent={this.getExecutionInfo(record).percent * 100} />
           </div>
         ),
       },
