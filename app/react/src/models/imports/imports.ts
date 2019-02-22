@@ -13,7 +13,7 @@ export interface ImportExecution {
   creation_date: number;
   debug: null | string;
   duration: number;
-  error: null | string;
+  error: null | { message: string };
   id: string;
   job_type: string;
   import_mode: string;
@@ -21,7 +21,11 @@ export interface ImportExecution {
   num_tasks: null | string;
   organisation_id: string;
   parameters: object;
-  result: { output_files: string[] };
+  result: { 
+    output_files: string[];
+    total_failure: number;
+    total_success: number;
+  };
   start_date: number;
   status: string;
   user_id: string;
