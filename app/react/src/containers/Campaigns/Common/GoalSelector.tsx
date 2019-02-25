@@ -54,7 +54,7 @@ class GoalSelector extends React.Component<Props> {
     };
 
     if (filter.keywords) {
-      options.name = filter.keywords;
+      options.keywords = filter.keywords;
     }
 
     return GoalService.getGoals(organisationId, options);
