@@ -61,6 +61,7 @@ interface State {
   keydown: string[];
   locked: boolean;
   viewSchema: boolean;
+  keyboardOnlyLock: boolean;
 }
 
 type Props = JSONQLBuilderProps;
@@ -98,6 +99,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
         this.getTreeNodeOperations(),
         this.props.objectTypes,
         this.lockInteraction,
+        this.keyboardOnlyLock
       ),
     );
 
@@ -108,11 +110,16 @@ class JSONQLBuilder extends React.Component<Props, State> {
       keydown: [],
       locked: false,
       viewSchema: true,
+      keyboardOnlyLock: false
     };
   }
 
   lockInteraction = (locked: boolean) => {
     this.setState({ locked });
+  };
+
+  keyboardOnlyLock = (keyboardOnlyLock: boolean) => {
+    this.setState({ keyboardOnlyLock })
   };
 
   componentDidMount() {
@@ -160,54 +167,56 @@ class JSONQLBuilder extends React.Component<Props, State> {
   };
 
   handleKeyDown = (event: KeyboardEvent) => {
-    this.setState(
-      prevState => {
-        return {
-          keydown: prevState.keydown.find(k => k === event.key)
-            ? prevState.keydown
-            : [...this.state.keydown, event.key],
-        };
-      },
-      () => {
-        if (
-          this.state.keydown.includes('f') &&
-          this.state.keydown.length === 1
-        ) {
-          this.engine.zoomToFit();
-        }
-        if (
-          this.state.keydown.includes('r') &&
-          this.state.keydown.length === 1
-        ) {
-          this.engine.getDiagramModel().setZoomLevel(100);
-          this.engine.getDiagramModel().setOffset(0, 0);
-        }
-        if (
-          this.state.keydown.includes('Control') &&
-          this.state.keydown.includes('z') &&
-          this.props.undoRedo.enableUndo
-        ) {
-          this.props.undoRedo.handleUndo();
-        }
-        if (
-          this.state.keydown.includes('Control') &&
-          (this.state.keydown.includes('z') ||
-            this.state.keydown.includes('Z')) &&
-          this.state.keydown.includes('Shift') &&
-          this.props.undoRedo.enableRedo
-        ) {
-          this.props.undoRedo.handleRedo();
-        }
-        if (
-          this.state.keydown.includes('Control') &&
-          (this.state.keydown.includes('y') ||
-            (this.state.keydown.includes('Y') &&
-              this.props.undoRedo.enableRedo))
-        ) {
-          this.props.undoRedo.handleRedo();
-        }
-      },
-    );
+    if (!this.state.keyboardOnlyLock) {
+      this.setState(
+        prevState => {
+          return {
+            keydown: prevState.keydown.find(k => k === event.key)
+              ? prevState.keydown
+              : [...this.state.keydown, event.key],
+          };
+        },
+        () => {
+          if (
+            this.state.keydown.includes('f') &&
+            this.state.keydown.length === 1
+          ) {
+            this.engine.zoomToFit();
+          }
+          if (
+            this.state.keydown.includes('r') &&
+            this.state.keydown.length === 1
+          ) {
+            this.engine.getDiagramModel().setZoomLevel(100);
+            this.engine.getDiagramModel().setOffset(0, 0);
+          }
+          if (
+            this.state.keydown.includes('Control') &&
+            this.state.keydown.includes('z') &&
+            this.props.undoRedo.enableUndo
+          ) {
+            this.props.undoRedo.handleUndo();
+          }
+          if (
+            this.state.keydown.includes('Control') &&
+            (this.state.keydown.includes('z') ||
+              this.state.keydown.includes('Z')) &&
+            this.state.keydown.includes('Shift') &&
+            this.props.undoRedo.enableRedo
+          ) {
+            this.props.undoRedo.handleRedo();
+          }
+          if (
+            this.state.keydown.includes('Control') &&
+            (this.state.keydown.includes('y') ||
+              (this.state.keydown.includes('Y') &&
+                this.props.undoRedo.enableRedo))
+          ) {
+            this.props.undoRedo.handleRedo();
+          }
+        },
+      );
+    }
   };
 
   handleKeyUp = (event: KeyboardEvent) => {

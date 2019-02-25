@@ -21,6 +21,7 @@ interface FieldNodeWidgetProps {
   diagramEngine: DiagramEngine;
   treeNodeOperations: TreeNodeOperations;
   lockGlobalInteraction: (lock: boolean) => void;
+  keyboardOnlyLock: (lock: boolean) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
 }
 
@@ -124,7 +125,6 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   removeNode = () => {
-
     this.setState({ focus: false }, () => {
       this.props.treeNodeOperations.deleteNode(this.props.node.treeNodePath);
       this.props.treeNodeOperations.updateLayout();
@@ -132,7 +132,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   editNode = (edition: boolean) => {
-
+    this.props.keyboardOnlyLock(edition);
     this.setState(
       {
         edit: edition,
@@ -218,7 +218,9 @@ class FieldNodeWidget extends React.Component<Props, State> {
       node,
     } = this.props;
   
-    const onHover = (type: 'enter' | 'leave') => () => this.setState({ hover: type === 'enter' ? true : false });
+    const onHover = (type: 'enter' | 'leave') => () => {
+      this.setState({ hover: type === 'enter' ? true : false });
+    }
 
     const onFocus = () => {
       this.props.lockGlobalInteraction(!this.state.focus);
