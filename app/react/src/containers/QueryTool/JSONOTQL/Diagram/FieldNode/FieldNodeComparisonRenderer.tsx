@@ -9,6 +9,10 @@ import {
   BooleanComparisonOperator,
   NumericComparisonOperator,
 } from '../../../../../models/datamart/graphdb/QueryDocument';
+import SegmentNameDisplay from '../../../../Audience/Common/SegmentNameDisplay';
+import CompartmentannelNameDisplay from '../../../../Common/CompartmentNameDisplay';
+import ChannelNameDisplay from '../../../../Common/ChannelNameDisplay';
+import { getCoreReferenceTypeAndModel } from '../../domain';
 
 type ComparisonOperator =
   | StringComparisonOperator
@@ -19,6 +23,7 @@ type ComparisonOperator =
 
 interface Props {
   node: FieldNodeModel;
+  datamartId: string;
 }
 
 const messages: {
@@ -119,7 +124,35 @@ export default class FieldNodeComparisonRenderer extends React.Component<
     }, '');
   };
 
+  renderReferenceTable = (values: string[], type: string, modelType: string) => {
+    const {
+      datamartId
+    } = this.props;
+
+    if (type === 'CORE_OBJECT') {
+      if (modelType === 'COMPARTMENTS') {
+        return values.map(v => <CompartmentannelNameDisplay userAccountCompartmentId={v} key={v} />) 
+      }
+      if (modelType === 'SEGMENTS') {
+        return values.map(v => <SegmentNameDisplay audienceSegmentId={v} key={v} />)
+      }
+      if (modelType === 'CHANNELS') {
+        return values.map(v => <ChannelNameDisplay datamartId={datamartId} channelId={v} key={v} />)
+      }
+    } 
+    return this.renderStringValues(values)
+  }
+
   renderValues = (comparison: QueryFieldComparisonShape) => {
+
+    const { node } = this.props;
+
+    const field = node.objectTypeInfo.fields.find(f => f.name === node.fieldNode.field)!;
+
+    const modelAndType = getCoreReferenceTypeAndModel(field.directives);
+    if (modelAndType) return this.renderReferenceTable(comparison.values, modelAndType.type, modelAndType.modelType);
+
+
     switch (comparison.type) {
       case 'BOOLEAN':
         return this.renderBooleanValues(comparison.values);
@@ -142,6 +175,7 @@ export default class FieldNodeComparisonRenderer extends React.Component<
     const fieldInfo = node.objectTypeInfo.fields.find(f => f.name === node.fieldNode.field);
     const fieldName = fieldInfo && fieldInfo.decorator && fieldInfo.decorator.label ? fieldInfo.decorator.label : node.fieldNode.field
 
+   
     return (
       <div className="comparison">
         <div

@@ -22,6 +22,8 @@ export interface FieldNodeSectionProps {
   onBooleanOperatorChange: (value: QueryBooleanOperator) => void;
   formChange: (fieldName: string, fieldValue: any) => void;
   objectType: ObjectLikeTypeInfoResource;
+  datamartId: string;
+  runtimeSchemaId: string;
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -38,6 +40,8 @@ class FieldNodeSection extends React.Component<JoinedProps> {
       onBooleanOperatorChange,
       booleanOperator,
       objectType,
+      datamartId,
+      runtimeSchemaId
     } = this.props;
 
     const handleOnClick = () =>
@@ -61,6 +65,8 @@ class FieldNodeSection extends React.Component<JoinedProps> {
               expressionIndex={index}
               availableFields={availableFields}
               objectType={objectType}
+              datamartId={datamartId}
+              runtimeSchemaId={runtimeSchemaId}
             />
           </div>
         </div>

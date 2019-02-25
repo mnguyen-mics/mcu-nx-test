@@ -47,6 +47,7 @@ export interface FieldDirectiveResource {
   runtime_schema_id: string;
   name: string;
   comment: string;
+  arguments?: DirectiveArgumentResource[]
 }
 
 export interface FieldDirectiveInfoResource extends FieldDirectiveResource {

@@ -32,6 +32,7 @@ interface ObjectNodeWidgetProps {
   query?: ObjectTreeExpressionNodeShape;
   schema?: SchemaItem;
   isTrigger: boolean;
+  datamartId: string;
 }
 
 interface State {
@@ -106,7 +107,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
   };
 
   editNode = () => {
-    const { node, lockGlobalInteraction } = this.props;
+    const { node, lockGlobalInteraction, datamartId } = this.props;
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(false);
       this.props.openNextDrawer<ObjectNodeFormProps>(ObjectNodeForm, {
@@ -124,6 +125,8 @@ class ObjectNodeWidget extends React.Component<Props, State> {
           },
           initialValues: generateFormDataFromObjectNode(node.objectNode),
           isTrigger: this.props.isTrigger,
+          datamartId: datamartId,
+          runtimeSchemaId: node.objectTypeInfo.runtime_schema_id,
         },
         size: 'small',
       });

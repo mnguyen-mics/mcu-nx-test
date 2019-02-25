@@ -38,6 +38,8 @@ export interface ObjectNodeFormProps
   objectType: ObjectLikeTypeInfoResource;
   objectTypes: ObjectLikeTypeInfoResource[];
   isTrigger: boolean;
+  datamartId: string;
+  runtimeSchemaId: string;
 }
 
 interface MapStateToProps {
@@ -136,6 +138,8 @@ class ObjectNodeForm extends React.Component<Props> {
       formValues,
       isTrigger,
       objectType,
+      datamartId,
+      runtimeSchemaId
     } = this.props;
 
     const genericFieldArrayProps = {
@@ -193,6 +197,8 @@ class ObjectNodeForm extends React.Component<Props> {
             booleanOperator={formValues.objectNodeForm.boolean_operator}
             onBooleanOperatorChange={onBooleanOperatorChange}
             objectType={this.getSelectedObjectType()}
+            datamartId={datamartId}
+            runtimeSchemaId={runtimeSchemaId}
             {...genericFieldArrayProps}
           />
         ),

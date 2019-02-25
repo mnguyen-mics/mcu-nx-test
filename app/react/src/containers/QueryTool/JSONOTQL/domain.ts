@@ -10,7 +10,7 @@ import {
   FieldNode,
   ObjectNode,
 } from '../../../models/datamart/graphdb/QueryDocument';
-import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType, ObjectLikeTypeDirectiveInfoResource, SchemaDecoratorResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType, ObjectLikeTypeDirectiveInfoResource, SchemaDecoratorResource, FieldDirectiveResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { SchemaItem } from './domain';
 
 export enum typesTrigger {
@@ -734,4 +734,25 @@ export function computeAdditionalNode(additionalNodePath: number[], offset: numb
     return builtUpQuery;
   }
   return generatedQuery;
+}
+
+export const getCoreReferenceTypeAndModel = (directives: FieldDirectiveResource[]): { type: string, modelType: string } | undefined => {
+  const ref = directives.find(d => d.name === 'ReferenceTable');
+  if (ref && ref.arguments) {
+    const type = ref.arguments.find(a => a.name === 'type')
+    const modelType = ref.arguments.find(a => a.name === 'model_type')
+    if (type) {
+      const match = type.value.match(/\w+/);
+      if (match && match[0] && match[0] === "CORE_OBJECT") {
+        if (modelType) {
+          return {
+            type: "CORE_OBJECT",
+            modelType: modelType.value.replace(/\"/g, "")
+          }
+        }
+      }
+      
+    }
+  }
+  return undefined
 }

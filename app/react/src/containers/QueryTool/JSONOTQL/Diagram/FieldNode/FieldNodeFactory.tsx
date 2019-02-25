@@ -12,13 +12,15 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
   objectTypes: ObjectLikeTypeInfoResource[];
   lockGlobalInteraction: (lock: boolean) => void;
   keyboardOnlyLock: (lock: boolean) => void;
+  datamartId: string;
 
-  constructor(_treeNodeOperations: TreeNodeOperations,  _objectTypes: ObjectLikeTypeInfoResource[], _lockGlobalInteraction: (lock: boolean) => void, _keyboardOnlyLock: (lock: boolean) => void) {
+  constructor(_treeNodeOperations: TreeNodeOperations,  _objectTypes: ObjectLikeTypeInfoResource[], _lockGlobalInteraction: (lock: boolean) => void, _keyboardOnlyLock: (lock: boolean) => void, datamartId: string) {
     super('field-node');
     this.treeNodeOperations = _treeNodeOperations;
     this.objectTypes = _objectTypes;
     this.lockGlobalInteraction = _lockGlobalInteraction;
     this.keyboardOnlyLock = _keyboardOnlyLock;
+    this.datamartId = datamartId;
   }
 
   generateReactWidget(
@@ -34,7 +36,8 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
       treeNodeOperations: this.treeNodeOperations,
       objectTypes: this.objectTypes,
       lockGlobalInteraction: this.lockGlobalInteraction,
-      keyboardOnlyLock: this.keyboardOnlyLock
+      keyboardOnlyLock: this.keyboardOnlyLock,
+      datamartId: this.datamartId
     })) 
   }
 

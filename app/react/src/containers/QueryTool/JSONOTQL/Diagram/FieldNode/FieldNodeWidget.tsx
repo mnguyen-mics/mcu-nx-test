@@ -23,6 +23,7 @@ interface FieldNodeWidgetProps {
   lockGlobalInteraction: (lock: boolean) => void;
   keyboardOnlyLock: (lock: boolean) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
+  datamartId: string;
 }
 
 interface MapStateToProps {
@@ -148,7 +149,8 @@ class FieldNodeWidget extends React.Component<Props, State> {
   renderEditNode = () => {
     const {
       node,
-      treeNodeOperations
+      treeNodeOperations,
+      datamartId
     } = this.props;
 
     const onSubmit = (val: FieldNodeFormDataValues) => {
@@ -205,6 +207,8 @@ class FieldNodeWidget extends React.Component<Props, State> {
           initialValues={{ fieldNodeForm: node.fieldNode }}
           onSubmit={onSubmit}
           idToAttachDropDowns={this.wrapperId}
+          runtimeSchemaId={node.objectTypeInfo.runtime_schema_id}
+          datamartId={datamartId}
         />
         <WindowBodyPortal>
           <div ref={this.setSelectRef} id={this.wrapperId} />
@@ -216,6 +220,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
   renderedStandardNode = (): JSX.Element => {
     const {
       node,
+      datamartId
     } = this.props;
   
     const onHover = (type: 'enter' | 'leave') => () => {
@@ -231,6 +236,8 @@ class FieldNodeWidget extends React.Component<Props, State> {
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
 
     const triggerEdit = () => this.editNode(true);
+
+    
 
     return (
       <div
@@ -248,7 +255,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
         onMouseLeave={onHover('leave')}
       >
         <div className="field">
-          <FieldNodeComparisonRenderer node={node} />
+          <FieldNodeComparisonRenderer node={node} datamartId={datamartId} />
         </div>
         <FourAnchorPortWidget node={node} />
         {this.state.focus && (
@@ -287,7 +294,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
                 onClick={onFocus}
               >
                 <div className="field">
-                  <FieldNodeComparisonRenderer node={node} />
+                  <FieldNodeComparisonRenderer node={node} datamartId={datamartId} />
                 </div>
               </span>
               <div
