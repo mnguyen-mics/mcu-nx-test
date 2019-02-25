@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import messages from './messages';
 import ContentHeader from '../../../components/ContentHeader';
 import { Identifier } from './Monitoring';
 import UserDataService from '../../../services/UserDataService';
 import { withRouter, RouteComponentProps } from 'react-router';
-import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { TimelinePageParams } from './TimelinePage';
 import { compose } from 'recompose';
 
@@ -22,16 +21,14 @@ interface TimelineHeaderProps {
 }
 
 type Props = TimelineHeaderProps &
-  InjectedNotificationProps &
-  InjectedIntlProps &
   RouteComponentProps<TimelinePageParams>;
 
 class TimelineHeader extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      'loaded': false,
-      'lastSeen': 0
+      loaded: false,
+      lastSeen: 0
     };
   }
 
@@ -41,8 +38,8 @@ class TimelineHeader extends React.Component<Props, State> {
 
   getLastSeen() {
     this.setState({
-      'loaded': false,
-      'lastSeen': 0
+      loaded: false,
+      lastSeen: 0
     });
     
     const {
@@ -53,8 +50,8 @@ class TimelineHeader extends React.Component<Props, State> {
       }
     } = this.props;
 
-    let type: string | null;
-    let id: string | null;;
+    let type: string | null = null;
+    let id: string | null = null;
 
     if (identifier.id && identifier.type) {
       type = identifier.type;
@@ -62,10 +59,8 @@ class TimelineHeader extends React.Component<Props, State> {
     } else if (identifierId && identifierType) {
       type = identifierType;
       id = identifierId;
-    } else {
-      type = null
-      id = null
     }
+
     if (type && id) {
       UserDataService.getActivities(datamartId, type, id).then(res => {
         const timestamps = res.data.map(item => {
@@ -107,7 +102,5 @@ class TimelineHeader extends React.Component<Props, State> {
 }
 
 export default compose<Props, TimelineHeaderProps>(
-  withRouter,
-  injectIntl,
-  injectNotifications,
+  withRouter
 )(TimelineHeader);
