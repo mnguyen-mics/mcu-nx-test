@@ -88,11 +88,26 @@ const RuntimeSchemaService = {
                     runtimeSchemaId,
                     object.id,
                     field.id,
-                  ).then(dirRes => ({ ...field, directives: dirRes.data }));
+                  ).then(dirRes => {
+                    return Promise.all(dirRes.data.map(dir => {
+                      return RuntimeSchemaService.getFieldDirectiveArguments(
+                        datamartId,
+                        runtimeSchemaId,
+                        object.id,
+                        field.id,
+                        dir.id
+                      ).then(fieldDirArgs => {
+                        return {
+                          ...dir,
+                          arguments: fieldDirArgs.data,
+                        };
+                      });
+                    })).then((fieldDirectives) => ({ ...field, directives: fieldDirectives }));
+                  })
                 }),
               );
             })])
-            .then(([directives,fields]) => ({ ...object, fields, directives}));
+            .then(([objectTypeDirectives,fields]) => ({ ...object, fields, directives: objectTypeDirectives}));
           }),
         );
       });
@@ -183,6 +198,31 @@ const RuntimeSchemaService = {
     ): Promise<DataResponse<FieldDirectiveResource>> {
       return ApiService.getRequest(
         `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/fields/${fieldId}/directives/${directiveId}`,
+      );
+    },
+
+    getFieldDirectiveArguments(
+      datamartId: string,
+      runtimeSchemaId: string,
+      objectTypeId: string,
+      fieldId: string,
+      directiveId: string,
+    ): Promise<DataListResponse<DirectiveArgumentResource>> {
+      return ApiService.getRequest(
+        `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/fields/${fieldId}/directives/${directiveId}/arguments`,
+      );
+    },
+
+    getFieldDirectiveArgument(
+      datamartId: string,
+      runtimeSchemaId: string,
+      objectTypeId: string,
+      fieldId: string,
+      directiveId: string,
+      argumentId: string,
+    ): Promise<DataResponse<DirectiveArgumentResource>> {
+      return ApiService.getRequest(
+        `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}/fields/${fieldId}/directives/${directiveId}/arguments/${argumentId}`,
       );
     },
   };
