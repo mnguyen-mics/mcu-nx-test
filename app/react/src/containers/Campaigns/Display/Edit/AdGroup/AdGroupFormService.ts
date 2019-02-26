@@ -104,7 +104,7 @@ const AdGroupFormService = {
       DisplayCampaignService.getAdex(displayCampaignId, adGroupId).then(
         extractDataList,
       ),
-      DisplayCampaignService.getDisplayNetwork(
+      DisplayCampaignService.getDisplayNetworks(
         displayCampaignId,
         adGroupId,
       ).then(extractDataList),
