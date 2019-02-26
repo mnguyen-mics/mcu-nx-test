@@ -49,8 +49,12 @@ export interface FieldDirectiveResource {
   comment: string;
 }
 
+export interface FieldDirectiveInfoResource extends FieldDirectiveResource {
+  arguments: DirectiveArgumentResource[];
+}
+
 export interface FieldInfoResource extends FieldResource {
-  directives: FieldDirectiveResource[];
+  directives: FieldDirectiveInfoResource[];
 }
 
 export interface ObjectLikeTypeInfoResource extends ObjectLikeTypeResource {

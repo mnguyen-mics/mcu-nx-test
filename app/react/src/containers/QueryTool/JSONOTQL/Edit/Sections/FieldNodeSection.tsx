@@ -12,12 +12,12 @@ import { QueryBooleanOperator } from '../../../../../models/datamart/graphdb/Que
 // import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { FormItemProps } from 'antd/lib/form';
 import { FieldNodeFormData } from '../domain';
-import { FieldResource, ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
+import { FieldInfoResource, ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import FieldNodeForm from './Field/FieldNodeForm';
 
 export interface FieldNodeSectionProps {
   formItemProps?: FormItemProps;
-  availableFields: FieldResource[];
+  availableFields: FieldInfoResource[];
   booleanOperator: QueryBooleanOperator;
   onBooleanOperatorChange: (value: QueryBooleanOperator) => void;
   formChange: (fieldName: string, fieldValue: any) => void;

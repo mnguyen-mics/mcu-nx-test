@@ -30,7 +30,7 @@ import {
   TimeComparisonOperator,
 } from '../../../../../../models/datamart/graphdb/QueryDocument';
 import {
-  FieldResource,
+  FieldInfoResource,
   ObjectLikeTypeInfoResource,
 } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import {
@@ -60,7 +60,7 @@ export const FormSearchObjectField = Field as new () => GenericField<
 
 export interface FieldNodeFormProps {
   expressionIndex?: number;
-  availableFields: FieldResource[];
+  availableFields: FieldInfoResource[];
   name?: string;
   formChange: (fieldName: string, value: any) => void;
   objectType: ObjectLikeTypeInfoResource;
@@ -106,9 +106,10 @@ class FieldNodeForm extends React.Component<Props> {
     if (field && !field.comparison) {
       const fieldName = field ? field.field : undefined;
       const fieldType = this.getSelectedFieldType(fieldName);
+      const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
       formChange(
         name ? `${name}.comparison` : 'comparison',
-        this.generateAvailableConditionOptions(fieldType).defaultValue,
+        this.generateAvailableConditionOptions(fieldType, fieldIndexDataType).defaultValue,
       );
     }
   }
@@ -131,9 +132,10 @@ class FieldNodeForm extends React.Component<Props> {
 
     if (fieldName !== nextFieldName && nextFieldName !== undefined) {
       const fieldType = this.getSelectedFieldType(nextFieldName);
+      const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
       formChange(
         name ? `${name}.comparison` : 'comparison',
-        this.generateAvailableConditionOptions(fieldType).defaultValue,
+        this.generateAvailableConditionOptions(fieldType, fieldIndexDataType).defaultValue,
       );
     }
   }
@@ -175,8 +177,28 @@ class FieldNodeForm extends React.Component<Props> {
     return null;
   };
 
+  getSelectedFieldIndexDataType = (fieldName: string | undefined) => {
+    const { availableFields } = this.props;
+
+    const possibleFieldType = availableFields.find(i => i.name === fieldName);
+    if (possibleFieldType) {
+      const indexDirective  = possibleFieldType.directives.find(d => d.name === 'TreeIndex');
+      if (indexDirective) {
+        const dataTypeDirArg = indexDirective.arguments.find(arg => arg.name === 'data_type')
+        if (dataTypeDirArg) {
+          const match = dataTypeDirArg.value.match(/\w+/);
+          return match && match[0];
+        }
+        return null;
+      }
+      return null;
+    }
+    return null;
+  };
+
   generateAvailableConditionOptions = (
     fieldType: string | null,
+    fieldIndexDataType: string | null,
   ): FieldComparisonGenerator => {
     const { intl } = this.props;
 
@@ -193,7 +215,7 @@ class FieldNodeForm extends React.Component<Props> {
         };
       case 'String':
         return {
-          ...constants.generateStringComparisonOperator(intl),
+          ...constants.generateStringComparisonOperator(intl, fieldIndexDataType || undefined),
           component: this.generateStringComparisonField(),
         };
       case 'Bool':
@@ -490,6 +512,7 @@ class FieldNodeForm extends React.Component<Props> {
         ? (field.comparison.operator as ConditionsOperators)
         : undefined;
     const fieldType = this.getSelectedFieldType(fieldName);
+    const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
 
     let popUpProps = {};
 
@@ -520,7 +543,7 @@ class FieldNodeForm extends React.Component<Props> {
           name={name ? `${name}.comparison.operator` : 'comparison.operator'}
           component={DefaultSelect}
           validate={[]}
-          options={this.generateAvailableConditionOptions(fieldType).values}
+          options={this.generateAvailableConditionOptions(fieldType, fieldIndexDataType).values}
           formItemProps={{
             label: intl.formatMessage(messages.fieldConditionConditionLabel),
           }}
@@ -533,7 +556,7 @@ class FieldNodeForm extends React.Component<Props> {
         />
         {fieldName &&
           fieldCondition &&
-          this.generateAvailableConditionOptions(fieldType).component}
+          this.generateAvailableConditionOptions(fieldType, fieldIndexDataType).component}
       </div>
     );
   }
