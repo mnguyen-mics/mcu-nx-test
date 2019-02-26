@@ -10,7 +10,7 @@ import injectDatamart, {
 } from '../../../../../../Datamart/injectDatamart';
 import PlacementListsService from '../../../../../../../services/Library/PlacementListsService';
 import { PlacementListResource } from '../../../../../../../models/placement/PlacementListResource';
-import DealListsService from '../../../../../../../services/Library/DealListsService';
+import { IDealsListService } from '../../../../../../../services/Library/DealListsService';
 import { DealsListResource } from '../../../../../../../models/dealList/dealList';
 import { IKeywordListService } from '../../../../../../../services/Library/KeywordListsService';
 import { TYPES } from '../../../../../../../constants/types';
@@ -40,6 +40,9 @@ const provideInventoryCatalog = (
   class ProvidedComponent extends React.Component<Props, State> {
     @lazyInject(TYPES.IKeywordListService)
     private _keywordListService: IKeywordListService;
+
+    @lazyInject(TYPES.IDealsListService)
+    private _dealsListService: IDealsListService;
 
     public constructor(props: Props) {
       super(props);
@@ -203,9 +206,10 @@ const provideInventoryCatalog = (
         },
       }));
 
-      DealListsService.getDealLists(organisationId, {
-        max_results: 500,
-      })
+      this._dealsListService
+        .getDealLists(organisationId, {
+          max_results: 500,
+        })
         .then(res => res.data)
         .then(dealList => {
           this.setState(prevState => ({

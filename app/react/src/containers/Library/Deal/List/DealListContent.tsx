@@ -6,7 +6,7 @@ import { Modal } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
-import DealListsService from '../../../../services/Library/DealListsService';
+import { IDealsListService } from '../../../../services/Library/DealListsService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { DealsListResource } from '../../../../models/dealList/dealList';
 import {
@@ -15,8 +15,12 @@ import {
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import messages from './messages';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 const initialState = {
   loading: false,
@@ -35,16 +39,29 @@ interface RouterProps {
 }
 
 class DealListContent extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps,
+  RouteComponentProps<RouterProps> &
+    InjectedIntlProps &
+    InjectedNotificationProps,
   DealListContentState
 > {
   state = initialState;
 
+  @lazyInject(TYPES.IDealsListService)
+  private _dealsListService: IDealsListService;
+
   archiveDealList = (dealListId: string) => {
-    const { match: { params: { organisationId } }, notifyError } = this.props;
-    this.setState({ loading: true })
-    return DealListsService.deleteDealList(organisationId, dealListId)
-      .then(r => this.fetchDealList(organisationId, { currentPage: 1, pageSize: 10 }))
+    const {
+      match: {
+        params: { organisationId },
+      },
+      notifyError,
+    } = this.props;
+    this.setState({ loading: true });
+    return this._dealsListService
+      .deleteDealList(organisationId, dealListId)
+      .then(r =>
+        this.fetchDealList(organisationId, { currentPage: 1, pageSize: 10 }),
+      )
       .catch(err => notifyError(err));
   };
 
@@ -53,15 +70,15 @@ class DealListContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      DealListsService.getDealLists(organisationId, options).then(
-        results => {
+      this._dealsListService
+        .getDealLists(organisationId, options)
+        .then(results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        },
-      );
+        });
     });
   };
 
@@ -69,7 +86,9 @@ class DealListContent extends React.Component<
     const {
       location: { search, pathname, state },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -113,7 +132,6 @@ class DealListContent extends React.Component<
   };
 
   render() {
-
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<DealsListResource>> = [
       {
         key: 'action',
@@ -164,4 +182,8 @@ class DealListContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl, injectNotifications)(DealListContent);
+export default compose(
+  withRouter,
+  injectIntl,
+  injectNotifications,
+)(DealListContent);

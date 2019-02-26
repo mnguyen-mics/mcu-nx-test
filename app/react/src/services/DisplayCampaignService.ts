@@ -393,7 +393,7 @@ const DisplayCampaignService = {
   },
 
   // DEAL LIST
-  getDealsList(
+  getDealsLists(
     campaignId: string,
     adGroupId: string,
   ): Promise<DataListResponse<DealsListSelectionResource>> {

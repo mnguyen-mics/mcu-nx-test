@@ -2,12 +2,12 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import lodash from 'lodash';
 import moment from 'moment';
-import { 
-  HistoryEventShape, 
-  isHistoryUpdateEvent, 
-  isHistoryCreateEvent, 
-  isHistoryDeleteEvent, 
-  isHistoryCreateLinkEvent, 
+import {
+  HistoryEventShape,
+  isHistoryUpdateEvent,
+  isHistoryCreateEvent,
+  isHistoryDeleteEvent,
+  isHistoryCreateLinkEvent,
   isHistoryDeleteLinkEvent,
   ResourceType,
   ResourceLinkHelper,
@@ -30,12 +30,14 @@ interface HistoryEventCardProps {
 }
 
 type Props = HistoryEventCardProps &
-            InjectedIntlProps &
-            RouteComponentProps<any>;
+  InjectedIntlProps &
+  RouteComponentProps<any>;
 
   interface State {
     showMore: boolean;
-    resourceName: string;
+    resourceNames: {
+      [resourceIdentifier: string]: React.ReactNode;
+    };
   }
 
 class HistoryEventCard extends React.Component<Props, State> {
@@ -43,38 +45,46 @@ class HistoryEventCard extends React.Component<Props, State> {
     super(props);
     this.state = {
       showMore: false,
-      resourceName: 'Untitled',
+      resourceNames: {},
     };
+  }
+
+  generateResourceIdentifier = (event: HistoryLinkEventResource) => {
+    return event.resource_type + event.resource_id;
   }
 
   componentDidMount() {
     const { events, resourceLinkHelper } = this.props;
 
-    const event = events[0];
-    if(event && isHistoryCreateLinkEvent(event) || isHistoryDeleteLinkEvent(event)) {
-      const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
-      if(resourceHelper) {
-        resourceHelper.getName(event.resource_id)
-          .then(name => {
-            if(name){
-              this.setState(currentState => {
-                return {
-                  ...currentState,
-                  resourceName: name, 
-                }
+    events.forEach(event => {
+      if(event && isHistoryCreateLinkEvent(event) || isHistoryDeleteLinkEvent(event)) {
+        this.setState(prevState => {
+          prevState.resourceNames[this.generateResourceIdentifier(event)] = <FormattedMessage {...messages.fetchingData} />;
+          return prevState;
+        });
+      };
+    });
+
+    events.forEach(event => {
+      if(event && isHistoryCreateLinkEvent(event) || isHistoryDeleteLinkEvent(event)) {
+        const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
+        if(resourceHelper) {
+          resourceHelper.getName(event.resource_id)
+            .then(name => {
+              this.setState(prevState => {
+                prevState.resourceNames[this.generateResourceIdentifier(event)] = name;
+                return prevState;
               });
-            }
-          })
-          .catch(() => {
-            this.setState(currentState => {
-              return {
-                ...currentState,
-                resourceName: '(deleted)', 
-              }
+            })
+            .catch(err => {
+              this.setState(prevState => {
+                prevState.resourceNames[this.generateResourceIdentifier(event)] = <FormattedMessage {...messages.deleted}/>;
+                return prevState;
+              });
             });
-          });
+        }
       }
-    }
+    })
   }
   
   renderField = (field: string) => {
@@ -98,7 +108,7 @@ class HistoryEventCard extends React.Component<Props, State> {
 
   renderMultiEdit = (events: HistoryEventShape[], isCreationCard: boolean) => {
     return events.map(event => {
-      return isHistoryUpdateEvent(event) 
+      return isHistoryUpdateEvent(event)
         ? <div className="mcs-fields-list-item">
           { isCreationCard
             ? <FormattedMessage {...{...messages.initialFieldValue, values: {
@@ -113,47 +123,46 @@ class HistoryEventCard extends React.Component<Props, State> {
           }
         </div>
         : isHistoryLinkEvent(event) &&
-        <div className="mcs-fields-list-item">
-          { this.renderLinkEventInMultiEdit(event) }
-        </div>
+          <div className="mcs-fields-list-item">
+            { this.renderLinkEventInMultiEdit(event) }
+          </div>
     });
   }
 
   renderLinkEventInMultiEdit = (event: HistoryLinkEventResource) => {
-    const {  resourceLinkHelper } = this.props;
-    const { resourceName } = this.state;
+    const { resourceLinkHelper } = this.props;
+    const { resourceNames } = this.state;
 
     const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
 
     if(!resourceHelper)
       return;
-      
-    const message = isHistoryDeleteLinkEvent(event) ? 
-    messages.selectionRemovedMultiEditList
-    : messages.selectionAddedMultiEditList ;
+
+    const message = isHistoryDeleteLinkEvent(event)
+      ? messages.selectionRemovedMultiEditList
+      : messages.selectionAddedMultiEditList;
     const goToResource = () => {
       resourceHelper.goToResource(event.resource_id)
     };
 
     return (
-    <div className="mcs-fields-list-item">
-    { <FormattedMessage
+      <div className="mcs-fields-list-item">
+        <FormattedMessage
           {...{...message, values: {
             selection: <span className="name">{resourceHelper.getType()}</span>,
-            value: 
+            value:
               <span className="value cursor-pointer" onClick={goToResource}>
-                {resourceName}
+                {resourceNames[this.generateResourceIdentifier(event)]}
               </span>
           }}}
         />
-    }
-  </div>
+      </div>
     );
   }
 
   renderLinkEvent = (event: HistoryLinkEventResource) => {
     const { formatProperty, resourceLinkHelper } = this.props;
-    const { resourceName } = this.state;
+    const { resourceNames } = this.state;
 
     const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
     
@@ -167,29 +176,28 @@ class HistoryEventCard extends React.Component<Props, State> {
     };
 
     return (
-      resourceHelper.direction === 'CHILD' ?
-        <FormattedMessage
-          {...{...messageChild, values: {
-            userName: event.user_identification.user_name,
-            resourceType: <span className="name">{resourceHelper.getType()}</span>,
-            resourceName: 
-              <span className="value cursor-pointer" onClick={goToResource}>
-                {resourceName}
-              </span>
-          }}}
-        />
-        :
-        <FormattedMessage
-          {...{...messageParent, values: {
-            userName: event.user_identification.user_name,
-            childResourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
-            parentResourceType:  <span className="name">{resourceHelper.getType()}</span>,
-            parentResourceName: 
-              <span className="value cursor-pointer" onClick={goToResource}>
-                {resourceName}
-              </span>,
-          }}}
-        />
+      resourceHelper.direction === 'CHILD'
+      ? <FormattedMessage
+        {...{...messageChild, values: {
+          userName: event.user_identification.user_name,
+          resourceType: <span className="name">{resourceHelper.getType()}</span>,
+          resourceName:
+            <span className="value cursor-pointer" onClick={goToResource}>
+              {resourceNames[this.generateResourceIdentifier(event)]}
+            </span>
+        }}}
+      />
+      : <FormattedMessage
+        {...{...messageParent, values: {
+          userName: event.user_identification.user_name,
+          childResourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
+          parentResourceType:  <span className="name">{resourceHelper.getType()}</span>,
+          parentResourceName:
+            <span className="value cursor-pointer" onClick={goToResource}>
+              {resourceNames[this.generateResourceIdentifier(event)]}
+            </span>,
+        }}}
+      />
     );
   }
 
@@ -281,7 +289,7 @@ class HistoryEventCard extends React.Component<Props, State> {
         </Row>
         <Row style={{padding: '15px 0px 0px', fontWeight: 'bold',}} className="timed-footer text-left">
           <span>
-            <Icon type="clock-circle-o" style={{paddingRight: '5px'}}/> 
+            <Icon type="clock-circle-o" style={{paddingRight: '5px'}}/>
             <FormattedMessage
               {...{...messages.date, values: {
                 day: moment(events[0].timestamp).format("Do"),
