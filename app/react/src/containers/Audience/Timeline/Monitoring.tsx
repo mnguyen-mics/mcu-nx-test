@@ -254,7 +254,7 @@ class Monitoring extends React.Component<Props, State> {
               <Row>
                 <TimelineHeader
                   datamartId={datamartId}
-                  identifiers={identifiers}
+                  identifier={identifier}
                   userPointId={userPointId}
                 />
                 <Row

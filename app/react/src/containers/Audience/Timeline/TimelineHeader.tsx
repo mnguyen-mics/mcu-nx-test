@@ -3,50 +3,104 @@ import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import messages from './messages';
 import ContentHeader from '../../../components/ContentHeader';
-import { IdentifiersProps, UserAgent } from '../../../models/timeline/timeline';
+import { Identifier } from './Monitoring';
+import UserDataService from '../../../services/UserDataService';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { TimelinePageParams } from './TimelinePage';
+import { compose } from 'recompose';
+
+interface State {
+  lastSeen: number;
+  loaded: boolean;
+}
 
 interface TimelineHeaderProps {
   datamartId: string;
-  identifiers: IdentifiersProps;
+  identifier: Identifier;
   userPointId: string;
 }
 
-type Props = TimelineHeaderProps;
+type Props = TimelineHeaderProps &
+  RouteComponentProps<TimelinePageParams>;
 
-class TimelineHeader extends React.Component<Props> {
+class TimelineHeader extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      loaded: false,
+      lastSeen: 0
+    };
   }
 
+  componentDidMount() {
+    this.getLastSeen()
+  }
 
-  getLastSeen = (userAgents: UserAgent[]) => {
-    if (userAgents) {
-      const formattedAgents = userAgents.map(item => {
-        return item.last_activity_ts;
-      });
-      return Math.max.apply(null, formattedAgents);
+  getLastSeen() {
+    this.setState({
+      loaded: false,
+      lastSeen: 0
+    });
+    
+    const {
+      datamartId,
+      identifier,
+      match: {
+        params: { identifierId, identifierType },
+      }
+    } = this.props;
+
+    let type: string | null = null;
+    let id: string | null = null;
+
+    if (identifier.id && identifier.type) {
+      type = identifier.type;
+      id = identifier.id;      
+    } else if (identifierId && identifierType) {
+      type = identifierType;
+      id = identifierId;
     }
-    return 0;
+
+    if (type && id) {
+      UserDataService.getActivities(datamartId, type, id).then(res => {
+        const timestamps = res.data.map(item => {
+          return item.$ts
+        })
+        let lastSeen = 0;
+        if (timestamps.length > 0) {
+          lastSeen = Math.max.apply(null, timestamps);
+        }
+        this.setState({
+          'lastSeen': lastSeen,
+          'loaded': true
+        });
+      });
+    }
   };
 
   render() {
-    const { identifiers, userPointId } = this.props;
-    const userId = {
-      id: userPointId,
-      lastSeen: this.getLastSeen(identifiers.items.USER_AGENT),
-    };
-    const lastSeen =
-      userId.lastSeen !== '' ? (
+    
+    const { 
+      userPointId ,
+    } = this.props;
+
+    const { loaded, lastSeen } = this.state
+
+    const subtitle =
+      loaded && lastSeen !== 0
+       ? (
         <span>
           <FormattedMessage {...messages.lastSeen} />{' '}
-          {moment(parseInt(userId.lastSeen, 0)).format('YYYY-MM-DD, HH:mm:ss')}
+          {moment(lastSeen).format('YYYY-MM-DD, HH:mm:ss')}
         </span>
       ) : null;
 
     return userPointId ? (
-      <ContentHeader title={userPointId} subTitle={lastSeen} />
+      <ContentHeader title={userPointId} subTitle={subtitle} />
     ) : null;
   }
 }
 
-export default TimelineHeader;
+export default compose<Props, TimelineHeaderProps>(
+  withRouter
+)(TimelineHeader);
