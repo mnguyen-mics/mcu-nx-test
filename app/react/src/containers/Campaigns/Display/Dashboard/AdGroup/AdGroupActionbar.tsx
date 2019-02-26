@@ -51,10 +51,9 @@ type JoinedProps = AdGroupActionbarProps &
   InjectedDrawerProps;
 
 class AdGroupActionbar extends React.Component<JoinedProps> {
-
   @lazyInject(TYPES.IDisplayNetworkService)
   private _displayNetworkService: IDisplayNetworkService;
-  
+
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
@@ -257,30 +256,37 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       ).then(keywordsListId => {
                         history.push(
                           `/v2/o/${organisationId}/library/keywordslist/${keywordsListId}/edit`,
-                          );
+                        );
                       });
                     },
                   },
-                    DISPLAY_NETWORK_SELECTION: {
-                      direction: 'CHILD',
-                      getType: () => {
-                        return <FormattedMessage {...resourceHistoryMessages.displayNetworkResourceType} />;
-                      },
-                      getName: (id: string) => {
-                        return this.getLinkedResourceIdInSelection(organisationId, 'DISPLAY_NETWORK_SELECTION', id, 'DISPLAY_NETWORK')
-                        .then(displayNetworkId => {
-                          return this._displayNetworkService.getDisplayNetwork(
-                            displayNetworkId,
-                            organisationId
-                          ).then(displayNetworkResponse => {
-                            return displayNetworkResponse.data.name;
-                          })
-                        });
-                      },
-                      goToResource: (id: string) => {
-                        return;
-                      }
+                  DISPLAY_NETWORK_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.displayNetworkResourceType}
+                        />
+                      );
                     },
+                    getName: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'DISPLAY_NETWORK_SELECTION',
+                        id,
+                        'DISPLAY_NETWORK',
+                      ).then(displayNetworkId => {
+                        return this._displayNetworkService
+                          .getDisplayNetwork(displayNetworkId, organisationId)
+                          .then(displayNetworkResponse => {
+                            return displayNetworkResponse.data.name;
+                          });
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return;
+                    },
+                  },
                   AD: {
                     direction: 'CHILD',
                     getType: () => {

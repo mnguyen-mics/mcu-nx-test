@@ -44,7 +44,7 @@ import {
 } from '../services/AudienceTagFeedService';
 import {
   IDisplayNetworkService,
-  DisplayNetworkService
+  DisplayNetworkService,
 } from '../services/DisplayNetworkService';
 import {
   IDealsListService,
@@ -85,12 +85,10 @@ container
 container
   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
   .toConstructor(AudienceTagFeedService);
-container
-  .bind<IImportService>(TYPES.IImportService)
-  .to(ImportService);
+container.bind<IImportService>(TYPES.IImportService).to(ImportService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
-  .to(DisplayNetworkService)
+  .to(DisplayNetworkService);
 container.bind<IDealsListService>(TYPES.IDealsListService).to(DealsListService);
 container
   .bind<IDealListFormService>(TYPES.IDealListFormService)
