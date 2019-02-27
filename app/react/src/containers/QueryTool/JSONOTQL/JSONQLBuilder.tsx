@@ -103,7 +103,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
         this.getTreeNodeOperations(),
         this.props.objectTypes,
         this.lockInteraction,
-        this.keyboardOnlyLock
+        this.keyboardOnlyLock,
         this.props.datamartId
       ),
     );

@@ -215,15 +215,11 @@ class FieldNodeForm extends React.Component<Props> {
     const { intl } = this.props;
 
     const shouldRenderDirective = (renderDefault: JSX.Element) => {
-      
       if (directives) {
         const modelAndType = getCoreReferenceTypeAndModel(directives);
         if (modelAndType) {
           return this.generateReferenceTableComparisonField(modelAndType.type, modelAndType.modelType);
-        }
-        // const myDir = directives.find(d => d.name === 'ReferenceTable')!;
-        // add here the arguments of the directive
-        
+        }        
       }
       return renderDefault;
     }
@@ -243,7 +239,7 @@ class FieldNodeForm extends React.Component<Props> {
       case 'String':
         return {
           ...constants.generateStringComparisonOperator(intl, fieldIndexDataType || undefined),
-          component: this.generateStringComparisonField(),
+          component: shouldRenderDirective(this.generateStringComparisonField()),
         };
       case 'Bool':
         return {
@@ -539,6 +535,8 @@ class FieldNodeForm extends React.Component<Props> {
     } = this.props;
 
     const field = this.getField(formValues, expressionIndex);
+
+
 
     let fetchListMethod = (keywords: string) => {
       if (field) {

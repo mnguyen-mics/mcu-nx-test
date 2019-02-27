@@ -258,7 +258,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1162",
-      schema_id: "272",
+      schema_id: "275",
       field_name: "activity_events",
       help_text: "ceci est un evenement",
       label: "Evenement",
@@ -269,7 +269,7 @@ const RuntimeSchemaService = {
     },
     {
       datamart_id: "1162",
-      schema_id: "272",
+      schema_id: "275",
       field_name: "app_id",
       help_text: "this is the channel id used by the user",
       label: "Application Identifier",
