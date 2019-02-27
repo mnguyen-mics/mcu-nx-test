@@ -54,6 +54,7 @@ import {
   IDealListFormService,
   DealListFormService,
 } from '../containers/Library/Deal/Edit/DealListFormService';
+import CompartmentService, { IComparmentService } from '../services/CompartmentService';
 
 const container = new Container();
 
@@ -93,6 +94,13 @@ container.bind<IDealsListService>(TYPES.IDealsListService).to(DealsListService);
 container
   .bind<IDealListFormService>(TYPES.IDealListFormService)
   .to(DealListFormService);
+container
+  .bind<IDealListFormService>(TYPES.IDealListFormService)
+  .to(DealListFormService);
+container
+  .bind<IComparmentService>(TYPES.ICompartmentService)
+  .to(CompartmentService);
+
 
 export const { lazyInject } = getDecorators(container, false);
 

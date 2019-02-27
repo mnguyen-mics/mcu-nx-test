@@ -572,10 +572,11 @@ function buildSchemaItem(
   };
 }
 
-function checkIfHidden(
+function checkIfVisible(
   field: Field
 ): boolean {
-  return field.decorator ? !field.decorator.hidden : true;
+  const isVisible = field.decorator ? !field.decorator.hidden : true;
+  return isVisible;
 }
 
 function filterSchemaItem(
@@ -588,16 +589,16 @@ function filterSchemaItem(
     ...schema,
     fields: schema.fields.filter(field => {
       if(isTrigger){
-        if(isSchemaItem(field) && field.closestParentType==="UserPoint") return filterAvailableFields(field as SchemaItem) && checkIfHidden(field)
-        else if(isFieldInfoEnfancedResource(field) && field.closestParentType==="UserPoint") return false && checkIfHidden(field)
-        else return true && checkIfHidden(field)
+        if(isSchemaItem(field) && field.closestParentType==="UserPoint") return filterAvailableFields(field as SchemaItem) && checkIfVisible(field)
+        else if(isFieldInfoEnfancedResource(field) && field.closestParentType==="UserPoint") return false && checkIfVisible(field)
+        else return true && checkIfVisible(field)
       }else{
         if(isFieldInfoEnfancedResource(field) && onlyIndexed){
           const match = extractFieldType(field as FieldInfoEnhancedResource);
-          if (objectTypes.map(ot => ot.name).includes(match)) return true && checkIfHidden(field);
-          return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex') && checkIfHidden(field)
+          if (objectTypes.map(ot => ot.name).includes(match)) return true && checkIfVisible(field);
+          return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex') && checkIfVisible(field)
         } 
-      return true && checkIfHidden(field)
+      return true && checkIfVisible(field)
       }
     }).map(field => {
       if (isSchemaItem(field)) return filterSchemaItem(field as SchemaItem, objectTypes, onlyIndexed, isTrigger)

@@ -56,10 +56,10 @@ export default class ChannelNameDisplay extends React.Component<ChannelNameDispl
       return <span />
     }
 
-    return this.state.channel && (
+    return this.state.channel ? (
       <span>
         {this.state.channel.name}
       </span>
-    );
+    ): <span>{this.props.channelId}</span>;
   }
 }

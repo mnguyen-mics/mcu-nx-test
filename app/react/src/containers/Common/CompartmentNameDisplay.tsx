@@ -1,6 +1,8 @@
 import * as React from 'react';
-import CompartmentService from '../../services/CompartmentService'
+import { IComparmentService } from '../../services/CompartmentService'
 import { UserAccountCompartmentResource } from '../../models/datamart/DatamartResource';
+import { lazyInject } from '../../config/inversify.config';
+import { TYPES } from '../../constants/types';
 
 export interface CompartmentNameDisplayProps {
   userAccountCompartmentId: string;
@@ -11,7 +13,10 @@ interface State {
   loading: boolean;
 }
 
-export default class CompartmentannelNameDisplay extends React.Component<CompartmentNameDisplayProps, State> {
+export default class CompartmentNameDisplay extends React.Component<CompartmentNameDisplayProps, State> {
+
+  @lazyInject(TYPES.ICompartmentService)
+  private _compartmentService: IComparmentService;
 
   constructor(props: CompartmentNameDisplayProps) {
     super(props);
@@ -43,7 +48,7 @@ export default class CompartmentannelNameDisplay extends React.Component<Compart
 
   fetchUserAccountCompartment = (userAccountCompartmentId: string) => {
     this.setState({ loading: true });
-    return CompartmentService.getCompartment(userAccountCompartmentId).then(res => res.data).then(res => this.setState({ loading: false, compartment: res }))
+    return this._compartmentService.getCompartment(userAccountCompartmentId).then(res => res.data).then(res => this.setState({ loading: false, compartment: res }))
   }
 
   public render() {
@@ -52,10 +57,10 @@ export default class CompartmentannelNameDisplay extends React.Component<Compart
       return <span />
     }
 
-    return this.state.compartment && (
+    return this.state.compartment ? (
       <span>
         {this.state.compartment.name}
       </span>
-    );
+    ) : <span>{this.props.userAccountCompartmentId}</span>;
   }
 }

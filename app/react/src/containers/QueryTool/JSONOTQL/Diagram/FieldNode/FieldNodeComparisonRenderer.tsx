@@ -10,7 +10,7 @@ import {
   NumericComparisonOperator,
 } from '../../../../../models/datamart/graphdb/QueryDocument';
 import SegmentNameDisplay from '../../../../Audience/Common/SegmentNameDisplay';
-import CompartmentannelNameDisplay from '../../../../Common/CompartmentNameDisplay';
+import CompartmentNameDisplay from '../../../../Common/CompartmentNameDisplay';
 import ChannelNameDisplay from '../../../../Common/ChannelNameDisplay';
 import { getCoreReferenceTypeAndModel } from '../../domain';
 
@@ -131,7 +131,7 @@ export default class FieldNodeComparisonRenderer extends React.Component<
 
     if (type === 'CORE_OBJECT') {
       if (modelType === 'COMPARTMENTS') {
-        return values.map(v => <CompartmentannelNameDisplay userAccountCompartmentId={v} key={v} />) 
+        return values.map(v => <CompartmentNameDisplay userAccountCompartmentId={v} key={v} />) 
       }
       if (modelType === 'SEGMENTS') {
         return values.map(v => <SegmentNameDisplay audienceSegmentId={v} key={v} />)

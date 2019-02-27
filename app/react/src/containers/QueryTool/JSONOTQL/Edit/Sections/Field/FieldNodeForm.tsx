@@ -51,7 +51,7 @@ import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDispla
 import ReferenceTableService from '../../../../../../services/ReferenceTableService';
 import DatamartService from '../../../../../../services/DatamartService';
 import channelService from '../../../../../../services/ChannelService';
-import CompartmentService from '../../../../../../services/CompartmentService';
+import { IComparmentService } from '../../../../../../services/CompartmentService';
 import { getCoreReferenceTypeAndModel } from '../../../domain';
 
 export const FormTagSelectField = Field as new () => GenericField<
@@ -105,6 +105,10 @@ type FieldComparisonGenerator = ComparisonValues<any> & {
 class FieldNodeForm extends React.Component<Props> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.ICompartmentService)
+  private _compartmentService: IComparmentService;
+
   componentDidMount() {
     // if no default value compute it
     const { formValues, expressionIndex, formChange, name } = this.props;
@@ -556,7 +560,7 @@ class FieldNodeForm extends React.Component<Props> {
             fetchListMethod = (keywords: string) => {
               return DatamartService.getUserAccountCompartments(datamartId).then(res => res.data.map(r => ({ key: r.compartment_id, label: r.name ? r.name : r.token })))
             }
-            fetchSingleMethod = (id: string) => CompartmentService.getCompartment(id).then(res => ({ key: res.data.id, label: res.data.name }))
+            fetchSingleMethod = (id: string) => this._compartmentService.getCompartment(id).then(res => ({ key: res.data.id, label: res.data.name }))
             break;
           case 'CHANNELS':
             fetchListMethod = (keywords: string) => {
