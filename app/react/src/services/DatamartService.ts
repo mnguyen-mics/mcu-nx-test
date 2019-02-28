@@ -4,6 +4,7 @@ import {
   UserAccountCompartmentDatamartSelectionResource,
 } from '../models/datamart/DatamartResource';
 import { EventRules } from '../models/settings/settings';
+import { UserActivityCleaningRuleResource } from '../models/cleaningRules/CleaningRules';
 
 const DatamartService = {
   getDatamarts(
@@ -80,6 +81,19 @@ const DatamartService = {
     const endpoint = `datamarts/${datamartId}/sources`;
     return ApiService.getRequest(endpoint);
   },
+  getCleaningRules(
+    datamartId: string,
+    options: object = {},
+  ): Promise<DataListResponse<UserActivityCleaningRuleResource>> {
+    const endpoint = `datamarts/${datamartId}/cleaning_rules`;
+
+    const calculatedOptions = {
+      type: "USER_ACTIVITY_CLEANING_RULE",
+      ...options
+    }
+
+    return ApiService.getRequest(endpoint, calculatedOptions);
+  }
 };
 
 export default DatamartService;

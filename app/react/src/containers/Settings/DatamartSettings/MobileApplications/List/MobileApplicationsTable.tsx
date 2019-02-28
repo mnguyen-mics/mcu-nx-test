@@ -23,7 +23,7 @@ export interface MobileApplicationsTableProps {
   onArchiveMobileApplication: (a: ChannelResource) => void;
   onEditMobileApplication: (a: ChannelResource) => void;
   filter: Filter;
-  filtersOptions: Array<MultiSelectProps<any>>;
+  filtersOptions?: Array<MultiSelectProps<any>>;
 }
 
 type Props = MobileApplicationsTableProps &

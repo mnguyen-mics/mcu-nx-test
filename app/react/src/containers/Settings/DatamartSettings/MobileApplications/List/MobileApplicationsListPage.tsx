@@ -30,7 +30,9 @@ import { getWorkspace } from '../../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 
 const { Content } = Layout;
-export interface MobileApplicationsListPageProps {}
+export interface MobileApplicationsListPageProps {
+  datamartId?: string;
+}
 
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
@@ -101,15 +103,16 @@ class MobileApplicationsListPage extends React.Component<
       },
       location: { search },
       datamart,
+      datamartId,
     } = this.props;
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
-    const datamartId = filter.datamartId ? filter.datamartId : datamart.id;
+    const calculatedDatamartId = datamartId ? datamartId : (filter.datamartId ? filter.datamartId : datamart.id);
     this.setState({
       isFetchingMobileApplications: true,
     });
     this.fetchMobileApplications(
       organisationId,
-      datamartId,
+      calculatedDatamartId,
       this.state.filter,
     ).then(() => {
       this.setState({
@@ -124,6 +127,7 @@ class MobileApplicationsListPage extends React.Component<
         params: { organisationId },
       },
       location: { search },
+      datamartId,
     } = this.props;
 
     const {
@@ -131,23 +135,25 @@ class MobileApplicationsListPage extends React.Component<
         params: { organisationId: nextOrganisationId },
       },
       location: { search: nextSearch },
+      datamartId: nextDatamartId,
     } = nextProps;
 
     if (
       nextOrganisationId !== organisationId ||
-      !compareSearches(search, nextSearch)
+      !compareSearches(search, nextSearch) ||
+      nextDatamartId !== datamartId
     ) {
       const nextFilter = parseSearch(
         nextSearch,
         this.getSearchSetting(nextOrganisationId),
       );
-      const datamartId = nextFilter.datamartId;
+      const calculatedDatamartId = nextDatamartId ? nextDatamartId : nextFilter.datamartId;
       this.setState({
         isFetchingMobileApplications: true,
       });
       this.fetchMobileApplications(
         organisationId,
-        datamartId,
+        calculatedDatamartId,
         this.state.filter,
       ).then(() => {
         this.setState({
@@ -182,6 +188,7 @@ class MobileApplicationsListPage extends React.Component<
         params: { organisationId },
       },
       datamart,
+      datamartId,
       location: {search}
     } = this.props;
 
@@ -190,7 +197,8 @@ class MobileApplicationsListPage extends React.Component<
       search,
       this.getSearchSetting(organisationId),
     );
-    this.fetchMobileApplications(organisationId, filters.datamartId ? filters.datamartId : datamart.id, newFilter);
+    const calculatedDatamartId = datamartId ? datamartId : (filters.datamartId ? filters.datamartId : datamart.id);
+    this.fetchMobileApplications(organisationId, calculatedDatamartId, newFilter);
   };
 
   /**
@@ -270,6 +278,7 @@ class MobileApplicationsListPage extends React.Component<
         params: { organisationId },
       },
       datamart,
+      datamartId,
       workspace,
       location: { search },
     } = this.props;
@@ -319,7 +328,9 @@ class MobileApplicationsListPage extends React.Component<
           });
         },
       };
-      filtersOptions.push(datamartFilter);
+      if (!datamartId) {
+        filtersOptions.push(datamartFilter);
+      }
     }
 
     return (
