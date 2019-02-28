@@ -37,6 +37,8 @@ interface PlusNodeProps {
   query?: ObjectTreeExpressionNodeShape;
   schema?: SchemaItem;
   isTrigger: boolean;
+  datamartId: string;
+  runtimeSchemaId: string;
 }
 
 interface DroppedItemProps {
@@ -133,6 +135,8 @@ class PlusNodeWidget extends React.Component<
           },
           initialValues: QUERY_DOCUMENT_INITIAL_VALUE,
           isTrigger: this.props.isTrigger,
+          datamartId: this.props.datamartId,
+          runtimeSchemaId: this.props.runtimeSchemaId
         },
         size: 'small',
       });

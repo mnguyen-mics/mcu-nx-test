@@ -24,15 +24,15 @@ import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
 import { FORM_ID, ObjectNodeFormData } from '../domain';
 import {
-  FieldResource,
   ObjectLikeTypeInfoResource,
+  FieldInfoResource,
 } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { SelectValue } from 'antd/lib/select';
 import { frequencyModeMessageMap } from '../../messages';
 import { typesTrigger } from '../../domain';
 
 export interface ObjectNodeSectionProps {
-  objectTypeFields: FieldResource[];
+  objectTypeFields: FieldInfoResource[];
   onSelect: (value: SelectValue) => void;
   isTrigger: boolean;
   objectType: ObjectLikeTypeInfoResource;
@@ -53,7 +53,7 @@ class ObjectNodeSection extends React.Component<Props> {
   buildOptions = () => {
     const { objectTypeFields } = this.props;
     return objectTypeFields.map(otf => ({
-      title: otf.name,
+      title: otf.decorator && otf.decorator.hidden === false ? otf.decorator.label : otf.name,
       value: otf.name,
     }));
   };

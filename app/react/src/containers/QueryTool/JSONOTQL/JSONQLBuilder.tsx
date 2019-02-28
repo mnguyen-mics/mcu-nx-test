@@ -74,6 +74,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+    const runtimeSchemaId = props.objectTypes[0] ? props.objectTypes[0].runtime_schema_id : ''
     this.engine.registerNodeFactory(
       new BooleanOperatorNodeFactory(
         this.getTreeNodeOperations(),
@@ -85,6 +86,8 @@ class JSONQLBuilder extends React.Component<Props, State> {
         this.getTreeNodeOperations(),
         this.props.objectTypes,
         this.lockInteraction,
+        this.props.datamartId,
+        runtimeSchemaId
       ),
     );
     this.engine.registerNodeFactory(
@@ -92,6 +95,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
         this.getTreeNodeOperations(),
         this.props.objectTypes,
         this.lockInteraction,
+        this.props.datamartId
       ),
     );
     this.engine.registerNodeFactory(
@@ -99,7 +103,8 @@ class JSONQLBuilder extends React.Component<Props, State> {
         this.getTreeNodeOperations(),
         this.props.objectTypes,
         this.lockInteraction,
-        this.keyboardOnlyLock
+        this.keyboardOnlyLock,
+        this.props.datamartId
       ),
     );
 

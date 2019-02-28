@@ -30,8 +30,9 @@ import {
   TimeComparisonOperator,
 } from '../../../../../../models/datamart/graphdb/QueryDocument';
 import {
-  FieldInfoResource,
   ObjectLikeTypeInfoResource,
+  FieldInfoResource,
+  FieldDirectiveResource,
 } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import {
   FORM_ID,
@@ -47,6 +48,11 @@ import { IAudienceSegmentService } from '../../../../../../services/AudienceSegm
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
+import ReferenceTableService from '../../../../../../services/ReferenceTableService';
+import DatamartService from '../../../../../../services/DatamartService';
+import channelService from '../../../../../../services/ChannelService';
+import { IComparmentService } from '../../../../../../services/CompartmentService';
+import { getCoreReferenceTypeAndModel } from '../../../domain';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -65,6 +71,8 @@ export interface FieldNodeFormProps {
   formChange: (fieldName: string, value: any) => void;
   objectType: ObjectLikeTypeInfoResource;
   idToAttachDropDowns?: string;
+  runtimeSchemaId: string;
+  datamartId: string;
 }
 
 interface FormValues {
@@ -97,11 +105,16 @@ type FieldComparisonGenerator = ComparisonValues<any> & {
 class FieldNodeForm extends React.Component<Props> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.ICompartmentService)
+  private _compartmentService: IComparmentService;
+
   componentDidMount() {
     // if no default value compute it
     const { formValues, expressionIndex, formChange, name } = this.props;
 
     const field = this.getField(formValues, expressionIndex);
+    const directive = field ? this.getFieldDirective(field.field) : undefined;
 
     if (field && !field.comparison) {
       const fieldName = field ? field.field : undefined;
@@ -109,7 +122,7 @@ class FieldNodeForm extends React.Component<Props> {
       const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
       formChange(
         name ? `${name}.comparison` : 'comparison',
-        this.generateAvailableConditionOptions(fieldType, fieldIndexDataType).defaultValue,
+        this.generateAvailableConditionOptions(fieldType, fieldIndexDataType, directive).defaultValue,
       );
     }
   }
@@ -126,6 +139,8 @@ class FieldNodeForm extends React.Component<Props> {
 
     const field = this.getField(formValues, expressionIndex);
     const fieldName = field ? field.field : undefined;
+    const directive = field ? this.getFieldDirective(field.field) : undefined;
+
 
     const nextField = this.getField(nextFormValues, nextExpressionIndex);
     const nextFieldName = nextField ? nextField.field : undefined;
@@ -135,7 +150,7 @@ class FieldNodeForm extends React.Component<Props> {
       const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
       formChange(
         name ? `${name}.comparison` : 'comparison',
-        this.generateAvailableConditionOptions(fieldType, fieldIndexDataType).defaultValue,
+        this.generateAvailableConditionOptions(fieldType, fieldIndexDataType, directive).defaultValue,
       );
     }
   }
@@ -162,7 +177,7 @@ class FieldNodeForm extends React.Component<Props> {
       .filter(field =>
         SUPPORTED_FIELD_TYPES.find(t => field.field_type.indexOf(t) > -1),
       )
-      .map(i => ({ value: i.name, title: i.name }));
+      .map(i => ({ value: i.name, title: i.decorator && i.decorator.hidden === false ? i.decorator.label : i.name }));
   };
 
   getSelectedFieldType = (fieldName: string | undefined) => {
@@ -199,69 +214,81 @@ class FieldNodeForm extends React.Component<Props> {
   generateAvailableConditionOptions = (
     fieldType: string | null,
     fieldIndexDataType: string | null,
+    directives?: FieldDirectiveResource[],
   ): FieldComparisonGenerator => {
     const { intl } = this.props;
+
+    const shouldRenderDirective = (renderDefault: JSX.Element) => {
+      if (directives) {
+        const modelAndType = getCoreReferenceTypeAndModel(directives);
+        if (modelAndType) {
+          return this.generateReferenceTableComparisonField(modelAndType.type, modelAndType.modelType);
+        }        
+      }
+      return renderDefault;
+    }
+    
 
     switch (fieldType) {
       case 'Timestamp':
         return {
           ...constants.generateTimeComparisonOperator(intl),
-          component: this.generateTimestampComparisonField(),
+          component: shouldRenderDirective(this.generateTimestampComparisonField()),
         };
       case 'Date':
         return {
           ...constants.generateTimeComparisonOperator(intl),
-          component: this.generateTimestampComparisonField(),
+          component: shouldRenderDirective(this.generateTimestampComparisonField()),
         };
       case 'String':
         return {
           ...constants.generateStringComparisonOperator(intl, fieldIndexDataType || undefined),
-          component: this.generateStringComparisonField(),
+          component: shouldRenderDirective(this.generateStringComparisonField()),
         };
       case 'Bool':
         return {
           ...constants.generateBooleanComparisonOperator(intl),
-          component: this.generateBooleanComparisonField(),
+          component: shouldRenderDirective(this.generateBooleanComparisonField()),
         };
       case 'Boolean':
         return {
           ...constants.generateBooleanComparisonOperator(intl),
-          component: this.generateBooleanComparisonField(),
+          component: shouldRenderDirective(this.generateBooleanComparisonField()),
         };
       case 'Enum':
         return {
           ...constants.generateEnumComparisonOperator(intl),
-          component: this.generateEnumComparisonField(),
+          component: shouldRenderDirective(this.generateEnumComparisonField()),
         };
       case 'Number':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField(),
+          component: shouldRenderDirective(this.generateNumericComparisonField()),
         };
       case 'Float':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField(),
+          component: shouldRenderDirective(this.generateNumericComparisonField()),
         };
       case 'Int':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField(),
+          component: shouldRenderDirective(this.generateNumericComparisonField()),
         };
       case 'Double':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField(),
+          component: shouldRenderDirective(this.generateNumericComparisonField()),
         };
       case 'BigDecimal':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: this.generateNumericComparisonField(),
+          component: shouldRenderDirective(this.generateNumericComparisonField()),
         };
       case 'ID':
         return {
           ...constants.generateStringComparisonOperator(intl),
-          component: this.generateIdComparisonField(),
+          component: shouldRenderDirective(this.generateIdComparisonField()),
         };
       default:
         return {
@@ -494,6 +521,104 @@ class FieldNodeForm extends React.Component<Props> {
     );
   }
 
+  generateReferenceTableComparisonField(type: string, modelType: string) {
+    const {
+      intl,
+      name,
+      objectType,
+      idToAttachDropDowns,
+      datamartId,
+      runtimeSchemaId,
+      formValues,
+      expressionIndex,
+      match: {
+        params: {
+          organisationId
+        }
+      }
+    } = this.props;
+
+    const field = this.getField(formValues, expressionIndex);
+
+
+
+    let fetchListMethod = (keywords: string) => {
+      if (field) {
+        return ReferenceTableService.getReferenceTable(datamartId, runtimeSchemaId, objectType.name, field.field)
+        .then(res => res.data.map(r => ({ key: r.value, label:r.display_value })))
+      }
+      return Promise.resolve([])
+    }
+
+    let fetchSingleMethod = (id: string) => Promise.resolve({ key: id, label: id })
+
+
+    if (type && type === "CORE_OBJECT") {
+      if (modelType) {
+        switch (modelType) {
+          case 'COMPARTMENTS':
+            fetchListMethod = (keywords: string) => {
+              return DatamartService.getUserAccountCompartments(datamartId).then(res => res.data.map(r => ({ key: r.compartment_id, label: r.name ? r.name : r.token })))
+            }
+            fetchSingleMethod = (id: string) => this._compartmentService.getCompartment(id).then(res => ({ key: res.data.id, label: res.data.name }))
+            break;
+          case 'CHANNELS':
+            fetchListMethod = (keywords: string) => {
+              return channelService.getChannels(organisationId, datamartId, { keywords: keywords }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
+            }
+            fetchSingleMethod = (id: string) => channelService.getChannel(datamartId, id).then(res => ({ key: res.data.id, label: res.data.name }))
+            break;
+          case 'SEGMENTS':
+            fetchListMethod = (keywords: string) => {
+              return this._audienceSegmentService.getSegments(organisationId, { keywords: keywords }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
+            }
+            fetchSingleMethod = (id: string) => this._audienceSegmentService.getSegment(id).then(res => ({ key: res.data.id, label: res.data.name }))
+            break;
+        }
+      }
+    }
+
+   
+    
+
+    let popUpProps = {};
+
+    if (idToAttachDropDowns) {
+      popUpProps = {
+        getPopupContainer: (e: HTMLElement) =>
+          document.getElementById(idToAttachDropDowns)!,
+      };
+    }
+
+    return (
+      <FormSearchObjectField
+        name={name ? `${name}.comparison.values` : 'comparison.values'}
+        component={FormSearchObject}
+        formItemProps={{
+          label: intl.formatMessage(messages.fieldConditionValuesStringLabel),
+          required: true,
+        }}
+        fetchListMethod={fetchListMethod}
+        fetchSingleMethod={fetchSingleMethod}
+        helpToolTipProps={{
+          title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
+        }}
+        selectProps={{
+          ...popUpProps,
+        }}
+        small={true}
+      />
+    );
+  }
+
+  getFieldDirective = (fieldName: string) => {
+    const {
+      objectType
+    } = this.props;
+    const foundField = objectType.fields.find(f => f.name === fieldName);
+    return foundField ? foundField.directives : undefined;
+  }
+
   render() {
     const {
       expressionIndex,
@@ -504,7 +629,10 @@ class FieldNodeForm extends React.Component<Props> {
       idToAttachDropDowns,
     } = this.props;
 
+   
+
     const field = this.getField(formValues, expressionIndex);
+    const directive = field ? this.getFieldDirective(field.field) : undefined;
     const hasSelectedAField = field && field.field !== '';
     const fieldName = field ? field.field : '';
     const fieldCondition =
@@ -543,7 +671,7 @@ class FieldNodeForm extends React.Component<Props> {
           name={name ? `${name}.comparison.operator` : 'comparison.operator'}
           component={DefaultSelect}
           validate={[]}
-          options={this.generateAvailableConditionOptions(fieldType, fieldIndexDataType).values}
+          options={this.generateAvailableConditionOptions(fieldType, fieldIndexDataType, directive).values}
           formItemProps={{
             label: intl.formatMessage(messages.fieldConditionConditionLabel),
           }}
@@ -556,7 +684,7 @@ class FieldNodeForm extends React.Component<Props> {
         />
         {fieldName &&
           fieldCondition &&
-          this.generateAvailableConditionOptions(fieldType, fieldIndexDataType).component}
+          this.generateAvailableConditionOptions(fieldType, fieldIndexDataType, directive).component}
       </div>
     );
   }

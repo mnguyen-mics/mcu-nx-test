@@ -13,6 +13,7 @@ const TYPES = {
   IDisplayNetworkService: Symbol.for('displayNetworkService'),
   IDealsListService: Symbol.for('dealsListService'),
   IDealListFormService: Symbol.for('dealListFormService'),
+  ICompartmentService: Symbol.for('compartmentService')
 };
 
 export { TYPES };

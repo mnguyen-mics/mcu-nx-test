@@ -21,6 +21,8 @@ export interface FieldNodeFormWrapperProps
   objectType: ObjectLikeTypeInfoResource;
   objectTypes: ObjectLikeTypeInfoResource[];
   idToAttachDropDowns?: string;
+  runtimeSchemaId: string;
+  datamartId: string;
 }
 
 type Props = InjectedFormProps<
@@ -49,7 +51,7 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
   };
 
   render() {
-    const { handleSubmit, change, objectType, idToAttachDropDowns } = this.props;
+    const { handleSubmit, change, objectType, idToAttachDropDowns, datamartId, runtimeSchemaId } = this.props;
     return (
       <Form
         className="edit-layout ant-layout"
@@ -62,6 +64,8 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
           objectType={objectType}
           name={'fieldNodeForm'}
           idToAttachDropDowns={idToAttachDropDowns}
+          datamartId={datamartId}
+          runtimeSchemaId={runtimeSchemaId}
         />
         <Button type="primary" className="mcs-primary" htmlType="submit">Submit</Button>
       </Form>

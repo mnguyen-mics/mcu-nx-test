@@ -12,16 +12,22 @@ export default class PlusNodeFactory extends AbstractNodeFactory<
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
   lockGlobalInteraction: (locked: boolean) => void;
+  datamartId: string;
+  runtimeSchemaId: string;
 
   constructor(
     _treeNodeOperations: TreeNodeOperations,
     _objectTypes: ObjectLikeTypeInfoResource[],
     _lockGlobalInteraction: (locked: boolean) => void,
+    _datamartId: string,
+    _runtimeSchemaId: string,
   ) {
     super('plus-node');
     this.treeNodeOperations = _treeNodeOperations;
     this.objectTypes = _objectTypes;
     this.lockGlobalInteraction = _lockGlobalInteraction;
+    this.datamartId = _datamartId;
+    this.runtimeSchemaId = _runtimeSchemaId;
   }
 
   generateReactWidget(
@@ -43,6 +49,8 @@ export default class PlusNodeFactory extends AbstractNodeFactory<
             query: query,
             schema: schema,
             isTrigger: isTrigger,
+            datamartId: this.datamartId,
+            runtimeSchemaId: this.runtimeSchemaId
           })
         }
       </JSONQLBuilderContext.Consumer>

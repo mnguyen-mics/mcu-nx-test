@@ -32,6 +32,7 @@ interface ObjectNodeWidgetProps {
   query?: ObjectTreeExpressionNodeShape;
   schema?: SchemaItem;
   isTrigger: boolean;
+  datamartId: string;
 }
 
 interface State {
@@ -106,7 +107,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
   };
 
   editNode = () => {
-    const { node, lockGlobalInteraction } = this.props;
+    const { node, lockGlobalInteraction, datamartId } = this.props;
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(false);
       this.props.openNextDrawer<ObjectNodeFormProps>(ObjectNodeForm, {
@@ -124,6 +125,8 @@ class ObjectNodeWidget extends React.Component<Props, State> {
           },
           initialValues: generateFormDataFromObjectNode(node.objectNode),
           isTrigger: this.props.isTrigger,
+          datamartId: datamartId,
+          runtimeSchemaId: node.objectTypeInfo.runtime_schema_id,
         },
         size: 'small',
       });
@@ -155,10 +158,13 @@ class ObjectNodeWidget extends React.Component<Props, State> {
 
     const frequency = FrequencyConverter.toFrequency(node.objectNode);
 
+    const objectInfo =  node.objectTypeInfo.fields.find(f => f.name === node.objectNode.field);
+    const objectName = objectInfo && objectInfo.decorator && objectInfo.decorator.hidden === false ? objectInfo.decorator.label : node.objectNode.field;
+
     const renderedObjectNode = (
       <div className="field">
         <div className="objectValue">
-          <span>{node.objectNode.field}</span>
+          <span>{objectName}</span>
           {frequency.enabled && (
             <div>
               {intl.formatMessage(frequencyModeMessageMap[frequency.mode])}{' '}

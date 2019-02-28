@@ -7,6 +7,8 @@ import {
 } from 'react-dnd';
 import { DragAndDropInterface, SchemaItem, extractFieldType, FieldInfoEnhancedResource } from '../domain';
 import { McsIcon } from '../../../../components';
+import { Tooltip } from 'antd';
+import cuid from 'cuid';
 
 export type FieldNodeProps = FieldNodeObjectProps | FieldNodeFieldProps;
 
@@ -57,12 +59,29 @@ const fieldSource = {
 }
 
 class FieldNode extends React.Component<FieldNodeProps, any> {
+
   render() {
     const { item, isDragging, connectDragSource, type } = this.props;
+    let itemName = item.name;
+    if (item.decorator && item.decorator.hidden === false) {
+      itemName = item.decorator.label
+    }
+
+    const Fieldtype = type === 'object' ? (item as SchemaItem).schemaType : (item as FieldInfoEnhancedResource).field_type;
+    let helper = (<span className="field-type">{Fieldtype} <McsIcon type="dots" /></span>);
+
+    if (item.decorator && item.decorator.hidden === false && item.decorator.help_text) {
+      const helptext = `${item.decorator.help_text} - ${Fieldtype}`;
+      const id = cuid();
+      const getPopupContainer = () => document.getElementById(id)!
+      helper = (<span className="field-type" id={id}><Tooltip placement="left" title={helptext} getPopupContainer={getPopupContainer}><McsIcon type="question" /></Tooltip></span>);
+    }
+
+
     return connectDragSource &&
     connectDragSource(
       <div className={`field-node-item ${isDragging ? 'dragging' : ''}`}>
-        <div>{item.name} <span className="field-type">{type === 'object' ? (item as SchemaItem).schemaType : (item as FieldInfoEnhancedResource).field_type} <McsIcon type="dots" /></span></div>
+        <div>{itemName} {helper}</div>
       </div>,
     );
   }
