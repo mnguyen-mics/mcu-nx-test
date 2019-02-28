@@ -63,14 +63,14 @@ class FieldNode extends React.Component<FieldNodeProps, any> {
   render() {
     const { item, isDragging, connectDragSource, type } = this.props;
     let itemName = item.name;
-    if (item.decorator) {
-      itemName = (item as FieldInfoEnhancedResource).decorator!.label
+    if (item.decorator && item.decorator.hidden === false) {
+      itemName = item.decorator.label
     }
 
     const Fieldtype = type === 'object' ? (item as SchemaItem).schemaType : (item as FieldInfoEnhancedResource).field_type;
     let helper = (<span className="field-type">{Fieldtype} <McsIcon type="dots" /></span>);
 
-    if (item.decorator && item.decorator.help_text) {
+    if (item.decorator && item.decorator.hidden === false && item.decorator.help_text) {
       const helptext = `${item.decorator.help_text} - ${Fieldtype}`;
       const id = cuid();
       const getPopupContainer = () => document.getElementById(id)!

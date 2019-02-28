@@ -177,7 +177,7 @@ class FieldNodeForm extends React.Component<Props> {
       .filter(field =>
         SUPPORTED_FIELD_TYPES.find(t => field.field_type.indexOf(t) > -1),
       )
-      .map(i => ({ value: i.name, title: i.decorator ? i.decorator.label : i.name }));
+      .map(i => ({ value: i.name, title: i.decorator && i.decorator.hidden === false ? i.decorator.label : i.name }));
   };
 
   getSelectedFieldType = (fieldName: string | undefined) => {

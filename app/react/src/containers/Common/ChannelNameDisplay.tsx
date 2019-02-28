@@ -47,7 +47,10 @@ export default class ChannelNameDisplay extends React.Component<ChannelNameDispl
 
   fetchChannel = (datamartId: string, channelId: string) => {
     this.setState({ loading: true });
-    return ChannelService.getChannel(datamartId, channelId).then(res => res.data).then(res => this.setState({ loading: false, channel: res }))
+    return ChannelService.getChannel(datamartId, channelId)
+      .then(res => res.data)
+      .then(res => this.setState({ loading: false, channel: res }))
+      .catch(() => this.setState({ loading: false }))
   }
 
   public render() {

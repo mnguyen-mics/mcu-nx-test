@@ -48,7 +48,9 @@ export default class CompartmentNameDisplay extends React.Component<CompartmentN
 
   fetchUserAccountCompartment = (userAccountCompartmentId: string) => {
     this.setState({ loading: true });
-    return this._compartmentService.getCompartment(userAccountCompartmentId).then(res => res.data).then(res => this.setState({ loading: false, compartment: res }))
+    return this._compartmentService.getCompartment(userAccountCompartmentId)
+      .then(res => res.data).then(res => this.setState({ loading: false, compartment: res }))
+      .catch(() => this.setState({ loading: false }))
   }
 
   public render() {
@@ -59,7 +61,7 @@ export default class CompartmentNameDisplay extends React.Component<CompartmentN
 
     return this.state.compartment ? (
       <span>
-        {this.state.compartment.name}
+        {this.state.compartment.name ? this.state.compartment.name : this.state.compartment.token ? this.state.compartment.token : this.state.compartment.id}
       </span>
     ) : <span>{this.props.userAccountCompartmentId}</span>;
   }

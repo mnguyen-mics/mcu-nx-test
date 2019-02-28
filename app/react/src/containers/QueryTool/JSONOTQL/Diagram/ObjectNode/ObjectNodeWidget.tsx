@@ -159,7 +159,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
     const frequency = FrequencyConverter.toFrequency(node.objectNode);
 
     const objectInfo =  node.objectTypeInfo.fields.find(f => f.name === node.objectNode.field);
-    const objectName = objectInfo && objectInfo.decorator ? objectInfo.decorator.label : node.objectNode.field;
+    const objectName = objectInfo && objectInfo.decorator && objectInfo.decorator.hidden === false ? objectInfo.decorator.label : node.objectNode.field;
 
     const renderedObjectNode = (
       <div className="field">

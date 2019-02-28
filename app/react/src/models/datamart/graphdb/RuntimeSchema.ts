@@ -54,16 +54,26 @@ export interface FieldDirectiveInfoResource extends FieldDirectiveResource {
   arguments: DirectiveArgumentResource[];
 }
 
-export interface SchemaDecoratorResource {
+export type SchemaDecoratorResource = SchemaVisibleDecoratorRedource | SchemaHiddenDecoratorRedource;
+
+export interface SchemaBaseDecoratorResource {
   id: string;
   hidden: boolean;
-  label: string;
-  help_text?: string;
   object_name: string;
   field_name: string;
   language: string;
   schema_id: string;
   datamart_id: string;
+}
+
+export interface SchemaVisibleDecoratorRedource extends SchemaBaseDecoratorResource {
+  label: string;
+  help_text?: string;
+  hidden: false;
+}
+
+export interface SchemaHiddenDecoratorRedource extends SchemaBaseDecoratorResource {
+  hidden: true;
 }
 
 export interface FieldInfoResource extends FieldResource {

@@ -53,7 +53,7 @@ class ObjectNodeSection extends React.Component<Props> {
   buildOptions = () => {
     const { objectTypeFields } = this.props;
     return objectTypeFields.map(otf => ({
-      title: otf.decorator ? otf.decorator.label : otf.name,
+      title: otf.decorator && otf.decorator.hidden === false ? otf.decorator.label : otf.name,
       value: otf.name,
     }));
   };

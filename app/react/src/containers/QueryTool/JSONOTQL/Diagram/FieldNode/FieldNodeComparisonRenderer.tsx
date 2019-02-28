@@ -173,7 +173,7 @@ export default class FieldNodeComparisonRenderer extends React.Component<
       : null;
 
     const fieldInfo = node.objectTypeInfo.fields.find(f => f.name === node.fieldNode.field);
-    const fieldName = fieldInfo && fieldInfo.decorator && fieldInfo.decorator.label ? fieldInfo.decorator.label : node.fieldNode.field
+    const fieldName = fieldInfo && fieldInfo.decorator && fieldInfo.decorator.hidden === false && fieldInfo.decorator.label ? fieldInfo.decorator.label : node.fieldNode.field
 
    
     return (
