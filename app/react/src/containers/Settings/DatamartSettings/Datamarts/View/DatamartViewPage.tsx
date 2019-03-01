@@ -11,17 +11,17 @@ import { Row, Col } from 'antd';
 import { MobileApplicationsListPage } from '../../MobileApplications/List';
 import { SitesListPage } from '../../Sites/List';
 import ImportsContentContainer from '../../../../Datastudio/Imports/List/ImportsContentContainer';
-import { Filters } from '../../../../../components/ItemList';
 import CleaningRulesContainer from '../../CleaningRules/CleaningRulesContainer';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
+import { notifyError } from '../../../../../state/Notifications/actions';
 
 type Props = RouteComponentProps<{ organisationId: string; datamartId: string }> &
   InjectedIntlProps;
 
 interface State {
-  datamart: DatamartResource;
+  datamart?: DatamartResource;
   isLoading: boolean;
-  importsContentFilter: Filters;
+  importsContentFilter: PaginationSearchSettings;
   cleaningRulesFilter: PaginationSearchSettings;
 }
 
@@ -30,18 +30,6 @@ class DatamartViewPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      datamart: {
-        id: "",
-        name: "",
-        organisation_id: "",
-        token: "",
-        creation_date: 0,
-        time_zone: "",
-        type: "DATAMART",
-        datafarm: "",
-        region: "",
-        storage_model_version: "",
-      },
       isLoading: true,
       importsContentFilter: {
         currentPage: 1,
@@ -69,18 +57,20 @@ class DatamartViewPage extends React.Component<Props, State> {
       .then(res => this.setState({
         datamart: res.data,
         isLoading: false
-      }));
+      }))
+      .catch(err => {
+        this.setState({ isLoading: false });
+        notifyError(err);
+      });
   };
 
-  onImportsContentFilterChange = (newFilter: any) => {
+  onImportsContentFilterChange = (newFilter: PaginationSearchSettings) => {
     const {
-      type,
       currentPage,
       pageSize,
     } = newFilter;
 
     const importsContentFilter = {
-      type: type,
       currentPage: currentPage,
       pageSize: pageSize,
     };
@@ -90,7 +80,7 @@ class DatamartViewPage extends React.Component<Props, State> {
     });
   };
 
-  onCleaningRulesFilterChange = (newFilter: any) => {
+  onCleaningRulesFilterChange = (newFilter: PaginationSearchSettings) => {
     const {
       currentPage,
       pageSize,

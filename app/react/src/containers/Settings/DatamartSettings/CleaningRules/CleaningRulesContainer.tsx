@@ -20,7 +20,7 @@ interface CleaningRulesContainerState {
 
 export interface CleaningRulesContainerProps {
   filter: PaginationSearchSettings;
-  onFilterChange: any;
+  onFilterChange: (newFilter: PaginationSearchSettings) => void;
   datamartId: string;
 }
 

@@ -49,7 +49,7 @@ class DatamartActionBar extends React.Component<Props> {
       <Actionbar path={breadcrumbPaths}>
         <Button onClick={this.onEditClick}>
           <McsIcon type="pen" />
-          <FormattedMessage id="EDIT" />
+          <FormattedMessage {...messages.edit} />
         </Button>
       </Actionbar>
     )

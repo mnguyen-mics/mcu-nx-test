@@ -11,17 +11,17 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
+  PaginationSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
 import { IMPORTS_SEARCH_SETTINGS } from './constants';
 import { Index } from '../../../../utils';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import ImportsContentContainer from './ImportsContentContainer';
-import { Filters } from '../../../../components/ItemList';
 
 interface ImportContentState {
   loading: boolean;
   selectedDatamartId: string;
-  filter: Filters;
+  filter: PaginationSearchSettings;
 }
 
 interface RouterProps {
@@ -73,18 +73,15 @@ class ImportContent extends React.Component<Props, ImportContentState> {
       const {
         currentPage,
         pageSize,
-        status,
-        keywords,
-        archived
+        datamartId,
       } = parseSearch(search, this.getSearchSetting(organisationId));
+      const selectedDatamartId = datamartId ? datamartId : this.state.selectedDatamartId;
       this.setState({
         filter: {
           currentPage: currentPage,
           pageSize: pageSize,
-          status: status,
-          keywords: keywords,
-          archived: archived
-        }
+        },
+        selectedDatamartId: selectedDatamartId
       });
     }
   }
@@ -129,18 +126,14 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         const {
           currentPage,
           pageSize,
-          status,
-          keywords,
-          archived
-        } = parseSearch(search, this.getSearchSetting(organisationId));
+          datamartId
+        } = parseSearch(nextSearch, this.getSearchSetting(organisationId));
         this.setState({
           filter: {
             currentPage: currentPage,
             pageSize: pageSize,
-            status: status,
-            keywords: keywords,
-            archived: archived
-          }
+          },
+          selectedDatamartId: datamartId
         });
       }
     }
@@ -169,21 +162,17 @@ class ImportContent extends React.Component<Props, ImportContentState> {
 
   onFilterChange = (newFilter: any) => {
     const {
-      type,
-      currentPage,
-      pageSize,
+      datamartId,
+      ...restFilter
     } = newFilter;
 
-    const importsContentFilter = {
-      type: type,
-      currentPage: currentPage,
-      pageSize: pageSize
-    };
+    const calculatedDatamartId = datamartId ? datamartId : this.state.selectedDatamartId
 
-    this.setState({
-      filter: importsContentFilter
-    })
-  }
+    this.updateLocationSearch({
+      datamartId: calculatedDatamartId,
+      ...restFilter    
+    });
+  };
 
   getSearchSetting(organisationId: string): SearchSetting[] {
     return [...IMPORTS_SEARCH_SETTINGS];

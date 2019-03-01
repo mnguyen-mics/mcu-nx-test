@@ -16,12 +16,16 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { formatDocumentTypeText, formatMimeTypeText } from "../domain";
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import {
-  updateSearch,
+  updateSearch, PaginationSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
-import { Filters } from '../../../../components/ItemList';
 import DatamartService from '../../../../services/DatamartService';
+import { notifyError } from '../../../../state/Notifications/actions';
 
 const { Content } = Layout;
+
+interface ImportsContentContainerFilter extends PaginationSearchSettings {
+  datamartId: string;
+}
 
 interface ImportsContentContainerState {
   loading: boolean;
@@ -31,8 +35,8 @@ interface ImportsContentContainerState {
 }
 
 export interface ImportsContentContainerProps {
-  filter: Filters;
-  onFilterChange: any;
+  filter: PaginationSearchSettings;
+  onFilterChange: (newFilter: Partial<ImportsContentContainerFilter>) => void;
   datamartId: string;
   noFilterDatamart: boolean;
 }
@@ -64,11 +68,26 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
       },
     } = this.props;
 
-    DatamartService.getDatamarts(organisationId)
+    this.setState({
+      loading: true,
+    });
+
+    const options = {
+      allow_administrator: true,
+    };
+
+    DatamartService.getDatamarts(organisationId, options)
       .then(res => {
         this.setState({
           datamarts: res.data,
+          loading: false
+        })
+      })
+      .catch(err => {
+        this.setState({
+          loading: false,
         });
+        notifyError(err);
       });
 
     this.fetchImport(datamartId, filter);
@@ -112,7 +131,7 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
     return this._importService.deleteImport(datamartId, importId);
   };
 
-  fetchImport = (datamartId: string, filter: Filters) => {
+  fetchImport = (datamartId: string, filter: PaginationSearchSettings) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
@@ -254,37 +273,12 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
       },
     ];
 
-    const statusItems = ['SUCCESS', 'PENDING', 'FAILURE'].map(type => ({
-      key: type,
-      value: type,
-    }));
-
     const datamartItems = datamarts.map(d => ({
       key: d.id,
       value: d.name || d.token,
     }));
 
-    const filtersOptions: Array<MultiSelectProps<any>> = [
-      {
-        displayElement: (
-          <div>
-            <FormattedMessage {...messages.filterStatus} /> <Icon type="down" />
-          </div>
-        ),
-        selectedItems: filter.status ? filter.status.map((status: string) => ({
-          key: status,
-          value: status,
-        })) : [],
-        items: statusItems,
-        getKey: (item: { key: string; value: string }) => item.key,
-        display: (item: { key: string; value: string }) => item.value,
-        handleMenuClick: (values: Array<{ key: string; value: string }>) =>
-          onFilterChange({
-            type: values.map(v => v.value),
-            currentPage: 1,
-          }),
-      },
-    ];
+    const filtersOptions: Array<MultiSelectProps<any>> = [];
 
     if (datamarts.length > 1) {
       const datamartFilter = {
@@ -304,6 +298,7 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
             datamartId:
               datamartItem && datamartItem.key ? datamartItem.key : undefined,
             currentPage: 1,
+            pageSize: filter.pageSize,
           });
         },
       };
@@ -320,11 +315,13 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
         onFilterChange({
           currentPage: page,
           pageSize: size,
+          datamartId: datamartId,
         }),
       onShowSizeChange: (current: number, size: number) =>
         onFilterChange({
           currentPage: 1,
           pageSize: size,
+          datamartId: datamartId,
         }),
     };
 

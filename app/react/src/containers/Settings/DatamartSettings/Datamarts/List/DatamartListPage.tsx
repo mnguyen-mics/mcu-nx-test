@@ -155,7 +155,7 @@ class DatamartsListPage extends React.Component<
         key: 'name',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (value: string, record: DatamartResource) => <Link to={`/v2/o/${organisationId}/settings/datamart/my_datamart/${record.id}/edit`}>{value}</Link>
+        render: (value: string, record: DatamartResource) => <Link to={`/v2/o/${organisationId}/settings/datamart/my_datamart/${record.id}`}>{value}</Link>
       },
       {
         intlMessage: messages.datamartToken,
