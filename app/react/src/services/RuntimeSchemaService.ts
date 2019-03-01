@@ -258,7 +258,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserPoint",
       field_name: "accounts",
       hidden: true,
@@ -268,7 +268,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserPoint",
       field_name: "activities",
       hidden: true,
@@ -278,7 +278,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserPoint",
       field_name: "creation_ts",
       hidden: true,
@@ -288,7 +288,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserPoint",
       field_name: "emails",
       hidden: true,
@@ -298,7 +298,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserPoint",
       field_name: "segments",
       hidden: true,
@@ -308,7 +308,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserPoint",
       field_name: "agents",
       hidden: false,
@@ -319,7 +319,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserPoint",
       field_name: "events",
       hidden: false,
@@ -330,7 +330,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserPoint",
       field_name: "profiles",
       hidden: false,
@@ -341,7 +341,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserAgent",
       field_name: "id",
       hidden: true,
@@ -351,7 +351,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserAgent",
       field_name: "user_agent_info",
       hidden: false,
@@ -362,7 +362,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserAgent",
       field_name: "creation_ts",
       hidden: false,
@@ -373,7 +373,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserAgentInfo",
       field_name: "agent_type",
       hidden: false,
@@ -384,7 +384,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserAgentInfo",
       field_name: "browser_family",
       hidden: false,
@@ -395,7 +395,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserEvent",
       field_name: "date",
       hidden: false,
@@ -406,7 +406,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserEvent",
       field_name: "name",
       hidden: false,
@@ -417,7 +417,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserEvent",
       field_name: "channel_id",
       hidden: true,
@@ -427,7 +427,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserEvent",
       field_name: "channel_type",
       hidden: true,
@@ -437,7 +437,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserEvent",
       field_name: "page",
       hidden: false,
@@ -448,7 +448,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserEvent",
       field_name: "purchase",
       hidden: false,
@@ -459,7 +459,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Page",
       field_name: "breadcrumb",
       hidden: true,
@@ -469,7 +469,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Page",
       field_name: "c1",
       hidden: true,
@@ -479,7 +479,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Page",
       field_name: "c2",
       hidden: true,
@@ -489,7 +489,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Page",
       field_name: "c3",
       hidden: true,
@@ -499,7 +499,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Page",
       field_name: "c4",
       hidden: true,
@@ -509,7 +509,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Page",
       field_name: "keywords",
       hidden: false,
@@ -520,7 +520,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Page",
       field_name: "page_name",
       hidden: false,
@@ -531,7 +531,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Page",
       field_name: "products",
       hidden: false,
@@ -542,7 +542,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Product",
       field_name: "id",
       hidden: true,
@@ -552,7 +552,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Product",
       field_name: "name",
       hidden: false,
@@ -563,7 +563,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Product",
       field_name: "brand",
       hidden: false,
@@ -574,7 +574,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Product",
       field_name: "unit_price",
       hidden: false,
@@ -585,7 +585,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Product",
       field_name: "id",
       hidden: true,
@@ -595,7 +595,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Product",
       field_name: "unit_price",
       hidden: false,
@@ -606,7 +606,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Purchase",
       field_name: "id",
       hidden: true,
@@ -616,7 +616,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Purchase",
       field_name: "delivery_date",
       hidden: true,
@@ -626,7 +626,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Purchase",
       field_name: "payment_mode",
       hidden: true,
@@ -636,7 +636,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Purchase",
       field_name: "items",
       hidden: true,
@@ -646,7 +646,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Purchase",
       field_name: "channel",
       hidden: false,
@@ -657,7 +657,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Purchase",
       field_name: "delivery_mode",
       hidden: false,
@@ -668,7 +668,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Purchase",
       field_name: "point_of_sale",
       hidden: false,
@@ -679,7 +679,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Purchase",
       field_name: "total_amount",
       hidden: false,
@@ -690,7 +690,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserProfile",
       field_name: "birth_date",
       hidden: false,
@@ -701,7 +701,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserProfile",
       field_name: "gender",
       hidden: false,
@@ -712,7 +712,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserProfile",
       field_name: "optins",
       hidden: false,
@@ -723,7 +723,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserProfile",
       field_name: "scoring",
       hidden: false,
@@ -734,7 +734,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserProfile",
       field_name: "compartment_id",
       hidden: false,
@@ -745,7 +745,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserProfile",
       field_name: "id",
       hidden: true,
@@ -755,7 +755,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserProfile",
       field_name: "employee",
       hidden: true,
@@ -765,7 +765,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "UserProfile",
       field_name: "user_account_id",
       hidden: true,
@@ -775,7 +775,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Optins",
       field_name: "print",
       hidden: false,
@@ -786,7 +786,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Optins",
       field_name: "email",
       hidden: false,
@@ -797,7 +797,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Optins",
       field_name: "email",
       hidden: false,
@@ -808,7 +808,7 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Optins",
       field_name: "email",
       hidden: false,
@@ -819,12 +819,45 @@ const RuntimeSchemaService = {
     {
 
       datamart_id: "1297",
-      schema_id: "285",
+      schema_id: "287",
       object_name: "Scoring",
       field_name: "crossCanal",
       hidden: false,
       id: "6",
       language: "EN_us",
       label: "Cross-Channel"
+    },
+    {
+
+      datamart_id: "1297",
+      schema_id: "287",
+      object_name: "CrossCanalTimeFrame",
+      field_name: "months_12",
+      hidden: false,
+      id: "6",
+      language: "EN_us",
+      label: "Cross-channel 12"
+    },
+    {
+
+      datamart_id: "1297",
+      schema_id: "287",
+      object_name: "CrossCanalTimeFrame",
+      field_name: "months_24",
+      hidden: false,
+      id: "6",
+      language: "EN_us",
+      label: "Cross-channel 24"
+    },
+    {
+
+      datamart_id: "1297",
+      schema_id: "287",
+      object_name: "CrossCanalTimeFrame",
+      field_name: "months_36",
+      hidden: false,
+      id: "6",
+      language: "EN_us",
+      label: "Cross-channel 36"
     },
   ]
