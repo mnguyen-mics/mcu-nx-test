@@ -116,19 +116,6 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
         />
 
         <div className="automation-node-form">
-          <FormInputField
-            name="name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(formMessages.automationNodeName),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(formMessages.automationNodeName),
-            }}
-            small={true}
-          />
 
           <FormInputField
             name="campaign.name"
@@ -175,7 +162,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           />
 
           <FormSelectField
-            name="consentFields[0].model.consent_id"
+            name="blastFields[0].model.consentFields[0].model.consent_id"
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{

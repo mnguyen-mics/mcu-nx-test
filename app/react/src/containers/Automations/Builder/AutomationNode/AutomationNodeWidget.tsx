@@ -109,11 +109,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                   initialValuesForm: {
                     name: node.name,
                     campaign: campaignResp.campaign,
-                    templateFields: [],
-                    consentFields: [],
                     blastFields: campaignResp.blastFields,
                     routerFields: campaignResp.routerFields,
-                    blast: {},
                   },
                 });
               },
@@ -150,7 +147,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   };
 
   editNode = () => {
-    const { node, lockGlobalInteraction } = this.props;
+    const { node, lockGlobalInteraction, openNextDrawer, closeNextDrawer, nodeOperations } = this.props;
     const { initialValuesForm } = this.state;
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(false);
@@ -159,23 +156,26 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         initialValuesForm
       ) {
         const scenarioNodeShape = node.storylineNodeModel.node;
-
-        this.props.openNextDrawer<AutomationFormPropsType>(
+        let initialValue: any = initialValuesForm;
+        if ((scenarioNodeShape.type === 'DISPLAY_CAMPAIGN' || scenarioNodeShape.type === 'EMAIL_CAMPAIGN' || scenarioNodeShape.type === 'QUERY_INPUT') && scenarioNodeShape.formData) {
+          initialValue = scenarioNodeShape.formData
+        }
+        openNextDrawer<AutomationFormPropsType>(
           node.editFormComponent,
           {
             additionalProps: {
               node: scenarioNodeShape,
-              close: this.props.closeNextDrawer,
+              close: closeNextDrawer,
               breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
               onSubmit: (formData: AutomationFormDataType) => {
-                this.props.nodeOperations.updateNode(
+                nodeOperations.updateNode(
                   scenarioNodeShape,
                   formData,
-                  initialValuesForm,
+                  initialValue,
                 );
-                this.props.closeNextDrawer();
+                closeNextDrawer();
               },
-              initialValues: this.state.initialValuesForm,
+              initialValues: initialValue,
             },
             size: 'small',
           },
@@ -213,6 +213,15 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
 
+    let nodeName = node.title;
+
+    switch (node.storylineNodeModel.node.type) {
+      case 'DISPLAY_CAMPAIGN':
+      case 'EMAIL_CAMPAIGN':
+        nodeName = node.storylineNodeModel.node.formData &&  node.storylineNodeModel.node.formData.campaign && node.storylineNodeModel.node.formData.campaign.name ? node.storylineNodeModel.node.formData.campaign.name : nodeName
+        break
+    }
+
     const renderedAutomationNode = (
       <div
         className="node-body"
@@ -243,7 +252,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           )}
         </div>
 
-        <div className="node-content">{node.title}</div>
+        <div className="node-content">{nodeName}</div>
       </div>
     );
 
@@ -347,6 +356,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
                 {nodeType !== 'START' &&
                   nodeType !== 'GOAL' &&
+                  nodeType !== 'END_NODE' &&
                   nodeType !== 'FAILURE' && (
                     <div
                       onClick={this.removeNode}

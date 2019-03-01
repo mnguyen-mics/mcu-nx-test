@@ -22,10 +22,10 @@ export default class AutomationNodeModel extends NodeModel {
   iconAnt?: AntIcon;
 
   constructor(
-    datamartId: string,
-    storylineNodeModel: StorylineNodeModel,
-    title: string,
-    color: string,
+    datamartId?: string,
+    storylineNodeModel?: StorylineNodeModel,
+    title?: string,
+    color?: string,
     iconType?: McsIconType,
     iconAnt?: AntIcon,
     treeNodePath?: number[],
@@ -36,6 +36,10 @@ export default class AutomationNodeModel extends NodeModel {
     this.addPort(new SimplePortModel('right'));
 
     this.icon = iconType;
+
+    if (datamartId === undefined || title === undefined || color === undefined || storylineNodeModel === undefined) {
+      throw new Error('missing parameters') 
+    }
     this.datamartId = datamartId;
     this.title = title;
     this.color = color;

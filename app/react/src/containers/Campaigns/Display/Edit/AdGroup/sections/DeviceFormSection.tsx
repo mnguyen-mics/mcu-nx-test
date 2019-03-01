@@ -25,6 +25,7 @@ interface DeviceFormSectionProps
     ReduxFormChangeProps {
   initialValues: Partial<AdGroupResource>;
   small?: boolean;
+  name?: string;
 }
 
 type Props = DeviceFormSectionProps &
@@ -38,6 +39,11 @@ interface State {
 }
 
 class DeviceFormSection extends React.Component<Props, State> {
+
+  static defaultProps = {
+    name: "adGroup"
+  }
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -175,11 +181,14 @@ class DeviceFormSection extends React.Component<Props, State> {
   };
 
   onMediaChange = (value: TargetedMedia) => {
+    const {
+      name
+    } = this.props;
     this.setState({
       mediaValue: value,
     });
     this.props.formChange(
-      'adGroup.targeted_devices',
+      `${name}.targeted_devices`,
       value === 'WEB' ? 'ALL' : 'ONLY_MOBILE',
     );
     this.props.formChange('adGroup.targeted_operating_systems', 'ALL');
@@ -192,6 +201,7 @@ class DeviceFormSection extends React.Component<Props, State> {
       fieldValidators: { isRequired },
       intl: { formatMessage },
       small,
+      name
     } = this.props;
 
     return (
@@ -203,7 +213,7 @@ class DeviceFormSection extends React.Component<Props, State> {
 
         <div>
           <FormSelectField
-            name="adGroup.targeted_medias"
+            name={`${name}.targeted_medias`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
@@ -223,7 +233,7 @@ class DeviceFormSection extends React.Component<Props, State> {
           />
 
           <FormSelectField
-            name="adGroup.targeted_devices"
+            name={`${name}.targeted_devices`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
@@ -238,7 +248,7 @@ class DeviceFormSection extends React.Component<Props, State> {
           />
 
           <FormSelectField
-            name="adGroup.targeted_operating_systems"
+            name={`${name}.targeted_operating_systems`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
@@ -253,7 +263,7 @@ class DeviceFormSection extends React.Component<Props, State> {
           />
 
           <FormSelectField
-            name="adGroup.targeted_connection_types"
+            name={`${name}.targeted_connection_types`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
@@ -272,7 +282,7 @@ class DeviceFormSection extends React.Component<Props, State> {
           />
 
           <FormSelectField
-            name="adGroup.targeted_browser_families"
+            name={`${name}.targeted_browser_families`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{

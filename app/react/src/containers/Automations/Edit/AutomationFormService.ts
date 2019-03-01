@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   AutomationResource,
   ScenarioNodeShape,
@@ -19,21 +20,21 @@ import {
   isEmailCampaignNode,
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   EmailCampaignAutomationFormData,
+  isAbnNode,
+  isEndNode,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
-import DisplayCampaignService from '../../../services/DisplayCampaignService';
 import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
-import {
-  getAdTasks,
-  getLocationTasks,
-  getInventoryCatalogTask,
-} from '../../Campaigns/Display/Edit/AdGroup/AdGroupFormService';
+
 import EmailCampaignService from '../../../services/EmailCampaignService';
 import {
   getBlastTasks,
   getRouterTasks,
 } from '../../Campaigns/Email/Edit/EmailCampaignFormService';
+import { isFakeId } from '../../../utils/FakeIdHelper';
+import { IDisplayCampaignFormService } from '../../Campaigns/Display/Edit/DisplayCampaignFormService';
+import DisplayCampaignService from '../../../services/DisplayCampaignService';
 
 interface CustomEdgeResource {
   source_id: string;
@@ -60,6 +61,9 @@ export class AutomationFormService implements IAutomationFormService {
 
   @inject(TYPES.IQueryService)
   private _queryService: IQueryService;
+
+  @inject(TYPES.IDisplayCampaignFormService)
+  private _displayCampaignFormService: IDisplayCampaignFormService;
 
   loadInitialAutomationValues(
     automationId: string,
@@ -128,9 +132,9 @@ export class AutomationFormService implements IAutomationFormService {
         const treeData = formData.automationTreeData;
 
         if (datamartId) {
-          this.saveFirstNode(datamartId, savedAutomationId, treeData).then(
+          return this.saveFirstNode(datamartId, savedAutomationId, treeData).then(
             firstNodeId => {
-              this.iterate(
+              return this.iterate(
                 organisationId,
                 datamartId,
                 savedAutomationId,
@@ -140,6 +144,7 @@ export class AutomationFormService implements IAutomationFormService {
             },
           );
         }
+        return Promise.resolve()
       });
     }
   }
@@ -171,8 +176,8 @@ export class AutomationFormService implements IAutomationFormService {
     automationId: string,
     storylineNodes: StorylineNodeModel[],
     parentNodeId: string,
-  ) => {
-    storylineNodes.map(storylineNode => {
+  ): Promise<any> => {
+    return storylineNodes.reduce((prev, storylineNode) => {
       const node = storylineNode.node;
 
       if (isScenarioNodeShape(node)) {
@@ -183,18 +188,18 @@ export class AutomationFormService implements IAutomationFormService {
             node.initialFormData,
             node.campaign_id,
           );
-          saveOrCreateCampaignPromise.then(campaignIds => {
-            this.saveOrCreateNode(
+          return prev.then(() => saveOrCreateCampaignPromise.then(campaignIds => {
+            return this.saveOrCreateNode(
               automationId,
               storylineNode,
               campaignIds,
             ).then(res => {
-              this.saveOrCreateEdges(automationId, {
+              return this.saveOrCreateEdges(automationId, {
                 source_id: parentNodeId,
                 target_id: res.data.id,
                 edgeResource: storylineNode.in_edge,
               }).then(() => {
-                this.iterate(
+                return this.iterate(
                   organisationId,
                   datamartId,
                   automationId,
@@ -203,7 +208,7 @@ export class AutomationFormService implements IAutomationFormService {
                 );
               });
             });
-          });
+          }))
         } else if (isEmailCampaignNode(node)) {
           const saveOrCreateCampaignPromise = this.saveSubEmailCampaign(
             organisationId,
@@ -211,16 +216,16 @@ export class AutomationFormService implements IAutomationFormService {
             node.initialFormData,
             node.campaign_id,
           );
-          saveOrCreateCampaignPromise.then(campaignId => {
-            this.saveOrCreateNode(automationId, storylineNode, {
+          return prev.then(() => saveOrCreateCampaignPromise.then(campaignId => {
+            return this.saveOrCreateNode(automationId, storylineNode, {
               campaign_id: campaignId,
             }).then(res => {
-              this.saveOrCreateEdges(automationId, {
+              return this.saveOrCreateEdges(automationId, {
                 source_id: parentNodeId,
                 target_id: res.data.id,
                 edgeResource: storylineNode.in_edge,
               }).then(() => {
-                this.iterate(
+                return this.iterate(
                   organisationId,
                   datamartId,
                   automationId,
@@ -229,7 +234,7 @@ export class AutomationFormService implements IAutomationFormService {
                 );
               });
             });
-          });
+          }))
         } else if (isQueryInputNode(node)) {
           const saveOrCreateQueryPromise = node.query_id
             ? this._queryService.updateQuery(
@@ -238,19 +243,19 @@ export class AutomationFormService implements IAutomationFormService {
                 node.formData,
               )
             : this._queryService.createQuery(datamartId, node.formData);
-          saveOrCreateQueryPromise.then(queryRes => {
-            this.saveOrCreateNode(
+          return prev.then(() => saveOrCreateQueryPromise.then(queryRes => {
+            return this.saveOrCreateNode(
               automationId,
               storylineNode,
               undefined,
               queryRes.data.id,
             ).then(res => {
-              this.saveOrCreateEdges(automationId, {
+              return this.saveOrCreateEdges(automationId, {
                 source_id: parentNodeId,
                 target_id: res.data.id,
                 edgeResource: storylineNode.in_edge,
               }).then(() => {
-                this.iterate(
+                return this.iterate(
                   organisationId,
                   datamartId,
                   automationId,
@@ -259,11 +264,49 @@ export class AutomationFormService implements IAutomationFormService {
                 );
               });
             });
-          });
+          }))
+        } else if (isAbnNode(node)) {
+          return prev.then(() => this.saveOrCreateNode(
+            automationId,
+            storylineNode,
+          ).then(res => {
+            return this.saveOrCreateEdges(automationId, {
+              source_id: parentNodeId,
+              target_id: res.data.id,
+              edgeResource: storylineNode.in_edge
+            }).then(() => {
+              return this.iterate(
+                organisationId,
+                datamartId,
+                automationId,
+                storylineNode.out_edges,
+                res.data.id,
+              );
+            });
+          }))
+        } else if (isEndNode(node)) {
+          return prev.then(() => this.saveOrCreateNode(
+            automationId,
+            storylineNode,
+          ).then(res => {
+            return this.saveOrCreateEdges(automationId, {
+              source_id: parentNodeId,
+              target_id: res.data.id,
+              edgeResource: storylineNode.in_edge
+            }).then(() => {
+              return this.iterate(
+                organisationId,
+                datamartId,
+                automationId,
+                storylineNode.out_edges,
+                res.data.id,
+              );
+            });
+          }))
         }
       }
-      return;
-    });
+      return prev.then(() => Promise.resolve());
+    }, Promise.resolve());
   };
 
   saveOrCreateNode = (
@@ -313,6 +356,24 @@ export class AutomationFormService implements IAutomationFormService {
         query_id: queryId,
       };
       resourceId = node.query_id;
+    } else if (isAbnNode(node)) {
+      scenarioNodeResource = {
+        id: node.id,
+        name: node.name,
+        scenario_id: automationId,
+        x: node.x,
+        y: node.y,
+        type: 'ABN_NODE'
+      }
+    } else if (isEndNode(node)) {
+      scenarioNodeResource = {
+        id: node.id,
+        name: node.name,
+        scenario_id: automationId,
+        x: node.x,
+        y: node.y,
+        type: 'END_NODE'
+      }
     }
     saveOrCreateScenarioNode = resourceId
       ? this._scenarioService.updateScenarioNode(
@@ -336,14 +397,15 @@ export class AutomationFormService implements IAutomationFormService {
     automationId: string,
     customEdgeData: CustomEdgeResource,
   ) => {
-    return customEdgeData.edgeResource && customEdgeData.edgeResource.id
+
+    return customEdgeData.edgeResource && customEdgeData.edgeResource.id && !isFakeId(customEdgeData.edgeResource.id)
       ? this._scenarioService.updateScenarioEdge(
           automationId,
           customEdgeData.edgeResource.id,
           customEdgeData.edgeResource,
         )
       : this._scenarioService.createScenarioEdge(automationId, {
-          ...customEdgeData.edgeResource,
+          ..._.omit(customEdgeData.edgeResource, ['id']),
           scenario_id: automationId,
           source_id: customEdgeData.source_id,
           target_id: customEdgeData.target_id,
@@ -355,75 +417,12 @@ export class AutomationFormService implements IAutomationFormService {
     formData: DisplayCampaignAutomationFormData,
     initialFormData: DisplayCampaignAutomationFormData = INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
     campaignId?: string,
-  ): Promise<{ ad_group_id: string; campaign_id: string }> => {
-    let createOrUpdateCampaignPromise;
+  ): Promise<{ ad_group_id?: string; campaign_id: string }> => {
 
-    if (campaignId) {
-      createOrUpdateCampaignPromise = DisplayCampaignService.updateCampaign(
-        campaignId,
-        formData.campaign,
-      );
-    } else {
-      createOrUpdateCampaignPromise = DisplayCampaignService.createCampaign({
-        ...formData.campaign,
-        organisation_id: organisationId,
-      });
-    }
+    return this._displayCampaignFormService
+      .saveCampaign(organisationId, formData, initialFormData)
+      .then(res => DisplayCampaignService.getAdGroups(res).then(r => ({ campaign_id: res, ad_group_id: r && r.data.length ? r.data[0].id : undefined})))
 
-    return createOrUpdateCampaignPromise.then(savedCampaignRes => {
-      const savedCampaignId = savedCampaignRes.data.id;
-
-      updateBidOptimizer(formData);
-
-      let createOrUpdateAdGroupPromise;
-      if (formData.adGroup.id) {
-        createOrUpdateAdGroupPromise = DisplayCampaignService.updateAdGroup(
-          savedCampaignId,
-          formData.adGroup.id,
-          formData.adGroup,
-        );
-      } else {
-        createOrUpdateAdGroupPromise = DisplayCampaignService.createAdGroup(
-          savedCampaignId,
-          formData.adGroup,
-        );
-      }
-
-      return createOrUpdateAdGroupPromise.then(res => {
-        const adGroupId = res.data.id;
-
-        const tasks: Task[] = [];
-
-        tasks.push(
-          ...getAdTasks(
-            organisationId,
-            savedCampaignId,
-            adGroupId,
-            formData.adFields,
-            initialFormData.adFields,
-          ),
-          ...getLocationTasks(
-            savedCampaignId,
-            adGroupId,
-            formData.locationFields,
-            initialFormData.locationFields,
-          ),
-          ...getInventoryCatalogTask(
-            savedCampaignId,
-            adGroupId,
-            formData.inventoryCatalFields,
-            initialFormData.inventoryCatalFields,
-          ),
-        );
-
-        return executeTasksInSequence(tasks).then(() => {
-          return {
-            ad_group_id: adGroupId,
-            campaign_id: savedCampaignId,
-          };
-        });
-      });
-    });
   };
 
   saveSubEmailCampaign = (
@@ -469,23 +468,4 @@ export class AutomationFormService implements IAutomationFormService {
       });
     });
   };
-}
-
-function updateBidOptimizer(
-  adGroupFormData: DisplayCampaignAutomationFormData,
-) {
-  const bidOptimizer =
-    adGroupFormData.bidOptimizerFields[0] &&
-    adGroupFormData.bidOptimizerFields[0].model;
-  if (bidOptimizer) {
-    adGroupFormData.adGroup.bid_optimizer_id = bidOptimizer.bid_optimizer_id;
-    adGroupFormData.adGroup.bid_optimization_objective_type =
-      bidOptimizer.bid_optimization_objective_type;
-    adGroupFormData.adGroup.bid_optimization_objective_value =
-      bidOptimizer.bid_optimization_objective_value;
-  } else {
-    adGroupFormData.adGroup.bid_optimizer_id = null;
-    adGroupFormData.adGroup.bid_optimization_objective_type = null;
-    adGroupFormData.adGroup.bid_optimization_objective_value = null;
-  }
 }

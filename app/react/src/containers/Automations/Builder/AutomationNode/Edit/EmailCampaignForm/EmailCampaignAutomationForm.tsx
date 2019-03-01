@@ -85,7 +85,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
     const senderInformation = {
       id: 'senderInformation',
       title: localMessages.sectionSenderInformationTitle,
-      component: <BlastFormSection small={true} />,
+      component: <BlastFormSection small={true} fieldName={'blastFields[0].model.blast'} />,
     };
 
     const emailTemplate = {
@@ -93,7 +93,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
       title: localMessages.sectionSenderInformationTitle,
       component: (
         <BlastTemplateSectionFieldArray
-          name="templateFields"
+          name="blastFields[0].model.templateFields"
           component={TemplateFormSection}
           formChange={change}
           rerenderOnEveryChange={true}

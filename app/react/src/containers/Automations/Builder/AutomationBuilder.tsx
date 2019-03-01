@@ -62,7 +62,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.registerNodeFactory(
       new AutomationNodeFactory(
         this.getTreeNodeOperations(),
-        this.props.updateQueryNode,
+        props.updateQueryNode,
         this.lockInteraction,
       ),
     );
@@ -131,7 +131,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       this.startAutomationTree(automationTreeData, model);
       this.engine.setDiagramModel(model);
       this.engine.repaintCanvas();
-    }, 500);
+    }, 10);
   }
 
   addNode = (
@@ -139,9 +139,9 @@ class AutomationBuilder extends React.Component<Props, State> {
     childNodeId: string,
     node: ScenarioNodeShape,
   ): StorylineNodeModel | void => {
-    const { automationTreeData } = this.props;
+    const { automationTreeData, updateAutomationData } = this.props;
     if (automationTreeData) {
-      return this.props.updateAutomationData(
+      updateAutomationData(
         new AddNodeOperation(idParentNode, childNodeId, node).execute(
           automationTreeData,
         ),
@@ -163,9 +163,9 @@ class AutomationBuilder extends React.Component<Props, State> {
     formData: AutomationFormDataType,
     initialFormData: AutomationFormDataType,
   ): StorylineNodeModel | void => {
-    const { automationTreeData } = this.props;
+    const { automationTreeData, updateAutomationData } = this.props;
     if (automationTreeData) {
-      return this.props.updateAutomationData(
+      return updateAutomationData(
         new UpdateNodeOperation(node, formData, initialFormData).execute(
           automationTreeData,
         ),

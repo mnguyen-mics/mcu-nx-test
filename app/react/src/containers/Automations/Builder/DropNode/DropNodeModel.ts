@@ -8,15 +8,19 @@ export default class DropNodeModel extends NodeModel {
   color: string;
   dropNode: DropNode;
 
-  constructor(dropNode: DropNode, height: number) {
+  constructor(dropNode?: DropNode, height?: number) {
     super('drop-node');
+
+    if (dropNode === undefined) {
+      throw new Error('Missing parameters');
+    }
 
     this.addPort(new SimplePortModel('center'));
     this.addPort(new SimplePortModel('right'));
 
     this.color = '#919191';
     this.dropNode = dropNode;
-    this.height = height;
+    this.height = height ? height : 80;
   }
 
   getPosition = () => {

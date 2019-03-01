@@ -113,9 +113,6 @@ container
   .bind<IComparmentService>(TYPES.ICompartmentService)
   .to(CompartmentService);
 container
-  .bind<IScenarioService>(TYPES.IScenarioService)
-  .to(ScenarioService);
-container
   .bind<IAutomationFormService>(TYPES.IAutomationFormService)
   .to(AutomationFormService);
 container.bind<IQueryService>(TYPES.IQueryService).to(QueryService);

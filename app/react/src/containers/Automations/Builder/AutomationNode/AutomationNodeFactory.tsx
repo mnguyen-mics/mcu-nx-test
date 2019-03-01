@@ -2,8 +2,7 @@ import * as React from 'react';
 import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
 import AutomationNodeWidget from './AutomationNodeWidget';
 import AutomationNodeModel from './AutomationNodeModel';
-import { StorylineNodeModel, TreeNodeOperations } from '../domain';
-import { INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA } from './Edit/domain';
+import { TreeNodeOperations } from '../domain';
 
 export default class AutomationNodeFactory extends AbstractNodeFactory<
   AutomationNodeModel
@@ -40,25 +39,6 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
   }
 
   getNewInstance(initialConfig?: any): AutomationNodeModel {
-    const emptyNode: StorylineNodeModel = {
-      node: {
-        id: '1',
-        name: 'begin node',
-        scenario_id: '1',
-        type: 'DISPLAY_CAMPAIGN',
-        campaign_id: 'string',
-        ad_group_id: 'string',
-        formData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
-        initialFormData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
-      },
-      out_edges: [],
-    };
-    return new AutomationNodeModel(
-      '1162',
-      emptyNode,
-      'User belongs to ### segment',
-      '#2ecc71',
-      'plus',
-    );
+    return new AutomationNodeModel();
   }
 }

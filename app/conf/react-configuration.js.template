@@ -14,6 +14,7 @@
     'campaignsSettings.email_routers',
     'campaignsSettings.recommenders',
     'automations.list',
+    'automations.builder',
     'creatives.display',
     'creatives.native',
     'creatives.email',

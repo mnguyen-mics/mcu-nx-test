@@ -15,6 +15,7 @@ import {
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
+import { generateFakeId } from '../../../utils/FakeIdHelper';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -56,6 +57,8 @@ export interface NodeOperation {
   execute(automationData: StorylineNodeModel): StorylineNodeModel;
 }
 
+// ADD NODE
+
 export class AddNodeOperation implements NodeOperation {
   parentNodeId: string;
   childNodeId: string;
@@ -72,11 +75,12 @@ export class AddNodeOperation implements NodeOperation {
   }
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
-    return this.iterateData(
+    const result = this.iterateData(
       automationData,
       this.parentNodeId,
       this.childNodeId,
     );
+    return result
   }
 
   iterateData(
@@ -87,19 +91,19 @@ export class AddNodeOperation implements NodeOperation {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
         if (child.node.id === childNodeId) {
-          const inEdgeId: string = cuid();
+          const inEdgeId: string = generateFakeId();
           const childNode: StorylineNodeModel = {
             node: child.node,
             in_edge: {
               id: inEdgeId,
               source_id: this.node.id,
               target_id: child.node.id,
-              handler: 'GOAL',
+              handler: 'OUT',
               scenario_id: child.in_edge!.scenario_id,
             },
             out_edges: child.out_edges,
           };
-          const newId = cuid();
+          const newId = generateFakeId();
 
           const generateNewEmptyOutEdges = (
             branchNumber: number,
@@ -109,15 +113,15 @@ export class AddNodeOperation implements NodeOperation {
               const emptyNode: StorylineNodeModel = {
                 node: {
                   id: newId,
-                  name: 'Exit from automation',
-                  scenario_id: '1',
-                  type: 'GOAL',
+                  name: 'Exit automation',
+                  scenario_id: '',
+                  type: 'END_NODE',
                 },
                 in_edge: {
-                  id: cuid(),
+                  id: generateFakeId(),
                   source_id: this.node.id,
                   target_id: newId,
-                  handler: 'GOAL',
+                  handler: 'OUT',
                   scenario_id: child.in_edge!.scenario_id,
                 },
                 out_edges: [],
@@ -139,11 +143,11 @@ export class AddNodeOperation implements NodeOperation {
           const newNode: StorylineNodeModel = {
             node: this.node,
             in_edge: {
-              id: '',
+              id: generateFakeId(),
               source_id: parentNodeId,
               target_id: this.node.id,
               handler: 'ON_VISIT',
-              scenario_id: '1',
+              scenario_id: '',
             },
             out_edges: newOutEdges,
           };
@@ -161,6 +165,9 @@ export class AddNodeOperation implements NodeOperation {
     };
   }
 }
+
+
+// DELETE NODE
 
 export class DeleteNodeOperation implements NodeOperation {
   idNodeToBeDeleted: string;
@@ -186,9 +193,9 @@ export class DeleteNodeOperation implements NodeOperation {
           const newNode: StorylineNodeModel = {
             node: {
               id: child.node.id,
-              name: 'END NODE',
-              scenario_id: '1',
-              type: 'FAILURE',
+              name: 'Exit Automation',
+              scenario_id: '',
+              type: 'END_NODE',
             },
             in_edge: child.in_edge,
             out_edges: [],
@@ -216,6 +223,8 @@ export class DeleteNodeOperation implements NodeOperation {
     };
   }
 }
+
+// UPDATE NODE
 
 export class UpdateNodeOperation implements NodeOperation {
   node: AutomationNodeShape;
@@ -325,14 +334,14 @@ export class UpdateNodeOperation implements NodeOperation {
         node: {
           id: newId,
           name: 'Exit from automation',
-          scenario_id: '1',
-          type: 'GOAL',
+          scenario_id: '',
+          type: 'END_NODE',
         },
         in_edge: {
           id: cuid(),
           source_id: this.node.id,
           target_id: newId,
-          handler: 'GOAL',
+          handler: 'OUT',
           scenario_id: child.in_edge!.scenario_id,
         },
         out_edges: [],
@@ -388,7 +397,7 @@ export const node4: ScenarioNodeShape = {
   id: '2',
   name: 'Exit automation',
   scenario_id: '',
-  type: 'GOAL',
+  type: 'END_NODE',
 };
 
 export const storylineNodeData: ScenarioNodeShape[] = [beginNode, node4];
@@ -434,6 +443,11 @@ export function generateNodeProperties(
         branchNumber: node.branch_number,
       };
     case 'GOAL':
+      return {
+        iconType: 'check',
+        color: '#18b577',
+      };
+    case 'END_NODE':
       return {
         iconType: 'check',
         color: '#18b577',

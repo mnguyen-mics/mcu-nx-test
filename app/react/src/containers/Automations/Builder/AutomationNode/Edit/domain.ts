@@ -8,28 +8,17 @@ import {
   EndNodeResource,
   EmailCampaignNodeResource,
 } from '../../../../../models/automations/automations';
-import {
-  LocationFieldModel,
-  AdFieldModel,
-  BidOptimizerFieldModel,
-  InventoryCatalFieldsModel,
-} from '../../../../Campaigns/Display/Edit/AdGroup/domain';
-import { AdGroupResource, DisplayCampaignResource } from '../../../../../models/campaign/display';
+
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
 import { DefaultAutomationFormProps } from './DefaultForm/DefaultAutomationForm';
 import { DisplayCampaignAutomationFormProps } from './DisplayCampaignForm/DisplayCampaignAutomationForm';
 import {
-  TemplateFieldModel,
-  ConsentFieldModel,
-  BlastFieldModel,
-  RouterFieldModel,
+  EmailCampaignFormData,
 } from '../../../../Campaigns/Email/Edit/domain';
-import {
-  EmailBlastResource,
-  EmailBlastCreateRequest,
-  EmailCampaignResource,
-} from '../../../../../models/campaign/email';
+
 import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampaignAutomationForm';
+import { generateFakeId } from '../../../../../utils/FakeIdHelper';
+import { DisplayCampaignFormData } from '../../../../Campaigns/Display/Edit/domain';
 
 export interface DefaultFormData {
   name: string;
@@ -40,15 +29,10 @@ export interface ABNFormData extends DefaultFormData {
 }
 
 export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
-  name: '',
-  locationFields: [],
-  adGroup: {},
-  adFields: [],
-  bidOptimizerFields: [],
-  inventoryCatalFields: [],
+  name: 'Display Advertising',
   campaign: {
     organisation_id: '',
-    name: '',
+    name: 'Display Advertising',
     editor_version_id: '11',
     currency_code: 'EUR',
     technical_name: '',
@@ -63,26 +47,54 @@ export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationF
     model_version: 'V2017_09',
     type: 'DISPLAY',
   },
+  adGroupFields: [{
+    key: generateFakeId(),
+    model: {
+      adGroup: {
+        total_impression_capping: 10,
+        max_budget_period: 'DAY',
+        targeted_operating_systems: 'ALL',
+        targeted_medias: 'WEB',
+        targeted_devices: 'ALL',
+        targeted_connection_types: 'ALL',
+        targeted_browser_families: 'ALL',
+      },
+      adFields: [],
+      bidOptimizerFields: [],
+      inventoryCatalFields: [],
+      locationFields: [],
+      segmentFields: []
+    }
+  }],
+  goalFields: []
 };
 
 export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormData = {
-  name: '',
-  templateFields: [],
-  consentFields: [],
-  blastFields: [],
+  name: 'Send Email',
+  
+  blastFields: [
+    {
+      key: generateFakeId(),
+      model: {
+        blast: {
+          blast_name: '',
+          subject_line: '',
+          from_email: '',
+          from_name: '',
+          reply_to: '',
+          send_date: 0,
+          batch_size: 0,
+        },
+        templateFields: [],
+        consentFields: [],
+        segmentFields: []
+      },
+    }
+  ],
   routerFields: [],
-  blast: {
-    blast_name: '',
-    subject_line: '',
-    from_email: '',
-    from_name: '',
-    reply_to: '',
-    send_date: 0,
-    batch_size: 0,
-  },
   campaign: {
     organisation_id: '',
-    name: '',
+    name: 'Send Email',
     editor_versionid: '17',
     editor_version_value: '',
     editor_groupid: '',
@@ -93,22 +105,10 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
   },
 };
 
-export interface DisplayCampaignAutomationFormData extends DefaultFormData {
-  locationFields: LocationFieldModel[];
-  adGroup: Partial<AdGroupResource>;
-  adFields: AdFieldModel[];
-  bidOptimizerFields: BidOptimizerFieldModel[];
-  inventoryCatalFields: InventoryCatalFieldsModel[];
-  campaign: Partial<DisplayCampaignResource>;
+export interface DisplayCampaignAutomationFormData extends DefaultFormData, DisplayCampaignFormData {
 }
 
-export interface EmailCampaignAutomationFormData extends DefaultFormData {
-  templateFields: TemplateFieldModel[];
-  consentFields: ConsentFieldModel[];
-  blastFields: BlastFieldModel[];
-  routerFields: RouterFieldModel[];
-  blast: EmailBlastCreateRequest | EmailBlastResource;
-  campaign: Partial<EmailCampaignResource>;
+export interface EmailCampaignAutomationFormData extends DefaultFormData, EmailCampaignFormData {
 }
 
 export type AutomationFormDataType =
@@ -157,6 +157,7 @@ export function isQueryInputNode(
   );
 }
 
+
 export function isEndNode(node: AutomationNodeShape): node is EndNodeResource {
-  return node.type === 'GOAL' || node.type === 'FAILURE';
+  return node.type === 'GOAL' || node.type === 'FAILURE' || node.type === 'END_NODE';
 }

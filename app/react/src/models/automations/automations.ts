@@ -88,7 +88,7 @@ export interface PluginNodeResource extends ScenarioNodeResource {
 }
 
 export interface EndNodeResource extends ScenarioNodeResource {
-  type: 'FAILURE' | 'GOAL';
+  type: 'FAILURE' | 'GOAL' | 'END_NODE';
 }
 
 export interface StartNodeResource extends ScenarioNodeResource {
@@ -119,7 +119,7 @@ export interface ScenarioEdgeResource {
   scenario_id: string;
 }
 
-export type EdgeHandler = 'ON_VISIT' | 'ON_GOAL' | 'GOAL';
+export type EdgeHandler = 'ON_VISIT' | 'ON_GOAL' | 'OUT';
 
 export interface StorylineNodeResource {
   node: ScenarioNodeShape;

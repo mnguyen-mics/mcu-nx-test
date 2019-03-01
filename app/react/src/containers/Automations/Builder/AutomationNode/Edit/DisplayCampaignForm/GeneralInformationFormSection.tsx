@@ -79,20 +79,6 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
         <div className="automation-node-form">
           <FormInputField
-            name="name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(formMessages.automationNodeName),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(formMessages.automationNodeName),
-            }}
-            small={true}
-          />
-
-          <FormInputField
             name="campaign.name"
             component={FormInput}
             validate={[isRequired]}
@@ -243,7 +229,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           />
 
           <FormInputField
-            name="adGroup.max_bid_price"
+            name="adGroupFields[0].model.adGroup.max_bid_price"
             component={FormInput}
             validate={[isValidFloat, isNotZero, isRequired]}
             formItemProps={{

@@ -94,7 +94,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       title: messages.sectionTitleLocationTargeting,
       component: (
         <LocationTargetingFieldArray
-          name="locationFields"
+          name="adGroupFields[0].model.locationFields"
           small={true}
           component={LocationTargetingFormSection}
           {...genericFieldArrayProps}
@@ -106,9 +106,10 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       title: messages.sectionTitleDevice,
       component: (
         <DeviceFormSection
+          name="adGroupFields[0].model.adGroup"
           formChange={this.props.change}
           small={true}
-          initialValues={this.props.initialValues.adGroup}
+          initialValues={this.props.initialValues.adGroupFields && this.props.initialValues.adGroupFields[0].model.adGroup}
         />
       ),
     };
@@ -118,7 +119,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       title: messages.sectionTitlePlacement,
       component: (
         <InventoryCatalogFieldArray
-          name="inventoryCatalFields"
+          name="adGroupFields[0].model.inventoryCatalFields"
           component={InventoryCatalogFormSection}
           small={true}
           {...genericFieldArrayProps}
@@ -131,7 +132,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       title: messages.sectionTitleAds,
       component: (
         <AdFieldArray
-          name="adFields"
+          name="adGroupFields[0].model.adFields"
           component={AdFormSection}
           {...genericFieldArrayProps}
         />
@@ -143,7 +144,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       title: messages.sectionTitleOptimizer,
       component: (
         <BidOptimizerFieldArray
-          name="bidOptimizerFields"
+          name="adGroupFields[0].model.bidOptimizerFields"
           component={BidOptimizerFormSection}
           {...genericFieldArrayProps}
         />
