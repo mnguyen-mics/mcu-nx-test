@@ -354,6 +354,9 @@ export class AutomationFormService implements IAutomationFormService {
         y: node.y,
         type: 'QUERY_INPUT',
         query_id: queryId,
+        evaluation_mode: 'LIVE',
+        evaluation_period: null,
+        evaluation_period_unit: null
       };
       resourceId = node.query_id;
     } else if (isAbnNode(node)) {
@@ -463,7 +466,11 @@ export class AutomationFormService implements IAutomationFormService {
         ),
       );
 
-      return executeTasksInSequence(tasks).then(() => {
+      return executeTasksInSequence(tasks)
+      .then(() => EmailCampaignService.updateEmailCampaign(savedCampaignId, { id: savedCampaignId, status: 'ACTIVE' }))
+      .then(() => EmailCampaignService.getBlasts(savedCampaignId))
+      .then((blastData) => Promise.all(blastData.data.map(blast => EmailCampaignService.updateBlast(savedCampaignId, blast.id, { id: blast.id, status: 'SCENARIO_ACTIVATED' }))))
+      .then(() => {
         return savedCampaignId;
       });
     });

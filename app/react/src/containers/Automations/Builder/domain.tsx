@@ -146,7 +146,7 @@ export class AddNodeOperation implements NodeOperation {
               id: generateFakeId(),
               source_id: parentNodeId,
               target_id: this.node.id,
-              handler: 'ON_VISIT',
+              handler: this.node.type === 'DISPLAY_CAMPAIGN' ? 'ON_VISIT' : 'OUT',
               scenario_id: '',
             },
             out_edges: newOutEdges,
