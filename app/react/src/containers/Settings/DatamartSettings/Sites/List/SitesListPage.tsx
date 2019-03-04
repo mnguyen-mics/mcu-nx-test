@@ -29,6 +29,10 @@ import { connect } from 'react-redux';
 
 const { Content } = Layout;
 
+export interface SitesListPageProps {
+  datamartId?: string;
+}
+
 interface SiteListState {
   sites: ChannelResource[];
   totalSites: number;
@@ -40,7 +44,8 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = RouteComponentProps<{ organisationId: string }> &
+type Props = SitesListPageProps &
+  RouteComponentProps<{ organisationId: string }> &
   InjectedDatamartProps &
   MapStateToProps &
   InjectedNotificationProps;
@@ -68,13 +73,14 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       },
       location: { search },
       datamart,
+      datamartId,
     } = this.props;
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
-    const datamartId = filter.datamartId ? filter.datamartId : datamart.id;
+    const calculatedDatamartId = datamartId ? datamartId : (filter.datamartId ? filter.datamartId : datamart.id);
     this.setState({
       isFetchingSites: true,
     });
-    this.fetchSites(organisationId, datamartId, this.state.filter).then(() => {
+    this.fetchSites(organisationId, calculatedDatamartId, this.state.filter).then(() => {
       this.setState({
         isFetchingSites: false,
       });
@@ -87,6 +93,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       match: {
         params: { organisationId },
       },
+      datamartId,
     } = this.props;
 
     const {
@@ -94,20 +101,23 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       match: {
         params: { organisationId: nextOrganisationId },
       },
+      datamartId: nextDatamartId,
     } = nextProps;
+
     if (
       nextOrganisationId !== organisationId ||
-      !compareSearches(search, nextSearch)
+      !compareSearches(search, nextSearch) ||
+      datamartId !== nextDatamartId
     ) {
       const nextFilter = parseSearch(
         nextSearch,
         this.getSearchSetting(nextOrganisationId),
       );
-      const datamartId = nextFilter.datamartId;
+      const calculatedDatamartId = datamartId ? datamartId : nextFilter.datamartId;
       this.setState({
         isFetchingSites: true,
       });
-      this.fetchSites(organisationId, datamartId, this.state.filter).then(
+      this.fetchSites(organisationId, calculatedDatamartId, this.state.filter).then(
         () => {
           this.setState({
             isFetchingSites: false,
@@ -126,12 +136,14 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       match: {
         params: { organisationId },
       },
+      location,
       history,
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/datamart/${site.datamart_id}/sites/${site.id}/edit`,
-    );
+    history.push({
+      pathname: `/v2/o/${organisationId}/settings/datamart/${site.datamart_id}/sites/${site.id}/edit`,
+      state: { from: `${location.pathname}${location.search}`}
+    });
   };
 
   handleFilterChange = (newFilter: Filter) => {
@@ -140,6 +152,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         params: { organisationId },
       },
       datamart,
+      datamartId,
       location: {
         search
       }
@@ -149,7 +162,8 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       search,
       this.getSearchSetting(organisationId),
     );
-    this.fetchSites(organisationId, filters.datamartId ? filters.datamartId : datamart.id, newFilter);
+    const calculatedDatamartId = datamartId ? datamartId : (filters.datamartId ? filters.datamartId : datamart.id);
+    this.fetchSites(organisationId, calculatedDatamartId, newFilter);
   };
 
   fetchSites = (organisationId: string, datamartId: string, filter: Filter) => {
@@ -232,6 +246,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       },
       location: { search },
       datamart,
+      datamartId,
       workspace,
     } = this.props;
 
@@ -280,7 +295,9 @@ class SitesListPage extends React.Component<Props, SiteListState> {
           });
         },
       };
-      filtersOptions.push(datamartFilter);
+      if (!datamartId) {
+        filtersOptions.push(datamartFilter);
+      }
     }
 
     return (
@@ -318,7 +335,7 @@ const mapStateToProps = (state: any) => ({
   workspace: getWorkspace(state),
 });
 
-export default compose<Props, {}>(
+export default compose<Props, SitesListPageProps>(
   withRouter,
   injectDatamart,
   injectNotifications,
