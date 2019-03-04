@@ -9,10 +9,11 @@ import {
 import messages from './messages';
 import { ChannelResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import { ButtonStyleless } from '../../../../../components';
 
 export interface MobileApplicationsTableProps {
   isFetchingMobileApplications: boolean;
@@ -45,6 +46,8 @@ class MobileApplicationsTable extends React.Component<Props> {
       match: {
         params: { organisationId },
       },
+      location,
+      history,
       filtersOptions
     } = this.props;
 
@@ -69,15 +72,21 @@ class MobileApplicationsTable extends React.Component<Props> {
         intlMessage: messages.mobileApplicationName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: ChannelResource) => (
-          <Link
-            to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/mobile_application/${
-              record.id
-            }/edit`}
-          >
-            {text}
-          </Link>
-        ),
+        render: (text: string, record: ChannelResource) => {
+
+          const handleEditSite = () => {
+            history.push({
+              pathname: `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/mobile_application/${record.id}/edit`,
+              state: { from: `${location.pathname}${location.search}` }
+            });
+          }
+
+          return (
+            <ButtonStyleless onClick={handleEditSite}>
+              {text}
+            </ButtonStyleless>
+          )
+        },
       },
       {
         intlMessage: messages.mobileApplicationToken,
@@ -126,16 +135,16 @@ class MobileApplicationsTable extends React.Component<Props> {
         className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (
-      <TableViewFilters
-        columns={dataColumns}
-        actionsColumnsDefinition={actionColumns}
-        searchOptions={searchOptions}
-        dataSource={dataSource}
-        loading={isFetchingMobileApplications}
-        pagination={pagination}
-        filtersOptions={filtersOptions}
-      />
-    );
+        <TableViewFilters
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
+          searchOptions={searchOptions}
+          dataSource={dataSource}
+          loading={isFetchingMobileApplications}
+          pagination={pagination}
+          filtersOptions={filtersOptions}
+        />
+      );
   }
 }
 

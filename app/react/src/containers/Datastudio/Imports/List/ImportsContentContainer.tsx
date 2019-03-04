@@ -191,16 +191,18 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
   onClickEdit = (imp: Import) => {
     const {
       history,
+      location,
       match: {
         params: { organisationId },
       },
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/datastudio/datamart/${imp.datamart_id}/imports/${
+    history.push({
+     pathname: `/v2/o/${organisationId}/datastudio/datamart/${imp.datamart_id}/imports/${
       imp.id
       }/edit`,
-    );
+      state: { from: `${location.pathname}${location.search}`}
+    });
   };
 
   render() {

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
 import {
   EmptyTableView,
   TableViewFilters,
@@ -13,6 +12,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import { ButtonStyleless } from '../../../../../components';
 
 export interface SitesTableProps {
   isFetchingSites: boolean;
@@ -31,6 +31,7 @@ type Props = SitesTableProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class SitesTable extends React.Component<Props> {
+
   render() {
     const {
       isFetchingSites,
@@ -45,6 +46,8 @@ class SitesTable extends React.Component<Props> {
       match: {
         params: { organisationId },
       },
+      location,
+      history,
       filtersOptions
     } = this.props;
 
@@ -69,15 +72,21 @@ class SitesTable extends React.Component<Props> {
         intlMessage: messages.siteName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: ChannelResource) => (
-          <Link
-            to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/sites/${
-              record.id
-            }/edit`}
-          >
-            {text}
-          </Link>
-        ),
+        render: (text: string, record: ChannelResource) => {
+
+          const handleEditSite = () => {
+            history.push({
+              pathname: `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/sites/${record.id}/edit`,
+              state: { from: `${location.pathname}${location.search}` }
+            });
+          }
+
+          return (
+            <ButtonStyleless onClick={handleEditSite}>
+              {text}
+            </ButtonStyleless>
+          )
+        },
       },
       {
         intlMessage: messages.siteToken,
@@ -126,16 +135,16 @@ class SitesTable extends React.Component<Props> {
         className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (
-      <TableViewFilters
-        columns={dataColumns}
-        actionsColumnsDefinition={actionColumns}
-        searchOptions={searchOptions}
-        dataSource={dataSource}
-        loading={isFetchingSites}
-        pagination={pagination}
-        filtersOptions={filtersOptions}
-      />
-    );
+        <TableViewFilters
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
+          searchOptions={searchOptions}
+          dataSource={dataSource}
+          loading={isFetchingSites}
+          pagination={pagination}
+          filtersOptions={filtersOptions}
+        />
+      );
   }
 }
 

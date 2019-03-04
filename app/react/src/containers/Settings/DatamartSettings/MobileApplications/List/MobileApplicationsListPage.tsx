@@ -172,14 +172,16 @@ class MobileApplicationsListPage extends React.Component<
       match: {
         params: { organisationId },
       },
+      location,
       history,
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/datamart/${mobileApplication.datamart_id}/mobile_application/${
+    history.push({
+      pathname: `/v2/o/${organisationId}/settings/datamart/${mobileApplication.datamart_id}/mobile_application/${
         mobileApplication.id
       }/edit`,
-    );
+      state: { from: `${location.pathname}${location.search}`}
+    });
   };
 
   handleFilterChange = (newFilter: Filter) => {
