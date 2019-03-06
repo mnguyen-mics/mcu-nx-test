@@ -80,7 +80,7 @@ const setRefreshToken = (refreshToken: string) => {
 
 const setRememberMe = ({ rememberMe }: { rememberMe: boolean }) => {
   LocalStorage.setItem({
-    [REMEMBER_ME]: rememberMe,
+    [REMEMBER_ME]: String(rememberMe),
   });
 };
 

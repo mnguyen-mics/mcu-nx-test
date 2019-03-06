@@ -1,4 +1,4 @@
-import { LocalStorage } from '../services/LocalStorage';
+import { LocalStorage } from '../services/LocalStorage.ts';
 
 // TODO test to do this local-storage operation in saga next to LOGOUT listener
 export default store => next => action => { // eslint-disable-line no-unused-vars
