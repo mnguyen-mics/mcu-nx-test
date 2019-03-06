@@ -70,6 +70,7 @@
     "@types/d3": "^4.13.1",
     "@types/geojson": "^7946.0.4",
     "@types/humps": "^1.1.2",
+    "@types/js-cookie": "^2.2.1",
     "@types/lodash": "^4.14.118",
     "@types/numeral": "0.0.22",
     "@types/papaparse": "^4.5.5",
