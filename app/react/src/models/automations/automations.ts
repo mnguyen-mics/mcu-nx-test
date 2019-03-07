@@ -38,12 +38,15 @@ export interface StorylineResource {
   begin_node_id: string;
 }
 
+export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT' | 'DROP_NODE' | 'START' // remove start
+
 export interface ScenarioNodeResource {
   id: string;
   name: string;
   scenario_id: string;
   x?: number;
   y?: number;
+  type: ScenarioNodeType;
 }
 
 export interface DisplayCampaignNodeResource extends ScenarioNodeResource {
@@ -88,7 +91,7 @@ export interface PluginNodeResource extends ScenarioNodeResource {
 }
 
 export interface EndNodeResource extends ScenarioNodeResource {
-  type: 'FAILURE' | 'GOAL' | 'END_NODE';
+  type: 'END_NODE';
 }
 
 export interface StartNodeResource extends ScenarioNodeResource {

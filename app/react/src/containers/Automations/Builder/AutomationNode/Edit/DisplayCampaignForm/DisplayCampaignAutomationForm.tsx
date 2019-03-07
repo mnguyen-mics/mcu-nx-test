@@ -53,6 +53,7 @@ export interface DisplayCampaignAutomationFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   node: ScenarioNodeShape;
+  disabled?: boolean;
 }
 
 interface MapStateToProps {
@@ -70,11 +71,12 @@ DisplayCampaignAutomationFormData,
 
 class DisplayCampaignAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const { change } = this.props;
+    const { change, disabled } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
       rerenderOnEveryChange: true,
+      disabled: disabled
     };
 
     const sections: McsFormSection[] = [];
@@ -85,6 +87,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       component: (
         <GeneralInformationFormSection
           initialValues={this.props.initialValues}
+          disabled={disabled}
         />
       ),
     };
@@ -109,6 +112,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
           name="adGroupFields[0].model.adGroup"
           formChange={this.props.change}
           small={true}
+          disabled={!!disabled}
           initialValues={this.props.initialValues.adGroupFields && this.props.initialValues.adGroupFields[0].model.adGroup}
         />
       ),
@@ -134,6 +138,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
         <AdFieldArray
           name="adGroupFields[0].model.adFields"
           component={AdFormSection}
+          small={true}
           {...genericFieldArrayProps}
         />
       ),
@@ -146,6 +151,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
         <BidOptimizerFieldArray
           name="adGroupFields[0].model.bidOptimizerFields"
           component={BidOptimizerFormSection}
+          small={true}
           {...genericFieldArrayProps}
         />
       ),

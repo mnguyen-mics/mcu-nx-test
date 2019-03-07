@@ -66,6 +66,7 @@ interface State {
 interface GeneralInformationFormSectionProps {
   initialValues: Partial<EmailCampaignAutomationFormData>;
   organisationId: string;
+  disabled?: boolean;
 }
 
 type Props = GeneralInformationFormSectionProps &
@@ -106,6 +107,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      disabled
     } = this.props;
 
     return (
@@ -131,6 +133,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.campaignFormPlaceholderCampaignName,
               ),
+              disabled: !!disabled
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
@@ -159,6 +162,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               title: formatMessage(formMessages.emailEditorRouterSelectHelper),
             }}
             small={true}
+            disabled={!!disabled}
           />
 
           <FormSelectField
@@ -173,6 +177,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               notFoundContent: this.state.fetchingConsents ? (
                 <Spin size="small" />
               ) : null,
+              disabled: !!disabled
             }}
             options={this.state.consents.map(consent => ({
               value: consent.id,
@@ -184,6 +189,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               ),
             }}
             small={true}
+            disabled={!!disabled}
           />
         </div>
       </div>

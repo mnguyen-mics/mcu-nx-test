@@ -32,20 +32,31 @@ import AutomationLinkModel from './Link/AutomationLinkModel';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 import { AutomationFormDataType } from './AutomationNode/Edit/domain';
 
-export interface AutomationBuilderProps {
+export interface AutomationBuilderBaseProps {
   datamartId: string;
   scenarioId: string;
   automationTreeData?: StorylineNodeModel;
+  viewer: boolean
+}
+
+export interface AutomationBuilderVisualizerProps extends AutomationBuilderBaseProps {
+  viewer: true;
+}
+
+export interface AutomationBuilderEditorProps extends AutomationBuilderBaseProps {
+  viewer: false;
   updateAutomationData: (
     automationData: StorylineNodeModel,
   ) => StorylineNodeModel;
   updateQueryNode: (nodeId: string, queryText: string) => void;
-  editMode: boolean;
 }
 
+export type AutomationBuilderProps = AutomationBuilderEditorProps | AutomationBuilderVisualizerProps;
+
+
 interface State {
-  viewNodeSelector: boolean;
   locked: boolean;
+  viewNodeSelector: boolean;
 }
 
 type Props = AutomationBuilderProps;
@@ -62,15 +73,18 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.registerNodeFactory(
       new AutomationNodeFactory(
         this.getTreeNodeOperations(),
-        props.updateQueryNode,
         this.lockInteraction,
+        props.datamartId,
+        props.viewer,
+        !props.viewer ? props.updateQueryNode : undefined,
       ),
     );
+   
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
-      viewNodeSelector: props.editMode,
       locked: false,
+      viewNodeSelector: true
     };
   }
 
@@ -139,8 +153,8 @@ class AutomationBuilder extends React.Component<Props, State> {
     childNodeId: string,
     node: ScenarioNodeShape,
   ): StorylineNodeModel | void => {
-    const { automationTreeData, updateAutomationData } = this.props;
-    if (automationTreeData) {
+    const { automationTreeData, updateAutomationData, viewer } = this.props as AutomationBuilderEditorProps;
+    if (automationTreeData && !viewer) {
       updateAutomationData(
         new AddNodeOperation(idParentNode, childNodeId, node).execute(
           automationTreeData,
@@ -150,9 +164,9 @@ class AutomationBuilder extends React.Component<Props, State> {
   };
 
   deleteNode = (idNodeToBeDeleted: string): StorylineNodeModel | void => {
-    const { automationTreeData } = this.props;
-    if (automationTreeData) {
-      return this.props.updateAutomationData(
+    const { automationTreeData, updateAutomationData, viewer } = this.props as AutomationBuilderEditorProps;
+    if (automationTreeData && !viewer) {
+      return updateAutomationData(
         new DeleteNodeOperation(idNodeToBeDeleted).execute(automationTreeData),
       );
     }
@@ -163,8 +177,8 @@ class AutomationBuilder extends React.Component<Props, State> {
     formData: AutomationFormDataType,
     initialFormData: AutomationFormDataType,
   ): StorylineNodeModel | void => {
-    const { automationTreeData, updateAutomationData } = this.props;
-    if (automationTreeData) {
+    const { automationTreeData, updateAutomationData, viewer } = this.props as AutomationBuilderEditorProps;
+    if (automationTreeData && !viewer) {
       return updateAutomationData(
         new UpdateNodeOperation(node, formData, initialFormData).execute(
           automationTreeData,
@@ -263,6 +277,8 @@ class AutomationBuilder extends React.Component<Props, State> {
         generateNodeProperties(automationData.node).color,
         generateNodeProperties(automationData.node).iconType,
         generateNodeProperties(automationData.node).iconAnt,
+        undefined,
+        true
       );
       rootNode.root = true;
       rootNode.x = ROOT_NODE_POSITION.x;
@@ -286,12 +302,12 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   render() {
     const { viewNodeSelector } = this.state;
-    const { editMode } = this.props;
+    const { viewer } = this.props;
 
-    return (
+    let content = (
       <div className={`automation-builder`} ref={this.div}>
         <Col
-          span={viewNodeSelector || editMode ? 18 : 24}
+          span={viewNodeSelector ? 18 : 24}
           className={'diagram'}
         >
           <DiagramWidget
@@ -302,7 +318,7 @@ class AutomationBuilder extends React.Component<Props, State> {
             // allowCanvasTranslation={true}
             inverseZoom={true}
           />
-          {editMode && (
+         
             <div className="button-helpers top">
               <ButtonStyleless
                 onClick={this.onNodeSelectorClick}
@@ -311,7 +327,7 @@ class AutomationBuilder extends React.Component<Props, State> {
                 <McsIcon
                   type={'chevron-right'}
                   style={
-                    viewNodeSelector || editMode
+                    viewNodeSelector
                       ? {}
                       : {
                           transform: 'rotate(180deg)',
@@ -321,16 +337,38 @@ class AutomationBuilder extends React.Component<Props, State> {
                 />{' '}
               </ButtonStyleless>
             </div>
-          )}
+          
         </Col>
         <Col
-          span={viewNodeSelector || editMode ? 6 : 24}
+          span={viewNodeSelector ? 6 : 24}
           className="available-nodes-visualizer"
         >
           <AvailableNodeVisualizer />
         </Col>
       </div>
-    );
+    )
+
+    if (viewer) {
+      content = (
+        <div className={`automation-builder`} ref={this.div}>
+        <Col
+          span={24}
+          className={'diagram'}
+        >
+          <DiagramWidget
+            diagramEngine={this.engine}
+            allowCanvasZoom={!this.state.locked}
+            allowCanvasTranslation={!this.state.locked}
+            // allowCanvasZoom={true}
+            // allowCanvasTranslation={true}
+            inverseZoom={true}
+          />
+        </Col>
+      </div>
+      )
+    }
+
+    return content;
   }
 }
 

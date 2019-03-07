@@ -9,6 +9,7 @@ import ObjectRenderer from '../../../../../../../containers/ObjectRenderer/Objec
 interface Props {
   locationFields: LocationFieldModel[];
   onClickOnRemove: (locationField: LocationFieldModel, index: number) => void;
+  disabled?: boolean;
 }
 
 class LocationSelectionRenderer extends React.Component<Props> {
@@ -22,6 +23,7 @@ class LocationSelectionRenderer extends React.Component<Props> {
     const {
       locationFields,
       onClickOnRemove,
+      disabled
     } = this.props;
 
     return (
@@ -34,7 +36,7 @@ class LocationSelectionRenderer extends React.Component<Props> {
         >
           {locationFields.map((locationField, index) => {
 
-            const handleOnClick = () => onClickOnRemove(locationField, index);
+            const handleOnClick = () => !!disabled ? undefined : onClickOnRemove(locationField, index);
             const iconType: McsIconType = locationField.model.exclude ? 'close-big' : 'check';
             const renderGeoname = (geoname: Geoname) => <span>{geoname.name}</span>;
 
@@ -50,6 +52,7 @@ class LocationSelectionRenderer extends React.Component<Props> {
                 <ButtonStyleless
                   className="close-button"
                   onClick={handleOnClick}
+                  disabled={!!disabled}
                 >
                   <McsIcon type="close" />
                 </ButtonStyleless>

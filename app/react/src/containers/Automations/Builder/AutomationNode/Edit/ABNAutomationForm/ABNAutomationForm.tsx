@@ -41,6 +41,7 @@ export interface ABNAutomationFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   node: ScenarioNodeShape;
+  disabled?: boolean;
 }
 
 interface MapStateToProps {
@@ -55,11 +56,13 @@ type Props = InjectedFormProps<ABNFormData, ABNAutomationFormProps> &
 
 class ABNAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
+    const { disabled } = this.props;
     const general = {
       id: 'general',
       title: localMessages.sectionGeneralTitle,
       component: (
         <GeneralInformationFormSection
+          disabled={disabled}
           initialValues={this.props.initialValues}
         />
       ),

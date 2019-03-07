@@ -20,7 +20,9 @@ import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface TemplateFormSectionProps extends ReduxFormChangeProps {}
+export interface TemplateFormSectionProps extends ReduxFormChangeProps {
+  disabled?: boolean
+}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<TemplateFieldModel> &
@@ -94,7 +96,7 @@ class TemplateFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { meta, intl: { formatMessage } } = this.props;
+    const { meta, intl: { formatMessage } ,disabled } = this.props;
 
     const showError = meta.error;
 
@@ -104,6 +106,7 @@ class TemplateFormSection extends React.Component<Props> {
           button={{
             message: formatMessage(messages.blastTemplateSelectionSelectButton),
             onClick: this.openCreativeCardSelector,
+            disabled: !!disabled
           }}
           subtitle={messages.emailBlastEditorStepSubTitleTemplateSelection}
           title={messages.emailBlastEditorStepTitleTemplateSelection}

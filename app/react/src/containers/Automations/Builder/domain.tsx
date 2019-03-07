@@ -242,7 +242,7 @@ export class UpdateNodeOperation implements NodeOperation {
   }
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
-    return this.iterateData(automationData, this.node.id);
+    return this.iterateData(automationData, this.node.id, true);
   }
 
   buildUpdatedNode(storylineNode: StorylineNodeModel): StorylineNodeModel {
@@ -354,7 +354,14 @@ export class UpdateNodeOperation implements NodeOperation {
   iterateData(
     automationData: StorylineNodeModel,
     id: string,
+    firstNode?: boolean
   ): StorylineNodeModel {
+
+    let node = automationData;
+    if (firstNode && automationData.node.id === id) {
+      node = this.buildUpdatedNode(automationData) as StorylineNodeModel
+    }
+
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
         if (child.node.id === id) {
@@ -368,8 +375,7 @@ export class UpdateNodeOperation implements NodeOperation {
     );
 
     return {
-      node: automationData.node,
-      in_edge: automationData.in_edge,
+      ...node,
       out_edges: outEdges,
     };
   }
@@ -381,20 +387,28 @@ export interface StorylineNodeModel {
   out_edges: StorylineNodeModel[];
 }
 
+const beginNodeId = generateFakeId();
+const endNodeId = generateFakeId();
+const baseEdgeId = generateFakeId();
+const baseQueryId = generateFakeId()
+
 export const storylineResourceData: StorylineResource = {
-  begin_node_id: '1',
+  begin_node_id: beginNodeId,
 };
 
 export const beginNode: ScenarioNodeShape = {
-  id: '1',
+  id: beginNodeId,
   name: 'Enter automation',
   scenario_id: '',
-  type: 'START',
-  formData: {},
+  type: 'QUERY_INPUT',
+  query_id: baseQueryId,
+  evaluation_mode: 'LIVE',
+  formData: {
+  },
 };
 
 export const node4: ScenarioNodeShape = {
-  id: '2',
+  id: endNodeId,
   name: 'Exit automation',
   scenario_id: '',
   type: 'END_NODE',
@@ -403,10 +417,10 @@ export const node4: ScenarioNodeShape = {
 export const storylineNodeData: ScenarioNodeShape[] = [beginNode, node4];
 
 export const edge12: ScenarioEdgeResource = {
-  id: '3',
-  source_id: '1',
-  target_id: '2',
-  handler: 'ON_VISIT',
+  id: baseEdgeId,
+  source_id: beginNodeId,
+  target_id: endNodeId,
+  handler: 'OUT',
   scenario_id: '',
 };
 
@@ -433,7 +447,7 @@ export function generateNodeProperties(
       };
     case 'QUERY_INPUT':
       return {
-        iconAnt: 'fork',
+        iconAnt: 'flag',
         color: '#fbc02d',
       };
     case 'ABN_NODE':
@@ -442,20 +456,10 @@ export function generateNodeProperties(
         color: '#fbc02d',
         branchNumber: node.branch_number,
       };
-    case 'GOAL':
-      return {
-        iconType: 'check',
-        color: '#18b577',
-      };
     case 'END_NODE':
       return {
         iconType: 'check',
         color: '#18b577',
-      };
-    case 'FAILURE':
-      return {
-        iconType: 'close',
-        color: '#ff5959',
       };
     case 'START':
       return {

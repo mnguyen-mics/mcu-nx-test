@@ -50,6 +50,7 @@ export interface EmailCampaignAutomationFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   node: ScenarioNodeShape;
+  disabled?: boolean;
 }
 
 interface MapStateToProps {
@@ -67,7 +68,7 @@ type Props = InjectedFormProps<
 
 class EmailCampaignAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const { change } = this.props;
+    const { change, disabled } = this.props;
 
     const sections: McsFormSection[] = [];
 
@@ -78,6 +79,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
         <GeneralInformationFormSection
           initialValues={this.props.initialValues}
           organisationId={this.props.match.params.organisationId}
+          disabled={disabled}
         />
       ),
     };
@@ -85,7 +87,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
     const senderInformation = {
       id: 'senderInformation',
       title: localMessages.sectionSenderInformationTitle,
-      component: <BlastFormSection small={true} fieldName={'blastFields[0].model.blast'} />,
+      component: <BlastFormSection small={true} disabled={disabled} fieldName={'blastFields[0].model.blast'} />,
     };
 
     const emailTemplate = {
@@ -97,6 +99,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
           component={TemplateFormSection}
           formChange={change}
           rerenderOnEveryChange={true}
+          disabled={disabled}
         />
       ),
     };

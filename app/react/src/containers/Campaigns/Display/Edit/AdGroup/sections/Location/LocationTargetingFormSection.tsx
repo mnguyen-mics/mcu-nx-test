@@ -18,6 +18,7 @@ const confirm = Modal.confirm;
 export interface LocationTargetingFormSectionProps
   extends ReduxFormChangeProps {
     small?: boolean;
+    disabled?: boolean;
   }
 
 interface State {
@@ -175,7 +176,7 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
   };
 
   render() {
-    const { fields, intl: { formatMessage } } = this.props;
+    const { fields, intl: { formatMessage }, disabled } = this.props;
 
     const { locationTargetingDisplayed } = this.state;
 
@@ -204,6 +205,7 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
           checked={showLocationTargeting}
           className="field-label checkbox-location-section"
           onChange={this.handleCheckbox}
+          disabled={!!disabled}
         >
           <FormattedMessage
             id="location-checkbox-message"
@@ -227,10 +229,12 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
             <LocationSelectionRenderer
               locationFields={allFields}
               onClickOnRemove={removeField}
+              disabled={disabled}
             />
             <SelectGeoname
                 onGeonameSelect={this.addLocationField}
                 hiddenGeonameIds={alreadySelectedGeonameIds}
+                disabled={disabled}
               />
           </FormFieldWrapper>
           

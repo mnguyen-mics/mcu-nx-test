@@ -45,6 +45,7 @@ export interface InventoryCatalogFormSectionProps
   extends 
     ReduxFormChangeProps {
       small?: boolean;
+      disabled?: boolean;
     }
 
 type Props = WrappedFieldArrayProps<InventoryCatalFieldsModel> &
@@ -497,6 +498,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
       dealList,
       placementList,
       small,
+      disabled
     } = this.props;
 
     const otherData = [
@@ -557,6 +559,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               keywordList.data,
               placementList.data,
             )}
+            disabled={disabled}
             small={small}
           />
           <div className={showExclude ? '' : 'hide-section'}>
@@ -599,12 +602,13 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
                 placementList.data,
                 true,
               )}
+              disabled={disabled}
             />
           </div>
           <Row className={showExclude ? 'hide-section' : ''}>
             <Col span={3} offset={small ? 20 : 14}>
               <ButtonStyleless
-                onClick={this.toogleShowExclude}
+                onClick={disabled ? undefined : this.toogleShowExclude}
                 className="action-button"
               >
                 <FormattedMessage {...inventoryCatalogMsgs.excludeLinkMsg} />

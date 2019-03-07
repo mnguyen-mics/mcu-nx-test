@@ -41,6 +41,7 @@ export const messages = defineMessages({
 
 interface GeneralInformationFormSectionProps {
   initialValues: Partial<ABNFormData>;
+  disabled?: boolean;
 }
 
 type Props = GeneralInformationFormSectionProps &
@@ -68,6 +69,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      disabled
     } = this.props;
 
     return (
@@ -88,6 +90,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             }}
             inputProps={{
               placeholder: formatMessage(messages.automationNodeName),
+              disabled: !!disabled
             }}
             small={true}
           />
@@ -103,6 +106,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               inputProps={{
                 min: 2,
                 max: 10,
+                disabled: !!disabled
               }}
             />
           )}

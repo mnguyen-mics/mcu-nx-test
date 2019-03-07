@@ -19,6 +19,7 @@ import {
 import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampaignAutomationForm';
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 import { DisplayCampaignFormData } from '../../../../Campaigns/Display/Edit/domain';
+import { QueryCreateRequest } from '../../../../../models/datamart/DatamartResource';
 
 export interface DefaultFormData {
   name: string;
@@ -105,17 +106,31 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
   },
 };
 
+export const INITIAL_QUERY_DATA: (datamartId: string) => QueryAutomationFormData = (datamartId: string) => {
+  return {
+    datamart_id: datamartId,
+    name: '',
+    query_language: undefined,
+    query_text: ''
+  }
+}
+
 export interface DisplayCampaignAutomationFormData extends DefaultFormData, DisplayCampaignFormData {
 }
 
 export interface EmailCampaignAutomationFormData extends DefaultFormData, EmailCampaignFormData {
 }
 
+export interface QueryAutomationFormData extends Partial<QueryCreateRequest> {
+  name: string
+}
+
 export type AutomationFormDataType =
   | DefaultFormData
   | ABNFormData
   | DisplayCampaignAutomationFormData
-  | EmailCampaignAutomationFormData;
+  | EmailCampaignAutomationFormData
+  | QueryAutomationFormData;
 
 export type AutomationFormPropsType =
   | ABNAutomationFormProps
@@ -152,12 +167,11 @@ export function isQueryInputNode(
 ): node is QueryInputNodeResource | StartNodeResource {
   return (
     (node as QueryInputNodeResource | StartNodeResource).type ===
-      'QUERY_INPUT' ||
-    (node as QueryInputNodeResource | StartNodeResource).type === 'START'
+      'QUERY_INPUT'
   );
 }
 
 
 export function isEndNode(node: AutomationNodeShape): node is EndNodeResource {
-  return node.type === 'GOAL' || node.type === 'FAILURE' || node.type === 'END_NODE';
+  return node.type === 'END_NODE';
 }

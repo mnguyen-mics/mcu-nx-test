@@ -8,8 +8,8 @@ import {
   AutomationBuilderPageRouteParams,
 } from '../AutomationBuilderPage';
 import ActionBar from '../../../../components/ActionBar';
-import { Button, Modal } from 'antd';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { Button } from 'antd';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import AutomationSimpleForm, {
   FORM_ID,
   AutomationSimpleFormData,
@@ -102,7 +102,7 @@ class AutomationActionBar extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const { isLoading, visible } = this.state;
+    const { visible } = this.state;
 
     const initialFormData: Partial<AutomationSimpleFormData> = {
       name:
@@ -154,25 +154,15 @@ class AutomationActionBar extends React.Component<Props, State> {
             onClick={onClose}
           />
         )}
-        <Modal
-          visible={visible}
-          onOk={handleOnOk}
-          onCancel={this.handleModal}
-          confirmLoading={isLoading}
-          title={
-            <FormattedMessage
-              id="automation.builder.page.actionbar.modal.title"
-              defaultMessage="Save Automation"
-            />
-          }
-        >
-          {visible && (
-            <AutomationSimpleForm
-              onSubmit={this.onSave}
-              initialValues={initialFormData}
-            />
-          )}
-        </Modal>
+       {visible && (
+          <AutomationSimpleForm
+            onSubmit={this.onSave}
+            initialValues={initialFormData}
+            visible={visible}
+            onClose={this.handleModal}
+            onHandleOk={handleOnOk}
+          />
+        )}
       </ActionBar>
     );
   }

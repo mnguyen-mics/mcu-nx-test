@@ -7,6 +7,7 @@ export interface SearchAndTreeSelectProps {
   placeholder?: string;
   treeData: TreeData[];
   checkedIds: string[];
+  disabled?: boolean;
 }
 
 export { TreeData };

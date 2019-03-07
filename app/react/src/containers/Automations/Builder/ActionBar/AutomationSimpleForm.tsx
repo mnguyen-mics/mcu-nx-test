@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { Omit } from 'react-router';
-import { Form } from 'antd';
+import { Form, Button } from 'antd';
 import {
   FormInputField,
   FormInput,
@@ -13,13 +13,20 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../../components/Form/withNormalizer';
 import { AutomationResource } from '../../../../models/automations/automations';
+import BlurredModal from '../../../../components/BlurredModal/BlurredModal';
+import { McsIcon } from '../../../../components';
+import { ButtonProps } from 'antd/lib/button';
 
 export type AutomationSimpleFormData = Partial<AutomationResource>;
 
 export const FORM_ID = 'automationSimpleForm';
 
 export interface FormProps
-  extends Omit<ConfigProps<AutomationSimpleFormData, FormProps>, 'form'> {}
+  extends Omit<ConfigProps<AutomationSimpleFormData, FormProps>, 'form'> {
+  visible: boolean;
+  onClose: () => void;
+  onHandleOk: () => void;
+}
 
 type Props = FormProps & InjectedIntlProps & ValidatorProps & NormalizerProps;
 
@@ -33,15 +40,39 @@ class AutomationSimleForm extends React.Component<
   }
 
   render() {
-    const { fieldValidators, intl, handleSubmit } = this.props;
+    const {
+      fieldValidators,
+      intl,
+      handleSubmit,
+      visible,
+      onClose,
+      onHandleOk
+    } = this.props;
+
+    const submitButtonProps: ButtonProps = {
+      htmlType: 'submit',
+      type: 'primary',
+      onClick: onHandleOk
+    };
+
+    const modalFooter = (
+      <Button {...submitButtonProps} className="mcs-primary">
+        <McsIcon type="plus" />
+        Save
+      </Button>
+    );
 
     return (
       <Form
         className="edit-layout ant-layout"
-        layout="vertical"
         onSubmit={handleSubmit as any}
       >
-        <div className="mcs-form-container" style={{ paddingTop: '0px' }}>
+        <BlurredModal
+          onClose={onClose}
+          formId={FORM_ID}
+          opened={visible}
+          footer={modalFooter}
+        >
           <FormInputField
             name="name"
             component={FormInput}
@@ -58,9 +89,8 @@ class AutomationSimleForm extends React.Component<
             helpToolTipProps={{
               title: intl.formatMessage(messages.automationNameTooltip),
             }}
-            small={true}
           />
-        </div>
+        </BlurredModal>
       </Form>
     );
   }
@@ -71,7 +101,7 @@ export default compose<Props, FormProps>(
   withValidators,
   withNormalizer,
   reduxForm({
-    form: FORM_ID
+    form: FORM_ID,
   }),
 )(AutomationSimleForm);
 

@@ -8,18 +8,24 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
   AutomationNodeModel
 > {
   nodeOperations: TreeNodeOperations;
-  updateQueryNode: (nodeId: string, queryText: string) => void;
+  updateQueryNode?: (nodeId: string, queryText: string) => void;
   lockGlobalInteraction: (locked: boolean) => void;
+  viewer: boolean;
+  datamartId: string;
 
   constructor(
     nodeOperations: TreeNodeOperations,
-    updateQueryNode: (nodeId: string, queryText: string) => void,
     _lockGlobalInteraction: (locked: boolean) => void,
+    datamartId: string,
+    viewer: boolean,
+    updateQueryNode?: (nodeId: string, queryText: string) => void,
   ) {
     super('automation-node');
     this.nodeOperations = nodeOperations;
     this.updateQueryNode = updateQueryNode;
     this.lockGlobalInteraction = _lockGlobalInteraction;
+    this.viewer = viewer;
+    this.datamartId = datamartId
   }
 
   generateReactWidget(
@@ -34,7 +40,9 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
       diagramEngine: diagramEngine,
       nodeOperations: this.nodeOperations,
       updateQueryNode: this.updateQueryNode,
+      datamartId: this.datamartId,
       lockGlobalInteraction: this.lockGlobalInteraction,
+      viewer: this.viewer
     });
   }
 

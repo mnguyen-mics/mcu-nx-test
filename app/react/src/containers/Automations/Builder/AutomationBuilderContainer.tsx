@@ -23,6 +23,7 @@ export interface AutomationBuilderContainerProps {
   automationFormData?: Partial<AutomationFormData>;
   saveOrUpdate: (formData: Partial<AutomationFormData>) => void;
   loading: boolean;
+  edition?: boolean;
 }
 
 type Props = AutomationBuilderContainerProps &
@@ -171,7 +172,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
               scenarioId={storylineNodeData[0].scenario_id}
               updateAutomationData={this.handleUpdateAutomationData}
               updateQueryNode={this.handleQueryNodeData}
-              editMode={editMode}
+              viewer={false}
             />
           </Layout.Content>
         </Layout>

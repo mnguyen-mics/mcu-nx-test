@@ -152,10 +152,10 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
     this._automationFormService
       .saveOrCreateAutomation(organisationId, 'v201709', formData)
-      .then(() => {
+      .then((automation) => {
         hideSaveInProgress();
         this.setState({ isLoading: false });
-        this.redirect();
+        this.redirect(automation.data.id);
         message.success(intl.formatMessage(messages.automationSaved));
       })
       .catch(err => {
@@ -165,7 +165,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       });
   };
 
-  redirect = () => {
+  redirect = (automationId?: string) => {
     const {
       history,
       match: {
@@ -173,7 +173,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const url = `/v2/o/${organisationId}/automations/list`;
+    const url = automationId ? `/v2/o/${organisationId}/automations/${automationId}` : `/v2/o/${organisationId}/automations`;
 
     return history.push(url);
   };

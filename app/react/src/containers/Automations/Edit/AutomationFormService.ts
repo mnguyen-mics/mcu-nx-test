@@ -51,7 +51,7 @@ export interface IAutomationFormService {
     organsiationId: string,
     storageModelVersionId: string,
     formData: AutomationFormData,
-  ) => Promise<DataResponse<any>>;
+  ) => Promise<DataResponse<AutomationResource>>;
 }
 
 @injectable()
@@ -109,7 +109,7 @@ export class AutomationFormService implements IAutomationFormService {
     organisationId: string,
     storageModelVersion: string,
     formData: AutomationFormData,
-  ): Promise<any> {
+  ): Promise<DataResponse<AutomationResource>> {
     const automationId = formData.automation.id;
     const saveOrCreatePromise = () =>
       automationId
@@ -142,9 +142,9 @@ export class AutomationFormService implements IAutomationFormService {
                 firstNodeId,
               );
             },
-          );
+          ).then(() => createdAutomation);
         }
-        return Promise.resolve()
+        return Promise.resolve(createdAutomation)
       });
     }
   }
@@ -154,8 +154,9 @@ export class AutomationFormService implements IAutomationFormService {
     automationId: string,
     storylineNode: StorylineNodeModel,
   ) => {
+    // make it more modular to add new first node
     const node = storylineNode.node as QueryInputNodeResource;
-    const saveOrCreateQueryPromise = node.query_id
+    const saveOrCreateQueryPromise = !isFakeId(node.query_id)
       ? this._queryService.updateQuery(datamartId, node.query_id, node.formData)
       : this._queryService.createQuery(datamartId, node.formData);
     return saveOrCreateQueryPromise.then(queryRes => {
@@ -164,6 +165,7 @@ export class AutomationFormService implements IAutomationFormService {
         storylineNode,
         undefined,
         queryRes.data.id,
+        true
       ).then(res => {
         return res.data.id;
       });
@@ -317,6 +319,7 @@ export class AutomationFormService implements IAutomationFormService {
       campaign_id: string;
     },
     queryId?: string,
+    isStartNode?: boolean
   ) => {
     const node = storylineNode.node as ScenarioNodeShape;
     let saveOrCreateScenarioNode: Promise<DataResponse<ScenarioNodeShape>>;
@@ -324,7 +327,7 @@ export class AutomationFormService implements IAutomationFormService {
     let resourceId;
     if (isDisplayCampaignNode(node)) {
       scenarioNodeResource = {
-        id: node.id ? node.id : undefined,
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
         x: node.x,
@@ -333,10 +336,10 @@ export class AutomationFormService implements IAutomationFormService {
         ad_group_id: campaignIds ? campaignIds.ad_group_id : undefined,
         campaign_id: campaignIds ? campaignIds.campaign_id : undefined,
       };
-      resourceId = node.campaign_id;
+      resourceId = node.campaign_id && !isFakeId(node.campaign_id) ? node.campaign_id : undefined;
     } else if (isEmailCampaignNode(node)) {
       scenarioNodeResource = {
-        id: node.id ? node.id : undefined,
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
         x: node.x,
@@ -344,10 +347,10 @@ export class AutomationFormService implements IAutomationFormService {
         type: node.type,
         campaign_id: campaignIds ? campaignIds.campaign_id : undefined,
       };
-      resourceId = node.campaign_id;
+      resourceId = node.campaign_id  && !isFakeId(node.campaign_id) ? node.campaign_id : undefined;
     } else if (isQueryInputNode(node)) {
       scenarioNodeResource = {
-        id: node.id,
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
         x: node.x,
@@ -358,10 +361,10 @@ export class AutomationFormService implements IAutomationFormService {
         evaluation_period: null,
         evaluation_period_unit: null
       };
-      resourceId = node.query_id;
+      resourceId = node.query_id  && !isFakeId(node.query_id) ? node.query_id : undefined;
     } else if (isAbnNode(node)) {
       scenarioNodeResource = {
-        id: node.id,
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
         x: node.x,
@@ -370,7 +373,7 @@ export class AutomationFormService implements IAutomationFormService {
       }
     } else if (isEndNode(node)) {
       scenarioNodeResource = {
-        id: node.id,
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
         x: node.x,
@@ -389,7 +392,7 @@ export class AutomationFormService implements IAutomationFormService {
           id: undefined,
         });
     return saveOrCreateScenarioNode.then(res => {
-      if (node.type === 'START') {
+      if (isStartNode) {
         this._scenarioService.createScenarioBeginNode(automationId, res.data);
       }
       return res;

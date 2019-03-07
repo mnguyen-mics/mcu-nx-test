@@ -16,7 +16,6 @@ import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer'
 import { TreeNodeOperations } from '../domain';
 import { Icon } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
-import JSONQLPreview from '../../../QueryTool/JSONOTQL/JSONQLPreview';
 import {
   isScenarioNodeShape,
   AutomationFormDataType,
@@ -24,17 +23,25 @@ import {
   isQueryInputNode,
   INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
+  INITIAL_QUERY_DATA,
 } from './Edit/domain';
 import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import AdGroupFormService from '../../../Campaigns/Display/Edit/AdGroup/AdGroupFormService';
 import EmailCampaignFormService from '../../../Campaigns/Email/Edit/EmailCampaignFormService';
+import { ScenarioNodeType } from '../../../../models/automations/automations';
+import { IQueryService } from '../../../../services/QueryService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { isFakeId } from '../../../../utils/FakeIdHelper';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
   lockGlobalInteraction: (lock: boolean) => void;
   diagramEngine: DiagramEngine;
   nodeOperations: TreeNodeOperations;
-  updateQueryNode: (nodeId: string, queryText: string) => void;
+  updateQueryNode?: (nodeId: string, queryText: string) => void;
+  viewer: boolean;
+  datamartId: string;
 }
 
 interface State {
@@ -47,6 +54,10 @@ const messages = defineMessages({
   edit: {
     id: 'automation.builder.node.edit',
     defaultMessage: 'Edit',
+  },
+  view: {
+    id: 'automation.builder.node.view',
+    defaultMessage: 'View',
   },
   remove: {
     id: 'automation.builder.node.remove',
@@ -61,6 +72,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   left: number = 0;
   id: string = cuid();
 
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService; 
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -69,11 +83,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     };
   }
 
+  // todo move load into the formWrapper
   componentDidMount() {
     const {
       node: {
         storylineNodeModel: { node },
       },
+      datamartId
     } = this.props;
     switch (node.type) {
       case 'DISPLAY_CAMPAIGN':
@@ -88,11 +104,18 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                     initialValuesForm: {
                       campaign: campaignResp.data,
                       name: node.name,
-                      locationFields: adGroupResp.locationFields,
-                      adGroup: adGroupResp.adGroup,
-                      adFields: adGroupResp.adFields,
-                      bidOptimizerFields: adGroupResp.bidOptimizerFields,
-                      inventoryCatalFields: adGroupResp.inventoryCatalFields,
+                      goalFields: [],
+                      adGroupFields: [{
+                        key: adGroupResp.adGroup.id,
+                        model: {
+                          adFields: adGroupResp.adFields,
+                          adGroup: {...adGroupResp.adGroup},
+                          bidOptimizerFields: adGroupResp.bidOptimizerFields,
+                          locationFields: adGroupResp.locationFields,
+                          inventoryCatalFields: adGroupResp.inventoryCatalFields,
+                          segmentFields: adGroupResp.segmentFields
+                        }
+                      }]
                     },
                   });
                 });
@@ -118,6 +141,23 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           : this.setState({
               initialValuesForm: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
             });
+      case 'QUERY_INPUT':
+        return node.query_id && !isFakeId(node.query_id) ?
+          this._queryService.getQuery(datamartId, node.query_id).then(
+            queryResp => {
+              this.setState({
+                initialValuesForm: {
+                  name: node.name,
+                  ...queryResp.data
+                }
+              })
+            }
+          ) : this.setState({ 
+            initialValuesForm: {
+              ...INITIAL_QUERY_DATA(datamartId),
+              name: node.name
+            } 
+          })
       case 'ABN_NODE':
         const abnFormData = node.formData;
         return (
@@ -146,8 +186,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     });
   };
 
+  
+
   editNode = () => {
-    const { node, lockGlobalInteraction, openNextDrawer, closeNextDrawer, nodeOperations } = this.props;
+    const { node, lockGlobalInteraction, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId } = this.props;
     const { initialValuesForm } = this.state;
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(false);
@@ -157,9 +199,16 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       ) {
         const scenarioNodeShape = node.storylineNodeModel.node;
         let initialValue: any = initialValuesForm;
+        let size: "small" | "large" = 'small'
         if ((scenarioNodeShape.type === 'DISPLAY_CAMPAIGN' || scenarioNodeShape.type === 'EMAIL_CAMPAIGN' || scenarioNodeShape.type === 'QUERY_INPUT') && scenarioNodeShape.formData) {
           initialValue = scenarioNodeShape.formData
         }
+
+        if (scenarioNodeShape.type === 'QUERY_INPUT') {
+          initialValue.datamart_id = initialValue.datamart_id ? initialValue.datamart_id  : datamartId;
+          size = "large"
+        }
+
         openNextDrawer<AutomationFormPropsType>(
           node.editFormComponent,
           {
@@ -167,6 +216,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               node: scenarioNodeShape,
               close: closeNextDrawer,
               breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
+              disabled: viewer,
               onSubmit: (formData: AutomationFormDataType) => {
                 nodeOperations.updateNode(
                   scenarioNodeShape,
@@ -177,7 +227,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               },
               initialValues: initialValue,
             },
-            size: 'small',
+            size: size,
           },
         );
       }
@@ -195,9 +245,179 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   };
 
   handleQueryOnChange = (queryText: string) => {
-    const { node } = this.props;
-    this.props.updateQueryNode(node.storylineNodeModel.node.id, queryText);
+    const { node, updateQueryNode } = this.props;
+    if (updateQueryNode) {
+      updateQueryNode(node.storylineNodeModel.node.id, queryText);
+    }
   };
+
+  renderAbnEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+
+    const content: React.ReactNodeArray = [];
+
+    if (!viewer) {
+      content.push((
+        <div onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+      
+      if (!node.isFirstNode) {
+        content.push((
+          <div onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+     
+    }
+
+    return content
+  }
+
+  renderCampaignEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+
+    const content: React.ReactNodeArray = [];
+    if (!viewer) {
+      content.push((
+        <div onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+
+      if (!node.isFirstNode) {
+        content.push((
+          <div onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+    } else {
+      content.push((
+        <div onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.view} />
+        </div>
+      ))
+    }
+
+    return content
+
+  }
+
+  renderQueryEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+    const content: React.ReactNodeArray = [];
+    if (!viewer) {
+      content.push((
+        <div onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+
+      if (!node.isFirstNode) {
+        content.push((
+          <div onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+    } else {
+      content.push((
+        <div onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.view} />
+        </div>
+      ))
+    }
+
+    return content;
+  }
+
+  renderEndNodeEdit = (): React.ReactNodeArray => {
+    const content: React.ReactNodeArray = [];
+  
+    return content;
+  }
+
+  renderWaitNodeEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+
+    const content: React.ReactNodeArray = [];
+    if (!viewer) {
+      content.push((
+        <div onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+
+      if (!node.isFirstNode) {
+        content.push((
+          <div onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+    } else {
+      content.push((
+        <div onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.view} />
+        </div>
+      ))
+    }
+
+    return content;
+  }
+
+  rendePluginNodeEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+
+    const content: React.ReactNodeArray = [];
+    if (!viewer) {
+      content.push((
+        <div onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+
+      if (!node.isFirstNode) {
+        content.push((
+          <div onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+    } else {
+      content.push((
+        <div onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.view} />
+        </div>
+      ))
+    }
+
+    return content;
+  }
+
+  renderEditMenu = (nodeType: ScenarioNodeType): React.ReactNodeArray => {
+    switch(nodeType) {
+      case 'ABN_NODE':
+        return this.renderAbnEdit()
+      case 'EMAIL_CAMPAIGN':
+      case 'DISPLAY_CAMPAIGN':
+        return this.renderCampaignEdit();
+      case 'QUERY_INPUT':
+        return this.renderQueryEdit();
+      case 'START':
+      case 'END_NODE':
+        return this.renderEndNodeEdit();
+      case 'WAIT':
+        return this.renderWaitNodeEdit();
+      case 'PLUGIN_NODE':
+        return this.rendePluginNodeEdit();
+      default:
+        return [];
+    }
+  }
 
   render() {
     const { node } = this.props;
@@ -222,12 +442,18 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         break
     }
 
+    const nodeType = node.storylineNodeModel.node.type;
+
+    const editContent = this.renderEditMenu(nodeType);
+    const onClick = editContent.length ? onFocus : undefined
+
     const renderedAutomationNode = (
       <div
         className="node-body"
         style={{
           width: `${node.getNodeSize().width}px`,
           height: `${node.getNodeSize().height}px`,
+          cursor: onClick ? 'pointer' : 'default'
         }}
       >
         <div
@@ -256,10 +482,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       </div>
     );
 
-    const nodeType = node.storylineNodeModel.node.type;
+    
 
     return (
-      <div id={this.id} onClick={onFocus}>
+      <div id={this.id} onClick={onClick}>
         {renderedAutomationNode}
         <div
           style={{
@@ -338,33 +564,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                   zIndex: 1001,
                 }}
               >
-                {/* Uncomment when feature is ready */}
-                {/* <div onClick={this.toggleCollapsed} className='boolean-menu-item'>Collapse</div> */}
-                {nodeType === 'START' || nodeType === 'QUERY_INPUT' ? (
-                  <JSONQLPreview
-                    datamartId={node.datamartId}
-                    value={this.getQuery()}
-                    isTrigger={true}
-                    onChange={this.handleQueryOnChange}
-                    context="AUTOMATION_BUILDER"
-                  />
-                ) : (
-                  <div onClick={this.editNode} className="boolean-menu-item">
-                    <FormattedMessage {...messages.edit} />
-                  </div>
-                )}
-
-                {nodeType !== 'START' &&
-                  nodeType !== 'GOAL' &&
-                  nodeType !== 'END_NODE' &&
-                  nodeType !== 'FAILURE' && (
-                    <div
-                      onClick={this.removeNode}
-                      className="boolean-menu-item"
-                    >
-                      <FormattedMessage {...messages.remove} />
-                    </div>
-                  )}
+                {editContent}
               </div>
             </div>
           </WindowBodyPortal>

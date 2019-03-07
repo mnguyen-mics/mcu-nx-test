@@ -6,41 +6,35 @@ import {
 } from './domain';
 import AutomationBuilderPage from '../containers/Automations/Builder/AutomationBuilderPage';
 import AutomationListPage from '../containers/Automations/List/AutomationListPage';
+import AutomationDashboardPage from '../containers/Automations/Dashboard/AutomationDashboardPage';
 
 export const automationDefinition: NavigatorDefinition = {
-  automationsList: {
-    path: '/automations/list',
+  automationBuilder: {
+    path: '/automation-builder',
     layout: 'main',
-    contentComponent: AutomationListPage,
-    requiredFeature: 'automations.list',
+    contentComponent: AutomationBuilderPage,
+    requiredFeature: 'automations.builder',
     requireDatamart: true,
   },
   automationsEdit: {
     path: '/automations/:automationId/edit',
-    layout: 'edit',
-    editComponent: AutomationEditPage,
-    requiredFeature: 'automations.list',
-    requireDatamart: true,
-  },
-  automationCreation: {
-    path: '/automations/create',
-    layout: 'edit',
-    editComponent: AutomationEditPage,
-    requiredFeature: 'automations.list',
-    requireDatamart: true,
-  },
-  automationBuilder: {
-    path: '/automations/builder',
     layout: 'main',
-    contentComponent: AutomationBuilderPage,
+    contentComponent: AutomationEditPage,
     requiredFeature: 'automations.builder',
     requireDatamart: true,
   },
-  automationBuilderEdit: {
-    path: '/automations/builder/:automationId/edit',
+  automationsDashboard: {
+    path: '/automations/:automationId',
     layout: 'main',
-    contentComponent: AutomationBuilderPage,
+    contentComponent: AutomationDashboardPage,
     requiredFeature: 'automations.builder',
+    requireDatamart: true,
+  },
+  automationsList: {
+    path: '/automations',
+    layout: 'main',
+    contentComponent: AutomationListPage,
+    requiredFeature: 'automations.list',
     requireDatamart: true,
   },
 };

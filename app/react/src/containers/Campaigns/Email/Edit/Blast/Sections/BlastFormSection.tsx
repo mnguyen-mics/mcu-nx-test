@@ -10,6 +10,7 @@ import messages from '../../messages';
 interface BlastFormSectionProps {
   small?: boolean;
   fieldName?: string;
+  disabled?: boolean;
 }
 
 type Props = InjectedIntlProps & ValidatorProps & BlastFormSectionProps;
@@ -29,7 +30,8 @@ class BlastFormSection extends React.Component<Props> {
         isValidEmail,
       },
       small,
-      fieldName
+      fieldName,
+      disabled
     } = this.props;
 
     return (
@@ -48,6 +50,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine),
+            disabled: disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine),
@@ -64,6 +67,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail),
+            disabled: disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperFromEmail),
@@ -80,6 +84,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName),
+            disabled: disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperFromName),
@@ -96,6 +101,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo),
+            disabled: disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperReplyTo),

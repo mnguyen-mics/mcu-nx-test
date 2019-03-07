@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { Layout, Tooltip, Icon, Modal } from 'antd';
 import { compose } from 'recompose';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
@@ -19,7 +19,7 @@ import {
   buildDefaultSearch,
   parseSearch,
 } from '../../../utils/LocationSearchHelper';
-import { McsIcon, ButtonStyleless } from '../../../components';
+import { McsIcon } from '../../../components';
 import { TableViewFilters } from '../../../components/TableView';
 import { MapDispatchToProps } from './AutomationListPage';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
@@ -235,6 +235,9 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
 
   render() {
     const {
+      match: {
+        params: { organisationId },
+      },
       location: { search },
       intl,
       translations,
@@ -296,13 +299,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         key: 'name',
         isHideable: false,
         render: (text: string, record: AutomationResource) => {
-          const onNameclick = () => {
-            this.editAutomation(record);
-          };
           return (
-            <ButtonStyleless onClick={onNameclick}>
+            <Link to={`/v2/o/${organisationId}/automations/${record.id}`} >
               <span className="mcs-automation-link">{text}</span>
-            </ButtonStyleless>
+            </Link>
           );
         },
       },
