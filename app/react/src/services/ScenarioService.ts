@@ -48,7 +48,7 @@ export interface IScenarioService {
   ) => Promise<DataResponse<AutomationResource>>;
   updateScenario: (
     scenarioId: string,
-    scenario: AutomationResource,
+    scenario: Partial<AutomationResource>,
   ) => Promise<DataResponse<AutomationResource>>;
   deleteScenario: (
     scenarioId: string,

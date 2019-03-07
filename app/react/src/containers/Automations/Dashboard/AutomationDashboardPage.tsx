@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import injectNotifications, {
@@ -11,9 +10,12 @@ import { TYPES } from '../../../constants/types';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 
 import { IAutomationFormService } from '../Edit/AutomationFormService';
-import { Loading } from '../../../components';
-import { Layout } from 'antd';
+import { Loading, McsIcon } from '../../../components';
+import { Layout, Button } from 'antd';
 import AutomationBuilder from '../Builder/AutomationBuilder';
+import ActionBar, { Path } from '../../../components/ActionBar';
+import { IScenarioService } from '../../../services/ScenarioService';
+import { AutomationStatus } from '../../../models/automations/automations';
 
 export interface AutomationDashboardrams {
   organisationId: string;
@@ -22,6 +24,7 @@ export interface AutomationDashboardrams {
 
 interface State {
   isLoading: boolean;
+  updating: boolean;
   automationFormData: Partial<AutomationFormData>;
 }
 
@@ -33,10 +36,15 @@ type Props = RouteComponentProps<AutomationDashboardrams> &
 class AutomationDashboardPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAutomationFormService)
   private _automationFormService: IAutomationFormService;
+
+  @lazyInject(TYPES.IScenarioService)
+  private _scenarioService: IScenarioService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       isLoading: true,
+      updating: false,
       automationFormData: INITIAL_AUTOMATION_DATA,
     };
   }
@@ -92,9 +100,51 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     }
   }
 
-  render() {
+  renderStatus = (status: AutomationStatus) => {
+    switch (status) {
+      case 'ACTIVE':
+        return <span><McsIcon type="pause" /> Pause</span>
+      case 'NEW':
+      case 'PAUSED':
+        return <span><McsIcon type="play" /> Activate</span>
+    }
+  }
 
-    const { automationFormData, isLoading } = this.state;
+  onStatusClick = (automationId: string, status: AutomationStatus) => () => {
+    const newStatus: AutomationStatus = status === 'PAUSED' || status === 'NEW' ? 'ACTIVE' : 'PAUSED';
+    const payload = {
+      status: newStatus,
+      id: automationId
+    }
+
+    this.setState({ updating: true })
+    return this._scenarioService.updateScenario(automationId, payload)
+      .then(r => this.setState({
+        automationFormData: { 
+          ...this.state.automationFormData, 
+          automation: r.data 
+        }, 
+        updating: false  
+      }));
+
+  }
+
+  onEditClick = () => {
+    const {
+      history,
+      match: {
+        params: {
+          organisationId,
+          automationId
+        }
+      }
+    } = this.props;
+    history.push(`/v2/o/${organisationId}/automations/${automationId}/edit`);
+  }
+
+  render() {
+    const { match: { params: { organisationId } } } = this.props;
+    const { automationFormData, isLoading, updating, } = this.state;
 
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
@@ -104,25 +154,31 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       return ('this automation does not seem to exist!')
     }
 
+    const breadCrumbPaths: Path[] = [
+      {
+        name: 'Automations',
+        path: `/v2/o/${organisationId}/automations`
+      },
+      {
+        name: automationFormData.automation.name ? automationFormData.automation.name : ''
+      }
+    ];
+
+
     return (
       <div style={{ height: '100%', display: 'flex' }}>
         <Layout>
-          {/* <AutomationActionBar
-            automationData={{
-              automation:
-                automationFormData && automationFormData.automation
-                  ? {
-                      ...automationFormData.automation,
-                      datamart_id: datamartId,
-                    }
-                  : undefined,
-              automationTreeData: automationTreeData,
-            }}
-            saveOrUpdate={saveOrUpdate}
-            onClose={this.handleEditMode}
-            editMode={editMode}
-            handleEditMode={this.handleEditMode}
-          /> */}
+          <ActionBar
+            paths={breadCrumbPaths}
+          >
+            {automationFormData.automation && automationFormData.automation.status && automationFormData.automation.id ? <Button onClick={this.onStatusClick(automationFormData.automation.id, automationFormData.automation.status)} className={"mcs-primary"} type="primary">
+              {updating ? <i className="mcs-table-cell-loading" style={{ minWidth: 50}} /> : this.renderStatus(automationFormData.automation.status)}
+            </Button> : null}
+            <Button onClick={this.onEditClick}>
+              <McsIcon type={"pen"} /> Edit
+            </Button>
+          </ActionBar>
+          
           <Layout.Content
             className={`mcs-content-container`}
             style={{ padding: 0, overflow: 'hidden' }}
@@ -144,7 +200,4 @@ export default compose(
   injectIntl,
   withRouter,
   injectNotifications,
-  connect((state: any) => ({
-    connectedUser: state.session.connectedUser,
-  })),
 )(AutomationDashboardPage);
