@@ -23,7 +23,7 @@ import { IAutomationFormService } from '../Edit/AutomationFormService';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
-  automationId: string;
+  automationId?: string;
 }
 
 interface MapStateToProps {
@@ -118,7 +118,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       this.setState({
         automationFormData: INITIAL_AUTOMATION_DATA,
       });
-    } else if (automationId !== prevAutomationId) {
+    } else if (automationId && automationId !== prevAutomationId) {
       this.setState({
         isLoading: true,
       });
