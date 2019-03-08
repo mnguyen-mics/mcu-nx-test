@@ -33,7 +33,6 @@ type Props = AutomationBuilderContainerProps &
 
 interface State {
   automationTreeData: StorylineNodeModel;
-  editMode: boolean;
 }
 
 class AutomationBuilderContainer extends React.Component<Props, State> {
@@ -45,7 +44,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
         props.automationFormData && props.automationFormData.automationTreeData
           ? props.automationFormData.automationTreeData
           : INITIAL_AUTOMATION_DATA.automationTreeData,
-      editMode: props.match.params.automationId ? false : true,
     };
   }
 
@@ -124,11 +122,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     });
   };
 
-  handleEditMode = () => {
-    this.setState({
-      editMode: !this.state.editMode,
-    });
-  };
 
   render() {
     const {
@@ -137,7 +130,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       saveOrUpdate,
       loading,
     } = this.props;
-    const { automationTreeData, editMode } = this.state;
+    const { automationTreeData } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -158,9 +151,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
               automationTreeData: automationTreeData,
             }}
             saveOrUpdate={saveOrUpdate}
-            onClose={this.handleEditMode}
-            editMode={editMode}
-            handleEditMode={this.handleEditMode}
           />
           <Layout.Content
             className={`mcs-content-container`}

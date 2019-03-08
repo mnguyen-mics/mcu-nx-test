@@ -2,6 +2,7 @@ import {
   DisplayCampaignAutomationFormData,
   ABNFormData,
   EmailCampaignAutomationFormData,
+  WaitFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
 import { QueryResource } from './../datamart/DatamartResource';
@@ -38,7 +39,7 @@ export interface StorylineResource {
   begin_node_id: string;
 }
 
-export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT' | 'DROP_NODE' | 'START' // remove start
+export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT_NODE' | 'DROP_NODE'
 
 export interface ScenarioNodeResource {
   id: string;
@@ -94,14 +95,10 @@ export interface EndNodeResource extends ScenarioNodeResource {
   type: 'END_NODE';
 }
 
-export interface StartNodeResource extends ScenarioNodeResource {
-  type: 'START';
-  query_id?: string;
-  formData: Partial<QueryResource>;
-}
-
 export interface WaitNodeResource extends ScenarioNodeResource {
-  type: 'WAIT';
+  type: 'WAIT_NODE';
+  timeout: number;
+  formData?: WaitFormData;
 }
 
 export type ScenarioNodeShape =
@@ -111,7 +108,6 @@ export type ScenarioNodeShape =
   | ABNNodeResource
   | PluginNodeResource
   | EndNodeResource
-  | StartNodeResource
   | WaitNodeResource;
 
 export interface ScenarioEdgeResource {

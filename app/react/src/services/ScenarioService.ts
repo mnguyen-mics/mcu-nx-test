@@ -79,7 +79,7 @@ export interface IScenarioService {
   ) => Promise<DataResponse<ScenarioNodeShape>>;
   deleteScenarioNode: (
     scenarioId: string,
-    scenarioNode: ScenarioNodeShape,
+    nodeId: string,
   ) => Promise<DataResponse<ScenarioNodeShape>>;
   updateScenarioNode: (
     scenarioId: string,
@@ -188,8 +188,9 @@ export class ScenarioService implements IScenarioService {
   }
   deleteScenarioNode(
     scenarioId: string,
+    nodeId: string,
   ): Promise<DataResponse<ScenarioNodeShape>> {
-    const endpoint = `scenarios/${scenarioId}/storyline/nodes`;
+    const endpoint = `scenarios/${scenarioId}/storyline/nodes/${nodeId}`;
     return ApiService.deleteRequest(endpoint);
   }
   updateScenarioNode(

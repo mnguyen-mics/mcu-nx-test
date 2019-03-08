@@ -24,6 +24,7 @@ import {
   INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_QUERY_DATA,
+  INITIAL_WAIT_DATA,
 } from './Edit/domain';
 import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import AdGroupFormService from '../../../Campaigns/Display/Edit/AdGroup/AdGroupFormService';
@@ -159,13 +160,24 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             } 
           })
       case 'ABN_NODE':
-        const abnFormData = node.formData;
-        return (
-          abnFormData || {
-            name: '',
-            branch_number: 2,
+        return this.setState({
+          initialValuesForm: {
+            branch_number: node.branch_number,
+            edges_selction: node.edges_selection,
+            name: node.name ? node.name : 'Split',
           }
-        );
+        });
+      case 'WAIT_NODE':
+        return node.formData ? this.setState({
+          initialValuesForm: {
+            timeout: node.timeout,
+            name: node.name ? node.name : 'Wait'
+          }
+        }) : this.setState({
+          initialValuesForm: {
+            ...INITIAL_WAIT_DATA
+          }
+        })
       default:
         return;
     }
@@ -199,8 +211,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       ) {
         const scenarioNodeShape = node.storylineNodeModel.node;
         let initialValue: any = initialValuesForm;
-        let size: "small" | "large" = 'small'
-        if ((scenarioNodeShape.type === 'DISPLAY_CAMPAIGN' || scenarioNodeShape.type === 'EMAIL_CAMPAIGN' || scenarioNodeShape.type === 'QUERY_INPUT') && scenarioNodeShape.formData) {
+        let size: "small" | "large" = 'small';
+
+        if ((scenarioNodeShape.type !== 'END_NODE' && scenarioNodeShape.type !== 'PLUGIN_NODE') && scenarioNodeShape.formData) {
           initialValue = scenarioNodeShape.formData
         }
 
@@ -309,23 +322,24 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   renderQueryEdit = (): React.ReactNodeArray => {
     const { viewer, node } = this.props;
     const content: React.ReactNodeArray = [];
+
     if (!viewer) {
       content.push((
-        <div onClick={this.editNode} className="boolean-menu-item">
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
         </div>
       ))
 
       if (!node.isFirstNode) {
         content.push((
-          <div onClick={this.removeNode} className="boolean-menu-item">
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
             <FormattedMessage {...messages.remove} />
           </div>
         ))
       }
     } else {
       content.push((
-        <div onClick={this.editNode} className="boolean-menu-item">
+        <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
         </div>
       ))
@@ -346,21 +360,21 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
     if (!viewer) {
       content.push((
-        <div onClick={this.editNode} className="boolean-menu-item">
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
         </div>
       ))
 
       if (!node.isFirstNode) {
         content.push((
-          <div onClick={this.removeNode} className="boolean-menu-item">
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
             <FormattedMessage {...messages.remove} />
           </div>
         ))
       }
     } else {
       content.push((
-        <div onClick={this.editNode} className="boolean-menu-item">
+        <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
         </div>
       ))
@@ -375,21 +389,21 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
     if (!viewer) {
       content.push((
-        <div onClick={this.editNode} className="boolean-menu-item">
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
         </div>
       ))
 
       if (!node.isFirstNode) {
         content.push((
-          <div onClick={this.removeNode} className="boolean-menu-item">
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
             <FormattedMessage {...messages.remove} />
           </div>
         ))
       }
     } else {
       content.push((
-        <div onClick={this.editNode} className="boolean-menu-item">
+        <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
         </div>
       ))
@@ -407,10 +421,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         return this.renderCampaignEdit();
       case 'QUERY_INPUT':
         return this.renderQueryEdit();
-      case 'START':
       case 'END_NODE':
         return this.renderEndNodeEdit();
-      case 'WAIT':
+      case 'WAIT_NODE':
         return this.renderWaitNodeEdit();
       case 'PLUGIN_NODE':
         return this.rendePluginNodeEdit();
@@ -439,7 +452,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'DISPLAY_CAMPAIGN':
       case 'EMAIL_CAMPAIGN':
         nodeName = node.storylineNodeModel.node.formData &&  node.storylineNodeModel.node.formData.campaign && node.storylineNodeModel.node.formData.campaign.name ? node.storylineNodeModel.node.formData.campaign.name : nodeName
-        break
+        break;
+      case 'ABN_NODE':
+        // node name not saved on ABN NODE"
+        nodeName = 'Split';
+        break;
     }
 
     const nodeType = node.storylineNodeModel.node.type;

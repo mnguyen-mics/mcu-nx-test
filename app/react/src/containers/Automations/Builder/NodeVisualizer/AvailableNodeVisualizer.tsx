@@ -72,8 +72,9 @@ const conditionNode1: ScenarioNodeShape = {
 const conditionNode2: ScenarioNodeShape = {
   id: cuid(),
   name: 'Wait',
-  type: 'WAIT',
+  type: 'WAIT_NODE',
   scenario_id: '',
+  timeout: 1000,
 };
 
 type Props = InjectedIntlProps;

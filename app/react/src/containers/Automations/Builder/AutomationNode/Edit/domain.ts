@@ -4,9 +4,9 @@ import {
   ScenarioNodeShape,
   DisplayCampaignNodeResource,
   QueryInputNodeResource,
-  StartNodeResource,
   EndNodeResource,
   EmailCampaignNodeResource,
+  WaitNodeResource,
 } from '../../../../../models/automations/automations';
 
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
@@ -27,6 +27,11 @@ export interface DefaultFormData {
 
 export interface ABNFormData extends DefaultFormData {
   branch_number: number;
+  edges_selection: any;
+}
+
+export interface WaitFormData extends DefaultFormData {
+  timeout: number;
 }
 
 export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
@@ -115,6 +120,11 @@ export const INITIAL_QUERY_DATA: (datamartId: string) => QueryAutomationFormData
   }
 }
 
+export const INITIAL_WAIT_DATA: WaitFormData = {
+  name: 'Wait',
+  timeout: 1000 * 60 * 60 * 24 * 2 // 2 days
+}
+
 export interface DisplayCampaignAutomationFormData extends DefaultFormData, DisplayCampaignFormData {
 }
 
@@ -164,10 +174,19 @@ export function isEmailCampaignNode(
 
 export function isQueryInputNode(
   node: AutomationNodeShape,
-): node is QueryInputNodeResource | StartNodeResource {
+): node is QueryInputNodeResource {
   return (
-    (node as QueryInputNodeResource | StartNodeResource).type ===
+    (node as QueryInputNodeResource).type ===
       'QUERY_INPUT'
+  );
+}
+
+export function isWaitNode(
+  node: AutomationNodeShape,
+): node is WaitNodeResource {
+  return (
+    (node as WaitNodeResource).type ===
+      'WAIT_NODE'
   );
 }
 

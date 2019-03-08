@@ -17,15 +17,12 @@ import AutomationSimpleForm, {
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { McsIcon } from '../../../../components';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../../Edit/domain';
+import { McsIcon } from '../../../../components';
 
 interface AutomationActionBarProps {
   automationData?: Partial<AutomationFormData>;
   saveOrUpdate: (formData: Partial<AutomationFormData>) => void;
-  onClose?: () => void;
-  editMode: boolean;
-  handleEditMode: () => void;
 }
 
 interface State {
@@ -61,9 +58,6 @@ class AutomationActionBar extends React.Component<Props, State> {
     this.handleModal();
   };
 
-  editAutomation = () => {
-    this.props.handleEditMode();
-  };
 
   handleModal = () => {
     this.setState({
@@ -94,9 +88,7 @@ class AutomationActionBar extends React.Component<Props, State> {
     const {
       intl,
       submit,
-      onClose,
       automationData,
-      editMode,
       match: {
         params: { automationId },
       },
@@ -131,29 +123,13 @@ class AutomationActionBar extends React.Component<Props, State> {
           },
         ]}
       >
-        {editMode ? (
-          <Button className="mcs-primary" type="primary" onClick={this.onClick}>
-            {automationId
-              ? intl.formatMessage(messages.updateAutomation)
-              : intl.formatMessage(messages.saveAutomation)}
-          </Button>
-        ) : (
-          <Button
-            className="mcs-primary"
-            type="primary"
-            onClick={this.editAutomation}
-          >
-            <McsIcon type="pen" /> {intl.formatMessage(messages.editAutomation)}
-          </Button>
-        )}
-        {editMode && automationId && (
-          <McsIcon
-            type="close"
-            className="close-icon"
-            style={{ cursor: 'pointer' }}
-            onClick={onClose}
-          />
-        )}
+        <Button className="mcs-primary" type="primary" onClick={this.onClick}>
+          <McsIcon type={"plus"} /> 
+          {automationId
+            ? intl.formatMessage(messages.updateAutomation)
+            : intl.formatMessage(messages.saveAutomation)}
+        </Button>
+        
        {visible && (
           <AutomationSimpleForm
             onSubmit={this.onSave}

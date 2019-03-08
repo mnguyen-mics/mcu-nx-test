@@ -8,6 +8,7 @@ import DefaultAutomationForm from './Edit/DefaultForm/DefaultAutomationForm';
 import { AutomationFormPropsType } from './Edit/domain';
 import EmailCampaignAutomationForm from './Edit/EmailCampaignForm/EmailCampaignAutomationForm';
 import QueryAutomationForm from './Edit/QueryForm/QueryForm';
+import WaitForm from './Edit/WaitForm/WaitForm';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -62,6 +63,9 @@ export default class AutomationNodeModel extends NodeModel {
         break;
       case 'QUERY_INPUT':
         this.editFormComponent = QueryAutomationForm;
+        break;
+      case 'WAIT_NODE':
+        this.editFormComponent = WaitForm;
         break;
       default:
         this.editFormComponent = DefaultAutomationForm;

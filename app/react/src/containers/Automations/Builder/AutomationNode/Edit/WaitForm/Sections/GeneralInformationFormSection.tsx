@@ -5,16 +5,14 @@ import {
   FormInput,
   FormSection,
   FormInputField,
-  FormSlider,
-  FormSliderField,
-} from '../../../../../../components/Form';
+} from '../../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+} from '../../../../../../../components/Form/withValidators';
 import withNormalizer, {
   NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
-import { ABNFormData } from '../domain';
+} from '../../../../../../../components/Form/withNormalizer';
+import { DefaultFormData } from '../../domain';
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
@@ -23,24 +21,20 @@ export const messages = defineMessages({
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.edition.form.general.subtitle',
-    defaultMessage: 'Modify the general information of the ABN Node',
+    defaultMessage: 'Modify the general information of the node',
   },
   automationNodeName: {
     id: 'automation.builder.node.form.name',
     defaultMessage: 'Automation Node name',
   },
-  branchNumber: {
-    id: 'automation.builder.split.node.form.branch.number',
-    defaultMessage: 'Branches',
-  },
-  advancedSection: {
-    id: 'automation.builder.node.advanced.section',
-    defaultMessage: 'Advanced',
+  automationNodeBranch: {
+    id: 'automation.builder.node.form.wait.branch_number',
+    defaultMessage: 'Timeout',
   },
 });
 
 interface GeneralInformationFormSectionProps {
-  initialValues: Partial<ABNFormData>;
+  initialValues: Partial<DefaultFormData>;
   disabled?: boolean;
 }
 
@@ -67,9 +61,9 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
   render() {
     const {
-      fieldValidators: { isRequired },
+      fieldValidators: { isRequired, isValidInteger },
       intl: { formatMessage },
-      disabled,
+      disabled
     } = this.props;
 
     return (
@@ -90,26 +84,26 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             }}
             inputProps={{
               placeholder: formatMessage(messages.automationNodeName),
-              disabled: !!disabled,
+              disabled: !!disabled
             }}
             small={true}
           />
 
-          <FormSliderField
-            name="branch_number"
-            component={FormSlider}
+          <FormInputField
+            name="timeout"
+            component={FormInput}
+            validate={[isRequired, isValidInteger]}
             formItemProps={{
-              label: formatMessage(messages.branchNumber),
+              label: formatMessage(messages.automationNodeBranch),
               required: true,
             }}
             inputProps={{
-              min: 2,
-              max: 10,
-              defaultValue: 2,
-              disabled: !!disabled,
+              type: 'number',
+              disabled: !!disabled
             }}
             small={true}
           />
+
         </div>
       </div>
     );

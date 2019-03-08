@@ -11,6 +11,7 @@ import {
   ABNFormData,
   DisplayCampaignAutomationFormData,
   EmailCampaignAutomationFormData,
+  WaitFormData,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
@@ -269,6 +270,8 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'ABN_NODE':
         nodeBody = {
           ...storylineNode.node,
+          branch_number: (this.formData as ABNFormData).branch_number,
+          edges_selection: (this.formData as ABNFormData).edges_selection,
           name: this.formData.name,
           formData: this.formData as ABNFormData,
         };
@@ -280,10 +283,12 @@ export class UpdateNodeOperation implements NodeOperation {
           formData: this.formData as Partial<QueryResource>,
         };
         break;
-      case 'START':
+      case 'WAIT_NODE':
         nodeBody = {
           ...storylineNode.node,
-          formData: this.formData as Partial<QueryResource>,
+          timeout: (this.formData as WaitFormData).timeout,
+          name: this.formData.name,
+          formData: this.formData as WaitFormData,
         };
         break;
       default:
@@ -461,12 +466,7 @@ export function generateNodeProperties(
         iconType: 'check',
         color: '#18b577',
       };
-    case 'START':
-      return {
-        iconAnt: 'flag',
-        color: '#fbc02d',
-      };
-    case 'WAIT':
+    case 'WAIT_NODE':
       return {
         iconAnt: 'clock-circle',
         color: '#fbc02d',

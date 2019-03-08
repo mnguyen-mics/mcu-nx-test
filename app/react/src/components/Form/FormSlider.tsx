@@ -13,6 +13,7 @@ export interface FormSliderProps {
   formItemProps?: FormItemProps;
   inputProps?: SliderProps;
   helpToolTipProps?: TooltipProps;
+  small?: boolean;
 }
 
 class FormSlider extends React.Component<
@@ -39,6 +40,7 @@ class FormSlider extends React.Component<
       inputProps,
       helpToolTipProps,
       input,
+      small
     } = this.props;
 
     let validateStatus = 'success' as
@@ -54,6 +56,7 @@ class FormSlider extends React.Component<
         help={meta.touched && (meta.warning || meta.error)}
         helpToolTipProps={helpToolTipProps}
         validateStatus={validateStatus}
+        small={small}
         {...formItemProps}
       >
         <Slider

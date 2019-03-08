@@ -22,6 +22,7 @@ import {
   EmailCampaignAutomationFormData,
   isAbnNode,
   isEndNode,
+  isWaitNode,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
@@ -65,6 +66,9 @@ export class AutomationFormService implements IAutomationFormService {
   @inject(TYPES.IDisplayCampaignFormService)
   private _displayCampaignFormService: IDisplayCampaignFormService;
 
+  private edgeIds: string[] = [];
+  private nodeIds: string[] = [];
+
   loadInitialAutomationValues(
     automationId: string,
     storageModelVersion: string,
@@ -73,8 +77,22 @@ export class AutomationFormService implements IAutomationFormService {
     const storylinePromise = this._scenarioService.getScenarioStoryline(
       automationId,
     );
-    const nodePromise = this._scenarioService.getScenarioNodes(automationId);
-    const edgePromise = this._scenarioService.getScenarioEdges(automationId);
+
+    this.edgeIds = [];
+    this.nodeIds = [];
+
+    const nodePromise = this._scenarioService.getScenarioNodes(automationId).then(r => {
+      r.data.map(n => {
+        this.nodeIds.push(n.id)
+      })
+      return r;
+    });
+    const edgePromise = this._scenarioService.getScenarioEdges(automationId).then(r => {
+      r.data.map(e => {
+        this.edgeIds.push(e.id);
+      })
+      return r;
+    });
     if (storageModelVersion !== 'v201506') {
       return Promise.all([
         automationPromise,
@@ -142,12 +160,27 @@ export class AutomationFormService implements IAutomationFormService {
                 firstNodeId,
               );
             },
-          ).then(() => createdAutomation);
+          )
+          .then(() => {
+            const deleteEdgesPromise = this.edgeIds.map((id => {
+              return this._scenarioService.deleteScenarioEdge(createdAutomation.data.id, id);
+            }))
+            const deleteNodePromise = this.nodeIds.map(id => {
+              return this._scenarioService.deleteScenarioNode(createdAutomation.data.id, id)
+            })
+            const allPromises: Array<Promise<any>> = [...deleteEdgesPromise, ...deleteNodePromise];
+            return Promise.all(allPromises)
+          })
+          .then(() => createdAutomation);
         }
         return Promise.resolve(createdAutomation)
       });
     }
   }
+
+
+  removeNodeId = (id: string) => this.nodeIds = this.nodeIds.filter(n => n !== id);
+  removeEdgeId = (id: string) => this.edgeIds = this.edgeIds.filter(n => n !== id);
 
   saveFirstNode = (
     datamartId: string,
@@ -305,6 +338,25 @@ export class AutomationFormService implements IAutomationFormService {
               );
             });
           }))
+        } else if (isWaitNode(node)) {
+          return prev.then(() => this.saveOrCreateNode(
+            automationId,
+            storylineNode,
+          ).then(res => {
+            return this.saveOrCreateEdges(automationId, {
+              source_id: parentNodeId,
+              target_id: res.data.id,
+              edgeResource: storylineNode.in_edge
+            }).then(() => {
+              return this.iterate(
+                organisationId,
+                datamartId,
+                automationId,
+                storylineNode.out_edges,
+                res.data.id,
+              );
+            });
+          }))
         }
       }
       return prev.then(() => Promise.resolve());
@@ -379,6 +431,16 @@ export class AutomationFormService implements IAutomationFormService {
         x: node.x,
         y: node.y,
         type: 'END_NODE'
+      } 
+    } else if (isWaitNode(node)) {
+      scenarioNodeResource = {
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
+        name: node.name,
+        scenario_id: automationId,
+        x: node.x,
+        y: node.y,
+        timeout: node.formData ? node.formData.timeout : 24 * 1000 * 60 * 60 * 2, // 2 days
+        type: 'WAIT_NODE'
       }
     }
     saveOrCreateScenarioNode = resourceId
@@ -386,10 +448,16 @@ export class AutomationFormService implements IAutomationFormService {
           automationId,
           node.id,
           scenarioNodeResource,
-        )
+        ).then(e => {
+          this.removeNodeId(e.data.id)
+          return e;
+        })
       : this._scenarioService.createScenarioNode(automationId, {
           ...scenarioNodeResource,
           id: undefined,
+        }).then(e => {
+          this.removeNodeId(e.data.id)
+          return e;
         });
     return saveOrCreateScenarioNode.then(res => {
       if (isStartNode) {
@@ -409,12 +477,19 @@ export class AutomationFormService implements IAutomationFormService {
           automationId,
           customEdgeData.edgeResource.id,
           customEdgeData.edgeResource,
-        )
+        ).then(e => {
+          this.removeEdgeId(e.data.id)
+          return e;
+        })
       : this._scenarioService.createScenarioEdge(automationId, {
           ..._.omit(customEdgeData.edgeResource, ['id']),
           scenario_id: automationId,
           source_id: customEdgeData.source_id,
           target_id: customEdgeData.target_id,
+        })
+        .then(e => {
+          this.removeEdgeId(e.data.id)
+          return e;
         });
   };
 
