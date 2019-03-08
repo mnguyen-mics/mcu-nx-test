@@ -12,7 +12,7 @@ import ExportService from '../../../../services/Library/ExportService';
 import ExportActionbar from './ExportActionbar';
 import TableView from '../../../../components/TableView/TableView';
 import log from '../../../../utils/Logger';
-import { getCookie } from '../../../../utils/CookieHelper';
+import LocalStorage from '../../../../services/LocalStorage';
 import {
   PAGINATION_SEARCH_SETTINGS,
   buildDefaultSearch,
@@ -200,7 +200,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         execution.id
       }/files/technical_name=${
         execution.result.output_files[0]
-      }?access_token=${encodeURIComponent(getCookie('access_token'))}`;
+      }?access_token=${encodeURIComponent(LocalStorage.getItem('access_token')!)}`;
     }
   };
 
