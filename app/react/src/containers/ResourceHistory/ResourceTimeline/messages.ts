@@ -51,6 +51,10 @@ const messages: {
     id: 'timeline.resourceType.adxExchange',
     defaultMessage: 'Ad Exchange',
   },
+  placementListResourceType: {
+    id: 'timeline.resourceType.placementList',
+    defaultMessage: 'Placement List',
+  },
   today: {
     id: 'timeline.events.title.today',
     defaultMessage: 'Today',

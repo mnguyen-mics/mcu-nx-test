@@ -21,6 +21,7 @@ import formatAdGroupProperty from '../../../../../messages/campaign/display/adgr
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages'; 
 import GeonameService from '../../../../../services/GeonameService';
 import CreativeService from '../../../../../services/CreativeService';
+import PlacementListsService from '../../../../../services/Library/PlacementListsService';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -423,6 +424,41 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                     goToResource: (id: string) => {
                       return;
                     }
+                  },
+                  PLACEMENT_LIST_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.placementListResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return getLinkedResourceIdInSelection(
+                        organisationId,
+                        'PLACEMENT_LIST_SELECTION',
+                        id,
+                        'PLACEMENT_LIST',
+                      ).then(placementListId => {
+                        return PlacementListsService.getPlacementList(placementListId)
+                        .then(placementListResponse => {
+                          return placementListResponse.data.name
+                        });
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return getLinkedResourceIdInSelection(
+                        organisationId,
+                        'PLACEMENT_LIST_SELECTION',
+                        id,
+                        'PLACEMENT_LIST',
+                      ).then(placementListId => {
+                        history.push(
+                          `/v2/o/${organisationId}/library/placementlist/${placementListId}/edit`,
+                        );
+                      });
+                    },
                   },
                 },
               },
