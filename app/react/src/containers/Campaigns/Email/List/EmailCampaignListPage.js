@@ -195,6 +195,7 @@ class EmailCampaignListPage extends Component {
     const buildGetCampaignsOptions = () => {
       const options = {
         archived: filter.statuses.includes('ARCHIVED'),
+        automated: false,
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
 

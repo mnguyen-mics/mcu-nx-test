@@ -82,6 +82,19 @@ class QueryAutomationForm extends React.Component<Props, State> {
       return (
         <Layout>
           <div className="edit-layout ant-layout">
+            <ActionBar
+              edition={true}
+              paths={breadCrumbPaths}
+            >
+             
+              
+              <McsIcon
+                type="close"
+                className="close-icon"
+                style={{ cursor: 'pointer' }}
+                onClick={close}
+              />
+            </ActionBar>
             <Layout>
               <Content className="mcs-content-container mcs-form-container text-center">
                 <FormTitle

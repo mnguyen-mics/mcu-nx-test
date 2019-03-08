@@ -25,6 +25,7 @@ import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_QUERY_DATA,
   INITIAL_WAIT_DATA,
+  DisplayCampaignAutomationFormData,
 } from './Edit/domain';
 import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import AdGroupFormService from '../../../Campaigns/Display/Edit/AdGroup/AdGroupFormService';
@@ -34,6 +35,9 @@ import { IQueryService } from '../../../../services/QueryService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { isFakeId } from '../../../../utils/FakeIdHelper';
+import DisplayCampaignAutomatedDashboardPage, { DisplayCampaignAutomatedDashboardPageProps } from './Dashboard/DisplayCampaign/DisplayCampaignAutomatedDashboardPage';
+import EmailCampaignAutomatedDashboardPage, { EmailCampaignAutomatedDashboardPageProps } from './Dashboard/EmailCampaign/EmailCampaignAutomatedDashboardPage';
+
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -58,7 +62,11 @@ const messages = defineMessages({
   },
   view: {
     id: 'automation.builder.node.view',
-    defaultMessage: 'View',
+    defaultMessage: 'View Node Config.',
+  },
+  stats: {
+    id: 'automation.builder.node.stats',
+    defaultMessage: 'View Stats.',
   },
   remove: {
     id: 'automation.builder.node.remove',
@@ -198,13 +206,44 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     });
   };
 
+  viewStats = () => {
+    const { node, openNextDrawer, closeNextDrawer } = this.props;
+    const { initialValuesForm } = this.state
+    const selectedNode = node.storylineNodeModel.node;
+
+    if (selectedNode.type === "DISPLAY_CAMPAIGN" && initialValuesForm) {
+      const campaignValue = initialValuesForm as DisplayCampaignAutomationFormData;
+      openNextDrawer<DisplayCampaignAutomatedDashboardPageProps>(
+        DisplayCampaignAutomatedDashboardPage,
+        {
+          additionalProps: {
+            campaignId: campaignValue.campaign.id!,
+            close: closeNextDrawer,
+          },
+          size: 'large',
+        },
+      );
+    } else if (selectedNode.type === "EMAIL_CAMPAIGN" && initialValuesForm) {
+      openNextDrawer<EmailCampaignAutomatedDashboardPageProps>(
+        EmailCampaignAutomatedDashboardPage,
+        {
+          additionalProps: {
+            campaignId: selectedNode.campaign_id,
+            close: closeNextDrawer,
+          },
+          size: 'large',
+        },
+      );
+    }
+    
+  }
   
 
   editNode = () => {
     const { node, lockGlobalInteraction, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId } = this.props;
     const { initialValuesForm } = this.state;
     this.setState({ focus: false }, () => {
-      lockGlobalInteraction(false);
+      lockGlobalInteraction(true);
       if (
         isScenarioNodeShape(node.storylineNodeModel.node) &&
         initialValuesForm
@@ -237,10 +276,12 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                   initialValue,
                 );
                 closeNextDrawer();
+                lockGlobalInteraction(false);
               },
               initialValues: initialValue,
             },
             size: size,
+            isModal: true
           },
         );
       }
@@ -308,6 +349,12 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         ))
       }
     } else {
+      content.push((
+        <div onClick={this.viewStats} className="boolean-menu-item">
+          <FormattedMessage {...messages.stats} />
+        </div>
+      ))
+
       content.push((
         <div onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
@@ -442,6 +489,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const onFocus = () => {
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
       this.setState({ focus: !this.state.focus });
+      
     };
 
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;

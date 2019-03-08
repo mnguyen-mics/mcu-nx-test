@@ -118,6 +118,7 @@ class DisplayCampaignsPage extends React.Component<
     } = this.props;
     const options: GetCampaignsOptions = {
       max_results: totalDisplayCampaigns,
+      automated: false,
       archived: false,
     };
     return CampaignService.getCampaigns(organisationId, 'DISPLAY', options)
