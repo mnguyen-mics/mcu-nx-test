@@ -44,7 +44,6 @@ interface AutomationNodeProps {
   lockGlobalInteraction: (lock: boolean) => void;
   diagramEngine: DiagramEngine;
   nodeOperations: TreeNodeOperations;
-  updateQueryNode?: (nodeId: string, queryText: string) => void;
   viewer: boolean;
   datamartId: string;
 }
@@ -301,13 +300,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       }
     }
     return undefined;
-  };
-
-  handleQueryOnChange = (queryText: string) => {
-    const { node, updateQueryNode } = this.props;
-    if (updateQueryNode) {
-      updateQueryNode(node.storylineNodeModel.node.id, queryText);
-    }
   };
 
   renderAbnEdit = (): React.ReactNodeArray => {

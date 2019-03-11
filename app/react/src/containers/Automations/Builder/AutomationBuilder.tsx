@@ -48,7 +48,6 @@ export interface AutomationBuilderEditorProps extends AutomationBuilderBaseProps
   updateAutomationData: (
     automationData: StorylineNodeModel,
   ) => StorylineNodeModel;
-  updateQueryNode: (nodeId: string, queryText: string) => void;
 }
 
 export type AutomationBuilderProps = AutomationBuilderEditorProps | AutomationBuilderVisualizerProps;
@@ -76,7 +75,6 @@ class AutomationBuilder extends React.Component<Props, State> {
         this.lockInteraction,
         props.datamartId,
         props.viewer,
-        !props.viewer ? props.updateQueryNode : undefined,
       ),
     );
    

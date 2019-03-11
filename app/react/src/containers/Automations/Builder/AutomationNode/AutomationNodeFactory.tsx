@@ -8,7 +8,6 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
   AutomationNodeModel
 > {
   nodeOperations: TreeNodeOperations;
-  updateQueryNode?: (nodeId: string, queryText: string) => void;
   lockGlobalInteraction: (locked: boolean) => void;
   viewer: boolean;
   datamartId: string;
@@ -21,8 +20,7 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
     updateQueryNode?: (nodeId: string, queryText: string) => void,
   ) {
     super('automation-node');
-    this.nodeOperations = nodeOperations;
-    this.updateQueryNode = updateQueryNode;
+    this.nodeOperations = nodeOperations
     this.lockGlobalInteraction = _lockGlobalInteraction;
     this.viewer = viewer;
     this.datamartId = datamartId
@@ -39,7 +37,6 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
       node: node,
       diagramEngine: diagramEngine,
       nodeOperations: this.nodeOperations,
-      updateQueryNode: this.updateQueryNode,
       datamartId: this.datamartId,
       lockGlobalInteraction: this.lockGlobalInteraction,
       viewer: this.viewer

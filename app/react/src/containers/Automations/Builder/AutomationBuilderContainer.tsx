@@ -11,11 +11,8 @@ import { StorylineNodeModel, storylineNodeData } from './domain';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import AutomationActionBar from './ActionBar/AutomationActionBar';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
-import { ScenarioNodeShape } from '../../../models/automations/automations';
-import { isQueryInputNode } from './AutomationNode/Edit/domain';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
-import { QueryLanguage } from '../../../models/datamart/DatamartResource';
 import { Loading } from '../../../components';
 
 export interface AutomationBuilderContainerProps {
@@ -66,8 +63,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     }
   }
 
-  // TODO: merge handleUpdateAutomationData and handleQueryNodeData
-
   handleUpdateAutomationData = (
     newAutomationData: StorylineNodeModel,
   ): StorylineNodeModel => {
@@ -76,50 +71,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       automationTreeData: newAutomationData,
     });
     return newAutomationData;
-  };
-
-  handleQueryNodeData = (nodeId: string, queryText: string) => {
-    const { automationTreeData } = this.state;
-    let updatedBeginNode: ScenarioNodeShape;
-    if (
-      automationTreeData.node.id === nodeId &&
-      isQueryInputNode(automationTreeData.node)
-    ) {
-      updatedBeginNode = {
-        ...automationTreeData.node,
-        formData: {
-          query_text: JSON.stringify(queryText),
-          query_language: 'JSON_OTQL' as QueryLanguage,
-        },
-      };
-    }
-    const iterate = (treeData: StorylineNodeModel): StorylineNodeModel => {
-      const outEdges = treeData.out_edges.map((child, index) => {
-        if (child.node.id === nodeId) {
-          const updatedNode = {
-            ...child.node,
-            query_text: JSON.stringify(queryText),
-            query_language: 'JSON_OTQL' as QueryLanguage,
-          };
-          return {
-            node: updatedNode,
-            in_edge: child.in_edge,
-            out_edges: child.out_edges,
-          };
-        } else {
-          return iterate(child);
-        }
-      });
-      return {
-        node: treeData.node.id === nodeId ? updatedBeginNode : treeData.node,
-        in_edge: treeData.in_edge,
-        out_edges: outEdges,
-      };
-    };
-
-    this.setState({
-      automationTreeData: iterate(automationTreeData),
-    });
   };
 
 
@@ -161,7 +112,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
               automationTreeData={automationTreeData}
               scenarioId={storylineNodeData[0].scenario_id}
               updateAutomationData={this.handleUpdateAutomationData}
-              updateQueryNode={this.handleQueryNodeData}
               viewer={false}
             />
           </Layout.Content>
