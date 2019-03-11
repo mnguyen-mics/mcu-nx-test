@@ -261,12 +261,17 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           size = "large"
         }
 
+        const close = () => {
+          lockGlobalInteraction(false);
+          closeNextDrawer()
+        }
+
         openNextDrawer<AutomationFormPropsType>(
           node.editFormComponent,
           {
             additionalProps: {
               node: scenarioNodeShape,
-              close: closeNextDrawer,
+              close: close,
               breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
               disabled: viewer,
               onSubmit: (formData: AutomationFormDataType) => {

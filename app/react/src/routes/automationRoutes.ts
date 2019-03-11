@@ -16,6 +16,20 @@ export const automationDefinition: NavigatorDefinition = {
     requiredFeature: 'automations.builder',
     requireDatamart: true,
   },
+  automationBuilderOld: {
+    path: '/automation-builder-old',
+    layout: 'edit',
+    editComponent: AutomationEditPage,
+    requiredFeature: 'automations.builder',
+    requireDatamart: true,
+  },
+  automationBuilderEditOld: {
+    path: '/automation-builder-old/:automationId',
+    layout: 'edit',
+    editComponent: AutomationEditPage,
+    requiredFeature: 'automations.builder',
+    requireDatamart: true,
+  },
   automationsEdit: {
     path: '/automations/:automationId/edit',
     layout: 'main',

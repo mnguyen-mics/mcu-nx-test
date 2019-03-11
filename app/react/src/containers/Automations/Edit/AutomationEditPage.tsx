@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
+import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -73,12 +74,24 @@ class EditAutomationPage extends React.Component<Props, State> {
       match: {
         params: { automationId, organisationId },
       },
+      location: { search },
     } = this.props;
-   
+    const datamartId = queryString.parse(search).datamartId;
 
     if (automationId && organisationId) {
       this.loadData(organisationId, automationId)
-    } 
+    }
+    if (!automationId && datamartId) {
+      const ScenarioContainer = this.scenarioContainer;
+      this.AngularSession.init(organisationId).then(() => {
+        this.setState({
+          scenarioContainer: new ScenarioContainer(),
+        })
+      }).then(() => {
+        this.fetchDatamart(datamartId)
+      })
+      
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -86,22 +99,43 @@ class EditAutomationPage extends React.Component<Props, State> {
       match: {
         params: { automationId, organisationId },
       },
+      location: { search },
     } = this.props;
 
     const {
       match: {
         params: { automationId: prevAutomationId, organisationId: prevOrganisationId },
       },
+      location: { search: prevSearch },
     } = prevProps;
 
     if (automationId && (automationId !== prevAutomationId || organisationId !== prevOrganisationId)) {
       this.loadData(organisationId, automationId)
     }
+    const datamartId = queryString.parse(search).datamartId;
+    const preDatamartId = queryString.parse(prevSearch).datamartId;
+    if (!automationId && automationId !== prevAutomationId && datamartId !== preDatamartId) {
+      const ScenarioContainer = this.scenarioContainer;
+      this.AngularSession.init(organisationId).then(() => {
+        this.setState({
+          scenarioContainer: new ScenarioContainer(),
+        })
+      }).then(() => {
+        this.fetchDatamart(datamartId)
+      })
+    }
+  }
+
+  fetchDatamart = (datamartId: string) => {
+    this.setState({ loading: true });
+    return DatamartService.getDatamart(datamartId)
+      .then(r => this.setState({ datamart: r.data, loading: false }))
+      .catch((err) => {  this.props.notifyError(err); this.setState({ loading: false })})
   }
 
   loadData = (organisationId: string, automationId: string) => {
     this.setState({ loading: true });
-    this._scenarioService.getScenario(automationId)
+    return this._scenarioService.getScenario(automationId)
       .then((r) => DatamartService.getDatamart(r.data.datamart_id))
       .then(r => {
         const datafarmVersion = r.data.storage_model_version;
@@ -114,7 +148,7 @@ class EditAutomationPage extends React.Component<Props, State> {
                 datamart: r.data,
                 automationFormData: data,
                 loading: false,
-                scenarioContainer: ScenarioContainer
+                scenarioContainer: new ScenarioContainer(automationId)
               })
             })
         }
@@ -158,9 +192,16 @@ class EditAutomationPage extends React.Component<Props, State> {
       saveOrUpdate
         .then(() => {
           this.setState({ loading: false });
-          this.props.history.push(
-            `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
-          );
+          if (datamart.storage_model_version === 'v201506') {
+            this.props.history.push(
+              `/v2/o/${this.props.match.params.organisationId}/automations`,
+            );
+          } else {
+            this.props.history.push(
+              `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
+            );
+          }
+         
         })
       .catch(err => {
         this.setState({ loading: false });
@@ -175,8 +216,11 @@ class EditAutomationPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      location: {
+        state
+      }
     } = this.props;
-    history.push(`/v2/o/${organisationId}/automations/list`);
+    history.push(state && state.from ? state.from : `/v2/o/${organisationId}/automations`);
   };
 
 
@@ -186,7 +230,7 @@ class EditAutomationPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle,
-        path: `/v2/o/${organisationId}/automations/list`,
+        path: `/v2/o/${organisationId}/automations`,
       },
       {
         name: automationId
@@ -240,6 +284,19 @@ class EditAutomationPage extends React.Component<Props, State> {
 
     if (automationId && !loading && datamart) {
       return this.renderEditPage(datamart, organisationId, automationId)
+    }
+
+    // render create form for old automations
+    if (!automationId && !loading) {
+      return (<AutomationEditForm
+        initialValues={this.state.automationFormData}
+        onSubmit={this.save}
+        close={this.onClose}
+        breadCrumbPaths={[]}
+        onSubmitFail={this.onSubmitFail}
+        scenarioContainer={this.state.scenarioContainer}
+        datamart={datamart}
+      />)
     }
 
     return 'The automation you are trying to load doesn\'t seem to exist or you don\'t have the right to view it'

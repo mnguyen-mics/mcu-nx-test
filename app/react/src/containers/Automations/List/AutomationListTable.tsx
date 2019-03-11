@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout, Tooltip, Icon, Modal } from 'antd';
 import { compose } from 'recompose';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
@@ -152,20 +152,18 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         params: { organisationId },
       },
       history,
+      location
     } = this.props;
 
     DatamartService.getDatamart(record.datamart_id).then(resp => {
       if (resp.data.storage_model_version !== 'v201506') {
-        history.push(
-          `/v2/o/${organisationId}/automations/builder/${
-            record.id
-          }/edit?datamartId=${resp.data.id}`,
-        );
+        history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`, { from: `${location.pathname}${location.search}`});
       } else {
-        history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`);
+        history.push(`/v2/o/${organisationId}/automation-builder-old/${record.id}`, { from: `${location.pathname}${location.search}` });
       }
     });
   };
+  
 
   deleteAutomation = (record: AutomationResource) => {
     const {
@@ -233,11 +231,25 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     history.push(nextLocation);
   };
 
-  render() {
+  viewAutomation = (record: AutomationResource) => () => {
     const {
       match: {
         params: { organisationId },
       },
+      history
+    } = this.props;
+
+    DatamartService.getDatamart(record.datamart_id).then(resp => {
+      if (resp.data.storage_model_version !== 'v201506') {
+        history.push(`/v2/o/${organisationId}/automations/${record.id}`);
+      } else {
+        history.push(`/v2/o/${organisationId}/automation-builder-old/${record.id}`);
+      }
+    });
+  }
+
+  render() {
+    const {
       location: { search },
       intl,
       translations,
@@ -300,9 +312,9 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         isHideable: false,
         render: (text: string, record: AutomationResource) => {
           return (
-            <Link to={`/v2/o/${organisationId}/automations/${record.id}`} >
+            <a onClick={this.viewAutomation(record)} >
               <span className="mcs-automation-link">{text}</span>
-            </Link>
+            </a>
           );
         },
       },

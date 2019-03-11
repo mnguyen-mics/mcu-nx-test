@@ -194,9 +194,9 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       if (selection.storage_model_version === 'v201506') {
         history.push(
-          `/v2/o/${organisationId}/automations/create?datamartId=${
+          `/v2/o/${organisationId}/automation-builder-old?datamartId=${
             selection.id
-          }`,
+         }`,
         );
       } else {
         history.push({

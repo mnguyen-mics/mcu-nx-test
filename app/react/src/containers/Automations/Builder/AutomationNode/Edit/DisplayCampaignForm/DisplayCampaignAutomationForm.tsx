@@ -19,12 +19,10 @@ import { FORM_ID, DisplayCampaignAutomationFormData } from '../domain';
 import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
 import {
-  LocationTargetingFieldArray,
   InventoryCatalogFieldArray,
   AdFieldArray,
   BidOptimizerFieldArray,
 } from '../../../../../Campaigns/Display/Edit/AdGroup/AdGroupForm';
-import { LocationTargetingFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections/Location';
 import messages from '../../../../../Campaigns/Display/Edit/messages';
 import DeviceFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/DeviceFormSection';
 import { InventoryCatalogFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections/InventoryCatalog';
@@ -92,18 +90,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       ),
     };
 
-    const location = {
-      id: 'location',
-      title: messages.sectionTitleLocationTargeting,
-      component: (
-        <LocationTargetingFieldArray
-          name="adGroupFields[0].model.locationFields"
-          small={true}
-          component={LocationTargetingFormSection}
-          {...genericFieldArrayProps}
-        />
-      ),
-    };
+
     const device = {
       id: 'device',
       title: messages.sectionTitleDevice,
@@ -158,7 +145,6 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
     };
 
     sections.push(displayCampaignSection);
-    sections.push(location);
     sections.push(device);
     sections.push(placementList);
     sections.push(displayAd);
