@@ -31,8 +31,12 @@ export interface InjectedInventoryCatalogProps {
 
 type State = InjectedInventoryCatalogProps;
 
+interface ProvidedProps {
+  isScenario?: boolean;
+}
+
 type Props = InjectedDatamartProps &
-  RouteComponentProps<EditAdGroupRouteMatchParam>;
+  RouteComponentProps<EditAdGroupRouteMatchParam> & ProvidedProps;
 
 const provideInventoryCatalog = (
   Component: React.ComponentClass<InjectedInventoryCatalogProps>,
@@ -68,9 +72,11 @@ const provideInventoryCatalog = (
 
     componentDidMount() {
       this.fetchDetailedTargetingData();
-      this.fetchOwnDealList();
-      this.fetchOwnKeywordList();
-      this.fetchOwnPlacementList();
+      if (!this.props.isScenario) {
+        this.fetchOwnDealList();
+        this.fetchOwnKeywordList();
+        this.fetchOwnPlacementList();
+      }
     }
 
     fetchDetailedTargetingData = () => {

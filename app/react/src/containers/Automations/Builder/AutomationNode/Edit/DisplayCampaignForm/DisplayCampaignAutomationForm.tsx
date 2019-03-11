@@ -113,6 +113,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
           name="adGroupFields[0].model.inventoryCatalFields"
           component={InventoryCatalogFormSection}
           small={true}
+          isScenario={true}
           {...genericFieldArrayProps}
         />
       ),

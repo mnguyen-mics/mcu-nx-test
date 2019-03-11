@@ -46,6 +46,7 @@ export interface InventoryCatalogFormSectionProps
     ReduxFormChangeProps {
       small?: boolean;
       disabled?: boolean;
+      isScenario?: boolean;
     }
 
 type Props = WrappedFieldArrayProps<InventoryCatalFieldsModel> &
@@ -161,7 +162,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     const { intl } = this.props;
 
     const placementListTree =
-      placementList.data.length > 0
+      placementList.data.length > 0 
         ? // add datamart's segments to tree if any
           this.buildTreeDataFromOwnSegments(
             placementList.data,
@@ -171,7 +172,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
         : [];
 
     const keywordListTree =
-      keywordList.data.length > 0
+      keywordList.data.length > 0 
         ? // add datamart's segments to tree if any
           this.buildTreeDataFromOwnSegments(
             keywordList.data,
