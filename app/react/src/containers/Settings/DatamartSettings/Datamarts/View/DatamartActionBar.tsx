@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
-import { Actionbar } from '../../../../Actionbar';
+import Actionbar from '../../../../../components/ActionBar';
 import { McsIcon } from '../../../../../components';
 import { Button } from 'antd';
 import messages from './messages';
@@ -46,7 +46,7 @@ class DatamartActionBar extends React.Component<Props> {
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Button onClick={this.onEditClick}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.edit} />
