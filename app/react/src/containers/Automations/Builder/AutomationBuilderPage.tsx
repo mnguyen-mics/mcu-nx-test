@@ -163,7 +163,6 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         message.success(intl.formatMessage(messages.automationSaved));
       })
       .catch(err => {
-        console.log(err);
         this.setState({ isLoading: false });
         notifyError(err);
         hideSaveInProgress();

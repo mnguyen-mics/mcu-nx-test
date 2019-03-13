@@ -23,6 +23,8 @@ import {
   isAbnNode,
   isEndNode,
   isWaitNode,
+  ABNFormData,
+  WaitFormData,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
@@ -86,30 +88,32 @@ export class AutomationFormService implements IAutomationFormService {
     //   return r;
     // });
 
-    const nodePromise = this.loadScenarioNode(automationId);
+    const nodePromise = (datamartId: string) => this.loadScenarioNode(automationId, datamartId);
 
     const edgePromise = this._scenarioService.getScenarioEdges(automationId);
 
     if (storageModelVersion !== 'v201506') {
-      return Promise.all([
-        automationPromise,
-        storylinePromise,
-        nodePromise,
-        edgePromise,
-      ]).then(res => {
-        return buildAutomationTreeData(
-          res[1].data,
-          res[2],
-          res[3].data,
-          this._queryService,
-          res[0].data.datamart_id,
-        ).then(storylineNodeModelRes => {
-          return {
-            automation: res[0].data,
-            automationTreeData: storylineNodeModelRes,
-          };
+      return this._scenarioService.getScenario(automationId).then((r) => {
+        return Promise.all([
+          automationPromise,
+          storylinePromise,
+          nodePromise(r.data.datamart_id),
+          edgePromise,
+        ]).then(res => {
+          return buildAutomationTreeData(
+            res[1].data,
+            res[2],
+            res[3].data,
+            this._queryService,
+            res[0].data.datamart_id,
+          ).then(storylineNodeModelRes => {
+            return {
+              automation: res[0].data,
+              automationTreeData: storylineNodeModelRes,
+            };
+          });
         });
-      });
+      }) 
     } else {
       return Promise.all([automationPromise]).then(res => {
         return {
@@ -121,7 +125,8 @@ export class AutomationFormService implements IAutomationFormService {
   }
 
   loadScenarioNode(
-    automationId: string
+    automationId: string,
+    datamartId: string
   ): Promise<ScenarioNodeShape[]> {
     return this._scenarioService.getScenarioNodes(automationId).then(r => {
       r.data.map(n => {
@@ -185,10 +190,37 @@ export class AutomationFormService implements IAutomationFormService {
             break;
           
           case 'ABN_NODE':
+            const abnFormData: ABNFormData = {
+              branch_number: n.branch_number ? n.branch_number : 2,
+              edges_selection: n.edges_selection,
+              name: n.name ? n.name : 'Split',
+            };
+            getPromise = Promise.resolve().then(() => ({ 
+              ...n,
+              formData: abnFormData,
+            }))
+            break;
+          case 'WAIT_NODE':
+            const waitFormData: WaitFormData = {
+              timeout: n.timeout,
+              name: n.name ? n.name : 'Wait'
+            }
+            getPromise = Promise.resolve().then(() => ({ 
+              ...n,
+              formData: waitFormData,
+            }))
+            break;
+          case 'QUERY_INPUT':
+            getPromise = this._queryService.getQuery(datamartId, n.query_id).then((q) => ({
+              ...n,
+              formData: {
+                ...q.data,
+                name: n.name,
+              }
+            }))
+            break;
           case 'END_NODE':
           case 'PLUGIN_NODE':
-          case 'WAIT_NODE':
-          case 'QUERY_INPUT':
             getPromise = Promise.resolve().then(() => ({ ...n }))
             break;
         }
@@ -220,9 +252,7 @@ export class AutomationFormService implements IAutomationFormService {
       })
     };
 
-    traverse(initialFormData.automationTreeData)
-
-    console.log('start pool', this.ids, formData)
+    traverse(initialFormData.automationTreeData);
   
 
     const saveOrCreatePromise = () =>
@@ -258,7 +288,6 @@ export class AutomationFormService implements IAutomationFormService {
             },
           )
           .then(() => {
-            console.log('ending', this.ids);
             return this.ids.reduce((acc, id) => {
               const formattedId = id.substr(2);
               if (id.startsWith('e-')) {
@@ -308,7 +337,6 @@ export class AutomationFormService implements IAutomationFormService {
   ): Promise<any> => {
     return storylineNodes.reduce((prev, storylineNode) => {
       const node = storylineNode.node;
-      console.log('going there for', node)
       if (isScenarioNodeShape(node)) {
         if (isDisplayCampaignNode(node)) {
           const saveOrCreateCampaignPromise = this.saveSubDisplayCampaign(
@@ -540,7 +568,6 @@ export class AutomationFormService implements IAutomationFormService {
       }
       resourceId = node.id  && !isFakeId(node.id) ? node.id : undefined;
     }
-    console.log(resourceId ? 'updating' : 'creating', node.id, scenarioNodeResource)
     saveOrCreateScenarioNode = resourceId
       ? this._scenarioService.updateScenarioNode(
           automationId,
@@ -566,7 +593,6 @@ export class AutomationFormService implements IAutomationFormService {
     automationId: string,
     customEdgeData: CustomEdgeResource,
   ):  Promise<any> => {
-    console.log(customEdgeData.edgeResource && customEdgeData.edgeResource.id && !isFakeId(customEdgeData.edgeResource.id) ? 'updating edge' : 'creating edge', customEdgeData)
     const resource = customEdgeData.edgeResource;
     return resource && resource.id && !isFakeId(resource.id)
       ?

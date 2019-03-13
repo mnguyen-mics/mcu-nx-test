@@ -67,6 +67,11 @@ const conditionNode1: ScenarioNodeShape = {
   scenario_id: '',
   edges_selection: {},
   branch_number: 2,
+  formData: {
+    edges_selection: {},
+    branch_number: 2,
+    name: ''
+  }
 };
 
 const conditionNode2: ScenarioNodeShape = {
@@ -75,6 +80,10 @@ const conditionNode2: ScenarioNodeShape = {
   type: 'WAIT_NODE',
   scenario_id: '',
   timeout: 1000,
+  formData: {
+    timeout: 1000,
+    name: ''
+  },
 };
 
 type Props = InjectedIntlProps;

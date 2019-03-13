@@ -29,6 +29,7 @@ const fieldSource = {
       color: generateNodeProperties(props.node).color,
       type: props.node.type,
       branch_number: isAbnNode(props.node) ? props.node.branch_number : 0,
+      ...props.node
     };
   },
 };

@@ -140,7 +140,8 @@ export type AutomationFormDataType =
   | ABNFormData
   | DisplayCampaignAutomationFormData
   | EmailCampaignAutomationFormData
-  | QueryAutomationFormData;
+  | QueryAutomationFormData
+  | WaitFormData;
 
 export type AutomationFormPropsType =
   | ABNAutomationFormProps

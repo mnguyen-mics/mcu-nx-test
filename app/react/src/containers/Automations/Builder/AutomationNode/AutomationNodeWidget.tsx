@@ -21,20 +21,9 @@ import {
   AutomationFormDataType,
   AutomationFormPropsType,
   isQueryInputNode,
-  INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
-  INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
-  INITIAL_QUERY_DATA,
-  INITIAL_WAIT_DATA,
-  DisplayCampaignAutomationFormData,
 } from './Edit/domain';
-import DisplayCampaignService from '../../../../services/DisplayCampaignService';
-import AdGroupFormService from '../../../Campaigns/Display/Edit/AdGroup/AdGroupFormService';
-import EmailCampaignFormService from '../../../Campaigns/Email/Edit/EmailCampaignFormService';
-import { ScenarioNodeType } from '../../../../models/automations/automations';
-import { IQueryService } from '../../../../services/QueryService';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { isFakeId } from '../../../../utils/FakeIdHelper';
+
+import { ScenarioNodeType, QueryInputNodeResource, ScenarioNodeShape } from '../../../../models/automations/automations'
 import DisplayCampaignAutomatedDashboardPage, { DisplayCampaignAutomatedDashboardPageProps } from './Dashboard/DisplayCampaign/DisplayCampaignAutomatedDashboardPage';
 import EmailCampaignAutomatedDashboardPage, { EmailCampaignAutomatedDashboardPageProps } from './Dashboard/EmailCampaign/EmailCampaignAutomatedDashboardPage';
 
@@ -51,7 +40,6 @@ interface AutomationNodeProps {
 interface State {
   focus: boolean;
   hover: boolean;
-  initialValuesForm?: AutomationFormDataType;
 }
 
 const messages = defineMessages({
@@ -80,115 +68,15 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   left: number = 0;
   id: string = cuid();
 
-  @lazyInject(TYPES.IQueryService)
-  private _queryService: IQueryService; 
-
   constructor(props: Props) {
     super(props);
+
     this.state = {
       focus: false,
       hover: false,
     };
   }
 
-  // todo move load into the formWrapper
-  componentDidMount() {
-    const {
-      node: {
-        storylineNodeModel: { node },
-      },
-      datamartId
-    } = this.props;
-    switch (node.type) {
-      case 'DISPLAY_CAMPAIGN':
-        return node.campaign_id && node.ad_group_id
-          ? DisplayCampaignService.getCampaignDisplay(node.campaign_id).then(
-              campaignResp => {
-                AdGroupFormService.loadAdGroup(
-                  node.campaign_id,
-                  node.ad_group_id,
-                ).then(adGroupResp => {
-                  this.setState({
-                    initialValuesForm: {
-                      campaign: campaignResp.data,
-                      name: node.name,
-                      goalFields: [],
-                      adGroupFields: [{
-                        key: adGroupResp.adGroup.id,
-                        model: {
-                          adFields: adGroupResp.adFields,
-                          adGroup: {...adGroupResp.adGroup},
-                          bidOptimizerFields: adGroupResp.bidOptimizerFields,
-                          locationFields: adGroupResp.locationFields,
-                          inventoryCatalFields: adGroupResp.inventoryCatalFields,
-                          segmentFields: adGroupResp.segmentFields
-                        }
-                      }]
-                    },
-                  });
-                });
-              },
-            )
-          : this.setState({
-              initialValuesForm: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
-            });
-      case 'EMAIL_CAMPAIGN':
-        return node.campaign_id
-          ? EmailCampaignFormService.loadCampaign(node.campaign_id).then(
-              campaignResp => {
-                this.setState({
-                  initialValuesForm: {
-                    name: node.name,
-                    campaign: campaignResp.campaign,
-                    blastFields: campaignResp.blastFields,
-                    routerFields: campaignResp.routerFields,
-                  },
-                });
-              },
-            )
-          : this.setState({
-              initialValuesForm: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
-            });
-      case 'QUERY_INPUT':
-        return node.query_id && !isFakeId(node.query_id) ?
-          this._queryService.getQuery(datamartId, node.query_id).then(
-            queryResp => {
-              this.setState({
-                initialValuesForm: {
-                  name: node.name,
-                  ...queryResp.data
-                }
-              })
-            }
-          ) : this.setState({ 
-            initialValuesForm: {
-              ...INITIAL_QUERY_DATA(datamartId),
-              name: node.name
-            } 
-          })
-      case 'ABN_NODE':
-        return this.setState({
-          initialValuesForm: {
-            branch_number: node.branch_number,
-            edges_selction: node.edges_selection,
-            name: node.name ? node.name : 'Split',
-          }
-        });
-      case 'WAIT_NODE':
-        return node.formData ? this.setState({
-          initialValuesForm: {
-            timeout: node.timeout,
-            name: node.name ? node.name : 'Wait'
-          }
-        }) : this.setState({
-          initialValuesForm: {
-            ...INITIAL_WAIT_DATA
-          }
-        })
-      default:
-        return;
-    }
-  }
 
   setPosition = (node: HTMLDivElement | null) => {
     const bodyPosition = document.body.getBoundingClientRect();
@@ -207,11 +95,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   viewStats = () => {
     const { node, openNextDrawer, closeNextDrawer } = this.props;
-    const { initialValuesForm } = this.state
     const selectedNode = node.storylineNodeModel.node;
 
-    if (selectedNode.type === "DISPLAY_CAMPAIGN" && initialValuesForm) {
-      const campaignValue = initialValuesForm as DisplayCampaignAutomationFormData;
+    if (selectedNode.type === "DISPLAY_CAMPAIGN") {
+      const campaignValue = selectedNode.formData;
       openNextDrawer<DisplayCampaignAutomatedDashboardPageProps>(
         DisplayCampaignAutomatedDashboardPage,
         {
@@ -222,7 +109,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           size: 'large',
         },
       );
-    } else if (selectedNode.type === "EMAIL_CAMPAIGN" && initialValuesForm) {
+    } else if (selectedNode.type === "EMAIL_CAMPAIGN") {
       openNextDrawer<EmailCampaignAutomatedDashboardPageProps>(
         EmailCampaignAutomatedDashboardPage,
         {
@@ -240,25 +127,42 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   editNode = () => {
     const { node, lockGlobalInteraction, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId } = this.props;
-    const { initialValuesForm } = this.state;
+
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(true);
       if (
-        isScenarioNodeShape(node.storylineNodeModel.node) &&
-        initialValuesForm
+        isScenarioNodeShape(node.storylineNodeModel.node)
       ) {
         const scenarioNodeShape = node.storylineNodeModel.node;
-        let initialValue: any = initialValuesForm;
+        let initialValue: AutomationFormDataType = {
+          name: node.storylineNodeModel.node.name
+        };
         let size: "small" | "large" = 'small';
 
-        if ((scenarioNodeShape.type !== 'END_NODE' && scenarioNodeShape.type !== 'PLUGIN_NODE') && scenarioNodeShape.formData) {
-          initialValue = scenarioNodeShape.formData
+        switch(scenarioNodeShape.type) {
+          case 'ABN_NODE':
+          case 'DISPLAY_CAMPAIGN':
+          case 'EMAIL_CAMPAIGN':
+          case 'WAIT_NODE':
+            initialValue = {
+              ...scenarioNodeShape.formData!,
+              name: scenarioNodeShape.name
+            };
+            break;
+          case 'QUERY_INPUT':
+            // add here query input
+            initialValue = {
+              ... scenarioNodeShape.formData,
+              datamart_id: scenarioNodeShape.formData.datamart_id ? scenarioNodeShape.formData.datamart_id : datamartId,
+              name: scenarioNodeShape.name
+            } as any;
+            size = "large"
+            break;      
+          default:
+            break;
         }
 
-        if (scenarioNodeShape.type === 'QUERY_INPUT') {
-          initialValue.datamart_id = initialValue.datamart_id ? initialValue.datamart_id  : datamartId;
-          size = "large"
-        }
+      
 
         const close = () => {
           lockGlobalInteraction(false);
@@ -302,6 +206,25 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     return undefined;
   };
 
+
+  editNodeProperties = (node: ScenarioNodeShape) => () => {
+    const { nodeOperations } = this.props;
+
+    let initialValuesForm: AutomationFormDataType = { name: node.name};
+    switch(node.type) {
+      case 'DISPLAY_CAMPAIGN':
+      case 'EMAIL_CAMPAIGN':
+        initialValuesForm = node.initialFormData;
+        break;
+    }
+
+    nodeOperations.updateNode(
+      node,
+      initialValuesForm ? initialValuesForm : { name: node.name},
+      initialValuesForm ? initialValuesForm : { name: node.name},
+    );
+  }
+
   renderAbnEdit = (): React.ReactNodeArray => {
     const { viewer, node } = this.props;
 
@@ -309,14 +232,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (!viewer) {
       content.push((
-        <div onClick={this.editNode} className="boolean-menu-item">
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
         </div>
       ))
       
       if (!node.isFirstNode) {
         content.push((
-          <div onClick={this.removeNode} className="boolean-menu-item">
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
             <FormattedMessage {...messages.remove} />
           </div>
         ))
@@ -333,27 +256,27 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
     if (!viewer) {
       content.push((
-        <div onClick={this.editNode} className="boolean-menu-item">
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
         </div>
       ))
 
       if (!node.isFirstNode) {
         content.push((
-          <div onClick={this.removeNode} className="boolean-menu-item">
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
             <FormattedMessage {...messages.remove} />
           </div>
         ))
       }
     } else {
       content.push((
-        <div onClick={this.viewStats} className="boolean-menu-item">
+        <div key="stats" onClick={this.viewStats} className="boolean-menu-item">
           <FormattedMessage {...messages.stats} />
         </div>
       ))
 
       content.push((
-        <div onClick={this.editNode} className="boolean-menu-item">
+        <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
         </div>
       ))
@@ -371,6 +294,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       content.push((
         <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+      const evaluationMode = (node.storylineNodeModel.node as QueryInputNodeResource).evaluation_mode;
+      const newNode: QueryInputNodeResource = { ...node.storylineNodeModel.node as QueryInputNodeResource, evaluation_mode: evaluationMode === 'LIVE' ? 'PERIODIC' : 'LIVE' };
+      content.push((
+        <div key="queyType" onClick={this.editNodeProperties(newNode)} className="boolean-menu-item">
+          {(node.storylineNodeModel.node as QueryInputNodeResource).evaluation_mode}
         </div>
       ))
 
@@ -547,7 +477,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     
 
     return (
-      <div id={this.id} onClick={onClick}>
+      <div id={this.id} key={this.id} onClick={onClick}>
         {renderedAutomationNode}
         <div
           style={{
