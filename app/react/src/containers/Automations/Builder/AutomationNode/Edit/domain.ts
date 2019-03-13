@@ -52,6 +52,7 @@ export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationF
     time_zone: 'Europe/Paris',
     model_version: 'V2017_09',
     type: 'DISPLAY',
+    automated: true
   },
   adGroupFields: [{
     key: generateFakeId(),
@@ -100,6 +101,7 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
   routerFields: [],
   campaign: {
     organisation_id: '',
+    automated: true,
     name: 'Send Email',
     editor_versionid: '17',
     editor_version_value: '',

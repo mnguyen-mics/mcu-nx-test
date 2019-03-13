@@ -33,4 +33,5 @@ export interface DisplayCampaignCreateRequest {
   time_zone: string;
   model_version: ModelVersion;
   type: string;
+  automated: boolean;
 }

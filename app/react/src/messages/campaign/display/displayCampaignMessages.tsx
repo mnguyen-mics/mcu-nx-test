@@ -141,6 +141,10 @@ const campaignPropertiesMessageMap: {
     id: 'campaign.display.fields.type',
     defaultMessage: 'Type',
   },
+  automated: {
+    id: 'campaign.display.fields.automated',
+    defaultMessage: 'Automated'
+  },
   /*
   ==============================================================================
   ================================= EXTRA KEYS =================================
@@ -192,6 +196,7 @@ const campaignPropertiesFormatMap: {
   time_zone: { format: 'STRING' },
   model_version: { format: 'STRING' },
   type: { format: 'STRING' },
+  automated: { format: 'STRING' },
   /*
   ==============================================================================
   ================================= EXTRA KEYS =================================
