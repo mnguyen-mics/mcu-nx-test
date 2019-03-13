@@ -179,14 +179,6 @@ const DisplayCampaignService = {
       }));
   },
 
-  getPublisher(
-    campaignId: string,
-    id: string,
-  ): Promise<DataResponse<InventorySourceResource>> {
-    const endpoint = `display_campaigns/${campaignId}/inventory_sources/${id}`;
-    return ApiService.getRequest(endpoint);
-  },
-
   createPublisher(
     campaignId: string,
     body: object,
@@ -443,15 +435,6 @@ const DisplayCampaignService = {
     adGroupId: string,
   ): Promise<DataListResponse<AdExchangeSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ad_exchanges`;
-    return ApiService.getRequest(endpoint);
-  },
-
-  getAdexById(
-    campaignId: string,
-    adGroupId: string,
-    id: string
-  ): Promise<DataResponse<AdExchangeSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ad_exchanges/${id}`;
     return ApiService.getRequest(endpoint);
   },
 

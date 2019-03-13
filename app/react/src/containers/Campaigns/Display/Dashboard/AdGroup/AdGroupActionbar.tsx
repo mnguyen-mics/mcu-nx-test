@@ -401,16 +401,12 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                           serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS']
                         })
                           .then(res => {
-                            return (res.data.filter(r => r.type === 'inventory_access_ad_exchange') as AdexInventoryServiceItemPublicResource[]);
+                            const inventoryAccessExchanges = (res.data.filter(r => r.type === 'inventory_access_ad_exchange') as AdexInventoryServiceItemPublicResource[]);
+                            const adexExchange = inventoryAccessExchanges.find(r => r.ad_exchange_id === adExchangeId)
+                            if (adexExchange !== undefined) {
+                              return adexExchange.name;
+                            } else return intl.formatMessage(resourceHistoryMessages.deleted)
                           })
-                          .then(res => {
-                            return res.find(r => r.ad_exchange_id === adExchangeId)
-                          })
-                          .then(res => {
-                            if (res !== undefined) {
-                              return res.name;
-                            } else return intl.formatMessage(resourceHistoryMessages.resourceDeletedResource)
-                          });
                       });
                     },
                     goToResource: (id: string) => {

@@ -130,10 +130,6 @@ const messages: {
   fetchingData: {
     id: 'timeline.events.card.selection.fetching',
     defaultMessage: '(fetching...)',
-  },
-  resourceDeletedResource: {
-    id: 'timeline.resource.deletedResource',
-    defaultMessage: '(deleted)'
   }
 });
 

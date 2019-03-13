@@ -2,6 +2,8 @@
 export type ResourceType =
   'AD' |
   'AD_GROUP' |
+  'AD_EXCHANGE' |
+  'AD_EXCHANGE_SELECTION' |
   'AUDIENCE_SEGMENT' |
   'AUDIENCE_SEGMENT_SELECTION' |
   'CREATIVE' |
@@ -16,11 +18,7 @@ export type ResourceType =
   'EMAIL_TEMPLATE' |
   'KEYWORDS_LIST' |
   'KEYWORDS_LIST_SELECTION' |
-  'VIDEO_AD' |
-  'AD' |
-  'AD_EXCHANGE' |
-  'AD_EXCHANGE_SELECTION' |
-  'AUDIENCE_SEGMENT';
+  'VIDEO_AD';
 
 export type EventType =
   'CREATE_EVENT' |
