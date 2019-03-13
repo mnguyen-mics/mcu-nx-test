@@ -413,7 +413,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       return
                     }
                   },
-                  LOCATION_SELECTION: {
+                  GEO_TARGETING_SELECTION: {
                     direction: 'CHILD',
                     getType: () => {
                       return 'Location';
@@ -421,9 +421,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                     getName: (id: string) => {
                       return this.getLinkedResourceIdInSelection(
                         organisationId,
-                        'LOCATION_SELECTION',
+                        'GEO_TARGETING_SELECTION',
                         id,
-                        'GEONAME_SELECTION',
+                        'GEONAME',
                       )
                       .then(geonameId => {
                         return GeonameService.getGeoname(geonameId)
