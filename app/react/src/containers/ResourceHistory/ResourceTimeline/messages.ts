@@ -11,6 +11,22 @@ const messages: {
     id: 'timeline.defaultResourceType',
     defaultMessage: 'Resource',
   },
+  adGroupResourceType: {
+    id: 'timeline.resourceType.adGroup',
+    defaultMessage: 'Ad Group',
+  },
+  displayCampaignResourceType: {
+    id: 'timeline.resourceType.displayCampaign',
+    defaultMessage: 'Display Campaign',
+  },
+  emailBlastResourceType: {
+    id: 'timeline.resourceType.emailBlast',
+    defaultMessage: 'Email Blast',
+  },
+  emailCampaignResourceType: {
+    id: 'timeline.resourceType.emailCampaign',
+    defaultMessage: 'Email Campaign',
+  },
   creativeResourceType: {
     id: 'timeline.resourceType.creative',
     defaultMessage: 'Creative',
@@ -65,7 +81,11 @@ const messages: {
   },
   resourceCreated: {
     id: 'timeline.events.card.resourceCreated',
-    defaultMessage: '{userName} created the {resourceType}.',
+    defaultMessage: '{userName} created the {resourceType} {parentLink}.',
+  },
+  parentLink: {
+    id: 'timeline.events.card.resourceCreated.parentLink',
+    defaultMessage: 'in the {parentType}: {parentName}',
   },
   initialFieldValue: {
     id: 'timeline.events.card.initialFieldValue',
@@ -83,13 +103,21 @@ const messages: {
     id: 'timeline.events.card.multiEdit.item',
     defaultMessage: '{field} from {oldValue} to {newValue}',
   },
-  selectionAddedMultiEditList: {
-    id: 'timeline.events.card.multiEdit.selection.added',
-    defaultMessage: '{selection} added : {value}',
+  childAddedMultiEditList: {
+    id: 'timeline.events.card.multiEdit.child.added',
+    defaultMessage: '{linkedResource} added : {value}',
   },
-  selectionRemovedMultiEditList: {
-    id: 'timeline.events.card.multiEdit.selection.removed',
-    defaultMessage: '{selection} removed : {value}',
+  childRemovedMultiEditList: {
+    id: 'timeline.events.card.multiEdit.child.removed',
+    defaultMessage: '{linkedResource} removed : {value}',
+  },
+  parentAddedMultiEditList: {
+    id: 'timeline.events.card.multiEdit.parent.added',
+    defaultMessage: 'added in the {linkedResource}: {value}',
+  },
+  parentRemovedMultiEditList: {
+    id: 'timeline.events.card.multiEdit.parent.removed',
+    defaultMessage: 'removed from the {linkedResource}: {value}',
   },
   resourceDeleted: {
     id: 'timeline.events.card.resourceDeleted',
@@ -117,11 +145,11 @@ const messages: {
   },
   resourceCreateLinkParent: {
     id: 'timeline.events.card.selection.resourceCreateLinkParent',
-    defaultMessage: '{userName} added this {childResourceType} in {parentResourceType} : {parentResourceName}.',
+    defaultMessage: '{userName} added this {childResourceType} in the {parentResourceType} : {parentResourceName}.',
   },
   resourceDeleteLinkParent: {
     id: 'timeline.events.card.selection.resourceDeleteLinkParent',
-    defaultMessage: '{userName} removed this {childResourceType} in {parentResourceType} : {parentResourceName}.',
+    defaultMessage: '{userName} removed this {childResourceType} from the {parentResourceType} : {parentResourceName}.',
   },
   deleted: {
     id: 'timeline.events.card.selection.deleted',
