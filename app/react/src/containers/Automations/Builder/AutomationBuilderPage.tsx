@@ -32,7 +32,7 @@ interface MapStateToProps {
 
 interface State {
   isLoading: boolean;
-  automationFormData: Partial<AutomationFormData>;
+  automationFormData: AutomationFormData;
 }
 
 type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
@@ -142,6 +142,10 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       },
     } = this.props;
 
+    const {
+      automationFormData
+    } = this.state;
+
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
       0,
@@ -151,7 +155,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     });
 
     this._automationFormService
-      .saveOrCreateAutomation(organisationId, 'v201709', formData)
+      .saveOrCreateAutomation(organisationId, 'v201709', formData, automationFormData)
       .then((automation) => {
         hideSaveInProgress();
         this.setState({ isLoading: false });
@@ -159,6 +163,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         message.success(intl.formatMessage(messages.automationSaved));
       })
       .catch(err => {
+        console.log(err);
         this.setState({ isLoading: false });
         notifyError(err);
         hideSaveInProgress();

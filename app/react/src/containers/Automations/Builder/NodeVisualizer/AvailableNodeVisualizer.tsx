@@ -1,5 +1,4 @@
 import * as React from 'react';
-import cuid from 'cuid';
 import { McsIconType } from '../../../../components/McsIcon';
 import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
@@ -10,6 +9,7 @@ import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
 } from '../AutomationNode/Edit/domain';
+import { generateFakeId } from '../../../../utils/FakeIdHelper';
 
 const { TreeNode } = Tree;
 
@@ -40,7 +40,7 @@ interface State {
 }
 
 const emailCampaignNode: ScenarioNodeShape = {
-  id: cuid(),
+  id: generateFakeId(),
   name: 'Send Email',
   type: 'EMAIL_CAMPAIGN',
   scenario_id: '',
@@ -50,7 +50,7 @@ const emailCampaignNode: ScenarioNodeShape = {
 };
 
 const displayCampaignNode: ScenarioNodeShape = {
-  id: cuid(),
+  id: generateFakeId(),
   name: 'Display Advertising',
   type: 'DISPLAY_CAMPAIGN',
   campaign_id: '',
@@ -61,7 +61,7 @@ const displayCampaignNode: ScenarioNodeShape = {
 };
 
 const conditionNode1: ScenarioNodeShape = {
-  id: cuid(),
+  id: generateFakeId(),
   name: 'Split',
   type: 'ABN_NODE',
   scenario_id: '',
@@ -70,7 +70,7 @@ const conditionNode1: ScenarioNodeShape = {
 };
 
 const conditionNode2: ScenarioNodeShape = {
-  id: cuid(),
+  id: generateFakeId(),
   name: 'Wait',
   type: 'WAIT_NODE',
   scenario_id: '',
@@ -104,8 +104,8 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
           {nodes.map(node => {
             return (
               <TreeNode
-                title={<AvailableNode key={node.id} node={node} />}
-                key={cuid()}
+                title={<AvailableNode node={node} />}
+                key={node.id}
               />
             );
           })}

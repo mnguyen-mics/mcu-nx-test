@@ -179,11 +179,11 @@ class EditAutomationPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const { datamart } = this.state;
+    const { datamart, automationFormData } = this.state;
 
     if (datamart) {
       this.setState({ loading: true });
-      const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(organisationId, datamart.storage_model_version, formData)
+      const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(organisationId, datamart.storage_model_version, formData, automationFormData)
       if (datamart.storage_model_version === 'v201506') {
         saveOrUpdate.then((res) => {
           this.state.scenarioContainer.saveOrUpdate(res.data);
@@ -204,6 +204,7 @@ class EditAutomationPage extends React.Component<Props, State> {
          
         })
       .catch(err => {
+        console.log(err);
         this.setState({ loading: false });
         this.props.notifyError(err.data);
       });

@@ -29,13 +29,14 @@ import { IQueryService } from '../../../services/QueryService';
 import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
 
 import EmailCampaignService from '../../../services/EmailCampaignService';
-import {
+import EmailCampaignFormService, {
   getBlastTasks,
   getRouterTasks,
 } from '../../Campaigns/Email/Edit/EmailCampaignFormService';
 import { isFakeId } from '../../../utils/FakeIdHelper';
 import { IDisplayCampaignFormService } from '../../Campaigns/Display/Edit/DisplayCampaignFormService';
 import DisplayCampaignService from '../../../services/DisplayCampaignService';
+import AdGroupFormService from '../../Campaigns/Display/Edit/AdGroup/AdGroupFormService';
 
 interface CustomEdgeResource {
   source_id: string;
@@ -52,6 +53,7 @@ export interface IAutomationFormService {
     organsiationId: string,
     storageModelVersionId: string,
     formData: AutomationFormData,
+    initialFormData: AutomationFormData,
   ) => Promise<DataResponse<AutomationResource>>;
 }
 
@@ -66,8 +68,7 @@ export class AutomationFormService implements IAutomationFormService {
   @inject(TYPES.IDisplayCampaignFormService)
   private _displayCampaignFormService: IDisplayCampaignFormService;
 
-  private edgeIds: string[] = [];
-  private nodeIds: string[] = [];
+  private ids: string[] = [];
 
   loadInitialAutomationValues(
     automationId: string,
@@ -78,21 +79,17 @@ export class AutomationFormService implements IAutomationFormService {
       automationId,
     );
 
-    this.edgeIds = [];
-    this.nodeIds = [];
+    // const nodePromise = this._scenarioService.getScenarioNodes(automationId).then(r => {
+    //   r.data.map(n => {
+    //     this.nodeIds.push(n.id)
+    //   })
+    //   return r;
+    // });
 
-    const nodePromise = this._scenarioService.getScenarioNodes(automationId).then(r => {
-      r.data.map(n => {
-        this.nodeIds.push(n.id)
-      })
-      return r;
-    });
-    const edgePromise = this._scenarioService.getScenarioEdges(automationId).then(r => {
-      r.data.map(e => {
-        this.edgeIds.push(e.id);
-      })
-      return r;
-    });
+    const nodePromise = this.loadScenarioNode(automationId);
+
+    const edgePromise = this._scenarioService.getScenarioEdges(automationId);
+
     if (storageModelVersion !== 'v201506') {
       return Promise.all([
         automationPromise,
@@ -102,7 +99,7 @@ export class AutomationFormService implements IAutomationFormService {
       ]).then(res => {
         return buildAutomationTreeData(
           res[1].data,
-          res[2].data,
+          res[2],
           res[3].data,
           this._queryService,
           res[0].data.datamart_id,
@@ -123,12 +120,111 @@ export class AutomationFormService implements IAutomationFormService {
     }
   }
 
+  loadScenarioNode(
+    automationId: string
+  ): Promise<ScenarioNodeShape[]> {
+    return this._scenarioService.getScenarioNodes(automationId).then(r => {
+      r.data.map(n => {
+        this.addNodeId(n.id)
+      })
+      return r;
+    })
+    .then((r) => {
+      return Promise.all(r.data.map(n => {
+        let getPromise: Promise<ScenarioNodeShape> = Promise.resolve().then(() => ({ ...n }));
+        switch(n.type) {
+          case 'DISPLAY_CAMPAIGN':
+            getPromise = DisplayCampaignService
+              .getCampaignDisplay(n.campaign_id)
+              .then(campaignResp => {
+                return AdGroupFormService.loadAdGroup(
+                  n.campaign_id,
+                  n.ad_group_id,
+                ).then(adGroupResp => {
+                  const initialValues = {
+                    campaign: campaignResp.data,
+                    name: n.name,
+                    goalFields: [],
+                    adGroupFields: [{
+                      key: adGroupResp.adGroup.id!,
+                      model: {
+                        adFields: adGroupResp.adFields,
+                        adGroup: {...adGroupResp.adGroup},
+                        bidOptimizerFields: adGroupResp.bidOptimizerFields,
+                        locationFields: adGroupResp.locationFields,
+                        inventoryCatalFields: adGroupResp.inventoryCatalFields,
+                        segmentFields: adGroupResp.segmentFields
+                      }
+                    }]
+                  }
+                  return {
+                    ...n,
+                    formData: initialValues,
+                    initialFormData: initialValues,
+                  }
+                });
+              },
+            )
+          break;
+          case 'EMAIL_CAMPAIGN':
+            getPromise = EmailCampaignFormService.loadCampaign(n.campaign_id).then(
+              campaignResp => {
+                const initialValues = {
+                  name: n.name,
+                  campaign: campaignResp.campaign,
+                  blastFields: campaignResp.blastFields,
+                  routerFields: campaignResp.routerFields,
+                };
+                return ({
+                  ...n,
+                  formData: initialValues,
+                  initialValuesForm: initialValues,
+                });
+              },
+            )
+            break;
+          
+          case 'ABN_NODE':
+          case 'END_NODE':
+          case 'PLUGIN_NODE':
+          case 'WAIT_NODE':
+          case 'QUERY_INPUT':
+            getPromise = Promise.resolve().then(() => ({ ...n }))
+            break;
+        }
+        return getPromise
+      }))
+    });
+  }
+
+  removeNodeId = (id: string) => this.ids = this.ids.filter(n => (n !== `n-${id}`));
+  removeEdgeId = (id: string) => this.ids = this.ids.filter(n => (n !== `e-${id}`));
+  addNodeId = (id: string) => this.ids.push(`n-${id}`);
+  addEdgeId = (id: string) => this.ids.push(`e-${id}`);
+
   saveOrCreateAutomation(
     organisationId: string,
     storageModelVersion: string,
     formData: AutomationFormData,
+    initialFormData: AutomationFormData,
   ): Promise<DataResponse<AutomationResource>> {
     const automationId = formData.automation.id;
+
+    const traverse = (s: StorylineNodeModel) => {
+      if (s.node.id && !isFakeId(s.node.id)) this.addNodeId(s.node.id);
+      if (s.in_edge) {
+        if (s.in_edge.id && !isFakeId(s.in_edge.id)) this.addEdgeId(s.in_edge.id);
+      }
+      s.out_edges.forEach(e => {
+        traverse(e)
+      })
+    };
+
+    traverse(initialFormData.automationTreeData)
+
+    console.log('start pool', this.ids, formData)
+  
+
     const saveOrCreatePromise = () =>
       automationId
         ? this._scenarioService.updateScenario(
@@ -162,14 +258,16 @@ export class AutomationFormService implements IAutomationFormService {
             },
           )
           .then(() => {
-            const deleteEdgesPromise = this.edgeIds.map((id => {
-              return this._scenarioService.deleteScenarioEdge(createdAutomation.data.id, id);
-            }))
-            const deleteNodePromise = this.nodeIds.map(id => {
-              return this._scenarioService.deleteScenarioNode(createdAutomation.data.id, id)
-            })
-            const allPromises: Array<Promise<any>> = [...deleteEdgesPromise, ...deleteNodePromise];
-            return Promise.all(allPromises)
+            console.log('ending', this.ids);
+            return this.ids.reduce((acc, id) => {
+              const formattedId = id.substr(2);
+              if (id.startsWith('e-')) {
+                return acc.then(() => this._scenarioService.deleteScenarioEdge(createdAutomation.data.id, formattedId)); 
+              }
+              return acc.then(() => this._scenarioService.deleteScenarioNode(createdAutomation.data.id, formattedId));
+             
+            }, Promise.resolve() as Promise<any>)
+    
           })
           .then(() => createdAutomation);
         }
@@ -177,10 +275,6 @@ export class AutomationFormService implements IAutomationFormService {
       });
     }
   }
-
-
-  removeNodeId = (id: string) => this.nodeIds = this.nodeIds.filter(n => n !== id);
-  removeEdgeId = (id: string) => this.edgeIds = this.edgeIds.filter(n => n !== id);
 
   saveFirstNode = (
     datamartId: string,
@@ -190,7 +284,7 @@ export class AutomationFormService implements IAutomationFormService {
     // make it more modular to add new first node
     const node = storylineNode.node as QueryInputNodeResource;
     const saveOrCreateQueryPromise = !isFakeId(node.query_id)
-      ? this._queryService.updateQuery(datamartId, node.query_id, node.formData)
+      ? this._queryService.updateQuery(datamartId, node.query_id, node.formData).then(res => { this.removeNodeId(res.data.id); return res})
       : this._queryService.createQuery(datamartId, node.formData);
     return saveOrCreateQueryPromise.then(queryRes => {
       return this.saveOrCreateNode(
@@ -214,7 +308,7 @@ export class AutomationFormService implements IAutomationFormService {
   ): Promise<any> => {
     return storylineNodes.reduce((prev, storylineNode) => {
       const node = storylineNode.node;
-
+      console.log('going there for', node)
       if (isScenarioNodeShape(node)) {
         if (isDisplayCampaignNode(node)) {
           const saveOrCreateCampaignPromise = this.saveSubDisplayCampaign(
@@ -376,7 +470,7 @@ export class AutomationFormService implements IAutomationFormService {
     const node = storylineNode.node as ScenarioNodeShape;
     let saveOrCreateScenarioNode: Promise<DataResponse<ScenarioNodeShape>>;
     let scenarioNodeResource = {};
-    let resourceId;
+    let resourceId: string | undefined;
     if (isDisplayCampaignNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
@@ -423,6 +517,7 @@ export class AutomationFormService implements IAutomationFormService {
         y: node.y,
         type: 'ABN_NODE'
       }
+      resourceId = node.id  && !isFakeId(node.id) ? node.id : undefined;
     } else if (isEndNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
@@ -431,7 +526,8 @@ export class AutomationFormService implements IAutomationFormService {
         x: node.x,
         y: node.y,
         type: 'END_NODE'
-      } 
+      }
+      resourceId = node.id  && !isFakeId(node.id) ? node.id : undefined;
     } else if (isWaitNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
@@ -442,7 +538,9 @@ export class AutomationFormService implements IAutomationFormService {
         timeout: node.formData ? node.formData.timeout : 24 * 1000 * 60 * 60 * 2, // 2 days
         type: 'WAIT_NODE'
       }
+      resourceId = node.id  && !isFakeId(node.id) ? node.id : undefined;
     }
+    console.log(resourceId ? 'updating' : 'creating', node.id, scenarioNodeResource)
     saveOrCreateScenarioNode = resourceId
       ? this._scenarioService.updateScenarioNode(
           automationId,
@@ -455,12 +553,9 @@ export class AutomationFormService implements IAutomationFormService {
       : this._scenarioService.createScenarioNode(automationId, {
           ...scenarioNodeResource,
           id: undefined,
-        }).then(e => {
-          this.removeNodeId(e.data.id)
-          return e;
         });
     return saveOrCreateScenarioNode.then(res => {
-      if (isStartNode) {
+      if (isStartNode && !resourceId) {
         this._scenarioService.createScenarioBeginNode(automationId, res.data);
       }
       return res;
@@ -470,16 +565,17 @@ export class AutomationFormService implements IAutomationFormService {
   saveOrCreateEdges = (
     automationId: string,
     customEdgeData: CustomEdgeResource,
-  ) => {
-
-    return customEdgeData.edgeResource && customEdgeData.edgeResource.id && !isFakeId(customEdgeData.edgeResource.id)
-      ? this._scenarioService.updateScenarioEdge(
-          automationId,
-          customEdgeData.edgeResource.id,
-          customEdgeData.edgeResource,
-        ).then(e => {
-          this.removeEdgeId(e.data.id)
-          return e;
+  ):  Promise<any> => {
+    console.log(customEdgeData.edgeResource && customEdgeData.edgeResource.id && !isFakeId(customEdgeData.edgeResource.id) ? 'updating edge' : 'creating edge', customEdgeData)
+    const resource = customEdgeData.edgeResource;
+    return resource && resource.id && !isFakeId(resource.id)
+      ?
+      // update does not work therefore we are deleting the old one and creating a new one
+      this._scenarioService.deleteScenarioEdge(automationId, resource.id)
+      .then(() => this._scenarioService.createScenarioEdge(automationId, {..._.omit(customEdgeData.edgeResource, ['id'])}))
+      .then(() => {
+          this.removeEdgeId(resource.id)
+          return resource;
         })
       : this._scenarioService.createScenarioEdge(automationId, {
           ..._.omit(customEdgeData.edgeResource, ['id']),
@@ -501,7 +597,7 @@ export class AutomationFormService implements IAutomationFormService {
   ): Promise<{ ad_group_id?: string; campaign_id: string }> => {
 
     return this._displayCampaignFormService
-      .saveCampaign(organisationId, formData, initialFormData)
+      .saveCampaign(organisationId, formData ? formData : initialFormData, initialFormData)
       .then(res => DisplayCampaignService.getAdGroups(res).then(r => ({ campaign_id: res, ad_group_id: r && r.data.length ? r.data[0].id : undefined})))
 
   };
@@ -513,7 +609,6 @@ export class AutomationFormService implements IAutomationFormService {
     campaignId?: string,
   ) => {
     let createOrUpdateCampaignPromise;
-
     if (campaignId) {
       createOrUpdateCampaignPromise = EmailCampaignService.updateEmailCampaign(
         campaignId,

@@ -1,4 +1,3 @@
-import cuid from 'cuid';
 import { StorylineNodeModel } from './domain';
 import {
   ScenarioNodeShape,
@@ -184,6 +183,7 @@ export class DeleteNodeOperation implements NodeOperation {
   iterateData(
     automationData: StorylineNodeModel,
     idNodeToBeDeleted: string,
+    parentData?: StorylineNodeModel
   ): StorylineNodeModel {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
@@ -206,13 +206,19 @@ export class DeleteNodeOperation implements NodeOperation {
           child.node.id === idNodeToBeDeleted &&
           child.node.type !== 'ABN_NODE'
         ) {
-          return {
+          const inEdge = child.out_edges[0].in_edge;
+          const storylineNodeModel: StorylineNodeModel = {
             node: child.out_edges[0].node,
-            in_edge: child.out_edges[0].in_edge,
+            in_edge: inEdge ? {
+              ...inEdge,
+              source_id: automationData.node.id,
+              target_id: inEdge.target_id
+            } : undefined,
             out_edges: child.out_edges[0].out_edges,
-          };
+          }
+          return storylineNodeModel;
         } else {
-          return this.iterateData(child, idNodeToBeDeleted);
+          return this.iterateData(child, idNodeToBeDeleted, automationData);
         }
       },
     );
@@ -334,7 +340,7 @@ export class UpdateNodeOperation implements NodeOperation {
   ): StorylineNodeModel[] => {
     const newEmptyOutEdges = [];
     for (let i = 1; i <= branchNumber; i++) {
-      const newId = cuid();
+      const newId = generateFakeId();
       const emptyNode: StorylineNodeModel = {
         node: {
           id: newId,
@@ -343,7 +349,7 @@ export class UpdateNodeOperation implements NodeOperation {
           type: 'END_NODE',
         },
         in_edge: {
-          id: cuid(),
+          id: generateFakeId(),
           source_id: this.node.id,
           target_id: newId,
           handler: 'OUT',

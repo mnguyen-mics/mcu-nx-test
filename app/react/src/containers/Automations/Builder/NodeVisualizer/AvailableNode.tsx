@@ -1,5 +1,4 @@
 import McsIcon, { McsIconType } from '../../../../components/McsIcon';
-import cuid from 'cuid';
 import React from 'react';
 import {
   ConnectDragSource,
@@ -11,6 +10,7 @@ import { Icon } from 'antd';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { generateNodeProperties } from '../domain';
 import { isAbnNode } from '../AutomationNode/Edit/domain';
+import { generateFakeId } from '../../../../utils/FakeIdHelper';
 
 interface AvailableNodeProps {
   node: ScenarioNodeShape;
@@ -22,7 +22,7 @@ interface AvailableNodeProps {
 const fieldSource = {
   beginDrag(props: AvailableNodeProps) {
     return {
-      id: cuid(),
+      id: generateFakeId(),
       name: props.node.name,
       icon: generateNodeProperties(props.node).iconType,
       iconAnt: generateNodeProperties(props.node).iconAnt,
