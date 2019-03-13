@@ -31,6 +31,10 @@ const messages: {
     id: 'timeline.resourceType.dealList',
     defaultMessage: 'Deal List',
   },
+  adExchangeResourceType: {
+    id: 'timeline.resourceType.adxExchange',
+    defaultMessage: 'Ad Exchange',
+  },
   today: {
     id: 'timeline.events.title.today',
     defaultMessage: 'Today',
@@ -126,7 +130,7 @@ const messages: {
   fetchingData: {
     id: 'timeline.events.card.selection.fetching',
     defaultMessage: '(fetching...)',
-  },
+  }
 });
 
 export default messages;

@@ -2,6 +2,8 @@
 export type ResourceType =
   'AD' |
   'AD_GROUP' |
+  'AD_EXCHANGE' |
+  'AD_EXCHANGE_SELECTION' |
   'AUDIENCE_SEGMENT' |
   'AUDIENCE_SEGMENT_SELECTION' |
   'CREATIVE' |

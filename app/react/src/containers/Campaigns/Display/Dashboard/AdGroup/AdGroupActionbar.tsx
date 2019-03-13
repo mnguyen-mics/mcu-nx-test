@@ -33,6 +33,8 @@ import { IAudienceSegmentService } from '../../../../../services/AudienceSegment
 import { IKeywordListService } from '../../../../../services/Library/KeywordListsService';
 import { IDealsListService } from '../../../../../services/Library/DealListsService';
 import lodash from 'lodash';
+import CatalogService from '../../../../../services/CatalogService';
+import { AdexInventoryServiceItemPublicResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -133,16 +135,16 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
       organisationId,
       params,
     ).then(response => {
-      return lodash
+      const ids = lodash
         .flatMap(response.data, rhr => {
           return rhr.events.map(event =>
             isHistoryLinkEvent(event) &&
-            event.resource_type === linkedResourceType
+              event.resource_type === linkedResourceType
               ? event.resource_id
               : '',
           );
-        })
-        .join('');
+        }).filter((id => id !== ""))
+        return ids.length > 0 ? ids[0] : ''
     });
   };
 
@@ -325,20 +327,20 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                               if (creativeResponse.data.subtype === 'NATIVE') {
                                 return history.push(
                                   `/v2/o/${organisationId}/creatives/native/edit/${
-                                    creativeResponse.data.id
+                                  creativeResponse.data.id
                                   }`,
                                 );
                               } else {
                                 return history.push(
                                   `/v2/o/${organisationId}/creatives/display/edit/${
-                                    creativeResponse.data.id
+                                  creativeResponse.data.id
                                   }`,
                                 );
                               }
                             } else {
                               return history.push(
                                 `/v2/o/${organisationId}/creatives/email/edit/${
-                                  creativeResponse.data.id
+                                creativeResponse.data.id
                                 }`,
                               );
                             }
@@ -383,6 +385,36 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       });
                     },
                   },
+                  AD_EXCHANGE_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return <FormattedMessage {...resourceHistoryMessages.adExchangeResourceType} />;
+                    },
+                    getName: (id: string) => {
+                      return this.getLinkedResourceIdInSelection(
+                        organisationId,
+                        'AD_EXCHANGE_SELECTION',
+                        id,
+                        'AD_EXCHANGE',
+                      ).then(adExchangeId => {
+                        return CatalogService.getServices(organisationId, {
+                          serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS']
+                        })
+                          .then(res => {
+                            const inventoryAccessExchanges = (res.data.filter(r => r.type === 'inventory_access_ad_exchange') as AdexInventoryServiceItemPublicResource[]);
+                            const adexExchange = inventoryAccessExchanges.find(r => r.ad_exchange_id === adExchangeId)
+                            if (adexExchange !== undefined) {
+                              return adexExchange.name;
+                            } else return intl.formatMessage(resourceHistoryMessages.deleted)
+                          })
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return
+                    }
+
+
+                  }
                 },
               },
               size: 'small',
