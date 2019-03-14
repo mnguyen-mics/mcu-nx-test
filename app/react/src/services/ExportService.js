@@ -289,12 +289,12 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
   const sanitizeSheetNames = (name) => {
 
     return name
-      .replace('\\', '')
-      .replace('/', '')
-      .replace('?', '')
-      .replace('*', '')
-      .replace('[', '')
-      .replace(']', '');
+      .replace(/\\/gm, '')
+      .replace(/\//gm, '')
+      .replace(/\?/gm, '')
+      .replace(/\*/gm, '')
+      .replace(/\[/gm, '')
+      .replace(/\]/gm, '');
 
   };
 
