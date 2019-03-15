@@ -4,17 +4,19 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { TableViewFilters } from '../../../../components/TableView';
 import messages from './messages';
-import { UserActivityCleaningRuleResource } from '../../../../models/cleaningRules/CleaningRules';
+import { UserEventCleaningRuleResource } from '../../../../models/cleaningRules/CleaningRules';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import DatamartService from '../../../../services/DatamartService';
 import { PaginationSearchSettings } from '../../../../utils/LocationSearchHelper';
 import { Layout, Row } from 'antd';
+import * as moment from 'moment';
+import 'moment-duration-format';
 
 const { Content } = Layout;
 
 interface CleaningRulesContainerState {
   loading: boolean;
-  data: UserActivityCleaningRuleResource[];
+  data: UserEventCleaningRuleResource[];
   total: number;
 }
 
@@ -100,15 +102,17 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
         intlMessage: messages.id,
         key: 'id',
         isHideable: false,
-        render: (text: string, record: UserActivityCleaningRuleResource) => (<span>{text}</span>),
+        render: (text: string, record: UserEventCleaningRuleResource) => (<span>{text}</span>),
       },
       {
         translationKey: 'life_duration',
         intlMessage: messages.lifeDuration,
         key: 'life_duration',
         isHideable: false,
-        render: (text: string, record: UserActivityCleaningRuleResource) => (
-          <span>{`${record.life_duration.length} ${record.life_duration.unit}`}</span>
+        render: (text: string, record: UserEventCleaningRuleResource) => (
+          <span>
+            {moment.duration(text).format()}
+          </span>
         ),
       },
       {
@@ -116,14 +120,14 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
         intlMessage: messages.type,
         key: 'type',
         isHideable: false,
-        render: (text: string, record: UserActivityCleaningRuleResource) => (<span>{text}</span>),
+        render: (text: string, record: UserEventCleaningRuleResource) => (<span>{text}</span>),
       },
       {
         translationKey: 'activity_type_filter',
         intlMessage: messages.activityTypeFilter,
         key: 'activity_type_filter',
         isHideable: false,
-        render: (text: string, record: UserActivityCleaningRuleResource) => {
+        render: (text: string, record: UserEventCleaningRuleResource) => {
           return record.activity_type_filter && (
             <span>{record.activity_type_filter}</span>
           )

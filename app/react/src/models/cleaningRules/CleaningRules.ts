@@ -22,16 +22,9 @@ export type UserActivityType =
   'USER_SCENARIO_NODE_ENTER' |
   'USER_SCENARIO_NODE_EXIT';
 
-export interface FiniteDuration {
-  length: number;
-  unit: string;
-  finite: boolean;
-};
-
-export interface UserActivityCleaningRuleResource extends CleaningRuleResource{
+export interface UserEventCleaningRuleResource extends CleaningRuleResource{
   datamart_id: number;
   channel_filter?: string;
   activity_type_filter?: UserActivityType;
-  content_filter: string;
-  life_duration: FiniteDuration;
+  life_duration: string;
 };
