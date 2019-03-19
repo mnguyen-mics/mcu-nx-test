@@ -36,6 +36,7 @@ class AudienceSegment extends React.Component<Props> {
           labellableType="SEGMENT"
           organisationId={organisationId}
         />
+        {segment && segment.short_description && <div style={{ marginBottom: 20 }}>{segment.short_description}</div>}
         <LookalikeStatusWarning isFetching={isLoading} segment={segment} />
         <AudienceSegmentDashboard segment={segment} isLoading={isLoading} />
       </div>

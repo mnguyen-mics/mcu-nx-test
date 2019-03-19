@@ -19,6 +19,8 @@ import {
   FormAddonSelectField,
   FormBoolean,
   FormBooleanField,
+  FormTextArea,
+  FormTextAreaField,
 } from '../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
@@ -139,7 +141,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
   render() {
     const {
-      fieldValidators: { isRequired, isNotZero, isValidInteger },
+      fieldValidators: { isRequired, isNotZero, isValidInteger, isCharLengthLessThan },
       intl: { formatMessage },
       segmentType,
     } = this.props;
@@ -170,6 +172,28 @@ class GeneralFormSection extends React.Component<Props, State> {
               helpToolTipProps={{
                 title: formatMessage(
                   messages.audienceSegmentCreationGeneralNameFieldHelper,
+                ),
+              }}
+            />
+          </div>
+          <div>
+            <FormTextAreaField
+              name="audienceSegment.short_description"
+              component={FormTextArea}
+              validate={[isCharLengthLessThan(255)]}
+              formItemProps={{
+                label: formatMessage(
+                  messages.audienceSegmentCreationGeneralDescriptionFieldTitle,
+                ),
+              }}
+              inputProps={{
+                placeholder: formatMessage(
+                  messages.audienceSegmentCreationGeneralDescriptionFieldPlaceHolder,
+                ),
+              }}
+              helpToolTipProps={{
+                title: formatMessage(
+                  messages.audienceSegmentCreationGeneralDescriptionFieldHelper,
                 ),
               }}
             />
