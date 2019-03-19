@@ -5,7 +5,11 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import McsTabs from '../../../../../components/McsTabs';
 import Card from '../../../../../components/Card/Card';
-import { DisplayStackedAreaChart, MediaPerformanceTable, GoalStackedAreaChart } from '../Charts';
+import {
+  DisplayStackedAreaChart,
+  MediaPerformanceTable,
+  GoalStackedAreaChart,
+} from '../Charts';
 
 import messages from '../messages';
 import { GoalsCampaignRessource } from './domain';
@@ -13,37 +17,30 @@ import { MediaPerformance } from '../Charts/MediaPerformanceTable';
 import { OverallStat } from '../Charts/DisplayStackedAreaChart';
 
 export interface DisplayCampaignDashboardProps {
-  isFetchingCampaignStat: boolean,
-  hasFetchedCampaignStat: boolean,
-  campaignStat?: OverallStat[],
-  mediaStat?: MediaPerformance[],
-  isFetchingMediaStat: boolean,
-  hasFetchedMediaStat: boolean,
-  isFetchingOverallStat: boolean,
-  hasFetchedOverallStat: boolean,
-  overallStat?: OverallStat[],
-  goals: GoalsCampaignRessource[],
+  isFetchingCampaignStat: boolean;
+  campaignStat?: OverallStat[];
+  mediaStat?: MediaPerformance[];
+  isFetchingMediaStat: boolean;
+  isFetchingOverallStat: boolean;
+  overallStat?: OverallStat[];
+  goals: GoalsCampaignRessource[];
 }
 
-
-type Props = DisplayCampaignDashboardProps & RouteComponentProps<{ organisationId: string, campaignId: string }> & InjectedIntlProps;
+type Props = DisplayCampaignDashboardProps &
+  RouteComponentProps<{ organisationId: string; campaignId: string }> &
+  InjectedIntlProps;
 
 class DisplayCampaignDashboard extends React.Component<Props> {
-
   render() {
-
     const {
       intl,
       goals,
       campaignStat,
-      hasFetchedCampaignStat,
-      hasFetchedOverallStat,
       isFetchingCampaignStat,
       isFetchingMediaStat,
       overallStat,
       mediaStat,
       isFetchingOverallStat,
-
     } = this.props;
 
     const goalsItems = goals.map(goal => {
@@ -60,10 +57,8 @@ class DisplayCampaignDashboard extends React.Component<Props> {
         display: (
           <DisplayStackedAreaChart
             isFetchingCampaignStat={isFetchingCampaignStat}
-            hasFetchedCampaignStat={hasFetchedCampaignStat}
             dataSource={campaignStat}
             overallStat={overallStat}
-            hasFetchedOverallStat={hasFetchedOverallStat}
             isFetchingOverallStat={isFetchingOverallStat}
             renderCampaignProgress={true}
           />
@@ -81,9 +76,12 @@ class DisplayCampaignDashboard extends React.Component<Props> {
       ...goalsItems,
     ];
 
-    return <Card><McsTabs items={items} /></Card>;
+    return (
+      <Card>
+        <McsTabs items={items} />
+      </Card>
+    );
   }
-
 }
 
 export default compose<Props, DisplayCampaignDashboardProps>(

@@ -74,9 +74,9 @@ interface AdCardProps extends CardProps {
   updateAd: (
     adId: string,
     body: Partial<AdResource>,
+    undoBody?: Partial<AdResource>,
     successMessage?: UpdateMessage,
     errorMessage?: UpdateMessage,
-    undoBody?: Partial<AdResource>,
   ) => Promise<any>;
   additionalButtons?: React.ReactNode;
 }

@@ -13,9 +13,12 @@
  * @param {*} arr input array of object to convert
  * @param {*} key object key to extract
  */
-import {Index} from './index';
+import { Index } from './index';
 
-export function normalizeArrayOfObject<T, K extends keyof T>(arr: T[], key: K): Index<T> {
+export function normalizeArrayOfObject<T, K extends keyof T>(
+  arr: T[],
+  key: K,
+): Index<T> {
   if (!Array.isArray(arr)) throw new Error(`${arr} is not an array`);
   return arr.reduce((acc, object) => {
     if (object[key]) {
@@ -28,4 +31,10 @@ export function normalizeArrayOfObject<T, K extends keyof T>(arr: T[], key: K): 
       return '';
     }
   }, {});
+}
+
+export function formateList<T>(a: { [key: string]: T }) {
+  return Object.keys(a).map(k => {
+    return a[k];
+  });
 }

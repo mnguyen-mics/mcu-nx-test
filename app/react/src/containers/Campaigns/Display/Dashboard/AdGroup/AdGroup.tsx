@@ -19,35 +19,31 @@ import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupR
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
+import { Items, ItemsById,  } from '../ProgrammaticCampaign/domain';
+import { OverallStat } from '../Charts/DisplayStackedAreaChart';
+import { MediaPerformance } from '../Charts/MediaPerformanceTable';
+import { formateList } from '../../../../../utils/Normalizer';
 
 const { Content } = Layout;
 
-export interface AdGroupSubProps<T> {
-  isLoadingList: boolean;
-  isLoadingPerf: boolean;
-  items: T[];
-}
-
-interface AdGroupActionBarSubProps<T> {
-  isLoadingList: boolean;
-  isLoadingPerf: boolean;
-  items?: T;
-}
-
-export interface DashboardPerformanceSubProps {
-  isLoading: boolean;
-  hasFetched: boolean;
-  items?: object[];
-}
-
 interface AdGroupProps {
-  ads: AdGroupSubProps<AdInfoResource>;
-  adGroups: AdGroupActionBarSubProps<AdGroupResource>;
-  campaign: AdGroupActionBarSubProps<DisplayCampaignInfoResource>;
+  ads: {
+    data: ItemsById<AdInfoResource>;
+    performance: Items<OverallStat>;
+  };
+  adGroups: {
+    data: Items<AdGroupResource>;
+    overallPerformance: Items<OverallStat>;
+    performance: Items<OverallStat>;
+    mediaPerformance: Items<MediaPerformance>;
+  };
+  campaign: {
+    data: Items<DisplayCampaignInfoResource>;
+  };
   dashboardPerformance: {
-    media: DashboardPerformanceSubProps;
-    adGroups: DashboardPerformanceSubProps;
-    overallPerformance: DashboardPerformanceSubProps;
+    media: Items<MediaPerformance>;
+    adGroups: Items<OverallStat>;
+    overallPerformance: Items<OverallStat>;
   };
   updateAdGroup: (
     adGroupId: string,
@@ -56,9 +52,9 @@ interface AdGroupProps {
   updateAd: (
     adId: string,
     body: Partial<AdResource>,
+    undoBody?: Partial<AdResource>,
     successMessage?: UpdateMessage,
     errorMessage?: UpdateMessage,
-    undoBody?: Partial<AdResource>,
   ) => Promise<any>;
 }
 
@@ -73,7 +69,9 @@ class AdGroup extends React.Component<JoinedProps> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       adGroups,
       ads,
       campaign,
@@ -96,34 +94,43 @@ class AdGroup extends React.Component<JoinedProps> {
     return (
       <div className="ant-layout">
         <AdGroupActionbar
-          adGroup={adGroups.items}
-          displayCampaign={campaign.items}
+          adGroup={adGroups.data.items[0]}
+          displayCampaign={campaign.data.items[0]}
           updateAdGroup={updateAdGroup}
           archiveAdGroup={this.archiveAdGroup}
         />
         <Content className="mcs-content-container">
-          <CampaignDashboardHeader campaign={adGroups.items} />
-          {campaign.items && campaign.items.model_version === 'V2014_06' ? < Alert className="m-b-20" message={intl.formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
+          <CampaignDashboardHeader
+            campaign={
+              adGroups.data.items && adGroups.data.items[0]
+                ? adGroups.data.items[0]
+                : undefined
+            }
+          />
+          {campaign.data.items &&
+          campaign.data.items[0] &&
+          campaign.data.items[0].model_version === 'V2014_06' ? (
+            <Alert
+              className="m-b-20"
+              message={intl.formatMessage(messages.editionNotAllowed)}
+              type="warning"
+            />
+          ) : null}
           <AdGroupsDashboard
             isFetchingMediaStat={dashboardPerformance.media.isLoading}
             mediaStat={dashboardPerformance.media.items}
-            hasFetchedMediaStat={dashboardPerformance.media.hasFetched}
             adGroupStat={dashboardPerformance.adGroups.items}
             isFetchingAdGroupStat={dashboardPerformance.adGroups.isLoading}
-            hasFetchedAdGroupStat={dashboardPerformance.adGroups.hasFetched}
             isFetchingOverallStat={
               dashboardPerformance.overallPerformance.isLoading
-            }
-            hasFetchedOverallStat={
-              dashboardPerformance.overallPerformance.hasFetched
             }
             overallStat={dashboardPerformance.overallPerformance.items}
           />
           <AdCard
             title={intl.formatMessage(messages.creatives)}
-            dataSet={ads.items}
-            isFetching={ads.isLoadingList}
-            isFetchingStat={ads.isLoadingPerf}
+            dataSet={formateList(ads.data.items)}
+            isFetching={ads.data.isLoading}
+            isFetchingStat={ads.performance.isLoading}
             updateAd={updateAd}
             additionalButtons={adButtons}
           />
@@ -140,5 +147,8 @@ const mapStateToProps = (state: any) => ({
 export default compose<JoinedProps, AdGroupProps>(
   withRouter,
   injectIntl,
-  connect(mapStateToProps, undefined),
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(AdGroup);

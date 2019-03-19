@@ -31,9 +31,9 @@ interface DisplayCampaignAdTableProps {
   updateAd: (
     adId: string,
     body: Partial<AdResource>,
+    undoBody: Partial<AdResource>,
     successMessage: UpdateMessage,
     errorMessage: UpdateMessage,
-    undoBody: Partial<AdResource>,
   ) => void;
   rowSelection?: ExtendedTableRowSelection;
 }
@@ -221,11 +221,11 @@ class DisplayCampaignAdTable extends React.Component<
         {
           status,
         },
-        successMessage,
-        errorMessage,
         {
           status: initialStatus,
         },
+        successMessage,
+        errorMessage,
       );
     };
 
