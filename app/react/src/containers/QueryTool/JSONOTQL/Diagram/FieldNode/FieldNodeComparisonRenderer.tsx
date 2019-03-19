@@ -13,6 +13,7 @@ import SegmentNameDisplay from '../../../../Audience/Common/SegmentNameDisplay';
 import CompartmentNameDisplay from '../../../../Common/CompartmentNameDisplay';
 import ChannelNameDisplay from '../../../../Common/ChannelNameDisplay';
 import { getCoreReferenceTypeAndModel } from '../../domain';
+import moment from 'moment';
 
 type ComparisonOperator =
   | StringComparisonOperator
@@ -107,8 +108,9 @@ export default class FieldNodeComparisonRenderer extends React.Component<
   Props
 > {
   renderDateValue = (values: string[]) => {
+    const formatDate = (v: string) => moment(v).format('YYYY-MM-DD');
     return values.reduce((acc, val, i) => {
-      return `${acc}${i !== 0 ? ', ' : ''}${val}`;
+      return `${acc}${i !== 0 ? ', ' : ''}${formatDate(val)}`;
     }, '');
   };
 
