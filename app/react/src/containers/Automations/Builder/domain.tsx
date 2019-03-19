@@ -3,6 +3,11 @@ import {
   ScenarioNodeShape,
   ScenarioEdgeResource,
   StorylineResource,
+  DisplayCampaignNodeResource,
+  EmailCampaignNodeResource,
+  ABNNodeResource,
+  QueryInputNodeResource,
+  WaitNodeResource,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
@@ -259,6 +264,7 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'DISPLAY_CAMPAIGN':
         nodeBody = {
           ...storylineNode.node,
+          ...this.node as DisplayCampaignNodeResource,
           name: this.formData.name,
           formData: this.formData as DisplayCampaignAutomationFormData,
           initialFormData: this
@@ -268,6 +274,7 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'EMAIL_CAMPAIGN':
         nodeBody = {
           ...storylineNode.node,
+          ...this.node as EmailCampaignNodeResource,
           name: this.formData.name,
           formData: this.formData as EmailCampaignAutomationFormData,
           // todo initial form values
@@ -276,6 +283,7 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'ABN_NODE':
         nodeBody = {
           ...storylineNode.node,
+          ...this.node as ABNNodeResource,
           branch_number: (this.formData as ABNFormData).branch_number,
           edges_selection: (this.formData as ABNFormData).edges_selection,
           name: this.formData.name,
@@ -285,6 +293,7 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'QUERY_INPUT':
         nodeBody = {
           ...storylineNode.node,
+          ...this.node as QueryInputNodeResource,
           name: this.formData.name,
           formData: this.formData as Partial<QueryResource>,
         };
@@ -292,6 +301,7 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'WAIT_NODE':
         nodeBody = {
           ...storylineNode.node,
+          ...this.node as WaitNodeResource,
           timeout: (this.formData as WaitFormData).timeout,
           name: this.formData.name,
           formData: this.formData as WaitFormData,

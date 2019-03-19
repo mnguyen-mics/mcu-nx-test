@@ -28,6 +28,8 @@ import DeviceFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sec
 import { InventoryCatalogFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections/InventoryCatalog';
 import AdFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/AdFormSection';
 import { BidOptimizerFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections';
+import { GoalFieldArray } from '../../../../../Campaigns/Display/Edit/DisplayCampaignForm';
+import { GoalFormSection } from '../../../../../Campaigns/Display/Edit/Sections/Programmatic';
 
 const { Content } = Layout;
 
@@ -90,6 +92,19 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       ),
     };
 
+    const goalSection = {
+      id: 'goals',
+      title: messages.sectionTitle2,
+      component: (
+        <GoalFieldArray
+          name="goalFields"
+          component={GoalFormSection}
+          small={true}
+          {...genericFieldArrayProps}
+        />
+      ),
+    };
+
 
     const device = {
       id: 'device',
@@ -146,6 +161,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
     };
 
     sections.push(displayCampaignSection);
+    sections.push(goalSection);
     sections.push(device);
     sections.push(placementList);
     sections.push(displayAd);

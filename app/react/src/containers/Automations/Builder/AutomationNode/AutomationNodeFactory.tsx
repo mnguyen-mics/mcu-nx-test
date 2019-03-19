@@ -17,7 +17,6 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
     _lockGlobalInteraction: (locked: boolean) => void,
     datamartId: string,
     viewer: boolean,
-    updateQueryNode?: (nodeId: string, queryText: string) => void,
   ) {
     super('automation-node');
     this.nodeOperations = nodeOperations

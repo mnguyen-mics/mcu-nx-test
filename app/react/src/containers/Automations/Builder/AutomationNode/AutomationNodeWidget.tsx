@@ -13,7 +13,7 @@ import {
 import { injectDrawer } from '../../../../components/Drawer';
 import { compose } from 'recompose';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import { TreeNodeOperations } from '../domain';
+import { TreeNodeOperations, AutomationNodeShape } from '../domain';
 import { Icon } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
 import {
@@ -23,7 +23,7 @@ import {
   isQueryInputNode,
 } from './Edit/domain';
 
-import { ScenarioNodeType, QueryInputNodeResource, ScenarioNodeShape } from '../../../../models/automations/automations'
+import { ScenarioNodeType, ScenarioNodeShape } from '../../../../models/automations/automations'
 import DisplayCampaignAutomatedDashboardPage, { DisplayCampaignAutomatedDashboardPageProps } from './Dashboard/DisplayCampaign/DisplayCampaignAutomatedDashboardPage';
 import EmailCampaignAutomatedDashboardPage, { EmailCampaignAutomatedDashboardPageProps } from './Dashboard/EmailCampaign/EmailCampaignAutomatedDashboardPage';
 
@@ -296,13 +296,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           <FormattedMessage {...messages.edit} />
         </div>
       ))
-      const evaluationMode = (node.storylineNodeModel.node as QueryInputNodeResource).evaluation_mode;
-      const newNode: QueryInputNodeResource = { ...node.storylineNodeModel.node as QueryInputNodeResource, evaluation_mode: evaluationMode === 'LIVE' ? 'PERIODIC' : 'LIVE' };
-      content.push((
-        <div key="queyType" onClick={this.editNodeProperties(newNode)} className="boolean-menu-item">
-          {(node.storylineNodeModel.node as QueryInputNodeResource).evaluation_mode}
-        </div>
-      ))
 
       if (!node.isFirstNode) {
         content.push((
@@ -406,6 +399,18 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     }
   }
 
+  renderSubTitle = (node: AutomationNodeShape) => {
+
+    switch(node.type) {
+      case 'DISPLAY_CAMPAIGN':
+        return node.formData.goalFields.length ? 'exit on goal' : 'exit on visit';
+      case 'QUERY_INPUT':
+        return node.evaluation_mode && node.evaluation_mode === 'LIVE' ? <span>Live evaluation</span> : <span>Evalutated every {node.evaluation_period} {node.evaluation_period_unit}</span>
+      default:
+        return '';
+    }
+  }
+
   render() {
     const { node } = this.props;
 
@@ -471,6 +476,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         </div>
 
         <div className="node-content">{nodeName}</div>
+        <div className="node-subtitle">{this.renderSubTitle(node.storylineNodeModel.node)}</div>
       </div>
     );
 

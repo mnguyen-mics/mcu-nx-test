@@ -52,7 +52,8 @@ type Props =
 
 interface State {
   queryLanguage?: QueryLanguage;
-  queryText?: string
+  queryText?: string;
+  isTrigger?: boolean;
 }
 
 class QueryAutomationForm extends React.Component<Props, State> {
@@ -61,7 +62,8 @@ class QueryAutomationForm extends React.Component<Props, State> {
     super(props);
     this.state = {
       queryLanguage: props.node.formData.query_language,
-      queryText: props.node.formData.query_text
+      queryText: props.node.formData.query_text,
+      isTrigger: props.node.evaluation_mode === 'LIVE'
     }
   }
 
@@ -69,7 +71,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
   render() {
     const { breadCrumbPaths, close, node, initialValues, onSubmit, disabled } = this.props;
 
-    const { queryLanguage } = this.state;
+    const { queryLanguage, isTrigger } = this.state;
 
     const isDisabled: any = {
       disabled: disabled
@@ -171,7 +173,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
         renderActionBar={actionBar}
         editionLayout={true}
         queryDocument={node.formData.query_text! ? JSON.parse(node.formData.query_text!) : undefined}
-        isTrigger={true}
+        isTrigger={isTrigger}
         {...isDisabled}
       />
     }

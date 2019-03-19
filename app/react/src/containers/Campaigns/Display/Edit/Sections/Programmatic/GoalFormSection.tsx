@@ -51,7 +51,9 @@ import GoalService from '../../../../../../services/GoalService';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
 
-export interface GoalFormSectionProps extends ReduxFormChangeProps {}
+export interface GoalFormSectionProps extends ReduxFormChangeProps {
+  small?: boolean;
+}
 
 type Props = GoalFormSectionProps &
   InjectedIntlProps &
