@@ -206,7 +206,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
           objectTypes={this.props.objectTypes}
           initialValues={{ fieldNodeForm: node.fieldNode }}
           onSubmit={onSubmit}
-          idToAttachDropDowns={this.wrapperId}
+          idToAttachDropDowns={this.id}
           runtimeSchemaId={node.objectTypeInfo.runtime_schema_id}
           datamartId={datamartId}
         />

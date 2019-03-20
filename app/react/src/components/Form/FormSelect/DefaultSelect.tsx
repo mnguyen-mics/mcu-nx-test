@@ -99,6 +99,7 @@ class DefaultSelect extends React.Component<
       </Option>
     )
     const getRef = () => document.getElementById(this.id)!;
+    
 
     return (
       <FormFieldWrapper
@@ -116,7 +117,7 @@ class DefaultSelect extends React.Component<
             onFocus={input.onFocus as () => any}
             value={input.value}
             disabled={disabled}
-            getPopupContainer={getRef}
+            getPopupContainer={selectProps && selectProps.getPopupContainer ? selectProps.getPopupContainer : getRef}
           >
             {defaultOption}
             {optionsToDisplay}
