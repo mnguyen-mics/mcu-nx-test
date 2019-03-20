@@ -178,7 +178,6 @@ const DisplayCampaignService = {
         };
       }));
   },
-
   createPublisher(
     campaignId: string,
     body: object,

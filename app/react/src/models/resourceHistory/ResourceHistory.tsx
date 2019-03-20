@@ -16,9 +16,14 @@ export type ResourceType =
   'EMAIL_BLAST' |
   'EMAIL_CAMPAIGN' |
   'EMAIL_TEMPLATE' |
+  'GEONAME' |
+  'GEO_TARGETING_SELECTION' |
   'KEYWORDS_LIST' |
   'KEYWORDS_LIST_SELECTION' |
   'VIDEO_AD';
+  
+  
+  
 
 export type EventType =
   'CREATE_EVENT' |
