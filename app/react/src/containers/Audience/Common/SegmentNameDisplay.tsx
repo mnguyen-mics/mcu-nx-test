@@ -9,6 +9,7 @@ import { IAudienceSegmentService } from '../../../services/AudienceSegmentServic
 interface SegmentNameDisplayProps {
     audienceSegmentId?: string;
     audienceSegmentResource?: AudienceSegmentShape;
+    onLoad?: (segment?: AudienceSegmentShape) => void
 }
 
 interface State {
@@ -52,7 +53,11 @@ class SegmentNameDisplay extends React.Component<Props, State> {
     }
 
     fetchAudienceSegmentResource = (segmentId: string) => {
-        return this._audienceSegmentService.getSegment(segmentId);
+        return this._audienceSegmentService.getSegment(segmentId)
+            .then(r => {
+                if (this.props.onLoad) this.props.onLoad(r.data)
+                return r;
+            });
     }
 
 

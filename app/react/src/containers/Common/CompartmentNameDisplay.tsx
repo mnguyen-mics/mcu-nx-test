@@ -6,6 +6,7 @@ import { TYPES } from '../../constants/types';
 
 export interface CompartmentNameDisplayProps {
   userAccountCompartmentId: string;
+  onLoad?: (compartment?: UserAccountCompartmentResource) => void
 }
 
 interface State {
@@ -49,7 +50,7 @@ export default class CompartmentNameDisplay extends React.Component<CompartmentN
   fetchUserAccountCompartment = (userAccountCompartmentId: string) => {
     this.setState({ loading: true });
     return this._compartmentService.getCompartment(userAccountCompartmentId)
-      .then(res => res.data).then(res => this.setState({ loading: false, compartment: res }))
+      .then(res => res.data).then(res => this.setState({ loading: false, compartment: res }, () => this.props.onLoad && this.props.onLoad(res)))
       .catch(() => this.setState({ loading: false }))
   }
 
