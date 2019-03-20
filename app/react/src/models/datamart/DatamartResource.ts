@@ -45,7 +45,29 @@ export interface UserAccountCompartmentDatamartSelectionResource {
 }
 
 export interface AutoCompleteResource {
-  type: string,
-  object_type_name: string,
-  field_name: string
+  type: string;
+  object_type_name: string;
+  field_name: string;
+}
+
+export interface AudienceSegmentMetricResource {
+  id: string;
+  datafarmKey: string;
+  datamartId: string;
+  queryId: string;
+  technical_name:
+    | 'user_points'
+    | 'user_accounts'
+    | 'emails'
+    | 'desktop_cookie_ids'
+    | 'user_point_additions'
+    | 'user_point_deletions'
+    | 'mobile_ad_ids'
+    | 'mobile_cookie_ids';
+  display_name: string;
+  icon: string;
+  status: 'DRAFT' | 'LIVE' | 'ARCHIVED';
+  creationDate: number;
+  lastModifiedDate: number;
+  lastPublishedDate: number;
 }

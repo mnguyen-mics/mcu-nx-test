@@ -3,7 +3,12 @@ import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-
+import {
+  injectIntl,
+  InjectedIntlProps,
+  defineMessages,
+  FormattedMessage,
+} from 'react-intl';
 import {
   EmptyCharts,
   LoadingChart,
@@ -26,7 +31,6 @@ import { TranslationProps } from '../../../../Helpers/withTranslations';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 const StackedAreaPlotJS = StackedAreaPlot as any;
 
@@ -60,7 +64,9 @@ class Overview extends React.Component<Props> {
   }
 
   renderDatePicker() {
-    const { location: { search } } = this.props;
+    const {
+      location: { search },
+    } = this.props;
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
 
@@ -80,21 +86,30 @@ class Overview extends React.Component<Props> {
 
   renderStackedAreaCharts() {
     const { dataSource, isFetching, colors } = this.props;
-
+    const metrics =
+      dataSource && dataSource[0]
+        ? Object.keys(dataSource[0]).filter(el => el !== 'day')
+        : [];
     const optionsForChart = {
       xKey: 'day',
-      yKeys: [
-        { key: 'user_points', message: messages.userPoints },
-        { key: 'user_accounts', message: messages.userAccounts },
-        { key: 'emails', message: messages.emails },
-        { key: 'desktop_cookie_ids', message: messages.desktopCookieId },
-      ],
+      yKeys: metrics.map(metric => {
+        return {
+          key: metric,
+          message: messagesMap[metric],
+        };
+      }),
+      // yKeys: [
+      //   { key: 'user_points', message: messages.userPoints },
+      //   { key: 'user_accounts', message: messages.userAccounts },
+      //   { key: 'emails', message: messages.emails },
+      //   { key: 'desktop_cookie_ids', message: messages.desktopCookieId },
+      // ],
       colors: [
         colors['mcs-warning'],
         colors['mcs-info'],
         colors['mcs-success'],
         colors['mcs-error'],
-      ],
+      ].slice(0, metrics.length),
     };
     return !isFetching ? (
       <StackedAreaPlotJS
@@ -107,32 +122,34 @@ class Overview extends React.Component<Props> {
     );
   }
 
-  render() {
-    const {
-      dataSource,
-      isFetching,
-      colors,
-      intl,
-    } = this.props;
+  getColor = (metric: string) => {
+    const { colors } = this.props;
+    switch (metric) {
+      case 'user_points':
+        return colors['mcs-warning'];
+      case 'user_accounts':
+        return colors['mcs-info'];
+      case 'emails':
+        return colors['mcs-success'];
+      case 'deskstop_cookie_ids':
+        return colors['mcs-error'];
+      default:
+        return colors['mcs-info'];
+    }
+  };
 
-    const options = [
-      {
-        domain: intl.formatMessage(messages.userPoints),
-        color: colors['mcs-warning'],
-      },
-      {
-        domain: intl.formatMessage(messages.userAccounts),
-        color: colors['mcs-info'],
-      },
-      {
-        domain: intl.formatMessage(messages.emails),
-        color: colors['mcs-success'],
-      },
-      {
-        domain: intl.formatMessage(messages.desktopCookieId),
-        color: colors['mcs-error'],
-      },
-    ];
+  render() {
+    const { dataSource, isFetching, intl } = this.props;
+    const metrics =
+      dataSource && dataSource[0]
+        ? Object.keys(dataSource[0]).filter(el => el !== 'day')
+        : [];
+    const options = metrics.map(metric => {
+      return {
+        domain: intl.formatMessage(messagesMap[metric]),
+        color: this.getColor(metric),
+      };
+    });
 
     return (
       <div>
@@ -149,7 +166,9 @@ class Overview extends React.Component<Props> {
           </Col>
         </Row>
         {dataSource.length === 0 && !isFetching ? (
-          <EmptyCharts title={intl.formatMessage(messages.noAdditionDeletion)} />
+          <EmptyCharts
+            title={intl.formatMessage(messages.noAdditionDeletion)}
+          />
         ) : (
           this.renderStackedAreaCharts()
         )}
@@ -163,3 +182,40 @@ export default compose<Props, OverviewProps>(
   injectIntl,
   injectThemeColors,
 )(Overview);
+
+const messagesMap: {
+  [metric: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  user_points: {
+    id: 'segment.user_points',
+    defaultMessage: 'User Points',
+  },
+  user_accounts: {
+    id: 'segment.user_accounts',
+    defaultMessage: 'Accounts',
+  },
+  emails: {
+    id: 'segment.emails',
+    defaultMessage: 'Emails',
+  },
+  desktop_cookie_ids: {
+    id: 'segment.desktop_cookie_ids',
+    defaultMessage: 'Display Cookies',
+  },
+  user_point_additions: {
+    id: 'segment.user_point_additions',
+    defaultMessage: 'User Point Additions',
+  },
+  user_point_deletions: {
+    id: 'segment.user_point_deletions',
+    defaultMessage: 'User Point Deletions',
+  },
+  mobile_ad_ids: {
+    id: 'segment.mobile_ad_ids',
+    defaultMessage: 'Mobile Ad Ids',
+  },
+  mobile_cookie_ids: {
+    id: 'segment.mobile_cookie_ids',
+    defaultMessage: 'Mobile Cookie Ids',
+  },
+});

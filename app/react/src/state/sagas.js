@@ -13,6 +13,7 @@ import { labelsSagas } from './Labels/sagas';
 import { versionSagas } from './Version/sagas';
 import { accountSagas } from './Account/sagas';
 import { featuresSagas } from './Features/sagas';
+import { audienceSegmentMetricsSagas } from './AudienceSegmentMetrics/sagas';
 
 export default function* sagas() {
   yield all([
@@ -30,5 +31,6 @@ export default function* sagas() {
     ...nativeCreativesSagas,
     ...accountSagas,
     ...featuresSagas,
+    ...audienceSegmentMetricsSagas
   ]);
 }

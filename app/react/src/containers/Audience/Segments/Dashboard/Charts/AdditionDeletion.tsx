@@ -57,7 +57,9 @@ class AdditionDeletion extends React.Component<Props> {
   }
 
   renderDatePicker() {
-    const { location: { search } } = this.props;
+    const {
+      location: { search },
+    } = this.props;
 
     const filter = parseSearch(search, SEGMENT_QUERY_SETTINGS);
 
@@ -78,12 +80,14 @@ class AdditionDeletion extends React.Component<Props> {
   renderStackedAreaCharts() {
     const { dataSource, isFetching, colors } = this.props;
 
-    const formattedDataSource = dataSource.length && dataSource.map(item => {
-      return {
-        ...item,
-        user_point_deletions: -item.user_point_deletions,
-      };
-    });
+    const formattedDataSource =
+      dataSource.length &&
+      dataSource.map(item => {
+        return {
+          ...item,
+          user_point_deletions: -item ? item.user_point_deletions : 0,
+        };
+      });
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
@@ -104,12 +108,7 @@ class AdditionDeletion extends React.Component<Props> {
   }
 
   render() {
-    const {
-      dataSource,
-      isFetching,
-      colors,
-      intl,
-    } = this.props;
+    const { dataSource, isFetching, colors, intl } = this.props;
 
     const options = [
       {
@@ -140,7 +139,9 @@ class AdditionDeletion extends React.Component<Props> {
           </Col>
         </Row>
         {dataSource.length === 0 && !isFetching ? (
-          <EmptyCharts title={intl.formatMessage(messages.noAdditionDeletion)} />
+          <EmptyCharts
+            title={intl.formatMessage(messages.noAdditionDeletion)}
+          />
         ) : (
           this.renderStackedAreaCharts()
         )}

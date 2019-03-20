@@ -16,20 +16,31 @@ import { AudienceSegmentResource } from '../../../../models/audiencesegment/Audi
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { parseSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
+import {
+  parseSearch,
+  compareSearches,
+} from '../../../../utils/LocationSearchHelper';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
-import FeedCardList from './Feeds/FeedCardList'
+import FeedCardList from './Feeds/FeedCardList';
+import {
+  DatamartResource,
+  AudienceSegmentMetricResource,
+} from '../../../../models/datamart/DatamartResource';
+import DatamartService from '../../../../services/DatamartService';
+import { connect } from 'react-redux';
 
 interface State {
   loading: boolean;
-  counter: {
-    report: AudienceReport,
-    isLoading: boolean
-  },
+
   dashboard: {
-    report: AudienceReport,
-    isLoading: boolean
-  },
+    report: AudienceReport;
+    isLoading: boolean;
+  };
+  datamart?: DatamartResource;
+}
+
+interface MapStateToProps {
+  audienceSegmentMetrics: { [key: string]: AudienceSegmentMetricResource[] };
 }
 
 export interface AudienceSegmentDashboardProps {
@@ -39,6 +50,7 @@ export interface AudienceSegmentDashboardProps {
 
 type Props = AudienceSegmentDashboardProps &
   InjectedIntlProps &
+  MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
@@ -47,141 +59,190 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     super(props);
     this.state = {
       loading: true,
-      counter: {
-        isLoading: true,
-        report: []
-      },
       dashboard: {
         isLoading: true,
-        report: []
+        report: [],
       },
     };
   }
 
   componentDidMount() {
-
-    const { match: { params: { segmentId, organisationId } }, location: { search }, } = this.props;
+    const {
+      match: {
+        params: { segmentId, organisationId },
+      },
+      location: { search },
+    } = this.props;
 
     if (segmentId) {
       const filters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
-      this.fetchCounterView(organisationId, [{
-        name: 'audience_segment_id',
-        value: segmentId
-      }])
-      this.fetchDashboardView(organisationId,
+
+      this.fetchDashboardView(
+        organisationId,
         filters.from,
         filters.to,
-        [{
-          name: 'audience_segment_id',
-          value: segmentId
-        }]
-      )
+        [
+          {
+            name: 'audience_segment_id',
+            value: segmentId,
+          },
+        ],
+        [],
+      );
     }
   }
-
 
   componentWillReceiveProps(nextProps: Props) {
+    const {
+      match: {
+        params: { segmentId },
+      },
+      location: { search },
+    } = this.props;
+    const {
+      match: {
+        params: {
+          segmentId: nextSegmentId,
+          organisationId: nextOrganisationId,
+        },
+      },
+      location: { search: nextSearch },
+      segment: nextSegment,
+      audienceSegmentMetrics: nextAudienceSegmentMetrics,
+    } = nextProps;
 
-    const { match: { params: { segmentId } }, location: { search }, } = this.props;
-    const { match: { params: { segmentId: nextSegmentId, organisationId: nextOrganisationId } }, location: { search: nextSearch }, } = nextProps;
-
-    if (!compareSearches(search, nextSearch) || segmentId !== nextSegmentId) {
-      const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
-      this.fetchCounterView(nextOrganisationId, [{
-        name: 'audience_segment_id',
-        value: nextSegmentId
-      }])
-      this.fetchDashboardView(nextOrganisationId,
-        nextFilters.from,
-        nextFilters.to,
-        [{
-          name: 'audience_segment_id',
-          value: nextSegmentId
-        }]
-      )
+    if (
+      (!compareSearches(search, nextSearch) ||
+        segmentId !== nextSegmentId ||
+        nextAudienceSegmentMetrics) &&
+      nextSegment
+    ) {
+      DatamartService.getDatamart(nextSegment.datamart_id)
+        .then(res => {
+          this.setState({
+            datamart: res.data,
+          });
+          return res.data;
+        })
+        .then(datamart => {
+          const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
+          const metrics: string[] = ['user_points'];
+          let additionalMetrics;
+          if (nextAudienceSegmentMetrics[datamart.id]) {
+            additionalMetrics = nextAudienceSegmentMetrics[datamart.id].map(
+              metric => metric.technical_name,
+            );
+            metrics.concat(additionalMetrics);
+          } else if (datamart.storage_model_version === 'v201506') {
+            additionalMetrics = [
+              'user_accounts',
+              'desktop_cookie_ids',
+              'emails',
+            ];
+          }
+          this.fetchDashboardView(
+            nextOrganisationId,
+            nextFilters.from,
+            nextFilters.to,
+            [
+              {
+                name: 'audience_segment_id',
+                value: nextSegmentId,
+              },
+            ],
+            additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
+          );
+        });
     }
   }
 
-  fetchCounterView = (organisationId: string, filters: Filter[]) => {
-    this.setState({ counter: { ...this.state.counter, isLoading: true } })
-    return ReportService.getAudienceSegmentReport(
-      organisationId,
-      new McsMoment('now'),
-      new McsMoment('now'),
-      ['day'],
-      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'],
-      filters,
-    ).then(res => this.setState({ counter: { isLoading: false, report: normalizeReportView(res.data.report_view) } }))
+  fetchDashboardView = (
+    organisationId: string,
+    from: McsMoment,
+    to: McsMoment,
+    filters: Filter[],
+    metrics: string[],
+  ) => {
+    this.setState({ dashboard: { ...this.state.dashboard, isLoading: true } });
 
-  }
-
-  fetchDashboardView = (organisationId: string, from: McsMoment, to: McsMoment, filters: Filter[]) => {
-    this.setState({ dashboard: { ...this.state.dashboard, isLoading: true } })
     return ReportService.getAudienceSegmentReport(
       organisationId,
       from,
       to,
       ['day'],
-      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'],
+      metrics,
       filters,
-    ).then(res => this.setState({ dashboard: { isLoading: false, report: normalizeReportView(res.data.report_view) } }))
+    ).then(res =>
+      this.setState({
+        dashboard: {
+          isLoading: false,
+          report: normalizeReportView(res.data.report_view),
+        },
+      }),
+    );
+  };
 
-  }
-
-
-  render() {
-
-    const { intl, segment } = this.props;
-    const { counter, dashboard } = this.state
-
-    const getLoadingValue = (
-      key: 'user_points' | 'user_accounts' | 'emails' | 'desktop_cookie_ids',
-    ) => {
-
-      const value = !counter.isLoading && counter.report && counter.report[0] ? counter.report[0][key] : undefined
-      return {
-        value,
-        loading: counter.isLoading,
-      };
-    };
+  buildItems = () => {
+    const { intl, segment, audienceSegmentMetrics } = this.props;
+    const { dashboard, datamart } = this.state;
     const items = [
       {
         title: intl.formatMessage(messages.overview),
-        display: <Overview isFetching={dashboard.isLoading} dataSource={dashboard.report} />,
+        display: (
+          <Overview
+            isFetching={dashboard.isLoading}
+            dataSource={dashboard.report}
+          />
+        ),
       },
-      {
-        title: intl.formatMessage(messages.additionDeletion),
-        display: <AdditionDeletion isFetching={dashboard.isLoading} dataSource={dashboard.report} />,
-      },
-      
     ];
-    if (segment) {
-      items.push({
-        title: intl.formatMessage(messages.overlap),
-        display: <Overlap datamartId={segment.datamart_id} />,
-      },)
-      if (segment.type === 'USER_LIST') {
+    if (datamart) {
+      const metrics = audienceSegmentMetrics[datamart.id]
+        ? audienceSegmentMetrics[datamart.id].map(el => el.technical_name)
+        : [];
+      if (
+        metrics.includes('user_point_additions') ||
+        metrics.includes('user_point_deletions') ||
+        datamart.storage_model_version === 'v201506'
+      ) {
         items.push({
-          title: intl.formatMessage(messages.imports),
+          title: intl.formatMessage(messages.additionDeletion),
           display: (
-            <UserListImportCard
-              datamartId={segment.datamart_id}
+            <AdditionDeletion
+              isFetching={dashboard.isLoading}
+              dataSource={dashboard.report}
             />
           ),
         });
       }
     }
+    if (segment) {
+      items.push({
+        title: intl.formatMessage(messages.overlap),
+        display: <Overlap datamartId={segment.datamart_id} />,
+      });
+      if (segment.type === 'USER_LIST') {
+        items.push({
+          title: intl.formatMessage(messages.imports),
+          display: <UserListImportCard datamartId={segment.datamart_id} />,
+        });
+      }
+    }
+    return items;
+  };
 
+  render() {
+    const { audienceSegmentMetrics } = this.props;
+    const { datamart } = this.state;
+    const datamartMetrics = datamart ? audienceSegmentMetrics[datamart.id] : [];
     return (
       <div>
         <AudienceCounters
-          userPoints={getLoadingValue('user_points')}
-          userAccounts={getLoadingValue('user_accounts')}
-          userAgents={getLoadingValue('desktop_cookie_ids')}
-          userEmails={getLoadingValue('emails')}
+          datamart={datamart}
+          audienceSegmentMetrics={datamartMetrics}
         />
         <Card>
-          <McsTabs items={items} />
+          <McsTabs items={this.buildItems()} />
         </Card>
         <FeedCardList />
       </div>
@@ -189,10 +250,18 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  audienceSegmentMetrics: state.metrics.audienceSegmentMetrics,
+});
+
 export default compose<Props, AudienceSegmentDashboardProps>(
   injectIntl,
   withRouter,
   injectNotifications,
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(AudienceSegmentDashboard);
 
 const messages = defineMessages({

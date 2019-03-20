@@ -1,3 +1,4 @@
+import { AudienceSegmentMetricResource } from './../models/datamart/DatamartResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   DatamartResource,
@@ -72,7 +73,7 @@ const DatamartService = {
   getUserAccountCompartments(
     datamartId: string,
   ): Promise<
-  DataListResponse<UserAccountCompartmentDatamartSelectionResource>
+    DataListResponse<UserAccountCompartmentDatamartSelectionResource>
   > {
     const endpoint = `datamarts/${datamartId}/compartments`;
     return ApiService.getRequest(endpoint);
@@ -88,12 +89,18 @@ const DatamartService = {
     const endpoint = `datamarts/${datamartId}/cleaning_rules`;
 
     const calculatedOptions = {
-      type: "USER_EVENT_CLEANING_RULE",
-      ...options
-    }
+      type: 'USER_EVENT_CLEANING_RULE',
+      ...options,
+    };
 
     return ApiService.getRequest(endpoint, calculatedOptions);
-  }
+  },
+  getAudienceSegmentMetrics(
+    datamartId: string,
+  ): Promise<DataResponse<AudienceSegmentMetricResource>> {
+    const endpoint = `datamarts/${datamartId}/audience_segment_metrics`;
+    return ApiService.getRequest(endpoint);
+  },
 };
 
 export default DatamartService;
