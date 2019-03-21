@@ -240,7 +240,7 @@ class DisplayCampaignAdTable extends React.Component<
               text === 'AUDIT_PASSED' ? (
                 <FormattedMessage
                   id="display.campaign.adtable.ad.auditpassed.msg"
-                  defaultMessage="Audit sucessful"
+                  defaultMessage="Audit successful"
                 />
               ) : (
                   <FormattedMessage
