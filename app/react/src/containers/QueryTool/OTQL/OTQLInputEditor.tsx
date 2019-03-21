@@ -9,7 +9,8 @@ export interface Props {
   onAbortQuery: () => void;
   runningQuery: boolean;
   datamartId: string;
-  onQueryChange: (query: string) => void
+  onQueryChange: (query: string) => void;
+  defaultValue?: string
 }
 
 interface State {
@@ -83,7 +84,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
 
   render() {
     const { query } = this.state;
-    const { datamartId } = this.props;
+    const { datamartId, defaultValue } = this.props;
 
     return (
       <Card
@@ -103,6 +104,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
           height="250px"
           enableBasicAutocompletion={true}
           enableLiveAutocompletion={false}
+          defaultValue={defaultValue}
         />
       </Card>
     );
