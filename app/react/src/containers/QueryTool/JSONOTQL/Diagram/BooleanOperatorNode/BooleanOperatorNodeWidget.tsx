@@ -1,9 +1,8 @@
 import * as React from 'react';
 import cuid from 'cuid';
 import { CSSTransition } from 'react-transition-group';
-import { DiagramEngine } from 'storm-react-diagrams';
 import BooleanOperatorNodeModel from './BooleanOperatorNodeModel';
-import { TreeNodeOperations } from '../../domain';
+import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
 import WindowBodyPortal from '../../../../../components/WindowBodyPortal';
 import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import { compose } from 'recompose';
@@ -13,7 +12,7 @@ import injectThemeColors, {
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import { FormattedMessage } from 'react-intl';
 import messages from '../Common/messages';
-import { QueryBooleanOperator } from '../../../../../models/datamart/graphdb/QueryDocument';
+import { QueryBooleanOperator, ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
 
 const addinTarget = {
   canDrop() {
@@ -28,7 +27,7 @@ interface DroppedItemProps {
 
 interface BooleanOperatorNodeWidgetProps {
   node: BooleanOperatorNodeModel;
-  diagramEngine: DiagramEngine;
+  diagramEngine: MicsDiagramEngine;
   treeNodeOperations: TreeNodeOperations;
   lockGlobalInteraction: (lock: boolean) => void;
 }
@@ -83,6 +82,68 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
     return treeNodeOperations.deleteNode(node.treeNodePath);
   };
 
+  copyNode = () => {
+    const { node, treeNodeOperations, lockGlobalInteraction } = this.props;
+    this.setState({ focus: false }, () => {
+      lockGlobalInteraction(false);
+      if (this.props.node.objectOrGroupNode.type === 'GROUP') {
+        treeNodeOperations.copyNode(node.treeNodePath, 'UserPoint', this.props.node.treeNodePath);
+      }
+    });
+  };
+
+  cutNode = () => {
+    const { node, treeNodeOperations, lockGlobalInteraction } = this.props;
+    this.setState({ focus: false }, () => {
+      lockGlobalInteraction(false);
+      if (this.props.node.objectOrGroupNode.type === 'GROUP') {
+        treeNodeOperations.copyNode(node.treeNodePath, 'UserPoint', this.props.node.treeNodePath);
+        treeNodeOperations.deleteNode(node.treeNodePath);
+      }
+    });
+  };
+
+  pasteNode = () => {
+    const { node, treeNodeOperations, lockGlobalInteraction } = this.props;
+    const canPaste = this.canPasteHere()
+    const objectTree = canPaste ? {...canPaste} : undefined;
+    if (objectTree) {
+      this.setState({ focus: false }, () => {
+        lockGlobalInteraction(false);
+        if (node.objectOrGroupNode.type === 'GROUP') {
+          const newObject = {
+            ...node.objectOrGroupNode,
+          };
+          const newObjectTree = {
+            ...objectTree
+          }
+          newObject.expressions.push(newObjectTree)
+          treeNodeOperations.updateNode(node.treeNodePath, newObject);
+        }
+        this.props.diagramEngine.emptyClipboard()
+      });
+    }
+  };
+
+  canPasteHere = (): ObjectTreeExpressionNodeShape | undefined => {
+    if (
+      this.props.node.objectOrGroupNode.type === 'GROUP' &&
+      this.props.diagramEngine.isCopying()
+    ) {
+      const copying = this.props.diagramEngine.getCopiedValue();
+      if (
+        copying &&
+        copying.copiedObjectType &&
+        copying.objectType &&
+        copying.objectType === 'UserPoint' &&
+        copying.treeNodePath !== this.props.node.treeNodePath
+      ) {
+        return copying.copiedObjectType;
+      }
+    }
+    return;
+  };
+
   render() {
     const { node, connectDropTarget, isDragging } = this.props;
     const onHover = (type: 'enter' | 'leave') => () =>
@@ -116,6 +177,37 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
       OR: { booleanOperator: 'OR', negation: false },
       OR_NOT: { booleanOperator: 'OR', negation: true },
     };
+
+    const editMenu: React.ReactNode[] = [];
+
+    if (this.props.diagramEngine.isCopying()) {
+      if (this.canPasteHere()) {
+        editMenu.push(
+          <div onClick={this.pasteNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.paste} />
+          </div>,
+        );
+      }
+    } else {
+      if (this.props.node.objectOrGroupNode.type === 'GROUP') {
+        editMenu.push(
+          <div onClick={this.copyNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.copy} />
+          </div>,
+        );
+        editMenu.push(
+          <div onClick={this.cutNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.cut} />
+          </div>,
+        );
+      }
+    }
+
+    editMenu.push(
+      <div onClick={this.removeGroup} className="boolean-menu-item">
+        <FormattedMessage {...messages.remove} />
+      </div>,
+    );
 
     return (
       connectDropTarget &&
@@ -185,8 +277,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
                       zIndex: 1001,
                     }}
                   >
-                    {
-                      Object.keys(operators)
+                    {Object.keys(operators)
                       .filter((opName: OperatorName) => {
                         return (
                           operators[opName].booleanOperator !==
@@ -201,7 +292,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
                         return (
                           <div
                             onClick={this.changeBooleanOperator(
-                              operators[opName]
+                              operators[opName],
                             )}
                             className="boolean-menu-item"
                             key={opName}
@@ -209,14 +300,8 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
                             <FormattedMessage {...messages[opName]} />
                           </div>
                         );
-                      })
-                    }
-                    <div
-                      onClick={this.removeGroup}
-                      className="boolean-menu-item"
-                    >
-                      <FormattedMessage {...messages.remove} />
-                    </div>
+                      })}
+                   {editMenu}
                   </div>
                 </CSSTransition>
               </div>

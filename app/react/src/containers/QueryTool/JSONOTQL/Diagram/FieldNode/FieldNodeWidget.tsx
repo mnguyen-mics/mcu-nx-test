@@ -1,10 +1,13 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { DiagramEngine } from 'storm-react-diagrams';
 import FieldNodeModel from './FieldNodeModel';
 import FieldNodeComparisonRenderer from './FieldNodeComparisonRenderer';
-import { WindowBodyPortal, McsIcon, ButtonStyleless } from '../../../../../components';
-import { TreeNodeOperations } from '../../domain';
+import {
+  WindowBodyPortal,
+  McsIcon,
+  ButtonStyleless,
+} from '../../../../../components';
+import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
 import FieldNodeFormWrapper from '../../Edit/Sections/Field/FieldNodeFormWrapper';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { FieldNodeFormDataValues, FORM_ID } from '../../Edit/domain';
@@ -18,7 +21,7 @@ import messages from '../Common/messages';
 
 interface FieldNodeWidgetProps {
   node: FieldNodeModel;
-  diagramEngine: DiagramEngine;
+  diagramEngine: MicsDiagramEngine;
   treeNodeOperations: TreeNodeOperations;
   lockGlobalInteraction: (lock: boolean) => void;
   keyboardOnlyLock: (lock: boolean) => void;
@@ -46,7 +49,7 @@ interface DroppedItemProps {
 
 const addinTarget = {
   canDrop() {
-   return false
+    return false;
   },
 };
 
@@ -93,7 +96,12 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   handleClickOutside = (event: any) => {
-    const { formValues, treeNodeOperations, node, lockGlobalInteraction } = this.props;
+    const {
+      formValues,
+      treeNodeOperations,
+      node,
+      lockGlobalInteraction,
+    } = this.props;
     if (
       !this.isDragging &&
       this.wrapperRef &&
@@ -103,8 +111,11 @@ class FieldNodeWidget extends React.Component<Props, State> {
       this.state.edit
     ) {
       this.editNode(false);
-      treeNodeOperations.updateNode(node.treeNodePath, formValues.fieldNodeForm)
-      lockGlobalInteraction(false)
+      treeNodeOperations.updateNode(
+        node.treeNodePath,
+        formValues.fieldNodeForm,
+      );
+      lockGlobalInteraction(false);
     } else {
       this.isDragging = false;
     }
@@ -123,6 +134,28 @@ class FieldNodeWidget extends React.Component<Props, State> {
     this.bottom = viewportOffset
       ? bodyPosition.bottom - viewportOffset.bottom
       : 0;
+  };
+
+  copyNode = () => {
+    this.setState({ focus: false }, () => {
+      this.props.treeNodeOperations.copyNode(
+        this.props.node.treeNodePath,
+        this.props.node.objectTypeInfo.name,
+        this.props.node.treeNodePath
+      );
+      this.props.treeNodeOperations.updateLayout();
+    });
+  };
+
+  cutNode = () => {
+    this.setState({ focus: false }, () => {
+      this.props.treeNodeOperations.cutNode(
+        this.props.node.treeNodePath,
+        this.props.node.objectTypeInfo.name,
+        this.props.node.treeNodePath
+      );
+      this.props.treeNodeOperations.updateLayout();
+    });
   };
 
   removeNode = () => {
@@ -147,11 +180,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   renderEditNode = () => {
-    const {
-      node,
-      treeNodeOperations,
-      datamartId
-    } = this.props;
+    const { node, treeNodeOperations, datamartId } = this.props;
 
     const onSubmit = (val: FieldNodeFormDataValues) => {
       treeNodeOperations.updateNode(node.treeNodePath, val.fieldNodeForm);
@@ -187,18 +216,20 @@ class FieldNodeWidget extends React.Component<Props, State> {
             borderBottom: `${ARROW_SIZE}px solid ${node.getColor()}`,
             transform: 'rotate(-90deg)',
             position: 'absolute',
-            left: -ARROW_SIZE - (ARROW_SIZE / 2) + 2,
-            top: (node.getSize().height / 2) - (ARROW_SIZE / 2)
+            left: -ARROW_SIZE - ARROW_SIZE / 2 + 2,
+            top: node.getSize().height / 2 - ARROW_SIZE / 2,
           }}
         />
         <div
           style={{
             position: 'absolute',
             top: 7,
-            right: 0
+            right: 0,
           }}
         >
-          <ButtonStyleless onClick={closeEdit}><McsIcon type="close" /></ButtonStyleless>
+          <ButtonStyleless onClick={closeEdit}>
+            <McsIcon type="close" />
+          </ButtonStyleless>
         </div>
         <FieldNodeFormWrapper
           breadCrumbPaths={[]}
@@ -218,14 +249,11 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   renderedStandardNode = (): JSX.Element => {
-    const {
-      node,
-      datamartId
-    } = this.props;
-  
+    const { node, datamartId } = this.props;
+
     const onHover = (type: 'enter' | 'leave') => () => {
       this.setState({ hover: type === 'enter' ? true : false });
-    }
+    };
 
     const onFocus = () => {
       this.props.lockGlobalInteraction(!this.state.focus);
@@ -237,7 +265,30 @@ class FieldNodeWidget extends React.Component<Props, State> {
 
     const triggerEdit = () => this.editNode(true);
 
-    
+    const editMenu = [
+      <div onClick={triggerEdit} className="boolean-menu-item" key="EDIT">
+        <FormattedMessage {...messages.edit} />
+      </div>,
+    ];
+
+    if (!this.props.diagramEngine.isCopying()) {
+      editMenu.push(
+        <div onClick={this.copyNode} className="boolean-menu-item" key="COPY">
+          <FormattedMessage {...messages.copy} />
+        </div>,
+      );
+      editMenu.push(
+        <div onClick={this.cutNode} className="boolean-menu-item" key="CUT">
+          <FormattedMessage {...messages.cut} />
+        </div>,
+      );
+    }
+
+    editMenu.push(
+      <div onClick={this.removeNode} className="boolean-menu-item" key="REMOVE">
+        <FormattedMessage {...messages.remove} />
+      </div>,
+    );
 
     return (
       <div
@@ -282,8 +333,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
                   borderStyle: 'solid',
                   color: node.getColor(),
                   borderColor: node.getColor(),
-                  top:
-                    this.top - node.getSize().height * ((1 - zoomRatio) / 2),
+                  top: this.top - node.getSize().height * ((1 - zoomRatio) / 2),
                   left:
                     this.left - node.getSize().width * ((1 - zoomRatio) / 2),
 
@@ -294,7 +344,10 @@ class FieldNodeWidget extends React.Component<Props, State> {
                 onClick={onFocus}
               >
                 <div className="field">
-                  <FieldNodeComparisonRenderer node={node} datamartId={datamartId} />
+                  <FieldNodeComparisonRenderer
+                    node={node}
+                    datamartId={datamartId}
+                  />
                 </div>
               </span>
               <div
@@ -305,12 +358,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
                   zIndex: 1001,
                 }}
               >
-                <div onClick={triggerEdit} className="boolean-menu-item">
-                  <FormattedMessage {...messages.edit} />
-                </div>
-                <div onClick={this.removeNode} className="boolean-menu-item">
-                  <FormattedMessage {...messages.remove} />
-                </div>
+                {editMenu}
               </div>
             </div>
           </WindowBodyPortal>
@@ -319,27 +367,24 @@ class FieldNodeWidget extends React.Component<Props, State> {
     );
   };
 
-
   render() {
-    const { connectDropTarget, isDragging } = this.props;  
+    const { connectDropTarget, isDragging } = this.props;
 
     const opacity = isDragging ? 0.3 : 1;
 
     const renderedFieldNode = (
-      <div ref={this.setWrapperRef} style={{opacity}} >
+      <div ref={this.setWrapperRef} style={{ opacity }}>
         {this.state.edit ? this.renderEditNode() : this.renderedStandardNode()}
       </div>
     );
 
-    return connectDropTarget &&
-    connectDropTarget(renderedFieldNode);
+    return connectDropTarget && connectDropTarget(renderedFieldNode);
   }
 }
 
 const mapStateToProps = (state: any) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
- 
 
 export default compose<Props, FieldNodeWidgetProps>(
   DropTarget(
@@ -349,8 +394,8 @@ export default compose<Props, FieldNodeWidgetProps>(
     addinTarget,
     (connec, monitor) => ({
       connectDropTarget: connec.dropTarget(),
-      isDragging: !!monitor.getItemType()
+      isDragging: !!monitor.getItemType(),
     }),
   ),
-  connect(mapStateToProps)
-)(FieldNodeWidget)
+  connect(mapStateToProps),
+)(FieldNodeWidget);

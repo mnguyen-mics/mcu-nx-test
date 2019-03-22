@@ -1,10 +1,9 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { DiagramEngine } from 'storm-react-diagrams';
 import { compose } from 'recompose';
 import ObjectNodeModel from './ObjectNodeModel';
 import { WindowBodyPortal } from '../../../../../components';
-import { TreeNodeOperations, DragAndDropInterface, computeSchemaPathFromQueryPath, computeAdditionalNode, SchemaItem } from '../../domain';
+import { TreeNodeOperations, DragAndDropInterface, computeSchemaPathFromQueryPath, computeAdditionalNode, SchemaItem, MicsDiagramEngine } from '../../domain';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
@@ -25,7 +24,7 @@ import messages from '../Common/messages';
 
 interface ObjectNodeWidgetProps {
   node: ObjectNodeModel;
-  diagramEngine: DiagramEngine;
+  diagramEngine: MicsDiagramEngine;
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
   lockGlobalInteraction: (lock: boolean) => void;
@@ -98,6 +97,35 @@ class ObjectNodeWidget extends React.Component<Props, State> {
     });
   };
 
+  copyNode = () => {
+    this.setState({ focus: false }, () => {
+      this.props.treeNodeOperations.copyNode(this.props.node.treeNodePath, this.props.node.objectTypeInfo.name, this.props.node.treeNodePath);
+      this.props.treeNodeOperations.updateLayout();
+    });
+  };
+
+  cutNode = () => {
+    this.setState({ focus: false }, () => {
+      this.props.treeNodeOperations.cutNode(this.props.node.treeNodePath, this.props.node.objectTypeInfo.name, this.props.node.treeNodePath);
+      this.props.treeNodeOperations.updateLayout();
+    });
+  };
+
+  pasteNode = () => {
+    this.setState({ focus: false }, () => {
+      const pasteValue = this.canPasteHere();
+      if (pasteValue) {
+        const newObject = {
+          ...this.props.node.objectNode,
+        }
+        newObject.expressions.push(pasteValue);
+        this.props.treeNodeOperations.updateNode(this.props.node.treeNodePath, newObject)
+      };
+      this.props.diagramEngine.emptyClipboard();
+      this.props.treeNodeOperations.updateLayout();
+    })
+  }
+
   removeNode = () => {
 
     this.setState({ focus: false }, () => {
@@ -132,6 +160,24 @@ class ObjectNodeWidget extends React.Component<Props, State> {
       });
     });
   };
+
+
+  canPasteHere = (): ObjectTreeExpressionNodeShape | undefined => {
+    const copiedValues = this.props.diagramEngine.getCopiedValue();
+    if (copiedValues && copiedValues.copiedObjectType && copiedValues.objectType) {
+      const copiedObjectType = copiedValues.copiedObjectType;
+      if (copiedObjectType.type === 'FIELD' || copiedObjectType.type === 'OBJECT') {
+        const objectTypeLike = this.props.node.objectTypeInfo.fields.find(f => {
+          const match = f.field_type.match(/\w+/);
+          return match ? match[0] === copiedValues.objectType : false
+        });
+        if (objectTypeLike) {
+          return copiedValues.copiedObjectType;
+        }
+      }
+    }
+    return undefined;
+  }
 
   render() {
     const {
@@ -189,6 +235,40 @@ class ObjectNodeWidget extends React.Component<Props, State> {
     }
 
     const opacity = isDragging && !canDrop ? 0.3 : 1;
+
+    const renderEditMenu = [
+     ( <div onClick={this.editNode} className="boolean-menu-item" key="EDIT"> 
+                  <FormattedMessage {...messages.edit} />
+                </div>)
+                
+    ];
+
+    if (this.props.diagramEngine.isCopying()) {
+      if (!!this.canPasteHere()) {
+        renderEditMenu.push(
+          <div onClick={this.pasteNode} className="boolean-menu-item" key="PASTE">
+            <FormattedMessage {...messages.paste} />
+          </div>
+        )
+      }
+    } else {
+      renderEditMenu.push(
+        <div onClick={this.copyNode} className="boolean-menu-item" key="COPY">
+          <FormattedMessage {...messages.copy} />
+        </div>
+      )
+      renderEditMenu.push(
+        <div onClick={this.cutNode} className="boolean-menu-item" key="CUT">
+          <FormattedMessage {...messages.cut} />
+        </div>
+      )
+    }
+    
+    renderEditMenu.push(
+      <div onClick={this.removeNode} className="boolean-menu-item" key="REMOVE">
+        <FormattedMessage {...messages.remove} />
+      </div>
+    )
 
     return connectDropTarget &&
     connectDropTarget (
@@ -260,12 +340,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
               >
                 {/* Uncomment when feature is ready */}
                 {/* <div onClick={this.toggleCollapsed} className='boolean-menu-item'>Collapse</div> */}
-                <div onClick={this.editNode} className="boolean-menu-item">
-                  <FormattedMessage {...messages.edit} />
-                </div>
-                <div onClick={this.removeNode} className="boolean-menu-item">
-                <FormattedMessage {...messages.remove} />
-                </div>
+                {renderEditMenu}
               </div>
             </div>
           </WindowBodyPortal>

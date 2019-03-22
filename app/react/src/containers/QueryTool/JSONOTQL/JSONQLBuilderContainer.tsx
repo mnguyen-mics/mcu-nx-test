@@ -178,6 +178,15 @@ handleUndo = () => {
   });
 };
 
+handleCopy = (copying: ObjectTreeExpressionNodeShape) => {
+  this.setState(prevState => {
+    return {
+      ...prevState,
+      copyQuery: copying
+    }
+  })
+}
+
 handleRedo = () => {
   this.setState(prevState => {
     const {

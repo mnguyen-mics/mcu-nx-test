@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  DiagramEngine,
   DiagramWidget,
   DiagramModel,
 } from 'storm-react-diagrams';
@@ -29,6 +28,7 @@ import {
   createLink,
   toNodeList,
   buildLinkList,
+  MicsDiagramEngine,
 } from './domain';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import CounterList from './CounterList';
@@ -67,7 +67,7 @@ interface State {
 type Props = JSONQLBuilderProps;
 
 class JSONQLBuilder extends React.Component<Props, State> {
-  engine = new DiagramEngine();
+  engine = new MicsDiagramEngine();
   nodeBTreeCache?: NodeModelBTree;
   div: React.RefObject<HTMLDivElement>;
   isDragging: boolean = false;
@@ -142,10 +142,43 @@ class JSONQLBuilder extends React.Component<Props, State> {
       deleteNode: this.deleteNode,
       addNode: this.addNode,
       updateNode: this.updateNode,
+      copyNode: this.copyNode,
+      cutNode: this.cutNode,
       updateLayout: () => this.engine.repaintCanvas(),
       addNewGroupAsRoot: this.addNewGroupAsRoot,
     };
   };
+
+  cutNode = (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => {
+    this.copyNode(nodePath, objectLikeType, treeNodePath);
+    this.deleteNode(nodePath);
+  }
+
+
+  copyNode = (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => {
+    const { query } = this.props;
+    if (query) {
+      const partialObjectTree = this.getObjectTreeExpressionFromNodePath(nodePath, query);
+      this.engine.setCopying(partialObjectTree, objectLikeType, treeNodePath);
+      
+    }
+    
+  }
+
+  getObjectTreeExpressionFromNodePath = (nodePath: number[], ot: ObjectTreeExpressionNodeShape): ObjectTreeExpressionNodeShape => {    
+    if (nodePath.length === 0) {
+      return ot;
+    }
+    if (ot.type === "FIELD") {
+      return ot;
+    }
+    if (nodePath.length === 1) {
+      return ot.expressions[nodePath[0]];
+    }
+
+    const [head, ...tail] = nodePath;
+    return this.getObjectTreeExpressionFromNodePath(tail, ot.expressions[head]); 
+  }
 
   addNode = (nodePath: number[], node: ObjectTreeExpressionNodeShape) => {
     const { updateQuery, query } = this.props;

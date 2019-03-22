@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
+import { AbstractNodeFactory } from 'storm-react-diagrams';
 import BooleanOperatorNodeWidget from './BooleanOperatorNodeWidget';
 import BooleanOperatorNodeModel from './BooleanOperatorNodeModel';
-import { TreeNodeOperations } from '../../domain';
+import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
 
 export default class BooleanOperatorNodeFactory extends AbstractNodeFactory<
   BooleanOperatorNodeModel
@@ -17,7 +17,7 @@ export default class BooleanOperatorNodeFactory extends AbstractNodeFactory<
   }
 
   generateReactWidget(
-    diagramEngine: DiagramEngine,
+    diagramEngine: MicsDiagramEngine,
     node: BooleanOperatorNodeModel,
   ): JSX.Element {
     if (node.extras.collapsed) {

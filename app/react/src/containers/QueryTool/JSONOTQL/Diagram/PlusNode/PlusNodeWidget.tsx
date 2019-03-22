@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { DiagramEngine } from 'storm-react-diagrams';
 import { compose } from 'recompose';
 import PlusNodeModel from './PlusNodeModel';
 import { injectDrawer } from '../../../../../components/Drawer';
@@ -10,6 +9,7 @@ import {
   computeSchemaPathFromQueryPath,
   computeAdditionalNode,
   SchemaItem,
+  MicsDiagramEngine,
 } from '../../domain';
 import { McsIcon, WindowBodyPortal } from '../../../../../components';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
@@ -30,7 +30,7 @@ import { FormattedMessage } from 'react-intl';
 
 interface PlusNodeProps {
   node: PlusNodeModel;
-  diagramEngine: DiagramEngine;
+  diagramEngine: MicsDiagramEngine;
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
   lockGlobalInteraction: (lock: boolean) => void;
@@ -158,6 +158,43 @@ class PlusNodeWidget extends React.Component<
     }
   };
 
+  pasteNode = () => {
+    const {node, treeNodeOperations, lockGlobalInteraction} = this.props;
+
+    const canPasteObject = this.canPasteHere();
+    if (canPasteObject) {
+      if (node.objectOrGroupNode && node.objectOrGroupNode.type === 'GROUP') {
+        const newObject = {
+          ...node.objectOrGroupNode
+        }
+        newObject.expressions.push(canPasteObject)
+        treeNodeOperations.updateNode(node.treeNodePath, newObject);
+        this.props.diagramEngine.emptyClipboard()
+      }
+      
+      lockGlobalInteraction(false);
+    }
+  }
+
+  canPasteHere = (): ObjectTreeExpressionNodeShape | undefined => {
+    if (
+      !this.props.node.root &&
+      this.props.diagramEngine.isCopying()
+    ) {
+      const copying = this.props.diagramEngine.getCopiedValue();
+      if (
+        copying &&
+        copying.copiedObjectType &&
+        copying.objectType &&
+        copying.objectType === 'UserPoint' &&
+        copying.treeNodePath !== this.props.node.treeNodePath
+      ) {
+        return copying.copiedObjectType;
+      }
+    }
+    return;
+  };
+
   setPosition = (node: HTMLDivElement | null) => {
     const viewportOffset = node ? node.getBoundingClientRect() : null;
     this.top = viewportOffset ? viewportOffset.top : 0;
@@ -207,6 +244,8 @@ class PlusNodeWidget extends React.Component<
       color = node.getColor();
       borderColor = node.getColor();
     }
+
+    const canPaste = this.canPasteHere();
 
     return (
       connectDropTarget &&
@@ -298,6 +337,13 @@ class PlusNodeWidget extends React.Component<
                       <FormattedMessage {...messages.group} />
                     </div>
                   )}
+                  {
+                    canPaste && (
+                      <div onClick={this.pasteNode} className="boolean-menu-item">
+                        <FormattedMessage {...messages.paste} />
+                      </div>
+                    )
+                  }
                 </div>
               </div>
             </WindowBodyPortal>
