@@ -191,6 +191,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
     const onMouseLeave = () => this.props.lockGlobalInteraction(false);
 
     return (
+      <React.Fragment>
       <div
         id={this.id}
         style={{
@@ -237,14 +238,14 @@ class FieldNodeWidget extends React.Component<Props, State> {
           objectTypes={this.props.objectTypes}
           initialValues={{ fieldNodeForm: node.fieldNode }}
           onSubmit={onSubmit}
-          idToAttachDropDowns={this.id}
+          idToAttachDropDowns={'popoverId'}
           runtimeSchemaId={node.objectTypeInfo.runtime_schema_id}
           datamartId={datamartId}
         />
-        <WindowBodyPortal>
-          <div ref={this.setSelectRef} id={this.wrapperId} />
-        </WindowBodyPortal>
+       
       </div>
+
+      </React.Fragment>
     );
   };
 

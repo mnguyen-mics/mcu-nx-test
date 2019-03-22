@@ -398,6 +398,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
             {({ schema }) => <SchemaVizualizer schema={schema} />}
           </JSONQLBuilderContext.Consumer>
         </Col>
+        <div id="popoverId" />
       </div>
     );
   }
