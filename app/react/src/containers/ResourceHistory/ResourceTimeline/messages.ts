@@ -55,6 +55,10 @@ const messages: {
     id: 'timeline.resourceType.placementList',
     defaultMessage: 'Placement List',
   },
+  emailRouterResourceType: {
+    id: 'timeline.resourceType.emailRouter',
+    defaultMessage: 'Email Router',
+  },
   today: {
     id: 'timeline.events.title.today',
     defaultMessage: 'Today',

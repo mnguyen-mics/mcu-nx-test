@@ -65,6 +65,14 @@ const EmailCampaignService = {
     return ApiService.getRequest(endpoint);
   },
 
+  getRouter(
+    campaignId: string,
+    routerId: string,
+  ): Promise<DataResponse<EmailRouterSelectionResource>> {
+    const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}/email_routers/${routerId}`;
+    return ApiService.getRequest(endpoint);
+  },
+
   createRouter(
     campaignId: string,
     resource: Partial<EmailRouterSelectionResource>,

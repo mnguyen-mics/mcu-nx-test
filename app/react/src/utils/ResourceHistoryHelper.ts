@@ -14,8 +14,8 @@ export function getLinkedResourceIdInSelection(
   const params = {
     resource_type: selectionType,
     resource_id: selectionId,
-    max_results: 10,
-  }; // Let's keep 10 for now, selections shouldn't have many events anyway.
+    max_results: 15,
+  }; // Let's keep 15 for now, selections shouldn't have many events anyway.
 
   return ResourceHistoryService.getResourceHistory(organisationId, params).then(
     response => {
