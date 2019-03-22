@@ -22,6 +22,8 @@ import { ClickParam } from 'antd/lib/menu';
 import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatEmailBlastProperty from '../../../../messages/campaign/email/emailBlastMessages';
+import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
+import EmailCampaignService from '../../../../services/EmailCampaignService';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
@@ -131,6 +133,13 @@ class BlastTable extends React.Component<Props> {
   };
 
   openHistoryDrawer = (record: BlastData) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
+    
     this.props.openNextDrawer<ResourceTimelinePageProps>(
       ResourceTimelinePage,
       {
@@ -139,6 +148,27 @@ class BlastTable extends React.Component<Props> {
           resourceId: record.id,
           handleClose: () => this.props.closeNextDrawer(),
           formatProperty: formatEmailBlastProperty,
+          resourceLinkHelper: {
+            EMAIL_CAMPAIGN: {
+              direction: 'PARENT',
+              getType: () => {
+                return (
+                  <FormattedMessage
+                    {...resourceHistoryMessages.emailCampaignResourceType}/>
+                );
+              },
+              getName: (id: string) => {
+                return EmailCampaignService.getEmailCampaign(id).then(response => {
+                  return response.data.name;
+                });
+              },
+              goToResource: (id: string) => {
+                history.push(
+                  `/v2/o/${organisationId}/campaigns/email/${id}`,
+                );
+              },
+            },
+          },
         },
         size: 'small',
       }

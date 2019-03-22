@@ -1,4 +1,4 @@
-import * as React from 'react';
+ import * as React from 'react';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router-dom';
 import { Switch, Modal } from 'antd';
@@ -17,6 +17,12 @@ import {
 import { Popover } from '../../../../../components/PopupContainers/index';
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import injectDrawer, { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
+import { getLinkedResourceIdInSelection } from '../../../../../utils/ResourceHistoryHelper';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import formatCreativeProperty from '../../../../../messages/creative/creativeMessages';
 
 interface DisplayCampaignAdTableProps {
   isFetching: boolean;
@@ -38,7 +44,8 @@ interface DisplayCampaignAdTableState {
 
 type JoinedProps = DisplayCampaignAdTableProps &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<{ organisationId: string , campaignId: string}> &
+  InjectedDrawerProps;
 
 class DisplayCampaignAdTable extends React.Component<
   JoinedProps,
@@ -83,6 +90,62 @@ class DisplayCampaignAdTable extends React.Component<
       },
     });
   };
+
+  openHistoryDrawer = (record: AdResource) => {
+    const {
+      match: {
+        params: { organisationId, campaignId },
+      },
+      history,
+    } = this.props;
+    
+    this.props.openNextDrawer<ResourceTimelinePageProps>(
+      ResourceTimelinePage,
+      {
+        additionalProps: {
+          resourceType: 'CREATIVE',
+          resourceId: record.creative_id,
+          handleClose: () => this.props.closeNextDrawer(),
+          formatProperty: formatCreativeProperty, // change this
+          resourceLinkHelper: {
+            AD: {
+              direction: 'PARENT',
+              getType: () => {
+                return (
+                  <FormattedMessage
+                    {...resourceHistoryMessages.adGroupResourceType}/>
+                );
+              },
+              getName: (id: string) => {
+                return getLinkedResourceIdInSelection(
+                  organisationId,
+                  'AD',
+                  id,
+                  'AD_GROUP',
+                ).then(adGroupId => {
+                  return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
+                    .then(adGroupResponse => adGroupResponse.data.name);
+                });
+              },
+              goToResource: (id: string) => {
+                return getLinkedResourceIdInSelection(
+                  organisationId,
+                  'AD',
+                  id,
+                  'AD_GROUP',
+                ).then(adGroupId => {
+                  history.push(
+                    `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`,
+                  );
+                });
+              },
+            },
+          },
+        },
+        size: 'small',
+      }
+    )
+  }
 
   render() {
     const {
@@ -177,7 +240,7 @@ class DisplayCampaignAdTable extends React.Component<
               text === 'AUDIT_PASSED' ? (
                 <FormattedMessage
                   id="display.campaign.adtable.ad.auditpassed.msg"
-                  defaultMessage="Audit sucessfull"
+                  defaultMessage="Audit successful"
                 />
               ) : (
                   <FormattedMessage
@@ -321,6 +384,10 @@ class DisplayCampaignAdTable extends React.Component<
             callback: this.editCampaign,
           },
           {
+            translationKey: 'HISTORY',
+            callback: this.openHistoryDrawer,
+          },
+          {
             translationKey: 'ARCHIVE',
             callback: this.archiveAd,
           },
@@ -362,4 +429,5 @@ class DisplayCampaignAdTable extends React.Component<
 export default compose<JoinedProps, DisplayCampaignAdTableProps>(
   injectIntl,
   withRouter,
+  injectDrawer,
 )(DisplayCampaignAdTable);

@@ -27,6 +27,7 @@ import log from '../../../../utils/Logger';
 import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import formatCampaignProperty from '../../../../messages/campaign/email/emailCampaignMessages';
 import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 
 export interface EmailCampaignActionbarProps {
   campaign?: EmailCampaignResource;
@@ -139,8 +140,9 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     const onClick = (param: ClickParam) => {
       const {
         match: {
-          params: { campaignId },
+          params: { organisationId, campaignId },
         },
+        history,
       } = this.props;
 
       switch (param.key) {
@@ -153,6 +155,31 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                 resourceId: campaignId,
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatCampaignProperty,
+                resourceLinkHelper: {
+                  EMAIL_BLAST: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.emailBlastResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                        return EmailCampaignService.getBlast(
+                          campaignId,
+                          id,
+                        ).then(response => {
+                          return response.data.blast_name;
+                        });
+                    },
+                    goToResource: (id: string) => {
+                      history.push(
+                        `/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${id}/edit`,
+                      );
+                    },
+                  },
+                },
               },
               size: 'small',
             }
