@@ -116,8 +116,6 @@ class AudienceCounters extends React.Component<Props, State> {
         | 'desktop_cookie_ids'
         | 'mobile_ad_ids'
         | 'mobile_cookie_ids'
-        | 'user_point_additions'
-        | 'user_point_deletions',
     ) => {
       const value =
         !counter.isLoading && counter.report && counter.report[0]

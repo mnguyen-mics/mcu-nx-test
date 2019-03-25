@@ -183,8 +183,8 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   buildItems = () => {
-    const { intl, segment, audienceSegmentMetrics } = this.props;
-    const { dashboard, datamart } = this.state;
+    const { intl, segment } = this.props;
+    const { dashboard } = this.state;
     const items = [
       {
         title: intl.formatMessage(messages.overview),
@@ -195,27 +195,16 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           />
         ),
       },
+      {
+        title: intl.formatMessage(messages.additionDeletion),
+        display: (
+          <AdditionDeletion
+            isFetching={dashboard.isLoading}
+            dataSource={dashboard.report}
+          />
+        ),
+      },
     ];
-    if (datamart) {
-      const metrics = audienceSegmentMetrics[datamart.id]
-        ? audienceSegmentMetrics[datamart.id].map(el => el.technical_name)
-        : [];
-      if (
-        metrics.includes('user_point_additions') ||
-        metrics.includes('user_point_deletions') ||
-        datamart.storage_model_version === 'v201506'
-      ) {
-        items.push({
-          title: intl.formatMessage(messages.additionDeletion),
-          display: (
-            <AdditionDeletion
-              isFetching={dashboard.isLoading}
-              dataSource={dashboard.report}
-            />
-          ),
-        });
-      }
-    }
     if (segment) {
       items.push({
         title: intl.formatMessage(messages.overlap),
