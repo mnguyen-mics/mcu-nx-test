@@ -67,6 +67,10 @@ export default defineMessages({
     id: 'audience.segment.create.section.general.field.name.title',
     defaultMessage: 'Name',
   },
+  audienceSegmentCreationGeneralDescriptionFieldTitle: {
+    id: 'audience.segment.create.section.general.field.description.title',
+    defaultMessage: 'Description',
+  },
   audienceSegmentCreationGeneralPersistedFieldTitle: {
     id: 'audience.segment.create.section.general.field.persisted.title',
     defaultMessage: 'Persisted',
@@ -80,9 +84,17 @@ export default defineMessages({
     id: 'audience.segment.create.section.general.field.name.placeholder',
     defaultMessage: 'Audience Segment Name',
   },
+  audienceSegmentCreationGeneralDescriptionFieldPlaceHolder: {
+    id: 'audience.segment.create.section.general.field.description.placeholder',
+    defaultMessage: 'Audience Segment Description',
+  },
   audienceSegmentCreationGeneralNameFieldHelper: {
     id: 'audience.segment.create.section.general.field.name.helper',
     defaultMessage: 'Give your Audience Segment a name!',
+  },
+  audienceSegmentCreationGeneralDescriptionFieldHelper: {
+    id: 'audience.segment.create.section.general.field.description.helper',
+    defaultMessage: 'This is the description of your audience segment. You can for instance describe how this segment is built or what its usage is for.',
   },
   audienceSegmentCreationUserQueryFieldHelper: {
     id: 'audience.segment.create.section.general.field.query.helper',

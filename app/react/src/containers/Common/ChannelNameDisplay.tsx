@@ -5,6 +5,7 @@ import { ChannelResource } from '../../models/settings/settings';
 export interface ChannelNameDisplayProps {
   datamartId: string;
   channelId: string;
+  onLoad?: (channel?: ChannelResource) => void
 }
 
 interface State {
@@ -49,7 +50,7 @@ export default class ChannelNameDisplay extends React.Component<ChannelNameDispl
     this.setState({ loading: true });
     return ChannelService.getChannel(datamartId, channelId)
       .then(res => res.data)
-      .then(res => this.setState({ loading: false, channel: res }))
+      .then(res => this.setState({ loading: false, channel: res }, () => this.props.onLoad && this.props.onLoad(res)))
       .catch(() => this.setState({ loading: false }))
   }
 

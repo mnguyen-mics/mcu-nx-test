@@ -9,6 +9,18 @@ export default defineMessages({
     id: 'querytool.field.edit',
     defaultMessage: 'Edit'
   },
+  copy: {
+    id: 'querytool.field.copy',
+    defaultMessage: 'Copy'
+  },
+  cut: {
+    id: 'querytool.field.cut',
+    defaultMessage: 'Cut'
+  },
+  paste: {
+    id: 'querytool.field.paste',
+    defaultMessage: 'Paste Here'
+  },
   object: {
     id: 'querytool.plus.object',
     defaultMessage: 'Object'

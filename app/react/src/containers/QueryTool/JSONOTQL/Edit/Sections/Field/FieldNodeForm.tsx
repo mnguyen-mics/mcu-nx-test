@@ -476,11 +476,12 @@ class FieldNodeForm extends React.Component<Props> {
         params: { organisationId },
       },
       objectType,
+      datamartId,
       idToAttachDropDowns,
     } = this.props;
 
     const fetchListMethod = (keywords: string) =>
-      this._audienceSegmentService.getSegments(organisationId, { keywords }).then(
+      this._audienceSegmentService.getSegments(organisationId, { keywords, datamart_id: datamartId }).then(
         res => res.data.map(r => ({ key: r.id, label: <SegmentNameDisplay audienceSegmentResource={r}/> })),
       );
     const fetchSingleMethod = (id: string) =>
@@ -570,7 +571,7 @@ class FieldNodeForm extends React.Component<Props> {
             break;
           case 'SEGMENTS':
             fetchListMethod = (keywords: string) => {
-              return this._audienceSegmentService.getSegments(organisationId, { keywords: keywords }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
+              return this._audienceSegmentService.getSegments(organisationId, { keywords: keywords, datamart_id: datamartId }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
             }
             fetchSingleMethod = (id: string) => this._audienceSegmentService.getSegment(id).then(res => ({ key: res.data.id, label: res.data.name }))
             break;

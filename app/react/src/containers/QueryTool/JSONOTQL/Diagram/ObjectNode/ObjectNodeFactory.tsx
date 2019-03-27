@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
+import { AbstractNodeFactory } from 'storm-react-diagrams';
 import ObjectNodeWidget from './ObjectNodeWidget';
 import ObjectNodeModel from './ObjectNodeModel';
-import { TreeNodeOperations } from '../../domain';
+import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { JSONQLBuilderContext } from '../../JSONQLBuilderContext';
 
@@ -24,7 +24,7 @@ export default class ObjectNodeFactory extends AbstractNodeFactory<
   }
 
   generateReactWidget(
-    diagramEngine: DiagramEngine,
+    diagramEngine: MicsDiagramEngine,
     node: ObjectNodeModel,
   ): JSX.Element {
     if (node.extras.collapsed) {

@@ -1,4 +1,4 @@
-import { PortModel, LinkModel, NodeModel } from 'storm-react-diagrams';
+import { PortModel, LinkModel, NodeModel, DiagramEngine } from 'storm-react-diagrams';
 import lodash from 'lodash'
 import { SimpleLinkModel } from './Diagram/Link';
 import { BooleanOperatorNodeModel } from './Diagram/BooleanOperatorNode';
@@ -63,6 +63,35 @@ export interface Operation {
   execute(
     treeNode: ObjectTreeExpressionNodeShape,
   ): ObjectTreeExpressionNodeShape | undefined;
+}
+
+export class MicsDiagramEngine extends DiagramEngine {
+
+  private objectType?: string;
+  private copiedObjectTree?: ObjectTreeExpressionNodeShape;
+  private treeNodePath?: number[];
+
+  setCopying = (copiedObjectTree: ObjectTreeExpressionNodeShape, objectType: string, treeNodePath: number[]) => {
+    this.objectType = objectType;
+    this.copiedObjectTree = copiedObjectTree;
+    this.treeNodePath = treeNodePath;
+  }
+
+  getCopiedValue = () => ({
+    copiedObjectType: this.copiedObjectTree,
+    objectType: this.objectType,
+    treeNodePath: this.treeNodePath
+  })
+
+  isCopying = () => {
+    return !!(this.objectType && this.copiedObjectTree)
+  }
+
+  emptyClipboard = () => {
+    this.objectType = undefined;
+    this.copiedObjectTree = undefined;
+    this.treeNodePath = undefined;
+  }
 }
 
 export class AddOperation implements Operation {
@@ -243,6 +272,8 @@ export interface TreeNodeOperations {
   addNode: (nodePath: number[], node: ObjectTreeExpressionNodeShape) => void;
   updateNode: (nodePath: number[], node: ObjectTreeExpressionNodeShape) => void;
   updateLayout: () => void;
+  copyNode: (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => void;
+  cutNode: (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => void;
   addNewGroupAsRoot: () => void;
 }
 

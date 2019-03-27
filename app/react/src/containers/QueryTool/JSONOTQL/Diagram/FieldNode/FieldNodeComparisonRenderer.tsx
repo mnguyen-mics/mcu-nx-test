@@ -13,6 +13,10 @@ import SegmentNameDisplay from '../../../../Audience/Common/SegmentNameDisplay';
 import CompartmentNameDisplay from '../../../../Common/CompartmentNameDisplay';
 import ChannelNameDisplay from '../../../../Common/ChannelNameDisplay';
 import { getCoreReferenceTypeAndModel } from '../../domain';
+import moment from 'moment';
+import { UserAccountCompartmentResource } from '../../../../../models/datamart/DatamartResource';
+import { AudienceSegmentResource } from '../../../../../models/audiencesegment';
+import { ChannelResource } from '../../../../../models/settings/settings';
 
 type ComparisonOperator =
   | StringComparisonOperator
@@ -103,12 +107,26 @@ const messages: {
   },
 });
 
+interface State {
+  objectName: string;
+}
+
 export default class FieldNodeComparisonRenderer extends React.Component<
-  Props
+  Props,
+  State
 > {
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      objectName: '',
+    }
+  }
+
   renderDateValue = (values: string[]) => {
+    const formatDate = (v: string) => moment(v).format('YYYY-MM-DD');
     return values.reduce((acc, val, i) => {
-      return `${acc}${i !== 0 ? ', ' : ''}${val}`;
+      return `${acc}${i !== 0 ? ', ' : ''}${formatDate(val)}`;
     }, '');
   };
 
@@ -129,15 +147,31 @@ export default class FieldNodeComparisonRenderer extends React.Component<
       datamartId
     } = this.props;
 
+    const setState = (v?: UserAccountCompartmentResource | AudienceSegmentResource | ChannelResource) => this.setState({
+      objectName: v ? `${this.state.objectName ? `${this.state.objectName}, ${v.name}` : v.name}` : this.state.objectName
+    })
+
     if (type === 'CORE_OBJECT') {
       if (modelType === 'COMPARTMENTS') {
-        return values.map(v => <CompartmentNameDisplay userAccountCompartmentId={v} key={v} />) 
+        return <span title={this.state.objectName}>{values.reduce((acc, v, i) => {
+          acc.push(<CompartmentNameDisplay userAccountCompartmentId={v} key={v} onLoad={setState} />)
+          if (i !== values.length - 1) acc.push(', ');
+          return acc;    
+        }, [] as React.ReactNode[])}</span> 
       }
       if (modelType === 'SEGMENTS') {
-        return values.map(v => <SegmentNameDisplay audienceSegmentId={v} key={v} />)
+        return <span title={this.state.objectName}>{values.reduce((acc, v, i) => {
+          acc.push(<SegmentNameDisplay audienceSegmentId={v} key={v} onLoad={setState} />)
+          if (i !== values.length - 1) acc.push(', ');
+          return acc;    
+        }, [] as React.ReactNode[])}</span> 
       }
       if (modelType === 'CHANNELS') {
-        return values.map(v => <ChannelNameDisplay datamartId={datamartId} channelId={v} key={v} />)
+        return <span title={this.state.objectName}>{values.reduce((acc, v, i) => {
+          acc.push(<ChannelNameDisplay datamartId={datamartId} channelId={v} key={v} onLoad={setState} />)
+          if (i !== values.length - 1) acc.push(', ');
+          return acc;    
+        }, [] as React.ReactNode[])}</span> 
       }
     } 
     return this.renderStringValues(values)
@@ -155,13 +189,13 @@ export default class FieldNodeComparisonRenderer extends React.Component<
 
     switch (comparison.type) {
       case 'BOOLEAN':
-        return this.renderBooleanValues(comparison.values);
+        return <span title={this.renderBooleanValues(comparison.values)}>{this.renderBooleanValues(comparison.values)}</span>
       case 'TIME':
-        return this.renderDateValue(comparison.values);
+        return <span title={this.renderDateValue(comparison.values)}>{this.renderDateValue(comparison.values)}</span>
       case 'NUMERIC':
-        return this.renderStringValues(comparison.values);
+        return <span title={this.renderStringValues(comparison.values)}>{this.renderStringValues(comparison.values)}</span>
       case 'STRING':
-        return this.renderStringValues(comparison.values);
+        return <span title={this.renderStringValues(comparison.values)}>{this.renderStringValues(comparison.values)}</span>
     }
     return '';
   };

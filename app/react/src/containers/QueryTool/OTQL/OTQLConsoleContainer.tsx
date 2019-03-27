@@ -18,8 +18,13 @@ import injectNotifications, {
 import OTQLResultRenderer from './OTQLResultRenderer';
 import OTQLInputEditor from './OTQLInputEditor';
 import { DataResponse } from '../../../services/ApiService';
+import SchemaVizualizer from '../JSONOTQL/SchemaVisualizer/SchemaVizualizer';
+import { computeFinalSchemaItem } from '../JSONOTQL/domain';
+import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import RuntimeSchemaService from '../../../services/RuntimeSchemaService';
+import { Loading } from '../../../components';
 
-const { Content } = Layout;
+const { Content, Sider } = Layout;
 
 export interface OTQLConsoleContainerProps {
   datamartId: string;
@@ -32,10 +37,12 @@ interface State {
   queryAborted: boolean;
   error: any | null;
   query: string;
+  schemaVizOpen: boolean;
+  schemaLoading: boolean;
+  rawSchema?: ObjectLikeTypeInfoResource[];
 }
 
-type Props =
-  OTQLConsoleContainerProps &
+type Props = OTQLConsoleContainerProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps;
@@ -50,9 +57,43 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       runningQuery: false,
       queryAborted: false,
       error: null,
-      query: ''
+      query: 'SELECT @count{} FROM UserPoint',
+      schemaVizOpen: true,
+      schemaLoading: true,
     };
   }
+
+  componentDidMount() {
+    const { datamartId } = this.props;
+    this.fetchObjectTypes(datamartId);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { datamartId } = this.props;
+    const { datamartId: prevDatamartId } = prevProps;
+    if (prevDatamartId !== datamartId) {
+      this.fetchObjectTypes(datamartId);
+    }
+  }
+
+  fetchObjectTypes = (
+    datamartId: string,
+  ): Promise<ObjectLikeTypeInfoResource[]> => {
+    this.setState({ schemaLoading: true });
+    return RuntimeSchemaService.getRuntimeSchemas(datamartId).then(
+      schemaRes => {
+        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+        if (!liveSchema) return [];
+        return RuntimeSchemaService.getObjectTypeInfoResources(
+          datamartId,
+          liveSchema.id,
+        ).then(r => {
+          this.setState({ rawSchema: r, schemaLoading: false });
+          return r;
+        });
+      },
+    );
+  };
 
   runQuery = (otqlQuery: string) => {
     const { datamartId } = this.props;
@@ -87,7 +128,20 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   render() {
     const { intl, datamartId } = this.props;
-    const { error, queryResult, runningQuery, queryAborted } = this.state;
+    const {
+      error,
+      queryResult,
+      runningQuery,
+      queryAborted,
+      schemaVizOpen,
+      schemaLoading,
+      rawSchema,
+      query,
+    } = this.state;
+
+    if (schemaLoading) {
+      return <Loading className="loading-full-screen" />;
+    }
 
     const errorMsg = error && (
       <Alert
@@ -101,8 +155,8 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
               <code>{error.error_id}</code>
             </span>
           ) : (
-              intl.formatMessage(messages.queryErrorDefaultMsg)
-            )
+            intl.formatMessage(messages.queryErrorDefaultMsg)
+          )
         }
         type="error"
         showIcon={true}
@@ -114,37 +168,65 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     const queryResultRenderer: React.ReactNode = (runningQuery ||
       queryAborted ||
       queryResult) && (
-        <OTQLResultRenderer
-          loading={runningQuery}
-          result={queryResult}
-          aborted={queryAborted}
-        />
-      );
-    
-    const onChange = (query: string) => this.setState({ query })
+      <OTQLResultRenderer
+        loading={runningQuery}
+        result={queryResult}
+        aborted={queryAborted}
+      />
+    );
+
+    const onChange = (q: string) => this.setState({ query: q });
+
+    let startType = 'UserPoint';
+
+    if (rawSchema) {
+      const foundType = rawSchema.find(ot => {
+        return !!query.includes(ot.name);
+      });
+      if (foundType) {
+        startType = foundType.name;
+      }
+    }
 
     return (
       <Layout>
         {this.props.renderActionBar(this.state.query, datamartId)}
-        <Content className="mcs-content-container">
-          <ContentHeader
-            title={
-              <FormattedMessage
-                id="query-tool-page-title"
-                defaultMessage="Query Tool"
+        <Layout>
+          <Layout>
+            <Content className="mcs-content-container">
+              <ContentHeader
+                title={
+                  <FormattedMessage
+                    id="query-tool-page-title"
+                    defaultMessage="Query Tool"
+                  />
+                }
               />
-            }
-          />
-          {errorMsg}
-          <OTQLInputEditor
-            onRunQuery={this.runQuery}
-            onAbortQuery={this.abortQuery}
-            runningQuery={runningQuery}
-            datamartId={datamartId}
-            onQueryChange={onChange}
-          />
-          {queryResultRenderer}
-        </Content>
+              {errorMsg}
+              <OTQLInputEditor
+                onRunQuery={this.runQuery}
+                onAbortQuery={this.abortQuery}
+                runningQuery={runningQuery}
+                datamartId={datamartId}
+                onQueryChange={onChange}
+                defaultValue={query}
+              />
+              {queryResultRenderer}
+            </Content>
+          </Layout>
+          <Sider width={schemaVizOpen ? 250 : 0}>
+            <div className="schema-visualizer">
+              <SchemaVizualizer
+                schema={
+                  rawSchema
+                    ? computeFinalSchemaItem(rawSchema, startType, false, false)
+                    : undefined
+                }
+                disableDragAndDrop={true}
+              />
+            </div>
+          </Sider>
+        </Layout>
       </Layout>
     );
   }
