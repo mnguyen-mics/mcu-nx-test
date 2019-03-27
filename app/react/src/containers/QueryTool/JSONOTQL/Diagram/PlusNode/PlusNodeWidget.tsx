@@ -187,6 +187,7 @@ class PlusNodeWidget extends React.Component<
         copying.copiedObjectType &&
         copying.objectType &&
         copying.objectType === 'UserPoint' &&
+        copying.treeNodePath && copying.treeNodePath.length === this.props.node.treeNodePath.length &&
         copying.treeNodePath !== this.props.node.treeNodePath
       ) {
         return copying.copiedObjectType;
