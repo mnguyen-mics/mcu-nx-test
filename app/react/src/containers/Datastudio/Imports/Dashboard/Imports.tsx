@@ -7,7 +7,7 @@ import moment from 'moment';
 import ImportHeader from './ImportHeader';
 import Card from '../../../../components/Card/Card';
 import { Filters } from '../../../../components/ItemList';
-import { ImportExecution, Import } from '../../../../models/imports/imports';
+import { ImportExecution, Import, ImportExecutionSuccess } from '../../../../models/imports/imports';
 import ImportActionbar from './ImportActionbar';
 import TableView from '../../../../components/TableView/TableView';
 import log from '../../../../utils/Logger';
@@ -227,6 +227,27 @@ class Imports extends React.Component<JoinedProps, State> {
     };
   };
 
+  renderStatuColumn = (record: ImportExecution) => {
+    switch(record.status) {
+      case 'SUCCEEDED':
+      case 'SUCESS':
+        return (
+          <div>
+            {record.status} {(record as ImportExecutionSuccess).result && (record as ImportExecutionSuccess).result.total_failure > 0 ? <span>- with errors <Tooltip placement="top" title={record.error && record.error.message}><McsIcon type="question" /></Tooltip></span> : undefined}
+          </div>
+        )
+      default:
+      return (
+        (
+          <div>
+            {record.status}}
+          </div>
+        )
+      )
+
+    }
+  }
+
   buildColumnDefinition = () => {
     const {
       intl: { formatMessage },
@@ -243,11 +264,7 @@ class Imports extends React.Component<JoinedProps, State> {
         intlMessage: messages.status,
         key: 'status',
         isHideable: false,
-        render: (text: string, record: ImportExecution) => (
-          <div>
-            {text} {record.result.total_failure > 0 ? <span>- with errors <Tooltip placement="top" title={record.error && record.error.message}><McsIcon type="question" /></Tooltip></span> : undefined}
-          </div>
-        ),
+        render: (text: string, record: ImportExecution) => this.renderStatuColumn(record),
       },
       {
         intlMessage: messages.progress,

@@ -8,7 +8,9 @@ export interface Import {
   document_type: string; // 'USER_ACTIVITY' | 'USER_PROFILE' | 'USER_SEGMENT';
 }
 
-export interface ImportExecution {
+export type ImportExecution = ImportExecutionSuccess | ImportExecutionBase;
+
+export interface ImportExecutionBase {
   completed_tasks: null | string;
   creation_date: number;
   debug: null | string;
@@ -21,12 +23,16 @@ export interface ImportExecution {
   num_tasks: null | string;
   organisation_id: string;
   parameters: object;
+  start_date: number;
+  status: 'SUCESS' | 'RUNNING' | 'PENDING' | 'SUCCEEDED' | 'FAILED';
+  user_id: string;
+}
+
+export interface ImportExecutionSuccess extends ImportExecutionBase {
+  status: 'SUCESS' | 'SUCCEEDED',
   result: { 
     output_files: string[];
     total_failure: number;
     total_success: number;
   };
-  start_date: number;
-  status: string;
-  user_id: string;
 }
