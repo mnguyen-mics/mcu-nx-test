@@ -8,7 +8,6 @@ import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   AutomationResource,
   AutomationCreateResource,
-  AutomationStatus,
 } from '../models/automations/automations';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import {
@@ -20,7 +19,7 @@ import {
 export interface GetAutomationsOptions extends PaginatedApiParam {
   organisation_id?: string;
   keywords?: string;
-  status?: AutomationStatus[];
+  status?: string[];
   order_by?: string[];
   first_result?: number;
   max_results?: number;

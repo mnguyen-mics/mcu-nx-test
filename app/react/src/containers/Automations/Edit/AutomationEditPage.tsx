@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import * as NotificationActions from '../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../state/Features/selectors';
 import { EditAutomationParam, AutomationFormData } from './domain';
@@ -22,6 +22,7 @@ import { IAutomationFormService } from './AutomationFormService';
 import DatamartService from '../../../services/DatamartService';
 import { IScenarioService } from '../../../services/ScenarioService';
 import AutomationBuilderContainer from '../Builder/AutomationBuilderContainer';
+
 
 interface State {
   automationFormData: AutomationFormData;
@@ -299,7 +300,7 @@ class EditAutomationPage extends React.Component<Props, State> {
       />)
     }
 
-    return 'The automation you are trying to load doesn\'t seem to exist or you don\'t have the right to view it'
+    return <FormattedMessage {...messages.dontExist} />
 
    
   }

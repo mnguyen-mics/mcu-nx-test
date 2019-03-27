@@ -277,7 +277,8 @@ export class UpdateNodeOperation implements NodeOperation {
           ...this.node as EmailCampaignNodeResource,
           name: this.formData.name,
           formData: this.formData as EmailCampaignAutomationFormData,
-          // todo initial form values
+          initialFormData: this
+            .initialFormData as EmailCampaignAutomationFormData,
         };
         break;
       case 'ABN_NODE':
@@ -513,6 +514,7 @@ export const buildAutomationTreeData = (
   );
 
   if (
+    node &&
     node.type === 'QUERY_INPUT' &&
     node.query_id &&
     datamartId &&

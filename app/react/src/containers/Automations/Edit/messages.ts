@@ -74,4 +74,8 @@ export default defineMessages({
     id: 'automation.edit.section.automation.subtitle',
     defaultMessage: 'Build your automation',
   },
+  dontExist: {
+    id: 'automation.edit.dontexist',
+    defaultMessage: 'The automation you are trying to load doesn\'t seem to exist or you don\'t have the right to view it'
+  }
 });

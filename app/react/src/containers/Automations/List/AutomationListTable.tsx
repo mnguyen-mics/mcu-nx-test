@@ -29,7 +29,6 @@ import {
   IScenarioService,
   GetAutomationsOptions,
 } from '../../../services/ScenarioService';
-import { Filters } from '../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
@@ -52,6 +51,13 @@ type JoinedProps = AutomationsTableProps &
   InjectedIntlProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string }>;
+
+interface Filters {
+  currentPage?: number;
+  pageSize?: number;
+  keywords?: string;
+  statuses?: string[];
+}
 
 class AutomationsListTable extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.IScenarioService)
@@ -128,12 +134,14 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
 
   fetchAutomationList = (organisationId: string, filter: Filters) => {
     this.setState({ isLoading: true });
-
     const options: GetAutomationsOptions = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
     if (filter.keywords) {
       options.keywords = filter.keywords;
+    }
+    if (filter.statuses && filter.statuses.length) {
+      options.status = filter.statuses;
     }
     return this._scenarioService
       .getScenarios(organisationId, options)

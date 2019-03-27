@@ -73,7 +73,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
 
     const { queryLanguage, isTrigger } = this.state;
 
-    const isDisabled: any = {
+    const isDisabled = {
       disabled: disabled
     }
 

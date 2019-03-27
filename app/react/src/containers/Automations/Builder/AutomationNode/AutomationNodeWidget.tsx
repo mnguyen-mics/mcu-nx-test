@@ -145,7 +145,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           case 'EMAIL_CAMPAIGN':
           case 'WAIT_NODE':
             initialValue = {
-              ...scenarioNodeShape.formData!,
+              ...scenarioNodeShape.formData,
               name: scenarioNodeShape.name
             };
             break;

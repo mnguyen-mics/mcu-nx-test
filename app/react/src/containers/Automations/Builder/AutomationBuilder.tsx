@@ -52,6 +52,9 @@ export interface AutomationBuilderEditorProps extends AutomationBuilderBaseProps
 
 export type AutomationBuilderProps = AutomationBuilderEditorProps | AutomationBuilderVisualizerProps;
 
+const isAutomationBuilderEditorProp = (props: AutomationBuilderProps): props is AutomationBuilderEditorProps => {
+  return props.viewer === false
+}
 
 interface State {
   locked: boolean;
@@ -151,21 +154,21 @@ class AutomationBuilder extends React.Component<Props, State> {
     childNodeId: string,
     node: ScenarioNodeShape,
   ): StorylineNodeModel | void => {
-    const { automationTreeData, updateAutomationData, viewer } = this.props as AutomationBuilderEditorProps;
-    if (automationTreeData && !viewer) {
-      updateAutomationData(
+    const props = this.props;
+    if (isAutomationBuilderEditorProp(props) && props.automationTreeData) {
+      return props.updateAutomationData(
         new AddNodeOperation(idParentNode, childNodeId, node).execute(
-          automationTreeData,
+          props.automationTreeData,
         ),
       );
     }
   };
 
   deleteNode = (idNodeToBeDeleted: string): StorylineNodeModel | void => {
-    const { automationTreeData, updateAutomationData, viewer } = this.props as AutomationBuilderEditorProps;
-    if (automationTreeData && !viewer) {
-      return updateAutomationData(
-        new DeleteNodeOperation(idNodeToBeDeleted).execute(automationTreeData),
+    const props = this.props;
+    if (isAutomationBuilderEditorProp(props) && props.automationTreeData) {
+      return props.updateAutomationData(
+        new DeleteNodeOperation(idNodeToBeDeleted).execute(props.automationTreeData),
       );
     }
   };
@@ -175,11 +178,11 @@ class AutomationBuilder extends React.Component<Props, State> {
     formData: AutomationFormDataType,
     initialFormData: AutomationFormDataType,
   ): StorylineNodeModel | void => {
-    const { automationTreeData, updateAutomationData, viewer } = this.props as AutomationBuilderEditorProps;
-    if (automationTreeData && !viewer) {
-      return updateAutomationData(
+    const props = this.props;
+    if (isAutomationBuilderEditorProp(props) && props.automationTreeData) {
+      return props.updateAutomationData(
         new UpdateNodeOperation(node, formData, initialFormData).execute(
-          automationTreeData,
+          props.automationTreeData,
         ),
       );
     }
