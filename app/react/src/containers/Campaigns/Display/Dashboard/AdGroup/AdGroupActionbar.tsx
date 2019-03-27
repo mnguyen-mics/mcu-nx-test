@@ -18,9 +18,10 @@ import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
-import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages'; 
+import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
 import GeonameService from '../../../../../services/GeonameService';
 import CreativeService from '../../../../../services/CreativeService';
+import PlacementListsService from '../../../../../services/Library/PlacementListsService';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -313,20 +314,20 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                               if (creativeResponse.data.subtype === 'NATIVE') {
                                 return history.push(
                                   `/v2/o/${organisationId}/creatives/native/edit/${
-                                  creativeResponse.data.id
+                                    creativeResponse.data.id
                                   }`,
                                 );
                               } else {
                                 return history.push(
                                   `/v2/o/${organisationId}/creatives/display/edit/${
-                                  creativeResponse.data.id
+                                    creativeResponse.data.id
                                   }`,
                                 );
                               }
                             } else {
                               return history.push(
                                 `/v2/o/${organisationId}/creatives/email/edit/${
-                                creativeResponse.data.id
+                                  creativeResponse.data.id
                                 }`,
                               );
                             }
@@ -374,7 +375,11 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                   AD_EXCHANGE_SELECTION: {
                     direction: 'CHILD',
                     getType: () => {
-                      return <FormattedMessage {...resourceHistoryMessages.adExchangeResourceType} />;
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.adExchangeResourceType}
+                        />
+                      );
                     },
                     getName: (id: string) => {
                       return getLinkedResourceIdInSelection(
@@ -384,20 +389,26 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         'AD_EXCHANGE',
                       ).then(adExchangeId => {
                         return CatalogService.getServices(organisationId, {
-                          serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS']
-                        })
-                          .then(res => {
-                            const inventoryAccessExchanges = (res.data.filter(r => r.type === 'inventory_access_ad_exchange') as AdexInventoryServiceItemPublicResource[]);
-                            const adexExchange = inventoryAccessExchanges.find(r => r.ad_exchange_id === adExchangeId)
-                            if (adexExchange !== undefined) {
-                              return adexExchange.name;
-                            } else return intl.formatMessage(resourceHistoryMessages.deleted)
-                          })
+                          serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS'],
+                        }).then(res => {
+                          const inventoryAccessExchanges = res.data.filter(
+                            r => r.type === 'inventory_access_ad_exchange',
+                          ) as AdexInventoryServiceItemPublicResource[];
+                          const adexExchange = inventoryAccessExchanges.find(
+                            r => r.ad_exchange_id === adExchangeId,
+                          );
+                          if (adexExchange !== undefined) {
+                            return adexExchange.name;
+                          } else
+                            return intl.formatMessage(
+                              resourceHistoryMessages.deleted,
+                            );
+                        });
                       });
                     },
                     goToResource: (id: string) => {
-                      return
-                    }
+                      return;
+                    },
                   },
                   GEO_TARGETING_SELECTION: {
                     direction: 'CHILD',
@@ -410,19 +421,53 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         'GEO_TARGETING_SELECTION',
                         id,
                         'GEONAME',
-                      )
-                      .then(geonameId => {
-                        return GeonameService.getGeoname(geonameId)
-                        .then(res => {
-                          return res.data.name;
-                        });
-                    
+                      ).then(geonameId => {
+                        return GeonameService.getGeoname(geonameId).then(
+                          res => {
+                            return res.data.name;
+                          },
+                        );
                       });
-                      
                     },
                     goToResource: (id: string) => {
                       return;
-                    }
+                    },
+                  },
+                  PLACEMENT_LIST_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.placementListResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return getLinkedResourceIdInSelection(
+                        organisationId,
+                        'PLACEMENT_LIST_SELECTION',
+                        id,
+                        'PLACEMENT_LIST',
+                      ).then(placementListId => {
+                        return PlacementListsService.getPlacementList(
+                          placementListId,
+                        ).then(placementListResponse => {
+                          return placementListResponse.data.name;
+                        });
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return getLinkedResourceIdInSelection(
+                        organisationId,
+                        'PLACEMENT_LIST_SELECTION',
+                        id,
+                        'PLACEMENT_LIST',
+                      ).then(placementListId => {
+                        history.push(
+                          `/v2/o/${organisationId}/library/placementlist/${placementListId}/edit`,
+                        );
+                      });
+                    },
                   },
                 },
               },

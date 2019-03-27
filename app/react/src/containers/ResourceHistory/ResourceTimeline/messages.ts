@@ -1,11 +1,11 @@
-import { FormattedMessage, defineMessages } from "react-intl";
+import { FormattedMessage, defineMessages } from 'react-intl';
 
 const messages: {
-  [propertyName: string]: FormattedMessage.MessageDescriptor
+  [propertyName: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   defaultTitle: {
     id: 'timeline.title',
-    defaultMessage: 'History'
+    defaultMessage: 'History',
   },
   defaultResourceType: {
     id: 'timeline.defaultResourceType',
@@ -51,6 +51,10 @@ const messages: {
     id: 'timeline.resourceType.adxExchange',
     defaultMessage: 'Ad Exchange',
   },
+  placementListResourceType: {
+    id: 'timeline.resourceType.placementList',
+    defaultMessage: 'Placement List',
+  },
   today: {
     id: 'timeline.events.title.today',
     defaultMessage: 'Today',
@@ -89,7 +93,7 @@ const messages: {
   },
   initialFieldValue: {
     id: 'timeline.events.card.initialFieldValue',
-    defaultMessage: '{field} set to {newValue}'
+    defaultMessage: '{field} set to {newValue}',
   },
   singleFieldEdited: {
     id: 'timeline.events.card.singleEdit',
@@ -145,11 +149,13 @@ const messages: {
   },
   resourceCreateLinkParent: {
     id: 'timeline.events.card.selection.resourceCreateLinkParent',
-    defaultMessage: '{userName} added this {childResourceType} in the {parentResourceType} : {parentResourceName}.',
+    defaultMessage:
+      '{userName} added this {childResourceType} in the {parentResourceType} : {parentResourceName}.',
   },
   resourceDeleteLinkParent: {
     id: 'timeline.events.card.selection.resourceDeleteLinkParent',
-    defaultMessage: '{userName} removed this {childResourceType} from the {parentResourceType} : {parentResourceName}.',
+    defaultMessage:
+      '{userName} removed this {childResourceType} from the {parentResourceType} : {parentResourceName}.',
   },
   deleted: {
     id: 'timeline.events.card.selection.deleted',
@@ -158,7 +164,7 @@ const messages: {
   fetchingData: {
     id: 'timeline.events.card.selection.fetching',
     defaultMessage: '(fetching...)',
-  }
+  },
 });
 
 export default messages;
