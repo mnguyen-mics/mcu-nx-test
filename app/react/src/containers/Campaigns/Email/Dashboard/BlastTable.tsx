@@ -24,6 +24,10 @@ import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../Resour
 import formatEmailBlastProperty from '../../../../messages/campaign/email/emailBlastMessages';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
+import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistoryHelper';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
@@ -87,6 +91,10 @@ const BlastTableView = TableView as React.ComponentClass<
 >;
 
 class BlastTable extends React.Component<Props> {
+
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
+
   editBlast = (blast: BlastData) => {
     const {
       match: { params: { organisationId, campaignId } },
@@ -166,6 +174,40 @@ class BlastTable extends React.Component<Props> {
                 history.push(
                   `/v2/o/${organisationId}/campaigns/email/${id}`,
                 );
+              },
+            },
+            AUDIENCE_SEGMENT_EMAIL_SELECTION: {
+              direction: 'CHILD',
+              getType: () => {
+                return (
+                  <FormattedMessage
+                    {...resourceHistoryMessages.segmentResourceType}/>
+                );
+              },
+              getName: (id: string) => {
+                return getLinkedResourceIdInSelection(
+                  organisationId,
+                  'AUDIENCE_SEGMENT_EMAIL_SELECTION',
+                  id,
+                  'AUDIENCE_SEGMENT',
+                ).then(audienceSegmentId => {
+                  return this._audienceSegmentService.getSegment(audienceSegmentId)
+                    .then(response => {
+                      return response.data.name;
+                    });
+                });
+              },
+              goToResource: (id: string) => {
+                getLinkedResourceIdInSelection(
+                  organisationId,
+                  'AUDIENCE_SEGMENT_EMAIL_SELECTION',
+                  id,
+                  'AUDIENCE_SEGMENT',
+                ).then(audienceSegmentId => {
+                  history.push(
+                    `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
+                  );
+                });
               },
             },
           },
