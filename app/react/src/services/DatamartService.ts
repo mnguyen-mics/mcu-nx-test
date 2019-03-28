@@ -1,4 +1,3 @@
-import { AudienceSegmentMetricResource } from './../models/datamart/DatamartResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   DatamartResource,
@@ -94,12 +93,6 @@ const DatamartService = {
     };
 
     return ApiService.getRequest(endpoint, calculatedOptions);
-  },
-  getAudienceSegmentMetrics(
-    datamartId: string,
-  ): Promise<DataResponse<AudienceSegmentMetricResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_segment_metrics`;
-    return ApiService.getRequest(endpoint);
   },
 };
 

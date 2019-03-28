@@ -9,15 +9,12 @@ import { compareSearches } from '../../../../utils/LocationSearchHelper';
 import { AudienceReport } from './constants';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
-import {
-  DatamartResource,
-  AudienceSegmentMetricResource,
-} from '../../../../models/datamart/DatamartResource';
+import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { McsIconType } from '../../../../components/McsIcon';
 
 export interface AudienceCountersProps {
-  datamart?: DatamartResource;
-  audienceSegmentMetrics: AudienceSegmentMetricResource[];
+  datamarts: DatamartWithMetricResource[];
+  datamartId?: string;
 }
 
 interface State {
@@ -104,28 +101,30 @@ class AudienceCounters extends React.Component<Props, State> {
     );
   };
 
-  getCounters = () => {
+  getLoadingValue = (
+    key:
+      | 'user_points'
+      | 'user_accounts'
+      | 'emails'
+      | 'desktop_cookie_ids'
+      | 'mobile_ad_ids'
+      | 'mobile_cookie_ids',
+  ) => {
     const { counter } = this.state;
-    const { datamart, audienceSegmentMetrics } = this.props;
-    const counters: CounterProps[] = [];
-    const getLoadingValue = (
-      key:
-        | 'user_points'
-        | 'user_accounts'
-        | 'emails'
-        | 'desktop_cookie_ids'
-        | 'mobile_ad_ids'
-        | 'mobile_cookie_ids'
-    ) => {
-      const value =
-        !counter.isLoading && counter.report && counter.report[0]
-          ? counter.report[0][key]
-          : undefined;
-      return {
-        value,
-        loading: counter.isLoading,
-      };
+    const value =
+      !counter.isLoading && counter.report && counter.report[0]
+        ? counter.report[0][key]
+        : undefined;
+    return {
+      value,
+      loading: counter.isLoading,
     };
+  };
+
+  getCounters = () => {
+    const { datamarts, datamartId } = this.props;
+    const counters: CounterProps[] = [];
+
     counters.push({
       iconType: 'full-users' as McsIconType,
       title: (
@@ -134,87 +133,48 @@ class AudienceCounters extends React.Component<Props, State> {
           defaultMessage="User Points"
         />
       ),
-      ...getLoadingValue('user_points'),
+      ...this.getLoadingValue('user_points'),
     });
-
-    if (datamart && datamart.storage_model_version === 'v201506') {
-      const otherMetrics = [
-        {
-          iconType: 'users' as McsIconType,
-          title: (
-            <FormattedMessage
-              id="audience-segment-dashboard-counters-user-accounts"
-              defaultMessage="User Accounts"
-            />
-          ),
-          ...getLoadingValue('user_accounts'),
-        },
-        {
-          iconType: 'display' as McsIconType,
-          title: (
-            <FormattedMessage
-              id="audience-segment-dashboard-counters-display-cookies"
-              defaultMessage="Display Cookies"
-            />
-          ),
-          ...getLoadingValue('desktop_cookie_ids'),
-        },
-        {
-          iconType: 'email-inverted' as McsIconType,
-          title: (
-            <FormattedMessage
-              id="audience-segment-dashboard-counters-emails"
-              defaultMessage="Email"
-            />
-          ),
-          ...getLoadingValue('emails'),
-        },
-      ];
+    if (datamartId) {
+      const datamart = datamarts.find(dm => dm.id === datamartId);
+      const otherMetrics = datamart
+        ? datamart.audience_segment_metrics.map(el => {
+            return {
+              iconType: el.icon as McsIconType,
+              title: el.display_name,
+              ...this.getLoadingValue(el.technical_name),
+            };
+          })
+        : [];
       return counters.concat(otherMetrics);
     } else {
-      if (audienceSegmentMetrics) {
-        const otherMetrics = audienceSegmentMetrics.map(el => {
-          return {
-            iconType: el.icon as McsIconType,
-            title: el.display_name,
-            ...getLoadingValue(el.technical_name),
-          };
-        });
-        return counters.concat(otherMetrics);
-      }
       return counters;
     }
   };
 
+  getKnownCounters = () => {
+    const { datamarts } = this.props;
+    return datamarts[0]
+      ? datamarts[0].audience_segment_metrics.map(el => {
+          return {
+            iconType: el.icon as McsIconType,
+            title: el.display_name,
+            ...this.getLoadingValue(el.technical_name),
+          };
+        })
+      : [];
+  };
+
   render() {
-    const { datamart } = this.props;
-
-    if (!datamart) {
-      return (
-        <div className="audience-statistic">
-          <CounterDashboard
-            counters={[
-              {
-                iconType: 'question',
-                title: (
-                  <FormattedMessage
-                    id="audience-segment-dashboard-counters-loading"
-                    defaultMessage="Loading"
-                  />
-                ),
-                value: undefined,
-                loading: true,
-              },
-            ]}
-            invertedColor={true}
-          />
-        </div>
-      );
-    }
-
+    const { datamarts } = this.props;
+    const getCounters = () => {
+      return datamarts.length > 1
+        ? this.getCounters()
+        : this.getKnownCounters();
+    };
     return (
       <div className="audience-statistic">
-        <CounterDashboard counters={this.getCounters()} invertedColor={true} />
+        <CounterDashboard counters={getCounters()} invertedColor={true} />
       </div>
     );
   }

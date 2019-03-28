@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-
 import { Card } from '../../../../components/Card';
 import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
@@ -22,25 +21,24 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
 import FeedCardList from './Feeds/FeedCardList';
-import {
-  DatamartResource,
-  AudienceSegmentMetricResource,
-} from '../../../../models/datamart/DatamartResource';
-import DatamartService from '../../../../services/DatamartService';
+import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { connect } from 'react-redux';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
+import * as SessionHelper from '../../../../state/Session/selectors';
 
 interface State {
   loading: boolean;
-
   dashboard: {
     report: AudienceReport;
     isLoading: boolean;
   };
-  datamart?: DatamartResource;
+  datamarts: DatamartWithMetricResource[];
 }
 
 interface MapStateToProps {
-  audienceSegmentMetrics: { [key: string]: AudienceSegmentMetricResource[] };
+  workspaces: {
+    [key: string]: UserWorkspaceResource;
+  };
 }
 
 export interface AudienceSegmentDashboardProps {
@@ -63,33 +61,21 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         isLoading: true,
         report: [],
       },
+      datamarts: [],
     };
   }
 
   componentDidMount() {
     const {
       match: {
-        params: { segmentId, organisationId },
+        params: { organisationId },
       },
-      location: { search },
+      workspaces,
     } = this.props;
-
-    if (segmentId) {
-      const filters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
-
-      this.fetchDashboardView(
-        organisationId,
-        filters.from,
-        filters.to,
-        [
-          {
-            name: 'audience_segment_id',
-            value: segmentId,
-          },
-        ],
-        [],
-      );
-    }
+    const workspace = workspaces[organisationId];
+    this.setState({
+      datamarts: workspace ? workspace.datamarts : [],
+    });
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -108,51 +94,41 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       },
       location: { search: nextSearch },
       segment: nextSegment,
-      audienceSegmentMetrics: nextAudienceSegmentMetrics,
+      workspaces: nextWorkspaces,
     } = nextProps;
 
     if (
       (!compareSearches(search, nextSearch) ||
         segmentId !== nextSegmentId ||
-        nextAudienceSegmentMetrics) &&
+        nextWorkspaces) &&
       nextSegment
     ) {
-      DatamartService.getDatamart(nextSegment.datamart_id)
-        .then(res => {
-          this.setState({
-            datamart: res.data,
-          });
-          return res.data;
-        })
-        .then(datamart => {
-          const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
-          const metrics: string[] = ['user_points'];
-          let additionalMetrics;
-          if (nextAudienceSegmentMetrics[datamart.id]) {
-            additionalMetrics = nextAudienceSegmentMetrics[datamart.id].map(
-              metric => metric.technical_name,
-            );
-            metrics.concat(additionalMetrics);
-          } else if (datamart.storage_model_version === 'v201506') {
-            additionalMetrics = [
-              'user_accounts',
-              'desktop_cookie_ids',
-              'emails',
-            ];
-          }
-          this.fetchDashboardView(
-            nextOrganisationId,
-            nextFilters.from,
-            nextFilters.to,
-            [
-              {
-                name: 'audience_segment_id',
-                value: nextSegmentId,
-              },
-            ],
-            additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
-          );
-        });
+      const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
+      const metrics: string[] = ['user_points'];
+      let additionalMetrics;
+      if (nextWorkspaces) {
+        const datamart = this.state.datamarts.find(
+          dm => dm.id === nextSegment.datamart_id,
+        );
+
+        additionalMetrics = datamart
+          ? datamart.audience_segment_metrics
+              .filter(metric => metric.status === 'LIVE')
+              .map(el => el.technical_name)
+          : undefined;
+      }
+      this.fetchDashboardView(
+        nextOrganisationId,
+        nextFilters.from,
+        nextFilters.to,
+        [
+          {
+            name: 'audience_segment_id',
+            value: nextSegmentId,
+          },
+        ],
+        additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
+      );
     }
   }
 
@@ -221,14 +197,13 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { audienceSegmentMetrics } = this.props;
-    const { datamart } = this.state;
-    const datamartMetrics = datamart ? audienceSegmentMetrics[datamart.id] : [];
+    const { datamarts } = this.state;
+    const { segment } = this.props;
     return (
       <div>
         <AudienceCounters
-          datamart={datamart}
-          audienceSegmentMetrics={datamartMetrics}
+          datamarts={datamarts}
+          datamartId={segment ? segment.datamart_id : undefined}
         />
         <Card>
           <McsTabs items={this.buildItems()} />
@@ -240,7 +215,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: any) => ({
-  audienceSegmentMetrics: state.metrics.audienceSegmentMetrics,
+  workspaces: SessionHelper.getWorkspaces(state),
 });
 
 export default compose<Props, AudienceSegmentDashboardProps>(

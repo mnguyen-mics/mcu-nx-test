@@ -17,7 +17,6 @@ import LabelsReducers from '../state/Labels/reducer';
 import MenuReducers from '../state/Menu/reducer';
 import creativesReducer from '../state/Creatives/reducer';
 import { drawerReducer } from '../components/Drawer/DrawerStore.ts';
-import AudienceSegmentMetricsReducer from '../state/AudienceSegmentMetrics/reducer';
 
 const allReducers = Object.assign(
   {},
@@ -37,7 +36,6 @@ const allReducers = Object.assign(
   MenuReducers,
   creativesReducer,
   drawerReducer,
-  AudienceSegmentMetricsReducer,
 );
 
 export default combineReducers(allReducers);

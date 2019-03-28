@@ -32,7 +32,6 @@ import { NavigatorRoute } from '../../routes/domain';
 import angularRedirect from '../../routes/angularRedirect';
 import RedirectAngular from './Route/RedirectAngular';
 import { CommunityChangePassword } from '../Communities/ChangePassword';
-import * as audienceSegmentMetricsActions from '../../state/AudienceSegmentMetrics/actions';
 
 interface MapStateToProps {
   initialized: boolean;
@@ -65,11 +64,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
   }
 
   componentDidMount() {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
     NavigatorService.isAdBlockOn()
       .then(() => {
         // Read theme colors in DOM and store them in redux for future usage
@@ -107,7 +101,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         );
       })
       .catch(() => this.setState({ adBlockOn: true }));
-    this.props.fetchAllAudienceSegmentMetrics(organisationId);
   }
 
   render() {
@@ -324,8 +317,6 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   logOut: loginActions.logOut,
   setColorsStore: setColorsStore,
-  fetchAllAudienceSegmentMetrics:
-    audienceSegmentMetricsActions.fetchAllAudienceSegmentMetrics.request,
 };
 
 export default compose<JoinedProps, {}>(
