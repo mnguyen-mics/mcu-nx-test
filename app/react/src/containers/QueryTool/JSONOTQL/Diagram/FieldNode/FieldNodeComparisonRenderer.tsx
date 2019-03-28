@@ -124,7 +124,7 @@ export default class FieldNodeComparisonRenderer extends React.Component<
   }
 
   renderDateValue = (values: string[]) => {
-    const formatDate = (v: string) => moment(v).format('YYYY-MM-DD');
+    const formatDate = (v: string | Date) => typeof v === 'string' && v.includes('now') ? v : moment(v).format('YYYY-MM-DD');
     return values.reduce((acc, val, i) => {
       return `${acc}${i !== 0 ? ', ' : ''}${formatDate(val)}`;
     }, '');
