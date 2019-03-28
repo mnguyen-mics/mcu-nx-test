@@ -67,7 +67,10 @@ class HistoryEventCard extends React.Component<Props, State> {
     });
 
     events.forEach(event => {
-      if(isHistoryCreateLinkEvent(event) || isHistoryDeleteLinkEvent(event)) {
+      if (
+        isHistoryLinkEvent(event) &&
+        !this.state.resourceNames[this.generateResourceIdentifier(event)]
+      ) {
         const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
         if(resourceHelper) {
           resourceHelper.getName(event.resource_id)

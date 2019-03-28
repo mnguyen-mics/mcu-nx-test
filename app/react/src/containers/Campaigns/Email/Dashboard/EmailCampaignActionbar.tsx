@@ -24,10 +24,16 @@ import ReportService from '../../../../services/ReportService';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import log from '../../../../utils/Logger';
-import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import injectDrawer, {
+  InjectedDrawerProps,
+} from '../../../../components/Drawer/injectDrawer';
 import formatCampaignProperty from '../../../../messages/campaign/email/emailCampaignMessages';
-import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import ResourceTimelinePage, {
+  ResourceTimelinePageProps,
+} from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
+import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistoryHelper';
+import EmailRoutersService from '../../../../services/Library/EmailRoutersService';
 
 export interface EmailCampaignActionbarProps {
   campaign?: EmailCampaignResource;
@@ -54,7 +60,9 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
 
   handleRunExport = () => {
     const {
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
       intl: { formatMessage },
       location: { search },
       campaign,
@@ -122,7 +130,11 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
   };
 
   buildMenu = () => {
-    const { campaign, archiveCampaign, intl: { formatMessage } } = this.props;
+    const {
+      campaign,
+      archiveCampaign,
+      intl: { formatMessage },
+    } = this.props;
 
     const handleArchiveCampaign = (displayCampaignId: string) => {
       Modal.confirm({
@@ -150,6 +162,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
           return this.props.openNextDrawer<ResourceTimelinePageProps>(
             ResourceTimelinePage,
             {
+              size: 'small',
               additionalProps: {
                 resourceType: 'EMAIL_CAMPAIGN',
                 resourceId: campaignId,
@@ -166,12 +179,11 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                       );
                     },
                     getName: (id: string) => {
-                        return EmailCampaignService.getBlast(
-                          campaignId,
-                          id,
-                        ).then(response => {
+                      return EmailCampaignService.getBlast(campaignId, id).then(
+                        response => {
                           return response.data.blast_name;
-                        });
+                        },
+                      );
                     },
                     goToResource: (id: string) => {
                       history.push(
@@ -179,10 +191,45 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                       );
                     },
                   },
+                  EMAIL_ROUTER_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.emailRouterResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return getLinkedResourceIdInSelection(
+                        organisationId,
+                        'EMAIL_ROUTER_SELECTION',
+                        id,
+                        'EMAIL_ROUTER',
+                      ).then(emailRouterId => {
+                        return EmailRoutersService.getEmailRouter(
+                          emailRouterId,
+                        ).then(response => {
+                          return response.data.name;
+                        });
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      return getLinkedResourceIdInSelection(
+                        organisationId,
+                        'EMAIL_ROUTER_SELECTION',
+                        id,
+                        'EMAIL_ROUTER',
+                      ).then(emailRouterId => {
+                        history.push(
+                          `/v2/o/${organisationId}/settings/campaigns/email_routers/${emailRouterId}/edit`,
+                        );
+                      });
+                    },
+                  },
                 },
               },
-              size: 'small',
-            }
+            },
           );
         case 'ARCHIVED':
           return campaign && handleArchiveCampaign(campaign.id);
@@ -206,7 +253,9 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
   };
 
   exportIsRunningModal = (e: React.FormEvent<HTMLButtonElement>) => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     Modal.warning({
       title: formatMessage(modalMessages.exportIsRunningTitle),
       content: formatMessage(modalMessages.exportIsRunningMessage),
@@ -220,7 +269,9 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
 
   render() {
     const {
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
       intl: { formatMessage },
       campaign,
     } = this.props;
