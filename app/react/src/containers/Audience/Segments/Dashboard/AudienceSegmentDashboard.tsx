@@ -111,7 +111,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           dm => dm.id === nextSegment.datamart_id,
         );
 
-        additionalMetrics = datamart
+        additionalMetrics = datamart && datamart.audience_segment_metrics
           ? datamart.audience_segment_metrics
               .filter(metric => metric.status === 'LIVE')
               .map(el => el.technical_name)
