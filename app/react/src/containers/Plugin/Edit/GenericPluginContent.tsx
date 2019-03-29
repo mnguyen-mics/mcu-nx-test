@@ -12,8 +12,7 @@ import {
   PluginInstance,
   LayoutablePlugin,
 } from '../../../models/Plugins';
-import PluginService from '../../../services/PluginService';
-import PluginInstanceService from '../../../services/PluginInstanceService';
+import { IPluginInstanceService } from '../../../services/PluginInstanceService';
 import * as actions from '../../../state/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
 import Loading from '../../../components/Loading';
@@ -25,6 +24,9 @@ import { PropertyResourceShape } from '../../../models/plugin';
 import { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import PluginCardSelector from './PluginCard/PluginCardSelector';
 import PluginCardModal from './PluginCard/PluginCardModal';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IPluginService } from '../../../services/PluginService';
 
 const formId = 'pluginForm';
 
@@ -42,7 +44,7 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
   listTitle: FormattedMessage.MessageDescriptor;
   listSubTitle: FormattedMessage.MessageDescriptor;
   breadcrumbPaths: (pluginInstance?: T) => Path[];
-  pluginInstanceService: PluginInstanceService<T>;
+  pluginInstanceService: IPluginInstanceService<T>;
   pluginInstanceId?: string;
   onClose: () => void;
   onSaveOrCreatePluginInstance: (
@@ -90,6 +92,12 @@ class PluginContent<T extends PluginInstance> extends React.Component<
   JoinedProps<T>,
   PluginContentState<T>
 > {
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
+
+  @lazyInject(TYPES.IPluginInstanceService)
+  private _pluginInstanceService: IPluginInstanceService<T>;
+
   constructor(props: JoinedProps<T>) {
     super(props);
 
@@ -141,30 +149,37 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         isLoadingList: true,
       },
       () => {
-        PluginService.getPlugins({
-          plugin_type: this.props.pluginType,
-        })
+        this._pluginService
+          .getPlugins({
+            plugin_type: this.props.pluginType,
+          })
           .then(res => res.data)
           .then((response: PluginResource[]) => {
-            const pluginsWithLayouts = response.reduce((filteredPlugins, pResourceWoutLayout) => {
-              if (!pResourceWoutLayout.current_version_id) return filteredPlugins;
+            const pluginsWithLayouts = response.reduce(
+              (filteredPlugins, pResourceWoutLayout) => {
+                if (!pResourceWoutLayout.current_version_id)
+                  return filteredPlugins;
 
-              return [
-                ...filteredPlugins,
-                PluginService.getLocalizedPluginLayout(
-                  pResourceWoutLayout.id,
-                  pResourceWoutLayout.current_version_id,
-                ).then(resultPluginLayout => {
-                  return Promise.resolve({
-                    ...pResourceWoutLayout,
-                    plugin_layout:
-                      resultPluginLayout !== null
-                        ? resultPluginLayout
-                        : undefined,
-                  });
-                }),
-              ];
-            }, []);
+                return [
+                  ...filteredPlugins,
+                  this._pluginService
+                    .getLocalizedPluginLayout(
+                      pResourceWoutLayout.id,
+                      pResourceWoutLayout.current_version_id,
+                    )
+                    .then(resultPluginLayout => {
+                      return Promise.resolve({
+                        ...pResourceWoutLayout,
+                        plugin_layout:
+                          resultPluginLayout !== null
+                            ? resultPluginLayout
+                            : undefined,
+                      });
+                    }),
+                ];
+              },
+              [],
+            );
 
             Promise.all(pluginsWithLayouts).then(availablePluginsResponse => {
               this.setState({
@@ -183,10 +198,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
 
   fetchInitialValues = (pInstanceId: string) => {
     const { pluginInstanceService, notifyError } = this.props;
-    const promisePluginInstance = pluginInstanceService
+    const promisePluginInstance = this._pluginInstanceService
       .getInstanceById(pInstanceId)
       .then(res => res.data);
-    const promiseInstanceProperties = pluginInstanceService
+    const promiseInstanceProperties = this._pluginInstanceService
       .getInstanceProperties(pInstanceId)
       .then(res => res.data);
     const promisePluginLayout = pluginInstanceService.getLocalizedPluginLayout(
@@ -195,7 +210,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     this.setState(
       {
         isLoadingPlugin: true,
-        isLoadingList: false
+        isLoadingList: false,
       },
       () => {
         Promise.all([
@@ -227,11 +242,11 @@ class PluginContent<T extends PluginInstance> extends React.Component<
                 pluginProperties: resultInstanceProperties,
               });
             }
-          },
-        ).catch(err => {
-          notifyError(err);
-          this.setState({ isLoadingPlugin: false });
-        });
+          })
+          .catch(err => {
+            notifyError(err);
+            this.setState({ isLoadingPlugin: false });
+          });
       },
     );
   };
@@ -255,7 +270,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     // if edition update and redirect
     if (pluginInstance.id) {
       return this.setState({ isLoadingPlugin: true }, () => {
-        const updateInstancePromise = pluginInstanceService.updatePluginInstance(pluginInstance.id!, pluginInstance)
+        const updateInstancePromise = pluginInstanceService.updatePluginInstance(
+          pluginInstance.id!,
+          pluginInstance,
+        );
 
         const updatePropertiesPromise = updateInstancePromise.then(() => {
           return this.updatePropertiesValue(
@@ -282,11 +300,9 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     );
 
     return this.setState({ isLoadingPlugin: true }, () => {
-      const createInstancePromise = pluginInstanceService.createPluginInstance(
-        organisationId,
-        formattedFormValues,
-      )
-        .then(res => res.data)
+      const createInstancePromise = pluginInstanceService
+        .createPluginInstance(organisationId, formattedFormValues)
+        .then(res => res.data);
       const updatePropertiesPromise = createInstancePromise.then(res => {
         return this.updatePropertiesValue(properties, organisationId, res.id!);
       });
@@ -329,16 +345,17 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         plugin: plugin,
       },
       () => {
-        PluginService.getPluginVersions(plugin.id)
+        this._pluginService
+          .getPluginVersions(plugin.id)
           .then(res => {
             const lastVersion = res.data[res.data.length - 1];
-            const promiseVersionProperty = PluginService.getPluginVersionProperty(
+            const promiseVersionProperty = this._pluginService.getPluginVersionProperty(
               plugin.id,
               plugin.current_version_id
                 ? plugin.current_version_id
                 : lastVersion.id,
             );
-            const promisePluginLayout = PluginService.getLocalizedPluginLayout(
+            const promisePluginLayout = this._pluginService.getLocalizedPluginLayout(
               plugin.id,
               plugin.current_version_id
                 ? plugin.current_version_id
@@ -407,10 +424,16 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       showGeneralInformation,
       disableFields,
       isCardLayout,
-      renderSpecificFields
+      renderSpecificFields,
     } = this.props;
 
-    const { pluginProperties, isLoadingList, isLoadingPlugin, plugin, initialValues } = this.state;
+    const {
+      pluginProperties,
+      isLoadingList,
+      isLoadingPlugin,
+      plugin,
+      initialValues,
+    } = this.state;
 
     const sidebarItems: SideBarItem[] = [];
 
@@ -456,9 +479,11 @@ class PluginContent<T extends PluginInstance> extends React.Component<
           };
 
     if (isLoadingList || (isLoadingPlugin && !isCardLayout))
-        return (<div style={{ display: 'flex', flex: 1 }}>
-        <Loading className="loading-full-screen" />
-      </div>)
+      return (
+        <div style={{ display: 'flex', flex: 1 }}>
+          <Loading className="loading-full-screen" />
+        </div>
+      );
 
     if (isCardLayout) {
       return (
@@ -480,14 +505,16 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             save={this.saveOrCreatePluginInstance}
             initialValues={this.formatInitialValues(initialValues)}
             pluginProperties={pluginProperties}
-            disableFields={(isLoadingPlugin || disableFields) ? true : false}
+            disableFields={isLoadingPlugin || disableFields ? true : false}
             pluginLayout={this.state.pluginLayout!}
-            isLoading={isLoadingPlugin || isLoadingList || !this.state.pluginLayout}
+            isLoading={
+              isLoadingPlugin || isLoadingList || !this.state.pluginLayout
+            }
             pluginVersionId={plugin.id}
             editionMode={false}
           />
         </EditContentLayout>
-      )
+      );
     }
 
     if (pluginProperties.length || pluginInstanceId) {
@@ -503,19 +530,21 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             organisationId={organisationId}
             save={this.saveOrCreatePluginInstance}
             pluginProperties={pluginProperties}
-            disableFields={(isLoadingPlugin || disableFields) ? true : false}
+            disableFields={isLoadingPlugin || disableFields ? true : false}
             pluginLayout={this.state.pluginLayout}
-            isLoading={isLoadingPlugin || isLoadingList}
+            isLoading={isLoadingPlugin || isLoadingList}
             pluginVersionId={plugin.id}
             formId={formId}
             initialValues={this.formatInitialValues(initialValues)}
             showGeneralInformation={
-              showGeneralInformation !== undefined ? showGeneralInformation : true
+              showGeneralInformation !== undefined
+                ? showGeneralInformation
+                : true
             }
             renderSpecificFields={renderSpecificFields}
           />
         </EditContentLayout>
-      )
+      );
     }
 
     return (
@@ -527,11 +556,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
           onSelect={this.onSelectPlugin}
           availablePlugins={this.state.availablePlugins}
           listTitle={this.props.listTitle}
-          listSubTitle={this.props.listSubTitle}          
+          listSubTitle={this.props.listSubTitle}
         />
       </EditContentLayout>
     );
-
   }
 }
 

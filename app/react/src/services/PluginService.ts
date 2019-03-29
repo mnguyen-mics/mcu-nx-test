@@ -8,10 +8,12 @@ import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PluginResource, PluginVersionResource } from '../models/Plugins';
 import { PropertyResourceShape } from '../models/plugin';
 import DataFileService from './DataFileService';
-import AssetsFilesService from './Library/AssetsFilesService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import log from '../utils/Logger';
 import { Omit } from '../utils/Types';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../constants/types';
+import { IAssetFileService } from './Library/AssetFileService';
 
 // TODO Pagination is disabled for now waiting for an api param
 // to allow filtering of plugin without version and/or with current version not archived
@@ -22,7 +24,65 @@ interface GetPluginOptions extends Omit<PaginatedApiParam, 'first_result'> {
   organisation_id?: number;
 }
 
-const PluginService = {
+export interface IPluginService {
+  getPlugins: (
+    options: GetPluginOptions,
+    withArchivedPluginVersion?: boolean,
+  ) => Promise<DataListResponse<PluginResource>>;
+  getPlugin: (
+    id: string
+  ) => Promise<DataResponse<PluginResource>>;
+  getPluginVersions: (
+    pluginId: string,
+    params?: object,
+  ) => Promise<DataListResponse<PluginVersionResource>>;
+  findPluginFromVersionId: (
+    versionId: string,
+  ) => Promise<DataResponse<PluginResource>>;
+  getPluginVersion: (
+    pluginId: string,
+    versionId: string,
+  ) => Promise<DataResponse<PluginVersionResource>>;
+  getPluginVersionProperty: (
+    pluginId: string,
+    pluginVersionId: string,
+    params?: object,
+  ) => Promise<DataListResponse<PropertyResourceShape>>;
+  getEngineProperties: (
+    engineVersionId: string,
+  ) => Promise<PropertyResourceShape[]>;
+  getEngineVersion: (engineVersionId: string) => Promise<PluginVersionResource>;
+  getAdLayouts: (
+    organisationId: string,
+    pluginVersionId: string,
+  ) => Promise<DataListResponse<Adlayout>>;
+  getAdLayoutVersion: (
+    organisationId: string,
+    adLayoutVersion: string,
+  ) => Promise<DataListResponse<any>>;
+  getStyleSheets: (organisationId: string) => Promise<DataListResponse<any>>;
+  getStyleSheetsVersion: (
+    organisationId: string,
+    styleSheetId: string,
+  ) => Promise<DataListResponse<StylesheetVersionResource>>;
+  handleSaveOfProperties: (
+    params: any,
+    organisationId: string,
+    objectType: string,
+    objectId: string,
+    endpoint: string,
+  ) => Promise<DataResponse<PropertyResourceShape> | void>;
+  getLocalizedPluginLayout: (
+    pluginId: string,
+    pluginVersionId: string,
+    locale?: string,
+  ) => Promise<PluginLayout | null>;
+}
+
+@injectable()
+export class PluginService implements IPluginService {
+  @inject(TYPES.IAssetFileService)
+  private _assetFileService: IAssetFileService;
   getPlugins(
     options: GetPluginOptions = {},
     withArchivedPluginVersion: boolean = false,
@@ -38,7 +98,7 @@ const PluginService = {
             if (p.current_version_id) {
               return [
                 ...filteredPlugins,
-                PluginService.getPluginVersion(p.id, p.current_version_id).then(
+                this.getPluginVersion(p.id, p.current_version_id).then(
                   pv => pv.data,
                 ),
               ];
@@ -58,33 +118,33 @@ const PluginService = {
       }
       return plugins;
     });
-  },
+  }
   getPluginVersions(
     pluginId: string,
     params: object = {},
   ): Promise<DataListResponse<PluginVersionResource>> {
     const endpoint = `plugins/${pluginId}/versions`;
     return ApiService.getRequest(endpoint, params);
-  },
+  }
   getPlugin(
     pluginId: string,
   ): Promise<DataResponse<PluginResource>> {
     const endpoint = `plugins/${pluginId}`;
     return ApiService.getRequest(endpoint);
-  },
+  }
   findPluginFromVersionId(
     versionId: string,
   ): Promise<DataResponse<PluginResource>> {
     const endpoint = `plugins/version/${versionId}`;
     return ApiService.getRequest(endpoint);
-  },
+  }
   getPluginVersion(
     pluginId: string,
     versionId: string,
   ): Promise<DataResponse<PluginVersionResource>> {
     const endpoint = `plugins/${pluginId}/versions/${versionId}`;
     return ApiService.getRequest(endpoint);
-  },
+  }
   getPluginVersionProperty(
     pluginId: string,
     pluginVersionId: string,
@@ -92,7 +152,7 @@ const PluginService = {
   ): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties`;
     return ApiService.getRequest(endpoint, params);
-  },
+  }
   getEngineProperties(
     engineVersionId: string,
   ): Promise<PropertyResourceShape[]> {
@@ -101,7 +161,7 @@ const PluginService = {
     return ApiService.getRequest(endpoint).then(
       (res: DataListResponse<PropertyResourceShape>) => res.data,
     );
-  },
+  }
   getEngineVersion(engineVersionId: string): Promise<PluginVersionResource> {
     const endpoint = `plugins/version/${engineVersionId}`;
     return ApiService.getRequest(endpoint).then(
@@ -109,14 +169,14 @@ const PluginService = {
         return res.data;
       },
     );
-  },
+  }
   getAdLayouts(
     organisationId: string,
     pluginVersionId: string,
   ): Promise<DataListResponse<Adlayout>> {
     const endpoint = `ad_layouts?organisation_id=${organisationId}&renderer_version_id=${pluginVersionId}`;
     return ApiService.getRequest(endpoint);
-  },
+  }
   getAdLayoutVersion(
     organisationId: string,
     adLayoutVersion: string,
@@ -127,11 +187,11 @@ const PluginService = {
       statuses: 'DRAFT,PUBLISHED',
     };
     return ApiService.getRequest(endpoint, params);
-  },
+  }
   getStyleSheets(organisationId: string): Promise<DataListResponse<any>> {
     const endpoint = `style_sheets?organisation_id=${organisationId}`;
     return ApiService.getRequest(endpoint);
-  },
+  }
   getStyleSheetsVersion(
     organisationId: string,
     styleSheetId: string,
@@ -142,7 +202,7 @@ const PluginService = {
       statuses: 'DRAFT,PUBLISHED',
     };
     return ApiService.getRequest(endpoint, params);
-  },
+  }
   handleSaveOfProperties(
     params: any,
     organisationId: string,
@@ -150,7 +210,11 @@ const PluginService = {
     objectId: string,
     endpoint: string,
   ): Promise<DataResponse<PropertyResourceShape> | void> {
-    if (params.property_type === 'ASSET' || params.property_type === 'ASSET_FILE' || params.property_type === 'ASSET_FOLDER') {
+    if (
+      params.property_type === 'ASSET' ||
+      params.property_type === 'ASSET_FILE' ||
+      params.property_type === 'ASSET_FOLDER'
+    ) {
       let uploadEndpoint = `asset_files?organisation_id=${organisationId}`;
 
       if (params.property_type === 'ASSET_FOLDER') {
@@ -194,24 +258,23 @@ const PluginService = {
         const formData = new FormData(); /* global FormData */
         formData.append('file', fileValue, fileValue.name);
 
-        return AssetsFilesService.uploadAssetsFile(
-          organisationId,
-          formData,
-        ).then(res => {
-          const newParams = {
-            ...params,
-          };
-          newParams.value = {
-            original_file_name: res.data.original_name,
-            file_path: res.data.path,
-            asset_id: res.data.id,
-            require_display: true,
-            height: res.data.height,
-            width: res.data.width,
-            type: 1,
-          };
-          ApiService.putRequest(endpoint, newParams);
-        });
+        return this._assetFileService
+          .uploadAssetsFile(organisationId, formData)
+          .then(res => {
+            const newParams = {
+              ...params,
+            };
+            newParams.value = {
+              original_file_name: res.data.original_name,
+              file_path: res.data.path,
+              asset_id: res.data.id,
+              require_display: true,
+              height: res.data.height,
+              width: res.data.width,
+              type: 1,
+            };
+            ApiService.putRequest(endpoint, newParams);
+          });
       }
       return Promise.resolve();
     } else if (params.property_type === 'DATA_FILE') {
@@ -276,7 +339,7 @@ const PluginService = {
     }
 
     return ApiService.putRequest(endpoint, params);
-  },
+  }
   getLocalizedPluginLayout(
     pluginId: string,
     pluginVersionId: string,
@@ -291,7 +354,7 @@ const PluginService = {
         log.warn('Cannot retrieve plugin layout', err);
         return null;
       });
-  },
-};
+  }
+}
 
 export default PluginService;

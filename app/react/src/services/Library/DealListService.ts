@@ -5,7 +5,7 @@ import {
 } from '../../models/dealList/dealList';
 import { injectable } from 'inversify';
 
-export interface IDealsListService {
+export interface IDealListService {
   getDealLists(
     organisationId: string,
     options: object,
@@ -46,7 +46,7 @@ export interface IDealsListService {
 }
 
 @injectable()
-export class DealsListService implements IDealsListService {
+export class DealListService implements IDealListService {
   //
   //  DEAL LIST
   //

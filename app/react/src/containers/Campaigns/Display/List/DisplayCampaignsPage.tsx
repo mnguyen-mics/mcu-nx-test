@@ -9,7 +9,8 @@ import DisplayCampaignsActionbar, {
 } from './DisplayCampaignsActionbar';
 import DisplayCampaignsTable from './DisplayCampaignsTable';
 import { injectDrawer } from '../../../../components/Drawer';
-import DisplayCampaignService, {
+import {
+  IDisplayCampaignService,
   CampaignsOptions,
 } from '../../../../services/DisplayCampaignService';
 import EditCampaignsForm, {
@@ -71,9 +72,15 @@ type Props = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class DisplayCampaignsPage extends React.Component<Props, State> {
+class DisplayCampaignsPage extends React.Component<
+  Props,
+  State
+> {
   @lazyInject(TYPES.IDisplayCampaignFormService)
   private _displayCampaignFormService: IDisplayCampaignFormService;
+
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
 
   constructor(props: Props) {
     super(props);
@@ -179,7 +186,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       options.status = apiStatuses;
     }
 
-    DisplayCampaignService.getDisplayCampaigns(
+    this._displayCampaignService.getDisplayCampaigns(
       organisationId,
       campaignType,
       options,
@@ -239,7 +246,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       automated: false,
       archived: false,
     };
-    return DisplayCampaignService.getDisplayCampaigns(
+    return this._displayCampaignService.getDisplayCampaigns(
       organisationId,
       'DISPLAY',
       options,
@@ -292,7 +299,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
     const tasks: Task[] = [];
     campaignIds.forEach(campaignId => {
       tasks.push(() => {
-        return DisplayCampaignService.updateCampaign(campaignId, {
+        return this._displayCampaignService.updateCampaign(campaignId, {
           status: 'PAUSED',
           archived: true,
           type: 'DISPLAY',
@@ -339,7 +346,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       okText: intl.formatMessage(messages.confirmArchiveModalOk),
       cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
       onOk() {
-        return DisplayCampaignService.deleteCampaign(campaign.id).then(() => {
+        return this._displayCampaignService.deleteCampaign(campaign.id).then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -459,16 +466,16 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       ...undoBody,
     };
 
-    return DisplayCampaignService.updateCampaign(campaignId, campaignBody)
+    return this._displayCampaignService
+      .updateCampaign(campaignId, campaignBody)
       .then(response => {
         if (successMessage) {
           const undo = () => {
-            DisplayCampaignService.updateCampaign(
-              campaignId,
-              campaignUndoBody,
-            ).then(() => {
-              removeNotification(campaignId);
-            });
+            this._displayCampaignService
+              .updateCampaign(campaignId, campaignUndoBody)
+              .then(() => {
+                removeNotification(campaignId);
+              });
           };
 
           notifySuccess({
@@ -538,7 +545,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
         archived: false,
       };
       const allCampaignsIds: string[] = [];
-      DisplayCampaignService.getDisplayCampaigns(
+      this._displayCampaignService.getDisplayCampaigns(
         organisationId,
         'DISPLAY',
         options,

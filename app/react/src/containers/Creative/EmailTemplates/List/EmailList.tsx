@@ -22,7 +22,6 @@ import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
-
 interface CreativeEmailsTableProps {
   rowSelection: ExtendedTableRowSelection;
   isLoadingEmailTemplates: boolean;
@@ -43,6 +42,7 @@ type JoinedProps = CreativeEmailsTableProps &
   InjectedIntlProps;
 
 class CreativeEmailsTable extends React.Component<JoinedProps, State> {
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
