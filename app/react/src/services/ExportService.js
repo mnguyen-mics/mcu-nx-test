@@ -282,12 +282,55 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
     to: filter.to.toMoment().format('YYYY-MM-DD'),
   };
 
+  /**
+   * Sheet names are not allowing the following special chars: `\`, `/`, `[`, `]`, `?`, `*`
+   * @param name The name of a sheet
+   */
+  const sanitizeSheetNames = (name) => {
+
+    // If a sheet has no name, the excel spreasheet won't work
+    // Throw an error
+    if (!name) {
+      throw new Error("An Excel spreadsheet can't have no name.");
+    }
+
+    return name
+      .replace(/\\/gm, '')
+      .replace(/\//gm, '')
+      .replace(/\?/gm, '')
+      .replace(/\*/gm, '')
+      .replace(/\[/gm, '')
+      .replace(/\]/gm, '');
+
+  };
+
+  /**
+   * Sheet names are limited to 31 chars.
+   *
+   * As we're displaying the attribution name at the beginning, we have to ellipsize it.
+   *
+   * @param name
+   */
+  const ellispizeAttributionName = (name) => {
+
+    if (!name) {
+      return 'undefined';
+    }
+
+    if (name.length > 20) {
+      return `${name.substring(0, 15)}...`;
+    }
+    // Else
+    return name;
+
+  };
+
   const buildGoalSheets = () => {
     const goalSheets = [];
     goalData.forEach(goal => {
       goal.attribution.forEach(attribution => {
         goalSheets.push(
-          addSheet(`${attribution.attribution_model_name} - ${goal.goal_name}`, attribution.perf, goalHeaders, exportFilter, formatMessage, `${goal.goal_name} - ${attribution.attribution_model_name}`, otherInfos)
+          addSheet(sanitizeSheetNames(`${ellispizeAttributionName(attribution.attribution_model_name)} -- ${goal.id} - ${goal.goal_name}`), attribution.perf, goalHeaders, exportFilter, formatMessage, `${goal.goal_name} - ${attribution.attribution_model_name}`, otherInfos)
         );
       });
     });
