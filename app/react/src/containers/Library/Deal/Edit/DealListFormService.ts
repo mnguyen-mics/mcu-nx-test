@@ -1,4 +1,4 @@
-import { IDealsListService } from '../../../../services/Library/DealListsService';
+import { IDealListService } from '../../../../services/Library/DealListService';
 import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
 import {
   DealListFormData,
@@ -20,8 +20,8 @@ export interface IDealListFormService {
 
 @injectable()
 export class DealListFormService implements IDealListFormService {
-  @inject(TYPES.IDealsListService)
-  private _dealsListService: IDealsListService;
+  @inject(TYPES.IDealListService)
+  private _dealsListService: IDealListService;
 
   saveDealList(
     organisationId: string,

@@ -15,7 +15,6 @@ import Actionbar from '../../../../../components/ActionBar';
 import McsIcon from '../../../../../components/McsIcon';
 import ExportService from '../../../../../services/ExportService';
 import ReportService from '../../../../../services/ReportService';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import log from '../../../../../utils/Logger';
 import {
   parseSearch,
@@ -36,6 +35,9 @@ import ResourceTimelinePage, {
 import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
 import { getLinkedResourceIdInSelection } from '../../../../../utils/ResourceHistoryHelper';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 
 interface DisplayCampaignActionBarProps {
   campaign: DisplayCampaignInfoResource;
@@ -66,195 +68,13 @@ const formatReportView = (reportView: ReportView, key: string) => {
   return normalizeArrayOfObject(format, key);
 };
 
-const fetchAllExportData = (
-  organisationId: string,
-  campaignId: string,
-  filter: DateSearchSettings,
-) => {
-  const lookbackWindow =
-    filter.to.toMoment().unix() - filter.from.toMoment().unix();
-  const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
-  const defaultMetrics: string[] = [
-    'impressions',
-    'clicks',
-    'cpm',
-    'ctr',
-    'cpc',
-    'impressions_cost',
-    'cpa',
-  ];
-
-  const getGoalsData = () =>
-    DisplayCampaignService.getGoals(campaignId)
-      .then(res => {
-        const promises = res.data.map(goal => {
-          return GoalService.getAttributionModels(goal.goal_id).then(
-            attribution => {
-              const goalCampaign: GoalsCampaignRessource = {
-                ...goal,
-                attribution: attribution.data,
-              };
-              return goalCampaign;
-            },
-          );
-        });
-        return Promise.all(promises);
-      })
-      .then(res => {
-        return Promise.all(
-          res.map(goal => {
-            const goalAttributionPerformance: Array<Promise<Index<any>>> = [];
-            goal.attribution.forEach(attribution => {
-              const filters = [
-                `campaign_id==${campaignId}`,
-                `goal_id==${goal.goal_id}`,
-                `attribution_model_id==${attribution.id}`,
-              ];
-              const myPromise = ReportService.getConversionAttributionPerformance(
-                organisationId,
-                filter.from,
-                filter.to,
-                filters,
-                ['day'],
-                undefined,
-              )
-                .then(report => normalizeReportView(report.data.report_view))
-                .then(report => ({ ...attribution, perf: report }));
-              goalAttributionPerformance.push(myPromise);
-            });
-            return Promise.all(goalAttributionPerformance).then(
-              attribution => ({ ...goal, attribution }),
-            );
-          }),
-        );
-      });
-
-  const apiResults = Promise.all([
-    ReportService.getMediaDeliveryReport(
-      organisationId,
-      'campaign_id',
-      campaignId,
-      filter.from,
-      filter.to,
-      undefined,
-      defaultMetrics,
-      { sort: '-clicks' },
-    ),
-    ReportService.getAdDeliveryReport(
-      organisationId,
-      'campaign_id',
-      campaignId,
-      filter.from,
-      filter.to,
-      undefined,
-      defaultMetrics,
-    ),
-    ReportService.getAdGroupDeliveryReport(
-      organisationId,
-      'campaign_id',
-      campaignId,
-      filter.from,
-      filter.to,
-      undefined,
-      defaultMetrics,
-    ),
-    ReportService.getSingleDisplayDeliveryReport(
-      organisationId,
-      campaignId,
-      filter.from,
-      filter.to,
-      dimensions,
-      defaultMetrics,
-    ),
-    getGoalsData(),
-    DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, {
-      view: 'deep',
-    }),
-  ]);
-
-  return apiResults.then(responses => {
-    const mediaData = normalizeReportView(responses[0].data.report_view);
-    const adPerformanceById = formatReportView(
-      responses[1].data.report_view,
-      'message_id',
-    );
-    const adGroupPerformanceById = formatReportView(
-      responses[2].data.report_view,
-      'sub_campaign_id',
-    );
-    const overallDisplayData = normalizeReportView(
-      responses[3].data.report_view,
-    );
-    const goalData = responses[4];
-    const data = responses[5].data;
-    const campaign = {
-      ...data,
-    };
-    delete campaign.ad_groups;
-
-    const adGroups = [...data.ad_groups];
-    const formattedAdGroups = adGroups.map(item => {
-      const formattedItem = {
-        ...item,
-      };
-
-      delete formattedItem.ads;
-
-      return formattedItem;
-    });
-
-    const ads: AdInfoResource[] = [];
-    const adAdGroup: Array<{
-      ad_id: string;
-      ad_group_id: string;
-      campaign_id: string;
-    }> = [];
-
-    data.ad_groups.forEach(adGroup => {
-      adGroup.ads.forEach(ad => {
-        ads.push(ad);
-        adAdGroup.push({
-          ad_id: ad.id,
-          ad_group_id: adGroup.id,
-          campaign_id: campaign.id,
-        });
-      });
-    });
-
-    const formatListView = (a: any, b: any) => {
-      if (a) {
-        return Object.keys(a).map(c => {
-          return {
-            ...b[c],
-            ...a[c],
-          };
-        });
-      }
-      return [];
-    };
-
-    const adGroupItemsById = normalizeArrayOfObject(formattedAdGroups, 'id');
-    const adItemsById = normalizeArrayOfObject(ads, 'id');
-
-    return {
-      mediaData: mediaData,
-      adData: {
-        items: formatListView(adItemsById, adPerformanceById),
-      },
-      adGroupData: {
-        items: formatListView(adGroupItemsById, adGroupPerformanceById),
-      },
-      overallDisplayData: overallDisplayData,
-      displayData: campaign,
-      goalData: goalData,
-    };
-  });
-};
-
 class DisplayCampaignActionbar extends React.Component<
   JoinedProps,
   DisplayCampaignActionBarState
 > {
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = { exportIsRunning: false };
@@ -280,7 +100,7 @@ class DisplayCampaignActionbar extends React.Component<
       0,
     );
 
-    fetchAllExportData(organisationId, campaignId, filter)
+    this.fetchAllExportData(organisationId, campaignId, filter)
       .then(exportData => {
         // We don't want to display empty cells in the export
         exportData.mediaData.map( media => {
@@ -382,7 +202,10 @@ class DisplayCampaignActionbar extends React.Component<
           }
         >
           <McsIcon type="download" />
-          <FormattedMessage id="display.campaign.actionbar.exportButton" defaultMessage="Export" />
+          <FormattedMessage
+            id="display.campaign.actionbar.exportButton"
+            defaultMessage="Export"
+          />
         </Button>
 
         {campaign && campaign.model_version !== 'V2014_06' && (
@@ -462,6 +285,192 @@ class DisplayCampaignActionbar extends React.Component<
     });
   };
 
+  fetchAllExportData = (
+    organisationId: string,
+    campaignId: string,
+    filter: DateSearchSettings,
+  ) => {
+    const lookbackWindow =
+      filter.to.toMoment().unix() - filter.from.toMoment().unix();
+    const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
+    const defaultMetrics: string[] = [
+      'impressions',
+      'clicks',
+      'cpm',
+      'ctr',
+      'cpc',
+      'impressions_cost',
+      'cpa',
+    ];
+
+    const getGoalsData = () =>
+      this._displayCampaignService
+        .getGoals(campaignId)
+        .then(res => {
+          const promises = res.data.map(goal => {
+            return GoalService.getAttributionModels(goal.goal_id).then(
+              attribution => {
+                const goalCampaign: GoalsCampaignRessource = {
+                  ...goal,
+                  attribution: attribution.data,
+                };
+                return goalCampaign;
+              },
+            );
+          });
+          return Promise.all(promises);
+        })
+        .then(res => {
+          return Promise.all(
+            res.map(goal => {
+              const goalAttributionPerformance: Array<Promise<Index<any>>> = [];
+              goal.attribution.forEach(attribution => {
+                const filters = [
+                  `campaign_id==${campaignId}`,
+                  `goal_id==${goal.goal_id}`,
+                  `attribution_model_id==${attribution.id}`,
+                ];
+                const myPromise = ReportService.getConversionAttributionPerformance(
+                  organisationId,
+                  filter.from,
+                  filter.to,
+                  filters,
+                  ['day'],
+                  undefined,
+                )
+                  .then(report => normalizeReportView(report.data.report_view))
+                  .then(report => ({ ...attribution, perf: report }));
+                goalAttributionPerformance.push(myPromise);
+              });
+              return Promise.all(goalAttributionPerformance).then(
+                attribution => ({ ...goal, attribution }),
+              );
+            }),
+          );
+        });
+
+    const apiResults = Promise.all([
+      ReportService.getMediaDeliveryReport(
+        organisationId,
+        'campaign_id',
+        campaignId,
+        filter.from,
+        filter.to,
+        undefined,
+        defaultMetrics,
+        { sort: '-clicks' },
+      ),
+      ReportService.getAdDeliveryReport(
+        organisationId,
+        'campaign_id',
+        campaignId,
+        filter.from,
+        filter.to,
+        undefined,
+        defaultMetrics,
+      ),
+      ReportService.getAdGroupDeliveryReport(
+        organisationId,
+        'campaign_id',
+        campaignId,
+        filter.from,
+        filter.to,
+        undefined,
+        defaultMetrics,
+      ),
+      ReportService.getSingleDisplayDeliveryReport(
+        organisationId,
+        campaignId,
+        filter.from,
+        filter.to,
+        dimensions,
+        defaultMetrics,
+      ),
+      getGoalsData(),
+      this._displayCampaignService.getCampaignDisplayViewDeep(campaignId, {
+        view: 'deep',
+      }),
+    ]);
+
+    return apiResults.then(responses => {
+      const mediaData = normalizeReportView(responses[0].data.report_view);
+      const adPerformanceById = formatReportView(
+        responses[1].data.report_view,
+        'message_id',
+      );
+      const adGroupPerformanceById = formatReportView(
+        responses[2].data.report_view,
+        'sub_campaign_id',
+      );
+      const overallDisplayData = normalizeReportView(
+        responses[3].data.report_view,
+      );
+      const goalData = responses[4];
+      const data = responses[5].data;
+      const campaign = {
+        ...data,
+      };
+      delete campaign.ad_groups;
+
+      const adGroups = [...data.ad_groups];
+      const formattedAdGroups = adGroups.map(item => {
+        const formattedItem = {
+          ...item,
+        };
+
+        delete formattedItem.ads;
+
+        return formattedItem;
+      });
+
+      const ads: AdInfoResource[] = [];
+      const adAdGroup: Array<{
+        ad_id: string;
+        ad_group_id: string;
+        campaign_id: string;
+      }> = [];
+
+      data.ad_groups.forEach(adGroup => {
+        adGroup.ads.forEach(ad => {
+          ads.push(ad);
+          adAdGroup.push({
+            ad_id: ad.id,
+            ad_group_id: adGroup.id,
+            campaign_id: campaign.id,
+          });
+        });
+      });
+
+      const formatListView = (a: any, b: any) => {
+        if (a) {
+          return Object.keys(a).map(c => {
+            return {
+              ...b[c],
+              ...a[c],
+            };
+          });
+        }
+        return [];
+      };
+
+      const adGroupItemsById = normalizeArrayOfObject(formattedAdGroups, 'id');
+      const adItemsById = normalizeArrayOfObject(ads, 'id');
+
+      return {
+        mediaData: mediaData,
+        adData: {
+          items: formatListView(adItemsById, adPerformanceById),
+        },
+        adGroupData: {
+          items: formatListView(adGroupItemsById, adGroupPerformanceById),
+        },
+        overallDisplayData: overallDisplayData,
+        displayData: campaign,
+        goalData: goalData,
+      };
+    });
+  };
+
   buildMenu = () => {
     const {
       campaign,
@@ -516,12 +525,11 @@ class DisplayCampaignActionbar extends React.Component<
                       );
                     },
                     getName: (id: string) => {
-                      return DisplayCampaignService.getAdGroup(
-                        campaignId,
-                        id,
-                      ).then(response => {
-                        return response.data.name || id;
-                      });
+                      return this._displayCampaignService
+                        .getAdGroup(campaignId, id)
+                        .then(response => {
+                          return response.data.name || id;
+                        });
                     },
                     goToResource: (id: string) => {
                       history.push(
@@ -545,9 +553,7 @@ class DisplayCampaignActionbar extends React.Component<
                         id,
                         'GOAL',
                       ).then(goalId => {
-                        return GoalService.getGoal(
-                          goalId,
-                        ).then(response => {
+                        return GoalService.getGoal(goalId).then(response => {
                           return response.data.name;
                         });
                       });

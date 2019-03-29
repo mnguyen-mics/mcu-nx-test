@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import {
@@ -13,8 +12,6 @@ import {
   INITIAL_AD_GROUP_FORM_DATA,
 } from './domain';
 import { DisplayCampaignResource } from '../../../../../models/campaign/display/DisplayCampaignResource';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
-import AdGroupFormService from './AdGroupFormService';
 import messages from '../messages';
 import AdGroupForm from './AdGroupForm';
 import Loading from '../../../../../components/Loading';
@@ -23,6 +20,10 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
+import { IAdGroupFormService } from './AdGroupFormService';
 
 interface State {
   campaign?: DisplayCampaignResource;
@@ -36,6 +37,12 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditAdGroupRouteMatchParam>;
 
 class EditAdGroupPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
+
+  @lazyInject(TYPES.IAdGroupFormService)
+  private _adGroupFormService: IAdGroupFormService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -46,7 +53,9 @@ class EditAdGroupPage extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      match: { params: { campaignId, adGroupId: adGroupIdFromURLParam } },
+      match: {
+        params: { campaignId, adGroupId: adGroupIdFromURLParam },
+      },
       location,
     } = this.props;
 
@@ -55,9 +64,9 @@ class EditAdGroupPage extends React.Component<Props, State> {
     const adGroupId = adGroupIdFromURLParam || adGroupIdFromLocState;
 
     Promise.all([
-      DisplayCampaignService.getCampaignDisplay(campaignId),
+      this._displayCampaignService.getCampaignDisplay(campaignId),
       adGroupId
-        ? AdGroupFormService.loadAdGroup(
+        ? this._adGroupFormService.loadAdGroup(
             campaignId,
             adGroupId,
             !!adGroupIdFromLocState,
@@ -88,7 +97,9 @@ class EditAdGroupPage extends React.Component<Props, State> {
 
   save = (adGroupFormData: AdGroupFormData) => {
     const {
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
       notifyError,
       history,
       intl,
@@ -105,12 +116,13 @@ class EditAdGroupPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    return AdGroupFormService.saveAdGroup(
-      organisationId,
-      campaignId,
-      adGroupFormData,
-      initialAdGroupFormData,
-    )
+    return this._adGroupFormService
+      .saveAdGroup(
+        organisationId,
+        campaignId,
+        adGroupFormData,
+        initialAdGroupFormData,
+      )
       .then(adGroupId => {
         hideSaveInProgress();
         const adGroupDashboardUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`;
@@ -128,7 +140,9 @@ class EditAdGroupPage extends React.Component<Props, State> {
   onClose = () => {
     const {
       history,
-      match: { params: { adGroupId, campaignId, organisationId } },
+      match: {
+        params: { adGroupId, campaignId, organisationId },
+      },
     } = this.props;
 
     const defaultRedirectUrl = adGroupId
@@ -140,7 +154,9 @@ class EditAdGroupPage extends React.Component<Props, State> {
 
   render() {
     const {
-      match: { params: { organisationId, campaignId, adGroupId } },
+      match: {
+        params: { organisationId, campaignId, adGroupId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -195,5 +211,8 @@ export default compose(
   injectIntl,
   injectDrawer,
   injectNotifications,
-  connect(mapStateToProps, undefined),
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(EditAdGroupPage);

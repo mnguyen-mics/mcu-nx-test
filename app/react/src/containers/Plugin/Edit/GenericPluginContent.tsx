@@ -13,8 +13,7 @@ import {
   PluginInstance,
   LayoutablePlugin,
 } from '../../../models/Plugins';
-import PluginService from '../../../services/PluginService';
-import PluginInstanceService from '../../../services/PluginInstanceService';
+import { IPluginInstanceService } from '../../../services/PluginInstanceService';
 import * as actions from '../../../state/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
 import Loading from '../../../components/Loading';
@@ -29,6 +28,9 @@ import PluginCardModal from './PluginCard/PluginCardModal';
 import { withValidators } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import { Modal } from 'antd';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IPluginService } from '../../../services/PluginService';
 
 const formId = 'pluginForm';
 
@@ -48,7 +50,7 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
   pluginPresetListTitle?: FormattedMessage.MessageDescriptor;
   pluginPresetListSubTitle?: FormattedMessage.MessageDescriptor;
   breadcrumbPaths: (pluginInstance?: T) => Path[];
-  pluginInstanceService: PluginInstanceService<T>;
+  pluginInstanceService: IPluginInstanceService<T>;
   pluginInstanceId?: string;
   onClose: () => void;
   onSaveOrCreatePluginInstance: (
@@ -100,6 +102,12 @@ class PluginContent<T extends PluginInstance> extends React.Component<
   JoinedProps<T>,
   PluginContentState<T>
 > {
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
+
+  @lazyInject(TYPES.IPluginInstanceService)
+  private _pluginInstanceService: IPluginInstanceService<T>;
+
   constructor(props: JoinedProps<T>) {
     super(props);
 
@@ -173,7 +181,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
   }
 
   getPluginsList() {
-    return PluginService.getPlugins({
+    return this._pluginService.getPlugins({
       plugin_type: this.props.pluginType,
     })
       .then(res => res.data)
@@ -184,7 +192,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
 
             return [
               ...filteredPlugins,
-              PluginService.getLocalizedPluginLayout(
+              this._pluginService.getLocalizedPluginLayout(
                 pResourceWoutLayout.id,
                 pResourceWoutLayout.current_version_id,
               ).then(resultPluginLayout => {
@@ -209,7 +217,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       },
     } = this.props;
 
-    return PluginService.getPluginPresets({
+    return this._pluginService.getPluginPresets({
       organisation_id: +organisationId,
       plugin_type: this.props.pluginType,
     })
@@ -238,10 +246,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
 
   fetchInitialValues = (pInstanceId: string) => {
     const { pluginInstanceService, notifyError } = this.props;
-    const promisePluginInstance = pluginInstanceService
+    const promisePluginInstance = this._pluginInstanceService
       .getInstanceById(pInstanceId)
       .then(res => res.data);
-    const promiseInstanceProperties = pluginInstanceService
+    const promiseInstanceProperties = this._pluginInstanceService
       .getInstanceProperties(pInstanceId)
       .then(res => res.data);
     const promisePluginLayout = pluginInstanceService.getLocalizedPluginLayout(
@@ -250,7 +258,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     this.setState(
       {
         isLoadingPlugin: true,
-        isLoadingList: false
+        isLoadingList: false,
       },
       () => {
         Promise.all([
@@ -282,11 +290,11 @@ class PluginContent<T extends PluginInstance> extends React.Component<
                 pluginProperties: resultInstanceProperties,
               });
             }
-          },
-        ).catch(err => {
-          notifyError(err);
-          this.setState({ isLoadingPlugin: false });
-        });
+          })
+          .catch(err => {
+            notifyError(err);
+            this.setState({ isLoadingPlugin: false });
+          });
       },
     );
   };
@@ -311,7 +319,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     // if edition update and redirect
     if (pluginInstance.id) {
       return this.setState({ isLoadingPlugin: true }, () => {
-        const updateInstancePromise = pluginInstanceService.updatePluginInstance(pluginInstance.id!, pluginInstance)
+        const updateInstancePromise = pluginInstanceService.updatePluginInstance(
+          pluginInstance.id!,
+          pluginInstance,
+        );
 
         const updatePropertiesPromise = updateInstancePromise.then(() => {
           return this.updatePropertiesValue(
@@ -389,10 +400,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         pluginLayout: layoutablePlugin.plugin_layout,
       },
       () => {
-        PluginService.getPluginVersions(layoutablePlugin.id)
+        this._pluginService.getPluginVersions(layoutablePlugin.id)
           .then(res => {
             const lastVersion = res.data[res.data.length - 1];
-            const promiseVersionProperties = PluginService.getPluginVersionProperty(
+            const promiseVersionProperties = this._pluginService.getPluginVersionProperty(
               layoutablePlugin.id,
               layoutablePlugin.current_version_id
                 ? layoutablePlugin.current_version_id
@@ -432,7 +443,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         cancelText: formatMessage(messages.presetDeletionModalCancel),
         onOk: () => {
           if (layoutablePlugin && layoutablePlugin.plugin_preset)
-            PluginService.deletePluginPreset(
+          this._pluginService.deletePluginPreset(
               layoutablePlugin.plugin_preset.plugin_id,
               layoutablePlugin.plugin_preset.plugin_version_id,
               layoutablePlugin.plugin_preset.id,
@@ -560,18 +571,17 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     }
 
     const actionbarProps =
-      {
-        formId,
-        message: (pluginProperties.length || pluginInstanceId) && !disableFields
-          ? messages.save
+      {PluginService
           : undefined,
         onClose: onClose,
       };
 
     if (isLoadingList || (isLoadingPlugin && !isCardLayout))
-        return (<div style={{ display: 'flex', flex: 1 }}>
-        <Loading className="loading-full-screen" />
-      </div>)
+      return (
+        <div style={{ display: 'flex', flex: 1 }}>
+          <Loading className="loading-full-screen" />
+        </div>
+      );
 
     if (isCardLayout) {
       return (
@@ -599,9 +609,11 @@ class PluginContent<T extends PluginInstance> extends React.Component<
               ? initializedPresetValues 
               : this.formatInitialValues(initialValues)}
             pluginProperties={pluginProperties}
-            disableFields={(isLoadingPlugin || disableFields) ? true : false}
+            disableFields={isLoadingPlugin || disableFields ? true : false}
             pluginLayout={this.state.pluginLayout!}
-            isLoading={isLoadingPlugin || isLoadingList || !this.state.pluginLayout}
+            isLoading={
+              isLoadingPlugin || isLoadingList || !this.state.pluginLayout
+            }
             pluginVersionId={plugin.id}
             editionMode={false}
             nameField={{
@@ -627,7 +639,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             selectedTab='configuration'
           />
         </EditContentLayout>
-      )
+      );
     }
 
     if (pluginProperties.length || pluginInstanceId) {
@@ -643,19 +655,21 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             organisationId={organisationId}
             save={this.saveOrCreatePluginInstance}
             pluginProperties={pluginProperties}
-            disableFields={(isLoadingPlugin || disableFields) ? true : false}
+            disableFields={isLoadingPlugin || disableFields ? true : false}
             pluginLayout={this.state.pluginLayout}
-            isLoading={isLoadingPlugin || isLoadingList}
+            isLoading={isLoadingPlugin || isLoadingList}
             pluginVersionId={plugin.id}
             formId={formId}
             initialValues={this.formatInitialValues(initialValues)}
             showGeneralInformation={
-              showGeneralInformation !== undefined ? showGeneralInformation : true
+              showGeneralInformation !== undefined
+                ? showGeneralInformation
+                : true
             }
             renderSpecificFields={renderSpecificFields}
           />
         </EditContentLayout>
-      )
+      );
     }
 
     return (
@@ -667,11 +681,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
           onSelect={this.onSelectPlugin}
           availablePlugins={this.state.availablePlugins}
           listTitle={this.props.listTitle}
-          listSubTitle={this.props.listSubTitle}          
+          listSubTitle={this.props.listSubTitle}
         />
       </EditContentLayout>
     );
-
   }
 }
 

@@ -3,8 +3,10 @@ import { Modal, Button, Select } from 'antd';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
 import { OptionProps } from 'antd/lib/select';
-import PluginService from '../../../services/PluginService';
 import { ButtonStyleless, McsIcon } from '../../../components';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IPluginService } from '../../../services/PluginService';
 
 const Option = Select.Option;
 
@@ -34,6 +36,9 @@ interface State {
 type Props = PluginSelectModalProps & InjectedIntlProps;
 
 class PluginSelectModal extends React.Component<Props, State> {
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -130,9 +135,7 @@ class PluginSelectModal extends React.Component<Props, State> {
       this.setState({
         open: false,
       });
-
     }
-
   };
 
   showModal = () => {
@@ -154,7 +157,8 @@ class PluginSelectModal extends React.Component<Props, State> {
       options: { disabled },
     } = this.props;
 
-    PluginService.getAdLayouts(organisationId, rendererVersion)
+    this._pluginService
+      .getAdLayouts(organisationId, rendererVersion)
       .then(resp => resp.data)
       .then(adLayouts => {
         this.setState({
@@ -179,7 +183,8 @@ class PluginSelectModal extends React.Component<Props, State> {
       options: { disabled },
     } = this.props;
 
-    PluginService.getStyleSheets(organisationId)
+    this._pluginService
+      .getStyleSheets(organisationId)
       .then(resp => resp.data)
       .then(styleSheets => {
         this.setState({
@@ -205,7 +210,8 @@ class PluginSelectModal extends React.Component<Props, State> {
     } = this.props;
 
     this.setState({ loading: true });
-    PluginService.getAdLayoutVersion(organisationId, adLayoutId)
+    this._pluginService
+      .getAdLayoutVersion(organisationId, adLayoutId)
       .then(resp => resp.data)
       .then(versions => {
         this.setState({
@@ -237,7 +243,8 @@ class PluginSelectModal extends React.Component<Props, State> {
 
     this.setState({ loading: true });
 
-    PluginService.getStyleSheetsVersion(organisationId, styleSheetId)
+    this._pluginService
+      .getStyleSheetsVersion(organisationId, styleSheetId)
       .then(resp => resp.data)
       .then(versions => {
         this.setState({

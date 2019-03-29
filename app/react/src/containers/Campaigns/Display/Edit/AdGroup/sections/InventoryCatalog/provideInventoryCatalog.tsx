@@ -9,7 +9,7 @@ import injectDatamart, {
 } from '../../../../../../Datamart/injectDatamart';
 import PlacementListsService from '../../../../../../../services/Library/PlacementListsService';
 import { PlacementListResource } from '../../../../../../../models/placement/PlacementListResource';
-import { IDealsListService } from '../../../../../../../services/Library/DealListsService';
+import { IDealListService } from '../../../../../../../services/Library/DealListService';
 import { DealsListResource } from '../../../../../../../models/dealList/dealList';
 import { IKeywordListService } from '../../../../../../../services/Library/KeywordListsService';
 import { TYPES } from '../../../../../../../constants/types';
@@ -45,8 +45,8 @@ const provideInventoryCatalog = (
     @lazyInject(TYPES.IKeywordListService)
     private _keywordListService: IKeywordListService;
 
-    @lazyInject(TYPES.IDealsListService)
-    private _dealsListService: IDealsListService;
+    @lazyInject(TYPES.IDealListService)
+    private _dealsListService: IDealListService;
 
     @lazyInject(TYPES.ICatalogService)
     private _catalogService: ICatalogService;

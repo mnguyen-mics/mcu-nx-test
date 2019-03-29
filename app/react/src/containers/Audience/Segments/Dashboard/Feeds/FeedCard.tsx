@@ -14,18 +14,21 @@ import injectNotifications, {
 import { compose } from 'recompose';
 import { Modal, Dropdown, Menu, Tooltip } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import PluginService from '../../../../../services/PluginService';
+import { IPluginService } from '../../../../../services/PluginService';
 import PluginCardModal, {
   PluginCardModalProps,
 } from '../../../../Plugin/Edit/PluginCard/PluginCardModal';
 import { PluginLayout } from '../../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../../models/plugin';
 import { withRouter, RouteComponentProps } from 'react-router';
-import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { PluginCardModalTab } from '../../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import { withValidators } from '../../../../../components/Form';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
+import { IAudienceSegmentFeedService } from '../../../../../services/AudienceSegmentFeedService';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { interfaces } from 'inversify';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -121,9 +124,15 @@ const messages = defineMessages({
 
 class FeedCard extends React.Component<Props, FeedCardState> {
   id: string = cuid();
-  feedService: AudienceSegmentFeedService;
-  // @lazyInject(TYPES.IAudienceSegmentService)
-  // private _audienceSegmentService: IAudienceSegmentService;
+  private feedService: IAudienceSegmentFeedService;
+
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
+
+  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
+  private _audienceSegmentFeedServiceFactory: interfaces.Factory<
+    IAudienceSegmentFeedService
+  >;
 
   constructor(props: Props) {
     super(props);
@@ -134,39 +143,45 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       modalTab: 'configuration',
       pluginProperties: [],
     };
+  }
 
+  componentWillMount() {
     if (this.props.feed) {
-      this.feedService = new AudienceSegmentFeedService(
+      // this.feedService = new AudienceSegmentFeedService(
+      //   this.props.segmentId,
+      //   this.props.feed.type,
+      // );
+      this.feedService = this._audienceSegmentFeedServiceFactory(
         this.props.segmentId,
         this.props.feed.type,
-      );
+      ) as IAudienceSegmentFeedService;
     }
   }
 
   componentDidMount() {
     const { feed } = this.props;
 
-    PluginService.findPluginFromVersionId(feed.version_id)
+    this._pluginService
+      .findPluginFromVersionId(feed.version_id)
       .then(res => {
         if (
           res !== null &&
           res.status !== 'error' &&
           res.data.current_version_id
         ) {
-          PluginService.getLocalizedPluginLayout(
-            res.data.id,
-            res.data.current_version_id,
-          ).then(resultPluginLayout => {
-            if (resultPluginLayout !== null) {
-              this.setState({
-                cardHeaderTitle: resultPluginLayout.metadata.display_name,
-                cardHeaderThumbnail:
-                  resultPluginLayout.metadata.small_icon_asset_url,
-                pluginLayout: resultPluginLayout,
-                isLoading: false,
-              });
-            }
-          });
+          this._pluginService
+            .getLocalizedPluginLayout(res.data.id, res.data.current_version_id)
+            .then(resultPluginLayout => {
+              if (resultPluginLayout !== null) {
+                this.setState({
+                  cardHeaderTitle: resultPluginLayout.metadata.display_name,
+                  cardHeaderThumbnail:
+                    resultPluginLayout.metadata.small_icon_asset_url,
+                  pluginLayout: resultPluginLayout,
+                  isLoading: false,
+                });
+              }
+            });
         }
       })
       .catch(() => this.setState({ isLoading: false }));
@@ -260,9 +275,10 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   getPluginProperties = () => {
     const { feed } = this.props;
 
-    return PluginService.findPluginFromVersionId(feed.version_id)
+    return this._pluginService
+      .findPluginFromVersionId(feed.version_id)
       .then(res =>
-        PluginService.getPluginVersionProperty(
+        this._pluginService.getPluginVersionProperty(
           res.data.id,
           res.data.current_version_id!,
         ),
@@ -298,16 +314,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
-      propertiesPromises.push(
-        updatePromise(
-          organisationId,
-          pluginInstanceId,
-          item.technical_name,
-          item,
-        ),
-      );
-    });
     return Promise.all(propertiesPromises);
+    })
   };
 
   saveOrCreatePluginInstance = (
@@ -370,9 +378,13 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const editFeed = () => {
       switch (feed.type) {
         case 'EXTERNAL_FEED':
-          return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/external/${feed.id}/edit`;
+          return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/external/${
+            feed.id
+          }/edit`;
         case 'TAG_FEED':
-          return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/tag/${feed.id}/edit`;
+          return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/tag/${
+            feed.id
+          }/edit`;
       }
     };
 
@@ -406,7 +418,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       if (!this.state.pluginLayout) {
         return history.push(editFeed());
       } else {
-        this.setState({ opened: true, modalTab: tab, isLoadingCard: true });
+        this.setState({ opened: true });
+        this.setState({ isLoadingCard: true });
         return Promise.all([
           this.getPluginProperties(),
           this.getInitialValues(),
