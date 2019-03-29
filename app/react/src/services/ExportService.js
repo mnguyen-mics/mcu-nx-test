@@ -288,6 +288,12 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
    */
   const sanitizeSheetNames = (name) => {
 
+    // If a sheet has no name, the excel spreasheet won't work
+    // Throw an error
+    if (!name) {
+      throw new Error("An Excel spreadsheet can't have no name.");
+    }
+
     return name
       .replace(/\\/gm, '')
       .replace(/\//gm, '')
@@ -306,6 +312,10 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
    * @param name
    */
   const ellispizeAttributionName = (name) => {
+
+    if (!name) {
+      return 'undefined';
+    }
 
     if (name.length > 20) {
       return `${name.substring(0, 15)}...`;
