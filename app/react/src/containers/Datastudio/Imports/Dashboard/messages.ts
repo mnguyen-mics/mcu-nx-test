@@ -62,6 +62,10 @@ export default defineMessages({
     id: 'imports.dashboard.actionbar.notEnded',
     defaultMessage: 'Not ended',
   },
+  notCreated: {
+    id: 'imports.dashboard.actionbar.notCreated',
+    defaultMessage: 'Not created',
+  },
   status: {
     id: 'imports.table.column.status',
     defaultMessage: 'Status',
