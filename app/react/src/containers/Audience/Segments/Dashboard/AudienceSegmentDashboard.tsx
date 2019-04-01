@@ -29,7 +29,7 @@ import * as SessionHelper from '../../../../state/Session/selectors';
 interface State {
   loading: boolean;
   dashboard: {
-    report: AudienceReport;
+    reports: AudienceReport;
     isLoading: boolean;
   };
   datamarts: DatamartWithMetricResource[];
@@ -59,7 +59,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       loading: true,
       dashboard: {
         isLoading: true,
-        report: [],
+        reports: [],
       },
       datamarts: [],
     };
@@ -152,7 +152,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       this.setState({
         dashboard: {
           isLoading: false,
-          report: normalizeReportView(res.data.report_view),
+          reports: normalizeReportView(res.data.report_view),
         },
       }),
     );
@@ -167,7 +167,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         display: (
           <Overview
             isFetching={dashboard.isLoading}
-            dataSource={dashboard.report}
+            dataSource={dashboard.reports}
           />
         ),
       },
@@ -176,7 +176,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         display: (
           <AdditionDeletion
             isFetching={dashboard.isLoading}
-            dataSource={dashboard.report}
+            dataSource={dashboard.reports}
           />
         ),
       },

@@ -98,12 +98,6 @@ class Overview extends React.Component<Props> {
           message: messagesMap[metric],
         };
       }),
-      // yKeys: [
-      //   { key: 'user_points', message: messages.userPoints },
-      //   { key: 'user_accounts', message: messages.userAccounts },
-      //   { key: 'emails', message: messages.emails },
-      //   { key: 'desktop_cookie_ids', message: messages.desktopCookieId },
-      // ],
       colors: [
         colors['mcs-warning'],
         colors['mcs-info'],
