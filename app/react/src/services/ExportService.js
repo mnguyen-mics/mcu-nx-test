@@ -495,6 +495,84 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   exportData(sheets, `${organisationId}_goals`, 'xlsx');
 };
 
+const exportGoal = (organisationId, goalData, attributionsData, filter, translations, formatMessage) => {
+  const exportFilter = {
+    ...filter,
+    from: filter.from.toMoment().format('YYYY-MM-DD'),
+    to: filter.to.toMoment().format('YYYY-MM-DD'),
+  };
+
+  const sanitizeSheetNames = (name) => {
+    if (!name) {
+      throw new Error("An Excel spreadsheet can't have no name.");
+    }
+
+    return name
+      .replace(/\\/gm, '')
+      .replace(/\//gm, '')
+      .replace(/\?/gm, '')
+      .replace(/\*/gm, '')
+      .replace(/\[/gm, '')
+      .replace(/\]/gm, '');
+  };
+
+  const headersMap = [
+    { name: 'day', translation: translations.DAY },
+    { name: 'value', translation: translations.VALUE },
+    { name: 'price', translation: translations.PRICE },
+    { name: 'conversions', translation: translations.CONVERSIONS },
+  ];
+
+  const reportTypeHeaders = {
+    SOURCE: [
+      { name: 'marketing_channel', translation: translations.MARKETING_CHANNEL },
+      { name: 'source', translation: translations.SOURCE },
+      { name: 'interaction_type', translation: translations.INTERACTION_TYPE },
+      { name: 'weighted_conversions', translation: translations.WEIGHTED_CONVERSIONS },
+      { name: 'weighted_value', translation: translations.WEIGHTED_VALUE },
+      { name: 'interaction_to_conversion_duration', translation: translations.INTERACTION_TO_CONVERSION_DURATION },
+    ],
+    CAMPAIGN: [
+      { name: 'campaign_id', translation: translations.CAMPAIGN_ID },
+      { name: 'campaign_name', translation: translations.CAMPAIGN_NAME },
+      { name: 'interaction_type', translation: translations.INTERACTION_TYPE },
+      { name: 'weighted_conversions', translation: translations.WEIGHTED_CONVERSIONS },
+      { name: 'weighted_value', translation: translations.WEIGHTED_VALUE },
+      { name: 'interaction_to_conversion_duration', translation: translations.INTERACTION_TO_CONVERSION_DURATION },
+    ],
+    CREATIVE: [
+      { name: 'creative_id', translation: translations.CREATIVE_ID },
+      { name: 'creative_name', translation: translations.CREATIVE_NAME },
+      { name: 'interaction_type', translation: translations.INTERACTION_TYPE },
+      { name: 'weighted_conversions', translation: translations.WEIGHTED_CONVERSIONS },
+      { name: 'weighted_value', translation: translations.WEIGHTED_VALUE },
+      { name: 'interaction_to_conversion_duration', translation: translations.INTERACTION_TO_CONVERSION_DURATION },
+    ]
+  };
+
+  const attributionSheets = attributionsData.map(attributionData => {
+    if (attributionData.normalized_report_view.length > 0) {
+      return addSheet(
+        attributionData.attribution_model_id
+          .concat('_', sanitizeSheetNames(attributionData.attribution_model_name))
+          .concat('_', attributionData.report_type),
+        attributionData.normalized_report_view,
+        reportTypeHeaders[attributionData.report_type],
+        exportFilter,
+        formatMessage
+      );
+    }
+
+    return undefined;
+  });
+
+  const sheets = [
+    addSheet(translations.GOAL_EXPORT_TITLE, goalData, headersMap, exportFilter, formatMessage)
+  ].concat(attributionSheets);
+
+  exportData(sheets, `${organisationId}_goal`, 'xlsx');
+};
+
 /**
  * Audience Segments
  */
@@ -635,6 +713,7 @@ const exportCreativeAdServingSnippet = (organisationId, campaignName, data, form
 export default {
   exportData,
   exportGoals,
+  exportGoal,
   exportEmailCampaigns,
   exportEmailCampaignDashboard,
   exportAudienceSegments,
