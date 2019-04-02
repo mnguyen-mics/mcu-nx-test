@@ -175,7 +175,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             additionalProps: {
               node: scenarioNodeShape,
               close: close,
-              breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
+              breadCrumbPaths: [{ name: node.storylineNodeModel.node.name ? node.storylineNodeModel.node.name : "" }],
               disabled: viewer,
               onSubmit: (formData: AutomationFormDataType) => {
                 nodeOperations.updateNode(

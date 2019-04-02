@@ -152,6 +152,7 @@ class EmailCampaignListPage extends Component {
             const newFilter = {
               ...filter,
               currentPage: filter.currentPage - 1,
+              automated: true,
             };
             reloadEmailCampaign();
             history.replace({

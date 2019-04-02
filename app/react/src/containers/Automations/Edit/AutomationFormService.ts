@@ -38,7 +38,6 @@ import EmailCampaignFormService, {
 import { isFakeId } from '../../../utils/FakeIdHelper';
 import { IDisplayCampaignFormService } from '../../Campaigns/Display/Edit/DisplayCampaignFormService';
 import DisplayCampaignService from '../../../services/DisplayCampaignService';
-import AdGroupFormService from '../../Campaigns/Display/Edit/AdGroup/AdGroupFormService';
 
 interface CustomEdgeResource {
   source_id: string;
@@ -80,13 +79,6 @@ export class AutomationFormService implements IAutomationFormService {
     const storylinePromise = this._scenarioService.getScenarioStoryline(
       automationId,
     );
-
-    // const nodePromise = this._scenarioService.getScenarioNodes(automationId).then(r => {
-    //   r.data.map(n => {
-    //     this.nodeIds.push(n.id)
-    //   })
-    //   return r;
-    // });
 
     const nodePromise = (datamartId: string) => this.loadScenarioNode(automationId, datamartId);
 
@@ -139,37 +131,21 @@ export class AutomationFormService implements IAutomationFormService {
         let getPromise: Promise<ScenarioNodeShape> = Promise.resolve().then(() => ({ ...n }));
         switch(n.type) {
           case 'DISPLAY_CAMPAIGN':
-            getPromise = DisplayCampaignService
-              .getCampaignDisplay(n.campaign_id)
-              .then(campaignResp => {
-                return AdGroupFormService.loadAdGroup(
-                  n.campaign_id,
-                  n.ad_group_id,
-                ).then(adGroupResp => {
-                  const initialValues = {
-                    campaign: campaignResp.data,
-                    name: n.name,
-                    goalFields: [],
-                    adGroupFields: [{
-                      key: adGroupResp.adGroup.id!,
-                      model: {
-                        adFields: adGroupResp.adFields,
-                        adGroup: {...adGroupResp.adGroup},
-                        bidOptimizerFields: adGroupResp.bidOptimizerFields,
-                        locationFields: adGroupResp.locationFields,
-                        inventoryCatalFields: adGroupResp.inventoryCatalFields,
-                        segmentFields: adGroupResp.segmentFields
-                      }
-                    }]
-                  }
-                  return {
-                    ...n,
-                    formData: initialValues,
-                    initialFormData: initialValues,
-                  }
-                });
-              },
-            )
+            getPromise = this._displayCampaignFormService
+              .loadCampaign(n.campaign_id)
+              .then(resp => {
+                const initialValues = {
+                  campaign: resp.campaign,
+                  name: resp.campaign.name!,
+                  goalFields: resp.goalFields,
+                  adGroupFields: resp.adGroupFields
+                }
+                return {
+                  ...n,
+                  formData: initialValues,
+                  initialFormData: initialValues
+                }
+              })
           break;
           case 'EMAIL_CAMPAIGN':
             getPromise = EmailCampaignFormService.loadCampaign(n.campaign_id).then(
@@ -621,7 +597,6 @@ export class AutomationFormService implements IAutomationFormService {
     initialFormData: DisplayCampaignAutomationFormData = INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
     campaignId?: string,
   ): Promise<{ ad_group_id?: string; campaign_id: string }> => {
-
     return this._displayCampaignFormService
       .saveCampaign(organisationId, formData ? formData : initialFormData, initialFormData)
       .then(res => DisplayCampaignService.getAdGroups(res).then(r => ({ campaign_id: res, ad_group_id: r && r.data.length ? r.data[0].id : undefined})))

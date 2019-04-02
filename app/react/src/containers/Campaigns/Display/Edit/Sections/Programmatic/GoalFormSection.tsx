@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import cuid from 'cuid';
 import { Modal } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -50,9 +49,11 @@ import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectD
 import GoalService from '../../../../../../services/GoalService';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
+import { generateFakeId } from '../../../../../../utils/FakeIdHelper';
 
 export interface GoalFormSectionProps extends ReduxFormChangeProps {
   small?: boolean;
+  disabled?: boolean;
 }
 
 type Props = GoalFormSectionProps &
@@ -139,7 +140,7 @@ class GoalFormSection extends React.Component<Props, State> {
           .then(goalResource => {
             const triggerMode = goalResource.new_query_id ? 'QUERY' : 'PIXEL';
             newFields.push({
-              key: cuid(),
+              key: generateFakeId(),
               model,
               meta: { name: goal.name, triggerMode: triggerMode },
             });
@@ -172,7 +173,7 @@ class GoalFormSection extends React.Component<Props, State> {
     } else {
       newFields.push(...fields.getAll());
       newFields.push({
-        key: cuid(),
+        key: generateFakeId(),
         model: goalFormData,
         meta: {
           name: goalFormData.goal.name || '',
@@ -259,7 +260,7 @@ class GoalFormSection extends React.Component<Props, State> {
           .then(goalResource => {
             if (field && _field.key === field.key) {
               newFields.push({
-                key: cuid(),
+                key: generateFakeId(),
                 model: {
                   goal_id: goalId,
                   goal_selection_type: 'CONVERSION',

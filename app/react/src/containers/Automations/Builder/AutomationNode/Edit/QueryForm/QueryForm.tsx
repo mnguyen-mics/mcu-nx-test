@@ -155,9 +155,9 @@ class QueryAutomationForm extends React.Component<Props, State> {
           edition={true}
           paths={breadCrumbPaths}
         >
-          <Button onClick={onSave} type="primary" className={"mcs-primary"}>
+          {!disabled && <Button onClick={onSave} type="primary" className={"mcs-primary"}>
             Save
-          </Button>
+          </Button>}
           
           <McsIcon
             type="close"

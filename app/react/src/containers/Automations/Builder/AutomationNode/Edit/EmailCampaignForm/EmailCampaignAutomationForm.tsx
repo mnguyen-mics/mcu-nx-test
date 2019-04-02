@@ -112,12 +112,13 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
   };
 
   render() {
-    const { breadCrumbPaths, handleSubmit, close } = this.props;
+    const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
+      disabled: disabled
     };
 
     const sections = this.buildFormSections();
