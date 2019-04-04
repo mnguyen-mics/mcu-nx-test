@@ -32,6 +32,7 @@ export interface IImportService {
   getImportExecutions: (
     datamartId: string,
     importId: string,
+    options: object
   ) => Promise<DataListResponse<any>>;
 }
 
@@ -87,8 +88,9 @@ export class ImportService implements IImportService {
   getImportExecutions(
     datamartId: string,
     importId: string,
+    options: object = {}
   ): Promise<DataListResponse<any>> {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}/executions`;
-    return ApiService.getRequest(endpoint, {});
+    return ApiService.getRequest(endpoint, options);
   }
 }

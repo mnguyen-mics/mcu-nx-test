@@ -31,6 +31,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import { McsIcon } from '../../../../components';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 
 const { Content } = Layout;
 
@@ -165,7 +166,7 @@ class Imports extends React.Component<JoinedProps, State> {
   fetchImportAndExecutions = (
     datamartId: string,
     importId: string,
-    options: object,
+    options: Filters,
   ) => {
     const fetchImport = this._importService
       .getImport(datamartId, importId)
@@ -174,8 +175,13 @@ class Imports extends React.Component<JoinedProps, State> {
         this.setState({ importObject: { item: res, isLoading: false } }),
       )
       .catch(err => log(err));
+
+    const params = {
+      ...getPaginatedApiParam(options.currentPage, options.pageSize),
+    }
+    
     const fetchImportExecutions = this._importService
-      .getImportExecutions(datamartId, importId)
+      .getImportExecutions(datamartId, importId, params)
       .then(res =>
         this.setState({
           importExecutions: {
