@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginEditSelector from './PluginEditSelector';
-import PluginEditForm from './PluginEditForm';
+import PluginEditForm, { SpecificFieldsFunction } from './PluginEditForm';
 import {
   PluginResource,
   PluginProperty,
@@ -59,6 +59,7 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
   showedMessage?: React.ReactNode;
   disableFields?: boolean;
   isCardLayout?: boolean;
+  renderSpecificFields?: SpecificFieldsFunction;
 }
 
 interface PluginContentState<T> {
@@ -405,7 +406,8 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       pluginInstanceId,
       showGeneralInformation,
       disableFields,
-      isCardLayout
+      isCardLayout,
+      renderSpecificFields
     } = this.props;
 
     const { pluginProperties, isLoadingList, isLoadingPlugin, plugin, initialValues } = this.state;
@@ -510,6 +512,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             showGeneralInformation={
               showGeneralInformation !== undefined ? showGeneralInformation : true
             }
+            renderSpecificFields={renderSpecificFields}
           />
         </EditContentLayout>
       )
@@ -524,8 +527,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
           onSelect={this.onSelectPlugin}
           availablePlugins={this.state.availablePlugins}
           listTitle={this.props.listTitle}
-          listSubTitle={this.props.listSubTitle}
-          
+          listSubTitle={this.props.listSubTitle}          
         />
       </EditContentLayout>
     );
