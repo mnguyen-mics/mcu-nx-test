@@ -6,6 +6,7 @@ import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugi
 import { AttributionModel, PluginResource, PluginInstance, PluginProperty } from '../../../../../models/Plugins';
 import AttributionModelService from '../../../../../services/AttributionModelService';
 import { Omit } from '../../../../../utils/Types';
+import { DefaultSelect, FormSelectField } from '../../../../../components/Form';
 
 const AttributionModelPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AttributionModel>>
 
@@ -25,6 +26,22 @@ const messages = defineMessages({
   attributionModelEditBreadcrumb: {
     id: 'attributionmodel.create.breadcrumb.edittitle',
     defaultMessage: 'Edit {name}',
+  },
+  attributionModelModeLabel: {
+    id: 'attributionmodel.mode.label',
+    defaultMessage: 'Mode',
+  },
+  attributionModelModeStrict: {
+    id: 'attributionmodel.mode.strict',
+    defaultMessage: 'Strict',
+  },
+  attributionModelModeDiscovery: {
+    id: 'attributionmodel.mode.discovery',
+    defaultMessage: 'Dicovery',
+  },
+  attributionModelModeTooltip: {
+    id: 'attributionmodel.mode.tooltip',
+    defaultMessage: "'Strict' mode allows you to attribute only the campaigns that are linked to your goal, whereas 'discovery' helps your attribute the latest matching campaigns. By default disovery will be applied",
   },
 });
 
@@ -88,6 +105,32 @@ class EditAttributionModelPage extends React.Component<Props> {
         : formatMessage(messages.attributionModelNewBreadcrumb) },
     ];    
 
+
+    const renderSpecificFields = (disabled: boolean, prefix: string) => {
+      return (
+        <FormSelectField 
+          name={`${prefix}.mode`}
+          component={DefaultSelect}
+          formItemProps={{
+            label: formatMessage(messages.attributionModelModeLabel),
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.attributionModelModeTooltip),
+          }}
+          options={[
+            {
+              title: formatMessage(messages.attributionModelModeStrict),
+              value: 'STRICT',
+            },
+            {
+              title: formatMessage(messages.attributionModelModeDiscovery),
+              value: 'DISCOVERY',
+            },
+          ]}
+          disabled={disabled}
+        />)
+    }
+
     return (
       <AttributionModelPluginContent
         pluginType={'ATTRIBUTION_PROCESSOR'}
@@ -99,6 +142,7 @@ class EditAttributionModelPage extends React.Component<Props> {
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.saveOrCreatePluginInstance}
         onClose={this.redirect}
+        renderSpecificFields={renderSpecificFields}
       />
     );
   }
