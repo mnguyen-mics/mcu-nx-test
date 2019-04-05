@@ -128,12 +128,13 @@ class ImportContent extends React.Component<Props, ImportContentState> {
           pageSize,
           datamartId
         } = parseSearch(nextSearch, this.getSearchSetting(organisationId));
+        const selectedDatamartId = datamartId ? datamartId : this.state.selectedDatamartId;
         this.setState({
           filter: {
             currentPage: currentPage,
             pageSize: pageSize,
           },
-          selectedDatamartId: datamartId
+          selectedDatamartId: selectedDatamartId
         });
       }
     }
