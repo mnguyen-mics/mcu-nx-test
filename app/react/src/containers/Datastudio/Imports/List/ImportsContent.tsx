@@ -37,7 +37,6 @@ type Props = RouteComponentProps<RouterProps> &
   MapStateToProps;
 
 class ImportContent extends React.Component<Props, ImportContentState> {
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -70,18 +69,19 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         state: { reloadDataSource: true },
       });
     } else {
-      const {
-        currentPage,
-        pageSize,
-        datamartId,
-      } = parseSearch(search, this.getSearchSetting(organisationId));
-      const selectedDatamartId = datamartId ? datamartId : this.state.selectedDatamartId;
+      const { currentPage, pageSize, datamartId } = parseSearch(
+        search,
+        this.getSearchSetting(organisationId),
+      );
+      const selectedDatamartId = datamartId
+        ? datamartId
+        : this.state.selectedDatamartId;
       this.setState({
         filter: {
           currentPage: currentPage,
           pageSize: pageSize,
         },
-        selectedDatamartId: selectedDatamartId
+        selectedDatamartId: selectedDatamartId,
       });
     }
   }
@@ -123,18 +123,19 @@ class ImportContent extends React.Component<Props, ImportContentState> {
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const {
-          currentPage,
-          pageSize,
-          datamartId
-        } = parseSearch(nextSearch, this.getSearchSetting(organisationId));
-        const selectedDatamartId = datamartId ? datamartId : this.state.selectedDatamartId;
+        const { currentPage, pageSize, datamartId } = parseSearch(
+          nextSearch,
+          this.getSearchSetting(organisationId),
+        );
+        const selectedDatamartId = datamartId
+          ? datamartId
+          : this.state.selectedDatamartId;
         this.setState({
           filter: {
             currentPage: currentPage,
             pageSize: pageSize,
           },
-          selectedDatamartId: selectedDatamartId
+          selectedDatamartId: selectedDatamartId,
         });
       }
     }
@@ -162,16 +163,15 @@ class ImportContent extends React.Component<Props, ImportContentState> {
   };
 
   onFilterChange = (newFilter: any) => {
-    const {
-      datamartId,
-      ...restFilter
-    } = newFilter;
+    const { datamartId, ...restFilter } = newFilter;
 
-    const calculatedDatamartId = datamartId ? datamartId : this.state.selectedDatamartId
+    const calculatedDatamartId = datamartId
+      ? datamartId
+      : this.state.selectedDatamartId;
 
     this.updateLocationSearch({
       datamartId: calculatedDatamartId,
-      ...restFilter    
+      ...restFilter,
     });
   };
 
@@ -180,9 +180,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
   }
 
   render() {
-    const { filter,
-      selectedDatamartId,
-    } = this.state;
+    const { filter, selectedDatamartId } = this.state;
 
     return (
       <ImportsContentContainer
@@ -191,8 +189,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         onFilterChange={this.onFilterChange}
         noFilterDatamart={false}
       />
-    )
-
+    );
   }
 }
 

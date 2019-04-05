@@ -122,11 +122,20 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       const formData = new FormData();
 
       const file = importFile[0];
-      const fileContent = await this.onFileUpdate(file)
-      const formattedFile = new Blob([fileContent as any], { type: importObject.mime_type === "TEXT_CSV" ? "text/csv" : "application/x-ndjson" })
+      const fileContent = await this.onFileUpdate(file);
+      const formattedFile = new Blob([fileContent as any], {
+        type:
+          importObject.mime_type === 'TEXT_CSV'
+            ? 'text/csv'
+            : 'application/x-ndjson',
+      });
       formData.append('file', formattedFile, file.name);
-      if (importObject.mime_type === 'TEXT_CSV') { formData.append('type', 'text/csv') }
-      if (importObject.mime_type === 'APPLICATION_X_NDJSON') { formData.append('type', 'application/x-ndjson') }
+      if (importObject.mime_type === 'TEXT_CSV') {
+        formData.append('type', 'text/csv');
+      }
+      if (importObject.mime_type === 'APPLICATION_X_NDJSON') {
+        formData.append('type', 'application/x-ndjson');
+      }
 
       this._importService
         .createImportExecution(datamartId, importId, formData)

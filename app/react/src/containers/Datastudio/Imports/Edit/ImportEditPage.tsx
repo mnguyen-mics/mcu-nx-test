@@ -126,9 +126,10 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
       },
     } = this.props;
 
-    const url = (location.state && location.state.from) ?
-      location.state.from :
-      `/v2/o/${organisationId}/datastudio/imports`;
+    const url =
+      location.state && location.state.from
+        ? location.state.from
+        : `/v2/o/${organisationId}/datastudio/imports`;
 
     return history.push(url);
   };
@@ -211,10 +212,10 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
 
     const importName = importId
       ? formatMessage(messages.editImports, {
-        name: this.state.importData.name
-          ? this.state.importData.name
-          : formatMessage(messages.imports),
-      })
+          name: this.state.importData.name
+            ? this.state.importData.name
+            : formatMessage(messages.imports),
+        })
       : formatMessage(messages.newImports);
     const breadcrumbPaths = [
       {
@@ -249,14 +250,14 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
         breadCrumbPaths={breadcrumbPaths}
       />
     ) : (
-        <EditContentLayout
-          paths={breadcrumbPaths}
-          formId="EXPORT"
-          onClose={this.close}
-        >
-          <DatamartSelector onSelect={this.onDatamartSelect} />
-        </EditContentLayout>
-      );
+      <EditContentLayout
+        paths={breadcrumbPaths}
+        formId="EXPORT"
+        onClose={this.close}
+      >
+        <DatamartSelector onSelect={this.onDatamartSelect} />
+      </EditContentLayout>
+    );
   }
 }
 

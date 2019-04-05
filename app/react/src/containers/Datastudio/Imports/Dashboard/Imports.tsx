@@ -178,8 +178,8 @@ class Imports extends React.Component<JoinedProps, State> {
 
     const params = {
       ...getPaginatedApiParam(options.currentPage, options.pageSize),
-    }
-    
+    };
+
     const fetchImportExecutions = this._importService
       .getImportExecutions(datamartId, importId, params)
       .then(res =>

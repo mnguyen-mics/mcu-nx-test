@@ -13,10 +13,11 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IImportService } from '../../../../services/ImportService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { formatDocumentTypeText, formatMimeTypeText } from "../domain";
+import { formatDocumentTypeText, formatMimeTypeText } from '../domain';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import {
-  updateSearch, PaginationSearchSettings,
+  updateSearch,
+  PaginationSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
 import DatamartService from '../../../../services/DatamartService';
 import { notifyError } from '../../../../state/Notifications/actions';
@@ -45,7 +46,10 @@ type Props = ImportsContentContainerProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps;
 
-class ImportsContentContainer extends React.Component<Props, ImportsContentContainerState>{
+class ImportsContentContainer extends React.Component<
+  Props,
+  ImportsContentContainerState
+> {
   @lazyInject(TYPES.IImportService)
   private _importService: IImportService;
 
@@ -80,8 +84,8 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
       .then(res => {
         this.setState({
           datamarts: res.data,
-          loading: false
-        })
+          loading: false,
+        });
       })
       .catch(err => {
         this.setState({
@@ -111,18 +115,14 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
     } = nextProps;
 
     if (organisationId !== nextOrganisationId) {
-      DatamartService.getDatamarts(nextOrganisationId)
-        .then(res => {
-          this.setState({
-            datamarts: res.data,
-          });
+      DatamartService.getDatamarts(nextOrganisationId).then(res => {
+        this.setState({
+          datamarts: res.data,
         });
+      });
     }
 
-    if (
-      (filter !== nextFilter) ||
-      (datamartId !== nextDatamartId)
-    ) {
+    if (filter !== nextFilter || datamartId !== nextDatamartId) {
       this.fetchImport(nextDatamartId, nextFilter);
     }
   }
@@ -155,9 +155,7 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
       datamartId,
     } = this.props;
 
-    const {
-      data
-    } = this.state;
+    const { data } = this.state;
 
     Modal.confirm({
       iconType: 'exclamation-circle',
@@ -198,10 +196,10 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
     } = this.props;
 
     history.push({
-     pathname: `/v2/o/${organisationId}/datastudio/datamart/${imp.datamart_id}/imports/${
-      imp.id
-      }/edit`,
-      state: { from: `${location.pathname}${location.search}`}
+      pathname: `/v2/o/${organisationId}/datastudio/datamart/${
+        imp.datamart_id
+      }/imports/${imp.id}/edit`,
+      state: { from: `${location.pathname}${location.search}` },
     });
   };
 
@@ -216,10 +214,7 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
       noFilterDatamart,
     } = this.props;
 
-    const { data,
-      loading,
-      datamarts,
-    } = this.state;
+    const { data, loading, datamarts } = this.state;
 
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<Import>> = [
       {
@@ -249,7 +244,7 @@ class ImportsContentContainer extends React.Component<Props, ImportsContentConta
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/datastudio/datamart/${
               record.datamart_id
-              }/imports/${record.id}`}
+            }/imports/${record.id}`}
           >
             {text}
           </Link>
