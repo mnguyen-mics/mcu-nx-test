@@ -33,6 +33,7 @@ import {
   ObjectLikeTypeInfoResource,
   FieldInfoResource,
   FieldDirectiveResource,
+  BuitinEnumerationType,
 } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import {
   FORM_ID,
@@ -43,7 +44,7 @@ import messages from '../../messages';
 import FormRelativeAbsoluteDate, {
   FormRelativeAbsoluteDateProps,
 } from './Comparison/FormRelativeAbsoluteDate';
-import constants, { ComparisonValues } from './contants';
+import constants, { ComparisonValues, builtinEnumTypeOptions } from './contants';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
@@ -290,6 +291,21 @@ class FieldNodeForm extends React.Component<Props> {
           ...constants.generateStringComparisonOperator(intl),
           component: shouldRenderDirective(this.generateIdComparisonField()),
         };
+      case 'OperatingSystemFamily': 
+      case 'FormFactor':
+      case 'HashFunction':
+      case 'BrowserFamily':
+      case 'UserAgentType':
+      case 'ActivitySource':
+      case 'UserActivityType':
+        return {
+          ...constants.generateEnumComparisonOperator(intl),
+          component: shouldRenderDirective(
+            this.generateTagSelectComparisonField(
+              (builtinEnumTypeOptions[fieldType as BuitinEnumerationType] as string[]).map(v => ({ label: v, value: v }))
+            ),
+          ),
+        };
       default:
         return {
           values: [],
@@ -389,7 +405,7 @@ class FieldNodeForm extends React.Component<Props> {
     );
   }
 
-  generateBooleanComparisonField() {
+  generateTagSelectComparisonField(options: Array<{ label: string, value: string }>) {
     const { intl, name, idToAttachDropDowns } = this.props;
 
     let popUpProps = {};
@@ -410,10 +426,7 @@ class FieldNodeForm extends React.Component<Props> {
           required: true,
         }}
         selectProps={{
-          options: [
-            { value: 'true', label: 'true' },
-            { value: 'false', label: 'false' },
-          ],
+          options,
           ...popUpProps,
         }}
         helpToolTipProps={{
@@ -424,7 +437,14 @@ class FieldNodeForm extends React.Component<Props> {
     );
   }
 
-  generateEnumComparisonField() {
+  generateBooleanComparisonField() {
+    return this.generateTagSelectComparisonField([
+      { value: 'true', label: 'true' },
+      { value: 'false', label: 'false' },
+    ]);
+  }
+
+  generateEnumComparisonField(buitinEnumerationType?: BuitinEnumerationType) {
     const { intl } = this.props;
 
     return <div>{intl.formatMessage(messages.fieldTypeNotSupported)}</div>;
