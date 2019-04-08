@@ -216,6 +216,7 @@ class Imports extends React.Component<JoinedProps, State> {
     const completedTasks = execution.completed_tasks
       ? parseInt(execution.completed_tasks, 10)
       : 0;
+
     const setColor = (status: string) => {
       switch (status) {
         case 'RUNNING':
@@ -232,7 +233,7 @@ class Imports extends React.Component<JoinedProps, State> {
       }
     };
     return {
-      percent: tasks ? Math.round(completedTasks / tasks) : 0,
+      percent: tasks ? completedTasks / tasks : 0,
       color: setColor(execution.status),
     };
   };
@@ -261,7 +262,7 @@ class Imports extends React.Component<JoinedProps, State> {
           </div>
         );
       default:
-        return <div>{record.status}}</div>;
+        return <div>{record.status}</div>;
     }
   };
 
@@ -293,7 +294,7 @@ class Imports extends React.Component<JoinedProps, State> {
           // currently we can't pass color
           // https://github.com/ant-design/ant-design/blob/master/components/progress/progress.tsx
           <div>
-            <Progress percent={this.getExecutionInfo(record).percent * 100} />
+            <Progress showInfo={false} percent={this.getExecutionInfo(record).percent * 100} />
           </div>
         ),
       },
