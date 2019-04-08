@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
-import {
-  Form,
-  reduxForm,
-  InjectedFormProps,
-  ConfigProps,
-} from 'redux-form';
+import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
