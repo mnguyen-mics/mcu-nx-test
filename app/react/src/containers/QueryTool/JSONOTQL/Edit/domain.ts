@@ -17,7 +17,14 @@ export const SUPPORTED_FIELD_TYPES = [
   'Int',
   'Double',
   'BigDecimal',
-  'ID'
+  'ID',
+  'FormFactor',
+  'HashFunction',
+  'BrowserFamily',
+  'OperatingSystemFamily',
+  'UserAgentType',
+  'ActivitySource',
+  'UserActivityType',
 ];
 
 export interface FieldNodeFormData extends FieldNode {

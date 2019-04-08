@@ -196,6 +196,9 @@ export default class FieldNodeComparisonRenderer extends React.Component<
         return <span title={this.renderStringValues(comparison.values)}>{this.renderStringValues(comparison.values)}</span>
       case 'STRING':
         return <span title={this.renderStringValues(comparison.values)}>{this.renderStringValues(comparison.values)}</span>
+      case 'ENUM':
+        return <span title={this.renderStringValues(comparison.values)}>{this.renderStringValues(comparison.values)}</span>
+      default : return <span title={this.renderStringValues(comparison.values)}>{this.renderStringValues(comparison.values)}</span>
     }
     return '';
   };
