@@ -187,7 +187,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
         );
       case 'PUBLISHED':
         return (
-          <ButtonStyleless />
+          <div className="fake-button-styleless-height" />
         );
     }
   };
