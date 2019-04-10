@@ -89,7 +89,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   feedService: AudienceSegmentFeedService;
   // @lazyInject(TYPES.IAudienceSegmentService)
   // private _audienceSegmentService: IAudienceSegmentService;
-  
+
 
   constructor(props: Props) {
     super(props);
@@ -186,7 +186,9 @@ class FeedCard extends React.Component<Props, FeedCardState> {
           </ButtonStyleless>
         );
       case 'PUBLISHED':
-        return null;
+        return (
+          <ButtonStyleless />
+        );
     }
   };
 
@@ -229,13 +231,13 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     return PluginService.findPluginFromVersionId(feed.version_id)
       .then(res => PluginService.getPluginVersionProperty(res.data.id, res.data.current_version_id!))
       .then(res => this.setState({ pluginProperties: res.data }))
-      
+
   }
 
   getInitialValues = () => {
     const { feed } = this.props;
 
-   
+
     return this.feedService.getAudienceFeedProperty(feed.id)
       .then((res) => this.setState({ initialValue: { plugin: feed, properties: res.data.reduce((acc, val) => ({ ...acc, [val.technical_name]: { value: val.value } }), {}) } }))
   }
@@ -262,7 +264,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   };
 
   saveOrCreatePluginInstance = (
-    pluginInstance: AudienceTagFeedTyped | AudienceExternalFeedTyped,
+    pluginInstance: AudienceTagFeedTyped | AudienceExternalFeedTyped,
     properties: PropertyResourceShape[],
   ) => {
 
@@ -291,11 +293,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     }).then(() => {
       this.setState({ isLoadingCard: false, opened: false })
     })
-    .catch((err: any) => {
-      notifyError(err);
-      this.setState({ isLoadingCard: false });
-    });
-    
+      .catch((err: any) => {
+        notifyError(err);
+        this.setState({ isLoadingCard: false });
+      });
+
   };
 
   render() {
@@ -316,26 +318,26 @@ class FeedCard extends React.Component<Props, FeedCardState> {
         case 'EXTERNAL_FEED':
           return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/external/${
             feed.id
-          }/edit`;
+            }/edit`;
         case 'TAG_FEED':
           return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/tag/${
             feed.id
-          }/edit`;
+            }/edit`;
       }
     };
 
     const removeFeed = () => {
       const onOk = () => {
         return this.setState({ isLoading: true }, () => this.feedService.deleteAudienceFeed(feed.id)
-            .then(r => {
-              this.setState({ isLoading: false })
-              onFeedDelete(feed)
-            })
-            .catch(err => {
-              this.setState({ isLoading: false })
-              notifyError(err)
-            })
-          )
+          .then(r => {
+            this.setState({ isLoading: false })
+            onFeedDelete(feed)
+          })
+          .catch(err => {
+            this.setState({ isLoading: false })
+            notifyError(err)
+          })
+        )
       }
 
 
@@ -359,10 +361,10 @@ class FeedCard extends React.Component<Props, FeedCardState> {
           this.getPluginProperties(),
           this.getInitialValues(),
         ])
-        .then(() => this.setState({ isLoadingCard: false }))
-        .catch((err) => { notifyError(err); this.setState({ opened: false })})
+          .then(() => this.setState({ isLoadingCard: false }))
+          .catch((err) => { notifyError(err); this.setState({ opened: false }) })
       }
-      
+
     }
 
     const menu = (
@@ -403,8 +405,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
                   }${cardHeaderThumbnail}`}
               />
             ) : (
-              undefined
-            )}
+                undefined
+              )}
             <div className="title">
               {cardHeaderTitle ? cardHeaderTitle : feed.artifact_id}
             </div>
@@ -419,7 +421,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
         </div>
         {this.state.opened && this.state.pluginLayout && this.state.pluginProperties && <FeedCardModal
           editionMode={true}
-          disableFields={(feed.status === 'ACTIVE' || feed.status === 'PUBLISHED')}
+          disableFields={(feed.status === 'ACTIVE' || feed.status === 'PUBLISHED')}
           initialValues={this.state.initialValue}
           isLoading={this.state.isLoadingCard}
           onClose={onClose}
