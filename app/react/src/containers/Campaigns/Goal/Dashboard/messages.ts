@@ -112,5 +112,9 @@ export default defineMessages({
   pCpVFormatDuration: {
     id: 'goals.stats.pcpvduration',
     defaultMessage: '{ value } in { duration }'
-  }
+  },
+  exportInProgress: {
+    id: 'goal.actionbar.button.export',
+    defaultMessage: 'Export in progress',
+  },
 })
