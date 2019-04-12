@@ -299,6 +299,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     const endpoint = `audience_segments/${segmentId}/overlap_analysis`;
     const params = {
       audienceSegmentId: segmentId,
+      job_type: 'FIRST_PARTY_OVERLAP_ANALYSIS',
       ...options,
     };
 
