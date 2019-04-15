@@ -23,6 +23,10 @@ const messages: {
     id: 'timeline.resourceType.emailBlast',
     defaultMessage: 'Email Blast',
   },
+  emailTemplateResourceType: {
+    id: 'timeline.resourceType.emailTemplate',
+    defaultMessage: 'Email Template',
+  },
   emailCampaignResourceType: {
     id: 'timeline.resourceType.emailCampaign',
     defaultMessage: 'Email Campaign',

@@ -28,6 +28,7 @@ import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistor
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
+import CreativeService from '../../../../services/CreativeService';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
@@ -174,6 +175,40 @@ class BlastTable extends React.Component<Props> {
                 history.push(
                   `/v2/o/${organisationId}/campaigns/email/${id}`,
                 );
+              },
+            },
+            EMAIL_TEMPLATE_SELECTION: {
+              direction: 'CHILD',
+              getType: () => {
+                return (
+                  <FormattedMessage
+                    {...resourceHistoryMessages.emailTemplateResourceType}/>
+                );
+              },
+              getName: (id: string) => {
+                return getLinkedResourceIdInSelection(
+                  organisationId,
+                  'EMAIL_TEMPLATE_SELECTION',
+                  id,
+                  'CREATIVE',
+                ).then(emailTemplateId => {
+                  return CreativeService.getEmailTemplate(emailTemplateId)
+                    .then(response => {
+                      return response.data.name;
+                    });
+                });
+              },
+              goToResource: (id: string) => {
+                getLinkedResourceIdInSelection(
+                  organisationId,
+                  'EMAIL_TEMPLATE_SELECTION',
+                  id,
+                  'CREATIVE',
+                ).then(emailTemplateId => {
+                  history.push(
+                    `/v2/o/${organisationId}/creatives/email/${emailTemplateId}/edit`,
+                  );
+                });
               },
             },
             AUDIENCE_SEGMENT_EMAIL_SELECTION: {
