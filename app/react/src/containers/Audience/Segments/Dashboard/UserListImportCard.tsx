@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
 import {
   UserSegmentImportJobExecutionResource,
   IAudienceSegmentService,
@@ -16,13 +15,13 @@ import {
   TableViewProps,
   DataColumnDefinition,
 } from '../../../../components/TableView/TableView';
-
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import log from '../../../../utils/Logger';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import { defineMessages } from 'react-intl';
 
 export interface UserListImportCardProps {
   datamartId: string;
@@ -30,7 +29,6 @@ export interface UserListImportCardProps {
 }
 
 type Props = UserListImportCardProps &
-  InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
@@ -49,6 +47,25 @@ export interface ImportExecutionsData {
 const ImportJobTableView = TableView as React.ComponentClass<
   TableViewProps<ImportExecutionsData>
 >;
+
+const messages = defineMessages({
+  submissionDate: {
+    id: 'audience.segments.dashboard.userImportList.submissionDate',
+    defaultMessage: 'Submission Date',
+  },
+  status: {
+    id: 'audience.segments.dashboard.userImportList.status',
+    defaultMessage: 'Status',
+  },
+  totalUserSegmentTreated: {
+    id: 'audience.segments.dashboard.userImportList.totalUserSegmentTreated',
+    defaultMessage: 'User Segments Treated',
+  },
+  totalUserSegmentImported: {
+    id: 'audience.segments.dashboard.userImportList.totalUserSegmentImported',
+    defaultMessage: 'User Segments Imported',
+  },
+});
 
 class UserListImportCard extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
@@ -93,27 +110,27 @@ class UserListImportCard extends React.Component<Props, State> {
 
     const dataColumns: Array<DataColumnDefinition<ImportExecutionsData>> = [
       {
-        translationKey: 'SUBMISSION_DATE',
+        intlMessage: messages.submissionDate,
         key: 'submissionDate',
         isVisibleByDefault: true,
         isHideable: false,
         render: (text, record) => formatUnixTimestamp(record.submissionDate),
       },
       {
-        translationKey: 'STATUS',
+        intlMessage: messages.status,
         key: 'status',
         isHideable: false,
         render: (text, record) => text,
       },
       {
-        translationKey: 'TOTAL_USER_SEGMENT_TREATED',
+        intlMessage: messages.totalUserSegmentTreated,
         key: 'totalUserSegmentTreated',
         isVisibleByDefault: true,
         isHideable: false,
         render: (text, record) => formatMetric(text, '0', '', ''),
       },
       {
-        translationKey: 'TOTAL_USER_SEGMENT_IMPORTED',
+        intlMessage: messages.totalUserSegmentImported,
         key: 'totalUserSegmentImported',
         isVisibleByDefault: true,
         isHideable: false,
@@ -145,7 +162,6 @@ class UserListImportCard extends React.Component<Props, State> {
 }
 
 export default compose<Props, UserListImportCardProps>(
-  injectIntl,
   withRouter,
   injectNotifications,
 )(UserListImportCard);

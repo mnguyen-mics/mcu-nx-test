@@ -10,19 +10,19 @@ const { Content } = Layout;
 
 const messages = defineMessages({
   listTitle: {
-    id: 'audience.segment.form.segment.type.selector.list.title',
+    id: 'audience.segments.form.segmentTypeSelector.title',
     defaultMessage: 'Segment Types',
   },
   listSubtitle: {
-    id: 'audience.segment.form.segment.type.selector.list.subtitle',
+    id: 'audience.segments.form.segmentTypeSelector.subtitle',
     defaultMessage: 'Choose your segment type',
   },
   segmentTypeOr: {
-    id: 'audience.segment.form.segment.type.selector.or',
+    id: 'audience.segments.form.segmentTypeSelector.or',
     defaultMessage: 'Or',
   },
   otherSegmentTypes: {
-    id: 'audience.segment.form.segment.type.selector.other',
+    id: 'audience.segments.form.segmentTypeSelector.other',
     defaultMessage: 'Other segment types',
   },
 });

@@ -2,23 +2,23 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   id: {
-    id: 'cleaning_rules.table.column.id',
+    id: 'settings.cleaningRules.table.column.id',
     defaultMessage: 'ID',
   },
   lifeDuration: {
-    id: 'cleaning_rules.table.column.life_duration',
+    id: 'settings.cleaningRules.table.column.life_duration',
     defaultMessage: 'Life duration',
   },
   type: {
-    id: 'cleaning_rules.table.column.type',
+    id: 'settings.cleaningRules.table.column.type',
     defaultMessage: 'Type',
   },
   activityTypeFilter: {
-    id: 'cleaning_rules.table.column.activity_type_filter',
+    id: 'settings.cleaningRules.table.column.activity_type_filter',
     defaultMessage: 'Activity type filter',
   },
   cleaningRules: {
-    id: 'cleaning_rules',
+    id: 'settings.cleaningRules',
     defaultMessage: 'Cleaning rules',
   },
 });

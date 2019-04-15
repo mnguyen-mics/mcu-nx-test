@@ -34,7 +34,7 @@ const initialState = {
   total: 0,
   isModalVisible: false,
   saving: false,
-  name: ''
+  name: '',
 };
 
 const messages = defineMessages({
@@ -70,6 +70,10 @@ const messages = defineMessages({
     id: 'settings.profile.apitoken.list.delete.button',
     defaultMessage: 'Revoke',
   },
+  editApiToken: {
+    id: 'settings.profile.apitoken.list.edit.button',
+    defaultMessage: 'Edit',
+  },
   deleteApiTokenModalTitle: {
     id: 'settings.profile.apitoken.delete.modal.title',
     defaultMessage: 'Are you sure to revoke this Api Token ?',
@@ -85,7 +89,7 @@ const messages = defineMessages({
   },
   dangerZone: {
     id: 'settings.profile.apitoken.dangerzone',
-    defaultMessage: 'DANGER ZONE!!'
+    defaultMessage: 'DANGER ZONE!!',
   },
   deleteApiTokenModalOkText: {
     id: 'settings.profile.apitoken.delete.modal.ok.text',
@@ -203,7 +207,10 @@ class ApiTokenListPage extends React.Component<Props, State> {
       title: intl.formatMessage(messages.deleteApiTokenModalTitle),
       content: (
         <div>
-          <Alert message={intl.formatMessage(messages.dangerZone)} type="error" />
+          <Alert
+            message={intl.formatMessage(messages.dangerZone)}
+            type="error"
+          />
           <br />
           <p>{intl.formatMessage(messages.deleteApiTokenModalContent)}</p>
         </div>
@@ -211,7 +218,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
       okText: intl.formatMessage(messages.deleteApiTokenModalOkText),
       cancelText: intl.formatMessage(messages.ApiTokenModalCancelText),
       onOk: () => {
-        this.setState({ loading: true })
+        this.setState({ loading: true });
         ApiTokenService.deleteApiToken(
           apiToken.id,
           connectedUser.id,
@@ -240,7 +247,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
   handleModal = () => {
     this.setState({
       isModalVisible: !this.state.isModalVisible,
-      name: ''
+      name: '',
     });
   };
 
@@ -254,11 +261,13 @@ class ApiTokenListPage extends React.Component<Props, State> {
 
     const { isModalVisible, loading, saving } = this.state;
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<ApiTokenResource>> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<ApiTokenResource>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
+          { intlMessage: messages.editApiToken, callback: this.onClickEdit },
           { intlMessage: messages.deleteApiToken, callback: this.onDelete },
         ],
       },
@@ -274,7 +283,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
           <Link
             to={`/v2/o/${organisationId}/settings/account/api_tokens/${
               record.id
-              }/edit`}
+            }/edit`}
           >
             {value}
           </Link>
@@ -285,7 +294,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         key: 'value',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (value: string) => <div>{`${value.substring(0, 25)}...`}</div>
+        render: (value: string) => <div>{`${value.substring(0, 25)}...`}</div>,
       },
       {
         intlMessage: messages.apiTokenCreationDate,
@@ -322,9 +331,9 @@ class ApiTokenListPage extends React.Component<Props, State> {
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-        iconType: 'settings',
-        intlMessage: messages.emptyApiTokenList,
-      };
+      iconType: 'settings',
+      intlMessage: messages.emptyApiTokenList,
+    };
 
     const apiTokenModal = (apiTokenData: ApiTokenResource) => {
       const {
@@ -339,7 +348,10 @@ class ApiTokenListPage extends React.Component<Props, State> {
         width: '600px',
         content: (
           <div>
-            <Alert message={formatMessage(messages.apiTokenModalContent)} type="warning" />
+            <Alert
+              message={formatMessage(messages.apiTokenModalContent)}
+              type="warning"
+            />
             <br />
             <CopyToClipboard text={apiTokenData.value} onCopy={handleOnClick}>
               <div style={{ cursor: 'pointer' }}>
@@ -357,7 +369,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
             currentPage: 1,
             pageSize: 10,
           };
-          this.fetchApiTokens(organisationId, filters)
+          this.fetchApiTokens(organisationId, filters);
         },
       });
     };
@@ -368,7 +380,9 @@ class ApiTokenListPage extends React.Component<Props, State> {
         saving: true,
       });
 
-      ApiTokenService.createApiToken(connectedUser.id, organisationId, { name: this.state.name })
+      ApiTokenService.createApiToken(connectedUser.id, organisationId, {
+        name: this.state.name,
+      })
         .then(resp => resp.data)
         .then(apiTokenData => {
           this.setState({
@@ -404,7 +418,8 @@ class ApiTokenListPage extends React.Component<Props, State> {
       </div>
     );
 
-    const changeName = (e: React.ChangeEvent<HTMLInputElement>) => this.setState({ name: e.target.value })
+    const changeName = (e: React.ChangeEvent<HTMLInputElement>) =>
+      this.setState({ name: e.target.value });
 
     return (
       <div className="ant-layout">
@@ -432,7 +447,10 @@ class ApiTokenListPage extends React.Component<Props, State> {
         >
           <p>{intl.formatMessage(messages.createApiTokenModalContent)}</p>
           <br />
-          <Input onChange={changeName} placeholder={intl.formatMessage(messages.apiTokenName)} />
+          <Input
+            onChange={changeName}
+            placeholder={intl.formatMessage(messages.apiTokenName)}
+          />
         </Modal>
       </div>
     );
@@ -447,5 +465,8 @@ export default compose(
   withRouter,
   injectIntl,
   injectNotifications,
-  connect(mapStateToProps, undefined),
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(ApiTokenListPage);

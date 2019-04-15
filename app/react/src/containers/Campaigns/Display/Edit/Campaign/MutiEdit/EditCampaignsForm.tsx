@@ -36,11 +36,11 @@ const FORM_ID = 'editCampaignsForm';
 
 const messageMap = defineMessages({
   allCampaignsNames: {
-    id: 'edit.campaigns.all.campaigns.names',
+    id: 'display.campaigns.multiEdit.allCampaignsSelected',
     defaultMessage: 'You have selected all the campaigns.',
   },
   oldCampaignsNames: {
-    id: 'edit.campaigns.2014.campaigns.names',
+    id: 'display.campaigns.multiEdit.oldCampaignsSelected',
     defaultMessage:
       'It is not recommended to edit these campaigns because they are deprecated :',
   },

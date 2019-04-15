@@ -29,7 +29,7 @@ const Option = Select.Option;
 
 const messages = defineMessages({
   defaultValue: {
-    id: 'select.form.defaultValue',
+    id: 'components.form.formSelect.defaultSelect.defaultValue',
     defaultMessage: '- Select One -'
   }
 })

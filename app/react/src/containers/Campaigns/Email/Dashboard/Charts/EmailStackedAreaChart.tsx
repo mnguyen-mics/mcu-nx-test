@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-
 import {
   EmptyCharts,
   LoadingChart,
@@ -15,10 +14,9 @@ import messages from '../messages';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-import withTranslations, {
-  TranslationProps,
-} from '../../../../Helpers/withTranslations';
 import { Index } from '../../../../../utils';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { messagesMap } from '../BlastTable';
 
 export interface EmailStackedAreaChartProps {
   dateRangeValue: McsDateRangeValue;
@@ -28,8 +26,8 @@ export interface EmailStackedAreaChartProps {
 }
 
 type Props = EmailStackedAreaChartProps &
-  InjectedThemeColorsProps &
-  TranslationProps;
+  InjectedIntlProps &
+  InjectedThemeColorsProps;
 
 class EmailStackedAreaChart extends React.Component<Props> {
   renderStackedAreaCharts() {
@@ -63,29 +61,29 @@ class EmailStackedAreaChart extends React.Component<Props> {
 
   render() {
     const {
-      translations,
       emailReport,
       isLoading,
       colors,
       dateRangeValue,
       onDateRangeChange,
+      intl,
     } = this.props;
 
     const options = [
       {
-        domain: translations['email_sent'.toUpperCase()],
+        domain: intl.formatHTMLMessage(messagesMap.emailSent),
         color: colors['mcs-warning'],
       },
       {
-        domain: translations['clicks'.toUpperCase()],
+        domain: intl.formatHTMLMessage(messagesMap.clicks),
         color: colors['mcs-info'],
       },
       {
-        domain: translations['impressions'.toUpperCase()],
+        domain: intl.formatHTMLMessage(messagesMap.impressions),
         color: colors['mcs-success'],
       },
       {
-        domain: translations['email_hard_bounced'.toUpperCase()],
+        domain: intl.formatHTMLMessage(messagesMap.emailHardBounced),
         color: colors['mcs-error'],
       },
     ];
@@ -110,7 +108,7 @@ class EmailStackedAreaChart extends React.Component<Props> {
           </Col>
         </Row>
         {emailReport.length === 0 && isLoading ? (
-          <EmptyCharts title={translations.NO_EMAIL_STATS} />
+          <EmptyCharts title={intl.formatMessage(messagesMap.noEmailStats)} />
         ) : (
           this.renderStackedAreaCharts()
         )}
@@ -122,6 +120,6 @@ class EmailStackedAreaChart extends React.Component<Props> {
 }
 
 export default compose<Props, EmailStackedAreaChartProps>(
-  withTranslations,
   injectThemeColors,
+  injectIntl,
 )(EmailStackedAreaChart);

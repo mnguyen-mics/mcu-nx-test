@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { Button, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import {
@@ -67,14 +66,9 @@ const messages = defineMessages({
   },
 });
 
-interface MapStateToProps {
-  translations: any;
-}
-
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
   InjectedDatamartProps &
-  MapStateToProps &
   InjectedNotificationProps;
 
 interface State {
@@ -180,7 +174,6 @@ class SegmentsActionbar extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl,
-      translations,
       notifyError,
     } = this.props;
 
@@ -203,8 +196,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
           organisationId,
           datamartId,
           data,
-          filter,
-          translations,
+          filter
         );
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
@@ -256,14 +248,9 @@ class SegmentsActionbar extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-});
-
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectDatamart,
   injectNotifications,
-  connect(mapStateToProps),
 )(SegmentsActionbar);

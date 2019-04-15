@@ -18,40 +18,40 @@ const messages = defineMessages({
     defaultMessage: 'Labels'
   },
   myServiceOffersTitle: {
-    id: 'settings.my.service.offers.title',
+    id: 'settings.serviceOffers.title',
     defaultMessage: 'My Service Offers'
   },
   myServiceOffersAddNew: {
-    id: 'settings.my.service.offers.add.new',
+    id: 'settings.serviceOffers.add.new',
     defaultMessage: 'Add new offer'
   },
   myServiceCatalogTitle: {
-    id: 'settings.my.service.catalog.title',
+    id: 'settings.serviceCatalog.title',
     defaultMessage: 'My Service Catalog'
   },
   name: {
-    id: 'settings.my.service.catalog.offers.list.column.name',
+    id: 'settings.serviceCatalog.offers.list.column.name',
     defaultMessage: 'Name',
   },
   creditedAccount: {
     id:
-      'settings.my.service.catalog.offers.list.column.credited.account',
+      'settings.serviceCatalog.offers.list.column.credited.account',
     defaultMessage: 'Credited Account',
   },
   providerName: {
-    id: 'settings.my.service.catalog.offers.list.column.provider.name',
+    id: 'settings.serviceCatalog.offers.list.column.provider.name',
     defaultMessage: 'Provider Name',
   },
   empty: {
-    id: 'settings.my.service.catalog.offers.empty.list',
+    id: 'settings.serviceCatalog.offers.empty.list',
     defaultMessage: 'You have not subscribed to service offers.',
   },
   offerCreationBreadCrumb: {
-    id: 'settings.my.service.create.offer.breadcumb.label',
+    id: 'settings.serviceOffers.create.offer.breadcumb.label',
     defaultMessage: 'New offer',
   },
   offerTypePickerTitle: {
-    id: 'settings.my.service.create.offer.typePicker.title',
+    id: 'settings.serviceOffers.create.offer.typePicker.title',
     defaultMessage: 'Offer Type',
   },
   offerTypePickerSubTitle: {

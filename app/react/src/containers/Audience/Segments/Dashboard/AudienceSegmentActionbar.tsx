@@ -359,11 +359,11 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         {actionButton}
         <Button onClick={this.onEditClick}>
           <McsIcon type="pen" />
-          <FormattedMessage id="EDIT" defaultMessage="Edit" />
+          <FormattedMessage id="audience.segments.dashboard.actionbar.editButton" defaultMessage="Edit" />
         </Button>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           <McsIcon type="download" />
-          <FormattedMessage id="EXPORT" defaultMessage="Export" />
+          <FormattedMessage id="audience.segments.dashboard.actionbar.exportButton" defaultMessage="Export" />
         </Button>
         <Dropdown overlay={dropdowMenu} trigger={['click']}>
           <Button>

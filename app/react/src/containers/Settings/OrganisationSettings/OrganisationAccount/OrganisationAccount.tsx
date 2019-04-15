@@ -51,7 +51,7 @@ class OrganisationAccount extends React.Component<Props> {
             <div className="mcs-card-header mcs-card-title">
               <span className="mcs-card-title">
                 <FormattedMessage
-                  id="OrganisationProfile"
+                  id="settings.organisation.organisationAccount.organisationProfile"
                   defaultMessage="Organisation Profile"
                 />
               </span>

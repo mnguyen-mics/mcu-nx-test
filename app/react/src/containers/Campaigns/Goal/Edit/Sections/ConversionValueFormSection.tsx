@@ -94,7 +94,7 @@ class ConversionValueFormSection extends React.Component<Props, State> {
           onChange={this.toggleConversionValueSection}
         >
           <FormattedMessage
-            id="goal-conversion-value-checkbox-message"
+            id="goal.edit.conversionValueSection.checkbox-message"
             defaultMessage="Add a conversion value"
           />
         </Checkbox>

@@ -15,7 +15,8 @@ export default defineMessages({
   },
   placementArchiveMessage: {
     id: 'placements.modal.archive.message',
-    defaultMessage: 'By archiving this Placement it will stop campaigns using it. Are you sure?',
+    defaultMessage:
+      'By archiving this Placement it will stop campaigns using it. Are you sure?',
   },
   placementArchiveOk: {
     id: 'placements.modal.archive.ok',
@@ -30,8 +31,16 @@ export default defineMessages({
     defaultMessage: 'Name',
   },
   empty: {
-    id: 'placements.table.empty',
-    defaultMessage: 'There is no Placement List created yet! Click on New to get started',
+    id: 'placements.lsit.empty',
+    defaultMessage:
+      'There is no Placement List created yet! Click on New to get started',
   },
-})
-;
+  edit: {
+    id: 'placements.list.actionColumn.edit',
+    defaultMessage: 'Edit',
+  },
+  archive: {
+    id: 'placements.list.actionColumn.archive',
+    defaultMessage: 'Archive',
+  },
+});

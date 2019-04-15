@@ -9,11 +9,11 @@ type Props = AudienceDashboardActionBarProps & InjectedIntlProps;
 
 const messages = defineMessages({
   dashboardTitle: {
-    id: 'audience.dashboard.title',
+    id: 'audience.dashboard.actionbar.title',
     defaultMessage: 'Dashboard',
   },
   refreshButton: {
-    id: 'audience.dashboard.refresh',
+    id: 'audience.dashboard.actionbar.refreshDashboard',
     defaultMessage: 'Refresh Dashboard',
   },
 });

@@ -22,27 +22,27 @@ type Props = AudienceSegmentHeaderProps & InjectedIntlProps;
 
 export const localMessages = defineMessages({
   USER_ACTIVATION: {
-    id: 'segment.type.USER_ACTIVATION',
+    id: 'audience.segments.dashboard.header.type.USER_ACTIVATION',
     defaultMessage: 'User Activation',
   },
   USER_QUERY: {
-    id: 'segment.type.USER_QUERY',
+    id: 'audience.segments.dashboard.header.type.USER_QUERY',
     defaultMessage: 'User Query',
   },
   USER_LIST: {
-    id: 'segment.type.USER_LIST',
+    id: 'audience.segments.dashboard.header.type.USER_LIST',
     defaultMessage: 'User List',
   },
   USER_PIXEL: {
-    id: 'segment.type.USER_PIXEL',
+    id: 'audience.segments.dashboard.header.type.USER_PIXEL',
     defaultMessage: 'User Pixel',
   },
   USER_PARTITION: {
-    id: 'segment.type.USER_PARTITION',
+    id: 'audience.segments.dashboard.header.type.USER_PARTITION',
     defaultMessage: 'User Partition',
   },
   USER_LOOKALIKE: {
-    id: 'segment.type.USER_LOOKALIKE',
+    id: 'audience.segments.dashboard.header.type.USER_LOOKALIKE',
     defaultMessage: 'User Lookalike',
   },
 });

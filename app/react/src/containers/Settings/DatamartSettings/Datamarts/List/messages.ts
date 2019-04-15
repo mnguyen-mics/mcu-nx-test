@@ -6,51 +6,51 @@ const messages = defineMessages({
     defaultMessage: 'Search Datamarts',
   },
   datamartId: {
-    id: 'datamart.id',
+    id: 'settings.datamart.id',
     defaultMessage: 'Id',
   },
   datamartToken: {
-    id: 'datamart.token',
+    id: 'settings.datamart.token',
     defaultMessage: 'Token',
   },
   datamartName: {
-    id: 'datamart.name',
+    id: 'settings.datamart.name',
     defaultMessage: 'Name',
   },
   datamartCreationDate: {
-    id: 'datamart.creation_date',
+    id: 'settings.datamart.creation_date',
     defaultMessage: 'Creation Date',
   },
   editDatamart: {
-    id: 'datamart.edit',
+    id: 'settings.datamart.edit',
     defaultMessage: 'Edit',
   },
   emptyDatamarts: {
-    id: 'datamart.empty',
+    id: 'settings.datamart.empty',
     defaultMessage: 'There are no datamarts set up.',
   },
   datamartType: {
-    id: 'datamart.type',
+    id: 'settings.datamart.type',
     defaultMessage: 'Type'
   },
   typeStandard: {
-    id: 'datamart.type.standard',
+    id: 'settings.datamart.type.standard',
     defaultMessage: 'Standard Datamart'
   },
   typeXDatamart: {
-    id: 'datamart.type.xdatamart',
+    id: 'settings.datamart.type.xdatamart',
     defaultMessage: 'Cross-Datamart'
   },
   serviceUsageReport: {
-    id: 'datamart.service_usage_report',
+    id: 'settings.datamart.service_usage_report',
     defaultMessage: 'View Service Usage Report',
   },
   noData: {
-    id: 'datamart.no.data.service_usage_report',
+    id: 'settings.datamart.no.data.service_usage_report',
     defaultMessage: 'There is no service usage report for this datamart.',
   },
   viewDatamartSources: {
-    id: 'datamart.datamartSources',
+    id: 'settings.datamart.datamartSources',
     defaultMessage: 'View Sources',
   },
 });

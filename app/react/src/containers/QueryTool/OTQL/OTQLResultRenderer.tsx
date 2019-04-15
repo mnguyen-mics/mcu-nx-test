@@ -31,7 +31,7 @@ class OTQLResultRenderer extends React.Component<Props> {
       content = (
         <div className="text-center">
           <FormattedMessage
-            id="otql-result-renderer-aborted"
+            id="queryTool.otql-result-renderer-aborted"
             defaultMessage="Aborted..."
           />
         </div>
@@ -66,7 +66,7 @@ class OTQLResultRenderer extends React.Component<Props> {
       content = (
         <div className="text-center">
           <FormattedMessage
-            id="otql-result-renderer-empty"
+            id="queryTool.otql-result-renderer-empty"
             defaultMessage="Empty Result"
           />
         </div>
@@ -77,14 +77,14 @@ class OTQLResultRenderer extends React.Component<Props> {
       <Card
         title={
           <FormattedMessage
-            id="otql-result-renderer-card-title"
+            id="queryTool.otql-result-renderer-card-title"
             defaultMessage="Result"
           />
         }
         buttons={
           result && (
             <FormattedMessage
-              id="otql-result-renderer-card-subtitle"
+              id="queryTool.otql-result-renderer-card-subtitle"
               defaultMessage="Took {duration}ms"
               values={{ duration: result.took }}
             />

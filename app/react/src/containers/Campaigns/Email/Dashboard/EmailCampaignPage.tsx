@@ -3,18 +3,15 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout } from 'antd';
-
 import EmailCampaignActionbar from './EmailCampaignActionbar';
 import CampaignDashboardHeader from '../../Common/CampaignDashboardHeader';
 import { Labels } from '../../../Labels';
 import { Card } from '../../../../components/Card';
-
 import {
   EMAIL_DASHBOARD_SEARCH_SETTINGS,
   EmailCampaignDashboardRouteMatchParam,
   EmailDashboardSearchSettings,
 } from './constants';
-
 import {
   parseSearch,
   isSearchValid,
@@ -22,7 +19,6 @@ import {
   compareSearches,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
-
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import injectNotifications, {
   InjectedNotificationProps,

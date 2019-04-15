@@ -1,5 +1,5 @@
 import XLSX from 'xlsx';
-import displayCampaignMessages from '../containers/Campaigns/Display/messages';
+import displayCampaignMessages from '../containers/Campaigns/Display/messages.ts';
 import emailCampaignMessages from '../containers/Campaigns/Email/messages.ts';
 import segmentMessages from '../containers/Audience/Segments/Dashboard/messages.ts';
 import dateMessages from '../common/messages/dateMessages';
@@ -170,15 +170,15 @@ const exportData = (sheets, fileName, extension) => {
 /**
  * Display Campaigns
  */
-const exportDisplayCampaigns = (organisationId, dataSource, filter, translations) => {
+const exportDisplayCampaigns = (organisationId, dataSource, filter) => {
 
-  const titleLine = [translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE];
+  const titleLine = ['Display Campaigns Export'];
   const blankLine = [];
 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
+  dataSheet.push([`From ${filter.from.toMoment().format('YYYY-MM-DD')} to ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -190,18 +190,19 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
 
   dataSheet.push(blankLine);
 
+  // TODO: Use react intl
   const headersMap = [
-    { name: 'id', translation: translations.ID },
-    { name: 'status', translation: translations.STATUS },
-    { name: 'name', translation: translations.NAME },
-    { name: 'technical_name', translation: translations.TECHNICAL_NAME },
-    { name: 'impressions', translation: translations.IMPRESSIONS },
-    { name: 'clicks', translation: translations.CLICKS },
-    { name: 'cpm', translation: translations.CPM },
-    { name: 'ctr', translation: translations.CTR },
-    { name: 'cpc', translation: translations.CPC },
-    { name: 'impressions_cost', translation: translations.IMPRESSIONS_COST },
-    { name: 'cpa', translation: translations.CPA },
+    { name: 'id', translation: 'ID' },
+    { name: 'status', translation: 'STATUS' },
+    { name: 'name', translation: 'NAME' },
+    { name: 'technical_name', translation: 'TECHNICAL NAME' },
+    { name: 'impressions', translation: 'IMPRESSIONS' },
+    { name: 'clicks', translation: 'CLICKS' },
+    { name: 'cpm', translation: 'CPM' },
+    { name: 'ctr', translation: 'CTR' },
+    { name: 'cpc', translation: 'CPC' },
+    { name: 'impressions_cost', translation: 'IMPRESSIONS COST' },
+    { name: 'cpa', translation: 'CPA' },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -216,7 +217,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
   });
 
   const sheets = [{
-    name: translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE,
+    name: 'Display Campaigns Export',
     data: dataSheet,
   }];
   exportData(sheets, `${organisationId}_display-campaigns`, 'xlsx');
@@ -353,15 +354,15 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
 /**
  * Email Campaigns
  */
-const exportEmailCampaigns = (organisationId, dataSource, filter, translations) => {
+const exportEmailCampaigns = (organisationId, dataSource, filter) => {
 
-  const titleLine = [translations.EMAIL_CAMPAIGNS_EXPORT_TITLE];
+  const titleLine = ['EMAIL_CAMPAIGNS_EXPORT_TITLE']; // TODO use react-inlt
   const blankLine = [];
 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
+  dataSheet.push([`From ${filter.from.toMoment().format('YYYY-MM-DD')} to ${filter.to.toMoment().format('YYYY-MM-DD')}`]); // TODO use react-inlt
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -373,16 +374,17 @@ const exportEmailCampaigns = (organisationId, dataSource, filter, translations) 
 
   dataSheet.push(blankLine);
 
+  // TODO use react-inlt
   const headersMap = [
-    { name: 'id', translation: translations.ID },
-    { name: 'status', translation: translations.STATUS },
-    { name: 'name', translation: translations.NAME },
-    { name: 'technical_name', translation: translations.TECHNICAL_NAME },
-    { name: 'email_sent', translation: translations.EMAIL_SENT },
-    { name: 'email_hard_bounced', translation: translations.EMAIL_HARD_BOUNCED },
-    { name: 'email_soft_bounced', translation: translations.EMAIL_SOFT_BOUNCED },
-    { name: 'clicks', translation: translations.CLICKS },
-    { name: 'impressions', translation: translations.IMPRESSIONS },
+    { name: 'id', translation: 'ID' },
+    { name: 'status', translation: 'STATUS' },
+    { name: 'name', translation: 'NAME' },
+    { name: 'technical_name', translation: 'TECHNICAL_NAME' },
+    { name: 'email_sent', translation: 'EMAIL_SENT' },
+    { name: 'email_hard_bounced', translation: 'EMAIL_HARD_BOUNCED' },
+    { name: 'email_soft_bounced', translation: 'EMAIL_SOFT_BOUNCED' },
+    { name: 'clicks', translation: 'CLICKS' },
+    { name: 'impressions', translation: 'IMPRESSIONS' },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -397,7 +399,7 @@ const exportEmailCampaigns = (organisationId, dataSource, filter, translations) 
   });
 
   const sheets = [{
-    name: translations.EMAIL_CAMPAIGNS_EXPORT_TITLE,
+    name: 'EMAIL_CAMPAIGNS_EXPORT_TITLE', // TODO use react-inlt
     data: dataSheet,
   }];
 
@@ -450,15 +452,15 @@ const exportEmailCampaignDashboard = (organisationId, campaign, campaignData, bl
 /**
  * Goals
  */
-const exportGoals = (organisationId, dataSource, filter, translations) => {
+const exportGoals = (organisationId, dataSource, filter) => {
 
-  const titleLine = [translations.GOALS_EXPORT_TITLE];
+  const titleLine = ['GOALS_EXPORT_TITLE'];// TODO use react-inlt
   const blankLine = [];
 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
+  dataSheet.push([`From ${filter.from.toMoment().format('YYYY-MM-DD')} to ${filter.to.toMoment().format('YYYY-MM-DD')}`]);// TODO use react-inlt
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -469,11 +471,11 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   }
 
   dataSheet.push(blankLine);
-
+  // TODO use react-inlt
   const headersMap = [
-    { name: 'name', translation: translations.NAME },
-    { name: 'conversions', translation: translations.CONVERSIONS },
-    { name: 'value', translation: translations.CONVERSION_VALUE },
+    { name: 'name', translation: 'NAME' },
+    { name: 'conversions', translation: 'CONVERSIONS' },
+    { name: 'value', translation: 'CONVERSION_VALUE' },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -488,14 +490,14 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   });
 
   const sheets = [{
-    name: translations.GOALS_EXPORT_TITLE,
+    name: 'GOALS_EXPORT_TITLE', // TODO use react-inlt
     data: dataSheet,
   }];
 
   exportData(sheets, `${organisationId}_goals`, 'xlsx');
 };
 
-const exportGoal = (organisationId, goalData, attributionsData, filter, translations, formatMessage) => {
+const exportGoal = (organisationId, goalData, attributionsData, filter, formatMessage) => {
   const exportFilter = {
     ...filter,
     from: filter.from.toMoment().format('YYYY-MM-DD'),
@@ -516,37 +518,39 @@ const exportGoal = (organisationId, goalData, attributionsData, filter, translat
       .replace(/\]/gm, '');
   };
 
+  // TODO use react-inlt
   const headersMap = [
-    { name: 'day', translation: translations.DAY },
-    { name: 'value', translation: translations.VALUE },
-    { name: 'price', translation: translations.PRICE },
-    { name: 'conversions', translation: translations.CONVERSIONS },
+    { name: 'day', translation: 'DAY' },
+    { name: 'value', translation: 'VALUE' },
+    { name: 'price', translation: 'PRICE' },
+    { name: 'conversions', translation: 'CONVERSIONS' },
   ];
 
+  // TODO use react-inlt
   const reportTypeHeaders = {
     SOURCE: [
-      { name: 'marketing_channel', translation: translations.MARKETING_CHANNEL },
-      { name: 'source', translation: translations.SOURCE },
-      { name: 'interaction_type', translation: translations.INTERACTION_TYPE },
-      { name: 'weighted_conversions', translation: translations.WEIGHTED_CONVERSIONS },
-      { name: 'weighted_value', translation: translations.WEIGHTED_VALUE },
-      { name: 'interaction_to_conversion_duration', translation: translations.INTERACTION_TO_CONVERSION_DURATION },
+      { name: 'marketing_channel', translation: 'MARKETING_CHANNEL' },
+      { name: 'source', translation: 'SOURCE' },
+      { name: 'interaction_type', translation: 'INTERACTION_TYPE' },
+      { name: 'weighted_conversions', translation: 'WEIGHTED_CONVERSIONS' },
+      { name: 'weighted_value', translation: 'WEIGHTED_VALUE' },
+      { name: 'interaction_to_conversion_duration', translation: 'INTERACTION_TO_CONVERSION_DURATION' },
     ],
     CAMPAIGN: [
-      { name: 'campaign_id', translation: translations.CAMPAIGN_ID },
-      { name: 'campaign_name', translation: translations.CAMPAIGN_NAME },
-      { name: 'interaction_type', translation: translations.INTERACTION_TYPE },
-      { name: 'weighted_conversions', translation: translations.WEIGHTED_CONVERSIONS },
-      { name: 'weighted_value', translation: translations.WEIGHTED_VALUE },
-      { name: 'interaction_to_conversion_duration', translation: translations.INTERACTION_TO_CONVERSION_DURATION },
+      { name: 'campaign_id', translation: 'CAMPAIGN_ID' },
+      { name: 'campaign_name', translation: 'CAMPAIGN_NAME' },
+      { name: 'interaction_type', translation: 'INTERACTION_TYPE' },
+      { name: 'weighted_conversions', translation: 'WEIGHTED_CONVERSIONS' },
+      { name: 'weighted_value', translation: 'WEIGHTED_VALUE' },
+      { name: 'interaction_to_conversion_duration', translation: 'INTERACTION_TO_CONVERSION_DURATION' },
     ],
     CREATIVE: [
-      { name: 'creative_id', translation: translations.CREATIVE_ID },
-      { name: 'creative_name', translation: translations.CREATIVE_NAME },
-      { name: 'interaction_type', translation: translations.INTERACTION_TYPE },
-      { name: 'weighted_conversions', translation: translations.WEIGHTED_CONVERSIONS },
-      { name: 'weighted_value', translation: translations.WEIGHTED_VALUE },
-      { name: 'interaction_to_conversion_duration', translation: translations.INTERACTION_TO_CONVERSION_DURATION },
+      { name: 'creative_id', translation: 'CREATIVE_ID' },
+      { name: 'creative_name', translation: 'CREATIVE_NAME' },
+      { name: 'interaction_type', translation: 'INTERACTION_TYPE' },
+      { name: 'weighted_conversions', translation: 'WEIGHTED_CONVERSIONS' },
+      { name: 'weighted_value', translation: 'WEIGHTED_VALUE' },
+      { name: 'interaction_to_conversion_duration', translation: 'INTERACTION_TO_CONVERSION_DURATION' },
     ]
   };
 
@@ -564,8 +568,9 @@ const exportGoal = (organisationId, goalData, attributionsData, filter, translat
       );
     });
 
+  // TODO use react-inlt
   const sheets = [
-    addSheet(translations.GOAL_EXPORT_TITLE, goalData, headersMap, exportFilter, formatMessage)
+    addSheet('GOAL_EXPORT_TITLE', goalData, headersMap, exportFilter, formatMessage)
   ].concat(attributionSheets);
 
   exportData(sheets, `${organisationId}_goal`, 'xlsx');
@@ -574,15 +579,16 @@ const exportGoal = (organisationId, goalData, attributionsData, filter, translat
 /**
  * Audience Segments
  */
-const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, translations) => {
+const exportAudienceSegments = (organisationId, datamartId, dataSource, filter) => {
 
-  const titleLine = [translations.AUDIENCE_SEGMENTS_EXPORT_TITLE];
+  // TODO use react-inlt
+  const titleLine = ['AUDIENCE_SEGMENTS_EXPORT_TITLE'];
   const blankLine = [];
 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${new McsMoment('now').toMoment().format('YYYY-MM-DD')} ${translations.TO} ${new McsMoment('now').toMoment().format('YYYY-MM-DD')}`]);
+  dataSheet.push([`From ${new McsMoment('now').toMoment().format('YYYY-MM-DD')} to ${new McsMoment('now').toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -594,17 +600,18 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 
   dataSheet.push(blankLine);
 
+  // TODO use react-inlt
   const headersMap = [
-    { name: 'id', translation: translations.ID },
-    { name: 'type', translation: translations.TYPE },
-    { name: 'name', translation: translations.NAME },
-    { name: 'technical_name', translation: translations.TECHNICAL_NAME },
-    { name: 'user_points', translation: translations.USER_POINTS },
-    { name: 'user_accounts', translation: translations.USER_ACCOUNTS },
-    { name: 'desktop_cookie_ids', translation: translations.DESKTOP_COOKIE_IDS },
-    { name: 'emails', translation: translations.EMAILS },
-    { name: 'user_point_additions', translation: translations.ADDITION },
-    { name: 'user_point_deletions', translation: translations.DELETION },
+    { name: 'id', translation: 'ID' },
+    { name: 'type', translation: 'TYPE' },
+    { name: 'name', translation: 'NAME' },
+    { name: 'technical_name', translation: 'TECHNICAL_NAME' },
+    { name: 'user_points', translation: 'USER_POINTS' },
+    { name: 'user_accounts', translation: 'USER_ACCOUNTS' },
+    { name: 'desktop_cookie_ids', translation: 'DESKTOP_COOKIE_IDS' },
+    { name: 'emails', translation: 'EMAILS' },
+    { name: 'user_point_additions', translation: 'ADDITION' },
+    { name: 'user_point_deletions', translation: 'DELETION' },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -618,8 +625,9 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
     dataSheet.push(dataLine);
   });
 
+  // TODO use react-inlt
   const sheets = [{
-    name: translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE,
+    name: 'DISPLAY_CAMPAIGNS_EXPORT_TITLE',
     data: dataSheet,
   }];
 

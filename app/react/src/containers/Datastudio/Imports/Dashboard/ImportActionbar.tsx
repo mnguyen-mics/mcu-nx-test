@@ -4,9 +4,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Dropdown } from '../../../../components/PopupContainers';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import withTranslations, {
-  TranslationProps,
-} from '../../../Helpers/withTranslations';
 import { Import } from '../../../../models/imports/imports';
 import modalMessages from '../../../../common/messages/modalMessages';
 import Actionbar from '../../../../components/ActionBar';
@@ -44,8 +41,7 @@ type JoinedProps = ImportActionbarProps &
     importId: string;
   }> &
   InjectedIntlProps &
-  InjectedNotificationProps &
-  TranslationProps;
+  InjectedNotificationProps;
 
 class ImportsActionbar extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.IImportService)
@@ -292,6 +288,5 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
 export default compose<JoinedProps, ImportActionbarProps>(
   withRouter,
   injectIntl,
-  withTranslations,
   injectNotifications,
 )(ImportsActionbar);

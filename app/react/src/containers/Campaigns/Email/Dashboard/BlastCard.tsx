@@ -151,7 +151,7 @@ class BlastCard extends React.Component<Props, State> {
       >
         <Button type="primary">
           <FormattedMessage
-            id="NEW_EMAIL_BLAST"
+            id="email.campaign.dashboard.blastCard.newEmailBlast"
             defaultMessage="New Email Blast"
           />
         </Button>

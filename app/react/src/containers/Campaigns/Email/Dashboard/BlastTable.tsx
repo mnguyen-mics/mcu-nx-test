@@ -19,8 +19,12 @@ import {
 import { EmailBlastStatus } from '../../../../models/campaign/email';
 import { EmailCampaignDashboardRouteMatchParam } from './constants';
 import { ClickParam } from 'antd/lib/menu';
-import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import injectDrawer, {
+  InjectedDrawerProps,
+} from '../../../../components/Drawer/injectDrawer';
+import ResourceTimelinePage, {
+  ResourceTimelinePageProps,
+} from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatEmailBlastProperty from '../../../../messages/campaign/email/emailBlastMessages';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
@@ -34,24 +38,71 @@ const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
 } = defineMessages({
   SCENARIO_ACTIVATED: {
-    id: 'blast.status.scenario_activated',
+    id: 'email.campaigns.dashboard.blastList.scenarioActivation',
     defaultMessage: 'Scenario activation',
   },
   PENDING: {
-    id: 'blast.status.pending',
+    id: 'email.campaigns.dashboard.blastList.status.pending',
     defaultMessage: 'Pending',
   },
   SCHEDULED: {
-    id: 'blast.status.scheduled',
+    id: 'email.campaigns.dashboard.blastList.status.scheduled',
     defaultMessage: 'Scheduled',
   },
   FINISHED: {
-    id: 'blast.status.finished',
+    id: 'email.campaigns.dashboard.blastList.status.finished',
     defaultMessage: 'Sent',
   },
   ERROR: {
-    id: 'blast.status.error',
+    id: 'email.campaigns.dashboard.blastList.status.error',
     defaultMessage: 'Error',
+  },
+});
+
+export const messagesMap = defineMessages({
+  status: {
+    id: 'email.campaigns.dashboard.blastList.status',
+    defaultMessage: 'Status',
+  },
+  name: {
+    id: 'email.campaigns.dashboard.blastList.name',
+    defaultMessage: 'Name',
+  },
+  emailSent: {
+    id: 'email.campaigns.dashboard.blastList.emailSent',
+    defaultMessage: 'Email Sent',
+  },
+  emailHardBounced: {
+    id: 'email.campaigns.dashboard.blastList.emailHardBounced',
+    defaultMessage: 'Email Hard Bounced',
+  },
+  emailSoftBounced: {
+    id: 'email.campaigns.dashboard.blastList.emailSoftBounced',
+    defaultMessage: 'Email Soft Bounced',
+  },
+  clicks: {
+    id: 'email.campaigns.dashboard.blastList.clicks',
+    defaultMessage: 'Clicks',
+  },
+  impressions: {
+    id: 'email.campaigns.dashboard.blastList.impressions',
+    defaultMessage: 'Impressions',
+  },
+  noEmailStats: {
+    id: 'email.campaigns.dashboard.blastList.noEmailStats',
+    defaultMessage: 'No Data during the selected period.',
+  },
+  editBlast: {
+    id: 'email.campaigns.dashboard.blastList.edit',
+    defaultMessage: 'Edit',
+  },
+  blastHistory: {
+    id: 'email.campaigns.dashboard.blastList.history',
+    defaultMessage: 'History',
+  },
+  archiveBlast: {
+    id: 'email.campaigns.dashboard.blastList.archive',
+    defaultMessage: 'Archive',
   },
 });
 
@@ -92,13 +143,14 @@ const BlastTableView = TableView as React.ComponentClass<
 >;
 
 class BlastTable extends React.Component<Props> {
-
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
   editBlast = (blast: BlastData) => {
     const {
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
       history,
     } = this.props;
 
@@ -148,113 +200,117 @@ class BlastTable extends React.Component<Props> {
       },
       history,
     } = this.props;
-    
-    this.props.openNextDrawer<ResourceTimelinePageProps>(
-      ResourceTimelinePage,
-      {
-        additionalProps: {
-          resourceType: 'EMAIL_BLAST',
-          resourceId: record.id,
-          handleClose: () => this.props.closeNextDrawer(),
-          formatProperty: formatEmailBlastProperty,
-          resourceLinkHelper: {
-            EMAIL_CAMPAIGN: {
-              direction: 'PARENT',
-              getType: () => {
-                return (
-                  <FormattedMessage
-                    {...resourceHistoryMessages.emailCampaignResourceType}/>
-                );
-              },
-              getName: (id: string) => {
-                return EmailCampaignService.getEmailCampaign(id).then(response => {
+
+    this.props.openNextDrawer<ResourceTimelinePageProps>(ResourceTimelinePage, {
+      additionalProps: {
+        resourceType: 'EMAIL_BLAST',
+        resourceId: record.id,
+        handleClose: () => this.props.closeNextDrawer(),
+        formatProperty: formatEmailBlastProperty,
+        resourceLinkHelper: {
+          EMAIL_CAMPAIGN: {
+            direction: 'PARENT',
+            getType: () => {
+              return (
+                <FormattedMessage
+                  {...resourceHistoryMessages.emailCampaignResourceType}
+                />
+              );
+            },
+            getName: (id: string) => {
+              return EmailCampaignService.getEmailCampaign(id).then(
+                response => {
                   return response.data.name;
-                });
-              },
-              goToResource: (id: string) => {
+                },
+              );
+            },
+            goToResource: (id: string) => {
+              history.push(`/v2/o/${organisationId}/campaigns/email/${id}`);
+            },
+          },
+          EMAIL_TEMPLATE_SELECTION: {
+            direction: 'CHILD',
+            getType: () => {
+              return (
+                <FormattedMessage
+                  {...resourceHistoryMessages.emailTemplateResourceType}
+                />
+              );
+            },
+            getName: (id: string) => {
+              return getLinkedResourceIdInSelection(
+                organisationId,
+                'EMAIL_TEMPLATE_SELECTION',
+                id,
+                'CREATIVE',
+              ).then(emailTemplateId => {
+                return CreativeService.getEmailTemplate(emailTemplateId).then(
+                  response => {
+                    return response.data.name;
+                  },
+                );
+              });
+            },
+            goToResource: (id: string) => {
+              getLinkedResourceIdInSelection(
+                organisationId,
+                'EMAIL_TEMPLATE_SELECTION',
+                id,
+                'CREATIVE',
+              ).then(emailTemplateId => {
                 history.push(
-                  `/v2/o/${organisationId}/campaigns/email/${id}`,
+                  `/v2/o/${organisationId}/creatives/email/${emailTemplateId}/edit`,
                 );
-              },
+              });
             },
-            EMAIL_TEMPLATE_SELECTION: {
-              direction: 'CHILD',
-              getType: () => {
-                return (
-                  <FormattedMessage
-                    {...resourceHistoryMessages.emailTemplateResourceType}/>
-                );
-              },
-              getName: (id: string) => {
-                return getLinkedResourceIdInSelection(
-                  organisationId,
-                  'EMAIL_TEMPLATE_SELECTION',
-                  id,
-                  'CREATIVE',
-                ).then(emailTemplateId => {
-                  return CreativeService.getEmailTemplate(emailTemplateId)
-                    .then(response => {
-                      return response.data.name;
-                    });
-                });
-              },
-              goToResource: (id: string) => {
-                getLinkedResourceIdInSelection(
-                  organisationId,
-                  'EMAIL_TEMPLATE_SELECTION',
-                  id,
-                  'CREATIVE',
-                ).then(emailTemplateId => {
-                  history.push(
-                    `/v2/o/${organisationId}/creatives/email/${emailTemplateId}/edit`,
-                  );
-                });
-              },
+          },
+          AUDIENCE_SEGMENT_EMAIL_SELECTION: {
+            direction: 'CHILD',
+            getType: () => {
+              return (
+                <FormattedMessage
+                  {...resourceHistoryMessages.segmentResourceType}
+                />
+              );
             },
-            AUDIENCE_SEGMENT_EMAIL_SELECTION: {
-              direction: 'CHILD',
-              getType: () => {
-                return (
-                  <FormattedMessage
-                    {...resourceHistoryMessages.segmentResourceType}/>
+            getName: (id: string) => {
+              return getLinkedResourceIdInSelection(
+                organisationId,
+                'AUDIENCE_SEGMENT_EMAIL_SELECTION',
+                id,
+                'AUDIENCE_SEGMENT',
+              ).then(audienceSegmentId => {
+                return this._audienceSegmentService
+                  .getSegment(audienceSegmentId)
+                  .then(response => {
+                    return response.data.name;
+                  });
+              });
+            },
+            goToResource: (id: string) => {
+              getLinkedResourceIdInSelection(
+                organisationId,
+                'AUDIENCE_SEGMENT_EMAIL_SELECTION',
+                id,
+                'AUDIENCE_SEGMENT',
+              ).then(audienceSegmentId => {
+                history.push(
+                  `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
                 );
-              },
-              getName: (id: string) => {
-                return getLinkedResourceIdInSelection(
-                  organisationId,
-                  'AUDIENCE_SEGMENT_EMAIL_SELECTION',
-                  id,
-                  'AUDIENCE_SEGMENT',
-                ).then(audienceSegmentId => {
-                  return this._audienceSegmentService.getSegment(audienceSegmentId)
-                    .then(response => {
-                      return response.data.name;
-                    });
-                });
-              },
-              goToResource: (id: string) => {
-                getLinkedResourceIdInSelection(
-                  organisationId,
-                  'AUDIENCE_SEGMENT_EMAIL_SELECTION',
-                  id,
-                  'AUDIENCE_SEGMENT',
-                ).then(audienceSegmentId => {
-                  history.push(
-                    `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
-                  );
-                });
-              },
+              });
             },
           },
         },
-        size: 'small',
-      }
-    )
-  }
+      },
+      size: 'small',
+    });
+  };
 
   render() {
     const {
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
       data,
       isStatLoading,
       isLoading,
@@ -274,13 +330,13 @@ class BlastTable extends React.Component<Props> {
 
     const dataColumns: Array<DataColumnDefinition<BlastData>> = [
       {
-        translationKey: 'STATUS',
+        intlMessage: messagesMap.status,
         key: 'status',
         isHideable: false,
         render: (text, record) => this.renderStatus(record),
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messagesMap.name,
         key: 'blast_name',
         isHideable: false,
         render: (text, record) => (
@@ -295,14 +351,14 @@ class BlastTable extends React.Component<Props> {
         ),
       },
       {
-        translationKey: 'EMAIL_SENT',
+        intlMessage: messagesMap.emailSent,
         key: 'email_sent',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text, record) => renderMetricData(record.email_sent, '0,0'),
       },
       {
-        translationKey: 'EMAIL_HARD_BOUNCED',
+        intlMessage: messagesMap.emailHardBounced,
         key: 'email_hard_bounced',
         isVisibleByDefault: true,
         isHideable: true,
@@ -310,7 +366,7 @@ class BlastTable extends React.Component<Props> {
           renderMetricData(record.email_hard_bounced, '0,0'),
       },
       {
-        translationKey: 'EMAIL_SOFT_BOUNCED',
+        intlMessage: messagesMap.emailSoftBounced,
         key: 'email_soft_bounced',
         isVisibleByDefault: true,
         isHideable: true,
@@ -318,14 +374,14 @@ class BlastTable extends React.Component<Props> {
           renderMetricData(record.email_soft_bounced, '0,0'),
       },
       {
-        translationKey: 'CLICKS',
+        intlMessage: messagesMap.clicks,
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text, record) => renderMetricData(record.clicks, '0,0'),
       },
       {
-        translationKey: 'IMPRESSIONS',
+        intlMessage: messagesMap.impressions,
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
@@ -338,15 +394,15 @@ class BlastTable extends React.Component<Props> {
         key: 'action',
         actions: () => [
           {
-            translationKey: 'EDIT',
+            intlMessage: messagesMap.editBlast,
             callback: this.editBlast,
           },
           {
-            translationKey: 'HISTORY',
+            intlMessage: messagesMap.blastHistory,
             callback: this.openHistoryDrawer,
           },
           {
-            translationKey: 'ARCHIVE',
+            intlMessage: messagesMap.archiveBlast,
             callback: this.props.archiveBlast,
           },
         ],
@@ -364,6 +420,8 @@ class BlastTable extends React.Component<Props> {
   }
 }
 
-export default compose<Props, BlastTableProps>(withRouter, injectIntl, injectDrawer)(
-  BlastTable,
-);
+export default compose<Props, BlastTableProps>(
+  withRouter,
+  injectIntl,
+  injectDrawer,
+)(BlastTable);

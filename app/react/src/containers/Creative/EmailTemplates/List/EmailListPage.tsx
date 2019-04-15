@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Layout, message } from 'antd';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-
 import EmailActionBar from './EmailActionBar';
 import EmailList from './EmailList';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
@@ -25,7 +24,6 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import * as CreativeEmailsActions from '../../../../state/Creatives/Emails/actions';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 import { Filters } from '../../../../components/ItemList';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -50,7 +48,7 @@ export interface MapDispatchToProps {
   resetCreativeEmails: () => void;
 }
 
-export interface MapStateToProps extends TranslationProps {
+export interface MapStateToProps {
   hasCreativeEmails: boolean;
   isFetchingCreativeEmails: boolean;
   dataSource: object[]; // type better
@@ -221,8 +219,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       dataSource,
       totalCreativeEmails,
       fetchCreativeEmails,
-      resetCreativeEmails,
-      translations,
+      resetCreativeEmails
     } = this.props;
     const rowSelection = {
       selectedRowKeys,
@@ -249,7 +246,6 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       totalCreativeEmails,
       fetchCreativeEmails,
       resetCreativeEmails,
-      translations,
     };
 
     return (
@@ -272,8 +268,7 @@ const mapStateToProps = (state: MapStateToProps) => ({
   hasCreativeEmails: hasEmailTemplates(state),
   isFetchingCreativeEmails: isFetchingEmailTemplates(state),
   dataSource: getEmailTemplates(state),
-  totalCreativeEmails: getEmailTemplatesTotal(state),
-  translations: state.translations,
+  totalCreativeEmails: getEmailTemplatesTotal(state)
 });
 
 const mapDispatchToProps = {

@@ -278,7 +278,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       const datamartFilter = {
         displayElement: (
           <div>
-            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+            <FormattedMessage id="settings.datamart.site.list.datamartFilter" defaultMessage="Datamart" />{' '}
             <Icon type="down" />
           </div>
         ),

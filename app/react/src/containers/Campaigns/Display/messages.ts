@@ -88,5 +88,33 @@ export default defineMessages({
   snippet: {
     id: 'campaignEditor.export.adserver.snippet',
     defaultMessage: 'Snippet',
-  }
+  },
+  confirmArchiveModalTitle: {
+    id: 'campaign.display.archive.confirmModal.title',
+    defaultMessage: 'Are you sure you want to archive this Campaign ?',
+  },
+  confirmArchiveModalContent: {
+    id: 'campaign.display.archive.confirmModal.content',
+    defaultMessage: "By archiving this Campaign all its activities will be suspended. You'll be able to recover it from the archived campaign filter.",
+  },
+  confirmArchiveModalOk: {
+    id: 'campaign.display.archive.confirmModal.ok',
+    defaultMessage: 'Archive now',
+  },
+  confirmArchiveModalCancel: {
+    id: 'campaign.display.archive.confirm_modal.cancel',
+    defaultMessage: 'Cancel',
+  },
+  searchDisplayCampaign: {
+    id: 'campaign.display.list.search.placeholder',
+    defaultMessage: 'Search Display Campaigns',
+  },
+  editDisplayCampaign: {
+    id: 'campaign.display.list.action.edit',
+    defaultMessage: 'Edit',
+  },
+  archiveDisplayCampaign: {
+    id: 'campaign.display.list.action.archive',
+    defaultMessage: 'Archive',
+  },
 });

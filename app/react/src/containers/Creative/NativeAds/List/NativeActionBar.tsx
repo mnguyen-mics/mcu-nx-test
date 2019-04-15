@@ -17,20 +17,20 @@ import Slider from '../../../../components/Transition/Slide';
 
 const messages = defineMessages({
   archiveNativesModalTitle: {
-    id: 'archive.natives.modal.title',
+    id: 'creatives.native.list.multiArchive.modal.title',
     defaultMessage: 'Archive Native Creatives',
   },
   archiveNativesModalMessage: {
-    id: 'archive.natives.modal.message',
+    id: 'creatives.native.list.multiArchive.modal.message',
     defaultMessage:
       'Are you sure to archive all the selected native creatives ?',
   },
   breadCrumbNativeListTitle: {
-    id: 'actionBar.natives.breadCrumb.title',
+    id: 'creatives.native.list.actionBar.breadCrumb.title',
     defaultMessage: 'Natives',
   },
   newNativeCreativeButton: {
-    id: 'actionBar.natives.new.native',
+    id: 'creatives.native.list.actionBar.new.Native',
     defaultMessage: 'New Native',
   },
 });
@@ -107,7 +107,7 @@ class NativeActionBar extends React.Component<JoinedProps> {
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="ARCHIVE" defaultMessage="Archive" />
+              <FormattedMessage id="creatives.native.list.actionbar.archive" defaultMessage="Archive" />
             </Button>
           }
         />

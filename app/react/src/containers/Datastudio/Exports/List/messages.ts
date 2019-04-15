@@ -31,16 +31,20 @@ export default defineMessages({
     defaultMessage: 'Search Exports',
   },
   name: {
-    id: 'exports.table.column.name',
+    id: 'exports.list.column.name',
     defaultMessage: 'Name',
   },
   type: {
-    id: 'exports.table.column.type',
+    id: 'exports.list.column.type',
     defaultMessage: 'Type',
   },
   empty: {
-    id: 'exports.table.empty',
+    id: 'exports.list.empty',
     defaultMessage:
       'There is no Export List created yet! Click on New to get started',
+  },
+  archive: {
+    id: 'exports.list.actionColumn.archive',
+    defaultMessage: 'Archive',
   },
 });

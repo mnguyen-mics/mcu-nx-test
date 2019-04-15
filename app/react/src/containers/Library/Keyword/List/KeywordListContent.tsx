@@ -7,12 +7,8 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
-import {
-  lazyInject,
-} from '../../../../config/inversify.config';
-import {
-  TYPES,
-} from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { KeywordListResource } from '../../../../models/keywordList/keywordList';
 import {
@@ -119,22 +115,20 @@ class KeywordListContent extends React.Component<
   };
 
   render() {
-
     const actionsColumnsDefinition: Array<
       ActionsColumnDefinition<KeywordListResource>
     > = [
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          { intlMessage: messages.edit, callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,

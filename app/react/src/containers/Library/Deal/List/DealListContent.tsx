@@ -132,19 +132,20 @@ class DealListContent extends React.Component<
   };
 
   render() {
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<DealsListResource>> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<DealsListResource>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          { intlMessage: messages.edit, callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,

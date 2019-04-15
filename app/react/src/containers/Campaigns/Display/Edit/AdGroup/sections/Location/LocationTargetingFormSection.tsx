@@ -208,14 +208,14 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
           disabled={!!disabled}
         >
           <FormattedMessage
-            id="location-checkbox-message"
+            id="display.campaign.edit.adGroup.locationTargetingSection.checkboxMessage"
             defaultMessage="I want to target a specific location"
           />
         </Checkbox>
         <div className={showLocationTargeting ? '' : 'hide-section'}>
           <FormFieldWrapper
             label={<FormattedMessage
-              id="label-location-targeting"
+              id="display.campaign.edit.adGroup.locationTargetingSection.label"
               defaultMessage="Location"
             />}
             rowProps={{ align: flexAlign }}

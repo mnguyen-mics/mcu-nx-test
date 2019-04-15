@@ -40,7 +40,7 @@ class SaveAsUserQuerySegmentModal extends React.Component<Props> {
         onOk={handleOnOk}
         title={
           <FormattedMessage
-            id="query-tool-modal-saveas-export"
+            id="queryTool.queryTool.query-tool-modal-saveas-export"
             defaultMessage="Save As User Query Segment (experimental)"
           />
         }

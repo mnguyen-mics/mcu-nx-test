@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button, Icon, Menu, Modal } from 'antd';
-import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
@@ -557,18 +556,8 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-});
-
-const mapDispatchToProps = {};
-
 export default compose<JoinedProps, AdGroupActionbarProps>(
   injectIntl,
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
   injectDrawer,
 )(AdGroupActionbar);

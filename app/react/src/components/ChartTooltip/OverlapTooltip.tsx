@@ -91,7 +91,7 @@ const OverlapTooltip: React.SFC<OverlapTooltipProps> = ({ content }) => {
       <div className="text-center">
         <Button type="primary">
           <McsIcon type="bolt" />
-          <FormattedMessage id="ACTIVATE" defaultMessage="Activate" />
+          <FormattedMessage id="components.overlap.tooltip.activate.button" defaultMessage="Activate" />
         </Button>
       </div>
     </div>

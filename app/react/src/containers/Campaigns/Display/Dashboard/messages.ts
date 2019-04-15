@@ -1,6 +1,8 @@
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-export default defineMessages({
+const messages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
   dashboardOverview: {
     id: 'display.dashboard.overview',
     defaultMessage: 'Overview',
@@ -219,6 +221,10 @@ export default defineMessages({
     id: 'campaign.chart.format',
     defaultMessage: 'Format',
   },
+  status: {
+    id: 'campaign.chart.status',
+    defaultMessage: 'Status',
+  },
   name: {
     id: 'campaign.chart.name',
     defaultMessage: 'Name',
@@ -279,31 +285,32 @@ export default defineMessages({
   },
   editionNotAllowed: {
     id: 'display.campaign.actionbar.edition.not.allowed',
-    defaultMessage: 'Edition on this campaign is deprecated, you must use navigator legacy to edit this campaign.'
+    defaultMessage:
+      'Edition on this campaign is deprecated, you must use navigator legacy to edit this campaign.',
   },
   adServingDownload: {
     id: 'display.campaign.actionbar.adserving.download',
-    defaultMessage: 'Get Your Snippets'
+    defaultMessage: 'Get Your Snippets',
   },
   googleDfp: {
     id: 'display.campaign.actionbar.adserving.google_dfp',
-    defaultMessage: 'Google DoubleClick For Publisher (DFP)'
+    defaultMessage: 'Google DoubleClick For Publisher (DFP)',
   },
   googleDbm: {
     id: 'display.campaign.actionbar.adserving.google_dbm',
-    defaultMessage: 'Google DoubleClick Bid Manager (DBM)'
+    defaultMessage: 'Google DoubleClick Bid Manager (DBM)',
   },
   apx: {
     id: 'display.campaign.actionbar.adserving.apx',
-    defaultMessage: 'App Nexus'
+    defaultMessage: 'App Nexus',
   },
   none: {
     id: 'display.campaign.actionbar.adserving.none',
-    defaultMessage: 'Other'
+    defaultMessage: 'Other',
   },
   emptyAds: {
     id: 'display.campaign.actionbar.adserving.emptyAds',
-    defaultMessage: 'There is no ads attached to your campaign.'
+    defaultMessage: 'There is no ads attached to your campaign.',
   },
   history: {
     id: 'display.campaign.actionbar.history',
@@ -311,6 +318,12 @@ export default defineMessages({
   },
   smartAdServer: {
     id: 'display.campaign.actionbar.adserving.smart_ad_server',
-    defaultMessage: 'Smart Ad Server'
-  }
-}) as { [key: string]: { id: string; defaultMessage: string } };
+    defaultMessage: 'Smart Ad Server',
+  },
+  exportInProgress: {
+    id: 'display.campaign.dashboard.exportInProgress',
+    defaultMessage: 'Export in progress',
+  },
+});
+
+export default messages;

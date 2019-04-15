@@ -4,7 +4,6 @@ import { Link, withRouter } from 'react-router-dom';
 import { Modal } from 'antd';
 import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-
 import {
   TableViewFilters,
   EmptyTableView,
@@ -17,14 +16,16 @@ import {
   buildDefaultSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-
 import CreativeScreenshot from '../../CreativeScreenshot';
 import messages from './message';
 import CreativeService from '../../../../services/CreativeService';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
 import { MapDispatchToProps, MapStateToProps } from './DisplayAdsPage';
-import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import {
+  ExtendedTableRowSelection,
+  ActionsColumnDefinition,
+} from '../../../../components/TableView/TableView';
 
 interface DisplayAdsListProps extends MapStateToProps, MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
@@ -181,7 +182,7 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
 
     const dataColumns = [
       {
-        translationKey: 'PREVIEW',
+        intlMessage: messages.preview,
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
@@ -190,7 +191,7 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
         ),
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messages.name,
         key: 'name',
         isHideable: false,
         render: (text: string, record: DisplayAdResource) => (
@@ -203,13 +204,13 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
         ),
       },
       {
-        translationKey: 'AUDIT_STATUS',
+        intlMessage: messages.auditStatus,
         key: 'audit_status',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        translationKey: 'PUBLISHED_VERSION',
+        intlMessage: messages.publishedVersion,
         key: 'published_version',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
@@ -221,11 +222,11 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
         key: 'action',
         actions: () => [
           {
-            translationKey: 'EDIT',
+            intlMessage: messages.edit,
             callback: this.editCreativeDisplay,
           },
           {
-            translationKey: 'ARCHIVE',
+            intlMessage: messages.archive,
             callback: this.archiveCreativeDisplay,
           },
         ],

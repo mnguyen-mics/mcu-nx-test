@@ -97,8 +97,6 @@ export const WORKSPACE = createRequestTypes('WORKSPACE');
 
 export const SIDEBAR_SWITCH_VISIBILITY = 'SIDEBAR_SWITCH_VISIBILITY';
 
-export const LOAD_TRANSLATIONS = createRequestTypes('LOAD_TRANSLATIONS');
-
 export const LABELS_FETCH = createRequestTypes('LABELS_FETCH');
 export const LABELS_RESET = 'LABELS_FETCH';
 

@@ -48,7 +48,7 @@ class LocationSummary extends React.Component<Props> {
     if (includedLocations.length === 0 && excludedLocations.length === 0) {
       content = (
         <FormattedMessage
-          id="ad-group-form-summary-locations-none"
+          id="display.campaign.edit.adGroup.locationSummary.noLocaton"
           defaultMessage="Your ad group is not restricted on a particular location"
         />
       );
@@ -56,7 +56,7 @@ class LocationSummary extends React.Component<Props> {
       content = (
         <div>
           <FormattedMessage
-            id="ad-group-form-summary-locations-include_only"
+            id="display.campaign.edit.adGroup.locationSummary.includeOnly"
             defaultMessage="Your ad group is restrited to the following {locationCount, plural , one {location} other {locations} }"
             values={{
               locationCount: includedLocations.length,
@@ -69,7 +69,7 @@ class LocationSummary extends React.Component<Props> {
       content = (
         <div>
           <FormattedMessage
-            id="ad-group-form-summary-locations-exclude_only"
+            id="display.campaign.edit.adGroup.locationSummary.excludeonly"
             defaultMessage="Your ad group will run everywhere except on the following {locationCount, plural , one {location} other {locations} }"
             values={{
               locationCount: excludedLocations.length,
@@ -82,7 +82,7 @@ class LocationSummary extends React.Component<Props> {
       content = (
         <div>
           <FormattedMessage
-            id="ad-group-form-summary-locations-include"
+            id="display.campaign.edit.adGroup.locationSummary.include"
             defaultMessage="Your ad group is restrited to the following {locationCount, plural , one {location} other {locations} }"
             values={{
               locationCount: includedLocations.length,
@@ -91,7 +91,7 @@ class LocationSummary extends React.Component<Props> {
           <p className="info-color">{printGeonames(includedLocations)}</p>
           <br />
           <FormattedMessage
-            id="ad-group-form-summary-locations-exclude"
+            id="display.campaign.edit.adGroup.locationSummary.exclude"
             defaultMessage="Except"
           />
           <p className="info-color">{printGeonames(excludedLocations)}</p>

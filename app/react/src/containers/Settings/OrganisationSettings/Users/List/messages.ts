@@ -2,39 +2,39 @@ import { defineMessages } from 'react-intl';
 
 const messages = defineMessages({
   users: {
-    id: 'users.title',
+    id: 'settings.organisation.users.list.title',
     defaultMessage: 'Users',
   },
   usersFirstName: {
-    id: 'users.first.name',
+    id: 'settings.organisation.users.list.first.name',
     defaultMessage: 'First Name',
   },
   usersLastName: {
-    id: 'users.last.name',
+    id: 'settings.organisation.users.list.last.name',
     defaultMessage: 'Last Name',
   },
   usersEmail: {
-    id: 'users.email',
+    id: 'settings.organisation.users.list.email',
     defaultMessage: 'Email',
   },
   newUser: {
-    id: 'users.new',
+    id: 'settings.organisation.users.list.new',
     defaultMessage: 'New User',
   },
   editUser: {
-    id: 'users.edit',
+    id: 'settings.organisation.users.list.edit',
     defaultMessage: 'Edit User',
   },
   archiveUser: {
-    id: 'users.archive',
+    id: 'settings.organisation.users.list.archive',
     defaultMessage: 'Archive User',
   },
   emptyUsers: {
-    id: 'users.empty',
+    id: 'settings.organisation.users.list.empty',
     defaultMessage: 'There is no User created yet!',
   },
   usersCreationDate: {
-    id: 'users.creationDate',
+    id: 'settings.organisation.users.list.creationDate',
     defaultMessage: 'Creation Date',
   },
 });

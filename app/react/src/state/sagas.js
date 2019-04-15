@@ -1,6 +1,5 @@
 import { all } from 'redux-saga/effects';
 import { appSagas } from './App/sagas';
-import { translationsSagas } from './Translations/sagas';
 import { loginSagas } from './Login/sagas';
 import { sessionSagas } from './Session/sagas';
 import { displayCampaignsSagas } from './Campaigns/Display/sagas';
@@ -17,7 +16,6 @@ import { featuresSagas } from './Features/sagas';
 export default function* sagas() {
   yield all([
     ...appSagas,
-    ...translationsSagas,
     ...sessionSagas,
     ...loginSagas,
     ...displayCampaignsSagas,

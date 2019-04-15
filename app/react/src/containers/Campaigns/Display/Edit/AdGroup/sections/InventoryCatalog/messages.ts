@@ -5,8 +5,6 @@ export default defineMessages({
     id: 'inventory.catalog.select.placeholder',
     defaultMessage: 'Browse Inventory...',
   },
-  
- 
   detailedTargetingLabel: {
     id: 'inventory.catalog.inventory-selection.label',
     defaultMessage: 'Inventory Selection',

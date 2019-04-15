@@ -157,7 +157,6 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,

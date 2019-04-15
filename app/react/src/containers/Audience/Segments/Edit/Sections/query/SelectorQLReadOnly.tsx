@@ -7,7 +7,7 @@ export interface AngularWidgetProps {
 }
 
 const messageProps = {
-  id: 'selector-ql.query-container.undefined',
+  id: 'audience.segments.form.selectorQLQueryContainer.undefined',
   defaultMessage: 'Undefined Query container'
 }
 

@@ -23,7 +23,7 @@ import ExportService from '../../../../../services/ExportService';
 
 const messages = defineMessages({
   serviceUsageReportTitle: {
-    id: 'seetings.service.usage.report.title',
+    id: 'settings.datamart.serviceUsageReport.list.title',
     defaultMessage: 'Service Usage Report List',
   },
 });
@@ -168,7 +168,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
           style={{ float: 'right', bottom: '10px' }}
         >
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" defaultMessage="Export" />
+          <FormattedMessage id="settings.datamart.serviceUsageReport.list.export" defaultMessage="Export" />
         </Button>
 
         <hr className="mcs-separator" />

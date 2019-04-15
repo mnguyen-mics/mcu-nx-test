@@ -74,7 +74,7 @@ class SegmentReach extends React.Component<Props, State> {
         return (
           <div className="segment-user-reach">
             <FormattedMessage
-              id="missing-provider"
+              id="email.campaign.edit.segmentReach.missing-provider"
               defaultMessage="Please select a provider to have the potential reach number"
             />
           </div>
@@ -85,7 +85,7 @@ class SegmentReach extends React.Component<Props, State> {
         return (
           <div className="segment-user-reach">
             <FormattedMessage
-              id="potential-reach-zero"
+              id="email.campaign.edit.segmentReach.potential-reach-zero"
               defaultMessage="There are no email to reach"
             />
           </div>
@@ -95,7 +95,7 @@ class SegmentReach extends React.Component<Props, State> {
       return (
         <div className="segment-user-reach">
           <FormattedMessage
-            id="potential-reach"
+            id="email.campaign.edit.segmentReach.potential-reach"
             defaultMessage={`Potential Reach: {emailCountLabeled} 
               { emailCount, plural, one { email } other { emails }} `}
             values={{

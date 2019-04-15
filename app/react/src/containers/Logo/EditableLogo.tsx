@@ -66,7 +66,7 @@ class EditableLogo extends React.Component<Props> {
         </p>
         <p className="ant-upload-text">
           <FormattedMessage
-            id="DRAGGER_MESSAGE"
+            id="components.logo.draggerMessage"
             defaultMessage="Click or drag an image in this area to upload"
           />
         </p>
@@ -82,7 +82,7 @@ class EditableLogo extends React.Component<Props> {
         <span id="logoDropzone" className="mcs-dropzone-overlay">
           <label htmlFor="logoDropzone" className="mcs-dropzone-overlay-label">
             <FormattedMessage
-              id="UPLOAD_IMAGE_MESSAGE"
+              id="components.logo.uploadImageMessage"
               defaultMessage="Upload image"
             />
           </label>
@@ -141,7 +141,7 @@ class EditableLogo extends React.Component<Props> {
             {isUploadingLogo && (
               <div>
                 <FormattedMessage
-                  id="settings.logo_loading"
+                  id="components.logo.loading"
                   defaultMessage="Logo is loading"
                 />
               </div>

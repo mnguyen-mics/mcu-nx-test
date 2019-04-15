@@ -14,7 +14,7 @@ interface State  {
 
 const messages = defineMessages({
   error: {
-    id: 'markdown.image.forbidden',
+    id: 'components.markdown.renderers.image.forbidden',
     defaultMessage: 'Please host your images as Assets on mediarithmics.'
   }
 })

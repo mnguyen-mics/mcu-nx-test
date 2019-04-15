@@ -373,14 +373,14 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
               title={formatMessage(messages.contentSectionLocationOption1)}
             >
               <McsIcon type="check" />
-              <FormattedMessage id="geoname.include" defaultMessage="Include" />
+              <FormattedMessage id="display.campaign.edit.adGroup.locationTargetingSection.include" defaultMessage="Include" />
             </Option>
             <Option
               value="EXC"
               title={formatMessage(messages.contentSectionLocationOption2)}
             >
               <McsIcon type="close-big" />
-              <FormattedMessage id="geoname.exclude" defaultMessage="Exclude" />
+              <FormattedMessage id="display.campaign.edit.adGroup.locationTargetingSection.exclude" defaultMessage="Exclude" />
             </Option>
           </Select>
         </div>

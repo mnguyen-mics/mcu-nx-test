@@ -36,7 +36,7 @@ export default class SelectorLayout extends React.Component<
             <Button type="primary" className="mcs-primary" onClick={handleAdd}>
               <McsIcon type="plus" />
               <FormattedMessage
-                id="table-selector-add-button"
+                id="components.elementSelector.selectorLayout.actionbar.add.button"
                 defaultMessage="Add"
               />
             </Button>

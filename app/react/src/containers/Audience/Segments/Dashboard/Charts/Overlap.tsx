@@ -5,7 +5,6 @@ import moment from 'moment';
 import {FormattedMessage, injectIntl, InjectedIntlProps} from 'react-intl';
 import {compose} from 'recompose';
 import {RouteComponentProps} from 'react-router';
-
 import {
   EmptyCharts,
   LoadingChart,
@@ -14,8 +13,6 @@ import {VerticalBarChart} from '../../../../../components/BarCharts/index';
 import {LegendChart} from '../../../../../components/LegendChart';
 import McsIcon from '../../../../../components/McsIcon';
 import messages from '../messages';
-
-import {TranslationProps} from '../../../../Helpers/withTranslations';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
@@ -42,7 +39,6 @@ export interface OverlapProps {
 
 type Props = InjectedThemeColorsProps &
   InjectedDatamartProps &
-  TranslationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
   InjectedIntlProps & OverlapProps;
 

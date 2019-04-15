@@ -36,7 +36,7 @@ class PlacementListSummary extends React.Component<Props> {
     ) {
       content = (
         <FormattedMessage
-          id="ad-group-form-summary-placementlist-none"
+          id="display.campaign.edit.adGroup.placementListSummary.noPlacementList"
           defaultMessage="Your ad group does not target a particular placement list"
         />
       );
@@ -47,7 +47,7 @@ class PlacementListSummary extends React.Component<Props> {
       content = (
         <div>
           <FormattedMessage
-            id="ad-group-form-summary-placementlist-include_only"
+            id="display.campaign.edit.adGroup.placementListSummary.includeOnly"
             defaultMessage="Your ad group will target the following {placementListCount, plural , one {placement list} other {placement lists} }"
             values={{
               placementListCount: includedPlacementLists.length,
@@ -65,7 +65,7 @@ class PlacementListSummary extends React.Component<Props> {
       content = (
         <div>
           <FormattedMessage
-            id="ad-group-form-summary-placementlist-exclude_only"
+            id="display.campaign.edit.adGroup.placementListSummary.excludeOnly"
             defaultMessage="Your ad group will exclude the following {placementListCount, plural , one {placement list} other {placement lists} }"
             values={{
               placementListCount: excludedPlacementLists.length,
@@ -83,7 +83,7 @@ class PlacementListSummary extends React.Component<Props> {
       content = (
         <div>
           <FormattedMessage
-            id="ad-group-form-summary-placementlist-include"
+            id="display.campaign.edit.adGroup.placementListSummary.include"
             defaultMessage="Your ad group will target the following {placementListCount, plural , one {placement list} other {placement lists} }"
             values={{
               placementListCount: includedPlacementLists.length,
@@ -94,7 +94,7 @@ class PlacementListSummary extends React.Component<Props> {
           </p>
           <br />
           <FormattedMessage
-            id="ad-group-form-summary-placementlist-exclude"
+            id="display.campaign.edit.adGroup.placementListSummary.exclude"
             defaultMessage="Your ad group will exclude the following {placementListCount, plural , one {placement list} other {placement lists} }"
             values={{
               placementListCount: excludedPlacementLists.length,

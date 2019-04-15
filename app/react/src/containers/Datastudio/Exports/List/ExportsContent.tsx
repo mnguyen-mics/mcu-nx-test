@@ -220,8 +220,8 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       {
         key: 'action',
         actions: () => [
-          // { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          // { intlMessage: 'EDIT', callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
@@ -231,7 +231,6 @@ class ExportContent extends React.Component<Props, ExportContentState> {
 
       dataColumnsDefinition: [
         {
-          translationKey: 'NAME',
           intlMessage: messages.name,
           key: 'name',
           isHideable: false,
@@ -245,7 +244,6 @@ class ExportContent extends React.Component<Props, ExportContentState> {
           ),
         },
         {
-          translationKey: 'type',
           intlMessage: messages.type,
           key: 'type',
           isHideable: false,

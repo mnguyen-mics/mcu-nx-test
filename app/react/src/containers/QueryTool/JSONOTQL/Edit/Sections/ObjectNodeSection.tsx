@@ -135,7 +135,7 @@ class ObjectNodeSection extends React.Component<Props> {
             className="field-label m-b-20"
           >
             <FormattedMessage
-              id="queryDocument.objectNode.freqency.enabled"
+              id="queryTool.queryDocument.objectNode.frequency.enabled"
               defaultMessage="I want to add a frequency"
             />
           </FormCheckboxField>
@@ -173,7 +173,7 @@ class ObjectNodeSection extends React.Component<Props> {
                 ),
                 addonAfter: (
                   <FormattedMessage
-                    id="queryDocument.objectNode.freqency.time"
+                    id="queryTool.queryDocument.objectNode.freqency.time"
                     defaultMessage="times"
                   />
                 ),

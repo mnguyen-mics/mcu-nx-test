@@ -11,7 +11,6 @@ import GoalReducers from '../state/Campaign/Goal/reducer';
 import NotificationsReducers from '../state/Notifications/reducer';
 import LoginReducers from '../state/Login/reducer';
 import SessionReducers from '../state/Session/reducer';
-import TranslationsReducers from '../state/Translations/reducer';
 import AutomationListReducers from '../state/Automations/reducer';
 import LabelsReducers from '../state/Labels/reducer';
 import MenuReducers from '../state/Menu/reducer';
@@ -30,7 +29,6 @@ const allReducers = Object.assign(
   NotificationsReducers,
   LoginReducers,
   SessionReducers,
-  TranslationsReducers,
   AutomationListReducers,
   LabelsReducers,
   MenuReducers,

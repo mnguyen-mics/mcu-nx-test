@@ -3,22 +3,17 @@ import PropTypes from 'prop-types';
 import { Button, message } from 'antd';
 import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
-
-import { withTranslations } from '../../../Helpers';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import Actionbar from '../../../../components/ActionBar.tsx';
 import McsIcon from '../../../../components/McsIcon.tsx';
-
 import ExportService from '../../../../services/ExportService';
 import CampaignService from '../../../../services/CampaignService.ts';
 import ReportService from '../../../../services/ReportService.ts';
-
 import { normalizeReportView } from '../../../../utils/MetricHelper.ts';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
-
 import { EMAIL_SEARCH_SETTINGS } from './constants';
-
 import { parseSearch } from '../../../../utils/LocationSearchHelper.ts';
+import messages from './messages.ts';
 
 const fetchExportData = (organisationId, filter) => {
   const campaignType = 'EMAIL';
@@ -91,7 +86,7 @@ class EmailCampaignsActionbar extends Component {
       match: {
         params: { organisationId },
       },
-      translations,
+      intl
     } = this.props;
 
     const filter = parseSearch(
@@ -101,7 +96,7 @@ class EmailCampaignsActionbar extends Component {
 
     this.setState({ exportIsRunning: true });
     const hideExportLoadingMsg = message.loading(
-      translations.EXPORT_IN_PROGRESS,
+      intl.formatMessage(messages.exportInProgress),
       0,
     );
 
@@ -110,8 +105,7 @@ class EmailCampaignsActionbar extends Component {
         ExportService.exportEmailCampaigns(
           organisationId,
           data,
-          filter,
-          translations,
+          filter
         );
         this.setState({
           exportIsRunning: false,
@@ -132,14 +126,14 @@ class EmailCampaignsActionbar extends Component {
       match: {
         params: { organisationId },
       },
-      translations,
+      intl
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
 
     const breadcrumbPaths = [
       {
-        name: translations.EMAILS,
+        name: intl.formatMessage(messages.emails),
         url: `/v2/o/${organisationId}/campaigns/email`,
       },
     ];
@@ -149,12 +143,12 @@ class EmailCampaignsActionbar extends Component {
         <Link to={`/v2/o/${organisationId}/campaigns/email/create`}>
           <Button type="primary" className="mcs-primary">
             <McsIcon type="plus" />{' '}
-            <FormattedMessage id="NEW_CAMPAIGN" defaultMessage="New Campaign" />
+            <FormattedMessage id="email.campaigns.list.actionbar.newCampaign" defaultMessage="New Campaign" />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" defaultMessage="Export" />
+          <FormattedMessage id="email.campaigns.list.actionbar.export" defaultMessage="Export" />
         </Button>
       </Actionbar>
     );
@@ -162,14 +156,13 @@ class EmailCampaignsActionbar extends Component {
 }
 
 EmailCampaignsActionbar.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  intl: PropTypes.shape().isRequired,
 };
 
 EmailCampaignsActionbar = compose(
   withRouter,
-  withTranslations,
 )(EmailCampaignsActionbar);
 
-export default EmailCampaignsActionbar;
+export default injectIntl(EmailCampaignsActionbar);

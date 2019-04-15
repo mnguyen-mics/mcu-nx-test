@@ -16,19 +16,19 @@ import { AudiencePartitionResource } from '../../../../models/audiencePartition/
 
 const messages = defineMessages({
   edit: {
-    id: 'partition.dashboard.actionbar.edit',
+    id: 'audience.partitions.dashboard.actionbar.edit',
     defaultMessage: 'Edit Partition',
   },
   publish: {
-    id: 'partition.dashboard.actionbar.publish',
+    id: 'audience.partitions.dashboard.actionbar.publish',
     defaultMessage: 'Publish',
   },
   partitions: {
-    id: 'partition.dashboard.actionbar.breadcrumb',
+    id: 'audience.partitions.dashboard.actionbar.breadcrumb',
     defaultMessage: 'Partitions',
   },
   partitionOverview: {
-    id: 'partition.dashboard.actionbar.breadcrumb.default',
+    id: 'audience.partitions.dashboard.actionbar.breadcrumb.default',
     defaultMessage: 'Partion Overview',
   },
 });

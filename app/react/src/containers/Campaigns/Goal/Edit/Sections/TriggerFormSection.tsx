@@ -245,13 +245,13 @@ class TriggerFormSection extends React.Component<Props, State> {
                       type="primary"
                     >
                       <FormattedMessage
-                        id="edit.goal.form.section.trigger.updateQueryContainer.ok"
+                        id="goal.edit.triggerSection.updateQueryContainer.ok"
                         defaultMessage="Ok"
                       />
                     </Button>
                     <Button onClick={this.closeEditMode} type="danger">
                       <FormattedMessage
-                        id="edit.goal.form.section.trigger.updateQueryContainer.cancel"
+                        id="goal.edit.triggerSection.updateQueryContainer.cancel"
                         defaultMessage="Cancel"
                       />
                     </Button>
@@ -259,7 +259,7 @@ class TriggerFormSection extends React.Component<Props, State> {
                 ) : (
                     <Button onClick={this.switchEditMode}>
                       <FormattedMessage
-                        id="edit.goal.form.section.trigger.button.trigger"
+                        id="goal.edit.triggerSection.updateQueryContainer.editTrigger"
                         defaultMessage="Edit trigger"
                       />
                     </Button>

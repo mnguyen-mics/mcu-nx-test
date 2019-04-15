@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Layout, message } from 'antd';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-
 import NativeActionBar from './NativeActionBar';
 import NativeList from './NativeList';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
@@ -25,7 +24,6 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { NATIVE_SEARCH_SETTINGS } from './constants';
 import * as NativeCreativesActions from '../../../../state/Creatives/Native/actions';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 import { Filters } from '../../../../components/ItemList';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -50,7 +48,7 @@ export interface MapDispatchToProps {
   resetNativeCreatives: () => void;
 }
 
-export interface MapStateToProps extends TranslationProps {
+export interface MapStateToProps {
   hasNatives: boolean;
   isFetchingNatives: boolean;
   dataSource: object[]; // type better
@@ -223,7 +221,6 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       totalNativeCreatives,
       fetchNativeCreatives,
       resetNativeCreatives,
-      translations,
     } = this.props;
     const rowSelection = {
       selectedRowKeys,
@@ -250,7 +247,6 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       totalNativeCreatives,
       fetchNativeCreatives,
       resetNativeCreatives,
-      translations,
     };
 
     return (
@@ -274,7 +270,6 @@ const mapStateToProps = (state: MapStateToProps) => ({
   isFetchingNativeCreatives: isFetchingNativeCreatives(state),
   dataSource: getNativeCreatives(state),
   totalNativeCreatives: getNativeCreativesTotal(state),
-  translations: state.translations,
 });
 
 const mapDispatchToProps = {
@@ -286,5 +281,8 @@ export default compose<JoinedProps, {}>(
   injectIntl,
   injectDrawer,
   injectNotifications,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(NativeListPage);

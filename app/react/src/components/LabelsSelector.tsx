@@ -25,11 +25,11 @@ interface LabelsSelectorState {
 
 const messages = defineMessages({
   labelNoResults: {
-    id: 'global.label.noResults',
+    id: 'components.labelsSelector.noResults',
     defaultMessage: 'No Results',
   },
   labelButton: {
-    id: 'global.label.button',
+    id: 'components.labelsSelector.label.button',
     defaultMessage: 'Label',
   },
 });

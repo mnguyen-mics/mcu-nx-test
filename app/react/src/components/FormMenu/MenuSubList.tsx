@@ -109,7 +109,7 @@ class MenuList extends Component<
           {!fetching && !displayMenu.length && (
             <div className="menu-item small">
               <div className="content alone small text-center">
-                <FormattedMessage id="sub-menu-empty" defaultMessage="Empty" />
+                <FormattedMessage id="components.formMenu.menuSubList.empty" defaultMessage="Empty" />
               </div>
             </div>
           )}

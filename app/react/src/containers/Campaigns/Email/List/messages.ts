@@ -57,6 +57,14 @@ const messages = defineMessages({
     id: 'campaign.email.archive',
     defaultMessage: 'Archive',
   },
+  emails: {
+    id: 'campaign.email.list.actionbar.breadCrumbPath.emails',
+    defaultMessage: 'Emails',
+  },
+  exportInProgress: {
+    id: 'campaign.email.list.actionbar.exportInProgress',
+    defaultMessage: 'Export in progress...',
+  },
 });
 
 export default messages;

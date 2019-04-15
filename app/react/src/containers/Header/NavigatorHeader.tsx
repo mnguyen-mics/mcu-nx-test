@@ -59,7 +59,7 @@ class NavigatorHeader extends React.Component<Props> {
         </Menu.Item>
         <Menu.Item key="logout">
           <Link to="/logout">
-            <FormattedMessage id="LOGOUT" defaultMessage="Log out" />
+            <FormattedMessage id="components.header.logOut" defaultMessage="Log out" />
           </Link>
         </Menu.Item>
       </Menu>

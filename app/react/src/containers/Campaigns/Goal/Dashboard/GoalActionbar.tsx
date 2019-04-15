@@ -5,9 +5,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Dropdown } from '../../../../components/PopupContainers';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import withTranslations, {
-  TranslationProps,
-} from '../../../Helpers/withTranslations';
 import { GoalResource } from '../../../../models/goal/index';
 import modalMessages from '../../../../common/messages/modalMessages';
 import Actionbar from '../../../../components/ActionBar';
@@ -46,9 +43,8 @@ interface ExportActionbarState {
 type JoinedProps = ExportActionbarProps &
   RouteComponentProps<{ organisationId: string; goalId: string }> &
   InjectedIntlProps &
-  InjectedNotificationProps &
-  TranslationProps &
-  InjectedDrawerProps;
+  InjectedDrawerProps &
+  InjectedNotificationProps;
 
 const reportTypeExportOptions = [
   {
@@ -160,7 +156,6 @@ class ExportsActionbar extends React.Component<
         params: { organisationId },
       },
       intl,
-      translations,
     } = this.props;
 
     if (!goal) return;
@@ -183,7 +178,6 @@ class ExportsActionbar extends React.Component<
           exportData.goalData,
           exportData.attributionsData,
           filter,
-          translations,
           intl.formatMessage,
         );
         this.setState({
@@ -278,7 +272,10 @@ class ExportsActionbar extends React.Component<
 
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage
+            id="goal.dashboard.actionbar.export"
+            defaultMessage="Export"
+          />
         </Button>
 
         <Button onClick={this.editCampaign}>
@@ -410,7 +407,6 @@ class ExportsActionbar extends React.Component<
 export default compose<JoinedProps, ExportActionbarProps>(
   withRouter,
   injectIntl,
-  withTranslations,
   injectNotifications,
   injectDrawer,
 )(ExportsActionbar);

@@ -14,7 +14,11 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import { PluginProperty, Recommender, PluginVersionResource } from '../../../../../models/Plugins';
+import {
+  PluginProperty,
+  Recommender,
+  PluginVersionResource,
+} from '../../../../../models/Plugins';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 
@@ -60,9 +64,10 @@ class RecommenderContent extends React.Component<
           const promises = results.data.map(va => {
             return new Promise((resolve, reject) => {
               PluginService.getEngineVersion(va.version_id)
-              .then((recommender: PluginVersionResource) => {
-                return PluginService.getEngineProperties(recommender.id);
-              }).then((v: PluginProperty[]) => resolve(v));
+                .then((recommender: PluginVersionResource) => {
+                  return PluginService.getEngineProperties(recommender.id);
+                })
+                .then((v: PluginProperty[]) => resolve(v));
             });
           });
           Promise.all(promises).then((vaProperties: PluginProperty[]) => {
@@ -87,7 +92,9 @@ class RecommenderContent extends React.Component<
     const {
       location: { search, pathname, state },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -125,29 +132,42 @@ class RecommenderContent extends React.Component<
   };
 
   onClickEdit = (visitAnalyzer: RecommenderInterface) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/campaigns/recommenders/${visitAnalyzer.id}/edit`,
+      `/v2/o/${organisationId}/settings/campaigns/recommenders/${
+        visitAnalyzer.id
+      }/edit`,
     );
   };
 
   render() {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<RecommenderInterface>> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<RecommenderInterface>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          { intlMessage: messages.edit, callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'PROCESSOR',
         intlMessage: messages.processor,
         key: 'name',
         isHideable: false,
@@ -163,7 +183,6 @@ class RecommenderContent extends React.Component<
         ),
       },
       {
-        translationKey: 'PROVIDER',
         intlMessage: messages.provider,
         key: 'id',
         isHideable: false,
@@ -180,7 +199,6 @@ class RecommenderContent extends React.Component<
         },
       },
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'version_id',
         isHideable: false,
@@ -206,21 +224,28 @@ class RecommenderContent extends React.Component<
       intlMessage: messages.empty,
     };
 
-    const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/recommenders/create`)
+    const onClick = () =>
+      history.push(
+        `/v2/o/${organisationId}/settings/campaigns/recommenders/create`,
+      );
 
     const buttons = [
-      (<Button key="create" type="primary" onClick={onClick}>
-      <FormattedMessage {...messages.newRecommender} />
-    </Button>)
-    ]
+      <Button key="create" type="primary" onClick={onClick}>
+        <FormattedMessage {...messages.newRecommender} />
+      </Button>,
+    ];
 
-    const additionnalComponent = (<div>
-      <div className="mcs-card-header mcs-card-title">
-        <span className="mcs-card-title"><FormattedMessage {...messages.recommender} /></span>
-        <span className="mcs-card-button">{buttons}</span>
+    const additionnalComponent = (
+      <div>
+        <div className="mcs-card-header mcs-card-title">
+          <span className="mcs-card-title">
+            <FormattedMessage {...messages.recommender} />
+          </span>
+          <span className="mcs-card-button">{buttons}</span>
+        </div>
+        <hr className="mcs-separator" />
       </div>
-      <hr className="mcs-separator" />
-    </div>)
+    );
 
     return (
       <div className="ant-layout">
@@ -242,4 +267,7 @@ class RecommenderContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(RecommenderContent);
+export default compose(
+  withRouter,
+  injectIntl,
+)(RecommenderContent);

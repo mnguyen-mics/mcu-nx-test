@@ -311,7 +311,7 @@ class MobileApplicationsListPage extends React.Component<
       const datamartFilter = {
         displayElement: (
           <div>
-            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+            <FormattedMessage id="settings.mobilApplication.datamartFilter" defaultMessage="Datamart" />{' '}
             <Icon type="down" />
           </div>
         ),

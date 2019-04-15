@@ -113,7 +113,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
       <Button className="mcs-primary" type="primary" onClick={activateCampaign}>
         <McsIcon type="play" />
         <FormattedMessage
-          id="ACTIVATE_CAMPAIGN"
+          id="email.campaign.dashboard.actionbar.activateCampaign"
           defaultMessage="Activate Campaign"
         />
       </Button>
@@ -121,7 +121,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     const pauseCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={pauseCampaign}>
         <McsIcon type="pause" />
-        <FormattedMessage id="PAUSE_CAMPAIGN" defaultMessage="Pause Campaign" />
+        <FormattedMessage id="email.campaign.dashboard.actionbar.pauseCampaign" defaultMessage="Pause Campaign" />
       </Button>
     );
 
@@ -249,7 +249,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
           <FormattedMessage {...messages.history} />
         </Menu.Item>
         <Menu.Item key="ARCHIVED">
-          <FormattedMessage id="ARCHIVED" defaultMessage="Archived" />
+          <FormattedMessage id="email.campaign.dashboard.actionbar.archive" defaultMessage="Archive" />
         </Menu.Item>
       </Menu>
     );
@@ -301,12 +301,12 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
           }
         >
           <McsIcon type="download" />
-          <FormattedMessage id="EXPORT" defaultMessage="Export" />
+          <FormattedMessage id="email.campaign.dashboard.actionbar.export" defaultMessage="Export" />
         </Button>
         <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
           <Button>
             <Icon type="edit" />
-            <FormattedMessage id="EDIT" defaultMessage="Edit" />
+            <FormattedMessage id="email.campaign.dashboard.actionbar.edit" defaultMessage="Edit" />
           </Button>
         </Link>
         <Dropdown overlay={menu} trigger={['click']}>

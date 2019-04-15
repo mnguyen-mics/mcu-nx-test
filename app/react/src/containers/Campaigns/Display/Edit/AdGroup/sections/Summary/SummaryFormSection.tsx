@@ -55,7 +55,7 @@ class SummaryFormSection extends React.Component<Props> {
 
             <Section>
               <FormattedMessage
-                id="ad-group-form-summary-bidoptimizer"
+                id="display.campaign.edit.adGroup.summaryFormSection.bidoptimizer"
                 defaultMessage={`You have { bidOptimizerCountLabeled } 
                   { bidOptimizerCount , plural, 
                     zero {bid optimizer} one {bid optimizer} other {bid optimizers} }
@@ -73,7 +73,7 @@ class SummaryFormSection extends React.Component<Props> {
 
             <Section>
               <FormattedMessage
-                id="ad-group-form-summary-creative"
+                id="display.campaign.edit.adGroup.summaryFormSection.creative"
                 defaultMessage={`You have { creativeCountLabeled } 
                   { creativeCount , plural, 
                     zero {creative} one {creative} other {creatives} }

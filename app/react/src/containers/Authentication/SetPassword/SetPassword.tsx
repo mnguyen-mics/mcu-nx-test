@@ -38,19 +38,19 @@ interface State {
 
 const messages = defineMessages({
   setPassword: {
-    id: 'reset.set.password.set.password',
+    id: 'authentication.setPassword.reset',
     defaultMessage: 'Reset Your Password',
   },
   revertologin: {
-    id: 'reset.set.password.rever.to.login',
+    id: 'authentication.setPassword.goBackTologin',
     defaultMessage: 'Go Back To Login',
   },
   passwordFormTitle: {
-    id: 'reset.set.password.form.title',
+    id: 'authentication.setPassword.formTitle',
     defaultMessage: 'PASSWORD',
   },
   standardSetPasswordError: {
-    id: 'reset.set.password.error',
+    id: 'authentication.setPassword.errorMessage',
     defaultMessage:
       'Please make sure that the two passwords match and that your password is at least 8 characters long.',
   },

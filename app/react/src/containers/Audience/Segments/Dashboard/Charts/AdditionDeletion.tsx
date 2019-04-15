@@ -2,7 +2,6 @@ import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-
 import {
   EmptyCharts,
   LoadingChart,
@@ -13,15 +12,11 @@ import McsDateRangePicker, {
 import { StackedBarCharts } from '../../../../../components/BarCharts/index';
 import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
-
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
-
 import {
   updateSearch,
   parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
-
-import { TranslationProps } from '../../../../Helpers/withTranslations';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
@@ -38,7 +33,6 @@ interface AdditionDeletionProps {
 type Props = AdditionDeletionProps &
   InjectedThemeColorsProps &
   InjectedIntlProps &
-  TranslationProps &
   RouteComponentProps<{}>;
 
 class AdditionDeletion extends React.Component<Props> {
