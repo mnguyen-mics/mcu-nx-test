@@ -12,7 +12,7 @@ export default defineMessages({
   },
   userAccounts: {
     id: 'audience.segments.user_accounts',
-    defaultMessage: 'Accounts',
+    defaultMessage: 'User Accounts',
   },
   emails: {
     id: 'audience.segments.emails',
@@ -113,5 +113,29 @@ export default defineMessages({
   noAdditionDeletion: {
     id: 'audience.segments.additiondeletions.nodata',
     defaultMessage: 'There is no data on the selected period!',
+  },
+  audienceSegmentsExportTitle: {
+    id: 'audience.segments.actionbar.export.title',
+    defaultMessage: 'Audience Segments Export'
+  },
+  type: {
+    id: 'audience.segments.export.column.type',
+    defaultMessage: 'Type'
+  },
+  name: {
+    id: 'audience.segments.export.column.name',
+    defaultMessage: 'Name'
+  },
+  technicalName: {
+    id: 'audience.segments.export.column.technicalName',
+    defaultMessage: 'Technical Name'
+  },
+  addition: {
+    id: 'audience.segments.export.column.addition',
+    defaultMessage: 'Addition'
+  },
+  deletion: {
+    id: 'audience.segments.export.column.deletion',
+    defaultMessage: 'Deletion'
   },
 });

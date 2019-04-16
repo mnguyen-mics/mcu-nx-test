@@ -105,7 +105,8 @@ class EmailCampaignsActionbar extends Component {
         ExportService.exportEmailCampaigns(
           organisationId,
           data,
-          filter
+          filter,
+          intl.formatMessage
         );
         this.setState({
           exportIsRunning: false,

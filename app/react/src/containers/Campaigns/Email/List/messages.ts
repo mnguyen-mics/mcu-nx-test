@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'campaign.email.search.placeholder',
     defaultMessage: 'Search Email Campaigns',
   },
+  emailId: {
+    id: 'campaign.email.id',
+    defaultMessage: 'Id',
+  },
   emailHeaderStatus: {
     id: 'campaign.email.status',
     defaultMessage: 'Status',
@@ -12,6 +16,10 @@ const messages = defineMessages({
   emailHeaderName: {
     id: 'campaign.email.name',
     defaultMessage: 'Name',
+  },
+  emailTechnicalName: {
+    id: 'campaign.email.technicalName',
+    defaultMessage: 'Technical Name',
   },
   emailHeaderSent: {
     id: 'campaign.email.email_sent',
@@ -65,6 +73,10 @@ const messages = defineMessages({
     id: 'campaign.email.list.actionbar.exportInProgress',
     defaultMessage: 'Export in progress...',
   },
+  emailCampaignsExportTitle: {
+    id: 'campaign.email.list.export.title',
+    defaultMessage: 'Email Campaigns Export'
+  }
 });
 
 export default messages;

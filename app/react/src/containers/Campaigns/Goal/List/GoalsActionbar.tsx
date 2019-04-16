@@ -120,7 +120,12 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
 
     fetchExportData(organisationId, filter)
       .then(data => {
-        ExportService.exportGoals(organisationId, data, filter);
+        ExportService.exportGoals(
+          organisationId,
+          data,
+          filter,
+          intl.formatMessage,
+        );
         this.setState({
           exportIsRunning: false,
         });

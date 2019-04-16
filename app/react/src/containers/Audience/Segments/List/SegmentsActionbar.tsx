@@ -173,7 +173,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      intl,
+      intl: { formatMessage },
       notifyError,
     } = this.props;
 
@@ -184,7 +184,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
 
     this.setState({ exportIsRunning: true });
     const hideExportLoadingMsg = message.loading(
-      intl.formatMessage(messages.exportRunning),
+      formatMessage(messages.exportRunning),
       0,
     );
 
@@ -196,7 +196,8 @@ class SegmentsActionbar extends React.Component<Props, State> {
           organisationId,
           datamartId,
           data,
-          filter
+          filter,
+          formatMessage
         );
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();

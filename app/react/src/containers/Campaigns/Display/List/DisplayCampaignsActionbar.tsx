@@ -187,6 +187,7 @@ class DisplayCampaignsActionbar extends React.Component<
           organisationId,
           data,
           filter,
+          intl.formatMessage
         );
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();

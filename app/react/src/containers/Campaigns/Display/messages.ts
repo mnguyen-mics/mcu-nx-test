@@ -13,6 +13,10 @@ export default defineMessages({
     id: 'display.metrics.name',
     defaultMessage: 'Name'
   },
+  technicalName: {
+    id: 'display.metrics.technicalName',
+    defaultMessage: 'Technical Name'
+  },
   impressions: {
     id: 'display.metrics.impressions',
     defaultMessage: 'Imp.'
@@ -116,5 +120,9 @@ export default defineMessages({
   archiveDisplayCampaign: {
     id: 'campaign.display.list.action.archive',
     defaultMessage: 'Archive',
+  },
+  displayCampaignsExportTitle: {
+    id: 'campaign.display.list.actionbar.exportTitle',
+    defaultMessage: 'Display Campaigns Export',
   },
 });
