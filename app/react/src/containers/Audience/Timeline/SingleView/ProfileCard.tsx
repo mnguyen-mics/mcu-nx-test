@@ -37,72 +37,48 @@ class ProfileCard extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      match: {
-        params: { organisationId, identifierId, identifierType },
-      },
       datamartId,
       identifier,
     } = this.props;
     if (identifier.id && identifier.type) {
       this.fetchProfileData(
-        organisationId,
         datamartId,
-        identifier.type,
-        identifier.id,
-      );
-    } else if (identifierId && identifierType) {
-      this.fetchProfileData(
-        organisationId,
-        datamartId,
-        identifierType,
-        identifierId,
+        identifier
       );
     }
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      match: {
-        params: { organisationId },
-      },
       datamartId,
-      identifier: { id, type },
+      identifier,
     } = this.props;
     const {
-      match: {
-        params: { organisationId: prevOrganisationId },
-      },
       datamartId: prevDatamartId,
-      identifier: { id: prevIdentifierId, type: prevIdentifierType },
+      identifier: prevIdentifier,
     } = prevProps;
     if (
-      organisationId !== prevOrganisationId ||
-      id !== prevIdentifierId ||
-      type !== prevIdentifierType ||
+      identifier.id !== prevIdentifier.id ||
+      identifier.type !== prevIdentifier.type ||
       datamartId !== prevDatamartId
     ) {
-      this.fetchProfileData(organisationId, datamartId, type, id);
+      if (identifier.id && identifier.type) {
+        this.fetchProfileData(datamartId, identifier);
+      }
     }
   }
 
   fetchProfileData = (
-    organisationId: string,
     datamartId: string,
-    identifierType: string,
-    identifierId: string,
+    identifier: Identifier,
   ) => {
 
     DatamartService.getUserAccountCompartments(datamartId).then(res => {
       return Promise.all(
         res.data.map(userCompartiment => {
           return UserDataService.getProfile(
-            organisationId,
             datamartId,
-            identifierType,
-            identifierId,
-            {
-              compartment_id: userCompartiment.compartment_id,
-            },
+            identifier
           )
             .then(r => ({ profile: r ? r.data : {}, compartment: userCompartiment }))
             .catch(() =>
@@ -127,7 +103,7 @@ class ProfileCard extends React.Component<Props, State> {
     });
   };
 
-  
+
 
   render() {
     const { intl } = this.props;
@@ -136,15 +112,15 @@ class ProfileCard extends React.Component<Props, State> {
         {!this.state.profileByCompartments ? (
           <Spin />
         ) : (
-          Object.keys(this.state.profileByCompartments).map(key => {
-            return (
-              <Row gutter={10} key={key} className="table-line border-top">
-                <div className="sub-title">{key}</div>
-                <ProfileInfo profile={this.state.profileByCompartments[key]} />
-              </Row>
-            );
-          })
-        )}
+            Object.keys(this.state.profileByCompartments).map(key => {
+              return (
+                <Row gutter={10} key={key} className="table-line border-top">
+                  <div className="sub-title">{key}</div>
+                  <ProfileInfo profile={this.state.profileByCompartments[key]} />
+                </Row>
+              );
+            })
+          )}
       </Card>
     );
   }

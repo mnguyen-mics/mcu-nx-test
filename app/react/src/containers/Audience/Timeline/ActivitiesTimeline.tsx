@@ -64,34 +64,31 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      match: {
-        params: { identifierId, identifierType },
-      },
       datamartId,
       identifier,
     } = this.props;
     if (identifier.id && identifier.type) {
-      this.fetchActivities(datamartId, identifier.type, identifier.id);
-    } else if (identifierId && identifierType) {
-      this.fetchActivities(datamartId, identifierType, identifierId);
+      this.fetchActivities(datamartId, identifier);
     }
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      match: {
-        params: { identifierId, identifierType },
-      },
       datamartId,
-      location: { search, pathname },
+      identifier,
     } = this.props;
 
     const {
-      location: { search: prevSearch, pathname: prevPathname },
+      datamartId: prevDatamartId,
+      identifier: prevIdentifier,
     } = prevProps;
 
-    if (search !== prevSearch || pathname !== prevPathname) {
-      this.fetchActivities(datamartId, identifierType, identifierId, true);
+    if (
+      identifier.id !== prevIdentifier.id ||
+      identifier.type !== prevIdentifier.type ||
+      datamartId !== prevDatamartId      
+    ) {
+      this.fetchActivities(datamartId, identifier, true);
     }
   }
 
@@ -200,8 +197,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   fetchActivities = (
     datamartId: string,
-    identifierType: string,
-    identifierId: string,
+    identifier: Identifier,
     dataSourceHasChanged: boolean = false,
   ) => {
     const { nextDate, activityCountOnOldestDate } = this.state;
@@ -220,9 +216,9 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         return nextState;
       },
       () =>
-        takeLatestActivities(datamartId, identifierType, identifierId, params)
+        takeLatestActivities(datamartId, identifier, params)
           .then(response => {
-            takeLatestActivities(datamartId, identifierType, identifierId, {
+            takeLatestActivities(datamartId, identifier, {
               ...params,
               limit: params.limit + 1,
             }).then(extendedResponse => {
@@ -230,11 +226,11 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                 const newData = dataSourceHasChanged
                   ? response.data
                   : prevState.activities.items.concat(
-                      this.removeDuplicatesFromResponse(
-                        response.data,
-                        prevState.activities.items,
-                      ),
-                    );
+                    this.removeDuplicatesFromResponse(
+                      response.data,
+                      prevState.activities.items,
+                    ),
+                  );
                 const activitiesToDisplay = this.generateScenarioMovementActivities(
                   newData.slice(0),
                 ).sort((a, b) => this.orderScenarioActivities(a, b));
@@ -248,19 +244,19 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                   },
                   nextDate:
                     response.count !== extendedResponse.count &&
-                    response.data &&
-                    response.data[response.data.length - 1]
+                      response.data &&
+                      response.data[response.data.length - 1]
                       ? moment(response.data[response.data.length - 1].$ts)
-                          .add(1, 'day')
-                          .format('YYYY-MM-DD')
+                        .add(1, 'day')
+                        .format('YYYY-MM-DD')
                       : undefined,
                   activityCountOnOldestDate: 0,
                 };
                 nextState.activityCountOnOldestDate = (
                   nextState.activities.byDay[
-                    Object.keys(nextState.activities.byDay)[
-                      Object.keys(nextState.activities.byDay).length - 1
-                    ]
+                  Object.keys(nextState.activities.byDay)[
+                  Object.keys(nextState.activities.byDay).length - 1
+                  ]
                   ] || []
                 ).length;
                 return nextState;
@@ -285,13 +281,11 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   fetchNewActivities = (e: any) => {
     const {
-      match: {
-        params: { identifierId, identifierType },
-      },
+      identifier,
       datamartId,
     } = this.props;
     e.preventDefault();
-    this.fetchActivities(datamartId, identifierType, identifierId);
+    this.fetchActivities(datamartId, identifier);
   };
 
   renderPendingTimeline = (activities: Activities) => {
@@ -299,21 +293,21 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       return activities.isLoading ? (
         <Spin size="small" />
       ) : (
-        <button
-          className="mcs-card-inner-action"
-          onClick={this.fetchNewActivities}
-        >
-          <FormattedMessage {...messages.seeMore} />
-        </button>
-      );
+          <button
+            className="mcs-card-inner-action"
+            onClick={this.fetchNewActivities}
+          >
+            <FormattedMessage {...messages.seeMore} />
+          </button>
+        );
     } else {
       return (
         <div className="mcs-title">
           {activities.hasItems ? (
             <FormattedMessage {...messages.noActivities} />
           ) : (
-            <FormattedMessage {...messages.noActivitiesLeft} />
-          )}
+              <FormattedMessage {...messages.noActivitiesLeft} />
+            )}
         </div>
       );
     }
@@ -381,37 +375,37 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         <Spin />
       </Col>
     ) : (
-      <Timeline
-        pending={this.renderPendingTimeline(activities)}
-        pendingDot={<McsIcon type="status" className="mcs-timeline-last-dot" />}
-      >
-        {keys.map(day => {
-          const activityOnDay = activities.byDay[day];
-          const dayToFormattedMessage = this.renderDate(day);
-          return (
-            <div className="mcs-timeline" key={cuid()}>
-              <Timeline.Item
-                dot={<Icon type="flag" className="mcs-timeline-dot" />}
-              >
-                <div className="mcs-title">{dayToFormattedMessage}</div>
-              </Timeline.Item>
-              {activityOnDay.length !== 0 &&
-                activityOnDay.map((activity: Activity) => {
-                  return (
-                    <Timeline.Item key={cuid()} dot={this.renderType(activity)}>
-                      <ActivityCard
-                        activity={activity}
-                        datamartId={datamartId}
-                        identifiers={identifiers}
-                      />
-                    </Timeline.Item>
-                  );
-                })}
-            </div>
-          );
-        })}
-      </Timeline>
-    );
+        <Timeline
+          pending={this.renderPendingTimeline(activities)}
+          pendingDot={<McsIcon type="status" className="mcs-timeline-last-dot" />}
+        >
+          {keys.map(day => {
+            const activityOnDay = activities.byDay[day];
+            const dayToFormattedMessage = this.renderDate(day);
+            return (
+              <div className="mcs-timeline" key={cuid()}>
+                <Timeline.Item
+                  dot={<Icon type="flag" className="mcs-timeline-dot" />}
+                >
+                  <div className="mcs-title">{dayToFormattedMessage}</div>
+                </Timeline.Item>
+                {activityOnDay.length !== 0 &&
+                  activityOnDay.map((activity: Activity) => {
+                    return (
+                      <Timeline.Item key={cuid()} dot={this.renderType(activity)}>
+                        <ActivityCard
+                          activity={activity}
+                          datamartId={datamartId}
+                          identifiers={identifiers}
+                        />
+                      </Timeline.Item>
+                    );
+                  })}
+              </div>
+            );
+          })}
+        </Timeline>
+      );
   }
 }
 

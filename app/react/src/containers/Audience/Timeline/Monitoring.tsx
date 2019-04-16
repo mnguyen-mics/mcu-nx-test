@@ -181,6 +181,7 @@ class Monitoring extends React.Component<Props, State> {
             identifier: {
               id: identifierId,
               type: identifierType,
+              compartmentId: compartmentId,
             },
           };
           return nextState;
@@ -197,6 +198,7 @@ class Monitoring extends React.Component<Props, State> {
             identifier: {
               id: identifierId,
               type: identifierType,
+              compartmentId: compartmentId
             },
           };
           return nextState;

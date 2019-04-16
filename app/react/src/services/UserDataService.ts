@@ -5,6 +5,7 @@ import {
   UserIdentifierShape,
 } from './../models/timeline/timeline';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
+import { Identifier } from '../containers/Audience/Timeline/Monitoring';
 
 type ChannelResource = {
   creation_ts: number;
@@ -20,19 +21,18 @@ type ChannelResource = {
 
 const UserDataService = {
   getProfile(
-    organisationId: string,
     datamartId: string,
-    identifierType: string,
-    identifierId: string,
+    identifier: Identifier,
     options: object = {},
   ): Promise<DataResponse<UserProfileResource> | undefined> {
     const endpoint =
-      identifierType !== 'user_point_id'
-        ? `datamarts/${datamartId}/user_profiles/${identifierType}=${identifierId}`
-        : `datamarts/${datamartId}/user_profiles/${identifierId}`;
+      identifier.type !== 'user_point_id'
+        ? `datamarts/${datamartId}/user_profiles/${identifier.type}=${identifier.id}`
+        : `datamarts/${datamartId}/user_profiles/${identifier.id}`;
 
     const params = {
       ...options,
+      compartment_id: identifier.compartmentId
     };
 
     return ApiService.getRequest<DataResponse<UserProfileResource> | undefined>(
@@ -48,16 +48,19 @@ const UserDataService = {
   },
 
   getSegments(
-    organisationId: string,
     datamartId: string,
-    identifierType: string,
-    identifierId: string,
+    identifier: Identifier,
     options: object = {},
   ): Promise<DataListResponse<UserSegmentResource>> {
+    const inBetweenCompartmentId = identifier.compartmentId ?
+      `compartment_id=${identifier.compartmentId}/` :
+      ``;
     const endpoint =
-      identifierType !== 'user_point_id'
-        ? `datamarts/${datamartId}/user_segments/${identifierType}=${identifierId}`
-        : `datamarts/${datamartId}/user_segments/${identifierId}`;
+      identifier.type !== 'user_point_id'
+        ? identifier.type === 'user_account_id'
+          ? `datamarts/${datamartId}/user_segments/${inBetweenCompartmentId}${identifier.type}=${identifier.id}`
+          : `datamarts/${datamartId}/user_segments/${identifier.type}=${identifier.id}`
+        : `datamarts/${datamartId}/user_segments/${identifier.id}`;
 
     const params = {
       ...options,
@@ -136,14 +139,18 @@ const UserDataService = {
 
   getActivities(
     datamartId: string,
-    identifierType: string,
-    identifierId: string,
+    identifier: Identifier,
     options: object = {},
   ): Promise<DataListResponse<Activity>> {
+    const inBetweenCompartmentId = identifier.compartmentId ?
+      `compartment_id=${identifier.compartmentId}/` :
+      ``;
     const endpoint =
-      identifierType !== 'user_point_id'
-        ? `datamarts/${datamartId}/user_timelines/${identifierType}=${identifierId}/user_activities`
-        : `datamarts/${datamartId}/user_timelines/${identifierId}/user_activities`;
+      identifier.type !== 'user_point_id'
+        ? identifier.type === 'user_account_id'
+          ? `datamarts/${datamartId}/user_timelines/${inBetweenCompartmentId}${identifier.type}=${identifier.id}/user_activities`
+          : `datamarts/${datamartId}/user_timelines/${identifier.type}=${identifier.id}/user_activities`
+        : `datamarts/${datamartId}/user_timelines/${identifier.id}/user_activities`;
 
     const params = {
       ...options,

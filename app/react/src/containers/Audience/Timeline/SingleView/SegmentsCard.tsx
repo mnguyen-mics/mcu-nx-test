@@ -48,59 +48,40 @@ class SegmentsCard extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      match: {
-        params: { organisationId, identifierType, identifierId },
-      },
       datamartId,
       identifier,
     } = this.props;
     if (identifier.id && identifier.type) {
       this.fetchSegmentsData(
-        organisationId,
         datamartId,
-        identifier.type,
-        identifier.id,
-      );
-    } else if (identifierType && identifierId) {
-      this.fetchSegmentsData(
-        organisationId,
-        datamartId,
-        identifierType,
-        identifierId,
+        identifier
       );
     }
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      match: {
-        params: { organisationId },
-      },
       datamartId,
-      identifier: { id, type },
+      identifier,
     } = this.props;
     const {
-      match: {
-        params: { organisationId: prevOrganisationId },
-      },
       datamartId: prevDatamartId,
-      identifier: { id: prevIdentifierId, type: prevIdentifierType },
+      identifier: prevIdentifier,
     } = prevProps;
     if (
-      organisationId !== prevOrganisationId ||
-      id !== prevIdentifierId ||
-      type !== prevIdentifierType ||
+      identifier.id !== prevIdentifier.id ||
+      identifier.type !== prevIdentifier.type ||
       datamartId !== prevDatamartId
     ) {
-      this.fetchSegmentsData(organisationId, datamartId, type, id);
+      if (identifier.id && identifier.type) {
+        this.fetchSegmentsData(datamartId, identifier);
+      }
     }
   }
 
   fetchSegmentsData = (
-    organisationId: string,
     datamartId: string,
-    identifierType: string,
-    identifierId: string,
+    identifier: Identifier
   ) => {
     this.setState(prevState => {
       const nextState = {
@@ -112,10 +93,8 @@ class SegmentsCard extends React.Component<Props, State> {
       return nextState;
     });
     UserDataService.getSegments(
-      organisationId,
       datamartId,
-      identifierType,
-      identifierId,
+      identifier
     )
       .then(response => {
         this.setState(prevState => {
@@ -200,15 +179,15 @@ class SegmentsCard extends React.Component<Props, State> {
               </button>
             </div>
           ) : (
-            <div className="mcs-card-footer">
-              <button
-                className="mcs-card-footer-link"
-                onClick={onViewLessClick}
-              >
-                <FormattedMessage {...messages.viewLess} />.
+              <div className="mcs-card-footer">
+                <button
+                  className="mcs-card-footer-link"
+                  onClick={onViewLessClick}
+                >
+                  <FormattedMessage {...messages.viewLess} />.
               </button>
-            </div>
-          )
+              </div>
+            )
         ) : null}
       </Card>
     );
