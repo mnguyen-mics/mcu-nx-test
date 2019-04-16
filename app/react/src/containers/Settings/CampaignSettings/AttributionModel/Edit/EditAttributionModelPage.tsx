@@ -37,7 +37,7 @@ const messages = defineMessages({
   },
   attributionModelModeDiscovery: {
     id: 'attributionmodel.mode.discovery',
-    defaultMessage: 'Dicovery',
+    defaultMessage: 'Discovery',
   },
   attributionModelModeTooltip: {
     id: 'attributionmodel.mode.tooltip',
