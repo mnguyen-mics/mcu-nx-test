@@ -20,7 +20,7 @@ define(['./module'], function (module) {
       // redirect to v2
       $location.path(Session.getV2WorkspacePrefixUrl() + '/audience/segments');
 
-      Restangular.all('audience_segments').getList({ datamart_id: datamartId, max_results: 200 }).then(function (segments) {
+      Restangular.all('audience_segments').getList({ datamart_id: datamartId, max_results: 5000 }).then(function (segments) {
         var filteredSegments = segments.filter(function (seg) {
           return seg.type !== 'USER_PARTITION';
         });
