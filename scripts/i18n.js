@@ -8,7 +8,6 @@ const baseDir = path.join(process.cwd(), '/app/react/src/assets/i18n');
 const files = {};
 
 const compareKeys = (currentLang, otherLang) => {
-
   const currentLangData = JSON.parse(currentLang.data);
   const currentLangKeys = Object.keys(currentLangData);
 
@@ -27,7 +26,9 @@ const compareKeys = (currentLang, otherLang) => {
   const size = files[otherLangKey].length;
 
   if (size) {
-    console.log(`${size} missing ${(size > 1) ? 'keys' : 'key'} in ${otherLangKey}:`);
+    console.log(
+      `${size} missing ${size > 1 ? 'keys' : 'key'} in ${otherLangKey}:`,
+    );
     console.log('');
     files[otherLangKey].map(key => console.log(key));
   } else {
@@ -48,28 +49,31 @@ const compareWithOtherLang = (currentLang, otherLang) => {
     {
       key: otherLang,
       data: fs.readFileSync(path.join(baseDir, otherLang)),
-    });
+    },
+  );
 };
 
 const processFile = (dir, currentFile) => {
-
-  console.log('===================================================================');
+  console.log(
+    '===================================================================',
+  );
   console.log('\n');
   console.log(`Comparison of ${currentFile} with other files`);
   console.log('\n');
 
-  return fs.readdirSync(dir)
-        .filter(file => !file.includes(currentFile))
-        .map(otherLang => compareWithOtherLang(currentFile, otherLang))
-        .reduce((acc, curr) => acc + curr);
+  return fs
+    .readdirSync(dir)
+    .filter(file => !file.includes(currentFile))
+    .map(otherLang => compareWithOtherLang(currentFile, otherLang))
+    .reduce((acc, curr) => acc + curr);
 };
 
 const check = dir => {
-  return fs.readdirSync(dir)
-        .map(file => processFile(dir, file))
-        .reduce((acc, curr) => acc + curr);
+  return fs
+    .readdirSync(dir)
+    .map(file => processFile(dir, file))
+    .reduce((acc, curr) => acc + curr);
 };
-
 
 const numberOfDiff = check(baseDir);
 
