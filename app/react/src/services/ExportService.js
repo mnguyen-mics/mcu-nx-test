@@ -550,8 +550,9 @@ const exportGoal = (organisationId, goalData, attributionsData, filter, translat
     ]
   };
 
-  const attributionSheets = attributionsData.map(attributionData => {
-    if (attributionData.normalized_report_view.length > 0) {
+  const attributionSheets = attributionsData
+    .filter(attributionData => attributionData.normalized_report_view.length > 0)
+    .map(attributionData => {
       return addSheet(
         attributionData.attribution_model_id
           .concat('_', sanitizeSheetNames(attributionData.attribution_model_name))
@@ -561,10 +562,7 @@ const exportGoal = (organisationId, goalData, attributionsData, filter, translat
         exportFilter,
         formatMessage
       );
-    }
-
-    return undefined;
-  });
+    });
 
   const sheets = [
     addSheet(translations.GOAL_EXPORT_TITLE, goalData, headersMap, exportFilter, formatMessage)
