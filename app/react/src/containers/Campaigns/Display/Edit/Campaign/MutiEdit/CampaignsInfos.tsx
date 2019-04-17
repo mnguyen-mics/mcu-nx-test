@@ -200,19 +200,19 @@ const campaignPropertiesMessageMap: {
   >]: FormattedMessage.MessageDescriptor
 } = defineMessages({
   total_impression_capping: {
-    id: 'edit.campaigns.option.total.impression.capping',
+    id: 'display.campaigns.multiEdit.option.totalImpressionCapping',
     defaultMessage: 'Total Impression Capping',
   },
   per_day_impression_capping: {
-    id: 'edit.campaigns.option.daily.impression.capping',
+    id: 'display.campaigns.multiEdit.option.dailyImpressionCapping',
     defaultMessage: 'Daily Impression Capping',
   },
   total_budget: {
-    id: 'edit.campaigns.option.total.budget',
+    id: 'display.campaigns.multiEdit.option.totalBudget',
     defaultMessage: 'Total Budget',
   },
   max_budget_per_period: {
-    id: 'edit.campaigns.option.budget.split',
+    id: 'display.campaigns.multiEdit.option.budgetSplit',
     defaultMessage: 'Budget Split',
   },
 });
@@ -221,15 +221,15 @@ const campaignsActionsMessageMap: {
   [propertyName: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   equals: {
-    id: 'edit.adgroups.form.option.equals',
+    id: 'display.campaigns.multiEdit.option.equals',
     defaultMessage: '=',
   },
   increase: {
-    id: 'edit.adgroups.form.option.increase',
+    id: 'display.campaigns.multiEdit.option.increase',
     defaultMessage: 'Increase %',
   },
   decrease: {
-    id: 'edit.adgroups.form.option.decrease',
+    id: 'display.campaigns.multiEdit.option.decrease',
     defaultMessage: 'Decrease %',
   },
 });

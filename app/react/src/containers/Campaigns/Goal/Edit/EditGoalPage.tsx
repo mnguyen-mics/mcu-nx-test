@@ -20,24 +20,24 @@ import { IGoalFormService } from './GoalFormService';
 
 const messages = defineMessages({
   errorFormMessage: {
-    id: 'campaign.form.generic.error.message',
+    id: 'campaigns.goal.edit.genericErrorMessage',
     defaultMessage:
       'There is an error with some fields in your form. Please review the data you entered.',
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'campaigns.goal.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
   breadcrumbGoalsTitle: {
-    id: 'goalEditor.breadcrumb.goals',
+    id: 'campaigns.goal.edit.breadcrumb.goals',
     defaultMessage: 'Goals',
   },
   breadcrumbNewGoalTitle: {
-    id: 'goalEditor.breadcrumb.new-goal',
+    id: 'campaigns.goal.edit.breadcrumb.newGoal',
     defaultMessage: 'New Goal',
   },
   breadcrumbEditGoalTitle: {
-    id: 'goalEditor.breadcrumb.edit-goal-name',
+    id: 'campaigns.goal.edit.breadcrumb.editGoalName',
     defaultMessage: 'Edit {name}',
   },
 });

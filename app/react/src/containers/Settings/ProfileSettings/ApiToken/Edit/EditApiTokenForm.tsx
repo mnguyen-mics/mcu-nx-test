@@ -26,11 +26,11 @@ const Content = Layout.Content as React.ComponentClass<
 
 const messages = defineMessages({
   sectionTitleGeneral: {
-    id: 'edit.user.form.general',
+    id: 'settings.profile.apiToken.edit.generalInfoSection.title',
     defaultMessage: 'General Informations',
   },
   saveApiToken: {
-    id: 'edit.apiToken.form.save.button',
+    id: 'settings.profile.apiToken.edit.saveButton',
     defaultMessage: 'Save Api Token',
   },
 });

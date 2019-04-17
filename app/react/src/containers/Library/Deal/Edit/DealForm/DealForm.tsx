@@ -46,87 +46,87 @@ const Content = Layout.Content as React.ComponentClass<
 
 const messages = defineMessages({
   addPlacementDescriptor: {
-    id: 'edit.deal.edit.add',
+    id: 'deal.edit.addDeal',
     defaultMessage: 'Add Deal',
   },
   editDeal: {
-    id: 'edit.deal.edit.edit',
+    id: 'deal.edit.actionbar.editDeal',
     defaultMessage: 'Edit {name}',
   },
   deals: {
-    id: 'edit.deal.deals',
+    id: 'deal.edit.actionbar.breadCrumb.deals',
     defaultMessage: 'Deals',
   },
   newPlacementDescriptor: {
-    id: 'new.deal',
+    id: 'deal.edit.actionabar.newDeal',
     defaultMessage: 'New Deal',
   },
   generalInfos: {
-    id: 'edit.deal.general.section.title',
+    id: 'deal.edit.generalSection.title',
     defaultMessage: 'General Informations',
   },
   generalInfosSubtitle: {
-    id: 'edit.deal.general.section.subtitle',
+    id: 'deal.edit.generalSection.subtitle',
     defaultMessage: 'Enter here your Deal information.',
   },
   valueLabel: {
-    id: 'edit.deal.value.label',
+    id: 'deal.edit.input.value.label',
     defaultMessage: 'Value',
   },
   valuePlaceholder: {
-    id: 'edit.deal.value.placeholder',
+    id: 'deal.edit.input.value.placeholder',
     defaultMessage: 'Deal Value',
   },
   valueTooltip: {
-    id: 'edit.deal.value.tooltip',
+    id: 'deal.edit.input.value.tooltip',
     defaultMessage: 'This represent the value your provider has given to you.',
   },
   adExchangeLabel: {
-    id: 'edit.deal.adExchange.label',
+    id: 'deal.edit.input.adExchange.label',
     defaultMessage: 'Ad Exchange',
   },
   adExchangePlaceholder: {
-    id: 'edit.deal.adExchange.placeholder',
+    id: 'deal.edit.input.adExchange.placeholder',
     defaultMessage: 'Ad Exchange',
   },
   adExchangeTooltip: {
-    id: 'edit.deal.adExchange.tooltip',
+    id: 'deal.edit.input.adExchange.tooltip',
     defaultMessage: 'This represent the ad exchange your deal has been agreed upon.',
   },
   displayNetworkLabel: {
-    id: 'edit.deal.displayNetwork.label',
+    id: 'deal.edit.input.displayNetwork.label',
     defaultMessage: 'Display Network',
   },
   displayNetworkPlaceholder: {
-    id: 'edit.deal.displayNetwork.placeholder',
+    id: 'deal.edit.input.displayNetwork.placeholder',
     defaultMessage: 'Display Network',
   },
   displayNetworkTooltip: {
-    id: 'edit.deal.displayNetwork.tooltip',
+    id: 'deal.edit.input.displayNetwork.tooltip',
     defaultMessage: 'This represent the display network your deal has been agreed upon.',
   },
   floorPriceLabel: {
-    id: 'edit.deal.floor_price.label',
+    id: 'deal.edit.input.floorPrice.label',
     defaultMessage: 'Floor Price',
   },
   floorPricePlaceholder: {
-    id: 'edit.deal.floor_price.placeholder',
+    id: 'deal.edit.input.floorPrice.placeholder',
     defaultMessage: 'Floor Price',
   },
   floorPriceTooltip: {
-    id: 'edit.deal.floor_price.tooltip',
+    id: 'deal.edit.input.floorPrice.tooltip',
     defaultMessage: 'This is the floor price you have agreed with your provided in the currency agreed upon.',
   },
   eur: {
-    id: 'edit.deal.eur',
+    id: 'deal.edit.eur',
     defaultMessage: 'Euro'
   },
   usd: {
-    id: 'edit.deal.usd',
+    id: 'deal.edit.usd',
     defaultMessage: 'US Dollars'
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'deal.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
 });

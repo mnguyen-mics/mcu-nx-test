@@ -20,36 +20,36 @@ import { UploadFile } from 'antd/lib/upload/interface';
 
 const messages = defineMessages({
   sectionSubtitleGeneral: {
-    id: 'edit.keywordList.form.keywords.part.subtitle',
+    id: 'keywordList.edit.keywords.part.subtitle',
     defaultMessage:
       'This is the list of all keywords added to your keyword list. You can target or exclude it directly within an Ad Group. Click on New Keyword button to add keyword to your list.',
   },
   sectionTitleKeywords: {
-    id: 'edit.keywordList.form.keywords.part.title',
+    id: 'keywordList.edit.keywords.part.title',
     defaultMessage: 'Keywords',
   },
   replaceWithCsv: {
-    id: 'edit.keywordList.replace.data.with.csv',
+    id: 'keywordList.edit.replace.data.with.csv',
     defaultMessage: 'Replace data with CSV',
   },
   addDataWithCsv: {
-    id: 'edit.keywordList.add.data.with.csv',
+    id: 'keywordList.edit.add.data.with.csv',
     defaultMessage: 'Add data with CSV',
   },
   download: {
-    id: 'edit.keywordList.download',
+    id: 'keywordList.edit.download',
     defaultMessage: 'Download CSV',
   },
   modalTitle: {
-    id: 'drag.and.drop.modal.title',
+    id: 'keywordList.edit.dragAndDrop.modal.title',
     defaultMessage: 'Replace the current keywords by CSV ',
   },
   dragAndDrop: {
-    id: 'drag.and.drop.file.or.click.line.1',
+    id: 'keywordList.edit.dragAndDropOrClick.line.1',
     defaultMessage: 'Drag & Drop your file or click to upload your CSV file.',
   },
   csvRules: {
-    id: 'drag.and.drop.file.or.click.line.2',
+    id: 'keywordList.edit.dragAndDropOrClick.line.2',
     defaultMessage: 'Your CSV file must have 1 column and no empty cells',
   },
 });

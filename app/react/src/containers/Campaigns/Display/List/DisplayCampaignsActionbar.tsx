@@ -41,23 +41,23 @@ import { ExtendedTableRowSelection } from '../../../../components/TableView/Tabl
 
 const messagesMap = defineMessages({
   setStatus: {
-    id: 'set.ads.status',
+    id: 'display.campaigns.list.multiEdit.status.setStatusTo',
     defaultMessage: 'Set status to',
   },
   activeAll: {
-    id: 'active.all.ads',
+    id: 'display.campaigns.list.multiEdit.status.activeAll',
     defaultMessage: 'Active',
   },
   pauseAll: {
-    id: 'pause.all.ads',
+    id: 'display.campaigns.list.multiEdit.status.pauseAll',
     defaultMessage: 'Paused',
   },
   exportInProgress: {
-    id: 'display.campaigns.export.in.progress',
+    id: 'display.campaigns.list.actionbar.exportInProgress',
     defaultMessage: 'Export in progress',
   },
   breadCrumbPath: {
-    id: 'display.campaigns.breadCrumb',
+    id: 'display.campaigns.list.actionbar.breadCrumb.display',
     defaultMessage: 'Display',
   },
 });

@@ -62,7 +62,7 @@ export default defineMessages({
         defaultMessage: 'Datamarts'
     },
     warningOnTokenEdition: {
-        id: 'settings.datamart.warning.token.edition',
+        id: 'settings.datamart.edit.warning.token.edition',
         defaultMessage: 'Danger Zone: Editing this token may cause any integrations to fail if not updated properly. Please make sure you have reviewed all your integration before saving.'
     }
 })

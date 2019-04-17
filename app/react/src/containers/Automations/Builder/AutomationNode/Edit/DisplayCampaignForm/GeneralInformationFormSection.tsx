@@ -21,19 +21,19 @@ import { DisplayCampaignAutomationFormData } from '../domain';
 
 export const formMessages = defineMessages({
   sectionGeneralTitle: {
-    id: 'automation.builder.node.edition.form.general.title',
+    id: 'automation.builder.node.displayCampaignForm.generalInfoSection.title',
     defaultMessage: 'General information',
   },
   sectionGeneralSubtitle: {
-    id: 'automation.builder.node.edition.form.general.subtitle',
+    id: 'automation.builder.node.displayCampaignForm.general.subtitle',
     defaultMessage: 'Modify the general information of your display campaign',
   },
   automationNodeName: {
-    id: 'automation.builder.node.form.name',
+    id: 'automation.builder.node.displayCampaignForm.name',
     defaultMessage: 'Automation Node name',
   },
   advancedSection: {
-    id: 'automation.builder.node.advanced.section',
+    id: 'automation.builder.node.displayCampaignForm.advanced.section',
     defaultMessage: 'Advanced',
   },
 });

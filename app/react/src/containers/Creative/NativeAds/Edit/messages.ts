@@ -14,11 +14,11 @@ export default defineMessages({
     defaultMessage: 'New Native Creative',
   },
   save: {
-    id: 'creatives.create.breadcrumb.save',
+    id: 'native.creatives.edit.breadcrumb.save',
     defaultMessage: 'Save',
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'creatives.native.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
   errorFormMessage: {

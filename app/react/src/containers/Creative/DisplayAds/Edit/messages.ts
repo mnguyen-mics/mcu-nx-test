@@ -30,7 +30,7 @@ export default defineMessages({
     defaultMessage: 'Creative Type',
   },
   creativesTypePickerSubTitle: {
-    id: 'creatives.create.typePicker.subtitle',
+    id: 'creatives.display.edit.typePicker.subtitle',
     defaultMessage: 'Choose your creative type',
   },
   creativeSectionGeneralTitle: {
@@ -202,11 +202,11 @@ export default defineMessages({
     defaultMessage: 'Advanced'
   },
   errorFormMessage: {
-    id: 'campaign.form.generic.error.message',
+    id: 'creatives.display.edit.generic.errorMessage',
     defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'creatives.display.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
   advanced: {

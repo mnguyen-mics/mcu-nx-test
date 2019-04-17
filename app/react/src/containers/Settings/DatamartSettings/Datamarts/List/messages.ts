@@ -22,7 +22,7 @@ const messages = defineMessages({
     defaultMessage: 'Creation Date',
   },
   editDatamart: {
-    id: 'settings.datamart.edit',
+    id: 'settings.datamart.list.action.edit',
     defaultMessage: 'Edit',
   },
   emptyDatamarts: {

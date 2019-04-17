@@ -21,27 +21,27 @@ import { IKeywordListFormService } from './KeywordListFormService';
 
 const messages = defineMessages({
   editKeywordList: {
-    id: 'edit.keywordList.form.button.save',
+    id: 'keywordList.edit.actionbar.editKeywordList',
     defaultMessage: 'Edit {name}',
   },
   keywordList: {
-    id: 'edit.keywordList.form.default.name.keywordList',
+    id: 'keywordList.edit.actionbar.breadCrumb.keywordList',
     defaultMessage: 'keyword list',
   },
   newKeywordList: {
-    id: 'edit.keywordList.form.button.new.keywordList.',
+    id: 'keywordList.edit.actionbar.newKeywordList.',
     defaultMessage: 'New Keywords List',
   },
   keywordLists: {
-    id: 'edit.keywordList.form.breadcrumb.keywordLists',
+    id: 'keywordList.edit.actionbar.breadcrumb.keywordLists',
     defaultMessage: 'Keywords Lists',
   },
   keywordListSaved: {
-    id: 'edit.keywordList.form.save.success',
+    id: 'keywordList.edit.save.successMessage',
     defaultMessage: 'Keywords List successfully saved.',
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'keywordList.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
 });

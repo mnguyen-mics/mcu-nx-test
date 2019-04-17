@@ -111,15 +111,15 @@ export const auditStatusMessageMap: {
   [key in AuditStatus]: FormattedMessage.MessageDescriptor
 } = defineMessages({
   AUDIT_PENDING: {
-    id: 'creatives.audit.status.pending',
+    id: 'creatives.display.audit.status.pending',
     defaultMessage: 'Audit Pending',
   },
   AUDIT_FAILURE: {
-    id: 'creatives.audit.status.failed',
+    id: 'creatives.display.audit.status.failed',
     defaultMessage: 'Audit Failed',
   },
   AUDIT_SUCCESS: {
-    id: 'creatives.audit.status.passed',
+    id: 'creatives.display.audit.status.passed',
     defaultMessage: 'Audit Success',
   },
 });

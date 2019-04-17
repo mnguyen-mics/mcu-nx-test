@@ -3,14 +3,11 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
-
 import {
   INITIAL_PLACECMENT_LIST_FORM_DATA,
   PlacementListFormData,
 } from './domain';
-
 import PlacementListService from '../../../../services/Library/PlacementListsService';
-
 import PlacementListForm from './PlacementListForm';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
@@ -21,31 +18,31 @@ import PlacementListFormService from './PlacementListFormService';
 
 const messages = defineMessages({
   newPlacementList: {
-    id: 'new.placement.list',
+    id: 'placement.placementList.edit.actionbar.newPlacementList',
     defaultMessage: 'New Placement List',
   },
   placementList: {
-    id: 'placement.list',
+    id: 'placement.placementList.edit.actionbar.breadCrumb.placementList',
     defaultMessage: 'Placement List',
   },
-  placements: {
-    id: 'edit.placement.list.placements',
-    defaultMessage: 'Placements',
+  placementLists: {
+    id: 'placement.placementList.edit.actionbar.breadCrumb.placementLists',
+    defaultMessage: 'Placement Lists',
   },
   editPlacementList: {
-    id: 'edit.placement.list',
+    id: 'placement.placementList.edit.actionbar.editPlacementList',
     defaultMessage: 'Edit {name}',
   },
   updateSuccess: {
-    id: 'edit.placement.list.success.message',
+    id: 'placement.placementList.edit.successMessage',
     defaultMessage: 'Placement List successfully saved ',
   },
   updateError: {
-    id: 'edit.placement.list.error.message',
+    id: 'placement.placementList.edit.errorMessage',
     defaultMessage: 'Placement List update failed ',
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'placement.placementList.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
 });
@@ -176,7 +173,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
       : formatMessage(messages.newPlacementList);
     const breadcrumbPaths = [
       {
-        name: formatMessage(messages.placements),
+        name: formatMessage(messages.placementLists),
         url: `/v2/o/${organisationId}/library/placementlist`,
       },
       {

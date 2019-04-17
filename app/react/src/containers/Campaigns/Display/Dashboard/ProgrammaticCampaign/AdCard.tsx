@@ -39,31 +39,31 @@ import CreativeService from '../../../../../services/CreativeService';
 
 const messagesMap = defineMessages({
   setStatus: {
-    id: 'set.ads.status',
+    id: 'display.campaigns.dashboard.adCard.status.setStatusTo',
     defaultMessage: 'Set status to',
   },
   auditAction: {
-    id: 'audit.action',
+    id: 'display.campaigns.dashboard.adCard.auditAction',
     defaultMessage: 'Audit Action',
   },
   activeAll: {
-    id: 'active.all.ads',
+    id: 'display.campaigns.dashboard.adCard.status.activeAll',
     defaultMessage: 'Active',
   },
   pauseAll: {
-    id: 'pause.all.ads',
+    id: 'display.campaigns.dashboard.adCard.status.pauseAll',
     defaultMessage: 'Paused',
   },
   startAll: {
-    id: 'display.campaign.start.all.audits',
+    id: 'display.campaigns.dashboard.adCard.status.startAll',
     defaultMessage: 'Start',
   },
   resetAll: {
-    id: 'display.campaign.reset.all.audits',
+    id: 'display.campaigns.dashboard.adCard.status.resetAll',
     defaultMessage: 'Reset',
   },
   archiveSuccess: {
-    id: 'archive.ads.success.msg',
+    id: 'display.campaigns.dashboard.adCard.archive.successMsg',
     defaultMessage: 'Creatives successfully archived',
   },
 });

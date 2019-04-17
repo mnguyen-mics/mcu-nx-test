@@ -16,28 +16,28 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { IDealListFormService } from './DealListFormService';
 
 const messages = defineMessages({
-  editKeywordList: {
-    id: 'edit.dealList.form.button.save',
+  editDealList: {
+    id: 'dealList.edit.actionbar.editDealList',
     defaultMessage: 'Edit {name}',
   },
   dealList: {
-    id: 'edit.dealList.form.default.name.dealList',
+    id: 'dealList.edit.actionbar.breadCrumb.dealList',
     defaultMessage: 'Deal List',
   },
   newDealList: {
-    id: 'edit.dealList.form.button.new.dealList.',
+    id: 'dealList.edit.actionbar.newDealList.',
     defaultMessage: 'New Deal List',
   },
   dealLists: {
-    id: 'edit.dealList.form.breadcrumb.dealLists',
+    id: 'dealList.edit.actionbar.breadCrumb.dealLists',
     defaultMessage: 'Deal Lists',
   },
   dealListSaved: {
-    id: 'edit.dealList.form.save.success',
+    id: 'dealList.edit.save.successMessage',
     defaultMessage: 'Deal List successfully saved.',
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'dealList.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
 });
@@ -154,7 +154,7 @@ class DealListPage extends React.Component<JoinedProps, DealListPageState> {
     } else {
       const keywordListName =
         dealListId && dealListFormData
-          ? intl.formatMessage(messages.editKeywordList, {
+          ? intl.formatMessage(messages.editDealList, {
               name: dealListFormData.name
                 ? dealListFormData.name
                 : intl.formatMessage(messages.dealList),

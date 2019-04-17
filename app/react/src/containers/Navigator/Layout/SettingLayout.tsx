@@ -17,15 +17,15 @@ const { Sider } = Layout;
 
 const messages = defineMessages({
   switchOrg: {
-    id: 'navigator.sideMenu.switchOrg',
+    id: 'navigator.layout.settingLayout.sideMenu.switchOrg.label',
     defaultMessage: 'Switch Org.'
   },
   collapse: {
-    id: 'navigator.sideMenu.collapse',
+    id: 'navigator.layout.settingLayout.sideMenu.collapse',
     defaultMessage: 'Collapse'
   },
   backToApp: {
-    id: 'navigator.sideMenu.backToApp',
+    id: 'navigator.layout.settingLayout.sideMenu.backToApp',
     defaultMessage: 'Back To Your App'
   }
 });

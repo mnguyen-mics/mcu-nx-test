@@ -18,27 +18,27 @@ import { TYPES } from '../../../../constants/types';
 
 const messages = defineMessages({
   newImports: {
-    id: 'form.new.import',
+    id: 'imports.edit.newImport',
     defaultMessage: 'New Import',
   },
   imports: {
-    id: 'edit.imports.title',
+    id: 'imports.edit.title',
     defaultMessage: 'Imports',
   },
   editImports: {
-    id: 'edit.imports',
+    id: 'imports.edit.action.editImport',
     defaultMessage: 'Edit {name}',
   },
   updateSuccess: {
-    id: 'edit.imports.success.message',
+    id: 'imports.edit.save.successMessage',
     defaultMessage: 'Import successfully saved ',
   },
   updateError: {
-    id: 'edit.imports.list.error.message',
+    id: 'imports.edit.list.errorMessage',
     defaultMessage: 'Import update failed ',
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'imports.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
 });
