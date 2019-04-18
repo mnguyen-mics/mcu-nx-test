@@ -24,7 +24,7 @@ import { Labels } from '../../../../Labels/index';
 import { GoalsCampaignRessource, Items, ItemsById } from './domain';
 import { OverallStat } from '../Charts/DisplayStackedAreaChart';
 import { MediaPerformance } from '../Charts/MediaPerformanceTable';
-import { formateList } from '../../../../../utils/Normalizer';
+import { formatListView } from '../../../../../utils/Normalizer';
 
 const { Content } = Layout;
 
@@ -32,11 +32,11 @@ interface DisplayCampaignProps {
   campaign: DisplayCampaignInfoResource;
   ads: {
     data: ItemsById<AdInfoResource>;
-    performance: Items<OverallStat>;
+    performance: ItemsById<OverallStat>;
   };
   adGroups: {
     data: ItemsById<AdGroupResource>;
-    performance: Items<OverallStat>;
+    performance: ItemsById<OverallStat>;
   };
   updateAd: (
     adId: string,
@@ -130,7 +130,7 @@ class DisplayCampaign extends React.Component<JoinedProps> {
               title={formatMessage(messages.adGroups)}
               isFetching={adGroups.data.isLoading}
               isFetchingStat={adGroups.performance.isLoading}
-              dataSet={formateList(adGroups.data.items)}
+              dataSet={formatListView(adGroups.data, adGroups.performance)}
               updateAdGroup={updateAdGroup}
               campaign={campaign}
             />
@@ -139,7 +139,7 @@ class DisplayCampaign extends React.Component<JoinedProps> {
               title={formatMessage(messages.creatives)}
               isFetching={ads.data.isLoading}
               isFetchingStat={ads.performance.isLoading}
-              dataSet={formateList(ads.data.items)}
+              dataSet={formatListView(ads.data, ads.performance)}
               updateAd={updateAd}
             />
           </Content>

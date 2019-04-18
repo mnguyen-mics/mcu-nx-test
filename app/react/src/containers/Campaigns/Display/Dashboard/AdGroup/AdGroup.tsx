@@ -19,17 +19,17 @@ import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupR
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
-import { Items, ItemsById,  } from '../ProgrammaticCampaign/domain';
+import { Items, ItemsById } from '../ProgrammaticCampaign/domain';
 import { OverallStat } from '../Charts/DisplayStackedAreaChart';
 import { MediaPerformance } from '../Charts/MediaPerformanceTable';
-import { formateList } from '../../../../../utils/Normalizer';
+import { formatListView } from '../../../../../utils/Normalizer';
 
 const { Content } = Layout;
 
 interface AdGroupProps {
   ads: {
     data: ItemsById<AdInfoResource>;
-    performance: Items<OverallStat>;
+    performance: ItemsById<OverallStat>;
   };
   adGroups: {
     data: Items<AdGroupResource>;
@@ -128,7 +128,7 @@ class AdGroup extends React.Component<JoinedProps> {
           />
           <AdCard
             title={intl.formatMessage(messages.creatives)}
-            dataSet={formateList(ads.data.items)}
+            dataSet={formatListView(ads.data, ads.performance)}
             isFetching={ads.data.isLoading}
             isFetchingStat={ads.performance.isLoading}
             updateAd={updateAd}

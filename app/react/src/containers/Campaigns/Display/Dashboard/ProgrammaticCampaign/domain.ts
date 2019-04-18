@@ -46,7 +46,7 @@ export const initialPageState: DisplayCampaignPageState = {
       adGroupCampaign: {},
     },
     performance: {
-      items: [],
+      items: {},
       isLoading: false,
       isUpdating: false,
       isArchiving: false,
@@ -61,7 +61,7 @@ export const initialPageState: DisplayCampaignPageState = {
       isArchiving: false,
     },
     performance: {
-      items: [],
+      items: {},
       isLoading: false,
       isUpdating: false,
       isArchiving: false,
@@ -119,7 +119,7 @@ export const initialAdGroupPageState: AdGroupPageState = {
       isArchiving: false,
     },
     performance: {
-      items: [],
+      items: {},
       isLoading: false,
       isUpdating: false,
       isArchiving: false,
@@ -165,11 +165,11 @@ export interface DisplayCampaignPageState {
   };
   adGroups: {
     data: ItemsById<AdGroupResource>;
-    performance: Items<OverallStat>;
+    performance: ItemsById<OverallStat>;
   };
   ads: {
     data: ItemsById<AdInfoResource>;
-    performance: Items<OverallStat>;
+    performance: ItemsById<OverallStat>;
   };
   goals: Items<GoalsCampaignRessource>;
 }
@@ -186,6 +186,6 @@ export interface AdGroupPageState {
   };
   ads: {
     data: ItemsById<AdInfoResource>;
-    performance: Items<OverallStat>;
+    performance: ItemsById<OverallStat>;
   };
 }

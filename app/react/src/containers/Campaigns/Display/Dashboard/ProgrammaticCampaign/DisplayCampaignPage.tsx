@@ -2,11 +2,8 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { Button } from 'antd';
-
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
-
 import DisplayCampaign from './DisplayCampaign';
-
 import ReportService from '../../../../../services/ReportService';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import GoalService from '../../../../../services/GoalService';
@@ -14,7 +11,6 @@ import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { makeCancelable } from '../../../../../utils/ApiHelper';
 import log from '../../../../../utils/Logger';
-
 import {
   parseSearch,
   isSearchValid,

@@ -14,6 +14,7 @@
  * @param {*} key object key to extract
  */
 import { Index } from './index';
+import { ItemsById } from '../containers/Campaigns/Display/Dashboard/ProgrammaticCampaign/domain';
 
 export function normalizeArrayOfObject<T, K extends keyof T>(
   arr: T[],
@@ -36,5 +37,14 @@ export function normalizeArrayOfObject<T, K extends keyof T>(
 export function formateList<T>(a: { [key: string]: T }) {
   return Object.keys(a).map(k => {
     return a[k];
+  });
+}
+
+export function formatListView(a: ItemsById<any>, b: ItemsById<any>) {
+  return Object.keys(a.items).map(c => {
+    return {
+      ...a.items[c],
+      ...b.items[c],
+    };
   });
 }
