@@ -13,8 +13,11 @@ export default class CounterDashboard extends React.Component<Props> {
 
     if (counters.length === 0) return null;
 
-    const computedSpan = Math.floor(24 / counters.length);
-
+    const colStyle: React.CSSProperties = {
+      width: `${(100 / counters.length).toFixed(2)}%`,
+      float: 'left',
+      flex: '0 0 auto',
+    };
     return (
       <div className={`counter-dashboard ${invertedColor ? 'inverted' : ''}`}>
         <Row>
@@ -22,10 +25,8 @@ export default class CounterDashboard extends React.Component<Props> {
             return (
               <Col
                 key={index}
-                span={computedSpan}
-                className={
-                  index !== counters.length - 1 ? 'border-right' : ''
-                }
+                style={colStyle}
+                className={index !== counters.length - 1 ? 'border-right' : ''}
               >
                 <Counter {...counter} />
               </Col>

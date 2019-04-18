@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 
 import { normalizeArrayOfObject } from '../../utils/Normalizer.ts';
 
-const getAdditionnalWorkspace = state => state.session.workspace;
 const getConnectedUserWorkspaces = state =>
   state.session.connectedUser.workspaces;
 
@@ -25,15 +24,7 @@ const getDefaultWorkspace = createSelector(
 
 const getWorkspaces = createSelector(
   getConnectedUserWorkspaces,
-  getAdditionnalWorkspace,
-  (userWorkspaces, additionnalWorkspace) => {
-    if (additionnalWorkspace && additionnalWorkspace.organisation_id) {
-      return normalizeArrayOfObject(
-        [...userWorkspaces, additionnalWorkspace],
-        'organisation_id',
-      );
-    }
-
+  (userWorkspaces) => {
     return normalizeArrayOfObject(userWorkspaces, 'organisation_id');
   },
 );

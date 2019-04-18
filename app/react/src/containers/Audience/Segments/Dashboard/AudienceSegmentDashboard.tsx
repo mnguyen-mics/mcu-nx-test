@@ -104,18 +104,23 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       nextSegment
     ) {
       const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
-      const metrics: string[] = ['user_points'];
+      const metrics: string[] = [
+        'user_points',
+        'user_point_additions',
+        'user_point_deletions',
+      ];
       let additionalMetrics;
       if (nextWorkspaces) {
         const datamart = this.state.datamarts.find(
           dm => dm.id === nextSegment.datamart_id,
         );
 
-        additionalMetrics = datamart && datamart.audience_segment_metrics
-          ? datamart.audience_segment_metrics
-              .filter(metric => metric.status === 'LIVE')
-              .map(el => el.technical_name)
-          : undefined;
+        additionalMetrics =
+          datamart && datamart.audience_segment_metrics
+            ? datamart.audience_segment_metrics
+                .filter(metric => metric.status === 'LIVE')
+                .map(el => el.technical_name)
+            : undefined;
       }
       this.fetchDashboardView(
         nextOrganisationId,

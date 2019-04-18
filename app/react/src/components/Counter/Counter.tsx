@@ -10,7 +10,7 @@ export interface LoadingCounterValue {
 
 export interface CounterProps extends LoadingCounterValue {
   iconType: McsIconType;
-  title: React.ReactNode;
+  title: React.ReactNode | string;
 }
 
 export default class Counter extends React.Component<CounterProps> {

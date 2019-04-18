@@ -6,6 +6,10 @@ export default defineMessages({
     id: 'segment',
     defaultMessage: 'Segments',
   },
+  userPoints: {
+    id: 'audience.segments.dashboard.counters.userPoints',
+    defaultMessage: 'User Points',
+  },
   userPointAddition: {
     id: 'segment.user_point_additions',
     defaultMessage: 'User Point Additions',

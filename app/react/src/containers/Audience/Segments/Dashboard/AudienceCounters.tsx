@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { CounterDashboard } from '../../../../components/Counter/index';
 import { CounterProps } from '../../../../components/Counter/Counter';
 import ReportService, { Filter } from '../../../../services/ReportService';
@@ -11,6 +11,7 @@ import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { McsIconType } from '../../../../components/McsIcon';
+import messages from './messages';
 
 export interface AudienceCountersProps {
   datamarts: DatamartWithMetricResource[];
@@ -25,6 +26,7 @@ interface State {
 }
 
 type Props = AudienceCountersProps &
+  InjectedIntlProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class AudienceCounters extends React.Component<Props, State> {
@@ -89,7 +91,14 @@ class AudienceCounters extends React.Component<Props, State> {
       new McsMoment('now'),
       new McsMoment('now'),
       ['day'],
-      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'],
+      [
+        'user_points',
+        'user_accounts',
+        'emails',
+        'desktop_cookie_ids',
+        'mobile_ad_ids',
+        'mobile_cookie_ids',
+      ],
       filters,
     ).then(res =>
       this.setState({
@@ -122,30 +131,26 @@ class AudienceCounters extends React.Component<Props, State> {
   };
 
   getCounters = () => {
-    const { datamarts, datamartId } = this.props;
+    const { datamarts, datamartId, intl } = this.props;
     const counters: CounterProps[] = [];
 
     counters.push({
       iconType: 'full-users' as McsIconType,
-      title: (
-        <FormattedMessage
-          id="audience-segment-dashboard-counters-user-points"
-          defaultMessage="User Points"
-        />
-      ),
+      title: intl.formatMessage(messages.userPoints),
       ...this.getLoadingValue('user_points'),
     });
     if (datamartId) {
       const datamart = datamarts.find(dm => dm.id === datamartId);
-      const otherMetrics = datamart
-        ? datamart.audience_segment_metrics.map(el => {
-            return {
-              iconType: el.icon as McsIconType,
-              title: el.display_name,
-              ...this.getLoadingValue(el.technical_name),
-            };
-          })
-        : [];
+      const otherMetrics =
+        datamart && datamart.audience_segment_metrics
+          ? datamart.audience_segment_metrics.map(el => {
+              return {
+                iconType: el.icon as McsIconType,
+                title: el.display_name,
+                ...this.getLoadingValue(el.technical_name),
+              };
+            })
+          : [];
       return counters.concat(otherMetrics);
     } else {
       return counters;
@@ -153,16 +158,24 @@ class AudienceCounters extends React.Component<Props, State> {
   };
 
   getKnownCounters = () => {
-    const { datamarts } = this.props;
-    return datamarts[0]
-      ? datamarts[0].audience_segment_metrics.map(el => {
-          return {
-            iconType: el.icon as McsIconType,
-            title: el.display_name,
-            ...this.getLoadingValue(el.technical_name),
-          };
-        })
-      : [];
+    const { datamarts, intl } = this.props;
+    const counters =
+      datamarts[0] && datamarts[0].audience_segment_metrics
+        ? datamarts[0].audience_segment_metrics.map(el => {
+            return {
+              iconType: el.icon as McsIconType,
+              title: el.display_name,
+              ...this.getLoadingValue(el.technical_name),
+            };
+          })
+        : [];
+    return [
+      {
+        iconType: 'full-users' as McsIconType,
+        title: intl.formatMessage(messages.userPoints),
+        ...this.getLoadingValue('user_points'),
+      },
+    ].concat(counters);
   };
 
   render() {
@@ -180,4 +193,4 @@ class AudienceCounters extends React.Component<Props, State> {
   }
 }
 
-export default withRouter(AudienceCounters);
+export default injectIntl(withRouter(AudienceCounters));

@@ -85,7 +85,7 @@ class AdditionDeletion extends React.Component<Props> {
       dataSource.map(item => {
         return {
           ...item,
-          user_point_deletions: -item ? item.user_point_deletions : 0,
+          user_point_deletions: item && item.user_point_deletions ? -item.user_point_deletions : 0,
         };
       });
     const optionsForChart = {

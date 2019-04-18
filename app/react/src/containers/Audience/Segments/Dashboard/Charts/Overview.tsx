@@ -88,7 +88,12 @@ class Overview extends React.Component<Props> {
     const { dataSource, isFetching, colors } = this.props;
     const metrics =
       dataSource && dataSource[0]
-        ? Object.keys(dataSource[0]).filter(el => el !== 'day')
+        ? Object.keys(dataSource[0]).filter(
+            el =>
+              el !== 'day' &&
+              el !== 'user_point_additions' &&
+              el !== 'user_point_deletions',
+          )
         : [];
     const optionsForChart = {
       xKey: 'day',
@@ -136,7 +141,12 @@ class Overview extends React.Component<Props> {
     const { dataSource, isFetching, intl } = this.props;
     const metrics =
       dataSource && dataSource[0]
-        ? Object.keys(dataSource[0]).filter(el => el !== 'day')
+        ? Object.keys(dataSource[0]).filter(
+            el =>
+              el !== 'day' &&
+              el !== 'user_point_additions' &&
+              el !== 'user_point_deletions',
+          )
         : [];
     const options = metrics.map(metric => {
       return {
