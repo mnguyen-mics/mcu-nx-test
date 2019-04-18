@@ -117,7 +117,7 @@ class AutomationActionBar extends React.Component<
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
             <FormattedMessage
-              id="NEW_AUTOMATION"
+              id="automations.list.actionbar.newAutomation"
               defaultMessage="New Automation"
             />
           </Button>

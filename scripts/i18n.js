@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-
 const fs = require('fs');
 const path = require('path');
-
-const baseDir = path.join(process.cwd(), '/app/react/src/assets/i18n');
+// Let's keep this script for now,
+// we might need it to compare keys in the language files
+const baseDir = path.join(process.cwd(), '/build/lang');
 
 const files = {};
 
