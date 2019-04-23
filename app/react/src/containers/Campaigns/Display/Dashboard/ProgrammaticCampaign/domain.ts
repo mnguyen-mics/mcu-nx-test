@@ -1,78 +1,155 @@
-import { MediaPerformance } from "../Charts/MediaPerformanceTable";
-import { OverallStat } from "../Charts/DisplayStackedAreaChart";
-import { DisplayCampaignInfoResource, AdInfoResource, AdGroupResource } from "../../../../../models/campaign/display";
-import { AttributionSelectionResource, GoalSelectionResource } from "../../../../../models/goal";
+import { MediaPerformance } from '../Charts/MediaPerformanceTable';
+import { OverallStat } from '../Charts/DisplayStackedAreaChart';
+import {
+  DisplayCampaignInfoResource,
+  AdInfoResource,
+  AdGroupResource,
+} from '../../../../../models/campaign/display';
+import {
+  AttributionSelectionResource,
+  GoalSelectionResource,
+} from '../../../../../models/goal';
 
 export const initialPageState: DisplayCampaignPageState = {
   campaign: {
-    items: {
+    data: {
+      items: [],
       isLoading: false,
       isUpdating: false,
       isArchiving: false,
-      hasItems: true,
-      hasFetched: false,
     },
     overallPerformance: {
-      performance: [],
+      items: [],
       isLoading: false,
-      hasFetched: false,
-      error: false,
+      isUpdating: false,
+      isArchiving: false,
     },
     performance: {
-      performance: [],
+      items: [],
       isLoading: false,
-      hasFetched: false,
-      error: false,
+      isUpdating: false,
+      isArchiving: false,
     },
     mediaPerformance: {
-      performance: [],
+      items: [],
       isLoading: false,
-      hasFetched: false,
-      error: false,
+      isUpdating: false,
+      isArchiving: false,
     },
   },
   adGroups: {
-    items: {
-      itemById: {},
+    data: {
+      items: {},
+      isLoading: false,
+      isUpdating: false,
+      isArchiving: false,
+      adGroupCampaign: {},
+    },
+    performance: {
+      items: {},
+      isLoading: false,
+      isUpdating: false,
+      isArchiving: false,
+    },
+  },
+  ads: {
+    data: {
+      items: {},
       adGroupCampaign: {},
       isLoading: false,
       isUpdating: false,
       isArchiving: false,
-      hasItems: true,
-      hasFetched: false,
     },
     performance: {
-      performanceById: {},
-      isLoading: false,
-      hasFetched: false,
-      error: false,
-    },
-  },
-  ads: {
-    items: {
-      itemById: {},
-      adAdGroup: {},
+      items: {},
       isLoading: false,
       isUpdating: false,
       isArchiving: false,
-      hasItems: true,
-      hasFetched: false,
-    },
-    performance: {
-      performanceById: {},
-      isLoading: false,
-      hasFetched: false,
-      error: false,
     },
   },
   goals: {
-    items: {
-      itemById: [],
+    items: [],
+    isLoading: false,
+    isUpdating: false,
+    isArchiving: false,
+  },
+};
+
+export const initialAdGroupPageState: AdGroupPageState = {
+  campaign: {
+    data: {
+      items: [],
       isLoading: false,
-      hasItems: true,
-      hasFetched: false,
+      isUpdating: false,
+      isArchiving: false,
     },
   },
+  adGroups: {
+    data: {
+      items: [],
+      isLoading: false,
+      isUpdating: false,
+      isArchiving: false,
+    },
+    overallPerformance: {
+      items: [],
+      isLoading: false,
+      isUpdating: false,
+      isArchiving: false,
+    },
+    performance: {
+      items: [],
+      isLoading: false,
+      isUpdating: false,
+      isArchiving: false,
+    },
+    mediaPerformance: {
+      items: [],
+      isLoading: false,
+      isUpdating: false,
+      isArchiving: false,
+    },
+  },
+  ads: {
+    data: {
+      items: {},
+      adGroupCampaign: {},
+      isLoading: false,
+      isUpdating: false,
+      isArchiving: false,
+    },
+    performance: {
+      items: {},
+      isLoading: false,
+      isUpdating: false,
+      isArchiving: false,
+    },
+  },
+};
+
+interface CommonItemsProps {
+  adGroupCampaign?: {
+    [key: string]: {
+      ad_group_id: string;
+      campaign_id: string;
+    };
+  };
+  adAdGroup?: {
+    [key: string]: {
+      ad_group_id: string;
+      campaign_id: string;
+    };
+  };
+  isLoading: boolean;
+  isUpdating: boolean;
+  isArchiving: boolean;
+}
+export interface Items<T> extends CommonItemsProps {
+  items: T[];
+}
+
+export interface ItemsById<T> extends CommonItemsProps {
+  items: { [key: string]: T };
 }
 
 export interface GoalsCampaignRessource extends GoalSelectionResource {
@@ -81,78 +158,34 @@ export interface GoalsCampaignRessource extends GoalSelectionResource {
 
 export interface DisplayCampaignPageState {
   campaign: {
-    items: {
-      itemById?: DisplayCampaignInfoResource,
-      isLoading: boolean,
-      isUpdating: boolean,
-      isArchiving: boolean,
-      hasItems: boolean,
-      hasFetched: boolean,
-    },
-    overallPerformance: {
-      performance: OverallStat[],
-      isLoading: boolean,
-      hasFetched: boolean,
-      error: boolean,
-    },
-    performance: {
-      performance: OverallStat[],
-      isLoading: boolean,
-      hasFetched: boolean,
-      error: boolean,
-    },
-    mediaPerformance: {
-      performance: MediaPerformance[],
-      isLoading: boolean,
-      hasFetched: boolean,
-      error: boolean,
-    },
-  },
+    data: Items<DisplayCampaignInfoResource>;
+    overallPerformance: Items<OverallStat>;
+    performance: Items<OverallStat>;
+    mediaPerformance: Items<MediaPerformance>;
+  };
   adGroups: {
-    items: {
-      itemById: { [key: string]: AdGroupResource },
-      adGroupCampaign: {},
-      isLoading: boolean,
-      isUpdating: boolean,
-      isArchiving: boolean,
-      hasItems: boolean,
-      hasFetched: boolean,
-    },
-    performance: {
-      performanceById: { [key: string]: OverallStat },
-      isLoading: boolean,
-      hasFetched: boolean,
-      error: boolean,
-    },
-  },
+    data: ItemsById<AdGroupResource>;
+    performance: ItemsById<OverallStat>;
+  };
   ads: {
-    items: {
-      itemById: { [key: string]: AdInfoResource },
-      adAdGroup: {
-        [key: string]: {
-          ad_group_id: string,
-          campaign_id: string,
-        },
-      },
-      isLoading: boolean,
-      isUpdating: boolean,
-      isArchiving: boolean,
-      hasItems: boolean,
-      hasFetched: boolean,
-    },
-    performance: {
-      performanceById: { [key: string]: OverallStat },
-      isLoading: boolean,
-      hasFetched: boolean,
-      error: boolean,
-    },
-  },
-  goals: {
-    items: {
-      itemById: GoalsCampaignRessource[],
-      isLoading: boolean,
-      hasItems: boolean,
-      hasFetched: boolean,
-    },
-  }
+    data: ItemsById<AdInfoResource>;
+    performance: ItemsById<OverallStat>;
+  };
+  goals: Items<GoalsCampaignRessource>;
+}
+
+export interface AdGroupPageState {
+  campaign: {
+    data: Items<DisplayCampaignInfoResource>;
+  };
+  adGroups: {
+    data: Items<AdGroupResource>;
+    overallPerformance: Items<OverallStat>;
+    performance: Items<OverallStat>;
+    mediaPerformance: Items<MediaPerformance>;
+  };
+  ads: {
+    data: ItemsById<AdInfoResource>;
+    performance: ItemsById<OverallStat>;
+  };
 }

@@ -40,11 +40,7 @@ import formatDisplayCampaignProperty from '../../../../../messages/campaign/disp
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
 
 interface DisplayCampaignActionBarProps {
-  campaign: {
-    isLoadingList?: boolean;
-    isLoadingPerf?: boolean;
-    items?: DisplayCampaignInfoResource;
-  };
+  campaign: DisplayCampaignInfoResource;
   updateCampaign: (
     campaignId: string,
     object: {
@@ -337,7 +333,7 @@ class DisplayCampaignActionbar extends React.Component<
       intl,
     } = this.props;
 
-    if (campaign.items && campaign.items.model_version === 'V2014_06') {
+    if (campaign.model_version === 'V2014_06') {
       message.info(intl.formatMessage(messages.editionNotAllowed));
     } else {
       const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
@@ -368,7 +364,7 @@ class DisplayCampaignActionbar extends React.Component<
         url: `/v2/o/${organisationId}/campaigns/display`,
       },
       {
-        name: campaign.items && campaign.items.name ? campaign.items.name : '',
+        name: (campaign && campaign.name) || '',
       },
     ];
 
@@ -384,8 +380,7 @@ class DisplayCampaignActionbar extends React.Component<
           <FormattedMessage id="EXPORT" />
         </Button>
 
-        {campaign.items &&
-        campaign.items.model_version === 'V2014_06' ? null : (
+        {campaign && campaign.model_version !== 'V2014_06' && (
           <Button onClick={this.editCampaign}>
             <McsIcon type="pen" />
             <FormattedMessage {...messages.editCampaign} />
@@ -405,8 +400,8 @@ class DisplayCampaignActionbar extends React.Component<
     const { campaign, updateCampaign } = this.props;
 
     const onClickElement = (status: string) => () =>
-      campaign.items
-        ? updateCampaign(campaign.items.id, {
+      campaign
+        ? updateCampaign(campaign.id, {
             status,
             type: 'DISPLAY',
           })
@@ -433,13 +428,12 @@ class DisplayCampaignActionbar extends React.Component<
       </Button>
     );
 
-    if (campaign.items && !campaign.items.id) {
+    if (campaign && !campaign.id) {
       return null;
     }
 
-    return campaign.items &&
-      (campaign.items.status === 'PAUSED' ||
-        campaign.items.status === 'PENDING')
+    return campaign &&
+      (campaign.status === 'PAUSED' || campaign.status === 'PENDING')
       ? activeCampaignElement
       : pauseCampaignElement;
   };
@@ -494,7 +488,7 @@ class DisplayCampaignActionbar extends React.Component<
 
       switch (event.key) {
         case 'ARCHIVED':
-          return campaign.items ? handleArchiveGoal(campaign.items.id) : null;
+          return handleArchiveGoal(campaign.id);
         case 'DUPLICATE':
           return this.duplicateCampaign();
         case 'HISTORY':
@@ -517,12 +511,12 @@ class DisplayCampaignActionbar extends React.Component<
                       );
                     },
                     getName: (id: string) => {
-                        return DisplayCampaignService.getAdGroup(
-                          campaignId,
-                          id,
-                        ).then(response => {
-                          return response.data.name;
-                        });
+                      return DisplayCampaignService.getAdGroup(
+                        campaignId,
+                        id,
+                      ).then(response => {
+                        return response.data.name;
+                      });
                     },
                     goToResource: (id: string) => {
                       history.push(
@@ -547,8 +541,7 @@ class DisplayCampaignActionbar extends React.Component<
         <Menu.Item key="HISTORY">
           <FormattedMessage {...messages.history} />
         </Menu.Item>
-        {campaign.items &&
-        campaign.items.model_version === 'V2014_06' ? null : (
+        {campaign && campaign.model_version === 'V2014_06' ? null : (
           <Menu.Item key="DUPLICATE">
             <FormattedMessage {...messages.duplicate} />
           </Menu.Item>

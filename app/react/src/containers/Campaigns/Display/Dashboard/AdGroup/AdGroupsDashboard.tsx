@@ -8,17 +8,16 @@ import { Card } from '../../../../../components/Card/index';
 import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
 
 import messages from '../messages';
+import { OverallStat } from '../Charts/DisplayStackedAreaChart';
+import { MediaPerformance } from '../Charts/MediaPerformanceTable';
 
 interface AdGroupDashboardProps {
   isFetchingAdGroupStat: boolean;
-  hasFetchedAdGroupStat: boolean;
-  adGroupStat: any; // type
+  adGroupStat: OverallStat[];
   isFetchingMediaStat: boolean;
-  hasFetchedMediaStat: boolean;
-  mediaStat: any; // type
+  mediaStat: MediaPerformance[];
   isFetchingOverallStat: boolean;
-  hasFetchedOverallStat: boolean;
-  overallStat: any; // type
+  overallStat: OverallStat[];
 }
 
 type JoinedProps = AdGroupDashboardProps & InjectedIntlProps;
@@ -28,12 +27,10 @@ class AdGroupDashboard extends React.Component<JoinedProps> {
     const {
       intl,
       isFetchingAdGroupStat,
-      hasFetchedAdGroupStat,
       adGroupStat,
       isFetchingMediaStat,
       mediaStat,
       isFetchingOverallStat,
-      hasFetchedOverallStat,
       overallStat,
     } = this.props;
     const items = [
@@ -42,10 +39,8 @@ class AdGroupDashboard extends React.Component<JoinedProps> {
         display: (
           <DisplayStackedAreaChart
             isFetchingCampaignStat={isFetchingAdGroupStat}
-            hasFetchedCampaignStat={hasFetchedAdGroupStat}
             dataSource={adGroupStat}
             isFetchingOverallStat={isFetchingOverallStat}
-            hasFetchedOverallStat={hasFetchedOverallStat}
             overallStat={overallStat}
           />
         ),
@@ -68,6 +63,7 @@ class AdGroupDashboard extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, AdGroupDashboardProps>(injectIntl, withRouter)(
-  AdGroupDashboard,
-);
+export default compose<JoinedProps, AdGroupDashboardProps>(
+  injectIntl,
+  withRouter,
+)(AdGroupDashboard);

@@ -21,38 +21,29 @@ import { AdResource } from '../../../../../models/campaign/display/AdResource';
 import AdCard from './AdCard';
 import AdGroupCard from './AdGroupCard';
 import { Labels } from '../../../../Labels/index';
-import { GoalsCampaignRessource } from './domain';
+import { GoalsCampaignRessource, Items, ItemsById } from './domain';
 import { OverallStat } from '../Charts/DisplayStackedAreaChart';
 import { MediaPerformance } from '../Charts/MediaPerformanceTable';
+import { formatListView } from '../../../../../utils/Normalizer';
 
 const { Content } = Layout;
 
-export interface CampaignSubProps<T> {
-  isLoadingList: boolean;
-  isLoadingPerf: boolean;
-  items?: T[];
-}
-
-interface DashboardPerformanceSubProps<T> {
-  isLoading: boolean;
-  hasFetched: boolean;
-  items?: T[];
-}
-
 interface DisplayCampaignProps {
-  campaign: {
-    isLoadingList?: boolean;
-    isLoadingPerf?: boolean;
-    items?: DisplayCampaignInfoResource;
+  campaign: DisplayCampaignInfoResource;
+  ads: {
+    data: ItemsById<AdInfoResource>;
+    performance: ItemsById<OverallStat>;
   };
-  ads: CampaignSubProps<AdInfoResource>;
-  adGroups: CampaignSubProps<AdGroupResource>;
+  adGroups: {
+    data: ItemsById<AdGroupResource>;
+    performance: ItemsById<OverallStat>;
+  };
   updateAd: (
     adId: string,
     body: Partial<AdResource>,
+    undoBody?: Partial<AdResource>,
     successMessage?: UpdateMessage,
     errorMessage?: UpdateMessage,
-    undoBody?: Partial<AdResource>,
   ) => Promise<any>;
   updateAdGroup: (
     adGroupId: string,
@@ -69,9 +60,9 @@ interface DisplayCampaignProps {
     },
   ) => void;
   dashboardPerformance: {
-    media: DashboardPerformanceSubProps<MediaPerformance>;
-    overall: DashboardPerformanceSubProps<OverallStat>;
-    campaign: DashboardPerformanceSubProps<OverallStat>;
+    media: Items<MediaPerformance>;
+    overall: Items<OverallStat>;
+    campaign: Items<OverallStat>;
   };
   goals: GoalsCampaignRessource[];
 }
@@ -93,7 +84,9 @@ class DisplayCampaign extends React.Component<JoinedProps> {
       dashboardPerformance,
       goals,
       intl: { formatMessage },
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
     } = this.props;
 
     return (
@@ -103,15 +96,21 @@ class DisplayCampaign extends React.Component<JoinedProps> {
           updateCampaign={updateCampaign}
           isFetchingStats={
             dashboardPerformance.campaign.isLoading &&
-            adGroups.isLoadingPerf &&
-            ads.isLoadingPerf &&
+            adGroups.performance.isLoading &&
+            ads.performance.isLoading &&
             dashboardPerformance.media.isLoading
           }
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <CampaignDashboardHeader campaign={campaign.items} />
-            {campaign.items && campaign.items.model_version === 'V2014_06' ? < Alert className="m-b-20" message={formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
+            <CampaignDashboardHeader campaign={campaign} />
+            {campaign && campaign.model_version === 'V2014_06' ? (
+              <Alert
+                className="m-b-20"
+                message={formatMessage(messages.editionNotAllowed)}
+                type="warning"
+              />
+            ) : null}
             <Labels
               labellableId={campaignId}
               organisationId={organisationId}
@@ -119,31 +118,28 @@ class DisplayCampaign extends React.Component<JoinedProps> {
             />
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
-              hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}
               campaignStat={dashboardPerformance.campaign.items}
               mediaStat={dashboardPerformance.media.items}
               isFetchingMediaStat={dashboardPerformance.media.isLoading}
-              hasFetchedMediaStat={dashboardPerformance.media.hasFetched}
               isFetchingOverallStat={dashboardPerformance.overall.isLoading}
-              hasFetchedOverallStat={dashboardPerformance.overall.hasFetched}
               overallStat={dashboardPerformance.overall.items}
               goals={goals}
             />
 
             <AdGroupCard
               title={formatMessage(messages.adGroups)}
-              isFetching={adGroups.isLoadingList}
-              isFetchingStat={adGroups.isLoadingPerf}
-              dataSet={adGroups.items}
+              isFetching={adGroups.data.isLoading}
+              isFetchingStat={adGroups.performance.isLoading}
+              dataSet={formatListView(adGroups.data, adGroups.performance)}
               updateAdGroup={updateAdGroup}
-              campaign={campaign.items}
+              campaign={campaign}
             />
 
             <AdCard
               title={formatMessage(messages.creatives)}
-              isFetching={ads.isLoadingList}
-              isFetchingStat={ads.isLoadingPerf}
-              dataSet={ads.items}
+              isFetching={ads.data.isLoading}
+              isFetchingStat={ads.performance.isLoading}
+              dataSet={formatListView(ads.data, ads.performance)}
               updateAd={updateAd}
             />
           </Content>
