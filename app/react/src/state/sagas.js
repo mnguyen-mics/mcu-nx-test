@@ -29,6 +29,6 @@ export default function* sagas() {
     ...creativeEmailsSagas,
     ...nativeCreativesSagas,
     ...accountSagas,
-    ...featuresSagas,
+    ...featuresSagas
   ]);
 }

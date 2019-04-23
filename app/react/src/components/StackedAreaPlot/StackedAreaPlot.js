@@ -389,8 +389,8 @@ class StackedAreaPlot extends Component {
             {options.colors.map((color, index) => {
               return (
                 <linearGradient
-                  key={options.yKeys[index].key}
-                  id={`${options.yKeys[index].key}${identifier}`}
+                  key={options.yKeys[index] ? options.yKeys[index].key : ''}
+                  id={`${options.yKeys[index] ? options.yKeys[index].key : ''}${identifier}`}
                   x1="0"
                   y1="0"
                   x2="0"

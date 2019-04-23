@@ -37,13 +37,15 @@ interface MapStateToProps {
   initialized: boolean;
   initializationError: boolean;
   defaultWorkspaceOrganisationId?: string;
-  workspaces: {[orgid: number] : UserWorkspaceResource};
+  workspaces: UserWorkspaceResource[];
   setColorsStore: (mcsColors: { [key: string]: string }) => void;
   logOut: (action?: any, meta?: any) => void;
+  fetchAllAudienceSegmentMetrics: (organisationId: string) => void;
 }
 
 interface NavigatorState {
   adBlockOn: boolean;
+  datamartIds: string[];
 }
 
 type JoinedProps = MapStateToProps &
@@ -57,6 +59,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     super(props);
     this.state = {
       adBlockOn: false,
+      datamartIds: [],
     };
   }
 
@@ -128,10 +131,15 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     }
 
     const basePath = '/v2/o/:organisationId(\\d+)';
-    const homeUrl = workspaces && defaultWorkspaceOrganisationId &&
-      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)] && workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts
-      && workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts.length > 0 ?
-      `/v2/o/${defaultWorkspaceOrganisationId}/audience/segments` : `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
+    const homeUrl =
+      workspaces &&
+      defaultWorkspaceOrganisationId &&
+      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)] &&
+      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts &&
+      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts.length >
+        0
+        ? `/v2/o/${defaultWorkspaceOrganisationId}/audience/segments`
+        : `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
 
     const renderRoute = ({
       match,
@@ -147,7 +155,8 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       return <Redirect to={redirectToUrl} />;
     };
     const loginRouteRender = () => {
-      const authenticated = AuthService.isAuthenticated() || AuthService.canAuthenticate();
+      const authenticated =
+        AuthService.isAuthenticated() || AuthService.canAuthenticate();
       if (authenticated) return <Redirect to={homeUrl} />;
       this.props.logOut();
       return <Login />;
@@ -255,8 +264,16 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         <Route exact={true} path="/login" render={loginRouteRender} />
         <Route exact={true} path="/logout" render={logoutRouteRender} />
 
-        <Route exact={true} path="/:communityToken/change-password" component={CommunityChangePassword} />
-        <Route exact={true} path="/:communityToken/set-password" component={CommunityChangePassword} />
+        <Route
+          exact={true}
+          path="/:communityToken/change-password"
+          component={CommunityChangePassword}
+        />
+        <Route
+          exact={true}
+          path="/:communityToken/set-password"
+          component={CommunityChangePassword}
+        />
 
         <Route
           exact={true}

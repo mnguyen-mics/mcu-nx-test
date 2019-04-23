@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-
 import { Card } from '../../../../components/Card';
 import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
@@ -16,20 +15,30 @@ import { AudienceSegmentResource } from '../../../../models/audiencesegment/Audi
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { parseSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
+import {
+  parseSearch,
+  compareSearches,
+} from '../../../../utils/LocationSearchHelper';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
-import FeedCardList from './Feeds/FeedCardList'
+import FeedCardList from './Feeds/FeedCardList';
+import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
+import { connect } from 'react-redux';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
+import * as SessionHelper from '../../../../state/Session/selectors';
 
 interface State {
   loading: boolean;
-  counter: {
-    report: AudienceReport,
-    isLoading: boolean
-  },
   dashboard: {
-    report: AudienceReport,
-    isLoading: boolean
-  },
+    reports: AudienceReport;
+    isLoading: boolean;
+  };
+  datamarts: DatamartWithMetricResource[];
+}
+
+interface MapStateToProps {
+  workspaces: {
+    [key: string]: UserWorkspaceResource;
+  };
 }
 
 export interface AudienceSegmentDashboardProps {
@@ -39,6 +48,7 @@ export interface AudienceSegmentDashboardProps {
 
 type Props = AudienceSegmentDashboardProps &
   InjectedIntlProps &
+  MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
@@ -47,141 +57,161 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     super(props);
     this.state = {
       loading: true,
-      counter: {
-        isLoading: true,
-        report: []
-      },
       dashboard: {
         isLoading: true,
-        report: []
+        reports: [],
       },
+      datamarts: [],
     };
   }
 
   componentDidMount() {
-
-    const { match: { params: { segmentId, organisationId } }, location: { search }, } = this.props;
-
-    if (segmentId) {
-      const filters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
-      this.fetchCounterView(organisationId, [{
-        name: 'audience_segment_id',
-        value: segmentId
-      }])
-      this.fetchDashboardView(organisationId,
-        filters.from,
-        filters.to,
-        [{
-          name: 'audience_segment_id',
-          value: segmentId
-        }]
-      )
-    }
+    const {
+      match: {
+        params: { organisationId },
+      },
+      workspaces,
+    } = this.props;
+    const workspace = workspaces[organisationId];
+    this.setState({
+      datamarts: workspace ? workspace.datamarts : [],
+    });
   }
-
 
   componentWillReceiveProps(nextProps: Props) {
+    const {
+      match: {
+        params: { segmentId },
+      },
+      location: { search },
+    } = this.props;
+    const {
+      match: {
+        params: {
+          segmentId: nextSegmentId,
+          organisationId: nextOrganisationId,
+        },
+      },
+      location: { search: nextSearch },
+      segment: nextSegment,
+      workspaces: nextWorkspaces,
+    } = nextProps;
 
-    const { match: { params: { segmentId } }, location: { search }, } = this.props;
-    const { match: { params: { segmentId: nextSegmentId, organisationId: nextOrganisationId } }, location: { search: nextSearch }, } = nextProps;
-
-    if (!compareSearches(search, nextSearch) || segmentId !== nextSegmentId) {
+    if (
+      (!compareSearches(search, nextSearch) ||
+        segmentId !== nextSegmentId ||
+        nextWorkspaces) &&
+      nextSegment
+    ) {
       const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
-      this.fetchCounterView(nextOrganisationId, [{
-        name: 'audience_segment_id',
-        value: nextSegmentId
-      }])
-      this.fetchDashboardView(nextOrganisationId,
+      const metrics: string[] = [
+        'user_points',
+        'user_point_additions',
+        'user_point_deletions',
+      ];
+      let additionalMetrics;
+      if (nextWorkspaces) {
+        const datamart = this.state.datamarts.find(
+          dm => dm.id === nextSegment.datamart_id,
+        );
+
+        additionalMetrics =
+          datamart && datamart.audience_segment_metrics
+            ? datamart.audience_segment_metrics
+                .filter(metric => metric.status === 'LIVE')
+                .map(el => el.technical_name)
+            : undefined;
+      }
+      this.fetchDashboardView(
+        nextOrganisationId,
         nextFilters.from,
         nextFilters.to,
-        [{
-          name: 'audience_segment_id',
-          value: nextSegmentId
-        }]
-      )
+        [
+          {
+            name: 'audience_segment_id',
+            value: nextSegmentId,
+          },
+        ],
+        additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
+      );
     }
   }
 
-  fetchCounterView = (organisationId: string, filters: Filter[]) => {
-    this.setState({ counter: { ...this.state.counter, isLoading: true } })
-    return ReportService.getAudienceSegmentReport(
-      organisationId,
-      new McsMoment('now'),
-      new McsMoment('now'),
-      ['day'],
-      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids'],
-      filters,
-    ).then(res => this.setState({ counter: { isLoading: false, report: normalizeReportView(res.data.report_view) } }))
+  fetchDashboardView = (
+    organisationId: string,
+    from: McsMoment,
+    to: McsMoment,
+    filters: Filter[],
+    metrics: string[],
+  ) => {
+    this.setState({ dashboard: { ...this.state.dashboard, isLoading: true } });
 
-  }
-
-  fetchDashboardView = (organisationId: string, from: McsMoment, to: McsMoment, filters: Filter[]) => {
-    this.setState({ dashboard: { ...this.state.dashboard, isLoading: true } })
     return ReportService.getAudienceSegmentReport(
       organisationId,
       from,
       to,
       ['day'],
-      ['user_points', 'user_accounts', 'emails', 'desktop_cookie_ids', 'user_point_additions', 'user_point_deletions'],
+      metrics,
       filters,
-    ).then(res => this.setState({ dashboard: { isLoading: false, report: normalizeReportView(res.data.report_view) } }))
+    ).then(res =>
+      this.setState({
+        dashboard: {
+          isLoading: false,
+          reports: normalizeReportView(res.data.report_view),
+        },
+      }),
+    );
+  };
 
-  }
-
-
-  render() {
-
+  buildItems = () => {
     const { intl, segment } = this.props;
-    const { counter, dashboard } = this.state
-
-    const getLoadingValue = (
-      key: 'user_points' | 'user_accounts' | 'emails' | 'desktop_cookie_ids',
-    ) => {
-
-      const value = !counter.isLoading && counter.report && counter.report[0] ? counter.report[0][key] : undefined
-      return {
-        value,
-        loading: counter.isLoading,
-      };
-    };
+    const { dashboard } = this.state;
     const items = [
       {
         title: intl.formatMessage(messages.overview),
-        display: <Overview isFetching={dashboard.isLoading} dataSource={dashboard.report} />,
+        display: (
+          <Overview
+            isFetching={dashboard.isLoading}
+            dataSource={dashboard.reports}
+          />
+        ),
       },
       {
         title: intl.formatMessage(messages.additionDeletion),
-        display: <AdditionDeletion isFetching={dashboard.isLoading} dataSource={dashboard.report} />,
+        display: (
+          <AdditionDeletion
+            isFetching={dashboard.isLoading}
+            dataSource={dashboard.reports}
+          />
+        ),
       },
-      
     ];
     if (segment) {
       items.push({
         title: intl.formatMessage(messages.overlap),
         display: <Overlap datamartId={segment.datamart_id} />,
-      },)
+      });
       if (segment.type === 'USER_LIST') {
         items.push({
           title: intl.formatMessage(messages.imports),
-          display: (
-            <UserListImportCard
-              datamartId={segment.datamart_id}
-            />
-          ),
+          display: <UserListImportCard datamartId={segment.datamart_id} />,
         });
       }
     }
+    return items;
+  };
 
+  render() {
+    const { datamarts } = this.state;
+    const { segment } = this.props;
     return (
       <div>
         <AudienceCounters
-          userPoints={getLoadingValue('user_points')}
-          userAccounts={getLoadingValue('user_accounts')}
-          userAgents={getLoadingValue('desktop_cookie_ids')}
-          userEmails={getLoadingValue('emails')}
+          datamarts={datamarts}
+          datamartId={segment ? segment.datamart_id : undefined}
         />
         <Card>
-          <McsTabs items={items} />
+          <McsTabs items={this.buildItems()} />
         </Card>
         <FeedCardList />
       </div>
@@ -189,10 +219,18 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  workspaces: SessionHelper.getWorkspaces(state),
+});
+
 export default compose<Props, AudienceSegmentDashboardProps>(
   injectIntl,
   withRouter,
   injectNotifications,
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(AudienceSegmentDashboard);
 
 const messages = defineMessages({
