@@ -13,10 +13,11 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { TimelinePageParams } from '../TimelinePage';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 interface SegmentsCardProps {
-  datamartId: string;
-  identifier: Identifier;
+  selectedDatamart: DatamartResource;
+  userPointId: string;
 }
 
 interface State {
@@ -48,41 +49,44 @@ class SegmentsCard extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      datamartId,
-      identifier,
+      selectedDatamart,
+      userPointId
     } = this.props;
-    if (identifier.id && identifier.type) {
-      this.fetchSegmentsData(
-        datamartId,
-        identifier
-      );
-    }
+
+    this.fetchSegmentsData(
+      selectedDatamart,
+      userPointId
+    );
+
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      datamartId,
-      identifier,
+      selectedDatamart,
+      userPointId,
     } = this.props;
     const {
-      datamartId: prevDatamartId,
-      identifier: prevIdentifier,
+      selectedDatamart: prevSelectedDatamart,
+      userPointId: prevUserPointId,
     } = prevProps;
     if (
-      identifier.id !== prevIdentifier.id ||
-      identifier.type !== prevIdentifier.type ||
-      datamartId !== prevDatamartId
+      userPointId !== prevUserPointId ||
+      selectedDatamart !== prevSelectedDatamart
     ) {
-      if (identifier.id && identifier.type) {
-        this.fetchSegmentsData(datamartId, identifier);
-      }
+        this.fetchSegmentsData(selectedDatamart, userPointId);
     }
   }
 
   fetchSegmentsData = (
-    datamartId: string,
-    identifier: Identifier
+    datamart: DatamartResource,
+    userPointId: string
   ) => {
+    
+    const identifier: Identifier = {
+      id: userPointId,
+      type: 'user_point_id'
+    };
+
     this.setState(prevState => {
       const nextState = {
         segments: {
@@ -93,7 +97,7 @@ class SegmentsCard extends React.Component<Props, State> {
       return nextState;
     });
     UserDataService.getSegments(
-      datamartId,
+      datamart.id,
       identifier
     )
       .then(response => {

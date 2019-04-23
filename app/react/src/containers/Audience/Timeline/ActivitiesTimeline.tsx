@@ -6,7 +6,7 @@ import cuid from 'cuid';
 import { compose } from 'recompose';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import UserDataService from '../../../services/UserDataService';
-import { Activity, IdentifiersProps } from '../../../models/timeline/timeline';
+import { Activity, isUserAgentIdentifier, UserAgentIdentifierInfo } from '../../../models/timeline/timeline';
 import { Identifier } from './Monitoring';
 import messages from './messages';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -19,6 +19,7 @@ import injectNotifications, {
 import { TimelinePageParams } from './TimelinePage';
 import { takeLatest } from '../../../utils/ApiHelper';
 import { McsIconType } from '../../../components/McsIcon';
+import { DatamartResource } from '../../../models/datamart/DatamartResource';
 
 const takeLatestActivities = takeLatest(UserDataService.getActivities);
 
@@ -32,15 +33,16 @@ export interface Activities {
 }
 
 interface ActivitiesTimelineProps {
-  datamartId: string;
-  identifier: Identifier;
-  identifiers: IdentifiersProps;
+  selectedDatamart: DatamartResource;
+  userPointId: string;
 }
 
 interface State {
   activities: Activities;
   nextDate?: string;
   activityCountOnOldestDate: number;
+  userAgentsIdentifierInfo?: UserAgentIdentifierInfo[];
+  hasItems?: boolean;
 }
 
 type Props = ActivitiesTimelineProps &
@@ -64,33 +66,53 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      datamartId,
-      identifier,
+      selectedDatamart,
+      userPointId
     } = this.props;
-    if (identifier.id && identifier.type) {
-      this.fetchActivities(datamartId, identifier);
-    }
+
+    this.fetchActivities(selectedDatamart, userPointId);
+    this.fetchUserAgents(selectedDatamart, userPointId);
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      datamartId,
-      identifier,
+      selectedDatamart,
+      userPointId
     } = this.props;
 
     const {
-      datamartId: prevDatamartId,
-      identifier: prevIdentifier,
+      selectedDatamart: prevSelectedDatamart,
+      userPointId: prevUserPointId,
     } = prevProps;
 
     if (
-      identifier.id !== prevIdentifier.id ||
-      identifier.type !== prevIdentifier.type ||
-      datamartId !== prevDatamartId      
+      userPointId !== prevUserPointId ||
+      selectedDatamart !== prevSelectedDatamart
     ) {
-      this.fetchActivities(datamartId, identifier, true);
+      this.fetchActivities(selectedDatamart, userPointId, true);
+      this.fetchUserAgents(selectedDatamart, userPointId);
     }
   }
+
+  fetchUserAgents = (datamart: DatamartResource, userPointId: string) => {
+    const identifierType = "user_point_id";
+
+    UserDataService.getIdentifiers(
+      datamart.organisation_id,
+      datamart.id,
+      identifierType,
+      userPointId
+    ).then(response => {
+      const userAgentsIdentifierInfo = response.data.filter(isUserAgentIdentifier);
+
+      const hasItems = Object.keys(response.data).length > 0;
+
+      this.setState({
+        userAgentsIdentifierInfo: userAgentsIdentifierInfo,
+        hasItems: hasItems,
+      });
+    });
+  };
 
   groupByDate = (array: any[], key: any) => {
     return lodash.groupBy(array, value => {
@@ -196,10 +218,16 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   }
 
   fetchActivities = (
-    datamartId: string,
-    identifier: Identifier,
+    datamart: DatamartResource,
+    userPointId: string,
     dataSourceHasChanged: boolean = false,
   ) => {
+
+    const identifier: Identifier = {
+      id: userPointId,
+      type: 'user_point_id'
+    };
+
     const { nextDate, activityCountOnOldestDate } = this.state;
     const params =
       nextDate && !dataSourceHasChanged
@@ -216,9 +244,9 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         return nextState;
       },
       () =>
-        takeLatestActivities(datamartId, identifier, params)
+        takeLatestActivities(datamart.id, identifier, params)
           .then(response => {
-            takeLatestActivities(datamartId, identifier, {
+            takeLatestActivities(datamart.id, identifier, {
               ...params,
               limit: params.limit + 1,
             }).then(extendedResponse => {
@@ -281,11 +309,11 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   fetchNewActivities = (e: any) => {
     const {
-      identifier,
-      datamartId,
+      userPointId,
+      selectedDatamart,
     } = this.props;
     e.preventDefault();
-    this.fetchActivities(datamartId, identifier);
+    this.fetchActivities(selectedDatamart, userPointId);
   };
 
   renderPendingTimeline = (activities: Activities) => {
@@ -366,8 +394,8 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   }
 
   render() {
-    const { activities } = this.state;
-    const { datamartId, identifiers } = this.props;
+    const { activities, userAgentsIdentifierInfo } = this.state;
+    const { selectedDatamart } = this.props;
 
     const keys = Object.keys(activities.byDay);
     return activities.isLoading === true && activities.items.length === 0 ? (
@@ -395,8 +423,8 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                       <Timeline.Item key={cuid()} dot={this.renderType(activity)}>
                         <ActivityCard
                           activity={activity}
-                          datamartId={datamartId}
-                          identifiers={identifiers}
+                          selectedDatamart={selectedDatamart}
+                          userAgentsIdentifierInfo={userAgentsIdentifierInfo}
                         />
                       </Timeline.Item>
                     );

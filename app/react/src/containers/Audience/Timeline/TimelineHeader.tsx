@@ -3,11 +3,12 @@ import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import messages from './messages';
 import ContentHeader from '../../../components/ContentHeader';
-import { Identifier } from './Monitoring';
 import UserDataService from '../../../services/UserDataService';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { TimelinePageParams } from './TimelinePage';
 import { compose } from 'recompose';
+import { Identifier } from './Monitoring';
+import { DatamartResource } from '../../../models/datamart/DatamartResource';
 
 interface State {
   lastSeen: number;
@@ -15,8 +16,7 @@ interface State {
 }
 
 interface TimelineHeaderProps {
-  datamartId: string;
-  identifier: Identifier;
+  selectedDatamart: DatamartResource;
   userPointId: string;
 }
 
@@ -43,11 +43,16 @@ class TimelineHeader extends React.Component<Props, State> {
     });
 
     const {
-      datamartId,
-      identifier,
+      selectedDatamart,
+      userPointId
     } = this.props;
 
-    UserDataService.getActivities(datamartId, identifier).then(res => {
+    const identifier: Identifier = {
+      id: userPointId,
+      type: 'user_point_id'
+    };
+
+    UserDataService.getActivities(selectedDatamart.id, identifier).then(res => {
       const timestamps = res.data.map(item => {
         return item.$ts
       })

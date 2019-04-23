@@ -13,10 +13,11 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { TimelinePageParams } from '../TimelinePage';
 import ProfileInfo from './ProfileInfo';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 interface ProfileCardProps {
-  datamartId: string;
-  identifier: Identifier;
+  selectedDatamart: DatamartResource;
+  userPointId: string;
 }
 
 interface State {
@@ -37,47 +38,50 @@ class ProfileCard extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      datamartId,
-      identifier,
+      selectedDatamart,
+      userPointId
     } = this.props;
-    if (identifier.id && identifier.type) {
-      this.fetchProfileData(
-        datamartId,
-        identifier
-      );
-    }
+
+    this.fetchProfileData(
+      selectedDatamart,
+      userPointId
+    );
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      datamartId,
-      identifier,
+      selectedDatamart,
+      userPointId,
     } = this.props;
+
     const {
-      datamartId: prevDatamartId,
-      identifier: prevIdentifier,
+      selectedDatamart: prevSelectedDatamart,
+      userPointId: prevUserPointId,
     } = prevProps;
+
     if (
-      identifier.id !== prevIdentifier.id ||
-      identifier.type !== prevIdentifier.type ||
-      datamartId !== prevDatamartId
+      userPointId !== prevUserPointId ||
+      selectedDatamart !== prevSelectedDatamart
     ) {
-      if (identifier.id && identifier.type) {
-        this.fetchProfileData(datamartId, identifier);
-      }
+      this.fetchProfileData(selectedDatamart, userPointId);
     }
   }
 
   fetchProfileData = (
-    datamartId: string,
-    identifier: Identifier,
+    datamart: DatamartResource,
+    userPointId: string,
   ) => {
 
-    DatamartService.getUserAccountCompartments(datamartId).then(res => {
+    DatamartService.getUserAccountCompartments(datamart.id).then(res => {
       return Promise.all(
         res.data.map(userCompartiment => {
+          const identifier: Identifier = {
+            id: userPointId,
+            type: 'user_point_id',
+            compartmentId: userCompartiment.compartment_id
+          };
           return UserDataService.getProfile(
-            datamartId,
+            datamart.id,
             identifier
           )
             .then(r => ({ profile: r ? r.data : {}, compartment: userCompartiment }))

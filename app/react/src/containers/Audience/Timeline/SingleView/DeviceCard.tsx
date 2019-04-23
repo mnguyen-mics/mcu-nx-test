@@ -3,14 +3,19 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Card } from '../../../../components/Card/index';
 import Device from './Device';
 import messages from '../messages';
-import { IdentifiersProps } from '../../../../models/timeline/timeline';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
+import UserDataService from '../../../../services/UserDataService';
+import { isUserAgentIdentifier, UserAgentIdentifierInfo } from '../../../../models/timeline/timeline';
 
 interface DeviceCardProps {
-  identifiers: IdentifiersProps;
+  selectedDatamart: DatamartResource;
+  userPointId: string;
 }
 
 interface State {
   showMore: boolean;
+  userAgentsIdentifierInfo?: UserAgentIdentifierInfo[];
+  hasItems?: boolean;
 }
 
 type Props = DeviceCardProps & InjectedIntlProps;
@@ -23,13 +28,63 @@ class DeviceCard extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    const {
+      selectedDatamart,
+      userPointId,
+    } = this.props;
+
+    this.fetchUserAgents(selectedDatamart, userPointId);
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      selectedDatamart,
+      userPointId,
+    } = this.props;
+
+    const {
+      selectedDatamart: nextSelectedDatamart,
+      userPointId: nextUserPointId,
+    } = nextProps;
+
+    if (selectedDatamart !== nextSelectedDatamart ||
+      userPointId !== nextUserPointId) {
+      this.fetchUserAgents(nextSelectedDatamart, nextUserPointId);
+    }
+  }
+
+  fetchUserAgents = (datamart: DatamartResource, userPointId: string) => {
+    const identifierType = "user_point_id";
+
+    UserDataService.getIdentifiers(
+      datamart.organisation_id,
+      datamart.id,
+      identifierType,
+      userPointId
+    ).then(response => {
+      const userAgentsIdentifierInfo = response.data.filter(isUserAgentIdentifier);
+
+      const hasItems = Object.keys(response.data).length > 0;
+
+      this.setState({
+        userAgentsIdentifierInfo: userAgentsIdentifierInfo,
+        hasItems: hasItems,
+      });
+    });
+  };
+
   render() {
     const {
-      identifiers,
       intl: { formatMessage },
     } = this.props;
 
-    const userAgents = identifiers.items.USER_AGENT || [];
+    const {
+      userAgentsIdentifierInfo,
+      hasItems,
+    } = this.state;
+
+    const userAgents = userAgentsIdentifierInfo || [];
     let accountsFormatted: any[] = [];
     if (userAgents.length > 5 && !this.state.showMore) {
       accountsFormatted = accountsFormatted.concat(userAgents).splice(0, 5);
@@ -42,10 +97,12 @@ class DeviceCard extends React.Component<Props, State> {
       this.setState({ showMore: visible });
     };
 
+    const isLoading = (userAgentsIdentifierInfo === undefined || hasItems === undefined);
+
     return (
       <Card
         title={formatMessage(messages.deviceTitle)}
-        isLoading={identifiers.isLoading}
+        isLoading={isLoading}
       >
         {accountsFormatted &&
           accountsFormatted.map(agent => {
@@ -59,7 +116,7 @@ class DeviceCard extends React.Component<Props, State> {
               <div key={agent.vector_id}>{agent.vector_id}</div>
             );
           })}
-        {(accountsFormatted.length === 0 || identifiers.hasItems === false) && (
+        {(accountsFormatted.length === 0 || hasItems === false) && (
           <span>
             <FormattedMessage {...messages.emptyDevice} />
           </span>

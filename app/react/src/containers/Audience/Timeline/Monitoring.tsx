@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import lodash from 'lodash';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -16,14 +15,13 @@ import TimelineHeader from './TimelineHeader';
 import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
-import { IdentifiersProps, Cookies } from '../../../models/timeline/timeline';
+import { isUserPointIdentifier } from '../../../models/timeline/timeline';
 import UserDataService from '../../../services/UserDataService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { EmptyTableView } from '../../../components/TableView';
-import { DatamartResource, UserAccountCompartmentDatamartSelectionResource } from '../../../models/datamart/DatamartResource';
-import DatamartService from '../../../services/DatamartService';
+import { DatamartResource } from '../../../models/datamart/DatamartResource';
 
 const { Content } = Layout;
 
@@ -39,15 +37,12 @@ interface MapStateToProps {
 
 interface State {
   isModalVisible: boolean;
-  identifier: Identifier;
-  identifiers: IdentifiersProps;
-  compartments: UserAccountCompartmentDatamartSelectionResource[];  
+  userPointId?: string;
+  isLoading?: boolean;
 }
 
 interface MonitoringProps {
-  datamartId: string;
   selectedDatamart: DatamartResource;
-  cookies: Cookies;
 }
 
 type Props = MonitoringProps &
@@ -60,21 +55,6 @@ class Monitoring extends React.Component<Props, State> {
     super(props);
     this.state = {
       isModalVisible: false,
-      identifier: {
-        id: '',
-        type: '',
-      },
-      identifiers: {
-        isLoading: false,
-        hasItems: false,
-        items: {
-          USER_ACCOUNT: [],
-          USER_AGENT: [],
-          USER_EMAIL: [],
-          USER_POINT: [],
-        },
-      },
-      compartments: [],
     };
   }
 
@@ -84,29 +64,18 @@ class Monitoring extends React.Component<Props, State> {
       match: {
         params: { organisationId, identifierType, identifierId },
       },
-      datamartId,
+      selectedDatamart,
     } = this.props;
-    
-    const { identifier } = this.state;
 
-    if (identifier.type && identifier.id) {
+    if (identifierType && identifierId) {
       this.fetchIdentifiersData(
         organisationId,
-        datamartId,
-        identifier.type,
-        identifier.id,
-        queryString.parse(location.search).compartmentId,
-      );
-    } else if (identifierType && identifierId) {
-      this.fetchIdentifiersData(
-        organisationId,
-        datamartId,
+        selectedDatamart.id,
         identifierType,
         identifierId,
         queryString.parse(location.search).compartmentId,
       );
     }
-    this.fetchCompartments();    
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -123,27 +92,20 @@ class Monitoring extends React.Component<Props, State> {
         },
       },
       location: { search: nextSearch, pathname: nextPathname },
-      datamartId: nextDatamartId,
+      selectedDatamart: nextSelectedDatamart,
     } = nextProps;
 
     if (search !== nextSearch || pathname !== nextPathname) {
       if (nextIdentifierType && nextIdentifierId) {
         this.fetchIdentifiersData(
           nextOrganisationId,
-          nextDatamartId,
+          nextSelectedDatamart.id,
           nextIdentifierType,
           nextIdentifierId,
           queryString.parse(nextSearch).compartmentId,
         );
       }
     }
-    this.fetchCompartments();    
-  }
-
-  fetchCompartments = () => {
-    DatamartService.getUserAccountCompartments(this.props.datamartId).then(res => {
-      this.setState({ compartments: res.data })
-    })
   }
 
   fetchIdentifiersData = (
@@ -155,10 +117,7 @@ class Monitoring extends React.Component<Props, State> {
   ) => {
     this.setState(prevState => {
       const nextState = {
-        identifiers: {
-          ...prevState.identifiers,
-          isLoading: true,
-        },
+        isLoading: true,
       };
       return nextState;
     });
@@ -170,38 +129,19 @@ class Monitoring extends React.Component<Props, State> {
       compartmentId,
     )
       .then(response => {
-        this.setState((prevState: any) => {
-          const nextState = {
-            identifiers: {
-              ...prevState.identifiers,
-              isLoading: false,
-              hasItems: Object.keys(response.data).length > 0,
-              items: lodash.groupBy(response.data, 'type'),
-            },
-            identifier: {
-              id: identifierId,
-              type: identifierType,
-              compartmentId: compartmentId,
-            },
-          };
-          return nextState;
+        const userPointIdentifierInfo = response.data.find(isUserPointIdentifier);
+        if (userPointIdentifierInfo) {
+          this.setState({
+            userPointId: userPointIdentifierInfo.user_point_id
+          });
+        }
+        this.setState({
+          isLoading: false
         });
       })
       .catch(error => {
-        this.setState((prevState: any) => {
-          const nextState = {
-            identifiers: {
-              ...prevState.identifiers,
-              items: {},
-              isLoading: false,
-            },
-            identifier: {
-              id: identifierId,
-              type: identifierType,
-              compartmentId: compartmentId
-            },
-          };
-          return nextState;
+        this.setState({
+          isLoading: false
         });
       });
   };
@@ -222,41 +162,34 @@ class Monitoring extends React.Component<Props, State> {
     } = this.props;
     const datamartId = queryString.parse(location.search).datamartId
       ? queryString.parse(location.search).datamartId
-      : this.props.datamartId;
-      
+      : this.props.selectedDatamart.id;
+
     history.push(
       `/v2/o/${organisationId}/audience/timeline/${identifier.type}/${
-        identifier.id
-      }?datamartId=${datamartId}${identifier.compartmentId ? `&compartmentId=${identifier.compartmentId}`: ''}`,
+      identifier.id
+      }?datamartId=${datamartId}${identifier.compartmentId ? `&compartmentId=${identifier.compartmentId}` : ''}`,
     );
   };
 
   render() {
-    const { datamartId, cookies, selectedDatamart } = this.props;
+    const { selectedDatamart } = this.props;
 
-    const { identifier, identifiers, isModalVisible } = this.state;
-
-    const userPointId =
-      identifiers.items.USER_POINT && identifiers.items.USER_POINT[0]
-        ? identifiers.items.USER_POINT[0].user_point_id
-        : '';
+    const { isModalVisible, userPointId } = this.state;
 
     return (
       <div className="ant-layout">
         <MonitoringActionbar
           selectedDatamart={selectedDatamart}
-          compartments={this.state.compartments}
           onIdentifierChange={this.onIdentifierChange}
           isModalVisible={isModalVisible}
           handleModal={this.handleModal}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            {cookies.mics_vid || identifier.id ? (
+            { userPointId ? (
               <Row>
                 <TimelineHeader
-                  datamartId={datamartId}
-                  identifier={identifier}
+                  selectedDatamart={selectedDatamart}
                   userPointId={userPointId}
                 />
                 <Row
@@ -269,12 +202,12 @@ class Monitoring extends React.Component<Props, State> {
                       <FormattedMessage {...messages.visitor} />
                     </div>
                     <ProfileCard
-                      datamartId={datamartId}
-                      identifier={identifier}
+                      selectedDatamart={selectedDatamart}
+                      userPointId={userPointId}
                     />
                     <SegmentsCard
-                      datamartId={datamartId}
-                      identifier={identifier}
+                      selectedDatamart={selectedDatamart}
+                      userPointId={userPointId}
                     />
                   </Col>
                   <Col span={12}>
@@ -283,9 +216,8 @@ class Monitoring extends React.Component<Props, State> {
                     </div>
 
                     <ActivitiesTimeline
-                      datamartId={datamartId}
-                      identifier={identifier}
-                      identifiers={identifiers}
+                      selectedDatamart={selectedDatamart}
+                      userPointId={userPointId}
                     />
                   </Col>
                   <Col span={6}>
@@ -293,20 +225,26 @@ class Monitoring extends React.Component<Props, State> {
                       <FormattedMessage {...messages.identifiers} />
                     </div>
                     <AccountIdCard
-                      identifiers={identifiers}
-                      datamartId={datamartId}
+                      selectedDatamart={selectedDatamart}
+                      userPointId={userPointId}
                     />
-                    <DeviceCard identifiers={identifiers} />
-                    <EmailCard identifiers={identifiers} />
+                    <DeviceCard
+                      selectedDatamart={selectedDatamart}
+                      userPointId={userPointId}
+                    />
+                    <EmailCard
+                      selectedDatamart={selectedDatamart}
+                      userPointId={userPointId}
+                    />
                   </Col>
                 </Row>
               </Row>
             ) : (
-              <EmptyTableView
-                iconType="user"
-                intlMessage={messages.pleaseFillInformations}
-              />
-            )}
+                <EmptyTableView
+                  iconType="user"
+                  intlMessage={messages.pleaseFillInformations}
+                />
+              )}
           </Content>
         </div>
       </div>

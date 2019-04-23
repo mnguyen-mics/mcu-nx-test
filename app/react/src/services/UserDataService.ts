@@ -1,8 +1,8 @@
-import { Activity } from '../models/timeline/timeline';
 import {
   UserSegmentResource,
   UserProfileResource,
-  UserIdentifierShape,
+  Activity,
+  UserIdentifierInfo
 } from './../models/timeline/timeline';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { Identifier } from '../containers/Audience/Timeline/Monitoring';
@@ -108,7 +108,7 @@ const UserDataService = {
     identifierId: string,
     compartmentId?: string,
     options: object = {},
-  ): Promise<DataListResponse<UserIdentifierShape>> {
+  ): Promise<DataListResponse<UserIdentifierInfo>> {
     const endpoint = UserDataService.getIdentifiersEndpoint(
       identifierType,
       datamartId,
@@ -120,13 +120,13 @@ const UserDataService = {
       ...options,
     };
 
-    return ApiService.getRequest<DataListResponse<UserIdentifierShape>>(
+    return ApiService.getRequest<DataListResponse<UserIdentifierInfo>>(
       endpoint,
       params,
     ).catch(error => {
       // api send 404 when identifiers don't exist
       if (error && error.error === 'Resource Not Found') {
-        const result: DataListResponse<UserIdentifierShape> = {
+        const result: DataListResponse<UserIdentifierInfo> = {
           data: [],
           status: 'ok',
           count: 0,
