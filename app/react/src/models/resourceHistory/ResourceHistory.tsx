@@ -26,7 +26,8 @@ export type ResourceType =
   | 'KEYWORDS_LIST'
   | 'KEYWORDS_LIST_SELECTION'
   | 'PLACEMENT_LIST'
-  | 'PLACEMENT_LIST_SELECTION';
+  | 'PLACEMENT_LIST_SELECTION'
+  | 'PLUGIN_VERSION';
 
 export type EventType =
   | 'CREATE_EVENT'

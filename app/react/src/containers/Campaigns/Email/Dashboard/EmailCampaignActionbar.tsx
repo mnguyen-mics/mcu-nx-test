@@ -34,6 +34,7 @@ import ResourceTimelinePage, {
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistoryHelper';
 import EmailRoutersService from '../../../../services/Library/EmailRoutersService';
+import PluginService from '../../../../services/PluginService';
 
 export interface EmailCampaignActionbarProps {
   campaign?: EmailCampaignResource;
@@ -167,7 +168,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
             {
               size: 'small',
               additionalProps: {
-                resourceType: 'EMAIL_CAMPAIGN',
+                resourceType: 'CAMPAIGN',
                 resourceId: campaignId,
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatCampaignProperty,
@@ -228,6 +229,22 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                           `/v2/o/${organisationId}/settings/campaigns/email_routers/${emailRouterId}/edit`,
                         );
                       });
+                    },
+                  },
+                  PLUGIN_VERSION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.campaignEditorResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return PluginService.findPluginFromVersionId(id).then(response => `${response.data.group_id}.${response.data.artifact_id}`);
+                    },
+                    goToResource: (id: string) => {
+                      return ;
                     },
                   },
                 },

@@ -67,6 +67,10 @@ const messages: {
     id: 'timeline.resourceType.emailRouter',
     defaultMessage: 'Email Router',
   },
+  campaignEditorResourceType: {
+    id: 'timeline.resourceType.campaignEditor',
+    defaultMessage: 'Campaign Editor',
+  },
   today: {
     id: 'timeline.events.title.today',
     defaultMessage: 'Today',
