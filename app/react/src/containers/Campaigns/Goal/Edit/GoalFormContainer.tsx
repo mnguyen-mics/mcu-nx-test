@@ -61,9 +61,11 @@ class GoalFormContainer extends React.Component<Props, State> {
       DatamartService.getDatamart(initialValues.goal.datamart_id)
         .then(resp => {          
           this.setState({ 
-            loading: false, showTriggerTypeSelector: false,
-            selectedDatamart: resp.data
+            loading: false, 
+            showTriggerTypeSelector: false,
+            selectedDatamart: resp.data,
            });
+           this.onDatamartSelect(resp.data);
         })
         .catch(err => {
           this.props.notifyError(err);
