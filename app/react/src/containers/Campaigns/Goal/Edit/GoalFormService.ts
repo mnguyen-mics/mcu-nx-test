@@ -90,7 +90,7 @@ const GoalFormService = {
       } else {        
         const query = { 
           ...goalFormData.query,
-          datamart_id: goalFormData.goal.datamart_id!,
+          datamart_id: goalFormData.goal.datamart_id,
           query_language: goalFormData.queryLanguage,
          };
         goalDataToUpload = queryService.createQuery(goalFormData.goal.datamart_id!, query).then(resp => {
