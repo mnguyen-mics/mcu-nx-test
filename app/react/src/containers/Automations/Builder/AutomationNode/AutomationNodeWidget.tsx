@@ -99,6 +99,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (selectedNode.type === "DISPLAY_CAMPAIGN") {
       const campaignValue = selectedNode.formData;
+      console.log('campaignValue', campaignValue)
       openNextDrawer<DisplayCampaignAutomatedDashboardPageProps>(
         DisplayCampaignAutomatedDashboardPage,
         {

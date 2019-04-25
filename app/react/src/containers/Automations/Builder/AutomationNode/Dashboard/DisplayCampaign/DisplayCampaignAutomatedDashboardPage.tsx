@@ -194,15 +194,16 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<Props, Displ
         ...prevState,
       };
 
-      nextState.campaign.items.isLoading = true;
-      nextState.adGroups.items.isLoading = true;
-      nextState.ads.items.isLoading = true;
+      
+      nextState.campaign.data.isLoading = true;
+      nextState.adGroups.data.isLoading = true;
+      nextState.ads.data.isLoading = true;
       nextState.campaign.performance.isLoading = true;
       nextState.campaign.mediaPerformance.isLoading = true;
       nextState.campaign.overallPerformance.isLoading = true;
       nextState.adGroups.performance.isLoading = true;
       nextState.ads.performance.isLoading = true;
-      nextState.goals.items.isLoading = true;
+      nextState.goals.isLoading = true;
 
       return nextState;
     });
@@ -251,25 +252,20 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<Props, Displ
           ...prevState,
         };
 
-        nextState.campaign.items.isLoading = false;
-        nextState.adGroups.items.isLoading = false;
-        nextState.ads.items.isLoading = false;
-
-        nextState.campaign.items.hasFetched = true;
-        nextState.adGroups.items.hasFetched = true;
-        nextState.ads.items.hasFetched = true;
-
-        nextState.campaign.items.itemById = campaign;
-        nextState.adGroups.items.itemById = normalizeArrayOfObject(
+        nextState.campaign.data.isLoading = false;
+        nextState.adGroups.data.isLoading = false;
+        nextState.ads.data.isLoading = false;
+        nextState.campaign.data.items = [campaign];
+        nextState.adGroups.data.items = normalizeArrayOfObject(
           formattedAdGroups,
           'id',
         );
-        nextState.adGroups.items.adGroupCampaign = normalizeArrayOfObject(
+        nextState.adGroups.data.adGroupCampaign = normalizeArrayOfObject(
           adGroupCampaign,
           'ad_group_id',
         );
-        nextState.ads.items.itemById = normalizeArrayOfObject(ads, 'id');
-        nextState.ads.items.adAdGroup = normalizeArrayOfObject(
+        nextState.ads.data.items = normalizeArrayOfObject(ads, 'id');
+        nextState.ads.data.adAdGroup = normalizeArrayOfObject(
           adAdGroup,
           'ad_id',
         );
@@ -277,6 +273,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<Props, Displ
         return nextState;
       });
     });
+
 
     DisplayCampaignService.getGoals(campaignId)
       .then(goals => goals.data)
@@ -294,12 +291,13 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<Props, Displ
       .then(goals => {
         this.setState({
           goals: {
-            items: {
-              itemById: goals,
-              isLoading: false,
-              hasFetched: true,
-              hasItems: true,
-            },
+            items: goals,
+            isLoading: false,
+            hasFetched: true,
+            hasItems: true,
+            error: false,
+            isArchiving: false,
+            isUpdating: false,
           },
         });
       });
@@ -424,57 +422,65 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<Props, Displ
     return [];
   }
 
-  updateAd = (adId: string, body: Partial<AdResource>, successMessage?: UpdateMessage, errorMessage?: UpdateMessage, undoBody?: Partial<AdResource>): Promise<any> => {
+  updateAd = (
+    adId: string,
+    body: Partial<AdResource>,
+    undoBody?: Partial<AdResource>,
+    successMessage?: UpdateMessage,
+    errorMessage?: UpdateMessage,
+  ): Promise<any> => {
     const { notifySuccess, notifyError, removeNotification } = this.props;
 
-    return DisplayCampaignService.updateAd(
-      adId,
-      this.state.ads.items.adAdGroup[adId].campaign_id,
-      this.state.ads.items.adAdGroup[adId].ad_group_id,
-      body,
-    )
-      .then(response => {
-        this.setState(prevState => {
-          const nextState = {
-            ...prevState,
-          };
-          nextState.ads.items.itemById[adId].status = response.data.status;
-          return nextState;
-        });
-        if ((successMessage || errorMessage) && undoBody) {
-          const uid = Math.random().toString();
-          const undo = () => {
-            this.updateAd(adId, undoBody).then(() => {
-              removeNotification(uid);
-            });
-          };
+    const adAdGroup =
+      this.state.ads.data.adAdGroup && this.state.ads.data.adAdGroup[adId];
+    const campaignId = adAdGroup ? adAdGroup.campaign_id : undefined;
+    const adGroupId = adAdGroup ? adAdGroup.ad_group_id : undefined;
 
-          if (successMessage) {
-            notifySuccess({
-              uid,
-              message: successMessage.title,
-              description: successMessage.body,
-              btn: (
-                <Button type="primary" size="small" onClick={undo}>
-                  <span>Undo</span>
-                </Button>
-              ),
+    return campaignId && adGroupId
+      ? DisplayCampaignService.updateAd(adId, campaignId, adGroupId, body)
+          .then(response => {
+            this.setState(prevState => {
+              const nextState = {
+                ...prevState,
+              };
+              nextState.ads.data.items[adId].status = response.data.status;
+              return nextState;
             });
-          }
-        }
+            if ((successMessage || errorMessage) && undoBody) {
+              const uid = Math.random().toString();
+              const undo = () => {
+                this.updateAd(adId, undoBody).then(() => {
+                  removeNotification(uid);
+                });
+              };
 
-        return null;
-      })
-      .catch(error => {
-        const errorMsg = errorMessage
-          ? {
-            message: errorMessage.title,
-            description: errorMessage.body,
-          }
-          : undefined;
-        notifyError(error, errorMsg);
-        throw error;
-      });
+              if (successMessage) {
+                notifySuccess({
+                  uid,
+                  message: successMessage.title,
+                  description: successMessage.body,
+                  btn: (
+                    <Button type="primary" size="small" onClick={undo}>
+                      <span>Undo</span>
+                    </Button>
+                  ),
+                });
+              }
+            }
+
+            return null;
+          })
+          .catch(error => {
+            const errorMsg = errorMessage
+              ? {
+                  message: errorMessage.title,
+                  description: errorMessage.body,
+                }
+              : undefined;
+            notifyError(error, errorMsg);
+            throw error;
+          })
+      : Promise.resolve();
   };
 
   
@@ -485,47 +491,54 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<Props, Displ
 
     } = this.props;
 
-    const campaign = {
-      isLoadingList: this.state.campaign.items.isLoading,
-      isLoadingPerf: this.state.campaign.performance.isLoading,
-      items: this.state.campaign.items.itemById,
-    };
+    const { campaign, ads, goals } = this.state;
+
+    // const campaign = {
+    //   isLoadingList: this.state.campaign.items.isLoading,
+    //   isLoadingPerf: this.state.campaign.performance.isLoading,
+    //   items: this.state.campaign.items.itemById,
+    // };
 
 
-    const ads = {
-      isLoadingList: this.state.ads.items.isLoading,
-      isLoadingPerf: this.state.ads.performance.isLoading,
-      items: this.formatListView(
-        this.state.ads.items.itemById,
-        this.state.ads.performance.performanceById,
-      ),
-    };
+    // const ads = {
+    //   isLoadingList: this.state.ads.items.isLoading,
+    //   isLoadingPerf: this.state.ads.performance.isLoading,
+    //   items: this.formatListView(
+    //     this.state.ads.items.itemById,
+    //     this.state.ads.performance.performanceById,
+    //   ),
+    // };
 
-    const goals = this.state.goals.items.itemById;
+    // const ads = this.state.ads;
+    // const goals = this.state.goals.items.itemById;
 
     const dashboardPerformance = {
       media: {
-        isLoading: this.state.campaign.mediaPerformance.isLoading,
-        hasFetched: this.state.campaign.mediaPerformance.hasFetched,
-        items: this.state.campaign.mediaPerformance.performance,
+        items: campaign.mediaPerformance.items,
+        isLoading: campaign.mediaPerformance.isLoading,
+        isUpdating: false,
+        isArchiving: false,
       },
       overall: {
-        isLoading: this.state.campaign.overallPerformance.isLoading,
-        hasFetched: this.state.campaign.overallPerformance.hasFetched,
-        items: this.state.campaign.overallPerformance.performance,
+        items: campaign.overallPerformance.items,
+        isLoading: campaign.overallPerformance.isLoading,
+        isUpdating: false,
+        isArchiving: false,
       },
       campaign: {
-        isLoading: this.state.campaign.performance.isLoading,
-        hasFetched: this.state.campaign.performance.hasFetched,
-        items: this.state.campaign.performance.performance,
+        items: campaign.performance.items,
+        isLoading: campaign.performance.isLoading,
+        isUpdating: false,
+        isArchiving: false,
       },
     };
+    
     return (
       <div className="ant-layout">
         <ActionBar
           paths={[
             {
-              name: this.state.campaign.items.itemById && this.state.campaign.items.itemById.name ? this.state.campaign.items.itemById.name : ''
+              name: campaign && campaign.data && campaign.data.items && campaign.data.items[0] ? campaign.data.items[0].name : ''
             }
           ]}
           edition={true}
@@ -539,29 +552,26 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<Props, Displ
         </ActionBar> 
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <CampaignDashboardHeader campaign={campaign.items} />
-            {campaign.items && campaign.items.model_version === 'V2014_06' ? < Alert className="m-b-20" message={formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
+            <CampaignDashboardHeader campaign={campaign.data.items[0]} />
+            {campaign && campaign.data && campaign.data.items && campaign.data.items[0] && campaign.data.items[0].model_version === 'V2014_06' ? < Alert className="m-b-20" message={formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
           
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
-              hasFetchedCampaignStat={dashboardPerformance.campaign.hasFetched}
               campaignStat={dashboardPerformance.campaign.items}
               mediaStat={dashboardPerformance.media.items}
               isFetchingMediaStat={dashboardPerformance.media.isLoading}
-              hasFetchedMediaStat={dashboardPerformance.media.hasFetched}
               isFetchingOverallStat={dashboardPerformance.overall.isLoading}
-              hasFetchedOverallStat={dashboardPerformance.overall.hasFetched}
               overallStat={dashboardPerformance.overall.items}
-              goals={goals}
+              goals={goals.items}
             />
 
             
             <AdCard
-              title={formatMessage(messages.creatives)}
-              isFetching={ads.isLoadingList}
-              isFetchingStat={ads.isLoadingPerf}
-              dataSet={ads.items}
-              updateAd={this.updateAd}
+             title={formatMessage(messages.creatives)}
+             isFetching={ads.data.isLoading}
+             isFetchingStat={ads.performance.isLoading}
+             dataSet={this.formatListView(ads.data, ads.performance)}
+             updateAd={this.updateAd}
             />
           </Content>
         </div>
