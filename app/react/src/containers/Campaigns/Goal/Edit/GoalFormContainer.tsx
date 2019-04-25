@@ -65,7 +65,6 @@ class GoalFormContainer extends React.Component<Props, State> {
             showTriggerTypeSelector: false,
             selectedDatamart: resp.data,
            });
-           this.onDatamartSelect(resp.data);
         })
         .catch(err => {
           this.props.notifyError(err);
