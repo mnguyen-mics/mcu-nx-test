@@ -3,8 +3,15 @@ export interface OTQLResult {
   timed_out: boolean;
   offset: number | null;
   limit: number | null;
+  result_type: OTQLResultType;
+  precision: QueryPrecisionMode;
   rows: OTQLResultRowsShape;
+  cache_hit: boolean;
 }
+
+export type QueryPrecisionMode = 'FULL_PRECISION' | 'LOWER_PRECISION' | 'MEDIUM_PRECISION'
+
+export type OTQLResultType = 'COUNT' | 'SELECTION' | 'AGGREGATION'
 
 export type OTQLResultRowsShape =
   | OTQLAggregationResult[]

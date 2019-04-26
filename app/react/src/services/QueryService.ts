@@ -4,7 +4,7 @@ import {
   AutoCompleteResource,
   ErrorQueryResource,
 } from '../models/datamart/DatamartResource';
-import { OTQLResult } from '../models/datamart/graphdb/OTQLResult';
+import { OTQLResult, QueryPrecisionMode } from '../models/datamart/graphdb/OTQLResult';
 import { QueryDocument } from '../models/datamart/graphdb/QueryDocument';
 import log from '../utils/Logger';
 import { injectable } from 'inversify';
@@ -31,6 +31,8 @@ export interface IQueryService {
       query_id?: string;
       limit?: number;
       offset?: number;
+      useCache?: boolean;
+      precision?: QueryPrecisionMode
     },
   ) => Promise<DataResponse<OTQLResult>>;
   runJSONOTQLQuery: (
@@ -41,6 +43,8 @@ export interface IQueryService {
       query_id?: string;
       limit?: number;
       offset?: number;
+      useCache?: boolean;
+      precision?: QueryPrecisionMode
     },
   ) => Promise<DataResponse<OTQLResult>>;
 
@@ -92,6 +96,8 @@ export class QueryService implements IQueryService {
       query_id?: string;
       limit?: number;
       offset?: number;
+      useCache?: boolean;
+      precision?: QueryPrecisionMode
     } = {},
   ): Promise<DataResponse<OTQLResult>> {
     const endpoint = `datamarts/${datamartId}/query_executions/otql`;
@@ -107,6 +113,8 @@ export class QueryService implements IQueryService {
       query_id?: string;
       limit?: number;
       offset?: number;
+      useCache?: boolean;
+      precision?: QueryPrecisionMode
     } = {},
   ): Promise<DataResponse<OTQLResult>> {
     const endpoint = `datamarts/${datamartId}/query_executions/jsonotql`;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Spin } from 'antd';
+import { Spin, Tag } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import CountUp from 'react-countup';
 import {
@@ -9,16 +9,20 @@ import {
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { Card } from '../../../components/Card/index';
 import AggregationRenderer from './AggregationRenderer';
+import  injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
+import { compose } from 'recompose';
 
-export interface Props {
+export interface OTQLResultRendererProps {
   result: OTQLResult | null;
   loading?: boolean;
   aborted?: boolean;
 }
 
+type Props = OTQLResultRendererProps & InjectedThemeColorsProps
+
 class OTQLResultRenderer extends React.Component<Props> {
   render() {
-    const { result, loading, aborted } = this.props;
+    const { result, loading, aborted, colors } = this.props;
 
     let content: React.ReactNode;
     if (loading) {
@@ -82,13 +86,23 @@ class OTQLResultRenderer extends React.Component<Props> {
           />
         }
         buttons={
-          result && (
-            <FormattedMessage
-              id="queryTool.otql-result-renderer-card-subtitle"
-              defaultMessage="Took {duration}ms"
-              values={{ duration: result.took }}
-            />
-          )
+          result ? (
+            <React.Fragment>
+              <Tag color={colors["mcs-info"]}>
+                <FormattedMessage
+                  id="otql-result-renderer-card-subtitle-duration"
+                  defaultMessage="Took {duration}ms"
+                  values={{ duration: result.took }}
+                />
+              </Tag>
+              {result.cache_hit && <Tag color={colors["mcs-success"]}>
+                <FormattedMessage
+                  id="otql-result-renderer-card-subtitle-cache"
+                  defaultMessage="From Cache"
+                />
+              </Tag>}
+            </React.Fragment>
+          ) : undefined
         }
       >
         {content}
@@ -97,4 +111,6 @@ class OTQLResultRenderer extends React.Component<Props> {
   }
 }
 
-export default OTQLResultRenderer;
+export default compose<Props, OTQLResultRendererProps>(
+  injectThemeColors
+)(OTQLResultRenderer);

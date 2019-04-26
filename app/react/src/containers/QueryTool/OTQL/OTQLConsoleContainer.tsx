@@ -10,7 +10,7 @@ import {
 } from 'react-intl';
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
 import ContentHeader from '../../../components/ContentHeader';
-import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
+import { OTQLResult, QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -42,6 +42,8 @@ interface State {
   schemaVizOpen: boolean;
   schemaLoading: boolean;
   rawSchema?: ObjectLikeTypeInfoResource[];
+  precision: QueryPrecisionMode;
+  useCache: boolean;
 }
 
 type Props = OTQLConsoleContainerProps &
@@ -65,6 +67,8 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       query: 'SELECT @count{} FROM UserPoint',
       schemaVizOpen: true,
       schemaLoading: true,
+      precision: 'FULL_PRECISION',
+      useCache: false
     };
   }
 
@@ -102,7 +106,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   runQuery = (otqlQuery: string) => {
     const { datamartId } = this.props;
-
+    const { precision, useCache } = this.state;
     this.setState({
       runningQuery: true,
       error: null,
@@ -110,7 +114,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       queryResult: null,
     });
     this.asyncQuery = makeCancelable(
-      this._queryService.runOTQLQuery(datamartId, otqlQuery),
+      this._queryService.runOTQLQuery(datamartId, otqlQuery, { precision: precision, useCache: useCache }),
     );
     this.asyncQuery.promise
       .then(result => {
@@ -142,6 +146,8 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       schemaLoading,
       rawSchema,
       query,
+      precision,
+      useCache
     } = this.state;
 
     if (schemaLoading) {
@@ -193,6 +199,8 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       }
     }
 
+    const handleChange = (c: boolean, p: QueryPrecisionMode) => this.setState({ useCache: c, precision: p})
+
     return (
       <Layout>
         {this.props.renderActionBar(this.state.query, datamartId)}
@@ -215,6 +223,9 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                 datamartId={datamartId}
                 onQueryChange={onChange}
                 defaultValue={query}
+                handleChange={handleChange}
+                precision={precision}
+                useCache={useCache}
               />
               {queryResultRenderer}
             </Content>
