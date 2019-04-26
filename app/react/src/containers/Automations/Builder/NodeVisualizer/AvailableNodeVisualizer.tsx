@@ -1,11 +1,15 @@
 import * as React from 'react';
-import cuid from 'cuid';
 import { McsIconType } from '../../../../components/McsIcon';
 import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { AntIcon } from '../domain';
+import {
+  INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
+  INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+} from '../AutomationNode/Edit/domain';
+import { generateFakeId } from '../../../../utils/FakeIdHelper';
 
 const { TreeNode } = Tree;
 
@@ -21,7 +25,7 @@ const messages = defineMessages({
   },
 });
 
-export interface FakeNode {
+export interface AvailableNode {
   node: ScenarioNodeShape;
   iconType?: McsIconType;
   iconAnt?: AntIcon;
@@ -35,36 +39,51 @@ interface State {
   exitsNodes: ScenarioNodeShape[];
 }
 
-const fakeNode: ScenarioNodeShape = {
-  id: cuid(),
+const emailCampaignNode: ScenarioNodeShape = {
+  id: generateFakeId(),
   name: 'Send Email',
   type: 'EMAIL_CAMPAIGN',
-  scenario_id: '1',
+  scenario_id: '',
   campaign_id: '',
+  formData: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
+  initialFormData: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
 };
 
-const fakeNode2: ScenarioNodeShape = {
-  id: cuid(),
+const displayCampaignNode: ScenarioNodeShape = {
+  id: generateFakeId(),
   name: 'Display Advertising',
   type: 'DISPLAY_CAMPAIGN',
   campaign_id: '',
-  scenario_id: '1',
+  scenario_id: '',
   ad_group_id: '',
+  formData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+  initialFormData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
 };
 
 const conditionNode1: ScenarioNodeShape = {
-  id: cuid(),
+  id: generateFakeId(),
   name: 'Split',
   type: 'ABN_NODE',
-  scenario_id: '1',
+  scenario_id: '',
   edges_selection: {},
+  branch_number: 2,
+  formData: {
+    edges_selection: {},
+    branch_number: 2,
+    name: ''
+  }
 };
 
 const conditionNode2: ScenarioNodeShape = {
-  id: cuid(),
+  id: generateFakeId(),
   name: 'Wait',
-  type: 'WAIT',
-  scenario_id: '1',
+  type: 'WAIT_NODE',
+  scenario_id: '',
+  timeout: 1000,
+  formData: {
+    timeout: 1000,
+    name: ''
+  },
 };
 
 type Props = InjectedIntlProps;
@@ -79,62 +98,9 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
     };
   }
 
-  generateNodeProperties = (node: ScenarioNodeShape): FakeNode => {
-    switch (node.type) {
-      case 'DISPLAY_CAMPAIGN':
-        return {
-          node: node,
-          iconType: 'display',
-          color: '#0ba6e1',
-        };
-      case 'EMAIL_CAMPAIGN':
-        return {
-          node: node,
-          iconType: 'email',
-          color: '#0ba6e1',
-        };
-      case 'QUERY_INPUT':
-      return {
-        node: node,
-        iconType: 'question',
-        color: '#fbc02d',
-      };
-      case 'ABN_NODE':
-        return {
-          node: node,
-          iconAnt: 'fork',
-          color: '#fbc02d',
-        };
-      case 'GOAL':
-        return {
-          node: node,
-          iconType: 'check',
-          color: '#18b577',
-        };
-      case 'FAILURE':
-        return {
-          node: node,
-          iconType: 'close',
-          color: '#ff5959',
-        };
-        case 'WAIT':
-        return {
-          node: node,
-          iconAnt: 'clock-circle',
-          color: '#fbc02d',
-        };
-      default:
-        return {
-          node: node,
-          iconType: 'info',
-          color: '#fbc02d',
-        };
-    }
-  };
-
   componentWillMount() {
     this.setState({
-      actionNodes: [fakeNode, fakeNode2],
+      actionNodes: [emailCampaignNode, displayCampaignNode],
       conditionNodes: [conditionNode1, conditionNode2],
       exitsNodes: [],
     });
@@ -147,21 +113,8 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
           {nodes.map(node => {
             return (
               <TreeNode
-                title={
-                  <AvailableNode
-                    key={node.id}
-                    id={node.id}
-                    type={node.type}
-                    name={node.name}
-                    branchNumber={
-                      this.generateNodeProperties(node).branchNumber
-                    }
-                    icon={this.generateNodeProperties(node).iconType}
-                    iconAnt={this.generateNodeProperties(node).iconAnt}
-                    color={this.generateNodeProperties(node).color}
-                  />
-                }
-                key={cuid()}
+                title={<AvailableNode node={node} />}
+                key={node.id}
               />
             );
           })}
@@ -188,9 +141,6 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
         <Row className="available-node-visualizer-row">
           {this.createNodeGrid('Conditions', this.state.conditionNodes)}
         </Row>
-        {/* <Row className="available-node-visualizer-row">
-          {this.createNodeGrid('Exits', this.state.exitsNodes)}
-        </Row> */}
       </div>
     );
   }

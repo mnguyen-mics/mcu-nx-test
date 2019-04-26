@@ -2,21 +2,27 @@ import * as React from 'react';
 import { DiagramEngine, AbstractNodeFactory } from 'storm-react-diagrams';
 import AutomationNodeWidget from './AutomationNodeWidget';
 import AutomationNodeModel from './AutomationNodeModel';
-import { StorylineNodeModel, TreeNodeOperations } from '../domain';
+import { TreeNodeOperations } from '../domain';
 
 export default class AutomationNodeFactory extends AbstractNodeFactory<
   AutomationNodeModel
 > {
   nodeOperations: TreeNodeOperations;
   lockGlobalInteraction: (locked: boolean) => void;
+  viewer: boolean;
+  datamartId: string;
 
   constructor(
     nodeOperations: TreeNodeOperations,
     _lockGlobalInteraction: (locked: boolean) => void,
+    datamartId: string,
+    viewer: boolean,
   ) {
     super('automation-node');
-    this.nodeOperations = nodeOperations;
+    this.nodeOperations = nodeOperations
     this.lockGlobalInteraction = _lockGlobalInteraction;
+    this.viewer = viewer;
+    this.datamartId = datamartId
   }
 
   generateReactWidget(
@@ -30,28 +36,13 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
       node: node,
       diagramEngine: diagramEngine,
       nodeOperations: this.nodeOperations,
+      datamartId: this.datamartId,
       lockGlobalInteraction: this.lockGlobalInteraction,
+      viewer: this.viewer
     });
   }
 
   getNewInstance(initialConfig?: any): AutomationNodeModel {
-    const emptyNode: StorylineNodeModel = {
-      node: {
-        id: '1',
-        name: 'begin node',
-        scenario_id: '1',
-        type: 'DISPLAY_CAMPAIGN',
-        campaign_id: 'string',
-        ad_group_id: 'string',
-      },
-      out_edges: [],
-    };
-    return new AutomationNodeModel(
-      '1162',
-      emptyNode,
-      'User belongs to ### segment',
-      '#2ecc71',
-      'plus',
-    );
+    return new AutomationNodeModel();
   }
 }

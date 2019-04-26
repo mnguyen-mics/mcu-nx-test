@@ -17,7 +17,7 @@ import withNormalizer, {
 import formatDisplayCampaignProperty from '../../../../../../messages/campaign/display/displayCampaignMessages';
 import messages from '../../../../../Campaigns/Display/Edit/messages';
 import formatAdGroupProperty from '../../../../../../messages/campaign/display/adgroupMessages';
-import { DisplayCampaignFormData } from '../domain';
+import { DisplayCampaignAutomationFormData } from '../domain';
 
 export const formMessages = defineMessages({
   sectionGeneralTitle: {
@@ -39,7 +39,8 @@ export const formMessages = defineMessages({
 });
 
 interface GeneralInformationFormSectionProps {
-  initialValues: Partial<DisplayCampaignFormData>;
+  initialValues: Partial<DisplayCampaignAutomationFormData>;
+  disabled?: boolean;
 }
 
 type Props = GeneralInformationFormSectionProps &
@@ -68,6 +69,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
       fieldNormalizer: { normalizeInteger },
       fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       intl: { formatMessage },
+      disabled
     } = this.props;
 
     return (
@@ -79,31 +81,20 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
         <div className="automation-node-form">
           <FormInputField
-            name="name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(formMessages.automationNodeName),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(formMessages.automationNodeName),
-            }}
-            small={true}
-          />
-
-          <FormInputField
             name="campaign.name"
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(formatDisplayCampaignProperty('name').message),
+              label: formatMessage(
+                formatDisplayCampaignProperty('name').message,
+              ),
               required: true,
             }}
             inputProps={{
               placeholder: formatMessage(
                 messages.campaignFormPlaceholderCampaignName,
               ),
+              disabled: disabled
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
@@ -126,6 +117,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.contentSectionGeneralAdvancedPartRow3Placeholder,
               ),
+              disabled: disabled
             }}
             helpToolTipProps={{
               title: formatMessage(
@@ -150,6 +142,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.contentSectionGeneralAdvancedPartRow2Placeholder,
               ),
+              disabled: disabled
             }}
             helpToolTipProps={{
               title: formatMessage(
@@ -174,6 +167,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.contentSectionGeneralAdvancedPartRow4Placeholder,
               ),
+              disabled: disabled
             }}
             helpToolTipProps={{
               title: formatMessage(
@@ -194,6 +188,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               required: true,
             }}
             inputProps={{
+              disabled: disabled,
               suffix: <span>€</span>,
               addonAfter: (
                 <FormAddonSelectField
@@ -202,6 +197,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                   options={[
                     {
                       value: 'DAY',
+                      key: 'DAY',
                       children: formatDisplayCampaignProperty(
                         'max_budget_period',
                         'DAY',
@@ -209,6 +205,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                     },
                     {
                       value: 'WEEK',
+                      key: 'WEEK',
                       children: formatDisplayCampaignProperty(
                         'max_budget_period',
                         'WEEK',
@@ -216,12 +213,17 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                     },
                     {
                       value: 'MONTH',
+                      key: 'MONTH',
                       children: formatDisplayCampaignProperty(
                         'max_budget_period',
                         'MONTH',
                       ).formattedValue,
                     },
                   ]}
+                  selectProps={{
+                    disabled: disabled
+                  }}
+                  disabled={disabled}
                 />
               ),
               placeholder: formatMessage(
@@ -238,7 +240,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           />
 
           <FormInputField
-            name="adGroup.max_bid_price"
+            name="adGroupFields[0].model.adGroup.max_bid_price"
             component={FormInput}
             validate={[isValidFloat, isNotZero, isRequired]}
             formItemProps={{
@@ -252,6 +254,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.contentSectionGeneralRow5Placeholder,
               ),
+              disabled: disabled
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow5Tooltip),

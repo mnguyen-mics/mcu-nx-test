@@ -1,37 +1,58 @@
 import AutomationEditPage from '../containers/Automations/Edit/AutomationEditPage';
-import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
+import {
+  NavigatorRoute,
+  NavigatorDefinition,
+  generateRoutesFromDefinition,
+} from './domain';
 import AutomationBuilderPage from '../containers/Automations/Builder/AutomationBuilderPage';
 import AutomationListPage from '../containers/Automations/List/AutomationListPage';
+import AutomationDashboardPage from '../containers/Automations/Dashboard/AutomationDashboardPage';
 
 export const automationDefinition: NavigatorDefinition = {
-  automationsList: {
-    path: '/automations/list',
-    layout: 'main',
-    contentComponent: AutomationListPage,
-    requiredFeature: 'automations.list',
-    requireDatamart: true
-  },
-  automationsEdit: {
-    path: '/automations/:automationId/edit',
-    layout: 'edit',
-    editComponent: AutomationEditPage,
-    requiredFeature: 'automations.list',
-    requireDatamart: true
-  },
-  automationCreation: {
-    path: '/automations/create',
-    layout: 'edit',
-    editComponent: AutomationEditPage,
-    requiredFeature: 'automations.list',
-    requireDatamart: true
-  },
   automationBuilder: {
-    path: '/automations/builder',
+    path: '/automation-builder',
     layout: 'main',
     contentComponent: AutomationBuilderPage,
     requiredFeature: 'automations.builder',
-    requireDatamart: true
+    requireDatamart: true,
   },
-}
+  automationBuilderOld: {
+    path: '/automation-builder-old',
+    layout: 'edit',
+    editComponent: AutomationEditPage,
+    requiredFeature: 'automations.builder',
+    requireDatamart: true,
+  },
+  automationBuilderEditOld: {
+    path: '/automation-builder-old/:automationId',
+    layout: 'edit',
+    editComponent: AutomationEditPage,
+    requiredFeature: 'automations.builder',
+    requireDatamart: true,
+  },
+  automationsEdit: {
+    path: '/automations/:automationId/edit',
+    layout: 'main',
+    contentComponent: AutomationEditPage,
+    requiredFeature: 'automations.builder',
+    requireDatamart: true,
+  },
+  automationsDashboard: {
+    path: '/automations/:automationId',
+    layout: 'main',
+    contentComponent: AutomationDashboardPage,
+    requiredFeature: 'automations.builder',
+    requireDatamart: true,
+  },
+  automationsList: {
+    path: '/automations',
+    layout: 'main',
+    contentComponent: AutomationListPage,
+    requiredFeature: 'automations.list',
+    requireDatamart: true,
+  },
+};
 
-export const automationRoutes: NavigatorRoute[] = generateRoutesFromDefinition(automationDefinition)
+export const automationRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
+  automationDefinition,
+);

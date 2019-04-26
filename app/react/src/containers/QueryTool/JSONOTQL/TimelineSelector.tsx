@@ -3,12 +3,14 @@ import {
   ObjectTreeExpressionNodeShape,
   QueryDocument,
 } from '../../../models/datamart/graphdb/QueryDocument';
-import QueryService from '../../../services/QueryService';
 import { OTQLDataResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { Spin } from 'antd';
 import { ButtonStyleless } from '../../../components';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IQueryService } from '../../../services/QueryService';
 
 export interface TimelineSelectorProps {
   query: ObjectTreeExpressionNodeShape | undefined;
@@ -41,6 +43,9 @@ const messages = defineMessages({
 type Props = TimelineSelectorProps & InjectedIntlProps;
 
 class TimelineSelector extends React.Component<Props, State> {
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -56,12 +61,14 @@ class TimelineSelector extends React.Component<Props, State> {
       from: 'UserPoint',
       where: query,
     };
+
     this.setState({
       loading: true,
       error: false,
       results: undefined,
     });
-    QueryService.runJSONOTQLQuery(datamartId, queryDocument)
+    this._queryService
+      .runJSONOTQLQuery(datamartId, queryDocument)
       .then(res => {
         if (res.data.rows.length !== 0 && !stale) {
           window.open(

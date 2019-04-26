@@ -35,7 +35,10 @@ import { BidOptimizationObjectiveType } from '../../../../../../models/campaign/
 
 const InputGroup = Input.Group;
 
-export interface BidOptimizerFormSectionProps extends ReduxFormChangeProps {}
+export interface BidOptimizerFormSectionProps extends ReduxFormChangeProps {
+  disabled?: boolean;
+  small?: boolean;
+}
 
 type Props = BidOptimizerFormSectionProps &
   WrappedFieldArrayProps<BidOptimizerFieldModel> &
@@ -134,7 +137,7 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
   };
 
   renderActionsButtons = (record: BidOptimizerFieldModel) => {
-    const { fields, formChange } = this.props;
+    const { fields, formChange, disabled } = this.props;
     const onInputChange = (e: any) => {
       const newField: BidOptimizerFieldModel[] = [
         {
@@ -168,20 +171,20 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
     return (
       <span>
         <InputGroup compact={true}>
-          <Select defaultValue={record.model.bid_optimization_objective_type || 'CPC'} onChange={onSelectChange}>
+          <Select disabled={disabled} defaultValue={record.model.bid_optimization_objective_type || 'CPC'} onChange={onSelectChange}>
             <Select.Option value="CPC">CPC</Select.Option>
             <Select.Option value="CPA">CPA</Select.Option>
             <Select.Option value="CTR">CTR</Select.Option>
             <Select.Option value="CPV">CPV</Select.Option>
           </Select>
-          <Input style={{ width: 100 }} type="number" placeholder="value" defaultValue={record.model.bid_optimization_objective_value} onChange={onInputChange} />
+          <Input disabled={disabled} style={{ width: 100 }} type="number" placeholder="value" defaultValue={record.model.bid_optimization_objective_value} onChange={onInputChange} />
         </InputGroup>
       </span>
     )
   }
 
   getBidOptimizerRecords = () => {
-    const { fields } = this.props;
+    const { fields, disabled } = this.props;
     const { bidOptimizerData } = this.state;
 
     const getName = (field: BidOptimizerFieldModel) => {
@@ -204,7 +207,7 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
     };
 
     return fields.map((name, index) => {
-      const removeField = () => fields.remove(index);
+      const removeField = () => disabled ? null : fields.remove(index);
 
       const field = fields.get(index);
 
@@ -215,14 +218,14 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
           record={field}
           title={getName}
           additionalActionButtons={this.renderActionsButtons}
-          onRemove={removeField}
+          onRemove={disabled ? undefined : removeField}
         />
       );
     });
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const { intl: { formatMessage }, disabled } = this.props;
 
     return (
       <div>
@@ -232,6 +235,7 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
               onClick: this.openBidOptimizerSelector,
+              disabled: disabled
             },
           ]}
           subtitle={messages.sectionSubtitleOptimizer}

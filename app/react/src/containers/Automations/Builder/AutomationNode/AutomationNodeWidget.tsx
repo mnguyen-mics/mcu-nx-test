@@ -13,34 +13,47 @@ import {
 import { injectDrawer } from '../../../../components/Drawer';
 import { compose } from 'recompose';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import { TreeNodeOperations } from '../domain';
+import { TreeNodeOperations, AutomationNodeShape } from '../domain';
 import { Icon } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
-import JSONQLPreview from '../../../QueryTool/JSONOTQL/JSONQLPreview';
 import {
   isScenarioNodeShape,
   AutomationFormDataType,
   AutomationFormPropsType,
+  isQueryInputNode,
 } from './Edit/domain';
+
+import { ScenarioNodeType, ScenarioNodeShape } from '../../../../models/automations/automations'
+import DisplayCampaignAutomatedDashboardPage, { DisplayCampaignAutomatedDashboardPageProps } from './Dashboard/DisplayCampaign/DisplayCampaignAutomatedDashboardPage';
+import EmailCampaignAutomatedDashboardPage, { EmailCampaignAutomatedDashboardPageProps } from './Dashboard/EmailCampaign/EmailCampaignAutomatedDashboardPage';
+
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
   lockGlobalInteraction: (lock: boolean) => void;
   diagramEngine: DiagramEngine;
   nodeOperations: TreeNodeOperations;
+  viewer: boolean;
+  datamartId: string;
 }
 
 interface State {
   focus: boolean;
   hover: boolean;
-  initialValuesForm: AutomationFormDataType;
-  query?: string;
 }
 
 const messages = defineMessages({
   edit: {
     id: 'automation.builder.node.edit',
     defaultMessage: 'Edit',
+  },
+  view: {
+    id: 'automation.builder.node.view',
+    defaultMessage: 'View Node Config.',
+  },
+  stats: {
+    id: 'automation.builder.node.stats',
+    defaultMessage: 'View Stats.',
   },
   remove: {
     id: 'automation.builder.node.remove',
@@ -57,61 +70,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+
     this.state = {
       focus: false,
       hover: false,
-      initialValuesForm: this.getInitialValues(props),
     };
   }
 
-  getInitialValues = (props: Props): AutomationFormDataType => {
-    switch (props.node.storylineNodeModel.node.type) {
-      case 'DISPLAY_CAMPAIGN':
-        const dCFormData = props.node.storylineNodeModel.node.formData;
-        return dCFormData || {
-          name: props.node.title,
-          adGroup: {
-            max_budget_period: 'DAY',
-            targeted_operating_systems: 'ALL',
-            targeted_medias: 'WEB',
-            targeted_devices: 'ALL',
-            targeted_connection_types: 'ALL',
-            targeted_browser_families: 'ALL',
-          },
-          campaign: {
-            model_version: 'V2017_09',
-            max_budget_period: 'DAY',
-            editor_version_id: '11',
-            time_zone: 'Europe/Paris',
-            type: 'DISPLAY'
-          },
-          locationFields: [],
-          adFields: [],
-          bidOptimizerFields: [],
-          inventoryCatalFields: [],
-        };
-      case 'EMAIL_CAMPAIGN':
-        const eCFormData = props.node.storylineNodeModel.node.formData;
-        return eCFormData || {
-          name: props.node.title,
-          blast: {},
-          templateFields: [],
-          consentFields: [],
-          blastFields: [],
-          routerFields: [],
-        }
-      case 'ABN_NODE':
-        const abnFormData = props.node.storylineNodeModel.node.formData;
-        return abnFormData || {
-            name: props.node.title,
-            branch_number: 2, 
-        };
-      default:
-        return {
-            name: props.node.title,
-        };
-    }
-  };
 
   setPosition = (node: HTMLDivElement | null) => {
     const bodyPosition = document.body.getBoundingClientRect();
@@ -128,39 +93,323 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     });
   };
 
-  editNode = () => {
-    const { node, lockGlobalInteraction } = this.props;
-    this.setState({ focus: false }, () => {
-      lockGlobalInteraction(false);
-      if (isScenarioNodeShape(node.storylineNodeModel.node)) {
-        const scenarioNodeShape = node.storylineNodeModel.node;
+  viewStats = () => {
+    const { node, openNextDrawer, closeNextDrawer } = this.props;
+    const selectedNode = node.storylineNodeModel.node;
 
-        this.props.openNextDrawer<AutomationFormPropsType>(
+    if (selectedNode.type === "DISPLAY_CAMPAIGN") {
+      const campaignValue = selectedNode.formData;
+      openNextDrawer<DisplayCampaignAutomatedDashboardPageProps>(
+        DisplayCampaignAutomatedDashboardPage,
+        {
+          additionalProps: {
+            campaignId: campaignValue.campaign.id!,
+            close: closeNextDrawer,
+          },
+          size: 'large',
+        },
+      );
+    } else if (selectedNode.type === "EMAIL_CAMPAIGN") {
+      openNextDrawer<EmailCampaignAutomatedDashboardPageProps>(
+        EmailCampaignAutomatedDashboardPage,
+        {
+          additionalProps: {
+            campaignId: selectedNode.campaign_id,
+            close: closeNextDrawer,
+          },
+          size: 'large',
+        },
+      );
+    }
+    
+  }
+  
+
+  editNode = () => {
+    const { node, lockGlobalInteraction, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId } = this.props;
+
+    this.setState({ focus: false }, () => {
+      lockGlobalInteraction(true);
+      if (
+        isScenarioNodeShape(node.storylineNodeModel.node)
+      ) {
+        const scenarioNodeShape = node.storylineNodeModel.node;
+        let initialValue: AutomationFormDataType = {
+          name: node.storylineNodeModel.node.name
+        };
+        let size: "small" | "large" = 'small';
+
+        switch(scenarioNodeShape.type) {
+          case 'ABN_NODE':
+          case 'DISPLAY_CAMPAIGN':
+          case 'EMAIL_CAMPAIGN':
+          case 'WAIT_NODE':
+            initialValue = {
+              ...scenarioNodeShape.formData,
+              name: scenarioNodeShape.name
+            };
+            break;
+          case 'QUERY_INPUT':
+            // add here query input
+            initialValue = {
+              ... scenarioNodeShape.formData,
+              datamart_id: scenarioNodeShape.formData.datamart_id ? scenarioNodeShape.formData.datamart_id : datamartId,
+              name: scenarioNodeShape.name
+            } as any;
+            size = "large"
+            break;      
+          default:
+            break;
+        }
+
+      
+
+        const close = () => {
+          lockGlobalInteraction(false);
+          closeNextDrawer()
+        }
+
+        openNextDrawer<AutomationFormPropsType>(
           node.editFormComponent,
           {
             additionalProps: {
               node: scenarioNodeShape,
-              close: this.props.closeNextDrawer,
-              breadCrumbPaths: [{ name: node.storylineNodeModel.node.name }],
+              close: close,
+              breadCrumbPaths: [{ name: node.storylineNodeModel.node.name ? node.storylineNodeModel.node.name : "" }],
+              disabled: viewer,
               onSubmit: (formData: AutomationFormDataType) => {
-                this.props.nodeOperations.updateNode(
+                nodeOperations.updateNode(
                   scenarioNodeShape,
                   formData,
+                  initialValue,
                 );
-                this.props.closeNextDrawer();
+                closeNextDrawer();
+                lockGlobalInteraction(false);
               },
-              initialValues: this.state.initialValuesForm,
+              initialValues: initialValue,
             },
-            size: 'small',
+            size: size,
+            isModal: true
           },
         );
       }
     });
   };
 
-  handleQueryOnChange = (queryText: string) => {
-    this.setState({ query: queryText });
+  getQuery = () => {
+    const node = this.props.node.storylineNodeModel.node;
+    if (isQueryInputNode(node)) {
+      if (node.formData.query_text) {
+        return JSON.parse(node.formData.query_text);
+      }
+    }
+    return undefined;
   };
+
+
+  editNodeProperties = (node: ScenarioNodeShape) => () => {
+    const { nodeOperations } = this.props;
+
+    let initialValuesForm: AutomationFormDataType = { name: node.name};
+    switch(node.type) {
+      case 'DISPLAY_CAMPAIGN':
+      case 'EMAIL_CAMPAIGN':
+        initialValuesForm = node.initialFormData;
+        break;
+    }
+
+    nodeOperations.updateNode(
+      node,
+      initialValuesForm ? initialValuesForm : { name: node.name},
+      initialValuesForm ? initialValuesForm : { name: node.name},
+    );
+  }
+
+  renderAbnEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+
+    const content: React.ReactNodeArray = [];
+
+    if (!viewer) {
+      content.push((
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+      
+      if (!node.isFirstNode) {
+        content.push((
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+     
+    }
+
+    return content
+  }
+
+  renderCampaignEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+
+    const content: React.ReactNodeArray = [];
+    if (!viewer) {
+      content.push((
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+
+      if (!node.isFirstNode) {
+        content.push((
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+    } else {
+      content.push((
+        <div key="stats" onClick={this.viewStats} className="boolean-menu-item">
+          <FormattedMessage {...messages.stats} />
+        </div>
+      ))
+
+      content.push((
+        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.view} />
+        </div>
+      ))
+    }
+
+    return content
+
+  }
+
+  renderQueryEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+    const content: React.ReactNodeArray = [];
+
+    if (!viewer) {
+      content.push((
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+
+      if (!node.isFirstNode) {
+        content.push((
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+    } else {
+      content.push((
+        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.view} />
+        </div>
+      ))
+    }
+
+    return content;
+  }
+
+  renderEndNodeEdit = (): React.ReactNodeArray => {
+    const content: React.ReactNodeArray = [];
+  
+    return content;
+  }
+
+  renderWaitNodeEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+
+    const content: React.ReactNodeArray = [];
+    if (!viewer) {
+      content.push((
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+
+      if (!node.isFirstNode) {
+        content.push((
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+    } else {
+      content.push((
+        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.view} />
+        </div>
+      ))
+    }
+
+    return content;
+  }
+
+  rendePluginNodeEdit = (): React.ReactNodeArray => {
+    const { viewer, node } = this.props;
+
+    const content: React.ReactNodeArray = [];
+    if (!viewer) {
+      content.push((
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+
+      if (!node.isFirstNode) {
+        content.push((
+          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+            <FormattedMessage {...messages.remove} />
+          </div>
+        ))
+      }
+    } else {
+      content.push((
+        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.view} />
+        </div>
+      ))
+    }
+
+    return content;
+  }
+
+  renderEditMenu = (nodeType: ScenarioNodeType): React.ReactNodeArray => {
+    switch(nodeType) {
+      case 'ABN_NODE':
+        return this.renderAbnEdit()
+      case 'EMAIL_CAMPAIGN':
+      case 'DISPLAY_CAMPAIGN':
+        return this.renderCampaignEdit();
+      case 'QUERY_INPUT':
+        return this.renderQueryEdit();
+      case 'END_NODE':
+        return this.renderEndNodeEdit();
+      case 'WAIT_NODE':
+        return this.renderWaitNodeEdit();
+      case 'PLUGIN_NODE':
+        return this.rendePluginNodeEdit();
+      default:
+        return [];
+    }
+  }
+
+  renderSubTitle = (node: AutomationNodeShape) => {
+
+    switch(node.type) {
+      case 'DISPLAY_CAMPAIGN':
+        return node.formData.goalFields.length ? 'exit on goal' : 'exit on visit';
+      case 'QUERY_INPUT':
+        return node.evaluation_mode && node.evaluation_mode === 'LIVE' ? <span>Live evaluation</span> : <span>Evalutated every {node.evaluation_period} {node.evaluation_period_unit}</span>
+      default:
+        return '';
+    }
+  }
 
   render() {
     const { node } = this.props;
@@ -172,9 +421,28 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const onFocus = () => {
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
       this.setState({ focus: !this.state.focus });
+      
     };
 
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
+
+    let nodeName = node.title;
+
+    switch (node.storylineNodeModel.node.type) {
+      case 'DISPLAY_CAMPAIGN':
+      case 'EMAIL_CAMPAIGN':
+        nodeName = node.storylineNodeModel.node.formData &&  node.storylineNodeModel.node.formData.campaign && node.storylineNodeModel.node.formData.campaign.name ? node.storylineNodeModel.node.formData.campaign.name : nodeName
+        break;
+      case 'ABN_NODE':
+        // node name not saved on ABN NODE"
+        nodeName = 'Split';
+        break;
+    }
+
+    const nodeType = node.storylineNodeModel.node.type;
+
+    const editContent = this.renderEditMenu(nodeType);
+    const onClick = editContent.length ? onFocus : undefined
 
     const renderedAutomationNode = (
       <div
@@ -182,6 +450,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         style={{
           width: `${node.getNodeSize().width}px`,
           height: `${node.getNodeSize().height}px`,
+          cursor: onClick ? 'pointer' : 'default'
         }}
       >
         <div
@@ -206,14 +475,15 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           )}
         </div>
 
-        <div className="node-content">{node.title}</div>
+        <div className="node-content">{nodeName}</div>
+        <div className="node-subtitle">{this.renderSubTitle(node.storylineNodeModel.node)}</div>
       </div>
     );
 
-    const nodeType = node.storylineNodeModel.node.type;
+    
 
     return (
-      <div id={this.id} onClick={onFocus}>
+      <div id={this.id} key={this.id} onClick={onClick}>
         {renderedAutomationNode}
         <div
           style={{
@@ -292,32 +562,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                   zIndex: 1001,
                 }}
               >
-                {/* Uncomment when feature is ready */}
-                {/* <div onClick={this.toggleCollapsed} className='boolean-menu-item'>Collapse</div> */}
-                {nodeType === 'START' ? (
-                  <JSONQLPreview
-                    datamartId={node.datamartId}
-                    value={this.state.query}
-                    isTrigger={true}
-                    onChange={this.handleQueryOnChange}
-                    context="AUTOMATION_BUILDER"
-                  />
-                ) : (
-                  <div onClick={this.editNode} className="boolean-menu-item">
-                    <FormattedMessage {...messages.edit} />
-                  </div>
-                )}
-
-                {nodeType !== 'START' &&
-                  nodeType !== 'GOAL' &&
-                  nodeType !== 'FAILURE' && (
-                    <div
-                      onClick={this.removeNode}
-                      className="boolean-menu-item"
-                    >
-                      <FormattedMessage {...messages.remove} />
-                    </div>
-                  )}
+                {editContent}
               </div>
             </div>
           </WindowBodyPortal>

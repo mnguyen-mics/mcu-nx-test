@@ -15,21 +15,21 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
-import { FORM_ID, DisplayCampaignFormData } from '../domain';
+import { FORM_ID, DisplayCampaignAutomationFormData } from '../domain';
 import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
 import {
-  LocationTargetingFieldArray,
   InventoryCatalogFieldArray,
   AdFieldArray,
   BidOptimizerFieldArray,
 } from '../../../../../Campaigns/Display/Edit/AdGroup/AdGroupForm';
-import { LocationTargetingFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections/Location';
 import messages from '../../../../../Campaigns/Display/Edit/messages';
 import DeviceFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/DeviceFormSection';
 import { InventoryCatalogFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections/InventoryCatalog';
 import AdFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/AdFormSection';
 import { BidOptimizerFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections';
+import { GoalFieldArray } from '../../../../../Campaigns/Display/Edit/DisplayCampaignForm';
+import { GoalFormSection } from '../../../../../Campaigns/Display/Edit/Sections/Programmatic';
 
 const { Content } = Layout;
 
@@ -49,18 +49,19 @@ const localMessages = defineMessages({
 });
 
 export interface DisplayCampaignAutomationFormProps
-  extends Omit<ConfigProps<DisplayCampaignFormData>, 'form'> {
+  extends Omit<ConfigProps<DisplayCampaignAutomationFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
   node: ScenarioNodeShape;
+  disabled?: boolean;
 }
 
 interface MapStateToProps {
-  formValues: DisplayCampaignFormData;
+  formValues: DisplayCampaignAutomationFormData;
 }
 
 type Props = InjectedFormProps<
-  DisplayCampaignFormData,
+DisplayCampaignAutomationFormData,
   DisplayCampaignAutomationFormProps
 > &
   DisplayCampaignAutomationFormProps &
@@ -70,11 +71,12 @@ type Props = InjectedFormProps<
 
 class DisplayCampaignAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const { change } = this.props;
+    const { change, disabled } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
       rerenderOnEveryChange: true,
+      disabled: disabled
     };
 
     const sections: McsFormSection[] = [];
@@ -85,30 +87,35 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       component: (
         <GeneralInformationFormSection
           initialValues={this.props.initialValues}
+          disabled={disabled}
         />
       ),
     };
 
-    const location = {
-      id: 'location',
-      title: messages.sectionTitleLocationTargeting,
+    const goalSection = {
+      id: 'goals',
+      title: messages.sectionTitle2,
       component: (
-        <LocationTargetingFieldArray
-          name="locationFields"
+        <GoalFieldArray
+          name="goalFields"
+          component={GoalFormSection}
           small={true}
-          component={LocationTargetingFormSection}
           {...genericFieldArrayProps}
         />
       ),
     };
+
+
     const device = {
       id: 'device',
       title: messages.sectionTitleDevice,
       component: (
         <DeviceFormSection
+          name="adGroupFields[0].model.adGroup"
           formChange={this.props.change}
           small={true}
-          initialValues={this.props.initialValues.adGroup}
+          disabled={!!disabled}
+          initialValues={this.props.initialValues.adGroupFields && this.props.initialValues.adGroupFields[0].model.adGroup}
         />
       ),
     };
@@ -118,9 +125,10 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       title: messages.sectionTitlePlacement,
       component: (
         <InventoryCatalogFieldArray
-          name="inventoryCatalFields"
+          name="adGroupFields[0].model.inventoryCatalFields"
           component={InventoryCatalogFormSection}
           small={true}
+          isScenario={true}
           {...genericFieldArrayProps}
         />
       ),
@@ -131,8 +139,9 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       title: messages.sectionTitleAds,
       component: (
         <AdFieldArray
-          name="adFields"
+          name="adGroupFields[0].model.adFields"
           component={AdFormSection}
+          small={true}
           {...genericFieldArrayProps}
         />
       ),
@@ -143,15 +152,16 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       title: messages.sectionTitleOptimizer,
       component: (
         <BidOptimizerFieldArray
-          name="bidOptimizerFields"
+          name="adGroupFields[0].model.bidOptimizerFields"
           component={BidOptimizerFormSection}
+          small={true}
           {...genericFieldArrayProps}
         />
       ),
     };
 
     sections.push(displayCampaignSection);
-    sections.push(location);
+    sections.push(goalSection);
     sections.push(device);
     sections.push(placementList);
     sections.push(displayAd);
@@ -161,12 +171,13 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
   };
 
   render() {
-    const { breadCrumbPaths, handleSubmit, close } = this.props;
+    const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
+      disabled: disabled
     };
 
     const sections = this.buildFormSections();

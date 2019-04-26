@@ -7,6 +7,8 @@ import ABNAutomationForm from './Edit/ABNAutomationForm/ABNAutomationForm';
 import DefaultAutomationForm from './Edit/DefaultForm/DefaultAutomationForm';
 import { AutomationFormPropsType } from './Edit/domain';
 import EmailCampaignAutomationForm from './Edit/EmailCampaignForm/EmailCampaignAutomationForm';
+import QueryAutomationForm from './Edit/QueryForm/QueryForm';
+import WaitForm from './Edit/WaitForm/WaitForm';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -20,15 +22,17 @@ export default class AutomationNodeModel extends NodeModel {
   root?: boolean;
   icon?: McsIconType;
   iconAnt?: AntIcon;
+  isFirstNode?: boolean;
 
   constructor(
-    datamartId: string,
-    storylineNodeModel: StorylineNodeModel,
-    title: string,
-    color: string,
+    datamartId?: string,
+    storylineNodeModel?: StorylineNodeModel,
+    title?: string,
+    color?: string,
     iconType?: McsIconType,
     iconAnt?: AntIcon,
     treeNodePath?: number[],
+    isFirstNode?: boolean,
   ) {
     super('automation-node');
 
@@ -36,11 +40,16 @@ export default class AutomationNodeModel extends NodeModel {
     this.addPort(new SimplePortModel('right'));
 
     this.icon = iconType;
+
+    if (datamartId === undefined || title === undefined || color === undefined || storylineNodeModel === undefined) {
+      throw new Error('missing parameters') 
+    }
     this.datamartId = datamartId;
     this.title = title;
     this.color = color;
     this.storylineNodeModel = storylineNodeModel;
     this.iconAnt = iconAnt;
+    this.isFirstNode = isFirstNode;
 
     switch (this.storylineNodeModel.node.type) {
       case 'DISPLAY_CAMPAIGN':
@@ -51,6 +60,12 @@ export default class AutomationNodeModel extends NodeModel {
         break;
       case 'ABN_NODE':
         this.editFormComponent = ABNAutomationForm;
+        break;
+      case 'QUERY_INPUT':
+        this.editFormComponent = QueryAutomationForm;
+        break;
+      case 'WAIT_NODE':
+        this.editFormComponent = WaitForm;
         break;
       default:
         this.editFormComponent = DefaultAutomationForm;

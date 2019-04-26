@@ -1,7 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
 import { Card } from '../../../../components/Card';
-import QueryService from '../../../../services/QueryService';
 import {
   OTQLAggregationResult,
   isAggregateResult,
@@ -15,6 +14,9 @@ import { StackedAreaPlot } from '../../../../components/StackedAreaPlot';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
 import messages from './messages';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IQueryService } from '../../../../services/QueryService';
 
 export interface DateAggregationChartProps {
   title?: string;
@@ -23,7 +25,7 @@ export interface DateAggregationChartProps {
 }
 
 interface QueryResult {
-  xKey: number | string;
+  xKey: number | string;
   yKey: number | string;
 }
 
@@ -34,10 +36,15 @@ interface State {
   loading: boolean;
 }
 
-type Props = DateAggregationChartProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props = DateAggregationChartProps &
+  InjectedThemeColorsProps &
+  InjectedIntlProps;
 
 class DateAggregationChart extends React.Component<Props, State> {
   identifier = cuid();
+
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
 
   constructor(props: Props) {
     super(props);
@@ -74,13 +81,15 @@ class DateAggregationChart extends React.Component<Props, State> {
   }
 
   formatData = (queryResult: OTQLAggregationResult[]): QueryResult[] => {
-    if (queryResult.length &&
+    if (
+      queryResult.length &&
       queryResult[0].aggregations.buckets.length &&
-      queryResult[0].aggregations.buckets[0].buckets.length) {
-      return  queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
+      queryResult[0].aggregations.buckets[0].buckets.length
+    ) {
+      return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
         yKey: data.count,
-        xKey: data.key
-      }))
+        xKey: data.key,
+      }));
     }
     return [];
   };
@@ -88,14 +97,19 @@ class DateAggregationChart extends React.Component<Props, State> {
   fetchData = (datamartId: string, queryId: string): Promise<void> => {
     this.setState({ error: false, loading: true });
 
-    return QueryService.getQuery(datamartId, queryId)
+    return this._queryService
+      .getQuery(datamartId, queryId)
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          return QueryService.runOTQLQuery(datamartId, res.data.query_text)
+          return this._queryService
+            .runOTQLQuery(datamartId, res.data.query_text)
             .then(r => r.data)
             .then(r => {
               if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                this.setState({ queryResult: this.formatData(r.rows), loading: false });
+                this.setState({
+                  queryResult: this.formatData(r.rows),
+                  loading: false,
+                });
                 return Promise.resolve();
               }
               const mapErr = new Error('wrong query type');
@@ -127,29 +141,35 @@ class DateAggregationChart extends React.Component<Props, State> {
 
     const optionsForChart = {
       xKey: 'xKey',
-      yKeys: [
-        { key: 'yKey', message: messages.count },
-      ],
-      colors: [
-        colors['mcs-warning'],
-      ],
+      yKeys: [{ key: 'yKey', message: messages.count }],
+      colors: [colors['mcs-warning']],
     };
 
     const generateChart = () => {
       if (this.state.loading) {
-        return <LoadingChart />
+        return <LoadingChart />;
       } else if (this.state.error) {
-        return <EmptyCharts title={intl.formatMessage(messages.error)} icon={'close-big'} />
-      } else if (this.state.queryResult && this.state.queryResult.length === 0) {
-        return <EmptyCharts title={intl.formatMessage(messages.noData)} />
+        return (
+          <EmptyCharts
+            title={intl.formatMessage(messages.error)}
+            icon={'close-big'}
+          />
+        );
+      } else if (
+        this.state.queryResult &&
+        this.state.queryResult.length === 0
+      ) {
+        return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
-        return <StackedAreaPlot
-        identifier={`${this.identifier}-chart`}
-        dataset={this.state.queryResult}
-        options={optionsForChart}
-      />
+        return (
+          <StackedAreaPlot
+            identifier={`${this.identifier}-chart`}
+            dataset={this.state.queryResult}
+            options={optionsForChart}
+          />
+        );
       }
-    }
+    };
 
     return (
       <Card title={title}>
@@ -160,4 +180,7 @@ class DateAggregationChart extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, DateAggregationChartProps>(injectThemeColors, injectIntl)(DateAggregationChart);
+export default compose<Props, DateAggregationChartProps>(
+  injectThemeColors,
+  injectIntl,
+)(DateAggregationChart);

@@ -59,6 +59,10 @@ const emailCampaignPropertiesMessageMap: {
     id: 'emailCampaign.fields.type',
     defaultMessage: 'Type',
   },
+  automated: {
+    id: 'emailCampaign.fields.automated',
+    defaultMessage: 'Automated',
+  },
   /*
   ==============================================================================
   ================================= EXTRA KEYS =================================
@@ -93,6 +97,7 @@ const emailCampaignPropertiesFormatMap: {
   currency_code: { format: 'STRING' },
   technical_name: { format: 'STRING' },
   type: { format: 'STRING' },
+  automated: { format: "STRING" },
   /*
   ==============================================================================
   ================================= EXTRA KEYS =================================

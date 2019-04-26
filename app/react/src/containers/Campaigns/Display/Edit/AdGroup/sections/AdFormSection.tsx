@@ -43,7 +43,10 @@ import {
 } from '../../../../../../utils/ApiHelper';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface AdFormSectionProps extends ReduxFormChangeProps {}
+export interface AdFormSectionProps extends ReduxFormChangeProps {
+  disabled?: boolean;
+  small?: boolean;
+}
 
 export interface DisplayAdResourceWithFieldIndex {
   creativeResource: DisplayAdResource | DisplayAdCreateRequest;
@@ -207,7 +210,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
   };
 
   getCreativeCardFooter = (data: DisplayAdResourceWithFieldIndex) => {
-    const { fields } = this.props;
+    const { fields, disabled } = this.props;
 
     const format = split(data.creativeResource.format, 'x');
     const dimensions = computeDimensionsByRatio(
@@ -237,7 +240,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
           </Col>
           <Col className="inline buttons" span={4}>
 
-            <ButtonStyleless onClick={removeField}>
+            <ButtonStyleless disabled={disabled} onClick={removeField}>
               <McsIcon className="button" type="delete" />
             </ButtonStyleless>
           </Col>
@@ -252,7 +255,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
   };
 
   render() {
-    const { intl: { formatMessage }, fields } = this.props;
+    const { intl: { formatMessage }, fields, disabled, small } = this.props;
 
     const { displayCreativeCacheById } = this.state;
 
@@ -278,7 +281,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     const cards = allCreatives.map(data => {
       const getFooter = () => this.getCreativeCardFooter(data);
       return (
-        <Col key={data.fieldModel.key} span={6}>
+        <Col key={data.fieldModel.key} span={small ? 12 : 6}>
           <div className="ad-group-card">
             <CreativeCard
               key={data.fieldModel.key}
@@ -297,6 +300,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
               onClick: this.openCreativeCardSelector,
+              disabled: disabled
             },
           ]}
           subtitle={messages.sectionSubtitleAds}

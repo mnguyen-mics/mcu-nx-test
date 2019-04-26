@@ -1,3 +1,5 @@
+import { QueryService, IQueryService } from './../services/QueryService';
+import { AutomationFormService } from './../containers/Automations/Edit/AutomationFormService';
 import {
   IAudienceFeedFormService,
   AudienceFeedFormService,
@@ -55,6 +57,15 @@ import {
   DealListFormService,
 } from '../containers/Library/Deal/Edit/DealListFormService';
 import CompartmentService, { IComparmentService } from '../services/CompartmentService';
+import {
+  IScenarioService,
+  ScenarioService,
+} from '../services/ScenarioService';
+import { IAutomationFormService } from '../containers/Automations/Edit/AutomationFormService';
+import {
+  IGoalFormService,
+  GoalFormService,
+} from '../containers/Campaigns/Goal/Edit/GoalFormService';
 
 const container = new Container();
 
@@ -87,6 +98,7 @@ container
   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
   .toConstructor(AudienceTagFeedService);
 container.bind<IImportService>(TYPES.IImportService).to(ImportService);
+container.bind<IScenarioService>(TYPES.IScenarioService).to(ScenarioService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
   .to(DisplayNetworkService);
@@ -100,7 +112,11 @@ container
 container
   .bind<IComparmentService>(TYPES.ICompartmentService)
   .to(CompartmentService);
-
+container
+  .bind<IAutomationFormService>(TYPES.IAutomationFormService)
+  .to(AutomationFormService);
+container.bind<IQueryService>(TYPES.IQueryService).to(QueryService);
+container.bind<IGoalFormService>(TYPES.IGoalFormService).to(GoalFormService);
 
 export const { lazyInject } = getDecorators(container, false);
 

@@ -15,7 +15,7 @@ import ActionBar from '../../../components/ActionBar';
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
 
 export interface JSONQLPreviewProps {
-  value?: string;
+  value?: string | void;
   onChange?: (e: string) => void;
   datamartId: string;
   context: JSONQLPreviewContext;
@@ -88,25 +88,23 @@ class JSONQLPreview extends React.Component<Props> {
   render() {
     const { context } = this.props;
 
-    const displayMode =
-      context === 'AUTOMATION_BUILDER' ? (
-        <div onClick={this.openEditor} className="boolean-menu-item">
+    return context === 'AUTOMATION_BUILDER' ? (
+      <div onClick={this.openEditor} className="boolean-menu-item">
+        {this.props.intl.formatMessage({
+          id: 'jsonql.button.query.edit',
+          defaultMessage: 'Edit Query',
+        })}
+      </div>
+    ) : (
+      <div className="text-center m-t-20">
+        <Button onClick={this.openEditor}>
           {this.props.intl.formatMessage({
             id: 'jsonql.button.query.edit',
             defaultMessage: 'Edit Query',
           })}
-        </div>
-      ) : (
-        <div className="text-center m-t-20">
-          <Button onClick={this.openEditor}>
-            {this.props.intl.formatMessage({
-              id: 'jsonql.button.query.edit',
-              defaultMessage: 'Edit Query',
-            })}
-          </Button>
-        </div>
-      );
-    return displayMode;
+        </Button>
+      </div>
+    );
   }
 }
 

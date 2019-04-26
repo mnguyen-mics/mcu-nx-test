@@ -2,11 +2,16 @@ import {
   BudgetPeriod,
   CampaignStatus,
   DisplayCampaignSubType,
-  ModelVersion
+  ModelVersion,
 } from '../constants';
 
-export interface DisplayCampaignResource {
+export interface DisplayCampaignResource extends DisplayCampaignCreateRequest {
   id: string;
+  status: CampaignStatus;
+  archived: boolean;
+}
+
+export interface DisplayCampaignCreateRequest {
   organisation_id: string;
   name: string;
   creation_ts: string;
@@ -14,10 +19,8 @@ export interface DisplayCampaignResource {
   editor_version_value: string;
   editor_group_id: string;
   editor_artifact_id: string;
-  status: CampaignStatus;
   currency_code: string;
   technical_name: string | null;
-  archived: boolean;
   subtype: DisplayCampaignSubType;
   max_bid_price: number;
   total_budget: number;
@@ -30,4 +33,5 @@ export interface DisplayCampaignResource {
   time_zone: string;
   model_version: ModelVersion;
   type: string;
+  automated: boolean;
 }

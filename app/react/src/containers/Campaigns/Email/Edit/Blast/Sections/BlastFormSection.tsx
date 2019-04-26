@@ -9,11 +9,17 @@ import messages from '../../messages';
 
 interface BlastFormSectionProps {
   small?: boolean;
+  fieldName?: string;
+  disabled?: boolean;
 }
 
 type Props = InjectedIntlProps & ValidatorProps & BlastFormSectionProps;
 
 class BlastFormSection extends React.Component<Props> {
+
+  static defaultProps = {
+    fieldName: 'blast'
+  }
 
   render() {
 
@@ -24,6 +30,8 @@ class BlastFormSection extends React.Component<Props> {
         isValidEmail,
       },
       small,
+      fieldName,
+      disabled
     } = this.props;
 
     return (
@@ -33,7 +41,7 @@ class BlastFormSection extends React.Component<Props> {
           title={messages.emailBlastEditorStepTitleBlastInformation}
         />
         <FormInputField
-          name="blast.subject_line"
+          name={`${fieldName}.subject_line`}
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -42,6 +50,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine),
+            disabled: disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine),
@@ -49,7 +58,7 @@ class BlastFormSection extends React.Component<Props> {
           small={small}
         />
         <FormInputField
-          name="blast.from_email"
+          name={`${fieldName}.from_email`}
           component={FormInput}
           validate={[isRequired, isValidEmail]}
           formItemProps={{
@@ -58,6 +67,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail),
+            disabled: disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperFromEmail),
@@ -65,7 +75,7 @@ class BlastFormSection extends React.Component<Props> {
           small={small}
         />
         <FormInputField
-          name="blast.from_name"
+          name={`${fieldName}.from_name`}
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -74,6 +84,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName),
+            disabled: disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperFromName),
@@ -81,7 +92,7 @@ class BlastFormSection extends React.Component<Props> {
           small={small}
         />
         <FormInputField
-          name="blast.reply_to"
+          name={`${fieldName}.reply_to`}
           component={FormInput}
           validate={[isRequired, isValidEmail]}
           formItemProps={{
@@ -90,6 +101,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo),
+            disabled: disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperReplyTo),

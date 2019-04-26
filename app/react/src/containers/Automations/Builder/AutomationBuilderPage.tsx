@@ -1,27 +1,38 @@
 import queryString from 'query-string';
 import * as React from 'react';
+import { message } from 'antd';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
-import { DatamartSelector } from '../../Datamart';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import {
   UserProfileResource,
   UserWorkspaceResource,
 } from '../../../models/directory/UserProfileResource';
 import AutomationBuilderContainer from './AutomationBuilderContainer';
+import { DatamartSelector } from '../../Datamart';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
+
+import { IAutomationFormService } from '../Edit/AutomationFormService';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
+  automationId?: string;
 }
 
 interface MapStateToProps {
   connectedUser: UserProfileResource;
+}
+
+interface State {
+  isLoading: boolean;
+  automationFormData: AutomationFormData;
 }
 
 type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
@@ -29,26 +40,174 @@ type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
   InjectedNotificationProps &
   InjectedIntlProps;
 
-const messages = defineMessages({
+export const messages = defineMessages({
+  newAutomation: {
+    id: 'automation.builder.page.actionbar.new.automation',
+    defaultMessage: 'New Automation',
+  },
   automationBuilder: {
-    id: 'automation-builder-page-actionbar-title',
+    id: 'automation.builder.page.actionbar.title',
     defaultMessage: 'Automation Builder',
+  },
+  savingInProgress: {
+    id: 'automation.builder.page.actionbar.save.in.progress',
+    defaultMessage: 'Saving in progress',
+  },
+  automationSaved: {
+    id: 'automation.builder.page.automation.saved',
+    defaultMessage: 'Automation Saved',
+  },
+  saveAutomation: {
+    id: 'automation.builder.page.actionBar.save',
+    defaultMessage: 'Save',
+  },
+  updateAutomation: {
+    id: 'automation.builder.page.actionBar.update',
+    defaultMessage: 'Update',
+  },
+  editAutomation: {
+    id: 'automation.builder.page.actionBar.edit',
+    defaultMessage: 'Edit',
   },
 });
 
-class AutomationBuilderPage extends React.Component<Props> {
+class AutomationBuilderPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IAutomationFormService)
+  private _automationFormService: IAutomationFormService;
   constructor(props: Props) {
     super(props);
+    this.state = {
+      isLoading: false,
+      automationFormData: INITIAL_AUTOMATION_DATA,
+    };
   }
 
+  componentDidMount() {
+    const {
+      match: {
+        params: { automationId },
+      },
+    } = this.props;
+    if (automationId) {
+      this.setState({
+        isLoading: true,
+      });
+      this._automationFormService
+        .loadInitialAutomationValues(automationId, 'v201709')
+        .then(res => {
+          this.setState({
+            automationFormData: res,
+            isLoading: false,
+          });
+        });
+    }
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      match: {
+        params: { automationId },
+      },
+    } = this.props;
+    const {
+      match: {
+        params: { automationId: prevAutomationId },
+      },
+    } = prevProps;
+    if (!automationId && automationId !== prevAutomationId) {
+      this.setState({
+        automationFormData: INITIAL_AUTOMATION_DATA,
+      });
+    } else if (automationId && automationId !== prevAutomationId) {
+      this.setState({
+        isLoading: true,
+      });
+      this._automationFormService
+        .loadInitialAutomationValues(automationId, 'v201709')
+        .then(res => {
+          this.setState({
+            automationFormData: res,
+            isLoading: false,
+          });
+        });
+    }
+  }
+
+  saveAutomation = (formData: AutomationFormData) => {
+    const {
+      intl,
+      notifyError,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const {
+      automationFormData
+    } = this.state;
+
+    const hideSaveInProgress = message.loading(
+      intl.formatMessage(messages.savingInProgress),
+      0,
+    );
+    this.setState({
+      isLoading: true,
+    });
+
+    this._automationFormService
+      .saveOrCreateAutomation(organisationId, 'v201709', formData, automationFormData)
+      .then((automation) => {
+        hideSaveInProgress();
+        this.setState({ isLoading: false });
+        this.redirect(automation.data.id);
+        message.success(intl.formatMessage(messages.automationSaved));
+      })
+      .catch(err => {
+        this.setState({ isLoading: false });
+        notifyError(err);
+        hideSaveInProgress();
+      });
+  };
+
+  redirect = (automationId?: string) => {
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const url = automationId ? `/v2/o/${organisationId}/automations/${automationId}` : `/v2/o/${organisationId}/automations`;
+
+    return history.push(url);
+  };
+
   render() {
-    const { intl, connectedUser, location, history } = this.props;
+    const {
+      connectedUser,
+      location,
+      intl,
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const { automationFormData, isLoading } = this.state;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
-      history.push({
-        pathname: location.pathname,
-        search: queryString.stringify({ datamartId: selection.id }),
-      });
+      if (selection.storage_model_version === 'v201506') {
+        history.push(
+          `/v2/o/${organisationId}/automation-builder-old?datamartId=${
+            selection.id
+         }`,
+        );
+      } else {
+        history.push({
+          pathname: location.pathname,
+          search: queryString.stringify({ datamartId: selection.id }),
+        });
+      }
     };
 
     let selectedDatamart: DatamartResource | undefined;
@@ -74,48 +233,24 @@ class AutomationBuilderPage extends React.Component<Props> {
       );
     }
 
-    const automationActionBar = (datamartId: string) => {
-      return (
-        <SaveQueryAsActionBar
-          breadcrumb={[
+    return selectedDatamart ? (
+      <AutomationBuilderContainer
+        datamartId={selectedDatamart.id}
+        automationFormData={automationFormData}
+        saveOrUpdate={this.saveAutomation}
+        loading={isLoading}
+      />
+    ) : (
+      <DatamartSelector
+        onSelectDatamart={handleOnSelectDatamart}
+        actionbarProps={{
+          paths: [
             {
               name: intl.formatMessage(messages.automationBuilder),
             },
-          ]}
-        />
-      );
-    };
-
-    const style: React.CSSProperties = { height: '100%', display: 'flex' };
-    return (
-      <div style={style}>
-        {!selectedDatamart && (
-          <DatamartSelector
-            onSelectDatamart={handleOnSelectDatamart}
-            actionbarProps={{
-              paths: [
-                {
-                  name: intl.formatMessage(messages.automationBuilder),
-                },
-              ],
-            }}
-          />
-        )}
-        {selectedDatamart &&
-          selectedDatamart.storage_model_version === 'v201709' && (
-            <AutomationBuilderContainer
-              datamartId={selectedDatamart.id}
-              renderActionBar={automationActionBar}
-            />
-          )}
-        {selectedDatamart &&
-          selectedDatamart.storage_model_version === 'v201506' &&
-          history.push(
-            `/v2/o/${
-              this.props.match.params.organisationId
-            }/automations/create`,
-          )}
-      </div>
+          ],
+        }}
+      />
     );
   }
 }

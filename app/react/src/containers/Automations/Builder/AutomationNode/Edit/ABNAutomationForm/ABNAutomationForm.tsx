@@ -41,16 +41,14 @@ export interface ABNAutomationFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   node: ScenarioNodeShape;
+  disabled?: boolean;
 }
 
 interface MapStateToProps {
   formValues: ABNFormData;
 }
 
-type Props = InjectedFormProps<
-  ABNFormData,
-  ABNAutomationFormProps
-> &
+type Props = InjectedFormProps<ABNFormData, ABNAutomationFormProps> &
   ABNAutomationFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -58,27 +56,31 @@ type Props = InjectedFormProps<
 
 class ABNAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-
+    const { disabled } = this.props;
     const general = {
       id: 'general',
       title: localMessages.sectionGeneralTitle,
       component: (
-        <GeneralInformationFormSection initialValues={this.props.initialValues} />
+        <GeneralInformationFormSection
+          disabled={disabled}
+          initialValues={this.props.initialValues}
+        />
       ),
     };
 
     const sections: McsFormSection[] = [general];
-    
+
     return sections;
   };
 
   render() {
-    const { breadCrumbPaths, handleSubmit, close } = this.props;
+    const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
+      disabled: disabled
     };
 
     const sections = this.buildFormSections();
@@ -101,6 +103,7 @@ class ABNAutomationForm extends React.Component<Props> {
           <Form
             className="edit-layout ant-layout"
             onSubmit={handleSubmit}
+            layout="vertical"
           >
             <Content
               id={FORM_ID}

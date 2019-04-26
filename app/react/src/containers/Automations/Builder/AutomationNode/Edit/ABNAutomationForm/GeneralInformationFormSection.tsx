@@ -41,6 +41,7 @@ export const messages = defineMessages({
 
 interface GeneralInformationFormSectionProps {
   initialValues: Partial<ABNFormData>;
+  disabled?: boolean;
 }
 
 type Props = GeneralInformationFormSectionProps &
@@ -68,6 +69,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      disabled,
     } = this.props;
 
     return (
@@ -88,24 +90,26 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             }}
             inputProps={{
               placeholder: formatMessage(messages.automationNodeName),
+              disabled: !!disabled,
             }}
             small={true}
           />
 
-          {this.props.initialValues.branch_number !== undefined && (
-              <FormSliderField
-                name="branch_number"
-                component={FormSlider}
-                formItemProps={{
-                  label: formatMessage(messages.branchNumber),
-                  required: true,
-                }}
-                inputProps={{
-                  min: 2,
-                  max: 10,
-                }}
-              />
-            )}
+          <FormSliderField
+            name="branch_number"
+            component={FormSlider}
+            formItemProps={{
+              label: formatMessage(messages.branchNumber),
+              required: true,
+            }}
+            inputProps={{
+              min: 2,
+              max: 10,
+              defaultValue: 2,
+              disabled: !!disabled,
+            }}
+            small={true}
+          />
         </div>
       </div>
     );

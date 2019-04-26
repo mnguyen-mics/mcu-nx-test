@@ -1,7 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
 import { Card } from '../../../../components/Card';
-import QueryService from '../../../../services/QueryService';
 import {
   OTQLAggregationResult,
   isAggregateResult,
@@ -16,6 +15,9 @@ import { LegendChart } from '../../../../components/LegendChart';
 import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IQueryService } from '../../../../services/QueryService';
 
 export interface MapPieChartProps {
   title?: string;
@@ -34,6 +36,9 @@ type Props = MapPieChartProps & InjectedThemeColorsProps & InjectedIntlProps;
 
 class MapPieChart extends React.Component<Props, State> {
   identifier = cuid();
+
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
 
   constructor(props: Props) {
     super(props);
@@ -70,20 +75,15 @@ class MapPieChart extends React.Component<Props, State> {
   }
 
   formatData = (queryResult: OTQLAggregationResult[]): DatasetProps[] => {
-
-
     const generateColorIndex = (currentIndex: number) => {
-      const {
-        colors
-      } = this.state
+      const { colors } = this.state;
       if (currentIndex < colors.length) {
-        return currentIndex
+        return currentIndex;
       } else {
-        const times =  Math.floor(currentIndex / colors.length)
-        return currentIndex - (times * ( colors.length ))
+        const times = Math.floor(currentIndex / colors.length);
+        return currentIndex - times * colors.length;
       }
-    }
-
+    };
 
     return queryResult.length &&
       queryResult[0].aggregations.buckets.length &&
@@ -91,9 +91,7 @@ class MapPieChart extends React.Component<Props, State> {
       ? queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
           key: data.key,
           value: data.count,
-          color: this.state.colors[
-            generateColorIndex(i)
-          ],
+          color: this.state.colors[generateColorIndex(i)],
         }))
       : [];
   };
@@ -101,14 +99,19 @@ class MapPieChart extends React.Component<Props, State> {
   fetchData = (datamartId: string, queryId: string): Promise<void> => {
     this.setState({ error: false, loading: true });
 
-    return QueryService.getQuery(datamartId, queryId)
+    return this._queryService
+      .getQuery(datamartId, queryId)
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          return QueryService.runOTQLQuery(datamartId, res.data.query_text)
+          return this._queryService
+            .runOTQLQuery(datamartId, res.data.query_text)
             .then(r => r.data)
             .then(r => {
               if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                this.setState({ queryResult: this.formatData(r.rows), loading: false });
+                this.setState({
+                  queryResult: this.formatData(r.rows),
+                  loading: false,
+                });
                 return Promise.resolve();
               }
               const mapErr = new Error('wrong query type');
@@ -142,19 +145,29 @@ class MapPieChart extends React.Component<Props, State> {
 
     const generateChart = () => {
       if (this.state.loading) {
-        return <LoadingChart />
+        return <LoadingChart />;
       } else if (this.state.error) {
-        return <EmptyCharts title={intl.formatMessage(messages.error)} icon={'close-big'} />
-      } else if ((this.state.queryResult && this.state.queryResult.length === 0) || !this.state.queryResult) {
-        return <EmptyCharts title={intl.formatMessage(messages.noData)} />
+        return (
+          <EmptyCharts
+            title={intl.formatMessage(messages.error)}
+            icon={'close-big'}
+          />
+        );
+      } else if (
+        (this.state.queryResult && this.state.queryResult.length === 0) ||
+        !this.state.queryResult
+      ) {
+        return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
-        return <PieChart
-        identifier={`${this.identifier}-chart`}
-        dataset={this.state.queryResult}
-        options={pieChartsOptions}
-      />
+        return (
+          <PieChart
+            identifier={`${this.identifier}-chart`}
+            dataset={this.state.queryResult}
+            options={pieChartsOptions}
+          />
+        );
       }
-    }
+    };
 
     return (
       <Card title={title}>
@@ -174,4 +187,7 @@ class MapPieChart extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, MapPieChartProps>(injectThemeColors, injectIntl)(MapPieChart);
+export default compose<Props, MapPieChartProps>(
+  injectThemeColors,
+  injectIntl,
+)(MapPieChart);

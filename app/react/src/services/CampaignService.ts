@@ -11,6 +11,7 @@ export interface GetCampaignsOptions extends PaginatedApiParam {
   archived?: boolean;
   label_ids?: string[];
   order_by?: string[];
+  automated?: boolean;
 }
 
 const CampaignService = {

@@ -17,8 +17,14 @@ const ButtonStyleless: React.SFC<
     onClick();
   };
 
+  const { disabled } = props;
+
+  const style: React.CSSProperties = {
+    cursor: disabled ? 'not-allowed' : 'pointer'
+  }
+
   return (
-    <button type='button' className={`button-styleless ${className ? className : ''}`} onClick={handleOnClick} {...rest}>
+    <button type='button' style={style} className={`button-styleless ${className ? className : ''}`} onClick={disabled ? undefined : handleOnClick} {...rest}>
       {children}
     </button>
   );

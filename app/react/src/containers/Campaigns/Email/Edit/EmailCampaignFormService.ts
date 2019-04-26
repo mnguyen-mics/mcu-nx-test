@@ -377,7 +377,7 @@ function getConsentTasks(
   return tasks;
 }
 
-function getRouterTasks(
+export function getRouterTasks(
   campaignId: string,
   routerFields: RouterFieldModel[],
   initialRouterFields: RouterFieldModel[],
@@ -411,7 +411,7 @@ function getRouterTasks(
   return tasks;
 }
 
-function getBlastTasks(
+export function getBlastTasks(
   campaignId: string,
   blastFields: BlastFieldModel[],
   initialBlastFields: BlastFieldModel[],

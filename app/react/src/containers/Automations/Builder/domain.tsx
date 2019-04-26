@@ -1,17 +1,26 @@
-import cuid from 'cuid';
 import { StorylineNodeModel } from './domain';
 import {
   ScenarioNodeShape,
   ScenarioEdgeResource,
   StorylineResource,
+  DisplayCampaignNodeResource,
+  EmailCampaignNodeResource,
+  ABNNodeResource,
+  QueryInputNodeResource,
+  WaitNodeResource,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
   isAbnNode,
   ABNFormData,
-  DisplayCampaignFormData,
+  DisplayCampaignAutomationFormData,
   EmailCampaignAutomationFormData,
+  WaitFormData,
 } from './AutomationNode/Edit/domain';
+import { McsIconType } from '../../../components/McsIcon';
+import { QueryResource } from '../../../models/datamart/DatamartResource';
+import { IQueryService } from '../../../services/QueryService';
+import { generateFakeId } from '../../../utils/FakeIdHelper';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -23,6 +32,7 @@ export interface TreeNodeOperations {
   updateNode: (
     node: ScenarioNodeShape,
     formData: AutomationFormDataType,
+    initalFormData: AutomationFormDataType,
   ) => void;
   updateLayout: () => void;
 }
@@ -52,6 +62,8 @@ export interface NodeOperation {
   execute(automationData: StorylineNodeModel): StorylineNodeModel;
 }
 
+// ADD NODE
+
 export class AddNodeOperation implements NodeOperation {
   parentNodeId: string;
   childNodeId: string;
@@ -68,11 +80,12 @@ export class AddNodeOperation implements NodeOperation {
   }
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
-    return this.iterateData(
+    const result = this.iterateData(
       automationData,
       this.parentNodeId,
       this.childNodeId,
     );
+    return result
   }
 
   iterateData(
@@ -83,19 +96,19 @@ export class AddNodeOperation implements NodeOperation {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
         if (child.node.id === childNodeId) {
-          const inEdgeId: string = cuid();
+          const inEdgeId: string = generateFakeId();
           const childNode: StorylineNodeModel = {
             node: child.node,
             in_edge: {
               id: inEdgeId,
               source_id: this.node.id,
               target_id: child.node.id,
-              handler: 'GOAL',
+              handler: 'OUT',
               scenario_id: child.in_edge!.scenario_id,
             },
             out_edges: child.out_edges,
           };
-          const newId = cuid();
+          const newId = generateFakeId();
 
           const generateNewEmptyOutEdges = (
             branchNumber: number,
@@ -105,15 +118,15 @@ export class AddNodeOperation implements NodeOperation {
               const emptyNode: StorylineNodeModel = {
                 node: {
                   id: newId,
-                  name: 'Exit from automation',
-                  scenario_id: '1',
-                  type: 'GOAL',
+                  name: 'Exit automation',
+                  scenario_id: '',
+                  type: 'END_NODE',
                 },
                 in_edge: {
-                  id: cuid(),
+                  id: generateFakeId(),
                   source_id: this.node.id,
                   target_id: newId,
-                  handler: 'GOAL',
+                  handler: 'OUT',
                   scenario_id: child.in_edge!.scenario_id,
                 },
                 out_edges: [],
@@ -135,11 +148,11 @@ export class AddNodeOperation implements NodeOperation {
           const newNode: StorylineNodeModel = {
             node: this.node,
             in_edge: {
-              id: 'string',
+              id: generateFakeId(),
               source_id: parentNodeId,
               target_id: this.node.id,
-              handler: 'ON_VISIT',
-              scenario_id: '1',
+              handler: this.node.type === 'DISPLAY_CAMPAIGN' ? 'ON_VISIT' : 'OUT',
+              scenario_id: '',
             },
             out_edges: newOutEdges,
           };
@@ -158,6 +171,9 @@ export class AddNodeOperation implements NodeOperation {
   }
 }
 
+
+// DELETE NODE
+
 export class DeleteNodeOperation implements NodeOperation {
   idNodeToBeDeleted: string;
 
@@ -172,23 +188,42 @@ export class DeleteNodeOperation implements NodeOperation {
   iterateData(
     automationData: StorylineNodeModel,
     idNodeToBeDeleted: string,
+    parentData?: StorylineNodeModel
   ): StorylineNodeModel {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
-        if (child.node.id === idNodeToBeDeleted) {
+        if (
+          child.node.id === idNodeToBeDeleted &&
+          child.node.type === 'ABN_NODE'
+        ) {
           const newNode: StorylineNodeModel = {
             node: {
               id: child.node.id,
-              name: 'END NODE',
-              scenario_id: '1',
-              type: 'FAILURE',
+              name: 'Exit Automation',
+              scenario_id: '',
+              type: 'END_NODE',
             },
             in_edge: child.in_edge,
             out_edges: [],
           };
           return newNode;
+        } else if (
+          child.node.id === idNodeToBeDeleted &&
+          child.node.type !== 'ABN_NODE'
+        ) {
+          const inEdge = child.out_edges[0].in_edge;
+          const storylineNodeModel: StorylineNodeModel = {
+            node: child.out_edges[0].node,
+            in_edge: inEdge ? {
+              ...inEdge,
+              source_id: automationData.node.id,
+              target_id: inEdge.target_id
+            } : undefined,
+            out_edges: child.out_edges[0].out_edges,
+          }
+          return storylineNodeModel;
         } else {
-          return this.iterateData(child, idNodeToBeDeleted);
+          return this.iterateData(child, idNodeToBeDeleted, automationData);
         }
       },
     );
@@ -201,17 +236,25 @@ export class DeleteNodeOperation implements NodeOperation {
   }
 }
 
+// UPDATE NODE
+
 export class UpdateNodeOperation implements NodeOperation {
   node: AutomationNodeShape;
   formData: AutomationFormDataType;
+  initialFormData: AutomationFormDataType;
 
-  constructor(node: ScenarioNodeShape, formData: AutomationFormDataType) {
+  constructor(
+    node: ScenarioNodeShape,
+    formData: AutomationFormDataType,
+    initialFormData: AutomationFormDataType,
+  ) {
     this.node = node;
     this.formData = formData;
+    this.initialFormData = initialFormData;
   }
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
-    return this.iterateData(automationData, this.node.id);
+    return this.iterateData(automationData, this.node.id, true);
   }
 
   buildUpdatedNode(storylineNode: StorylineNodeModel): StorylineNodeModel {
@@ -221,22 +264,48 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'DISPLAY_CAMPAIGN':
         nodeBody = {
           ...storylineNode.node,
+          ...this.node as DisplayCampaignNodeResource,
           name: this.formData.name,
-          formData: this.formData as DisplayCampaignFormData,
+          formData: this.formData as DisplayCampaignAutomationFormData,
+          initialFormData: this
+            .initialFormData as DisplayCampaignAutomationFormData,
         };
         break;
       case 'EMAIL_CAMPAIGN':
         nodeBody = {
           ...storylineNode.node,
+          ...this.node as EmailCampaignNodeResource,
           name: this.formData.name,
           formData: this.formData as EmailCampaignAutomationFormData,
+          initialFormData: this
+            .initialFormData as EmailCampaignAutomationFormData,
         };
         break;
       case 'ABN_NODE':
         nodeBody = {
           ...storylineNode.node,
+          ...this.node as ABNNodeResource,
+          branch_number: (this.formData as ABNFormData).branch_number,
+          edges_selection: (this.formData as ABNFormData).edges_selection,
           name: this.formData.name,
           formData: this.formData as ABNFormData,
+        };
+        break;
+      case 'QUERY_INPUT':
+        nodeBody = {
+          ...storylineNode.node,
+          ...this.node as QueryInputNodeResource,
+          name: this.formData.name,
+          formData: this.formData as Partial<QueryResource>,
+        };
+        break;
+      case 'WAIT_NODE':
+        nodeBody = {
+          ...storylineNode.node,
+          ...this.node as WaitNodeResource,
+          timeout: (this.formData as WaitFormData).timeout,
+          name: this.formData.name,
+          formData: this.formData as WaitFormData,
         };
         break;
       default:
@@ -282,19 +351,19 @@ export class UpdateNodeOperation implements NodeOperation {
   ): StorylineNodeModel[] => {
     const newEmptyOutEdges = [];
     for (let i = 1; i <= branchNumber; i++) {
-      const newId = cuid();
+      const newId = generateFakeId();
       const emptyNode: StorylineNodeModel = {
         node: {
           id: newId,
           name: 'Exit from automation',
-          scenario_id: '1',
-          type: 'GOAL',
+          scenario_id: '',
+          type: 'END_NODE',
         },
         in_edge: {
-          id: cuid(),
+          id: generateFakeId(),
           source_id: this.node.id,
           target_id: newId,
-          handler: 'GOAL',
+          handler: 'OUT',
           scenario_id: child.in_edge!.scenario_id,
         },
         out_edges: [],
@@ -307,7 +376,14 @@ export class UpdateNodeOperation implements NodeOperation {
   iterateData(
     automationData: StorylineNodeModel,
     id: string,
+    firstNode?: boolean
   ): StorylineNodeModel {
+
+    let node = automationData;
+    if (firstNode && automationData.node.id === id) {
+      node = this.buildUpdatedNode(automationData) as StorylineNodeModel
+    }
+
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
         if (child.node.id === id) {
@@ -321,8 +397,7 @@ export class UpdateNodeOperation implements NodeOperation {
     );
 
     return {
-      node: automationData.node,
-      in_edge: automationData.in_edge,
+      ...node,
       out_edges: outEdges,
     };
   }
@@ -334,36 +409,159 @@ export interface StorylineNodeModel {
   out_edges: StorylineNodeModel[];
 }
 
-/******************
- * Hardcoded data *
- ******************/
+const beginNodeId = generateFakeId();
+const endNodeId = generateFakeId();
+const baseEdgeId = generateFakeId();
+const baseQueryId = generateFakeId()
 
 export const storylineResourceData: StorylineResource = {
-  begin_node_id: '1',
+  begin_node_id: beginNodeId,
 };
 
 export const beginNode: ScenarioNodeShape = {
-  id: '1',
+  id: beginNodeId,
   name: 'Enter automation',
-  scenario_id: '1',
-  type: 'START',
+  scenario_id: '',
+  type: 'QUERY_INPUT',
+  query_id: baseQueryId,
+  evaluation_mode: 'LIVE',
+  formData: {
+  },
 };
 
 export const node4: ScenarioNodeShape = {
-  id: '2',
+  id: endNodeId,
   name: 'Exit automation',
-  scenario_id: '1',
-  type: 'GOAL',
+  scenario_id: '',
+  type: 'END_NODE',
 };
 
 export const storylineNodeData: ScenarioNodeShape[] = [beginNode, node4];
 
 export const edge12: ScenarioEdgeResource = {
-  id: 'string',
-  source_id: '1',
-  target_id: '2',
-  handler: 'ON_VISIT',
-  scenario_id: '1',
+  id: baseEdgeId,
+  source_id: beginNodeId,
+  target_id: endNodeId,
+  handler: 'OUT',
+  scenario_id: '',
 };
 
 export const storylineEdgeData: ScenarioEdgeResource[] = [edge12];
+
+export function generateNodeProperties(
+  node: AutomationNodeShape,
+): {
+  color: string;
+  iconType?: McsIconType;
+  iconAnt?: AntIcon;
+  branchNumber?: number;
+} {
+  switch (node.type) {
+    case 'DISPLAY_CAMPAIGN':
+      return {
+        iconType: 'display',
+        color: '#0ba6e1',
+      };
+    case 'EMAIL_CAMPAIGN':
+      return {
+        iconType: 'email',
+        color: '#0ba6e1',
+      };
+    case 'QUERY_INPUT':
+      return {
+        iconAnt: 'flag',
+        color: '#fbc02d',
+      };
+    case 'ABN_NODE':
+      return {
+        iconAnt: 'fork',
+        color: '#fbc02d',
+        branchNumber: node.branch_number,
+      };
+    case 'END_NODE':
+      return {
+        iconType: 'check',
+        color: '#18b577',
+      };
+    case 'WAIT_NODE':
+      return {
+        iconAnt: 'clock-circle',
+        color: '#fbc02d',
+      };
+    default:
+      return {
+        iconType: 'info',
+        color: '#fbc02d',
+      };
+  }
+}
+
+export const buildAutomationTreeData = (
+  storylineData: StorylineResource,
+  nodeData: ScenarioNodeShape[],
+  edgeData: ScenarioEdgeResource[],
+  queryService: IQueryService,
+  datamartId?: string,
+): Promise<StorylineNodeModel> => {
+  const node: AutomationNodeShape = nodeData.filter(
+    n => n.id === storylineData.begin_node_id,
+  )[0];
+  const outNodesId: string[] = edgeData
+    .filter(e => node && e.source_id === node.id)
+    .map(e => e.target_id);
+  const outNodes: ScenarioNodeShape[] = nodeData.filter(n =>
+    outNodesId.includes(n.id),
+  );
+
+  if (
+    node &&
+    node.type === 'QUERY_INPUT' &&
+    node.query_id &&
+    datamartId &&
+    queryService
+  ) {
+    return queryService.getQuery(datamartId, node.query_id).then(res => {
+      return {
+        node: {
+          ...node,
+          formData: res.data,
+        },
+        out_edges: outNodes.map(n =>
+          buildStorylineNodeModel(n, nodeData, edgeData, node),
+        ),
+      };
+    });
+  } else {
+    return Promise.resolve({
+      node: node,
+      out_edges: outNodes.map(n =>
+        buildStorylineNodeModel(n, nodeData, edgeData, node),
+      ),
+    });
+  }
+};
+
+export function buildStorylineNodeModel(
+  node: ScenarioNodeShape,
+  nodeData: ScenarioNodeShape[],
+  edgeData: ScenarioEdgeResource[],
+  parentNode: AutomationNodeShape,
+): any {
+  const outNodesId: string[] = edgeData
+    .filter(e => e.source_id === node.id)
+    .map(e => e.target_id);
+  const outNodes: ScenarioNodeShape[] = nodeData.filter(n =>
+    outNodesId.includes(n.id),
+  );
+  const inEdge: ScenarioEdgeResource = edgeData.filter(
+    e => e.source_id === parentNode.id && e.target_id === node.id,
+  )[0];
+
+  return {
+    node: node,
+    in_edge: inEdge,
+    out_edges: outNodes.map(n =>
+      buildStorylineNodeModel(n, nodeData, edgeData, node),
+    ),
+  };
+}

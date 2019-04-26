@@ -13,7 +13,11 @@ const TYPES = {
   IDisplayNetworkService: Symbol.for('displayNetworkService'),
   IDealsListService: Symbol.for('dealsListService'),
   IDealListFormService: Symbol.for('dealListFormService'),
-  ICompartmentService: Symbol.for('compartmentService')
+  ICompartmentService: Symbol.for('compartmentService'),
+  IScenarioService: Symbol.for('scenarioService'),
+  IAutomationFormService: Symbol.for('automationFormService'),
+  IQueryService: Symbol.for('queryService'),
+  IGoalFormService: Symbol.for('goalFormService')
 };
 
 export { TYPES };

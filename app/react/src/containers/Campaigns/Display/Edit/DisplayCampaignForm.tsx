@@ -36,7 +36,7 @@ const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
 >;
 
-const GoalFieldArray = FieldArray as new () => GenericFieldArray<
+export const GoalFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   GoalFormSectionProps
 >;

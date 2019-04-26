@@ -18,6 +18,7 @@ interface FormSectionProps extends FormTitleProps {
   button?: {
     message: string;
     onClick: () => void;
+    disabled?: boolean
   };
   dropdownItems?: DropdownButtonItemProps[];
 }
@@ -37,8 +38,8 @@ class FormSection extends React.Component<FormSectionProps> {
     const handleClick = (param: ClickParam) => {
       const currentItem =
         dropdownItems && dropdownItems.find(item => item.id === param.key);
-
-      currentItem!.onClick();
+        currentItem!.onClick();
+     
     };
 
     const overlay = (
@@ -69,7 +70,7 @@ class FormSection extends React.Component<FormSectionProps> {
       >
         <FormTitle title={title} subtitle={subtitle} />
 
-        {button && <Button onClick={button.onClick}>{button.message}</Button>}
+        {button && <Button onClick={button.onClick} disabled={button.disabled}>{button.message}</Button>}
 
         {dropdownItems && this.renderDropdownButton()}
       </Row>

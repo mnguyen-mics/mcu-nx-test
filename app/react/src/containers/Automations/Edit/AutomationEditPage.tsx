@@ -1,29 +1,34 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
+import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import * as NotificationActions from '../../../state/Notifications/actions';
 import * as FeatureSelectors from '../../../state/Features/selectors';
 import { EditAutomationParam, AutomationFormData } from './domain';
-import ScenarioService from '../../../services/ScenarioService';
 import AutomationEditForm from './AutomationEditForm';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
-import {
-  AutomationResource,
-  AutomationCreateResource,
-} from '../../../models/automations/automations';
 import messages from './messages';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { Loading } from '../../../components';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { DatamartResource } from '../../../models/datamart/DatamartResource';
+import { IAutomationFormService } from './AutomationFormService';
+import DatamartService from '../../../services/DatamartService';
+import { IScenarioService } from '../../../services/ScenarioService';
+import AutomationBuilderContainer from '../Builder/AutomationBuilderContainer';
+
 
 interface State {
   automationFormData: AutomationFormData;
   loading: boolean;
   scenarioContainer: any;
+  datamart?: DatamartResource;
 }
 
 interface MapStateProps {
@@ -41,69 +46,127 @@ class EditAutomationPage extends React.Component<Props, State> {
     .injector()
     .get('core/scenarios/ScenarioContainer');
 
-  state: State = {
-    loading: true,
-    automationFormData: {
-      automation: {}
-    },
-    scenarioContainer: {}
-  };
+  AngularSession = (window as any).angular
+    .element(document.body)
+    .injector()
+    .get('core/common/auth/Session');
 
-  AngularSession = (window as any).angular.element(document.body).injector().get('core/common/auth/Session');
+  @lazyInject(TYPES.IAutomationFormService)
+  private _automationFormService: IAutomationFormService;
+
+  @lazyInject(TYPES.IScenarioService)
+  private _scenarioService: IScenarioService;
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      loading: false,
+      loading: true,
       automationFormData: INITIAL_AUTOMATION_DATA,
       scenarioContainer: {
         scenario: {
-          id: undefined
-        }
-      }
-    }
+          id: undefined,
+        },
+      },
+    };
   }
 
   componentDidMount() {
-    const { match: { params: { automationId } } } = this.props;
-    this.setState({ loading: true })
-    const ScenarioContainer = this.scenarioContainer;
-    this.AngularSession.init(this.props.match.params.organisationId)
-    .then(() => {
-      this.setState({
-        scenarioContainer: new ScenarioContainer(this.props.match.params.automationId),
-      })
-    })
-    .then(() => {
-      if (automationId) {
-        this.fetchInitialData(automationId);
-      } else {
-        this.setState({ loading: false });
-      }
-    })
-    .catch((err: any) => {
-      this.props.notifyError(err);
-      this.setState({ loading: false });
-    })
-    
+    const {
+      match: {
+        params: { automationId, organisationId },
+      },
+      location: { search },
+    } = this.props;
+    const datamartId = queryString.parse(search).datamartId;
 
-   
+    if (automationId && organisationId) {
+      this.loadData(organisationId, automationId)
+    }
+    if (!automationId && datamartId) {
+      const ScenarioContainer = this.scenarioContainer;
+      this.AngularSession.init(organisationId).then(() => {
+        this.setState({
+          scenarioContainer: new ScenarioContainer(),
+        })
+      }).then(() => {
+        this.fetchDatamart(datamartId)
+      })
+      
+    }
   }
 
-  fetchInitialData = (automationId: string) => {
-    return ScenarioService.getScenario(automationId)
-      .then(res => res.data)
-      .then(res =>
+  componentDidUpdate(prevProps: Props) {
+    const {
+      match: {
+        params: { automationId, organisationId },
+      },
+      location: { search },
+    } = this.props;
+
+    const {
+      match: {
+        params: { automationId: prevAutomationId, organisationId: prevOrganisationId },
+      },
+      location: { search: prevSearch },
+    } = prevProps;
+
+    if (automationId && (automationId !== prevAutomationId || organisationId !== prevOrganisationId)) {
+      this.loadData(organisationId, automationId)
+    }
+    const datamartId = queryString.parse(search).datamartId;
+    const preDatamartId = queryString.parse(prevSearch).datamartId;
+    if (!automationId && automationId !== prevAutomationId && datamartId !== preDatamartId) {
+      const ScenarioContainer = this.scenarioContainer;
+      this.AngularSession.init(organisationId).then(() => {
         this.setState({
-          automationFormData: { automation: res },
-          loading: false,
-        }),
-      )
-      .catch(err => {
+          scenarioContainer: new ScenarioContainer(),
+        })
+      }).then(() => {
+        this.fetchDatamart(datamartId)
+      })
+    }
+  }
+
+  fetchDatamart = (datamartId: string) => {
+    this.setState({ loading: true });
+    return DatamartService.getDatamart(datamartId)
+      .then(r => this.setState({ datamart: r.data, loading: false }))
+      .catch((err) => {  this.props.notifyError(err); this.setState({ loading: false })})
+  }
+
+  loadData = (organisationId: string, automationId: string) => {
+    this.setState({ loading: true });
+    return this._scenarioService.getScenario(automationId)
+      .then((r) => DatamartService.getDatamart(r.data.datamart_id))
+      .then(r => {
+        const datafarmVersion = r.data.storage_model_version;
+        if (datafarmVersion === 'v201506') {
+          const ScenarioContainer = this.scenarioContainer;
+          this.AngularSession.init(organisationId)
+          return this._automationFormService.loadInitialAutomationValues(automationId, 'v201506')
+            .then(data => {
+              this.setState({
+                datamart: r.data,
+                automationFormData: data,
+                loading: false,
+                scenarioContainer: new ScenarioContainer(automationId)
+              })
+            })
+        }
+        return this._automationFormService.loadInitialAutomationValues(automationId, datafarmVersion)
+          .then((data) => {
+            this.setState({
+              datamart: r.data,
+              automationFormData: data,
+              loading: false,
+            })
+          })
+      })
+      .catch((err: any) => {
         this.props.notifyError(err);
         this.setState({ loading: false });
       });
-  };
+  }
 
   onSubmitFail = () => {
     const { intl } = this.props;
@@ -111,64 +174,135 @@ class EditAutomationPage extends React.Component<Props, State> {
   };
 
   save = (formData: AutomationFormData) => {
-    const generatePromise = () => {
-      if (this.props.match.params.automationId) {
-        return ScenarioService.updateScenario(
-          this.props.match.params.automationId,
-          formData.automation as AutomationResource,
-        );
+    const {
+      match: {
+        params: { organisationId, automationId },
+      },
+    } = this.props;
+
+    const { datamart, automationFormData } = this.state;
+
+    if (datamart) {
+      this.setState({ loading: true });
+      const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(organisationId, datamart.storage_model_version, formData, automationFormData)
+      if (datamart.storage_model_version === 'v201506') {
+        saveOrUpdate.then((res) => {
+          this.state.scenarioContainer.saveOrUpdate(res.data);
+        })
       }
-      return ScenarioService.createScenario(
-        this.props.match.params.organisationId,
-        formData.automation as AutomationCreateResource,
-      );
-    };
-    this.setState({ loading: true });
-    return generatePromise()
-      .then(res => res.data)
-      .then(res => this.state.scenarioContainer.saveOrUpdate(res))
-      .then(res => {
-        this.setState({ loading: false });
-        this.props.history.push(
-          `/v2/o/${this.props.match.params.organisationId}/automations/list`,
-        );
-      })
+      saveOrUpdate
+        .then(() => {
+          this.setState({ loading: false });
+          if (datamart.storage_model_version === 'v201506') {
+            this.props.history.push(
+              `/v2/o/${this.props.match.params.organisationId}/automations`,
+            );
+          } else {
+            this.props.history.push(
+              `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
+            );
+          }
+         
+        })
       .catch(err => {
         this.setState({ loading: false });
         this.props.notifyError(err.data);
       });
+    }
   };
 
   onClose = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
-    history.push(`/v2/o/${organisationId}/automations/list`);
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+      location: {
+        state
+      }
+    } = this.props;
+    history.push(state && state.from ? state.from : `/v2/o/${organisationId}/automations`);
   };
 
-  render() {
-    const { match: { params: { organisationId, automationId } }, intl } = this.props;
 
+
+  renderEditPage = (datamart: DatamartResource, organisationId: string, automationId: string) => {
+    const { intl } = this.props;
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle,
-        path: `/v2/o/${organisationId}/automations/list`,
+        path: `/v2/o/${organisationId}/automations`,
       },
       {
-        name: automationId ? intl.formatMessage(messages.breadcrumbEdit, { name: this.state.automationFormData.automation.name }) : messages.breadcrumbNew,
+        name: automationId
+          ? intl.formatMessage(messages.breadcrumbEdit, {
+              name: this.state.automationFormData.automation.name,
+            })
+          : messages.breadcrumbNew,
       },
     ];
 
-    return this.state.loading ? (
-      <Loading className="loading-full-screen" />
-    ) : (
-      <AutomationEditForm
+    switch (datamart.storage_model_version) {
+      case 'v201506':
+        return (
+          <AutomationEditForm
+            initialValues={this.state.automationFormData}
+            onSubmit={this.save}
+            close={this.onClose}
+            breadCrumbPaths={breadcrumbPaths}
+            onSubmitFail={this.onSubmitFail}
+            scenarioContainer={this.state.scenarioContainer}
+            datamart={datamart}
+          />
+        )
+      default:
+        return (
+          <AutomationBuilderContainer 
+            datamartId={datamart.id}
+            automationFormData={this.state.automationFormData}
+            saveOrUpdate={this.save}
+            loading={this.state.loading}
+            edition={true}
+          />
+          
+        )
+    }
+    return <div />
+  }
+
+  render() {
+    const {
+      match: {
+        params: { organisationId, automationId },
+      },
+    } = this.props;
+
+    const { loading, datamart } = this.state;
+    
+    if (loading) {
+      return <Loading className="loading-full-screen" />
+    }
+
+    if (automationId && !loading && datamart) {
+      return this.renderEditPage(datamart, organisationId, automationId)
+    }
+
+    // render create form for old automations
+    if (!automationId && !loading) {
+      return (<AutomationEditForm
         initialValues={this.state.automationFormData}
         onSubmit={this.save}
         close={this.onClose}
-        breadCrumbPaths={breadcrumbPaths}
+        breadCrumbPaths={[]}
         onSubmitFail={this.onSubmitFail}
         scenarioContainer={this.state.scenarioContainer}
-      />
-    );
+        datamart={datamart}
+      />)
+    }
+
+    return <FormattedMessage {...messages.dontExist} />
+
+   
   }
 }
 

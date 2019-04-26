@@ -1,19 +1,20 @@
 import React from 'react';
 import { Button } from 'antd';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import {
-  FormattedMessage,
-  InjectedIntlProps,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { Actionbar } from '../../Actionbar';
 import { McsIcon } from '../../../components';
 import { compose } from 'recompose';
 import Menu from 'antd/lib/menu';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
 import { AutomationStatus } from '../../../models/automations/automations';
-import { PaginationSearchSettings, KeywordSearchSettings } from '../../../utils/LocationSearchHelper';
-import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
+import {
+  PaginationSearchSettings,
+  KeywordSearchSettings,
+} from '../../../utils/LocationSearchHelper';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
 import Dropdown from 'antd/lib/dropdown/dropdown';
 import messages from './messages';
 import Slider from '../../../components/Transition/Slide';
@@ -25,11 +26,11 @@ interface AutomationActionbarProps {
     visible: boolean;
     handleStatusAction: (status: AutomationStatus) => void;
   };
-} 
+}
 
 export interface FilterParams
-extends PaginationSearchSettings,
-KeywordSearchSettings {
+  extends PaginationSearchSettings,
+    KeywordSearchSettings {
   statuses: AutomationStatus[];
 }
 
@@ -43,8 +44,10 @@ interface AutomationActionbarState {
   allAutomationsActivated: boolean;
   allAutomationsPaused: boolean;
 }
-class AutomationActionBar extends React.Component<JoinedProps, AutomationActionbarState> {
-  
+class AutomationActionBar extends React.Component<
+  JoinedProps,
+  AutomationActionbarState
+> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -80,20 +83,22 @@ class AutomationActionBar extends React.Component<JoinedProps, AutomationActionb
       </Menu>
     );
   };
-  
-  render(){
-    const { 
-      organisationId, 
+
+  render() {
+    const {
+      organisationId,
       intl,
       rowSelection: { selectedRowKeys },
-    } = this.props
+    } = this.props;
 
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
-    const breadcrumbPaths = [{
-      name: intl.formatMessage(messages.automationListTitle),
-      url: `/v2/o/${organisationId}/automations/list`,
-    }];
+    const breadcrumbPaths = [
+      {
+        name: intl.formatMessage(messages.automationListTitle),
+        url: `/v2/o/${organisationId}/automations/list`,
+      },
+    ];
 
     const buildActionElement = () => {
       return (
@@ -105,10 +110,10 @@ class AutomationActionBar extends React.Component<JoinedProps, AutomationActionb
         </Dropdown>
       );
     };
-    
+
     return (
       <Actionbar path={breadcrumbPaths}>
-        <Link to={`/v2/o/${organisationId}/automations/create`}>
+        <Link to={`/v2/o/${organisationId}/automation-builder`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
           </Button>
@@ -121,7 +126,6 @@ class AutomationActionBar extends React.Component<JoinedProps, AutomationActionb
       </Actionbar>
     );
   }
-  
 }
 
 export default compose<JoinedProps, AutomationActionbarProps>(

@@ -25,6 +25,8 @@ interface DeviceFormSectionProps
     ReduxFormChangeProps {
   initialValues: Partial<AdGroupResource>;
   small?: boolean;
+  name?: string;
+  disabled: boolean;
 }
 
 type Props = DeviceFormSectionProps &
@@ -38,6 +40,11 @@ interface State {
 }
 
 class DeviceFormSection extends React.Component<Props, State> {
+
+  static defaultProps = {
+    name: "adGroup"
+  }
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -175,11 +182,14 @@ class DeviceFormSection extends React.Component<Props, State> {
   };
 
   onMediaChange = (value: TargetedMedia) => {
+    const {
+      name
+    } = this.props;
     this.setState({
       mediaValue: value,
     });
     this.props.formChange(
-      'adGroup.targeted_devices',
+      `${name}.targeted_devices`,
       value === 'WEB' ? 'ALL' : 'ONLY_MOBILE',
     );
     this.props.formChange('adGroup.targeted_operating_systems', 'ALL');
@@ -192,6 +202,8 @@ class DeviceFormSection extends React.Component<Props, State> {
       fieldValidators: { isRequired },
       intl: { formatMessage },
       small,
+      name,
+      disabled
     } = this.props;
 
     return (
@@ -203,7 +215,7 @@ class DeviceFormSection extends React.Component<Props, State> {
 
         <div>
           <FormSelectField
-            name="adGroup.targeted_medias"
+            name={`${name}.targeted_medias`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
@@ -220,40 +232,47 @@ class DeviceFormSection extends React.Component<Props, State> {
             }}
             options={this.medias()}
             small={small}
+            disabled={disabled}
           />
 
           <FormSelectField
-            name="adGroup.targeted_devices"
+            name={`${name}.targeted_devices`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
               label: formatMessage(formatAdGroupProperty('targeted_devices').message),
               required: true,
             }}
+            selectProps={{
+            }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionDeviceTypeTooltip),
             }}
             options={this.devices()}
             small={small}
+            disabled={disabled}
           />
 
           <FormSelectField
-            name="adGroup.targeted_operating_systems"
+            name={`${name}.targeted_operating_systems`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
               label: formatMessage(formatAdGroupProperty('targeted_operating_systems').message),
               required: true,
             }}
+            selectProps={{
+            }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionDeviceOSTooltip),
             }}
             options={this.operatingSystems()}
             small={small}
+            disabled={disabled}
           />
 
           <FormSelectField
-            name="adGroup.targeted_connection_types"
+            name={`${name}.targeted_connection_types`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
@@ -262,28 +281,34 @@ class DeviceFormSection extends React.Component<Props, State> {
               ),
               required: true,
             }}
+            selectProps={{
+            }}
             helpToolTipProps={{
               title: formatMessage(
                 messages.contentSectionDeviceConnectionTypeTooltip,
               ),
             }}
+            disabled={disabled}
             options={this.connectionTypes()}
             small={small}
           />
 
           <FormSelectField
-            name="adGroup.targeted_browser_families"
+            name={`${name}.targeted_browser_families`}
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
               label: formatMessage(formatAdGroupProperty('targeted_browser_families').message),
               required: true,
             }}
+            selectProps={{
+            }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionDeviceBrowserTooltip),
             }}
             options={this.browserFamilies()}
             small={small}
+            disabled={disabled}
           />
         </div>
       </div>

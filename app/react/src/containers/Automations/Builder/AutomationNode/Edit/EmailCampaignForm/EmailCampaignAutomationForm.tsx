@@ -17,7 +17,10 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { FORM_ID, EmailCampaignAutomationFormData } from '../domain';
 import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
-import { BlastFormSection, TemplateFormSection } from '../../../../../Campaigns/Email/Edit/Blast/Sections';
+import {
+  BlastFormSection,
+  TemplateFormSection,
+} from '../../../../../Campaigns/Email/Edit/Blast/Sections';
 import { BlastTemplateSectionFieldArray } from '../../../../../Campaigns/Email/Edit/Blast/EmailBlastForm';
 import GeneralInformationFormSection from './GeneralInformationSectionForm';
 
@@ -47,6 +50,7 @@ export interface EmailCampaignAutomationFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   node: ScenarioNodeShape;
+  disabled?: boolean;
 }
 
 interface MapStateToProps {
@@ -64,8 +68,7 @@ type Props = InjectedFormProps<
 
 class EmailCampaignAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const { change } = this.props;
-
+    const { change, disabled } = this.props;
 
     const sections: McsFormSection[] = [];
 
@@ -76,6 +79,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
         <GeneralInformationFormSection
           initialValues={this.props.initialValues}
           organisationId={this.props.match.params.organisationId}
+          disabled={disabled}
         />
       ),
     };
@@ -83,22 +87,20 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
     const senderInformation = {
       id: 'senderInformation',
       title: localMessages.sectionSenderInformationTitle,
-      component: (
-        <BlastFormSection small={true}/>
-      ),
+      component: <BlastFormSection small={true} disabled={disabled} fieldName={'blastFields[0].model.blast'} />,
     };
-
 
     const emailTemplate = {
       id: 'emailTemplate',
       title: localMessages.sectionSenderInformationTitle,
-      component: (  
+      component: (
         <BlastTemplateSectionFieldArray
-        name="templateFields"
-        component={TemplateFormSection}
-        formChange={change}
-        rerenderOnEveryChange={true}
-      />
+          name="blastFields[0].model.templateFields"
+          component={TemplateFormSection}
+          formChange={change}
+          rerenderOnEveryChange={true}
+          disabled={disabled}
+        />
       ),
     };
 
@@ -110,12 +112,13 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
   };
 
   render() {
-    const { breadCrumbPaths, handleSubmit, close } = this.props;
+    const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
+      disabled: disabled
     };
 
     const sections = this.buildFormSections();
@@ -135,7 +138,11 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form className="edit-layout ant-layout" onSubmit={handleSubmit} layout="vertical">
+          <Form
+            className="edit-layout ant-layout"
+            onSubmit={handleSubmit}
+            layout="vertical"
+          >
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container automation-form"

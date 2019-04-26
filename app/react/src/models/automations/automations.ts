@@ -1,11 +1,25 @@
-import { DisplayCampaignFormData, ABNFormData, EmailCampaignAutomationFormData } from "../../containers/Automations/Builder/AutomationNode/Edit/domain";
+import {
+  DisplayCampaignAutomationFormData,
+  ABNFormData,
+  EmailCampaignAutomationFormData,
+  WaitFormData,
+} from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
+import { QueryResource } from './../datamart/DatamartResource';
+import { AutomationSimpleFormData } from './../../containers/Automations/Builder/ActionBar/AutomationSimpleForm';
 export interface AutomationResource {
   id: string;
   name: string;
   datamart_id: string;
   organisation_id: string;
   status: AutomationStatus;
+  technical_name?: string;
+}
+
+export function isAutomationResource(
+  automation: AutomationSimpleFormData,
+): automation is AutomationResource {
+  return (automation as AutomationResource).id !== undefined;
 }
 
 export type AutomationStatus = 'NEW' | 'ACTIVE' | 'PAUSED';
@@ -18,35 +32,44 @@ export const automationStatuses: AutomationStatus[] = [
 export interface AutomationCreateResource {
   name: string;
   datamart_id: string;
+  technical_name?: string;
 }
 
 export interface StorylineResource {
   begin_node_id: string;
 }
 
+export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT_NODE' | 'DROP_NODE'
+
 export interface ScenarioNodeResource {
   id: string;
   name: string;
   scenario_id: string;
+  x?: number;
+  y?: number;
+  type: ScenarioNodeType;
 }
 
 export interface DisplayCampaignNodeResource extends ScenarioNodeResource {
   type: 'DISPLAY_CAMPAIGN';
   campaign_id: string;
   ad_group_id: string;
-  formData?: DisplayCampaignFormData;
+  formData: DisplayCampaignAutomationFormData;
+  initialFormData: DisplayCampaignAutomationFormData;
 }
 
 export interface EmailCampaignNodeResource extends ScenarioNodeResource {
   type: 'EMAIL_CAMPAIGN';
   campaign_id: string;
-  formData?: EmailCampaignAutomationFormData;
+  formData: EmailCampaignAutomationFormData;
+  initialFormData: EmailCampaignAutomationFormData;
 }
 
 export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
+  formData: Partial<QueryResource>;
   query_id: string;
-  evaluation_mode: string;
+  evaluation_mode?: string;
   evaluation_period?: string;
   evaluation_period_unit?: string;
 }
@@ -55,6 +78,7 @@ export interface ABNNodeResource extends ScenarioNodeResource {
   type: 'ABN_NODE';
   edges_selection: { [nodeId: string]: { min: number; max: number } };
   formData?: ABNFormData;
+  branch_number?: number;
 }
 
 export interface PluginNodeResource extends ScenarioNodeResource {
@@ -68,15 +92,13 @@ export interface PluginNodeResource extends ScenarioNodeResource {
 }
 
 export interface EndNodeResource extends ScenarioNodeResource {
-  type: 'FAILURE' | 'GOAL';
-}
-
-export interface StartNodeResource extends ScenarioNodeResource {
-  type: 'START';
+  type: 'END_NODE';
 }
 
 export interface WaitNodeResource extends ScenarioNodeResource {
-  type: 'WAIT';
+  type: 'WAIT_NODE';
+  timeout: number;
+  formData?: WaitFormData;
 }
 
 export type ScenarioNodeShape =
@@ -86,7 +108,6 @@ export type ScenarioNodeShape =
   | ABNNodeResource
   | PluginNodeResource
   | EndNodeResource
-  | StartNodeResource
   | WaitNodeResource;
 
 export interface ScenarioEdgeResource {
@@ -97,7 +118,7 @@ export interface ScenarioEdgeResource {
   scenario_id: string;
 }
 
-export type EdgeHandler = 'ON_VISIT' | 'ON_GOAL' | 'GOAL';
+export type EdgeHandler = 'ON_VISIT' | 'ON_GOAL' | 'OUT';
 
 export interface StorylineNodeResource {
   node: ScenarioNodeShape;

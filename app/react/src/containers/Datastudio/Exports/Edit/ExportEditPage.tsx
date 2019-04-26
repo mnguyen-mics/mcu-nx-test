@@ -3,12 +3,8 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
-
 import { INITIAL_EXPORTS_FORM_DATA, ExportFormData } from './domain';
-
 import ExportsService from '../../../../services/Library/ExportService';
-import QueryService from '../../../../services/QueryService';
-
 import ExportEditForm from './ExportEditForm';
 import { injectDatamart } from '../../../Datamart/index';
 import { injectDrawer } from '../../../../components/Drawer/index';
@@ -24,6 +20,9 @@ import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from '../../../Audience/Common/DatamartSelector';
 import { Export } from '../../../../models/exports/exports';
 import { DataResponse } from '../../../../services/ApiService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IQueryService } from '../../../../services/QueryService';
 
 const messages = defineMessages({
   newExports: {
@@ -65,6 +64,9 @@ type Props = InjectedDrawerProps &
   InjectedIntlProps;
 
 class ExportEditPage extends React.Component<Props, ExportEditPageState> {
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -116,7 +118,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
       .then(exportData => exportData.data)
       .then(res => {
         return Promise.all([
-          QueryService.getQuery(res.datamart_id, res.query_id),
+          this._queryService.getQuery(res.datamart_id, res.query_id),
           DatamartService.getDatamart(res.datamart_id),
         ]).then(q => {
           this.setState({
@@ -201,11 +203,13 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
         const generateQuerySaveMethod = () => {
           return selectedDatamart!.storage_model_version === 'v201506'
             ? this.state.export.query.saveOrUpdate()
-            : QueryService.updateQuery(
-                selectedDatamart!.id,
-                this.state.export.query.id,
-                formData.query,
-              ).then(res => res.data);
+            : this._queryService
+                .updateQuery(
+                  selectedDatamart!.id,
+                  this.state.export.query.id,
+                  formData.query,
+                )
+                .then(res => res.data);
         };
 
         return generateQuerySaveMethod().then((res: QueryResource) => {
@@ -215,11 +219,13 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
         const generateQuerySaveMethod = () => {
           return selectedDatamart!.storage_model_version === 'v201506'
             ? this.state.export.query.saveOrUpdate()
-            : QueryService.createQuery(selectedDatamart!.id, {
-                ...formData.query,
-                datamart_id: selectedDatamart!.id,
-                query_language: 'OTQL',
-              }).then(res => res.data);
+            : this._queryService
+                .createQuery(selectedDatamart!.id, {
+                  ...formData.query,
+                  datamart_id: selectedDatamart!.id,
+                  query_language: 'OTQL',
+                })
+                .then(res => res.data);
         };
         return generateQuerySaveMethod().then((res: QueryResource) => {
           return ExportsService.createExport(organisationId, {

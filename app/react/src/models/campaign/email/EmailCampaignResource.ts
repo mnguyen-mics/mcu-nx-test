@@ -12,6 +12,7 @@ export interface EmailCampaignCreateRequest {
   currency_code: string;
   technical_name: string;
   type: string;
+  automated: boolean;
 }
 
 export interface EmailCampaignResource extends EmailCampaignCreateRequest {

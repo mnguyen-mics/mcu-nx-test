@@ -1,26 +1,50 @@
 import React from 'react';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Layout, Tooltip, Icon } from 'antd';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { Layout, Tooltip, Icon, Modal } from 'antd';
 import { compose } from 'recompose';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import withTranslations, { TranslationProps } from '../../Helpers/withTranslations';
-import { AutomationResource, AutomationStatus, automationStatuses } from '../../../models/automations/automations';
-import { updateSearch, compareSearches, isSearchValid, buildDefaultSearch, parseSearch } from '../../../utils/LocationSearchHelper';
+import withTranslations, {
+  TranslationProps,
+} from '../../Helpers/withTranslations';
+import {
+  AutomationResource,
+  AutomationStatus,
+  automationStatuses,
+} from '../../../models/automations/automations';
+import {
+  updateSearch,
+  compareSearches,
+  isSearchValid,
+  buildDefaultSearch,
+  parseSearch,
+} from '../../../utils/LocationSearchHelper';
 import { McsIcon } from '../../../components';
-import { EmptyTableView, TableViewFilters } from '../../../components/TableView';
-import { MapDispatchToProps, MapStateToProps } from './AutomationListPage';
+import { TableViewFilters } from '../../../components/TableView';
+import { MapDispatchToProps } from './AutomationListPage';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
 import messages from './messages';
-import { SCENARIOS_SEARCH_SETTINGS } from '../../../services/ScenarioService';
+import {
+  SCENARIOS_SEARCH_SETTINGS,
+  IScenarioService,
+  GetAutomationsOptions,
+} from '../../../services/ScenarioService';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import DatamartService from '../../../services/DatamartService';
 
 const { Content } = Layout;
 
-interface AutomationsTableProps
-  extends MapDispatchToProps,
-  MapStateToProps {
+interface AutomationsTableProps extends MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingStatuses: boolean;
+}
+
+interface State {
+  dataSource: AutomationResource[];
+  totalAutomations: number;
+  isLoading: boolean;
 }
 
 type JoinedProps = AutomationsTableProps &
@@ -28,21 +52,33 @@ type JoinedProps = AutomationsTableProps &
   TranslationProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class AutomationsListTable extends React.Component<JoinedProps> {
-    
+interface Filters {
+  currentPage?: number;
+  pageSize?: number;
+  keywords?: string;
+  statuses?: string[];
+}
+
+class AutomationsListTable extends React.Component<JoinedProps, State> {
+  @lazyInject(TYPES.IScenarioService)
+  private _scenarioService: IScenarioService;
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      dataSource: [],
+      totalAutomations: 0,
+    };
+  }
+
   componentDidMount() {
     const {
       history,
-      location: {
-        search,
-        pathname,
-      },
+      location: { search, pathname },
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
-      fetchAutomationList,
     } = this.props;
 
     if (!isSearchValid(search, SCENARIOS_SEARCH_SETTINGS)) {
@@ -52,41 +88,34 @@ class AutomationsListTable extends React.Component<JoinedProps> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
-      fetchAutomationList(organisationId, filter, true);
+      const filter = parseSearch<FilterParams>(
+        search,
+        SCENARIOS_SEARCH_SETTINGS,
+      );
+      this.fetchAutomationList(organisationId, filter);
     }
   }
 
   componentWillReceiveProps(nextProps: JoinedProps) {
     const {
-      location: {
-        search,
-      },
+      location: { search },
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
       history,
-      fetchAutomationList,
     } = this.props;
 
     const {
-      location: {
-        pathname: nextPathname,
-        search: nextSearch,
-        state,
-      },
+      location: { pathname: nextPathname, search: nextSearch },
       match: {
-        params: {
-          organisationId: nextOrganisationId,
-        },
+        params: { organisationId: nextOrganisationId },
       },
     } = nextProps;
 
-    const checkEmptyDataSource = state && state.reloadDataSource;
-
-    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
+    if (
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
+    ) {
       if (!isSearchValid(nextSearch, SCENARIOS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
@@ -94,36 +123,112 @@ class AutomationsListTable extends React.Component<JoinedProps> {
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch<FilterParams>(nextSearch, SCENARIOS_SEARCH_SETTINGS);
-        fetchAutomationList(nextOrganisationId, filter, checkEmptyDataSource);
+        const filter = parseSearch<FilterParams>(
+          nextSearch,
+          SCENARIOS_SEARCH_SETTINGS,
+        );
+        this.fetchAutomationList(nextOrganisationId, filter);
       }
     }
   }
 
-  componentWillUnmount() {
-    this.props.resetAutomationsTable();
-  }
+  fetchAutomationList = (organisationId: string, filter: Filters) => {
+    this.setState({ isLoading: true });
+    const options: GetAutomationsOptions = {
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+    };
+    if (filter.keywords) {
+      options.keywords = filter.keywords;
+    }
+    if (filter.statuses && filter.statuses.length) {
+      options.status = filter.statuses;
+    }
+    return this._scenarioService
+      .getScenarios(organisationId, options)
+      .then(res => {
+        this.setState({
+          isLoading: false,
+          dataSource: res.data,
+          totalAutomations: res.total || res.count,
+        });
+      });
+  };
 
   editAutomation = (record: AutomationResource) => {
     const {
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
+      history,
+      location
+    } = this.props;
+
+    DatamartService.getDatamart(record.datamart_id).then(resp => {
+      if (resp.data.storage_model_version !== 'v201506') {
+        history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`, { from: `${location.pathname}${location.search}`});
+      } else {
+        history.push(`/v2/o/${organisationId}/automation-builder-old/${record.id}`, { from: `${location.pathname}${location.search}` });
+      }
+    });
+  };
+  
+
+  deleteAutomation = (record: AutomationResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search, pathname, state },
+      intl,
       history,
     } = this.props;
 
-    history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`);
-  }
+    const { dataSource } = this.state;
+
+    const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
+    const deleteMethod = (automationId: string) => {
+      return this._scenarioService.deleteScenario(automationId);
+    };
+    const fetchMethod = () => {
+      if (dataSource.length === 1 && filter.currentPage !== 1) {
+        const newFilter = {
+          ...filter,
+          currentPage: filter.currentPage - 1,
+        };
+        this.fetchAutomationList(organisationId, filter);
+        history.replace({
+          pathname: pathname,
+          search: updateSearch(search, newFilter),
+          state: state,
+        });
+      }
+      this.fetchAutomationList(organisationId, filter);
+    };
+    Modal.confirm({
+      title: intl.formatMessage(messages.automationModalConfirmDeletionTitle),
+      content: intl.formatMessage(
+        messages.automationModalConfirmDeletionContent,
+      ),
+      iconType: 'exclamation-circle',
+      okText: intl.formatMessage(messages.deleteAutomation),
+      cancelText: intl.formatMessage(
+        messages.automationModalConfirmDeletionCancel,
+      ),
+      onOk() {
+        deleteMethod(record.id).then(() => {
+          fetchMethod();
+        });
+      },
+      onCancel() {
+        //
+      },
+    });
+  };
 
   updateLocationSearch = (params: any) => {
     const {
       history,
-      location: {
-        search: currentSearch,
-        pathname,
-      },
+      location: { search: currentSearch, pathname },
     } = this.props;
 
     const nextLocation = {
@@ -132,26 +237,34 @@ class AutomationsListTable extends React.Component<JoinedProps> {
     };
 
     history.push(nextLocation);
+  };
+
+  viewAutomation = (record: AutomationResource) => () => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history
+    } = this.props;
+
+    DatamartService.getDatamart(record.datamart_id).then(resp => {
+      if (resp.data.storage_model_version !== 'v201506') {
+        history.push(`/v2/o/${organisationId}/automations/${record.id}`);
+      } else {
+        history.push(`/v2/o/${organisationId}/automation-builder-old/${record.id}`);
+      }
+    });
   }
 
   render() {
     const {
-      match: {
-        params: {
-          organisationId,
-        },
-      },
-      location: {
-        search,
-      },
+      location: { search },
       intl,
-      isFetchingAutomations,
-      dataSource,
-      totalAutomations,
       translations,
-      hasAutomations,
       rowSelection,
     } = this.props;
+
+    const { dataSource, totalAutomations, isLoading } = this.state;
 
     const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
 
@@ -181,10 +294,11 @@ class AutomationsListTable extends React.Component<JoinedProps> {
           rowSelection.unselectAllItemIds();
         }
       },
-      onShowSizeChange: (current: number, size: number) => this.updateLocationSearch({
-        currentPage: 1,
-        pageSize: size,
-      }),
+      onShowSizeChange: (current: number, size: number) =>
+        this.updateLocationSearch({
+          currentPage: 1,
+          pageSize: size,
+        }),
     };
 
     const dataColumns = [
@@ -204,13 +318,13 @@ class AutomationsListTable extends React.Component<JoinedProps> {
         translationKey: 'NAME',
         key: 'name',
         isHideable: false,
-        render: (text: string, record: AutomationResource) => (
-          <Link
-            className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/automations/${record.id}/edit`}
-          >{text}
-          </Link>
-        ),
+        render: (text: string, record: AutomationResource) => {
+          return (
+            <a onClick={this.viewAutomation(record)} >
+              <span className="mcs-automation-link">{text}</span>
+            </a>
+          );
+        },
       },
     ];
 
@@ -221,7 +335,11 @@ class AutomationsListTable extends React.Component<JoinedProps> {
           {
             translationKey: 'EDIT',
             callback: this.editAutomation,
-          }
+          },
+          {
+            intlMessage: messages.deleteAutomation,
+            callback: this.deleteAutomation,
+          },
         ],
       },
     ];
@@ -256,32 +374,29 @@ class AutomationsListTable extends React.Component<JoinedProps> {
       },
     ];
 
-    return (hasAutomations
-      ? (
-          <div className="ant-layout">
-            <Content className="mcs-content-container">
-              <div className="mcs-table-container">
-                <TableViewFilters
-                  columns={dataColumns}
-                  actionsColumnsDefinition={actionColumns}
-                  searchOptions={searchOptions}
-                  filtersOptions={filtersOptions}
-                  dataSource={dataSource}
-                  loading={isFetchingAutomations}
-                  pagination={pagination}
-                  rowSelection={rowSelection}
-                />
-              </div>
-            </Content>
+    return (
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <div className="mcs-table-container">
+            <TableViewFilters
+              columns={dataColumns}
+              actionsColumnsDefinition={actionColumns}
+              searchOptions={searchOptions}
+              filtersOptions={filtersOptions}
+              dataSource={dataSource}
+              loading={isLoading}
+              pagination={pagination}
+              rowSelection={rowSelection}
+            />
           </div>
-      )
-      : <EmptyTableView iconType="automation" text="EMPTY_AUTOMATIONS" />
+        </Content>
+      </div>
     );
   }
 }
 
 export default compose<JoinedProps, AutomationsTableProps>(
-    withRouter,
-    withTranslations,
-    injectIntl,
-  )(AutomationsListTable);
+  withRouter,
+  withTranslations,
+  injectIntl,
+)(AutomationsListTable);

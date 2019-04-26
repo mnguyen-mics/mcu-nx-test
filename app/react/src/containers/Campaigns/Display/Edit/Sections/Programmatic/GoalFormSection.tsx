@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import cuid from 'cuid';
 import { Modal } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -15,7 +14,9 @@ import {
   GoalFieldModel,
   isGoalFormData,
 } from '../../domain';
-import GoalSelector, { GoalSelectorProps } from '../../../../Common/GoalSelector';
+import GoalSelector, {
+  GoalSelectorProps,
+} from '../../../../Common/GoalSelector';
 import { InjectedDatamartProps, injectDatamart } from '../../../../../Datamart';
 import { McsIcon, ButtonStyleless } from '../../../../../../components';
 import {
@@ -37,15 +38,23 @@ import {
   INITIAL_GOAL_FORM_DATA,
   GoalFormData,
 } from '../../../../Goal/Edit/domain';
-import GoalFormContainer, { GoalFormContainerProps } from '../../../../Goal/Edit/GoalFormContainer';
+import GoalFormContainer, {
+  GoalFormContainerProps,
+} from '../../../../Goal/Edit/GoalFormContainer';
 import GoalFormLoader, {
   GoalFormLoaderProps,
 } from '../../../../Goal/Edit/GoalFormLoader';
-import GoalFormService from '../../../../Goal/Edit/GoalFormService';
+import { IGoalFormService } from '../../../../Goal/Edit/GoalFormService';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 import GoalService from '../../../../../../services/GoalService';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../constants/types';
+import { generateFakeId } from '../../../../../../utils/FakeIdHelper';
 
-export interface GoalFormSectionProps extends ReduxFormChangeProps {}
+export interface GoalFormSectionProps extends ReduxFormChangeProps {
+  small?: boolean;
+  disabled?: boolean;
+}
 
 type Props = GoalFormSectionProps &
   InjectedIntlProps &
@@ -61,6 +70,9 @@ interface State {
 }
 
 class GoalFormSection extends React.Component<Props, State> {
+  @lazyInject(TYPES.IGoalFormService)
+  private _goalFormService: IGoalFormService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -107,7 +119,7 @@ class GoalFormSection extends React.Component<Props, State> {
         if (newGoalIds.includes(field.model.goal.id)) {
           keptFields.push(field);
         }
-      } else if(isGoalFormData(field.model)) {
+      } else if (isGoalFormData(field.model)) {
         keptFields.push(field);
       }
     });
@@ -115,26 +127,28 @@ class GoalFormSection extends React.Component<Props, State> {
 
     const existingGoalIds = getExistingGoalIds(fields.getAll());
     const newFields: GoalFieldModel[] = [];
-    goals.filter(goal => !existingGoalIds.includes(goal.id)).forEach(goal => {
-      const model: GoalSelectionCreateRequest = {
-        goal_id: goal.id,
-        goal_selection_type: 'CONVERSION',
-        default: true,
-      };
-      return GoalService.getGoal(model.goal_id)
-        .then(resp => resp.data)
-        .then(goalResource => {
-          const triggerMode = goalResource.new_query_id ? 'QUERY' : 'PIXEL';
-          newFields.push({
-            key: cuid(),
-            model,
-            meta: { name: goal.name, triggerMode: triggerMode },
+    goals
+      .filter(goal => !existingGoalIds.includes(goal.id))
+      .forEach(goal => {
+        const model: GoalSelectionCreateRequest = {
+          goal_id: goal.id,
+          goal_selection_type: 'CONVERSION',
+          default: true,
+        };
+        return GoalService.getGoal(model.goal_id)
+          .then(resp => resp.data)
+          .then(goalResource => {
+            const triggerMode = goalResource.new_query_id ? 'QUERY' : 'PIXEL';
+            newFields.push({
+              key: generateFakeId(),
+              model,
+              meta: { name: goal.name, triggerMode: triggerMode },
+            });
+          })
+          .then(() => {
+            formChange((fields as any).name, keptFields.concat(newFields));
           });
-        })
-        .then(() => {
-          formChange((fields as any).name, keptFields.concat(newFields));
-        });
-    });
+      });
   };
 
   updateGoals = (goalFormData: GoalFormData, fieldKey?: string) => {
@@ -159,7 +173,7 @@ class GoalFormSection extends React.Component<Props, State> {
     } else {
       newFields.push(...fields.getAll());
       newFields.push({
-        key: cuid(),
+        key: generateFakeId(),
         model: goalFormData,
         meta: {
           name: goalFormData.goal.name || '',
@@ -209,7 +223,7 @@ class GoalFormSection extends React.Component<Props, State> {
         ...INITIAL_GOAL_FORM_DATA,
       };
     } else if (isGoalFormData(field.model)) {
-      props.initialValues = field.model;      
+      props.initialValues = field.model;
     } else {
       // TODO fix this ugly cast
       FormComponent = GoalFormLoader;
@@ -246,7 +260,7 @@ class GoalFormSection extends React.Component<Props, State> {
           .then(goalResource => {
             if (field && _field.key === field.key) {
               newFields.push({
-                key: cuid(),
+                key: generateFakeId(),
                 model: {
                   goal_id: goalId,
                   goal_selection_type: 'CONVERSION',
@@ -280,8 +294,9 @@ class GoalFormSection extends React.Component<Props, State> {
         loading: true,
       });
       const goalFormData = field.model as GoalFormData;
-      GoalFormService.saveGoal(organisationId, goalFormData).then(
-        goalResource => {
+      this._goalFormService
+        .saveGoal(organisationId, goalFormData)
+        .then(goalResource => {
           this.setState({
             loading: false,
             visible: false,
@@ -289,8 +304,7 @@ class GoalFormSection extends React.Component<Props, State> {
           this.showPixelSnippet(goalResource.id, () =>
             this.updateFields(goalResource.id, goalResource.name),
           );
-        },
-      );
+        });
     }
   };
 

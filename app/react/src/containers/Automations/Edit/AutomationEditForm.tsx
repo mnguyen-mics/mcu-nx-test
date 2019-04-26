@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
+import {
+  Form,
+  reduxForm,
+  InjectedFormProps,
+  ConfigProps,
+  getFormValues,
+} from 'redux-form';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Layout } from 'antd';
@@ -14,16 +20,14 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../components/Layout/ScrollspySider';
 import messages from './messages';
-import { AutomationFormData } from './domain';
+import { AutomationFormData, EditAutomationParam } from './domain';
 import { Omit } from '../../../utils/Types';
 import GeneralFormSection from './sections/GeneralFormSection';
 import { McsFormSection } from '../../../utils/FormHelper';
-import AngularWidget from './sections/AutomationFormSection';
-import injectDatamart, {
-  InjectedDatamartProps,
-} from '../../Datamart/injectDatamart';
 
 import * as SessionSelectors from '../../../state/Session/selectors';
+import { DatamartResource } from '../../../models/datamart/DatamartResource';
+import AngularWidget from './sections/AutomationFormSection';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -34,22 +38,28 @@ export interface AutomationEditFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   scenarioContainer: any;
+  datamart?: DatamartResource;
 }
 
 interface MapStateToProps {
   hasDatamarts: (organisationId: string) => boolean;
+  formValues: AutomationFormData;
 }
 
 type Props = InjectedFormProps<AutomationFormData, AutomationEditFormProps> &
   AutomationEditFormProps &
   MapStateToProps &
   InjectedIntlProps &
-  InjectedDatamartProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<EditAutomationParam>;
 
 const FORM_ID = 'automationForm';
 
 class AutomationEditForm extends React.Component<Props> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {};
+  }
+
   render() {
     const { handleSubmit, breadCrumbPaths, close, datamart } = this.props;
 
@@ -70,13 +80,16 @@ class AutomationEditForm extends React.Component<Props> {
     sections.push({
       id: 'automation',
       title: messages.sectionTitle1,
-      component: (
-        <AngularWidget
-          scenarioContainer={this.props.scenarioContainer}
-          organisationId={this.props.match.params.organisationId}
-          datamartId={datamart.id}
-        />
-      ),
+      component:
+        datamart && datamart.storage_model_version === 'v201506' ? (
+          <AngularWidget
+            scenarioContainer={this.props.scenarioContainer}
+            organisationId={this.props.match.params.organisationId}
+            datamartId={datamart.id}
+          />
+        ) : (
+          undefined
+        ),
     });
 
     const sideBarProps: SidebarWrapperProps = {
@@ -119,13 +132,17 @@ class AutomationEditForm extends React.Component<Props> {
   }
 }
 
+const mapStateToProps = (state: any) => ({
+  formValues: getFormValues(FORM_ID)(state),
+  hasDatamarts: SessionSelectors.hasDatamarts(state),
+});
+
 export default compose<Props, AutomationEditFormProps>(
   injectIntl,
-  injectDatamart,
   withRouter,
   reduxForm({
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
+  connect(mapStateToProps),
 )(AutomationEditForm);

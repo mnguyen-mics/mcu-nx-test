@@ -85,19 +85,19 @@ class DropNodeWidget extends React.Component<Props, State> {
             onMouseEnter={onHover('enter')}
             onMouseLeave={onHover('leave')}
           >
-          <div
-            className={'drop-node'}
-            onMouseEnter={onHover('enter')}
-            onMouseLeave={onHover('leave')}
-            style={{
-              width: node.getNodeSize().width,
-              height: node.getNodeSize().height,
-              borderWidth: node.getNodeSize().borderWidth,
-              borderColor: borderColor,
-              backgroundColor: backgroundColor,
-              opacity,
-            }}
-          />
+            <div
+              className={'drop-node'}
+              onMouseEnter={onHover('enter')}
+              onMouseLeave={onHover('leave')}
+              style={{
+                width: node.getNodeSize().width,
+                height: node.getNodeSize().height,
+                borderWidth: node.getNodeSize().borderWidth,
+                borderColor: borderColor,
+                backgroundColor: backgroundColor,
+                opacity,
+              }}
+            />
             <AnchorPortWidget node={node} />
           </div>
         </div>,

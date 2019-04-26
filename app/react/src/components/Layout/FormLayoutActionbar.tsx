@@ -17,6 +17,7 @@ export interface FormLayoutActionbarProps extends Omit<ActionBarProps, 'edition'
   message?: FormattedMessage.MessageDescriptor;
 
   onClose: React.MouseEventHandler<HTMLSpanElement>;
+  disabled?: boolean;
 }
 
 interface FormLayoutActionbarProvidedProps
@@ -37,6 +38,7 @@ const FormLayoutActionbar: React.SFC<FormLayoutActionbarProvidedProps> = props =
     message,
     onClose,
     submitting,
+    disabled
   } = props;
 
   const submitButtonProps: ButtonProps = {
@@ -48,7 +50,7 @@ const FormLayoutActionbar: React.SFC<FormLayoutActionbarProvidedProps> = props =
 
   return (
     <ActionBar edition={true} {...props}>
-      { message ? <Button {...submitButtonProps} className="mcs-primary">
+      { message && !disabled ? <Button {...submitButtonProps} className="mcs-primary">
         <McsIcon type="plus"/>
         <FormattedMessage {...message} />
       </Button> : null }

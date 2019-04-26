@@ -15,6 +15,7 @@ export interface FormSearchAndTreeSelectProps {
   handleClickOnRemove: (key: string) => void;
   handleOnChange: (checkedKeys: string[]) => void;
   small?: boolean;
+  disabled?: boolean;
 }
 
 export default class FormSearchAndTreeSelect extends React.Component<
@@ -59,7 +60,8 @@ export default class FormSearchAndTreeSelect extends React.Component<
       loading,
       handleClickOnRemove,
       handleOnChange,
-      small
+      small,
+      disabled
     } = this.props;
 
     const selectedLeaves: Array<{
@@ -102,7 +104,7 @@ export default class FormSearchAndTreeSelect extends React.Component<
         selectedItemsView.push(
           <div key={leave.key} className="audience-service-subitem">
             {leave.label}
-            <ButtonStyleless className="remove-button" onClick={handleClick}>
+            <ButtonStyleless disabled={disabled} className="remove-button" onClick={handleClick}>
               <McsIcon type="close" />
             </ButtonStyleless>
           </div>,
@@ -140,6 +142,7 @@ export default class FormSearchAndTreeSelect extends React.Component<
             placeholder={placeholder}
             treeData={datasource}
             checkedIds={value}
+            disabled={disabled}
           />
         </Col>
       </FormFieldWrapper>

@@ -267,7 +267,7 @@ const redirects: Redirect[] = [
   },
   {
     from: '/library/scenarios/',
-    to: automationDefinition.automationCreation.path
+    to: automationDefinition.automationBuilder.path
   },
   {
     from: '/settings/useraccount',

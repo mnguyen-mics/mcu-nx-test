@@ -263,6 +263,7 @@ const allCountries = [
 interface Props {
   onGeonameSelect?: (locationField: LocationFieldModel) => void;
   hiddenGeonameIds: string[];
+  disabled?: boolean
 }
 
 interface State {
@@ -360,12 +361,13 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
 
     const {
       intl: { formatMessage },
+      disabled
     } = this.props;
 
     return (
       <InputGroup compact={true}>
         <div className="small-select">
-          <Select defaultValue="INC" onChange={this.handleIncOrExcChange}>
+          <Select defaultValue="INC" disabled={!!disabled} onChange={this.handleIncOrExcChange}>
             <Option
               value="INC"
               title={formatMessage(messages.contentSectionLocationOption1)}
@@ -387,6 +389,7 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
             showSearch={true}
             defaultValue={'France'}
             onChange={this.handleCountryChange}
+            disabled={!!disabled}
           >
             {allCountries.map(country => (
               <Option key={country.name}>{country.name}</Option>
@@ -404,6 +407,7 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
             filterOption={false}
             onSearch={this.fetchGeonames}
             onChange={this.handleChange}
+            disabled={!!disabled}
           >
             {listOfGeonamesToDisplay.map(country => (
               <Option key={country.id}>{country.name}</Option>

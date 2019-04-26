@@ -15,7 +15,7 @@ export default defineMessages({
   },
   automationListTitle: {
     id: 'automations.list.title',
-    defaultMessage: 'Automations'
+    defaultMessage: 'Automations',
   },
   activeAll: {
     id: 'automations.list.activeAll',
@@ -29,5 +29,21 @@ export default defineMessages({
     id: 'automations.list.search.placeholder',
     defaultMessage: 'Search automation',
   },
-}
-);
+  automationModalConfirmDeletionTitle: {
+    id: 'automation.modal.confirm.deletion.title',
+    defaultMessage: 'Are you sure to delete this automation ?',
+  },
+  automationModalConfirmDeletionContent: {
+    id: 'automation.modal.confirm.deletion.content',
+    defaultMessage:
+      "By deleting this automation, you won't be able to recover the related campaigns. Are you sure you wan't to continue ?",
+  },
+  deleteAutomation: {
+    id: 'automation.delete.ok',
+    defaultMessage: 'Delete',
+  },
+  automationModalConfirmDeletionCancel: {
+    id: 'automation.modal.confirm.cancel',
+    defaultMessage: 'Cancel',
+  },
+});

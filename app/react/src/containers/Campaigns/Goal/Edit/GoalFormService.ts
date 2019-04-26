@@ -12,19 +12,32 @@ import {
 } from './domain';
 import { GoalResource } from '../../../../models/goal';
 import GoalService from '../../../../services/GoalService';
-import queryService from '../../../../services/QueryService';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../../../constants/types';
+import { IQueryService } from '../../../../services/QueryService';
 
-const GoalFormService = {
+export interface IGoalFormService {
+  loadGoalData: (goalId: string) => Promise<GoalFormData>;
+  saveGoal: (
+    organisationId: string,
+    goalFormData: GoalFormData,
+    initialGoalFormData?: GoalFormData,
+  ) => Promise<GoalResource>;
+}
+
+@injectable()
+export class GoalFormService implements IGoalFormService {
+  @inject(TYPES.IQueryService)
+  private _queryService: IQueryService;
   loadGoalData(goalId: string): Promise<GoalFormData> {
     return Promise.all([
       GoalService.getGoal(goalId),
       GoalService.getAttributionModels(goalId),
     ]).then(([goalRes, attribModelRes]) => {
-      
       const goalFormData: GoalFormData = {
         ...INITIAL_GOAL_FORM_DATA,
         goal: goalRes.data,
-        triggerType: goalRes.data.new_query_id ? 'QUERY': 'PIXEL',
+        triggerType: goalRes.data.new_query_id ? 'QUERY' : 'PIXEL',
         attributionModels: attribModelRes.data.map(attributionModel =>
           createFieldArrayModelWithMeta(attributionModel, {
             name: attributionModel.attribution_model_name,
@@ -34,17 +47,16 @@ const GoalFormService = {
           }),
         ),
       };
-    
+
       if (goalRes.data.new_query_id) {
-        return queryService
+        return this._queryService
           .getQuery(goalRes.data.datamart_id, goalRes.data.new_query_id)
           .then(r => r.data)
-          .then(res => {            
+          .then(res => {
             goalFormData.query = res;
             goalFormData.queryLanguage = res.query_language;
 
             if (res.query_language === 'SELECTORQL') {
-
               const QueryContainer = (window as any).angular
                 .element(document.body)
                 .injector()
@@ -61,11 +73,10 @@ const GoalFormService = {
             return goalFormData;
           });
       }
-      
-      return goalFormData;
 
+      return goalFormData;
     });
-  },
+  }
 
   saveGoal(
     organisationId: string,
@@ -87,18 +98,20 @@ const GoalFormService = {
               new_query_id: queryId,
             };
           });
-      } else {        
-        const query = { 
+      } else {
+        const query = {
           ...goalFormData.query,
           datamart_id: goalFormData.goal.datamart_id,
           query_language: goalFormData.queryLanguage,
-         };
-        goalDataToUpload = queryService.createQuery(goalFormData.goal.datamart_id!, query).then(resp => {
-          return {
-            ...goalFormData.goal,
-            new_query_id: resp.data.id,
-          };
-        });
+        };
+        goalDataToUpload = this._queryService
+          .createQuery(goalFormData.goal.datamart_id!, query)
+          .then(resp => {
+            return {
+              ...goalFormData.goal,
+              new_query_id: resp.data.id,
+            };
+          });
       }
     }
 
@@ -130,10 +143,8 @@ const GoalFormService = {
         return executeTasksInSequence(tasks).then(() => resp.data);
       });
     });
-  },
-};
-
-export default GoalFormService;
+  }
+}
 
 function getAttributionModelTasks(
   organisationId: string,
@@ -189,8 +200,10 @@ function getAttributionModelTasks(
     }
   });
 
-  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
-    tasks.push(() => GoalService.deleteAttributionModel(goalId, id));
-  });
+  initialIds
+    .filter(id => !currentIds.includes(id))
+    .forEach(id => {
+      tasks.push(() => GoalService.deleteAttributionModel(goalId, id));
+    });
   return tasks;
 }
