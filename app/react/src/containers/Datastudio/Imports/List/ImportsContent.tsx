@@ -12,16 +12,21 @@ import {
   buildDefaultSearch,
   compareSearches,
   PaginationSearchSettings,
+  KeywordSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
 import { IMPORTS_SEARCH_SETTINGS } from './constants';
 import { Index } from '../../../../utils';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import ImportsContentContainer from './ImportsContentContainer';
 
+export interface ImportFilterParams
+  extends PaginationSearchSettings,
+    KeywordSearchSettings {}
+
 interface ImportContentState {
   loading: boolean;
   selectedDatamartId: string;
-  filter: PaginationSearchSettings;
+  filter: ImportFilterParams;
 }
 
 interface RouterProps {
@@ -46,6 +51,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
       filter: {
         currentPage: 1,
         pageSize: 10,
+        keywords: '',
       },
     };
   }
@@ -69,7 +75,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         state: { reloadDataSource: true },
       });
     } else {
-      const { currentPage, pageSize, datamartId } = parseSearch(
+      const { currentPage, pageSize, datamartId, keywords  } = parseSearch(
         search,
         this.getSearchSetting(organisationId),
       );
@@ -80,6 +86,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         filter: {
           currentPage: currentPage,
           pageSize: pageSize,
+          keywords: keywords,
         },
         selectedDatamartId: selectedDatamartId,
       });
@@ -123,7 +130,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const { currentPage, pageSize, datamartId } = parseSearch(
+        const { currentPage, pageSize, datamartId, keywords } = parseSearch(
           nextSearch,
           this.getSearchSetting(organisationId),
         );
@@ -134,6 +141,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
           filter: {
             currentPage: currentPage,
             pageSize: pageSize,
+            keywords: keywords,
           },
           selectedDatamartId: selectedDatamartId,
         });
