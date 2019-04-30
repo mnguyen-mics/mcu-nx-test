@@ -133,20 +133,21 @@ class ImportsContentContainer extends React.Component<
       },
     } = nextProps;
 
-    if (organisationId !== nextOrganisationId) {
-      DatamartService.getDatamarts(nextOrganisationId).then(res => {
-        this.setState({
-          datamarts: res.data,
-        });
-      });
-    }
-
     if (
       filter.currentPage !== nextFilter.currentPage ||
       filter.pageSize !== nextFilter.pageSize ||
       filter.keywords !== nextFilter.keywords ||
-      datamartId !== nextDatamartId
+      datamartId !== nextDatamartId ||
+      organisationId !== nextOrganisationId
     ) {
+      const options = {
+        allow_administrator: true,
+      };
+      DatamartService.getDatamarts(nextOrganisationId, options).then(res => {
+        this.setState({
+          datamarts: res.data,
+        });
+      });
       this.fetchImport(nextDatamartId, nextFilter);
     }
   }
