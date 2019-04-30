@@ -14,11 +14,11 @@ import { QueryContainer } from '../../QueryTool/SelectorQL/AngularQueryToolWidge
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
-import ExportService from '../../../services/Library/ExportService';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 import { IQueryService } from '../../../services/QueryService';
+import { IExportService } from '../../../services/Library/ExportService';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -45,6 +45,9 @@ class QueryToolPage extends React.Component<Props> {
 
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
+
+  @lazyInject(TYPES.IExportService)
+  private _exportService: IExportService;
 
   getSelectedDatamart = () => {
     const { connectedUser, location } = this.props;
@@ -117,18 +120,20 @@ class QueryToolPage extends React.Component<Props> {
             new Error("angular query container isn't loaded correctly"),
           );
         return query.saveOrUpdate().then(queryResource => {
-          return ExportService.createExport(match.params.organisationId, {
-            name: exportFormData.name,
-            output_format: exportFormData.outputFormat,
-            query_id: queryResource.id,
-            type: 'QUERY',
-          }).then(res => {
-            history.push(
-              `/v2/o/${match.params.organisationId}/datastudio/exports/${
-                res.data.id
-              }`,
-            );
-          });
+          return this._exportService
+            .createExport(match.params.organisationId, {
+              name: exportFormData.name,
+              output_format: exportFormData.outputFormat,
+              query_id: queryResource.id,
+              type: 'QUERY',
+            })
+            .then(res => {
+              history.push(
+                `/v2/o/${match.params.organisationId}/datastudio/exports/${
+                  res.data.id
+                }`,
+              );
+            });
         });
       };
       return (
@@ -153,18 +158,20 @@ class QueryToolPage extends React.Component<Props> {
             query_text: query,
           })
           .then(queryResource => {
-            return ExportService.createExport(match.params.organisationId, {
-              name: exportFormData.name,
-              output_format: exportFormData.outputFormat,
-              query_id: queryResource.data.id,
-              type: 'QUERY',
-            }).then(res => {
-              history.push(
-                `/v2/o/${match.params.organisationId}/datastudio/exports/${
-                  res.data.id
-                }`,
-              );
-            });
+            return this._exportService
+              .createExport(match.params.organisationId, {
+                name: exportFormData.name,
+                output_format: exportFormData.outputFormat,
+                query_id: queryResource.data.id,
+                type: 'QUERY',
+              })
+              .then(res => {
+                history.push(
+                  `/v2/o/${match.params.organisationId}/datastudio/exports/${
+                    res.data.id
+                  }`,
+                );
+              });
           });
       };
       return (

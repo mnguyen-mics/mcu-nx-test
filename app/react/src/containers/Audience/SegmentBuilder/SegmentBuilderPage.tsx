@@ -8,7 +8,6 @@ import { compose } from 'recompose';
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
-import ExportService from '../../../services/Library/ExportService';
 import { DatamartSelector } from '../../Datamart';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -23,6 +22,7 @@ import { IAudienceSegmentService } from '../../../services/AudienceSegmentServic
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 import { IQueryService } from '../../../services/QueryService';
+import { IExportService } from '../../../services/Library/ExportService';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -50,6 +50,9 @@ class SegmentBuilderPage extends React.Component<Props> {
 
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
+
+  @lazyInject(TYPES.IExportService)
+  private _exportService: IExportService;
 
   render() {
     const { intl, connectedUser, location, history, match } = this.props;
@@ -161,18 +164,20 @@ class SegmentBuilderPage extends React.Component<Props> {
             new Error("angular query container isn't loaded correctly"),
           );
         return query.saveOrUpdate().then(queryResource => {
-          return ExportService.createExport(match.params.organisationId, {
-            name: exportFormData.name,
-            output_format: exportFormData.outputFormat,
-            query_id: queryResource.id,
-            type: 'QUERY',
-          }).then(res => {
-            history.push(
-              `/v2/o/${match.params.organisationId}/datastudio/exports/${
-                res.data.id
-              }`,
-            );
-          });
+          return this._exportService
+            .createExport(match.params.organisationId, {
+              name: exportFormData.name,
+              output_format: exportFormData.outputFormat,
+              query_id: queryResource.id,
+              type: 'QUERY',
+            })
+            .then(res => {
+              history.push(
+                `/v2/o/${match.params.organisationId}/datastudio/exports/${
+                  res.data.id
+                }`,
+              );
+            });
         });
       };
       return (

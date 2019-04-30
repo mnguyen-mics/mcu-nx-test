@@ -4,8 +4,9 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Modal, Layout, Row } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import ExportService, {
+import {
   GetExportOptions,
+  IExportService,
 } from '../../../../services/Library/ExportService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import {
@@ -22,6 +23,8 @@ import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { TableViewFilters } from '../../../../components/TableView';
 import { Index } from '../../../../utils';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -49,6 +52,9 @@ type Props = RouteComponentProps<RouterProps> & InjectedIntlProps;
 
 class ExportContent extends React.Component<Props, ExportContentState> {
   state = initialState;
+
+  @lazyInject(TYPES.IExportService)
+  private _exportService: IExportService;
 
   componentDidMount() {
     const {
@@ -101,7 +107,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
   }
 
   archiveExport = (exportId: string) => {
-    return ExportService.deleteExport(exportId);
+    return this._exportService.deleteExport(exportId);
   };
 
   fetchExport = (organisationId: string, filter: ExportFilterParams) => {
@@ -113,7 +119,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       if (filter.keywords) {
         options.keywords = filter.keywords;
       }
-      ExportService.getExports(options).then(results => {
+      this._exportService.getExports(options).then(results => {
         this.setState({
           loading: false,
           data: results.data,

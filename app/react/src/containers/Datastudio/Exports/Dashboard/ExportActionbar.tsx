@@ -11,9 +11,11 @@ import { Export } from '../../../../models/exports/exports';
 import modalMessages from '../../../../common/messages/modalMessages';
 import { Actionbar } from '../../../Actionbar';
 import McsIcon from '../../../../components/McsIcon';
-import ExportService from '../../../../services/Library/ExportService';
 import log from '../../../../utils/Logger';
 import messages from './messages';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IExportService } from '../../../../services/Library/ExportService';
 
 interface ExportActionbarProps {
   exportObject?: Export;
@@ -35,6 +37,9 @@ class ExportsActionbar extends React.Component<
   JoinedProps,
   ExportActionbarState
 > {
+  @lazyInject(TYPES.IExportService)
+  private _exportService: IExportService;
+  
   constructor(props: JoinedProps) {
     super(props);
     this.state = { exportIsRunning: this.props.isExportExecutionRunning };
@@ -70,7 +75,7 @@ class ExportsActionbar extends React.Component<
     if (this.state.exportIsRunning) {
       message.error(formatMessage(messages.exportRunning));
     } else if (this.props.exportObject) {
-      ExportService.createExecution(this.props.exportObject.id)
+      this._exportService.createExecution(this.props.exportObject.id)
         .then(res => this.setState({ exportIsRunning: true }))
         .then(res => this.props.onNewExecution());
     }

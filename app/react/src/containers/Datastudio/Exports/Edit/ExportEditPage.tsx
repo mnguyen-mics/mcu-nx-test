@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
 import { INITIAL_EXPORTS_FORM_DATA, ExportFormData } from './domain';
-import ExportsService from '../../../../services/Library/ExportService';
+import { IExportService } from '../../../../services/Library/ExportService';
 import ExportEditForm from './ExportEditForm';
 import { injectDatamart } from '../../../Datamart/index';
 import { injectDrawer } from '../../../../components/Drawer/index';
@@ -67,6 +67,9 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
+  @lazyInject(TYPES.IExportService)
+  private _exportService: IExportService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -114,7 +117,8 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
   }
 
   loadInitialValues = (exportId: string) => {
-    ExportsService.getExport(exportId)
+    this._exportService
+      .getExport(exportId)
       .then(exportData => exportData.data)
       .then(res => {
         return Promise.all([
@@ -213,7 +217,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
         };
 
         return generateQuerySaveMethod().then((res: QueryResource) => {
-          return ExportsService.updateExport(exportId, formData.export);
+          return this._exportService.updateExport(exportId, formData.export);
         });
       } else {
         const generateQuerySaveMethod = () => {
@@ -228,7 +232,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
                 .then(res => res.data);
         };
         return generateQuerySaveMethod().then((res: QueryResource) => {
-          return ExportsService.createExport(organisationId, {
+          return this._exportService.createExport(organisationId, {
             ...formData.export,
             query_id: res.id,
           });

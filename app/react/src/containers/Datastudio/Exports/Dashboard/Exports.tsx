@@ -8,7 +8,6 @@ import ExportHeader from './ExportHeader';
 import Card from '../../../../components/Card/Card';
 import { Filters } from '../../../../components/ItemList';
 import { Export, ExportExecution } from '../../../../models/exports/exports';
-import ExportService from '../../../../services/Library/ExportService';
 import ExportActionbar from './ExportActionbar';
 import TableView from '../../../../components/TableView/TableView';
 import log from '../../../../utils/Logger';
@@ -22,6 +21,9 @@ import {
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import messages from './messages';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IExportService } from '../../../../services/Library/ExportService';
 
 const { Content } = Layout;
 
@@ -70,6 +72,9 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       this.fetchExportExecution(exportId, filter);
     }
   }, 5000);
+
+  @lazyInject(TYPES.IExportService)
+  private _exportService: IExportService;
 
   constructor(props: JoinedProps) {
     super(props);
@@ -146,16 +151,15 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
   }
 
   fetchExportExecution = (exportId: string, options: object) => {
-    const fetchExport = ExportService.getExport(exportId)
+    const fetchExport = this._exportService
+      .getExport(exportId)
       .then(res => res.data)
       .then(res =>
         this.setState({ exportObject: { item: res, isLoading: false } }),
       )
       .catch(err => log(err));
-    const fetchExportExecution = ExportService.getExportExecutions(
-      exportId,
-      options,
-    )
+    const fetchExportExecution = this._exportService
+      .getExportExecutions(exportId, options)
       .then(res =>
         this.setState({
           exportExecutions: {
@@ -200,7 +204,9 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         execution.id
       }/files/technical_name=${
         execution.result.output_files[0]
-      }?access_token=${encodeURIComponent(LocalStorage.getItem('access_token')!)}`;
+      }?access_token=${encodeURIComponent(
+        LocalStorage.getItem('access_token')!,
+      )}`;
     }
   };
 
