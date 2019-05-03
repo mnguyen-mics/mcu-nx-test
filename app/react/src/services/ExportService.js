@@ -629,14 +629,11 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 /**
  * Audience Segment Dashboard
  */
-const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData, overlapData, filter, formatMessage, segment) => {
-  const overviewHeaders = [
-    { name: 'day', translation: formatMessage(dateMessages.day) },
-    { name: 'user_points', translation: formatMessage(segmentMessages.userPoints) },
-    { name: 'user_accounts', translation: formatMessage(segmentMessages.userAccounts) },
-    { name: 'emails', translation: formatMessage(segmentMessages.emails) },
-    { name: 'desktop_cookie_ids', translation: formatMessage(segmentMessages.desktopCookieId) },
-  ];
+const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData, overlapData, filter, formatMessage, segment, audienceSegmentMetrics) => {
+  const overviewHeaders = [];
+  audienceSegmentMetrics.forEach(metric => {
+    overviewHeaders.push({ name: metric.technical_name, translation: metric.display_name });
+  });
 
   const additionDeletionHeaders = [
     { name: 'day', translation: dateMessages.day.defaultMessage },
