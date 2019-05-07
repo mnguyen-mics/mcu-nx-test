@@ -630,9 +630,19 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
  * Audience Segment Dashboard
  */
 const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData, overlapData, filter, formatMessage, segment, audienceSegmentMetrics) => {
-  const overviewHeaders = [];
-  audienceSegmentMetrics.forEach(metric => {
-    overviewHeaders.push({ name: metric.technical_name, translation: metric.display_name });
+
+  const overviewHeadersMap = (audienceSegmentMetrics || []).reduce((headers, metric) => {
+    return {
+      ...headers,
+      [metric.technical_name]: metric.display_name || metric.technical_name
+    };
+  }, { user_points: formatMessage(segmentMessages.userPoints) });
+
+  const overviewHeaders = Object.keys(overviewHeadersMap).map(tn => {
+    return {
+      name: tn,
+      translation: overviewHeadersMap[tn]
+    };
   });
 
   const additionDeletionHeaders = [
