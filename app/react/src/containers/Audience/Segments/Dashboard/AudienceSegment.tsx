@@ -10,11 +10,13 @@ import LookalikeStatusWarning from './Lookalike/LookalikeStatusWarning';
 import { compose } from 'recompose';
 import { InjectedIntlProps } from 'react-intl';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 
 
 export interface AudienceSegmentProps {
   segment?: AudienceSegmentShape;
   isLoading: boolean;
+  datamarts: DatamartWithMetricResource[];
 }
 
 type Props = AudienceSegmentProps &
@@ -27,7 +29,7 @@ class AudienceSegment extends React.Component<Props> {
 
 
   render() {
-    const { match: { params: { segmentId, organisationId } }, isLoading, segment } = this.props;
+    const { match: { params: { segmentId, organisationId } }, isLoading, segment, datamarts } = this.props;
     return (
       <div>
         <AudienceSegmentHeader isLoading={isLoading} segment={segment} />
@@ -38,7 +40,7 @@ class AudienceSegment extends React.Component<Props> {
         />
         {segment && segment.short_description && <div style={{ marginBottom: 20 }}>{segment.short_description}</div>}
         <LookalikeStatusWarning isFetching={isLoading} segment={segment} />
-        <AudienceSegmentDashboard segment={segment} isLoading={isLoading} />
+        <AudienceSegmentDashboard segment={segment} isLoading={isLoading} datamarts={datamarts} />
       </div>
     );
   }

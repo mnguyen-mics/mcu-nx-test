@@ -22,9 +22,6 @@ import {
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
 import FeedCardList from './Feeds/FeedCardList';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
-import { connect } from 'react-redux';
-import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import * as SessionHelper from '../../../../state/Session/selectors';
 
 interface State {
   loading: boolean;
@@ -32,23 +29,15 @@ interface State {
     reports: AudienceReport;
     isLoading: boolean;
   };
-  datamarts: DatamartWithMetricResource[];
 }
-
-interface MapStateToProps {
-  workspaces: {
-    [key: string]: UserWorkspaceResource;
-  };
-}
-
 export interface AudienceSegmentDashboardProps {
   segment?: AudienceSegmentResource;
   isLoading: boolean;
+  datamarts: DatamartWithMetricResource[];
 }
 
 type Props = AudienceSegmentDashboardProps &
   InjectedIntlProps &
-  MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
@@ -61,22 +50,10 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         isLoading: true,
         reports: [],
       },
-      datamarts: [],
+  
     };
   }
 
-  componentDidMount() {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      workspaces,
-    } = this.props;
-    const workspace = workspaces[organisationId];
-    this.setState({
-      datamarts: workspace ? workspace.datamarts : [],
-    });
-  }
 
   componentWillReceiveProps(nextProps: Props) {
     const {
@@ -84,6 +61,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         params: { segmentId },
       },
       location: { search },
+      datamarts
     } = this.props;
     const {
       match: {
@@ -94,13 +72,14 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       },
       location: { search: nextSearch },
       segment: nextSegment,
-      workspaces: nextWorkspaces,
     } = nextProps;
+
+
 
     if (
       (!compareSearches(search, nextSearch) ||
         segmentId !== nextSegmentId ||
-        nextWorkspaces) &&
+        datamarts) &&
       nextSegment
     ) {
       const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
@@ -110,8 +89,9 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         'user_point_deletions',
       ];
       let additionalMetrics;
-      if (nextWorkspaces) {
-        const datamart = this.state.datamarts.find(
+      
+      if (datamarts) {
+        const datamart = datamarts.find(
           dm => dm.id === nextSegment.datamart_id,
         );
 
@@ -202,8 +182,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { datamarts } = this.state;
-    const { segment } = this.props;
+    const { segment, datamarts } = this.props;
     return (
       <div>
         <AudienceCounters
@@ -219,18 +198,10 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  workspaces: SessionHelper.getWorkspaces(state),
-});
-
 export default compose<Props, AudienceSegmentDashboardProps>(
   injectIntl,
   withRouter,
-  injectNotifications,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  injectNotifications
 )(AudienceSegmentDashboard);
 
 const messages = defineMessages({

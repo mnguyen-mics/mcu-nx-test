@@ -23,6 +23,7 @@ import { UserLookalikeSegment } from '../../../../models/audiencesegment/Audienc
 import { SEGMENT_QUERY_SETTINGS, OverlapData } from './constants';
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
+import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { ClickParam } from 'antd/lib/menu';
 import { IOverlapInterval } from './OverlapServices';
@@ -33,6 +34,7 @@ export interface AudienceSegmentActionbarProps {
   segment?: AudienceSegmentResource;
   isLoading: boolean;
   onCalibrationClick: () => void;
+  datamarts: DatamartWithMetricResource[];
 }
 
 type Props = AudienceSegmentActionbarProps &
@@ -47,6 +49,7 @@ interface State {
   overlap?: any;
   exportIsRunning: boolean;
   showLookalikeModal: boolean;
+  datamarts: DatamartWithMetricResource[];
 }
 
 class AudienceSegmentActionbar extends React.Component<Props, State> {
@@ -55,6 +58,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     overlap: undefined,
     exportIsRunning: false,
     showLookalikeModal: false,
+    datamarts: [],
   };
   @lazyInject(TYPES.IOverlapInterval)
   private _overlapInterval: IOverlapInterval;
@@ -137,6 +141,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       location: { search },
       intl: { formatMessage },
       segment,
+      datamarts
     } = this.props;
     const filters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
     this.setState({ exportIsRunning: true });
@@ -144,6 +149,17 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       formatMessage(exportMessages.exportInProgress),
       0,
     );
+
+    const datamartId = segment && segment.datamart_id
+    const datamart = datamarts.find(
+      dm => dm.id === datamartId,
+    );
+
+    const additionalMetrics =
+          datamart && datamart.audience_segment_metrics
+            ? datamart.audience_segment_metrics
+                .filter(metric => metric.status === 'LIVE')
+            : undefined;
 
     this.fetchExportData(organisationId, segmentId, filters.from, filters.to)
       .then(res => {
@@ -155,6 +171,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
           filters,
           formatMessage,
           segment,
+          additionalMetrics
         );
       })
       .then(() => {
