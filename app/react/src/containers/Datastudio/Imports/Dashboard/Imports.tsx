@@ -32,6 +32,7 @@ import injectThemeColors, {
 } from '../../../Helpers/injectThemeColors';
 import { McsIcon } from '../../../../components';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
@@ -59,7 +60,8 @@ interface ImportRouteParams {
 
 type JoinedProps = RouteComponentProps<ImportRouteParams> &
   InjectedIntlProps &
-  InjectedThemeColorsProps;
+  InjectedThemeColorsProps &
+  InjectedNotificationProps;
 
 class Imports extends React.Component<JoinedProps, State> {
   fetchLoop = window.setInterval(() => {
@@ -272,9 +274,9 @@ class Imports extends React.Component<JoinedProps, State> {
     const datamartId = this.props.match.params.datamartId;
     const importId = this.props.match.params.importId;
     const executions = this.state.importExecutions.items;
-    this._importService.cancelImportExecution(datamartId, importId, execution.id)
+    return this._importService.cancelImportExecution(datamartId, importId, execution.id)
       .then(res => res.data)
-      .then(res => 
+      .then(res => {
         this.setState({
           importObject: this.state.importObject,
           importExecutions: { 
@@ -282,9 +284,11 @@ class Imports extends React.Component<JoinedProps, State> {
             isLoading: false,
             total: this.state.importExecutions.total
           }
-        }
-      ));
-
+        });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+      })
   }
   
 
@@ -432,4 +436,5 @@ export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
   injectThemeColors,
+  injectNotifications,
 )(Imports);
