@@ -13,6 +13,10 @@ export default defineMessages({
     id: 'goals.stats.archive',
     defaultMessage: 'Archive'
   },
+  history: {
+    id: 'goals.stats.history',
+    defaultMessage: 'History'
+  },
   delete: {
     id: 'goals.stats.delete',
     defaultMessage: 'Delete'

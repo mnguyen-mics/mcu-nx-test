@@ -38,6 +38,7 @@ import ResourceTimelinePage, {
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
+import { getLinkedResourceIdInSelection } from '../../../../../utils/ResourceHistoryHelper';
 
 interface DisplayCampaignActionBarProps {
   campaign: DisplayCampaignInfoResource;
@@ -496,7 +497,7 @@ class DisplayCampaignActionbar extends React.Component<
             ResourceTimelinePage,
             {
               additionalProps: {
-                resourceType: 'DISPLAY_CAMPAIGN',
+                resourceType: 'CAMPAIGN',
                 resourceId: campaignId,
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatDisplayCampaignProperty,
@@ -522,6 +523,42 @@ class DisplayCampaignActionbar extends React.Component<
                       history.push(
                         `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${id}`,
                       );
+                    },
+                  },
+                  GOAL_SELECTION: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.goalResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return getLinkedResourceIdInSelection(
+                        organisationId,
+                        'GOAL_SELECTION',
+                        id,
+                        'GOAL',
+                      ).then(goalId => {
+                        return GoalService.getGoal(
+                          goalId,
+                        ).then(response => {
+                          return response.data.name;
+                        });
+                      });
+                    },
+                    goToResource: (id: string) => {
+                      getLinkedResourceIdInSelection(
+                        organisationId,
+                        'GOAL_SELECTION',
+                        id,
+                        'GOAL',
+                      ).then(goalId => {
+                        history.push(
+                          `/v2/o/${organisationId}/campaigns/goals/${goalId}`,
+                        );
+                      });
                     },
                   },
                 },

@@ -28,6 +28,15 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistoryHelper';
+import { injectDrawer } from '../../../../components/Drawer';
+import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import ResourceTimelinePage, {
+  ResourceTimelinePageProps,
+} from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
+import formatGoalProperty from '../../../../messages/campaign/goal/goalMessages';
+import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 
 interface ExportActionbarProps {
   goal?: GoalResource;
@@ -42,7 +51,8 @@ type JoinedProps = ExportActionbarProps &
   RouteComponentProps<{ organisationId: string; goalId: string }> &
   InjectedIntlProps &
   InjectedNotificationProps &
-  TranslationProps;
+  TranslationProps &
+  InjectedDrawerProps;
 
 const reportTypeExportOptions = [
   {
@@ -258,7 +268,7 @@ class ExportsActionbar extends React.Component<
       history,
       notifyError,
       match: {
-        params: { organisationId },
+        params: { organisationId, goalId },
       },
       intl: { formatMessage },
     } = this.props;
@@ -293,6 +303,57 @@ class ExportsActionbar extends React.Component<
         switch (event.key) {
           case 'ARCHIVED':
             return handleArchiveGoal(goal.id);
+          case 'HISTORY':
+            return this.props.openNextDrawer<ResourceTimelinePageProps>(
+              ResourceTimelinePage,
+              {
+                additionalProps: {
+                  resourceType: 'GOAL',
+                  resourceId: goalId,
+                  handleClose: () => this.props.closeNextDrawer(),
+                  formatProperty: formatGoalProperty,
+                  resourceLinkHelper: {
+                    GOAL_SELECTION: {
+                      direction: 'PARENT',
+                      getType: () => {
+                        return (
+                          <FormattedMessage
+                            {...resourceHistoryMessages.displayCampaignResourceType}
+                          />
+                        );
+                      },
+                      getName: (id: string) => {
+                        return getLinkedResourceIdInSelection(
+                          organisationId,
+                          'GOAL_SELECTION',
+                          id,
+                          'CAMPAIGN',
+                        ).then(campaignId => {
+                          return DisplayCampaignService.getCampaignName(
+                            campaignId,
+                          ).then(response => {
+                            return response;
+                          });
+                        });
+                      },
+                      goToResource: (id: string) => {
+                        getLinkedResourceIdInSelection(
+                          organisationId,
+                          'GOAL_SELECTION',
+                          id,
+                          'CAMPAIGN',
+                        ).then(campaignId => {
+                          history.push(
+                            `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
+                          );
+                        });
+                      },
+                    },
+                  },
+                },
+                size: 'small',
+              },
+            );
           default:
             return () => {
               log.error('onclick error');
@@ -302,6 +363,9 @@ class ExportsActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
+        <Menu.Item key="HISTORY">
+          <FormattedMessage {...messages.history} />
+        </Menu.Item>
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archive} />
         </Menu.Item>
@@ -315,4 +379,5 @@ export default compose<JoinedProps, ExportActionbarProps>(
   injectIntl,
   withTranslations,
   injectNotifications,
+  injectDrawer,
 )(ExportsActionbar);

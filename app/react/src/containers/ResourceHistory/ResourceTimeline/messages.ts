@@ -19,6 +19,10 @@ const messages: {
     id: 'timeline.resourceType.displayCampaign',
     defaultMessage: 'Display Campaign',
   },
+  goalResourceType: {
+    id: 'timeline.resourceType.goal',
+    defaultMessage: 'Goal',
+  },
   emailBlastResourceType: {
     id: 'timeline.resourceType.emailBlast',
     defaultMessage: 'Email Blast',
