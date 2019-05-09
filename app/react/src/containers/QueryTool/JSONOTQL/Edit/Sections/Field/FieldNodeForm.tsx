@@ -74,6 +74,7 @@ export interface FieldNodeFormProps {
   idToAttachDropDowns?: string;
   runtimeSchemaId: string;
   datamartId: string;
+  formName?: string;
 }
 
 interface FormValues {
@@ -711,8 +712,8 @@ class FieldNodeForm extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  formValues: getFormValues(FORM_ID)(state),
+const mapStateToProps = (state: any, ownProps: FieldNodeFormProps) => ({
+  formValues: getFormValues(ownProps.formName || FORM_ID)(state),
 });
 
 export default compose<Props, FieldNodeFormProps>(

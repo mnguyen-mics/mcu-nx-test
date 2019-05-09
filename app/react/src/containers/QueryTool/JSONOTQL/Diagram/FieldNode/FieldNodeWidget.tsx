@@ -66,6 +66,8 @@ class FieldNodeWidget extends React.Component<Props, State> {
   selectRef: HTMLDivElement | null = null;
   isDragging: boolean = false;
 
+  formName: string = `${FORM_ID}-${cuid()}`;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -242,6 +244,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
           idToAttachDropDowns={'popoverId'}
           runtimeSchemaId={node.objectTypeInfo.runtime_schema_id}
           datamartId={datamartId}
+          form={this.formName}
         />
        
       </div>
