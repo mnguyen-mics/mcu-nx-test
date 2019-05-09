@@ -1,4 +1,4 @@
-import { Import } from './../models/imports/imports';
+import { Import, ImportExecutionBase, MakeJobExecutionAction } from './../models/imports/imports';
 import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 
@@ -34,6 +34,11 @@ export interface IImportService {
     importId: string,
     options: object
   ) => Promise<DataListResponse<any>>;
+  cancelImportExecution: (
+    datamartId: string,
+    importId: string,
+    executionId: string
+  ) => Promise<DataResponse<ImportExecutionBase>>
 }
 
 @injectable()
@@ -93,4 +98,16 @@ export class ImportService implements IImportService {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}/executions`;
     return ApiService.getRequest(endpoint, options);
   }
+  cancelImportExecution(
+    datamartId: string,
+    importId: string,
+    executionId: string,
+  ): Promise<DataResponse<ImportExecutionBase>> {
+    const endpoint = `datamarts/${datamartId}/document_imports/${importId}/executions/${executionId}/action`;
+    const action: MakeJobExecutionAction = {
+      'action': 'CANCEL'
+    }
+    return ApiService.postRequest(endpoint, action);
+  }
+
 }

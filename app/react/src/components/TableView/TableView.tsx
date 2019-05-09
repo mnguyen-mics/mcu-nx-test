@@ -31,6 +31,7 @@ export interface DataColumnDefinition<T> extends ColumnProps<T> {
 export interface ActionDefinition<T> {
   translationKey?: string;
   intlMessage?: FormattedMessage.MessageDescriptor;
+  disabled?: boolean;
   callback: (record: T) => void;
 }
 
@@ -140,8 +141,7 @@ class TableView<
       <Menu onClick={onClick} className="mcs-dropdown-actions">
         {actions(record).map((action, index) => {
           return (
-            <Menu.Item key={index.toString()}>
-              <a>
+            <Menu.Item key={index.toString()} disabled={action.disabled}>
                 {action.intlMessage ? (
                   <FormattedMessage {...action.intlMessage!} />
                 ) : action.translationKey ? (
@@ -149,7 +149,6 @@ class TableView<
                 ) : (
                   index
                 )}
-              </a>
             </Menu.Item>
           );
         })}

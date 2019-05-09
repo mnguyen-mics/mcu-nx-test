@@ -24,15 +24,18 @@ export interface ImportExecutionBase {
   organisation_id: string;
   parameters: object;
   start_date: number;
-  status: 'SUCESS' | 'RUNNING' | 'PENDING' | 'SUCCEEDED' | 'FAILED';
+  status: 'SUCCESS' | 'RUNNING' | 'PENDING' | 'SUCCEEDED' | 'FAILED' | 'CANCELED';
   user_id: string;
 }
 
 export interface ImportExecutionSuccess extends ImportExecutionBase {
-  status: 'SUCESS' | 'SUCCEEDED',
+  status: 'SUCCESS' | 'SUCCEEDED',
   result: { 
     output_files: string[];
     total_failure: number;
     total_success: number;
   };
+}
+export interface MakeJobExecutionAction {
+  action: 'CANCEL'
 }

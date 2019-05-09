@@ -13,7 +13,7 @@ import {
   ImportExecutionSuccess,
 } from '../../../../models/imports/imports';
 import ImportActionbar from './ImportActionbar';
-import TableView from '../../../../components/TableView/TableView';
+import TableView, { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import log from '../../../../utils/Logger';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -84,6 +84,7 @@ class Imports extends React.Component<JoinedProps, State> {
 
   @lazyInject(TYPES.IImportService)
   private _importService: IImportService;
+  
 
   constructor(props: JoinedProps) {
     super(props);
@@ -241,7 +242,7 @@ class Imports extends React.Component<JoinedProps, State> {
   renderStatuColumn = (record: ImportExecution) => {
     switch (record.status) {
       case 'SUCCEEDED':
-      case 'SUCESS':
+      case 'SUCCESS':
         return (
           <div>
             {record.status}{' '}
@@ -265,6 +266,27 @@ class Imports extends React.Component<JoinedProps, State> {
         return <div>{record.status}</div>;
     }
   };
+
+
+  onClickCancel = (execution: ImportExecution) => {
+    const datamartId = this.props.match.params.datamartId;
+    const importId = this.props.match.params.importId;
+    const executions = this.state.importExecutions.items;
+    this._importService.cancelImportExecution(datamartId, importId, execution.id)
+      .then(res => res.data)
+      .then(res => 
+        this.setState({
+          importObject: this.state.importObject,
+          importExecutions: { 
+            items: executions.map(e => e.id === res.id ? res : e),
+            isLoading: false,
+            total: this.state.importExecutions.total
+          }
+        }
+      ));
+
+  }
+  
 
   buildColumnDefinition = () => {
     const {
@@ -326,7 +348,7 @@ class Imports extends React.Component<JoinedProps, State> {
           text
             ? moment(text).format('DD/MM/YYYY h:mm:ss')
             : formatMessage(messages.notCreated),
-      },
+      }
     ];
 
     return {
@@ -364,6 +386,15 @@ class Imports extends React.Component<JoinedProps, State> {
       );
     };
 
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<ImportExecution>> = [
+      {
+        key: 'action',
+        actions: (execution: ImportExecution) => [
+          { intlMessage: messages.uploadCancel, callback: this.onClickCancel, disabled: execution.status !== "PENDING" },
+        ],
+      },
+    ];
+
     return (
       <div className="ant-layout">
         <ImportActionbar
@@ -385,6 +416,7 @@ class Imports extends React.Component<JoinedProps, State> {
               <TableView
                 dataSource={importExecutions.items}
                 columns={this.buildColumnDefinition().dataColumnsDefinition}
+                actionsColumnsDefinition={actionsColumnsDefinition}
                 pagination={pagination}
                 loading={importExecutions.isLoading}
               />
