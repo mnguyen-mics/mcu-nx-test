@@ -8,15 +8,14 @@ import {
   reduxForm,
   InjectedFormProps,
 } from 'redux-form';
-import { FieldNodeFormDataValues, FORM_ID } from '../../domain';
+import { FieldNodeFormDataValues } from '../../domain';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import FieldNodeForm from './FieldNodeForm';
-import { Omit } from '../../../../../../utils/Types';
 
 export interface FieldNodeFormWrapperProps
-  extends Omit<ConfigProps<FieldNodeFormDataValues>, 'form'> {
+  extends ConfigProps<FieldNodeFormDataValues> {
   breadCrumbPaths: Path[];
   objectType: ObjectLikeTypeInfoResource;
   objectTypes: ObjectLikeTypeInfoResource[];
@@ -66,6 +65,7 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
           idToAttachDropDowns={idToAttachDropDowns}
           datamartId={datamartId}
           runtimeSchemaId={runtimeSchemaId}
+          formName={this.props.form}
         />
         <Button type="primary" className="mcs-primary" htmlType="submit">Submit</Button>
       </Form>
@@ -77,7 +77,6 @@ export default compose<Props, FieldNodeFormWrapperProps>(
   injectIntl,
   withRouter,
   reduxForm({
-    form: FORM_ID,
     enableReinitialize: true,
   }),
 )(FieldNodeFormWrapper);
