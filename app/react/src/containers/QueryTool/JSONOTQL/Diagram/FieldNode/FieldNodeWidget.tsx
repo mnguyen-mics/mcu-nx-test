@@ -208,6 +208,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
         onMouseOver={onMouseOver}
         onMouseLeave={onMouseLeave}
       >
+        <FourAnchorPortWidget node={node} />
         <div
           style={{
             width: 0,
