@@ -188,14 +188,12 @@
     "node": ">=8.0.0"
   },
   "scripts": {
-    "extract-messages": "NODE_ENV=production babel app/react/src  --out-file /dev/null",
     "test": "grunt test",
     "test:tslint": "tslint -c tslint.json 'app/react/src/**/*.{ts,tsx}'",
     "test:lint": "eslint --cache --max-warnings 0 app/react/src",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "start": "cross-env NODE_OPTIONS=--max_old_space_size=4000 grunt serve",
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=4000 grunt build",
-    "build:langs": "NODE_ENV='production' babel-node scripts/translate.js",
     "translation-file": "npm run build && node scripts/translate.js"
   }
 }
