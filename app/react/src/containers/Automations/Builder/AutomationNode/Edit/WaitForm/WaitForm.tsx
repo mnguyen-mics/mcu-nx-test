@@ -23,15 +23,15 @@ const { Content } = Layout;
 
 const localMessages = defineMessages({
   save: {
-    id: 'automation.builder.node.form.save.button',
+    id: 'automation.builder.node.waitForm.saveButton',
     defaultMessage: 'Update',
   },
   sectionGeneralTitle: {
-    id: 'automation.builder.node.edition.form.general.title',
+    id: 'automation.builder.node.waitForm.generalTitle',
     defaultMessage: 'General Informations',
   },
   sectionDisplayCampaignTitle: {
-    id: 'automation.builder.node.edition.form.display.title',
+    id: 'automation.builder.node.waitForm.displayTitle',
     defaultMessage: 'Modify the parameters of the display campaign',
   },
 });

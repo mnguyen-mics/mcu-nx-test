@@ -18,11 +18,11 @@ const { Content, Sider } = Layout;
 
 const messages = defineMessages({
   switchOrg: {
-    id: 'navigator.sideMenu.switchOrg',
+    id: 'navigator.layout.mainLayout.sideMenu.switchOrg.label',
     defaultMessage: 'Switch Org.'
   },
   collapse: {
-    id: 'navigator.sideMenu.collapse',
+    id: 'navigator.layout.mainLayout.sideMenu.collapse',
     defaultMessage: 'Collapse'
   },
 });

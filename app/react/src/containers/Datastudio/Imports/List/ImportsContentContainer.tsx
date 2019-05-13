@@ -268,22 +268,20 @@ class ImportsContentContainer extends React.Component<
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          { intlMessage: messages.edit, callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
 
     const dataColumns = [
       {
-        translationKey: 'id',
         intlMessage: messages.id,
         key: 'id',
         isHideable: false,
         render: (text: string, record: Import) => <span>{text}</span>,
       },
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
@@ -299,7 +297,6 @@ class ImportsContentContainer extends React.Component<
         ),
       },
       {
-        translationKey: 'document_type',
         intlMessage: messages.documentType,
         key: 'document_type',
         isHideable: false,
@@ -308,7 +305,6 @@ class ImportsContentContainer extends React.Component<
         ),
       },
       {
-        translationKey: 'mime_type',
         intlMessage: messages.mimeType,
         key: 'mime_type',
         isHideable: false,
@@ -329,7 +325,10 @@ class ImportsContentContainer extends React.Component<
       const datamartFilter = {
         displayElement: (
           <div>
-            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+            <FormattedMessage
+              id="imports.list.datamartFilter"
+              defaultMessage="Datamart"
+            />{' '}
             <Icon type="down" />
           </div>
         ),

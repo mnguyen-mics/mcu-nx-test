@@ -26,11 +26,19 @@ export default defineMessages({
     defaultMessage: 'Cancel',
   },
   name: {
-    id: 'deals.table.column.name',
+    id: 'deals.list.column.name',
     defaultMessage: 'Name',
   },
   empty: {
-    id: 'deals.table.empty',
+    id: 'deals.list.empty',
     defaultMessage: 'There is no Deal List List created yet! Click on New to get started',
+  },
+  edit: {
+    id: 'deals.list.actionColumn.edit',
+    defaultMessage: 'Edit',
+  },
+  archive: {
+    id: 'deals.list.actionColumn.archive',
+    defaultMessage: 'Archive',
   },
 })

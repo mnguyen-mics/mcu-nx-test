@@ -2,35 +2,35 @@ import { defineMessages } from 'react-intl';
 
 const messages = defineMessages({
   searchPlaceholder: {
-    id: 'site.search.placeholder',
+    id: 'settings.datamart.site.list.search.placeholder',
     defaultMessage: 'Search Sites',
   },
   siteName: {
-    id: 'site.name',
+    id: 'settings.datamart.site.list.name',
     defaultMessage: 'Name',
   },
   siteToken: {
-    id: 'site.token',
+    id: 'settings.datamart.site.list.token',
     defaultMessage: 'Token',
   },
   siteCreationDate: {
-    id: 'site.creation_date',
+    id: 'settings.datamart.site.list.creation_date',
     defaultMessage: 'Creation Date',
   },
   newSite: {
-    id: 'site.new',
+    id: 'settings.datamart.site.list.new',
     defaultMessage: 'New Site',
   },
   editSite: {
-    id: 'site.edit',
+    id: 'settings.datamart.site.list.edit',
     defaultMessage: 'Edit',
   },
   archiveSite: {
-    id: 'site.archive',
+    id: 'settings.datamart.site.list.archive',
     defaultMessage: 'Archive',
   },
   emptySites: {
-    id: 'site.empty',
+    id: 'settings.datamart.site.list.empty',
     defaultMessage: "There are no sites set up. Click on 'New Site' to create one.",
   },
 });

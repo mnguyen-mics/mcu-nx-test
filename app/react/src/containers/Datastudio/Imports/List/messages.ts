@@ -64,6 +64,14 @@ export default defineMessages({
   filterStatus: {
     id: 'imports.table.filter.status',
     defaultMessage: 'Status',
+  },
+  edit: {
+    id: 'imports.table.actionColumn.edit',
+    defaultMessage: 'Edit',
+  },
+  archive: {
+    id: 'imports.table.actionColumn.archive',
+    defaultMessage: 'Archive',
   }
 })
 ;

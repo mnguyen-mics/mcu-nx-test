@@ -12,35 +12,35 @@ const AttributionModelPluginContent = GenericPluginContent as React.ComponentCla
 
 const messages = defineMessages({
   listTitle: {
-    id: 'attributionmodel.edit.list.title',
+    id: 'settings.attributionmodel.edit.list.title',
     defaultMessage: 'Attribution Models',
   },
   listSubTitle: {
-    id: 'attributionmodel.edit.list.subtitle',
+    id: 'settings.attributionmodel.edit.list.subtitle',
     defaultMessage: 'New Attribution Model',
   },
   attributionModelNewBreadcrumb: {
-    id: 'attributionmodel.create.breadcrumb.newtitle',
+    id: 'settings.attributionmodel.create.breadcrumb.newtitle',
     defaultMessage: 'New Attribution Model',
   },
   attributionModelEditBreadcrumb: {
-    id: 'attributionmodel.create.breadcrumb.edittitle',
+    id: 'settings.attributionmodel.create.breadcrumb.edittitle',
     defaultMessage: 'Edit {name}',
   },
   attributionModelModeLabel: {
-    id: 'attributionmodel.mode.label',
+    id: 'settings.attributionmodel.mode.label',
     defaultMessage: 'Mode',
   },
   attributionModelModeStrict: {
-    id: 'attributionmodel.mode.strict',
+    id: 'settings.attributionmodel.mode.strict',
     defaultMessage: 'Strict',
   },
   attributionModelModeDiscovery: {
-    id: 'attributionmodel.mode.discovery',
-    defaultMessage: 'Discovery',
+    id: 'settings.attributionmodel.mode.discovery',
+    defaultMessage: 'Dicovery',
   },
   attributionModelModeTooltip: {
-    id: 'attributionmodel.mode.tooltip',
+    id: 'settings.attributionmodel.mode.tooltip',
     defaultMessage: "'Strict' mode allows you to attribute only the campaigns that are linked to your goal, whereas 'discovery' helps your attribute the latest matching campaigns. By default disovery will be applied",
   },
 });

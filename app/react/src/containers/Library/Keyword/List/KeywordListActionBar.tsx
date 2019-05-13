@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
 
@@ -18,7 +18,9 @@ class KeywordActionbar extends React.Component<
 > {
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -30,7 +32,7 @@ class KeywordActionbar extends React.Component<
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/library/keywordslist/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
@@ -42,4 +44,7 @@ class KeywordActionbar extends React.Component<
   }
 }
 
-export default compose(injectIntl, withRouter)(KeywordActionbar);
+export default compose(
+  injectIntl,
+  withRouter,
+)(KeywordActionbar);

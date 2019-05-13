@@ -40,7 +40,7 @@ class SaveAsExportModal extends React.Component<Props, FormData> {
         onOk={handleOnOk}
         title={
           <FormattedMessage
-            id="query-tool-modal-saveas-export-title"
+            id="queryTool.query-tool-modal-saveas-export-title"
             defaultMessage="Save As Export"
           />
         }

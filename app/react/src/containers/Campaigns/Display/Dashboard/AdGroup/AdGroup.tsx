@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { withRouter, Link } from 'react-router-dom';
 import { Button, Layout, Alert } from 'antd';
@@ -140,15 +139,7 @@ class AdGroup extends React.Component<JoinedProps> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-});
-
 export default compose<JoinedProps, AdGroupProps>(
   withRouter,
-  injectIntl,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  injectIntl
 )(AdGroup);

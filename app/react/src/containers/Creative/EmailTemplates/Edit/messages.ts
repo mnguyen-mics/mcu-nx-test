@@ -2,23 +2,23 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   emailTemplateBreadCrumb: {
-    id: 'creatives.email.create.breadcrumb.title',
+    id: 'creatives.email.edit.breadcrumb.title',
     defaultMessage: 'New Email Template',
   },
   creativesTypePickerSubTitle: {
-    id: 'creatives.create.typePicker.subtitle',
+    id: 'creatives.edit.typePicker.subtitle',
     defaultMessage: 'Choose your creative type',
   },
   menuGeneralInformation: {
-    id: 'creatives.create.sidebar.general',
+    id: 'creatives.edit.sidebar.general',
     defaultMessage: 'General',
   },
   menuProperties: {
-    id: 'creatives.create.sidebar.properties',
+    id: 'creatives.edit.sidebar.properties',
     defaultMessage: 'Properties',
   },
   save: {
-    id: 'creatives.create.breadcrumb.save',
+    id: 'creatives.edit.breadcrumb.save',
     defaultMessage: 'Save',
   },
 });

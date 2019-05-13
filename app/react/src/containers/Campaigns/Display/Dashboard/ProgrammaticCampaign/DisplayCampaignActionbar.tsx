@@ -4,9 +4,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Dropdown } from '../../../../../components/PopupContainers';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import withTranslations, {
-  TranslationProps,
-} from '../../../../Helpers/withTranslations';
 import messages from '../messages';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import {
@@ -14,7 +11,7 @@ import {
   DisplayCampaignInfoResource,
 } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
-import { Actionbar } from '../../../../Actionbar';
+import Actionbar from '../../../../../components/ActionBar';
 import McsIcon from '../../../../../components/McsIcon';
 import ExportService from '../../../../../services/ExportService';
 import ReportService from '../../../../../services/ReportService';
@@ -60,7 +57,6 @@ interface DisplayCampaignActionBarState {
 type JoinedProps = DisplayCampaignActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps &
-  TranslationProps &
   InjectedDrawerProps;
 
 // type ReportViewReponse = CancelablePromise<ReportView>;
@@ -280,7 +276,7 @@ class DisplayCampaignActionbar extends React.Component<
     );
 
     const hideExportLoadingMsg = message.loading(
-      this.props.translations.EXPORT_IN_PROGRESS,
+      formatMessage(messages.exportInProgress),
       0,
     );
 
@@ -370,7 +366,7 @@ class DisplayCampaignActionbar extends React.Component<
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {actionElement}
         <Button
           onClick={
@@ -378,7 +374,7 @@ class DisplayCampaignActionbar extends React.Component<
           }
         >
           <McsIcon type="download" />
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage id="display.campaign.actionbar.exportButton" defaultMessage="Export" />
         </Button>
 
         {campaign && campaign.model_version !== 'V2014_06' && (
@@ -594,6 +590,5 @@ class DisplayCampaignActionbar extends React.Component<
 export default compose<JoinedProps, DisplayCampaignActionBarProps>(
   withRouter,
   injectIntl,
-  withTranslations,
   injectDrawer,
 )(DisplayCampaignActionbar);

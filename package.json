@@ -91,6 +91,7 @@
     "@types/recompose": "^0.24.7",
     "@types/redux-form": "^7.4.12",
     "awesome-typescript-loader": "^3.4.1",
+    "babel": "^6.23.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^7.1.5",
@@ -188,11 +189,11 @@
   },
   "scripts": {
     "test": "grunt test",
-    "i18n": "node scripts/i18n.js",
     "test:tslint": "tslint -c tslint.json 'app/react/src/**/*.{ts,tsx}'",
     "test:lint": "eslint --cache --max-warnings 0 app/react/src",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "start": "cross-env NODE_OPTIONS=--max_old_space_size=4000 grunt serve",
-    "build": "cross-env NODE_OPTIONS=--max_old_space_size=4000 grunt build"
+    "build": "cross-env NODE_OPTIONS=--max_old_space_size=4000 grunt build",
+    "translation-file": "npm run build && node scripts/translate.js"
   }
 }

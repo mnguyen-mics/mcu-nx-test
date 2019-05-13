@@ -98,14 +98,12 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
 
     const dataColumns = [
       {
-        translationKey: 'id',
         intlMessage: messages.id,
         key: 'id',
         isHideable: false,
         render: (text: string, record: UserEventCleaningRuleResource) => (<span>{text}</span>),
       },
       {
-        translationKey: 'life_duration',
         intlMessage: messages.lifeDuration,
         key: 'life_duration',
         isHideable: false,
@@ -116,14 +114,12 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
         ),
       },
       {
-        translationKey: 'type',
         intlMessage: messages.type,
         key: 'type',
         isHideable: false,
         render: (text: string, record: UserEventCleaningRuleResource) => (<span>{text}</span>),
       },
       {
-        translationKey: 'activity_type_filter',
         intlMessage: messages.activityTypeFilter,
         key: 'activity_type_filter',
         isHideable: false,

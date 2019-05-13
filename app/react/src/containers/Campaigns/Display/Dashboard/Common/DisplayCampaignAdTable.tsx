@@ -261,7 +261,7 @@ class DisplayCampaignAdTable extends React.Component<
         width: 10,
       },
       {
-        translationKey: 'STATUS',
+        intlMessage: messages.status, 
         key: 'status',
         isHideable: false,
         render: (text: string, record: AdResource) => {
@@ -307,7 +307,7 @@ class DisplayCampaignAdTable extends React.Component<
         </div>,
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messages.name,
         key: 'name',
         isHideable: false,
         render: (text: string, record: AdResource) => {
@@ -325,7 +325,7 @@ class DisplayCampaignAdTable extends React.Component<
         },
       },
       {
-        translationKey: 'IMPRESSIONS',
+        intlMessage: messages.impressions,
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
@@ -333,7 +333,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'impressions'),
       },
       {
-        translationKey: 'CLICKS',
+        intlMessage: messages.clicks,
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
@@ -341,7 +341,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'clicks'),
       },
       {
-        translationKey: 'CPM',
+        intlMessage: messages.cpm,
         key: 'cpm',
         isVisibleByDefault: true,
         isHideable: true,
@@ -349,7 +349,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'cpm'),
       },
       {
-        translationKey: 'CTR',
+        intlMessage: messages.ctr,
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
@@ -358,7 +358,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'ctr'),
       },
       {
-        translationKey: 'CPC',
+        intlMessage: messages.cpc,
         key: 'cpc',
         isVisibleByDefault: true,
         isHideable: true,
@@ -366,7 +366,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'cpc'),
       },
       {
-        translationKey: 'IMPRESSIONS_COST',
+        intlMessage: messages.impressions_cost,
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHideable: true,
@@ -380,15 +380,15 @@ class DisplayCampaignAdTable extends React.Component<
         key: 'action',
         actions: () => [
           {
-            translationKey: 'EDIT',
+            intlMessage: messages.editCampaign,
             callback: this.editCampaign,
           },
           {
-            translationKey: 'HISTORY',
+            intlMessage: messages.history,
             callback: this.openHistoryDrawer,
           },
           {
-            translationKey: 'ARCHIVE',
+            intlMessage: messages.archiveCampaign,
             callback: this.archiveAd,
           },
         ],

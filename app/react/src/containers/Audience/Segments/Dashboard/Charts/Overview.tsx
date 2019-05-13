@@ -18,16 +18,12 @@ import McsDateRangePicker, {
 } from '../../../../../components/McsDateRangePicker';
 import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
-
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
-
 import {
   updateSearch,
   parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
-
 import messages from '../messages';
-import { TranslationProps } from '../../../../Helpers/withTranslations';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
@@ -40,7 +36,6 @@ interface OverviewProps {
 }
 
 type Props = OverviewProps &
-  TranslationProps &
   InjectedThemeColorsProps &
   InjectedIntlProps &
   RouteComponentProps<{

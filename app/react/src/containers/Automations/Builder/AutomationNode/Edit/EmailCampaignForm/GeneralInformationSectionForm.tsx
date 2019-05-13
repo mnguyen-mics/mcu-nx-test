@@ -25,32 +25,32 @@ import { EmailCampaignAutomationFormData } from '../domain';
 
 export const formMessages = defineMessages({
   sectionGeneralTitle: {
-    id: 'automation.builder.node.edition.form.general.title',
+    id: 'automation.builder.node.emailCampaignForm.generalInfoSection.title',
     defaultMessage: 'General information',
   },
   sectionGeneralSubtitle: {
-    id: 'automation.builder.node.edition.form.general.subtitle',
+    id: 'automation.builder.node.emailCampaignForm.general.subtitle',
     defaultMessage: 'Modify the general information of your email campaign',
   },
   automationNodeName: {
-    id: 'automation.builder.node.form.name',
+    id: 'automation.builder.node.emailCampaignForm.name',
     defaultMessage: 'Automation Node name',
   },
   emailEditorRouterSelectLabel: {
-    id: 'emailEditor.step.select.label.router',
+    id: 'automation.builder.step.select.label.router',
     defaultMessage: 'Router',
   },
   emailEditorRouterSelectHelper: {
-    id: 'emailEditor.step.select.helper.router',
+    id: 'automation.builder.emailEditor.step.select.helper.router',
     defaultMessage:
       'Choose your Router. A Router is basically a channel through which you will send your email.',
   },
   emailEditorProviderSelectLabel: {
-    id: 'emailEditor.step.select.label.provider',
+    id: 'automation.builder.emailEditor.step.select.label.provider',
     defaultMessage: 'Provider',
   },
   emailEditorProviderSelectHelper: {
-    id: 'emailEditor.step.select.helper.provider',
+    id: 'automation.builder.emailEditor.step.select.helper.provider',
     defaultMessage:
       'A Provider helps you target the user that have given you an explicit consent on being targeted by email',
   },

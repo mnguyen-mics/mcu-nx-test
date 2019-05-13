@@ -37,7 +37,7 @@ class AudienceSegmentSummary extends React.Component<Props> {
     ) {
       content = (
         <FormattedMessage
-          id="ad-group-form-summary-segments-none"
+          id="display.campaign.edit.adGroup.summarySection.noSegment"
           defaultMessage="Your ads will target everyone"
         />
       );
@@ -48,7 +48,7 @@ class AudienceSegmentSummary extends React.Component<Props> {
       content = (
         <div>
           <FormattedMessage
-            id="ad-group-form-summary-segments-include_only"
+            id="display.campaign.edit.adGroup.summarySection.includeOnly"
             defaultMessage="Your ads will target the following {segmentCount, plural , one {segment} other {segments} }"
             values={{
               segmentCount: includedSegmentNames.length
@@ -64,7 +64,7 @@ class AudienceSegmentSummary extends React.Component<Props> {
       content = (
         <div className="error-color">
           <FormattedMessage
-            id="ad-group-form-summary-segments-exclude_only"
+            id="display.campaign.edit.adGroup.summarySection.excludeOnly"
             defaultMessage="Please target at least one segment"
           />
         </div>
@@ -76,7 +76,7 @@ class AudienceSegmentSummary extends React.Component<Props> {
       content = (
         <div>
           <FormattedMessage
-            id="ad-group-form-summary-segments-include"
+            id="display.campaign.edit.adGroup.summarySection.include"
             defaultMessage="Your ads will target the following {segmentCount, plural , one {segment} other {segments} }"
             values={{
               segmentCount: includedSegmentNames.length
@@ -85,7 +85,7 @@ class AudienceSegmentSummary extends React.Component<Props> {
           <p className="info-color">{printStringArray(includedSegmentNames)}</p>
           <br />
           <FormattedMessage
-            id="ad-group-form-summary-segments-exclude"
+            id="display.campaign.edit.adGroup.summarySection.exclude"
             defaultMessage="Your ads will no target the following {segmentCount, plural , one {segment} other {segments} }"
             values={{
               segmentCount: excludedSegmentNames.length

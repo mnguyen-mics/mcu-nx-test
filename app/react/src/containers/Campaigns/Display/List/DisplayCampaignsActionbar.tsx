@@ -10,8 +10,7 @@ import {
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Dropdown } from '../../../../components/PopupContainers';
-import { withTranslations } from '../../../Helpers';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
 import CampaignService, {
@@ -38,28 +37,27 @@ import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
 
 const messagesMap = defineMessages({
   setStatus: {
-    id: 'set.ads.status',
+    id: 'display.campaigns.list.multiEdit.status.setStatusTo',
     defaultMessage: 'Set status to',
   },
   activeAll: {
-    id: 'active.all.ads',
+    id: 'display.campaigns.list.multiEdit.status.activeAll',
     defaultMessage: 'Active',
   },
   pauseAll: {
-    id: 'pause.all.ads',
+    id: 'display.campaigns.list.multiEdit.status.pauseAll',
     defaultMessage: 'Paused',
   },
   exportInProgress: {
-    id: 'display.campaigns.export.in.progress',
+    id: 'display.campaigns.list.actionbar.exportInProgress',
     defaultMessage: 'Export in progress',
   },
   breadCrumbPath: {
-    id: 'display.campaigns.breadCrumb',
+    id: 'display.campaigns.list.actionbar.breadCrumb.display',
     defaultMessage: 'Display',
   },
 });
@@ -86,7 +84,6 @@ export interface FilterParams
 
 type JoinedProps = DisplayCampaignsActionbarProps &
   InjectedIntlProps &
-  TranslationProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -169,7 +166,7 @@ class DisplayCampaignsActionbar extends React.Component<
       match: {
         params: { organisationId },
       },
-      translations,
+      intl
     } = this.props;
 
     const filter = parseSearch<FilterParams>(
@@ -180,7 +177,7 @@ class DisplayCampaignsActionbar extends React.Component<
     this.setState({ exportIsRunning: true });
 
     const hideExportLoadingMsg = message.loading(
-      translations.EXPORT_IN_PROGRESS,
+      intl.formatMessage(messagesMap.exportInProgress),
       0,
     );
 
@@ -190,7 +187,7 @@ class DisplayCampaignsActionbar extends React.Component<
           organisationId,
           data,
           filter,
-          translations,
+          intl.formatMessage
         );
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
@@ -268,16 +265,17 @@ class DisplayCampaignsActionbar extends React.Component<
     };
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/display/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_CAMPAIGN" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage id="display.campaigns.list.actionbar.newCampaignButton" defaultMessage="New Campaign" />
           </Button>
         </Link>
 
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage id="display.campaigns.list.actionbar.newExportButton" defaultMessage="Export" />
         </Button>
 
         <Slider
@@ -289,7 +287,7 @@ class DisplayCampaignsActionbar extends React.Component<
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="ARCHIVE" />
+              <FormattedMessage id="display.campaigns.list.actionbar.archiveButton" defaultMessage="Archive" />
             </Button>
           }
         />
@@ -317,7 +315,7 @@ class DisplayCampaignsActionbar extends React.Component<
               className="button-slider button-glow"
             >
               <McsIcon type="pen" />
-              <FormattedMessage id="EDIT" />
+              <FormattedMessage id="display.campaigns.list.actionbar.editCampaignButton" defaultMessage="Edit" />
             </Button>
           }
         />
@@ -338,9 +336,11 @@ const mapStateToProps = (state: { drawableContents: DrawableContent[] }) => ({
 
 export default compose<JoinedProps, DisplayCampaignsActionbarProps>(
   withRouter,
-  withTranslations,
   injectDrawer,
   injectNotifications,
-  connect(mapStateToProps, undefined),
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
   injectIntl,
 )(DisplayCampaignsActionbar);

@@ -4,15 +4,21 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import AssetsFilesService from '../../../../services/Library/AssetsFilesService';
 import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
 
 import { UploadFile } from 'antd/lib/upload/interface';
 import { Filters } from '../../../../components/ItemList';
-import { updateSearch, PAGINATION_SEARCH_SETTINGS, parseSearch } from '../../../../utils/LocationSearchHelper';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import {
+  updateSearch,
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+} from '../../../../utils/LocationSearchHelper';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const maxFileSize = 200 * 1024;
 
@@ -53,7 +59,9 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
 
   handleOnUpload = () => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
       location: { pathname, search },
     } = this.props;
@@ -71,10 +79,14 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
         if (filter.currentPage !== 1) {
           history.replace({
             pathname: pathname,
-            search: updateSearch(search, {
-              currentPage: 1,
-              pageSize: 10,
-            }, PAGINATION_SEARCH_SETTINGS),
+            search: updateSearch(
+              search,
+              {
+                currentPage: 1,
+                pageSize: 10,
+              },
+              PAGINATION_SEARCH_SETTINGS,
+            ),
           });
         } else {
           this.props.onUploadDone(this.props.match.params.organisationId, {
@@ -90,7 +102,9 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
   };
 
   checkIfSizeOK = (file: UploadFile) => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const isSizeOK = file.size < maxFileSize;
     if (!isSizeOK) {
       message.error(`${file.name} ${formatMessage(messages.uploadError)}`, 2);
@@ -104,7 +118,9 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
   };
 
   renderModal = () => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     const props = {
       name: 'file',
@@ -153,7 +169,9 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -165,7 +183,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {this.renderModal()}
         <Button
           className="mcs-primary"

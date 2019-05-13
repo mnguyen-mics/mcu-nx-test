@@ -16,15 +16,15 @@ interface State {
 
 const messages = defineMessages({
   zones: {
-    id: 'zone;edit.breadcrumb.zones',
+    id: 'zone.edit.breadcrumb.zones',
     defaultMessage: 'Zones'
   },
   create: {
-    id: 'zone;edit.breadcrumb.create',
+    id: 'zone.edit.breadcrumb.create',
     defaultMessage: 'Create New Zone'
   },
   edit: {
-    id: 'zone;edit.breadcrumb.edit',
+    id: 'zone.edit.breadcrumb.edit',
     defaultMessage: 'Edit {name}'
   },
 })

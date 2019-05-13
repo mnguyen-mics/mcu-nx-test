@@ -40,62 +40,58 @@ const Content = Layout.Content as React.ComponentClass<
 
 const messages = defineMessages({
   addPlacementDescriptor: {
-    id: 'edit.placement.list.edit.placementDescriptor.add',
+    id: 'placement.placementDescriptor.edit.actionbar.add',
     defaultMessage: 'Add',
   },
   editPlacementDescriptor: {
-    id: 'edit.placement.list.edit.placementDescriptor.edit',
+    id: 'placement.placementDescriptor.edit.actionbar.editPlacementDescriptor',
     defaultMessage: 'Edit {name}',
   },
-  placements: {
-    id: 'edit.placement.list.placements',
-    defaultMessage: 'Placements',
-  },
   newPlacementDescriptor: {
-    id: 'new.placement.descriptor',
+    id: 'placement.placementDescriptor.edit.actionbar.newPlacementDescriptor',
     defaultMessage: 'New Placement Descriptor',
   },
   generalInfos: {
-    id: 'edit.placement.descriptor.general.section.title',
+    id: 'placement.placementDescriptor.edit.generalSection.title',
     defaultMessage: 'General Informations',
   },
   generalInfosSubtitle: {
-    id: 'edit.placement.descriptor.general.section.subtitle',
+    id: 'placement.placementDescriptor.edit.generalSection.subtitle',
     defaultMessage: 'Edit placement descriptor',
   },
   labelValuePlacementDescriptor: {
-    id: 'edit.placement.descriptor.label.value',
+    id: 'placement.placementDescriptor.edit.label.value',
     defaultMessage: 'Value',
   },
   labelTypePlacementDescriptor: {
-    id: 'edit.placement.descriptor.label.type',
+    id: 'placement.placementDescriptor.edit.label.type',
     defaultMessage: 'Type',
   },
   labelHolderPlacementDescriptor: {
-    id: 'edit.placement.descriptor.label.holder',
+    id: 'placement.placementDescriptor.edit.label.holder',
     defaultMessage: 'Holder',
   },
   websiteValueTooltip: {
-    id: 'edit.placement.descriptor.tooltip.website.value',
+    id: 'placement.placementDescriptor.edit.tooltip.website.value',
     defaultMessage:
       'Please add the webdomain you want to target such as example.com.',
   },
   mobileValueTooltip: {
-    id: 'edit.placement.descriptor.tooltip.mobile.value',
+    id: 'placement.placementDescriptor.edit.tooltip.mobile.value',
     defaultMessage: 'Please input the ID of the mobile app your are targeting.',
   },
   websiteTypeTooltip: {
-    id: 'edit.placement.descriptor.tooltip.website.type',
+    id: 'placement.placementDescriptor.edit.tooltip.website.type',
     defaultMessage:
       'Pattern will allow you to target or exclude domains or subdomains (for instance example.com will target all pages on this domain) Exact URL allows your to target or exclude a single URL (for instance example.com will target only the root page of this domain)',
   },
   mobileTypeTooltip: {
-    id: 'edit.placement.descriptor.tooltip.mobile.type',
+    id: 'placement.placementDescriptor.edit.tooltip.mobile.type',
     defaultMessage:
       'Exact application ID will target or exclude the application id entered above.',
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'placement.placementDescriptor.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
 });

@@ -24,27 +24,27 @@ import {
 
 const messages = defineMessages({
   audienceSegment: {
-    id: 'typeSelector.audienceSegment',
+    id: 'components.elementSelector.tableSelector.audienceSegment',
     defaultMessage: 'Audience Segment',
   },
   dealList: {
-    id: 'typeSelector.dealList',
+    id: 'components.elementSelector.tableSelector.dealList',
     defaultMessage: 'Deal List',
   },
   placementList: {
-    id: 'typeSelector.placementList',
+    id: 'components.elementSelector.tableSelector.placementList',
     defaultMessage: 'Placement List',
   },
   keywordList: {
-    id: 'typeSelector.keywordList',
+    id: 'components.elementSelector.tableSelector.keywordList',
     defaultMessage: 'Keyword List',
   },
   userAccountCompartment: {
-    id: 'typeSelector.userAccountCompartment',
+    id: 'components.elementSelector.tableSelector.userAccountCompartment',
     defaultMessage: 'User Account Compartment',
   },
   serviceType: {
-    id: 'typeSelector.serviceType',
+    id: 'components.elementSelector.tableSelector.serviceType',
     defaultMessage: 'Service type',
   }
 });
@@ -236,7 +236,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         {
           displayElement: (
             <div>
-              <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+              <FormattedMessage id="components.elementSelector.tableSelector.filterDatamart.button" defaultMessage="Datamart" />{' '}
               <Icon type="down" />
             </div>
           ),

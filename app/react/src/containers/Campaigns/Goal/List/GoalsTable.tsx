@@ -43,9 +43,10 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { McsIcon } from '../../../../components';
-import withTranslations, { TranslationProps } from '../../../Helpers/withTranslations';
 
-const messages = defineMessages({
+const messages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
   labelFilterBy: {
     id: 'goal.filterby.label',
     defaultMessage: 'Filter By Label',
@@ -73,6 +74,34 @@ const messages = defineMessages({
   archiveGoalActionButton: {
     id: 'goals.table.archive.action.button',
     defaultMessage: 'Archive',
+  },
+  ACTIVE: {
+    id: 'goals.table.status.active',
+    defaultMessage: 'Active',
+  },
+  PAUSED: {
+    id: 'goals.table.status.paused',
+    defaultMessage: 'Paused',
+  },
+  status: {
+    id: 'goals.table.column.status',
+    defaultMessage: 'Status',
+  },
+  name: {
+    id: 'goals.table.column.name',
+    defaultMessage: 'Name',
+  },
+  conversions: {
+    id: 'goals.table.column.conversions',
+    defaultMessage: 'Conversions',
+  },
+  conversionValue: {
+    id: 'goals.table.column.conversionValue',
+    defaultMessage: 'Conversion value',
+  },
+  edit: {
+    id: 'goals.table.column.action.edit',
+    defaultMessage: 'Edit',
   },
 });
 
@@ -108,7 +137,7 @@ type GoalsTableProps = MapStateToProps &
   MapDispatchToProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string }> & TranslationProps;
+  RouteComponentProps<{ organisationId: string }>;
 
 class GoalsTable extends React.Component<GoalsTableProps> {
   componentDidMount() {
@@ -261,7 +290,6 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       labels,
       intl,
       workspace,
-      translations,
     } = this.props;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
@@ -321,11 +349,11 @@ class GoalsTable extends React.Component<GoalsTableProps> {
 
     const dataColumns = [
       {
-        translationKey: "STATUS",
+        intlMessage: messages.status,
         key: 'status',
         isHideable: false,
         render: (text: string, record: GoalResource) => (
-          <Tooltip placement="top" title={translations[text]}>
+          <Tooltip placement="top" title={intl.formatMessage(messages[text])}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
               <McsIcon type="status" />
             </span>
@@ -333,7 +361,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
         ),
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messages.name,
         key: 'name',
         isHideable: false,
         render: (text: string, record: GoalResource) => (
@@ -346,14 +374,14 @@ class GoalsTable extends React.Component<GoalsTableProps> {
         ),
       },
       {
-        translationKey: 'CONVERSIONS',
+        intlMessage: messages.conversions,
         key: 'conversions',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'CONVERSION_VALUE',
+        intlMessage: messages.conversionValue,
         key: 'value',
         isVisibleByDefault: true,
         isHideable: true,
@@ -366,7 +394,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
         key: 'action',
         actions: () => [
           {
-            translationKey: 'EDIT',
+            intlMessage: messages.edit,
             callback: this.handleEditGoal,
           },
           {
@@ -381,7 +409,11 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       {
         displayElement: (
           <div>
-            <FormattedMessage id="STATUS" /> <Icon type="down" />
+            <FormattedMessage
+              id="goals.list.statusFilter"
+              defaultMessage="Status"
+            />{' '}
+            <Icon type="down" />
           </div>
         ),
         selectedItems: filter.statuses.map((status: string) => ({
@@ -415,7 +447,10 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       const datamartFilterOptions: MultiSelectProps<any> = {
         displayElement: (
           <div>
-            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+            <FormattedMessage
+              id="goals.list.datamartFilter"
+              defaultMessage="Datamart"
+            />{' '}
             <Icon type="down" />
           </div>
         ),
@@ -492,7 +527,6 @@ const mapDispatchToProps = {
 export default compose<GoalsTableProps, {}>(
   injectIntl,
   withRouter,
-  withTranslations,
   injectNotifications,
   connect(
     mapStateToProps,

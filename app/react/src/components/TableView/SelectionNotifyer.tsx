@@ -30,7 +30,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
         content = (
           <div>
             <FormattedMessage
-              id="display.items.allSelectedRows.msg"
+              id="components.tableview.selectionNotifyer.allRowsSelected"
               defaultMessage={`All the {paginationTotal} items of this list have been selected. `}
               values={{
                 paginationTotal: pagination.total,
@@ -41,7 +41,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
               className="selected-rows-btn"
             >
               <FormattedMessage
-                id="display.items.unselectall.buttonText"
+                id="components.tableview.selectionNotifyer.unselectAll"
                 defaultMessage={`Click here to unselect all the items.`}
               />
             </ButtonStyleless>
@@ -51,7 +51,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
         content = (
           <div>
             <FormattedMessage
-              id="display.items.selectedPageRows.msg"
+              id="components.tableview.selectionNotifyer.allPageRowsSelected"
               defaultMessage={`You have selected {paginationPageSize} items. `}
               values={{
                 paginationPageSize: pagination.pageSize,
@@ -62,7 +62,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
               className="selected-rows-btn"
             >
               <FormattedMessage
-                id="display.items.selectall.buttonText"
+                id="components.tableview.selectionNotifyer.selectAll"
                 defaultMessage={`Click here to select all the items.`}
               />
             </ButtonStyleless>
@@ -72,7 +72,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
         content = (
           <div>
             <FormattedMessage
-              id="display.items.selectedRows.msg"
+              id="components.tableview.selectionNotifyer.selectedRows"
               defaultMessage={`You have selected {selectedRowKeysLength}
               { selectedRowKeysLength, plural, zero {item} one {item} other {items} }.`}
               values={{

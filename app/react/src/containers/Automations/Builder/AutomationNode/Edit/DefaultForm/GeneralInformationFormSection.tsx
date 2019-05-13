@@ -16,19 +16,19 @@ import { DefaultFormData } from '../domain';
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id: 'automation.builder.node.edition.form.general.title',
+    id: 'automation.builder.node.defaultForm.generalInfoSection.title',
     defaultMessage: 'General Informations',
   },
   sectionGeneralSubtitle: {
-    id: 'automation.builder.node.edition.form.general.subtitle',
+    id: 'automation.builder.node.defaultForm.general.subtitle',
     defaultMessage: 'Modify the general information of the node',
   },
   automationNodeName: {
-    id: 'automation.builder.node.form.name',
+    id: 'automation.builder.node.defaultForm.name',
     defaultMessage: 'Automation Node name',
   },
   advancedSection: {
-    id: 'automation.builder.node.advanced.section',
+    id: 'automation.builder.node.defaultForm.advanced.section',
     defaultMessage: 'Advanced',
   },
 });

@@ -23,7 +23,7 @@ import ExportService from '../../../../../services/ExportService';
 
 const messages = defineMessages({
   serviceUsageReportTitle: {
-    id: 'seetings.service.usage.report.title',
+    id: 'settings.datamart.serviceUsageReport.list.title',
     defaultMessage: 'Service Usage Report List',
   },
 });
@@ -89,7 +89,9 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
 
   fetchData = () => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
     } = this.props;
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -114,7 +116,9 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
 
   handleRunExport = () => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       location: { search },
       intl: { formatMessage },
     } = this.props;
@@ -164,7 +168,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
           style={{ float: 'right', bottom: '10px' }}
         >
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage id="settings.datamart.serviceUsageReport.list.export" defaultMessage="Export" />
         </Button>
 
         <hr className="mcs-separator" />

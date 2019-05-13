@@ -8,9 +8,7 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
-
-import { withTranslations } from '../../../Helpers';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 
 import ExportService from '../../../../services/ExportService';
@@ -23,18 +21,20 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { GOAL_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { Index } from '../../../../utils';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 
 const messages = defineMessages({
   exportInProgress: {
     id: 'goals.actionbar.button.export',
     defaultMessage: 'Export in progress',
   },
+  goals: {
+    id: 'goals.actionbar.breadCrumbPath.goals',
+    defaultMessage: 'Goals',
+  },
 });
 
 type GoalsActionbarProps = InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }> &
-  TranslationProps;
+  RouteComponentProps<{ organisationId: string }>;
 
 interface State {
   exportIsRunning: boolean;
@@ -105,7 +105,6 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
         params: { organisationId },
       },
       intl,
-      translations,
     } = this.props;
 
     const filter = parseSearch(
@@ -121,7 +120,12 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
 
     fetchExportData(organisationId, filter)
       .then(data => {
-        ExportService.exportGoals(organisationId, data, filter, translations);
+        ExportService.exportGoals(
+          organisationId,
+          data,
+          filter,
+          intl.formatMessage,
+        );
         this.setState({
           exportIsRunning: false,
         });
@@ -141,35 +145,42 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
       match: {
         params: { organisationId },
       },
-      translations,
+      intl,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
 
     const breadcrumbPaths = [
       {
-        name: translations.GOALS,
+        name: intl.formatMessage(messages.goals),
         url: `/v2/o/${organisationId}/campaigns/goals`,
       },
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/goals/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />
-            <FormattedMessage id="NEW_GOAL" />
+            <FormattedMessage
+              id="goals.list.actionbar.newGoal"
+              defaultMessage="New Goal"
+            />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="EXPORT" />
+          <FormattedMessage
+            id="goals.list.actionbar.export"
+            defaultMessage="Export"
+          />
         </Button>
       </Actionbar>
     );
   }
 }
 
-export default compose(withRouter, withTranslations, injectIntl)(
-  GoalsActionbar,
-);
+export default compose(
+  withRouter,
+  injectIntl,
+)(GoalsActionbar);

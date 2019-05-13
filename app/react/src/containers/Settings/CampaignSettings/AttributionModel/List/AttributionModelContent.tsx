@@ -89,7 +89,9 @@ class AttributionModelContent extends React.Component<
     const {
       location: { pathname, state, search },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -127,7 +129,12 @@ class AttributionModelContent extends React.Component<
   };
 
   onClickEdit = (attribution: AttributionModelInterface) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     history.push(
       `/v2/o/${organisationId}/settings/campaigns/attribution_models/${
         attribution.id
@@ -136,21 +143,27 @@ class AttributionModelContent extends React.Component<
   };
 
   render() {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<AttributionModelInterface>> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<AttributionModelInterface>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          { intlMessage: messages.edit, callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
@@ -166,7 +179,6 @@ class AttributionModelContent extends React.Component<
         ),
       },
       {
-        translationKey: 'ENGINE',
         intlMessage: messages.engine,
         key: 'id',
         isHideable: false,
@@ -183,7 +195,6 @@ class AttributionModelContent extends React.Component<
         },
       },
       {
-        translationKey: 'MINER',
         intlMessage: messages.miner,
         key: '',
         isHideable: false,
@@ -252,4 +263,7 @@ class AttributionModelContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(AttributionModelContent);
+export default compose(
+  withRouter,
+  injectIntl,
+)(AttributionModelContent);

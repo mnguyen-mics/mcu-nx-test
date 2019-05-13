@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as Plottable from 'plottable';
 import moment from 'moment';
 import ChartUtils from '../ChartUtils';
-
 import { areDatesSameDay, truncateUpToHour } from '../../utils/DateHelper';
 import { ChartTooltip, BasicTooltip } from '../ChartTooltip/index';
 import { QuantitativeScale } from 'plottable/build/src/scales/quantitativeScale';
@@ -11,10 +10,8 @@ import { Component } from 'plottable/build/src/components/component';
 import { Pointer } from 'plottable/build/src/interactions';
 import { XDragBoxLayer } from 'plottable/build/src/components';
 import { ITickGenerator } from 'plottable/build/src/scales/tickGenerators';
-import MessageDescriptor = ReactIntl.FormattedMessage.MessageDescriptor;
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import InjectedIntlProps = ReactIntl.InjectedIntlProps;
 
 const HOUR_MILLIS = 3600 * 1000;
 const DAY_MILLIS = 24 * HOUR_MILLIS;
@@ -32,7 +29,7 @@ interface StackedAreaPlotDoubleAxisProps {
   dataset: any[];
   options: ChartOptions;
   style?: any;
-  intlMessages: { [s: string]: MessageDescriptor };
+  intlMessages: { [s: string]: FormattedMessage.MessageDescriptor };
 }
 
 interface StackedAreaPlotDoubleAxisState {
@@ -47,7 +44,7 @@ interface ChartTooltipProps {
 }
 
 interface Entry {
-  label: MessageDescriptor;
+  label: FormattedMessage.MessageDescriptor;
   value: number;
   color: string;
 }
@@ -80,9 +77,10 @@ interface PlotComponents {
   other: Component[];
 }
 
-class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxisProps & InjectedIntlProps,
-  StackedAreaPlotDoubleAxisState> {
-
+class StackedAreaPlotDoubleAxis extends React.Component<
+  StackedAreaPlotDoubleAxisProps & InjectedIntlProps,
+  StackedAreaPlotDoubleAxisState
+> {
   svgBoundingClientRect = {
     top: 0,
     bottom: 0,
@@ -98,7 +96,9 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
 
   constructor(props: StackedAreaPlotDoubleAxisProps & InjectedIntlProps) {
     super(props);
-    this.renderStackedAreaPlotDoubleAxis = this.renderStackedAreaPlotDoubleAxis.bind(this);
+    this.renderStackedAreaPlotDoubleAxis = this.renderStackedAreaPlotDoubleAxis.bind(
+      this,
+    );
     this.defineSvg = this.defineSvg.bind(this);
     this.setTooltip = this.setTooltip.bind(this);
     this.state = {
@@ -148,25 +148,25 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
   }
 
   componentDidMount() {
-    if (!this.mountLock)
-      this.renderStackedAreaPlotDoubleAxis(this.props);
+    if (!this.mountLock) this.renderStackedAreaPlotDoubleAxis(this.props);
   }
 
   componentWillReceiveProps(nextProps: StackedAreaPlotDoubleAxisProps) {
-    if (this.mountLock)
-      this.renderStackedAreaPlotDoubleAxis(nextProps);
+    if (this.mountLock) this.renderStackedAreaPlotDoubleAxis(nextProps);
     this.mountLock = true;
     this.updateBoundingRect();
   }
 
   defineSvg = (svg: any) => {
     this.svg = svg;
-  }
+  };
 
   render() {
     const { identifier, options } = this.props;
 
-    const { chartTooltipProps: { xTooltip, yTooltip, content, visibility } } = this.state;
+    const {
+      chartTooltipProps: { xTooltip, yTooltip, content, visibility },
+    } = this.state;
     const tooltipStyle = {
       xTooltip,
       yTooltip,
@@ -192,9 +192,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
                 </linearGradient>
               );
             })}
-            <filter id="shadow">
-              {feDropShadow}
-            </filter>
+            <filter id="shadow">{feDropShadow}</filter>
           </defs>
         </svg>
         <div
@@ -216,17 +214,27 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     if (dataset.length) {
       const lastDate = moment(new Date(dataset[dataset.length - 1].day));
       const firstDate = moment(new Date(dataset[0].day));
-      tickInterval = areDatesSameDay(lastDate, firstDate) && hasHoursOfDay ? HOUR_MILLIS : DAY_MILLIS;
+      tickInterval =
+        areDatesSameDay(lastDate, firstDate) && hasHoursOfDay
+          ? HOUR_MILLIS
+          : DAY_MILLIS;
     }
     return tickInterval;
   }
 
   buildXScale(dataset: any[], hasHourOfDay: boolean): QuantitativeScale<Date> {
     const xScale = new Plottable.Scales.Time().padProportion(0);
-    const tickInterval: number = this.extractTickInterval(dataset, hasHourOfDay);
+    const tickInterval: number = this.extractTickInterval(
+      dataset,
+      hasHourOfDay,
+    );
 
     // UGLY HACK but it's Plottable fault for not providing a way to build a ITickGenerator<Date>
-    const tickGenerator: ITickGenerator<Date> = Plottable.Scales.TickGenerators.intervalTickGenerator(tickInterval) as any;
+    const tickGenerator: ITickGenerator<
+      Date
+    > = Plottable.Scales.TickGenerators.intervalTickGenerator(
+      tickInterval,
+    ) as any;
     xScale.tickGenerator(tickGenerator);
     return xScale;
   }
@@ -253,7 +261,10 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     return scales;
   }
 
-  formatYAxis(yScale: QuantitativeScale<number>, side: Plottable.AxisOrientation) {
+  formatYAxis(
+    yScale: QuantitativeScale<number>,
+    side: Plottable.AxisOrientation,
+  ) {
     return new Plottable.Axes.Numeric(yScale, side).showEndTickLabels(false);
   }
 
@@ -264,20 +275,16 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     return colorScale;
   }
 
-  buildDragBox(
-    xScale: QuantitativeScale<Date>,
-    onDragEnd: any,
-  ) {
+  buildDragBox(xScale: QuantitativeScale<Date>, onDragEnd: any) {
     const dragBox = new Plottable.Components.XDragBoxLayer();
     dragBox.resizable(true);
-    dragBox.onDragEnd((bounds) => {
+    dragBox.onDragEnd(bounds => {
       const startDragDate = moment(xScale.invert(bounds.topLeft.x));
       const endDragDate = moment(xScale.invert(bounds.bottomRight.x));
       const min = startDragDate;
-      const duration: number = (endDragDate).diff(min, 'milliseconds');
-      const max = duration > DAY_MILLIS ?
-        endDragDate :
-        endDragDate.add(1, 'days');
+      const duration: number = endDragDate.diff(min, 'milliseconds');
+      const max =
+        duration > DAY_MILLIS ? endDragDate : endDragDate.add(1, 'days');
 
       onDragEnd([min, max]);
     });
@@ -350,7 +357,7 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
               return plotitem.item;
             },
             colorScale,
-        );
+          );
       });
 
     const pointComponents: Component[] = Object.keys(dataset[0])
@@ -379,7 +386,9 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
         );
       });
 
-    const guideline = new Plottable.Components.GuideLineLayer(Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL).scale(xScale);
+    const guideline = new Plottable.Components.GuideLineLayer(
+      Plottable.Components.GuideLineLayer.ORIENTATION_VERTICAL,
+    ).scale(xScale);
     pointComponents.push(guideline);
 
     return {
@@ -402,12 +411,16 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
   ) {
     const chartComponents: Component[] = dragBox ? [plots, dragBox] : [plots];
     const chart = new Plottable.Components.Group(chartComponents);
-    const table = new Plottable.Components.Table([[yAxis, chart, secondYAxis], [null, xAxis, null]]);
+    const table = new Plottable.Components.Table([
+      [yAxis, chart, secondYAxis],
+      [null, xAxis, null],
+    ]);
 
     table.renderTo(`#${identifier}`);
     this.plot = table;
 
-    gridlines.content()
+    gridlines
+      .content()
       .selectAll('line')
       .attr('stroke', '#8CA0B3')
       .attr('opacity', '0.6')
@@ -465,7 +478,8 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
       this.plot.destroy();
     }
 
-    const hasHoursOfDay = dataset.length && dataset[0].hour_of_day !== undefined ? true : false;
+    const hasHoursOfDay =
+      dataset.length && dataset[0].hour_of_day !== undefined ? true : false;
     const xScale = this.buildXScale(dataset, hasHoursOfDay);
     const xAxis = ChartUtils.formatXAxis(xScale, dataset, hasHoursOfDay);
 
@@ -475,9 +489,14 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     const secondYAxis = this.formatYAxis(yScales[yKeys[1]], 'right');
 
     const colorScale = this.buildColorScale(yKeys, options.colors);
-    const dragBox = options.isDraggable ? this.buildDragBox(xScale, options.onDragEnd) : null;
+    const dragBox = options.isDraggable
+      ? this.buildDragBox(xScale, options.onDragEnd)
+      : null;
 
-    const gridlines = new Plottable.Components.Gridlines(xScale, firstYScale).addClass('gridline');
+    const gridlines = new Plottable.Components.Gridlines(
+      xScale,
+      firstYScale,
+    ).addClass('gridline');
     const plotComponents = this.buildPlots(
       dataset,
       plottableDataSet,
@@ -492,7 +511,9 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     const componentsToRender: Component[] = plotComponents.other
       .concat(plotComponents.areaComponents)
       .concat(plotComponents.pointComponents);
-    const componentsGroupToRender = new Plottable.Components.Group(componentsToRender);
+    const componentsGroupToRender = new Plottable.Components.Group(
+      componentsToRender,
+    );
     this.renderPlots(
       options,
       gridlines,
@@ -509,9 +530,16 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
   }
 
   createDotsCrosshair(plot: Plottable.Plot): DotsCrossHair {
-    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
+    const crosshairContainer = plot
+      .foreground()
+      .append('g')
+      .style('visibility', 'hidden');
 
-    const circle = crosshairContainer.append('circle').attr('fill', 'white').attr('filter', 'url(#shadow)').attr('r', 8);
+    const circle = crosshairContainer
+      .append('circle')
+      .attr('fill', 'white')
+      .attr('filter', 'url(#shadow)')
+      .attr('r', 8);
 
     const drawAt = (p: Position) => {
       circle.attr('cx', p.x);
@@ -529,11 +557,17 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
     };
   }
 
-  createLineCrosshair(plot: Plottable.Plot, options: ChartOptions): LineCrossHair {
+  createLineCrosshair(
+    plot: Plottable.Plot,
+    options: ChartOptions,
+  ): LineCrossHair {
     const { intlMessages } = this.props;
     const { xKey, yKeys } = options;
 
-    const crosshairContainer = plot.foreground().append('g').style('visibility', 'hidden');
+    const crosshairContainer = plot
+      .foreground()
+      .append('g')
+      .style('visibility', 'hidden');
     const svgBoundingClientRect = this.svgBoundingClientRect;
     const setTooltip = this.setTooltip;
 
@@ -546,7 +580,10 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
       .attr('y1', 0)
       .attr('y2', plot.height());
 
-    const drawAt = (mousePosition: Position, navInfo: Plots.ILightweightPlotEntity) => {
+    const drawAt = (
+      mousePosition: Position,
+      navInfo: Plots.ILightweightPlotEntity,
+    ) => {
       const navPosition = navInfo.position;
       vLine.attr('x1', navPosition.x);
       vLine.attr('x2', navPosition.x);
@@ -570,12 +607,14 @@ class StackedAreaPlotDoubleAxis extends React.Component<StackedAreaPlotDoubleAxi
 
       const width = svgBoundingClientRect.right - svgBoundingClientRect.left;
       const height = svgBoundingClientRect.bottom - svgBoundingClientRect.top;
-      const xTooltip = mousePosition.x + 320 < width
-        ? (svgBoundingClientRect.left + mousePosition.x) + 80
-        : (svgBoundingClientRect.left + mousePosition.x) - 200;
-      const yTooltip = mousePosition.y + 120 < height
-        ? svgBoundingClientRect.top + mousePosition.y
-        : (svgBoundingClientRect.top + mousePosition.y) - 50;
+      const xTooltip =
+        mousePosition.x + 320 < width
+          ? svgBoundingClientRect.left + mousePosition.x + 80
+          : svgBoundingClientRect.left + mousePosition.x - 200;
+      const yTooltip =
+        mousePosition.y + 120 < height
+          ? svgBoundingClientRect.top + mousePosition.y
+          : svgBoundingClientRect.top + mousePosition.y - 50;
       setTooltip({
         xTooltip: xTooltip,
         yTooltip: yTooltip,

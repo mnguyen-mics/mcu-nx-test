@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Col } from 'antd';
 import messages from '../messages';
@@ -101,7 +100,6 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
     const dataColumns = [
       {
         intlMessage: messages.displayNetworkName,
-        translationKey: 'DISPLAY_NETWORK_NAME',
         key: 'display_network_name',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
@@ -195,13 +193,6 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
 
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-});
-
 export default compose<JoinedProps, MediaPerformanceTableProps>(
-  connect(
-    mapStateToProps,
-  ),
   withRouter,
 )(MediaPerformanceTable);

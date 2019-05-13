@@ -219,23 +219,23 @@ const adGroupPropertiesMessageMap: {
   >]: FormattedMessage.MessageDescriptor
 } = defineMessages({
   max_bid_price: {
-    id: 'edit.adgroups.option.max.bid.price',
+    id: 'display.campaigns.edit.adgroup.multiEdit.option.maxBidPrice',
     defaultMessage: 'Max Bid Price',
   },
   total_budget: {
-    id: 'edit.adgroups.option.total.budget',
+    id: 'display.campaigns.edit.adgroup.multiEdit.option.totalBudget',
     defaultMessage: 'Total Budget',
   },
   max_budget_per_period: {
-    id: 'edit.adgroups.option.budget.split',
+    id: 'display.campaigns.edit.adgroup.multiEdit.option.budgetSplit',
     defaultMessage: 'Budget Split',
   },
   start_date: {
-    id: 'edit.adgroups.option.start.date',
+    id: 'display.campaigns.edit.adgroup.multiEdit.option.startDate',
     defaultMessage: 'Start Date',
   },
   end_date: {
-    id: 'edit.adgroups.option.end.date',
+    id: 'display.campaigns.edit.adgroup.multiEdit.option.endDate',
     defaultMessage: 'End Date',
   },
 });
@@ -244,15 +244,15 @@ const campaignsActionsMessageMap: {
   [propertyName: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   equals: {
-    id: 'edit.adgroups.form.option.equals',
+    id: 'display.campaigns.edit.adgroup.multiEdit.option.equals',
     defaultMessage: '=',
   },
   increase: {
-    id: 'edit.adgroups.form.option.increase',
+    id: 'display.campaigns.edit.adgroup.multiEdit.option.increase',
     defaultMessage: 'Increase %',
   },
   decrease: {
-    id: 'edit.adgroups.form.option.decrease',
+    id: 'display.campaigns.edit.adgroup.multiEdit.option.decrease',
     defaultMessage: 'Decrease %',
   },
 });

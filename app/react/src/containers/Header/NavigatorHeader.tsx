@@ -31,7 +31,9 @@ type Props = NavigatorHeaderProps &
 class NavigatorHeader extends React.Component<Props> {
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       workspace,
       userEmail,
       isSetting,
@@ -57,7 +59,7 @@ class NavigatorHeader extends React.Component<Props> {
         </Menu.Item>
         <Menu.Item key="logout">
           <Link to="/logout">
-            <FormattedMessage id="LOGOUT" />
+            <FormattedMessage id="components.header.logOut" defaultMessage="Log out" />
           </Link>
         </Menu.Item>
       </Menu>
@@ -78,7 +80,11 @@ class NavigatorHeader extends React.Component<Props> {
                 <span className="launcher">
                   <Dropdown overlay={menu} trigger={['click']}>
                     <a>
-                      <Icon type="appstore" className="menu-icon" theme="filled" />
+                      <Icon
+                        type="appstore"
+                        className="menu-icon"
+                        theme="filled"
+                      />
                     </a>
                   </Dropdown>
                 </span>

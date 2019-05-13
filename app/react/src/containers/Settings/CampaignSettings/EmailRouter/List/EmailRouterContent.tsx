@@ -66,7 +66,9 @@ class EmailRouterContent extends React.Component<
     const {
       location: { search, pathname, state },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -104,29 +106,42 @@ class EmailRouterContent extends React.Component<
   };
 
   onClickEdit = (router: EmailRouter) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/campaigns/email_routers/${router.id}/edit`,
+      `/v2/o/${organisationId}/settings/campaigns/email_routers/${
+        router.id
+      }/edit`,
     );
   };
 
   render() {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<EmailRouter>> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<EmailRouter>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          { intlmessage: messages.edit, callback: this.onClickEdit },
+          { intlmessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
@@ -151,21 +166,28 @@ class EmailRouterContent extends React.Component<
       intlMessage: messages.empty,
     };
 
-    const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/email_routers/create`)
+    const onClick = () =>
+      history.push(
+        `/v2/o/${organisationId}/settings/campaigns/email_routers/create`,
+      );
 
     const buttons = [
-      (<Button key="create" type="primary" onClick={onClick}>
-      <FormattedMessage {...messages.newEmailRouter} />
-    </Button>)
-    ]
+      <Button key="create" type="primary" onClick={onClick}>
+        <FormattedMessage {...messages.newEmailRouter} />
+      </Button>,
+    ];
 
-    const additionnalComponent = (<div>
-      <div className="mcs-card-header mcs-card-title">
-        <span className="mcs-card-title"><FormattedMessage {...messages.emailrouter} /></span>
-        <span className="mcs-card-button">{buttons}</span>
+    const additionnalComponent = (
+      <div>
+        <div className="mcs-card-header mcs-card-title">
+          <span className="mcs-card-title">
+            <FormattedMessage {...messages.emailrouter} />
+          </span>
+          <span className="mcs-card-button">{buttons}</span>
+        </div>
+        <hr className="mcs-separator" />
       </div>
-      <hr className="mcs-separator" />
-    </div>)
+    );
 
     return (
       <div className="ant-layout">
@@ -187,4 +209,7 @@ class EmailRouterContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(EmailRouterContent);
+export default compose(
+  withRouter,
+  injectIntl,
+)(EmailRouterContent);

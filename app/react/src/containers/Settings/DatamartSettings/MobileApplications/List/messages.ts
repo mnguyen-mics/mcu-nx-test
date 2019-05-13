@@ -2,35 +2,35 @@ import { defineMessages } from 'react-intl';
 
 const messages = defineMessages({
   searchPlaceholder: {
-    id: 'mobile_application.search.placeholder',
+    id: 'settings.mobilApplication.search.placeholder',
     defaultMessage: 'Search Mobile Applications',
   },
   mobileApplicationName: {
-    id: 'mobile_application.name',
+    id: 'settings.mobilApplication.name',
     defaultMessage: 'Name',
   },
   mobileApplicationToken: {
-    id: 'mobile_application.token',
+    id: 'settings.mobilApplication.token',
     defaultMessage: 'Token',
   },
   mobileApplicationCreationDate: {
-    id: 'mobile_application.creation_date',
+    id: 'settings.mobilApplication.creation_date',
     defaultMessage: 'Creation Date',
   },
   newMobileApplication: {
-    id: 'mobile_application.new',
+    id: 'settings.mobilApplication.new',
     defaultMessage: 'New Mobile Application',
   },
   editMobileApplication: {
-    id: 'mobile_application.edit',
+    id: 'settings.mobilApplication.edit',
     defaultMessage: 'Edit',
   },
   archiveMobileApplication: {
-    id: 'mobile_application.archive',
+    id: 'settings.mobilApplication.archive',
     defaultMessage: 'Archive',
   },
   emptyMobileApplications: {
-    id: 'mobile_application.empty',
+    id: 'settings.mobilApplication.empty',
     defaultMessage: "There are no mobile apps set up. Click on 'New Mobile Application' to create one.",
   },
 });

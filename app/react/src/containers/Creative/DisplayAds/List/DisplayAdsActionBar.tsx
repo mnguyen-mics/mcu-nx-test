@@ -9,9 +9,8 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../components/PopupContainers';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
-import { withTranslations } from '../../../Helpers';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import Slide from '../../../../components/Transition/Slide';
@@ -31,28 +30,28 @@ interface ListCreativesDisplayProps {
 
 const messagesMap = defineMessages({
   displayAds: {
-    id: 'display.ads.actionbar.breadcrumb',
+    id: 'creatives.display.list.actionbar.breadcrumb',
     defaultMessage: 'Display Ads',
   },
   archiveCreativesModalTitle: {
-    id: 'archive.creatives.modal.title',
+    id: 'creatives.display.list.multiArchive.modal.title',
     defaultMessage: 'Archive Creatives',
   },
   archiveCreativesModalMessage: {
-    id: 'archive.creatives.modal.msg',
+    id: 'creatives.display.list.multiArchive.modal.msg',
     defaultMessage:
       "You can only archive creatives that haven't passed or failed the audit. If you have selected creatives wtih passed or failed audit status, please reset their audit status first before archiving.",
   },
   auditAction: {
-    id: 'audit.action',
+    id: 'creatives.display.list.audit',
     defaultMessage: 'Audit Action',
   },
   startAll: {
-    id: 'display.campaign.start.all.audits',
+    id: 'creatives.display.list.startAllAudits',
     defaultMessage: 'Start',
   },
   resetAll: {
-    id: 'display.campaign.reset.all.audits',
+    id: 'creatives.display.list.resetAllAudits',
     defaultMessage: 'Reset',
   },
 });
@@ -124,10 +123,14 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
     };
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_DISPLAY_AD" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage
+              id="creatives.display.list.actionbar.newDisplatAd"
+              defaultMessage="New Display Ad"
+            />
           </Button>
         </Link>
 
@@ -140,7 +143,7 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="ARCHIVE" />
+              <FormattedMessage id="creatives.display.list.actionbar.archive" defaultMessage="Archive" />
             </Button>
           }
         />
@@ -171,5 +174,4 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
 export default compose<JoinedProps, ListCreativesDisplayProps>(
   withRouter,
   injectIntl,
-  withTranslations,
 )(ListCreativesDisplay);

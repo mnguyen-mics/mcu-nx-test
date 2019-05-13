@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { Form, Layout } from 'antd';
-import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import {
-  FormInput,
-} from '../../../../components/Form/';
+  FormattedMessage,
+  injectIntl,
+  InjectedIntlProps,
+  defineMessages,
+} from 'react-intl';
+import { FormInput } from '../../../../components/Form/';
 import LogoInput from './LogoInput';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -14,21 +17,28 @@ export interface OrganisationAccountProps {
   organisationName: string;
 }
 
-type Props = OrganisationAccountProps & InjectedIntlProps & InjectedFormProps<{ organisation_name: string }>;
+type Props = OrganisationAccountProps &
+  InjectedIntlProps &
+  InjectedFormProps<{ organisation_name: string }>;
 
 const messages = defineMessages({
-  OrganisationProfile: { id: 'settings.organisation.profile', defaultMessage: 'Organisation Profile' },
-  OrganisationName: { id: 'settings.organisation.name', defaultMessage: 'Organisation Name' },
-  OrganisationLogo: { id: 'settings.organisation.logo', defaultMessage: 'Organisation Logo' },
-})
+  OrganisationProfile: {
+    id: 'settings.organisation.profile',
+    defaultMessage: 'Organisation Profile',
+  },
+  OrganisationName: {
+    id: 'settings.organisation.name',
+    defaultMessage: 'Organisation Name',
+  },
+  OrganisationLogo: {
+    id: 'settings.organisation.logo',
+    defaultMessage: 'Organisation Logo',
+  },
+});
 
 class OrganisationAccount extends React.Component<Props> {
-
   render() {
-
-    const {
-      intl,
-    } = this.props;
+    const { intl } = this.props;
     const fieldGridConfig = {
       labelCol: { span: 4 },
       wrapperCol: { span: 10, offset: 1 },
@@ -39,11 +49,16 @@ class OrganisationAccount extends React.Component<Props> {
         <Content className="mcs-content-container">
           <Form className={'edit-top'}>
             <div className="mcs-card-header mcs-card-title">
-              <span className="mcs-card-title"><FormattedMessage id="OrganisationProfile" defaultMessage="Organisation Profile" /></span>
+              <span className="mcs-card-title">
+                <FormattedMessage
+                  id="settings.organisation.organisationAccount.organisationProfile"
+                  defaultMessage="Organisation Profile"
+                />
+              </span>
             </div>
             <hr className="mcs-separator" />
             <Field
-              name={"organisation_name"}
+              name={'organisation_name'}
               component={FormInput}
               validate={[]}
               props={{
@@ -53,12 +68,12 @@ class OrganisationAccount extends React.Component<Props> {
                 },
                 inputProps: {
                   placeholder: intl.formatMessage(messages.OrganisationName),
-                  disabled: true
+                  disabled: true,
                 },
               }}
             />
             <Field
-              name={"organisation_id"}
+              name={'organisation_id'}
               component={LogoInput}
               validate={[]}
               props={{
@@ -76,8 +91,8 @@ class OrganisationAccount extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: any) => ({
-  initialValues: state.session.workspace
-})
+  initialValues: state.session.workspace,
+});
 
 export default compose<OrganisationAccountProps, {}>(
   injectIntl,

@@ -4,12 +4,9 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Dropdown } from '../../../../components/PopupContainers';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import withTranslations, {
-  TranslationProps,
-} from '../../../Helpers/withTranslations';
 import { Export } from '../../../../models/exports/exports';
 import modalMessages from '../../../../common/messages/modalMessages';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import log from '../../../../utils/Logger';
 import messages from './messages';
@@ -30,8 +27,7 @@ interface ExportActionbarState {
 
 type JoinedProps = ExportActionbarProps &
   RouteComponentProps<{ organisationId: string; exportId: string }> &
-  InjectedIntlProps &
-  TranslationProps;
+  InjectedIntlProps;
 
 class ExportsActionbar extends React.Component<
   JoinedProps,
@@ -97,7 +93,7 @@ class ExportsActionbar extends React.Component<
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Button
           className="mcs-primary"
           type="primary"
@@ -170,5 +166,4 @@ class ExportsActionbar extends React.Component<
 export default compose<JoinedProps, ExportActionbarProps>(
   withRouter,
   injectIntl,
-  withTranslations,
 )(ExportsActionbar);

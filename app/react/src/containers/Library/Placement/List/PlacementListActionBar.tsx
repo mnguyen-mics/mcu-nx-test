@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
 
@@ -13,35 +13,35 @@ interface RouterProps {
   organisationId: string;
 }
 
-class PlacementListsActionbar extends React.Component<RouteComponentProps<RouterProps> & InjectedIntlProps> {
-
+class PlacementListsActionbar extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps
+> {
   render() {
-
     const {
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
-      intl: {
-        formatMessage,
-      },
+      intl: { formatMessage },
     } = this.props;
 
-    const breadcrumbPaths = [{ name: formatMessage(messages.placements), url: `/v2/o/${organisationId}/library/placementlist` }];
+    const breadcrumbPaths = [
+      {
+        name: formatMessage(messages.placements),
+        url: `/v2/o/${organisationId}/library/placementlist`,
+      },
+    ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`placementlist/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage {...messages.newPlacement} />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage {...messages.newPlacement} />
           </Button>
         </Link>
       </Actionbar>
     );
-
   }
-
 }
 
 export default compose(

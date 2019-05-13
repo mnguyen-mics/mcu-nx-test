@@ -4,7 +4,6 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Modal } from 'antd';
 import { injectIntl, defineMessages } from 'react-intl';
-
 import EmailCampaignsTable from './EmailCampaignsTable';
 import { withMcsRouter } from '../../../Helpers';
 import { ReactRouterPropTypes } from '../../../../validators/proptypes';
@@ -129,7 +128,7 @@ class EmailCampaignListPage extends Component {
         search,
       },
       history,
-      translations,
+      intl
     } = this.props;
 
     const { emailCampaignsById } = this.state;
@@ -141,11 +140,11 @@ class EmailCampaignListPage extends Component {
     };
 
     Modal.confirm({
-      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+      title: intl.formatMessage(messages.confirmArchiveModalTitle),
+      content: intl.formatMessage(messages.confirmArchiveModalContent),
       iconType: 'exclamation-circle',
-      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+      okText: intl.formatMessage(messages.confirmArchiveModalOk),
+      cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
       onOk() {
         EmailCampaignService.deleteEmailCampaign(campaign.id).then(() => {
           if (emailCampaignsById.length === 1 && filter.currentPage !== 1) {
@@ -307,9 +306,8 @@ EmailCampaignListPage.propTypes = {
   location: ReactRouterPropTypes.location.isRequired,
   history: ReactRouterPropTypes.history.isRequired,
   notifyError: PropTypes.func,
-  translations: PropTypes.objectOf(PropTypes.string).isRequired,
   labels: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  // intl: intlShape.isRequired
+  intl: PropTypes.shape().isRequired,
 };
 
 export default compose(
@@ -317,7 +315,6 @@ export default compose(
   withMcsRouter,
   connect(
     state => ({
-      translations: state.translations,
       labels: state.labels.labelsApi.data,
     })
     ,

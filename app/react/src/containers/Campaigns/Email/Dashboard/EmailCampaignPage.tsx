@@ -3,18 +3,15 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout } from 'antd';
-
 import EmailCampaignActionbar from './EmailCampaignActionbar';
 import CampaignDashboardHeader from '../../Common/CampaignDashboardHeader';
 import { Labels } from '../../../Labels';
 import { Card } from '../../../../components/Card';
-
 import {
   EMAIL_DASHBOARD_SEARCH_SETTINGS,
   EmailCampaignDashboardRouteMatchParam,
   EmailDashboardSearchSettings,
 } from './constants';
-
 import {
   parseSearch,
   isSearchValid,
@@ -22,7 +19,6 @@ import {
   compareSearches,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
-
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -43,28 +39,28 @@ const { Content } = Layout;
 
 const messageMap = defineMessages({
   overview: {
-    id: 'email-campaign-overview',
+    id: 'email.campaigns.page.tabs.overview',
     defaultMessage: 'Overview',
   },
   devileryAnalysis: {
-    id: 'email-campaign-delivery-analysis',
+    id: 'email.campaigns.page.tabs.deliveryAnalysis',
     defaultMessage: 'Delivery Analysis',
   },
   statusUpdateSuccess: {
-    id: 'email-campaign-status-update-successfull',
+    id: 'email.campaigns.page.status-update-successfull',
     defaultMessage: 'Campaign status successfully updated',
   },
   statusUpdateFailure: {
-    id: 'email-campaign-status-update-failure',
+    id: 'email.campaigns.page.status-update-failure',
     defaultMessage:
       'There was an error updating your campaign... Please try again...',
   },
   notifSuccess: {
-    id: 'email-campaign-notification-success',
+    id: 'email.campaigns.page.notification-success',
     defaultMessage: 'Success',
   },
   notifError: {
-    id: 'email-campaign-notification-error',
+    id: 'email.campaigns.page.notification-error',
     defaultMessage: 'Error',
   },
 });

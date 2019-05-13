@@ -4,12 +4,10 @@ import { Modal } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
-
 import {
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView/index';
-
 import { NATIVE_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -18,16 +16,17 @@ import {
   buildDefaultSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-
 import CreativeScreenshot from '../../CreativeScreenshot';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { Filters } from '../../../../components/ItemList';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
-import { withTranslations } from '../../../Helpers/index';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 import { MapStateToProps, MapDispatchToProps } from './NativeListPage';
 import CreativeService from '../../../../services/CreativeService';
-import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import {
+  ExtendedTableRowSelection,
+  ActionsColumnDefinition,
+} from '../../../../components/TableView/TableView';
+import messagesMap from '../../DisplayAds/List/message';
 
 interface NativeCreativesTableProps
   extends MapStateToProps,
@@ -43,7 +42,6 @@ interface NativeCreativesTableState {
 
 type JoinedProps = NativeCreativesTableProps &
   RouteComponentProps<CampaignRouteParams> &
-  TranslationProps &
   InjectedIntlProps;
 
 const messages = defineMessages({
@@ -186,7 +184,7 @@ class NativeCreativesTable extends React.Component<
 
     const dataColumns = [
       {
-        translationKey: 'PREVIEW',
+        intlMessage: messagesMap.preview,
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
@@ -196,7 +194,7 @@ class NativeCreativesTable extends React.Component<
         ) => <CreativeScreenshot item={record} />,
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messagesMap.name,
         key: 'name',
         isHideable: false,
         render: (text: string, record: any) => {
@@ -212,13 +210,13 @@ class NativeCreativesTable extends React.Component<
         },
       },
       {
-        translationKey: 'AUDIT_STATUS',
+        intlMessage: messagesMap.auditStatus,
         key: 'audit_status',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        translationKey: 'PUBLISHED_VERSION',
+        intlMessage: messagesMap.publishedVersion,
         key: 'published_version',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
@@ -230,11 +228,11 @@ class NativeCreativesTable extends React.Component<
         key: 'action',
         actions: () => [
           {
-            translationKey: 'EDIT',
+            intlMessage: messagesMap.edit,
             callback: this.editNativeCreatives,
           },
           {
-            translationKey: 'ARCHIVE',
+            intlMessage: messagesMap.archive,
             callback: this.archiveNativeCreatives,
           },
         ],
@@ -290,19 +288,19 @@ class NativeCreativesTable extends React.Component<
       },
       location: { search, pathname, state },
       fetchNativeCreatives,
-      translations,
       dataSource,
       history,
+      intl,
     } = this.props;
 
     const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
 
     Modal.confirm({
-      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+      title: intl.formatMessage(messagesMap.creativeModalConfirmArchivedTitle),
+      content: intl.formatMessage(messagesMap.creativeModalNoArchiveMessage),
       iconType: 'exclamation-circle',
-      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+      okText: intl.formatMessage(messagesMap.creativeModalConfirmArchivedOk),
+      cancelText: intl.formatMessage(messagesMap.cancelText),
       onOk() {
         CreativeService.updateDisplayCreative(native.id, {
           ...native,
@@ -332,6 +330,5 @@ class NativeCreativesTable extends React.Component<
 
 export default compose<JoinedProps, NativeCreativesTableProps>(
   withRouter,
-  withTranslations,
   injectIntl,
 )(NativeCreativesTable);

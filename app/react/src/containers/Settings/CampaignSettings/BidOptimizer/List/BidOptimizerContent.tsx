@@ -89,7 +89,9 @@ class BidOptimizerContent extends React.Component<
     const {
       location: { pathname, state, search },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -127,7 +129,12 @@ class BidOptimizerContent extends React.Component<
   };
 
   onClickEdit = (bo: BidOptimizerInterface) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     history.push(
       `/v2/o/${organisationId}/settings/campaigns/bid_optimizer/${bo.id}/edit`,
@@ -135,21 +142,27 @@ class BidOptimizerContent extends React.Component<
   };
 
   render() {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<BidOptimizerInterface>>  = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<BidOptimizerInterface>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          { intlMessage: messages.edit, callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
@@ -165,7 +178,6 @@ class BidOptimizerContent extends React.Component<
         ),
       },
       {
-        translationKey: 'ENGINE',
         intlMessage: messages.engine,
         key: 'id',
         isHideable: false,
@@ -182,7 +194,6 @@ class BidOptimizerContent extends React.Component<
         },
       },
       {
-        translationKey: 'MINER',
         intlMessage: messages.miner,
         key: 'engine_group_id',
         isHideable: false,
@@ -208,21 +219,28 @@ class BidOptimizerContent extends React.Component<
       intlMessage: messages.empty,
     };
 
-    const onClick = () => history.push(`/v2/o/${organisationId}/settings/campaigns/bid_optimizer/create`)
+    const onClick = () =>
+      history.push(
+        `/v2/o/${organisationId}/settings/campaigns/bid_optimizer/create`,
+      );
 
     const buttons = [
-      (<Button key="create" type="primary" onClick={onClick}>
-      <FormattedMessage {...messages.newBidOptimizer} />
-    </Button>)
-    ]
+      <Button key="create" type="primary" onClick={onClick}>
+        <FormattedMessage {...messages.newBidOptimizer} />
+      </Button>,
+    ];
 
-    const additionnalComponent = (<div>
-      <div className="mcs-card-header mcs-card-title">
-        <span className="mcs-card-title"><FormattedMessage {...messages.bidoptimizer} /></span>
-        <span className="mcs-card-button">{buttons}</span>
+    const additionnalComponent = (
+      <div>
+        <div className="mcs-card-header mcs-card-title">
+          <span className="mcs-card-title">
+            <FormattedMessage {...messages.bidoptimizer} />
+          </span>
+          <span className="mcs-card-button">{buttons}</span>
+        </div>
+        <hr className="mcs-separator" />
       </div>
-      <hr className="mcs-separator" />
-    </div>)
+    );
 
     return (
       <div className="ant-layout">
@@ -244,4 +262,7 @@ class BidOptimizerContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(BidOptimizerContent);
+export default compose(
+  withRouter,
+  injectIntl,
+)(BidOptimizerContent);

@@ -4,7 +4,7 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import messages from './messages';
 import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 import McsIcon from '../../../../components/McsIcon';
@@ -32,7 +32,7 @@ class ExportsActionbar extends React.Component<
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/datastudio/exports/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.newExport} />

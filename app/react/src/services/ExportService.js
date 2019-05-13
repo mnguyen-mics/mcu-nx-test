@@ -1,5 +1,6 @@
 import XLSX from 'xlsx';
-import displayCampaignMessages from '../containers/Campaigns/Display/messages';
+import { defineMessages } from 'react-intl';
+import displayCampaignMessages from '../containers/Campaigns/Display/messages.ts';
 import emailCampaignMessages from '../containers/Campaigns/Email/messages.ts';
 import segmentMessages from '../containers/Audience/Segments/Dashboard/messages.ts';
 import dateMessages from '../common/messages/dateMessages';
@@ -7,6 +8,19 @@ import exportMessages from '../common/messages/exportMessages';
 import log from '../utils/Logger';
 import { messages } from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportTable.tsx';
 import McsMoment from '../utils/McsMoment.ts';
+import emailMessages from '../containers/Campaigns/Email/List/messages.ts';
+import goalMessages from '../containers/Campaigns/Goal/Dashboard/messages.ts';
+
+const exportServiceMessages = defineMessages({
+  from: {
+    id: 'service.exportService.from',
+    defaultMessage: 'From'
+  },
+  to: {
+    id: 'service.exportService.to',
+    defaultMessage: 'to'
+  }
+});
 
 const datenum = (v, date1904) => {
   let newV = v;
@@ -170,15 +184,15 @@ const exportData = (sheets, fileName, extension) => {
 /**
  * Display Campaigns
  */
-const exportDisplayCampaigns = (organisationId, dataSource, filter, translations) => {
+const exportDisplayCampaigns = (organisationId, dataSource, filter, formatMessage) => {
 
-  const titleLine = [translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE];
+  const titleLine = formatMessage(displayCampaignMessages.displayCampaignsExportTitle);
   const blankLine = [];
 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
+  dataSheet.push([`${formatMessage(exportServiceMessages.from)} ${filter.from.toMoment().format('YYYY-MM-DD')} ${formatMessage(exportServiceMessages.to)} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -191,17 +205,17 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
   dataSheet.push(blankLine);
 
   const headersMap = [
-    { name: 'id', translation: translations.ID },
-    { name: 'status', translation: translations.STATUS },
-    { name: 'name', translation: translations.NAME },
-    { name: 'technical_name', translation: translations.TECHNICAL_NAME },
-    { name: 'impressions', translation: translations.IMPRESSIONS },
-    { name: 'clicks', translation: translations.CLICKS },
-    { name: 'cpm', translation: translations.CPM },
-    { name: 'ctr', translation: translations.CTR },
-    { name: 'cpc', translation: translations.CPC },
-    { name: 'impressions_cost', translation: translations.IMPRESSIONS_COST },
-    { name: 'cpa', translation: translations.CPA },
+    { name: 'id', translation: formatMessage(displayCampaignMessages.id) },
+    { name: 'status', translation: formatMessage(displayCampaignMessages.status) },
+    { name: 'name', translation: formatMessage(displayCampaignMessages.name) },
+    { name: 'technical_name', translation: formatMessage(displayCampaignMessages.technicalName) },
+    { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
+    { name: 'clicks', translation: formatMessage(displayCampaignMessages.clicks) },
+    { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },
+    { name: 'ctr', translation: formatMessage(displayCampaignMessages.ctr) },
+    { name: 'cpc', translation: formatMessage(displayCampaignMessages.cpc) },
+    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impressionCost) },
+    { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -216,7 +230,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, translations
   });
 
   const sheets = [{
-    name: translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE,
+    name: titleLine,
     data: dataSheet,
   }];
   exportData(sheets, `${organisationId}_display-campaigns`, 'xlsx');
@@ -353,15 +367,15 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
 /**
  * Email Campaigns
  */
-const exportEmailCampaigns = (organisationId, dataSource, filter, translations) => {
+const exportEmailCampaigns = (organisationId, dataSource, filter, formatMessage) => {
 
-  const titleLine = [translations.EMAIL_CAMPAIGNS_EXPORT_TITLE];
+  const titleLine = formatMessage(emailMessages.emailCampaignsExportTitle);
   const blankLine = [];
 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
+  dataSheet.push([`${formatMessage(exportServiceMessages.from)} ${filter.from.toMoment().format('YYYY-MM-DD')} ${formatMessage(exportServiceMessages.to)} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -374,15 +388,15 @@ const exportEmailCampaigns = (organisationId, dataSource, filter, translations) 
   dataSheet.push(blankLine);
 
   const headersMap = [
-    { name: 'id', translation: translations.ID },
-    { name: 'status', translation: translations.STATUS },
-    { name: 'name', translation: translations.NAME },
-    { name: 'technical_name', translation: translations.TECHNICAL_NAME },
-    { name: 'email_sent', translation: translations.EMAIL_SENT },
-    { name: 'email_hard_bounced', translation: translations.EMAIL_HARD_BOUNCED },
-    { name: 'email_soft_bounced', translation: translations.EMAIL_SOFT_BOUNCED },
-    { name: 'clicks', translation: translations.CLICKS },
-    { name: 'impressions', translation: translations.IMPRESSIONS },
+    { name: 'id', translation: formatMessage(emailMessages.emaiId) },
+    { name: 'status', translation: formatMessage(emailMessages.emailHeaderStatus) },
+    { name: 'name', translation: formatMessage(emailMessages.emailHeaderName) },
+    { name: 'technical_name', translation: formatMessage(emailMessages.emailTechnicalName) },
+    { name: 'email_sent', translation: formatMessage(emailMessages.emailHeaderSent) },
+    { name: 'email_hard_bounced', translation: formatMessage(emailMessages.emailHeaderHardBounced) },
+    { name: 'email_soft_bounced', translation: formatMessage(emailMessages.emailHeaderSoftBounced) },
+    { name: 'clicks', translation: formatMessage(emailMessages.emailHeaderClicks) },
+    { name: 'impressions', translation: formatMessage(emailMessages.emailHeaderImpressions) },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -397,7 +411,7 @@ const exportEmailCampaigns = (organisationId, dataSource, filter, translations) 
   });
 
   const sheets = [{
-    name: translations.EMAIL_CAMPAIGNS_EXPORT_TITLE,
+    name: titleLine,
     data: dataSheet,
   }];
 
@@ -450,15 +464,15 @@ const exportEmailCampaignDashboard = (organisationId, campaign, campaignData, bl
 /**
  * Goals
  */
-const exportGoals = (organisationId, dataSource, filter, translations) => {
+const exportGoals = (organisationId, dataSource, filter, formatMessage) => {
 
-  const titleLine = [translations.GOALS_EXPORT_TITLE];
+  const titleLine = formatMessage(goalMessages.goalsExportTitle);
   const blankLine = [];
 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${filter.from.toMoment().format('YYYY-MM-DD')} ${translations.TO} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
+  dataSheet.push([`${formatMessage(exportServiceMessages.from)} ${filter.from.toMoment().format('YYYY-MM-DD')} ${formatMessage(exportServiceMessages.to)} ${filter.to.toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -471,9 +485,9 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   dataSheet.push(blankLine);
 
   const headersMap = [
-    { name: 'name', translation: translations.NAME },
-    { name: 'conversions', translation: translations.CONVERSIONS },
-    { name: 'value', translation: translations.CONVERSION_VALUE },
+    { name: 'name', translation: formatMessage(goalMessages.goalsExportColumnName) },
+    { name: 'conversions', translation: formatMessage(goalMessages.goalsExportColumnConversions) },
+    { name: 'value', translation: formatMessage(goalMessages.goalsExportColumnConversionValue) },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -488,14 +502,14 @@ const exportGoals = (organisationId, dataSource, filter, translations) => {
   });
 
   const sheets = [{
-    name: translations.GOALS_EXPORT_TITLE,
+    name: titleLine,
     data: dataSheet,
   }];
 
   exportData(sheets, `${organisationId}_goals`, 'xlsx');
 };
 
-const exportGoal = (organisationId, goalData, attributionsData, filter, translations, formatMessage) => {
+const exportGoal = (organisationId, goalData, attributionsData, filter, formatMessage) => {
   const exportFilter = {
     ...filter,
     from: filter.from.toMoment().format('YYYY-MM-DD'),
@@ -517,36 +531,36 @@ const exportGoal = (organisationId, goalData, attributionsData, filter, translat
   };
 
   const headersMap = [
-    { name: 'day', translation: translations.DAY },
-    { name: 'value', translation: translations.VALUE },
-    { name: 'price', translation: translations.PRICE },
-    { name: 'conversions', translation: translations.CONVERSIONS },
+    { name: 'day', translation: formatMessage(goalMessages.day) },
+    { name: 'value', translation: formatMessage(goalMessages.value) },
+    { name: 'price', translation: formatMessage(goalMessages.price) },
+    { name: 'conversions', translation: formatMessage(goalMessages.conversions) },
   ];
 
   const reportTypeHeaders = {
     SOURCE: [
-      { name: 'marketing_channel', translation: translations.MARKETING_CHANNEL },
-      { name: 'source', translation: translations.SOURCE },
-      { name: 'interaction_type', translation: translations.INTERACTION_TYPE },
-      { name: 'weighted_conversions', translation: translations.WEIGHTED_CONVERSIONS },
-      { name: 'weighted_value', translation: translations.WEIGHTED_VALUE },
-      { name: 'interaction_to_conversion_duration', translation: translations.INTERACTION_TO_CONVERSION_DURATION },
+      { name: 'marketing_channel', translation: formatMessage(goalMessages.marketingChannel) },
+      { name: 'source', translation: formatMessage(goalMessages.source) },
+      { name: 'interaction_type', translation: formatMessage(goalMessages.interactionType) },
+      { name: 'weighted_conversions', translation: formatMessage(goalMessages.weightedConversions) },
+      { name: 'weighted_value', translation: formatMessage(goalMessages.weightedValue) },
+      { name: 'interaction_to_conversion_duration', translation: formatMessage(goalMessages.interactionToConversionDuration) },
     ],
     CAMPAIGN: [
-      { name: 'campaign_id', translation: translations.CAMPAIGN_ID },
-      { name: 'campaign_name', translation: translations.CAMPAIGN_NAME },
-      { name: 'interaction_type', translation: translations.INTERACTION_TYPE },
-      { name: 'weighted_conversions', translation: translations.WEIGHTED_CONVERSIONS },
-      { name: 'weighted_value', translation: translations.WEIGHTED_VALUE },
-      { name: 'interaction_to_conversion_duration', translation: translations.INTERACTION_TO_CONVERSION_DURATION },
+      { name: 'campaign_id', translation: formatMessage(goalMessages.campaignId) },
+      { name: 'campaign_name', translation: formatMessage(goalMessages.campaignName) },
+      { name: 'interaction_type', translation: formatMessage(goalMessages.interactionType) },
+      { name: 'weighted_conversions', translation: formatMessage(goalMessages.weightedConversions) },
+      { name: 'weighted_value', translation: formatMessage(goalMessages.weightedValue) },
+      { name: 'interaction_to_conversion_duration', translation: formatMessage(goalMessages.interactionToConversionDuration) },
     ],
     CREATIVE: [
-      { name: 'creative_id', translation: translations.CREATIVE_ID },
-      { name: 'creative_name', translation: translations.CREATIVE_NAME },
-      { name: 'interaction_type', translation: translations.INTERACTION_TYPE },
-      { name: 'weighted_conversions', translation: translations.WEIGHTED_CONVERSIONS },
-      { name: 'weighted_value', translation: translations.WEIGHTED_VALUE },
-      { name: 'interaction_to_conversion_duration', translation: translations.INTERACTION_TO_CONVERSION_DURATION },
+      { name: 'creative_id', translation: formatMessage(goalMessages.creativeId) },
+      { name: 'creative_name', translation: formatMessage(goalMessages.creativeName) },
+      { name: 'interaction_type', translation: formatMessage(goalMessages.interactionType) },
+      { name: 'weighted_conversions', translation: formatMessage(goalMessages.weightedConversions) },
+      { name: 'weighted_value', translation: formatMessage(goalMessages.weightedValue) },
+      { name: 'interaction_to_conversion_duration', translation: formatMessage(goalMessages.interactionToConversionDuration) },
     ]
   };
 
@@ -565,7 +579,7 @@ const exportGoal = (organisationId, goalData, attributionsData, filter, translat
     });
 
   const sheets = [
-    addSheet(translations.GOAL_EXPORT_TITLE, goalData, headersMap, exportFilter, formatMessage)
+    addSheet(formatMessage(goalMessages.goalsExportTitle), goalData, headersMap, exportFilter, formatMessage)
   ].concat(attributionSheets);
 
   exportData(sheets, `${organisationId}_goal`, 'xlsx');
@@ -574,15 +588,15 @@ const exportGoal = (organisationId, goalData, attributionsData, filter, translat
 /**
  * Audience Segments
  */
-const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, translations) => {
+const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, formatMessage) => {
 
-  const titleLine = [translations.AUDIENCE_SEGMENTS_EXPORT_TITLE];
+  const titleLine = formatMessage(segmentMessages.audienceSegmentsExportTitle);
   const blankLine = [];
 
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([`${translations.FROM} ${new McsMoment('now').toMoment().format('YYYY-MM-DD')} ${translations.TO} ${new McsMoment('now').toMoment().format('YYYY-MM-DD')}`]);
+  dataSheet.push([`${formatMessage(exportServiceMessages.from)} ${new McsMoment('now').toMoment().format('YYYY-MM-DD')} ${formatMessage(exportServiceMessages.to)} ${new McsMoment('now').toMoment().format('YYYY-MM-DD')}`]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -594,17 +608,18 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 
   dataSheet.push(blankLine);
 
+  // TODO use react-inlt
   const headersMap = [
-    { name: 'id', translation: translations.ID },
-    { name: 'type', translation: translations.TYPE },
-    { name: 'name', translation: translations.NAME },
-    { name: 'technical_name', translation: translations.TECHNICAL_NAME },
-    { name: 'user_points', translation: translations.USER_POINTS },
-    { name: 'user_accounts', translation: translations.USER_ACCOUNTS },
-    { name: 'desktop_cookie_ids', translation: translations.DESKTOP_COOKIE_IDS },
-    { name: 'emails', translation: translations.EMAILS },
-    { name: 'user_point_additions', translation: translations.ADDITION },
-    { name: 'user_point_deletions', translation: translations.DELETION },
+    { name: 'id', translation: 'ID' },
+    { name: 'type', translation: formatMessage(segmentMessages.type) },
+    { name: 'name', translation: formatMessage(segmentMessages.name) },
+    { name: 'technical_name', translation: formatMessage(segmentMessages.technicalName) },
+    { name: 'user_points', translation: formatMessage(segmentMessages.userPoints) },
+    { name: 'user_accounts', translation: formatMessage(segmentMessages.userAccounts) },
+    { name: 'desktop_cookie_ids', translation: formatMessage(segmentMessages.desktopCookieId) },
+    { name: 'emails', translation: formatMessage(segmentMessages.emails) },
+    { name: 'user_point_additions', translation: formatMessage(segmentMessages.addition) },
+    { name: 'user_point_deletions', translation: formatMessage(segmentMessages.deletion) },
   ];
 
   const headersLine = headersMap.map(header => header.translation);
@@ -619,7 +634,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   });
 
   const sheets = [{
-    name: translations.DISPLAY_CAMPAIGNS_EXPORT_TITLE,
+    name: titleLine,
     data: dataSheet,
   }];
 

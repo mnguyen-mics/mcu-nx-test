@@ -16,29 +16,25 @@ import {
 
 const messages = defineMessages({
   sectionSubtitleGeneral: {
-    id: 'edit.apiToken.form.general.subtitle',
+    id: 'settings.profile.apiToken.edit.general.subtitle',
     defaultMessage: "Modify your Api Token's data.",
   },
   sectionTitleGeneral: {
-    id: 'edit.apiToken.form.general.title',
+    id: 'settings.profile.apiToken.edit.general.title',
     defaultMessage: 'General Informations',
   },
   labelApiTokenName: {
-    id: 'edit.apiToken.form.general.label.name',
+    id: 'settings.profile.apiToken.edit.general.label.name',
     defaultMessage: 'Name',
   },
   tootltipApiTokenName: {
-    id: 'edit.apiToken.form.general.tooltip.name',
+    id: 'settings.profile.apiToken.edit.general.tooltip.name',
     defaultMessage: 'Give your Api Token a first name.',
   },
   advancedFormSectionButtontext: {
-    id: 'edit.user.general.advanced.button',
+    id: 'settings.profile.apiToken.edit.general.advanced.button',
     defaultMessage: 'Advanced',
   },
-  //   tootltipTechnicalName: {
-  //     id: 'edit.user.general.infos.tooltip.technical.name',
-  //     defaultMessage: 'The technical Name is used for custom integrations.',
-  //   },
 });
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;

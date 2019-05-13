@@ -180,18 +180,15 @@ export default defineMessages({
     id: 'campaignEditor.section.general.advancedPart.title',
     defaultMessage: 'Advanced',
   },
-
   errorFormMessage: {
     id: 'audience.segment.error',
     defaultMessage:
       'There is an error with some fields in your form. Please review the data you entered.',
   },
-
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'audience.segments.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
-
   addAFeed: {
     id: 'audience.segment.addAFeed',
     defaultMessage: 'Add a Feed',

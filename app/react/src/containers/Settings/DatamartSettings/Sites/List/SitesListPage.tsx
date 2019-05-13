@@ -158,9 +158,11 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       }
     } = this.props;
     this.setState({ filter: newFilter });
-    const filters = parseSearch(
-      search,
-      this.getSearchSetting(organisationId),
+    const filters = parseSearch(search, this.getSearchSetting(organisationId));
+    this.fetchSites(
+      organisationId,
+      filters.datamartId ? filters.datamartId : datamart.id,
+      newFilter,
     );
     const calculatedDatamartId = datamartId ? datamartId : (filters.datamartId ? filters.datamartId : datamart.id);
     this.fetchSites(organisationId, calculatedDatamartId, newFilter);
@@ -276,7 +278,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       const datamartFilter = {
         displayElement: (
           <div>
-            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+            <FormattedMessage id="settings.datamart.site.list.datamartFilter" defaultMessage="Datamart" />{' '}
             <Icon type="down" />
           </div>
         ),

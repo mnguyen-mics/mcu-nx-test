@@ -64,7 +64,9 @@ class PlacementListContent extends React.Component<
     const {
       location: { search, state, pathname },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -108,20 +110,20 @@ class PlacementListContent extends React.Component<
   };
 
   render() {
-
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<PlacementListResource>> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<PlacementListResource>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          { intlMessage: messages.edit, callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
@@ -159,4 +161,7 @@ class PlacementListContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(PlacementListContent);
+export default compose(
+  withRouter,
+  injectIntl,
+)(PlacementListContent);

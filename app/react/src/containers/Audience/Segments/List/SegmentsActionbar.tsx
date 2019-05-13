@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { Button, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import {
@@ -9,7 +8,7 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
 import ReportService from '../../../../services/ReportService';
@@ -27,7 +26,6 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { UserActivationSegment } from '../../../../models/audiencesegment';
-
 
 const messages = defineMessages({
   exportRunning: {
@@ -60,22 +58,17 @@ const messages = defineMessages({
   },
   userActivationClickers: {
     id: 'segment.dashboard.useractivation.clickers',
-    defaultMessage: '{audienceSegmentName} - Clickers'
+    defaultMessage: '{audienceSegmentName} - Clickers',
   },
   userActivationExposed: {
     id: 'segment.dashboard.useractivation.exposed',
-    defaultMessage: '{audienceSegmentName} - Exposed'
-  }
+    defaultMessage: '{audienceSegmentName} - Exposed',
+  },
 });
-
-interface MapStateToProps {
-  translations: any;
-}
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
   InjectedDatamartProps &
-  MapStateToProps &
   InjectedNotificationProps;
 
 interface State {
@@ -96,17 +89,21 @@ class SegmentsActionbar extends React.Component<Props, State> {
 
   formatUserActivationSegmentName = (record: UserActivationSegment): string => {
     const { intl } = this.props;
-    
-    if(record.clickers) {
-      return intl.formatMessage(messages.userActivationClickers, {audienceSegmentName: record.name});
-    } else if (record.exposed){
-      return intl.formatMessage(messages.userActivationExposed, {audienceSegmentName: record.name});
+
+    if (record.clickers) {
+      return intl.formatMessage(messages.userActivationClickers, {
+        audienceSegmentName: record.name,
+      });
+    } else if (record.exposed) {
+      return intl.formatMessage(messages.userActivationExposed, {
+        audienceSegmentName: record.name,
+      });
     } else {
       // Not supposed to happen
       return record.name;
     }
-  }
-  
+  };
+
   fetchExportData = async (
     organisationId: string,
     datamartId: string,
@@ -117,7 +114,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
         first_result: 0,
         max_results: 5000,
       };
-  
+
       if (filter.keywords) {
         options.name = filter.keywords;
       }
@@ -129,11 +126,11 @@ class SegmentsActionbar extends React.Component<Props, State> {
       }
       return options;
     };
-  
+
     const startDate = new McsMoment('now');
     const endDate = new McsMoment('now');
     const dimension = ['audience_segment_id'];
-  
+
     const results = await Promise.all([
       this._audienceSegmentService.getSegments(organisationId, buildOptions()),
       ReportService.getAudienceSegmentReport(
@@ -143,26 +140,31 @@ class SegmentsActionbar extends React.Component<Props, State> {
         dimension,
       ),
     ]);
-  
+
     const segmentsWithUpdatedName = results[0].data.map(res => {
-      const name = res.type === "USER_ACTIVATION" ? this.formatUserActivationSegmentName(res) : res.name;
-      return {...res, name}
+      const name =
+        res.type === 'USER_ACTIVATION'
+          ? this.formatUserActivationSegmentName(res)
+          : res.name;
+      return { ...res, name };
     });
-  
-  
-    const audienceSegments = normalizeArrayOfObject(segmentsWithUpdatedName, 'id');
+
+    const audienceSegments = normalizeArrayOfObject(
+      segmentsWithUpdatedName,
+      'id',
+    );
     const performanceReport = normalizeArrayOfObject(
       normalizeReportView(results[1].data.report_view),
       'audience_segment_id',
     );
-  
+
     const mergedData = Object.keys(audienceSegments).map(segmentId => {
       return {
         ...audienceSegments[segmentId],
         ...performanceReport[segmentId],
       };
     });
-  
+
     return mergedData;
   };
 
@@ -171,8 +173,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      intl,
-      translations,
+      intl: { formatMessage },
       notifyError,
     } = this.props;
 
@@ -183,7 +184,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
 
     this.setState({ exportIsRunning: true });
     const hideExportLoadingMsg = message.loading(
-      intl.formatMessage(messages.exportRunning),
+      formatMessage(messages.exportRunning),
       0,
     );
 
@@ -196,7 +197,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
           datamartId,
           data,
           filter,
-          translations,
+          formatMessage
         );
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
@@ -228,7 +229,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link
           to={{
             pathname: `/v2/o/${organisationId}/audience/segments/create`,
@@ -248,14 +249,9 @@ class SegmentsActionbar extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-});
-
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectDatamart,
   injectNotifications,
-  connect(mapStateToProps),
 )(SegmentsActionbar);

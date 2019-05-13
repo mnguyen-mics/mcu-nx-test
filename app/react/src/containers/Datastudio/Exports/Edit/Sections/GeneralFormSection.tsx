@@ -16,19 +16,19 @@ import {
 
 const messages = defineMessages({
   sectionTitleGeneral: {
-    id: 'edit.placement.list.form.general.title',
+    id: 'exports.edit.generalInfoSection.title',
     defaultMessage: 'General Informations',
   },
   sectionSubTitleGeneral: {
-    id: 'edit.placement.list.form.general.subtitle',
+    id: 'exports.edit.generalInfoSection.subtitle',
     defaultMessage: 'Give your Export a name',
   },
   labelPlacementListName: {
-    id: 'edit.placement.list.general.infos.label.name',
+    id: 'exports.edit.generalInfoSection.label.name',
     defaultMessage: 'Export Name',
   },
   tootltipPlacementListName: {
-    id: 'edit.placement.list.general.infos.tooltip.name',
+    id: 'exports.edit.generalInfoSection.tooltip.name',
     defaultMessage:
       'Give your Export a Name so you can find it back in the different screens.',
   },

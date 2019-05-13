@@ -6,14 +6,41 @@ import {
   LoadingChart,
 } from '../../../../../components/EmptyCharts';
 import PieChart from '../../../../../components/PieChart';
-import withTranslations, {
-  TranslationProps,
-} from '../../../../Helpers/withTranslations';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { FormattedMessage } from 'react-intl';
+import {
+  FormattedMessage,
+  defineMessages,
+  InjectedIntlProps,
+  injectIntl,
+} from 'react-intl';
+
+const messageMap: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  DELIVERED: {
+    id: 'email.campaigns.dashboard.charts.delivered',
+    defaultMessage: 'Delivered',
+  },
+  OPENS: {
+    id: 'email.campaigns.dashboard.charts.opened',
+    defaultMessage: 'Opened',
+  },
+  CLICKS: {
+    id: 'email.campaigns.dashboard.charts.clicks',
+    defaultMessage: 'Clicks',
+  },
+  CLICKS_TO_OPENS: {
+    id: 'email.campaigns.dashboard.charts.openingCLicks',
+    defaultMessage: 'Opening Clicks',
+  },
+  UNSUBSCRIBE: {
+    id: 'email.campaigns.dashboard.charts.Unsubscribed',
+    defaultMessage: 'Unsubscribed',
+  },
+});
 
 export interface EmailDeliveryReport {
   emailDelivered: number;
@@ -28,12 +55,10 @@ export interface EmailPieChartsProps {
   isLoading: boolean;
 }
 
-type Props = EmailPieChartsProps & TranslationProps & InjectedThemeColorsProps;
+type Props = EmailPieChartsProps & InjectedThemeColorsProps & InjectedIntlProps;
 
 class EmailPieCharts extends React.Component<Props> {
   renderPieCharts = (deliveryReport: EmailDeliveryReport) => {
-    const { translations } = this.props;
-
     const {
       emailClicks,
       emailDelivered,
@@ -44,7 +69,7 @@ class EmailPieCharts extends React.Component<Props> {
 
     const generateRatio = (a: number, b: number) => {
       if (a === 0 || b === 0) return '0%';
-      const ratio = a / b * 100;
+      const ratio = (a / b) * 100;
       return `${Math.round(ratio)}%`;
     };
 
@@ -138,7 +163,7 @@ class EmailPieCharts extends React.Component<Props> {
       ratioValeA: number,
       ratioValeB: number,
     ) => {
-      const { colors } = this.props;
+      const { colors, intl } = this.props;
 
       let colorFormated = '';
       if (color === 'blue') {
@@ -153,7 +178,7 @@ class EmailPieCharts extends React.Component<Props> {
         isHalf: isHalf,
         text: {
           value: generateRatio(ratioValeA, ratioValeB),
-          text: translations[translationKey],
+          text: intl.formatMessage(messageMap[translationKey]),
         },
         colors: [colorFormated, gray],
       };
@@ -250,7 +275,7 @@ class EmailPieCharts extends React.Component<Props> {
         <EmptyCharts
           title={
             <FormattedMessage
-              id="email-campaign-overview"
+              id="email.campaign.dashboard.charts.noData"
               defaultMessage="No Data"
             />
           }
@@ -262,6 +287,6 @@ class EmailPieCharts extends React.Component<Props> {
 }
 
 export default compose<Props, EmailPieChartsProps>(
-  withTranslations,
   injectThemeColors,
+  injectIntl,
 )(EmailPieCharts);

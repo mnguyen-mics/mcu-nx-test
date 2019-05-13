@@ -26,27 +26,27 @@ import { IQueryService } from '../../../../services/QueryService';
 
 const messages = defineMessages({
   newExports: {
-    id: 'form.new.export',
+    id: 'exports.edit.newExport',
     defaultMessage: 'New Export',
   },
   exports: {
-    id: 'edit.exports.title',
+    id: 'exports.edit.title',
     defaultMessage: 'Exports',
   },
   editExports: {
-    id: 'edit.exports',
+    id: 'exports.edit.actionbar.editExprot',
     defaultMessage: 'Edit {name}',
   },
   updateSuccess: {
-    id: 'edit.exports.success.message',
+    id: 'exports.edit.successMessage',
     defaultMessage: 'Exports successfully saved ',
   },
   updateError: {
-    id: 'edit.exports.list.error.message',
+    id: 'exports.edit.list.errorMessage',
     defaultMessage: 'Exports update failed ',
   },
   savingInProgress: {
-    id: 'form.saving.in.progress',
+    id: 'exports.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Actionbar } from '../../Actionbar';
+import Actionbar from '../../../components/ActionBar';
 import { McsIcon } from '../../../components';
 import { compose } from 'recompose';
 import Menu from 'antd/lib/menu';
@@ -112,10 +112,14 @@ class AutomationActionBar extends React.Component<
     };
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/automation-builder`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_AUTOMATION" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage
+              id="automations.list.actionbar.newAutomation"
+              defaultMessage="New Automation"
+            />
           </Button>
         </Link>
         <Slider

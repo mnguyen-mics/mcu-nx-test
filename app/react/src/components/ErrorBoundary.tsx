@@ -12,7 +12,7 @@ interface State {
 }
 
 const messageProps = {
-  id: 'page.error.boundary.hasError.msg',
+  id: 'components.errorBoundary.hasError.msg',
   defaultMessage: 'Something went wrong',
 };
 

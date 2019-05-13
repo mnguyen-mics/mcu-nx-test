@@ -67,7 +67,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
     if (buckets.buckets.length === 0)
       return (
         <FormattedMessage
-          id="otql-result-renderer-aggrations-no-result"
+          id="queryTool.otql-result-renderer-aggrations-no-result"
           defaultMessage="No Result"
         />
       );
@@ -242,7 +242,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
             <div>
               <div className="m-r-10" style={{ display: 'inline-block' }}>
                 <FormattedMessage
-                  id="otql-result-renderer-aggrations-viewing"
+                  id="queryTool.otql-result-renderer-aggrations-viewing"
                   defaultMessage="Viewing :"
                 />
               </div>

@@ -9,7 +9,7 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
@@ -17,20 +17,20 @@ import Slider from '../../../../components/Transition/Slide';
 
 const messages = defineMessages({
   archiveNativesModalTitle: {
-    id: 'archive.natives.modal.title',
+    id: 'creatives.native.list.multiArchive.modal.title',
     defaultMessage: 'Archive Native Creatives',
   },
   archiveNativesModalMessage: {
-    id: 'archive.natives.modal.message',
+    id: 'creatives.native.list.multiArchive.modal.message',
     defaultMessage:
       'Are you sure to archive all the selected native creatives ?',
   },
   breadCrumbNativeListTitle: {
-    id: 'actionBar.natives.breadCrumb.title',
+    id: 'creatives.native.list.actionBar.breadCrumb.title',
     defaultMessage: 'Natives',
   },
   newNativeCreativeButton: {
-    id: 'actionBar.natives.new.native',
+    id: 'creatives.native.list.actionBar.new.Native',
     defaultMessage: 'New Native',
   },
 });
@@ -91,7 +91,7 @@ class NativeActionBar extends React.Component<JoinedProps> {
     };
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <a onClick={newnativeLink}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
@@ -107,7 +107,7 @@ class NativeActionBar extends React.Component<JoinedProps> {
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="ARCHIVE" />
+              <FormattedMessage id="creatives.native.list.actionbar.archive" defaultMessage="Archive" />
             </Button>
           }
         />

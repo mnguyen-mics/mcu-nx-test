@@ -2,18 +2,19 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
 import { Icon, Modal, Tooltip, message } from 'antd';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-
+import {
+  FormattedMessage,
+  InjectedIntlProps,
+  injectIntl,
+  defineMessages,
+} from 'react-intl';
 import {
   EmptyTableView,
   TableViewFilters,
 } from '../../../../components/TableView/index';
 import McsIcon from '../../../../components/McsIcon';
-
 import DisplayCampaignsService from '../../../../services/DisplayCampaignService';
-
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
-
 import {
   buildDefaultSearch,
   compareSearches,
@@ -21,33 +22,51 @@ import {
   parseSearch,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
-
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 import messages from '../messages';
-
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { RouteComponentProps } from 'react-router';
-
-import { TranslationProps } from '../../../Helpers/withTranslations';
-import { withTranslations } from '../../../Helpers/index';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
 import { MapDispatchToProps, MapStateToProps } from './DisplayCampaignsPage';
-import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import {
+  ExtendedTableRowSelection,
+  ActionsColumnDefinition,
+} from '../../../../components/TableView/TableView';
 import { FilterParams } from './DisplayCampaignsActionbar';
+
+const messagesMap: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  PENDING: {
+    id: 'display.campaigns.list.status.new',
+    defaultMessage: 'New',
+  },
+  ACTIVE: {
+    id: 'display.campaigns.list.status.active',
+    defaultMessage: 'Active',
+  },
+  PAUSED: {
+    id: 'display.campaigns.list.status.paused',
+    defaultMessage: 'Paused',
+  },
+  ARCHIVED: {
+    id: 'display.campaigns.list.status.archived',
+    defaultMessage: 'Archived',
+  },
+});
 
 interface DisplayCampaignsTableProps
   extends MapDispatchToProps,
-  MapStateToProps {
+    MapStateToProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingStatuses: boolean;
 }
 
 type JoinedProps = DisplayCampaignsTableProps &
   InjectedIntlProps &
-  TranslationProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCampaignsTable extends React.Component<JoinedProps> {
@@ -129,17 +148,17 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       loadDisplayCampaignsDataSource,
       history,
       dataSource,
-      translations,
+      intl,
     } = this.props;
 
     const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
 
     Modal.confirm({
-      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+      title: intl.formatMessage(messages.confirmArchiveModalTitle),
+      content: intl.formatMessage(messages.confirmArchiveModalContent),
       iconType: 'exclamation-circle',
-      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+      okText: intl.formatMessage(messages.confirmArchiveModalOk),
+      cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
       onOk() {
         return DisplayCampaignsService.deleteCampaign(campaign.id).then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
@@ -179,7 +198,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
     } else {
       const editUrl = `/v2/o/${organisationId}/campaigns/display/${
         campaign.id
-        }/edit`;
+      }/edit`;
 
       history.push({
         pathname: editUrl,
@@ -225,7 +244,6 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       },
       location: { search },
       hasDisplayCampaigns,
-      translations,
       isFetchingDisplayCampaigns,
       isFetchingCampaignsStat,
       dataSource,
@@ -233,12 +251,13 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       labels,
       rowSelection,
       isUpdatingStatuses,
+      intl,
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
 
     const searchOptions = {
-      placeholder: translations.SEARCH_DISPLAY_CAMPAIGNS,
+      placeholder: intl.formatMessage(messages.searchDisplayCampaign),
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
@@ -309,11 +328,14 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
 
     const dataColumns = [
       {
-        translationKey: 'STATUS',
+        intlMessage: messages.status,
         key: 'status',
         isHideable: false,
         render: (text: string) => (
-          <Tooltip placement="top" title={translations[text]}>
+          <Tooltip
+            placement="top"
+            title={intl.formatMessage(messagesMap[text])}
+          >
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
               <McsIcon type="status" />
             </span>
@@ -321,7 +343,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         ),
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messages.name,
         key: 'name',
         isHideable: false,
         render: (text: string, record: DisplayCampaignResource) => (
@@ -334,21 +356,21 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         ),
       },
       {
-        translationKey: 'IMPRESSIONS',
+        intlMessage: messages.impressions,
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'CLICKS',
+        intlMessage: messages.clicks,
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'IMPRESSIONS_COST',
+        intlMessage: messages.impressionCost,
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHideable: true,
@@ -359,14 +381,14 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         },
       },
       {
-        translationKey: 'CPM',
+        intlMessage: messages.cpm,
         key: 'cpm',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
-        translationKey: 'CTR',
+        intlMessage: messages.ctr,
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
@@ -374,7 +396,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
           renderMetricData(parseFloat(text) / 100, '0.000%'),
       },
       {
-        translationKey: 'CPC',
+        intlMessage: messages.cpc,
         key: 'cpc',
         isVisibleByDefault: true,
         isHideable: true,
@@ -382,7 +404,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       },
       // TODO UNCOMMENT WHEN THE CPA IS FIXED ON BACKEND SIDE
       // {
-      //   translationKey: 'CPA',
+      //   intlMessage: messages.cpa,
       //   key: 'cpa',
       //   isVisibleByDefault: true,
       //   isHideable: true,
@@ -390,12 +412,14 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       // },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<DisplayCampaignResource>> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<DisplayCampaignResource>
+    > = [
       {
         key: 'action',
         actions: () => [
           {
-            translationKey: 'EDIT',
+            intlMessage: messages.editDisplayCampaign,
             callback: this.editCampaign,
           },
           {
@@ -403,7 +427,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
             callback: this.duplicateCampaign,
           },
           {
-            translationKey: 'ARCHIVE',
+            intlMessage: messages.archiveDisplayCampaign,
             callback: this.archiveCampaign,
           },
         ],
@@ -419,7 +443,11 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       {
         displayElement: (
           <div>
-            <FormattedMessage id="STATUS" /> <Icon type="down" />
+            <FormattedMessage
+              id="display.campaigns.list.filterStatus"
+              defaultMessage="Status"
+            />{' '}
+            <Icon type="down" />
           </div>
         ),
         selectedItems: filter.statuses.map((status: CampaignStatus) => ({
@@ -473,13 +501,12 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-        <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
-      );
+      <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
+    );
   }
 }
 
 export default compose<JoinedProps, DisplayCampaignsTableProps>(
   withRouter,
-  withTranslations,
   injectIntl,
 )(DisplayCampaignsTable);

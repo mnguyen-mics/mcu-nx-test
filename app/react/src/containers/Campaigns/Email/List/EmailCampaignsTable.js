@@ -9,7 +9,7 @@ import {
   EmptyTableView,
 } from '../../../../components/TableView/index.ts';
 import { McsIcon } from '../../../../components/index.ts';
-import messages from './messages';
+import messages from './messages.ts';
 import { formatMetric } from '../../../../utils/MetricHelper.ts';
 import { campaignStatuses } from '../../constants';
 

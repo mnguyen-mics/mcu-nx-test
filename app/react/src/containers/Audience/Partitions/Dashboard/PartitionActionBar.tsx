@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 
 import McsIcon from '../../../../components/McsIcon';
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import {
   FormattedMessage,
   defineMessages,
@@ -16,19 +16,19 @@ import { AudiencePartitionResource } from '../../../../models/audiencePartition/
 
 const messages = defineMessages({
   edit: {
-    id: 'partition.dashboard.actionbar.edit',
+    id: 'audience.partitions.dashboard.actionbar.edit',
     defaultMessage: 'Edit Partition',
   },
   publish: {
-    id: 'partition.dashboard.actionbar.publish',
+    id: 'audience.partitions.dashboard.actionbar.publish',
     defaultMessage: 'Publish',
   },
   partitions: {
-    id: 'partition.dashboard.actionbar.breadcrumb',
+    id: 'audience.partitions.dashboard.actionbar.breadcrumb',
     defaultMessage: 'Partitions',
   },
   partitionOverview: {
-    id: 'partition.dashboard.actionbar.breadcrumb.default',
+    id: 'audience.partitions.dashboard.actionbar.breadcrumb.default',
     defaultMessage: 'Partion Overview',
   },
 });
@@ -50,7 +50,9 @@ class PartitionActionBar extends React.Component<
 > {
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl,
       partition,
       publishPartition,
@@ -71,7 +73,7 @@ class PartitionActionBar extends React.Component<
       },
     ];
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {partition && partition.status !== 'PUBLISHED' && (
           <Button
             className="mcs-primary"

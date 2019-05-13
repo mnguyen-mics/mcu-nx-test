@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Button, Icon, Menu, Modal } from 'antd';
-import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../../components/PopupContainers';
-import { Actionbar } from '../../../../Actionbar';
+import Actionbar from '../../../../../components/ActionBar';
 import messages from '../messages';
 import { McsIcon } from '../../../../../components/index';
 import { RouteComponentProps } from 'react-router';
@@ -521,15 +520,18 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
         key: formatMessage(messages.display),
       },
       {
-        name: displayCampaign && displayCampaign.name,
+        name: displayCampaign ? displayCampaign.name : '',
         url: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
         key: displayCampaign && displayCampaign.id,
       },
-      { name: adGroup && adGroup.name, key: adGroup && adGroup.id },
+      {
+        name: adGroup ? adGroup.name : '',
+        key: adGroup ? adGroup.id : '',
+      },
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {actionElement}
         {displayCampaign && displayCampaign.model_version !== 'V2014_06' ? (
           <Link
@@ -554,18 +556,8 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  translations: state.translations,
-});
-
-const mapDispatchToProps = {};
-
 export default compose<JoinedProps, AdGroupActionbarProps>(
   injectIntl,
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
   injectDrawer,
 )(AdGroupActionbar);

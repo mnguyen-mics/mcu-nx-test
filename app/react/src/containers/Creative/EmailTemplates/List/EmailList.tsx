@@ -10,7 +10,6 @@ import {
   EmptyTableView,
 } from '../../../../components/TableView/index';
 import EmailTestModal from './EmailTestModal';
-
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -19,16 +18,17 @@ import {
   buildDefaultSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-
+import messagesMap from '../../DisplayAds/List/message';
 import CreativeScreenshot from '../../CreativeScreenshot';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { Filters } from '../../../../components/ItemList';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
-import { withTranslations } from '../../../Helpers/index';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 import { MapStateToProps, MapDispatchToProps } from './EmailListPage';
 import CreativeService from '../../../../services/CreativeService';
-import { ExtendedTableRowSelection, ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import {
+  ExtendedTableRowSelection,
+  ActionsColumnDefinition,
+} from '../../../../components/TableView/TableView';
 
 interface CreativeEmailsTableProps extends MapStateToProps, MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
@@ -42,13 +42,16 @@ interface CreativeEmailsTableState {
 
 type JoinedProps = CreativeEmailsTableProps &
   RouteComponentProps<CampaignRouteParams> &
-  TranslationProps &
   InjectedIntlProps;
 
 const messages = defineMessages({
   searchPlaceholder: {
     id: 'creative.email.list.searchPlaceholder',
     defaultMessage: 'Search Email Templates',
+  },
+  sendTest: {
+    id: 'creative.email.list.sendTest',
+    defaultMessage: 'Send a test Email',
   },
 });
 
@@ -200,7 +203,7 @@ class CreativeEmailsTable extends React.Component<
 
     const dataColumns = [
       {
-        translationKey: 'PREVIEW',
+        intlMessage: messagesMap.preview,
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
@@ -210,7 +213,7 @@ class CreativeEmailsTable extends React.Component<
         ) => <CreativeScreenshot item={record} />,
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messagesMap.name,
         key: 'name',
         isHideable: false,
         render: (text: string, record: any) => (
@@ -223,33 +226,35 @@ class CreativeEmailsTable extends React.Component<
         ),
       },
       {
-        translationKey: 'AUDIT_STATUS',
+        intlMessage: messagesMap.auditStatus,
         key: 'audit_status',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        translationKey: 'PUBLISHED_VERSION',
+        intlMessage: messagesMap.publishedVersion,
         key: 'published_version',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<EmailTemplateResource>> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<EmailTemplateResource>
+    > = [
       {
         key: 'action',
         actions: () => [
           {
-            translationKey: 'SEND_TEST',
+            intlMessage: messages.sendTest,
             callback: this.viewTestModal,
           },
           {
-            translationKey: 'EDIT',
+            intlMessage: messagesMap.edit,
             callback: this.editCreativeEmails,
           },
           {
-            translationKey: 'ARCHIVE',
+            intlMessage: messagesMap.archive,
             callback: this.archiveCreativeEmails,
           },
         ],
@@ -307,19 +312,21 @@ class CreativeEmailsTable extends React.Component<
       },
       location: { search, pathname, state },
       fetchCreativeEmails,
-      translations,
       dataSource,
       history,
+      intl,
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
 
     Modal.confirm({
-      title: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_TITLE,
-      content: translations.CAMPAIGN_MODAL_CONFIRM_ARCHIVED_BODY,
+      title: intl.formatMessage(messagesMap.creativeModalConfirmArchivedTitle),
+      content: intl.formatMessage(
+        messagesMap.creativeModalConfirmArchivedContent,
+      ),
       iconType: 'exclamation-circle',
-      okText: translations.MODAL_CONFIRM_ARCHIVED_OK,
-      cancelText: translations.MODAL_CONFIRM_ARCHIVED_CANCEL,
+      okText: intl.formatMessage(messagesMap.creativeModalConfirmArchivedOk),
+      cancelText: intl.formatMessage(messagesMap.cancelText),
       onOk() {
         CreativeService.updateEmailTemplate(email.id, {
           ...email,
@@ -350,5 +357,4 @@ class CreativeEmailsTable extends React.Component<
 export default compose<JoinedProps, CreativeEmailsTableProps>(
   withRouter,
   injectIntl,
-  withTranslations,
 )(CreativeEmailsTable);

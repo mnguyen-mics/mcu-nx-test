@@ -13,15 +13,15 @@ export interface AudienceFeedSelectorProps {
 
 const messages = defineMessages({
   listTitle: {
-    id: 'audience.segment.form.segment.type.selector.list.title',
+    id: 'audience.segments.form.audienceFeedSelector.title',
     defaultMessage: 'Feed Types',
   },
   listSubtitle: {
-    id: 'audience.segment.form.segment.type.selector.list.subtitle',
+    id: 'audience.segments.form.audienceFeedSelector.subtitle',
     defaultMessage: 'Chose your feed types. Tags will display a pixel to all your users within your segment and external feed will transfer them from server to server.',
   },
   segmentTypeOr: {
-    id: 'audience.segment.form.segment.type.selector.or',
+    id: 'audience.segments.form.audienceFeedSelector.or',
     defaultMessage: 'Or',
   },
 });

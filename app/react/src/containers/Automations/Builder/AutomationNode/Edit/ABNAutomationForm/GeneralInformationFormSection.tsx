@@ -18,23 +18,23 @@ import { ABNFormData } from '../domain';
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id: 'automation.builder.node.edition.form.general.title',
+    id: 'automation.builder.abnNode.edition.form.generalInfoSection.title',
     defaultMessage: 'General Informations',
   },
   sectionGeneralSubtitle: {
-    id: 'automation.builder.node.edition.form.general.subtitle',
+    id: 'automation.builder.abnNode.edition.form.generalInfoSection.subtitle',
     defaultMessage: 'Modify the general information of the ABN Node',
   },
   automationNodeName: {
-    id: 'automation.builder.node.form.name',
+    id: 'automation.builder.abnNode.form.name',
     defaultMessage: 'Automation Node name',
   },
   branchNumber: {
-    id: 'automation.builder.split.node.form.branch.number',
+    id: 'automation.builder.abnNode.split.form.branch.number',
     defaultMessage: 'Branches',
   },
   advancedSection: {
-    id: 'automation.builder.node.advanced.section',
+    id: 'automation.builder.abnNode.advanced.section',
     defaultMessage: 'Advanced',
   },
 });

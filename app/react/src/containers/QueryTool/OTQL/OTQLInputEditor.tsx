@@ -49,7 +49,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
     const clearButton = (
       <Button onClick={this.clearQuery}>
         <FormattedMessage
-          id="query-tool-clear-query"
+          id="queryTool.query-tool-clear-query"
           defaultMessage="Clear Query"
         />
       </Button>
@@ -58,7 +58,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
     const abortButton = (
       <Button type="primary" onClick={onAbortQuery}>
         <FormattedMessage
-          id="query-tool-abort-query"
+          id="queryTool.query-tool-abort-query"
           defaultMessage="Abort Query"
         />
       </Button>
@@ -68,7 +68,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
     const runButton = (
       <Button type="primary" className="m-l-5" disabled={!query} onClick={handleOnRunButtonClick}>
         <FormattedMessage
-          id="query-tool-run-query"
+          id="queryTool.query-tool-run-query"
           defaultMessage="Run Query"
         />
       </Button>
@@ -90,7 +90,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       <Card
         title={
           <FormattedMessage
-            id="otql-query-editor-card-title"
+            id="queryTool.otql-query-editor-card-title"
             defaultMessage="OTQL Query"
           />
         }

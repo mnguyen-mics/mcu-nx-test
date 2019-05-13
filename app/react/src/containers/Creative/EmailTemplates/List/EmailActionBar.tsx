@@ -8,23 +8,24 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
-
-import { Actionbar } from '../../../Actionbar';
-import { withTranslations } from '../../../Helpers';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 import Slider from '../../../../components/Transition/Slide';
 
 const messages = defineMessages({
   archiveEmailsModalTitle: {
-    id: 'archive.emails.modal.title',
+    id: 'creatives.email.list.archiveModal.title',
     defaultMessage: 'Archive Emails',
   },
   archiveEmailsModalMessage: {
-    id: 'archive.emails.modal.message',
+    id: 'creatives.email.list.archiveModal.message',
     defaultMessage: 'Are you sure to archive all the selected emails ?',
+  },
+  emailTemplates: {
+    id: 'creatives.email.list.actionbar.breadCrumbPath.emailTemplates',
+    defaultMessage: 'Email Templates',
   },
 });
 
@@ -44,8 +45,7 @@ interface EmailActionBarProps {
 }
 type JoinedProps = EmailActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
-  InjectedIntlProps &
-  TranslationProps;
+  InjectedIntlProps;
 
 class EmailActionBar extends React.Component<JoinedProps> {
   render() {
@@ -53,7 +53,6 @@ class EmailActionBar extends React.Component<JoinedProps> {
       match: {
         params: { organisationId },
       },
-      translations,
       rowSelection,
       multiEditProps: {
         archiveEmails,
@@ -67,7 +66,7 @@ class EmailActionBar extends React.Component<JoinedProps> {
 
     const breadcrumbPaths = [
       {
-        name: translations.EMAILS_TEMPLATES,
+        name: intl.formatMessage(messages.emailTemplates),
         url: `/v2/o/${organisationId}/creatives/email`,
       },
     ];
@@ -77,10 +76,14 @@ class EmailActionBar extends React.Component<JoinedProps> {
     );
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/email/create`}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_EMAIL_TEMPLATE" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage
+              id="creatives.email.list.actionbar.newEmailTemplate"
+              defaultMessage="New Email Template"
+            />
           </Button>
         </Link>
         <Slider
@@ -92,7 +95,10 @@ class EmailActionBar extends React.Component<JoinedProps> {
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="ARCHIVE" />
+              <FormattedMessage
+                id="creatives.email.list.actionbar.deleteEmailTemplate"
+                defaultMessage="Archive"
+              />
             </Button>
           }
         />
@@ -116,5 +122,4 @@ class EmailActionBar extends React.Component<JoinedProps> {
 export default compose<JoinedProps, EmailActionBarProps>(
   withRouter,
   injectIntl,
-  withTranslations,
 )(EmailActionBar);

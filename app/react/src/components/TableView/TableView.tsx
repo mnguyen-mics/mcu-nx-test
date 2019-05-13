@@ -8,9 +8,6 @@ import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { ClickParam } from 'antd/lib/menu';
 import { Dropdown } from '../../components/PopupContainers';
 import McsIcon from '../McsIcon';
-import withTranslations, {
-  TranslationProps,
-} from '../../containers/Helpers/withTranslations';
 import SelectionNotifyer from './SelectionNotifyer';
 
 const DEFAULT_PAGINATION_OPTION = {
@@ -20,7 +17,6 @@ const DEFAULT_PAGINATION_OPTION = {
 
 export interface DataColumnDefinition<T> extends ColumnProps<T> {
   intlMessage?: FormattedMessage.MessageDescriptor;
-  translationKey?: string;
   key: string;
   render?: (text: string, record: T, index: number) => React.ReactNode;
   sorter?: boolean | ((a: any, b: any) => number);
@@ -29,7 +25,6 @@ export interface DataColumnDefinition<T> extends ColumnProps<T> {
 }
 
 export interface ActionDefinition<T> {
-  translationKey?: string;
   intlMessage?: FormattedMessage.MessageDescriptor;
   disabled?: boolean;
   callback: (record: T) => void;
@@ -61,7 +56,7 @@ export interface TableViewProps<T> extends TableProps<T> {
 class TableView<
   T extends { key?: string; id?: string; [key: string]: any }
 > extends React.Component<
-  TableViewProps<T> & TranslationProps & InjectedIntlProps
+  TableViewProps<T> & InjectedIntlProps
 > {
   static defaultProps: Partial<TableViewProps<any>> = {
     visibilitySelectedColumns: [],
@@ -116,8 +111,6 @@ class TableView<
         return {
           title: dataColumn.intlMessage ? (
             <FormattedMessage {...dataColumn.intlMessage} />
-          ) : dataColumn.translationKey ? (
-            this.props.translations[dataColumn.translationKey]
           ) : (
             undefined
           ),
@@ -144,9 +137,7 @@ class TableView<
             <Menu.Item key={index.toString()} disabled={action.disabled}>
                 {action.intlMessage ? (
                   <FormattedMessage {...action.intlMessage!} />
-                ) : action.translationKey ? (
-                  this.props.translations[action.translationKey]
-                ) : (
+                ): (
                   index
                 )}
             </Menu.Item>
@@ -164,7 +155,6 @@ class TableView<
       pagination,
       actionsColumnsDefinition,
       visibilitySelectedColumns,
-      translations,
       children,
       intl,
       ...rest
@@ -217,6 +207,5 @@ class TableView<
 }
 
 export default compose(
-  withTranslations,
   injectIntl,
 )(TableView) as React.ComponentClass<TableViewProps<any>>;

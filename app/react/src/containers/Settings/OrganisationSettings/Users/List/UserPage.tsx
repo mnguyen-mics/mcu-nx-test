@@ -80,7 +80,7 @@ class UserList extends React.Component<
     // const actionsColumnsDefinition = [
     //   {
     //     key: 'action',
-    //     actions: [{ translationKey: 'EDIT', callback: this.onClickEdit }],
+    //     actions: [{ intlMessage: 'EDIT', callback: this.onClickEdit }],
     //   },
     // ];
 

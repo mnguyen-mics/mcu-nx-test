@@ -57,7 +57,7 @@ class JSONQLPreview extends React.Component<Props> {
             onClick={onSave}
           >
             <FormattedMessage
-              id="jsonql.querytool.query.edit.update"
+              id="queryTool.jsonql.querytool.query.edit.update"
               defaultMessage="Update"
             />
           </Button>

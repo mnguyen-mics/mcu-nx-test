@@ -8,7 +8,6 @@ import {
   AutomationStatus,
 } from '../../../models/automations/automations';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
-import { TranslationProps } from '../../Helpers/withTranslations';
 import { Label } from '../../Labels/Labels';
 import injectDrawer, {
   InjectedDrawerProps,
@@ -30,7 +29,6 @@ import { TYPES } from '../../../constants/types';
 
 export interface MapDispatchToProps {
   labels: Label[];
-  translations: TranslationProps;
 }
 
 const { Content } = Layout;
@@ -191,7 +189,7 @@ class AutomationListPage extends React.Component<
       allRowsAreSelected,
     } = this.state;
 
-    const { labels, translations } = this.props;
+    const { labels } = this.props;
 
     const rowSelection = {
       selectedRowKeys,
@@ -210,7 +208,6 @@ class AutomationListPage extends React.Component<
 
     const reduxProps = {
       labels,
-      translations,
     };
 
     return (

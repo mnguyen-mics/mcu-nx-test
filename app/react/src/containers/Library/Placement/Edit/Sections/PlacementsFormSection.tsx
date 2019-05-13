@@ -34,60 +34,60 @@ const Dragger = Upload.Dragger;
 
 const messages = defineMessages({
   sectionSubtitleGeneral: {
-    id: 'edit.placement.list.form.placement.subtitle',
+    id: 'placement.placementList.edit.placement.subtitle',
     defaultMessage: 'This is the list of all placement added to your placement list. You can target or exclude it directly within an Ad Group.',
   },
   sectionTitleGeneral: {
-    id: 'edit.placement.list.form.placement.title',
+    id: 'placement.placementList.edit.placement.title',
     defaultMessage: 'Placement List',
   },
   addPlacement: {
-    id: 'edit.placement.list.form.add.new',
+    id: 'placement.placementList.edit.addNew',
     defaultMessage: 'Add New Placement',
   },
   addWebSite: {
-    id: 'edit.placement.list.form.add.new.website',
+    id: 'placement.placementList.edit.addNewWebsite',
     defaultMessage: 'Add Web Site',
   },
   addMobileApp: {
-    id: 'edit.placement.list.form.add.new.mobileApp',
+    id: 'placement.placementList.edit.addNewMobileApp',
     defaultMessage: 'Add Mobile App',
   },
   replaceWithCsv: {
-    id: 'edit.placement.list.form.replace.with.csv',
+    id: 'placement.placementList.edit.replaceWithCsv',
     defaultMessage: 'Replace with CSV',
   },
   addDataWithCsv: {
-    id: 'edit.placement.list.form.add.data.with.csv',
+    id: 'placement.placementList.edit.addDataWithCsv',
     defaultMessage: 'Add data with CSV',
   },
   downloadCsvTemplate: {
-    id: 'edit.placement.list.form.download.csv.template',
+    id: 'placement.placementList.edit.downloadCsvTemplate',
     defaultMessage: 'Download CSV Template',
   },
   addNewPlacement: {
-    id: 'edit.placement.list.form.add.new.text.button',
+    id: 'placement.placementList.edit.addNewButton',
     defaultMessage: 'Add',
   },
   emptyRecordTitle: {
-    id: 'edit.placement.list.no.placementDescriptor.title',
+    id: 'placement.placementList.edit.no.placementDescriptor.title',
     defaultMessage:
       'Click on the pen to add a placement to your placement list',
   },
   dragAndDrop: {
-    id: 'drag.and.drop.file.or.click.line.1',
+    id: 'placement.placementList.edit.dragAndDropOrClick.line.1',
     defaultMessage: 'Drag & Drop your file or click to upload your CSV file.',
   },
   csvRules: {
-    id: 'drag.and.drop.file.or.click.line.2',
+    id: 'placement.placementList.edit.dragAndDropOrClick.line.2',
     defaultMessage: 'Your CSV file must have 3 columns and no empty cells',
   },
   modalTitle: {
-    id: 'drag.and.drop.modal.title',
+    id: 'placement.placementList.edit.dragAndDrop.modal.title',
     defaultMessage: 'Replace the current placements by CSV ',
   },
   formError: {
-    id: 'form.placement.descriptor.empty.select.message.error',
+    id: 'placement.placementList.edit.dragAndDrop.empty.select.messageError',
     defaultMessage: 'Error: Empty fields are forbidden. Please select values.',
   },
 });

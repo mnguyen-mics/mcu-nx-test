@@ -82,13 +82,13 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
       <Menu onClick={handleMenuClick}>
         <Menu.Item key="USER_QUERY" disabled={!saveAsUserQuery}>
           <FormattedMessage
-            id="query-builder-page-actionbar-saveas-segment"
+            id="queryTool.query-builder-page-actionbar-saveas-segment"
             defaultMessage="User Query Segment"
           />
         </Menu.Item>
         <Menu.Item key="EXPORT" disabled={!saveAsExort}>
           <FormattedMessage
-            id="query-builder-page-actionbar-saveas-export"
+            id="queryTool.query-builder-page-actionbar-saveas-export"
             defaultMessage="Export"
           />
         </Menu.Item>
@@ -102,7 +102,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <FormattedMessage
-              id="query-builder-page-actionbar-save"
+              id="queryTool.query-builder-page-actionbar-save"
               defaultMessage="Save As"
             />
           </Button>

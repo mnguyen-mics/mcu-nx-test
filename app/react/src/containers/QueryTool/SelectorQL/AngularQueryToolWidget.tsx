@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import { Spin } from 'antd';
 
 const messageProps = {
-  id: 'query-tool.widget.angular-query.undefined',
+  id: 'queryTool.query-tool.widget.angular-query.undefined',
   defaultMessage: 'Undefined angular query container'
 }
 

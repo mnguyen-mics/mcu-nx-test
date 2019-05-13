@@ -1,21 +1,23 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { addLocaleData, IntlProvider } from 'react-intl';
-
 import enUS from 'antd/lib/locale-provider/en_US';
 import { LocaleProvider } from 'antd';
-
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
-
 import Navigator from './containers/Navigator';
 import { HashRouter as Router } from 'react-router-dom';
 
+// const messagesEn = require('../src/translations/en.json');
+// const messagesFr = require('../src/translations/fr.json');
+
 addLocaleData([...enLocaleData, ...frLocaleData]);
-interface IntlAppProps {
-  locale?: string;
-  translations: { [id: string]: string };
-}
+
+// const messages: any = {
+//   en: messagesEn,
+//   fr: messagesFr,
+// };
+
+// const language = navigator.language.split(/[-_]/)[0]; // language without region code
 
 const formats = {
   number: {
@@ -30,31 +32,23 @@ const formats = {
   },
 };
 
-const IntlApp: React.SFC<IntlAppProps> = ({ locale, translations }) => {
-  return (
-    <IntlProvider
-      locale={locale}
-      messages={translations}
-      formats={formats}
-      defaultFormats={formats}
-    >
-      <LocaleProvider locale={enUS}>
-        <Router>
-          <Navigator />
-        </Router>
-      </LocaleProvider>
-    </IntlProvider>
-  );
-};
+class IntlApp extends React.Component<{}> {
+  render() {
+    return (
+      <IntlProvider
+        // messages={messages[language]}
+        formats={formats}
+        defaultFormats={formats}
+        locale="en"
+      >
+        <LocaleProvider locale={enUS}>
+          <Router>
+            <Navigator />
+          </Router>
+        </LocaleProvider>
+      </IntlProvider>
+    );
+  }
+}
 
-// TODO find browser locale
-IntlApp.defaultProps = {
-  locale: 'en',
-  translations: {},
-};
-
-const mapStateToProps = (state: { translations: object }) => ({
-  translations: state.translations,
-});
-
-export default connect(mapStateToProps)(IntlApp);
+export default IntlApp;

@@ -175,7 +175,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
 
     const dataColumns = [
       {
-        translationKey: 'STATUS',
+        intlMessage: messages.status,
         key: 'status',
         isHideable: false,
         render: (text: string, record: AdGroupResource) => {
@@ -200,7 +200,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
         },
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messages.name,
         key: 'name',
         isHideable: false,
         render: (text: any, record: AdGroupResource) => {
@@ -219,28 +219,28 @@ class DisplayCampaignAdGroupTable extends React.Component<
       },
 
       {
-        translationKey: 'IMPRESSIONS',
+        intlMessage: messages.impressions,
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'CLICKS',
+        intlMessage: messages.clicks,
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'CPM',
+        intlMessage: messages.cpm,
         key: 'cpm',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
-        translationKey: 'CTR',
+        intlMessage: messages.ctr,
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
@@ -248,14 +248,14 @@ class DisplayCampaignAdGroupTable extends React.Component<
           renderMetricData(parseFloat(text) / 100, '0.000 %'),
       },
       {
-        translationKey: 'CPC',
+        intlMessage: messages.cpc,
         key: 'cpc',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
-        translationKey: 'IMPRESSIONS_COST',
+        intlMessage: messages.impressions_cost,
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHideable: true,
@@ -263,7 +263,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
       },
       // TODO UNCOMMENT WHEN BACKEND IS FIXED
       // {
-      //   translationKey: 'CPA',
+      //   intlMessage: messages.cpa,
       //   key: 'cpa',
       //   isVisibleByDefault: true,
       //   isHideable: true,
@@ -279,7 +279,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
     ) {
       actions.push(
         {
-          translationKey: 'EDIT',
+          intlMessage: messages.editCampaign,
           callback: this.editCampaign,
         },
         {

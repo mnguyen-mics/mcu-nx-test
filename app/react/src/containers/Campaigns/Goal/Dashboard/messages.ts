@@ -101,6 +101,10 @@ export default defineMessages({
     id: 'goals.stats.interactionToConversionDuration',
     defaultMessage: 'Interaction to Conversion Duration'
   },
+  interactionType: {
+    id: 'goals.stats.interactionType',
+    defaultMessage: 'Interaction type'
+  },
   SOURCE: {
     id: 'goals.stats.source',
     defaultMessage: 'Source'
@@ -118,7 +122,31 @@ export default defineMessages({
     defaultMessage: '{ value } in { duration }'
   },
   exportInProgress: {
-    id: 'goal.actionbar.button.export',
+    id: 'goal.dashboard.actionbar.button.export',
     defaultMessage: 'Export in progress',
+  },
+  goalsExportTitle: {
+    id: 'goal.dashboard.actionbar.export.title',
+    defaultMessage: 'Goals Export',
+  },
+  goalsExportColumnName: {
+    id: 'goal.dashboard.actionbar.export.column.name',
+    defaultMessage: 'Name',
+  },
+  goalsExportColumnConversions: {
+    id: 'goal.dashboard.actionbar.export.column.conversions',
+    defaultMessage: 'Conversions',
+  },
+  goalsExportColumnConversionValue: {
+    id: 'goal.dashboard.actionbar.export.column.conversionValue',
+    defaultMessage: 'Conversion value',
+  },
+  campaignId: {
+    id: 'goal.dashboard.actionbar.export.column.campaignId',
+    defaultMessage: 'Campaign ID',
+  },
+  creativeId: {
+    id: 'goal.dashboard.actionbar.export.column.creativeId',
+    defaultMessage: 'Creative ID',
   },
 })

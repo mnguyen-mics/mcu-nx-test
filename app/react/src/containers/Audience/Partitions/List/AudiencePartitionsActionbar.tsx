@@ -2,31 +2,43 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Menu, Button } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import {
+  FormattedMessage,
+  defineMessages,
+  InjectedIntlProps,
+  injectIntl,
+} from 'react-intl';
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../components/PopupContainers/index';
 
-import { Actionbar } from '../../../Actionbar';
+import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
-import { withTranslations } from '../../../Helpers';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
+
+const messages = defineMessages({
+  AUDIENCE_PARTITIONS: {
+    id: 'audience.partitions.list.actionbar.beardCrumbPath.partitions',
+    defaultMessage: 'Partitions',
+  },
+});
 
 interface MapStateToProps {
   defaultDatamart: (organisationId: string) => DatamartResource;
 }
 
 type Props = MapStateToProps &
-  TranslationProps &
+  InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AudiencePartitionsActionbar extends React.Component<Props> {
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       defaultDatamart,
-      translations,
+      intl,
     } = this.props;
 
     const datamartId = defaultDatamart(organisationId).id;
@@ -36,14 +48,20 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
           <Link
             to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=RANDOM_SPLIT`}
           >
-            <FormattedMessage id="RANDOM_SPLIT" />
+            <FormattedMessage
+              id="audience.partitions.list.actionbar.menu.randomSplit"
+              defaultMessage="Random Split"
+            />
           </Link>
         </Menu.Item>
         <Menu.Item key="CLUSTERING">
           <Link
             to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=CLUSTERING`}
           >
-            <FormattedMessage id="CLUSTERING" />
+            <FormattedMessage
+              id="audience.partitions.list.actionbar.menu.clustering"
+              defaultMessage="Clustering"
+            />
           </Link>
         </Menu.Item>
       </Menu>
@@ -51,16 +69,20 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
 
     const breadcrumbPaths = [
       {
-        name: translations.AUDIENCE_PARTITIONS,
+        name: intl.formatMessage(messages.AUDIENCE_PARTITIONS),
         url: `/v2/o/${organisationId}/audience/partitions`,
       },
     ];
 
     return (
-      <Actionbar path={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage id="NEW_PARTITION" />
+            <McsIcon type="plus" />{' '}
+            <FormattedMessage
+              id="audience.partitions.list.actionbar.newPartition"
+              defaultMessage="New Partition"
+            />
           </Button>
         </Dropdown>
       </Actionbar>
@@ -73,7 +95,10 @@ const mapStateToProps = (state: any) => ({
 });
 
 export default compose(
-  withTranslations,
   withRouter,
-  connect(mapStateToProps, undefined),
+  injectIntl,
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(AudiencePartitionsActionbar);

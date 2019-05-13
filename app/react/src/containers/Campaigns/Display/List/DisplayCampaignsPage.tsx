@@ -37,14 +37,12 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
 import { Label } from '../../../Labels/Labels';
-import { TranslationProps } from '../../../Helpers/withTranslations';
 import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 
 export interface MapDispatchToProps {
   labels: Label[];
-  translations: TranslationProps;
   hasDisplayCampaigns: boolean;
   isFetchingDisplayCampaigns: boolean;
   isFetchingCampaignsStat: boolean;
@@ -423,7 +421,6 @@ class DisplayCampaignsPage extends React.Component<
 
     const {
       labels,
-      translations,
       dataSource,
       hasDisplayCampaigns,
       isFetchingDisplayCampaigns,
@@ -456,7 +453,6 @@ class DisplayCampaignsPage extends React.Component<
 
     const reduxProps = {
       labels,
-      translations,
       dataSource,
       hasDisplayCampaigns,
       isFetchingDisplayCampaigns,
@@ -489,7 +485,6 @@ class DisplayCampaignsPage extends React.Component<
 
 const mapStateToProps = (state: any) => ({
   labels: state.labels.labelsApi.data,
-  translations: state.translations,
   hasDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.hasItems,
   isFetchingDisplayCampaigns:
     state.displayCampaignsTable.displayCampaignsApi.isFetching,

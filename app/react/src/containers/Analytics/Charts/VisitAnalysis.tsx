@@ -9,8 +9,7 @@ import StackedAreaPlotDoubleAxis from '../../../components/StackedAreaPlot/Stack
 import Col from 'antd/lib/grid/col';
 import Row from 'antd/lib/grid/row';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
-import MessageDescriptor = ReactIntl.FormattedMessage.MessageDescriptor;
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import McsMoment from '../../../utils/McsMoment';
 import { updateSearch } from '../../../utils/LocationSearchHelper';
 import { withRouter } from 'react-router-dom';
@@ -21,7 +20,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../Helpers/injectThemeColors';
 
-const _messages: { [s: string]: MessageDescriptor } = messages;
+const _messages: { [s: string]: FormattedMessage.MessageDescriptor } = messages;
 
 interface VisitAnalysisProps {
   hasFetchedVisitReport: boolean;
@@ -63,7 +62,9 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
   }
 
   createLegend() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const keys = [
       'max_duration',
       'min_duration',

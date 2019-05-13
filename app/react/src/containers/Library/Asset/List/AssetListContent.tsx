@@ -14,7 +14,7 @@ import {
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import AssetListActionBar from './AssetListActionBar'
+import AssetListActionBar from './AssetListActionBar';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 
@@ -67,7 +67,9 @@ class AssetListContent extends React.Component<
     const {
       location: { search, state, pathname },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -105,16 +107,19 @@ class AssetListContent extends React.Component<
   };
 
   render() {
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<AssetFileResource>> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<AssetFileResource>
+    > = [
       {
         key: 'action',
-        actions: () => [{ translationKey: 'ARCHIVE', callback: this.onClickArchive }],
+        actions: () => [
+          { intlMessage: messages.archive, callback: this.onClickArchive },
+        ],
       },
     ];
 
     const dataColumnsDefinition = [
       {
-        translationKey: 'PREVIEW',
         intlMessage: messages.preview,
         key: 'path',
         isHideable: false,
@@ -128,7 +133,9 @@ class AssetListContent extends React.Component<
             >
               <span className="thumbnail-helper" />
               <img
-                src={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${text}`}
+                src={`${
+                  (global as any).window.MCS_CONSTANTS.ASSETS_URL
+                }${text}`}
                 alt={record.original_name}
               />
             </a>
@@ -136,13 +143,14 @@ class AssetListContent extends React.Component<
         ),
       },
       {
-        translationKey: 'NAME',
         intlMessage: messages.name,
         key: 'original_name',
         isHideable: false,
         render: (text: string, record: AssetFileResource) => (
           <a
-            href={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${record.path}`}
+            href={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${
+              record.path
+            }`}
             rel="noreferrer noopener"
             target="_blank"
           >
@@ -151,14 +159,12 @@ class AssetListContent extends React.Component<
         ),
       },
       {
-        translationKey: 'TYPE',
         intlMessage: messages.type,
         key: 'mime_type',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        translationKey: 'DIMENSIONS',
         intlMessage: messages.dimensions,
         key: 'width',
         isHideable: false,
@@ -200,4 +206,7 @@ class AssetListContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(AssetListContent);
+export default compose(
+  withRouter,
+  injectIntl,
+)(AssetListContent);

@@ -26,7 +26,7 @@ class GeneralSettingSummary extends React.Component<Props> {
     return (
       <div>
         <FormattedMessage
-          id="ad-group-form-summary-schedule-date"
+          id="display.campaign.edit.adGroup.generalSettingSummary.scheduleDate"
           defaultMessage={`Your ad group will run from 
           the { startDate } to the { endDate }`}
           values={{
@@ -44,7 +44,7 @@ class GeneralSettingSummary extends React.Component<Props> {
         />
         <br />
         <FormattedMessage
-          id="ad-group-form-summary-buget-period"
+          id="display.campaign.edit.adGroup.generalSettingSummary.bugetPeriod"
           defaultMessage={`Your ad group will run with a { budgetPeriod } budget of { budgetAmount }`}
           values={{
             budgetPeriod: (

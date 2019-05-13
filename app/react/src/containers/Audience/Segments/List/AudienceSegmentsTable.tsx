@@ -47,7 +47,7 @@ import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
-import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import { ActionsColumnDefinition, DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -55,70 +55,110 @@ import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 
 const messages = defineMessages({
   filterByLabel: {
-    id: 'audience.label.filterBy',
+    id: 'audience.segments.list.label.filterBy',
     defaultMessage: 'Filter By Label',
   },
   modalTitle: {
-    id: 'audience.archive.modal.title',
+    id: 'audience.segments.list.archive.modal.title',
     defaultMessage: 'Are you sure you want to archive this Segment?',
   },
   modalText: {
-    id: 'audience.archive.modal.text',
+    id: 'audience.segments.list.archive.modal.text',
     defaultMessage:
       'By archiving this Segment all it will stop campaign using it. Are you sure?',
   },
   modalOk: {
-    id: 'audience.archive.modal.ok',
+    id: 'audience.segments.list.archive.modal.ok',
     defaultMessage: 'Ok',
   },
   modalCancel: {
-    id: 'audience.archive.modal.cancel',
+    id: 'audience.segments.list.archive.modal.cancel',
     defaultMessage: 'Cancel',
   },
   searchTitle: {
-    id: 'audience.table.search.title',
+    id: 'audience.segments.list.search.title',
     defaultMessage: 'Search Segments',
   },
   userActivation: {
-    id: 'audience.table.type.userActivation',
+    id: 'audience.segments.list.type.userActivation',
     defaultMessage: 'User Activation',
   },
   userLookalike: {
-    id: 'audience.table.type.userLookalike',
+    id: 'audience.segments.list.type.userLookalike',
     defaultMessage: 'User Lookalike',
   },
   userPartition: {
-    id: 'audience.table.type.userPartition',
+    id: 'audience.segments.list.type.userPartition',
     defaultMessage: 'User Partition',
   },
   userQuery: {
-    id: 'audience.table.type.userQuery',
+    id: 'audience.segments.list.type.userQuery',
     defaultMessage: 'User Query',
   },
   userList: {
-    id: 'audience.table.type.userList',
+    id: 'audience.segments.list.type.userList',
     defaultMessage: 'User List',
   },
   userPixel: {
-    id: 'audience.table.type.userPixel',
+    id: 'audience.segments.list.type.userPixel',
     defaultMessage: 'User Pixel',
   },
   userUnknown: {
-    id: 'audience.table.type.userUnknown',
+    id: 'audience.segments.list.type.userUnknown',
     defaultMessage: 'Unknown Type',
   },
   filterType: {
-    id: 'audience.table.filter.type',
+    id: 'audience.segments.list.filter.type',
     defaultMessage: 'Type',
   },
   userActivationClickers: {
-    id: 'audience.table.useractivation.clickers',
+    id: 'audience.segments.list.useractivation.clickers',
     defaultMessage: '{audienceSegmentName} - Clickers',
   },
   userActivationExposed: {
-    id: 'audience.table.useractivation.exposed',
+    id: 'audience.segments.list.useractivation.exposed',
     defaultMessage: '{audienceSegmentName} - Exposed',
   },
+  name: {
+    id: 'audience.segments.list.column.name',
+    defaultMessage: 'Name',
+  },
+  technicalName: {
+    id: 'audience.segments.list.column.technicalName',
+    defaultMessage: 'Technical Name',
+  },
+  type: {
+    id: 'audience.segments.list.column.type',
+    defaultMessage: 'Type',
+  },
+  userAccounts: {
+    id: 'audience.segments.list.column.userAccounts',
+    defaultMessage: 'User Accounts',
+  },
+  userPoints: {
+    id: 'audience.segments.list.column.userPoints',
+    defaultMessage: 'User Points',
+  },
+  addition: {
+    id: 'audience.segments.list.column.addition',
+    defaultMessage: 'Addition',
+  },
+  deletion: {
+    id: 'audience.segments.list.column.deletion',
+    defaultMessage: 'Deletion',
+  },
+  cookies: {
+    id: 'audience.segments.list.column.cookies',
+    defaultMessage: 'Cookies',
+  },
+  emails: {
+    id: 'audience.segments.list.column.emails',
+    defaultMessage: 'Emails',
+  },
+  editSegment: {
+    id: 'audience.segments.list.editSegment',
+    defaultMessage: 'Edit',
+  }
 });
 
 export interface AudienceSegmentsTableProps {}
@@ -510,9 +550,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<AudienceSegmentShape>> = [
       {
-        translationKey: 'TYPE',
+        intlMessage: messages.type,
         key: 'type',
         isHideable: false,
         render: (text: string) => {
@@ -581,23 +621,20 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         },
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messages.name,
         key: 'name',
         isHideable: false,
-        render: (
-          text: string,
-          record: AudienceSegmentShape,
-        ) => (
+        render: (text: string, record: AudienceSegmentShape) => (
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
           >
-            <SegmentNameDisplay audienceSegmentResource={record}/>
+            <SegmentNameDisplay audienceSegmentResource={record} />
           </Link>
         ),
       },
       {
-        translationKey: 'TECHNICAL_NAME',
+        intlMessage: messages.technicalName,
         isVisibleByDefault: false,
         key: 'technical_name',
         isHideable: true,
@@ -611,42 +648,42 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         ),
       },
       {
-        translationKey: 'USER_POINTS',
+        intlMessage: messages.userPoints,
         key: 'user_points',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'USER_ACCOUNTS',
+        intlMessage: messages.userAccounts,
         key: 'user_accounts',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'EMAILS',
+        intlMessage: messages.emails,
         key: 'emails',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'COOKIES',
+        intlMessage: messages.cookies,
         key: 'desktop_cookie_ids',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'ADDITION',
+        intlMessage: messages.addition,
         key: 'user_point_additions',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        translationKey: 'DELETION',
+        intlMessage: messages.deletion,
         key: 'user_point_deletions',
         isVisibleByDefault: true,
         isHideable: true,
@@ -661,11 +698,11 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         key: 'action',
         actions: () => [
           {
-            translationKey: 'EDIT',
+            intlMessage: messages.editSegment,
             callback: this.editSegment,
           },
           // {
-          //   translationKey: 'ARCHIVE',
+          //   intlMessage: messageMap.archive,
           //   callback: this.archiveSegment,
           // },
         ],
@@ -718,7 +755,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       const datamartFilter = {
         displayElement: (
           <div>
-            <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+            <FormattedMessage id="audience.segments.list.datamartFilter" defaultMessage="Datamart" />{' '}
             <Icon type="down" />
           </div>
         ),

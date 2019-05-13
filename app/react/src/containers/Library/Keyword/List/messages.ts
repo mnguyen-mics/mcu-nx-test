@@ -33,5 +33,13 @@ export default defineMessages({
     id: 'keywords.table.empty',
     defaultMessage: 'There is no Keyword List created yet! Click on New to get started',
   },
+  edit: {
+    id: 'keywords.list.actionColumn.edit',
+    defaultMessage: 'Edit',
+  },
+  archive: {
+    id: 'keywords.list.actionColumn.archive',
+    defaultMessage: 'Archive',
+  },
 })
 ;

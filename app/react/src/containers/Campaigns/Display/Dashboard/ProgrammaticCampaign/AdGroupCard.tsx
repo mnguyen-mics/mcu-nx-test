@@ -42,23 +42,23 @@ import { DisplayCampaignInfoResource } from '../../../../../models/campaign/disp
 
 const messagesMap = defineMessages({
   setStatus: {
-    id: 'set.ads.status',
+    id: 'display.campaigns.dashboard.adGroupCard.status.setStatusTo',
     defaultMessage: 'Set status to',
   },
   activeAll: {
-    id: 'active.all.ads',
+    id: 'display.campaigns.dashboard.adGroupCard.status.activeAll',
     defaultMessage: 'Active',
   },
   pauseAll: {
-    id: 'pause.all.ads',
+    id: 'display.campaigns.dashboard.adGroupCard.status.pauseAll',
     defaultMessage: 'Paused',
   },
   archiveSuccess: {
-    id: 'archive.adGroups.success.msg',
+    id: 'display.campaigns.dashboard.adGroupCard.archive.successMsg',
     defaultMessage: 'Ad Groups successfully archived',
   },
   saveSuccess: {
-    id: 'edit.adGroups.success.msg',
+    id: 'display.campaigns.dashboard.adGroupCard.save.successMsg',
     defaultMessage: 'Ad Groups successfully saved',
   },
 });

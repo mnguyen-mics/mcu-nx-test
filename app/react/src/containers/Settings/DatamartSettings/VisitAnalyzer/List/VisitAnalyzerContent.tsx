@@ -59,7 +59,7 @@ interface RouterProps {
 class VisitAnalyzerContent extends Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   VisitAnalyzerContentState
-  > {
+> {
   state = initialState;
 
   archiveVisitAnalyzer = (visitAnalyzerId: string) => {
@@ -104,7 +104,9 @@ class VisitAnalyzerContent extends Component<
     const {
       location: { search, state, pathname },
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -142,24 +144,36 @@ class VisitAnalyzerContent extends Component<
   };
 
   onClickEdit = (visitAnalyzer: VisitAnalyzer) => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     history.push(
       `/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
-      visitAnalyzer.id
+        visitAnalyzer.id
       }/edit`,
     );
   };
 
   render() {
-    const { match: { params: { organisationId } }, history } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<VisitAnalyzer>> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<VisitAnalyzer>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { translationKey: 'EDIT', callback: this.onClickEdit },
-          { translationKey: 'ARCHIVE', callback: this.onClickArchive },
+          { intlMessage: messages.edit, callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
@@ -174,7 +188,7 @@ class VisitAnalyzerContent extends Component<
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
               record.id
-              }/edit`}
+            }/edit`}
           >
             {text}
           </Link>
@@ -212,32 +226,38 @@ class VisitAnalyzerContent extends Component<
           return <span>{render}</span>;
         },
       },
-
     ];
 
     const emptyTable: {
       iconType: McsIconType;
       intlMessage: FormattedMessage.Props;
     } = {
-        iconType: 'settings',
-        intlMessage: messages.empty,
-      };
+      iconType: 'settings',
+      intlMessage: messages.empty,
+    };
 
-    const onClick = () => history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`)
+    const onClick = () =>
+      history.push(
+        `/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`,
+      );
 
     const buttons = [
-      (<Button key="create" type="primary" onClick={onClick}>
+      <Button key="create" type="primary" onClick={onClick}>
         <FormattedMessage {...messages.newVisitAnalyzer} />
-      </Button>)
-    ]
+      </Button>,
+    ];
 
-    const additionnalComponent = (<div>
-      <div className="mcs-card-header mcs-card-title">
-        <span className="mcs-card-title"><FormattedMessage {...messages.visitAnalyzer} /></span>
-        <span className="mcs-card-button">{buttons}</span>
+    const additionnalComponent = (
+      <div>
+        <div className="mcs-card-header mcs-card-title">
+          <span className="mcs-card-title">
+            <FormattedMessage {...messages.visitAnalyzer} />
+          </span>
+          <span className="mcs-card-button">{buttons}</span>
+        </div>
+        <hr className="mcs-separator" />
       </div>
-      <hr className="mcs-separator" />
-    </div>)
+    );
 
     return (
       <div className="ant-layout">
@@ -259,4 +279,7 @@ class VisitAnalyzerContent extends Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(VisitAnalyzerContent);
+export default compose(
+  withRouter,
+  injectIntl,
+)(VisitAnalyzerContent);

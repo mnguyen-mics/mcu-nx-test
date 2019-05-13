@@ -15,10 +15,11 @@ export interface SelectorLayoutProps {
   className?: string;
 }
 
-export default class SelectorLayout extends React.Component<SelectorLayoutProps, any> {
-
+export default class SelectorLayout extends React.Component<
+  SelectorLayoutProps,
+  any
+> {
   render() {
-
     const {
       actionBarTitle,
       handleAdd,
@@ -33,7 +34,11 @@ export default class SelectorLayout extends React.Component<SelectorLayoutProps,
         <div className="edit-layout ant-layout">
           <ActionBar paths={[{ name: actionBarTitle }]} edition={true}>
             <Button type="primary" className="mcs-primary" onClick={handleAdd}>
-              <McsIcon type="plus" /><FormattedMessage id="table-selector-add-button" defaultMessage="Add" />
+              <McsIcon type="plus" />
+              <FormattedMessage
+                id="components.elementSelector.selectorLayout.actionbar.add.button"
+                defaultMessage="Add"
+              />
             </Button>
             <McsIcon
               type="close"
@@ -42,11 +47,10 @@ export default class SelectorLayout extends React.Component<SelectorLayoutProps,
             />
           </ActionBar>
           <Layout>
-            <Content className={`mcs-edit-container ${className ? className : ''}`}>
-              { disabled
-                ? <EmptyTableView iconType="file" />
-                : children
-              }
+            <Content
+              className={`mcs-edit-container ${className ? className : ''}`}
+            >
+              {disabled ? <EmptyTableView iconType="file" /> : children}
             </Content>
           </Layout>
         </div>

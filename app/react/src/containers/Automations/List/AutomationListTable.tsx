@@ -3,10 +3,12 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout, Tooltip, Icon, Modal } from 'antd';
 import { compose } from 'recompose';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import withTranslations, {
-  TranslationProps,
-} from '../../Helpers/withTranslations';
+import {
+  InjectedIntlProps,
+  injectIntl,
+  FormattedMessage,
+  defineMessages,
+} from 'react-intl';
 import {
   AutomationResource,
   AutomationStatus,
@@ -36,6 +38,35 @@ import DatamartService from '../../../services/DatamartService';
 
 const { Content } = Layout;
 
+const messagesMap: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  NEW: {
+    id: 'automations.list.status.new',
+    defaultMessage: 'New',
+  },
+  ACTIVE: {
+    id: 'automations.list.status.active',
+    defaultMessage: 'Active',
+  },
+  PAUSED: {
+    id: 'automations.list.status.paused',
+    defaultMessage: 'Paused',
+  },
+  name: {
+    id: 'automations.list.column.name',
+    defaultMessage: 'Name',
+  },
+  status: {
+    id: 'automations.list.column.status',
+    defaultMessage: 'Status',
+  },
+  edit: {
+    id: 'automations.list.actionColumn.edit',
+    defaultMessage: 'Edit',
+  },
+});
+
 interface AutomationsTableProps extends MapDispatchToProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingStatuses: boolean;
@@ -49,7 +80,6 @@ interface State {
 
 type JoinedProps = AutomationsTableProps &
   InjectedIntlProps &
-  TranslationProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface Filters {
@@ -160,18 +190,22 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         params: { organisationId },
       },
       history,
-      location
+      location,
     } = this.props;
 
     DatamartService.getDatamart(record.datamart_id).then(resp => {
       if (resp.data.storage_model_version !== 'v201506') {
-        history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`, { from: `${location.pathname}${location.search}`});
+        history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`, {
+          from: `${location.pathname}${location.search}`,
+        });
       } else {
-        history.push(`/v2/o/${organisationId}/automation-builder-old/${record.id}`, { from: `${location.pathname}${location.search}` });
+        history.push(
+          `/v2/o/${organisationId}/automation-builder-old/${record.id}`,
+          { from: `${location.pathname}${location.search}` },
+        );
       }
     });
   };
-  
 
   deleteAutomation = (record: AutomationResource) => {
     const {
@@ -244,23 +278,24 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       match: {
         params: { organisationId },
       },
-      history
+      history,
     } = this.props;
 
     DatamartService.getDatamart(record.datamart_id).then(resp => {
       if (resp.data.storage_model_version !== 'v201506') {
         history.push(`/v2/o/${organisationId}/automations/${record.id}`);
       } else {
-        history.push(`/v2/o/${organisationId}/automation-builder-old/${record.id}`);
+        history.push(
+          `/v2/o/${organisationId}/automation-builder-old/${record.id}`,
+        );
       }
     });
-  }
+  };
 
   render() {
     const {
       location: { search },
       intl,
-      translations,
       rowSelection,
     } = this.props;
 
@@ -303,11 +338,14 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
 
     const dataColumns = [
       {
-        translationKey: 'STATUS',
+        intlMessage: messagesMap.status,
         key: 'status',
         isHideable: false,
         render: (text: string) => (
-          <Tooltip placement="top" title={translations[text]}>
+          <Tooltip
+            placement="top"
+            title={intl.formatMessage(messagesMap[text])}
+          >
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
               <McsIcon type="status" />
             </span>
@@ -315,12 +353,12 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         ),
       },
       {
-        translationKey: 'NAME',
+        intlMessage: messagesMap.name,
         key: 'name',
         isHideable: false,
         render: (text: string, record: AutomationResource) => {
           return (
-            <a onClick={this.viewAutomation(record)} >
+            <a onClick={this.viewAutomation(record)}>
               <span className="mcs-automation-link">{text}</span>
             </a>
           );
@@ -333,7 +371,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         key: 'action',
         actions: () => [
           {
-            translationKey: 'EDIT',
+            intlMessage: messagesMap.edit,
             callback: this.editAutomation,
           },
           {
@@ -353,7 +391,11 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       {
         displayElement: (
           <div>
-            <FormattedMessage id="STATUS" /> <Icon type="down" />
+            <FormattedMessage
+              id="automations.list.filterStatus"
+              defaultMessage="Status"
+            />{' '}
+            <Icon type="down" />
           </div>
         ),
         selectedItems: filter.statuses.map((status: AutomationStatus) => ({
@@ -397,6 +439,5 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
 
 export default compose<JoinedProps, AutomationsTableProps>(
   withRouter,
-  withTranslations,
   injectIntl,
 )(AutomationsListTable);

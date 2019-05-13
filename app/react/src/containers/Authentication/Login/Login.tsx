@@ -21,36 +21,36 @@ const FormItem = Form.Item;
 
 const messages = defineMessages({
   logInError: {
-    id: 'login.login.error',
+    id: 'authentication.login.login.error',
     defaultMessage:
       'There was an error with the information you entered, please check your username / password.',
   },
   forgotPassword: {
-    id: 'login.forgot.password',
+    id: 'authentication.login.forgot.password',
     defaultMessage: 'Forgot password',
   },
   passwordText: {
-    id: 'login.password',
+    id: 'authentication.login.password',
     defaultMessage: 'PASSWORD',
   },
   emailText: {
-    id: 'login.email',
+    id: 'authentication.login.email',
     defaultMessage: 'EMAIL',
   },
   logInText: {
-    id: 'login.login.text',
+    id: 'authentication.login.login.text',
     defaultMessage: 'Log in',
   },
   rememberMe: {
-    id: 'login.remember.me',
+    id: 'authentication.login.remember.me',
     defaultMessage: 'Remember me',
   },
   emailRequired: {
-    id: 'login.email.required',
+    id: 'authentication.login.email.required',
     defaultMessage: 'Please input your email!',
   },
   passwordRequired: {
-    id: 'login.password.required',
+    id: 'authentication.login.password.required',
     defaultMessage: 'Please input your password!',
   },
 });
@@ -187,7 +187,6 @@ class Login extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: any) => ({
-  translations: state.translations,
   hasError: state.login.hasError,
   isRequesting: state.login.isRequesting,
 });

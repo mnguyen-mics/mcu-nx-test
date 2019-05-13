@@ -15,27 +15,27 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 const messages = defineMessages({
   absolute: {
-    id: 'datepicker.label.absolute',
+    id: 'queryTool.datepicker.label.absolute',
     defaultMessage: 'Absolute'
   },
   relative: {
-    id: 'datepicker.label.relative',
+    id: 'queryTool.datepicker.label.relative',
     defaultMessage: 'Relative'
   },
   days: {
-    id: 'datepicker.label.days',
+    id: 'queryTool.datepicker.label.days',
     defaultMessage: 'Days'
   },
   month: {
-    id: 'datepicker.label.month',
+    id: 'queryTool.datepicker.label.month',
     defaultMessage: 'Month'
   },
   year: {
-    id: 'datepicker.label.year',
+    id: 'queryTool.datepicker.label.year',
     defaultMessage: 'Year'
   },
   ago: {
-    id: 'datepicker.label.ago',
+    id: 'queryTool.datepicker.label.ago',
     defaultMessage: 'Ago'
   }
  

@@ -71,7 +71,7 @@ class ProfileSettingsPage extends React.Component<
         htmlType="submit"
         disabled={!(dirty && valid)}
       >
-        <FormattedMessage id="SAVE" defaultMessage="Save" />{' '}
+        <FormattedMessage id="settings.profile.edit.save" defaultMessage="Save" />{' '}
         {this.state.loading ? <Icon type="loading" /> : null}
       </Button>
     );
@@ -191,7 +191,7 @@ class ProfileSettingsPage extends React.Component<
             <div className="mcs-card-header mcs-card-title">
               <span className="mcs-card-title">
                 <FormattedMessage
-                  id="UserProfile"
+                  id="settings.profile.edit.userProfile"
                   defaultMessage="User Profile"
                 />
               </span>
@@ -238,7 +238,10 @@ export default compose(
   injectIntl,
   injectNotifications,
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   reduxForm({
     form: 'userAccountEdit',
   }),

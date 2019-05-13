@@ -9,7 +9,6 @@ import {
   InjectedIntlProps,
   injectIntl,
 } from 'react-intl';
-
 import { TableViewFilters } from '../../../../components/TableView/index';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { AudiencePartitionResource } from '../../../../models/audiencePartition/AudiencePartitionResource';
@@ -62,7 +61,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
         {
           displayElement: (
             <div>
-              <FormattedMessage id="Datamart" defaultMessage="Datamart" />{' '}
+              <FormattedMessage id="audience.partitions.list.datamartFilter" defaultMessage="Datamart" />{' '}
               <Icon type="down" />
             </div>
           ),
@@ -164,12 +163,12 @@ class AudiencePartitionsTable extends React.Component<Props> {
         key: 'action',
         actions: () => [
           {
-            translationKey: 'EDIT',
+            intlMessage: messageMap.edit,
             callback: onEdit,
           },
           // waiting backend part
           // {
-          //   translationKey: 'ARCHIVE',
+          //   intlMessage: messageMap.archive,
           //   callback: this.archivePartition,
           // },
         ],
@@ -221,5 +220,9 @@ const messageMap = defineMessages({
   searchPlaceholder: {
     id: 'audience.partitions.search.placeholder',
     defaultMessage: 'Search Audience Partitions',
+  },
+  edit: {
+    id: 'audience.partitions.table.action.edit',
+    defaultMessage: 'Edit',
   },
 });

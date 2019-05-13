@@ -3,103 +3,139 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   // Segment
   audienceSegment: {
-    id: 'segment',
+    id: 'audience.segments',
     defaultMessage: 'Segments',
   },
   userPoints: {
-    id: 'audience.segments.dashboard.counters.userPoints',
+    id: 'audience.segments.user_points',
     defaultMessage: 'User Points',
   },
+  userAccounts: {
+    id: 'audience.segments.user_accounts',
+    defaultMessage: 'User Accounts',
+  },
+  emails: {
+    id: 'audience.segments.emails',
+    defaultMessage: 'Emails',
+  },
+  desktopCookieId: {
+    id: 'audience.segments.desktop_cookie_ids',
+    defaultMessage: 'Display Cookies',
+  },
   userPointAddition: {
-    id: 'segment.user_point_additions',
+    id: 'audience.segments.user_point_additions',
     defaultMessage: 'User Point Additions',
   },
   userPointDeletion: {
-    id: 'segment.user_point_deletions',
+    id: 'audience.segments.user_point_deletions',
     defaultMessage: 'User Point Deletions',
   },
   // Overlap
   overlap: {
-    id: 'segment.overlap',
+    id: 'audience.segments.overlap',
     defaultMessage: 'Audience Segment Overlap',
   },
   overlapNumber: {
-    id: 'segment.overlap_number',
+    id: 'audience.segments.overlap_number',
     defaultMessage: 'Overlap Number',
   },
   modalOverlapContentMessage: {
-    id: 'segment.overlap.modal.content',
+    id: 'audience.segments.overlap.modal.content',
     defaultMessage:
       'By clicking on OK you will create an overlap of the selected segment. Be carefull, this operation can take a significant amount of time.',
   },
   modalOverlapContentTitle: {
-    id: 'segment.overlap.modal.title',
+    id: 'audience.segments.overlap.modal.title',
     defaultMessage: 'Create an Overlap Analysis',
   },
   generated: {
-    id: 'segment.overlap.time.generated',
+    id: 'audience.segments.overlap.time.generated',
     defaultMessage: 'Generated',
   },
   refresh: {
-    id: 'segment.overlap.button.refresh',
+    id: 'audience.segments.overlap.button.refresh',
     defaultMessage: 'Refresh',
   },
   createOverlap: {
-    id: 'segment.overlap.button.create',
+    id: 'audience.segments.overlap.button.create',
     defaultMessage: 'Create Overlap Analysis',
   },
   overlapFetchingError: {
-    id: 'segment.overlap.error',
+    id: 'audience.segments.overlap.error',
     defaultMessage:
       'An unexpected error happened running your overlap. Please retry.',
   },
   lookAlikeCreation: {
-    id: 'segment.lookalike.button.create',
+    id: 'audience.segments.lookalike.button.create',
     defaultMessage: 'Create Lookalike',
   },
   lookAlikeModalTitle: {
-    id: 'segment.lookalike.modal.title',
+    id: 'audience.segments.lookalike.modal.title',
     defaultMessage: 'Create Lookalike',
   },
   lookAlikeModalHelper: {
-    id: 'segment.lookalike.modal.helper',
+    id: 'audience.segments.lookalike.modal.helper',
     defaultMessage:
       'To create a Lookalike, please select a partition and your extension ratio. Your segment will then be overlapped against the partition selected and the most overlapping partitions will be added to your base segment.',
   },
   lookAlikeModalNameLabel: {
-    id: 'segment.lookalike.modal.name.label',
+    id: 'audience.segments.lookalike.modal.name.label',
     defaultMessage: 'Segment Name',
   },
   lookAlikeModalPartitionLabel: {
-    id: 'segment.lookalike.modal.partition.label',
+    id: 'audience.segments.lookalike.modal.partition.label',
     defaultMessage: 'Partition',
   },
   lookAlikeModalExtentionFactorLabel: {
-    id: 'segment.lookalike.modal.extensionFactor.label',
+    id: 'audience.segments.lookalike.modal.extensionFactor.label',
     defaultMessage: 'Extension Factor',
   },
   lookAlikeCalibrationExecution: {
-    id: 'segment.lookalike.button.calibration.execution',
+    id: 'audience.segments.lookalike.button.calibration.execution',
     defaultMessage: 'Calibrate',
   },
   lookAlikeCalibrationRunning: {
-    id: 'segment.lookalike.button.calibration.executing',
+    id: 'audience.segments.lookalike.button.calibration.executing',
     defaultMessage: 'Calibration Ongoing',
   },
   lookAlikeCalibrationErrorSuccess: {
-    id: 'segment.lookalike.button.calibration.done',
+    id: 'audience.segments.lookalike.button.calibration.done',
     defaultMessage: 'Recalibrate',
   },
   USER_POINT_ADDITIONS: {
-    id: 'segment.additiondeletions.userpointaddition.label',
+    id: 'audience.segments.additiondeletions.userpointaddition.label',
     defaultMessage: 'Userpoint Additions',
   },
   USER_POINT_DELETIONS: {
-    id: 'segment.additiondeletions.userpointdeletion.label',
+    id: 'audience.segments.additiondeletions.userpointdeletion.label',
     defaultMessage: 'Userpoint Deletions',
   },
   noAdditionDeletion: {
-    id: 'segment.additiondeletions.nodata',
+    id: 'audience.segments.additiondeletions.nodata',
     defaultMessage: 'There is no data on the selected period!',
+  },
+  audienceSegmentsExportTitle: {
+    id: 'audience.segments.actionbar.export.title',
+    defaultMessage: 'Audience Segments Export'
+  },
+  type: {
+    id: 'audience.segments.export.column.type',
+    defaultMessage: 'Type'
+  },
+  name: {
+    id: 'audience.segments.export.column.name',
+    defaultMessage: 'Name'
+  },
+  technicalName: {
+    id: 'audience.segments.export.column.technicalName',
+    defaultMessage: 'Technical Name'
+  },
+  addition: {
+    id: 'audience.segments.export.column.addition',
+    defaultMessage: 'Addition'
+  },
+  deletion: {
+    id: 'audience.segments.export.column.deletion',
+    defaultMessage: 'Deletion'
   },
 });

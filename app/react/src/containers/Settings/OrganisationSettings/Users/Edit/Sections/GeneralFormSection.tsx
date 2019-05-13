@@ -16,39 +16,39 @@ import {
 
 const messages = defineMessages({
   sectionSubtitleGeneral: {
-    id: 'edit.user.form.general.subtitle',
+    id: 'settings.organisation.users.edit.generalInfoSection.subtitle',
     defaultMessage: 'Modify your User\'s data.',
   },
   sectionTitleGeneral: {
-    id: 'edit.user.form.general.title',
+    id: 'settings.organisation.users.edit.generalInfoSection.title',
     defaultMessage: 'General Informations',
   },
   labelUserFirstName: {
-    id: 'edit.user.form.general.label.firstname',
+    id: 'settings.organisation.users.edit.generalInfoSection.label.firstname',
     defaultMessage: 'First Name',
   },
   labelUserLastName: {
-    id: 'edit.user.form.general.label.lastname',
+    id: 'settings.organisation.users.edit.generalInfoSection.label.lastname',
     defaultMessage: 'Last Name',
   },
   tootltipUserFirstName: {
-    id: 'edit.user.form.general.tooltip.firstname',
+    id: 'settings.organisation.users.edit.generalInfoSection.tooltip.firstname',
     defaultMessage: 'Give your User a first name.',
   },
   tootltipUserLastName: {
-    id: 'edit.user.form.general.tooltip.lastname',
+    id: 'settings.organisation.users.edit.generalInfoSection.tooltip.lastname',
     defaultMessage: 'Give your User a last name.',
   },
   labelUserEmail: {
-    id: 'edit.user.form.general.label.email',
+    id: 'settings.organisation.users.edit.generalInfoSection.label.email',
     defaultMessage: 'Email',
   },
   tootltipUserEmail: {
-    id: 'edit.user.form.general.tooltip.email',
+    id: 'settings.organisation.users.edit.generalInfoSection.tooltip.email',
     defaultMessage: 'Give your User an email',
   },
   advancedFormSectionButtontext: {
-    id: 'edit.user.general.advanced.button',
+    id: 'settings.organisation.users.edit.generalInfoSection.advanced.button',
     defaultMessage: 'Advanced',
   },
 //   tootltipTechnicalName: {
