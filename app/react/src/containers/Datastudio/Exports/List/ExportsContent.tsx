@@ -2,26 +2,41 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Modal } from 'antd';
+import { Modal, Layout, Row } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { McsIconType } from '../../../../components/McsIcon';
-import ItemList, { Filters } from '../../../../components/ItemList';
-import ExportService from '../../../../services/Library/ExportService';
+import {
+  GetExportOptions,
+  IExportService,
+} from '../../../../services/Library/ExportService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
   updateSearch,
+  PaginationSearchSettings,
+  KeywordSearchSettings,
+  SearchSetting,
+  KEYWORD_SEARCH_SETTINGS,
 } from '../../../../utils/LocationSearchHelper';
 import { Export } from '../../../../models/exports/exports';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import { TableViewFilters } from '../../../../components/TableView';
+import { Index } from '../../../../utils';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+
+const { Content } = Layout;
 
 const initialState = {
   loading: false,
   data: [],
   total: 0,
 };
+
+export interface ExportFilterParams
+  extends PaginationSearchSettings,
+    KeywordSearchSettings {}
 
 interface ExportContentState {
   loading: boolean;
@@ -33,22 +48,78 @@ interface RouterProps {
   organisationId: string;
 }
 
-class ExportContent extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps,
-  ExportContentState
-> {
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps;
+
+class ExportContent extends React.Component<Props, ExportContentState> {
   state = initialState;
 
+  @lazyInject(TYPES.IExportService)
+  private _exportService: IExportService;
+
+  componentDidMount() {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search },
+    } = this.props;
+    const { currentPage, pageSize, keywords } = parseSearch(
+      search,
+      this.getSearchSetting(),
+    );
+    this.fetchExport(organisationId, {
+      currentPage: currentPage || 1,
+      pageSize: pageSize || 10,
+      keywords: keywords || '',
+    });
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      location: { search },
+    } = this.props;
+    const {
+      location: { search: nextSearch },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
+    } = nextProps;
+    const { currentPage, pageSize, keywords } = parseSearch(
+      search,
+      this.getSearchSetting(),
+    );
+    const {
+      currentPage: nextCurrentPage,
+      pageSize: nextPageSize,
+      keywords: nextKeywords,
+    } = parseSearch(nextSearch, this.getSearchSetting());
+    if (
+      currentPage !== nextCurrentPage ||
+      pageSize !== nextPageSize ||
+      keywords !== nextKeywords
+    ) {
+      this.fetchExport(nextOrganisationId, {
+        currentPage: nextCurrentPage || 1,
+        pageSize: nextPageSize || 10,
+        keywords: nextKeywords || '',
+      });
+    }
+  }
+
   archiveExport = (exportId: string) => {
-    return ExportService.deleteExport(exportId);
+    return this._exportService.deleteExport(exportId);
   };
 
-  fetchExport = (organisationId: string, filter: Filters) => {
+  fetchExport = (organisationId: string, filter: ExportFilterParams) => {
     this.setState({ loading: true }, () => {
-      const options = {
+      const options: GetExportOptions = {
+        organisation_id: organisationId,
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      ExportService.getExports(organisationId, options).then(results => {
+      if (filter.keywords) {
+        options.keywords = filter.keywords;
+      }
+      this._exportService.getExports(options).then(results => {
         this.setState({
           loading: false,
           data: results.data,
@@ -92,7 +163,11 @@ class ExportContent extends React.Component<
             });
             return Promise.resolve();
           }
-          return this.fetchExport(organisationId, filter);
+          return this.fetchExport(organisationId, {
+            pageSize: filter.pageSize,
+            currentPage: filter.currentPage,
+            keywords: '',
+          });
         });
       },
       onCancel: () => {
@@ -100,6 +175,10 @@ class ExportContent extends React.Component<
       },
     });
   };
+
+  getSearchSetting(): SearchSetting[] {
+    return [...KEYWORD_SEARCH_SETTINGS, ...PAGINATION_SEARCH_SETTINGS];
+  }
 
   onClickEdit = (keyword: Export) => {
     const {
@@ -112,12 +191,30 @@ class ExportContent extends React.Component<
     history.push(`/${organisationId}/datastudio/exports/${keyword.id}/edit`);
   };
 
+  updateLocationSearch = (params: Index<any>) => {
+    const {
+      history,
+      location: { search: currentSearch, pathname },
+    } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, this.getSearchSetting()),
+    };
+
+    history.push(nextLocation);
+  };
+
   render() {
     const {
       match: {
         params: { organisationId },
       },
+      intl,
+      location: { search },
     } = this.props;
+
+    const { data, loading } = this.state;
 
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<Export>> = [
       {
@@ -157,25 +254,60 @@ class ExportContent extends React.Component<
       ],
     };
 
-    const emptyTable: {
-      iconType: McsIconType;
-      intlMessage: FormattedMessage.Props;
-    } = {
-      iconType: 'library',
-      intlMessage: messages.empty,
+    const filter = parseSearch(search, this.getSearchSetting());
+
+    const searchOptions = {
+      placeholder: intl.formatMessage(messages.searchTitle),
+      onSearch: (value: string) =>
+        this.updateLocationSearch({
+          keywords: value,
+          currentPage: 1,
+          pageSize: filter.pageSize,
+        }),
+      defaultValue: filter.keywords,
+    };
+
+    const pagination = {
+      current: filter.currentPage,
+      pageSize: filter.pageSize,
+      total: this.state.total,
+      onChange: (page: number, size: number) =>
+        this.updateLocationSearch({
+          currentPage: page,
+          pageSize: size,
+        }),
+      onShowSizeChange: (current: number, size: number) =>
+        this.updateLocationSearch({
+          currentPage: current,
+          pageSize: size,
+        }),
     };
 
     return (
-      <ItemList
-        fetchList={this.fetchExport}
-        dataSource={this.state.data}
-        loading={this.state.loading}
-        total={this.state.total}
-        columns={columnsDefinitions.dataColumnsDefinition}
-        actionsColumnsDefinition={columnsDefinitions.actionsColumnsDefinition}
-        pageSettings={PAGINATION_SEARCH_SETTINGS}
-        emptyTable={emptyTable}
-      />
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <Row className="mcs-table-container">
+            <div>
+              <div className="mcs-card-header mcs-card-title">
+                <span className="mcs-card-title">
+                  <FormattedMessage {...messages.exports} />
+                </span>
+              </div>
+              <hr className="mcs-separator" />
+              <TableViewFilters
+                columns={columnsDefinitions.dataColumnsDefinition}
+                actionsColumnsDefinition={
+                  columnsDefinitions.actionsColumnsDefinition
+                }
+                searchOptions={searchOptions}
+                dataSource={data}
+                loading={loading}
+                pagination={pagination}
+              />
+            </div>
+          </Row>
+        </Content>
+      </div>
     );
   }
 }

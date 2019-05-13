@@ -4,7 +4,6 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
-
 import { Actionbar } from '../../../Actionbar';
 import messages from './messages';
 import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';

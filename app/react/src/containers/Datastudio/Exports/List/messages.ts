@@ -26,6 +26,10 @@ export default defineMessages({
     id: 'exports.modal.archive.cancel',
     defaultMessage: 'Cancel',
   },
+  searchTitle: {
+    id: 'exports.table.searchBar.label',
+    defaultMessage: 'Search Exports',
+  },
   name: {
     id: 'exports.table.column.name',
     defaultMessage: 'Name',

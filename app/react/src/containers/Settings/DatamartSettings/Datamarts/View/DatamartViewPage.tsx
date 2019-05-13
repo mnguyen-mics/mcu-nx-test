@@ -14,6 +14,7 @@ import ImportsContentContainer from '../../../../Datastudio/Imports/List/Imports
 import CleaningRulesContainer from '../../CleaningRules/CleaningRulesContainer';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import { notifyError } from '../../../../../state/Notifications/actions';
+import { ImportFilterParams } from '../../../../Datastudio/Imports/List/ImportsContent';
 
 type Props = RouteComponentProps<{ organisationId: string; datamartId: string }> &
   InjectedIntlProps;
@@ -21,7 +22,7 @@ type Props = RouteComponentProps<{ organisationId: string; datamartId: string }>
 interface State {
   datamart?: DatamartResource;
   isLoading: boolean;
-  importsContentFilter: PaginationSearchSettings;
+  importsContentFilter: ImportFilterParams;
   cleaningRulesFilter: PaginationSearchSettings;
 }
 
@@ -34,6 +35,7 @@ class DatamartViewPage extends React.Component<Props, State> {
       importsContentFilter: {
         currentPage: 1,
         pageSize: 10,
+        keywords: ''
       },
       cleaningRulesFilter: {
         currentPage: 1,
@@ -64,15 +66,17 @@ class DatamartViewPage extends React.Component<Props, State> {
       });
   };
 
-  onImportsContentFilterChange = (newFilter: PaginationSearchSettings) => {
+  onImportsContentFilterChange = (newFilter: ImportFilterParams) => {
     const {
       currentPage,
       pageSize,
+      keywords
     } = newFilter;
 
     const importsContentFilter = {
       currentPage: currentPage,
       pageSize: pageSize,
+      keywords: keywords
     };
 
     this.setState({

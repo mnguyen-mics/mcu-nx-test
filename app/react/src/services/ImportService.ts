@@ -1,11 +1,16 @@
 import { Import, ImportExecutionBase, MakeJobExecutionAction } from './../models/imports/imports';
 import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import { PaginatedApiParam } from '../utils/ApiHelper';
+
+export interface GetImportsOptions extends PaginatedApiParam {
+  keywords?: string;
+}
 
 export interface IImportService {
   getImportList: (
     datamartId: string,
-    options: object,
+    options: GetImportsOptions,
   ) => Promise<DataListResponse<Import>>;
   getImport: (
     datamartId: string,
@@ -32,7 +37,7 @@ export interface IImportService {
   getImportExecutions: (
     datamartId: string,
     importId: string,
-    options: object
+    options: object,
   ) => Promise<DataListResponse<any>>;
   cancelImportExecution: (
     datamartId: string,
@@ -93,7 +98,7 @@ export class ImportService implements IImportService {
   getImportExecutions(
     datamartId: string,
     importId: string,
-    options: object = {}
+    options: object = {},
   ): Promise<DataListResponse<any>> {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}/executions`;
     return ApiService.getRequest(endpoint, options);

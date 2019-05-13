@@ -56,16 +56,19 @@ import {
   IDealListFormService,
   DealListFormService,
 } from '../containers/Library/Deal/Edit/DealListFormService';
-import CompartmentService, { IComparmentService } from '../services/CompartmentService';
-import {
-  IScenarioService,
-  ScenarioService,
-} from '../services/ScenarioService';
+import CompartmentService, {
+  IComparmentService,
+} from '../services/CompartmentService';
+import { IScenarioService, ScenarioService } from '../services/ScenarioService';
 import { IAutomationFormService } from '../containers/Automations/Edit/AutomationFormService';
 import {
   IGoalFormService,
   GoalFormService,
 } from '../containers/Campaigns/Goal/Edit/GoalFormService';
+import {
+  IExportService,
+  ExportService,
+} from '../services/Library/ExportService';
 
 const container = new Container();
 
@@ -98,6 +101,7 @@ container
   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
   .toConstructor(AudienceTagFeedService);
 container.bind<IImportService>(TYPES.IImportService).to(ImportService);
+container.bind<IExportService>(TYPES.IExportService).to(ExportService);
 container.bind<IScenarioService>(TYPES.IScenarioService).to(ScenarioService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
