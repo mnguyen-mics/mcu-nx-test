@@ -54,6 +54,38 @@ export interface AutoCompleteResource {
   field_name: string;
 }
 
+export type ErrorQueryResource = ValidationErrorResource | ParsingErrorResource | ValidResource;
+
+export interface ErrorResource {
+  type: "PARSING_ERROR" | "VALID" | "VALIDATION_ERROR"
+}
+
+export interface ParsingErrorResource extends ErrorResource {
+  type: "PARSING_ERROR";
+  error: ErroTypeResource;
+  status: "error";
+}
+
+export interface ValidResource extends ErrorResource {
+  type: "VALID";
+  status: "ok";
+}
+
+export interface ValidationErrorResource extends ErrorResource {
+  type: "VALIDATION_ERROR";
+  error: ErroTypeResource;
+  status: "error";
+}
+
+export interface ErroTypeResource {
+  message: string;
+  position: {
+    row: number;
+    col: number;
+  }
+  error_type: "PARSING" | "TYPINGS" | "FIELD" | "DIRECTIVE";
+}
+
 export interface AudienceSegmentMetricResource {
   id: string;
   datafarmKey: string;

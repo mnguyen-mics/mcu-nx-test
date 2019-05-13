@@ -2,6 +2,7 @@ import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import {
   QueryResource,
   AutoCompleteResource,
+  ErrorQueryResource,
 } from '../models/datamart/DatamartResource';
 import { OTQLResult } from '../models/datamart/graphdb/OTQLResult';
 import { QueryDocument } from '../models/datamart/graphdb/QueryDocument';
@@ -52,6 +53,10 @@ export interface IQueryService {
     row: number,
     col: number,
   ) => Promise<AutoCompleteResource[] | undefined>;
+  checkOtqlQuery: (
+    datamartId: string,
+    query: string
+  ) => Promise<DataResponse<ErrorQueryResource>>
 }
 
 @injectable()
@@ -138,5 +143,15 @@ export class QueryService implements IQueryService {
         log.warn('cannot resolve autocompleters');
         return undefined;
       });
+  }
+  
+  checkOtqlQuery(
+    datamartId: string,
+    query: string
+  ): Promise<DataResponse<ErrorQueryResource>> {
+    const payload = {
+      query: query
+    }
+    return ApiService.postRequest(`datamarts/${datamartId}/query_check/otql`, payload)
   }
 }
