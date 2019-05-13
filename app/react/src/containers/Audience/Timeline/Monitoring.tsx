@@ -38,7 +38,6 @@ interface MapStateToProps {
 interface State {
   isModalVisible: boolean;
   userPointId?: string;
-  isLoading?: boolean;
 }
 
 interface MonitoringProps {
@@ -115,12 +114,7 @@ class Monitoring extends React.Component<Props, State> {
     identifierId: string,
     compartmentId?: string,
   ) => {
-    this.setState(prevState => {
-      const nextState = {
-        isLoading: true,
-      };
-      return nextState;
-    });
+
     UserDataService.getIdentifiers(
       organisationId,
       datamartId,
@@ -130,18 +124,8 @@ class Monitoring extends React.Component<Props, State> {
     )
       .then(response => {
         const userPointIdentifierInfo = response.data.find(isUserPointIdentifier);
-        if (userPointIdentifierInfo) {
-          this.setState({
-            userPointId: userPointIdentifierInfo.user_point_id
-          });
-        }
         this.setState({
-          isLoading: false
-        });
-      })
-      .catch(error => {
-        this.setState({
-          isLoading: false
+          userPointId: userPointIdentifierInfo && userPointIdentifierInfo.user_point_id
         });
       });
   };
@@ -186,7 +170,7 @@ class Monitoring extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            { userPointId ? (
+            {userPointId ? (
               <Row>
                 <TimelineHeader
                   selectedDatamart={selectedDatamart}

@@ -42,7 +42,6 @@ interface State {
   nextDate?: string;
   activityCountOnOldestDate: number;
   userAgentsIdentifierInfo?: UserAgentIdentifierInfo[];
-  hasItems?: boolean;
 }
 
 type Props = ActivitiesTimelineProps &
@@ -105,11 +104,8 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     ).then(response => {
       const userAgentsIdentifierInfo = response.data.filter(isUserAgentIdentifier);
 
-      const hasItems = Object.keys(response.data).length > 0;
-
       this.setState({
         userAgentsIdentifierInfo: userAgentsIdentifierInfo,
-        hasItems: hasItems,
       });
     });
   };

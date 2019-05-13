@@ -107,8 +107,7 @@ class TimelinePage extends React.Component<JoinedProps> {
     const datamarts = workspace(organisationId).datamarts;
 
     if (datamartIdQueryString) {
-      const isRelated = datamarts.find(d => d.id === datamartIdQueryString);
-      selectedDatamart = isRelated ? datamartIdQueryString : undefined;
+      selectedDatamart = datamarts.find(d => d.id === datamartIdQueryString);
     }
 
     if (datamarts && datamarts.length === 1) {
