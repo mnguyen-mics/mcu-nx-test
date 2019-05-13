@@ -33,7 +33,7 @@ const Content = Layout.Content as React.ComponentClass<
 
 const messages = defineMessages({
   sectionTitleGeneral: {
-    id: 'settings.organisation.users.edit.generalInfoSection.title',
+    id: 'settings.organisation.users.edit.generalInformationSection.title',
     defaultMessage: 'General Informations',
   },
   saveUser: {

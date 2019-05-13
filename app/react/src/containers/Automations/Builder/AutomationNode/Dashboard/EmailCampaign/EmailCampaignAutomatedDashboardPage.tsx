@@ -44,28 +44,28 @@ const { Content } = Layout;
 
 const messageMap = defineMessages({
   overview: {
-    id: 'email-campaign-overview',
+    id: 'email.automatedCampaigns.dashboard.tabs.overview',
     defaultMessage: 'Overview',
   },
   devileryAnalysis: {
-    id: 'email-campaign-delivery-analysis',
+    id: 'email.automatedCampaigns.dashboard.tabs.deliveryAnalysis',
     defaultMessage: 'Delivery Analysis',
   },
   statusUpdateSuccess: {
-    id: 'email-campaign-status-update-successfull',
+    id: 'email.automatedCampaigns.dashboard.status-update-successfull',
     defaultMessage: 'Campaign status successfully updated',
   },
   statusUpdateFailure: {
-    id: 'email-campaign-status-update-failure',
+    id: 'email.automatedCampaigns.dashboard.status-update-failure',
     defaultMessage:
       'There was an error updating your campaign... Please try again...',
   },
   notifSuccess: {
-    id: 'email-campaign-notification-success',
+    id: 'email.automatedCampaigns.dashboard.notification-success',
     defaultMessage: 'Success',
   },
   notifError: {
-    id: 'email-campaign-notification-error',
+    id: 'email.automatedCampaigns.dashboard.notification-error',
     defaultMessage: 'Error',
   },
 });

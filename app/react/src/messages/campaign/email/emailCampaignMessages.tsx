@@ -69,11 +69,11 @@ const emailCampaignPropertiesMessageMap: {
   ==============================================================================
   */
   history_title: {
-    id: 'emailCampaign.resourceHistory.title',
+    id: 'email.campaign.resourceHistory.title',
     defaultMessage: 'Email Campaign History',
   },
   history_resource_type: {
-    id: 'emailCampaign.resourceHistory.type',
+    id: 'email.campaign.resourceHistory.type',
     defaultMessage: 'Email Campaign',
   },
 });

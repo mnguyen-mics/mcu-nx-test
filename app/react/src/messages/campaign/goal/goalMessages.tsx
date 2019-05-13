@@ -7,15 +7,15 @@ const goalPropertiesMessageMap: {
   [propertyName in keyof GoalResource | HistoryKeys]: FormattedMessage.MessageDescriptor
 } = defineMessages({
   id: {
-    id: 'campaign.display.fields.id',
+    id: 'campaign.display.goal.fields.id',
     defaultMessage: 'ID',
   },
 	name: {
-		id: 'campaign.display.fields.name',
+		id: 'campaign.display.goal.fields.name',
     defaultMessage: 'Name',
 	},
 	technical_name: {
-		id: 'campaign.display.fields.technicalName',
+		id: 'campaign.display.goal.fields.technicalName',
     defaultMessage: 'Technical Name',
 	},
 	default_goal_value: {
@@ -35,15 +35,15 @@ const goalPropertiesMessageMap: {
     defaultMessage: 'New Query ID',
 	},
 	organisation_id: {
-		id: 'campaign.display.fields.organisationId',
+		id: 'campaign.display.goals.fields.organisationId',
     defaultMessage: 'Organisation ID',
 	},
 	archived: {
-		id: 'campaign.display.fields.archived',
+		id: 'campaign.display.goals.fields.archived',
     defaultMessage: 'Archived',
 	},
 	status: {
-		id: 'campaign.display.fields.status',
+		id: 'campaign.display.goals.fields.status',
     defaultMessage: 'Status',
 	},
   /*
@@ -56,7 +56,7 @@ const goalPropertiesMessageMap: {
     defaultMessage: 'Goal History',
   },
   history_resource_type: {
-    id: 'campaign.resourceHistory.type',
+    id: 'campaign.goal.resourceHistory.type',
     defaultMessage: 'Goal',
   },
 });
