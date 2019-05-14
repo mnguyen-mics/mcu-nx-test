@@ -98,30 +98,26 @@ class TimelinePage extends React.Component<JoinedProps> {
         params: { organisationId },
       },
       location,
-      cookies,
     } = this.props;
 
-    let selectedDatamartId = '';
+    let selectedDatamart: DatamartResource | undefined;
 
     const datamartIdQueryString = queryString.parse(location.search).datamartId;
 
     const datamarts = workspace(organisationId).datamarts;
 
     if (datamartIdQueryString) {
-      const isRelated = datamarts.find(d => d.id === datamartIdQueryString);
-      selectedDatamartId = isRelated ? datamartIdQueryString : undefined;
+      selectedDatamart = datamarts.find(d => d.id === datamartIdQueryString);
     }
 
     if (datamarts && datamarts.length === 1) {
-      selectedDatamartId = datamarts[0].id;
+      selectedDatamart = datamarts[0];
     }
 
-    return selectedDatamartId ? (
+    return selectedDatamart ? (
       <ErrorBoundary>
         <Monitoring 
-        datamartId={selectedDatamartId} 
-        selectedDatamart={datamarts.find(d => d.id === selectedDatamartId)!}
-        cookies={cookies}
+        selectedDatamart={selectedDatamart}
         />
       </ErrorBoundary>
     ) : (

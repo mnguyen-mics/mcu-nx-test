@@ -1,5 +1,6 @@
 import { Index } from '../../utils';
 import { UserActivityEventResource } from '../datamart/UserActivityResource';
+import { OperatingSystemFamily, BrowserFamily } from '../datamart/graphdb/RuntimeSchema';
 
 export interface Activity {
   $email_hash: string | object;
@@ -30,12 +31,6 @@ export interface Activity {
   $previous_node_name?: string;
 }
 
-export interface ActivityCardProps {
-  activity: Activity;
-  datamartId: string;
-  identifiers: IdentifiersProps;
-}
-
 export interface UserScenarioActivityCardProps {
   activity: Activity;
 }
@@ -56,19 +51,94 @@ export interface UserAgent {
   vector_id: string;
 }
 
-export interface UserPoint {
-  type: 'USER_POINT';
+export interface UserEmailIdentifierProviderResource {
+  technical_name: string;
+  creation_ts?: number;
+  last_activity_ts?: number;
+  last_modified_ts?: number;
+  expiration_ts?: number;
+  active?: boolean;
+  status?: string;
+}
+
+export interface UserAgentInfo {
+  form_factor: FormFactor;
+  os_family: OperatingSystemFamily;
+  browser_family?: BrowserFamily;
+  browser_version?: string;
+  brand?: string;
+  model?: string;
+  os_version?: string;
+  carrier?: string;
+  raw_value?: string;
+}
+
+export interface UserAgentIdentifierProviderResource {
+  technical_name: string;
+  creation_ts?: number;
+  last_activity_ts?: number;
+  expiration_ts?: number;
+}
+
+export interface UserAgentIdMappingResource {
+  user_agent_id: string;
+  realm_name: string;
+  last_activity_ts: number;
+}
+
+export interface UserPointIdentifierInfo {
   user_point_id: string;
+  creation_ts?: number;
+  type: 'USER_POINT';
 }
 
-export interface UserAccount {
-  compartment_id: number;
+export interface UserEmailIdentifierInfo {
+  hash: string;
+  email?: string;
+  operator?: string;
   creation_ts: number;
-  type: 'USER_ACCOUNT';
-  user_account_id: string;
+  last_activity_ts: number;
+  providers: UserEmailIdentifierProviderResource[];
+  type: 'USER_EMAIL';
 }
 
-export type UserIdentifierShape = UserAgent | UserPoint;
+export interface UserAccountIdentifierInfo {
+  user_account_id: string;
+  creation_ts: number;
+  compartment_id?: number;
+  type: 'USER_ACCOUNT';
+}
+
+export interface UserAgentIdentifierInfo {
+  vector_id: string;
+  device?: UserAgentInfo;
+  creation_ts: number;
+  last_activity_ts: number;
+  providers: UserAgentIdentifierProviderResource[]
+  mappings: UserAgentIdMappingResource[]
+  type: 'USER_AGENT'
+}
+
+export type UserIdentifierInfo = UserPointIdentifierInfo |
+  UserEmailIdentifierInfo |
+  UserAccountIdentifierInfo |
+  UserAgentIdentifierInfo;
+
+export function isUserPointIdentifier(userIdentifier: UserIdentifierInfo): userIdentifier is UserPointIdentifierInfo {
+  return userIdentifier.type === 'USER_POINT';
+}
+
+export function isUserAccountIdentifier(userIdentifier: UserIdentifierInfo): userIdentifier is UserAccountIdentifierInfo {
+  return userIdentifier.type === 'USER_ACCOUNT';
+}
+
+export function isUserAgentIdentifier(userIdentifier: UserIdentifierInfo): userIdentifier is UserAgentIdentifierInfo {
+  return userIdentifier.type === 'USER_AGENT';
+}
+
+export function isUserEmailIdentifier(userIdentifier: UserIdentifierInfo): userIdentifier is UserEmailIdentifierInfo {
+  return userIdentifier.type === 'USER_EMAIL';
+}
 
 export type FormFactor = 'TABLET' | 'SMARTPHONE' | 'PERSONAL_COMPUTER';
 
@@ -85,13 +155,12 @@ export interface Device {
 }
 
 export interface IdentifiersProps {
-  isLoading: boolean;
   hasItems: boolean;
   items: {
-    USER_ACCOUNT: UserAccount[];
-    USER_AGENT: UserAgent[];
-    USER_EMAIL: any[]; // type it better
-    USER_POINT: UserPoint[];
+    USER_ACCOUNT: UserAccountIdentifierInfo[];
+    USER_AGENT: UserAgentIdentifierInfo[];
+    USER_EMAIL: UserEmailIdentifierInfo[];
+    USER_POINT: UserPointIdentifierInfo[];
   };
 }
 

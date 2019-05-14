@@ -13,10 +13,11 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { TimelinePageParams } from '../TimelinePage';
 import ProfileInfo from './ProfileInfo';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 interface ProfileCardProps {
-  datamartId: string;
-  identifier: Identifier;
+  selectedDatamart: DatamartResource;
+  userPointId: string;
 }
 
 interface State {
@@ -37,72 +38,51 @@ class ProfileCard extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      match: {
-        params: { organisationId, identifierId, identifierType },
-      },
-      datamartId,
-      identifier,
+      selectedDatamart,
+      userPointId
     } = this.props;
-    if (identifier.id && identifier.type) {
-      this.fetchProfileData(
-        organisationId,
-        datamartId,
-        identifier.type,
-        identifier.id,
-      );
-    } else if (identifierId && identifierType) {
-      this.fetchProfileData(
-        organisationId,
-        datamartId,
-        identifierType,
-        identifierId,
-      );
-    }
+
+    this.fetchProfileData(
+      selectedDatamart,
+      userPointId
+    );
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      match: {
-        params: { organisationId },
-      },
-      datamartId,
-      identifier: { id, type },
+      selectedDatamart,
+      userPointId,
     } = this.props;
+
     const {
-      match: {
-        params: { organisationId: prevOrganisationId },
-      },
-      datamartId: prevDatamartId,
-      identifier: { id: prevIdentifierId, type: prevIdentifierType },
+      selectedDatamart: prevSelectedDatamart,
+      userPointId: prevUserPointId,
     } = prevProps;
+
     if (
-      organisationId !== prevOrganisationId ||
-      id !== prevIdentifierId ||
-      type !== prevIdentifierType ||
-      datamartId !== prevDatamartId
+      userPointId !== prevUserPointId ||
+      selectedDatamart !== prevSelectedDatamart
     ) {
-      this.fetchProfileData(organisationId, datamartId, type, id);
+      this.fetchProfileData(selectedDatamart, userPointId);
     }
   }
 
   fetchProfileData = (
-    organisationId: string,
-    datamartId: string,
-    identifierType: string,
-    identifierId: string,
+    datamart: DatamartResource,
+    userPointId: string,
   ) => {
 
-    DatamartService.getUserAccountCompartments(datamartId).then(res => {
+    DatamartService.getUserAccountCompartments(datamart.id).then(res => {
       return Promise.all(
         res.data.map(userCompartiment => {
+          const identifier: Identifier = {
+            id: userPointId,
+            type: 'user_point_id',
+            compartmentId: userCompartiment.compartment_id
+          };
           return UserDataService.getProfile(
-            organisationId,
-            datamartId,
-            identifierType,
-            identifierId,
-            {
-              compartment_id: userCompartiment.compartment_id,
-            },
+            datamart.id,
+            identifier
           )
             .then(r => ({ profile: r ? r.data : {}, compartment: userCompartiment }))
             .catch(() =>
@@ -127,7 +107,7 @@ class ProfileCard extends React.Component<Props, State> {
     });
   };
 
-  
+
 
   render() {
     const { intl } = this.props;
@@ -136,15 +116,15 @@ class ProfileCard extends React.Component<Props, State> {
         {!this.state.profileByCompartments ? (
           <Spin />
         ) : (
-          Object.keys(this.state.profileByCompartments).map(key => {
-            return (
-              <Row gutter={10} key={key} className="table-line border-top">
-                <div className="sub-title">{key}</div>
-                <ProfileInfo profile={this.state.profileByCompartments[key]} />
-              </Row>
-            );
-          })
-        )}
+            Object.keys(this.state.profileByCompartments).map(key => {
+              return (
+                <Row gutter={10} key={key} className="table-line border-top">
+                  <div className="sub-title">{key}</div>
+                  <ProfileInfo profile={this.state.profileByCompartments[key]} />
+                </Row>
+              );
+            })
+          )}
       </Card>
     );
   }

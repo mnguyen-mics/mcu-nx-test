@@ -3,11 +3,12 @@ import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import messages from './messages';
 import ContentHeader from '../../../components/ContentHeader';
-import { Identifier } from './Monitoring';
 import UserDataService from '../../../services/UserDataService';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { TimelinePageParams } from './TimelinePage';
 import { compose } from 'recompose';
+import { Identifier } from './Monitoring';
+import { DatamartResource } from '../../../models/datamart/DatamartResource';
 
 interface State {
   lastSeen: number;
@@ -15,8 +16,7 @@ interface State {
 }
 
 interface TimelineHeaderProps {
-  datamartId: string;
-  identifier: Identifier;
+  selectedDatamart: DatamartResource;
   userPointId: string;
 }
 
@@ -41,59 +41,48 @@ class TimelineHeader extends React.Component<Props, State> {
       loaded: false,
       lastSeen: 0
     });
-    
+
     const {
-      datamartId,
-      identifier,
-      match: {
-        params: { identifierId, identifierType },
-      }
+      selectedDatamart,
+      userPointId
     } = this.props;
 
-    let type: string | null = null;
-    let id: string | null = null;
+    const identifier: Identifier = {
+      id: userPointId,
+      type: 'user_point_id'
+    };
 
-    if (identifier.id && identifier.type) {
-      type = identifier.type;
-      id = identifier.id;      
-    } else if (identifierId && identifierType) {
-      type = identifierType;
-      id = identifierId;
-    }
-
-    if (type && id) {
-      UserDataService.getActivities(datamartId, type, id).then(res => {
-        const timestamps = res.data.map(item => {
-          return item.$ts
-        })
-        let lastSeen = 0;
-        if (timestamps.length > 0) {
-          lastSeen = Math.max.apply(null, timestamps);
-        }
-        this.setState({
-          'lastSeen': lastSeen,
-          'loaded': true
-        });
+    UserDataService.getActivities(selectedDatamart.id, identifier).then(res => {
+      const timestamps = res.data.map(item => {
+        return item.$ts
+      })
+      let lastSeen = 0;
+      if (timestamps.length > 0) {
+        lastSeen = Math.max.apply(null, timestamps);
+      }
+      this.setState({
+        'lastSeen': lastSeen,
+        'loaded': true
       });
-    }
+    });
   };
 
   render() {
-    
-    const { 
-      userPointId ,
+
+    const {
+      userPointId,
     } = this.props;
 
     const { loaded, lastSeen } = this.state
 
     const subtitle =
       loaded && lastSeen !== 0
-       ? (
-        <span>
-          <FormattedMessage {...messages.lastSeen} />{' '}
-          {moment(lastSeen).format('YYYY-MM-DD, HH:mm:ss')}
-        </span>
-      ) : null;
+        ? (
+          <span>
+            <FormattedMessage {...messages.lastSeen} />{' '}
+            {moment(lastSeen).format('YYYY-MM-DD, HH:mm:ss')}
+          </span>
+        ) : null;
 
     return userPointId ? (
       <ContentHeader title={userPointId} subTitle={subtitle} />

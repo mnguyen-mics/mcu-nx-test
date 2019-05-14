@@ -13,10 +13,11 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { TimelinePageParams } from '../TimelinePage';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 interface SegmentsCardProps {
-  datamartId: string;
-  identifier: Identifier;
+  selectedDatamart: DatamartResource;
+  userPointId: string;
 }
 
 interface State {
@@ -48,60 +49,44 @@ class SegmentsCard extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      match: {
-        params: { organisationId, identifierType, identifierId },
-      },
-      datamartId,
-      identifier,
+      selectedDatamart,
+      userPointId
     } = this.props;
-    if (identifier.id && identifier.type) {
-      this.fetchSegmentsData(
-        organisationId,
-        datamartId,
-        identifier.type,
-        identifier.id,
-      );
-    } else if (identifierType && identifierId) {
-      this.fetchSegmentsData(
-        organisationId,
-        datamartId,
-        identifierType,
-        identifierId,
-      );
-    }
+
+    this.fetchSegmentsData(
+      selectedDatamart,
+      userPointId
+    );
+
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      match: {
-        params: { organisationId },
-      },
-      datamartId,
-      identifier: { id, type },
+      selectedDatamart,
+      userPointId,
     } = this.props;
     const {
-      match: {
-        params: { organisationId: prevOrganisationId },
-      },
-      datamartId: prevDatamartId,
-      identifier: { id: prevIdentifierId, type: prevIdentifierType },
+      selectedDatamart: prevSelectedDatamart,
+      userPointId: prevUserPointId,
     } = prevProps;
     if (
-      organisationId !== prevOrganisationId ||
-      id !== prevIdentifierId ||
-      type !== prevIdentifierType ||
-      datamartId !== prevDatamartId
+      userPointId !== prevUserPointId ||
+      selectedDatamart !== prevSelectedDatamart
     ) {
-      this.fetchSegmentsData(organisationId, datamartId, type, id);
+        this.fetchSegmentsData(selectedDatamart, userPointId);
     }
   }
 
   fetchSegmentsData = (
-    organisationId: string,
-    datamartId: string,
-    identifierType: string,
-    identifierId: string,
+    datamart: DatamartResource,
+    userPointId: string
   ) => {
+    
+    const identifier: Identifier = {
+      id: userPointId,
+      type: 'user_point_id'
+    };
+
     this.setState(prevState => {
       const nextState = {
         segments: {
@@ -112,10 +97,8 @@ class SegmentsCard extends React.Component<Props, State> {
       return nextState;
     });
     UserDataService.getSegments(
-      organisationId,
-      datamartId,
-      identifierType,
-      identifierId,
+      datamart.id,
+      identifier
     )
       .then(response => {
         this.setState(prevState => {
@@ -200,15 +183,15 @@ class SegmentsCard extends React.Component<Props, State> {
               </button>
             </div>
           ) : (
-            <div className="mcs-card-footer">
-              <button
-                className="mcs-card-footer-link"
-                onClick={onViewLessClick}
-              >
-                <FormattedMessage {...messages.viewLess} />.
+              <div className="mcs-card-footer">
+                <button
+                  className="mcs-card-footer-link"
+                  onClick={onViewLessClick}
+                >
+                  <FormattedMessage {...messages.viewLess} />.
               </button>
-            </div>
-          )
+              </div>
+            )
         ) : null}
       </Card>
     );

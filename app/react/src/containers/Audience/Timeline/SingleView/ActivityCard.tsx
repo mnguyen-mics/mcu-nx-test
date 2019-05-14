@@ -7,7 +7,7 @@ import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import {
   Activity,
-  ActivityCardProps,
+  UserAgentIdentifierInfo,
 } from '../../../../models/timeline/timeline';
 import { Card } from '../../../../components/Card/index';
 import EventActivity from './EventActivity';
@@ -23,6 +23,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { TimelinePageParams } from '../TimelinePage';
 import UserScenarioActivityCard from './UserScenarioActivityCard';
 import { ButtonStyleless } from '../../../../components';
+import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
 enum scenarioActivityTypes {
@@ -35,6 +36,12 @@ enum scenarioActivityTypes {
 
 interface State {
   siteName?: string;
+}
+
+export interface ActivityCardProps {
+  activity: Activity;
+  selectedDatamart: DatamartResource;
+  userAgentsIdentifierInfo?: UserAgentIdentifierInfo[];
 }
 
 type Props = ActivityCardProps &
@@ -58,11 +65,15 @@ class ActivityCard extends React.Component<Props, State> {
   }
 
   getChannelInformation(activity: Activity) {
+    const { 
+      selectedDatamart
+    } = this.props;
+
     if (activity && needToDisplayDurationFor.indexOf(activity.$type) > -1) {
       const id = activity.$site_id ? activity.$site_id : activity.$app_id;
       const prefix = activity.$site_id ? 'Site' : 'App';
       this.getChannelPromise = makeCancelable(
-        UserDataService.getChannel(this.props.datamartId, id),
+        UserDataService.getChannel(selectedDatamart.id, id),
       );
       this.getChannelPromise.promise
         .then(response => {
@@ -114,33 +125,28 @@ class ActivityCard extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      datamartId,
+      selectedDatamart,
       activity,
     } = this.props;
     const {
       match: {
         params: { organisationId: prevOrganisationId },
       },
-      datamartId: prevDatamartId,
+      selectedDatamart: prevSelectedDatamart,
     } = prevProps;
     if (
       organisationId !== prevOrganisationId ||
-      datamartId !== prevDatamartId
+      selectedDatamart !== prevSelectedDatamart
     ) {
       this.getChannelInformation(activity);
     }
   }
 
   getAgentInfoFromAgentId = (userAgentId: string) => {
-    const { identifiers } = this.props;
-    const identif = {
-      ...identifiers,
-    };
+    const { userAgentsIdentifierInfo } = this.props;
     return userAgentId
-      ? identif &&
-          identif.items &&
-          identif.items.USER_AGENT &&
-          identif.items.USER_AGENT.find((element: any) => {
+      ? userAgentsIdentifierInfo &&
+          userAgentsIdentifierInfo.find((element: any) => {
             return element.vector_id === userAgentId;
           })
       : undefined;
