@@ -22,7 +22,6 @@ import ResourceTimelinePage, {
 import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
-import PluginService from '../../../../../services/PluginService';
 
 export interface AdServingActionBarProps {
   campaign: DisplayCampaignInfoResource;
@@ -123,22 +122,6 @@ class AdServingActionBar extends React.Component<Props> {
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatDisplayCampaignProperty,
                 resourceLinkHelper: {
-                  PLUGIN_VERSION: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.campaignEditorResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return PluginService.findPluginFromVersionId(id).then(response => `${response.data.group_id}.${response.data.artifact_id}`)
-                    },
-                    goToResource: (id: string) => {
-                      return ;
-                    },
-                  },
                   AD_GROUP: {
                     direction: 'CHILD',
                     getType: () => {

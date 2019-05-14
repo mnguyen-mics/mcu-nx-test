@@ -233,7 +233,7 @@ class HistoryEventCard extends React.Component<Props, State> {
 
     return events.findIndex(event => {
       const rHelper = isHistoryCreateLinkEvent(event) && resourceLinkHelper && resourceLinkHelper[event.resource_type];
-      return rHelper ? rHelper.direction === 'PARENT' : false;
+      return !!rHelper && rHelper.direction === 'PARENT';
     });
   }
 

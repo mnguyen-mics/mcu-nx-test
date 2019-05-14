@@ -321,15 +321,7 @@ class DisplayCampaignAdTable extends React.Component<
             callback: this.editCampaign,
           },
           {
-<<<<<<< HEAD
-            intlMessage: messages.history,
-            callback: this.openHistoryDrawer,
-          },
-          {
             intlMessage: messages.archiveCampaign,
-=======
-            translationKey: 'ARCHIVE',
->>>>>>> MICS-1129 Update campaigns' history
             callback: this.archiveAd,
           },
         ],
