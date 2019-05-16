@@ -7,43 +7,43 @@ const goalPropertiesMessageMap: {
   [propertyName in keyof GoalResource | HistoryKeys]: FormattedMessage.MessageDescriptor
 } = defineMessages({
   id: {
-    id: 'campaign.display.goal.fields.id',
+    id: 'goal.fields.id',
     defaultMessage: 'ID',
   },
 	name: {
-		id: 'campaign.display.goal.fields.name',
+		id: 'goal.fields.name',
     defaultMessage: 'Name',
 	},
 	technical_name: {
-		id: 'campaign.display.goal.fields.technicalName',
+		id: 'goal.fields.technicalName',
     defaultMessage: 'Technical Name',
 	},
 	default_goal_value: {
-		id: 'campaign.display.fields.defaultGoalValue',
+		id: 'goal.fields.defaultGoalValue',
     defaultMessage: 'Default Goal Value',
 	},
 	goal_value_currency: {
-		id: 'campaign.display.fields.goalValueCurrency',
+		id: 'goal.fields.goalValueCurrency',
     defaultMessage: 'Goal Value Currency',
 	},
 	datamart_id: {
-		id: 'campaign.display.fields.datamartId',
+		id: 'goal.fields.datamartId',
     defaultMessage: 'Datamart ID',
 	},
 	new_query_id: {
-		id: 'campaign.display.fields.newQueryid',
+		id: 'goal.fields.newQueryId',
     defaultMessage: 'New Query ID',
 	},
 	organisation_id: {
-		id: 'campaign.display.goals.fields.organisationId',
+		id: 'goal.fields.organisationId',
     defaultMessage: 'Organisation ID',
 	},
 	archived: {
-		id: 'campaign.display.goals.fields.archived',
+		id: 'goal.fields.archived',
     defaultMessage: 'Archived',
 	},
 	status: {
-		id: 'campaign.display.goals.fields.status',
+		id: 'goal.fields.status',
     defaultMessage: 'Status',
 	},
   /*
@@ -52,11 +52,11 @@ const goalPropertiesMessageMap: {
   ==============================================================================
   */
   history_title: {
-    id: 'campaign.resourceHistory.title',
+    id: 'goal.resourceHistory.title',
     defaultMessage: 'Goal History',
   },
   history_resource_type: {
-    id: 'campaign.goal.resourceHistory.type',
+    id: 'goal.resourceHistory.type',
     defaultMessage: 'Goal',
   },
 });
