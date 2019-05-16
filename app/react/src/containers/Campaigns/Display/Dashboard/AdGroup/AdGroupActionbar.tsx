@@ -525,7 +525,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
         key: displayCampaign && displayCampaign.id,
       },
       {
-        name: adGroup ? adGroup.name : '',
+        name: adGroup ? (adGroup.name ? adGroup.name : adGroup.id) : '',
         key: adGroup ? adGroup.id : '',
       },
     ];

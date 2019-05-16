@@ -6,16 +6,16 @@ import { CampaignStatus } from '../../../models/campaign/constants';
 interface Props {
   campaign?: {
     name: string;
+    id: string;
     status: CampaignStatus;
   };
-  showStatus?: boolean
+  showStatus?: boolean;
 }
 
 class CampaignDashboardHeader extends React.Component<Props> {
-
   static defaultProps = {
     showStatus: true,
-  }
+  };
 
   render() {
     const { campaign, showStatus } = this.props;
@@ -26,7 +26,9 @@ class CampaignDashboardHeader extends React.Component<Props> {
 
     return (
       <ContentHeader
-        title={campaign && campaign.name}
+        title={
+          campaign ? (campaign.name ? campaign.name : campaign.id) : ''
+        }
         subTitle={showStatus ? campaignStatus : null}
         loading={!campaign}
       />
