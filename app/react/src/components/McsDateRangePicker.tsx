@@ -160,7 +160,9 @@ class McsDateRangePicker extends React.Component<
           {ranges.map(item => {
             return this.getSelectedPresettedRange() ===
               intl.formatMessage(messages[item.name]) ? null : (
-              <Menu.Item key={item.name}>{messages[item.name]}</Menu.Item>
+              <Menu.Item key={item.name}>
+                {intl.formatMessage(messages[item.name])}
+              </Menu.Item>
             );
           })}
           <Menu.Item key="CUSTOM">
