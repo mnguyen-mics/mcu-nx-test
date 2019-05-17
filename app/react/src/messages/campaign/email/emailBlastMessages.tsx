@@ -42,7 +42,6 @@ const emailBlastPropertiesMessageMap: {
     id: 'emailBlast.fields.sendDate',
     defaultMessage: 'Send date'
   },
-  // provider ??
   subject_line: {
     id: 'emailBlast.fields.subjectLine',
     defaultMessage: 'Subject'
@@ -95,7 +94,6 @@ const emailBlastPropertiesFormatMap: {
   id: { format: 'STRING' },
   blast_name: { format: 'STRING' },
   send_date: { format: 'TIMESTAMP' },
-  // provider ??
   subject_line: { format: 'STRING' },
   from_email: { format: 'STRING' },
   from_name: { format: 'STRING' },
@@ -104,8 +102,8 @@ const emailBlastPropertiesFormatMap: {
     format: 'MESSAGE',
     messageMap: emailBlastStatusMessages,
   },
-  number_mail_not_send: { format: 'STRING' }, // INTEGER ??
-  batch_size: { format: 'STRING' }, // INTEGER ??
+  number_mail_not_send: { format: 'INTEGER' },
+  batch_size: { format: 'INTEGER' },
   /*
   ==============================================================================
   ================================= EXTRA KEYS =================================

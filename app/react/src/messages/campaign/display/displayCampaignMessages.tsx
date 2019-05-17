@@ -1,8 +1,25 @@
 import * as React from 'react';
 import { defineMessages, FormattedMessage } from "react-intl";
 import { DisplayCampaignResource } from "../../../models/campaign/display";
-import { BudgetPeriod, CampaignStatus } from '../../../models/campaign/constants';
+import { BudgetPeriod, CampaignStatus, DisplayCampaignSubType } from '../../../models/campaign/constants';
 import { HistoryKeys, formatToFormattingFunction, ValueFormat } from '../../resourcehistory/utils';
+
+const displayCampaignSubtypeMessages: {
+  [key in DisplayCampaignSubType]: FormattedMessage.MessageDescriptor
+} = defineMessages({
+  PROGRAMMATIC: {
+    id: 'campaign.display.fields.subtype.programmatic',
+    defaultMessage: 'Programmatic',
+  },
+  AD_SERVING: {
+    id: 'campaign.display.fields.subtype.adServing',
+    defaultMessage: 'Ad Serving',
+  },
+  TRACKING: {
+    id: 'campaign.display.fields.subtype.tracking',
+    defaultMessage: 'Tracking',
+  },
+});
 
 const budgetPeriodMessages: {
   [key in BudgetPeriod]: FormattedMessage.MessageDescriptor
@@ -151,11 +168,11 @@ const campaignPropertiesMessageMap: {
   ==============================================================================
   */
   history_title: {
-    id: 'display.campaign.resourceHistory.title',
+    id: 'campaign.display.resourceHistory.title',
     defaultMessage: 'Display Campaign History',
   },
   history_resource_type: {
-    id: 'display.campaign.resourceHistory.type',
+    id: 'campaign.display.resourceHistory.type',
     defaultMessage: 'Display Campaign',
   },
 });
@@ -181,8 +198,11 @@ const campaignPropertiesFormatMap: {
   currency_code: { format: 'STRING' },
   technical_name: { format: 'STRING' },
   archived: { format: 'STRING' },
-  subtype: { format: 'STRING' },
-  max_bid_price: { format: 'STRING' },
+  subtype: {
+    format: 'MESSAGE',
+    messageMap: displayCampaignSubtypeMessages,
+  },
+  max_bid_price: { format: 'FLOAT' },
   total_budget: { format: 'FLOAT' },
   max_budget_per_period: { format: 'FLOAT' },
   max_budget_period: {

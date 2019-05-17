@@ -2,65 +2,87 @@ import * as React from 'react';
 import { defineMessages, FormattedMessage } from "react-intl";
 import { HistoryKeys, formatToFormattingFunction, ValueFormat } from '../../resourcehistory/utils';
 import { EmailCampaignResource } from '../../../models/campaign/email';
+import { CampaignStatus } from '../../../models/campaign';
 
+
+const emailCampaignStatusMessages: {
+  [key in CampaignStatus]: FormattedMessage.MessageDescriptor
+} = defineMessages({
+  ACTIVE: {
+    id: 'campaign.email.fields.status.active',
+    defaultMessage: 'Active'
+  },
+  PENDING: {
+    id: 'campaign.email.fields.status.pending',
+    defaultMessage: 'Pending'
+  },
+  PAUSED: {
+    id: 'campaign.email.fields.status.paused',
+    defaultMessage: 'Paused'
+  },
+  ARCHIVED: {
+    id: 'campaign.email.fields.status.archived',
+    defaultMessage: 'Archived'
+  },
+});
 
 const emailCampaignPropertiesMessageMap: {
   [propertyName in keyof EmailCampaignResource | HistoryKeys]: FormattedMessage.MessageDescriptor
 } = defineMessages({
   id: {
-    id: 'emailCampaign.fields.id',
+    id: 'campaign.email.fields.id',
     defaultMessage: 'ID',
   },
   status: {
-    id: 'emailCampaign.fields.status',
+    id: 'campaign.email.fields.status',
     defaultMessage: 'Status',
   },
   archived: {
-    id: 'emailCampaign.fields.archived',
+    id: 'campaign.email.fields.archived',
     defaultMessage: 'Archived',
   },
   organisation_id: {
-    id: 'emailCampaign.fields.organisationId',
+    id: 'campaign.email.fields.organisationId',
     defaultMessage: 'Organisation ID',
   },
   name: {
-    id: 'emailCampaign.fields.name',
+    id: 'campaign.email.fields.name',
     defaultMessage: 'Name',
   },
   creation_ts: {
-    id: 'emailCampaign.fields.creationTs',
+    id: 'campaign.email.fields.creationTs',
     defaultMessage: 'Creation Timestamp',
   },
   editor_versionid: {
-    id: 'emailCampaign.fields.editorVersionId',
+    id: 'campaign.email.fields.editorVersionId',
     defaultMessage: 'Editor Version ID',
   },
   editor_version_value: {
-    id: 'emailCampaign.fields.editorVersionValue',
+    id: 'campaign.email.fields.editorVersionValue',
     defaultMessage: 'Editor Version Value',
   },
   editor_groupid: {
-    id: 'emailCampaign.fields.editorGroupId',
+    id: 'campaign.email.fields.editorGroupId',
     defaultMessage: 'Editor Group ID',
   },
   editor_artifact_id: {
-    id: 'emailCampaign.fields.editorArtifactId',
+    id: 'campaign.email.fields.editorArtifactId',
     defaultMessage: 'Editor Artifact ID',
   },
   currency_code: {
-    id: 'emailCampaign.fields.currencyCode',
+    id: 'campaign.email.fields.currencyCode',
     defaultMessage: 'Currency Code',
   },
   technical_name: {
-    id: 'emailCampaign.fields.technicalName',
+    id: 'campaign.email.fields.technicalName',
     defaultMessage: 'Technical Name',
   },
   type: {
-    id: 'emailCampaign.fields.type',
+    id: 'campaign.email.fields.type',
     defaultMessage: 'Type',
   },
   automated: {
-    id: 'emailCampaign.fields.automated',
+    id: 'campaign.email.fields.automated',
     defaultMessage: 'Automated',
   },
   /*
@@ -69,11 +91,11 @@ const emailCampaignPropertiesMessageMap: {
   ==============================================================================
   */
   history_title: {
-    id: 'email.campaign.resourceHistory.title',
+    id: 'campaign.email.resourceHistory.title',
     defaultMessage: 'Email Campaign History',
   },
   history_resource_type: {
-    id: 'email.campaign.resourceHistory.type',
+    id: 'campaign.email.resourceHistory.type',
     defaultMessage: 'Email Campaign',
   },
 });
@@ -85,7 +107,10 @@ const emailCampaignPropertiesFormatMap: {
   }
 } = {
   id: { format: 'STRING' },
-  status: { format: 'STRING' },
+  status: {
+    format: 'MESSAGE',
+    messageMap: emailCampaignStatusMessages,
+  },
   archived: { format: 'STRING' },
   organisation_id: { format: 'STRING' },
   name: { format: 'STRING' },

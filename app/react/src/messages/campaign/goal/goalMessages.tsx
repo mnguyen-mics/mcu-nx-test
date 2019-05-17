@@ -1,7 +1,20 @@
 import * as React from 'react';
 import { defineMessages, FormattedMessage } from "react-intl";
 import { HistoryKeys, formatToFormattingFunction, ValueFormat } from '../../resourcehistory/utils';
-import { GoalResource } from '../../../models/goal/GoalResource';
+import { GoalResource, GoalStatus } from '../../../models/goal/GoalResource';
+
+const goalStatusMessages: {
+  [key in GoalStatus]: FormattedMessage.MessageDescriptor
+} = defineMessages({
+  PAUSED: {
+    id: 'goal.fields.status.paused',
+    defaultMessage: 'Paused',
+  },
+  ACTIVE: {
+    id: 'goal.fields.status.active',
+    defaultMessage: 'Active',
+  },
+});
 
 const goalPropertiesMessageMap: {
   [propertyName in keyof GoalResource | HistoryKeys]: FormattedMessage.MessageDescriptor
@@ -10,42 +23,42 @@ const goalPropertiesMessageMap: {
     id: 'goal.fields.id',
     defaultMessage: 'ID',
   },
-	name: {
-		id: 'goal.fields.name',
+  name: {
+    id: 'goal.fields.name',
     defaultMessage: 'Name',
-	},
-	technical_name: {
-		id: 'goal.fields.technicalName',
+  },
+  technical_name: {
+    id: 'goal.fields.technicalName',
     defaultMessage: 'Technical Name',
-	},
-	default_goal_value: {
-		id: 'goal.fields.defaultGoalValue',
+  },
+  default_goal_value: {
+    id: 'goal.fields.defaultGoalValue',
     defaultMessage: 'Default Goal Value',
-	},
-	goal_value_currency: {
-		id: 'goal.fields.goalValueCurrency',
+  },
+  goal_value_currency: {
+    id: 'goal.fields.goalValueCurrency',
     defaultMessage: 'Goal Value Currency',
-	},
-	datamart_id: {
-		id: 'goal.fields.datamartId',
+  },
+  datamart_id: {
+    id: 'goal.fields.datamartId',
     defaultMessage: 'Datamart ID',
-	},
-	new_query_id: {
-		id: 'goal.fields.newQueryId',
+  },
+  new_query_id: {
+    id: 'goal.fields.newQueryId',
     defaultMessage: 'New Query ID',
-	},
-	organisation_id: {
-		id: 'goal.fields.organisationId',
+  },
+  organisation_id: {
+    id: 'goal.fields.organisationId',
     defaultMessage: 'Organisation ID',
-	},
-	archived: {
-		id: 'goal.fields.archived',
+  },
+  archived: {
+    id: 'goal.fields.archived',
     defaultMessage: 'Archived',
-	},
-	status: {
-		id: 'goal.fields.status',
+  },
+  status: {
+    id: 'goal.fields.status',
     defaultMessage: 'Status',
-	},
+  },
   /*
   ==============================================================================
   ================================= EXTRA KEYS =================================
@@ -67,16 +80,19 @@ const goalPropertiesFormatMap: {
     messageMap?: {[key: string]: FormattedMessage.MessageDescriptor}
   }
 } = {
-	id: { format: 'STRING' },
-	name: { format: 'STRING' },
-	technical_name: { format: 'STRING' },
-	default_goal_value: { format: 'FLOAT' },
-	goal_value_currency: { format: 'STRING' },
-	datamart_id: { format: 'STRING' },
-	new_query_id: { format: 'STRING' },
-	organisation_id: { format: 'STRING' },
-	archived: { format: 'STRING' },
-	status: { format: 'STRING' },
+  id: { format: 'STRING' },
+  name: { format: 'STRING' },
+  technical_name: { format: 'STRING' },
+  default_goal_value: { format: 'FLOAT' },
+  goal_value_currency: { format: 'STRING' },
+  datamart_id: { format: 'STRING' },
+  new_query_id: { format: 'STRING' },
+  organisation_id: { format: 'STRING' },
+  archived: { format: 'STRING' },
+  status: {
+    format: 'MESSAGE',
+    messageMap: goalStatusMessages,
+  },
   /*
   ==============================================================================
   ================================= EXTRA KEYS =================================
@@ -87,15 +103,15 @@ const goalPropertiesFormatMap: {
 }
 
 function formatGoalProperty(property: keyof GoalResource | HistoryKeys, value?: string): {
-	message: FormattedMessage.MessageDescriptor,
-	formattedValue?: React.ReactNode,
+  message: FormattedMessage.MessageDescriptor,
+  formattedValue?: React.ReactNode,
   } {
-	return {
-	  message: goalPropertiesMessageMap[property],
-	  formattedValue: (value && goalPropertiesFormatMap[property])
-		? formatToFormattingFunction(value, goalPropertiesFormatMap[property].format, goalPropertiesFormatMap[property].messageMap)
-		: undefined,
-	}
+  return {
+    message: goalPropertiesMessageMap[property],
+    formattedValue: (value && goalPropertiesFormatMap[property])
+    ? formatToFormattingFunction(value, goalPropertiesFormatMap[property].format, goalPropertiesFormatMap[property].messageMap)
+    : undefined,
+  }
 }
   
 export default formatGoalProperty;
