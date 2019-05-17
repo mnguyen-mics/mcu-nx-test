@@ -5,7 +5,7 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { TableViewFilters } from '../../../../components/TableView';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import messages from './messages';
-import { Icon, Modal, Layout, Row } from 'antd';
+import { Icon, Modal, Row } from 'antd';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { Import } from '../../../../models/imports/imports';
 import { Link } from 'react-router-dom';
@@ -31,8 +31,6 @@ import DatamartService from '../../../../services/DatamartService';
 import { notifyError } from '../../../../state/Notifications/actions';
 import { Index } from '../../../../utils';
 import { ImportFilterParams } from './ImportsContent';
-
-const { Content } = Layout;
 
 interface ImportsContentContainerFilter extends PaginationSearchSettings {
   datamartId: string;
@@ -382,29 +380,25 @@ class ImportsContentContainer extends React.Component<
     };
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
-            <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
-                  <FormattedMessage {...messages.imports} />
-                </span>
-              </div>
-              <hr className="mcs-separator" />
-              <TableViewFilters
-                columns={dataColumns}
-                actionsColumnsDefinition={actionsColumnsDefinition}
-                searchOptions={searchOptions}
-                filtersOptions={filtersOptions}
-                dataSource={data}
-                loading={loading}
-                pagination={pagination}
-              />
-            </div>
-          </Row>
-        </Content>
-      </div>
+      <Row className="mcs-table-container">
+        <div>
+          <div className="mcs-card-header mcs-card-title">
+            <span className="mcs-card-title">
+              <FormattedMessage {...messages.imports} />
+            </span>
+          </div>
+          <hr className="mcs-separator" />
+          <TableViewFilters
+            columns={dataColumns}
+            actionsColumnsDefinition={actionsColumnsDefinition}
+            searchOptions={searchOptions}
+            filtersOptions={filtersOptions}
+            dataSource={data}
+            loading={loading}
+            pagination={pagination}
+          />
+        </div>
+      </Row>
     );
   }
 }

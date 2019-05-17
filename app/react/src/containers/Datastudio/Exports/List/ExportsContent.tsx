@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Modal, Layout, Row } from 'antd';
+import { Modal, Row } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import {
   GetExportOptions,
@@ -25,8 +25,6 @@ import { TableViewFilters } from '../../../../components/TableView';
 import { Index } from '../../../../utils';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-
-const { Content } = Layout;
 
 const initialState = {
   loading: false,
@@ -282,30 +280,26 @@ class ExportContent extends React.Component<Props, ExportContentState> {
     };
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
-            <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
-                  <FormattedMessage {...messages.exports} />
-                </span>
-              </div>
-              <hr className="mcs-separator" />
-              <TableViewFilters
-                columns={columnsDefinitions.dataColumnsDefinition}
-                actionsColumnsDefinition={
-                  columnsDefinitions.actionsColumnsDefinition
-                }
-                searchOptions={searchOptions}
-                dataSource={data}
-                loading={loading}
-                pagination={pagination}
-              />
-            </div>
-          </Row>
-        </Content>
-      </div>
+      <Row className="mcs-table-container">
+        <div>
+          <div className="mcs-card-header mcs-card-title">
+            <span className="mcs-card-title">
+              <FormattedMessage {...messages.exports} />
+            </span>
+          </div>
+          <hr className="mcs-separator" />
+          <TableViewFilters
+            columns={columnsDefinitions.dataColumnsDefinition}
+            actionsColumnsDefinition={
+              columnsDefinitions.actionsColumnsDefinition
+            }
+            searchOptions={searchOptions}
+            dataSource={data}
+            loading={loading}
+            pagination={pagination}
+          />
+        </div>
+      </Row>
     );
   }
 }
