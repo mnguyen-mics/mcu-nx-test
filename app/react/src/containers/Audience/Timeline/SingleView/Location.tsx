@@ -7,7 +7,7 @@ interface LocationProps {
   location?: number;
   longitude: number;
   latitude: number;
-  containerWidth: number;
+  containerWidth?: number;
 }
 
 class LocationHelper extends React.Component<LocationProps> {
@@ -22,12 +22,16 @@ class LocationHelper extends React.Component<LocationProps> {
       doubleClickZoom: false,
     };
 
+    const containerWidth = this.props.containerWidth
+      ? this.props.containerWidth
+      : 0;
+
     return longitude && latitude ? (
       <Row gutter={10} className="table-line section border-top">
         <Col span={24} style={{ height: '100px', margin: '-5px -20px' }}>
           <ReactMapGL
             {...settings}
-            width={this.props.containerWidth + 40}
+            width={containerWidth + 40}
             height={100}
             latitude={latitude}
             longitude={longitude}

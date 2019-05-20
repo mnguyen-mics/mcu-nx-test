@@ -16,12 +16,14 @@ import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
 import { isUserPointIdentifier } from '../../../models/timeline/timeline';
-import UserDataService from '../../../services/UserDataService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { EmptyTableView } from '../../../components/TableView';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IUserDataService } from '../../../services/UserDataService';
 
 const { Content } = Layout;
 
@@ -50,6 +52,9 @@ type Props = MonitoringProps &
   RouteComponentProps<TimelinePageParams>;
 
 class Monitoring extends React.Component<Props, State> {
+  @lazyInject(TYPES.IUserDataService)
+  private _userDataService: IUserDataService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -114,18 +119,21 @@ class Monitoring extends React.Component<Props, State> {
     identifierId: string,
     compartmentId?: string,
   ) => {
-
-    UserDataService.getIdentifiers(
-      organisationId,
-      datamartId,
-      identifierType,
-      identifierId,
-      compartmentId,
-    )
+    this._userDataService
+      .getIdentifiers(
+        organisationId,
+        datamartId,
+        identifierType,
+        identifierId,
+        compartmentId,
+      )
       .then(response => {
-        const userPointIdentifierInfo = response.data.find(isUserPointIdentifier);
+        const userPointIdentifierInfo = response.data.find(
+          isUserPointIdentifier,
+        );
         this.setState({
-          userPointId: userPointIdentifierInfo && userPointIdentifierInfo.user_point_id
+          userPointId:
+            userPointIdentifierInfo && userPointIdentifierInfo.user_point_id,
         });
       });
   };
@@ -150,8 +158,12 @@ class Monitoring extends React.Component<Props, State> {
 
     history.push(
       `/v2/o/${organisationId}/audience/timeline/${identifier.type}/${
-      identifier.id
-      }?datamartId=${datamartId}${identifier.compartmentId ? `&compartmentId=${identifier.compartmentId}` : ''}`,
+        identifier.id
+      }?datamartId=${datamartId}${
+        identifier.compartmentId
+          ? `&compartmentId=${identifier.compartmentId}`
+          : ''
+      }`,
     );
   };
 
@@ -224,11 +236,11 @@ class Monitoring extends React.Component<Props, State> {
                 </Row>
               </Row>
             ) : (
-                <EmptyTableView
-                  iconType="user"
-                  intlMessage={messages.pleaseFillInformations}
-                />
-              )}
+              <EmptyTableView
+                iconType="user"
+                intlMessage={messages.pleaseFillInformations}
+              />
+            )}
           </Content>
         </div>
       </div>
