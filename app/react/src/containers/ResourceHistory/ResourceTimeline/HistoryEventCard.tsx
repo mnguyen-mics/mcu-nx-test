@@ -8,7 +8,6 @@ import {
   isHistoryCreateEvent,
   isHistoryDeleteEvent,
   isHistoryCreateLinkEvent,
-  isHistoryDeleteLinkEvent,
   ResourceType,
   ResourceLinkHelper,
   isHistoryLinkEvent,
@@ -58,7 +57,10 @@ class HistoryEventCard extends React.Component<Props, State> {
     const { events, resourceLinkHelper } = this.props;
 
     events.forEach(event => {
-      if(isHistoryCreateLinkEvent(event) || isHistoryDeleteLinkEvent(event)) {
+      if (
+        isHistoryLinkEvent(event) &&
+        (this.state.resourceNames[this.generateResourceIdentifier(event)] === undefined)
+      ) {
         this.setState(prevState => {
           prevState.resourceNames[this.generateResourceIdentifier(event)] = <FormattedMessage {...messages.fetchingData} />;
           return prevState;
@@ -69,7 +71,7 @@ class HistoryEventCard extends React.Component<Props, State> {
     events.forEach(event => {
       if (
         isHistoryLinkEvent(event) &&
-        !this.state.resourceNames[this.generateResourceIdentifier(event)]
+        (this.state.resourceNames[this.generateResourceIdentifier(event)] === undefined)
       ) {
         const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
         if(resourceHelper) {
@@ -90,7 +92,7 @@ class HistoryEventCard extends React.Component<Props, State> {
       }
     })
   }
-  
+
   renderField = (field: string) => {
     const { formatProperty } = this.props;
     const fieldToSnakeCase = lodash.snakeCase(field);
@@ -146,6 +148,23 @@ class HistoryEventCard extends React.Component<Props, State> {
       resourceHelper.goToResource(event.resource_id)
     };
 
+    // this is for when the componentDidMount already occurred and we have some new events (so only didUpdate is called).
+    if (this.state.resourceNames[this.generateResourceIdentifier(event)] === undefined) {
+      resourceHelper.getName(event.resource_id)
+        .then(name => {
+          this.setState(prevState => {
+            prevState.resourceNames[this.generateResourceIdentifier(event)] = name;
+            return prevState;
+          });
+        })
+        .catch(err => {
+          this.setState(prevState => {
+            prevState.resourceNames[this.generateResourceIdentifier(event)] = <FormattedMessage {...messages.deleted} />;
+            return prevState;
+          });
+        });
+    }
+
     if (isCreationCard) {
       return (
         <FormattedMessage
@@ -188,7 +207,7 @@ class HistoryEventCard extends React.Component<Props, State> {
     const { resourceNames } = this.state;
 
     const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
-    
+
     if(!resourceHelper)
       return;
 

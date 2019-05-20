@@ -512,7 +512,7 @@ class DisplayCampaignActionbar extends React.Component<
                         campaignId,
                         id,
                       ).then(response => {
-                        return response.data.name;
+                        return response.data.name || id;
                       });
                     },
                     goToResource: (id: string) => {

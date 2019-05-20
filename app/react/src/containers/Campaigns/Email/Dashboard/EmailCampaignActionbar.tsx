@@ -184,7 +184,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                     getName: (id: string) => {
                       return EmailCampaignService.getBlast(campaignId, id).then(
                         response => {
-                          return response.data.blast_name;
+                          return response.data.blast_name || id;
                         },
                       );
                     },
