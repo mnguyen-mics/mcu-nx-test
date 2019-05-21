@@ -224,13 +224,13 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       orgWp.datamarts &&
       orgWp.datamarts.length === 1
     ) {
-      selectedDatamart = orgWp.datamarts[0];
+      selectedDatamart = orgWp.datamarts[0].datamart_resource;
     }
 
     if (datamartIdQueryString && orgWp !== undefined) {
-      selectedDatamart = orgWp.datamarts.find(
-        (d: DatamartResource) => d.id === datamartIdQueryString,
-      );
+      selectedDatamart = orgWp.datamarts
+        .map(d => d.datamart_resource)
+        .find(d => d.id === datamartIdQueryString,);
     }
 
     return selectedDatamart ? (

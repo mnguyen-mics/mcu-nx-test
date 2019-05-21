@@ -132,7 +132,7 @@ class AudiencePartitionPage extends React.Component<
     } else {
       const datamartId = selectedDatamart
         ? selectedDatamart.id
-        : workspace.datamarts[0].id;
+        : workspace.datamarts[0].datamart_resource.id;
       this._audiencePartitionsService
         .createPartition(organisationId, datamartId, formData)
         .then(newAudiencePartition => {

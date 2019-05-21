@@ -47,8 +47,8 @@ class AudiencePartitionsTable extends React.Component<Props> {
     if (workspace(organisationId).datamarts.length > 1) {
       const datamartItems = workspace(organisationId)
         .datamarts.map(d => ({
-          key: d.id,
-          value: d.name || d.token,
+          key: d.datamart_resource.id,
+          value: d.datamart_resource.name || d.datamart_resource.token,
         }))
         .concat([
           {
