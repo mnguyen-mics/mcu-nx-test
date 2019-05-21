@@ -8,7 +8,6 @@ import {
   isHistoryCreateEvent,
   isHistoryDeleteEvent,
   isHistoryCreateLinkEvent,
-  isHistoryDeleteLinkEvent,
   ResourceType,
   ResourceLinkHelper,
   isHistoryLinkEvent,
@@ -44,11 +43,18 @@ type Props = HistoryEventCardProps &
 class HistoryEventCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    
     this.state = {
       showMore: false,
       resourceNames: {},
     };
-  }
+    
+    this.props.events.forEach(event => {
+      if (isHistoryLinkEvent(event)) {
+        this.state.resourceNames[this.generateResourceIdentifier(event)] = <FormattedMessage {...messages.fetchingData} />;
+      };
+    });
+  };
 
   generateResourceIdentifier = (event: HistoryLinkEventResource) => {
     return event.resource_type + event.resource_id;
@@ -58,19 +64,7 @@ class HistoryEventCard extends React.Component<Props, State> {
     const { events, resourceLinkHelper } = this.props;
 
     events.forEach(event => {
-      if(isHistoryCreateLinkEvent(event) || isHistoryDeleteLinkEvent(event)) {
-        this.setState(prevState => {
-          prevState.resourceNames[this.generateResourceIdentifier(event)] = <FormattedMessage {...messages.fetchingData} />;
-          return prevState;
-        });
-      };
-    });
-
-    events.forEach(event => {
-      if (
-        isHistoryLinkEvent(event) &&
-        !this.state.resourceNames[this.generateResourceIdentifier(event)]
-      ) {
+      if (isHistoryLinkEvent(event)) {
         const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
         if(resourceHelper) {
           resourceHelper.getName(event.resource_id)
@@ -90,7 +84,7 @@ class HistoryEventCard extends React.Component<Props, State> {
       }
     })
   }
-  
+
   renderField = (field: string) => {
     const { formatProperty } = this.props;
     const fieldToSnakeCase = lodash.snakeCase(field);
@@ -127,9 +121,8 @@ class HistoryEventCard extends React.Component<Props, State> {
           }
         </div>
         : isHistoryLinkEvent(event) &&
-          !isCreationCard &&
           <div className="mcs-fields-list-item">
-            { this.renderLinkEventInMultiEdit(event, isCreationCard) }
+            { this.renderLinkEventInMultiEdit(event, false) }
           </div>
     });
   }
@@ -146,6 +139,23 @@ class HistoryEventCard extends React.Component<Props, State> {
     const goToResource = () => {
       resourceHelper.goToResource(event.resource_id)
     };
+
+    // this is for when the componentDidMount already occurred and we have some new events (so only didUpdate is called).
+    if (this.state.resourceNames[this.generateResourceIdentifier(event)] === undefined) {
+      resourceHelper.getName(event.resource_id)
+        .then(name => {
+          this.setState(prevState => {
+            prevState.resourceNames[this.generateResourceIdentifier(event)] = name;
+            return prevState;
+          });
+        })
+        .catch(err => {
+          this.setState(prevState => {
+            prevState.resourceNames[this.generateResourceIdentifier(event)] = <FormattedMessage {...messages.deleted} />;
+            return prevState;
+          });
+        });
+    }
 
     if (isCreationCard) {
       return (
@@ -189,7 +199,7 @@ class HistoryEventCard extends React.Component<Props, State> {
     const { resourceNames } = this.state;
 
     const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
-    
+
     if(!resourceHelper)
       return;
 
@@ -229,8 +239,13 @@ class HistoryEventCard extends React.Component<Props, State> {
     return events.findIndex(event => isHistoryCreateEvent(event));
   }
 
-  findCreateLinkEvent = (events: HistoryEventShape[]) => {
-    return events.findIndex(event => isHistoryCreateLinkEvent(event));
+  findCreateParentLinkEventIndex = (events: HistoryEventShape[]) => {
+    const { resourceLinkHelper } = this.props;
+
+    return events.findIndex(event => {
+      const rHelper = isHistoryCreateLinkEvent(event) && resourceLinkHelper && resourceLinkHelper[event.resource_type];
+      return !!rHelper && rHelper.direction === 'PARENT';
+    });
   }
 
   render() {
@@ -243,7 +258,8 @@ class HistoryEventCard extends React.Component<Props, State> {
       });
     };
 
-    const createLinkEvent = events[this.findCreateLinkEvent(events)] as HistoryCreateLinkEventResource;
+    const createParentLinkEventIndex = this.findCreateParentLinkEventIndex(events);
+    const createParentLinkEvent = events[createParentLinkEventIndex] as HistoryCreateLinkEventResource;
 
     return (
       <Card>
@@ -251,16 +267,16 @@ class HistoryEventCard extends React.Component<Props, State> {
           {events.length > 1
             ? <Row>
                 <div style={{float: 'left'}} className="mcs-fields-list-item">
-                    { this.findCreateEventIndex(events) > -1 // aka the events are related to the creation of the resource.
-                      ? <FormattedMessage {...{...messages.resourceCreated, values: {
-                        userName: events[0].user_identification.user_name,
-                        resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
-                        parentLink: createLinkEvent ? this.renderLinkEventInMultiEdit(createLinkEvent, true) : '',
-                      }}} />
-                      : <FormattedMessage {...{...messages.severalFieldsEdited, values: {
-                        userName: events[0].user_identification.user_name
-                      }}} />
-                    }
+                  { this.findCreateEventIndex(events) > -1 // aka the events are related to the creation of the resource.
+                    ? <FormattedMessage {...{...messages.resourceCreated, values: {
+                      userName: events[0].user_identification.user_name,
+                      resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
+                      parentLink: createParentLinkEvent ? this.renderLinkEventInMultiEdit(createParentLinkEvent, true) : '',
+                    }}} />
+                    : <FormattedMessage {...{...messages.severalFieldsEdited, values: {
+                      userName: events[0].user_identification.user_name
+                    }}} />
+                  }
                 </div>
                 <div className="section-cta">
                   <ButtonStyleless
@@ -275,7 +291,12 @@ class HistoryEventCard extends React.Component<Props, State> {
                 </div>
                 {showMore && (
                   <div className="mcs-fields-list">
-                    {this.renderMultiEdit(events, this.findCreateEventIndex(events) > -1)}
+                    {this.renderMultiEdit(
+                      (createParentLinkEventIndex > -1
+                        ? [ ...events.slice(0, createParentLinkEventIndex), ...events.slice(createParentLinkEventIndex + 1) ]
+                        : events
+                      ), this.findCreateEventIndex(events) > -1
+                    )}
                   </div>
                 )}
               </Row>
@@ -287,7 +308,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                           {...{...messages.resourceCreated, values: {
                             userName: event.user_identification.user_name,
                             resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
-                            parentLink: '',
+                            parentLink: '',  // we only have one *create* event, so there can't be any parent link here : it would require also a link event.
                           }}}
                         />
                       </div>

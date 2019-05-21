@@ -167,7 +167,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
             {
               size: 'small',
               additionalProps: {
-                resourceType: 'EMAIL_CAMPAIGN',
+                resourceType: 'CAMPAIGN',
                 resourceId: campaignId,
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatCampaignProperty,
@@ -184,7 +184,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                     getName: (id: string) => {
                       return EmailCampaignService.getBlast(campaignId, id).then(
                         response => {
-                          return response.data.blast_name;
+                          return response.data.blast_name || id;
                         },
                       );
                     },

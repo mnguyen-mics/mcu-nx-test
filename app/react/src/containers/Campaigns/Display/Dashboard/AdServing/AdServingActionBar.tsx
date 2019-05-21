@@ -20,6 +20,8 @@ import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
 
 export interface AdServingActionBarProps {
   campaign: DisplayCampaignInfoResource;
@@ -99,8 +101,9 @@ class AdServingActionBar extends React.Component<Props> {
     const onClick = (event: any) => {
       const {
         match: {
-          params: { campaignId },
+          params: { organisationId, campaignId },
         },
+        history,
       } = this.props;
 
       switch (event.key) {
@@ -112,13 +115,38 @@ class AdServingActionBar extends React.Component<Props> {
           return this.props.openNextDrawer<ResourceTimelinePageProps>(
             ResourceTimelinePage,
             {
+              size: 'small',
               additionalProps: {
-                resourceType: 'DISPLAY_CAMPAIGN',
+                resourceType: 'CAMPAIGN',
                 resourceId: campaignId,
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatDisplayCampaignProperty,
+                resourceLinkHelper: {
+                  AD_GROUP: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.adGroupResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                        return DisplayCampaignService.getAdGroup(
+                          campaignId,
+                          id,
+                        ).then(response => {
+                          return response.data.name || id ;
+                        });
+                    },
+                    goToResource: (id: string) => {
+                      history.push(
+                        `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${id}`,
+                      );
+                    },
+                  },
+                }
               },
-              size: 'small',
             },
           );
         default:

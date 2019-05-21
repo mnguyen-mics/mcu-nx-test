@@ -158,7 +158,25 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatAdGroupProperty,
                 resourceLinkHelper: {
-                  DISPLAY_CAMPAIGN: {
+                  DISPLAY_CAMPAIGN: { // this one is only kept for backward compatibility, all the new events are related to "CAMPAIGN"
+                    direction: 'PARENT',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.displayCampaignResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return DisplayCampaignService.getCampaignName(id);
+                    },
+                    goToResource: (id: string) => {
+                      history.push(
+                        `/v2/o/${organisationId}/campaigns/display/${id}`,
+                      );
+                    },
+                  },
+                  CAMPAIGN: {
                     direction: 'PARENT',
                     getType: () => {
                       return (

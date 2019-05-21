@@ -209,6 +209,27 @@ class BlastTable extends React.Component<Props> {
         formatProperty: formatEmailBlastProperty,
         resourceLinkHelper: {
           EMAIL_CAMPAIGN: {
+            // this one is only kept for backward compatibility, all the new events are related to "CAMPAIGN"
+            direction: 'PARENT',
+            getType: () => {
+              return (
+                <FormattedMessage
+                  {...resourceHistoryMessages.emailCampaignResourceType}
+                />
+              );
+            },
+            getName: (id: string) => {
+              return EmailCampaignService.getEmailCampaign(id).then(
+                response => {
+                  return response.data.name;
+                },
+              );
+            },
+            goToResource: (id: string) => {
+              history.push(`/v2/o/${organisationId}/campaigns/email/${id}`);
+            },
+          },
+          CAMPAIGN: {
             direction: 'PARENT',
             getType: () => {
               return (

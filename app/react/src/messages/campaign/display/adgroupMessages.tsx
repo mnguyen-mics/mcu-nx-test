@@ -8,10 +8,28 @@ import {
   TargetedOperatingSystem,
   TargetedBrowserFamily,
   TargetedConnectionType,
-  AdGroupStatus
+  AdGroupStatus,
+  AdSlotVisibilityFilter,
 } from "../../../models/campaign/constants";
 
 type ExtraKeys = 'duration';
+
+const visibilityMessages: {
+  [key in AdSlotVisibilityFilter]: FormattedMessage.MessageDescriptor
+} = defineMessages({
+  ABOVE_THE_FOLD: {
+    id: 'adgroup.fields.visibility.aboveTheFold',
+    defaultMessage: 'Above the fold',
+  },
+  BELOW_THE_FOLD: {
+    id: 'adgroup.fields.visibility.belowTheFold',
+    defaultMessage: 'Below the fold',
+  },
+  ANY_POSITION: {
+    id: 'adgroup.fields.visibility.anyPosition',
+    defaultMessage: 'Any Position',
+  },
+});
 
 const budgetPeriodMessages: {
   [key in BudgetPeriod]: FormattedMessage.MessageDescriptor
@@ -313,19 +331,22 @@ const adGroupPropertiesFormatMap: {
   id: { format: 'STRING' },
   name: { format: 'STRING' },
   technical_name: { format: 'STRING' },
-  visibility: { format: 'STRING' },
+  visibility: {
+    format: 'MESSAGE',
+    messageMap: visibilityMessages,
+  },
   bid_optimizer_id: { format: 'STRING' },
   bid_optimization_objective_type: { format: 'STRING' },
   bid_optimization_use_user_data: { format: 'STRING' },
   bid_optimization_objective_value: { format: 'STRING' },
-  viewability_min_score: { format: 'STRING' },
+  viewability_min_score: { format: 'INTEGER' },
   viewability_use_third_party_data: { format: 'STRING' },
   ab_selection: { format: 'STRING' },
-  ab_selection_min: { format: 'STRING' },
-  ab_selection_max: { format: 'STRING' },
+  ab_selection_min: { format: 'INTEGER' },
+  ab_selection_max: { format: 'INTEGER' },
   start_date: { format: 'TIMESTAMP' },
   end_date: { format: 'TIMESTAMP' },
-  max_bid_price: { format: 'STRING' },
+  max_bid_price: { format: 'FLOAT' },
   per_day_impression_capping: { format: 'INTEGER' },
   total_impression_capping: { format: 'INTEGER' },
   budget_relative_to_campaign: { format: 'STRING' },

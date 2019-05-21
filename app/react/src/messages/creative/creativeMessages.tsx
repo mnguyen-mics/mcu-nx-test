@@ -138,7 +138,7 @@ const creativePropertiesFormatMap: {
   renderer_group_id: { format: 'STRING' },
   renderer_artifact_id: { format: 'STRING' },
   renderer_plugin_id: { format: 'STRING' },
-  creation_date: { format: 'STRING' },
+  creation_date: { format: 'TIMESTAMP' },
   subtype: {
     format: 'MESSAGE',
     messageMap: creativeSubtypeMessages,
