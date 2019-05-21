@@ -43,11 +43,18 @@ type Props = HistoryEventCardProps &
 class HistoryEventCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    
     this.state = {
       showMore: false,
       resourceNames: {},
     };
-  }
+    
+    this.props.events.forEach(event => {
+      if (isHistoryLinkEvent(event)) {
+        this.state.resourceNames[this.generateResourceIdentifier(event)] = <FormattedMessage {...messages.fetchingData} />;
+      };
+    });
+  };
 
   generateResourceIdentifier = (event: HistoryLinkEventResource) => {
     return event.resource_type + event.resource_id;
@@ -57,22 +64,7 @@ class HistoryEventCard extends React.Component<Props, State> {
     const { events, resourceLinkHelper } = this.props;
 
     events.forEach(event => {
-      if (
-        isHistoryLinkEvent(event) &&
-        (this.state.resourceNames[this.generateResourceIdentifier(event)] === undefined)
-      ) {
-        this.setState(prevState => {
-          prevState.resourceNames[this.generateResourceIdentifier(event)] = <FormattedMessage {...messages.fetchingData} />;
-          return prevState;
-        });
-      };
-    });
-
-    events.forEach(event => {
-      if (
-        isHistoryLinkEvent(event) &&
-        (this.state.resourceNames[this.generateResourceIdentifier(event)] === undefined)
-      ) {
+      if (isHistoryLinkEvent(event)) {
         const resourceHelper = resourceLinkHelper && resourceLinkHelper[event.resource_type];
         if(resourceHelper) {
           resourceHelper.getName(event.resource_id)
@@ -275,16 +267,16 @@ class HistoryEventCard extends React.Component<Props, State> {
           {events.length > 1
             ? <Row>
                 <div style={{float: 'left'}} className="mcs-fields-list-item">
-                    { this.findCreateEventIndex(events) > -1 // aka the events are related to the creation of the resource.
-                      ? <FormattedMessage {...{...messages.resourceCreated, values: {
-                        userName: events[0].user_identification.user_name,
-                        resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
-                        parentLink: createParentLinkEvent ? this.renderLinkEventInMultiEdit(createParentLinkEvent, true) : '',
-                      }}} />
-                      : <FormattedMessage {...{...messages.severalFieldsEdited, values: {
-                        userName: events[0].user_identification.user_name
-                      }}} />
-                    }
+                  { this.findCreateEventIndex(events) > -1 // aka the events are related to the creation of the resource.
+                    ? <FormattedMessage {...{...messages.resourceCreated, values: {
+                      userName: events[0].user_identification.user_name,
+                      resourceType: <span className="name"><FormattedMessage {...formatProperty('history_resource_type').message || messages.defaultResourceType} /></span>,
+                      parentLink: createParentLinkEvent ? this.renderLinkEventInMultiEdit(createParentLinkEvent, true) : '',
+                    }}} />
+                    : <FormattedMessage {...{...messages.severalFieldsEdited, values: {
+                      userName: events[0].user_identification.user_name
+                    }}} />
+                  }
                 </div>
                 <div className="section-cta">
                   <ButtonStyleless
