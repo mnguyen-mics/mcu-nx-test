@@ -26,9 +26,7 @@ class CampaignDashboardHeader extends React.Component<Props> {
 
     return (
       <ContentHeader
-        title={
-          campaign ? (campaign.name ? campaign.name : campaign.id) : ''
-        }
+        title={campaign ? campaign.name || campaign.id : ''}
         subTitle={showStatus ? campaignStatus : null}
         loading={!campaign}
       />
