@@ -107,11 +107,11 @@ class TimelinePage extends React.Component<JoinedProps> {
     const datamarts = workspace(organisationId).datamarts;
 
     if (datamartIdQueryString) {
-      selectedDatamart = datamarts.find(d => d.id === datamartIdQueryString);
+      selectedDatamart = datamarts.map(d => d.datamart_resource).find(d => d.id === datamartIdQueryString);
     }
 
     if (datamarts && datamarts.length === 1) {
-      selectedDatamart = datamarts[0];
+      selectedDatamart = datamarts[0].datamart_resource;
     }
 
     return selectedDatamart ? (

@@ -47,7 +47,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     this.state = {
       loading: false,
       selectedDatamartId: props.workspace(props.match.params.organisationId)
-        .datamarts[0].id,
+        .datamarts[0].datamart_resource.id,
       filter: {
         currentPage: 1,
         pageSize: 10,
