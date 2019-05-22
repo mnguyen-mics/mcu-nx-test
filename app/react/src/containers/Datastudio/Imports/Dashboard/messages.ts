@@ -90,4 +90,12 @@ export default defineMessages({
     id: 'imports.dashboard.new.execution.modal.cancel',
     defaultMessage: 'Cancel',
   },
+  downloadErrorFile: {
+    id: 'imports.execution.result.error.download',
+    defaultMessage: 'Download error file'
+  },
+  downloadInputFile: {
+    id: 'imports.execution.result.input.download',
+    defaultMessage: 'Download input file'
+  }
 });

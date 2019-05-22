@@ -9,8 +9,7 @@ import Card from '../../../../components/Card/Card';
 import { Filters } from '../../../../components/ItemList';
 import {
   ImportExecution,
-  Import,
-  ImportExecutionSuccess,
+  Import
 } from '../../../../models/imports/imports';
 import ImportActionbar from './ImportActionbar';
 import TableView, { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
@@ -33,6 +32,7 @@ import injectThemeColors, {
 import { McsIcon } from '../../../../components';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import LocalStorage from '../../../../services/LocalStorage';
 
 const { Content } = Layout;
 
@@ -86,7 +86,7 @@ class Imports extends React.Component<JoinedProps, State> {
 
   @lazyInject(TYPES.IImportService)
   private _importService: IImportService;
-  
+
 
   constructor(props: JoinedProps) {
     super(props);
@@ -177,7 +177,7 @@ class Imports extends React.Component<JoinedProps, State> {
       .then(res =>
         this.setState({ importObject: { item: res, isLoading: false } }),
       )
-      .catch(err => log(err));
+      .catch(err => log.error(err));
 
     const params = {
       ...getPaginatedApiParam(options.currentPage, options.pageSize),
@@ -194,7 +194,7 @@ class Imports extends React.Component<JoinedProps, State> {
           },
         }),
       )
-      .catch(err => log(err));
+      .catch(err => log.error(err));
 
     return Promise.all([fetchImport, fetchImportExecutions]);
   };
@@ -248,8 +248,7 @@ class Imports extends React.Component<JoinedProps, State> {
         return (
           <div>
             {record.status}{' '}
-            {(record as ImportExecutionSuccess).result &&
-            (record as ImportExecutionSuccess).result.total_failure > 0 ? (
+            { record.result && record.result.total_failure > 0 ? (
               <span>
                 - with errors{' '}
                 <Tooltip
@@ -287,10 +286,41 @@ class Imports extends React.Component<JoinedProps, State> {
         });
       })
       .catch(err => {
-        this.props.notifyError(err);
+        log.error(err);
       })
   }
-  
+
+  download = (uri: string) => {
+    try {
+      (window as any).open(
+        `${
+          (window as any).MCS_CONSTANTS.API_URL
+        }/v1/data_file/data?uri=${encodeURIComponent(uri)}&access_token=${encodeURIComponent(
+          LocalStorage.getItem('access_token')!,
+        )}`
+      );
+    } catch(err) {
+      log.error(err);
+    }
+    
+  }
+
+  onDownloadErrors = (execution: ImportExecution) => {
+    if (execution.result && execution.result.error_file_uri) {
+      this.download(execution.result.error_file_uri)
+    } else {
+
+      return;
+    }
+  }
+
+  onDownloadInputs = (execution: ImportExecution) => {
+    if (execution.result) {
+      this.download(execution.result.input_file_uri)
+    } else {
+      return;
+    }
+  }
 
   buildColumnDefinition = () => {
     const {
@@ -395,6 +425,8 @@ class Imports extends React.Component<JoinedProps, State> {
         key: 'action',
         actions: (execution: ImportExecution) => [
           { intlMessage: messages.uploadCancel, callback: this.onClickCancel, disabled: execution.status !== "PENDING" },
+          { intlMessage: messages.downloadErrorFile, callback: this.onDownloadErrors, disabled: !(execution.result && execution.result.total_failure > 0 && execution.result.error_file_uri) },
+          { intlMessage: messages.downloadInputFile, callback: this.onDownloadInputs, disabled: !(execution.result && execution.result.input_file_uri) },
         ],
       },
     ];
