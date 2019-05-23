@@ -92,7 +92,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       
       if (datamarts) {
         const datamart = datamarts.find(
-          dm => dm.datamart_resource.id === nextSegment.datamart_id,
+          dm => dm.id === nextSegment.datamart_id,
         );
 
         additionalMetrics =

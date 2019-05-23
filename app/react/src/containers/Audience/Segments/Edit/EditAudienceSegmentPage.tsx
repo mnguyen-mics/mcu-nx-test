@@ -172,14 +172,14 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     } else {
       const datamarts = workspace(organisationId).datamarts;
       const multipleDatamarts = datamarts.length > 1;
-      const defQuery = new QueryContainer(datamarts[0].datamart_resource.id);
+      const defQuery = new QueryContainer(datamarts[0].id);
       defQuery.load();
       this.setState({
         loading: false,
         displayDatamartSelector: multipleDatamarts,
         selectedDatamart: multipleDatamarts
           ? undefined
-          : workspace(organisationId).datamarts[0].datamart_resource,
+          : workspace(organisationId).datamarts[0],
         queryContainer: defQuery,
       });
     }

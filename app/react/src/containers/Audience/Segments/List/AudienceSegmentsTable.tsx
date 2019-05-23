@@ -719,8 +719,8 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
 
     const datamartItems = workspace(organisationId)
       .datamarts.map(d => ({
-        key: d.datamart_resource.id,
-        value: d.datamart_resource.name || d.datamart_resource.token,
+        key: d.id,
+        value: d.name || d.token,
       }))
       .concat([
         {
