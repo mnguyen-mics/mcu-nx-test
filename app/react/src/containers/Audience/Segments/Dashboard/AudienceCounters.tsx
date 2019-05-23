@@ -140,7 +140,7 @@ class AudienceCounters extends React.Component<Props, State> {
       ...this.getLoadingValue('user_points'),
     });
     if (datamartId) {
-      const datamart = datamarts.find(dm => dm.datamart_resource.id === datamartId);
+      const datamart = datamarts.find(dm => dm.id === datamartId);
       const otherMetrics =
         datamart && datamart.audience_segment_metrics
           ? datamart.audience_segment_metrics.map(el => {

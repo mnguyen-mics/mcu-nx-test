@@ -152,7 +152,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
 
     const datamartId = segment && segment.datamart_id
     const datamart = datamarts.find(
-      dm => dm.datamart_resource.id === datamartId,
+      dm => dm.id === datamartId,
     );
 
     const additionalMetrics =

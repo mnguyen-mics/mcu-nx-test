@@ -159,7 +159,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       .getPartition(partitionId)
       .then(partitionRes => {
         const datamart = workspace.datamarts.find(
-          d => d.datamart_resource.id === partitionRes.data.datamart_id,
+          d => d.id === partitionRes.data.datamart_id,
         )!;
         return Promise.all([
           this._audienceSegmentService
@@ -177,7 +177,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
               return segmentsRes;
             }),
           Promise.all([
-            this.fetchTotalUsers(datamart.datamart_resource),
+            this.fetchTotalUsers(datamart),
             ReportService.getAudienceSegmentReport(
               organisationId,
               new McsMoment('now'),

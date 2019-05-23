@@ -297,8 +297,8 @@ class MobileApplicationsListPage extends React.Component<
     const buttons = [newButton];
 
     const datamartItems = workspace(organisationId).datamarts.map(d => ({
-      key: d.datamart_resource.id,
-      value: d.datamart_resource.name || d.datamart_resource.token,
+      key: d.id,
+      value: d.name || d.token,
     }));
 
     const filtersOptions: Array<MultiSelectProps<any>> = [];

@@ -11,9 +11,8 @@ export interface DatamartResource {
   storage_model_version: string;
 }
 
-export interface DatamartWithMetricResource{
-  datamart_resource: DatamartResource;
-  audience_segment_metrics: AudienceSegmentMetricResource[];
+export interface DatamartWithMetricResource extends DatamartResource{
+audience_segment_metrics: AudienceSegmentMetricResource[] 
 }
 
 type DatamartType = 'DATAMART' | 'CROSS_DATAMART';

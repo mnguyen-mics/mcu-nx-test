@@ -71,7 +71,7 @@ class GoalFormContainer extends React.Component<Props, State> {
           this.setState({ loading: false });
         });
     } else if (workspace.datamarts.length === 1) {
-      this.onDatamartSelect(workspace.datamarts[0].datamart_resource);
+      this.onDatamartSelect(workspace.datamarts[0]);
     }
   }
 

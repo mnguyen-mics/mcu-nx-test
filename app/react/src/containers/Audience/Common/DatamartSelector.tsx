@@ -56,9 +56,9 @@ class DatamartSelector extends React.Component<Props> {
                   {workspace(organisationId).datamarts.map(item => {
                     return (
                       <MenuList
-                        title={item.datamart_resource.name}
-                        key={item.datamart_resource.id}
-                        select={this.onSelect(item.datamart_resource)}
+                        title={item.name}
+                        key={item.id}
+                        select={this.onSelect(item)}
                       />
                     );
                   })}
