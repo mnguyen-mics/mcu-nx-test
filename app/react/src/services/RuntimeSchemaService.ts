@@ -36,6 +36,15 @@ const RuntimeSchemaService = {
       `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types`,
     );
   },
+
+  getObjectTypesDeep(
+    datamartId: string,
+    runtimeSchemaId: string,
+  ): Promise<DataListResponse<ObjectLikeTypeInfoResource>> {
+    return ApiService.getRequest(
+      `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/deep`,
+    );
+  },
   
   getObjectType(
     datamartId: string,
@@ -46,78 +55,18 @@ const RuntimeSchemaService = {
       `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/object_types/${objectTypeId}`,
     );
   },
-  
+
   getObjectTypeInfoResources(
     datamartId: string,
     runtimeSchemaId: string,
-  ):Promise<ObjectLikeTypeInfoResource[]>{ 
-    return RuntimeSchemaService.getObjectTypes(
+  ): Promise<ObjectLikeTypeInfoResource[]> {
+    return RuntimeSchemaService.getObjectTypesDeep(
       datamartId,
-      runtimeSchemaId,
-    ).then(objectRes => {
-      return Promise.all(
-        objectRes.data.map(object => {       
-          return Promise.all([
-            RuntimeSchemaService.getObjectTypeDirectives(
-              datamartId,
-              runtimeSchemaId,
-              object.id
-            ).then(obTypeDirs => {
-              return Promise.all(obTypeDirs.data.map(dir => {
-                return RuntimeSchemaService.getObjectTypeDirectiveArguments(
-                  datamartId,
-                  runtimeSchemaId,
-                  object.id,
-                  dir.id
-                ).then(dirArgs => {
-                  return {
-                    ...dir,
-                    arguments: dirArgs.data,
-                  };
-                })                                
-              }))            
-            }),
-            RuntimeSchemaService.getFields(
-              datamartId,
-              runtimeSchemaId,
-              object.id,
-            ).then(fieldRes => {
-              return Promise.all(
-                fieldRes.data.map(field => {
-                  return Promise.all([RuntimeSchemaService.getFieldDirectives(
-                    datamartId,
-                    runtimeSchemaId,
-                    object.id,
-                    field.id,
-                  ),
-                  RuntimeSchemaService.getFieldDecorator(datamartId, runtimeSchemaId, object.name, field.name).catch(() => undefined)
-                ]).then(dirRes => {
-                    return Promise.all(dirRes[0].data.map(dir => {
-                      return RuntimeSchemaService.getFieldDirectiveArguments(
-                        datamartId,
-                        runtimeSchemaId,
-                        object.id,
-                        field.id,
-                        dir.id
-                      ).then(fieldDirArgs => {
-                        return {
-                          ...dir,
-                          arguments: fieldDirArgs.data,
-                        };
-                      });
-                    })).then((fieldDirectives) => {
-                      const decorator = dirRes[1]; 
-                      return {...field, directives: fieldDirectives, decorator: decorator ? decorator.data : undefined} 
-                    });
-                  })
-                }),
-              );
-            })])
-            .then(([objectTypeDirectives,fields]) => ({ ...object, fields, directives: objectTypeDirectives}));
-          }),
-        );
-      });
-    },
+      runtimeSchemaId
+    ).then(res => {
+      return res.data
+    });
+  },
     
     getObjectTypeDirectives(
       datamartId: string,
