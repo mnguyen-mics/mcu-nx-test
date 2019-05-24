@@ -19,6 +19,14 @@ export default defineMessages({
     id: 'modal.archive.campaign.message',
     defaultMessage: 'By archiving this Campaign all its activities will be suspended. You\'ll be able to recover it from the archived campaign filter.'
   },
+  archiveExportConfirm: {
+    id: 'modal.archive.export.confirm',
+    defaultMessage: 'Are you sure you want to archive this Export?'
+  },
+  archiveExportMessage: {
+    id: 'modal.archive.export.message',
+    defaultMessage: 'By archiving this Export all its execution and associated files will be unavailable.'
+  },
   noActionTitle: {
     id: 'modal.noupolad.title',
     defaultMessage: 'Unable to perform this action.'

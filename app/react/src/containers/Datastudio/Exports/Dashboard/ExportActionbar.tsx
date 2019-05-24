@@ -128,15 +128,15 @@ class ExportsActionbar extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const handleArchiveGoal = (displayCampaignId?: string) => {
+    const handleArchiveGoal = (exportObjectId?: string) => {
       Modal.confirm({
-        title: formatMessage(modalMessages.archiveCampaignConfirm),
-        content: formatMessage(modalMessages.archiveCampaignMessage),
+        title: formatMessage(modalMessages.archiveExportConfirm),
+        content: formatMessage(modalMessages.archiveExportMessage),
         iconType: 'exclamation-circle',
         okText: formatMessage(modalMessages.confirm),
         cancelText: formatMessage(modalMessages.cancel),
         onOk() {
-          return archiveObject(displayCampaignId);
+          return archiveObject(exportObjectId);
         },
         // onCancel() {},
       });
