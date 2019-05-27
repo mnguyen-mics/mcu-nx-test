@@ -1,44 +1,42 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Button, message } from 'antd';
 import { compose } from 'recompose';
-import { Link, withRouter } from 'react-router-dom';
-import { FormattedMessage, injectIntl } from 'react-intl';
-import Actionbar from '../../../../components/ActionBar.tsx';
-import McsIcon from '../../../../components/McsIcon.tsx';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import Actionbar from '../../../../components/ActionBar';
+import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
-import CampaignService from '../../../../services/CampaignService.ts';
-import ReportService from '../../../../services/ReportService.ts';
-import { normalizeReportView } from '../../../../utils/MetricHelper.ts';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer.ts';
+import CampaignService, {
+  GetCampaignsOptions,
+} from '../../../../services/CampaignService';
+import ReportService from '../../../../services/ReportService';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
-import { parseSearch } from '../../../../utils/LocationSearchHelper.ts';
-import messages from './messages.ts';
+import { parseSearch } from '../../../../utils/LocationSearchHelper';
+import messages from './messages';
+import { Index } from '../../../../utils';
 
-const fetchExportData = (organisationId, filter) => {
+const fetchExportData = (organisationId: string, filter: Index<any>) => {
   const campaignType = 'EMAIL';
 
   const buildOptionsForGetCampaigns = () => {
-    const options = {
+    const options: GetCampaignsOptions = {
       archived: filter.statuses.includes('ARCHIVED'),
       first_result: 0,
       max_results: 2000,
     };
 
-    const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
-
     if (filter.keywords) {
       options.keywords = filter.keywords;
     }
-    if (apiStatuses.length > 0) {
-      options.status = apiStatuses;
-    }
+
     return options;
   };
 
   const startDate = filter.from;
   const endDate = filter.to;
-  const dimension = 'campaign_id';
+  const dimension = ['campaign_id'];
 
   const apiResults = Promise.all([
     CampaignService.getCampaigns(
@@ -72,8 +70,18 @@ const fetchExportData = (organisationId, filter) => {
   });
 };
 
-class EmailCampaignsActionbar extends Component {
-  constructor(props) {
+interface EmailCampaignsActionbarProps {}
+
+interface State {
+  exportIsRunning: boolean;
+}
+
+type Props = EmailCampaignsActionbarProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
+
+class EmailCampaignsActionbar extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.handleRunExport = this.handleRunExport.bind(this);
     this.state = {
@@ -86,7 +94,7 @@ class EmailCampaignsActionbar extends Component {
       match: {
         params: { organisationId },
       },
-      intl
+      intl,
     } = this.props;
 
     const filter = parseSearch(
@@ -106,7 +114,7 @@ class EmailCampaignsActionbar extends Component {
           organisationId,
           data,
           filter,
-          intl.formatMessage
+          intl.formatMessage,
         );
         this.setState({
           exportIsRunning: false,
@@ -114,7 +122,6 @@ class EmailCampaignsActionbar extends Component {
         hideExportLoadingMsg();
       })
       .catch(() => {
-        // TODO notify error
         this.setState({
           exportIsRunning: false,
         });
@@ -127,7 +134,7 @@ class EmailCampaignsActionbar extends Component {
       match: {
         params: { organisationId },
       },
-      intl
+      intl,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
@@ -144,26 +151,24 @@ class EmailCampaignsActionbar extends Component {
         <Link to={`/v2/o/${organisationId}/campaigns/email/create`}>
           <Button type="primary" className="mcs-primary">
             <McsIcon type="plus" />{' '}
-            <FormattedMessage id="email.campaigns.list.actionbar.newCampaign" defaultMessage="New Campaign" />
+            <FormattedMessage
+              id="email.campaigns.list.actionbar.newCampaign"
+              defaultMessage="New Campaign"
+            />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="email.campaigns.list.actionbar.export" defaultMessage="Export" />
+          <FormattedMessage
+            id="email.campaigns.list.actionbar.export"
+            defaultMessage="Export"
+          />
         </Button>
       </Actionbar>
     );
   }
 }
-
-EmailCampaignsActionbar.propTypes = {
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  intl: PropTypes.shape().isRequired,
-};
-
-EmailCampaignsActionbar = compose(
+export default compose(
+  injectIntl,
   withRouter,
 )(EmailCampaignsActionbar);
-
-export default injectIntl(EmailCampaignsActionbar);

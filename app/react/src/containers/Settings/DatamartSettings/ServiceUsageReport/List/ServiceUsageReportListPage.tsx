@@ -15,6 +15,7 @@ import {
   FILTERS_SEARCH_SETTINGS,
   DATE_SEARCH_SETTINGS,
   LABELS_SEARCH_SETTINGS,
+  KEYWORD_SEARCH_SETTINGS,
 } from '../../../../../utils/LocationSearchHelper';
 import ServiceUsageReportTable from './ServiceUsageReportTable';
 import ServiceUsageReportService from '../../../../../services/ServiceUsageReportService';
@@ -31,6 +32,7 @@ const messages = defineMessages({
 export const DISPLAY_SEARCH_SETTINGS = [
   ...PAGINATION_SEARCH_SETTINGS,
   ...FILTERS_SEARCH_SETTINGS,
+  ...KEYWORD_SEARCH_SETTINGS,
   ...DATE_SEARCH_SETTINGS,
   ...LABELS_SEARCH_SETTINGS,
 ];

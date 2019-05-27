@@ -4,10 +4,12 @@ import {
   DATE_SEARCH_SETTINGS,
   LABELS_SEARCH_SETTINGS,
 } from '../../../../utils/LocationSearchHelper.ts';
+import { KEYWORD_SEARCH_SETTINGS } from '../../../../utils/LocationSearchHelper';
 
-export const EMAIL_SEARCH_SETTINGS = [
+export const DISPLAY_SEARCH_SETTINGS = [
   ...PAGINATION_SEARCH_SETTINGS,
   ...FILTERS_SEARCH_SETTINGS,
+  ...KEYWORD_SEARCH_SETTINGS,
   ...DATE_SEARCH_SETTINGS,
   ...LABELS_SEARCH_SETTINGS,
 ];
