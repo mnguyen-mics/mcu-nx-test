@@ -50,6 +50,10 @@ const messagesMap = defineMessages({
     id: 'audience.segment.form.breadcrumb.list',
     defaultMessage: 'Segments',
   },
+  noQueryText: {
+    id: 'audience.segment.form.save.error.noQUeryText',
+    defaultMessage: 'You must edit a query in order to save the segment.',
+  },
 });
 
 interface State {
@@ -249,59 +253,64 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return undefined;
     };
 
-    const datamartId = selectedDatamart
-      ? selectedDatamart.id
-      : audienceSegmentFormData.audienceSegment.datamart_id;
+    if (audienceSegmentFormData.query) {
+      this.setState({ loading: true });
 
-    const audienceSegment = {
-      ...audienceSegmentFormData.audienceSegment,
-      default_ttl: countTTL(audienceSegmentFormData),
-      datamart_id: datamartId,
-      organisation_id: organisationId,
-    };
-    audienceSegmentFormData = {
-      ...audienceSegmentFormData,
-      audienceSegment: audienceSegment,
-    };
+      const datamartId = selectedDatamart
+        ? selectedDatamart.id
+        : audienceSegmentFormData.audienceSegment.datamart_id;
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+      const audienceSegment = {
+        ...audienceSegmentFormData.audienceSegment,
+        default_ttl: countTTL(audienceSegmentFormData),
+        datamart_id: datamartId,
+        organisation_id: organisationId,
+      };
+      audienceSegmentFormData = {
+        ...audienceSegmentFormData,
+        audienceSegment: audienceSegment,
+      };
 
-    this.setState({ loading: true });
-    this._audienceSegmentFormService
-      .saveOrCreateAudienceSegment(
-        organisationId,
-        audienceSegmentFormData,
-        queryLanguage,
-        queryContainer,
-      )
-      .then(response => {
-        hideSaveInProgress();
-        if (!!response) {
-          let redirect = '';
-          if (
-            response.data.type === 'USER_LIST' &&
-            !audienceSegmentFormData.audienceSegment.id
-          ) {
-            redirect = `/v2/o/${organisationId}/audience/segments/${
-              response.data.id
-            }/edit`;
-          } else {
-            redirect = `/v2/o/${organisationId}/audience/segments/${
-              response.data.id
-            }`;
+      const hideSaveInProgress = message.loading(
+        intl.formatMessage(messages.savingInProgress),
+        0,
+      );
+
+      this._audienceSegmentFormService
+        .saveOrCreateAudienceSegment(
+          organisationId,
+          audienceSegmentFormData,
+          queryLanguage,
+          queryContainer,
+        )
+        .then(response => {
+          hideSaveInProgress();
+          if (!!response) {
+            let redirect = '';
+            if (
+              response.data.type === 'USER_LIST' &&
+              !audienceSegmentFormData.audienceSegment.id
+            ) {
+              redirect = `/v2/o/${organisationId}/audience/segments/${
+                response.data.id
+              }/edit`;
+            } else {
+              redirect = `/v2/o/${organisationId}/audience/segments/${
+                response.data.id
+              }`;
+            }
+
+            history.push(redirect);
           }
-
-          history.push(redirect);
-        }
-      })
-      .catch(err => {
-        hideSaveInProgress();
-        this.setState({ loading: false });
-        notifyError(err);
-      });
+        })
+        .catch(err => {
+          hideSaveInProgress();
+          this.setState({ loading: false });
+          notifyError(err);
+        });
+    } else {
+      message.error(intl.formatMessage(messagesMap.noQueryText));
+    }
   };
 
   redirectToSegmentList = () => {
