@@ -1,3 +1,4 @@
+import UserDataService, { IUserDataService } from './../services/UserDataService';
 import { QueryService, IQueryService } from './../services/QueryService';
 import { AutomationFormService } from './../containers/Automations/Edit/AutomationFormService';
 import {
@@ -121,6 +122,7 @@ container
   .to(AutomationFormService);
 container.bind<IQueryService>(TYPES.IQueryService).to(QueryService);
 container.bind<IGoalFormService>(TYPES.IGoalFormService).to(GoalFormService);
+container.bind<IUserDataService>(TYPES.IUserDataService).to(UserDataService);
 
 export const { lazyInject } = getDecorators(container, false);
 

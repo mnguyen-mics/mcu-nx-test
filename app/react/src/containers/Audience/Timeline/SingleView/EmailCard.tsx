@@ -6,9 +6,14 @@ import { Card } from '../../../../components/Card/index';
 import McsIcon from '../../../../components/McsIcon';
 import { TableView } from '../../../../components/TableView/index';
 import messages from '../messages';
-import { UserEmailIdentifierInfo, isUserEmailIdentifier } from '../../../../models/timeline/timeline';
+import {
+  UserEmailIdentifierInfo,
+  isUserEmailIdentifier,
+} from '../../../../models/timeline/timeline';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import UserDataService from '../../../../services/UserDataService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IUserDataService } from '../../../../services/UserDataService';
 
 interface EmailCardProps {
   selectedDatamart: DatamartResource;
@@ -26,6 +31,9 @@ interface State {
 type Props = EmailCardProps & InjectedIntlProps;
 
 class EmailCard extends React.Component<Props, State> {
+  @lazyInject(TYPES.IUserDataService)
+  private _userDataService: IUserDataService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -36,57 +44,56 @@ class EmailCard extends React.Component<Props, State> {
         hash: '',
         creation_ts: 0,
         last_activity_ts: 0,
-        type: 'USER_EMAIL'
+        type: 'USER_EMAIL',
       },
     };
   }
 
   componentDidMount() {
-    const {
-      selectedDatamart,
-      userPointId,
-    } = this.props;
+    const { selectedDatamart, userPointId } = this.props;
 
     this.fetchUserEmails(selectedDatamart, userPointId);
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    const {
-      selectedDatamart,
-      userPointId,
-    } = this.props;
+    const { selectedDatamart, userPointId } = this.props;
 
     const {
       selectedDatamart: nextSelectedDatamart,
       userPointId: nextUserPointId,
     } = nextProps;
 
-    if (selectedDatamart !== nextSelectedDatamart ||
-      userPointId !== nextUserPointId) {
+    if (
+      selectedDatamart !== nextSelectedDatamart ||
+      userPointId !== nextUserPointId
+    ) {
       this.fetchUserEmails(nextSelectedDatamart, nextUserPointId);
     }
   }
 
   fetchUserEmails = (datamart: DatamartResource, userPointId: string) => {
-    const identifierType = "user_point_id";
+    const identifierType = 'user_point_id';
 
-    UserDataService.getIdentifiers(
-      datamart.organisation_id,
-      datamart.id,
-      identifierType,
-      userPointId
-    ).then(response => {
-      const userEmailsIdentifierInfo = response.data.filter(isUserEmailIdentifier);
+    this._userDataService
+      .getIdentifiers(
+        datamart.organisation_id,
+        datamart.id,
+        identifierType,
+        userPointId,
+      )
+      .then(response => {
+        const userEmailsIdentifierInfo = response.data.filter(
+          isUserEmailIdentifier,
+        );
 
-      const hasItems = Object.keys(response.data).length > 0;
+        const hasItems = Object.keys(response.data).length > 0;
 
-      this.setState({
-        userEmailsIdentifierInfo: userEmailsIdentifierInfo,
-        hasItems: hasItems,
+        this.setState({
+          userEmailsIdentifierInfo: userEmailsIdentifierInfo,
+          hasItems: hasItems,
+        });
       });
-    });
   };
-
 
   renderModal = () => {
     const { selectedAgent, showModal } = this.state;
@@ -128,7 +135,9 @@ class EmailCard extends React.Component<Props, State> {
       );
     };
 
-    const dataSource = selectedAgent.providers ? selectedAgent.providers : undefined;
+    const dataSource = selectedAgent.providers
+      ? selectedAgent.providers
+      : undefined;
     const columnsDefinitions =
       selectedAgent.providers && selectedAgent.providers.length > 0
         ? Object.keys(selectedAgent.providers[0]).map(key => {
@@ -240,10 +249,7 @@ class EmailCard extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      userEmailsIdentifierInfo,
-      hasItems
-    } = this.state;
+    const { userEmailsIdentifierInfo, hasItems } = this.state;
 
     const userAgents = userEmailsIdentifierInfo || [];
     const accountsFormatted =
@@ -260,13 +266,11 @@ class EmailCard extends React.Component<Props, State> {
       this.setState({ showMore: visible });
     };
 
-    const isLoading = (userEmailsIdentifierInfo === undefined || hasItems === undefined) 
+    const isLoading =
+      userEmailsIdentifierInfo === undefined || hasItems === undefined;
 
     return (
-      <Card
-        title={formatMessage(messages.emailTitle)}
-        isLoading={isLoading}
-      >
+      <Card title={formatMessage(messages.emailTitle)} isLoading={isLoading}>
         {this.renderModal()}
         {accountsFormatted &&
           accountsFormatted.map(agent => {

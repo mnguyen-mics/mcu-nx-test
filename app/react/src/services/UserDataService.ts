@@ -2,10 +2,11 @@ import {
   UserSegmentResource,
   UserProfileResource,
   Activity,
-  UserIdentifierInfo
+  UserIdentifierInfo,
 } from './../models/timeline/timeline';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { Identifier } from '../containers/Audience/Timeline/Monitoring';
+import { injectable } from 'inversify';
 
 type ChannelResource = {
   creation_ts: number;
@@ -19,7 +20,49 @@ type ChannelResource = {
   visit_analyzer_model_id: string;
 };
 
-const UserDataService = {
+export interface IUserDataService {
+  getProfile: (
+    datamartId: string,
+    identifier: Identifier,
+    options?: object,
+  ) => Promise<DataResponse<UserProfileResource> | undefined>;
+
+  getSegments: (
+    datamartId: string,
+    identifier: Identifier,
+    options?: object,
+  ) => Promise<DataListResponse<UserSegmentResource>>;
+
+  getIdentifiersEndpoint: (
+    identifierType: string,
+    datamartId: string,
+    identifierId: string,
+    compartmentId?: string,
+  ) => string;
+
+  getIdentifiers: (
+    organisationId: string,
+    datamartId: string,
+    identifierType: string,
+    identifierId: string,
+    compartmentId?: string,
+    options?: object,
+  ) => Promise<DataListResponse<UserIdentifierInfo>>;
+
+  getActivities: (
+    datamartId: string,
+    identifier: Identifier,
+    options?: object,
+  ) => Promise<DataListResponse<Activity>>;
+
+  getChannel: (
+    datamartId: string,
+    channelId: string,
+  ) => Promise<DataResponse<ChannelResource> | undefined>;
+}
+
+@injectable()
+export class UserDataService implements IUserDataService {
   getProfile(
     datamartId: string,
     identifier: Identifier,
@@ -27,12 +70,14 @@ const UserDataService = {
   ): Promise<DataResponse<UserProfileResource> | undefined> {
     const endpoint =
       identifier.type !== 'user_point_id'
-        ? `datamarts/${datamartId}/user_profiles/${identifier.type}=${identifier.id}`
+        ? `datamarts/${datamartId}/user_profiles/${identifier.type}=${
+            identifier.id
+          }`
         : `datamarts/${datamartId}/user_profiles/${identifier.id}`;
 
     const params = {
       ...options,
-      compartment_id: identifier.compartmentId
+      compartment_id: identifier.compartmentId,
     };
 
     return ApiService.getRequest<DataResponse<UserProfileResource> | undefined>(
@@ -45,21 +90,25 @@ const UserDataService = {
       }
       throw error;
     });
-  },
+  }
 
   getSegments(
     datamartId: string,
     identifier: Identifier,
     options: object = {},
   ): Promise<DataListResponse<UserSegmentResource>> {
-    const inBetweenCompartmentId = identifier.compartmentId ?
-      `compartment_id=${identifier.compartmentId}/` :
-      ``;
+    const inBetweenCompartmentId = identifier.compartmentId
+      ? `compartment_id=${identifier.compartmentId}/`
+      : ``;
     const endpoint =
       identifier.type !== 'user_point_id'
         ? identifier.type === 'user_account_id'
-          ? `datamarts/${datamartId}/user_segments/${inBetweenCompartmentId}${identifier.type}=${identifier.id}`
-          : `datamarts/${datamartId}/user_segments/${identifier.type}=${identifier.id}`
+          ? `datamarts/${datamartId}/user_segments/${inBetweenCompartmentId}${
+              identifier.type
+            }=${identifier.id}`
+          : `datamarts/${datamartId}/user_segments/${identifier.type}=${
+              identifier.id
+            }`
         : `datamarts/${datamartId}/user_segments/${identifier.id}`;
 
     const params = {
@@ -81,7 +130,7 @@ const UserDataService = {
       }
       throw error;
     });
-  },
+  }
 
   getIdentifiersEndpoint(
     identifierType: string,
@@ -99,7 +148,7 @@ const UserDataService = {
       default:
         return `datamarts/${datamartId}/user_identifiers/${identifierType}=${identifierId}`;
     }
-  },
+  }
 
   getIdentifiers(
     organisationId: string,
@@ -109,7 +158,7 @@ const UserDataService = {
     compartmentId?: string,
     options: object = {},
   ): Promise<DataListResponse<UserIdentifierInfo>> {
-    const endpoint = UserDataService.getIdentifiersEndpoint(
+    const endpoint = this.getIdentifiersEndpoint(
       identifierType,
       datamartId,
       identifierId,
@@ -135,22 +184,28 @@ const UserDataService = {
       }
       throw error;
     });
-  },
+  }
 
   getActivities(
     datamartId: string,
     identifier: Identifier,
     options: object = {},
   ): Promise<DataListResponse<Activity>> {
-    const inBetweenCompartmentId = identifier.compartmentId ?
-      `compartment_id=${identifier.compartmentId}/` :
-      ``;
+    const inBetweenCompartmentId = identifier.compartmentId
+      ? `compartment_id=${identifier.compartmentId}/`
+      : ``;
     const endpoint =
       identifier.type !== 'user_point_id'
         ? identifier.type === 'user_account_id'
-          ? `datamarts/${datamartId}/user_timelines/${inBetweenCompartmentId}${identifier.type}=${identifier.id}/user_activities`
-          : `datamarts/${datamartId}/user_timelines/${identifier.type}=${identifier.id}/user_activities`
-        : `datamarts/${datamartId}/user_timelines/${identifier.id}/user_activities`;
+          ? `datamarts/${datamartId}/user_timelines/${inBetweenCompartmentId}${
+              identifier.type
+            }=${identifier.id}/user_activities`
+          : `datamarts/${datamartId}/user_timelines/${identifier.type}=${
+              identifier.id
+            }/user_activities`
+        : `datamarts/${datamartId}/user_timelines/${
+            identifier.id
+          }/user_activities`;
 
     const params = {
       ...options,
@@ -171,7 +226,7 @@ const UserDataService = {
       }
       throw error;
     });
-  },
+  }
 
   getChannel(
     datamartId: string,
@@ -188,7 +243,7 @@ const UserDataService = {
       }
       throw error;
     });
-  },
-};
+  }
+}
 
 export default UserDataService;

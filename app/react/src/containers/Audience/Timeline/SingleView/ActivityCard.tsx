@@ -15,7 +15,6 @@ import Device from './Device';
 import Origin from './Origin';
 import Location from './Location';
 import Topics from './Topics';
-import UserDataService from '../../../../services/UserDataService';
 import messages from '../messages';
 import log from '../../../../utils/Logger';
 import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
@@ -24,6 +23,9 @@ import { TimelinePageParams } from '../TimelinePage';
 import UserScenarioActivityCard from './UserScenarioActivityCard';
 import { ButtonStyleless } from '../../../../components';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IUserDataService } from '../../../../services/UserDataService';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
 enum scenarioActivityTypes {
@@ -51,6 +53,9 @@ type Props = ActivityCardProps &
 class ActivityCard extends React.Component<Props, State> {
   getChannelPromise: CancelablePromise<any> | undefined = undefined;
 
+  @lazyInject(TYPES.IUserDataService)
+  private _userDataService: IUserDataService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -65,15 +70,13 @@ class ActivityCard extends React.Component<Props, State> {
   }
 
   getChannelInformation(activity: Activity) {
-    const { 
-      selectedDatamart
-    } = this.props;
+    const { selectedDatamart } = this.props;
 
     if (activity && needToDisplayDurationFor.indexOf(activity.$type) > -1) {
       const id = activity.$site_id ? activity.$site_id : activity.$app_id;
       const prefix = activity.$site_id ? 'Site' : 'App';
       this.getChannelPromise = makeCancelable(
-        UserDataService.getChannel(selectedDatamart.id, id),
+        this._userDataService.getChannel(selectedDatamart.id, id),
       );
       this.getChannelPromise.promise
         .then(response => {
@@ -190,9 +193,13 @@ class ActivityCard extends React.Component<Props, State> {
     const agent = this.getAgentInfoFromAgentId(activity.$user_agent_id);
     const device = agent && agent.device ? agent.device : undefined;
     const longitude =
-      activity && activity.$location ? activity.$location.$latlon[1] : 0;
+      activity && activity.$location
+        ? parseInt(activity.$location.$latlon[1], 10)
+        : 0;
     const latitude =
-      activity && activity.$location ? activity.$location.$latlon[0] : 0;
+      activity && activity.$location
+        ? parseInt(activity.$location.$latlon[0], 10)
+        : 0;
     return (
       <Row>
         <Device vectorId={activity.$user_agent_id} device={device} />

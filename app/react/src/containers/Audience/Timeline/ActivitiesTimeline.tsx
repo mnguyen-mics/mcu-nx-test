@@ -5,13 +5,15 @@ import moment from 'moment';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import UserDataService from '../../../services/UserDataService';
-import { Activity, isUserAgentIdentifier, UserAgentIdentifierInfo } from '../../../models/timeline/timeline';
+import {
+  Activity,
+  isUserAgentIdentifier,
+  UserAgentIdentifierInfo,
+} from '../../../models/timeline/timeline';
 import { Identifier } from './Monitoring';
 import messages from './messages';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { McsIcon } from '../../../components';
-
 import ActivityCard from './SingleView/ActivityCard';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -20,8 +22,9 @@ import { TimelinePageParams } from './TimelinePage';
 import { takeLatest } from '../../../utils/ApiHelper';
 import { McsIconType } from '../../../components/McsIcon';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
-
-const takeLatestActivities = takeLatest(UserDataService.getActivities);
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IUserDataService } from '../../../services/UserDataService';
 
 export interface Activities {
   isLoading: boolean;
@@ -50,6 +53,10 @@ type Props = ActivitiesTimelineProps &
   RouteComponentProps<TimelinePageParams>;
 
 class ActivitiesTimeline extends React.Component<Props, State> {
+  
+  @lazyInject(TYPES.IUserDataService)
+  private _userDataService: IUserDataService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -64,20 +71,14 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      selectedDatamart,
-      userPointId
-    } = this.props;
+    const { selectedDatamart, userPointId } = this.props;
 
     this.fetchActivities(selectedDatamart, userPointId);
     this.fetchUserAgents(selectedDatamart, userPointId);
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      selectedDatamart,
-      userPointId
-    } = this.props;
+    const { selectedDatamart, userPointId } = this.props;
 
     const {
       selectedDatamart: prevSelectedDatamart,
@@ -94,20 +95,24 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   }
 
   fetchUserAgents = (datamart: DatamartResource, userPointId: string) => {
-    const identifierType = "user_point_id";
+    const identifierType = 'user_point_id';
 
-    UserDataService.getIdentifiers(
-      datamart.organisation_id,
-      datamart.id,
-      identifierType,
-      userPointId
-    ).then(response => {
-      const userAgentsIdentifierInfo = response.data.filter(isUserAgentIdentifier);
+    this._userDataService
+      .getIdentifiers(
+        datamart.organisation_id,
+        datamart.id,
+        identifierType,
+        userPointId,
+      )
+      .then(response => {
+        const userAgentsIdentifierInfo = response.data.filter(
+          isUserAgentIdentifier,
+        );
 
-      this.setState({
-        userAgentsIdentifierInfo: userAgentsIdentifierInfo,
+        this.setState({
+          userAgentsIdentifierInfo: userAgentsIdentifierInfo,
+        });
       });
-    });
   };
 
   groupByDate = (array: any[], key: any) => {
@@ -218,10 +223,9 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     userPointId: string,
     dataSourceHasChanged: boolean = false,
   ) => {
-
     const identifier: Identifier = {
       id: userPointId,
-      type: 'user_point_id'
+      type: 'user_point_id',
     };
 
     const { nextDate, activityCountOnOldestDate } = this.state;
@@ -240,21 +244,29 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         return nextState;
       },
       () =>
-        takeLatestActivities(datamart.id, identifier, params)
+        takeLatest(this._userDataService.getActivities)(
+          datamart.id,
+          identifier,
+          params,
+        )
           .then(response => {
-            takeLatestActivities(datamart.id, identifier, {
-              ...params,
-              limit: params.limit + 1,
-            }).then(extendedResponse => {
+            takeLatest(this._userDataService.getActivities)(
+              datamart.id,
+              identifier,
+              {
+                ...params,
+                limit: params.limit + 1,
+              },
+            ).then(extendedResponse => {
               this.setState(prevState => {
                 const newData = dataSourceHasChanged
                   ? response.data
                   : prevState.activities.items.concat(
-                    this.removeDuplicatesFromResponse(
-                      response.data,
-                      prevState.activities.items,
-                    ),
-                  );
+                      this.removeDuplicatesFromResponse(
+                        response.data,
+                        prevState.activities.items,
+                      ),
+                    );
                 const activitiesToDisplay = this.generateScenarioMovementActivities(
                   newData.slice(0),
                 ).sort((a, b) => this.orderScenarioActivities(a, b));
@@ -268,19 +280,19 @@ class ActivitiesTimeline extends React.Component<Props, State> {
                   },
                   nextDate:
                     response.count !== extendedResponse.count &&
-                      response.data &&
-                      response.data[response.data.length - 1]
+                    response.data &&
+                    response.data[response.data.length - 1]
                       ? moment(response.data[response.data.length - 1].$ts)
-                        .add(1, 'day')
-                        .format('YYYY-MM-DD')
+                          .add(1, 'day')
+                          .format('YYYY-MM-DD')
                       : undefined,
                   activityCountOnOldestDate: 0,
                 };
                 nextState.activityCountOnOldestDate = (
                   nextState.activities.byDay[
-                  Object.keys(nextState.activities.byDay)[
-                  Object.keys(nextState.activities.byDay).length - 1
-                  ]
+                    Object.keys(nextState.activities.byDay)[
+                      Object.keys(nextState.activities.byDay).length - 1
+                    ]
                   ] || []
                 ).length;
                 return nextState;
@@ -304,10 +316,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   };
 
   fetchNewActivities = (e: any) => {
-    const {
-      userPointId,
-      selectedDatamart,
-    } = this.props;
+    const { userPointId, selectedDatamart } = this.props;
     e.preventDefault();
     this.fetchActivities(selectedDatamart, userPointId);
   };
@@ -317,21 +326,21 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       return activities.isLoading ? (
         <Spin size="small" />
       ) : (
-          <button
-            className="mcs-card-inner-action"
-            onClick={this.fetchNewActivities}
-          >
-            <FormattedMessage {...messages.seeMore} />
-          </button>
-        );
+        <button
+          className="mcs-card-inner-action"
+          onClick={this.fetchNewActivities}
+        >
+          <FormattedMessage {...messages.seeMore} />
+        </button>
+      );
     } else {
       return (
         <div className="mcs-title">
           {activities.hasItems ? (
             <FormattedMessage {...messages.noActivities} />
           ) : (
-              <FormattedMessage {...messages.noActivitiesLeft} />
-            )}
+            <FormattedMessage {...messages.noActivitiesLeft} />
+          )}
         </div>
       );
     }
@@ -399,37 +408,37 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         <Spin />
       </Col>
     ) : (
-        <Timeline
-          pending={this.renderPendingTimeline(activities)}
-          pendingDot={<McsIcon type="status" className="mcs-timeline-last-dot" />}
-        >
-          {keys.map(day => {
-            const activityOnDay = activities.byDay[day];
-            const dayToFormattedMessage = this.renderDate(day);
-            return (
-              <div className="mcs-timeline" key={cuid()}>
-                <Timeline.Item
-                  dot={<Icon type="flag" className="mcs-timeline-dot" />}
-                >
-                  <div className="mcs-title">{dayToFormattedMessage}</div>
-                </Timeline.Item>
-                {activityOnDay.length !== 0 &&
-                  activityOnDay.map((activity: Activity) => {
-                    return (
-                      <Timeline.Item key={cuid()} dot={this.renderType(activity)}>
-                        <ActivityCard
-                          activity={activity}
-                          selectedDatamart={selectedDatamart}
-                          userAgentsIdentifierInfo={userAgentsIdentifierInfo}
-                        />
-                      </Timeline.Item>
-                    );
-                  })}
-              </div>
-            );
-          })}
-        </Timeline>
-      );
+      <Timeline
+        pending={this.renderPendingTimeline(activities)}
+        pendingDot={<McsIcon type="status" className="mcs-timeline-last-dot" />}
+      >
+        {keys.map(day => {
+          const activityOnDay = activities.byDay[day];
+          const dayToFormattedMessage = this.renderDate(day);
+          return (
+            <div className="mcs-timeline" key={cuid()}>
+              <Timeline.Item
+                dot={<Icon type="flag" className="mcs-timeline-dot" />}
+              >
+                <div className="mcs-title">{dayToFormattedMessage}</div>
+              </Timeline.Item>
+              {activityOnDay.length !== 0 &&
+                activityOnDay.map((activity: Activity) => {
+                  return (
+                    <Timeline.Item key={cuid()} dot={this.renderType(activity)}>
+                      <ActivityCard
+                        activity={activity}
+                        selectedDatamart={selectedDatamart}
+                        userAgentsIdentifierInfo={userAgentsIdentifierInfo}
+                      />
+                    </Timeline.Item>
+                  );
+                })}
+            </div>
+          );
+        })}
+      </Timeline>
+    );
   }
 }
 
