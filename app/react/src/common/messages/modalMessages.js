@@ -12,12 +12,20 @@ export default defineMessages({
   },
   // Specific
   archiveCampaignConfirm: {
-    id: 'modal.archive.campaign.confirm',
+    id: 'campaign.archive.modal.confirm',
     defaultMessage: 'Are you sure you want to archive this Campaign?'
   },
   archiveCampaignMessage: {
-    id: 'modal.archive.campaign.message',
+    id: 'campaign.archive.modal.message',
     defaultMessage: 'By archiving this Campaign all its activities will be suspended. You\'ll be able to recover it from the archived campaign filter.'
+  },
+  archiveExportConfirm: {
+    id: 'export.list.archive.modal.title',
+    defaultMessage: 'Are you sure you want to archive this Export?'
+  },
+  archiveExportMessage: {
+    id: 'export.list.archive.modal.message',
+    defaultMessage: 'By archiving this Export all its execution and associated files will be unavailable.'
   },
   noActionTitle: {
     id: 'modal.noupolad.title',
@@ -32,11 +40,11 @@ export default defineMessages({
     defaultMessage: 'Your creative audit is pending. If you want to modify it, please wait until the audit is done, reset it, modify your creative and submit to audit again.'
   },
   exportIsRunningTitle: {
-    id: 'modal.export.running.title',
+    id: 'export.running.modal.title',
     defaultMessage: 'Export is running'
   },
   exportIsRunningMessage: {
-    id: 'modal.export.running.message',
+    id: 'export.running.modal.message',
     defaultMessage: 'Please wait until the export is fully completed.'
   },
 });
