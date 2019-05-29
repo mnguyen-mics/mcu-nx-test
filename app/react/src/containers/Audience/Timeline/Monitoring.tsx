@@ -15,7 +15,7 @@ import TimelineHeader from './TimelineHeader';
 import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
-import { IdentifiersProps } from '../../../models/timeline/timeline';
+import { MonitoringData } from '../../../models/timeline/timeline';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -39,7 +39,7 @@ interface MapStateToProps {
 
 interface State {
   isModalVisible: boolean;
-  identifiers: IdentifiersProps;
+  monitoringData: MonitoringData;
   isLoading: boolean;
 }
 
@@ -60,14 +60,12 @@ class Monitoring extends React.Component<Props, State> {
     super(props);
     this.state = {
       isModalVisible: false,
-      identifiers: {
-        hasItems: false,
-        items: {
-          USER_ACCOUNT: [],
-          USER_AGENT: [],
-          USER_EMAIL: [],
-          USER_POINT: [],
-        },
+      monitoringData: {
+        userAgentList: [],
+        userEmailList: [],
+        userAccountsByCompartmentId: {},
+        userAccountCompartments: [],
+        userPointList: [],
         userPointId: '',
       },
       isLoading: false,
@@ -95,9 +93,9 @@ class Monitoring extends React.Component<Props, State> {
           identifierId,
           queryString.parse(location.search).compartmentId,
         )
-        .then(identifiers => {
+        .then(monitoringData => {
           this.setState({
-            identifiers: identifiers,
+            monitoringData: monitoringData,
             isLoading: false,
           });
         });
@@ -107,6 +105,7 @@ class Monitoring extends React.Component<Props, State> {
   componentWillReceiveProps(nextProps: Props) {
     const {
       location: { search, pathname },
+      selectedDatamart,
     } = this.props;
 
     const {
@@ -121,7 +120,11 @@ class Monitoring extends React.Component<Props, State> {
       selectedDatamart: nextSelectedDatamart,
     } = nextProps;
 
-    if (search !== nextSearch || pathname !== nextPathname) {
+    if (
+      search !== nextSearch ||
+      pathname !== nextPathname ||
+      selectedDatamart.id !== nextSelectedDatamart.id
+    ) {
       if (nextIdentifierType && nextIdentifierId) {
         this.setState({
           isLoading: true,
@@ -134,9 +137,9 @@ class Monitoring extends React.Component<Props, State> {
             nextIdentifierId,
             queryString.parse(nextSearch).compartmentId,
           )
-          .then(identifiers => {
+          .then(monitoringData => {
             this.setState({
-              identifiers: identifiers,
+              monitoringData: monitoringData,
               isLoading: false,
             });
           });
@@ -176,9 +179,9 @@ class Monitoring extends React.Component<Props, State> {
   render() {
     const { selectedDatamart } = this.props;
 
-    const { isModalVisible, identifiers, isLoading } = this.state;
+    const { isModalVisible, monitoringData, isLoading } = this.state;
 
-    const userPointId = identifiers.userPointId;
+    const userPointId = monitoringData.userPointId;
 
     return (
       <div className="ant-layout">
@@ -229,15 +232,20 @@ class Monitoring extends React.Component<Props, State> {
                       <FormattedMessage {...messages.identifiers} />
                     </div>
                     <AccountIdCard
-                      selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      userAccountCompartments={
+                        monitoringData.userAccountCompartments
+                      }
+                      userAccountsByCompartmentId={
+                        monitoringData.userAccountsByCompartmentId
+                      }
+                      isLoading={isLoading}
                     />
                     <DeviceCard
-                      dataSource={identifiers.items.USER_AGENT}
+                      dataSource={monitoringData.userAgentList}
                       isLoading={isLoading}
                     />
                     <EmailCard
-                      dataSource={identifiers.items.USER_EMAIL}
+                      dataSource={monitoringData.userEmailList}
                       isLoading={isLoading}
                     />
                   </Col>

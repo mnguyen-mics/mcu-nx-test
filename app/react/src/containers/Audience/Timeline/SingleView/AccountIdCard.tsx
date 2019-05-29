@@ -1,39 +1,25 @@
 import * as React from 'react';
-import { groupBy, Dictionary } from 'lodash';
+import { Dictionary } from 'lodash';
 import { Tag, Tooltip, Row } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Card } from '../../../../components/Card/index';
 import messages from '../messages';
-import DatamartService from '../../../../services/DatamartService';
-import {
-  UserAccountCompartmentDatamartSelectionResource,
-  DatamartResource,
-} from '../../../../models/datamart/DatamartResource';
-import {
-  UserAccountIdentifierInfo,
-  isUserAccountIdentifier,
-} from '../../../../models/timeline/timeline';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { IUserDataService } from '../../../../services/UserDataService';
+import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
+import { UserAccountIdentifierInfo } from '../../../../models/timeline/timeline';
 
 interface AccountIdCardProps {
-  selectedDatamart: DatamartResource;
-  userPointId: string;
+  userAccountCompartments?: UserAccountCompartmentDatamartSelectionResource[];
+  userAccountsByCompartmentId?: Dictionary<UserAccountIdentifierInfo[]>;
+  isLoading: boolean;
 }
 
 interface State {
-  expandedItems: string[];
-  userAccountCompartments?: UserAccountCompartmentDatamartSelectionResource[];
-  userAccountsByCompartmentId?: Dictionary<UserAccountIdentifierInfo[]>;
+  showMore: boolean;
 }
 
 type Props = AccountIdCardProps & InjectedIntlProps;
 
 class AccountIdCard extends React.Component<Props, State> {
-  @lazyInject(TYPES.IUserDataService)
-  private _userDataService: IUserDataService;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -41,76 +27,8 @@ class AccountIdCard extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    const { selectedDatamart, userPointId } = this.props;
-
-    this.fetchCompartments(selectedDatamart);
-
-    this.fetchUserAccountsByCompartmentId(selectedDatamart, userPointId);
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    const { selectedDatamart, userPointId } = this.props;
-
-    const {
-      selectedDatamart: nextSelectedDatamart,
-      userPointId: nextUserPointId,
-    } = nextProps;
-
-    if (
-      selectedDatamart !== nextSelectedDatamart ||
-      userPointId !== nextUserPointId
-    ) {
-      this.fetchUserAccountsByCompartmentId(
-        nextSelectedDatamart,
-        nextUserPointId,
-      );
-    }
-
-    if (selectedDatamart !== nextSelectedDatamart) {
-      this.fetchCompartments(nextSelectedDatamart);
-    }
-  }
-
-  fetchCompartments = (datamart: DatamartResource) => {
-    DatamartService.getUserAccountCompartments(datamart.id).then(resp => {
-      this.setState({
-        userAccountCompartments: resp.data,
-      });
-    });
-  };
-
-  fetchUserAccountsByCompartmentId = (
-    datamart: DatamartResource,
-    userPointId: string,
-  ) => {
-    const identifierType = 'user_point_id';
-
-    this._userDataService
-      .getIdentifiers(
-        datamart.organisation_id,
-        datamart.id,
-        identifierType,
-        userPointId,
-      )
-      .then(response => {
-        const userAccountIdentifierInfos = response.data.filter(
-          isUserAccountIdentifier,
-        );
-
-        const userAccountsByCompartmentId = groupBy(
-          userAccountIdentifierInfos,
-          'compartment_id',
-        );
-
-        this.setState({
-          userAccountsByCompartmentId: userAccountsByCompartmentId,
-        });
-      });
-  };
-
   renderCompartmentName = (compartmentId: string) => {
-    const { userAccountCompartments } = this.state;
+    const { userAccountCompartments } = this.props;
     if (userAccountCompartments) {
       const compartment = userAccountCompartments.find(
         c => c.compartment_id === compartmentId,
@@ -131,7 +49,7 @@ class AccountIdCard extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const { userAccountsByCompartmentId } = this.state;
+    const { userAccountsByCompartmentId } = this.props;
 
     const handleShowMore = (expandedItemsKey: string) => () => {
 

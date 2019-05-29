@@ -1,6 +1,11 @@
 import { Index } from '../../utils';
 import { UserActivityEventResource } from '../datamart/UserActivityResource';
-import { OperatingSystemFamily, BrowserFamily } from '../datamart/graphdb/RuntimeSchema';
+import {
+  OperatingSystemFamily,
+  BrowserFamily,
+} from '../datamart/graphdb/RuntimeSchema';
+import { Dictionary } from 'lodash';
+import { UserAccountCompartmentDatamartSelectionResource } from '../datamart/DatamartResource';
 
 export interface Activity {
   $email_hash: string | object;
@@ -114,29 +119,38 @@ export interface UserAgentIdentifierInfo {
   device?: UserAgentInfo;
   creation_ts: number;
   last_activity_ts: number;
-  providers: UserAgentIdentifierProviderResource[]
-  mappings: UserAgentIdMappingResource[]
-  type: 'USER_AGENT'
+  providers: UserAgentIdentifierProviderResource[];
+  mappings: UserAgentIdMappingResource[];
+  type: 'USER_AGENT';
 }
 
-export type UserIdentifierInfo = UserPointIdentifierInfo |
-  UserEmailIdentifierInfo |
-  UserAccountIdentifierInfo |
-  UserAgentIdentifierInfo;
+export type UserIdentifierInfo =
+  | UserPointIdentifierInfo
+  | UserEmailIdentifierInfo
+  | UserAccountIdentifierInfo
+  | UserAgentIdentifierInfo;
 
-export function isUserPointIdentifier(userIdentifier: UserIdentifierInfo): userIdentifier is UserPointIdentifierInfo {
+export function isUserPointIdentifier(
+  userIdentifier: UserIdentifierInfo,
+): userIdentifier is UserPointIdentifierInfo {
   return userIdentifier.type === 'USER_POINT';
 }
 
-export function isUserAccountIdentifier(userIdentifier: UserIdentifierInfo): userIdentifier is UserAccountIdentifierInfo {
+export function isUserAccountIdentifier(
+  userIdentifier: UserIdentifierInfo,
+): userIdentifier is UserAccountIdentifierInfo {
   return userIdentifier.type === 'USER_ACCOUNT';
 }
 
-export function isUserAgentIdentifier(userIdentifier: UserIdentifierInfo): userIdentifier is UserAgentIdentifierInfo {
+export function isUserAgentIdentifier(
+  userIdentifier: UserIdentifierInfo,
+): userIdentifier is UserAgentIdentifierInfo {
   return userIdentifier.type === 'USER_AGENT';
 }
 
-export function isUserEmailIdentifier(userIdentifier: UserIdentifierInfo): userIdentifier is UserEmailIdentifierInfo {
+export function isUserEmailIdentifier(
+  userIdentifier: UserIdentifierInfo,
+): userIdentifier is UserEmailIdentifierInfo {
   return userIdentifier.type === 'USER_EMAIL';
 }
 
@@ -154,15 +168,12 @@ export interface Device {
   raw_value?: string;
 }
 
-export interface IdentifiersProps {
-  hasItems: boolean;
-  items: {
-    USER_ACCOUNT: UserAccountIdentifierInfo[];
-    USER_AGENT: UserAgentIdentifierInfo[];
-    USER_EMAIL: UserEmailIdentifierInfo[];
-    USER_POINT: UserPointIdentifierInfo[];
-  };
-  // TO DO : TO REMOVE when low lovel component refacto is done
+export interface MonitoringData {
+  userAgentList: UserAgentIdentifierInfo[];
+  userAccountsByCompartmentId?: Dictionary<UserAccountIdentifierInfo[]>;
+  userAccountCompartments?: UserAccountCompartmentDatamartSelectionResource[];
+  userEmailList: UserEmailIdentifierInfo[];
+  userPointList: UserPointIdentifierInfo[];
   userPointId: string;
 }
 
