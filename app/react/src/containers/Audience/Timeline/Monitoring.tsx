@@ -15,7 +15,11 @@ import TimelineHeader from './TimelineHeader';
 import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
-import { isUserPointIdentifier } from '../../../models/timeline/timeline';
+import {
+  isUserPointIdentifier,
+  UserAgentIdentifierInfo,
+  isUserAgentIdentifier,
+} from '../../../models/timeline/timeline';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -40,6 +44,8 @@ interface MapStateToProps {
 interface State {
   isModalVisible: boolean;
   userPointId?: string;
+  userAgentsIdentifierInfo: UserAgentIdentifierInfo[];
+  isLoadingUserAgentIdentifierInfo: boolean;
 }
 
 interface MonitoringProps {
@@ -59,6 +65,8 @@ class Monitoring extends React.Component<Props, State> {
     super(props);
     this.state = {
       isModalVisible: false,
+      userAgentsIdentifierInfo: [],
+      isLoadingUserAgentIdentifierInfo: false,
     };
   }
 
@@ -112,6 +120,30 @@ class Monitoring extends React.Component<Props, State> {
     }
   }
 
+  fetchUserAgents = (datamart: DatamartResource, userPointId: string) => {
+    const identifierType = 'user_point_id';
+
+    this.setState({
+      isLoadingUserAgentIdentifierInfo: true,
+    });
+    this._userDataService
+      .getIdentifiers(
+        datamart.organisation_id,
+        datamart.id,
+        identifierType,
+        userPointId,
+      )
+      .then(response => {
+        const userAgentsIdentifierInfo = response.data.filter(
+          isUserAgentIdentifier,
+        );
+        this.setState({
+          userAgentsIdentifierInfo: userAgentsIdentifierInfo,
+          isLoadingUserAgentIdentifierInfo: false,
+        });
+      });
+  };
+
   fetchIdentifiersData = (
     organisationId: string,
     datamartId: string,
@@ -119,6 +151,7 @@ class Monitoring extends React.Component<Props, State> {
     identifierId: string,
     compartmentId?: string,
   ) => {
+    const { selectedDatamart } = this.props;
     this._userDataService
       .getIdentifiers(
         organisationId,
@@ -131,10 +164,15 @@ class Monitoring extends React.Component<Props, State> {
         const userPointIdentifierInfo = response.data.find(
           isUserPointIdentifier,
         );
+        const userPointId =
+          userPointIdentifierInfo && userPointIdentifierInfo.user_point_id;
         this.setState({
-          userPointId:
-            userPointIdentifierInfo && userPointIdentifierInfo.user_point_id,
+          userPointId: userPointId,
         });
+        return userPointId;
+      })
+      .then(userPointId => {
+        if (userPointId) this.fetchUserAgents(selectedDatamart, userPointId);
       });
   };
 
@@ -170,7 +208,12 @@ class Monitoring extends React.Component<Props, State> {
   render() {
     const { selectedDatamart } = this.props;
 
-    const { isModalVisible, userPointId } = this.state;
+    const {
+      isModalVisible,
+      userPointId,
+      userAgentsIdentifierInfo,
+      isLoadingUserAgentIdentifierInfo,
+    } = this.state;
 
     return (
       <div className="ant-layout">
@@ -225,8 +268,10 @@ class Monitoring extends React.Component<Props, State> {
                       userPointId={userPointId}
                     />
                     <DeviceCard
-                      selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      datasource={userAgentsIdentifierInfo}
+                      isLoading={isLoadingUserAgentIdentifierInfo}
+                      // selectedDatamart={selectedDatamart}
+                      // userPointId={userPointId}
                     />
                     <EmailCard
                       selectedDatamart={selectedDatamart}
