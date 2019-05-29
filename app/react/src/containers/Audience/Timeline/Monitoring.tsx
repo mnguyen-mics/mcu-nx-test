@@ -66,6 +66,7 @@ class Monitoring extends React.Component<Props, State> {
         userAccountsByCompartmentId: {},
         userAccountCompartments: [],
         userPointList: [],
+        lastSeen: 0,
         userPointId: '',
       },
       isLoading: false,
@@ -196,8 +197,8 @@ class Monitoring extends React.Component<Props, State> {
             {userPointId ? (
               <Row>
                 <TimelineHeader
-                  selectedDatamart={selectedDatamart}
-                  userPointId={userPointId}
+                  dataSource={monitoringData}
+                  isLoading={isLoading}
                 />
                 <Row
                   gutter={20}

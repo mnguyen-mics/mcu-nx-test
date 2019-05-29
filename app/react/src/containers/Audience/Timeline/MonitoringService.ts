@@ -1,6 +1,9 @@
 import { groupBy, Dictionary } from 'lodash';
 import { IUserDataService } from './../../../services/UserDataService';
-import { DatamartResource } from './../../../models/datamart/DatamartResource';
+import {
+  DatamartResource,
+  UserAccountCompartmentDatamartSelectionResource,
+} from './../../../models/datamart/DatamartResource';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../constants/types';
 import {
@@ -16,6 +19,13 @@ import {
 import DatamartService from '../../../services/DatamartService';
 
 export interface IMonitoringService {
+  fetchCompartments: (
+    datamart: DatamartResource,
+  ) => Promise<UserAccountCompartmentDatamartSelectionResource[]>;
+  getLastSeen: (
+    datamart: DatamartResource,
+    userPointId: string,
+  ) => Promise<number>;
   fetchUserAccountsByCompartmentId: (
     datamart: DatamartResource,
     userPointId: string,
@@ -50,6 +60,25 @@ export class MonitoringService implements IMonitoringService {
       },
     );
   };
+
+  getLastSeen(datamart: DatamartResource, userPointId: string) {
+    return this._userDataService
+      .getActivities(datamart.id, {
+        id: userPointId,
+        type: 'user_point_id',
+      })
+      .then(res => {
+        const timestamps = res.data.map(item => {
+          return item.$ts;
+        });
+        let lastSeen = 0;
+        if (timestamps.length > 0) {
+          lastSeen = Math.max.apply(null, timestamps);
+        }
+
+        return lastSeen;
+      });
+  }
 
   fetchUserAccountsByCompartmentId(
     datamart: DatamartResource,
@@ -145,12 +174,14 @@ export class MonitoringService implements IMonitoringService {
             this.fetchUserEmails(datamart, userPointId),
             this.fetchUserAccountsByCompartmentId(datamart, userPointId),
             this.fetchCompartments(datamart),
+            this.getLastSeen(datamart, userPointId),
           ]).then(res => {
             return {
               userAgentList: res[0],
               userEmailList: res[1],
               userAccountsByCompartmentId: res[2],
               userAccountCompartments: res[3],
+              lastSeen: res[4],
               userPointList: [],
               userPointId: userPointId,
             };
@@ -161,6 +192,7 @@ export class MonitoringService implements IMonitoringService {
           userEmailList: [],
           userAccountsByCompartmentId: {},
           userAccountCompartments: [],
+          lastSeen: 0,
           userPointList: [],
           userPointId: '',
         });

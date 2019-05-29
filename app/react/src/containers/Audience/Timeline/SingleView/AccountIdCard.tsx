@@ -8,8 +8,8 @@ import { UserAccountCompartmentDatamartSelectionResource } from '../../../../mod
 import { UserAccountIdentifierInfo } from '../../../../models/timeline/timeline';
 
 interface AccountIdCardProps {
-  userAccountCompartments?: UserAccountCompartmentDatamartSelectionResource[];
-  userAccountsByCompartmentId?: Dictionary<UserAccountIdentifierInfo[]>;
+  userAccountCompartments: UserAccountCompartmentDatamartSelectionResource[];
+  userAccountsByCompartmentId: Dictionary<UserAccountIdentifierInfo[]>;
   isLoading: boolean;
 }
 

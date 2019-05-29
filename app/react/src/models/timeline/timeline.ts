@@ -170,10 +170,11 @@ export interface Device {
 
 export interface MonitoringData {
   userAgentList: UserAgentIdentifierInfo[];
-  userAccountsByCompartmentId?: Dictionary<UserAccountIdentifierInfo[]>;
-  userAccountCompartments?: UserAccountCompartmentDatamartSelectionResource[];
+  userAccountsByCompartmentId: Dictionary<UserAccountIdentifierInfo[]>;
+  userAccountCompartments: UserAccountCompartmentDatamartSelectionResource[];
   userEmailList: UserEmailIdentifierInfo[];
   userPointList: UserPointIdentifierInfo[];
+  lastSeen: number;
   userPointId: string;
 }
 
