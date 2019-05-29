@@ -162,6 +162,8 @@ export interface IdentifiersProps {
     USER_EMAIL: UserEmailIdentifierInfo[];
     USER_POINT: UserPointIdentifierInfo[];
   };
+  // TO DO : TO REMOVE when low lovel component refacto is done
+  userPointId: string;
 }
 
 export interface UserProfileResource {

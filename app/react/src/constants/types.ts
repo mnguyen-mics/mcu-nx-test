@@ -21,6 +21,7 @@ const TYPES = {
   IExportService: Symbol.for('exportService'),
   IUserDataService: Symbol.for('userDataService'),
   IUsersService: Symbol.for('usersService'),
+  IMonitoringService: Symbol.for('monitoringService'),
 };
 
 export { TYPES };

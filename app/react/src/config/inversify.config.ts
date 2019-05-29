@@ -73,6 +73,10 @@ import {
   ExportService,
 } from '../services/Library/ExportService';
 import { IUsersService, UsersService } from '../services/UsersService';
+import {
+  IMonitoringService,
+  MonitoringService,
+} from '../containers/Audience/Timeline/MonitoringService';
 
 const container = new Container();
 
@@ -127,6 +131,9 @@ container.bind<IQueryService>(TYPES.IQueryService).to(QueryService);
 container.bind<IGoalFormService>(TYPES.IGoalFormService).to(GoalFormService);
 container.bind<IUserDataService>(TYPES.IUserDataService).to(UserDataService);
 container.bind<IUsersService>(TYPES.IUsersService).to(UsersService);
+container
+  .bind<IMonitoringService>(TYPES.IMonitoringService)
+  .to(MonitoringService);
 
 export const { lazyInject } = getDecorators(container, false);
 

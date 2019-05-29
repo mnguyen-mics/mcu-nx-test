@@ -6,7 +6,7 @@ import messages from '../messages';
 import { UserAgentIdentifierInfo } from '../../../../models/timeline/timeline';
 
 interface DeviceCardProps {
-  datasource: UserAgentIdentifierInfo[];
+  dataSource: UserAgentIdentifierInfo[];
   isLoading: boolean;
 }
 
@@ -27,11 +27,11 @@ class DeviceCard extends React.Component<Props, State> {
   render() {
     const {
       intl: { formatMessage },
-      datasource,
+      dataSource,
       isLoading,
     } = this.props;
 
-    const userAgents = datasource || [];
+    const userAgents = dataSource || [];
     let accountsFormatted: any[] = [];
     if (userAgents.length > 5 && !this.state.showMore) {
       accountsFormatted = accountsFormatted.concat(userAgents).splice(0, 5);
@@ -58,7 +58,7 @@ class DeviceCard extends React.Component<Props, State> {
               <div key={agent.vector_id}>{agent.vector_id}</div>
             );
           })}
-        {(accountsFormatted.length === 0 || datasource.length === 0) && (
+        {(accountsFormatted.length === 0 || dataSource.length === 0) && (
           <span>
             <FormattedMessage {...messages.emptyDevice} />
           </span>

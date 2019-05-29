@@ -15,11 +15,7 @@ import TimelineHeader from './TimelineHeader';
 import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
-import {
-  isUserPointIdentifier,
-  UserAgentIdentifierInfo,
-  isUserAgentIdentifier,
-} from '../../../models/timeline/timeline';
+import { IdentifiersProps } from '../../../models/timeline/timeline';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -27,7 +23,7 @@ import { EmptyTableView } from '../../../components/TableView';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
-import { IUserDataService } from '../../../services/UserDataService';
+import { IMonitoringService } from './MonitoringService';
 
 const { Content } = Layout;
 
@@ -43,9 +39,8 @@ interface MapStateToProps {
 
 interface State {
   isModalVisible: boolean;
-  userPointId?: string;
-  userAgentsIdentifierInfo: UserAgentIdentifierInfo[];
-  isLoadingUserAgentIdentifierInfo: boolean;
+  identifiers: IdentifiersProps;
+  isLoading: boolean;
 }
 
 interface MonitoringProps {
@@ -58,15 +53,24 @@ type Props = MonitoringProps &
   RouteComponentProps<TimelinePageParams>;
 
 class Monitoring extends React.Component<Props, State> {
-  @lazyInject(TYPES.IUserDataService)
-  private _userDataService: IUserDataService;
+  @lazyInject(TYPES.IMonitoringService)
+  private _monitoringService: IMonitoringService;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       isModalVisible: false,
-      userAgentsIdentifierInfo: [],
-      isLoadingUserAgentIdentifierInfo: false,
+      identifiers: {
+        hasItems: false,
+        items: {
+          USER_ACCOUNT: [],
+          USER_AGENT: [],
+          USER_EMAIL: [],
+          USER_POINT: [],
+        },
+        userPointId: '',
+      },
+      isLoading: false,
     };
   }
 
@@ -80,13 +84,23 @@ class Monitoring extends React.Component<Props, State> {
     } = this.props;
 
     if (identifierType && identifierId) {
-      this.fetchIdentifiersData(
-        organisationId,
-        selectedDatamart.id,
-        identifierType,
-        identifierId,
-        queryString.parse(location.search).compartmentId,
-      );
+      this.setState({
+        isLoading: true,
+      });
+      this._monitoringService
+        .fetchMonitoringData(
+          organisationId,
+          selectedDatamart,
+          identifierType,
+          identifierId,
+          queryString.parse(location.search).compartmentId,
+        )
+        .then(identifiers => {
+          this.setState({
+            identifiers: identifiers,
+            isLoading: false,
+          });
+        });
     }
   }
 
@@ -109,72 +123,26 @@ class Monitoring extends React.Component<Props, State> {
 
     if (search !== nextSearch || pathname !== nextPathname) {
       if (nextIdentifierType && nextIdentifierId) {
-        this.fetchIdentifiersData(
-          nextOrganisationId,
-          nextSelectedDatamart.id,
-          nextIdentifierType,
-          nextIdentifierId,
-          queryString.parse(nextSearch).compartmentId,
-        );
+        this.setState({
+          isLoading: true,
+        });
+        this._monitoringService
+          .fetchMonitoringData(
+            nextOrganisationId,
+            nextSelectedDatamart,
+            nextIdentifierType,
+            nextIdentifierId,
+            queryString.parse(nextSearch).compartmentId,
+          )
+          .then(identifiers => {
+            this.setState({
+              identifiers: identifiers,
+              isLoading: false,
+            });
+          });
       }
     }
   }
-
-  fetchUserAgents = (datamart: DatamartResource, userPointId: string) => {
-    const identifierType = 'user_point_id';
-
-    this.setState({
-      isLoadingUserAgentIdentifierInfo: true,
-    });
-    this._userDataService
-      .getIdentifiers(
-        datamart.organisation_id,
-        datamart.id,
-        identifierType,
-        userPointId,
-      )
-      .then(response => {
-        const userAgentsIdentifierInfo = response.data.filter(
-          isUserAgentIdentifier,
-        );
-        this.setState({
-          userAgentsIdentifierInfo: userAgentsIdentifierInfo,
-          isLoadingUserAgentIdentifierInfo: false,
-        });
-      });
-  };
-
-  fetchIdentifiersData = (
-    organisationId: string,
-    datamartId: string,
-    identifierType: string,
-    identifierId: string,
-    compartmentId?: string,
-  ) => {
-    const { selectedDatamart } = this.props;
-    this._userDataService
-      .getIdentifiers(
-        organisationId,
-        datamartId,
-        identifierType,
-        identifierId,
-        compartmentId,
-      )
-      .then(response => {
-        const userPointIdentifierInfo = response.data.find(
-          isUserPointIdentifier,
-        );
-        const userPointId =
-          userPointIdentifierInfo && userPointIdentifierInfo.user_point_id;
-        this.setState({
-          userPointId: userPointId,
-        });
-        return userPointId;
-      })
-      .then(userPointId => {
-        if (userPointId) this.fetchUserAgents(selectedDatamart, userPointId);
-      });
-  };
 
   handleModal = (visible: boolean) => {
     this.setState({
@@ -208,12 +176,9 @@ class Monitoring extends React.Component<Props, State> {
   render() {
     const { selectedDatamart } = this.props;
 
-    const {
-      isModalVisible,
-      userPointId,
-      userAgentsIdentifierInfo,
-      isLoadingUserAgentIdentifierInfo,
-    } = this.state;
+    const { isModalVisible, identifiers, isLoading } = this.state;
+
+    const userPointId = identifiers.userPointId;
 
     return (
       <div className="ant-layout">
@@ -268,14 +233,12 @@ class Monitoring extends React.Component<Props, State> {
                       userPointId={userPointId}
                     />
                     <DeviceCard
-                      datasource={userAgentsIdentifierInfo}
-                      isLoading={isLoadingUserAgentIdentifierInfo}
-                      // selectedDatamart={selectedDatamart}
-                      // userPointId={userPointId}
+                      dataSource={identifiers.items.USER_AGENT}
+                      isLoading={isLoading}
                     />
                     <EmailCard
-                      selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      dataSource={identifiers.items.USER_EMAIL}
+                      isLoading={isLoading}
                     />
                   </Col>
                 </Row>
