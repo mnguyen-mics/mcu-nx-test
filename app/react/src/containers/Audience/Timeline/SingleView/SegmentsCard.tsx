@@ -5,32 +5,20 @@ import { Card } from '../../../../components/Card/index';
 import SegmentsTag from './SegmentsTag';
 import messages from '../messages';
 import { UserSegmentResource } from '../../../../models/timeline/timeline';
-import { Identifier } from '../Monitoring';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import {
-  IUserDataService,
-} from '../../../../services/UserDataService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { TimelinePageParams } from '../TimelinePage';
-import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
 
 interface SegmentsCardProps {
-  selectedDatamart: DatamartResource;
-  userPointId: string;
+  dataSource: UserSegmentResource[];
+  isLoading: boolean;
 }
 
 interface State {
   showMore: boolean;
-  segments: {
-    isLoading: boolean;
-    hasItems: boolean;
-    items: UserSegmentResource[];
-  };
 }
 
 type Props = SegmentsCardProps &
@@ -39,100 +27,28 @@ type Props = SegmentsCardProps &
   RouteComponentProps<TimelinePageParams>;
 
 class SegmentsCard extends React.Component<Props, State> {
-  @lazyInject(TYPES.IUserDataService)
-  private _userDataService: IUserDataService;
-
   constructor(props: Props) {
     super(props);
     this.state = {
       showMore: false,
-      segments: {
-        isLoading: false,
-        hasItems: false,
-        items: [],
-      },
     };
   }
-
-  componentDidMount() {
-    const { selectedDatamart, userPointId } = this.props;
-
-    this.fetchSegmentsData(selectedDatamart, userPointId);
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { selectedDatamart, userPointId } = this.props;
-    const {
-      selectedDatamart: prevSelectedDatamart,
-      userPointId: prevUserPointId,
-    } = prevProps;
-    if (
-      userPointId !== prevUserPointId ||
-      selectedDatamart !== prevSelectedDatamart
-    ) {
-      this.fetchSegmentsData(selectedDatamart, userPointId);
-    }
-  }
-
-  fetchSegmentsData = (datamart: DatamartResource, userPointId: string) => {
-    const identifier: Identifier = {
-      id: userPointId,
-      type: 'user_point_id',
-    };
-
-    this.setState(prevState => {
-      const nextState = {
-        segments: {
-          ...prevState.segments,
-          isLoading: true,
-        },
-      };
-      return nextState;
-    });
-    this._userDataService
-      .getSegments(datamart.id, identifier)
-      .then(response => {
-        this.setState(prevState => {
-          const nextState = {
-            segments: {
-              ...prevState.segments,
-              isLoading: false,
-              hasItems: response.data.length > 0 ? true : false,
-              items: response.data,
-            },
-          };
-          return nextState;
-        });
-      })
-      .catch(err => {
-        this.setState(prevState => {
-          const nextState = {
-            segments: {
-              ...prevState.segments,
-              items: [],
-              isLoading: false,
-            },
-          };
-          return nextState;
-        });
-      });
-  };
 
   render() {
     const {
       intl: { formatMessage },
     } = this.props;
 
-    const { segments } = this.state;
+    const { dataSource: segments, isLoading } = this.props;
 
     let segmentsFormatted: UserSegmentResource[] = [];
-    if (segments.items.length > 5 && !this.state.showMore) {
-      segmentsFormatted = segmentsFormatted.concat(segments.items).splice(0, 5);
+    if (segments.length > 5 && !this.state.showMore) {
+      segmentsFormatted = segmentsFormatted.concat(segments).splice(0, 5);
     } else {
-      segmentsFormatted = segmentsFormatted.concat(segments.items);
+      segmentsFormatted = segmentsFormatted.concat(segments);
     }
 
-    const canViewMore = segments.items.length > 5 ? true : false;
+    const canViewMore = segments.length > 5 ? true : false;
 
     const onViewMoreClick = (e: any) => {
       e.preventDefault();
@@ -145,10 +61,7 @@ class SegmentsCard extends React.Component<Props, State> {
     };
 
     return (
-      <Card
-        title={formatMessage(messages.segmentTitle)}
-        isLoading={segments.isLoading}
-      >
+      <Card title={formatMessage(messages.segmentTitle)} isLoading={isLoading}>
         {segmentsFormatted.length &&
           segmentsFormatted.map(segment => {
             return (
@@ -158,7 +71,7 @@ class SegmentsCard extends React.Component<Props, State> {
               />
             );
           })}
-        {(segmentsFormatted.length === 0 || segments.hasItems === false) && (
+        {segmentsFormatted.length === 0 && (
           <span>
             <FormattedMessage {...messages.emptySegment} />
           </span>

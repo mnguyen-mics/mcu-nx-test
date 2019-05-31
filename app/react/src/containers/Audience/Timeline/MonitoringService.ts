@@ -15,10 +15,19 @@ import {
   UserEmailIdentifierInfo,
   isUserAccountIdentifier,
   UserAccountIdentifierInfo,
+  UserSegmentResource,
 } from '../../../models/timeline/timeline';
 import DatamartService from '../../../services/DatamartService';
 
 export interface IMonitoringService {
+  fetchProfileData: (
+    datamart: DatamartResource,
+    userPointId: string,
+  ) => Promise<any>; // type it
+  fetchSegmentsData: (
+    datamart: DatamartResource,
+    userPointId: string,
+  ) => Promise<UserSegmentResource[]>;
   fetchCompartments: (
     datamart: DatamartResource,
   ) => Promise<UserAccountCompartmentDatamartSelectionResource[]>;
@@ -52,14 +61,61 @@ export class MonitoringService implements IMonitoringService {
   @inject(TYPES.IUserDataService)
   private _userDataService: IUserDataService;
 
-  fetchCompartments = (datamart: DatamartResource) => {
+  fetchProfileData(datamart: DatamartResource, userPointId: string) {
+    // TO DO: inject DatamartService
+    return DatamartService.getUserAccountCompartments(datamart.id).then(res => {
+      return Promise.all(
+        res.data.map(userCompartiment => {
+          return this._userDataService
+            .getProfile(datamart.id, {
+              id: userPointId,
+              type: 'user_point_id',
+              compartmentId: userCompartiment.compartment_id,
+            })
+            .then(r => ({
+              profile: r ? r.data : {},
+              compartment: userCompartiment,
+            }))
+            .catch(() =>
+              Promise.resolve({
+                profile: undefined,
+                compartment: userCompartiment,
+              }),
+            );
+        }),
+      ).then(profiles => {
+        const formatedProfile: any = {};
+        profiles.forEach(profile => {
+          formatedProfile[
+            profile.compartment.name
+              ? profile.compartment.name
+              : profile.compartment.token
+          ] = profile.profile;
+        });
+        return formatedProfile;
+      });
+    });
+  }
+
+  fetchSegmentsData(datamart: DatamartResource, userPointId: string) {
+    return this._userDataService
+      .getSegments(datamart.id, {
+        id: userPointId,
+        type: 'user_point_id',
+      })
+      .then(res => {
+        return res.data;
+      });
+  }
+
+  fetchCompartments(datamart: DatamartResource) {
     // TO DO: inject DatamartService
     return DatamartService.getUserAccountCompartments(datamart.id).then(
       resp => {
         return resp.data;
       },
     );
-  };
+  }
 
   getLastSeen(datamart: DatamartResource, userPointId: string) {
     return this._userDataService
@@ -175,6 +231,8 @@ export class MonitoringService implements IMonitoringService {
             this.fetchUserAccountsByCompartmentId(datamart, userPointId),
             this.fetchCompartments(datamart),
             this.getLastSeen(datamart, userPointId),
+            this.fetchSegmentsData(datamart, userPointId),
+            this.fetchProfileData(datamart, userPointId),
           ]).then(res => {
             return {
               userAgentList: res[0],
@@ -182,6 +240,8 @@ export class MonitoringService implements IMonitoringService {
               userAccountsByCompartmentId: res[2],
               userAccountCompartments: res[3],
               lastSeen: res[4],
+              userSegmentList: res[5],
+              profileByCompartments: res[6],
               userPointList: [],
               userPointId: userPointId,
             };
@@ -193,6 +253,8 @@ export class MonitoringService implements IMonitoringService {
           userAccountsByCompartmentId: {},
           userAccountCompartments: [],
           lastSeen: 0,
+          userSegmentList: [],
+          profileByCompartments: {},
           userPointList: [],
           userPointId: '',
         });

@@ -174,6 +174,8 @@ export interface MonitoringData {
   userAccountCompartments: UserAccountCompartmentDatamartSelectionResource[];
   userEmailList: UserEmailIdentifierInfo[];
   userPointList: UserPointIdentifierInfo[];
+  userSegmentList: UserSegmentResource[];
+  profileByCompartments: any; // TO DO : Type it
   lastSeen: number;
   userPointId: string;
 }
