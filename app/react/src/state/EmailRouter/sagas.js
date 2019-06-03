@@ -1,6 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
-import log from '../../utils/Logger';
+import log from '../../utils/Logger.ts';
 
 import { fetchEmailRouters } from './actions';
 

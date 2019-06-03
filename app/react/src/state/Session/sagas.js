@@ -1,7 +1,7 @@
 import { call, put, fork, takeEvery } from 'redux-saga/effects';
 
 import { addNotification } from '../Notifications/actions';
-import log from '../../utils/Logger';
+import log from '../../utils/Logger.ts';
 import OrganisationService from '../../services/OrganisationService.ts';
 
 import {

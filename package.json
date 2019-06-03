@@ -75,6 +75,7 @@
     "@types/humps": "^1.1.2",
     "@types/js-cookie": "^2.2.1",
     "@types/lodash": "^4.14.118",
+    "@types/loglevel": "^1.5.4",
     "@types/moment-duration-format": "^2.2.2",
     "@types/numeral": "0.0.22",
     "@types/papaparse": "^4.5.5",

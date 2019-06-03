@@ -3,7 +3,7 @@ import SettingsService from '../../services/SettingsService.ts';
 import { addNotification } from '../Notifications/actions';
 import { getConnectedUser } from '../Session/actions';
 
-import log from '../../utils/Logger';
+import log from '../../utils/Logger.ts';
 
 import {
   SAVE_PROFILE,

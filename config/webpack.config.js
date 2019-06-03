@@ -7,7 +7,7 @@ const pkg = require('../package.json');
 const configFactory = (isProduction, customFontPath, lintFailOnError) => {
   return {
     entry: {
-      app: path.join(paths.reactAppSrc, '/index.js'),
+      app: path.join(paths.reactAppSrc, '/index.tsx'),
       'style-less': paths.appStyleLess,
       'react-vendors': Object.keys(pkg.dependencies),
     },

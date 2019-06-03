@@ -11,7 +11,6 @@ import LayoutManager from './Layout/LayoutManager';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { AuthenticatedRoute } from './Route';
-import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../Authentication/ForgotPassword';
 import { Login } from '../Authentication/Login';
 import { SetPassword } from '../Authentication/SetPassword';
@@ -212,7 +211,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         const datalayer = route.datalayer;
         return (
           <Datalayer datalayer={datalayer}>
-            <Notifications />
             <div className="drawer-wrapper">
               <DrawerManager />
             </div>
@@ -245,7 +243,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         const datalayer = route.datalayer;
         return (
           <Datalayer datalayer={datalayer}>
-            <Notifications />
             <div className="drawer-wrapper">
               <DrawerManager />
             </div>

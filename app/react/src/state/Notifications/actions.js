@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions';
-import log from '../../utils/Logger';
+import log from '../../utils/Logger.ts';
 
 import {
   NOTIFICATIONS_ADD,

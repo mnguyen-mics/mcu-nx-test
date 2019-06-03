@@ -4,7 +4,7 @@ import { delay } from 'redux-saga';
 import { call, put, take, race, fork, all, select } from 'redux-saga/effects';
 import MicsTagServices from '../../services/MicsTagServices.ts';
 
-import log from '../../utils/Logger';
+import log from '../../utils/Logger.ts';
 import AuthService from '../../services/AuthService.ts';
 import PersistedStoreService from '../../services/PersistedStoreService.ts';
 import {
