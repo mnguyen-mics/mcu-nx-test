@@ -55,7 +55,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
     const clearButton = (
       <Button onClick={this.clearQuery}>
         <FormattedMessage
-          id="queryTool.query-tool-clear-query"
+          id="queryTool.otql.edit.clear.label"
           defaultMessage="Clear Query"
         />
       </Button>
@@ -64,7 +64,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
     const abortButton = (
       <Button type="primary" onClick={onAbortQuery}>
         <FormattedMessage
-          id="queryTool.query-tool-abort-query"
+          id="queryTool.otql.edit.abort.label"
           defaultMessage="Abort Query"
         />
       </Button>
@@ -79,7 +79,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
         onClick={handleOnRunButtonClick}
       >
         <FormattedMessage
-          id="queryTool.query-tool-run-query"
+          id="queryTool.otql.edit.run.label"
           defaultMessage="Run Query"
         />
       </Button>
@@ -126,7 +126,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       <Card
         title={
           <FormattedMessage
-            id="queryTool.otql-query-editor-card-title"
+            id="queryTool.otql.card.title"
             defaultMessage="OTQL Query"
           />
         }
@@ -145,7 +145,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
         >
           <div style={{ marginBottom: 10 }}>
             <FormattedMessage
-              id="otql-query-editor-cache"
+              id="queryTool.otql.edit.label"
               defaultMessage="Use Cache"
             />
             : <Switch checked={useCache} onChange={onCacheChange} />
@@ -158,19 +158,19 @@ class OTQLInputEditor extends React.Component<Props, State> {
             >
               <Select.Option value="FULL_PRECISION">
                 <FormattedMessage
-                  id="otql-query-editor-precision-full"
+                  id="queryTool.otql.modal.full.precision"
                   defaultMessage="Full Precision"
                 />
               </Select.Option>
               <Select.Option value="MEDIUM_PRECISION">
                 <FormattedMessage
-                  id="otql-query-editor-precision-medium"
+                  id="queryTool.otql.modal.medium.precision"
                   defaultMessage="Medium Precision"
                 />
               </Select.Option>
               <Select.Option value="LOWER_PRECISION">
                 <FormattedMessage
-                  id="otql-query-editor-precision-low"
+                  id="queryTool.otql.modal.low.precision"
                   defaultMessage="Low Precision"
                 />
               </Select.Option>
