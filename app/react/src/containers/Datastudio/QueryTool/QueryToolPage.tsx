@@ -150,6 +150,36 @@ class QueryToolPage extends React.Component<Props> {
     };
 
     const OTQLActionbar = (query: string, datamartId: string) => {
+      const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
+        if (!query)
+          return Promise.reject(
+            new Error("angular query container isn't loaded correctly"),
+          );
+        return this._queryService.createQuery(datamartId, {
+          query_language: "OTQL",
+          query_text: query
+        }).then(d => d.data).then(queryResource => {
+          const { name, technical_name, persisted } = segmentFormData;
+          const userQuerySegment: Partial<UserQuerySegment> = {
+            datamart_id: datamartId,
+            type: 'USER_QUERY',
+            name,
+            technical_name,
+            persisted,
+            default_ttl: calculateDefaultTtl(segmentFormData),
+            query_id: queryResource.id,
+          };
+          return this._audienceSegmentService
+            .saveSegment(match.params.organisationId, userQuerySegment)
+            .then(res => {
+              history.push(
+                `/v2/o/${match.params.organisationId}/audience/segments/${
+                  res.data.id
+                }`,
+              );
+            });
+        });
+      };
       const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
         return this._queryService
           .createQuery(datamartId, {
@@ -176,6 +206,7 @@ class QueryToolPage extends React.Component<Props> {
       };
       return (
         <SaveQueryAsActionBar
+          saveAsUserQuery={saveAsUserQuery}
           saveAsExort={saveAsExport}
           breadcrumb={[
             {
