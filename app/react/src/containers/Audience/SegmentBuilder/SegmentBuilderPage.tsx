@@ -115,9 +115,21 @@ class SegmentBuilderPage extends React.Component<Props> {
             );
           });
       };
+
+      const convert2Otql = () => {
+        return this._queryService.createQuery(datamartId, {
+          query_language: 'JSON_OTQL',
+          query_text: JSON.stringify(query),
+        }).then(d => d.data)
+          .then(d => {
+            return this._queryService.convertJsonOtql2Otql(datamartId, d)
+          })
+      }
+
       return (
         <SaveQueryAsActionBar
           saveAsUserQuery={saveAsUserQuery}
+          convertToOtql={convert2Otql}
           breadcrumb={[
             {
               name: intl.formatMessage(messages.segmentBuilder),

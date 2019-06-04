@@ -5,13 +5,19 @@ import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { SaveAsExportModal, SaveAsUserQuerySegmentModal } from '.';
 import ActionBar, { Path } from '../../../components/ActionBar';
-import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
 import { NewExportSimpleFormData } from './NewExportSimpleForm';
 import { NewUserQuerySimpleFormData } from './NewUserQuerySegmentSimpleForm';
+import { DataResponse } from '../../../services/ApiService';
+import { QueryResource } from '../../../models/datamart/DatamartResource';
+import Convert2Otql from './Convet2Otql';
 
 export interface SaveQueryAsActionBarProps {
   saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
   saveAsExort?: (formData: NewExportSimpleFormData) => Promise<any>;
+  convertToOtql?: () => Promise<DataResponse<QueryResource>>;
   breadcrumb: Path[];
 }
 
@@ -20,11 +26,15 @@ interface State {
   segmentModalLoading: boolean;
   exportModalLoading: boolean;
   exportModalVisible: boolean;
+  conversionModalVisible: boolean;
 }
 
-type Props = SaveQueryAsActionBarProps & InjectedIntlProps & InjectedNotificationProps;
+type Props = SaveQueryAsActionBarProps &
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 class SaveQueryAsActionBar extends React.Component<Props, State> {
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -32,11 +42,13 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
       segmentModalVisible: false,
       exportModalLoading: false,
       exportModalVisible: false,
+      conversionModalVisible: false
+
     };
   }
 
   render() {
-    const { saveAsExort, saveAsUserQuery, breadcrumb } = this.props;
+    const { saveAsExort, saveAsUserQuery, convertToOtql, breadcrumb } = this.props;
     const handleMenuClick = (e: ClickParam) => {
       if (e.key === 'USER_QUERY') {
         this.setState({ segmentModalVisible: true });
@@ -51,10 +63,14 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
         segmentModalLoading: false,
       });
 
-    const closeExportModal = () => this.setState({
-      exportModalVisible: false,
-      exportModalLoading: false,
-    });
+    const closeExportModal = () =>
+      this.setState({
+        exportModalVisible: false,
+        exportModalLoading: false,
+      });
+
+    const openConversionModal = () => this.setState({ conversionModalVisible: true })
+    const closeConversionModal = () => this.setState({ conversionModalVisible: false })
 
     const handleSaveAsUserQuery = (formData: NewUserQuerySimpleFormData) => {
       this.setState({ segmentModalLoading: true });
@@ -96,17 +112,27 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
     );
 
     return (
-      <ActionBar
-        paths={breadcrumb}
-      >
+      <ActionBar paths={breadcrumb}>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <FormattedMessage
-              id="queryTool.query-builder-page-actionbar-save"
+              id="queryTool.query-builder.actionbar.save"
               defaultMessage="Save As"
             />
           </Button>
         </Dropdown>
+        {convertToOtql && <Button onClick={openConversionModal}>
+          <FormattedMessage
+            id="queryTool.query-builder.actionbar.convert"
+            defaultMessage="Convert to OTQL"
+          />
+        </Button>}
+       {convertToOtql && this.state.conversionModalVisible && <Convert2Otql 
+          onOk={closeConversionModal}
+          onCancel={closeConversionModal}
+          visible={this.state.conversionModalVisible}
+          convertQuery={convertToOtql}
+        />}
         <SaveAsUserQuerySegmentModal
           onOk={handleSaveAsUserQuery}
           onCancel={closeSegmentModal}

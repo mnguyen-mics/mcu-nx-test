@@ -56,7 +56,11 @@ export interface IQueryService {
   checkOtqlQuery: (
     datamartId: string,
     query: string
-  ) => Promise<DataResponse<ErrorQueryResource>>
+  ) => Promise<DataResponse<ErrorQueryResource>>;
+  convertJsonOtql2Otql: (
+    datamartId: string,
+    query: QueryResource
+  ) => Promise<DataResponse<QueryResource>>
 }
 
 @injectable()
@@ -153,5 +157,12 @@ export class QueryService implements IQueryService {
       query: query
     }
     return ApiService.postRequest(`datamarts/${datamartId}/query_check/otql`, payload)
+  }
+
+  convertJsonOtql2Otql(
+    datamartId: string,
+    query: QueryResource
+  ): Promise<DataResponse<QueryResource>> {
+    return ApiService.postRequest(`datamarts/${datamartId}/query_translations/to/otql`, query)
   }
 }

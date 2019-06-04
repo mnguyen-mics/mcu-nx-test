@@ -336,8 +336,6 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
 
     const onMenuClick = (event: ClickParam) => {
       switch (event.key) {
-        case 'FEED':
-          return this.handleCreateNewFeed();
         case 'LOOKALIKE':
           return onClick();
         default:
@@ -347,7 +345,6 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
 
     const dropdowMenu = (
       <Menu onClick={onMenuClick}>
-        <Menu.Item key="FEED">Add a Feed</Menu.Item>
         <Menu.Item key="LOOKALIKE">
           <FormattedMessage {...segmentMessages.lookAlikeCreation} />
         </Menu.Item>
@@ -357,6 +354,10 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     return (
       <Actionbar paths={breadcrumbPaths}>
         {actionButton}
+        <Button className="mcs-primary" type="primary" onClick={this.handleCreateNewFeed}>
+          <McsIcon type="bolt" />
+          <FormattedMessage id="audience.segments.dashboard.actionbar.feedButton" defaultMessage="Add a Feed" />
+        </Button>
         <Button onClick={this.onEditClick}>
           <McsIcon type="pen" />
           <FormattedMessage id="audience.segments.dashboard.actionbar.editButton" defaultMessage="Edit" />
