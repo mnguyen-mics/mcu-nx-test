@@ -157,7 +157,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       .then(res =>
         this.setState({ exportObject: { item: res, isLoading: false } }),
       )
-      .catch(err => log(err));
+      .catch(err => log.error(err));
     const fetchExportExecution = this._exportService
       .getExportExecutions(exportId, options)
       .then(res =>
@@ -169,7 +169,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
           },
         }),
       )
-      .catch(err => log(err));
+      .catch(err => log.error(err));
 
     return Promise.all([fetchExport, fetchExportExecution]);
   };
