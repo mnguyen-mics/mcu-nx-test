@@ -62,7 +62,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
     );
 
     const abortButton = (
-      <Button type="primary" onClick={onAbortQuery}>
+      <Button type="primary" className="m-l-10" onClick={onAbortQuery}>
         <FormattedMessage
           id="queryTool.otql.edit.abort.label"
           defaultMessage="Abort Query"

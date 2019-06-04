@@ -114,7 +114,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       queryResult: null,
     });
     this.asyncQuery = makeCancelable(
-      this._queryService.runOTQLQuery(datamartId, otqlQuery, { precision: precision, useCache: useCache }),
+      this._queryService.runOTQLQuery(datamartId, otqlQuery, { precision: precision, use_cache: useCache }),
     );
     this.asyncQuery.promise
       .then(result => {
