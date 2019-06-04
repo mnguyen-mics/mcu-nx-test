@@ -7,7 +7,7 @@ export default defineMessages({
   },
   generic: {
     id: 'errors.generic',
-    defaultMessage: 'Oops, please try to reload the page or contact support',
+    defaultMessage: 'Oops, please try to reload the page or contact your support',
   },
   notFound: {
     id: 'errors.notFound',
