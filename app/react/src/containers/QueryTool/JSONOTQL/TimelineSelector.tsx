@@ -76,7 +76,7 @@ class TimelineSelector extends React.Component<Props, State> {
               window.location.origin
             }/#/v2/o/${organisationId}/audience/timeline/user_point_id/${
               res.data.rows[Math.floor(Math.random() * res.data.rows.length)]
-            }?datamart_id=${datamartId}`,
+            }?datamartId=${datamartId}`,
           );
         }
         this.setState({
