@@ -9,8 +9,8 @@ import IntlApp from './IntlApp';
 const persistedStoreService = new PersistedStoreService();
 
 const preloadedState = localStorage.getItem('store');
-const statte = preloadedState ? JSON.parse(preloadedState) : undefined;
-const store = configureStore(statte);
+const state = preloadedState ? JSON.parse(preloadedState) : undefined;
+const store = configureStore(state);
 
 store.subscribe(() => {
   persistedStoreService.setStringItem(

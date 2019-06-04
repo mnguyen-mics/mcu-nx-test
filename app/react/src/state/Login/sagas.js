@@ -16,6 +16,7 @@ import {
 import { logIn } from './actions';
 import { getConnectedUser } from '../Session/actions';
 import { setOrgFeature } from '../Features/actions';
+import { getStoredConnectedUser } from '../Session/selectors';
 
 const persistedStoreService = new PersistedStoreService();
 
@@ -57,13 +58,9 @@ function* authorizeLoop(credentialsOrRefreshToken, isAuthenticated = false, canA
 
     let connectedUser;
 
-    const preloadedState = persistedStoreService.getStringItem('store');
-    const parsedState = preloadedState ? JSON.parse(preloadedState) : undefined;
-    const connectedUserId = (parsedState &&
-      parsedState.session &&
-      parsedState.session.connectedUser) ? parsedState.session.connectedUser.id : undefined;
+    const connectedUserId = getStoredConnectedUser && getStoredConnectedUser.id;
     if (connectedUserId) {
-      connectedUser = parsedState.session.connectedUser;
+      connectedUser = getStoredConnectedUser;
     } else {
       connectedUser = yield call(AuthService.getConnectedUser);
     }

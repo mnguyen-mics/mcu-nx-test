@@ -5,6 +5,10 @@ import { normalizeArrayOfObject } from '../../utils/Normalizer.ts';
 const getConnectedUserWorkspaces = state =>
   state.session.connectedUser.workspaces;
 
+const getStoredConnectedUser = state => {
+  return state.session.connectedUser;
+};
+
 const getDefaultWorkspaceIndex = state => {
   if (
     state.session.connectedUser.default_workspace &&
@@ -79,4 +83,5 @@ export {
   getWorkspace,
   getWorkspaces,
   getDefaultDatamart,
+  getStoredConnectedUser
 };
