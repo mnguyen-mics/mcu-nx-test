@@ -45,6 +45,7 @@ interface MapStateToProps {
 
 interface NavigatorState {
   adBlockOn: boolean;
+  error: boolean;
   datamartIds: string[];
 }
 
@@ -59,6 +60,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     super(props);
     this.state = {
       adBlockOn: false,
+      error: false,
       datamartIds: [],
     };
   }
@@ -103,6 +105,10 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       .catch(() => this.setState({ adBlockOn: true }));
   }
 
+  componentDidCatch() {
+    this.setState({ error: true })
+  }
+
   render() {
     const {
       defaultWorkspaceOrganisationId,
@@ -112,12 +118,23 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       initializationError,
     } = this.props;
 
-    if (this.state.adBlockOn) {
+    const {
+      error,
+      adBlockOn
+    } = this.state;
+
+    if (adBlockOn) {
       return <Error message={formatMessage(errorMessages.adBlock)} />;
     }
+    
     if (initializationError) {
       return <Error message={formatMessage(errorMessages.generic)} />;
     }
+
+    if (error) {
+      return <Error message={formatMessage(errorMessages.generic)} />;
+    }
+
     if (!initialized) return <Loading />; // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
     let selectorSize = 200;
