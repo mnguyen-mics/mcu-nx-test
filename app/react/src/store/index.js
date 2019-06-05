@@ -12,7 +12,7 @@ import sagas from '../state/sagas';
 // Uncomment to ajust plugged middlewares accordingly
 // const IS_PROD = process.env.NODE_ENV !== 'production';
 
-export default function configureStore() {
+export default function configureStore(preloadedState) {
 
   const middlewares = [];
 
@@ -25,7 +25,9 @@ export default function configureStore() {
 
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line no-undef, no-underscore-dangle
 
-  const store = createStore(rootReducer, /* preloadedState, */ composeEnhancers(
+  const store = preloadedState ? createStore(rootReducer, preloadedState, composeEnhancers(
+    applyMiddleware(...middlewares),
+  )) : createStore(rootReducer, composeEnhancers(
     applyMiddleware(...middlewares),
   ));
 

@@ -6,18 +6,19 @@ import MicsTagServices from '../../services/MicsTagServices.ts';
 
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService.ts';
-
+import PersistedStoreService from '../../services/PersistedStoreService.ts';
 import {
   LOG_IN,
   LOG_OUT,
   CONNECTED_USER,
   STORE_ORG_FEATURES
 } from '../action-types';
-
 import { logIn } from './actions';
 import { getConnectedUser } from '../Session/actions';
 import { setOrgFeature } from '../Features/actions';
+import { getStoredConnectedUser } from '../Session/selectors';
 
+const persistedStoreService = new PersistedStoreService();
 
 function* authorize(credentialsOrRefreshToken) {
   const response = yield call(AuthService.createAccessToken, credentialsOrRefreshToken);
@@ -55,7 +56,15 @@ function* authorizeLoop(credentialsOrRefreshToken, isAuthenticated = false, canA
       yield put(LOG_OUT);
     }
 
-    const connectedUser = yield call(AuthService.getConnectedUser);
+    let connectedUser;
+
+    const connectedUserId = getStoredConnectedUser && getStoredConnectedUser.id;
+    if (connectedUserId) {
+      connectedUser = getStoredConnectedUser;
+    } else {
+      connectedUser = yield call(AuthService.getConnectedUser);
+    }
+
     yield put(setOrgFeature(global.window.MCS_CONSTANTS.FEATURES));
     MicsTagServices.addUserAccountProperty(connectedUser.id);
     MicsTagServices.setUserProperties(connectedUser);
@@ -118,6 +127,7 @@ function* authentication() {
 
     if (signOutAction) {
       yield call(AuthService.deleteCredentials);
+      persistedStoreService.removeStringItem('store');
       if (signOutAction.meta && signOutAction.meta.redirectCb) {
         signOutAction.meta.redirectCb();
       }
