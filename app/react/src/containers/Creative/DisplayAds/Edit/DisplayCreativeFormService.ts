@@ -22,40 +22,48 @@ function normalizeProperties(properties: PropertyResourceShape[]) {
 
 const DisplayCreativeFormService = {
   initializeFormData(adRendererId: string, subtype: CreativeSubtype, defaultFormat?: string): Promise<DisplayCreativeFormData> {
-    return PluginService.getPluginVersions(adRendererId).then(resp => {
-      const lastVersion = resp.data[resp.data.length - 1];
+    
+    return PluginService.getPlugin(adRendererId).then((plugin) => {
 
-      return Promise.all([
-        PluginService.getPluginVersionProperty(
-          adRendererId,
-          lastVersion.id,
-        ),
-        PluginService.getLocalizedPluginLayout(
-          adRendererId,
-          lastVersion.id
-        )
-      ]).then(res => {
-        const properties = res[0].data;
-        const pLayoutRes = res[1];
-        const pLayout = (pLayoutRes !== null) ?
-          pLayoutRes :
-          undefined;
-
-        const creative: Partial<DisplayAdShape> = {
-          subtype,
-        }
-        if (defaultFormat) {
-          creative.format = defaultFormat;
-        }
-        return {
-          creative,
-          rendererPlugin: lastVersion,
-          properties: normalizeProperties(properties),
-          pluginLayout: pLayout,
-          repeatFields: []
-        };
+      return PluginService.getPluginVersion(adRendererId, plugin.data.current_version_id!).then(resp => {
+  
+        const lastVersion = resp.data;
+  
+        return Promise.all([
+          PluginService.getPluginVersionProperty(
+            adRendererId,
+            lastVersion.id,
+          ),
+          PluginService.getLocalizedPluginLayout(
+            adRendererId,
+            lastVersion.id
+          )
+        ]).then(res => {
+          const properties = res[0].data;
+          const pLayoutRes = res[1];
+          const pLayout = (pLayoutRes !== null) ?
+            pLayoutRes :
+            undefined;
+  
+          const creative: Partial<DisplayAdShape> = {
+            subtype,
+          }
+          if (defaultFormat) {
+            creative.format = defaultFormat;
+          }
+          return {
+            creative,
+            rendererPlugin: lastVersion,
+            properties: normalizeProperties(properties),
+            pluginLayout: pLayout,
+            repeatFields: []
+          };
+        });
       });
+
     });
+
+
   },
 
   loadFormData(creativeId: string): Promise<DisplayCreativeFormData> {
