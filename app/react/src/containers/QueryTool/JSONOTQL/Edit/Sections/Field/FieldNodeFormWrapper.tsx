@@ -22,6 +22,8 @@ export interface FieldNodeFormWrapperProps
   idToAttachDropDowns?: string;
   runtimeSchemaId: string;
   datamartId: string;
+  runFieldProposal?: (treeNodePath: number[]) => Promise<string[]>;
+  treeNodePath?: number[];
 }
 
 type Props = InjectedFormProps<
@@ -50,7 +52,7 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
   };
 
   render() {
-    const { handleSubmit, change, objectType, idToAttachDropDowns, datamartId, runtimeSchemaId } = this.props;
+    const { handleSubmit, change, objectType, idToAttachDropDowns, datamartId, runtimeSchemaId, treeNodePath, runFieldProposal } = this.props;
     return (
       <Form
         className="edit-layout ant-layout"
@@ -66,6 +68,8 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
           datamartId={datamartId}
           runtimeSchemaId={runtimeSchemaId}
           formName={this.props.form}
+          treeNodePath={treeNodePath}
+          runFieldProposal={runFieldProposal}
         />
         <Button type="primary" className="mcs-primary" htmlType="submit">Submit</Button>
       </Form>

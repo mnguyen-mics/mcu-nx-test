@@ -15,6 +15,7 @@ export interface FormSearchObjectProps {
   formItemProps?: FormItemProps;
   selectProps?: SelectProps;
   helpToolTipProps?: TooltipProps;
+  loadOnlyOnce?: boolean;
   fetchListMethod: (keyword: string) => Promise<LabeledValue[]>;
   fetchSingleMethod: (id: string) => Promise<LabeledValue>;
   small?: boolean;
@@ -25,6 +26,7 @@ interface FormSearchObjectState {
   value?: LabeledValue[];
   fetching: boolean;
   initialFetch?: boolean;
+  currentValue?: string;
 }
 
 type Props = FormSearchObjectProps & WrappedFieldProps;
@@ -53,6 +55,7 @@ class FormSearchObject extends React.Component<
     } = this.props;
 
     this.fetchInitialData(input.value);
+    this.fetchData("")
   }
 
 
@@ -82,9 +85,28 @@ class FormSearchObject extends React.Component<
 
   handleChange = (value: LabeledValue[]) => {
     const { input } = this.props;
-    this.setState({ value })
+    this.setState({ value, currentValue: undefined })
     input.onChange(value.map(i => i.key))
   }
+
+  onSearch = (val: string) => {
+    this.setState({ currentValue: val });
+  }
+
+  onInputKeyDown = () => {
+    const { input } = this.props;
+    const { value, currentValue } = this.state;
+    const formattedValue: LabeledValue[] = [];
+    if (value) {
+      formattedValue.concat(value)
+    }
+    const finalValue = [...formattedValue.map(i => i.key)];
+    if (currentValue) {
+      finalValue.push(currentValue)
+    }
+    console.log(value, currentValue, finalValue);
+    input.onChange(finalValue)
+  } 
 
   render() {
     const {
@@ -92,7 +114,8 @@ class FormSearchObject extends React.Component<
       formItemProps,
       helpToolTipProps,
       small,
-      selectProps
+      selectProps,
+      loadOnlyOnce
     } = this.props;
 
     let validateStatus = 'success' as
@@ -121,7 +144,8 @@ class FormSearchObject extends React.Component<
             placeholder={'Search'}
             defaultActiveFirstOption={false}
             filterOption={false}
-            onSearch={this.fetchData}
+            onSearch={loadOnlyOnce ? this.onSearch : this.fetchData}
+            onInputKeyDown={loadOnlyOnce ? this.onInputKeyDown : undefined}
             onChange={this.handleChange}
             notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
             style={{ width: '100%' }}

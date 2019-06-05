@@ -11,7 +11,7 @@ const Option = Select.Option;
 
 export interface FormMultiTagProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  selectProps?: RestrictedSelectProps & { options: Array<{ label: string, value: string }> };
+  selectProps?: RestrictedSelectProps & { options: Array<{ label: string, value: string, disabled?: boolean }> };
   small?: boolean;
   numericOnly?: boolean
 }

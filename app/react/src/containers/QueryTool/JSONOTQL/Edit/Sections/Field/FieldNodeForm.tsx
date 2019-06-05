@@ -1,5 +1,6 @@
 import { OptionProps } from 'antd/lib/select';
 import * as React from 'react';
+import _ from 'lodash';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -75,6 +76,8 @@ export interface FieldNodeFormProps {
   runtimeSchemaId: string;
   datamartId: string;
   formName?: string;
+  runFieldProposal?: (treeNodePath: number[]) => Promise<string[]>;
+  treeNodePath?: number[];
 }
 
 interface FormValues {
@@ -102,19 +105,38 @@ type ConditionsOperators =
 
 type FieldComparisonGenerator = ComparisonValues<any> & {
   component: React.ReactNode;
+  fetchPredicate?: Promise<{ value: string, name: string, disabled: boolean }>
 };
 
-class FieldNodeForm extends React.Component<Props> {
+interface State {
+}
+
+class FieldNodeForm extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
   @lazyInject(TYPES.ICompartmentService)
   private _compartmentService: IComparmentService;
 
+  private _computedTreeNodePath: number[];
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+    }
+    if (props.treeNodePath) {
+      this._computedTreeNodePath = props.treeNodePath;
+    }
+  }
+
   componentDidMount() {
     // if no default value compute it
-    const { formValues, expressionIndex, formChange, name } = this.props;
+    const { formValues, expressionIndex, formChange, name, treeNodePath } = this.props;
 
+    if (treeNodePath) {
+      this._computedTreeNodePath = treeNodePath;
+    }
+   
     const field = this.getField(formValues, expressionIndex);
     const directive = field ? this.getFieldDirective(field.field) : undefined;
 
@@ -129,6 +151,16 @@ class FieldNodeForm extends React.Component<Props> {
     }
   }
 
+  fetchPredicates = (treeNodePath: number[]) => {
+    const { runFieldProposal } = this.props;
+    if (!runFieldProposal) {
+      return Promise.resolve([])
+    }
+    
+    return runFieldProposal(treeNodePath)
+    
+  }
+
   componentWillReceiveProps(nextProps: Props) {
     const { formValues, expressionIndex } = this.props;
 
@@ -137,8 +169,10 @@ class FieldNodeForm extends React.Component<Props> {
       expressionIndex: nextExpressionIndex,
       formChange,
       name,
-    } = nextProps;
+      runFieldProposal,
+      treeNodePath,
 
+    } = nextProps;
     const field = this.getField(formValues, expressionIndex);
     const fieldName = field ? field.field : undefined;
     const directive = field ? this.getFieldDirective(field.field) : undefined;
@@ -150,6 +184,18 @@ class FieldNodeForm extends React.Component<Props> {
     if (fieldName !== nextFieldName && nextFieldName !== undefined) {
       const fieldType = this.getSelectedFieldType(nextFieldName);
       const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
+      console.log('going there', runFieldProposal, treeNodePath)
+      const computedFieldPosition = this.getSelectedIndex(nextFieldName);
+      console.log('computedFieldPosition', computedFieldPosition, treeNodePath)
+      if (computedFieldPosition && treeNodePath) {
+        // const [...tailTreeNodePath, headTreeNodePath] = treeNodePath;
+        const duplidatedTreeNodePath = _.map(treeNodePath, _.clone);
+        const newTreeNodePath = duplidatedTreeNodePath.splice(-1, 1);
+        newTreeNodePath.push(computedFieldPosition);
+        console.log('newTreeNodePath', newTreeNodePath)
+        this.fetchPredicates(newTreeNodePath)
+      }
+      
       formChange(
         name ? `${name}.comparison` : 'comparison',
         this.generateAvailableConditionOptions(fieldType, fieldIndexDataType, directive).defaultValue,
@@ -194,6 +240,16 @@ class FieldNodeForm extends React.Component<Props> {
     return null;
   };
 
+  getSelectedIndex = (fieldName: string | undefined) => {
+    const { availableFields } = this.props;
+
+    const possibleFieldIndex = availableFields.findIndex(i => i.name === fieldName);
+    if (possibleFieldIndex) {
+      return possibleFieldIndex;
+    }
+    return null;
+  }
+
   getSelectedFieldIndexDataType = (fieldName: string | undefined) => {
     const { availableFields } = this.props;
 
@@ -220,7 +276,10 @@ class FieldNodeForm extends React.Component<Props> {
   ): FieldComparisonGenerator => {
     const { intl } = this.props;
 
-    const shouldRenderDirective = (renderDefault: JSX.Element) => {
+    const shouldRenderDirective = (renderDefault: JSX.Element, fetchPredicates: boolean = false) => {
+      if (fetchPredicates) {
+        return this.generateReferenceTableComparisonField("COMPUTED")
+      }
       if (directives) {
         const modelAndType = getCoreReferenceTypeAndModel(directives);
         if (modelAndType) {
@@ -245,7 +304,8 @@ class FieldNodeForm extends React.Component<Props> {
       case 'String':
         return {
           ...constants.generateStringComparisonOperator(intl, fieldIndexDataType || undefined),
-          component: shouldRenderDirective(this.generateStringComparisonField()),
+          component: shouldRenderDirective(this.generateStringComparisonField(), true),
+          fetchPredicate: undefined
         };
       case 'Bool':
         return {
@@ -374,16 +434,7 @@ class FieldNodeForm extends React.Component<Props> {
   }
 
   generateStringComparisonField() {
-    const { intl, name, idToAttachDropDowns } = this.props;
-
-    let popUpProps = {};
-
-    if (idToAttachDropDowns) {
-      popUpProps = {
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
-      };
-    }
+    const { intl, name } = this.props;
 
     return (
       <FormMultiTagField
@@ -392,11 +443,6 @@ class FieldNodeForm extends React.Component<Props> {
         formItemProps={{
           label: intl.formatMessage(messages.fieldConditionValuesStringLabel),
           required: true,
-        }}
-        selectProps={{
-          options: [],
-          dropdownStyle: { display: 'none' },
-          ...popUpProps,
         }}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
@@ -543,7 +589,7 @@ class FieldNodeForm extends React.Component<Props> {
     );
   }
 
-  generateReferenceTableComparisonField(type: string, modelType: string) {
+  generateReferenceTableComparisonField(type: string, modelType?: string) {
     const {
       intl,
       name,
@@ -573,7 +619,8 @@ class FieldNodeForm extends React.Component<Props> {
     }
 
     let fetchSingleMethod = (id: string) => Promise.resolve({ key: id, label: id })
-
+    let selectProps = {};
+    let loadOnlyOnce = false;
 
     if (type && type === "CORE_OBJECT") {
       if (modelType) {
@@ -598,15 +645,21 @@ class FieldNodeForm extends React.Component<Props> {
             break;
         }
       }
+    } else if (type && type === "COMPUTED") {
+      fetchListMethod = (keywords: string) => this.fetchPredicates(this._computedTreeNodePath).then(r => r.map( e => ({ key: e, label: e })));
+      selectProps = {
+        ...selectProps, 
+        mode: 'tags'
+      }
+      loadOnlyOnce = true
     }
-
-   
     
 
-    let popUpProps = {};
+   
 
     if (idToAttachDropDowns) {
-      popUpProps = {
+      selectProps = {
+        ...selectProps,
         getPopupContainer: (e: HTMLElement) =>
           document.getElementById(idToAttachDropDowns)!,
       };
@@ -626,12 +679,15 @@ class FieldNodeForm extends React.Component<Props> {
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
         selectProps={{
-          ...popUpProps,
+          ...selectProps,
         }}
         small={true}
+        loadOnlyOnce={loadOnlyOnce}
       />
     );
   }
+
+  
 
   getFieldDirective = (fieldName: string) => {
     const {

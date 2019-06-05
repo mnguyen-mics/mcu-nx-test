@@ -7,6 +7,7 @@ import JSONQLBuilder, { QueryResult } from './JSONQLBuilder';
 import {
   ObjectTreeExpressionNodeShape,
   QueryDocument,
+  SelectionField,
 } from '../../../models/datamart/graphdb/QueryDocument';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { Loading } from '../../../components';
@@ -16,11 +17,13 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { computeFinalSchemaItem } from './domain';
+import { computeFinalSchemaItem, computeSchemaPathFromQueryPath, SchemaItem } from './domain';
 import { JSONQLBuilderContext } from './JSONQLBuilderContext';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
+import { isAggregateResult } from '../../../models/datamart/graphdb/OTQLResult';
+import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 
 export interface JSONQLBuilderContainerProps {
   datamartId: string;
@@ -49,7 +52,7 @@ interface State {
 type Props = JSONQLBuilderContainerProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<{ organisationId: string }> & InjectedFeaturesProps;
 
 class JSONQLBuilderContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.IQueryService)
@@ -206,14 +209,74 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
     });
   };
 
-handleCopy = (copying: ObjectTreeExpressionNodeShape) => {
-  this.setState(prevState => {
-    return {
-      ...prevState,
-      copyQuery: copying
+  runFieldProposal = (treenodePath: number[]): Promise<string[]> => {
+    const {datamartId, isTrigger, hasFeature} = this.props;
+    const {queryHistory: {present: query}, objectTypes} = this.state;
+
+    if (!hasFeature('audience.segment_builder.reference_table')) {
+      return Promise.resolve([]);
     }
-  })
-}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+    const computedSchema = objectTypes.length
+      ? computeFinalSchemaItem(
+          objectTypes,
+          'UserPoint',
+          !isTrigger,
+          isTrigger ? isTrigger : false,
+        )
+      : undefined;
+
+    const computedSchemaPathFromQueryPath = computeSchemaPathFromQueryPath(
+      query,
+      treenodePath,
+      computedSchema
+    );
+
+    console.log("running field proposal", treenodePath, computedSchemaPathFromQueryPath, computedSchema)
+
+    const computedSelectQuery = (path: number[], schema?: SchemaItem): SelectionField[] => {
+      if (!schema) {
+        throw new Error('please provide a schema');
+      }
+      if (path.length === 1) {
+        const [currentP] = path;
+        return [{ name: schema.fields[currentP].name, directives: [{ name: "map" }] }]
+      }
+      const [currentPath, ...remainingPaths] = path;
+      const newSchema = schema.fields[currentPath] as SchemaItem;
+      return [{ name: newSchema.name,selections: computedSelectQuery(remainingPaths, newSchema) }]
+    }
+    
+    return this._queryService.runJSONOTQLQuery(
+      datamartId,
+      {
+        operations: [{ selections: computedSelectQuery(computedSchemaPathFromQueryPath, computedSchema)}],
+        from: 'UserPoint',
+        where: query
+      },
+      { use_cache: true }
+    ).then(d => {
+      if (isAggregateResult(d.data.rows)) {
+        return d.data.rows[0]
+      } else {
+        throw new Error('err')
+      }
+    })
+    .then(d => {
+      return d.aggregations.buckets[0]
+    })
+    .then(d => d.buckets.map(e => e.key))
+    .catch(() => ([]))
+  }
+
+  handleCopy = (copying: ObjectTreeExpressionNodeShape) => {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        copyQuery: copying
+      }
+    })
+  }
 
 
   runQuery = (_datamartId?: string) => {
@@ -304,6 +367,7 @@ handleCopy = (copying: ObjectTreeExpressionNodeShape) => {
               query: query,
               schema: computedSchema,
               isTrigger: !!this.props.isTrigger,
+              runFieldProposal: this.runFieldProposal
             }}
           >
             <JSONQLBuilder
@@ -334,7 +398,9 @@ export default compose<Props, JSONQLBuilderContainerProps>(
   withRouter,
   injectIntl,
   injectNotifications,
+  injectFeatures,
   connect(state => ({
     getWorkspace: SessionHelper.getWorkspace,
   })),
+  
 )(JSONQLBuilderContainer);

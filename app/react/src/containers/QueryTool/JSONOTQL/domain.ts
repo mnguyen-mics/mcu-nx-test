@@ -529,7 +529,7 @@ export interface FieldEnhancedInfo extends FieldInfoResource {
   closestParentType: string;
 }
 
-type Field = FieldInfoEnhancedResource | SchemaItem | FieldInfoResource
+export type Field = FieldInfoEnhancedResource | SchemaItem | FieldInfoResource
 
 export interface SchemaItem {
   id: string;
