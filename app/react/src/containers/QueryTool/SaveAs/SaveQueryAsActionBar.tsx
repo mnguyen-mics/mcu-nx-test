@@ -130,6 +130,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
        {convertToOtql && this.state.conversionModalVisible && <Convert2Otql 
           onOk={closeConversionModal}
           onCancel={closeConversionModal}
+          footer={null}
           visible={this.state.conversionModalVisible}
           convertQuery={convertToOtql}
         />}

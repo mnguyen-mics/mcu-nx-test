@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 import { FormattedMessage } from 'react-intl';
 import { DataResponse } from '../../../services/ApiService';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { compose } from 'recompose';
-import { Loading } from '../../../components';
+import Code from '../../../components/Markdown/Renderers/Code';
 
 export interface Convert2OtqlProps extends ModalProps {
   convertQuery: () => Promise<DataResponse<QueryResource>>;
@@ -65,8 +65,8 @@ class Convert2Otql extends React.Component<Props, State> {
           />
         }
       >
-        { loading ? <Loading /> : undefined }
-        {query ? query.query_text : undefined}
+        { loading ? <Spin size={"small"} /> : undefined }
+        {query ? <Code language="otql" value={query.query_text} /> : undefined}
       </Modal>
     );
   }
