@@ -12,8 +12,6 @@ const preloadedState = localStorage.getItem('store');
 const state = preloadedState ? JSON.parse(preloadedState) : undefined;
 const store = configureStore(state);
 
-console.log(state, store)
-
 store.subscribe(() => {
   persistedStoreService.setStringItem(
     'store',
