@@ -1,5 +1,5 @@
-import { beginNode, edge12, node4 } from './../Builder/domain';
-import { AutomationResource } from '../../../models/automations/automations';
+import { beginNode, edge12, node4, generateBeginNode } from './../Builder/domain';
+import { AutomationResource, QueryInputEvaluationMode, QueryInputEvaluationPeriodUnit } from '../../../models/automations/automations';
 import { StorylineNodeModel } from '../Builder/domain';
 
 export interface EditAutomationParam {
@@ -25,3 +25,19 @@ export const INITIAL_AUTOMATION_DATA: AutomationFormData = {
     ],
   },
 };
+
+export const generateInitialAutomationData = (type: QueryInputEvaluationMode, n?: number, p?: QueryInputEvaluationPeriodUnit) => {
+  return {
+    automation: {},
+    automationTreeData: {
+      node: generateBeginNode(type, n, p),
+      out_edges: [
+        {
+          in_edge: edge12,
+          node: node4,
+          out_edges: [],
+        },
+      ],
+    },
+  }
+}

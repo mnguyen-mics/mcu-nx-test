@@ -507,9 +507,9 @@ export class AutomationFormService implements IAutomationFormService {
         y: node.y,
         type: 'QUERY_INPUT',
         query_id: queryId,
-        evaluation_mode: 'LIVE',
-        evaluation_period: null,
-        evaluation_period_unit: null
+        evaluation_mode: node.evaluation_mode,
+        evaluation_period: node.evaluation_period,
+        evaluation_period_unit: node.evaluation_period_unit
       };
       resourceId = node.query_id  && !isFakeId(node.query_id) ? node.query_id : undefined;
     } else if (isAbnNode(node)) {

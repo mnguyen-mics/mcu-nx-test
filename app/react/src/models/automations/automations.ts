@@ -65,13 +65,17 @@ export interface EmailCampaignNodeResource extends ScenarioNodeResource {
   initialFormData: EmailCampaignAutomationFormData;
 }
 
+export type QueryInputEvaluationPeriodUnit = 'MINUTE' | 'HOUR' | 'DAY' | 'WEEK' | 'MONTH';
+
+export type QueryInputEvaluationMode = 'LIVE' | 'PERIODIC';
+
 export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
   formData: Partial<QueryResource>;
   query_id: string;
-  evaluation_mode?: string;
-  evaluation_period?: string;
-  evaluation_period_unit?: string;
+  evaluation_mode?: QueryInputEvaluationMode;
+  evaluation_period?: number;
+  evaluation_period_unit?: QueryInputEvaluationPeriodUnit;
 }
 
 export interface ABNNodeResource extends ScenarioNodeResource {

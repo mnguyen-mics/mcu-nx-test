@@ -59,6 +59,10 @@ const messages = defineMessages({
     id: 'automation.builder.node.remove',
     defaultMessage: 'Remove',
   },
+  settings: {
+    id: 'automation.builder.node.settings',
+    defaultMessage: 'Settings',
+  },
 });
 
 type Props = AutomationNodeProps & InjectedDrawerProps & InjectedIntlProps;
@@ -123,6 +127,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     }
     
   }
+
+ 
   
 
   editNode = () => {
@@ -294,6 +300,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       content.push((
         <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+      content.push((
+        <div key="settings" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.settings} />
         </div>
       ))
 

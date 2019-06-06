@@ -8,6 +8,8 @@ import {
   ABNNodeResource,
   QueryInputNodeResource,
   WaitNodeResource,
+  QueryInputEvaluationMode,
+  QueryInputEvaluationPeriodUnit,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
@@ -428,6 +430,24 @@ export const beginNode: ScenarioNodeShape = {
   formData: {
   },
 };
+
+export const generateBeginNode = (type: QueryInputEvaluationMode, evaluationPeriod?: number, evaluationPeriodUnit?: QueryInputEvaluationPeriodUnit): ScenarioNodeShape => {
+  if (type === 'PERIODIC' && evaluationPeriod && evaluationPeriodUnit) {
+    return {
+      id: beginNodeId,
+      name: 'Enter automation',
+      scenario_id: '',
+      type: 'QUERY_INPUT',
+      query_id: baseQueryId,
+      evaluation_mode: 'PERIODIC',
+      evaluation_period: evaluationPeriod,
+      evaluation_period_unit: evaluationPeriodUnit,
+      formData: {
+      },
+    }
+  }
+  return beginNode
+}
 
 export const node4: ScenarioNodeShape = {
   id: endNodeId,

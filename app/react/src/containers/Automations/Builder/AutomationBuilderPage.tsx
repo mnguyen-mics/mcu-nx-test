@@ -17,9 +17,11 @@ import AutomationBuilderContainer from './AutomationBuilderContainer';
 import { DatamartSelector } from '../../Datamart';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
-import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
+import { AutomationFormData, INITIAL_AUTOMATION_DATA, generateInitialAutomationData } from '../Edit/domain';
 
 import { IAutomationFormService } from '../Edit/AutomationFormService';
+import AutomationTemplateSelector from './AutomationTemplateSelector';
+import { QueryInputEvaluationMode, QueryInputEvaluationPeriodUnit } from '../../../models/automations/automations';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
@@ -33,6 +35,7 @@ interface MapStateToProps {
 interface State {
   isLoading: boolean;
   automationFormData: AutomationFormData;
+  type?: 'LIVE' | 'PERIODIC';
 }
 
 type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
@@ -182,6 +185,11 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     return history.push(url);
   };
 
+  hasSelectedType = (type: QueryInputEvaluationMode, n?: number, p?: QueryInputEvaluationPeriodUnit) => {
+    const newInitialValues = generateInitialAutomationData(type, n, p)
+    this.setState({ type, automationFormData: newInitialValues })
+  }
+
   render() {
     const {
       connectedUser,
@@ -193,7 +201,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const { automationFormData, isLoading } = this.state;
+    const { automationFormData, isLoading, type } = this.state;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       if (selection.storage_model_version === 'v201506') {
@@ -233,15 +241,8 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       );
     }
 
-    return selectedDatamart ? (
-      <AutomationBuilderContainer
-        datamartId={selectedDatamart.id}
-        automationFormData={automationFormData}
-        saveOrUpdate={this.saveAutomation}
-        loading={isLoading}
-      />
-    ) : (
-      <DatamartSelector
+    if (!selectedDatamart) {
+      return (<DatamartSelector
         onSelectDatamart={handleOnSelectDatamart}
         actionbarProps={{
           paths: [
@@ -250,6 +251,30 @@ class AutomationBuilderPage extends React.Component<Props, State> {
             },
           ],
         }}
+      />)
+    }
+
+    if (!type) {
+      return (
+        <AutomationTemplateSelector
+          onSelectTemplate={this.hasSelectedType}
+          actionbarProps={{
+            paths: [
+              {
+                name: intl.formatMessage(messages.automationBuilder),
+              },
+            ],
+          }}
+        />
+      )
+    }
+
+    return (
+      <AutomationBuilderContainer
+        datamartId={selectedDatamart.id}
+        automationFormData={automationFormData}
+        saveOrUpdate={this.saveAutomation}
+        loading={isLoading}
       />
     );
   }
