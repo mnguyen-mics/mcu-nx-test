@@ -1,7 +1,7 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable camelcase */
 import { delay } from 'redux-saga';
-import { call, put, take, race, fork, all } from 'redux-saga/effects';
+import { call, put, take, race, fork, all, select } from 'redux-saga/effects';
 import MicsTagServices from '../../services/MicsTagServices.ts';
 
 import log from '../../utils/Logger';
@@ -58,9 +58,9 @@ function* authorizeLoop(credentialsOrRefreshToken, isAuthenticated = false, canA
 
     let connectedUser;
 
-    const connectedUserId = getStoredConnectedUser && getStoredConnectedUser.id;
-    if (connectedUserId) {
-      connectedUser = getStoredConnectedUser;
+    const connectedUserStored = yield select(getStoredConnectedUser);
+    if (connectedUserStored && connectedUserStored.id) {
+      connectedUser = connectedUserStored;
     } else {
       connectedUser = yield call(AuthService.getConnectedUser);
     }
