@@ -3,7 +3,6 @@ import {
 } from '../action-types';
 
 const defaultLoginState = {
-  isRequesting: false,
   hasError: false,
   error: {},
 };
@@ -15,11 +14,9 @@ const login = (state = defaultLoginState, action) => {
     case LOG_IN.REQUEST:
       return {
         ...state,
-        isRequesting: true,
       };
     case LOG_IN.FAILURE:
       return {
-        isRequesting: false,
         hasError: true,
         error: action.payload,
       };

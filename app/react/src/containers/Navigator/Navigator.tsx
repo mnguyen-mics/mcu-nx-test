@@ -139,7 +139,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     let selectorSize = 200;
 
-    const nbWorkspaces = Object.keys(this.props.workspaces).length;
+    const nbWorkspaces = this.props.workspaces ? Object.keys(this.props.workspaces).length : 0;
 
     if (nbWorkspaces > 20) {
       selectorSize = 800;

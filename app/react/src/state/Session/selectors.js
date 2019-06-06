@@ -5,8 +5,14 @@ import { normalizeArrayOfObject } from '../../utils/Normalizer.ts';
 const getConnectedUserWorkspaces = state =>
   state.session.connectedUser.workspaces;
 
+const getStoredConnectedUser = state => {
+  return state && state.session && state.session.connectedUser;
+};
+
 const getDefaultWorkspaceIndex = state => {
   if (
+    state.session &&
+    state.session.connectedUser &&
     state.session.connectedUser.default_workspace &&
     state.session.connectedUser.default_workspace !== -1
   ) {
@@ -19,13 +25,13 @@ const getDefaultWorkspace = createSelector(
   state => state.session.connectedUser.workspaces,
   getDefaultWorkspaceIndex,
   (userWorkspaces, defaultWorkspaceIndex) =>
-    userWorkspaces[defaultWorkspaceIndex],
+    userWorkspaces && userWorkspaces.length && userWorkspaces[defaultWorkspaceIndex],
 );
 
 const getWorkspaces = createSelector(
   getConnectedUserWorkspaces,
   (userWorkspaces) => {
-    return normalizeArrayOfObject(userWorkspaces, 'organisation_id');
+    return userWorkspaces && userWorkspaces.length && normalizeArrayOfObject(userWorkspaces, 'organisation_id');
   },
 );
 
@@ -79,4 +85,5 @@ export {
   getWorkspace,
   getWorkspaces,
   getDefaultDatamart,
+  getStoredConnectedUser
 };

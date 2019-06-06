@@ -15,6 +15,7 @@ import log from '../../../utils/Logger';
 
 import { logIn } from '../../../state/Login/actions';
 import { Credentials } from '../../../services/AuthService';
+import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 
 const logoUrl = require('../../../assets/images/logo.png');
 const FormItem = Form.Item;
@@ -55,11 +56,13 @@ const messages = defineMessages({
   },
 });
 
-interface LoginProps {}
+interface State {
+  isRequesting: boolean;
+}
 
 interface MapStateToProps {
-  isRequesting: boolean;
   hasError: boolean;
+  connectedUser: UserProfileResource;
 }
 
 // see https://redux-actions.js.org/api/createaction
@@ -68,21 +71,31 @@ interface MapDispatchToProps {
   logInRequest: (
     payloadCreator: Credentials & { remember: boolean },
     metaCreator: { redirect: () => void },
-  ) => void;
+  ) => Promise<void>;
 }
 
-type Props = LoginProps &
-  MapStateToProps &
+type Props = MapStateToProps &
   MapDispatchToProps &
   InjectedIntlProps &
   FormComponentProps &
   RouteComponentProps<{}>;
 
-class Login extends React.Component<Props> {
+class Login extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isRequesting: false,
+    };
+  }
+
   handleSubmit = (e: React.FormEvent<any>) => {
     e.preventDefault();
     const { from } = this.props.location.state || { from: { pathname: '/' } };
     const { match } = this.props;
+
+    this.setState({
+      isRequesting: true,
+    });
 
     const redirect = () => {
       log.debug(`Redirect from ${match.url} to ${from.pathname}`);
@@ -91,14 +104,29 @@ class Login extends React.Component<Props> {
 
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.props.logInRequest(
-          {
-            email: values.email,
-            password: values.password,
-            remember: values.remember,
-          },
-          { redirect },
-        );
+        this.setState({
+          isRequesting: true,
+        });
+        this.props
+          .logInRequest(
+            {
+              email: values.email,
+              password: values.password,
+              remember: values.remember,
+            },
+            { redirect },
+          )
+          .then(() => {
+            this.setState({
+              isRequesting: false,
+            });
+          })
+          .catch(error => {
+            this.setState({
+              isRequesting: false,
+            });
+            log.error(error);
+          });
       }
     });
   };
@@ -106,10 +134,14 @@ class Login extends React.Component<Props> {
   render() {
     const {
       form: { getFieldDecorator },
-      isRequesting,
       hasError,
       intl,
+      connectedUser,
     } = this.props;
+
+    const { isRequesting } = this.state;
+
+    const hasFetchedConnectedUser = connectedUser && connectedUser.id;
 
     const errorMsg = hasError ? (
       <Alert
@@ -159,7 +191,7 @@ class Login extends React.Component<Props> {
                   type="primary"
                   htmlType="submit"
                   className="mcs-primary login-form-button"
-                  loading={isRequesting}
+                  loading={isRequesting && !hasFetchedConnectedUser}
                 >
                   <FormattedMessage {...messages.logInText} />
                 </Button>
@@ -188,7 +220,7 @@ class Login extends React.Component<Props> {
 
 const mapStateToProps = (state: any) => ({
   hasError: state.login.hasError,
-  isRequesting: state.login.isRequesting,
+  connectedUser: state.session.connectedUser,
 });
 
 const mapDispatchToProps = {
