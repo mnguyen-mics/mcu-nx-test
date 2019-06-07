@@ -109,6 +109,18 @@ class GeneralFormSection extends React.Component<Props, State> {
           title: 'User Profile',
           value: 'USER_PROFILE',
         },
+        {
+          title: 'User Identifiers Association',
+          value: 'USER_IDENTIFIERS_ASSOCIATION_DECLARATIONS'
+        },
+        {
+          title: 'User Identifiers Dissociation',
+          value: 'USER_IDENTIFIERS_DISSOCIATION_DECLARATIONS'
+        },
+        {
+          title: 'User Identifiers Deletion',
+          value: 'USER_IDENTIFIERS_DELETION'
+        }
       ];
     };
 
