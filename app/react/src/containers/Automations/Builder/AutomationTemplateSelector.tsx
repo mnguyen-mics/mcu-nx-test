@@ -45,7 +45,7 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
           <div className="presentation">
             <MenuPresentational
               title={formatMessage(messages.live)}
-              type="user"
+              type="user-pixel"
               select={onClickOnLive}
             />
             <div className="separator">
