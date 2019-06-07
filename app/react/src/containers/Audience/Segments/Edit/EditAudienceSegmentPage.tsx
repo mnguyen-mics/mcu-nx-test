@@ -253,7 +253,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return undefined;
     };
 
-    if (audienceSegmentFormData.query) {
+    if (
+      !audienceSegmentFormData.query &&
+      audienceSegmentFormData.audienceSegment.type === 'USER_QUERY'
+    ) {
+      message.error(intl.formatMessage(messagesMap.noQueryText));
+    } else {
       this.setState({ loading: true });
 
       const datamartId = selectedDatamart
@@ -308,8 +313,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           this.setState({ loading: false });
           notifyError(err);
         });
-    } else {
-      message.error(intl.formatMessage(messagesMap.noQueryText));
     }
   };
 
