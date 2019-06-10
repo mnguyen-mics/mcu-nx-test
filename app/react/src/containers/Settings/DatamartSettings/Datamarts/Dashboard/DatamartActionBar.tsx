@@ -21,12 +21,19 @@ class DatamartActionBar extends React.Component<Props> {
         },
       },
       history,
+      location: {
+        pathname,
+        search
+      }
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/settings/datamart/my_datamart/${datamartId}/edit`;
 
     history.push({
       pathname: editUrl,
+      state: {
+        from: `${pathname}${search}`
+      }
     });
   };
 
@@ -47,7 +54,7 @@ class DatamartActionBar extends React.Component<Props> {
 
     return (
       <Actionbar paths={breadcrumbPaths}>
-        <Button onClick={this.onEditClick}>
+        <Button onClick={this.onEditClick} type="primary" className={"mcs-primary"}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.edit} />
         </Button>
