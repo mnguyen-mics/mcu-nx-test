@@ -175,6 +175,14 @@ define(['app-setup', 'angularAMD', 'jquery'],
     ]);
 
     angularAMD.bootstrap(app, true, document.body);
-    window.angularLoaded = true;
+    var interval = window.setInterval(function() {
+      if (!window.angular.element(document.body).injector()) {
+        window.angularLoaded = false;
+      } else {
+        window.angularLoaded = true;
+        window.clearInterval(interval);
+      }
+    }, 100);
+    
     return app;
   });
