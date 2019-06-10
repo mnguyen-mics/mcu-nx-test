@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import * as React from 'react';
 import lodash from 'lodash';
+import cuid from 'cuid';
 import { injectDrawer, DrawableContent, DrawerSize } from './index';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -142,11 +143,12 @@ class DrawerManager extends React.Component<
         const displayInForeground = lastElement;
 
         drawersWithOverlay.push(
-          <div className={'drawer-overlay'} onClick={this.handleClickOnBackground} />,
+          <div key={cuid()} className={'drawer-overlay'} onClick={this.handleClickOnBackground} />,
         );
 
         drawersWithOverlay.push(
           <div
+            key={cuid()}
             ref={div => {
               this.drawerDiv = div;
             }}
@@ -164,9 +166,9 @@ class DrawerManager extends React.Component<
       },
     );
 
-    drawersWithOverlay.push(<div className="drawer-overlay" />);
+    drawersWithOverlay.push(<div key={cuid()} className="drawer-overlay" />);
     drawersWithOverlay.push(
-      <div className="drawer" style={drawerStyles.ready} />,
+      <div key={cuid()} className="drawer" style={drawerStyles.ready} />,
     );
 
     return (
