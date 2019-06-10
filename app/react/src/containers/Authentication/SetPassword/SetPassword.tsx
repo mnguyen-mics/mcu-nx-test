@@ -155,7 +155,7 @@ class SetPassword extends React.Component<Props, State> {
                       ),
                     },
                   ],
-                })(<Input type="password" className="reset-password-input" />)}
+                })(<Input type="password" className="reset-password-input" autoComplete="off" />)}
               </FormItem>
             }
             <div className="password-text">
@@ -169,7 +169,7 @@ class SetPassword extends React.Component<Props, State> {
                     message: intl.formatMessage(defaultErrorMessages.required),
                   },
                 ],
-              })(<Input type="password" className="reset-password-input" />)}
+              })(<Input type="password" className="reset-password-input" autoComplete="off" />)}
             </FormItem>
             <Row type="flex" align="middle" justify="center">
               <Col span={12} className="reset-password-back-to-login">

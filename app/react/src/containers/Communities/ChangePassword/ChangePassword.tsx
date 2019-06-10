@@ -250,6 +250,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
                       type="password"
                       className="reset-password-input"
                       onChange={this.requestValidity}
+                      autoComplete="off"
                     />,
                   )}
                 </FormItem>
@@ -267,7 +268,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
                       ),
                     },
                   ],
-                })(<Input type="password" className="reset-password-input" />)}
+                })(<Input type="password" className="reset-password-input" autoComplete="off"/>)}
               </FormItem>
               <Row type="flex" align="middle" justify="center">
                 <Col span={12}>
