@@ -7,13 +7,11 @@ import DatamartActionBar from './DatamartActionBar';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import DatamartHeader from './DatamartHeader';
 import DatamartService from '../../../../../services/DatamartService';
-import { Row, Col, Layout } from 'antd';
-import { MobileApplicationsListPage } from '../../MobileApplications/List';
-import { SitesListPage } from '../../Sites/List';
-import CleaningRulesContainer from '../../CleaningRules/List/CleaningRulesContainer';
-import CompartmentContainer from '../../Compartments/List/CompartmentsContainer';
-import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
+import { Row, Col } from 'antd';
 import { notifyError } from '../../../../../state/Notifications/actions';
+import McsTabs from '../../../../../components/McsTabs';
+import DatamartConfigTab from './DatamartConfigTab';
+import DatamartObjectViewTab from './DatamartObjectViewTab';
 
 const { Content } = Layout;
 
@@ -26,8 +24,7 @@ type Props = RouteComponentProps<{
 interface State {
   datamart?: DatamartResource;
   isLoading: boolean;
-  cleaningRulesFilter: PaginationSearchSettings;
-  compartmentsFilter: PaginationSearchSettings;
+
 }
 
 class DatamartDashboardPage extends React.Component<Props, State> {
@@ -36,14 +33,6 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
-      cleaningRulesFilter: {
-        currentPage: 1,
-        pageSize: 10,
-      },
-      compartmentsFilter: {
-        currentPage: 1,
-        pageSize: 10,
-      },
     };
   }
 
@@ -71,38 +60,6 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       });
   };
 
-  onCleaningRulesFilterChange = (newFilter: PaginationSearchSettings) => {
-    const {
-      currentPage,
-      pageSize,
-    } = newFilter;
-
-    const cleaningRulesFilter = {
-      currentPage: currentPage,
-      pageSize: pageSize
-    };
-
-    this.setState({
-      cleaningRulesFilter: cleaningRulesFilter
-    });
-  };
-
-  onCompartmentsFilterChange = (newFilter: PaginationSearchSettings) => {
-    const {
-      currentPage,
-      pageSize,
-    } = newFilter;
-
-    const compartmentsFilter = {
-      currentPage: currentPage,
-      pageSize: pageSize,
-    };
-
-    this.setState({
-      compartmentsFilter: compartmentsFilter
-    });
-  };
-
   render() {
     const {
       match: {
@@ -113,8 +70,6 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     const {
       datamart,
       isLoading,
-      cleaningRulesFilter,
-      compartmentsFilter
     } = this.state;
 
     return (
@@ -127,37 +82,20 @@ class DatamartDashboardPage extends React.Component<Props, State> {
             </Col>
           </Row>
           <Row>
-            <Col>
-              <MobileApplicationsListPage
-                datamartId={datamartId}
-              />
-            </Col>
+            <McsTabs 
+              items={[
+                {
+                  title: "Datamart Configuration",
+                  display: <DatamartConfigTab datamartId={datamartId} />
+                },
+                {
+                  title: "Object View Configuration",
+                  display: <DatamartObjectViewTab datamartId={datamartId} />
+                }
+              ]}
+            />
           </Row>
-          <Row>
-            <Col>
-              <SitesListPage
-                datamartId={datamartId}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <CompartmentContainer 
-                datamartId={datamartId}
-                filter={compartmentsFilter}
-                onFilterChange={this.onCompartmentsFilterChange}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <CleaningRulesContainer
-                datamartId={datamartId}
-                filter={cleaningRulesFilter}
-                onFilterChange={this.onCleaningRulesFilterChange}
-              />
-            </Col>
-          </Row>
+         
         </div>
       </div>
     );

@@ -27,6 +27,15 @@ const RuntimeSchemaService = {
       `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}`,
     );
   },
+
+  getRuntimeSchemaText(
+    datamartId: string,
+    runtimeSchemaId: string,
+  ): Promise<string> {
+    return ApiService.getRequest(
+      `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/text`,
+    );
+  },
   
   getObjectTypes(
     datamartId: string,

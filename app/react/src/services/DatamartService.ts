@@ -71,7 +71,7 @@ const DatamartService = {
   },
   getUserAccountCompartments(
     datamartId: string,
-    options = {}
+    options: object = {}
   ): Promise<
     DataListResponse<UserAccountCompartmentDatamartSelectionResource>
   > {
