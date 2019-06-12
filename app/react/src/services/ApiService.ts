@@ -140,6 +140,10 @@ function request(
       return response.status < 400
         ? Promise.resolve()
         : Promise.reject(response);
+    } else if (contentType && contentType.indexOf('text/plain') !== -1) {
+      return response.status < 400
+        ? response.text()
+        : Promise.reject(response)
     }
 
     // Considered as a json response by default

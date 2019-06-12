@@ -5,7 +5,6 @@ import { RuntimeSchemaResource } from '../../../../../models/datamart/graphdb/Ru
 import moment from 'moment';
 import { Loading } from '../../../../../components';
 
-
 export interface IDatamartObjectViewTabProps {
   datamartId: string;
 }
@@ -79,30 +78,36 @@ export default class DatamartObjectViewTab extends React.Component<
     } = this.state;
 
     return (
-      <div>
-        <Row>
-          <Col span={6}>
+      <div className="schema-editor">
+        <Row className="title-line">
+          <Col className="title" span={6}>History</Col>
+          <Col className="title" span={18}>Schema</Col>
+        </Row>
+        <Row className="content-line">
+          <Col span={6} className="content">
             {loadingList ? (
               <Spin />
             ) : (
-              schemas.map(s => {
-                return (
-                  <div
-                    key={s.id}
-                    className={
-                      selectedSchema && selectedSchema.id === s.id
-                        ? 'selected'
-                        : undefined
-                    }
-                  >
-                    <span>{s.status}</span>{' '}
-                    <span>{moment(s.creation_date).fromNow()}</span>
-                  </div>
-                );
-              })
+              schemas
+                .sort((a, b) => b.creation_date - a.creation_date)
+                .map(s => {
+                  return (
+                    <div
+                      key={s.id}
+                      className={
+                        selectedSchema && selectedSchema.id === s.id
+                          ? 'list-item selected'
+                          : "list-item"
+                      }
+                    > 
+                      <span className="title">{s.status}</span>
+                      <span className="date">{moment(s.creation_date).fromNow()}</span>
+                    </div>
+                  );
+                })
             )}
           </Col>
-          <Col span={18}>
+          <Col span={18} className="content">
             {loadingSingle ? <Loading /> : <div>{selectedSchemaText}</div>}
           </Col>
         </Row>

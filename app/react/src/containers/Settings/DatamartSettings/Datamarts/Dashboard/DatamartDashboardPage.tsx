@@ -76,26 +76,32 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       <div className="ant-layout">
         <DatamartActionBar />
         <div className="ant-layout">
-          <Row className="mcs-content-channel">
-            <Col className="mcs-datamart-title">
-              <DatamartHeader datamart={datamart} isLoading={isLoading} />
-            </Col>
-          </Row>
-          <Row>
-            <McsTabs 
-              items={[
-                {
-                  title: "Datamart Configuration",
-                  display: <DatamartConfigTab datamartId={datamartId} />
-                },
-                {
-                  title: "Object View Configuration",
-                  display: <DatamartObjectViewTab datamartId={datamartId} />
-                }
-              ]}
-            />
-          </Row>
-         
+          <div className="ant-layout-content">
+            <Row className="mcs-content-channel">
+              <Col className="mcs-datamart-title">
+                <DatamartHeader
+                  datamart={datamart}
+                  isLoading={isLoading}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <McsTabs 
+                items={[
+                  {
+                    title: "Datamart Configuration",
+                    display: <DatamartConfigTab datamartId={datamartId} />
+                  },
+                  {
+                    title: "Object View Configuration",
+                    display: <DatamartObjectViewTab datamartId={datamartId} />
+                  }
+                ]}
+                tabBarStyle={{ margin: "0 40px" }}
+              />
+            </Row>
+          
+          </div>
         </div>
       </div>
     );
