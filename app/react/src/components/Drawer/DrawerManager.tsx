@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import * as React from 'react';
 import lodash from 'lodash';
-import cuid from 'cuid';
 import { injectDrawer, DrawableContent, DrawerSize } from './index';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -82,15 +81,12 @@ class DrawerManager extends React.Component<
   };
 
   canProgramaticallyCloseDrawer = () => {
-    const {
-      drawableContents
-    } = this.props;
+    const { drawableContents } = this.props;
     const last = lodash.last(drawableContents);
     return last ? !last.isModal : true;
-  }
+  };
 
   handleOnKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    
     if (event.key === 'Escape' && this.canProgramaticallyCloseDrawer()) {
       this.props.closeNextDrawer();
     }
@@ -112,9 +108,9 @@ class DrawerManager extends React.Component<
 
   handleClickOnBackground = () => {
     if (this.canProgramaticallyCloseDrawer()) {
-      this.props.closeNextDrawer()
+      this.props.closeNextDrawer();
     }
-  }
+  };
 
   render() {
     const { drawableContents } = this.props;
@@ -143,12 +139,14 @@ class DrawerManager extends React.Component<
         const displayInForeground = lastElement;
 
         drawersWithOverlay.push(
-          <div key={cuid()} className={'drawer-overlay'} onClick={this.handleClickOnBackground} />,
+          <div
+            className={'drawer-overlay'}
+            onClick={this.handleClickOnBackground}
+          />,
         );
 
         drawersWithOverlay.push(
           <div
-            key={cuid()}
             ref={div => {
               this.drawerDiv = div;
             }}
@@ -166,9 +164,9 @@ class DrawerManager extends React.Component<
       },
     );
 
-    drawersWithOverlay.push(<div key={cuid()} className="drawer-overlay" />);
+    drawersWithOverlay.push(<div className="drawer-overlay" />);
     drawersWithOverlay.push(
-      <div key={cuid()} className="drawer" style={drawerStyles.ready} />,
+      <div className="drawer" style={drawerStyles.ready} />,
     );
 
     return (
@@ -185,5 +183,5 @@ const mapStatetoProps = (state: DrawerStore) => ({
 
 export default compose<DrawerManagerProps, {}>(
   connect(mapStatetoProps),
-  injectDrawer
+  injectDrawer,
 )(DrawerManager);
