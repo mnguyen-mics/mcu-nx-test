@@ -101,6 +101,11 @@ class Monitoring extends React.Component<Props, State> {
             monitoringData: monitoringData,
             isLoading: false,
           });
+        })
+        .catch(() => {
+          this.setState({
+            isLoading: false,
+          });
         });
     }
   }
@@ -143,6 +148,11 @@ class Monitoring extends React.Component<Props, State> {
           .then(monitoringData => {
             this.setState({
               monitoringData: monitoringData,
+              isLoading: false,
+            });
+          })
+          .catch(() => {
+            this.setState({
               isLoading: false,
             });
           });
