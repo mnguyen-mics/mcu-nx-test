@@ -12,9 +12,14 @@ const preloadedState = localStorage.getItem('store');
 
 const state = preloadedState ? JSON.parse(preloadedState) : undefined;
 
+// reseting part of the state that are causing errors (we reset the initial state as well as the drawers that cannot be poped back)
 if (state && state.app) {
   state.app.initialized = false;
   state.app.initializationError = false;
+}
+
+if (state && state.drawableContents) {
+  state.drawableContents = []
 }
 
 const store = configureStore(state);

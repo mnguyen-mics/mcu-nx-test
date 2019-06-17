@@ -135,32 +135,35 @@ class DrawerManager extends React.Component<
         { component: WrappedComponent, additionalProps, size, ...others },
         index,
       ) => {
-        const lastElement = index === drawableContents.length - 1;
-        const displayInForeground = lastElement;
-
-        drawersWithOverlay.push(
-          <div
-            className={'drawer-overlay'}
-            onClick={this.handleClickOnBackground}
-          />,
-        );
-
-        drawersWithOverlay.push(
-          <div
-            ref={div => {
-              this.drawerDiv = div;
-            }}
-            tabIndex={0}
-            className={'drawer'}
-            style={
-              displayInForeground
-                ? drawerStyles.foreground
-                : drawerStyles.background
-            }
-          >
-            <WrappedComponent {...additionalProps} {...others} />
-          </div>,
-        );
+        // can be undefined when booting from store
+        if (WrappedComponent) {
+          const lastElement = index === drawableContents.length - 1;
+          const displayInForeground = lastElement;
+  
+          drawersWithOverlay.push(
+            <div
+              className={'drawer-overlay'}
+              onClick={this.handleClickOnBackground}
+            />,
+          );
+  
+          drawersWithOverlay.push(
+            <div
+              ref={div => {
+                this.drawerDiv = div;
+              }}
+              tabIndex={0}
+              className={'drawer'}
+              style={
+                displayInForeground
+                  ? drawerStyles.foreground
+                  : drawerStyles.background
+              }
+            >
+              <WrappedComponent {...additionalProps} {...others} />
+            </div>,
+          );
+        }
       },
     );
 
