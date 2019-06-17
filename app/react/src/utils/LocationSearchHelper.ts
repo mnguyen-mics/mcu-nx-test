@@ -139,8 +139,7 @@ export const FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
     serialize: (value: string[]) => value.join(','),
     isValid: (query: Index<string>) =>
       !query.statuses || query.statuses.split(',').length > 0,
-  },
-  ...KEYWORD_SEARCH_SETTINGS,
+  }
 ];
 
 export interface FiltersSearchSettings extends KeywordSearchSettings {

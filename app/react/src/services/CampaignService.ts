@@ -9,7 +9,7 @@ export interface GetCampaignsOptions extends PaginatedApiParam {
   keywords?: string;
   status?: CampaignStatus[];
   archived?: boolean;
-  label_ids?: string[];
+  label_id?: string[];
   order_by?: string[];
   automated?: boolean;
 }

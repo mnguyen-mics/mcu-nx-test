@@ -1,6 +1,8 @@
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-const messages = defineMessages({
+export const messages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
   searchPlaceholder: {
     id: 'campaign.email.search.placeholder',
     defaultMessage: 'Search Email Campaigns',
@@ -75,8 +77,37 @@ const messages = defineMessages({
   },
   emailCampaignsExportTitle: {
     id: 'campaign.email.list.export.title',
-    defaultMessage: 'Email Campaigns Export'
-  }
+    defaultMessage: 'Email Campaigns Export',
+  },
+  confirmArchiveModalTitle: {
+    id: 'campaign.email.archive.confirm_modal.title',
+    defaultMessage: 'Are you sure you want to archive this Campaign ?',
+  },
+  confirmArchiveModalContent: {
+    id: 'campaign.email.archive.confirm_modal.content',
+    defaultMessage:
+      "By archiving this Campaign all its activities will be suspended. You'll be able to recover it from the archived campaign filter.",
+  },
+  confirmArchiveModalOk: {
+    id: 'campaign.email.archive.confirm_modal.ok',
+    defaultMessage: 'Archive now',
+  },
+  confirmArchiveModalCancel: {
+    id: 'campaign.email.archive.confirm_modal.cancel',
+    defaultMessage: 'Cancel',
+  },
+  fetchReportError: {
+    id: 'campaign.email.error.fetch-report',
+    defaultMessage: 'Cannot load campaign statistics',
+  },
+  fetchCampaignError: {
+    id: 'campaign.email.error.fetch-campaign',
+    defaultMessage: 'Cannot load campaign data',
+  },
+  filterByLabel: {
+    id: 'campaign.email.filterBy.label',
+    defaultMessage: 'Filter By Label',
+  },
 });
 
 export default messages;

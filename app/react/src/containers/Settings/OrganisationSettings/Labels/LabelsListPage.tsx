@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Row, Button, Modal, Input, Alert, Layout } from 'antd';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { withMcsRouter } from '../../../Helpers';
 import * as labelsActions from '../../../../state/Labels/actions';
 import { Label } from '../../../Labels/Labels';
 import LabelsService from '../../../../services/LabelsService';
@@ -13,6 +12,7 @@ import messages from './messages';
 
 import LabelsTable, { Filters } from './LabelsTable';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import { withRouter } from 'react-router';
 
 
 const { Content } = Layout;
@@ -201,7 +201,7 @@ class LabelsListPage extends React.Component<LabelsListProps & InjectedNotificat
 
 export default compose(
   injectIntl,
-  withMcsRouter,
+  withRouter,
   injectNotifications,
   connect(
     (state: any) => ({
