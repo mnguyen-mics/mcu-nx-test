@@ -5,7 +5,8 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { TableViewFilters } from '../../../../components/TableView';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import messages from './messages';
-import { Icon, Modal, Row } from 'antd';
+import queryString from 'query-string';
+import { Icon, Modal, Row, } from 'antd';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { Import } from '../../../../models/imports/imports';
 import { Link } from 'react-router-dom';
@@ -22,15 +23,14 @@ import {
   updateSearch,
   PaginationSearchSettings,
   SearchSetting,
-  KEYWORD_SEARCH_SETTINGS,
   parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import DatamartService from '../../../../services/DatamartService';
 import { notifyError } from '../../../../state/Notifications/actions';
 import { Index } from '../../../../utils';
 import { ImportFilterParams } from './ImportsContent';
+import { IMPORTS_SEARCH_SETTINGS } from './constants';
 
 interface ImportsContentContainerFilter extends PaginationSearchSettings {
   datamartId: string;
@@ -78,8 +78,7 @@ class ImportsContentContainer extends React.Component<
       match: {
         params: { organisationId },
       },
-      location: { search, pathname },
-      history,
+      noFilterDatamart,
     } = this.props;
 
     this.setState({
@@ -89,13 +88,7 @@ class ImportsContentContainer extends React.Component<
     const options = {
       allow_administrator: true,
     };
-    if (!isSearchValid(search, this.getSearchSetting())) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(search, this.getSearchSetting()),
-        state: { reloadDataSource: true },
-      });
-    } else {
+    if (!noFilterDatamart) {
       DatamartService.getDatamarts(organisationId, options)
         .then(res => {
           this.setState({
@@ -109,9 +102,9 @@ class ImportsContentContainer extends React.Component<
           });
           notifyError(err);
         });
-
-      this.fetchImport(datamartId, filter);
     }
+
+    this.fetchImport(datamartId, filter);
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -121,6 +114,8 @@ class ImportsContentContainer extends React.Component<
       match: {
         params: { organisationId },
       },
+      location: { search },
+      noFilterDatamart,
     } = this.props;
 
     const {
@@ -129,24 +124,36 @@ class ImportsContentContainer extends React.Component<
       match: {
         params: { organisationId: nextOrganisationId },
       },
+      location: { search: nextSearch },
     } = nextProps;
+
+    const keywords = queryString.parse(nextSearch).keywords;
 
     if (
       filter.currentPage !== nextFilter.currentPage ||
       filter.pageSize !== nextFilter.pageSize ||
       filter.keywords !== nextFilter.keywords ||
       datamartId !== nextDatamartId ||
-      organisationId !== nextOrganisationId
+      organisationId !== nextOrganisationId ||
+      !compareSearches(search, nextSearch)
     ) {
       const options = {
         allow_administrator: true,
       };
-      DatamartService.getDatamarts(nextOrganisationId, options).then(res => {
-        this.setState({
-          datamarts: res.data,
+
+      const newFilter = {
+        ...nextFilter,
+        keywords: keywords,
+      };
+      if (!noFilterDatamart) {
+        DatamartService.getDatamarts(nextOrganisationId, options).then(res => {
+          this.setState({
+            datamarts: res.data,
+          });
         });
-      });
-      this.fetchImport(nextDatamartId, nextFilter);
+      }
+
+      this.fetchImport(nextDatamartId, newFilter);
     }
   }
 
@@ -230,7 +237,7 @@ class ImportsContentContainer extends React.Component<
   };
 
   getSearchSetting(): SearchSetting[] {
-    return [...KEYWORD_SEARCH_SETTINGS];
+    return [...IMPORTS_SEARCH_SETTINGS];
   }
 
   updateLocationSearch = (params: Index<any>) => {

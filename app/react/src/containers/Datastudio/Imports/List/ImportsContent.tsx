@@ -13,6 +13,7 @@ import {
   compareSearches,
   PaginationSearchSettings,
   KeywordSearchSettings,
+  DatamartSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
 import { IMPORTS_SEARCH_SETTINGS } from './constants';
 import { Index } from '../../../../utils';
@@ -21,7 +22,8 @@ import ImportsContentContainer from './ImportsContentContainer';
 
 export interface ImportFilterParams
   extends PaginationSearchSettings,
-    KeywordSearchSettings {}
+    KeywordSearchSettings,
+    DatamartSearchSettings {}
 
 interface ImportContentState {
   loading: boolean;
@@ -75,7 +77,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         state: { reloadDataSource: true },
       });
     } else {
-      const { currentPage, pageSize, datamartId, keywords  } = parseSearch(
+      const { currentPage, pageSize, datamartId, keywords } = parseSearch(
         search,
         this.getSearchSetting(organisationId),
       );

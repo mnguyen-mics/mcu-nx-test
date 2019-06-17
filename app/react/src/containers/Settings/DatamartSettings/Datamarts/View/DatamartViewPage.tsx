@@ -7,7 +7,7 @@ import DatamartActionBar from './DatamartActionBar';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import DatamartHeader from './DatamartHeader';
 import DatamartService from '../../../../../services/DatamartService';
-import { Row, Col } from 'antd';
+import { Row, Col, Layout } from 'antd';
 import { MobileApplicationsListPage } from '../../MobileApplications/List';
 import { SitesListPage } from '../../Sites/List';
 import ImportsContentContainer from '../../../../Datastudio/Imports/List/ImportsContentContainer';
@@ -16,7 +16,12 @@ import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHel
 import { notifyError } from '../../../../../state/Notifications/actions';
 import { ImportFilterParams } from '../../../../Datastudio/Imports/List/ImportsContent';
 
-type Props = RouteComponentProps<{ organisationId: string; datamartId: string }> &
+const { Content } = Layout;
+
+type Props = RouteComponentProps<{
+  organisationId: string;
+  datamartId: string;
+}> &
   InjectedIntlProps;
 
 interface State {
@@ -27,7 +32,6 @@ interface State {
 }
 
 class DatamartViewPage extends React.Component<Props, State> {
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -35,12 +39,12 @@ class DatamartViewPage extends React.Component<Props, State> {
       importsContentFilter: {
         currentPage: 1,
         pageSize: 10,
-        keywords: ''
+        keywords: '',
       },
       cleaningRulesFilter: {
         currentPage: 1,
         pageSize: 10,
-      }
+      },
     };
   }
 
@@ -56,10 +60,12 @@ class DatamartViewPage extends React.Component<Props, State> {
 
   fetchDatamart = (datamartId: string) => {
     DatamartService.getDatamart(datamartId)
-      .then(res => this.setState({
-        datamart: res.data,
-        isLoading: false
-      }))
+      .then(res =>
+        this.setState({
+          datamart: res.data,
+          isLoading: false,
+        }),
+      )
       .catch(err => {
         this.setState({ isLoading: false });
         notifyError(err);
@@ -67,16 +73,12 @@ class DatamartViewPage extends React.Component<Props, State> {
   };
 
   onImportsContentFilterChange = (newFilter: ImportFilterParams) => {
-    const {
-      currentPage,
-      pageSize,
-      keywords
-    } = newFilter;
+    const { currentPage, pageSize, keywords } = newFilter;
 
     const importsContentFilter = {
       currentPage: currentPage,
       pageSize: pageSize,
-      keywords: keywords
+      keywords: keywords,
     };
 
     this.setState({
@@ -85,18 +87,15 @@ class DatamartViewPage extends React.Component<Props, State> {
   };
 
   onCleaningRulesFilterChange = (newFilter: PaginationSearchSettings) => {
-    const {
-      currentPage,
-      pageSize,
-    } = newFilter;
+    const { currentPage, pageSize } = newFilter;
 
     const cleaningRulesFilter = {
       currentPage: currentPage,
-      pageSize: pageSize
+      pageSize: pageSize,
     };
 
     this.setState({
-      cleaningRulesFilter: cleaningRulesFilter
+      cleaningRulesFilter: cleaningRulesFilter,
     });
   };
 
@@ -120,32 +119,27 @@ class DatamartViewPage extends React.Component<Props, State> {
         <div className="ant-layout">
           <Row className="mcs-content-channel">
             <Col className="mcs-datamart-title">
-              <DatamartHeader
-                datamart={datamart}
-                isLoading={isLoading}
-              />
+              <DatamartHeader datamart={datamart} isLoading={isLoading} />
             </Col>
           </Row>
           <Row>
-            <Col>
-              <ImportsContentContainer
-                datamartId={datamartId}
-                filter={importsContentFilter}
-                onFilterChange={this.onImportsContentFilterChange}
-                noFilterDatamart={true}
-              />
-            </Col>
+            <div className="ant-layout">
+              <Content className="mcs-content-container">
+                <ImportsContentContainer
+                  datamartId={datamartId}
+                  filter={importsContentFilter}
+                  onFilterChange={this.onImportsContentFilterChange}
+                  noFilterDatamart={true}
+                />
+              </Content>
+            </div>
           </Row>
           <Row gutter={24} className="mcs-content-channel">
             <Col span={12}>
-              <MobileApplicationsListPage
-                datamartId={datamartId}
-              />
+              <MobileApplicationsListPage datamartId={datamartId} />
             </Col>
             <Col span={12}>
-              <SitesListPage
-                datamartId={datamartId}
-              />
+              <SitesListPage datamartId={datamartId} />
             </Col>
           </Row>
           <Row>
@@ -161,12 +155,10 @@ class DatamartViewPage extends React.Component<Props, State> {
       </div>
     );
   }
-
 }
 
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  injectNotifications)(
-    DatamartViewPage
-  );
+  injectNotifications,
+)(DatamartViewPage);
