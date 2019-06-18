@@ -164,7 +164,7 @@ class EditApiTokenPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.apiTokens),
-        url: `/v2/o/${organisationId}/settings/account/api_tokens`,
+        path: `/v2/o/${organisationId}/settings/account/api_tokens`,
       },
       {
         name: apiTokenName

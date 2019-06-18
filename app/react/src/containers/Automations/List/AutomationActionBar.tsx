@@ -96,7 +96,7 @@ class AutomationActionBar extends React.Component<
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.automationListTitle),
-        url: `/v2/o/${organisationId}/automations/list`,
+        path: `/v2/o/${organisationId}/automations/list`,
       },
     ];
 

@@ -25,7 +25,7 @@ class CatalogActionBar extends React.Component<
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.catalog),
-        url: `/v2/o/${organisationId}/library/catalog`,
+        path: `/v2/o/${organisationId}/library/catalog`,
       },
     ];
 

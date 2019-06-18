@@ -220,7 +220,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.imports),
-        url: `/v2/o/${organisationId}/datastudio/imports`,
+        path: `/v2/o/${organisationId}/datastudio/imports`,
       },
       {
         name: importName,

@@ -66,7 +66,7 @@ class PartitionActionBar extends React.Component<
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.partitions),
-        url: `/v2/o/${organisationId}/audience/partitions`,
+        path: `/v2/o/${organisationId}/audience/partitions`,
       },
       {
         name: partitionName,

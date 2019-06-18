@@ -174,7 +174,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.placementLists),
-        url: `/v2/o/${organisationId}/library/placementlist`,
+        path: `/v2/o/${organisationId}/library/placementlist`,
       },
       {
         name: placementListName,

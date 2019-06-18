@@ -140,7 +140,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.monitoring),
-        url: `/v2/o/${organisationId}/audience/timeline`,
+        path: `/v2/o/${organisationId}/audience/timeline`,
       },
     ];
 

@@ -83,7 +83,7 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messagesMap.displayAds),
-        url: `/v2/o/${organisationId}/creatives/display`,
+        path: `/v2/o/${organisationId}/creatives/display`,
       },
     ];
 

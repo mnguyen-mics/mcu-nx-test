@@ -178,7 +178,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.assets),
-        url: `/v2/o/${organisationId}/library/assets`,
+        path: `/v2/o/${organisationId}/library/assets`,
       },
     ];
 

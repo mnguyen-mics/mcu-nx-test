@@ -235,7 +235,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       {
         key: formatMessage(segmentMessages.audienceSegment),
         name: formatMessage(segmentMessages.audienceSegment),
-        url: `/v2/o/${organisationId}/audience/segments`,
+        path: `/v2/o/${organisationId}/audience/segments`,
       },
       {
         key: segment ? (segment as AudienceSegmentResource).name : '',

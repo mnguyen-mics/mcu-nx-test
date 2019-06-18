@@ -88,7 +88,7 @@ class ExportsActionbar extends React.Component<
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: 'Exports', url: `/v2/o/${organisationId}/datastudio/exports` },
+      { name: 'Exports', path: `/v2/o/${organisationId}/datastudio/exports` },
       { name: exportObject && exportObject.name ? exportObject.name : '' },
     ];
 

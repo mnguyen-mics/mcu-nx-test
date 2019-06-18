@@ -67,7 +67,7 @@ class EmailActionBar extends React.Component<JoinedProps> {
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.emailTemplates),
-        url: `/v2/o/${organisationId}/creatives/email`,
+        path: `/v2/o/${organisationId}/creatives/email`,
       },
     ];
 
