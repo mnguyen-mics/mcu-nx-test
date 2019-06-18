@@ -158,7 +158,7 @@ class EditUserPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.users),
-        url: `/v2/o/${organisationId}/settings/organisation/users`,
+        path: `/v2/o/${organisationId}/settings/organisation/users`,
       },
       {
         name: userName,

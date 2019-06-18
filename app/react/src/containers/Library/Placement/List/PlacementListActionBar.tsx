@@ -27,7 +27,7 @@ class PlacementListsActionbar extends React.Component<
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.placements),
-        url: `/v2/o/${organisationId}/library/placementlist`,
+        path: `/v2/o/${organisationId}/library/placementlist`,
       },
     ];
 

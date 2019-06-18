@@ -283,7 +283,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.exports),
-        url: `/v2/o/${organisationId}/datastudio/exports`,
+        path: `/v2/o/${organisationId}/datastudio/exports`,
       },
       {
         name: exportName,

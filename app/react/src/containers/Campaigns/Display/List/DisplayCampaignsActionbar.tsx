@@ -249,7 +249,7 @@ class DisplayCampaignsActionbar extends React.Component<
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messagesMap.breadCrumbPath),
-        url: `/v2/o/${organisationId}/campaigns/display`,
+        path: `/v2/o/${organisationId}/campaigns/display`,
       },
     ];
 

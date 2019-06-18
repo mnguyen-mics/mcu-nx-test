@@ -28,7 +28,7 @@ class ImportsActionbar extends React.Component<
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.imports),
-        url: `/v2/o/${organisationId}/datastudio/imports`,
+        path: `/v2/o/${organisationId}/datastudio/imports`,
       },
     ];
 

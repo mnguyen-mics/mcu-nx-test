@@ -27,7 +27,7 @@ class KeywordActionbar extends React.Component<
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.keywords),
-        url: `/v2/o/${organisationId}/library/keywordslist`,
+        path: `/v2/o/${organisationId}/library/keywordslist`,
       },
     ];
 

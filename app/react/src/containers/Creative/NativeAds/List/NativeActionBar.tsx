@@ -75,7 +75,7 @@ class NativeActionBar extends React.Component<JoinedProps> {
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.breadCrumbNativeListTitle),
-        url: `/v2/o/${organisationId}/creatives/native`,
+        path: `/v2/o/${organisationId}/creatives/native`,
       },
     ];
 

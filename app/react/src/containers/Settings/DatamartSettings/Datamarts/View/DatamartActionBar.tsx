@@ -41,7 +41,7 @@ class DatamartActionBar extends React.Component<Props> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.datamart),
-        url: `/v2/o/${organisationId}/settings/datamart/my_datamart`,
+        path: `/v2/o/${organisationId}/settings/datamart/my_datamart`,
       },
     ];
 

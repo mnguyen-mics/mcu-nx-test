@@ -70,7 +70,7 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.AUDIENCE_PARTITIONS),
-        url: `/v2/o/${organisationId}/audience/partitions`,
+        path: `/v2/o/${organisationId}/audience/partitions`,
       },
     ];
 

@@ -26,7 +26,7 @@ class OverviewActionBar extends Component<JoinedProps> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.overview),
-        url: `/v2/o/${organisationId}/analytics/overview`,
+        path: `/v2/o/${organisationId}/analytics/overview`,
       },
     ];
 

@@ -163,7 +163,7 @@ class DealListPage extends React.Component<JoinedProps, DealListPageState> {
       const breadcrumbPaths = [
         {
           name: intl.formatMessage(messages.dealLists),
-          url: `/v2/o/${organisationId}/library/deallist`,
+          path: `/v2/o/${organisationId}/library/deallist`,
         },
         {
           name: keywordListName,

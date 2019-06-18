@@ -224,7 +224,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.audienceSegment),
-        url: `/v2/o/${organisationId}/audience/segments`,
+        path: `/v2/o/${organisationId}/audience/segments`,
       },
     ];
 

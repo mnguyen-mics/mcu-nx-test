@@ -243,7 +243,7 @@ class ExportsActionbar extends React.Component<
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.goals),
-        url: `/v2/o/${organisationId}/campaigns/goals`,
+        path: `/v2/o/${organisationId}/campaigns/goals`,
       },
       { name: goal && goal.name ? goal.name : '' },
     ];

@@ -153,7 +153,7 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.goals),
-        url: `/v2/o/${organisationId}/campaigns/goals`,
+        path: `/v2/o/${organisationId}/campaigns/goals`,
       },
     ];
 

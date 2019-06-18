@@ -209,7 +209,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: 'Imports', url: `/v2/o/${organisationId}/datastudio/imports` },
+      { name: 'Imports', path: `/v2/o/${organisationId}/datastudio/imports` },
       { name: importObject && importObject.name ? importObject.name : '' },
     ];
 

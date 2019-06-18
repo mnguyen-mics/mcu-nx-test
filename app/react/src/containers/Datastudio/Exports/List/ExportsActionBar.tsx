@@ -27,7 +27,7 @@ class ExportsActionbar extends React.Component<
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.exports),
-        url: `/v2/o/${organisationId}/datastudio/exports`,
+        path: `/v2/o/${organisationId}/datastudio/exports`,
       },
     ];
 

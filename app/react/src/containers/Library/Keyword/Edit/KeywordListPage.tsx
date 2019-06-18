@@ -187,7 +187,7 @@ class KeywordListPage extends React.Component<
       const breadcrumbPaths = [
         {
           name: intl.formatMessage(messages.keywordLists),
-          url: `/v2/o/${organisationId}/library/keywordslist`,
+          path: `/v2/o/${organisationId}/library/keywordslist`,
         },
         {
           name: keywordListName,

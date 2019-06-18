@@ -27,7 +27,7 @@ class DealListActionbar extends React.Component<
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.dealList),
-        url: `/v2/o/${organisationId}/library/deallist`,
+        path: `/v2/o/${organisationId}/library/deallist`,
       },
     ];
 

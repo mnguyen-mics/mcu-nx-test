@@ -534,12 +534,12 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.display),
-        url: `/v2/o/${organisationId}/campaigns/display`,
+        path: `/v2/o/${organisationId}/campaigns/display`,
         key: formatMessage(messages.display),
       },
       {
         name: displayCampaign ? displayCampaign.name : '',
-        url: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
+        path: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
         key: displayCampaign && displayCampaign.id,
       },
       {
