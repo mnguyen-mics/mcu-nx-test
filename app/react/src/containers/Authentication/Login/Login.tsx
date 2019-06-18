@@ -184,14 +184,22 @@ class Login extends React.Component<Props, State> {
                       message: intl.formatMessage(messages.passwordRequired),
                     },
                   ],
-                })(<Input type="password" className="login-input" autoComplete="off" />)}
+                })(
+                  <Input
+                    type="password"
+                    className="login-input"
+                    autoComplete="off"
+                  />,
+                )}
               </FormItem>
               <FormItem>
                 <Button
                   type="primary"
                   htmlType="submit"
                   className="mcs-primary login-form-button"
-                  loading={isRequesting && !hasFetchedConnectedUser}
+                  loading={
+                    isRequesting && !hasFetchedConnectedUser && !hasError
+                  }
                 >
                   <FormattedMessage {...messages.logInText} />
                 </Button>
