@@ -25,9 +25,17 @@ export const messages = defineMessages({
     id: 'settings.datamart.seriveUsageReport.table.column.providerName',
     defaultMessage: 'Provider Name',
   },
+  campaignId: {
+    id: 'settings.datamart.seriveUsageReport.table.column.campaignId',
+    defaultMessage: 'Campaign Id',
+  },
   campaignName: {
     id: 'settings.datamart.seriveUsageReport.table.column.campaignName',
     defaultMessage: 'Campaign Name',
+  },
+  subCampaignId: {
+    id: 'settings.datamart.seriveUsageReport.table.column.subCampaignId',
+    defaultMessage: 'Sub Campaign Id',
   },
   serviceName: {
     id: 'settings.datamart.seriveUsageReport.table.column.serviceName',
@@ -94,8 +102,13 @@ class ServiceUsageReportTable extends React.Component<Props, State> {
         isHideable: false,
       },
       {
+        intlMessage: messages.subCampaignId,
+        key: 'sub_campaign_id',
+        isHideable: false,
+      },
+      {
         intlMessage: messages.serviceName,
-        key: 'serivce_name',
+        key: 'service_name',
         isHideable: false,
       },
       {

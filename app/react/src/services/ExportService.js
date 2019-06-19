@@ -693,6 +693,7 @@ const exportServiceUsageReportList = (organisationId, data, filter, formatMessag
     { name: 'provider_name', translation: formatMessage(messages.providerName) },
     { name: 'campaign_id', translation: formatMessage(exportMessages.campaignId) },
     { name: 'campaign_name', translation: formatMessage(messages.campaignName) },
+    { name: 'sub_campaign_id', translation: formatMessage(messages.subCampaignId) },
     { name: 'service_id', translation: formatMessage(exportMessages.serviceId) },
     { name: 'service_name', translation: formatMessage(messages.serviceName) },
     { name: 'service_element_id', translation: formatMessage(exportMessages.serviceElementId) },
