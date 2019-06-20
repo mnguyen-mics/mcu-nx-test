@@ -70,13 +70,19 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
       this.setState(
         {
           dataSource: resp.data.report_view.rows.map(row => {
+
             return {
+              provider_organisation_id: row[0],
               provider_name: row[1],
+              campaign_id: row[2],
               campaign_name: row[3],
-              serivce_name: row[5],
-              service_element_name: row[7],
-              usage: row[8],
+              sub_campaign_id: row[4],
+              service_name: row[5],
+              service_element_id: row[7],
+              service_element_name: row[8],
+              usage: row[9],
             };
+
           }),
         },
         () => {
@@ -102,6 +108,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
       'provider_name',
       'campaign_id',
       'campaign_name',
+      'sub_campaign_id',
       'service_id',
       'service_name',
       'service_element_id',
@@ -136,11 +143,12 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
             provider_name: row[1],
             campaign_id: row[2],
             campaign_name: row[3],
-            service_id: row[4],
-            service_name: row[5],
-            service_element_id: row[6],
-            segment_name: row[7],
-            unit_count: row[8],
+            sub_campaign_id: row[4],
+            service_id: row[5],
+            service_name: row[6],
+            service_element_id: row[7],
+            segment_name: row[8],
+            unit_count: row[9],
           };
         }),
       ).then(data => {
