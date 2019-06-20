@@ -14,8 +14,6 @@ import DatamartConfigTab from './DatamartConfigTab';
 import DatamartObjectViewTab from './DatamartObjectViewTab';
 import DatamartActivity from './DatamartActivity';
 
-const { Content } = Layout;
-
 type Props = RouteComponentProps<{
   organisationId: string;
   datamartId: string;
@@ -25,11 +23,9 @@ type Props = RouteComponentProps<{
 interface State {
   datamart?: DatamartResource;
   isLoading: boolean;
-
 }
 
 class DatamartDashboardPage extends React.Component<Props, State> {
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -68,10 +64,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const {
-      datamart,
-      isLoading,
-    } = this.state;
+    const { datamart, isLoading } = this.state;
 
     return (
       <div className="ant-layout">
@@ -80,32 +73,28 @@ class DatamartDashboardPage extends React.Component<Props, State> {
           <div className="ant-layout-content">
             <Row className="mcs-content-channel">
               <Col className="mcs-datamart-title">
-                <DatamartHeader
-                  datamart={datamart}
-                  isLoading={isLoading}
-                />
+                <DatamartHeader datamart={datamart} isLoading={isLoading} />
               </Col>
             </Row>
             <Row>
-              <McsTabs 
+              <McsTabs
                 items={[
                   {
-                    title: "Datamart Configuration",
-                    display: <DatamartConfigTab datamartId={datamartId} />
+                    title: 'Datamart Configuration',
+                    display: <DatamartConfigTab datamartId={datamartId} />,
                   },
                   {
-                    title: "Datamart Activity",
-                    display: <DatamartActivity datamartId={datamartId} />
+                    title: 'Datamart Activity',
+                    display: <DatamartActivity datamartId={datamartId} />,
                   },
                   {
-                    title: "Object View Configuration",
-                    display: <DatamartObjectViewTab datamartId={datamartId} />
+                    title: 'Object View Configuration',
+                    display: <DatamartObjectViewTab datamartId={datamartId} />,
                   },
                 ]}
-                tabBarStyle={{ margin: "0 40px" }}
+                tabBarStyle={{ margin: '0 40px' }}
               />
             </Row>
-          
           </div>
         </div>
       </div>
@@ -116,6 +105,5 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  injectNotifications)(
-    DatamartDashboardPage
-  );
+  injectNotifications,
+)(DatamartDashboardPage);

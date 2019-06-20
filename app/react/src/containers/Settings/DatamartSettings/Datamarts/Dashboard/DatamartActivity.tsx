@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import { SitesListPage } from '../../Sites/List';
 import { ImportFilterParams } from '../../../../Datastudio/Imports/List/ImportsContent';
 import ImportsContentContainer from '../../../../Datastudio/Imports/List/ImportsContentContainer';
 
@@ -49,19 +48,14 @@ export default class DatamartConfigTab extends React.Component<
 
     return (
       <div>
-        <Row>
-          <Col>
+        <Row className="ant-layout">
+          <Col className="mcs-content-container ant-layout-content">
             <ImportsContentContainer
               datamartId={datamartId}
               filter={importFilters}
               onFilterChange={this.onImportFilterChange}
               noFilterDatamart={true}
             />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <SitesListPage datamartId={datamartId} />
           </Col>
         </Row>
       </div>
