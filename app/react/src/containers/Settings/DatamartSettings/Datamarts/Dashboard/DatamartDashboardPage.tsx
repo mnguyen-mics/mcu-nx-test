@@ -12,6 +12,7 @@ import { notifyError } from '../../../../../state/Notifications/actions';
 import McsTabs from '../../../../../components/McsTabs';
 import DatamartConfigTab from './DatamartConfigTab';
 import DatamartObjectViewTab from './DatamartObjectViewTab';
+import DatamartActivity from './DatamartActivity';
 
 const { Content } = Layout;
 
@@ -93,9 +94,13 @@ class DatamartDashboardPage extends React.Component<Props, State> {
                     display: <DatamartConfigTab datamartId={datamartId} />
                   },
                   {
+                    title: "Datamart Activity",
+                    display: <DatamartActivity datamartId={datamartId} />
+                  },
+                  {
                     title: "Object View Configuration",
                     display: <DatamartObjectViewTab datamartId={datamartId} />
-                  }
+                  },
                 ]}
                 tabBarStyle={{ margin: "0 40px" }}
               />
