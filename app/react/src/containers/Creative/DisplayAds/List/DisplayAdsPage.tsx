@@ -114,13 +114,15 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       isUpdatingAuditStatus: true,
     });
     const tasks: Task[] = [];
+    const { notifyError } = this.props;
     creativesIds.forEach(creativeId => {
       tasks.push(() => {
         return CreativeService.getDisplayAd(creativeId)
           .then(apiResp => apiResp.data)
           .then(creative => {
             if (creative.available_user_audit_actions.includes(action)) {
-              CreativeService.makeAuditAction(creative.id, action);
+              CreativeService.makeAuditAction(creative.id, action)
+              .catch(err => notifyError(err));
             }
           });
       });
