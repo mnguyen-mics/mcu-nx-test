@@ -23,7 +23,7 @@ interface AccountIdCardProps {
 }
 
 interface State {
-  showMore: boolean;
+  expandedItems: string[];
   userAccountCompartments?: UserAccountCompartmentDatamartSelectionResource[];
   userAccountsByCompartmentId?: Dictionary<UserAccountIdentifierInfo[]>;
 }
@@ -37,7 +37,7 @@ class AccountIdCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      showMore: false,
+      expandedItems: []
     };
   }
 
@@ -133,8 +133,19 @@ class AccountIdCard extends React.Component<Props, State> {
 
     const { userAccountsByCompartmentId } = this.state;
 
-    const handleShowMore = (visible: boolean) => () => {
-      this.setState({ showMore: visible });
+    const handleShowMore = (expandedItemsKey: string) => () => {
+
+      this.setState(state => {
+        let expandedItems;
+        if (state.expandedItems.indexOf(expandedItemsKey) === -1) {
+          expandedItems = [...state.expandedItems, expandedItemsKey];
+        } else {
+          expandedItems = state.expandedItems.filter((e) => e !== expandedItemsKey)
+        }   
+        return {
+          expandedItems
+        };
+      });
     };
 
     const isLoading = userAccountsByCompartmentId === undefined;
@@ -151,9 +162,10 @@ class AccountIdCard extends React.Component<Props, State> {
               const userAccountsLength =
                 userAccountsByCompartmentId[key].length;
               const compartmentName = this.renderCompartmentName(key);
+              const userAccountsByCompartmentIdCopy = userAccountsByCompartmentId[key].slice();
               const accountsFormatted =
-                userAccountsLength > 5 && !this.state.showMore
-                  ? userAccountsByCompartmentId[key].splice(0, 5)
+                userAccountsLength > 5 && !this.state.expandedItems.find((e) => e === key)
+                  ? userAccountsByCompartmentIdCopy.splice(0, 5)
                   : userAccountsByCompartmentId[key];
               return (
                 <Row gutter={10} key={key} className="table-line border-top">
@@ -172,11 +184,11 @@ class AccountIdCard extends React.Component<Props, State> {
                     );
                   })}
                   {userAccountsLength > 5 ? (
-                    !this.state.showMore ? (
+                    !this.state.expandedItems.find((e) => e === key) ? (
                       <div className="mcs-card-footer">
                         <button
                           className="mcs-card-footer-link"
-                          onClick={handleShowMore(true)}
+                          onClick={handleShowMore(key)}
                         >
                           <FormattedMessage {...messages.viewMore} />
                         </button>
@@ -185,7 +197,7 @@ class AccountIdCard extends React.Component<Props, State> {
                       <div className="mcs-card-footer">
                         <button
                           className="mcs-card-footer-link"
-                          onClick={handleShowMore(false)}
+                          onClick={handleShowMore(key)}
                         >
                           <FormattedMessage {...messages.viewLess} />
                         </button>
