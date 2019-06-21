@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Spin } from 'antd';
+import { Row, Col, Spin, Button } from 'antd';
 import RuntimeSchemaService from '../../../../../services/RuntimeSchemaService';
 import { RuntimeSchemaResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import moment from 'moment';
@@ -80,8 +80,12 @@ export default class DatamartObjectViewTab extends React.Component<
     return (
       <div className="schema-editor">
         <Row className="title-line">
-          <Col className="title" span={6}>History</Col>
-          <Col className="title" span={18}>Schema</Col>
+          <Col className="title" span={6}>
+            {schemas.filter(s => s.status === "DRAFT").length ? undefined : <Button size="small" style={{ float: "right" }}>New Version</Button>} History
+          </Col>
+          <Col className="title" span={18}>
+            Schema {schemas.filter(s => s.status === "DRAFT").length ? undefined : <Button size="small" style={{ float: "right" }}>Publication</Button>} History
+          </Col>
         </Row>
         <Row className="content-line">
           <Col span={6} className="content">
@@ -97,11 +101,13 @@ export default class DatamartObjectViewTab extends React.Component<
                       className={
                         selectedSchema && selectedSchema.id === s.id
                           ? 'list-item selected'
-                          : "list-item"
+                          : 'list-item'
                       }
-                    > 
+                    >
                       <span className="title">{s.status}</span>
-                      <span className="date">{moment(s.creation_date).fromNow()}</span>
+                      <span className="date">
+                        {moment(s.creation_date).fromNow()}
+                      </span>
                     </div>
                   );
                 })

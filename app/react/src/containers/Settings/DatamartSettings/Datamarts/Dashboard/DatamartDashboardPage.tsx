@@ -13,12 +13,13 @@ import McsTabs from '../../../../../components/McsTabs';
 import DatamartConfigTab from './DatamartConfigTab';
 import DatamartObjectViewTab from './DatamartObjectViewTab';
 import DatamartActivity from './DatamartActivity';
+import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 
 type Props = RouteComponentProps<{
   organisationId: string;
   datamartId: string;
 }> &
-  InjectedIntlProps;
+  InjectedIntlProps & InjectedFeaturesProps;
 
 interface State {
   datamart?: DatamartResource;
@@ -62,9 +63,28 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       match: {
         params: { datamartId },
       },
+      hasFeature
     } = this.props;
 
     const { datamart, isLoading } = this.state;
+
+    const items = [
+      {
+        title: 'Datamart Configuration',
+        display: <DatamartConfigTab datamartId={datamartId} />,
+      },
+      {
+        title: 'Datamart Activity',
+        display: <DatamartActivity datamartId={datamartId} />,
+      },
+    ]
+
+    if (hasFeature("datamart.object_tree_schema")) {
+      items.push({
+        title: 'Object View Configuration',
+        display: <DatamartObjectViewTab datamartId={datamartId} />,
+      },)
+    }
 
     return (
       <div className="ant-layout">
@@ -78,20 +98,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
             </Row>
             <Row>
               <McsTabs
-                items={[
-                  {
-                    title: 'Datamart Configuration',
-                    display: <DatamartConfigTab datamartId={datamartId} />,
-                  },
-                  {
-                    title: 'Datamart Activity',
-                    display: <DatamartActivity datamartId={datamartId} />,
-                  },
-                  {
-                    title: 'Object View Configuration',
-                    display: <DatamartObjectViewTab datamartId={datamartId} />,
-                  },
-                ]}
+                items={items}
                 tabBarStyle={{ margin: '0 40px' }}
               />
             </Row>
@@ -106,4 +113,5 @@ export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectNotifications,
+  injectFeatures,
 )(DatamartDashboardPage);
