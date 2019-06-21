@@ -24,7 +24,7 @@ export default class Counter extends React.Component<CounterProps> {
         <div className="number">
           {loading ? (
             <Spin />
-          ) : value !== undefined ? (
+          ) : (value !== undefined && value !== null) ? (
             <FormattedNumber value={value} />
           ) : (
             '--'
