@@ -19,7 +19,8 @@ const TYPES = {
   IQueryService: Symbol.for('queryService'),
   IGoalFormService: Symbol.for('goalFormService'),
   IExportService: Symbol.for('exportService'),
-  IUserDataService: Symbol.for('userDataService')
+  IUserDataService: Symbol.for('userDataService'),
+  IUsersService: Symbol.for('usersService'),
 };
 
 export { TYPES };

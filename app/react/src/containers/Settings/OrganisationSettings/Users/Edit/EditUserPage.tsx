@@ -6,9 +6,11 @@ import { message } from 'antd';
 import { Loading } from '../../../../../components/index';
 import EditUserForm from './EditUserForm';
 import { INITIAL_USER_FORM_DATA } from './domain';
-import UsersService from '../../../../../services/UsersService';
 import UserResource from '../../../../../models/directory/UserResource';
 import { notifyError } from '../../../../../state/Notifications/actions';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IUsersService } from '../../../../../services/UsersService';
 
 const messages = defineMessages({
   newUser: {
@@ -53,6 +55,9 @@ type Props = EditUserPageProps &
   RouteComponentProps<{ organisationId: string; userId: string }>;
 
 class EditUserPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IUsersService)
+  private _usersService: IUsersService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -68,7 +73,8 @@ class EditUserPage extends React.Component<Props, State> {
       },
     } = this.props;
     if (userId) {
-      UsersService.getUser(userId, organisationId)
+      this._usersService
+        .getUser(userId, organisationId)
         .then(resp => resp.data)
         .then(userData => {
           this.setState({
@@ -117,13 +123,13 @@ class EditUserPage extends React.Component<Props, State> {
     };
     let createOrUpdateUserPromise;
     if (userId) {
-      createOrUpdateUserPromise = UsersService.updateUser(
+      createOrUpdateUserPromise = this._usersService.updateUser(
         userId,
         organisationId,
         formData,
       );
     } else {
-      createOrUpdateUserPromise = UsersService.createUser(
+      createOrUpdateUserPromise = this._usersService.createUser(
         organisationId,
         formData,
       );
@@ -180,4 +186,7 @@ class EditUserPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(withRouter, injectIntl)(EditUserPage);
+export default compose<Props, {}>(
+  withRouter,
+  injectIntl,
+)(EditUserPage);

@@ -6,11 +6,13 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Layout, /*Button*/ } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import UsersService from '../../../../../services/UsersService';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import UserResource from '../../../../../models/directory/UserResource';
 import messages from './messages';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IUsersService } from '../../../../../services/UsersService';
 
 const { Content } = Layout;
 
@@ -36,6 +38,9 @@ class UserList extends React.Component<
 > {
   state = initialState;
 
+  @lazyInject(TYPES.IUsersService)
+  private _usersService: IUsersService;
+
   archiveUser = (recommenderId: string) => {
     return Promise.resolve();
   };
@@ -45,7 +50,7 @@ class UserList extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      UsersService.getUsers(organisationId, options).then(
+      this._usersService.getUsers(organisationId, options).then(
         (results: { data: UserResource[]; total?: number; count: number }) => {
           this.setState({
             loading: false,
