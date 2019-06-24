@@ -71,11 +71,12 @@ const DatamartService = {
   },
   getUserAccountCompartments(
     datamartId: string,
+    options: object = {}
   ): Promise<
     DataListResponse<UserAccountCompartmentDatamartSelectionResource>
   > {
     const endpoint = `datamarts/${datamartId}/compartments`;
-    return ApiService.getRequest(endpoint);
+    return ApiService.getRequest(endpoint, options);
   },
   getSources(datamartId: string): Promise<DataListResponse<DatamartResource>> {
     const endpoint = `datamarts/${datamartId}/sources`;

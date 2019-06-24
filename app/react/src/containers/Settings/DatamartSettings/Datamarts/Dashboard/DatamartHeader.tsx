@@ -5,6 +5,7 @@ import { compose } from 'recompose';
 import { withRouter } from 'react-router';
 import ContentHeader from '../../../../../components/ContentHeader';
 
+
 export interface DatamartHeaderProps {
   datamart?: DatamartResource;
   isLoading?: boolean;

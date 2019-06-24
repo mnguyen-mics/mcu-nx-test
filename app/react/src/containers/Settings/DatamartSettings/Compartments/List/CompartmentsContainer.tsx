@@ -2,35 +2,34 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { TableViewFilters } from '../../../../components/TableView';
+import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
-import { UserEventCleaningRuleResource } from '../../../../models/cleaningRules/CleaningRules';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import DatamartService from '../../../../services/DatamartService';
-import { PaginationSearchSettings } from '../../../../utils/LocationSearchHelper';
+import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
+import DatamartService from '../../../../../services/DatamartService';
+import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import { Layout, Row } from 'antd';
-import * as moment from 'moment';
-import 'moment-duration-format';
+import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
+import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
-interface CleaningRulesContainerState {
+interface CompartmentsContainerState {
   loading: boolean;
-  data: UserEventCleaningRuleResource[];
+  data: UserAccountCompartmentDatamartSelectionResource[];
   total: number;
 }
 
-export interface CleaningRulesContainerProps {
+export interface CompartmentsContainerProps {
   filter: PaginationSearchSettings;
   onFilterChange: (newFilter: PaginationSearchSettings) => void;
   datamartId: string;
 }
 
-type Props = CleaningRulesContainerProps &
+type Props = CompartmentsContainerProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps;
+  InjectedIntlProps & InjectedNotificationProps;
 
-class CleaningRulesContainer extends React.Component<Props, CleaningRulesContainerState> {
+class CompartmentsContainer extends React.Component<Props, CompartmentsContainerState> {
 
   constructor(props: Props) {
     super(props);
@@ -47,7 +46,7 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
       filter
     } = this.props;
 
-    this.fetchCleaningRules(datamartId, filter);
+    this.fetchCompartments(datamartId, filter);
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -65,22 +64,26 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
       (filter !== nextFilter) ||
       (datamartId !== nextDatamartId)
     ) {
-      this.fetchCleaningRules(nextDatamartId, nextFilter);
+      this.fetchCompartments(nextDatamartId, nextFilter);
     }
   }
 
-  fetchCleaningRules = (datamartId: string, filter: PaginationSearchSettings) => {
+  fetchCompartments = (datamartId: string, filter: PaginationSearchSettings) => {
     this.setState({ loading: true, }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      DatamartService.getCleaningRules(datamartId, options).then(results => {
+      DatamartService.getUserAccountCompartments(datamartId, options).then(results => {
         this.setState({
           loading: false,
           data: results.data,
           total: results.total || results.count,
         });
-      });
+      })
+      .catch(err => {
+        this.setState({ loading: false })
+        this.props.notifyError(err);
+      });;
     });
   }
 
@@ -99,35 +102,39 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
     const dataColumns = [
       {
         intlMessage: messages.id,
-        key: 'id',
+        key: 'compartment_id',
         isHideable: false,
-        render: (text: string, record: UserEventCleaningRuleResource) => (<span>{text}</span>),
+        render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (<span>{text}</span>),
       },
       {
-        intlMessage: messages.lifeDuration,
-        key: 'life_duration',
+        intlMessage: messages.default,
+        key: 'default',
         isHideable: false,
-        render: (text: string, record: UserEventCleaningRuleResource) => (
+        render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
           <span>
-            {moment.duration(text).format()}
+            {record.default ? 'yes' : 'no'}
           </span>
         ),
       },
       {
-        intlMessage: messages.type,
-        key: 'type',
+        intlMessage: messages.name,
+        key: 'name',
         isHideable: false,
-        render: (text: string, record: UserEventCleaningRuleResource) => (<span>{text}</span>),
+        render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
+          <span>
+            {text}
+          </span>
+        ),
       },
       {
-        intlMessage: messages.activityTypeFilter,
-        key: 'activity_type_filter',
+        intlMessage: messages.token,
+        key: 'token',
         isHideable: false,
-        render: (text: string, record: UserEventCleaningRuleResource) => {
-          return record.activity_type_filter && (
-            <span>{record.activity_type_filter}</span>
-          )
-        },
+        render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
+          <span>
+            {text}
+          </span>
+        ),
       },
     ];
 
@@ -154,7 +161,7 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
             <div>
               <div className="mcs-card-header mcs-card-title">
                 <span className="mcs-card-title">
-                  <FormattedMessage {...messages.cleaningRules} />
+                  <FormattedMessage {...messages.compartments} />
                 </span>
               </div>
               <hr className="mcs-separator" />
@@ -172,7 +179,8 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
   }
 }
 
-export default compose<Props, CleaningRulesContainerProps>(
+export default compose<Props, CompartmentsContainerProps>(
   withRouter,
   injectIntl,
-)(CleaningRulesContainer);
+  injectNotifications
+)(CompartmentsContainer);
