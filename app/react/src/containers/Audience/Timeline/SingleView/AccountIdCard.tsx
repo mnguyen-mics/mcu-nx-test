@@ -14,6 +14,7 @@ interface AccountIdCardProps {
 }
 
 interface State {
+  expandedItems: string[];
   showMore: boolean;
 }
 
@@ -23,7 +24,8 @@ class AccountIdCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      expandedItems: []
+      expandedItems: [],
+      showMore: false,
     };
   }
 
@@ -52,16 +54,17 @@ class AccountIdCard extends React.Component<Props, State> {
     const { userAccountsByCompartmentId } = this.props;
 
     const handleShowMore = (expandedItemsKey: string) => () => {
-
       this.setState(state => {
         let expandedItems;
         if (state.expandedItems.indexOf(expandedItemsKey) === -1) {
           expandedItems = [...state.expandedItems, expandedItemsKey];
         } else {
-          expandedItems = state.expandedItems.filter((e) => e !== expandedItemsKey)
-        }   
+          expandedItems = state.expandedItems.filter(
+            e => e !== expandedItemsKey,
+          );
+        }
         return {
-          expandedItems
+          expandedItems,
         };
       });
     };
@@ -80,9 +83,12 @@ class AccountIdCard extends React.Component<Props, State> {
               const userAccountsLength =
                 userAccountsByCompartmentId[key].length;
               const compartmentName = this.renderCompartmentName(key);
-              const userAccountsByCompartmentIdCopy = userAccountsByCompartmentId[key].slice();
+              const userAccountsByCompartmentIdCopy = userAccountsByCompartmentId[
+                key
+              ].slice();
               const accountsFormatted =
-                userAccountsLength > 5 && !this.state.expandedItems.find((e) => e === key)
+                userAccountsLength > 5 &&
+                !this.state.expandedItems.find(e => e === key)
                   ? userAccountsByCompartmentIdCopy.splice(0, 5)
                   : userAccountsByCompartmentId[key];
               return (
@@ -102,7 +108,7 @@ class AccountIdCard extends React.Component<Props, State> {
                     );
                   })}
                   {userAccountsLength > 5 ? (
-                    !this.state.expandedItems.find((e) => e === key) ? (
+                    !this.state.expandedItems.find(e => e === key) ? (
                       <div className="mcs-card-footer">
                         <button
                           className="mcs-card-footer-link"
