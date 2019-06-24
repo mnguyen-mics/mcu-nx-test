@@ -4,6 +4,10 @@ import RuntimeSchemaService from '../../../../../services/RuntimeSchemaService';
 import { RuntimeSchemaResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import moment from 'moment';
 import { Loading } from '../../../../../components';
+import { compose } from 'recompose';
+import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+
+type Props = IDatamartObjectViewTabProps & InjectedNotificationProps
 
 export interface IDatamartObjectViewTabProps {
   datamartId: string;
@@ -17,11 +21,11 @@ interface State {
   selectedSchema?: RuntimeSchemaResource;
 }
 
-export default class DatamartObjectViewTab extends React.Component<
-  IDatamartObjectViewTabProps,
+class DatamartObjectViewTab extends React.Component<
+  Props,
   State
 > {
-  constructor(props: IDatamartObjectViewTabProps) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       loadingList: true,
@@ -56,6 +60,10 @@ export default class DatamartObjectViewTab extends React.Component<
         return this.fetchSchemaDetail(datamartId, liveSchema.id);
       }
       return this.fetchSchemaDetail(datamartId, r.data[0].id);
+    })
+    .catch(err => {
+      this.setState({ loadingList: false })
+      this.props.notifyError(err);
     });
   };
 
@@ -65,7 +73,11 @@ export default class DatamartObjectViewTab extends React.Component<
       r => {
         this.setState({ loadingSingle: false, selectedSchemaText: r });
       },
-    );
+    )
+    .catch(err => {
+      this.setState({ loadingSingle: false })
+      this.props.notifyError(err);
+    });
   };
 
   public render() {
@@ -121,3 +133,7 @@ export default class DatamartObjectViewTab extends React.Component<
     );
   }
 }
+
+export default compose<Props, IDatamartObjectViewTabProps>(
+  injectNotifications
+)(DatamartObjectViewTab)

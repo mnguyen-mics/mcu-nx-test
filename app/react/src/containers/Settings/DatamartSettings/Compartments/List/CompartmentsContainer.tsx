@@ -9,6 +9,7 @@ import DatamartService from '../../../../../services/DatamartService';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import { Layout, Row } from 'antd';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
+import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
@@ -26,7 +27,7 @@ export interface CompartmentsContainerProps {
 
 type Props = CompartmentsContainerProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps;
+  InjectedIntlProps & InjectedNotificationProps;
 
 class CompartmentsContainer extends React.Component<Props, CompartmentsContainerState> {
 
@@ -78,7 +79,11 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
           data: results.data,
           total: results.total || results.count,
         });
-      });
+      })
+      .catch(err => {
+        this.setState({ loading: false })
+        this.props.notifyError(err);
+      });;
     });
   }
 
@@ -177,4 +182,5 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
 export default compose<Props, CompartmentsContainerProps>(
   withRouter,
   injectIntl,
+  injectNotifications
 )(CompartmentsContainer);

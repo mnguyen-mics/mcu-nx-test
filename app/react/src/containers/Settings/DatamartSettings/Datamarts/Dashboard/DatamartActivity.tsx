@@ -9,7 +9,6 @@ export interface IDatamartConfigTabProps {
 
 interface State {
   importFilters: ImportFilterParams;
-  // exportFilters: PaginationSearchSettings;
 }
 
 export default class DatamartConfigTab extends React.Component<
