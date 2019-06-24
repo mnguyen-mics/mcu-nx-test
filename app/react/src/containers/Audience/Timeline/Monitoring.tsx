@@ -15,7 +15,7 @@ import TimelineHeader from './TimelineHeader';
 import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
-import { isUserPointIdentifier } from '../../../models/timeline/timeline';
+import { MonitoringData } from '../../../models/timeline/timeline';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -23,7 +23,7 @@ import { EmptyTableView } from '../../../components/TableView';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
-import { IUserDataService } from '../../../services/UserDataService';
+import { IMonitoringService } from './MonitoringService';
 
 const { Content } = Layout;
 
@@ -39,7 +39,8 @@ interface MapStateToProps {
 
 interface State {
   isModalVisible: boolean;
-  userPointId?: string;
+  monitoringData: MonitoringData;
+  isLoading: boolean;
 }
 
 interface MonitoringProps {
@@ -52,13 +53,25 @@ type Props = MonitoringProps &
   RouteComponentProps<TimelinePageParams>;
 
 class Monitoring extends React.Component<Props, State> {
-  @lazyInject(TYPES.IUserDataService)
-  private _userDataService: IUserDataService;
+  @lazyInject(TYPES.IMonitoringService)
+  private _monitoringService: IMonitoringService;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       isModalVisible: false,
+      monitoringData: {
+        userAgentList: [],
+        userEmailList: [],
+        userAccountsByCompartmentId: {},
+        userAccountCompartments: [],
+        userPointList: [],
+        userSegmentList: [],
+        profileByCompartments: {},
+        lastSeen: 0,
+        userPointId: '',
+      },
+      isLoading: false,
     };
   }
 
@@ -72,19 +85,35 @@ class Monitoring extends React.Component<Props, State> {
     } = this.props;
 
     if (identifierType && identifierId) {
-      this.fetchIdentifiersData(
-        organisationId,
-        selectedDatamart.id,
-        identifierType,
-        identifierId,
-        queryString.parse(location.search).compartmentId,
-      );
+      this.setState({
+        isLoading: true,
+      });
+      this._monitoringService
+        .fetchMonitoringData(
+          organisationId,
+          selectedDatamart,
+          identifierType,
+          identifierId,
+          queryString.parse(location.search).compartmentId,
+        )
+        .then(monitoringData => {
+          this.setState({
+            monitoringData: monitoringData,
+            isLoading: false,
+          });
+        })
+        .catch(() => {
+          this.setState({
+            isLoading: false,
+          });
+        });
     }
   }
 
   componentWillReceiveProps(nextProps: Props) {
     const {
       location: { search, pathname },
+      selectedDatamart,
     } = this.props;
 
     const {
@@ -99,44 +128,37 @@ class Monitoring extends React.Component<Props, State> {
       selectedDatamart: nextSelectedDatamart,
     } = nextProps;
 
-    if (search !== nextSearch || pathname !== nextPathname) {
+    if (
+      search !== nextSearch ||
+      pathname !== nextPathname ||
+      selectedDatamart.id !== nextSelectedDatamart.id
+    ) {
       if (nextIdentifierType && nextIdentifierId) {
-        this.fetchIdentifiersData(
-          nextOrganisationId,
-          nextSelectedDatamart.id,
-          nextIdentifierType,
-          nextIdentifierId,
-          queryString.parse(nextSearch).compartmentId,
-        );
+        this.setState({
+          isLoading: true,
+        });
+        this._monitoringService
+          .fetchMonitoringData(
+            nextOrganisationId,
+            nextSelectedDatamart,
+            nextIdentifierType,
+            nextIdentifierId,
+            queryString.parse(nextSearch).compartmentId,
+          )
+          .then(monitoringData => {
+            this.setState({
+              monitoringData: monitoringData,
+              isLoading: false,
+            });
+          })
+          .catch(() => {
+            this.setState({
+              isLoading: false,
+            });
+          });
       }
     }
   }
-
-  fetchIdentifiersData = (
-    organisationId: string,
-    datamartId: string,
-    identifierType: string,
-    identifierId: string,
-    compartmentId?: string,
-  ) => {
-    this._userDataService
-      .getIdentifiers(
-        organisationId,
-        datamartId,
-        identifierType,
-        identifierId,
-        compartmentId,
-      )
-      .then(response => {
-        const userPointIdentifierInfo = response.data.find(
-          isUserPointIdentifier,
-        );
-        this.setState({
-          userPointId:
-            userPointIdentifierInfo && userPointIdentifierInfo.user_point_id,
-        });
-      });
-  };
 
   handleModal = (visible: boolean) => {
     this.setState({
@@ -170,7 +192,9 @@ class Monitoring extends React.Component<Props, State> {
   render() {
     const { selectedDatamart } = this.props;
 
-    const { isModalVisible, userPointId } = this.state;
+    const { isModalVisible, monitoringData, isLoading } = this.state;
+
+    const userPointId = monitoringData.userPointId;
 
     return (
       <div className="ant-layout">
@@ -185,8 +209,8 @@ class Monitoring extends React.Component<Props, State> {
             {userPointId ? (
               <Row>
                 <TimelineHeader
-                  selectedDatamart={selectedDatamart}
-                  userPointId={userPointId}
+                  dataSource={monitoringData}
+                  isLoading={isLoading}
                 />
                 <Row
                   gutter={20}
@@ -198,12 +222,12 @@ class Monitoring extends React.Component<Props, State> {
                       <FormattedMessage {...messages.visitor} />
                     </div>
                     <ProfileCard
-                      selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      dataSource={monitoringData.profileByCompartments}
+                      isLoading={isLoading}
                     />
                     <SegmentsCard
-                      selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      dataSource={monitoringData.userSegmentList}
+                      isLoading={isLoading}
                     />
                   </Col>
                   <Col span={12}>
@@ -221,16 +245,21 @@ class Monitoring extends React.Component<Props, State> {
                       <FormattedMessage {...messages.identifiers} />
                     </div>
                     <AccountIdCard
-                      selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      userAccountCompartments={
+                        monitoringData.userAccountCompartments
+                      }
+                      userAccountsByCompartmentId={
+                        monitoringData.userAccountsByCompartmentId
+                      }
+                      isLoading={isLoading}
                     />
                     <DeviceCard
-                      selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      dataSource={monitoringData.userAgentList}
+                      isLoading={isLoading}
                     />
                     <EmailCard
-                      selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      dataSource={monitoringData.userEmailList}
+                      isLoading={isLoading}
                     />
                   </Col>
                 </Row>

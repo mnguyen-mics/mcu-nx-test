@@ -53,7 +53,6 @@ type Props = ActivitiesTimelineProps &
   RouteComponentProps<TimelinePageParams>;
 
 class ActivitiesTimeline extends React.Component<Props, State> {
-  
   @lazyInject(TYPES.IUserDataService)
   private _userDataService: IUserDataService;
 
