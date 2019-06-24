@@ -61,6 +61,8 @@ export class MonitoringService implements IMonitoringService {
   @inject(TYPES.IUserDataService)
   private _userDataService: IUserDataService;
 
+  private identifierType: string = 'user_point_id';
+
   fetchProfileData(datamart: DatamartResource, userPointId: string) {
     // TO DO: inject DatamartService
     return DatamartService.getUserAccountCompartments(datamart.id).then(res => {
@@ -69,7 +71,7 @@ export class MonitoringService implements IMonitoringService {
           return this._userDataService
             .getProfile(datamart.id, {
               id: userPointId,
-              type: 'user_point_id',
+              type: this.identifierType,
               compartmentId: userCompartiment.compartment_id,
             })
             .then(r => ({
@@ -101,7 +103,7 @@ export class MonitoringService implements IMonitoringService {
     return this._userDataService
       .getSegments(datamart.id, {
         id: userPointId,
-        type: 'user_point_id',
+        type: this.identifierType,
       })
       .then(res => {
         return res.data;
@@ -121,7 +123,7 @@ export class MonitoringService implements IMonitoringService {
     return this._userDataService
       .getActivities(datamart.id, {
         id: userPointId,
-        type: 'user_point_id',
+        type: this.identifierType,
       })
       .then(res => {
         const timestamps = res.data.map(item => {
@@ -140,13 +142,11 @@ export class MonitoringService implements IMonitoringService {
     datamart: DatamartResource,
     userPointId: string,
   ) {
-    const identifierType = 'user_point_id';
-
     return this._userDataService
       .getIdentifiers(
         datamart.organisation_id,
         datamart.id,
-        identifierType,
+        this.identifierType,
         userPointId,
       )
       .then(response => {
@@ -182,13 +182,11 @@ export class MonitoringService implements IMonitoringService {
   }
 
   fetchUserEmails(datamart: DatamartResource, userPointId: string) {
-    const identifierType = 'user_point_id';
-
     return this._userDataService
       .getIdentifiers(
         datamart.organisation_id,
         datamart.id,
-        identifierType,
+        this.identifierType,
         userPointId,
       )
       .then(response => {
