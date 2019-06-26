@@ -11,7 +11,7 @@ import {
   FormSlider,
   withValidators,
 } from '../../../../../components/Form';
-import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
+import { injectDatamart } from '../../../../Datamart';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import FormLayoutActionbar, {
@@ -39,6 +39,7 @@ export interface AudienceLookalikeCreationProps
   extends Omit<ConfigProps<any>, 'form'> {
   breadCrumbPaths: Path[];
   close: () => void;
+  datamartId: string;
 }
 
 interface AudienceLookalikeState {
@@ -50,7 +51,6 @@ type LookAlikeFormData = Partial<UserLookalikeSegment>;
 
 type Props = AudienceLookalikeCreationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
-  InjectedDatamartProps &
   InjectedIntlProps &
   InjectedFormProps<any, AudienceLookalikeCreationProps> &
   InjectedNotificationProps &
@@ -86,7 +86,7 @@ class AudienceLookalikeCreation extends React.Component<
       match: {
         params: { organisationId },
       },
-      datamart,
+      datamartId,
       notifyError,
     } = this.props;
     this._audiencePartitionsService
@@ -94,7 +94,7 @@ class AudienceLookalikeCreation extends React.Component<
         first_result: 0,
         max_results: 500,
         status: ['PUBLISHED'],
-        datamart_id: datamart.id,
+        datamart_id: datamartId,
       })
       .then(res => res.data)
       .then(res => this.setState({ partitions: res, loading: false }))
