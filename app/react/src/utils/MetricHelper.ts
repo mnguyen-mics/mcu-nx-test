@@ -8,7 +8,7 @@ export function formatMetric(
   prefix: string = '',
   suffix: string = '',
 ) {
-  if (value !== undefined && !isNaN(value)) {
+  if (value !== undefined && value !== null && !isNaN(value)) {
     return `${prefix}${numeral(value).format(numeralFormat)}${suffix}`;
   }
   return '-';
