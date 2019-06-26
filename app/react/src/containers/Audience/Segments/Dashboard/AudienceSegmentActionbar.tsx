@@ -224,12 +224,13 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl: { formatMessage },
-      datamart,
       segment,
       onCalibrationClick,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
+
+    const datamartId = segment && segment.datamart_id;
 
     const breadcrumbPaths = [
       {
@@ -243,11 +244,15 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       },
     ];
 
-    const onClick = () =>
+    const onClick = () => {
+      if (!datamartId)
+        return;
+
       this.props.openNextDrawer<AudienceLookalikeCreationProps>(
         AudienceLookalikeCreation,
         {
           additionalProps: {
+            datamartId: datamartId,
             close: this.props.closeNextDrawer,
             breadCrumbPaths: [
               {
@@ -263,12 +268,13 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
               type: 'USER_LOOKALIKE',
               lookalike_algorithm: 'CLUSTER_OVERLAP',
               extension_factor: 30,
-              datamart_id: datamart.id,
+              datamart_id: datamartId,
               organisation_id: organisationId,
             },
           },
         },
       );
+    }
 
     const onRecalibrateClick = () => onCalibrationClick();
 
