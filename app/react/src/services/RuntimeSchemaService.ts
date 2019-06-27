@@ -8,6 +8,7 @@ import {
   DirectiveArgumentResource,
   ObjectLikeTypeInfoResource,
   SchemaDecoratorResource,
+  RuntimeSchemaValidationResource,
 } from '../models/datamart/graphdb/RuntimeSchema';
 
 const RuntimeSchemaService = {
@@ -34,6 +35,36 @@ const RuntimeSchemaService = {
   ): Promise<string> {
     return ApiService.getRequest(
       `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/text`,
+    );
+  },
+
+  cloneRuntimeSchema(
+    datamartId: string,
+    runtimeSchemaId: string,
+  ): Promise<DataResponse<RuntimeSchemaResource>> {
+    return ApiService.postRequest(
+      `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/clone`,
+      {}
+    );
+  },
+
+  validateRuntimeSchema(
+    datamartId: string,
+    runtimeSchemaId: string,
+  ): Promise<DataResponse<RuntimeSchemaValidationResource>> {
+    return ApiService.postRequest(
+      `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/validation`,
+      {}
+    );
+  },
+
+  publishRuntimeSchema(
+    datamartId: string,
+    runtimeSchemaId: string,
+  ): Promise<DataResponse<RuntimeSchemaValidationResource>> {
+    return ApiService.postRequest(
+      `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/publication`,
+      {}
     );
   },
   
