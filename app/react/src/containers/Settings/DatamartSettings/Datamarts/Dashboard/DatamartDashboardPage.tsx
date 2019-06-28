@@ -79,7 +79,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       },
     ]
 
-    if (hasFeature("datamart.object_tree_schema")) {
+    if (hasFeature("datamart.object_tree_schema") && datamart && datamart.storage_model_version !== "v201506") {
       items.push({
         title: 'Object View Configuration',
         display: <DatamartObjectViewTab datamartId={datamartId} />,
