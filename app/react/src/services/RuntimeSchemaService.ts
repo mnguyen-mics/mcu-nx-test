@@ -241,11 +241,13 @@ const RuntimeSchemaService = {
     createSchemaDecorator(
       datamartId: string,
       runtimeSchemaId: string,
-      blob: Blob
+      blob: string
     ): Promise<DataListResponse<SchemaDecoratorResource>> {
       return ApiService.postRequest(
         `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/schema_decorators`,
-        blob
+        blob,
+        {},
+        { "Content-Type": "text/plain" }
       )
     }
   };

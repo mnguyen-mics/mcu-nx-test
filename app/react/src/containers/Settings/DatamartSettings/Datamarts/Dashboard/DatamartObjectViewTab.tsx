@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { Row, Col, Spin, Button, Alert } from 'antd';
+import { Row, Col, Spin, Button, Alert, Upload } from 'antd';
 import RuntimeSchemaService from '../../../../../services/RuntimeSchemaService';
 import {
   RuntimeSchemaResource,
   RuntimeSchemaValidationResource,
+  SchemaDecoratorResource,
 } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import moment from 'moment';
-import { Loading } from '../../../../../components';
+import { Loading, McsIcon } from '../../../../../components';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -14,6 +15,7 @@ import injectNotifications, {
 import AceEditor from 'react-ace';
 import 'brace/mode/graphqlschema';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { UploadFile } from 'antd/lib/upload/interface';
 
 type Props = IDatamartObjectViewTabProps & InjectedNotificationProps;
 
@@ -28,6 +30,8 @@ interface State {
   selectedSchemaText?: string;
   selectedSchema?: RuntimeSchemaResource;
   schemaValidation?: RuntimeSchemaValidationResource;
+  schemaDecorator?: SchemaDecoratorResource[];
+  uploadingDecorator: boolean;
 }
 
 const messages = defineMessages({
@@ -61,6 +65,22 @@ const messages = defineMessages({
     id: 'datamart.schemaEditor.objectTree.version.create',
     defaultMessage: 'Create a new version',
   },
+  hasDecorators: {
+    id: 'datamart.schemaEditor.objectTree.decorators.exist',
+    defaultMessage: 'This schema has decorators',
+  },
+  hasNotDecorators: {
+    id: 'datamart.schemaEditor.objectTree.decorators.dontExist',
+    defaultMessage: "This schema doesn't have any decorators",
+  },
+  uploadDecorators: {
+    id: 'datamart.schemaEditor.objectTree.decorators.upload',
+    defaultMessage: 'Upload new Decorators',
+  },
+  downloadDecorators: {
+    id: 'datamart.schemaEditor.objectTree.decorators.download',
+    defaultMessage: 'Download Template',
+  },
 });
 
 class DatamartObjectViewTab extends React.Component<Props, State> {
@@ -70,6 +90,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       loadingList: true,
       loadingSingle: true,
       schemas: [],
+      uploadingDecorator: false
     };
   }
 
@@ -111,7 +132,16 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     this.setState({ loadingSingle: true });
     return RuntimeSchemaService.getRuntimeSchemaText(datamartId, schemaId)
       .then(r => {
-        this.setState({ loadingSingle: false, selectedSchemaText: r });
+        this.setState({ selectedSchemaText: r });
+        return RuntimeSchemaService.getSchemaDecorator(
+          datamartId,
+          schemaId,
+        ).then(decorators => {
+          this.setState({
+            loadingSingle: false,
+            schemaDecorator: decorators.data,
+          });
+        });
       })
       .catch(err => {
         this.setState({ loadingSingle: false });
@@ -156,7 +186,11 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   publishSchema = () => {
     const { selectedSchema, schemaValidation } = this.state;
     if (selectedSchema && schemaValidation) {
-      this.setState({ loadingSingle: true, loadingList: true, schemaValidation: undefined });
+      this.setState({
+        loadingSingle: true,
+        loadingList: true,
+        schemaValidation: undefined,
+      });
       return RuntimeSchemaService.publishRuntimeSchema(
         selectedSchema.datamart_id,
         selectedSchema.id,
@@ -168,6 +202,74 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     }
     return Promise.resolve();
   };
+
+  downloadDecoratorsTemplate = () => {
+    const rowsToUpload: string[][] = [];
+    rowsToUpload.push([
+      'OBJECT_NAME',
+      'FIELD_NAME',
+      'HIDDEN',
+      'LABEL',
+      'HELP_TEXT',
+      'LOCALE',
+    ]);
+    rowsToUpload.push([
+      'UserPoint',
+      'profiles',
+      'false',
+      'Profile',
+      'Uploaded CRM Profiles',
+      'en-US',
+    ]);
+    let csvContent = 'data:text/csv;charset=utf-8,';
+    rowsToUpload.forEach(rowArray => {
+      const row = rowArray.join(',');
+      csvContent += row + '\r\n';
+    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'my_data.csv');
+    document.body.appendChild(link); // Required for FF
+    link.click();
+  };
+
+  onFileUpdate = (file: any) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.onload = (fileLoadedEvent: any) => {
+        const textFromFileLoaded = fileLoadedEvent.target.result;
+        return resolve(textFromFileLoaded);
+      };
+
+      fileReader.readAsText(file, 'UTF-8');
+    });
+  };
+
+  uploadDecorator = async (file: UploadFile) => {
+    const { datamartId } = this.props;
+    const { selectedSchema } = this.state;
+    this.setState({ uploadingDecorator: true })
+    if (!selectedSchema || !datamartId) {
+      return Promise.resolve()
+    }
+
+    const fileContent = await this.onFileUpdate(file);
+  
+    return RuntimeSchemaService.createSchemaDecorator(selectedSchema.datamart_id, selectedSchema.id, fileContent as string)
+      .then(() => RuntimeSchemaService.getSchemaDecorator(
+          selectedSchema.datamart_id,
+          selectedSchema.id,
+        )
+      )
+      .then((decorators) => {
+        this.setState({ uploadingDecorator: false, schemaDecorator: decorators.data })
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({ uploadingDecorator: false })
+      })
+  }
 
   onClickOnSelect = (schema: RuntimeSchemaResource) => () =>
     this.selectSchema(schema);
@@ -183,6 +285,18 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     } = this.state;
 
     let additionnalButton;
+
+    const uploadProps = {
+      name: 'file',
+      multiple: false,
+      action: '/',
+      accept: '.csv',
+      showUploadList: false,
+      beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
+        this.uploadDecorator(file)
+        return false;
+      },
+    };
 
     const isInValidationMode = !!schemaValidation;
     const validationError =
@@ -299,6 +413,34 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                   }}
                   value={selectedSchemaText}
                 />
+                <Row className="decorators">
+                  <Col span={12} className="text">
+                    {this.state.schemaDecorator &&
+                    this.state.schemaDecorator.length > 0 ? (
+                      <div className="success">
+                        <McsIcon type="check-rounded" />{' '}
+                        <FormattedMessage {...messages.hasDecorators} />
+                      </div>
+                    ) : (
+                      <div>
+                        <FormattedMessage {...messages.hasNotDecorators} />
+                      </div>
+                    )}
+                  </Col>
+                  <Col span={12} className="buttons">
+                    <Upload {...uploadProps}>
+                      <Button type="primary" className="spacing" size="small">
+                        <FormattedMessage {...messages.uploadDecorators} />
+                      </Button>
+                    </Upload>
+                    <Button
+                      size="small"
+                      onClick={this.downloadDecoratorsTemplate}
+                    >
+                      <FormattedMessage {...messages.downloadDecorators} />
+                    </Button>
+                  </Col>
+                </Row>
               </div>
             )}
           </Col>
