@@ -22,6 +22,7 @@ const TYPES = {
   IUserDataService: Symbol.for('userDataService'),
   IUsersService: Symbol.for('usersService'),
   IMonitoringService: Symbol.for('monitoringService'),
+  IMlAlgorithmService: Symbol.for('mlAlgorithmService'),
 };
 
 export { TYPES };
