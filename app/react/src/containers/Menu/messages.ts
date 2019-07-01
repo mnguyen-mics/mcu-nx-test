@@ -203,6 +203,10 @@ export default defineMessages({
         id: 'menu.organisation.settings',
         defaultMessage: 'Profile',
     },
+    mlAlgorithmsSettingsTitle: {
+        id: 'menu.organisation.ml-algorithms',
+        defaultMessage: 'ML Algorithms',
+    },
 
     accountSettingsTitle: {
         id: 'menu.account.title',

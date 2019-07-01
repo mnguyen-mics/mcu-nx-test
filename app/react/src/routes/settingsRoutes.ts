@@ -43,6 +43,7 @@ import MyOfferServiceItemListPage from '../containers/Settings/ServicesSettings/
 import CreateOfferPage from '../containers/Settings/ServicesSettings/MyOffers/CreateOfferPage';
 import SourcesListPage from '../containers/Settings/DatamartSettings/Sources/List/SourcesListPage';
 import DatamartViewPage from '../containers/Settings/DatamartSettings/Datamarts/Dashboard/DatamartDashboardPage';
+import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlAlgorithmsPage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -197,6 +198,12 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: EditUserPage,
     requiredFeature: 'organisationSettings.users',
+  },
+  settingsOrganisationMlAlgorithmList: {
+    path: '/settings/organisation/ml_algorithms',
+    layout: 'settings',
+    contentComponent: MlAlgorithmsPage,
+    requiredFeature: 'organisationSettings.mlAlgorithms'
   },
 
   /*
