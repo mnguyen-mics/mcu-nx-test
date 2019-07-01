@@ -81,6 +81,7 @@ import { MlAlgorithmService, IMlAlgorithmService } from '../services/MlAlgorithm
 import { IMlModelService, MlModelService } from '../services/MlModelService';
 
 
+import { IStoredProcedureService, StoredProcedureService } from '../services/StoredProcedureService';
 
 const container = new Container();
 
@@ -138,6 +139,9 @@ container.bind<IUsersService>(TYPES.IUsersService).to(UsersService);
 container
   .bind<IMonitoringService>(TYPES.IMonitoringService)
   .to(MonitoringService);
+container
+  .bind<IStoredProcedureService>(TYPES.IStoredProcedureService)
+  .to(StoredProcedureService);
 
 container
   .bind<IMlAlgorithmService>(TYPES.IMlAlgorithmService)
