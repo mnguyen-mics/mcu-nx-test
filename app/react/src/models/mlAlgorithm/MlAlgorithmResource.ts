@@ -5,4 +5,5 @@ export default interface MlAlgorithmResource {
     name?: string;
     description?: string;
     last_updated_date: number;
+    archived: boolean;
   }
