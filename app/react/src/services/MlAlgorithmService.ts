@@ -37,8 +37,8 @@ export class MlAlgorithmService implements IMlAlgorithmService {
     return ApiService.getRequest(endpoint, options);
   }
   getMlAlgorithm(
-    mlAlgorithmId: string,
     organisationId: string,
+    mlAlgorithmId: string,
   ): Promise<DataResponse<MlAlgorithmResource>> {
     const endpoint = `organisations/${organisationId}/ml_algorithms/${mlAlgorithmId}`;
     return ApiService.getRequest(endpoint);

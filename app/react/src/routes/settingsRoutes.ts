@@ -43,7 +43,8 @@ import MyOfferServiceItemListPage from '../containers/Settings/ServicesSettings/
 import CreateOfferPage from '../containers/Settings/ServicesSettings/MyOffers/CreateOfferPage';
 import SourcesListPage from '../containers/Settings/DatamartSettings/Sources/List/SourcesListPage';
 import DatamartViewPage from '../containers/Settings/DatamartSettings/Datamarts/Dashboard/DatamartDashboardPage';
-import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlAlgorithmsPage';
+import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/List/MlAlgorithmsPage';
+import CreateEditMlAlgorithm from '../containers/Settings/OrganisationSettings/MlAlgorithms/Edit/CreateEditMlAlgorithm';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -203,6 +204,18 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/organisation/ml_algorithms',
     layout: 'settings',
     contentComponent: MlAlgorithmsPage,
+    requiredFeature: 'organisationSettings.mlAlgorithms'
+  },
+  settingsOrganisationMlAlgorithmCreation: {
+    path: '/settings/organisation/ml_algorithms/create',
+    layout: 'edit',
+    editComponent: CreateEditMlAlgorithm,
+    requiredFeature: 'organisationSettings.mlAlgorithms'
+  },
+  settingsOrganisationMlAlgorithmEdit: {
+    path: '/settings/organisation/ml_algorithms/:mlAlgorithmId/edit',
+    layout: 'edit',
+    editComponent: CreateEditMlAlgorithm,
     requiredFeature: 'organisationSettings.mlAlgorithms'
   },
 

@@ -1,23 +1,24 @@
 import * as React from 'react';
-import { Layout } from 'antd';
+import { Layout, Button } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 
 import { compose } from 'redux';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import MlAlgorithmResource from '../../../../models/mlAlgorithm/MlAlgorithmResource';
-import { IMlAlgorithmService } from '../../../../services/MlAlgorithmService';
-import { Filters } from '../../../../components/ItemList';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import messages from './messages';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../utils/LocationSearchHelper';
-import { Card } from '../../../../components/Card';
-import { TableView } from '../../../../components/TableView';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import MlAlgorithmResource from '../../../../../models/mlAlgorithm/MlAlgorithmResource';
+import { IMlAlgorithmService } from '../../../../../services/MlAlgorithmService';
+import ItemList, { Filters } from '../../../../../components/ItemList';
+import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
+import messages from '../messages';
+import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../../utils/LocationSearchHelper';
 import moment from 'moment';
-import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
-import { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
-import { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import LocalStorage from '../../../../../services/LocalStorage';
+import log from '../../../../../utils/Logger';
+import { McsIconType } from '../../../../../components/McsIcon';
 
 const { Content } = Layout;
 
@@ -138,8 +139,12 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       });
     }
 
-    handleDownloadNotebook = () => {
-      return;
+    handleDownloadNotebook = (mlAlgorithm: MlAlgorithmResource) => {
+      if (mlAlgorithm.notebook_uri) {
+        this.download(mlAlgorithm.notebook_uri);
+      } else {
+        return;
+      }
     }
 
     handleArchiveMlAlgorithm = () => {
@@ -204,55 +209,89 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       };
     };
 
+    download = (uri: string) => {
+      try {
+        (window as any).open(
+          `${
+            (window as any).MCS_CONSTANTS.API_URL
+          }/v1/data_file/data?uri=${encodeURIComponent(uri)}&access_token=${encodeURIComponent(
+            LocalStorage.getItem('access_token')!,
+          )}`
+        );
+      } catch(err) {
+        log.error(err);
+      }
+      
+    }
+
     
 
     render() {
       const {
-        location: { search },
+        match: {
+          params: { organisationId },
+        },
+        history
       } = this.props;
 
-      const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-
-      const { data, loading } = this.state;
-
-      const pagination = {
-        current: filter.currentPage,
-        pageSize: filter.pageSize,
-        onChange: (page: number) =>
-          this.updateLocationSearch({
-            currentPage: page,
-          }),
-        onShowSizeChange: (current: number, size: number) =>
-          this.updateLocationSearch({
-            pageSize: size,
-          }),
-        total: this.state.total,
+      const emptyTable: {
+        iconType: McsIconType;
+        intlMessage: FormattedMessage.Props;
+      } = {
+        iconType: 'settings',
+        intlMessage: messages.empty,
       };
+
 
       const actionsColumnsDefinition: Array<ActionsColumnDefinition<MlAlgorithmResource>> = [
         {
           key: 'action',
           actions: (mlAlgorithm: MlAlgorithmResource) => [
-            { intlMessage: messages.edit, callback: this.handleEditMlAlgorithm, disabled: mlAlgorithm.archived },
+            { intlMessage: messages.editMlAlgorithmRaw, callback: this.handleEditMlAlgorithm, disabled: mlAlgorithm.archived },
             { intlMessage: messages.downloadNotebook, callback: this.handleDownloadNotebook, disabled: !(mlAlgorithm.notebook_uri) },
             { intlMessage: messages.archive, callback: this.handleArchiveMlAlgorithm, disabled: mlAlgorithm.archived },
           ],
         },
       ];
       
+      const onClick = () => {
+        history.push(
+          `/v2/o/${organisationId}/settings/organisation/ml_algorithms/create`,
+        );
+      }
+
+      const buttons = [
+        <Button key="create" type="primary" onClick={onClick}>
+          <FormattedMessage {...messages.newMlAlgorithm} />
+        </Button>,
+      ];
+
+      const additionnalComponent = (
+        <div>
+          <div className="mcs-card-header mcs-card-title">
+            <span className="mcs-card-title">
+              <FormattedMessage {...messages.mlAlgorithms} />
+            </span>
+            <span className="mcs-card-button">{buttons}</span>
+          </div>
+          <hr className="mcs-separator" />
+        </div>
+      );
+      
       return (
         <div className="ant-layout">
           <Content className="mcs-content-container">
-          <Card title={'ML Algorithm'}>
-            <hr />
-            <TableView
-              dataSource={data}
-              columns={this.buildColumnDefinition().dataColumnsDefinition}
-              actionsColumnsDefinition={actionsColumnsDefinition}
-              pagination={pagination}
-              loading={loading}
-            />
-          </Card>
+          <ItemList
+            fetchList={this.fetchMlAlgorithms}
+            dataSource={this.state.data}
+            loading={this.state.loading}
+            total={this.state.total}
+            columns={this.buildColumnDefinition().dataColumnsDefinition}
+            actionsColumnsDefinition={actionsColumnsDefinition}
+            pageSettings={PAGINATION_SEARCH_SETTINGS}
+            emptyTable={emptyTable}
+            additionnalComponent={additionnalComponent}
+          />
           </Content>
         </div>
       );

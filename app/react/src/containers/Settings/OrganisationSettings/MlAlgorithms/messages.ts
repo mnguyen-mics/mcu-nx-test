@@ -25,10 +25,6 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-algorithms.placeholder',
     defaultMessage: 'ML Algorithms'
   },
-  edit: {
-    id: 'settings.organisation.ml-algorithms.edit',
-    defaultMessage: 'Edit'
-  },
   downloadNotebook: {
     id: 'settings.organisation.ml-algorithms.download-notebook',
     defaultMessage: 'Download Notebook'
@@ -36,8 +32,48 @@ const messages = defineMessages({
   archive: {
     id: 'settings.organisation.ml-algorithms.archive',
     defaultMessage: 'Archive'
-  }
-  
+  },
+  newMlAlgorithm: {
+    id: 'settings.organisation.ml-algorithms.new',
+    defaultMessage: 'New ML Algorithm'
+  },
+  empty: {
+    id: 'settings.organisation.ml-algorithms.empty',
+    defaultMessage: 'No Ml Algorithms'
+  },
+  editMlAlgorithmRaw: {
+    id: 'settings.organisation.ml-algorithms.edit-raw',
+    defaultMessage: 'Edit'
+  },
+  editMlAlgorithm: {
+    id: 'settings.organisation.ml-algorithms.edit',
+    defaultMessage: 'Edit {name}'
+  },
+  sectionTitleGeneral: {
+    id: 'settings.organisation.ml-algorithms.edit.general-section',
+    defaultMessage: 'General Informations'
+  },
+  sectionSubTitleGeneral: {
+    id: 'settings.organisation.ml-algorithms.edit.subtitle',
+    defaultMessage: 'Give your Ml Algorithm a name'
+  },
+  saveMlAlgorithm: {
+    id: 'settings.organisation.ml-algorithms.edit.save',
+    defaultMessage: 'Save'
+  },
+  labelMlAlgorithmName: {
+    id: 'settings.organisation.ml-algorithms.edit.label.name',
+    defaultMessage: 'ML Algorithm Name',
+  },
+  labelMlAlgorithmDescription: {
+    id: 'settings.organisation.ml-algorithms.edit.label.description',
+    defaultMessage: 'ML Algorithm Description',
+  },
+  tooltipMlAlgorithmName: {
+    id: 'settings.organisation.ml-algorithms.edit.label.name.tooltip',
+    defaultMessage:
+      'Give your ML Algorithm a name so you can find it back in the different screens.',
+  },
 });
 
 export default messages;
