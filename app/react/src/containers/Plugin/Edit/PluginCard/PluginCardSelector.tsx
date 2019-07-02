@@ -7,7 +7,6 @@ import { FormTitle } from '../../../../components/Form';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 
-
 const { Content } = Layout;
 
 interface PluginCardSelectorProps<T> {
@@ -17,53 +16,59 @@ interface PluginCardSelectorProps<T> {
   listSubTitle: FormattedMessage.MessageDescriptor;
 }
 
-type Props<T> = PluginCardSelectorProps<T> & RouteComponentProps<{ organisationId: string }>
+type Props<T> = PluginCardSelectorProps<T> &
+  RouteComponentProps<{ organisationId: string }>;
 
-class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<Props<T> & InjectedIntlProps> {
-
+class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
+  Props<T> & InjectedIntlProps
+> {
   renderCards = () => {
     const {
       availablePlugins,
-      match: { params: { organisationId } }
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
-
-    const plugins = availablePlugins.map(plugin => {
-      const onPluginSelect = () => this.props.onSelect(plugin);
-      return !!plugin.plugin_layout && (
-        <Col key={plugin.id} span={4} className="text-center" >
-          <PluginCard plugin={plugin} organisationId={organisationId} onSelect={onPluginSelect} hoverable={true} />
-        </Col>
-      )
-    }).filter(a => !!a)
+    const plugins = availablePlugins
+      .map(plugin => {
+        const onPluginSelect = () => this.props.onSelect(plugin);
+        return (
+          !!plugin.plugin_layout && (
+            <Col key={plugin.id} span={4} className="text-center">
+              <PluginCard
+                plugin={plugin}
+                organisationId={organisationId}
+                onSelect={onPluginSelect}
+                hoverable={true}
+              />
+            </Col>
+          )
+        );
+      })
+      .filter(a => !!a);
 
     const array = [];
     const size = 6;
 
-    while (plugins.length > 0)
-      array.push(plugins.splice(0, size))
+    while (plugins.length > 0) array.push(plugins.splice(0, size));
 
-    return array.map((arr, i) => <Row key={i} style={{ marginTop: 40 }} type={'flex'} gutter={40}>{arr}</Row>)
-  }
+    return array.map((arr, i) => (
+      <Row key={i} style={{ marginTop: 40 }} type={'flex'} gutter={40}>
+        {arr}
+      </Row>
+    ));
+  };
 
   render() {
-    const {
-      listTitle,
-      listSubTitle,
-
-    } = this.props;
+    const { listTitle, listSubTitle } = this.props;
 
     return (
       <Layout>
-        <div
-          className="edit-layout ant-layout"
-        >
+        <div className="edit-layout ant-layout">
           <Layout>
             <Content className="mcs-content-container mcs-form-container">
-              <FormTitle
-                title={listTitle}
-                subtitle={listSubTitle}
-              />
+              <FormTitle title={listTitle} subtitle={listSubTitle} />
 
               {this.renderCards()}
             </Content>
@@ -74,7 +79,10 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<Pro
   }
 }
 
-export default compose<Props<LayoutablePlugin>, PluginCardSelectorProps<LayoutablePlugin>>(
+export default compose<
+  Props<LayoutablePlugin>,
+  PluginCardSelectorProps<LayoutablePlugin>
+>(
   injectIntl,
-  withRouter
+  withRouter,
 )(PluginCardSelector);
