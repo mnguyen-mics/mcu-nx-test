@@ -33,6 +33,18 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-algorithms.archive',
     defaultMessage: 'Archive'
   },
+  archived: {
+    id: 'settings.organisation.ml-algorithms.archived',
+    defaultMessage: 'Archived'
+  },
+  isArchived: {
+    id: 'settings.organisation.ml-algorithms.is-archived',
+    defaultMessage: 'Yes'
+  },
+  notArchived: {
+    id: 'settings.organisation.ml-algorithms.not-archived',
+    defaultMessage: 'No'
+  },
   newMlAlgorithm: {
     id: 'settings.organisation.ml-algorithms.new',
     defaultMessage: 'New ML Algorithm'
@@ -73,6 +85,18 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-algorithms.edit.label.name.tooltip',
     defaultMessage:
       'Give your ML Algorithm a name so you can find it back in the different screens.',
+  },
+  savingInProgress: {
+    id: 'settings.organisation.ml-algorithms.edit.savingInProgress',
+    defaultMessage: 'Saving in progress',
+  },
+  updateSuccess: {
+    id: 'settings.organisation.ml-algorithms.edit.save.successMessage',
+    defaultMessage: 'ML Algorithm successfully saved ',
+  },
+  updateError: {
+    id: 'settings.organisation.ml-algorithms.edit.list.errorMessage',
+    defaultMessage: 'ML Algorithm update failed ',
   },
 });
 

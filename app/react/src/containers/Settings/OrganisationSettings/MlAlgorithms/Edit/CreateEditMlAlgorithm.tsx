@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { compose } from 'redux';
+import { compose } from 'recompose';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IMlAlgorithmService } from '../../../../../services/MlAlgorithmService';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import MlAlgorithmResource from '../../../../../models/mlAlgorithm/MlAlgorithmResource';
+import { message } from 'antd';
 import messages from '../messages';
 import { INITIAL_ML_ALGORITHM_FORM_DATA } from '../domain';
 import { Loading } from '../../../../../components';
@@ -82,13 +83,80 @@ class CreateEditMlAlgorithm extends React.Component<Props, MlAlgorithmCreateEdit
         }
     }
 
-    save() {
-        return;
+    save = (formData: Partial<MlAlgorithmResource>) => {
+        const redirectAndNotify = (id?: string) => {
+            if (id) {
+              hideSaveInProgress();
+              message.success(intl.formatMessage(messages.updateSuccess));
+              return history.push(
+                `/v2/o/${organisationId}/settings/organisation/ml_algorithms`,
+              );
+            } else {
+              hideSaveInProgress();
+              this.setState({
+                loading: false,
+              });
+              message.error(intl.formatMessage(messages.updateError));
+            }
+          };
+
+        const {
+            history,
+            match: {
+              params: { mlAlgorithmId, organisationId },
+            },
+            intl,
+        } = this.props;
+
+        this.setState({ loading: true });
+
+        const hideSaveInProgress = message.loading(
+            intl.formatMessage(messages.savingInProgress),
+            0,
+        );
+
+        
+
+        if (mlAlgorithmId) {
+            this._mlAlgorithmService
+                .updateMlAlgorithm(organisationId, mlAlgorithmId, formData)
+                .then((res) => res.data)
+                .then(mlAlgorithmUdpated => {
+                    redirectAndNotify(mlAlgorithmId)
+                })
+                .catch(err => {
+                    redirectAndNotify();
+                });
+        } else {
+            this._mlAlgorithmService
+                .createMlAlgorithm(organisationId, formData)
+                .then((res) => res.data)
+                .then(mlAlgorithmCreated => {
+                    redirectAndNotify(mlAlgorithmCreated.id)
+                })
+                .catch(err => {
+                    redirectAndNotify();
+                });
+        }
+
     }
 
-    close() {
-        return;
-    }
+    close = () => {
+        const {
+          history,
+          location,
+          match: {
+            params: { organisationId },
+          },
+        } = this.props;
+    
+        const url =
+          location.state && location.state.from
+            ? location.state.from
+            : `/v2/o/${organisationId}/settings/organisation/ml_algorithms`;
+    
+        return history.push(url);
+      };
 
     render() {
         const {

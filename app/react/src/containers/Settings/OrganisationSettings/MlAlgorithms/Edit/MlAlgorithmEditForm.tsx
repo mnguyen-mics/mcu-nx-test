@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ConfigProps, reduxForm, InjectedFormProps } from 'redux-form';
+import { ConfigProps, reduxForm, InjectedFormProps, Form } from 'redux-form';
 import MlAlgorithmResource from "../../../../../models/mlAlgorithm/MlAlgorithmResource";
 import { RouteComponentProps, withRouter } from "react-router";
 import { InjectedIntlProps, injectIntl } from "react-intl";
@@ -11,7 +11,7 @@ import GeneralFormSection from './Section/GeneralFormSection';
 import { Omit } from '../../../../../utils/Types';
 import FormLayoutActionbar, { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import ScrollspySider, { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspySider';
-import { Layout, Form } from 'antd';
+import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 
 

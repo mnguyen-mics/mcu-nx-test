@@ -19,6 +19,8 @@ import { InjectedNotificationProps } from '../../../../Notifications/injectNotif
 import LocalStorage from '../../../../../services/LocalStorage';
 import log from '../../../../../utils/Logger';
 import { McsIconType } from '../../../../../components/McsIcon';
+import { message } from 'antd';
+import { Link } from 'react-router-dom';
 
 const { Content } = Layout;
 
@@ -122,7 +124,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
                   });
                 },
               );
-        })
+        });
     }
 
     handleEditMlAlgorithm = (mlAlgorithm: MlAlgorithmResource) => {
@@ -147,8 +149,29 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       }
     }
 
-    handleArchiveMlAlgorithm = () => {
-      return;
+    handleArchiveMlAlgorithm = (mlAlgorithm: MlAlgorithmResource) => {
+      const {
+        match: {
+          params: { organisationId },
+        },
+        location: { search },
+        intl
+      } = this.props
+
+      mlAlgorithm.archived = true;
+
+      this._mlAlgorithmService
+        .updateMlAlgorithm(organisationId, mlAlgorithm.id, mlAlgorithm)
+        .then(res => res.data)
+        .then(mlAlgorithmArchived => {
+          const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
+          this.fetchMlAlgorithms(organisationId, filter)
+          message.success(intl.formatMessage(messages.updateSuccess));
+        })
+        .catch(err => {
+          message.error(intl.formatMessage(messages.updateError));
+        })
+
     }
 
     updateLocationSearch = (params: Filters) => {
@@ -182,7 +205,14 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           key: 'name',
           isHideable: false,
           render: (text: string, record: MlAlgorithmResource) => (
-            <span>{record.name}</span>
+            <Link
+              className="mcs-campaigns-link"
+              to={`/v2/o/${record.organisation_id}/settings/organisation/ml_algorithms/${
+                record.id
+              }/ml_models`}
+            >
+              {record.name}
+            </Link>
           ),
         },
         {
@@ -190,7 +220,14 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           key: 'description',
           isHideable: false,
           render: (text: string, record: MlAlgorithmResource) => (
-            <span>{record.description}</span>
+            <Link
+              className="mcs-campaigns-link"
+              to={`/v2/o/${record.organisation_id}/settings/organisation/ml_algorithms/${
+                record.id
+              }/ml_models`}
+            >
+              {text}
+            </Link>
           ),
         },
         {
@@ -201,7 +238,15 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
             record.last_updated_date
               ? moment(record.last_updated_date).format('DD/MM/YYYY h:mm:ss')
               : formatMessage(messages.lastUpdatedDate),
+        },
+        {
+          intlMessage: messages.archived,
+          key: 'archived',
+          isHideable: false,
+          render: (text: string, record: MlAlgorithmResource) =>
+            record.archived ? formatMessage(messages.isArchived) : formatMessage(messages.notArchived)
         }
+        
       ];
   
       return {
