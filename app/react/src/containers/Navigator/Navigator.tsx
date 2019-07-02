@@ -33,6 +33,7 @@ import { CommunityChangePassword } from '../Communities/ChangePassword';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { INavigatorService } from '../../services/NavigatorService';
+import { Notifications } from '../../containers/Notifications';
 
 interface MapStateToProps {
   initialized: boolean;
@@ -211,6 +212,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         const datalayer = route.datalayer;
         return (
           <Datalayer datalayer={datalayer}>
+            <Notifications />
             <div className="drawer-wrapper">
               <DrawerManager />
             </div>
@@ -243,6 +245,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         const datalayer = route.datalayer;
         return (
           <Datalayer datalayer={datalayer}>
+            <Notifications />
             <div className="drawer-wrapper">
               <DrawerManager />
             </div>
