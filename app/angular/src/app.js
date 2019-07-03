@@ -10,8 +10,13 @@ define(['app-setup', 'angularAMD', 'jquery'],
           return typeof a === 'undefined' ? b : a;
         });
 
+        //Quick fix for lodash loading order issue MICS-1744
+        if( typeof _.contains === 'undefined' ) {
+          _.contains = _.includes;
+          _.prototype.contains = _.includes;
+        } 
+
         ErrorReporting.setup();
-        //
 
         function updateWorkspaces() {
           $log.debug("app.js updateWorkspaces !", $state.current, $state.params);
