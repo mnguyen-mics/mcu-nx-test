@@ -175,7 +175,7 @@ function* authentication() {
     });
 
     if (signOutAction) {
-      AuthService.revokeRefreshToken();
+      yield call(AuthService.revokeRefreshToken);
       yield call(AuthService.deleteCredentials);
       persistedStoreService.removeStringItem('store');
       if (signOutAction.meta && signOutAction.meta.redirectCb) {

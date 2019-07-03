@@ -63,8 +63,9 @@ const revokeRefreshToken = () => {
 
     const endpoint = 'authentication/refresh_token/revoke';
 
-    ApiService.postRequest(endpoint, body);
+    return ApiService.postRequest(endpoint, body);
   }
+  return Promise.resolve();
 };
 
 const getRememberMe = () => {
