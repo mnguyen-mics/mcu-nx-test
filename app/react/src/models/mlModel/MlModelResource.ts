@@ -5,6 +5,7 @@ export default interface MlModelResource {
     name?: string;
     model_uri?: string;
     html_notebook_result_uri?: string;
+    notebook_uri?: string;
     status: string;
     last_updated_date: number;
   }

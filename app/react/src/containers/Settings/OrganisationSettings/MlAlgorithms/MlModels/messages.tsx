@@ -43,15 +43,23 @@ const messages = defineMessages({
   },
   uploadTitle: {
     id: 'settings.organisation.ml-models.upload.title',
-    defaultMessage: 'Upload Title'
+    defaultMessage: 'Create your ML Model'
   },
   uploadConfirm: {
     id: 'settings.organisation.ml-models.upload.confirm',
-    defaultMessage: 'Upload Confirm'
+    defaultMessage: 'Create ML Model'
   },
-  uploadMessage: {
-    id: 'settings.organisation.ml-models.upload.message',
-    defaultMessage: 'Upload Message'
+  uploadMessageNotebook: {
+    id: 'settings.organisation.ml-models.upload.message-notebook',
+    defaultMessage: 'Put your notebook here'
+  },
+  uploadMessageResult: {
+    id: 'settings.organisation.ml-models.upload.message-result',
+    defaultMessage: 'Put the notebook result as html here'
+  },
+  uploadMessageModel: {
+    id: 'settings.organisation.ml-models.upload.message-model',
+    defaultMessage: 'Put your model here'
   },
   namePlaceholder: {
     id: 'settings.organisation.ml-models.upload.name.placeholder',
@@ -72,6 +80,22 @@ const messages = defineMessages({
   downloadResult: {
     id: 'settings.organisation.ml-models.download.result',
     defaultMessage: 'Download Result'
+  },
+  downloadNotebook: {
+    id: 'settings.organisation.ml-models.download.notebook',
+    defaultMessage: 'Download Notebook'
+  },
+  previewResult: {
+    id: 'settings.organisation.ml-models.download.preview-result',
+    defaultMessage: 'Preview Result'
+  },
+  updateSuccess: {
+    id: 'settings.organisation.ml-models.edit.save.successMessage',
+    defaultMessage: 'ML Model successfully saved ',
+  },
+  updateError: {
+    id: 'settings.organisation.ml-models.edit.list.errorMessage',
+    defaultMessage: 'ML Model update failed ',
   },
 });
 
