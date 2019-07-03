@@ -7,7 +7,7 @@ import AttributionModelService from '../../../../../services/AttributionModelSer
 import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import PluginServices from '../../../../../services/PluginServices';
+import PluginService from '../../../../../services/PluginService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
@@ -63,7 +63,7 @@ class AttributionModelContent extends React.Component<
         options,
       ).then(results => {
         const promises = results.data.map(am => {
-          return PluginServices.getEngineProperties(
+          return PluginService.getEngineProperties(
             am.attribution_processor_id,
           );
         });
