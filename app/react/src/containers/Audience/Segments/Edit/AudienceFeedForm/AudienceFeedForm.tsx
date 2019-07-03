@@ -2,7 +2,12 @@ import * as React from 'react';
 import { compose, Omit } from 'recompose';
 import { connect } from 'react-redux';
 import { Alert } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import {
+  injectIntl,
+  InjectedIntlProps,
+  defineMessages,
+  FormattedMessage,
+} from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import * as actions from '../../../../../state/Notifications/actions';
 import {
@@ -23,6 +28,42 @@ import { Path } from '../../../../../components/ActionBar';
 import GenericPluginContent from '../../../../Plugin/Edit/GenericPluginContent';
 import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
 
+const titleMessages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  AUDIENCE_SEGMENT_EXTERNAL_FEED: {
+    id: 'audience.segment.audienceExternalFeed.list.title',
+    defaultMessage: 'Choose your Audience External Feed Type',
+  },
+  AUDIENCE_SEGMENT_TAG_FEED: {
+    id: 'audience.segment.audienceTagFeed.list.title',
+    defaultMessage: 'Choose your Audience Tag Feed Type',
+  },
+  GENERIC_PLUGIN: {
+    id: 'audience.segment.genericPlugin.list.title',
+    defaultMessage: 'Choose your Plugin Type',
+  },
+});
+
+const subtitleMessages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  AUDIENCE_SEGMENT_EXTERNAL_FEED: {
+    id: 'audience.segment.audienceExternalFeed.list.subtitle',
+    defaultMessage:
+      'Add an Audience External Feed. An Audience External Feed Type will trigger a pixel on your properties to push cookies to third parties receivers.',
+  },
+  AUDIENCE_SEGMENT_TAG_FEED: {
+    id: 'audience.segment.audienceTagFeed.list.subtitle',
+    defaultMessage:
+      'Add an Audience Tag Feed. An Audience Tag Feed Type will trigger a pixel on your properties to push cookies to third parties receivers.',
+  },
+  GENERIC_PLUGIN: {
+    id: 'audience.segment.genericPlugin.list.subtitle',
+    defaultMessage:
+      'Add a Plugin. A Plugin will trigger a pixel on your properties to push cookies to third parties receivers.',
+  },
+});
 
 export interface CreateAudienceFeedProps<T = any> {
   initialValues?: AudienceFeedFormModel;
@@ -37,15 +78,18 @@ type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
   InjectedIntlProps &
   InjectedNotificationProps;
 
-class CreateAudienceFeed<T> extends React.Component<
-  JoinedProps<T>
-  > {
-
+class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
   feedService: AudienceSegmentFeedService;
   constructor(props: JoinedProps<T>) {
     super(props);
-    const type = props.type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED' ? 'EXTERNAL_FEED' : 'TAG_FEED';
-    this.feedService = new AudienceSegmentFeedService(props.match.params.segmentId, type)
+    const type =
+      props.type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+        ? 'EXTERNAL_FEED'
+        : 'TAG_FEED';
+    this.feedService = new AudienceSegmentFeedService(
+      props.match.params.segmentId,
+      type,
+    );
   }
 
   onSave = (audienceFeed: any, properties: PluginProperty[]) => {
@@ -109,10 +153,8 @@ class CreateAudienceFeed<T> extends React.Component<
       type,
       onClose,
       initialValues,
-      match: { 
-        params: { 
-          feedId,  
-        } 
+      match: {
+        params: { feedId },
       },
       intl: { formatMessage },
     } = this.props;
@@ -131,21 +173,25 @@ class CreateAudienceFeed<T> extends React.Component<
 
     return (
       <GenericPluginContent
-          pluginType={type}
-          listTitle={messages.listTagTitle}
-          listSubTitle={messages.listTagSubTitle}
-          breadcrumbPaths={paths}
-          pluginInstanceService={this.feedService}
-          pluginInstanceId={feedId}
-          createPluginInstance={this.createTagFeedPluginInstance}
-          onSaveOrCreatePluginInstance={this.onSave}
-          onClose={onClose}
-          showGeneralInformation={false}
-          showedMessage={showedMessage}
-          disableFields={initialValues && (initialValues.plugin.status === 'ACTIVE' || initialValues.plugin.status === 'PUBLISHED')}
-          isCardLayout={true}
+        pluginType={type}
+        listTitle={titleMessages[type] || titleMessages.GENERIC_PLUGIN}
+        listSubTitle={subtitleMessages[type] || titleMessages.GENERIC_PLUGIN}
+        breadcrumbPaths={paths}
+        pluginInstanceService={this.feedService}
+        pluginInstanceId={feedId}
+        createPluginInstance={this.createTagFeedPluginInstance}
+        onSaveOrCreatePluginInstance={this.onSave}
+        onClose={onClose}
+        showGeneralInformation={false}
+        showedMessage={showedMessage}
+        disableFields={
+          initialValues &&
+          (initialValues.plugin.status === 'ACTIVE' ||
+            initialValues.plugin.status === 'PUBLISHED')
+        }
+        isCardLayout={true}
       />
-    )
+    );
   }
 }
 

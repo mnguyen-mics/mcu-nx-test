@@ -223,15 +223,6 @@ export default defineMessages({
     id: 'audience.segment.audiencetagfeed.empty',
     defaultMessage: 'No Audience Tag Feed selected yet!',
   },
-  listTagTitle: {
-    id: 'audience.segment.audiencetagfeed.list.title',
-    defaultMessage: 'Choose your Audience Tag Feed Type',
-  },
-  listTagSubTitle: {
-    id: 'audience.segment.audiencetagfeed.list.subtitle',
-    defaultMessage:
-      'Add an Audience Tag Feed. An Audience Tag feed will trigger a pixel on your properties to push cookies to third parties receivers.',
-  },
   listExternalTitle: {
     id: 'audience.segment.audienceexternalfeed.list.title',
     defaultMessage: 'Choose your Audience External Feed Type',
