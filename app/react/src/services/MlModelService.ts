@@ -93,7 +93,7 @@ export class MlModelService implements IMlModelService {
         mlModelId: string,
         file: FormData
     ): Promise<DataResponse<MlModelResource>> {
-        const endpoint = `organisations/${organisationId}/ml_algorithms/${mlAlgorithmId}/ml_models/${mlModelId}/result`;
+        const endpoint = `organisations/${organisationId}/ml_algorithms/${mlAlgorithmId}/ml_models/${mlModelId}/model`;
         return ApiService.postRequest(endpoint, file);
     }
 }

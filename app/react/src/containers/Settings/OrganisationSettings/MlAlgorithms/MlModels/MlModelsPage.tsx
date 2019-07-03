@@ -18,6 +18,9 @@ import { McsIconType } from '../../../../../components/McsIcon';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { UploadFile } from 'antd/lib/upload/interface';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
+import LocalStorage from '../../../../../services/LocalStorage';
+import log from '../../../../../utils/Logger';
+
 
 const { Content } = Layout
 
@@ -229,10 +232,13 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             this._mlModelService.createMlModel(organisationId, mlAlgorithmId, mlModel)
               .then(res => res.data)
               .then(model => {
-                Promise.all([
-                  this._mlModelService.uploadModel(organisationId, mlAlgorithmId, model.id, modelFormData),
-                  this._mlModelService.uploadResult(organisationId, mlAlgorithmId, model.id, resultFormData)
-                ]);
+                console.log(model);
+                return this._mlModelService.uploadModel(organisationId, mlAlgorithmId, model.id, modelFormData);
+              })
+              .then(res => res.data)
+              .then(modelWithModel => {
+                console.log(modelWithModel)
+                return this._mlModelService.uploadResult(organisationId, mlAlgorithmId, modelWithModel.id, resultFormData)
               })
               .then(values => {
                 const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
@@ -248,6 +254,42 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
                 message.error(intl.formatMessage(messages.modelCreationError));
               })
         }
+    }
+
+    download = (uri: string) => {
+      try {
+        (window as any).open(
+          `${
+            (window as any).MCS_CONSTANTS.API_URL
+          }/v1/data_file/data?uri=${encodeURIComponent(uri)}&access_token=${encodeURIComponent(
+            LocalStorage.getItem('access_token')!,
+          )}`
+        );
+      } catch(err) {
+        log.error(err);
+      }
+      
+    }
+
+    downloadModel = (mlModel: MlModelResource) => {
+      if (mlModel.model_uri) {
+        this.download(mlModel.model_uri);
+      } else {
+        return;
+      }
+    }
+
+
+    downloadResult = (mlModel: MlModelResource) => {
+      if (mlModel.html_notebook_result_uri) {
+        this.download(mlModel.html_notebook_result_uri);
+      } else {
+        return;
+      }
+    }
+
+    togglePause = (mlModel: MlModelResource) => {
+      return;
     }
 
     handleOpenClose = () => {
@@ -333,7 +375,10 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
           const actionsColumnsDefinition: Array<ActionsColumnDefinition<MlModelResource>> = [
             {
               key: 'action',
-              actions: (mlAlgorithm: MlModelResource) => [
+              actions: (mlModel: MlModelResource) => [
+                { intlMessage: messages.downloadModel, callback: this.downloadModel, disabled: !mlModel.model_uri},
+                { intlMessage: messages.downloadResult, callback: this.downloadResult, disabled: !mlModel.html_notebook_result_uri},
+                { intlMessage: mlModel.status === "PAUSED" ? messages.statusLive : messages.statusPaused, callback: this.togglePause, disabled: false }
               ],
             },
           ];

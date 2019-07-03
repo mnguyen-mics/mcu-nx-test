@@ -64,7 +64,15 @@ const messages = defineMessages({
   modelCreationError: {
       id: 'settings.organisation.ml-models.create.error',
       defaultMessage: 'Error while creating the model'
-  }
+  },
+  downloadModel: {
+    id: 'settings.organisation.ml-models.download.model',
+    defaultMessage: 'Download Model'
+  },
+  downloadResult: {
+    id: 'settings.organisation.ml-models.download.result',
+    defaultMessage: 'Download Result'
+  },
 });
 
 export default messages;
