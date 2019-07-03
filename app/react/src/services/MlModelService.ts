@@ -36,6 +36,12 @@ export interface IMlModelService {
         mlModelId: string,
         file: FormData
     ) => Promise<DataResponse<MlModelResource>>;
+    uploadNotebook: (
+        organisationId: string,
+        mlAlgorithmId: string,
+        mlModelId: string,
+        file: FormData
+    ) => Promise<DataResponse<MlModelResource>>;
 }
 
 @injectable()
@@ -94,6 +100,15 @@ export class MlModelService implements IMlModelService {
         file: FormData
     ): Promise<DataResponse<MlModelResource>> {
         const endpoint = `organisations/${organisationId}/ml_algorithms/${mlAlgorithmId}/ml_models/${mlModelId}/model`;
+        return ApiService.postRequest(endpoint, file);
+    }
+    uploadNotebook(
+        organisationId: string,
+        mlAlgorithmId: string,
+        mlModelId: string,
+        file: FormData
+    ): Promise<DataResponse<MlModelResource>> {
+        const endpoint = `organisations/${organisationId}/ml_algorithms/${mlAlgorithmId}/ml_models/${mlModelId}/notebook`;
         return ApiService.postRequest(endpoint, file);
     }
 }

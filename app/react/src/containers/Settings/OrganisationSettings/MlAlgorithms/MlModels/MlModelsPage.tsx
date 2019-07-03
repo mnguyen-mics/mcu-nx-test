@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import { Layout, Button, Modal, Spin, Upload, message } from "antd";
 import MlModelResource from "../../../../../models/mlModel/MlModelResource";
@@ -20,6 +21,8 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import LocalStorage from '../../../../../services/LocalStorage';
 import log from '../../../../../utils/Logger';
+import NotebookResultPreviewModal from './NotebookResultPreviewModal';
+import DataFileService from '../../../../../services/DataFileService';
 
 
 const { Content } = Layout
@@ -31,6 +34,8 @@ const initialState = {
     data: [],
     total: 0,
     isModalOpen: false,
+    isPreviewModalOpened: false,
+    previewModalHtml: ''
 }
 
 interface MlModelsListState {
@@ -38,8 +43,11 @@ interface MlModelsListState {
     data: MlModelResource[],
     total: number;
     isModalOpen: boolean;
+    isPreviewModalOpened: boolean;
+    previewModalHtml: string;
     modelFile?: UploadFile[];
     resultFile?: UploadFile[];
+    notebookFile?: UploadFile[];
 }
 
 interface RouterProps {
@@ -219,11 +227,12 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             intl
         } = this.props;
         
-        const { modelFile, resultFile } = this.state;
+        const { modelFile, resultFile, notebookFile } = this.state;
         
-        if (modelFile && resultFile) {
+        if (modelFile && resultFile && notebookFile) {
             const modelFormData = await this.formatFormData(modelFile[0]);
             const resultFormData = await this.formatFormData(resultFile[0]);
+            const notebookFormData = await this.formatFormData(notebookFile[0]);
         
             const mlModel = {
               "name": "Model Name",
@@ -232,12 +241,15 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             this._mlModelService.createMlModel(organisationId, mlAlgorithmId, mlModel)
               .then(res => res.data)
               .then(model => {
-                console.log(model);
-                return this._mlModelService.uploadModel(organisationId, mlAlgorithmId, model.id, modelFormData);
+                return this._mlModelService.uploadNotebook(organisationId, mlAlgorithmId, model.id, notebookFormData)
               })
               .then(res => res.data)
+              .then(modelWithNotebook => {
+                return this._mlModelService.uploadModel(organisationId, mlAlgorithmId, modelWithNotebook.id, modelFormData);
+              })
+
+              .then(res => res.data)
               .then(modelWithModel => {
-                console.log(modelWithModel)
                 return this._mlModelService.uploadResult(organisationId, mlAlgorithmId, modelWithModel.id, resultFormData)
               })
               .then(values => {
@@ -248,6 +260,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
                   isModalOpen: false,
                   resultFile: [],
                   modelFile: [],
+                  notebookFile: []
                 });
               })
               .catch(err => {
@@ -288,8 +301,59 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
       }
     }
 
+    downloadNotebook = (mlModel: MlModelResource) => {
+      if (mlModel.notebook_uri) {
+        this.download(mlModel.notebook_uri);
+      } else {
+        return;
+      }
+    }
+
+    previewResult = async (mlModel: MlModelResource) => {
+      if (mlModel.html_notebook_result_uri) {
+        DataFileService.getDatafileData(mlModel.html_notebook_result_uri)
+          .then(blob => {
+            return new Response(blob).text()
+          })
+          .then(data => {
+            this.setState({ previewModalHtml: data, isPreviewModalOpened: true });
+          })
+      } else {
+        return;
+      }
+    }
+
+    onClosePreviewModal = () => {
+      this.setState({
+        previewModalHtml: '',
+        isPreviewModalOpened: false
+      });
+    }
+
     togglePause = (mlModel: MlModelResource) => {
-      return;
+      const { 
+        match: {
+          params: { organisationId, mlAlgorithmId }
+        },
+        location: { search },
+        intl
+      } = this.props
+      if (mlModel.status === "PAUSED") {
+        mlModel.status = "LIVE";
+      } else {
+        mlModel.status = "PAUSED";
+      }
+      this._mlModelService.updateMlModel(organisationId, mlAlgorithmId, mlModel.id, mlModel)
+        .then(res => res.data)
+        .then(mlModel => {
+          const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
+          this.fetchMlModels(organisationId, filter)
+          message.success(intl.formatMessage(messages.updateSuccess));
+        })
+        .catch(err => {
+          message.error(intl.formatMessage(messages.updateError));
+        })
+      
     }
 
     handleOpenClose = () => {
@@ -301,7 +365,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
           intl: { formatMessage },
         } = this.props;
     
-        const { loading, isModalOpen, resultFile, modelFile } = this.state;
+        const { loading, isModalOpen, resultFile, modelFile, notebookFile } = this.state;
     
         const modelUploadProps = {
           name: 'file',
@@ -319,11 +383,28 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
               }
           },
         };
+
+        const notebookUploadProps = {
+          name: 'file',
+          multiple: false,
+          action: '/',
+          accept: '.ipynb',
+          beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
+            this.setState({ notebookFile: fileList });
+            return false;
+          },
+          fileList: notebookFile,
+          onRemove: (file: UploadFile) => {
+              if (notebookFile) {
+                  this.setState({ notebookFile: [] });
+              }
+          },
+        };
         const resultUploadProps = {
             name: 'file',
             multiple: false,
             action: '/',
-            accept: '',
+            accept: '.html',
             beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
                 this.setState({ resultFile: fileList });
                 return false;
@@ -346,15 +427,21 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             confirmLoading={loading}
           >
             <Spin spinning={loading}>
+              <Dragger {...notebookUploadProps}>
+                <p className="ant-upload-hint">
+                  {formatMessage(messages.uploadMessageNotebook)}
+                </p>
+              </Dragger>
+              <br />
               <Dragger {...modelUploadProps}>
                 <p className="ant-upload-hint">
-                  {formatMessage(messages.uploadMessage)}
+                  {formatMessage(messages.uploadMessageModel)}
                 </p>
               </Dragger>
               <br />
               <Dragger {...resultUploadProps}>
                 <p className="ant-upload-hint">
-                  {formatMessage(messages.uploadMessage)}
+                  {formatMessage(messages.uploadMessageResult)}
                 </p>
               </Dragger>
             </Spin>
@@ -378,6 +465,8 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
               actions: (mlModel: MlModelResource) => [
                 { intlMessage: messages.downloadModel, callback: this.downloadModel, disabled: !mlModel.model_uri},
                 { intlMessage: messages.downloadResult, callback: this.downloadResult, disabled: !mlModel.html_notebook_result_uri},
+                { intlMessage: messages.downloadNotebook, callback: this.downloadNotebook, disabled: !mlModel.notebook_uri},
+                { intlMessage: messages.previewResult, callback: this.previewResult, disabled: !mlModel.notebook_uri},
                 { intlMessage: mlModel.status === "PAUSED" ? messages.statusLive : messages.statusPaused, callback: this.togglePause, disabled: false }
               ],
             },
@@ -405,10 +494,13 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             </div>
           );
 
+          const { isPreviewModalOpened, previewModalHtml } = this.state;
+
           return (
             <div className="ant-layout">
               <Content className="mcs-content-container">
               {this.renderModal()}
+              <NotebookResultPreviewModal opened={isPreviewModalOpened} html={previewModalHtml} onClose={this.onClosePreviewModal}/>
               <ItemList
                 fetchList={this.fetchMlModels}
                 dataSource={this.state.data}

@@ -16,8 +16,6 @@ import moment from 'moment';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-import LocalStorage from '../../../../../services/LocalStorage';
-import log from '../../../../../utils/Logger';
 import { McsIconType } from '../../../../../components/McsIcon';
 import { message } from 'antd';
 import { Link } from 'react-router-dom';
@@ -141,14 +139,6 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       });
     }
 
-    handleDownloadNotebook = (mlAlgorithm: MlAlgorithmResource) => {
-      if (mlAlgorithm.notebook_uri) {
-        this.download(mlAlgorithm.notebook_uri);
-      } else {
-        return;
-      }
-    }
-
     handleArchiveMlAlgorithm = (mlAlgorithm: MlAlgorithmResource) => {
       const {
         match: {
@@ -253,22 +243,6 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         dataColumnsDefinition: dataColumns,
       };
     };
-
-    download = (uri: string) => {
-      try {
-        (window as any).open(
-          `${
-            (window as any).MCS_CONSTANTS.API_URL
-          }/v1/data_file/data?uri=${encodeURIComponent(uri)}&access_token=${encodeURIComponent(
-            LocalStorage.getItem('access_token')!,
-          )}`
-        );
-      } catch(err) {
-        log.error(err);
-      }
-      
-    }
-
     
 
     render() {
@@ -293,7 +267,6 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           key: 'action',
           actions: (mlAlgorithm: MlAlgorithmResource) => [
             { intlMessage: messages.editMlAlgorithmRaw, callback: this.handleEditMlAlgorithm, disabled: mlAlgorithm.archived },
-            { intlMessage: messages.downloadNotebook, callback: this.handleDownloadNotebook, disabled: !(mlAlgorithm.notebook_uri) },
             { intlMessage: messages.archive, callback: this.handleArchiveMlAlgorithm, disabled: mlAlgorithm.archived },
           ],
         },
