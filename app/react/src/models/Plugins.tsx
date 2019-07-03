@@ -41,7 +41,8 @@ export type PluginType =
  | 'ATTRIBUTION_PROCESSOR'
  | 'ACTIVITY_ANALYZER'
  | 'DATA_CONNECTOR'
- | 'SCENARIO_NODE_PROCESSOR';
+ | 'SCENARIO_NODE_PROCESSOR'
+ | 'STORED_PROCEDURE';
 
 export interface PluginVersionResource {
   id: string;

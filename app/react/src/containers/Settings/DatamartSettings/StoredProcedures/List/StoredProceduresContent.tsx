@@ -16,9 +16,7 @@ import messages from './messages';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { StoredProcedureResource } from '../../../../../models/datamart/StoredProcedure';
-import { IStoredProcedureService } from '../../../../../services/StoredProcedureService';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { TYPES } from '../../../../../constants/types';
+import { IStoredProcedureService, StoredProcedureService } from '../../../../../services/StoredProcedureService';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
@@ -67,8 +65,7 @@ class StoredProceduresContent extends Component<
   StoredProceduresContentState
 > {
 
-  @lazyInject(TYPES.IStoredProcedureService)
-  private _storedProcedureService: IStoredProcedureService;
+  private _storedProcedureService: IStoredProcedureService = new StoredProcedureService();
 
   constructor(props: Props) {
     super(props);
@@ -160,7 +157,7 @@ class StoredProceduresContent extends Component<
     });
   };
 
-  onClickEdit = (visitAnalyzer: StoredProcedure) => {
+  onClickEdit = (storedProcedure: StoredProcedure) => {
     const {
       history,
       match: {
@@ -169,8 +166,8 @@ class StoredProceduresContent extends Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
-        visitAnalyzer.id
+      `/v2/o/${organisationId}/settings/datamart/stored_procedures/${
+        storedProcedure.id
       }/edit`,
     );
   };
@@ -203,7 +200,7 @@ class StoredProceduresContent extends Component<
         render: (text: string, record: StoredProcedure) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
+            to={`/v2/o/${organisationId}/settings/datamart/stored_procedures/${
               record.id
             }/edit`}
           >
@@ -224,7 +221,7 @@ class StoredProceduresContent extends Component<
 
     const onClick = () =>
       history.push(
-        `/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`,
+        `/v2/o/${organisationId}/settings/datamart/stored_procedures/create`,
       );
 
     const buttons = [
