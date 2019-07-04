@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormInputField, FormInput } from '../../../../../components/Form';
+import { FormInputField, FormInput, DefaultSelect, FormSelectField } from '../../../../../components/Form';
 import { compose } from 'recompose';
 import withValidators, {
   ValidatorProps,
@@ -7,7 +7,11 @@ import withValidators, {
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from "./messages"
 
-export interface IGeneralInformationProps {}
+export interface IGeneralInformationProps {
+  fieldNamePrefix: string;
+  disabled: boolean;
+  objects: string[];
+}
 
 type Props = IGeneralInformationProps & ValidatorProps & InjectedIntlProps;
 
@@ -16,26 +20,28 @@ class GeneralInformation extends React.Component<Props, any> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      disabled,
+      fieldNamePrefix
     } = this.props;
     return (
       <div>
-        <FormInputField
-          name="hosting_object_type_name"
-          component={FormInput}
+        <FormSelectField
+          name={`${fieldNamePrefix}.hosting_object_type_name`}
+          component={DefaultSelect}
           validate={[isRequired]}
+          options={this.props.objects.map(i => {
+            return { title: i, value: i };
+          })}
           formItemProps={{
             label: formatMessage(messages.labelHostingObjectType),
             required: true,
-          }}
-          inputProps={{
-            placeholder: formatMessage(messages.labelHostingObjectType),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.tootltipHostingObjectType),
           }}
         />
         <FormInputField
-          name="field_type_name"
+          name={`${fieldNamePrefix}.field_type_name`}
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -44,13 +50,14 @@ class GeneralInformation extends React.Component<Props, any> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.labelFieldTypeName),
+            disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.tootltipFieldTypeName),
           }}
         />
         <FormInputField
-          name="field_name"
+          name={`${fieldNamePrefix}.field_name`}
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -59,13 +66,14 @@ class GeneralInformation extends React.Component<Props, any> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.labelFieldName),
+            disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.tootltipFieldName),
           }}
         />
         <FormInputField
-          name="query"
+          name={`${fieldNamePrefix}.query`}
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -74,6 +82,7 @@ class GeneralInformation extends React.Component<Props, any> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.labelQuery),
+            disabled
           }}
           helpToolTipProps={{
             title: formatMessage(messages.tootltipQuery),

@@ -12,6 +12,7 @@ export interface StoredProcedureResource {
   artifact_id: string;
   version_id: string;
   version_value: string;
+  expiration_period: string;
 }
 
 export type StoredProcedureStatus = "INITIAL" | "ACTIVE" | "PAUSED" | "ERROR"
