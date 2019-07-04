@@ -16,6 +16,9 @@ import { IStoredProcedureService, StoredProcedureService } from '../../../../../
 import { SpecificFieldsFunction } from '../../../../Plugin/Edit/PluginEditForm';
 import { withDatamartSelector, WithDatamartSelectorProps } from '../../../../Datamart/WithDatamartSelector';
 import GeneralInformation from './GeneralInformationSection';
+import RuntimeSchemaService from '../../../../../services/RuntimeSchemaService';
+import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import { Loading } from '../../../../../components';
 
 const StoredProcedurePluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<StoredProcedureResource>>
 
@@ -24,12 +27,55 @@ interface StoredProcedureRouteParam {
   storedProcedureId?: string;
 }
 
-type JoinedProps = RouteComponentProps<StoredProcedureRouteParam> &
-  InjectedIntlProps & WithDatamartSelectorProps;
+interface IState {
+  objects: string[];
+  loading: boolean;
+}
 
-class CreateEditStoredProcedure extends React.Component<JoinedProps> {
+type JoinedProps = RouteComponentProps<StoredProcedureRouteParam> &
+  InjectedIntlProps & WithDatamartSelectorProps & InjectedNotificationProps;
+
+class CreateEditStoredProcedure extends React.Component<JoinedProps, IState> {
 
   private _storedProcedureService: IStoredProcedureService = new StoredProcedureService();
+
+  constructor(props: JoinedProps) {
+    super(props);
+    this.state = {
+      objects: [],
+      loading: true
+    }
+  }
+
+  componentDidMount() {
+    this.fetchObjectTypes(this.props.selectedDatamartId)
+  }
+  
+  componentDidUpdate(prevProps: JoinedProps, prevState: IState) {
+    if (this.props.selectedDatamartId !== prevProps.selectedDatamartId) {
+      this.fetchObjectTypes(this.props.selectedDatamartId)
+    }
+  }
+
+  fetchObjectTypes = (
+    datamartId: string,
+  ) => {
+    this.setState({ loading: true })
+    return RuntimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
+        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+        if (!liveSchema) return [];
+        return RuntimeSchemaService.getObjectTypeInfoResources(
+          datamartId,
+          liveSchema.id,
+        )
+      },
+    )
+    .then(r =>  this.setState({ objects: r.map(a => a.name), loading: false }))
+    .catch((err) => {
+      this.setState({ loading: false })
+      this.props.notifyError(err)
+    });
+  };
   
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
@@ -38,7 +84,8 @@ class CreateEditStoredProcedure extends React.Component<JoinedProps> {
   };
 
   renderSpecificFields: SpecificFieldsFunction = (disabled: boolean, fieldNamePrefix: string) => {
-    return <GeneralInformation />
+    const { objects } = this.state;
+    return <GeneralInformation disabled={disabled} fieldNamePrefix={fieldNamePrefix} objects={objects} />
   }
 
   onSaveOrCreatePluginInstance = (
@@ -75,6 +122,7 @@ class CreateEditStoredProcedure extends React.Component<JoinedProps> {
       field_type_name: pluginInstance.field_type_name,
       hosting_object_type_name: pluginInstance.hosting_object_type_name,
       query: pluginInstance.query,
+      expiration_period: "P1D",
       status: "INITIAL",
     }
     return result
@@ -86,6 +134,10 @@ class CreateEditStoredProcedure extends React.Component<JoinedProps> {
       match: { params: { storedProcedureId } },
     } = this.props;
 
+    const {
+      loading,
+    } = this.state;
+
     const breadcrumbPaths = (visitAnalyzer?: StoredProcedureResource) => [
       {
         name: visitAnalyzer
@@ -93,6 +145,10 @@ class CreateEditStoredProcedure extends React.Component<JoinedProps> {
           : formatMessage(messages.createBreadcrumb),
       },
     ];
+
+    if (loading) {
+      return <Loading />
+    }
 
     return (
       <StoredProcedurePluginContent
@@ -113,5 +169,6 @@ class CreateEditStoredProcedure extends React.Component<JoinedProps> {
 
 export default compose(
   withDatamartSelector,
+  injectNotifications,
   injectIntl,
 )(CreateEditStoredProcedure);
