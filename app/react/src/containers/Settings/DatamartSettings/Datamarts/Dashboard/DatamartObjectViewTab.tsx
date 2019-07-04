@@ -162,8 +162,12 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     ).then(s => {
       return Promise.all([
         this.fetchSchemaDetail(s.data.datamart_id, s.data.id),
-        this.fetchSchemas(s.data.datamart_id),
+        this.fetchSchemas(s.data.datamart_id, false),
       ]);
+    })
+    .catch(err => {
+      this.props.notifyError(err);
+      this.setState({ loadingList: false, loadingSingle: false })
     });
   };
 
@@ -249,10 +253,10 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   uploadDecorator = async (file: UploadFile) => {
     const { datamartId } = this.props;
     const { selectedSchema } = this.state;
-    this.setState({ uploadingDecorator: true })
     if (!selectedSchema || !datamartId) {
       return Promise.resolve()
     }
+    this.setState({ uploadingDecorator: true })
 
     const fileContent = await this.onFileUpdate(file);
   
