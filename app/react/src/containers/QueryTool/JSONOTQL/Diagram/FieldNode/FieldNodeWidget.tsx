@@ -7,7 +7,7 @@ import {
   McsIcon,
   ButtonStyleless,
 } from '../../../../../components';
-import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
+import { TreeNodeOperations, MicsDiagramEngine, FieldProposalLookup } from '../../domain';
 import FieldNodeFormWrapper from '../../Edit/Sections/Field/FieldNodeFormWrapper';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { FieldNodeFormDataValues, FORM_ID } from '../../Edit/domain';
@@ -27,7 +27,7 @@ interface FieldNodeWidgetProps {
   keyboardOnlyLock: (lock: boolean) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
   datamartId: string;
-  runFieldProposal: (treeNodePath: number[]) => Promise<string[]>;
+  runFieldProposal: FieldProposalLookup
 
 }
 

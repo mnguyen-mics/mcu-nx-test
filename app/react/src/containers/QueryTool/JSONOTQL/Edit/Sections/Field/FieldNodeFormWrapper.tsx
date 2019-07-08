@@ -13,6 +13,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import FieldNodeForm from './FieldNodeForm';
+import { FieldProposalLookup } from '../../../domain';
 
 export interface FieldNodeFormWrapperProps
   extends ConfigProps<FieldNodeFormDataValues> {
@@ -22,7 +23,7 @@ export interface FieldNodeFormWrapperProps
   idToAttachDropDowns?: string;
   runtimeSchemaId: string;
   datamartId: string;
-  runFieldProposal?: (treeNodePath: number[]) => Promise<string[]>;
+  runFieldProposal?: FieldProposalLookup
   treeNodePath?: number[];
 }
 

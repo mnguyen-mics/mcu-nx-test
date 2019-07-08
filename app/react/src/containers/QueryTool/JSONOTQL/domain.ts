@@ -13,6 +13,8 @@ import {
 import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType, ObjectLikeTypeDirectiveInfoResource, SchemaDecoratorResource, FieldDirectiveResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { SchemaItem } from './domain';
 
+export type FieldProposalLookup = (treeNodePath: number[], fieldName: string) => Promise<string[]>;
+
 export enum typesTrigger {
   "UserActivity",
   "UserEvent"
@@ -680,7 +682,7 @@ interface DragAndDropObjectdInterface extends DragAndDropCommonInterface {
 
 export type DragAndDropInterface = DragAndDropFieldInterface |DragAndDropObjectdInterface;
 
-export function computeSchemaPathFromQueryPath(query: ObjectTreeExpressionNodeShape | undefined, path: number[] , schema: SchemaItem | undefined) {
+export function computeSchemaPathFromQueryPath(query: ObjectTreeExpressionNodeShape | undefined, path: number[] , schema: SchemaItem | undefined, lastProperty?: string) {
  
   function computeElementInPath(_query: ObjectTreeExpressionNodeShape | undefined, _path: number[], elements: string[] = []): string[] {
     if (!_query) {
@@ -711,6 +713,10 @@ export function computeSchemaPathFromQueryPath(query: ObjectTreeExpressionNodeSh
   }
   
   const newPath = computeElementInPath(query, path);
+  if (lastProperty) {
+    newPath.splice(-1,1);
+    newPath.push(lastProperty);
+  }
   const newElementPath = computePathFromElement(schema, newPath);
   return newElementPath;
   

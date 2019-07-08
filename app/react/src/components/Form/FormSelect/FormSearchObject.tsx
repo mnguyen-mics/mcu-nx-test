@@ -18,6 +18,7 @@ export interface FormSearchObjectProps {
   loadOnlyOnce?: boolean;
   fetchListMethod: (keyword: string) => Promise<LabeledValue[]>;
   fetchSingleMethod: (id: string) => Promise<LabeledValue>;
+  type?: string;
   small?: boolean;
 }
 
@@ -57,6 +58,24 @@ class FormSearchObject extends React.Component<
     this.fetchInitialData(input.value);
     this.fetchData("")
   }
+
+  componentDidUpdate(prevProps: Props, prevState: FormSearchObjectState) {
+
+    const {
+      type,
+      input
+    } = this.props;
+
+    const {
+      type: prevType
+    } = prevProps;
+
+    if (type !== prevType) {
+      this.fetchInitialData(input.value);
+      this.fetchData("")
+    }
+  }
+  
 
 
   fetchInitialData = (values: string[]) => {
@@ -104,7 +123,6 @@ class FormSearchObject extends React.Component<
     if (currentValue) {
       finalValue.push(currentValue)
     }
-    console.log(value, currentValue, finalValue);
     input.onChange(finalValue)
   } 
 
@@ -138,7 +156,7 @@ class FormSearchObject extends React.Component<
       >
         <Spin spinning={this.state.initialFetch}>
           <Select
-            mode="multiple"
+            mode="tags"
             labelInValue={true}
             value={this.state.value}
             placeholder={'Search'}

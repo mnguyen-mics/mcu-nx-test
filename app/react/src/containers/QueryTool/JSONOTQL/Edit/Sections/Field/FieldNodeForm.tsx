@@ -1,6 +1,5 @@
 import { OptionProps } from 'antd/lib/select';
 import * as React from 'react';
-import _ from 'lodash';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -54,7 +53,7 @@ import ReferenceTableService from '../../../../../../services/ReferenceTableServ
 import DatamartService from '../../../../../../services/DatamartService';
 import channelService from '../../../../../../services/ChannelService';
 import { IComparmentService } from '../../../../../../services/CompartmentService';
-import { getCoreReferenceTypeAndModel } from '../../../domain';
+import { getCoreReferenceTypeAndModel, FieldProposalLookup } from '../../../domain';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -76,7 +75,7 @@ export interface FieldNodeFormProps {
   runtimeSchemaId: string;
   datamartId: string;
   formName?: string;
-  runFieldProposal?: (treeNodePath: number[]) => Promise<string[]>;
+  runFieldProposal?: FieldProposalLookup
   treeNodePath?: number[];
 }
 
@@ -151,13 +150,13 @@ class FieldNodeForm extends React.Component<Props, State> {
     }
   }
 
-  fetchPredicates = (treeNodePath: number[]) => {
+  fetchPredicates = (treeNodePath: number[], fieldName: string) => {
     const { runFieldProposal } = this.props;
     if (!runFieldProposal) {
       return Promise.resolve([])
     }
     
-    return runFieldProposal(treeNodePath)
+    return runFieldProposal(treeNodePath, fieldName)
     
   }
 
@@ -169,9 +168,6 @@ class FieldNodeForm extends React.Component<Props, State> {
       expressionIndex: nextExpressionIndex,
       formChange,
       name,
-      runFieldProposal,
-      treeNodePath,
-
     } = nextProps;
     const field = this.getField(formValues, expressionIndex);
     const fieldName = field ? field.field : undefined;
@@ -182,19 +178,10 @@ class FieldNodeForm extends React.Component<Props, State> {
     const nextFieldName = nextField ? nextField.field : undefined;
 
     if (fieldName !== nextFieldName && nextFieldName !== undefined) {
+
       const fieldType = this.getSelectedFieldType(nextFieldName);
       const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
-      console.log('going there', runFieldProposal, treeNodePath)
-      const computedFieldPosition = this.getSelectedIndex(nextFieldName);
-      console.log('computedFieldPosition', computedFieldPosition, treeNodePath)
-      if (computedFieldPosition && treeNodePath) {
-        // const [...tailTreeNodePath, headTreeNodePath] = treeNodePath;
-        const duplidatedTreeNodePath = _.map(treeNodePath, _.clone);
-        const newTreeNodePath = duplidatedTreeNodePath.splice(-1, 1);
-        newTreeNodePath.push(computedFieldPosition);
-        console.log('newTreeNodePath', newTreeNodePath)
-        this.fetchPredicates(newTreeNodePath)
-      }
+
       
       formChange(
         name ? `${name}.comparison` : 'comparison',
@@ -242,9 +229,8 @@ class FieldNodeForm extends React.Component<Props, State> {
 
   getSelectedIndex = (fieldName: string | undefined) => {
     const { availableFields } = this.props;
-
     const possibleFieldIndex = availableFields.findIndex(i => i.name === fieldName);
-    if (possibleFieldIndex) {
+    if (possibleFieldIndex > -1) {
       return possibleFieldIndex;
     }
     return null;
@@ -609,7 +595,6 @@ class FieldNodeForm extends React.Component<Props, State> {
     const field = this.getField(formValues, expressionIndex);
 
 
-
     let fetchListMethod = (keywords: string) => {
       if (field) {
         return ReferenceTableService.getReferenceTable(datamartId, runtimeSchemaId, objectType.name, field.field)
@@ -646,7 +631,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         }
       }
     } else if (type && type === "COMPUTED") {
-      fetchListMethod = (keywords: string) => this.fetchPredicates(this._computedTreeNodePath).then(r => r.map( e => ({ key: e, label: e })));
+      fetchListMethod = (keywords: string) => this.fetchPredicates(this._computedTreeNodePath, field ? field.field : "").then(r => r.map( e => ({ key: e, label: e })));
       selectProps = {
         ...selectProps, 
         mode: 'tags'
@@ -681,6 +666,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         selectProps={{
           ...selectProps,
         }}
+        type={field && field.field}
         small={true}
         loadOnlyOnce={loadOnlyOnce}
       />

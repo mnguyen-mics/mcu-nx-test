@@ -17,7 +17,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { computeFinalSchemaItem, computeSchemaPathFromQueryPath, SchemaItem } from './domain';
+import { computeFinalSchemaItem, computeSchemaPathFromQueryPath, SchemaItem, FieldProposalLookup } from './domain';
 import { JSONQLBuilderContext } from './JSONQLBuilderContext';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
@@ -53,6 +53,7 @@ type Props = JSONQLBuilderContainerProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> & InjectedFeaturesProps;
+
 
 class JSONQLBuilderContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.IQueryService)
@@ -209,7 +210,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
     });
   };
 
-  runFieldProposal = (treenodePath: number[]): Promise<string[]> => {
+  runFieldProposal: FieldProposalLookup = (treenodePath, fieldName) => {
     const {datamartId, isTrigger, hasFeature} = this.props;
     const {queryHistory: {present: query}, objectTypes} = this.state;
 
@@ -225,14 +226,14 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           isTrigger ? isTrigger : false,
         )
       : undefined;
+    
 
     const computedSchemaPathFromQueryPath = computeSchemaPathFromQueryPath(
       query,
       treenodePath,
-      computedSchema
+      computedSchema,
+      fieldName
     );
-
-    console.log("running field proposal", treenodePath, computedSchemaPathFromQueryPath, computedSchema)
 
     const computedSelectQuery = (path: number[], schema?: SchemaItem): SelectionField[] => {
       if (!schema) {
@@ -246,7 +247,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       const newSchema = schema.fields[currentPath] as SchemaItem;
       return [{ name: newSchema.name,selections: computedSelectQuery(remainingPaths, newSchema) }]
     }
-    
+
     return this._queryService.runJSONOTQLQuery(
       datamartId,
       {
