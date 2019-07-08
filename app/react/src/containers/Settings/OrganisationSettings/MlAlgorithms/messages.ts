@@ -17,10 +17,6 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-algorithms.last-updated-date',
     defaultMessage: 'Last Updated Date',
   },
-  emptyMlAlgorithms: {
-    id: 'settings.organisation.ml-algorithms.empty-ml-algorithms',
-    defaultMessage: 'No ML Algorithms for organisation',
-  },
   mlAlgorithms: {
     id: 'settings.organisation.ml-algorithms.placeholder',
     defaultMessage: 'ML Algorithms'
@@ -97,6 +93,10 @@ const messages = defineMessages({
   updateError: {
     id: 'settings.organisation.ml-algorithms.edit.list.errorMessage',
     defaultMessage: 'ML Algorithm update failed ',
+  },
+  loadingError: {
+    id: 'settings.organisation.ml-algorithms.edit.list.loadingErrorMessage',
+    defaultMessage: 'Error while loading ML Algorithms',
   },
 });
 

@@ -10,7 +10,7 @@ import { compose } from 'recompose';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IMlModelService } from '../../../../../services/MlModelService';
-import { isSearchValid, PAGINATION_SEARCH_SETTINGS, buildDefaultSearch, parseSearch, compareSearches } from '../../../../../utils/LocationSearchHelper';
+import {  PAGINATION_SEARCH_SETTINGS, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import messages from './messages';
@@ -70,64 +70,6 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
         this.state = initialState;
     }
 
-    componentDidMount() {
-        const {
-            match: {
-              params: { organisationId },
-            },
-            location: { search, pathname },
-            history,
-          } = this.props;
-
-        if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
-        history.replace({
-            pathname: pathname,
-            search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
-            state: { reloadDataSource: true },
-        });
-        } else {
-        const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-        this.fetchMlModels(organisationId, filter);
-        }
-    }
-
-    componentWillReceiveProps(nextProps: JoinedProps) {
-      const {
-        history,
-        location: { search },
-        match: {
-          params: { organisationId, mlAlgorithmId },
-        },
-      } = this.props;
-  
-      const {
-        location: { pathname: nextPathname, search: nextSearch },
-        match: {
-          params: {
-            organisationId: nextOrganisationId,
-            mlAlgorithmId: nextMlAlgorithmId
-          }
-        },
-      } = nextProps;
-  
-      if (
-        !compareSearches(search, nextSearch) ||
-        organisationId !== nextOrganisationId || mlAlgorithmId !== nextMlAlgorithmId
-      ) {
-        if (!isSearchValid(nextSearch, PAGINATION_SEARCH_SETTINGS)) {
-          history.replace({
-            pathname: nextPathname,
-            search: buildDefaultSearch(nextSearch, PAGINATION_SEARCH_SETTINGS),
-            state: { reloadDataSource: organisationId !== nextOrganisationId },
-          });
-        } else {
-          const filter = parseSearch(nextSearch, PAGINATION_SEARCH_SETTINGS);
-          this.fetchMlModelsWithMlAlgorithmId(nextOrganisationId, nextMlAlgorithmId, filter);
-        }
-      }
-    }
-
-
     fetchMlModels = (organisationId: string, filter: Filters) => {
         const {
             match: {
@@ -140,19 +82,22 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
     }
 
     fetchMlModelsWithMlAlgorithmId =  (organisationId: string, mlAlgorithmId: string, filter: Filters) => {
+      const { intl } = this.props;
         this.setState({ loading: true}, () => {
             const options = {
                 ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
               };
-              this._mlModelService.getMlModels(organisationId, mlAlgorithmId, options).then(
-                (results: { data: MlModelResource[]; total?: number; count: number }) => {
+              this._mlModelService.getMlModels(organisationId, mlAlgorithmId, options)
+                .then(results => {
                   this.setState({
                     loading: false,
                     data: results.data,
                     total: results.total || results.count,
                   });
-                },
-              );
+                })
+                .catch(err => {
+                  message.error(intl.formatMessage(messages.modelsLoadingError));
+                })          
         });
     }
 
@@ -287,8 +232,6 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
     downloadModel = (mlModel: MlModelResource) => {
       if (mlModel.model_uri) {
         this.download(mlModel.model_uri);
-      } else {
-        return;
       }
     }
 
@@ -296,16 +239,12 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
     downloadResult = (mlModel: MlModelResource) => {
       if (mlModel.html_notebook_result_uri) {
         this.download(mlModel.html_notebook_result_uri);
-      } else {
-        return;
       }
     }
 
     downloadNotebook = (mlModel: MlModelResource) => {
       if (mlModel.notebook_uri) {
         this.download(mlModel.notebook_uri);
-      } else {
-        return;
       }
     }
 
@@ -318,8 +257,6 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
           .then(data => {
             this.setState({ previewModalHtml: data, isPreviewModalOpened: true });
           })
-      } else {
-        return;
       }
     }
 
@@ -345,7 +282,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
       }
       this._mlModelService.updateMlModel(organisationId, mlAlgorithmId, mlModel.id, mlModel)
         .then(res => res.data)
-        .then(mlModel => {
+        .then(model => {
           const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
           this.fetchMlModels(organisationId, filter)
           message.success(intl.formatMessage(messages.updateSuccess));

@@ -25,18 +25,8 @@ export default class NotebookResultPreviewModal extends React.Component<JoinedPr
         this.state = initialState;
     }
 
-    componentDidUpdate(prevProps: JoinedProps, prevState: NotebookResultPreviewModalState) {
-        /*
-        const { opened } = this.props;
-        this.setState({ opened });
-        */
-       return;
-    }
-
     render() {
         const { html, onClose, opened } = this.props;
-        console.log("opened", opened);
-
         
         return (
             <StandardModal opened={opened} onClose={onClose}>
