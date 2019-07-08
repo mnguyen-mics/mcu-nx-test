@@ -1,6 +1,5 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { Card } from '../../../../components/Card';
 import {
   OTQLAggregationResult,
   isAggregateResult,
@@ -17,11 +16,14 @@ import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
+import CardFlex from '../Components/CardFlex';
 
 export interface MapBarChartProps {
   title?: string;
   queryId: string;
   datamartId: string;
+  height?: number;
+  labelsEnabled?: boolean;
 }
 
 interface QueryResult {
@@ -100,7 +102,7 @@ class MapBarChart extends React.Component<Props, State> {
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
           return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text)
+            .runOTQLQuery(datamartId, res.data.query_text, {use_cache: true})
             .then(r => r.data)
             .then(r => {
               if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
@@ -135,12 +137,13 @@ class MapBarChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl } = this.props;
+    const { title, colors, intl, height } = this.props;
 
     const optionsForChart = {
       xKey: 'xKey',
       yKeys: ['yKey'],
       colors: [colors['mcs-info']],
+      labelsEnabled: this.props.labelsEnabled
     };
 
     const generateChart = () => {
@@ -165,16 +168,16 @@ class MapBarChart extends React.Component<Props, State> {
             dataset={this.state.queryResult}
             options={optionsForChart}
             colors={{ base: colors['mcs-info'], hover: colors['mcs-warning'] }}
+            height={height}
           />
         );
       }
     };
 
     return (
-      <Card title={title}>
-        <hr />
+      <CardFlex title={title}>
         {generateChart()}
-      </Card>
+      </CardFlex>
     );
   }
 }

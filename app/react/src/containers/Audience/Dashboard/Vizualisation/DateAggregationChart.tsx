@@ -102,7 +102,7 @@ class DateAggregationChart extends React.Component<Props, State> {
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
           return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text)
+            .runOTQLQuery(datamartId, res.data.query_text, {use_cache: true})
             .then(r => r.data)
             .then(r => {
               if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
