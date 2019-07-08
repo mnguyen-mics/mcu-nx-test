@@ -117,38 +117,39 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       this.setState({ isLoading: true });
       const formData = new FormData();
 
-      const file = importFile[0];
-      const fileContent = await this.onFileUpdate(file);
-      const formattedFile = new Blob([fileContent as any], {
-        type:
-          importObject.mime_type === 'TEXT_CSV'
-            ? 'text/csv'
-            : 'application/x-ndjson',
-      });
-      formData.append('file', formattedFile, file.name);
-      if (importObject.mime_type === 'TEXT_CSV') {
-        formData.append('type', 'text/csv');
-      }
-      if (importObject.mime_type === 'APPLICATION_X_NDJSON') {
-        formData.append('type', 'application/x-ndjson');
-      }
-
-      this._importService
-        .createImportExecution(datamartId, importId, formData)
-        .then(item => {
-          this.setState({
-            isLoading: false,
-            isModalOpen: false,
-            importFile: [],
-          });
-          history.push(
-            `/v2/o/${organisationId}/datastudio/datamart/${datamartId}/imports/${importId}`,
-          );
-        })
-        .catch(err => {
-          this.setState({ isLoading: false, importFile: [] });
-          this.props.notifyError(err);
+      for (const file of importFile) {
+        const fileContent = await this.onFileUpdate(file);
+        const formattedFile = new Blob([fileContent as any], {
+          type:
+            importObject.mime_type === 'TEXT_CSV'
+              ? 'text/csv'
+              : 'application/x-ndjson',
         });
+        formData.append('file', formattedFile, file.name);
+        if (importObject.mime_type === 'TEXT_CSV') {
+          formData.append('type', 'text/csv');
+        }
+        if (importObject.mime_type === 'APPLICATION_X_NDJSON') {
+          formData.append('type', 'application/x-ndjson');
+        }
+
+        this._importService
+          .createImportExecution(datamartId, importId, formData)
+          .then(item => {
+            this.setState({
+              isLoading: false,
+              isModalOpen: false,
+              importFile: [],
+            });
+            history.push(
+              `/v2/o/${organisationId}/datastudio/datamart/${datamartId}/imports/${importId}`,
+            );
+          })
+          .catch(err => {
+            this.setState({ isLoading: false, importFile: [] });
+            this.props.notifyError(err);
+          });
+      }
     }
   };
 
@@ -161,7 +162,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
 
     const props = {
       name: 'file',
-      multiple: false,
+      multiple: true,
       action: '/',
       accept: '.ndjson,.csv',
       beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
