@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Button } from 'antd';
+import { Layout, Button, message } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 
@@ -11,13 +11,12 @@ import { IMlAlgorithmService } from '../../../../../services/MlAlgorithmService'
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import messages from '../messages';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch, isSearchValid, buildDefaultSearch, compareSearches } from '../../../../../utils/LocationSearchHelper';
+import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 import moment from 'moment';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { McsIconType } from '../../../../../components/McsIcon';
-import { message } from 'antd';
 import { Link } from 'react-router-dom';
 
 const { Content } = Layout;
@@ -52,76 +51,23 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       this.state = initialState;
     }
 
-    componentDidMount() {
-      const {
-        match: {
-          params: { organisationId },
-        },
-        location: { search, pathname },
-        history,
-      } = this.props;
-  
-      if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
-        history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
-          state: { reloadDataSource: true },
-        });
-      } else {
-        const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-        this.fetchMlAlgorithms(organisationId, filter);
-      }
-    }
-
-    componentWillReceiveProps(nextProps: JoinedProps) {
-      const {
-        history,
-        location: { search },
-        match: {
-          params: { organisationId },
-        },
-      } = this.props;
-  
-      const {
-        location: { pathname: nextPathname, search: nextSearch },
-        match: {
-          params: {
-            organisationId: nextOrganisationId,
-          }
-        },
-      } = nextProps;
-  
-      if (
-        !compareSearches(search, nextSearch) ||
-        organisationId !== nextOrganisationId
-      ) {
-        if (!isSearchValid(nextSearch, PAGINATION_SEARCH_SETTINGS)) {
-          history.replace({
-            pathname: nextPathname,
-            search: buildDefaultSearch(nextSearch, PAGINATION_SEARCH_SETTINGS),
-            state: { reloadDataSource: organisationId !== nextOrganisationId },
-          });
-        } else {
-          const filter = parseSearch(nextSearch, PAGINATION_SEARCH_SETTINGS);
-          this.fetchMlAlgorithms(nextOrganisationId, filter);
-        }
-      }
-    }
-
     fetchMlAlgorithms = (organisationId: string, filter: Filters) => {
+        const { intl } = this.props;
         this.setState({ loading: true}, () => {
             const options = {
                 ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
               };
-              this._mlAlgorithmService.getMlAlgorithms(organisationId, options).then(
-                (results: { data: MlAlgorithmResource[]; total?: number; count: number }) => {
+              this._mlAlgorithmService.getMlAlgorithms(organisationId, options)
+                .then(results  => {
                   this.setState({
                     loading: false,
                     data: results.data,
                     total: results.total || results.count,
                   });
-                },
-              );
+                })
+                .catch(err => {
+                  message.error(intl.formatMessage(messages.loadingError));
+                })
         });
     }
 

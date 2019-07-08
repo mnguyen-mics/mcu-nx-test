@@ -14,7 +14,7 @@ import {
   } from '../../../../../../components/Form';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { FORM_ID } from '../MlAlgorithmEditForm';
+import { FORM_ID } from '../MlAlgorithmForm';
 
 interface MapStateToProps {
     formValues: Partial<MlAlgorithmResource>;

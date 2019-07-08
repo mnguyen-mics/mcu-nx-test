@@ -31,7 +31,7 @@ const messages = defineMessages({
   },
   empty: {
     id: 'settings.organisation.ml-models.empty',
-    defaultMessage: 'No Ml Models'
+    defaultMessage: 'No ML Models'
   },
   newMlModel: {
     id: 'settings.organisation.ml-models.new',
@@ -96,6 +96,10 @@ const messages = defineMessages({
   updateError: {
     id: 'settings.organisation.ml-models.edit.list.errorMessage',
     defaultMessage: 'ML Model update failed ',
+  },
+  modelsLoadingError: {
+    id: 'settings.organisation.ml-models.edit.list.errorLoadingMessage',
+    defaultMessage: 'ML Models loading failed ',
   },
 });
 

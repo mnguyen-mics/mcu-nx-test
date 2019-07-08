@@ -11,12 +11,12 @@ import { message } from 'antd';
 import messages from '../messages';
 import { INITIAL_ML_ALGORITHM_FORM_DATA } from '../domain';
 import { Loading } from '../../../../../components';
-import MlAlgorithmEditForm from './MlAlgorithmEditForm';
+import MlAlgorithmForm from './MlAlgorithmForm';
 
 
 interface MlAlgorithmCreateEditState {
     loading: boolean;
-    mlAlgorithm: Partial<MlAlgorithmResource>;
+    mlAlgorithmFormData: Partial<MlAlgorithmResource>;
 }
 
 type Props = InjectedDrawerProps &
@@ -26,14 +26,14 @@ type Props = InjectedDrawerProps &
   }> &
   InjectedIntlProps;
 
-class CreateEditMlAlgorithm extends React.Component<Props, MlAlgorithmCreateEditState> {
+class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditState> {
     @lazyInject(TYPES.IMlAlgorithmService)
     private _mlAlgorithmService: IMlAlgorithmService;
     constructor(props: Props) {
         super(props);
         this.state = {
             loading: false,
-            mlAlgorithm: INITIAL_ML_ALGORITHM_FORM_DATA
+            mlAlgorithmFormData: INITIAL_ML_ALGORITHM_FORM_DATA
         }
     }
 
@@ -71,12 +71,18 @@ class CreateEditMlAlgorithm extends React.Component<Props, MlAlgorithmCreateEdit
     }
 
     loadInitialValues(organisationId: string, mlAlgorithmId: string) {
+        const {
+            intl,
+        } = this.props;
         if (mlAlgorithmId) {
             this._mlAlgorithmService
                 .getMlAlgorithm(organisationId, mlAlgorithmId)
                 .then(mlAlgorithmData => mlAlgorithmData.data)
                 .then(mlAlgorithm => {
-                    this.setState({ mlAlgorithm, loading: false })
+                    this.setState({ mlAlgorithmFormData: mlAlgorithm, loading: false })
+                })
+                .catch((err) => {
+                    message.error(intl.formatMessage(messages.loadingError));
                 });
         } else {
             this.setState({ loading: false });
@@ -166,11 +172,11 @@ class CreateEditMlAlgorithm extends React.Component<Props, MlAlgorithmCreateEdit
             }
         } = this.props;
 
-        const { loading, mlAlgorithm } = this.state;
+        const { loading, mlAlgorithmFormData } = this.state;
 
         const name = mlAlgorithmId
             ? formatMessage(messages.editMlAlgorithm, {
-                name: mlAlgorithm.name ? mlAlgorithm.name : formatMessage(messages.mlAlgorithms)
+                name: mlAlgorithmFormData.name ? mlAlgorithmFormData.name : formatMessage(messages.mlAlgorithms)
             }) 
             : formatMessage(messages.newMlAlgorithm)
 
@@ -188,8 +194,8 @@ class CreateEditMlAlgorithm extends React.Component<Props, MlAlgorithmCreateEdit
 
     
         return (
-            <MlAlgorithmEditForm
-                initialValues={this.state.mlAlgorithm}
+            <MlAlgorithmForm
+                initialValues={this.state.mlAlgorithmFormData}
                 onSave={this.save}
                 onClose={this.close}
                 breadCrumbPaths={breadcrumbPaths}
@@ -201,4 +207,4 @@ class CreateEditMlAlgorithm extends React.Component<Props, MlAlgorithmCreateEdit
 export default compose(
     withRouter,
     injectIntl,
-)(CreateEditMlAlgorithm)
+)(MlAlgorithmEditPage)

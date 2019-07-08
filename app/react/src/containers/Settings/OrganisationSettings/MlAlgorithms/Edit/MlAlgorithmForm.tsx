@@ -21,21 +21,21 @@ const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
 >;
 
-interface MlAlgorithmEditFormProps
+interface MlAlgorithmFormProps
     extends Omit<ConfigProps<Partial<MlAlgorithmResource>>, 'form'> {
         onClose: () => void;
         onSave: (formData: Partial<MlAlgorithmResource>) => void;
         breadCrumbPaths: Path[];
     }
 
-type Props = InjectedFormProps<Partial<MlAlgorithmResource>, MlAlgorithmEditFormProps> &
- MlAlgorithmEditFormProps &
+type Props = InjectedFormProps<Partial<MlAlgorithmResource>, MlAlgorithmFormProps> &
+ MlAlgorithmFormProps &
  RouteComponentProps<{
     organisationId: string;
     mlAlgorithmId: string;
 }> & InjectedIntlProps;
 
-class MlAlgorithmEditForm extends React.Component<Props> {
+class MlAlgorithmForm extends React.Component<Props> {
     buildFormSections = () => {
         const sections: McsFormSection[] = [];
         const general = {
@@ -96,12 +96,12 @@ class MlAlgorithmEditForm extends React.Component<Props> {
     }
 }
 
-export default compose<Props, MlAlgorithmEditFormProps>(
+export default compose<Props, MlAlgorithmFormProps>(
     withRouter,
     injectIntl,
-    reduxForm<Partial<MlAlgorithmResource>, MlAlgorithmEditFormProps>({
+    reduxForm<Partial<MlAlgorithmResource>, MlAlgorithmFormProps>({
       form: FORM_ID,
       enableReinitialize: true,
     }),
-  )(MlAlgorithmEditForm);
+  )(MlAlgorithmForm);
   
