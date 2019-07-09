@@ -4,6 +4,7 @@ import FieldNodeWidget from './FieldNodeWidget';
 import FieldNodeModel from './FieldNodeModel';
 import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
+import { JSONQLBuilderContext } from '../../JSONQLBuilderContext';
 
 export default class FieldNodeFactory extends AbstractNodeFactory<
   FieldNodeModel
@@ -14,7 +15,13 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
   keyboardOnlyLock: (lock: boolean) => void;
   datamartId: string;
 
-  constructor(_treeNodeOperations: TreeNodeOperations,  _objectTypes: ObjectLikeTypeInfoResource[], _lockGlobalInteraction: (lock: boolean) => void, _keyboardOnlyLock: (lock: boolean) => void, datamartId: string) {
+  constructor(
+    _treeNodeOperations: TreeNodeOperations,
+    _objectTypes: ObjectLikeTypeInfoResource[],
+    _lockGlobalInteraction: (lock: boolean) => void,
+    _keyboardOnlyLock: (lock: boolean) => void,
+    datamartId: string,
+  ) {
     super('field-node');
     this.treeNodeOperations = _treeNodeOperations;
     this.objectTypes = _objectTypes;
@@ -30,15 +37,22 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
     if (node.extras.collapsed) {
       return <div />;
     }
-    return (React.createElement(FieldNodeWidget, {
-      node: node,
-      diagramEngine: diagramEngine,
-      treeNodeOperations: this.treeNodeOperations,
-      objectTypes: this.objectTypes,
-      lockGlobalInteraction: this.lockGlobalInteraction,
-      keyboardOnlyLock: this.keyboardOnlyLock,
-      datamartId: this.datamartId
-    })) 
+    return (
+      <JSONQLBuilderContext.Consumer>
+        {({ runFieldProposal }) =>
+          React.createElement(FieldNodeWidget, {
+            node: node,
+            diagramEngine: diagramEngine,
+            treeNodeOperations: this.treeNodeOperations,
+            objectTypes: this.objectTypes,
+            lockGlobalInteraction: this.lockGlobalInteraction,
+            keyboardOnlyLock: this.keyboardOnlyLock,
+            datamartId: this.datamartId,
+            runFieldProposal: runFieldProposal
+          })
+        }
+      </JSONQLBuilderContext.Consumer>
+    );
   }
 
   getNewInstance(initialConfig?: any): FieldNodeModel {

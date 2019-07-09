@@ -7,7 +7,7 @@ import {
   McsIcon,
   ButtonStyleless,
 } from '../../../../../components';
-import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
+import { TreeNodeOperations, MicsDiagramEngine, FieldProposalLookup } from '../../domain';
 import FieldNodeFormWrapper from '../../Edit/Sections/Field/FieldNodeFormWrapper';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { FieldNodeFormDataValues, FORM_ID } from '../../Edit/domain';
@@ -27,6 +27,8 @@ interface FieldNodeWidgetProps {
   keyboardOnlyLock: (lock: boolean) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
   datamartId: string;
+  runFieldProposal: FieldProposalLookup
+
 }
 
 interface MapStateToProps {
@@ -182,7 +184,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   renderEditNode = () => {
-    const { node, treeNodeOperations, datamartId } = this.props;
+    const { node, treeNodeOperations, datamartId, runFieldProposal } = this.props;
 
     const onSubmit = (val: FieldNodeFormDataValues) => {
       treeNodeOperations.updateNode(node.treeNodePath, val.fieldNodeForm);
@@ -245,6 +247,8 @@ class FieldNodeWidget extends React.Component<Props, State> {
           runtimeSchemaId={node.objectTypeInfo.runtime_schema_id}
           datamartId={datamartId}
           form={this.formName}
+          treeNodePath={node.treeNodePath}
+          runFieldProposal={runFieldProposal}
         />
        
       </div>
@@ -252,6 +256,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
       </React.Fragment>
     );
   };
+  
 
   renderedStandardNode = (): JSX.Element => {
     const { node, datamartId } = this.props;

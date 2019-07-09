@@ -13,6 +13,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import FieldNodeForm from './FieldNodeForm';
+import { FieldProposalLookup } from '../../../domain';
 
 export interface FieldNodeFormWrapperProps
   extends ConfigProps<FieldNodeFormDataValues> {
@@ -22,6 +23,8 @@ export interface FieldNodeFormWrapperProps
   idToAttachDropDowns?: string;
   runtimeSchemaId: string;
   datamartId: string;
+  runFieldProposal?: FieldProposalLookup
+  treeNodePath?: number[];
 }
 
 type Props = InjectedFormProps<
@@ -50,7 +53,7 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
   };
 
   render() {
-    const { handleSubmit, change, objectType, idToAttachDropDowns, datamartId, runtimeSchemaId } = this.props;
+    const { handleSubmit, change, objectType, idToAttachDropDowns, datamartId, runtimeSchemaId, treeNodePath, runFieldProposal } = this.props;
     return (
       <Form
         className="edit-layout ant-layout"
@@ -66,6 +69,8 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
           datamartId={datamartId}
           runtimeSchemaId={runtimeSchemaId}
           formName={this.props.form}
+          treeNodePath={treeNodePath}
+          runFieldProposal={runFieldProposal}
         />
         <Button type="primary" className="mcs-primary" htmlType="submit">Submit</Button>
       </Form>

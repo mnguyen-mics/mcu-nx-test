@@ -43,8 +43,8 @@ export interface IQueryService {
       query_id?: string;
       limit?: number;
       offset?: number;
-      useCache?: boolean;
       precision?: QueryPrecisionMode
+      use_cache?: boolean;
     },
   ) => Promise<DataResponse<OTQLResult>>;
 
