@@ -15,7 +15,7 @@ export interface IGeneralInformationProps {
 
 type Props = IGeneralInformationProps & ValidatorProps & InjectedIntlProps;
 
-class GeneralInformation extends React.Component<Props, any> {
+class GeneralInformation extends React.Component<Props, {}> {
   public render() {
     const {
       fieldValidators: { isRequired },

@@ -47,7 +47,7 @@ import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgo
 import MlAlgorithmEditPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/Edit/MlAlgorithmEditPage';
 import MlModelsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlModels/MlModelsPage';
 import { StoredProceduresContent } from '../containers/Settings/DatamartSettings/StoredProcedures/List';
-import CreateEditStoredProcedure from '../containers/Settings/DatamartSettings/StoredProcedures/Edit/CreateEditStoredProcedure';
+import CreateEditStoredProcedure from '../containers/Settings/DatamartSettings/StoredProcedures/Edit/EditStoredProcedurePage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
