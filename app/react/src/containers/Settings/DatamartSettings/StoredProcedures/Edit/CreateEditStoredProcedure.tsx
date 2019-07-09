@@ -110,7 +110,6 @@ class CreateEditStoredProcedure extends React.Component<JoinedProps, IState> {
     const { selectedDatamartId } = this.props;
 
     const result: Omit<StoredProcedureResource, "id"> = {
-      // ...pluginInstance,
       version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
       artifact_id: plugin.artifact_id,
