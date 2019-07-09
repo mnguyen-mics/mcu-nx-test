@@ -194,9 +194,6 @@ class FieldNodeWidget extends React.Component<Props, State> {
     const onMouseOver = () => this.props.lockGlobalInteraction(true);
     const onMouseLeave = () => this.props.lockGlobalInteraction(false);
 
-    // runFieldProposal(node.treeNodePath)
-    //   .then(d => console.log(d))
-
     return (
       <React.Fragment>
       <div
