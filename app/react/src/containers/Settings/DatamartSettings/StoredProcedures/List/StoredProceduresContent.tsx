@@ -82,7 +82,7 @@ class StoredProceduresContent extends Component<
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       this._storedProcedureService.listStoredProcedure(options).then(
-        (results: { data: StoredProcedureResource[]; total?: number; count: number }) => {
+        (results) => {
           const promises = results.data.map(sp => {
             return new Promise((resolve, reject) => {
               PluginService.getEngineVersion(sp.version_id)

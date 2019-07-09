@@ -118,7 +118,6 @@ export function withDatamartSelector<T>(
 
         return (
           <Layout>
-            {/* <ActionBar {...actionbarProps} /> */}
             <Layout.Content className="mcs-content-container mcs-form-container text-center">
               <FormTitle title={messages.title} subtitle={messages.subTitle} />
               <Row style={{ width: '650px', display: 'inline-block' }}>
@@ -140,12 +139,12 @@ export function withDatamartSelector<T>(
         );
       }
 
-      const additionnalProps: any = {
+      const wrappedComponentProps: Partial<WithDatamartSelectorProps> = {
         selectedDatamartId: datamartId,
-        connectedUser: connectedUser
+        connectedUser: connectedUser,
       }
 
-      return <WrappedComponent {...this.props} {...additionnalProps} />;
+      return <WrappedComponent {...this.props} {...wrappedComponentProps} />;
     }
   }
 
