@@ -53,6 +53,21 @@ const getRefreshToken = () => {
   return LocalStorage.getItem(REFRESH_TOKEN);
 };
 
+const revokeRefreshToken = () => {
+  const refreshToken = LocalStorage.getItem(REFRESH_TOKEN);
+
+  if (refreshToken) {
+    const body = {
+      refresh_token: refreshToken
+    };
+
+    const endpoint = 'authentication/refresh_token/revoke';
+
+    return ApiService.postRequest(endpoint, body);
+  }
+  return Promise.resolve();
+};
+
 const getRememberMe = () => {
   return LocalStorage.getItem(REMEMBER_ME);
 };
@@ -105,7 +120,7 @@ export interface Credentials {
   password: string;
 };
 
-export interface CredentialsOrRefreshToken extends Credentials {  
+export interface CredentialsOrRefreshToken extends Credentials {
   refreshToken: string;
 };
 
@@ -125,10 +140,10 @@ const createAccessToken = (credentialsOrRefreshToken: CredentialsOrRefreshToken)
   const endpoint = 'authentication/access_tokens';
 
   return ApiService.postRequest<DataResponse<AccessTokenResource>>(
-    endpoint, 
-    body, 
-    {}, 
-    {}, 
+    endpoint,
+    body,
+    {},
+    {},
     { authenticated: false }
   );
 };
@@ -184,6 +199,7 @@ export default {
   isAuthenticated,
   canAuthenticate,
   getRefreshToken,
+  revokeRefreshToken,
   getRefreshTokenExpirationDate,
   setAccessToken,
   setAccessTokenExpirationDate,
