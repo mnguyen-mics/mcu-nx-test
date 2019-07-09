@@ -14,6 +14,7 @@ import DatamartConfigTab from './DatamartConfigTab';
 import DatamartObjectViewTab from './DatamartObjectViewTab';
 import DatamartActivity from './DatamartActivity';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
+import DatamartTableViewTab from './DatamartTableViewTab';
 
 type Props = RouteComponentProps<{
   organisationId: string;
@@ -79,10 +80,17 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       },
     ]
 
-    if (hasFeature("datamart.object_tree_schema")) {
+    if (hasFeature("datamart.object_tree_schema") && datamart && datamart.storage_model_version !== "v201506") {
       items.push({
         title: 'Object View Configuration',
         display: <DatamartObjectViewTab datamartId={datamartId} />,
+      },)
+    }
+
+    if (hasFeature("datamart.table_view_schema") && datamart && datamart.storage_model_version !== "v201506") {
+      items.push({
+        title: 'Table View Configuration',
+        display: <DatamartTableViewTab datamartId={datamartId} />,
       },)
     }
 
