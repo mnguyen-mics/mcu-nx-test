@@ -77,6 +77,10 @@ import {
   IMonitoringService,
   MonitoringService,
 } from '../containers/Audience/Timeline/MonitoringService';
+import { MlAlgorithmService, IMlAlgorithmService } from '../services/MlAlgorithmService';
+import { IMlModelService, MlModelService } from '../services/MlModelService';
+
+
 
 const container = new Container();
 
@@ -134,6 +138,13 @@ container.bind<IUsersService>(TYPES.IUsersService).to(UsersService);
 container
   .bind<IMonitoringService>(TYPES.IMonitoringService)
   .to(MonitoringService);
+
+container
+  .bind<IMlAlgorithmService>(TYPES.IMlAlgorithmService)
+  .to(MlAlgorithmService);
+container
+  .bind<IMlModelService>(TYPES.IMlModelService)
+  .to(MlModelService);
 
 export const { lazyInject } = getDecorators(container, false);
 

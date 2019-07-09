@@ -43,6 +43,9 @@ import MyOfferServiceItemListPage from '../containers/Settings/ServicesSettings/
 import CreateOfferPage from '../containers/Settings/ServicesSettings/MyOffers/CreateOfferPage';
 import SourcesListPage from '../containers/Settings/DatamartSettings/Sources/List/SourcesListPage';
 import DatamartViewPage from '../containers/Settings/DatamartSettings/Datamarts/Dashboard/DatamartDashboardPage';
+import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/List/MlAlgorithmsPage';
+import MlAlgorithmEditPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/Edit/MlAlgorithmEditPage';
+import MlModelsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlModels/MlModelsPage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -197,6 +200,30 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: EditUserPage,
     requiredFeature: 'organisationSettings.users',
+  },
+  settingsOrganisationMlAlgorithmList: {
+    path: '/settings/organisation/ml_algorithms',
+    layout: 'settings',
+    contentComponent: MlAlgorithmsPage,
+    requiredFeature: 'organisationSettings.mlAlgorithms'
+  },
+  settingsOrganisationMlAlgorithmCreation: {
+    path: '/settings/organisation/ml_algorithms/create',
+    layout: 'edit',
+    editComponent: MlAlgorithmEditPage,
+    requiredFeature: 'organisationSettings.mlAlgorithms'
+  },
+  settingsOrganisationMlAlgorithmEdit: {
+    path: '/settings/organisation/ml_algorithms/:mlAlgorithmId/edit',
+    layout: 'edit',
+    editComponent: MlAlgorithmEditPage,
+    requiredFeature: 'organisationSettings.mlAlgorithms'
+  },
+  settingsOrganisationMlModelsList: {
+    path: '/settings/organisation/ml_algorithms/:mlAlgorithmId/ml_models',
+    layout: 'settings',
+    contentComponent: MlModelsPage,
+    requiredFeature: 'organisationSettings.mlAlgorithms'
   },
 
   /*
