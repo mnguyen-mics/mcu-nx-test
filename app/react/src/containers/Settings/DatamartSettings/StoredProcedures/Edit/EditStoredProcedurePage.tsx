@@ -35,7 +35,7 @@ interface IState {
 type JoinedProps = RouteComponentProps<StoredProcedureRouteParam> &
   InjectedIntlProps & WithDatamartSelectorProps & InjectedNotificationProps;
 
-class CreateEditStoredProcedure extends React.Component<JoinedProps, IState> {
+class EditStoredProcedurePage extends React.Component<JoinedProps, IState> {
 
   private _storedProcedureService: IStoredProcedureService = new StoredProcedureService();
 
@@ -170,4 +170,4 @@ export default compose(
   withDatamartSelector,
   injectNotifications,
   injectIntl,
-)(CreateEditStoredProcedure);
+)(EditStoredProcedurePage);
