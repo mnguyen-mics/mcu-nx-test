@@ -55,14 +55,20 @@ const AdGroupFormService = {
       const bidOptimizerFields: BidOptimizerFieldModel[] = [];
       if (adGroup.bid_optimizer_id) {
         bidOptimizerFields.push(
-          createFieldArrayModel({ bid_optimizer_id: adGroup.bid_optimizer_id, bid_optimization_objective_type: adGroup.bid_optimization_objective_type, bid_optimization_objective_value: adGroup.bid_optimization_objective_value }),
+          createFieldArrayModel({
+            bid_optimizer_id: adGroup.bid_optimizer_id,
+            bid_optimization_objective_type:
+              adGroup.bid_optimization_objective_type,
+            bid_optimization_objective_value:
+              adGroup.bid_optimization_objective_value,
+          }),
         );
       }
 
       return {
         adGroup: {
           ...INITIAL_AD_GROUP_FORM_DATA.adGroup,
-          ...(duplicate ? omit(adGroup, 'id') : adGroup)
+          ...(duplicate ? omit(adGroup, 'id') : adGroup),
         },
         ...dependencies,
         bidOptimizerFields,
@@ -130,7 +136,7 @@ const AdGroupFormService = {
         const locationFields = locarionSelections.map(el =>
           createFieldArrayModel(duplicate ? omit(el, 'id') : el),
         );
-       
+
         const placementListFields = placementListSelections.map(el => {
           const model = {
             data: duplicate ? omit(el, 'id') : el,
@@ -181,15 +187,12 @@ const AdGroupFormService = {
           });
         });
 
-
-        
-
         const inventoryCatalFields = [
           ...displayNetworkFields,
           ...adExchangeFields,
           ...placementListFields,
           ...keywordListFields,
-          ...dealListFields
+          ...dealListFields,
         ];
 
         return {
@@ -208,7 +211,6 @@ const AdGroupFormService = {
     formData: AdGroupFormData,
     initialFormData: AdGroupFormData = INITIAL_AD_GROUP_FORM_DATA,
   ): Promise<AdGroupId> {
-
     updateBidOptimizer(formData);
 
     let createOrUpdatePromise;
@@ -255,7 +257,7 @@ const AdGroupFormService = {
           adGroupId,
           formData.inventoryCatalFields,
           initialFormData.inventoryCatalFields,
-        )
+        ),
       );
 
       return executeTasksInSequence(tasks).then(() => adGroupId);
@@ -305,14 +307,15 @@ function updateBidOptimizer(adGroupFormData: AdGroupFormData) {
     adGroupFormData.bidOptimizerFields[0].model;
   if (bidOptimizer) {
     adGroupFormData.adGroup.bid_optimizer_id = bidOptimizer.bid_optimizer_id;
-    adGroupFormData.adGroup.bid_optimization_objective_type = bidOptimizer.bid_optimization_objective_type;
-    adGroupFormData.adGroup.bid_optimization_objective_value = bidOptimizer.bid_optimization_objective_value;
+    adGroupFormData.adGroup.bid_optimization_objective_type =
+      bidOptimizer.bid_optimization_objective_type;
+    adGroupFormData.adGroup.bid_optimization_objective_value =
+      bidOptimizer.bid_optimization_objective_value;
   } else {
     adGroupFormData.adGroup.bid_optimizer_id = null;
     adGroupFormData.adGroup.bid_optimization_objective_type = null;
     adGroupFormData.adGroup.bid_optimization_objective_value = null;
   }
-  
 }
 
 function getSegmentTasks(
@@ -356,11 +359,13 @@ function getSegmentTasks(
       );
     }
   });
-  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
-    tasks.push(() =>
-      DisplayCampaignService.deleteAudienceSegment(campaignId, adGroupId, id),
-    );
-  });
+  initialIds
+    .filter(id => !currentIds.includes(id))
+    .forEach(id => {
+      tasks.push(() =>
+        DisplayCampaignService.deleteAudienceSegment(campaignId, adGroupId, id),
+      );
+    });
   return tasks;
 }
 
@@ -405,14 +410,15 @@ export function getLocationTasks(
       );
     }
   });
-  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
-    tasks.push(() =>
-      DisplayCampaignService.deleteLocation(campaignId, adGroupId, id),
-    );
-  });
+  initialIds
+    .filter(id => !currentIds.includes(id))
+    .forEach(id => {
+      tasks.push(() =>
+        DisplayCampaignService.deleteLocation(campaignId, adGroupId, id),
+      );
+    });
   return tasks;
 }
-
 
 export function getInventoryCatalogTask(
   campaignId: string,
@@ -420,7 +426,6 @@ export function getInventoryCatalogTask(
   inventoryCatalFields: InventoryCatalFieldsModel[],
   initialInventoryCatalFields: InventoryCatalFieldsModel[],
 ): Task[] {
-
   // get initial values
   const initialDealListIds: string[] = [];
   const initialPlacementListIds: string[] = [];
@@ -428,22 +433,36 @@ export function getInventoryCatalogTask(
   const initialAdExchangeIds: string[] = [];
   const initialDisplayNetworkIds: string[] = [];
 
-
   initialInventoryCatalFields.forEach(field => {
-    if (field.model.type === 'DEAL_LIST' && isDealListSelectionResource(field.model.data)) {
+    if (
+      field.model.type === 'DEAL_LIST' &&
+      isDealListSelectionResource(field.model.data)
+    ) {
       initialDealListIds.push(field.model.data.id);
     }
-    if (field.model.type === 'KEYWORD_LIST' && isKeywordListSelectionResource(field.model.data)) {
+    if (
+      field.model.type === 'KEYWORD_LIST' &&
+      isKeywordListSelectionResource(field.model.data)
+    ) {
       initialKeywordListIds.push(field.model.data.id);
     }
-    if (field.model.type === 'PLACEMENT_LIST' && isPlacementListSelectionResource(field.model.data)) {
+    if (
+      field.model.type === 'PLACEMENT_LIST' &&
+      isPlacementListSelectionResource(field.model.data)
+    ) {
       initialPlacementListIds.push(field.model.data.id);
     }
-    if (field.model.type === 'AD_EXCHANGE' && isAdExchangeSelectionResource(field.model.data)) {
-      initialAdExchangeIds.push(field.model.data.id)
+    if (
+      field.model.type === 'AD_EXCHANGE' &&
+      isAdExchangeSelectionResource(field.model.data)
+    ) {
+      initialAdExchangeIds.push(field.model.data.id);
     }
-    if (field.model.type === 'DISPLAY_NETWORK' && isDisplayNetworkSelectionResource(field.model.data)) {
-      initialDisplayNetworkIds.push(field.model.data.id)
+    if (
+      field.model.type === 'DISPLAY_NETWORK' &&
+      isDisplayNetworkSelectionResource(field.model.data)
+    ) {
+      initialDisplayNetworkIds.push(field.model.data.id);
     }
   });
 
@@ -455,23 +474,37 @@ export function getInventoryCatalogTask(
   const currentDisplayNetworkIds: string[] = [];
 
   inventoryCatalFields.forEach(field => {
-    if (field.model.type === 'DEAL_LIST' && isDealListSelectionResource(field.model.data)) {
+    if (
+      field.model.type === 'DEAL_LIST' &&
+      isDealListSelectionResource(field.model.data)
+    ) {
       currentDealListIds.push(field.model.data.id);
     }
-    if (field.model.type === 'KEYWORD_LIST' && isKeywordListSelectionResource(field.model.data)) {
+    if (
+      field.model.type === 'KEYWORD_LIST' &&
+      isKeywordListSelectionResource(field.model.data)
+    ) {
       currentKeywordListIds.push(field.model.data.id);
     }
-    if (field.model.type === 'PLACEMENT_LIST' && isPlacementListSelectionResource(field.model.data)) {
+    if (
+      field.model.type === 'PLACEMENT_LIST' &&
+      isPlacementListSelectionResource(field.model.data)
+    ) {
       currentPlacementListIds.push(field.model.data.id);
     }
-    if (field.model.type === 'AD_EXCHANGE' && isAdExchangeSelectionResource(field.model.data)) {
-      currentAdExchangeIds.push(field.model.data.id)
+    if (
+      field.model.type === 'AD_EXCHANGE' &&
+      isAdExchangeSelectionResource(field.model.data)
+    ) {
+      currentAdExchangeIds.push(field.model.data.id);
     }
-    if (field.model.type === 'DISPLAY_NETWORK' && isDisplayNetworkSelectionResource(field.model.data)) {
-      currentDisplayNetworkIds.push(field.model.data.id)
+    if (
+      field.model.type === 'DISPLAY_NETWORK' &&
+      isDisplayNetworkSelectionResource(field.model.data)
+    ) {
+      currentDisplayNetworkIds.push(field.model.data.id);
     }
   });
-
 
   const tasks: Task[] = [];
   inventoryCatalFields.forEach(field => {
@@ -479,7 +512,8 @@ export function getInventoryCatalogTask(
       const data = field.model.data;
       if (isDealListSelectionResource(field.model.data)) {
         const id = field.model.data.id;
-        tasks.push(() => DisplayCampaignService.updateDealsList(
+        tasks.push(() =>
+          DisplayCampaignService.updateDealsList(
             campaignId,
             adGroupId,
             id,
@@ -487,11 +521,8 @@ export function getInventoryCatalogTask(
           ),
         );
       } else {
-        tasks.push(() => DisplayCampaignService.createDealsList(
-            campaignId,
-            adGroupId,
-            data,
-          ),
+        tasks.push(() =>
+          DisplayCampaignService.createDealsList(campaignId, adGroupId, data),
         );
       }
     }
@@ -500,7 +531,8 @@ export function getInventoryCatalogTask(
       const data = field.model.data;
       if (isKeywordListSelectionResource(field.model.data)) {
         const id = field.model.data.id;
-        tasks.push(() => DisplayCampaignService.updateKeywordList(
+        tasks.push(() =>
+          DisplayCampaignService.updateKeywordList(
             campaignId,
             adGroupId,
             id,
@@ -508,11 +540,8 @@ export function getInventoryCatalogTask(
           ),
         );
       } else {
-        tasks.push(() => DisplayCampaignService.createKeywordList(
-            campaignId,
-            adGroupId,
-            data,
-          ),
+        tasks.push(() =>
+          DisplayCampaignService.createKeywordList(campaignId, adGroupId, data),
         );
       }
     }
@@ -521,7 +550,8 @@ export function getInventoryCatalogTask(
       const data = field.model.data;
       if (isPlacementListSelectionResource(field.model.data)) {
         const id = field.model.data.id;
-        tasks.push(() => DisplayCampaignService.updatePlacementList(
+        tasks.push(() =>
+          DisplayCampaignService.updatePlacementList(
             campaignId,
             adGroupId,
             id,
@@ -529,7 +559,8 @@ export function getInventoryCatalogTask(
           ),
         );
       } else {
-        tasks.push(() => DisplayCampaignService.createPlacementList(
+        tasks.push(() =>
+          DisplayCampaignService.createPlacementList(
             campaignId,
             adGroupId,
             data,
@@ -542,19 +573,12 @@ export function getInventoryCatalogTask(
       const data = field.model.data;
       if (isAdExchangeSelectionResource(field.model.data)) {
         const id = field.model.data.id;
-        tasks.push(() => DisplayCampaignService.updateAdex(
-            campaignId,
-            adGroupId,
-            id,
-            data,
-          ),
+        tasks.push(() =>
+          DisplayCampaignService.updateAdex(campaignId, adGroupId, id, data),
         );
       } else {
-        tasks.push(() => DisplayCampaignService.createAdex(
-            campaignId,
-            adGroupId,
-            data,
-          ),
+        tasks.push(() =>
+          DisplayCampaignService.createAdex(campaignId, adGroupId, data),
         );
       }
     }
@@ -563,7 +587,8 @@ export function getInventoryCatalogTask(
       const data = field.model.data;
       if (isDisplayNetworkSelectionResource(field.model.data)) {
         const id = field.model.data.id;
-        tasks.push(() => DisplayCampaignService.updateDisplayNetwork(
+        tasks.push(() =>
+          DisplayCampaignService.updateDisplayNetwork(
             campaignId,
             adGroupId,
             id,
@@ -571,7 +596,8 @@ export function getInventoryCatalogTask(
           ),
         );
       } else {
-        tasks.push(() => DisplayCampaignService.createDisplayNetwork(
+        tasks.push(() =>
+          DisplayCampaignService.createDisplayNetwork(
             campaignId,
             adGroupId,
             data,
@@ -579,40 +605,46 @@ export function getInventoryCatalogTask(
         );
       }
     }
-
-    
-  })
+  });
 
   // delete requests
-  initialDealListIds.filter(id => !currentDealListIds.includes(id)).forEach(id => {
-    tasks.push(() =>
-      DisplayCampaignService.deleteDealsList(campaignId, adGroupId, id),
-    );
-  });
-  initialKeywordListIds.filter(id => !currentKeywordListIds.includes(id)).forEach(id => {
-    tasks.push(() =>
-      DisplayCampaignService.deleteKeywordList(campaignId, adGroupId, id),
-    );
-  });
-  initialPlacementListIds.filter(id => !currentPlacementListIds.includes(id)).forEach(id => {
-    tasks.push(() =>
-      DisplayCampaignService.deletePlacementList(campaignId, adGroupId, id),
-    );
-  });
-  initialAdExchangeIds.filter(id => !currentAdExchangeIds.includes(id)).forEach(id => {
-    tasks.push(() =>
-      DisplayCampaignService.deleteAdex(campaignId, adGroupId, id),
-    );
-  });
-  initialDisplayNetworkIds.filter(id => !currentDisplayNetworkIds.includes(id)).forEach(id => {
-    tasks.push(() =>
-      DisplayCampaignService.deleteDisplayNetwork(campaignId, adGroupId, id),
-    );
-  });
+  initialDealListIds
+    .filter(id => !currentDealListIds.includes(id))
+    .forEach(id => {
+      tasks.push(() =>
+        DisplayCampaignService.deleteDealsList(campaignId, adGroupId, id),
+      );
+    });
+  initialKeywordListIds
+    .filter(id => !currentKeywordListIds.includes(id))
+    .forEach(id => {
+      tasks.push(() =>
+        DisplayCampaignService.deleteKeywordList(campaignId, adGroupId, id),
+      );
+    });
+  initialPlacementListIds
+    .filter(id => !currentPlacementListIds.includes(id))
+    .forEach(id => {
+      tasks.push(() =>
+        DisplayCampaignService.deletePlacementList(campaignId, adGroupId, id),
+      );
+    });
+  initialAdExchangeIds
+    .filter(id => !currentAdExchangeIds.includes(id))
+    .forEach(id => {
+      tasks.push(() =>
+        DisplayCampaignService.deleteAdex(campaignId, adGroupId, id),
+      );
+    });
+  initialDisplayNetworkIds
+    .filter(id => !currentDisplayNetworkIds.includes(id))
+    .forEach(id => {
+      tasks.push(() =>
+        DisplayCampaignService.deleteDisplayNetwork(campaignId, adGroupId, id),
+      );
+    });
   return tasks;
 }
-
-
 
 export function getAdTasks(
   organisationId: string,
@@ -644,7 +676,7 @@ export function getAdTasks(
           ...creativeFormData.creative,
           subtype: 'BANNER',
         },
-      }
+      };
       tasks.push(() =>
         DisplayCreativeFormService.saveDisplayCreative(
           organisationId,
@@ -665,10 +697,12 @@ export function getAdTasks(
     }
   });
 
-  initialIds.filter(id => !currentIds.includes(id)).forEach(id => {
-    tasks.push(() =>
-      DisplayCampaignService.deleteAd(campaignId, adGroupId, id),
-    );
-  });
+  initialIds
+    .filter(id => !currentIds.includes(id))
+    .forEach(id => {
+      tasks.push(() =>
+        DisplayCampaignService.deleteAd(campaignId, adGroupId, id),
+      );
+    });
   return tasks;
 }
