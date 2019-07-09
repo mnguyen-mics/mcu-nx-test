@@ -46,6 +46,8 @@ import DatamartViewPage from '../containers/Settings/DatamartSettings/Datamarts/
 import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/List/MlAlgorithmsPage';
 import MlAlgorithmEditPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/Edit/MlAlgorithmEditPage';
 import MlModelsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlModels/MlModelsPage';
+import { StoredProceduresContent } from '../containers/Settings/DatamartSettings/StoredProcedures/List';
+import CreateEditStoredProcedure from '../containers/Settings/DatamartSettings/StoredProcedures/Edit/EditStoredProcedurePage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -159,6 +161,29 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: CreateEditVisitAnalyzer,
     requiredFeature: 'datamartSettings.visit_analyzers',
+    requireDatamart: true,
+  },
+
+  // stored procedure 
+  settingsDatamartStoredProcedureList: {
+    path: '/settings/datamart/stored_procedures',
+    layout: 'settings',
+    contentComponent: StoredProceduresContent,
+    requiredFeature: 'datamartSettings.stored_procedure',
+    requireDatamart: true,
+  },
+  settingsDatamartStoredProcedureEdition: {
+    path: '/settings/datamart/stored_procedures/:storedProcedureId(\\d+)/edit',
+    layout: 'edit',
+    editComponent: CreateEditStoredProcedure,
+    requiredFeature: 'datamartSettings.stored_procedure',
+    requireDatamart: true,
+  },
+  settingsDatamartStoredProcedureCreation: {
+    path: '/settings/datamart/stored_procedures/create',
+    layout: 'edit',
+    editComponent: CreateEditStoredProcedure,
+    requiredFeature: 'datamartSettings.stored_procedure',
     requireDatamart: true,
   },
 

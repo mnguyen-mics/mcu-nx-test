@@ -181,11 +181,15 @@ export default defineMessages({
     },
    visitAnalyzerSettingsTitle: {
         id: 'menu.datamart.visit_analyzer',
-        defaultMessage: 'Visit Analyzer',
+        defaultMessage: 'Visit Analyzers',
+    },
+    storedProcedureSettingsTitle: {
+        id: 'menu.datamart.stored_procedure',
+        defaultMessage: 'Stored Procedures',
     },
     myDatamartSettingsTitle: {
         id: 'menu.datamart.myDatamart',
-        defaultMessage: 'My Datamart',
+        defaultMessage: 'Datamarts',
     },
     organisationSettingsTitle: {
         id: 'menu.organisation.title',
