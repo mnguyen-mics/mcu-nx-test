@@ -2,19 +2,17 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Row, Button, Modal, Input, Alert, Layout } from 'antd';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import * as labelsActions from '../../../../state/Labels/actions';
 import { Label } from '../../../Labels/Labels';
 import LabelsService from '../../../../services/LabelsService';
-
 import settingsMessages from '../../messages';
 import messages from './messages';
-
 import LabelsTable, { Filters } from './LabelsTable';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { withRouter } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 const { Content } = Layout;
 interface Options {
@@ -22,7 +20,6 @@ interface Options {
 }
 
 interface LabelsListProps {
-  organisationId: string;
   labels: Label[];
   isFetching: boolean;
   fetchLabels: (organisationId: string, options: Options) => void;
@@ -41,11 +38,13 @@ interface LabelsListState {
   edition: boolean;
 }
 
-class LabelsListPage extends React.Component<
-  LabelsListProps & InjectedNotificationProps,
-  LabelsListState
-> {
-  constructor(props: LabelsListProps & InjectedNotificationProps) {
+type Props = LabelsListProps &
+  InjectedIntlProps &
+  InjectedNotificationProps &
+  RouteComponentProps<{ organisationId: string }>;
+
+class LabelsListPage extends React.Component<Props, LabelsListState> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       totalLabels: 0,
@@ -74,13 +73,18 @@ class LabelsListPage extends React.Component<
   };
 
   handleArchiveLabels = (label: Label, that: LabelsListPage) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      intl,
+    } = this.props;
     Modal.confirm({
-      title: 'Do you Want to delete these items?',
-      content: 'Some descriptions',
+      title: intl.formatMessage(messages.archiveModalTitle),
       onOk() {
         LabelsService.deleteLabel(label.id)
           .then(() => {
-            that.props.fetchLabels(that.props.organisationId, { limit: 1000 });
+            that.props.fetchLabels(organisationId, { limit: 1000 });
           })
           .catch((err: any) => {
             that.setState({ isCreatingLabels: false });
@@ -109,7 +113,13 @@ class LabelsListPage extends React.Component<
   };
 
   handleOk = () => {
-    const { fetchLabels, notifyError, organisationId } = this.props;
+    const {
+      fetchLabels,
+      notifyError,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     const { selectedLabelId, inputValue } = this.state;
     const promise =
       selectedLabelId !== ''
@@ -126,7 +136,7 @@ class LabelsListPage extends React.Component<
             inputValue: '',
             edition: false,
           });
-          fetchLabels(this.props.organisationId, { limit: 1000 });
+          fetchLabels(organisationId, { limit: 1000 });
         })
         .catch((err: any) => {
           notifyError(err);
