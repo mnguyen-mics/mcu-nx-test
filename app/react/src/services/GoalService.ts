@@ -7,7 +7,7 @@ import {
   AttributionSelectionResource,
 } from '../models/goal';
 
-export interface GetGoalsOption extends PaginatedApiParam {
+export interface GoalsOptions extends PaginatedApiParam {
   keywords?: string[];
   archived?: boolean;
   order_by?: string[];
@@ -18,7 +18,7 @@ export interface GetGoalsOption extends PaginatedApiParam {
 const GoalService = {
   getGoals(
     organisationId: string,
-    options: GetGoalsOption = {},
+    options: GoalsOptions = {},
   ): Promise<DataListResponse<GoalResource>> {
     const endpoint = 'goals';
     const params = {

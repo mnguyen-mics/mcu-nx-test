@@ -2,19 +2,12 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Icon, Modal, Tooltip } from 'antd';
-import {
-  FormattedMessage,
-  defineMessages,
-  InjectedIntlProps,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView/index';
-
-import * as GoalsActions from '../../../../state/Campaigns/Goal/actions';
 import { GOAL_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -28,13 +21,13 @@ import {
   LabelsSearchSettings,
   DatamartSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
-import { formatMetric } from '../../../../utils/MetricHelper';
-import { getTableDataSource } from '../../../../state/Campaigns/Goal/selectors';
+import {
+  formatMetric,
+  normalizeReportView,
+} from '../../../../utils/MetricHelper';
 import { getWorkspace } from '../../../../state/Session/selectors';
-import GoalService from '../../../../services/GoalService';
+import GoalService, { GoalsOptions } from '../../../../services/GoalService';
 import { Label } from '../../../Labels/Labels';
-import { GoalResource } from '../../../../models/goal';
-import { Index } from '../../../../utils';
 import { McsRange } from '../../../../utils/McsMoment';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
@@ -43,67 +36,15 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { McsIcon } from '../../../../components';
-
-const messages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
-} = defineMessages({
-  labelFilterBy: {
-    id: 'goal.filterby.label',
-    defaultMessage: 'Filter By Label',
-  },
-  archiveGoalModalTitle: {
-    id: 'goals.table.archive.modal.title',
-    defaultMessage: 'Are you sure you want to archive this goal?',
-  },
-  archiveGoalModalBody: {
-    id: 'goals.table.archive.modal.message',
-    defaultMessage: "You'll not be able to recover it.",
-  },
-  archiveGoalModalOk: {
-    id: 'goals.table.archive.modal.ok',
-    defaultMessage: 'Archive Now',
-  },
-  archiveGoalModalCancel: {
-    id: 'goals.table.archive.modal.cancel',
-    defaultMessage: 'Cancel',
-  },
-  searchBarPlaceholder: {
-    id: 'goals.table.searchbar.placeholder',
-    defaultMessage: 'Search Goals',
-  },
-  archiveGoalActionButton: {
-    id: 'goals.table.archive.action.button',
-    defaultMessage: 'Archive',
-  },
-  ACTIVE: {
-    id: 'goals.table.status.active',
-    defaultMessage: 'Active',
-  },
-  PAUSED: {
-    id: 'goals.table.status.paused',
-    defaultMessage: 'Paused',
-  },
-  status: {
-    id: 'goals.table.column.status',
-    defaultMessage: 'Status',
-  },
-  name: {
-    id: 'goals.table.column.name',
-    defaultMessage: 'Name',
-  },
-  conversions: {
-    id: 'goals.table.column.conversions',
-    defaultMessage: 'Conversions',
-  },
-  conversionValue: {
-    id: 'goals.table.column.conversionValue',
-    defaultMessage: 'Conversion value',
-  },
-  edit: {
-    id: 'goals.table.column.action.edit',
-    defaultMessage: 'Edit',
-  },
-});
+import { messages } from './messages';
+import { Index } from '../../../../utils';
+import {
+  GoalTableResource,
+  GoalResource,
+} from '../../../../models/goal/GoalResource';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import ReportService from '../../../../services/ReportService';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 
 export interface ParamFilters
   extends PaginationSearchSettings,
@@ -114,32 +55,35 @@ export interface ParamFilters
   statuses?: string[];
 }
 
+interface State {
+  isLoadingGoals: boolean;
+  isLoadingStats: boolean;
+  dataSource: GoalTableResource[];
+  totalGoals: number;
+  hasGoals: boolean;
+}
+
 interface MapStateToProps {
   labels: Label[];
-  hasGoals: boolean;
-  isFetchingGoals: boolean;
-  isFetchingGoalsStat: boolean;
-  dataSource: GoalResource[];
-  totalGoals: number;
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-interface MapDispatchToProps {
-  loadGoalsDataSource: (
-    organisationId: string,
-    filter: Index<any>,
-    isInitialRender?: boolean,
-  ) => GoalResource[];
-  resetGoalsTable: () => any;
-}
-
-type GoalsTableProps = MapStateToProps &
-  MapDispatchToProps &
+type Props = MapStateToProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class GoalsTable extends React.Component<GoalsTableProps> {
+class GoalsTable extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isLoadingGoals: false,
+      isLoadingStats: false,
+      dataSource: [],
+      totalGoals: 0,
+      hasGoals: true,
+    };
+  }
   componentDidMount() {
     const {
       history,
@@ -147,7 +91,6 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       match: {
         params: { organisationId },
       },
-      loadGoalsDataSource,
     } = this.props;
 
     if (!isSearchValid(search, GOAL_SEARCH_SETTINGS)) {
@@ -158,18 +101,17 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       });
     } else {
       const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
-      loadGoalsDataSource(organisationId, filter, true);
+      this.loadGoalsDataSource(organisationId, filter, true);
     }
   }
 
-  componentWillReceiveProps(nextProps: GoalsTableProps) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       location: { search },
       match: {
         params: { organisationId },
       },
       history,
-      loadGoalsDataSource,
     } = this.props;
 
     const {
@@ -193,14 +135,73 @@ class GoalsTable extends React.Component<GoalsTableProps> {
         });
       } else {
         const filter = parseSearch(nextSearch, GOAL_SEARCH_SETTINGS);
-        loadGoalsDataSource(nextOrganisationId, filter, checkEmptyDataSource);
+        this.loadGoalsDataSource(
+          nextOrganisationId,
+          filter,
+          checkEmptyDataSource,
+        );
       }
     }
   }
 
-  componentWillUnmount() {
-    this.props.resetGoalsTable();
-  }
+  loadGoalsDataSource = (
+    organisationId: string,
+    filter: Index<any>,
+    init: boolean = false,
+  ) => {
+    this.setState({
+      isLoadingGoals: true,
+      isLoadingStats: true,
+    });
+    const options: GoalsOptions = {
+      archived: filter.statuses.includes('ARCHIVED'),
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+    };
+
+    if (filter.keywords) {
+      options.keywords = filter.keywords;
+    }
+    if (filter.label_id.length) {
+      options.label_ids = filter.label_id;
+    }
+    if (filter.datamartId) {
+      options.datamart_id = filter.datamartId;
+    }
+    GoalService.getGoals(organisationId, options).then(result => {
+      const goalsById = normalizeArrayOfObject(result.data, 'id');
+      this.setState({
+        dataSource: Object.keys(goalsById).map(goalId => {
+          return {
+            ...goalsById[goalId],
+          };
+        }),
+        isLoadingGoals: false,
+        totalGoals: result.total || 0,
+        hasGoals: init ? result.count !== 0 : true,
+      });
+
+      ReportService.getConversionPerformanceReport(
+        organisationId,
+        filter.from,
+        filter.to,
+        ['goal_id'],
+      ).then(statsResult => {
+        const statsByGoalId = normalizeArrayOfObject(
+          normalizeReportView(statsResult.data.report_view),
+          'goal_id',
+        );
+        this.setState({
+          isLoadingStats: false,
+          dataSource: Object.keys(goalsById).map(goalId => {
+            return {
+              ...statsByGoalId[goalId],
+              ...goalsById[goalId],
+            };
+          }),
+        });
+      });
+    });
+  };
 
   handleArchiveGoal = (goal: GoalResource) => {
     const {
@@ -209,13 +210,17 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       },
       location: { pathname, state, search },
       history,
-      dataSource,
-      loadGoalsDataSource,
       intl,
       notifyError,
     } = this.props;
 
+    const { dataSource } = this.state;
+
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
+
+    const fetchGoals = (orgId: string, params: Index<any>) => {
+      this.loadGoalsDataSource(organisationId, filter);
+    };
 
     Modal.confirm({
       title: intl.formatMessage(messages.archiveGoalModalTitle),
@@ -226,19 +231,22 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       onOk() {
         return GoalService.updateGoal(goal.id, { ...goal, archived: true })
           .then(() => {
-            if (dataSource.length === 1 && filter.currentPage !== 1) {
+            if (
+              Object.keys(dataSource).length === 1 &&
+              filter.currentPage !== 1
+            ) {
               const newFilter = {
                 ...filter,
                 currentPage: filter.currentPage - 1,
               };
-              loadGoalsDataSource(organisationId, filter);
+              fetchGoals(organisationId, filter);
               history.replace({
                 pathname: pathname,
                 search: updateSearch(search, newFilter),
                 state: state,
               });
             } else {
-              loadGoalsDataSource(organisationId, filter);
+              fetchGoals(organisationId, filter);
             }
           })
           .catch(err => {
@@ -282,15 +290,18 @@ class GoalsTable extends React.Component<GoalsTableProps> {
         params: { organisationId },
       },
       location: { search },
-      isFetchingGoals,
-      isFetchingGoalsStat,
-      dataSource,
-      totalGoals,
-      hasGoals,
       labels,
       intl,
       workspace,
     } = this.props;
+
+    const {
+      dataSource,
+      totalGoals,
+      isLoadingStats,
+      isLoadingGoals,
+      hasGoals,
+    } = this.state;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
 
@@ -340,8 +351,8 @@ class GoalsTable extends React.Component<GoalsTableProps> {
       numeralFormat: string,
       currency = '',
     ) => {
-      if (isFetchingGoalsStat) {
-        return <i className="mcs-table-cell-loading" />; // (<span>loading...</span>);
+      if (isLoadingStats) {
+        return <i className="mcs-table-cell-loading" />;
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -498,7 +509,7 @@ class GoalsTable extends React.Component<GoalsTableProps> {
           filtersOptions={filtersOptions}
           columnsVisibilityOptions={columnsVisibilityOptions}
           dataSource={dataSource}
-          loading={isFetchingGoals}
+          loading={isLoadingGoals}
           pagination={pagination}
           labelsOptions={labelsOptions}
         />
@@ -511,25 +522,12 @@ class GoalsTable extends React.Component<GoalsTableProps> {
 
 const mapStateToProps = (state: any) => ({
   labels: state.labels.labelsApi.data,
-  hasGoals: state.goalsTable.goalsApi.hasItems,
-  isFetchingGoals: state.goalsTable.goalsApi.isFetching,
-  isFetchingGoalsStat: state.goalsTable.performanceReportApi.isFetching,
-  dataSource: getTableDataSource(state),
-  totalGoals: state.goalsTable.goalsApi.total,
   workspace: getWorkspace(state),
 });
 
-const mapDispatchToProps = {
-  loadGoalsDataSource: GoalsActions.loadGoalsDataSource,
-  resetGoalsTable: GoalsActions.resetGoalsTable,
-};
-
-export default compose<GoalsTableProps, {}>(
+export default compose<Props, {}>(
   injectIntl,
   withRouter,
   injectNotifications,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps),
 )(GoalsTable);
