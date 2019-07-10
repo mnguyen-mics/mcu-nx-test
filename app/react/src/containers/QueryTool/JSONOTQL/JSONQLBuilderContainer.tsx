@@ -253,7 +253,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       {
         operations: [{ selections: computedSelectQuery(computedSchemaPathFromQueryPath, computedSchema)}],
         from: 'UserPoint',
-        where: query
+        where: undefined
       },
       { use_cache: true }
     ).then(d => {

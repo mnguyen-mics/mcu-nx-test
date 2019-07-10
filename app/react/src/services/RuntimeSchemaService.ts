@@ -38,6 +38,19 @@ const RuntimeSchemaService = {
     );
   },
 
+  updateRuntimeSchema(
+    datamartId: string,
+    runtimeSchemaId: string,
+    runtimeSchema: string,
+  ): Promise<DataResponse<{}>> {
+    return ApiService.putRequest(
+      `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/text`,
+      runtimeSchema,
+      {},
+      { "Content-Type": "text/plain" }
+    )
+  },
+
   cloneRuntimeSchema(
     datamartId: string,
     runtimeSchemaId: string,

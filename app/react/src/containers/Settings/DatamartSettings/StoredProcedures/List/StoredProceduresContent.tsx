@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Modal, Button, Layout } from 'antd';
-import { McsIconType } from '../../../../../components/McsIcon';
+import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import PluginService from '../../../../../services/PluginService';
 import {
@@ -193,6 +193,16 @@ class StoredProceduresContent extends Component<
     ];
 
     const dataColumnsDefinition = [
+      {
+        intlMessage: messages.name,
+        key: 'status',
+        isHideable: false,
+        render: (text: string, record: StoredProcedure) => (
+          <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
+            <McsIcon type="status" />
+          </span>
+        ),
+      },
       {
         intlMessage: messages.name,
         key: 'name',
