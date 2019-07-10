@@ -23,6 +23,7 @@ import LocalStorage from '../../../../../services/LocalStorage';
 import log from '../../../../../utils/Logger';
 import NotebookResultPreviewModal from './NotebookResultPreviewModal';
 import DataFileService from '../../../../../services/DataFileService';
+import { FormInputField, FormInput } from '../../../../../components/Form';
 
 
 const { Content } = Layout
@@ -35,7 +36,8 @@ const initialState = {
     total: 0,
     isModalOpen: false,
     isPreviewModalOpened: false,
-    previewModalHtml: ''
+    previewModalHtml: '',
+    newModelName: ''
 }
 
 interface MlModelsListState {
@@ -48,6 +50,7 @@ interface MlModelsListState {
     modelFile?: UploadFile[];
     resultFile?: UploadFile[];
     notebookFile?: UploadFile[];
+    newModelName?: string;
 }
 
 interface RouterProps {
@@ -180,7 +183,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             const notebookFormData = await this.formatFormData(notebookFile[0]);
         
             const mlModel = {
-              "name": "Model Name",
+              "name": this.state.newModelName,
               "status": "PAUSED"
             }          
             this._mlModelService.createMlModel(organisationId, mlAlgorithmId, mlModel)
@@ -300,6 +303,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
     renderModal = () => {
         const {
           intl: { formatMessage },
+          fieldValidators: { isRequired },
         } = this.props;
     
         const { loading, isModalOpen, resultFile, modelFile, notebookFile } = this.state;
@@ -353,6 +357,8 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
                 }
             },
         }
+
+        
     
         return (
           <Modal
@@ -363,6 +369,19 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             onCancel={this.handleOpenClose}
             confirmLoading={loading}
           >
+            <FormInputField
+              name="name"
+              component={FormInput}
+              validate={[isRequired]}
+              formItemProps={{
+                label: formatMessage(messages.createModelNameLabel),
+                required: true,
+              }}
+              inputProps={{
+                placeholder: formatMessage(messages.createModelNameLabel),
+                value: this.state.newModelName
+              }}
+            />
             <Spin spinning={loading}>
               <Dragger {...notebookUploadProps}>
                 <p className="ant-upload-hint">

@@ -1,6 +1,9 @@
 import * as React from 'react';
-import StandardModal from '../../../../../components/BlurredModal/StandardModal';
+import { Modal } from 'antd';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
+import messages from './messages';
 import IframeSupport from '../../../../Plugin/ConnectedFields/FormDataFile/HtmlEditor/IframeSupport';
+
 
 export interface NotebookResultPreviewModalProps {
     html: string;
@@ -16,9 +19,9 @@ const initialState = {
     opened: false
 }
 
-type JoinedProps = NotebookResultPreviewModalProps
+type JoinedProps = NotebookResultPreviewModalProps & InjectedIntlProps
 
-export default class NotebookResultPreviewModal extends React.Component<JoinedProps, NotebookResultPreviewModalState> {
+class NotebookResultPreviewModal extends React.Component<JoinedProps, NotebookResultPreviewModalState> {
 
     constructor(props: JoinedProps) {
         super(props);
@@ -26,12 +29,20 @@ export default class NotebookResultPreviewModal extends React.Component<JoinedPr
     }
 
     render() {
-        const { html, onClose, opened } = this.props;
+        const { html, onClose, opened, intl } = this.props;
         
         return (
-            <StandardModal opened={opened} onClose={onClose}>
-                <IframeSupport content={html} />;
-            </StandardModal>
+            <Modal
+                title={intl.formatMessage(messages.previewModalTitle)}
+                visible={opened}
+                onOk={onClose}
+                okText={intl.formatMessage(messages.closeModal)}
+                width={1280}
+            >
+                <IframeSupport content={html} />
+            </Modal>
         );
     }
 }
+
+export default injectIntl(NotebookResultPreviewModal)
