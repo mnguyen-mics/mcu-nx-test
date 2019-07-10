@@ -8,13 +8,7 @@ define(['app-setup', 'angularAMD', 'jquery'],
       function ($rootScope, $window, $location, $log, AuthenticationService, Session, _, LoginConstants, ErrorReporting, $state, $stateParams, $urlRouter ) {
         var defaults = _.partialRight(_.assign, function (a, b) {
           return typeof a === 'undefined' ? b : a;
-        });
-
-        //Quick fix for lodash loading order issue MICS-1744
-        if( typeof _.contains === 'undefined' ) {
-          _.contains = _.includes;
-          _.prototype.contains = _.includes;
-        } 
+        }); 
 
         ErrorReporting.setup();
 
