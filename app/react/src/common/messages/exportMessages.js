@@ -73,7 +73,7 @@ export default defineMessages({
   },
   serviceElementId: {
     id: 'settings.datamart.seriveUsageReport.export.serviceElementId',
-    defaultMessage: 'Service Id',
+    defaultMessage: 'Service Element Id',
   },
   segmentName: {
     id: 'settings.datamart.seriveUsageReport.export.segmentName',

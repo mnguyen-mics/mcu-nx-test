@@ -37,6 +37,10 @@ export const messages = defineMessages({
     id: 'settings.datamart.seriveUsageReport.table.column.subCampaignId',
     defaultMessage: 'Sub Campaign Id',
   },
+  subCampaignName: {
+    id: 'settings.datamart.seriveUsageReport.table.column.subCampaignName',
+    defaultMessage: 'Sub Campaign Name',
+  },
   serviceName: {
     id: 'settings.datamart.seriveUsageReport.table.column.serviceName',
     defaultMessage: 'Service Name',
