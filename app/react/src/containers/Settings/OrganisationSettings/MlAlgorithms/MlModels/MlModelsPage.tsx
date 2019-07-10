@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Layout, Button, Modal, Spin, Upload, message } from "antd";
+import { Layout, Button, Modal, Spin, Upload, message, Input } from "antd";
 import MlModelResource from "../../../../../models/mlModel/MlModelResource";
 import { RouteComponentProps, withRouter } from "react-router";
 import { InjectedIntlProps, injectIntl, FormattedMessage } from "react-intl";
@@ -23,7 +23,6 @@ import LocalStorage from '../../../../../services/LocalStorage';
 import log from '../../../../../utils/Logger';
 import NotebookResultPreviewModal from './NotebookResultPreviewModal';
 import DataFileService from '../../../../../services/DataFileService';
-import { FormInputField, FormInput } from '../../../../../components/Form';
 
 
 const { Content } = Layout
@@ -50,7 +49,7 @@ interface MlModelsListState {
     modelFile?: UploadFile[];
     resultFile?: UploadFile[];
     notebookFile?: UploadFile[];
-    newModelName?: string;
+    newModelName: string;
 }
 
 interface RouterProps {
@@ -266,7 +265,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
     onClosePreviewModal = () => {
       this.setState({
         previewModalHtml: '',
-        isPreviewModalOpened: false
+        isPreviewModalOpened: !this.state.isPreviewModalOpened
       });
     }
 
@@ -303,7 +302,6 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
     renderModal = () => {
         const {
           intl: { formatMessage },
-          fieldValidators: { isRequired },
         } = this.props;
     
         const { loading, isModalOpen, resultFile, modelFile, notebookFile } = this.state;
@@ -357,7 +355,9 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
                 }
             },
         }
-
+        const onChange = (e: any) => this.setState({
+          newModelName: e.target.value,
+        });
         
     
         return (
@@ -369,20 +369,9 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             onCancel={this.handleOpenClose}
             confirmLoading={loading}
           >
-            <FormInputField
-              name="name"
-              component={FormInput}
-              validate={[isRequired]}
-              formItemProps={{
-                label: formatMessage(messages.createModelNameLabel),
-                required: true,
-              }}
-              inputProps={{
-                placeholder: formatMessage(messages.createModelNameLabel),
-                value: this.state.newModelName
-              }}
-            />
             <Spin spinning={loading}>
+            <Input defaultValue={this.state.newModelName} onChange={onChange} placeholder="Name" />
+            <br /><br />
               <Dragger {...notebookUploadProps}>
                 <p className="ant-upload-hint">
                   {formatMessage(messages.uploadMessageNotebook)}
