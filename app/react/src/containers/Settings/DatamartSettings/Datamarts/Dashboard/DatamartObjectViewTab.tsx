@@ -32,6 +32,7 @@ interface State {
   schemaValidation?: RuntimeSchemaValidationResource;
   schemaDecorator?: SchemaDecoratorResource[];
   uploadingDecorator: boolean;
+  changedSchemaValue?: string;
 }
 
 const messages = defineMessages({
@@ -48,6 +49,10 @@ const messages = defineMessages({
   validationButton: {
     id: 'datamart.schemaEditor.objectTree.validation.button',
     defaultMessage: 'Validate your Schema.',
+  },
+  saveButton: {
+    id: 'datamart.schemaEditor.objectTree.save.button',
+    defaultMessage: 'Save your Changes.',
   },
   publicationButton: {
     id: 'datamart.schemaEditor.objectTree.publication.button',
@@ -117,13 +122,13 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
         this.setState({ loadingList: false, schemas: r.data });
         const liveSchema = r.data.find(s => s.status === 'LIVE');
         if (shouldSelectLive && liveSchema) {
-          this.setState({ selectedSchema: liveSchema });
+          this.setState({  selectedSchema: liveSchema  });
           return this.fetchSchemaDetail(datamartId, liveSchema.id);
         }
         return this.fetchSchemaDetail(datamartId, r.data[0].id);
       })
       .catch(err => {
-        this.setState({ loadingList: false });
+        this.setState({  loadingList: false });
         this.props.notifyError(err);
       });
   };
@@ -138,19 +143,20 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
           schemaId,
         ).then(decorators => {
           this.setState({
+            
             loadingSingle: false,
             schemaDecorator: decorators.data,
           });
         });
       })
       .catch(err => {
-        this.setState({ loadingSingle: false });
+        this.setState({  loadingSingle: false });
         this.props.notifyError(err);
       });
   };
 
   selectSchema = (schema: RuntimeSchemaResource) => {
-    this.setState({ selectedSchema: schema });
+    this.setState({  selectedSchema: schema });
     return this.fetchSchemaDetail(schema.datamart_id, schema.id);
   };
 
@@ -167,7 +173,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     })
     .catch(err => {
       this.props.notifyError(err);
-      this.setState({ loadingList: false, loadingSingle: false })
+      this.setState({  loadingList: false, loadingSingle: false })
     });
   };
 
@@ -180,9 +186,26 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
         selectedSchema.id,
       )
         .then(r =>
-          this.setState({ schemaValidation: r.data, loadingSingle: false }),
+          this.setState({  schemaValidation: r.data, loadingSingle: false }),
         )
-        .catch(() => this.setState({ loadingSingle: false }));
+        .catch(() => this.setState({  loadingSingle: false }));
+    }
+    return Promise.resolve();
+  };
+
+  saveSchema = () => {
+    const { selectedSchema, changedSchemaValue } = this.state;
+    if (selectedSchema && changedSchemaValue) {
+      this.setState({ loadingSingle: true });
+      return RuntimeSchemaService.updateRuntimeSchema(
+        selectedSchema.datamart_id,
+        selectedSchema.id,
+        changedSchemaValue
+      )
+        .then(r =>
+          this.setState({  selectedSchemaText: changedSchemaValue, changedSchemaValue: undefined, loadingSingle: false }),
+        )
+        .catch((err) => {this.props.notifyError(err); this.setState({ loadingSingle: false })});
     }
     return Promise.resolve();
   };
@@ -191,6 +214,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     const { selectedSchema, schemaValidation } = this.state;
     if (selectedSchema && schemaValidation) {
       this.setState({
+        
         loadingSingle: true,
         loadingList: true,
         schemaValidation: undefined,
@@ -201,7 +225,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       )
         .then(r => this.fetchSchemas(r.data.datamart_id, true))
         .catch(() =>
-          this.setState({ loadingSingle: false, loadingList: false }),
+          this.setState({  loadingSingle: false, loadingList: false }),
         );
     }
     return Promise.resolve();
@@ -267,12 +291,16 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
         )
       )
       .then((decorators) => {
-        this.setState({ uploadingDecorator: false, schemaDecorator: decorators.data })
+        this.setState({  uploadingDecorator: false, schemaDecorator: decorators.data })
       })
       .catch(err => {
         this.props.notifyError(err);
-        this.setState({ uploadingDecorator: false })
+        this.setState({  uploadingDecorator: false })
       })
+  }
+
+  onSchemaChange = (value: string) => {
+    this.setState({  changedSchemaValue: value })
   }
 
   onClickOnSelect = (schema: RuntimeSchemaResource) => () =>
@@ -286,6 +314,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       selectedSchema,
       selectedSchemaText,
       schemaValidation,
+      changedSchemaValue
     } = this.state;
 
     let additionnalButton;
@@ -301,6 +330,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
         return false;
       },
     };
+    
 
     const isInValidationMode = !!schemaValidation;
     const validationError =
@@ -311,6 +341,17 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
         ));
 
     if (
+        changedSchemaValue && selectedSchema &&
+      selectedSchema.status === 'DRAFT') {
+        additionnalButton = (
+          <Button size="small" type="primary" onClick={this.saveSchema}>
+            <FormattedMessage {...messages.saveButton} />
+          </Button>
+        );
+      }
+
+    if (
+      !changedSchemaValue &&
       selectedSchema &&
       selectedSchema.status === 'DRAFT' &&
       !isInValidationMode
@@ -415,7 +456,8 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                   setOptions={{
                     showGutter: true,
                   }}
-                  value={selectedSchemaText}
+                  onChange={this.onSchemaChange}
+                  value={changedSchemaValue ? changedSchemaValue : selectedSchemaText}
                 />
                 <Row className="decorators">
                   <Col span={12} className="text">
