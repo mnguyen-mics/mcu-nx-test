@@ -416,3 +416,180 @@ export const layout1394: LayoutShape = [
     ]
   }
 ];
+
+export const layout1390: LayoutShape = [
+  {
+    size: 1,
+    columns: [
+      {
+        span: 6,
+        components: [
+          {
+            height: 2,
+            component: {
+              component_type: 'COUNT',
+              datamart_id: '1390',
+              query_id: '21804',
+              title: 'Seed Unique UserPoints',
+            },
+          },
+          {
+            height: 2,
+            component: {
+              component_type: 'COUNT',
+              datamart_id: '1390',
+              query_id: '21714',
+              title: 'Total Unique UserPoints',
+            },
+          },
+        ],
+      },
+      {
+        span: 6,
+        components: [
+          {
+            height: 1,
+            component: {
+              component_type: 'GAUGE_PIE_CHART',
+              datamart_id: '1390',
+              partial_query_id: '21806',
+              total_query_id: '21804',
+              title: 'Global Pragmatists',
+              show_percentage: true,
+            },
+          },
+        ],
+      },
+      {
+        span: 6,
+        components: [
+          {
+            height: 1,
+            component: {
+              component_type: 'GAUGE_PIE_CHART',
+              datamart_id: '1390',
+              partial_query_id: '21808',
+              total_query_id: '21804',
+              title: 'Present First',
+              show_percentage: true,
+            },
+          },
+        ],
+      },
+      {
+        span: 6,
+        components: [
+          {
+            height: 1,
+            component: {
+              component_type: 'GAUGE_PIE_CHART',
+              datamart_id: '1390',
+              partial_query_id: '21810',
+              total_query_id: '21804',
+              title: 'Tech-Oriented"',
+              show_percentage: true,
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    size: 2,
+    columns: [
+      {
+        span: 6,
+        components: [
+          {
+            height: 2,
+            component: {
+              component_type: 'MAP_PIE_CHART',
+              datamart_id: '1390',
+              query_id: '21818',
+              title: 'Home Owner Status',
+              show_legend: false,
+              labels_enabled: true
+            },
+          },
+          {
+            height: 2,
+            component: {
+              component_type: 'MAP_PIE_CHART',
+              datamart_id: '1390',
+              query_id: '21820',
+              title: 'Parental Status',
+              show_legend: false,
+              labels_enabled: true
+            },
+          },
+        ],
+      },
+      {
+        span: 9,
+        components: [
+          {
+            height: 1,
+            component: {
+              component_type: 'MAP_STACKED_BAR_CHART',
+              show_legend: false,
+              datamart_id: '1390',
+              query_ids: ['21814', '21816'],
+              keys: ['male', 'female'],
+              title: 'Demographics',
+            },
+          },
+        ],
+      },
+      {
+        span: 9,
+        components: [
+          {
+            height: 1,
+            component: {
+              component_type: 'MAP_BAR_CHART',
+              show_legend: false,
+              datamart_id: '1390',
+              query_id: '21822',
+              title: 'Interest Group',
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    size: 2,
+    columns: [
+      {
+        span: 12,
+        components: [
+          {
+            height: 1,
+            component: {
+              component_type: 'MAP_BAR_CHART',
+              show_legend: false,
+              datamart_id: '1390',
+              query_id: '21824',
+              title: 'Country Breakdown',
+            }
+          }
+        ]
+      },
+      {
+        span: 12,
+        components: [
+          {
+            height: 1,
+            component: {
+              component_type: 'MAP_BAR_CHART',
+              show_legend: false,
+              datamart_id: '1390',
+              query_id: '21826',
+              title: 'App Category Breakdown',
+            }
+          }
+        ]
+      }
+    ]
+  }
+];
