@@ -8,7 +8,6 @@ import { compose } from 'recompose';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { DatamartSelector } from '../../Datamart';
 import SelectorQLBuilderContainer from '../../QueryTool/SelectorQL/SelectorQLBuilderContainer';
-import OTQLConsoleContainer from '../../QueryTool/OTQL/OTQLConsoleContainer';
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
 import { QueryContainer } from '../../QueryTool/SelectorQL/AngularQueryToolWidget';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
@@ -19,6 +18,7 @@ import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 import { IQueryService } from '../../../services/QueryService';
 import { IExportService } from '../../../services/Library/ExportService';
+import QueryToolSelector from '../../QueryTool/QueryToolSelector';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -233,7 +233,7 @@ class QueryToolPage extends React.Component<Props> {
         )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201709' && (
-            <OTQLConsoleContainer
+            <QueryToolSelector 
               renderActionBar={OTQLActionbar}
               datamartId={selectedDatamart.id}
             />

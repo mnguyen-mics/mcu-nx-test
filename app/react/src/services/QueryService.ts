@@ -4,7 +4,7 @@ import {
   AutoCompleteResource,
   ErrorQueryResource,
 } from '../models/datamart/DatamartResource';
-import { OTQLResult, QueryPrecisionMode } from '../models/datamart/graphdb/OTQLResult';
+import { OTQLResult, QueryPrecisionMode, GraphQLResult } from '../models/datamart/graphdb/OTQLResult';
 import { QueryDocument } from '../models/datamart/graphdb/QueryDocument';
 import log from '../utils/Logger';
 import { injectable } from 'inversify';
@@ -35,6 +35,13 @@ export interface IQueryService {
       precision?: QueryPrecisionMode
     },
   ) => Promise<DataResponse<OTQLResult>>;
+  runGraphQLQuery: (
+    datamartId: string,
+    query: string,
+    options?: {
+      use_cache?: boolean;
+    },
+  ) => Promise<DataResponse<GraphQLResult>>;
   runJSONOTQLQuery: (
     datamartId: string,
     query: QueryDocument,
@@ -105,6 +112,18 @@ export class QueryService implements IQueryService {
     } = {},
   ): Promise<DataResponse<OTQLResult>> {
     const endpoint = `datamarts/${datamartId}/query_executions/otql`;
+    const headers = { 'Content-Type': 'text/plain; charset=utf-8' };
+    return ApiService.postRequest(endpoint, query, options, headers);
+  }
+
+  runGraphQLQuery(
+    datamartId: string,
+    query: string,
+    options: {
+      use_cache?: boolean;
+    } = {},
+  ): Promise<DataResponse<GraphQLResult>> {
+    const endpoint = `datamarts/${datamartId}/query_executions/graphql`;
     const headers = { 'Content-Type': 'text/plain; charset=utf-8' };
     return ApiService.postRequest(endpoint, query, options, headers);
   }
