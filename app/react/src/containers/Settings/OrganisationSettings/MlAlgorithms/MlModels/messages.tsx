@@ -101,6 +101,18 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-models.edit.list.errorLoadingMessage',
     defaultMessage: 'ML Models loading failed ',
   },
+  previewModalTitle: {
+    id: 'settings.organisation.ml-models.edit.list.preview-modal-title',
+    defaultMessage: "Notebook's preview",
+  },
+  closeModal: {
+    id: 'settings.organisation.ml-models.edit.list.close-modal',
+    defaultMessage: "Close",
+  },
+  createModelNameLabel: {
+    id: 'settings.organisation.ml-models.edit.create-model-name-label',
+    defaultMessage: "Name",
+  }
 });
 
 export default messages;

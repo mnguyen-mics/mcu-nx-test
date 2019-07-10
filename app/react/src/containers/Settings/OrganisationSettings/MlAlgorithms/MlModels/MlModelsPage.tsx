@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { Layout, Button, Modal, Spin, Upload, message } from "antd";
+import { Layout, Button, Modal, Spin, Upload, message, Input } from "antd";
 import MlModelResource from "../../../../../models/mlModel/MlModelResource";
 import { RouteComponentProps, withRouter } from "react-router";
 import { InjectedIntlProps, injectIntl, FormattedMessage } from "react-intl";
@@ -35,7 +35,8 @@ const initialState = {
     total: 0,
     isModalOpen: false,
     isPreviewModalOpened: false,
-    previewModalHtml: ''
+    previewModalHtml: '',
+    newModelName: ''
 }
 
 interface MlModelsListState {
@@ -48,6 +49,7 @@ interface MlModelsListState {
     modelFile?: UploadFile[];
     resultFile?: UploadFile[];
     notebookFile?: UploadFile[];
+    newModelName: string;
 }
 
 interface RouterProps {
@@ -180,7 +182,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             const notebookFormData = await this.formatFormData(notebookFile[0]);
         
             const mlModel = {
-              "name": "Model Name",
+              "name": this.state.newModelName,
               "status": "PAUSED"
             }          
             this._mlModelService.createMlModel(organisationId, mlAlgorithmId, mlModel)
@@ -263,7 +265,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
     onClosePreviewModal = () => {
       this.setState({
         previewModalHtml: '',
-        isPreviewModalOpened: false
+        isPreviewModalOpened: !this.state.isPreviewModalOpened
       });
     }
 
@@ -353,6 +355,10 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
                 }
             },
         }
+        const onChange = (e: any) => this.setState({
+          newModelName: e.target.value,
+        });
+        
     
         return (
           <Modal
@@ -364,6 +370,8 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             confirmLoading={loading}
           >
             <Spin spinning={loading}>
+            <Input defaultValue={this.state.newModelName} onChange={onChange} placeholder="Name" />
+            <br /><br />
               <Dragger {...notebookUploadProps}>
                 <p className="ant-upload-hint">
                   {formatMessage(messages.uploadMessageNotebook)}
