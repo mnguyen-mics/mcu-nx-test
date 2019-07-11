@@ -1,13 +1,13 @@
-import { CampaignStatus } from '../CampaignStatus';
 import { EmailBlastStatus } from './EmailBlastStatus';
+import { CampaignStatus } from '../constants';
 
 export interface EmailCampaignCreateRequest {
   organisation_id: string;
   name: string;
-  creation_ts: string;
-  editor_versionid: string;
+  creation_ts: number;
+  editor_version_id: string;
   editor_version_value: string;
-  editor_groupid: string;
+  editor_group_id: string;
   editor_artifact_id: string;
   currency_code: string;
   technical_name: string;
@@ -35,4 +35,12 @@ export interface EmailBlastResource extends EmailBlastCreateRequest {
   id: string;
   status: EmailBlastStatus;
   number_mail_not_send?: number;
+}
+
+export interface EmailCampaignTableResource extends EmailCampaignResource {
+  email_sent?: number;
+  email_hard_bounced?: number;
+  email_soft_bounced?: number;
+  clicks?: number;
+  impressions?: number;
 }

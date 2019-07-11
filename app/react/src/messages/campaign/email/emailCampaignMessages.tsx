@@ -1,33 +1,38 @@
 import * as React from 'react';
-import { defineMessages, FormattedMessage } from "react-intl";
-import { HistoryKeys, formatToFormattingFunction, ValueFormat } from '../../resourcehistory/utils';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  HistoryKeys,
+  formatToFormattingFunction,
+  ValueFormat,
+} from '../../resourcehistory/utils';
 import { EmailCampaignResource } from '../../../models/campaign/email';
-import { CampaignStatus } from '../../../models/campaign';
-
+import { CampaignStatus } from '../../../models/campaign/constants';
 
 const emailCampaignStatusMessages: {
   [key in CampaignStatus]: FormattedMessage.MessageDescriptor
 } = defineMessages({
   ACTIVE: {
     id: 'campaign.email.fields.status.active',
-    defaultMessage: 'Active'
+    defaultMessage: 'Active',
   },
   PENDING: {
     id: 'campaign.email.fields.status.pending',
-    defaultMessage: 'Pending'
+    defaultMessage: 'Pending',
   },
   PAUSED: {
     id: 'campaign.email.fields.status.paused',
-    defaultMessage: 'Paused'
+    defaultMessage: 'Paused',
   },
   ARCHIVED: {
     id: 'campaign.email.fields.status.archived',
-    defaultMessage: 'Archived'
+    defaultMessage: 'Archived',
   },
 });
 
 const emailCampaignPropertiesMessageMap: {
-  [propertyName in keyof EmailCampaignResource | HistoryKeys]: FormattedMessage.MessageDescriptor
+  [propertyName in
+    | keyof EmailCampaignResource
+    | HistoryKeys]: FormattedMessage.MessageDescriptor
 } = defineMessages({
   id: {
     id: 'campaign.email.fields.id',
@@ -53,7 +58,7 @@ const emailCampaignPropertiesMessageMap: {
     id: 'campaign.email.fields.creationTs',
     defaultMessage: 'Creation Timestamp',
   },
-  editor_versionid: {
+  editor_version_id: {
     id: 'campaign.email.fields.editorVersionId',
     defaultMessage: 'Editor Version ID',
   },
@@ -61,7 +66,7 @@ const emailCampaignPropertiesMessageMap: {
     id: 'campaign.email.fields.editorVersionValue',
     defaultMessage: 'Editor Version Value',
   },
-  editor_groupid: {
+  editor_group_id: {
     id: 'campaign.email.fields.editorGroupId',
     defaultMessage: 'Editor Group ID',
   },
@@ -102,8 +107,8 @@ const emailCampaignPropertiesMessageMap: {
 
 const emailCampaignPropertiesFormatMap: {
   [propertyName in keyof EmailCampaignResource | HistoryKeys]: {
-    format: ValueFormat,
-    messageMap?: {[key: string]: FormattedMessage.MessageDescriptor}
+    format: ValueFormat;
+    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
   }
 } = {
   id: { format: 'STRING' },
@@ -115,14 +120,14 @@ const emailCampaignPropertiesFormatMap: {
   organisation_id: { format: 'STRING' },
   name: { format: 'STRING' },
   creation_ts: { format: 'TIMESTAMP' },
-  editor_versionid: { format: 'STRING' },
+  editor_version_id: { format: 'STRING' },
   editor_version_value: { format: 'STRING' },
-  editor_groupid: { format: 'STRING' },
+  editor_group_id: { format: 'STRING' },
   editor_artifact_id: { format: 'STRING' },
   currency_code: { format: 'STRING' },
   technical_name: { format: 'STRING' },
   type: { format: 'STRING' },
-  automated: { format: "STRING" },
+  automated: { format: 'STRING' },
   /*
   ==============================================================================
   ================================= EXTRA KEYS =================================
@@ -130,18 +135,26 @@ const emailCampaignPropertiesFormatMap: {
   */
   history_title: { format: 'STRING' },
   history_resource_type: { format: 'STRING' },
-}
+};
 
-function formatCampaignProperty(property: keyof EmailCampaignResource | HistoryKeys, value?: string): {
-  message: FormattedMessage.MessageDescriptor,
-  formattedValue?: React.ReactNode,
+function formatCampaignProperty(
+  property: keyof EmailCampaignResource | HistoryKeys,
+  value?: string,
+): {
+  message: FormattedMessage.MessageDescriptor;
+  formattedValue?: React.ReactNode;
 } {
   return {
     message: emailCampaignPropertiesMessageMap[property],
-    formattedValue: (value && emailCampaignPropertiesFormatMap[property])
-      ? formatToFormattingFunction(value, emailCampaignPropertiesFormatMap[property].format, emailCampaignPropertiesFormatMap[property].messageMap)
-      : undefined,
-  }
+    formattedValue:
+      value && emailCampaignPropertiesFormatMap[property]
+        ? formatToFormattingFunction(
+            value,
+            emailCampaignPropertiesFormatMap[property].format,
+            emailCampaignPropertiesFormatMap[property].messageMap,
+          )
+        : undefined,
+  };
 }
 
 export default formatCampaignProperty;

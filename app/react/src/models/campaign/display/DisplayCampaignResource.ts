@@ -14,13 +14,13 @@ export interface DisplayCampaignResource extends DisplayCampaignCreateRequest {
 export interface DisplayCampaignCreateRequest {
   organisation_id: string;
   name: string;
-  creation_ts: string;
+  creation_ts: number;
   editor_version_id: string;
   editor_version_value: string;
   editor_group_id: string;
   editor_artifact_id: string;
   currency_code: string;
-  technical_name: string | null;
+  technical_name: string;
   subtype: DisplayCampaignSubType;
   max_bid_price: number;
   total_budget: number;
@@ -34,4 +34,13 @@ export interface DisplayCampaignCreateRequest {
   model_version: ModelVersion;
   type: string;
   automated: boolean;
+}
+
+export interface DisplayCampaignTableResource extends DisplayCampaignResource {
+  clicks?: number;
+  cpc?: number;
+  cpm?: number;
+  ctr?: number;
+  impressions?: number;
+  impressions_cost?: number;
 }

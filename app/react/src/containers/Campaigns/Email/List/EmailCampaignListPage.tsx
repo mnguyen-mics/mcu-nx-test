@@ -18,9 +18,6 @@ import { getPaginatedApiParam, takeLatest } from '../../../../utils/ApiHelper';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
-import CampaignService, {
-  GetCampaignsOptions,
-} from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService';
 import * as notifyActions from '../../../../state/Notifications/actions';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -31,7 +28,10 @@ import injectNotifications, {
 import { CampaignStatus } from '../../../../models/campaign/constants';
 import { Index } from '../../../../utils';
 import { messages } from './messages';
-import { CampaignResource } from '../../../../models/campaign/CampaignResource';
+import { EmailCampaignResource } from '../../../../models/campaign/email';
+import { CampaignsOptions } from '../../../../services/DisplayCampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService';
+import { Modal } from 'antd';
 
 const getLatestDeliveryReport = takeLatest(
   ReportService.getEmailDeliveryReport,
@@ -45,10 +45,10 @@ export interface FilterParams
   statuses: CampaignStatus[];
 }
 interface State {
-  emailCampaignsById: Index<CampaignResource>;
+  emailCampaignsById: Index<EmailCampaignResource>;
   isFetchingCampaigns: boolean;
   isFetchingStats: boolean;
-  deliveryReportByCampaignId: { [key: string]: CampaignResource };
+  deliveryReportByCampaignId: { [key: string]: EmailCampaignResource };
   allCampaignIds: string[];
   totalCampaigns: number;
   hasEmailCampaigns: boolean;
@@ -75,7 +75,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
       totalCampaigns: 0,
       isFetchingCampaigns: true,
       isFetchingStats: true,
-      hasEmailCampaigns: false,
+      hasEmailCampaigns: true,
     };
   }
 
@@ -134,6 +134,54 @@ class EmailCampaignListPage extends React.Component<Props, State> {
     }
   }
 
+  handleArchiveCampaign = (campaign: EmailCampaignResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { pathname, state, search },
+      history,
+      intl,
+    } = this.props;
+
+    const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
+
+    const reloadEmailCampaign = () => {
+      this.fetchCampaignAndStats(organisationId, filter);
+    };
+
+    const dataSource = this.buildTableDataSource();
+
+    Modal.confirm({
+      title: intl.formatMessage(messages.confirmArchiveModalTitle),
+      content: intl.formatMessage(messages.confirmArchiveModalContent),
+      iconType: 'exclamation-circle',
+      okText: intl.formatMessage(messages.confirmArchiveModalOk),
+      cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
+      onOk() {
+        EmailCampaignService.deleteEmailCampaign(campaign.id).then(() => {
+          if (dataSource.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: filter.currentPage - 1,
+              automated: true,
+            };
+            reloadEmailCampaign();
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
+          }
+          reloadEmailCampaign();
+        });
+      },
+      onCancel() {
+        //
+      },
+    });
+  };
+
   handleFilterChange = (filter: Index<any>) => {
     const {
       history,
@@ -154,7 +202,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
     init: boolean = false,
   ) => {
     const buildGetCampaignsOptions = () => {
-      const options: GetCampaignsOptions = {
+      const options: CampaignsOptions = {
         archived: filter.statuses.includes('ARCHIVED'),
         automated: false,
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
@@ -179,7 +227,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
           }
         : options;
     };
-    CampaignService.getCampaigns(
+    EmailCampaignService.getEmailCampaigns(
       organisationId,
       'EMAIL',
       buildGetCampaignsOptions(),
@@ -190,7 +238,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
           allCampaignIds: response.data.map(emailCampaign => emailCampaign.id),
           emailCampaignsById: normalizeArrayOfObject(response.data, 'id'),
           totalCampaigns: response.total || 0,
-          hasEmailCampaigns: init ? response.count === 0 : false,
+          hasEmailCampaigns: init ? response.count !== 0 : true,
         });
       })
       .catch(error => {
@@ -211,7 +259,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
           isFetchingStats: false,
           deliveryReportByCampaignId: normalizeArrayOfObject(
             normalizeReportView(response.data.report_view),
-            'campaign_id',
+            'campaign_id' as any,
           ),
         });
       })
@@ -272,7 +320,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
     return (
       <EmailCampaignsTable
         dataSource={this.buildTableDataSource()}
-        fetchCampaignAndStats={this.fetchCampaignAndStats}
+        archiveCampaign={this.handleArchiveCampaign}
         hasEmailCampaigns={hasEmailCampaigns}
         totalCampaigns={totalCampaigns}
         isFetchingCampaigns={isFetchingCampaigns}

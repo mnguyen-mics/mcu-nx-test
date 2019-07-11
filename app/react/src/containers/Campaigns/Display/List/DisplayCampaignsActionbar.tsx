@@ -14,8 +14,8 @@ import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
 import CampaignService, {
-  GetCampaignsOptions,
-} from '../../../../services/CampaignService';
+  CampaignsOptions,
+} from '../../../../services/DisplayCampaignService';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
@@ -96,7 +96,7 @@ interface DisplayCampaignsActionbarState {
 const fetchExportData = (organisationId: string, filter: FilterParams) => {
   const campaignType = 'DISPLAY';
   const buildOptionsForGetCampaigns = () => {
-    const options: GetCampaignsOptions = {
+    const options: CampaignsOptions = {
       archived: filter.statuses.includes('ARCHIVED'),
       first_result: 0,
       max_results: 2000,
@@ -119,7 +119,7 @@ const fetchExportData = (organisationId: string, filter: FilterParams) => {
   const dimension = [''];
 
   const apiResults = Promise.all([
-    CampaignService.getCampaigns(
+    CampaignService.getDisplayCampaigns(
       organisationId,
       campaignType,
       buildOptionsForGetCampaigns(),

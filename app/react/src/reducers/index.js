@@ -5,7 +5,6 @@ import FormReducer from './FormReducer';
 import AppReducer from '../state/App/reducer';
 import ThemeReducer from '../state/Theme/reducer';
 import FeaturesReducer from '../state/Features/reducer';
-import DisplayCampaignsReducers from '../state/Campaigns/Display/reducer';
 import NotificationsReducers from '../state/Notifications/reducer';
 import LoginReducers from '../state/Login/reducer';
 import SessionReducers from '../state/Session/reducer';
@@ -20,7 +19,6 @@ const allReducers = Object.assign(
   AppReducer,
   ThemeReducer,
   FeaturesReducer,
-  DisplayCampaignsReducers,
   NotificationsReducers,
   LoginReducers,
   SessionReducers,

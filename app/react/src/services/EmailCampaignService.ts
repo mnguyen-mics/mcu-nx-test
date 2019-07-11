@@ -1,3 +1,4 @@
+import { CampaignsOptions } from './DisplayCampaignService';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import {
   EmailCampaignResource,
@@ -11,7 +12,6 @@ import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
 const EMAIL_CAMPAIGNS_BASE_URL = `email_campaigns`;
 
 const EmailCampaignService = {
-
   getEmailCampaign(
     campaignId: string,
   ): Promise<DataResponse<EmailCampaignResource>> {
@@ -19,9 +19,22 @@ const EmailCampaignService = {
     return ApiService.getRequest(endpoint);
   },
 
-  deleteEmailCampaign(
-    campaignId: string,
-  ): Promise<any> {
+  getEmailCampaigns(
+    organisationId: string,
+    campaignType: 'EMAIL',
+    options: CampaignsOptions = {},
+  ): Promise<DataListResponse<EmailCampaignResource>> {
+    const endpoint = 'campaigns';
+
+    const params = {
+      organisation_id: organisationId,
+      campaign_type: campaignType,
+      ...options,
+    };
+    return ApiService.getRequest(endpoint, params);
+  },
+
+  deleteEmailCampaign(campaignId: string): Promise<any> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}`;
     return ApiService.deleteRequest(endpoint);
   },
@@ -52,10 +65,9 @@ const EmailCampaignService = {
   archiveEmailCampaign(
     campaignId: string,
   ): Promise<DataResponse<EmailCampaignResource>> {
-    return EmailCampaignService.updateEmailCampaign(
-      campaignId,
-      { archived: true },
-    );
+    return EmailCampaignService.updateEmailCampaign(campaignId, {
+      archived: true,
+    });
   },
 
   getRouters(
@@ -81,17 +93,12 @@ const EmailCampaignService = {
     return ApiService.postRequest(endpoint, resource);
   },
 
-  deleteRouter(
-    campaignId: string,
-    routerSelectionId: string,
-  ): Promise<any> {
+  deleteRouter(campaignId: string, routerSelectionId: string): Promise<any> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}/email_routers/${routerSelectionId}`;
     return ApiService.deleteRequest(endpoint);
   },
 
-  getBlasts(
-    campaignId: string,
-  ): Promise<DataListResponse<EmailBlastResource>> {
+  getBlasts(campaignId: string): Promise<DataListResponse<EmailBlastResource>> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}/email_blasts`;
     return ApiService.getRequest(endpoint);
   },
@@ -121,10 +128,7 @@ const EmailCampaignService = {
     return ApiService.putRequest(endpoint, resource);
   },
 
-  deleteBlast(
-    campaignId: string,
-    blastId: string,
-  ): Promise<any> {
+  deleteBlast(campaignId: string, blastId: string): Promise<any> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}/email_blasts/${blastId}`;
     return ApiService.deleteRequest(endpoint);
   },
@@ -219,7 +223,9 @@ const EmailCampaignService = {
       provider_technical_names: providerTechnicalNames,
     };
 
-    return ApiService.getRequest(endpoint, params).then(res => (res as any).count);
+    return ApiService.getRequest(endpoint, params).then(
+      res => (res as any).count,
+    );
   },
 };
 
