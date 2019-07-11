@@ -39,9 +39,9 @@ const FormMultiTag: React.SFC<Props> = props => {
     validateStatus = 'warning';
   }
 
-  const optionsToDisplay = selectProps!.options.map(({ label, ...option }) => (
+  const optionsToDisplay = selectProps ? selectProps.options.map(({ label, ...option }) => (
     <Option {...option} key={option.value}>{label}</Option>
-  ));
+  )) : [];
 
   
 

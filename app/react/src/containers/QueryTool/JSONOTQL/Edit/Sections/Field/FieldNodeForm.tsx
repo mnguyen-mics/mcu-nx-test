@@ -263,14 +263,13 @@ class FieldNodeForm extends React.Component<Props, State> {
     const { intl } = this.props;
 
     const shouldRenderDirective = (renderDefault: JSX.Element, fetchPredicates: boolean = false) => {
-      if (fetchPredicates) {
-        return this.generateReferenceTableComparisonField("COMPUTED")
-      }
       if (directives) {
         const modelAndType = getCoreReferenceTypeAndModel(directives);
         if (modelAndType) {
           return this.generateReferenceTableComparisonField(modelAndType.type, modelAndType.modelType);
         }        
+      } else if (fetchPredicates) {
+        return this.generateReferenceTableComparisonField("COMPUTED")
       }
       return renderDefault;
     }
