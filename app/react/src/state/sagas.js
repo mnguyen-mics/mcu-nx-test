@@ -2,7 +2,6 @@ import { all } from 'redux-saga/effects';
 import { appSagas } from './App/sagas';
 import { loginSagas } from './Login/sagas';
 import { sessionSagas } from './Session/sagas';
-import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
 import { nativeCreativesSagas } from './Creatives/Native/sagas';
 import { labelsSagas } from './Labels/sagas';
@@ -17,7 +16,6 @@ export default function* sagas() {
     ...loginSagas,
     ...versionSagas,
     ...labelsSagas,
-    ...creativeDisplaySagas,
     ...creativeEmailsSagas,
     ...nativeCreativesSagas,
     ...versionSagas,

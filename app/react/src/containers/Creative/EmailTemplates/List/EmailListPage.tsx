@@ -8,7 +8,7 @@ import { CampaignRouteParams } from '../../../../models/campaign/CampaignResourc
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import CreativeService, {
-  GetCreativesOptions,
+  CreativesOptions,
 } from '../../../../services/CreativeService';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
@@ -119,7 +119,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       },
       notifyError,
     } = this.props;
-    const options: GetCreativesOptions = {
+    const options: CreativesOptions = {
       type: 'EMAIL_TEMPLATE',
       archived: false,
       max_results: totalCreativeEmails, // mandatory
@@ -219,7 +219,7 @@ class EmailListPage extends React.Component<JoinedProps, EmailListPageState> {
       dataSource,
       totalCreativeEmails,
       fetchCreativeEmails,
-      resetCreativeEmails
+      resetCreativeEmails,
     } = this.props;
     const rowSelection = {
       selectedRowKeys,
@@ -268,7 +268,7 @@ const mapStateToProps = (state: MapStateToProps) => ({
   hasCreativeEmails: hasEmailTemplates(state),
   isFetchingCreativeEmails: isFetchingEmailTemplates(state),
   dataSource: getEmailTemplates(state),
-  totalCreativeEmails: getEmailTemplatesTotal(state)
+  totalCreativeEmails: getEmailTemplatesTotal(state),
 });
 
 const mapDispatchToProps = {
@@ -280,5 +280,8 @@ export default compose<JoinedProps, {}>(
   injectIntl,
   injectDrawer,
   injectNotifications,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(EmailListPage);

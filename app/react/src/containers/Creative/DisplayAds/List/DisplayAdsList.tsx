@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
-import { Modal } from 'antd';
 import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import {
@@ -12,24 +11,24 @@ import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
   parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import CreativeScreenshot from '../../CreativeScreenshot';
 import messages from './message';
-import CreativeService from '../../../../services/CreativeService';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
-import { MapDispatchToProps, MapStateToProps } from './DisplayAdsPage';
 import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
 
-interface DisplayAdsListProps extends MapStateToProps, MapDispatchToProps {
+interface DisplayAdsListProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingAuditStatus: boolean;
+  dataSource: DisplayAdResource[];
+  archiveDisplayAd: (ad: DisplayAdResource) => void;
+  hasDisplayAds: boolean;
+  isLoadingDisplayAds: boolean;
+  totalDisplayAds: number;
 }
 
 type JoinedProps = DisplayAdsListProps &
@@ -39,77 +38,6 @@ type JoinedProps = DisplayAdsListProps &
 class CreativeDisplayTable extends React.Component<JoinedProps> {
   constructor(props: JoinedProps) {
     super(props);
-    this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.archiveCreativeDisplay = this.archiveCreativeDisplay.bind(this);
-    this.editCreativeDisplay = this.editCreativeDisplay.bind(this);
-  }
-
-  componentDidMount() {
-    const {
-      history,
-      location: { search, pathname },
-      match: {
-        params: { organisationId },
-      },
-      fetchCreativeDisplay,
-    } = this.props;
-
-    if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
-        state: { reloadDataSource: true },
-      });
-    } else {
-      const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
-      fetchCreativeDisplay(organisationId, filter, true);
-    }
-  }
-
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const {
-      location: { search },
-      match: {
-        params: { organisationId },
-      },
-      history,
-      fetchCreativeDisplay,
-    } = this.props;
-
-    const {
-      location: { pathname: nextPathname, search: nextSearch, state },
-      match: {
-        params: { organisationId: nextOrganisationId },
-      },
-    } = nextProps;
-
-    const checkEmptyDataSource = state && state.reloadDataSource;
-
-    if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
-    ) {
-      if (!isSearchValid(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
-        history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(
-            nextSearch,
-            CREATIVE_DISPLAY_SEARCH_SETTINGS,
-          ),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
-        });
-      } else {
-        const filter = parseSearch(
-          nextSearch,
-          CREATIVE_DISPLAY_SEARCH_SETTINGS,
-        );
-        fetchCreativeDisplay(nextOrganisationId, filter, checkEmptyDataSource);
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.resetCreativeDisplay();
   }
 
   updateLocationSearch(params: object) {
@@ -135,14 +63,15 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
       match: {
         params: { organisationId },
       },
-      location: { search },
-      isFetchingCreativeDisplay,
       dataSource,
-      totalCreativeDisplay,
-      hasCreativeDisplay,
+      isLoadingDisplayAds,
+      location: { search },
       rowSelection,
       isUpdatingAuditStatus,
+      totalDisplayAds,
       intl,
+      hasDisplayAds,
+      archiveDisplayAd,
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
@@ -160,7 +89,7 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalCreativeDisplay,
+      total: totalDisplayAds,
       onChange: (page: number) => {
         this.updateLocationSearch({
           currentPage: page,
@@ -227,19 +156,19 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
           },
           {
             intlMessage: messages.archive,
-            callback: this.archiveCreativeDisplay,
+            callback: archiveDisplayAd,
           },
         ],
       },
     ];
 
-    return hasCreativeDisplay ? (
+    return hasDisplayAds ? (
       <div className="mcs-table-container">
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}
-          loading={isFetchingCreativeDisplay || isUpdatingAuditStatus}
+          loading={isLoadingDisplayAds || isUpdatingAuditStatus}
           pagination={pagination}
           rowSelection={rowSelection}
           searchOptions={searchOptions}
@@ -261,60 +190,6 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
     history.push(
       `/v2/o/${organisationId}/creatives/display/edit/${creative.id}`,
     );
-  }
-  archiveCreativeDisplay(creative: DisplayAdResource) {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      location: { search, pathname, state },
-      fetchCreativeDisplay,
-      intl,
-      history,
-      dataSource,
-    } = this.props;
-
-    const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
-    if (creative.audit_status === 'NOT_AUDITED') {
-      Modal.confirm({
-        title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
-        content: intl.formatMessage(
-          messages.creativeModalConfirmArchivedContent,
-        ),
-        iconType: 'exclamation-circle',
-        okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
-        cancelText: intl.formatMessage(messages.cancelText),
-        onOk() {
-          CreativeService.updateDisplayCreative(creative.id, {
-            ...creative,
-            archived: true,
-          }).then(() => {
-            if (dataSource.length === 1 && filter.currentPage !== 1) {
-              const newFilter = {
-                ...filter,
-                currentPage: filter.currentPage - 1,
-              };
-              fetchCreativeDisplay(organisationId, filter, true);
-              history.replace({
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-                state: state,
-              });
-            }
-            fetchCreativeDisplay(organisationId, filter, true);
-          });
-        },
-        onCancel() {
-          //
-        },
-      });
-    } else {
-      Modal.warning({
-        title: intl.formatMessage(messages.creativeModalNoArchiveTitle),
-        content: intl.formatMessage(messages.creativeModalNoArchiveMessage),
-        iconType: 'exclamation-circle',
-      });
-    }
   }
 }
 

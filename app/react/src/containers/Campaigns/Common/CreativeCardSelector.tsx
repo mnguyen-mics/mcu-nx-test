@@ -14,7 +14,7 @@ import CollectionSelector, {
 } from '../../../components/ElementSelector/CollectionSelector';
 import { SearchFilter } from '../../../components/ElementSelector';
 import CreativeService, {
-  GetCreativesOptions,
+  CreativesOptions,
 } from '../../../services/CreativeService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import {
@@ -83,7 +83,7 @@ class CreativeCardSelector extends React.Component<Props> {
   fetchCreatives = (filter: SearchFilter) => {
     const { creativeType, match: { params: { organisationId } } } = this.props;
 
-    const options: GetCreativesOptions = {
+    const options: CreativesOptions = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 

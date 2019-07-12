@@ -8,7 +8,7 @@ import { CampaignRouteParams } from '../../../../models/campaign/CampaignResourc
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import CreativeService, {
-  GetCreativesOptions,
+  CreativesOptions,
 } from '../../../../services/CreativeService';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
@@ -119,7 +119,7 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       },
       notifyError,
     } = this.props;
-    const options: GetCreativesOptions = {
+    const options: CreativesOptions = {
       type: 'DISPLAY_AD',
       subtype: ['NATIVE'],
       archived: false,

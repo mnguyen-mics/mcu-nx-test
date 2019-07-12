@@ -328,7 +328,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
 
     const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
 
-    const fetchDataSource = (orgId: string, params: Index<any>) => {
+    const fetchDataSource = () => {
       this.loadDisplayCampaignsDataSource(organisationId, filter);
     };
 
@@ -345,14 +345,14 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
               ...filter,
               currentPage: filter.currentPage - 1,
             };
-            fetchDataSource(organisationId, filter);
+            fetchDataSource();
             history.replace({
               pathname: pathname,
               search: updateSearch(search, newFilter),
               state: state,
             });
           } else {
-            fetchDataSource(organisationId, filter);
+            fetchDataSource();
           }
         });
       },

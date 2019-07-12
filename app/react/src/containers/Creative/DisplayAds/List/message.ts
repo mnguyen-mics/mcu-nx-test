@@ -55,4 +55,8 @@ export default defineMessages({
     id: 'creatives.display.list.actionColumn.archive',
     defaultMessage: 'Archive',
   },
+  archiveSuccess: {
+    id: 'archive.creatives.success.msg',
+    defaultMessage: 'Creatives successfully archived',
+  },
 });

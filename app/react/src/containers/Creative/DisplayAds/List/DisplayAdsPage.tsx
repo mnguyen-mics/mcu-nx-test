@@ -1,63 +1,38 @@
 import * as React from 'react';
-import { Layout, message } from 'antd';
+import { Layout, message, Modal } from 'antd';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { connect } from 'react-redux';
-
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayAdsActionBar from './DisplayAdsActionBar';
 import DisplayAdsList from './DisplayAdsList';
 import { injectDrawer } from '../../../../components/Drawer';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import {
-  getDisplayCreatives,
-  getDisplayCreativesTotal,
-  hasDisplayCreatives,
-  isFetchingDisplayCreatives,
-} from '../../../../state/Creatives/Display/selectors';
-import {
   DisplayAdResource,
   CreativeAuditAction,
 } from '../../../../models/creative/CreativeResource';
 import CreativeService, {
-  GetCreativesOptions,
+  CreativesOptions,
 } from '../../../../services/CreativeService';
 import {
   parseSearch,
   updateSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import * as CreativeDisplayActions from '../../../../state/Creatives/Display/actions';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
-
-const messages = defineMessages({
-  archiveSuccess: {
-    id: 'archive.creatives.success.msg',
-    defaultMessage: 'Creatives successfully archived',
-  },
-});
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { Index } from '../../../../utils';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import messages from './message';
 
 const { Content } = Layout;
-
-export interface MapDispatchToProps {
-  fetchCreativeDisplay: (
-    organisationId: string,
-    filter: object,
-    bool: boolean,
-  ) => void;
-  resetCreativeDisplay: () => void;
-}
-
-export interface MapStateToProps {
-  isFetchingCreativeDisplay?: boolean;
-  dataSource: DisplayAdResource[];
-  totalCreativeDisplay?: number;
-  hasCreativeDisplay: boolean;
-}
 
 interface DisplayAdsPageState {
   selectedRowKeys: string[];
@@ -65,13 +40,15 @@ interface DisplayAdsPageState {
   isArchiveModalVisible: boolean;
   isArchiving: boolean;
   isUpdatingAuditStatus: boolean;
+  isLoadingDisplayAds: boolean;
+  dataSource: DisplayAdResource[];
+  totalDisplayAds: number;
+  hasDisplayAds: boolean;
 }
 
 type JoinedProps = DisplayAdsPage &
   InjectedIntlProps &
   InjectedDrawerProps &
-  MapStateToProps &
-  MapDispatchToProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
@@ -84,21 +61,124 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       isArchiveModalVisible: false,
       isArchiving: false,
       isUpdatingAuditStatus: false,
+      isLoadingDisplayAds: false,
+      dataSource: [],
+      totalDisplayAds: 0,
+      hasDisplayAds: true,
     };
   }
 
+  componentDidMount() {
+    const {
+      history,
+      location: { search, pathname },
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
+    } else {
+      const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
+      this.fetchDisplayAds(organisationId, filter, true);
+    }
+  }
+
+  componentWillReceiveProps(nextProps: JoinedProps) {
+    const {
+      location: { search },
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
+
+    const {
+      location: { pathname: nextPathname, search: nextSearch, state },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
+    } = nextProps;
+
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
+    if (
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
+    ) {
+      if (!isSearchValid(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(
+            nextSearch,
+            CREATIVE_DISPLAY_SEARCH_SETTINGS,
+          ),
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
+        });
+      } else {
+        const filter = parseSearch(
+          nextSearch,
+          CREATIVE_DISPLAY_SEARCH_SETTINGS,
+        );
+        this.fetchDisplayAds(nextOrganisationId, filter, checkEmptyDataSource);
+      }
+    }
+  }
+
+  fetchDisplayAds = (
+    organisationId: string,
+    filter: Index<any>,
+    init: boolean = false,
+  ) => {
+    this.setState({
+      isLoadingDisplayAds: true,
+    });
+    let options: CreativesOptions = {
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      archived: filter.archived,
+      subtype: ['BANNER', 'VIDEO'],
+    };
+
+    if (filter.keywords) {
+      options = {
+        ...options,
+        keywords: filter.keywords,
+      };
+    }
+    CreativeService.getDisplayAds(organisationId, options).then(result => {
+      const data = result.data;
+      const displayAdsById = normalizeArrayOfObject(data, 'id');
+      this.setState({
+        dataSource: Object.keys(displayAdsById).map(id => {
+          return {
+            ...displayAdsById[id],
+          };
+        }),
+        isLoadingDisplayAds: false,
+        hasDisplayAds: init ? result.count !== 0 : true,
+        totalDisplayAds: result.total || 0,
+      });
+    });
+  };
+
   getAllCreativesIds = () => {
     const {
-      totalCreativeDisplay,
       match: {
         params: { organisationId },
       },
       notifyError,
     } = this.props;
-    const options: GetCreativesOptions = {
+
+    const { totalDisplayAds } = this.state;
+    const options: CreativesOptions = {
       type: 'DISPLAY_AD',
       archived: false,
-      max_results: totalCreativeDisplay, // mandatory
+      max_results: totalDisplayAds,
     };
     return CreativeService.getDisplayAds(organisationId, options)
       .then(apiResp =>
@@ -121,8 +201,9 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
           .then(apiResp => apiResp.data)
           .then(creative => {
             if (creative.available_user_audit_actions.includes(action)) {
-              CreativeService.makeAuditAction(creative.id, action)
-              .catch(err => notifyError(err));
+              CreativeService.makeAuditAction(creative.id, action).catch(err =>
+                notifyError(err),
+              );
             }
           });
       });
@@ -198,26 +279,27 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
     const {
       location: { search, pathname, state },
       history,
-      fetchCreativeDisplay,
       match: {
         params: { organisationId },
       },
-      dataSource,
     } = this.props;
+
+    const { dataSource } = this.state;
+
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
     if (dataSource.length === 1 && filter.currentPage !== 1) {
       const newFilter = {
         ...filter,
         currentPage: filter.currentPage - 1,
       };
-      fetchCreativeDisplay(organisationId, filter, true);
+      this.fetchDisplayAds(organisationId, filter, true);
       history.push({
         pathname: pathname,
         search: updateSearch(search, newFilter),
         state: state,
       });
     }
-    fetchCreativeDisplay(organisationId, filter, true);
+    this.fetchDisplayAds(organisationId, filter, true);
   };
 
   makeArchiveAction = (creativesIds: string[]) => {
@@ -263,6 +345,66 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
     });
   };
 
+  archiveDisplayAd = (creative: DisplayAdResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search, pathname, state },
+      intl,
+      history,
+    } = this.props;
+
+    const { dataSource } = this.state;
+
+    const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
+
+    const fetchDataSource = () => {
+      this.fetchDisplayAds(organisationId, filter);
+    };
+
+    if (creative.audit_status === 'NOT_AUDITED') {
+      Modal.confirm({
+        title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
+        content: intl.formatMessage(
+          messages.creativeModalConfirmArchivedContent,
+        ),
+        iconType: 'exclamation-circle',
+        okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
+        cancelText: intl.formatMessage(messages.cancelText),
+        onOk() {
+          CreativeService.updateDisplayCreative(creative.id, {
+            ...creative,
+            archived: true,
+          }).then(() => {
+            if (dataSource.length === 1 && filter.currentPage !== 1) {
+              const newFilter = {
+                ...filter,
+                currentPage: filter.currentPage - 1,
+              };
+              fetchDataSource();
+              history.replace({
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+                state: state,
+              });
+            }
+            fetchDataSource();
+          });
+        },
+        onCancel() {
+          //
+        },
+      });
+    } else {
+      Modal.warning({
+        title: intl.formatMessage(messages.creativeModalNoArchiveTitle),
+        content: intl.formatMessage(messages.creativeModalNoArchiveMessage),
+        iconType: 'exclamation-circle',
+      });
+    }
+  };
+
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
@@ -280,15 +422,11 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       selectedRowKeys,
       allRowsAreSelected,
       isUpdatingAuditStatus,
-    } = this.state;
-    const {
-      hasCreativeDisplay,
-      isFetchingCreativeDisplay,
       dataSource,
-      totalCreativeDisplay,
-      fetchCreativeDisplay,
-      resetCreativeDisplay,
-    } = this.props;
+      hasDisplayAds,
+      totalDisplayAds,
+      isLoadingDisplayAds,
+    } = this.state;
 
     const rowSelection = {
       selectedRowKeys,
@@ -298,15 +436,6 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       unselectAllItemIds: this.unselectAllItemIds,
       onSelectAll: this.unsetAllItemsSelectedFlag,
       onSelect: this.unsetAllItemsSelectedFlag,
-    };
-
-    const reduxProps = {
-      hasCreativeDisplay,
-      isFetchingCreativeDisplay,
-      dataSource,
-      totalCreativeDisplay,
-      fetchCreativeDisplay,
-      resetCreativeDisplay,
     };
 
     const multiEditProps = {
@@ -329,7 +458,11 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
             <DisplayAdsList
               rowSelection={rowSelection}
               isUpdatingAuditStatus={isUpdatingAuditStatus}
-              {...reduxProps}
+              dataSource={dataSource}
+              archiveDisplayAd={this.archiveDisplayAd}
+              hasDisplayAds={hasDisplayAds}
+              isLoadingDisplayAds={isLoadingDisplayAds}
+              totalDisplayAds={totalDisplayAds}
             />
           </Content>
         </div>
@@ -337,22 +470,10 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
     );
   }
 }
-const mapStateToProps = (state: MapStateToProps) => ({
-  hasCreativeDisplay: hasDisplayCreatives(state),
-  isFetchingCreativeDisplay: isFetchingDisplayCreatives(state),
-  dataSource: getDisplayCreatives(state),
-  totalCreativeDisplay: getDisplayCreativesTotal(state),
-});
-
-const mapDispatchToProps = {
-  fetchCreativeDisplay: CreativeDisplayActions.fetchCreativeDisplay.request,
-  resetCreativeDisplay: CreativeDisplayActions.resetCreativeDisplay,
-};
 
 export default compose<JoinedProps, {}>(
   withRouter,
   injectIntl,
   injectDrawer,
   injectNotifications,
-  connect(mapStateToProps, mapDispatchToProps),
 )(DisplayAdsPage);
