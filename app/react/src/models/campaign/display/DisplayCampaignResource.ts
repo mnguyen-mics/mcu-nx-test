@@ -36,7 +36,7 @@ export interface DisplayCampaignCreateRequest {
   automated: boolean;
 }
 
-export interface DisplayCampaignTableResource extends DisplayCampaignResource {
+export interface DisplayCampaignResourceWithStats extends DisplayCampaignResource {
   clicks?: number;
   cpc?: number;
   cpm?: number;

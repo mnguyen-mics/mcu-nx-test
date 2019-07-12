@@ -28,10 +28,10 @@ import injectNotifications, {
 import { CampaignStatus } from '../../../../models/campaign/constants';
 import { Index } from '../../../../utils';
 import { messages } from './messages';
-import { EmailCampaignResource } from '../../../../models/campaign/email';
 import { CampaignsOptions } from '../../../../services/DisplayCampaignService';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { Modal } from 'antd';
+import { EmailCampaignResourceWithStats } from '../../../../models/campaign/email/EmailCampaignResource';
 
 const getLatestDeliveryReport = takeLatest(
   ReportService.getEmailDeliveryReport,
@@ -45,10 +45,10 @@ export interface FilterParams
   statuses: CampaignStatus[];
 }
 interface State {
-  emailCampaignsById: Index<EmailCampaignResource>;
+  emailCampaignsById: Index<EmailCampaignResourceWithStats>;
   isFetchingCampaigns: boolean;
   isFetchingStats: boolean;
-  deliveryReportByCampaignId: { [key: string]: EmailCampaignResource };
+  deliveryReportByCampaignId: { [key: string]: EmailCampaignResourceWithStats };
   allCampaignIds: string[];
   totalCampaigns: number;
   hasEmailCampaigns: boolean;
@@ -134,7 +134,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
     }
   }
 
-  handleArchiveCampaign = (campaign: EmailCampaignResource) => {
+  handleArchiveCampaign = (campaign: EmailCampaignResourceWithStats) => {
     const {
       match: {
         params: { organisationId },

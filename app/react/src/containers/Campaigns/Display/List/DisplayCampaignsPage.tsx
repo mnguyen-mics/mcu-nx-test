@@ -25,7 +25,7 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import {
-  DisplayCampaignTableResource,
+  DisplayCampaignResourceWithStats,
   DisplayCampaignResource,
 } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
@@ -60,7 +60,7 @@ interface State {
   isArchiving: boolean;
   isLoadingCampaigns: boolean;
   isLoadingStats: boolean;
-  dataSource: DisplayCampaignTableResource[];
+  dataSource: DisplayCampaignResourceWithStats[];
   totalCampaigns: number;
   hasCampaigns: boolean;
 }

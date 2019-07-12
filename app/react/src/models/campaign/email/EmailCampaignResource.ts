@@ -37,7 +37,7 @@ export interface EmailBlastResource extends EmailBlastCreateRequest {
   number_mail_not_send?: number;
 }
 
-export interface EmailCampaignTableResource extends EmailCampaignResource {
+export interface EmailCampaignResourceWithStats extends EmailCampaignResource {
   email_sent?: number;
   email_hard_bounced?: number;
   email_soft_bounced?: number;

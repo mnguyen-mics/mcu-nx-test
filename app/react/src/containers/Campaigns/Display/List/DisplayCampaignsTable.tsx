@@ -25,7 +25,7 @@ import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { RouteComponentProps } from 'react-router';
 import {
   DisplayCampaignResource,
-  DisplayCampaignTableResource,
+  DisplayCampaignResourceWithStats,
 } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
@@ -57,7 +57,7 @@ const messagesMap: {
 });
 
 interface DisplayCampaignsTableProps extends MapDispatchToProps {
-  dataSource: DisplayCampaignTableResource[];
+  dataSource: DisplayCampaignResourceWithStats[];
   archiveCampaign: (campaign: DisplayCampaignResource) => void;
   rowSelection: ExtendedTableRowSelection;
   hasCampaigns: boolean;
@@ -72,7 +72,6 @@ type JoinedProps = DisplayCampaignsTableProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCampaignsTable extends React.Component<JoinedProps> {
-
   editCampaign = (campaign: DisplayCampaignResource) => {
     const {
       match: {

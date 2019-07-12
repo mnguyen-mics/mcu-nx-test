@@ -8,21 +8,22 @@ import {
 } from '../../../../components/TableView/index';
 import { McsIcon } from '../../../../components/index';
 import messages from './messages';
+import {
+  EmailCampaignResourceWithStats,
+  EmailCampaignResource,
+} from '../../../../models/campaign/email/EmailCampaignResource';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 import { Index } from '../../../../utils';
-import { EmailCampaignResource } from '../../../../models/campaign/email';
 import { LabelsSelectorProps } from '../../../../components/LabelsSelector';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
-import { CampaignResource } from '../../../../models/campaign/CampaignResource';
-
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { compose } from 'recompose';
 import { CampaignStatus } from '../../../../models/campaign/constants';
 
 interface EmailCampaignsTableProps {
-  dataSource: CampaignResource[];
+  dataSource: EmailCampaignResourceWithStats[];
   archiveCampaign: (campaign: EmailCampaignResource) => void;
   totalCampaigns: number;
   hasEmailCampaigns: boolean;
@@ -134,7 +135,7 @@ class EmailCampaignsTable extends React.Component<Props> {
         intlMessage: messages.emailHeaderName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: CampaignResource) => (
+        render: (text: string, record: EmailCampaignResource) => (
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${record.organisation_id}/campaigns/email/${record.id}`}
