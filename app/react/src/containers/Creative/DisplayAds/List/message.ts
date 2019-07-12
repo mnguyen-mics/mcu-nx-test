@@ -59,4 +59,12 @@ export default defineMessages({
     id: 'archive.creatives.success.msg',
     defaultMessage: 'Creatives successfully archived',
   },
+  archiveNativeSuccess: {
+    id: 'archive.native.success.msg',
+    defaultMessage: 'Native creative successfully archived',
+  },
+  searchPlaceholder: {
+    id: 'creative.native.list.searchPlaceholder',
+    defaultMessage: 'Search Native Creatives',
+  },
 });

@@ -3,7 +3,6 @@ import { appSagas } from './App/sagas';
 import { loginSagas } from './Login/sagas';
 import { sessionSagas } from './Session/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
-import { nativeCreativesSagas } from './Creatives/Native/sagas';
 import { labelsSagas } from './Labels/sagas';
 import { versionSagas } from './Version/sagas.ts';
 import { accountSagas } from './Account/sagas';
@@ -17,8 +16,6 @@ export default function* sagas() {
     ...versionSagas,
     ...labelsSagas,
     ...creativeEmailsSagas,
-    ...nativeCreativesSagas,
-    ...versionSagas,
     ...accountSagas,
     ...featuresSagas,
   ]);
