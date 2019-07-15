@@ -67,4 +67,16 @@ export default defineMessages({
     id: 'creative.native.list.searchPlaceholder',
     defaultMessage: 'Search Native Creatives',
   },
+  archiveEmailSuccess: {
+    id: 'archive.email.success.msg',
+    defaultMessage: 'Email templates successfully archived',
+  },
+  searchPlaceholderEmail: {
+    id: 'creative.email.list.searchPlaceholder',
+    defaultMessage: 'Search Email Templates',
+  },
+  sendTest: {
+    id: 'creative.email.list.sendTest',
+    defaultMessage: 'Send a test Email',
+  },
 });

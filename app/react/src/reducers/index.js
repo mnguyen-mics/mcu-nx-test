@@ -10,7 +10,6 @@ import LoginReducers from '../state/Login/reducer';
 import SessionReducers from '../state/Session/reducer';
 import LabelsReducers from '../state/Labels/reducer';
 import MenuReducers from '../state/Menu/reducer';
-import creativesReducer from '../state/Creatives/reducer';
 import { drawerReducer } from '../components/Drawer/DrawerStore.ts';
 
 const allReducers = Object.assign(
@@ -24,7 +23,6 @@ const allReducers = Object.assign(
   SessionReducers,
   LabelsReducers,
   MenuReducers,
-  creativesReducer,
   drawerReducer,
 );
 

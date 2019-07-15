@@ -2,10 +2,13 @@ import * as React from 'react';
 import { Spin } from 'antd';
 import McsIcon from '../../components/McsIcon';
 import CreativeService from '../../services/CreativeService';
-import { DisplayAdResource } from '../../models/creative/CreativeResource';
+import {
+  DisplayAdResource,
+  EmailTemplateResource,
+} from '../../models/creative/CreativeResource';
 
 interface CreativeScreenshotProps {
-  item: DisplayAdResource;
+  item: DisplayAdResource | EmailTemplateResource;
 }
 
 interface CreativeScreenshotState {
@@ -90,7 +93,9 @@ class CreativeScreenshot extends React.Component<
       });
   };
 
-  renderSuccessScreenshot = (record: DisplayAdResource) => {
+  renderSuccessScreenshot = (
+    record: DisplayAdResource | EmailTemplateResource,
+  ) => {
     return (
       <a
         target="_blank"

@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { Modal } from 'antd';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
-
 import {
   TableViewFilters,
   EmptyTableView,
@@ -14,27 +12,27 @@ import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
   parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import messagesMap from '../../DisplayAds/List/message';
 import CreativeScreenshot from '../../CreativeScreenshot';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { Filters } from '../../../../components/ItemList';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
-import { MapStateToProps, MapDispatchToProps } from './EmailListPage';
-import CreativeService from '../../../../services/CreativeService';
 import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
 
-interface CreativeEmailsTableProps extends MapStateToProps, MapDispatchToProps {
+interface CreativeEmailsTableProps {
   rowSelection: ExtendedTableRowSelection;
+  isLoadingEmailTemplates: boolean;
+  dataSource: EmailTemplateResource[];
+  totalEmailTemplates: number;
+  hasEmailTemplates: boolean;
+  archiveEmailTemplate: (emailTemplate: EmailTemplateResource) => void;
 }
 
-interface CreativeEmailsTableState {
+interface State {
   modalVisible: boolean;
   inputValue: string[];
   selectedtemplateId: string;
@@ -44,96 +42,14 @@ type JoinedProps = CreativeEmailsTableProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps;
 
-const messages = defineMessages({
-  searchPlaceholder: {
-    id: 'creative.email.list.searchPlaceholder',
-    defaultMessage: 'Search Email Templates',
-  },
-  sendTest: {
-    id: 'creative.email.list.sendTest',
-    defaultMessage: 'Send a test Email',
-  },
-});
-
-class CreativeEmailsTable extends React.Component<
-  JoinedProps,
-  CreativeEmailsTableState
-> {
+class CreativeEmailsTable extends React.Component<JoinedProps, State> {
   constructor(props: JoinedProps) {
     super(props);
-    this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.archiveCreativeEmails = this.archiveCreativeEmails.bind(this);
-    this.editCreativeEmails = this.editCreativeEmails.bind(this);
     this.state = {
       modalVisible: false,
       selectedtemplateId: '',
       inputValue: [],
     };
-  }
-
-  componentDidMount() {
-    const {
-      history,
-      location: { search, pathname },
-      match: {
-        params: { organisationId },
-      },
-      fetchCreativeEmails,
-    } = this.props;
-
-    if (!isSearchValid(search, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS),
-        state: { reloadDataSource: true },
-      });
-    } else {
-      const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
-      fetchCreativeEmails(organisationId, filter, true);
-    }
-  }
-
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const {
-      location: { search },
-      match: {
-        params: { organisationId },
-      },
-      history,
-      fetchCreativeEmails,
-    } = this.props;
-
-    const {
-      location: { pathname: nextPathname, search: nextSearch, state },
-      match: {
-        params: { organisationId: nextOrganisationId },
-      },
-    } = nextProps;
-
-    const checkEmptyDataSource = state && state.reloadDataSource;
-
-    if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
-    ) {
-      if (!isSearchValid(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
-        history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(
-            nextSearch,
-            CREATIVE_EMAIL_SEARCH_SETTINGS,
-          ),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
-        });
-      } else {
-        const filter = parseSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS);
-        fetchCreativeEmails(nextOrganisationId, filter, checkEmptyDataSource);
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.resetCreativeEmails();
   }
 
   updateLocationSearch(params: Filters) {
@@ -162,16 +78,28 @@ class CreativeEmailsTable extends React.Component<
     this.setState({ modalVisible: false, selectedtemplateId: '' });
   };
 
+  editCreativeEmails(campaign: EmailTemplateResource) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
+
+    history.push(`/v2/o/${organisationId}/creatives/email/${campaign.id}/edit`);
+  }
+
   render() {
     const {
       match: {
         params: { organisationId },
       },
       location: { search },
-      isFetchingCreativeEmails,
+      isLoadingEmailTemplates,
       dataSource,
-      totalCreativeEmails,
-      hasCreativeEmails,
+      totalEmailTemplates,
+      hasEmailTemplates,
+      archiveEmailTemplate,
       rowSelection,
       intl,
     } = this.props;
@@ -181,7 +109,7 @@ class CreativeEmailsTable extends React.Component<
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalCreativeEmails,
+      total: totalEmailTemplates,
       onChange: (page: number) => {
         this.updateLocationSearch({
           currentPage: page,
@@ -207,10 +135,9 @@ class CreativeEmailsTable extends React.Component<
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
-        render: (
-          text: string,
-          record: any, // check type
-        ) => <CreativeScreenshot item={record} />,
+        render: (text: string, record: EmailTemplateResource) => (
+          <CreativeScreenshot item={record} />
+        ),
       },
       {
         intlMessage: messagesMap.name,
@@ -246,7 +173,7 @@ class CreativeEmailsTable extends React.Component<
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.sendTest,
+            intlMessage: messagesMap.sendTest,
             callback: this.viewTestModal,
           },
           {
@@ -255,14 +182,14 @@ class CreativeEmailsTable extends React.Component<
           },
           {
             intlMessage: messagesMap.archive,
-            callback: this.archiveCreativeEmails,
+            callback: archiveEmailTemplate,
           },
         ],
       },
     ];
 
     const searchOptions = {
-      placeholder: intl.formatMessage(messages.searchPlaceholder),
+      placeholder: intl.formatMessage(messagesMap.searchPlaceholderEmail),
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
@@ -271,7 +198,7 @@ class CreativeEmailsTable extends React.Component<
       defaultValue: filter.keywords,
     };
 
-    return hasCreativeEmails ? (
+    return hasEmailTemplates ? (
       <div className="mcs-table-container">
         <EmailTestModal
           organisationId={this.props.match.params.organisationId}
@@ -283,7 +210,7 @@ class CreativeEmailsTable extends React.Component<
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}
-          loading={isFetchingCreativeEmails}
+          loading={isLoadingEmailTemplates}
           pagination={pagination}
           rowSelection={rowSelection}
           searchOptions={searchOptions}
@@ -292,65 +219,6 @@ class CreativeEmailsTable extends React.Component<
     ) : (
       <EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />
     );
-  }
-
-  editCreativeEmails(campaign: EmailTemplateResource) {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      history,
-    } = this.props;
-
-    history.push(`/v2/o/${organisationId}/creatives/email/${campaign.id}/edit`);
-  }
-
-  archiveCreativeEmails(email: EmailTemplateResource) {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      location: { search, pathname, state },
-      fetchCreativeEmails,
-      dataSource,
-      history,
-      intl,
-    } = this.props;
-
-    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
-
-    Modal.confirm({
-      title: intl.formatMessage(messagesMap.creativeModalConfirmArchivedTitle),
-      content: intl.formatMessage(
-        messagesMap.creativeModalConfirmArchivedContent,
-      ),
-      iconType: 'exclamation-circle',
-      okText: intl.formatMessage(messagesMap.creativeModalConfirmArchivedOk),
-      cancelText: intl.formatMessage(messagesMap.cancelText),
-      onOk() {
-        CreativeService.updateEmailTemplate(email.id, {
-          ...email,
-          archived: true,
-        }).then(() => {
-          if (dataSource.length === 1 && filter.currentPage !== 1) {
-            const newFilter = {
-              ...filter,
-              currentPage: filter.currentPage - 1,
-            };
-            fetchCreativeEmails(organisationId, filter, true);
-            history.replace({
-              pathname: pathname,
-              search: updateSearch(search, newFilter),
-              state: state,
-            });
-          }
-          fetchCreativeEmails(organisationId, filter, true);
-        });
-      },
-      onCancel() {
-        //
-      },
-    });
   }
 }
 
