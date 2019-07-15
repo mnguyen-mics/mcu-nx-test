@@ -49,6 +49,10 @@ const messages = defineMessages({
     id: 'settings.organisation.label.modal.edition.title',
     defaultMessage: 'Edit Label',
   },
+  archiveModalTitle: {
+    id: 'settings.organisation.labels.archiveModal.title',
+    defaultMessage: 'Do you want to delete this item ?',
+  }
 });
 
 export default messages;
