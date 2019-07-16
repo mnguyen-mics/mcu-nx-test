@@ -6,6 +6,7 @@ import { libraryRoutes } from './libraryRoutes';
 import { settingsRoutes } from './settingsRoutes';
 import { datastudioRoutes } from './datastudioRoutes';
 import { analyticsRoutes } from './analyticsRoutes';
+import { marketplaceRoutes } from './marketplaceRoutes';
 
 import { NavigatorRoute } from './domain'
 /**
@@ -30,6 +31,7 @@ const routes: NavigatorRoute[] = [
   ...settingsRoutes,
   ...datastudioRoutes,
   ...analyticsRoutes,
+  ...marketplaceRoutes
 ];
 
 export default routes;

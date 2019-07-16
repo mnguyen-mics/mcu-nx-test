@@ -5,6 +5,7 @@ import { creativesDefinition } from './creativeRoutes';
 import { libraryDefinition } from './libraryRoutes';
 import { settingsDefinition } from './settingsRoutes';
 import { datastudioDefinition } from './datastudioRoutes';
+import { marketplaceDefinition } from './marketplaceRoutes';
 
 
 interface Redirect {
@@ -328,6 +329,10 @@ const redirects: Redirect[] = [
   {
     from: '/library/visitanalysers/:visitAnalyzerId',
     to: settingsDefinition.settingsDatamartVisitAnalyzerEdition.path
+  },
+  {
+    from: '/marketplace/offercatalog',
+    to: marketplaceDefinition.marketplaceOfferCatalogList.path
   },
 ]
 
