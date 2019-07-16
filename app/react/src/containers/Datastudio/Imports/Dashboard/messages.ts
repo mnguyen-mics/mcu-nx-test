@@ -78,9 +78,21 @@ export default defineMessages({
     id: 'imports.dashboard.new.execution.modal.title',
     defaultMessage: 'New Import',
   },
+  uploadErrorTooBig: {
+    id: 'imports.dashboard.new.import.error.fileTooBig',
+    defaultMessage: 'is too big (max size 100Mo).',
+  },
+  uploadErrorIsJson: {
+    id: 'imports.dashboard.new.import.error.isJson',
+    defaultMessage: 'is not NDJSON file (.ndjson)',
+  },
   uploadMessage: {
     id: 'imports.dashboard.new.execution.modal.message',
-    defaultMessage: 'Drag & Drop your file or click to import your file.',
+    defaultMessage: 'Drag & Drop your file or click to import your file',
+  },
+  uploadMessage2: {
+    id: 'imports.dashboard.new.execution.modal.message2',
+    defaultMessage: '(.ndjson or .csv and max size 100Mo)',
   },
   uploadConfirm: {
     id: 'imports.dashboard.new.execution.modal.confirm',
