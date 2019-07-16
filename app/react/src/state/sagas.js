@@ -9,7 +9,7 @@ import { creativeDisplaySagas } from './Creatives/Display/sagas';
 import { creativeEmailsSagas } from './Creatives/Emails/sagas';
 import { nativeCreativesSagas } from './Creatives/Native/sagas';
 import { labelsSagas } from './Labels/sagas';
-import { versionSagas } from './Version/sagas';
+import { versionSagas } from './Version/sagas.ts';
 import { accountSagas } from './Account/sagas';
 import { featuresSagas } from './Features/sagas';
 
@@ -21,12 +21,12 @@ export default function* sagas() {
     ...displayCampaignsSagas,
     ...goalsSagas,
     ...automationsSagas,
-    ...versionSagas,
     ...labelsSagas,
     ...creativeDisplaySagas,
     ...creativeEmailsSagas,
     ...nativeCreativesSagas,
+    ...versionSagas,
     ...accountSagas,
-    ...featuresSagas
+    ...featuresSagas,
   ]);
 }

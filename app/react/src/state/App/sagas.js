@@ -1,4 +1,5 @@
 /* eslint-disable no-constant-condition */
+import 'regenerator-runtime/runtime';
 import { fork, put, take, all, call } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import AuthService from '../../services/AuthService.ts';
