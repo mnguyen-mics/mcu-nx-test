@@ -50,10 +50,8 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         isLoading: true,
         reports: [],
       },
-  
     };
   }
-
 
   componentWillReceiveProps(nextProps: Props) {
     const {
@@ -61,7 +59,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         params: { segmentId },
       },
       location: { search },
-      datamarts
+      datamarts,
     } = this.props;
     const {
       match: {
@@ -73,8 +71,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       location: { search: nextSearch },
       segment: nextSegment,
     } = nextProps;
-
-
 
     if (
       (!compareSearches(search, nextSearch) ||
@@ -89,7 +85,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         'user_point_deletions',
       ];
       let additionalMetrics;
-      
+
       if (datamarts) {
         const datamart = datamarts.find(
           dm => dm.id === nextSegment.datamart_id,
@@ -97,8 +93,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
         additionalMetrics =
           datamart && datamart.audience_segment_metrics
-            ? datamart.audience_segment_metrics
-                .map(el => el.technical_name)
+            ? datamart.audience_segment_metrics.map(el => el.technical_name)
             : undefined;
       }
       this.fetchDashboardView(
@@ -142,6 +137,13 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     );
   };
 
+  isDatamartPionus = () => {
+    const { datamarts, segment } = this.props;
+    const datamartId = segment && segment.datamart_id;
+    const datamart = datamartId && datamarts.find(d => d.id === datamartId);
+    return datamart && datamart.storage_model_version !== 'v201506';
+  };
+
   buildItems = () => {
     const { intl, segment } = this.props;
     const { dashboard } = this.state;
@@ -155,7 +157,9 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           />
         ),
       },
-      {
+    ];
+    if (!this.isDatamartPionus()) {
+      items.push({
         title: intl.formatMessage(messages.additionDeletion),
         display: (
           <AdditionDeletion
@@ -163,8 +167,8 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
             dataSource={dashboard.reports}
           />
         ),
-      },
-    ];
+      });
+    }
     if (segment) {
       items.push({
         title: intl.formatMessage(messages.overlap),
@@ -200,7 +204,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 export default compose<Props, AudienceSegmentDashboardProps>(
   injectIntl,
   withRouter,
-  injectNotifications
+  injectNotifications,
 )(AudienceSegmentDashboard);
 
 const messages = defineMessages({

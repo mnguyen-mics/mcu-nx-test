@@ -1,4 +1,5 @@
 import * as React from 'react';
+import queryString from 'query-string';
 import { connect } from 'react-redux';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Icon, Tooltip } from 'antd';
@@ -47,7 +48,10 @@ import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
-import { ActionsColumnDefinition, DataColumnDefinition } from '../../../../components/TableView/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '../../../../components/TableView/TableView';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -158,7 +162,7 @@ const messages = defineMessages({
   editSegment: {
     id: 'audience.segments.list.editSegment',
     defaultMessage: 'Edit',
-  }
+  },
 });
 
 export interface AudienceSegmentsTableProps {}
@@ -495,60 +499,40 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     });
   };
 
-  render() {
+  isPionusDatamart = (dmId?: string) => {
+    const {
+      location: { search },
+      match: {
+        params: { organisationId },
+      },
+      workspace,
+    } = this.props;
+    const datamartId = dmId || queryString.parse(search).datamartId;
+    const datamart = workspace(organisationId).datamarts.find(
+      d => d.id === datamartId,
+    );
+    return datamart && datamart.storage_model_version !== 'v201506';
+  };
+
+  renderMetricData = (
+    value: string | number,
+    numeralFormat: string,
+    currency: string = '',
+  ) => {
+    if (this.state.reportView.isLoading) {
+      return <i className="mcs-table-cell-loading" />;
+    }
+    const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
+    return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
+  };
+
+  buildDataColumns = () => {
     const {
       match: {
         params: { organisationId },
       },
-      location: { search },
-      labels,
       intl,
-      workspace,
     } = this.props;
-
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
-
-    const searchOptions = {
-      placeholder: intl.formatMessage(messages.searchTitle),
-      onSearch: (value: string) =>
-        this.updateLocationSearch({
-          keywords: value,
-          currentPage: 1,
-        }),
-      defaultValue: filter.keywords,
-    };
-
-    const columnsVisibilityOptions = {
-      isEnabled: true,
-    };
-
-    const pagination = {
-      current: filter.currentPage,
-      pageSize: filter.pageSize,
-      total: this.state.list.total,
-      onChange: (page: number, size: number) =>
-        this.updateLocationSearch({
-          currentPage: page,
-          pageSize: size,
-        }),
-      onShowSizeChange: (current: number, size: number) =>
-        this.updateLocationSearch({
-          currentPage: 1,
-          pageSize: size,
-        }),
-    };
-
-    const renderMetricData = (
-      value: string | number,
-      numeralFormat: string,
-      currency: string = '',
-    ) => {
-      if (this.state.reportView.isLoading) {
-        return <i className="mcs-table-cell-loading" />;
-      }
-      const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
-      return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
-    };
 
     const dataColumns: Array<DataColumnDefinition<AudienceSegmentShape>> = [
       {
@@ -652,44 +636,108 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         key: 'user_points',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) => renderMetricData(text, '0,0'),
+        render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
         intlMessage: messages.userAccounts,
         key: 'user_accounts',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) => renderMetricData(text, '0,0'),
+        render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
         intlMessage: messages.emails,
         key: 'emails',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) => renderMetricData(text, '0,0'),
+        render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
         intlMessage: messages.cookies,
         key: 'desktop_cookie_ids',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) => renderMetricData(text, '0,0'),
+        render: (text: string) => this.renderMetricData(text, '0,0'),
       },
+    ];
+
+    const additionalColumns = [
       {
         intlMessage: messages.addition,
         key: 'user_point_additions',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) => renderMetricData(text, '0,0'),
+        render: (text: string, record: AudienceSegmentShape) => {
+          // When all segments from different datamarts are displayed
+          // we can't remove addition or deletion columns
+          // so we return '-' if the segment is from a pionus datamart
+          return this.isPionusDatamart(record.datamart_id)
+            ? '-'
+            : this.renderMetricData(text, '0,0');
+        },
       },
       {
         intlMessage: messages.deletion,
         key: 'user_point_deletions',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) => renderMetricData(text, '0,0'),
+        render: (text: string, record: AudienceSegmentShape) => {
+          // When all segments from different datamarts are displayed
+          // we can't remove addition or deletion columns
+          // so we return '-' if the segment is from a pionus datamart
+          return this.isPionusDatamart(record.datamart_id)
+            ? '-'
+            : this.renderMetricData(text, '0,0');
+        },
       },
     ];
+    return this.isPionusDatamart()
+      ? dataColumns
+      : dataColumns.concat(additionalColumns);
+  };
+
+  render() {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search },
+      labels,
+      intl,
+      workspace,
+    } = this.props;
+
+    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+
+    const searchOptions = {
+      placeholder: intl.formatMessage(messages.searchTitle),
+      onSearch: (value: string) =>
+        this.updateLocationSearch({
+          keywords: value,
+          currentPage: 1,
+        }),
+      defaultValue: filter.keywords,
+    };
+
+    const columnsVisibilityOptions = {
+      isEnabled: true,
+    };
+
+    const pagination = {
+      current: filter.currentPage,
+      pageSize: filter.pageSize,
+      total: this.state.list.total,
+      onChange: (page: number, size: number) =>
+        this.updateLocationSearch({
+          currentPage: page,
+          pageSize: size,
+        }),
+      onShowSizeChange: (current: number, size: number) =>
+        this.updateLocationSearch({
+          currentPage: 1,
+          pageSize: size,
+        }),
+    };
 
     const actionColumns: Array<
       ActionsColumnDefinition<AudienceSegmentResource>
@@ -755,7 +803,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       const datamartFilter = {
         displayElement: (
           <div>
-            <FormattedMessage id="audience.segments.list.datamartFilter" defaultMessage="Datamart" />{' '}
+            <FormattedMessage
+              id="audience.segments.list.datamartFilter"
+              defaultMessage="Datamart"
+            />{' '}
             <Icon type="down" />
           </div>
         ),
@@ -799,7 +850,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     return this.state.hasItem ? (
       <div className="mcs-table-container">
         <TableViewFilters
-          columns={dataColumns}
+          columns={this.buildDataColumns()}
           actionsColumnsDefinition={actionColumns}
           searchOptions={searchOptions}
           filtersOptions={filtersOptions}
