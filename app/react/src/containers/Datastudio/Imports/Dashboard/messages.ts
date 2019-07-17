@@ -82,10 +82,6 @@ export default defineMessages({
     id: 'imports.dashboard.new.import.error.fileTooBig',
     defaultMessage: 'is too big (max size 100Mo).',
   },
-  uploadErrorIsJson: {
-    id: 'imports.dashboard.new.import.error.isJson',
-    defaultMessage: 'is not NDJSON file (.ndjson)',
-  },
   uploadMessage: {
     id: 'imports.dashboard.new.execution.modal.message',
     defaultMessage: 'Drag & Drop your file or click to import your file',

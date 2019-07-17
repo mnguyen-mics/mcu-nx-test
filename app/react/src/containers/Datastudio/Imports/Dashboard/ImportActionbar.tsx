@@ -83,17 +83,9 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     } = this.props;
     // 100Mo
     const isSizeOK = file.size / 1024 / 1024 < 100;
-    const isJson = file.name.includes('.json');
     if (!isSizeOK) {
       message.error(
         `${file.name} ${formatMessage(messages.uploadErrorTooBig)}`,
-        3,
-      );
-      return false;
-    }
-    if (isJson) {
-      message.error(
-        `${file.name} ${formatMessage(messages.uploadErrorIsJson)}`,
         3,
       );
       return false;
