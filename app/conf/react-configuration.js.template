@@ -26,7 +26,7 @@
     'library.zone',
     'library.assets',
     'library.exports',
-    'marketplace.offer_catalog',
+    'marketplace.offer_catalog'
     'datastudio.query_tool',
     'datastudio.report',
     'datastudio.exports',
