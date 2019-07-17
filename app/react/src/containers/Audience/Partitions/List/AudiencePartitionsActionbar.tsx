@@ -54,6 +54,8 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
             />
           </Link>
         </Menu.Item>
+        {/*
+        TODO: Add the proper support in the backend
         <Menu.Item key="CLUSTERING">
           <Link
             to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=CLUSTERING`}
@@ -63,7 +65,7 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
               defaultMessage="Clustering"
             />
           </Link>
-        </Menu.Item>
+        </Menu.Item>*/}
       </Menu>
     );
 
