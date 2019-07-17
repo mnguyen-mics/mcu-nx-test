@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from './store';
 import PersistedStoreService from './services/PersistedStoreService';
-
+import safeJsonStringify from 'json-stringify-safe';
 import IntlApp from './IntlApp';
 
 const persistedStoreService = new PersistedStoreService();
@@ -27,7 +27,7 @@ const store = configureStore(state);
 store.subscribe(() => {
   persistedStoreService.setStringItem(
     'store',
-    JSON.stringify(store.getState()),
+    safeJsonStringify(store.getState()), // Use safe json stringify to avoid circular json issue
   );
 });
 
