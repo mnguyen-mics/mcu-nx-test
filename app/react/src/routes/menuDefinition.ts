@@ -7,6 +7,8 @@ import { datastudioDefinition } from './datastudioRoutes';
 import { analyticsDefinition } from './analyticsRoutes';
 import { NavigatorMenuDefinition, generateMissingdefinitionItemFromRoute } from './domain';
 import messages from '../containers/Menu/messages'
+import { marketplaceDefinition } from './marketplaceRoutes';
+import { settingsDefinition } from './settingsRoutes';
 
 
 
@@ -170,6 +172,23 @@ const datastudioMenuDefinition: NavigatorMenuDefinition = {
   ]
 }
 
+const marketplaceMenuDefinition: NavigatorMenuDefinition = {
+  iconType: 'warning',
+  translation: messages.marketplaceTitle,
+  type: 'multi',
+  subMenuItems: [
+    {
+      ...generateMissingdefinitionItemFromRoute(marketplaceDefinition.marketplaceOfferCatalogList),
+      translation: messages.marketplaceOfferCatalog,
+    },
+    {
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsSubscribedOffersList),
+      translation: messages.marketplaceSubsribedOffers,
+    },
+  ]
+}
+
+
 
 
 export const menuDefinitions: NavigatorMenuDefinition[] = [
@@ -179,5 +198,6 @@ export const menuDefinitions: NavigatorMenuDefinition[] = [
   automationsMenuDefinition,
   creativesMenuDefinition,
   libraryMenuDefinition,
-  datastudioMenuDefinition
+  datastudioMenuDefinition,
+  marketplaceMenuDefinition
 ];
