@@ -268,7 +268,8 @@ class FieldNodeForm extends React.Component<Props, State> {
         if (modelAndType) {
           return this.generateReferenceTableComparisonField(modelAndType.type, modelAndType.modelType);
         }        
-      } else if (fetchPredicates) {
+      }
+      if (fetchPredicates) {
         return this.generateReferenceTableComparisonField("COMPUTED")
       }
       return renderDefault;
