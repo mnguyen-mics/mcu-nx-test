@@ -59,6 +59,12 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
       ),
       translation: messages.myDatamartSettingsTitle,
     },
+    {
+      ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsDatamartMlAlgorithmList,
+      ),
+      translation: messages.mlAlgorithmsSettingsTitle,
+    }
   ],
 };
 
@@ -85,12 +91,6 @@ const organisationSettingsDefinition: NavigatorMenuDefinition = {
       ),
       translation: messages.usersSettingsTitle,
     },
-    {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsOrganisationMlAlgorithmList,
-      ),
-      translation: messages.mlAlgorithmsSettingsTitle,
-    }
   ],
 };
 

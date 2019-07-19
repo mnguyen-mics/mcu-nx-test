@@ -86,7 +86,10 @@ import {
   MlAlgorithmService,
   IMlAlgorithmService,
 } from '../services/MlAlgorithmService';
-import { IMlModelService, MlModelService } from '../services/MlModelService';
+import {
+  IMlAlgorithmModelService,
+  MlAlgorithmModelService
+} from '../services/MlAlgorithmModelService';
 
 import {
   IStoredProcedureService,
@@ -156,8 +159,12 @@ container
 container
   .bind<IMlAlgorithmService>(TYPES.IMlAlgorithmService)
   .to(MlAlgorithmService);
-container.bind<IMlModelService>(TYPES.IMlModelService).to(MlModelService);
-container.bind<INavigatorService>(TYPES.INavigatorService).to(NavigatorService);
+container
+  .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
+  .to(MlAlgorithmModelService);
+container
+  .bind<INavigatorService>(TYPES.INavigatorService)
+  .to(NavigatorService);
 
 export const { lazyInject } = getDecorators(container, false);
 

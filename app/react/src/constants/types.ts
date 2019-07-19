@@ -23,7 +23,7 @@ const TYPES = {
   IUsersService: Symbol.for('usersService'),
   IMonitoringService: Symbol.for('monitoringService'),
   IMlAlgorithmService: Symbol.for('mlAlgorithmService'),
-  IMlModelService: Symbol.for('mlModelService'),
+  IMlAlgorithmModelService: Symbol.for('mlAlgorithmModelService'),
   IStoredProcedureService: Symbol.for('storedProcedureService'),
   INavigatorService: Symbol.for('navigatorService')
 };
