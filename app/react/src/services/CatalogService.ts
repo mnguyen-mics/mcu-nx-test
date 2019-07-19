@@ -262,7 +262,12 @@ const CatalogService = {
   ): Promise<DataResponse<{}>> {
     const endpoint = `service_items/${serviceItemId}/service_item_conditions/${conditionId}`;
     return ApiService.deleteRequest(endpoint);
-  }
+  },
+
+  findAvailableServiceItems(): Promise<DataListResponse<ServiceItemShape>> {
+    const endpoint = `available_service_items`;
+    return ApiService.getRequest(endpoint);
+  },
 };
 
 export default CatalogService;
