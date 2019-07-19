@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Layout } from 'antd';
+
+import messages from './messages';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import {
     TableViewFilters,
   } from '../../../../components/TableView/index';
@@ -8,50 +10,39 @@ import injectNotifications, { InjectedNotificationProps } from '../../../Notific
 import { ServiceItemShape } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { compose } from 'recompose';
 import OrgLogo from '../../../Logo/OrgLogo';
-
-const { Content } = Layout;
-
-const dataColumns = [
-  {
-    intlMessage: {
-      id: 'display.metrics.logo',
-      defaultMessage: 'Provider',
-    },
-    key: 'provider_id',
-    isHideable: false,
-    render: (text: any) => (
-      <span className={"mcs-offerCatalogTable_providerLogo"}>
-          <OrgLogo organisationId={text} />
-      </span>
-        
-    ),
-  },
-  {
-    intlMessage: {
-      id: 'display.metrics.name',
-      defaultMessage: 'Name'
-    },
-    key: 'name',
-    isHideable: false,
-    render: (text: any) => text,
-  }
-];
+import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 
 interface State {
   loading: boolean;
   dataSource: ServiceItemShape[];
 }
 
-interface OfferCatalogTableProps {
-}
-
 type Props = 
-OfferCatalogTableProps &
+InjectedIntlProps &
   InjectedNotificationProps
 
+const dataColumns : Array<DataColumnDefinition<ServiceItemShape>> = [
+  {
+    intlMessage: messages.providerLabel,
+    key: 'provider_id',
+    isVisibleByDefault: true,
+    isHideable: false,
+    render: (text: any) => (
+      <span className={"mcs-offerCatalogTable_providerLogo"}>
+          <OrgLogo organisationId={text} />
+      </span>
+    ),
+  },
+  {
+    intlMessage: messages.nameLabel,
+    key: 'name',
+    isVisibleByDefault: true,
+    isHideable: false,
+    render: (text: any) => text,
+  },
+];
 
 class OfferCatalogTable extends React.Component<Props, State> {
-
 
   constructor(props: Props) {
     super(props);
@@ -61,9 +52,8 @@ class OfferCatalogTable extends React.Component<Props, State> {
       dataSource: []
     };
   }
-
+  
   componentDidMount() {
-
     this.setState({
       loading: true,
     });
@@ -82,24 +72,19 @@ class OfferCatalogTable extends React.Component<Props, State> {
   }
     render() {
       const { dataSource, loading } = this.state;
-
         return (
-            <div className="ant-layout">
-            <Content className="mcs-content-container">
-              <div className="mcs-table-container mcs-offerCatalogTable">
-                <TableViewFilters
-                  columns={dataColumns}
-                  dataSource={dataSource}
-                  loading={loading}
-                />
-              </div>
-            </Content>
+          <div className="mcs-table-container mcs-offerCatalogTable">
+            <TableViewFilters
+              columns={dataColumns}
+              dataSource={dataSource}
+              loading={loading}
+            />
           </div>
         )
     }
 }
 
-
-export default compose<Props, OfferCatalogTableProps>(
+export default compose<Props, {}>(
+  injectIntl,
   injectNotifications,
 )(OfferCatalogTable);
