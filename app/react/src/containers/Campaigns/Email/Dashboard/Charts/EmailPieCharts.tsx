@@ -5,7 +5,6 @@ import {
   EmptyCharts,
   LoadingChart,
 } from '../../../../../components/EmptyCharts';
-import PieChart from '../../../../../components/PieChart';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
@@ -16,6 +15,7 @@ import {
   InjectedIntlProps,
   injectIntl,
 } from 'react-intl';
+import PiePlot from '../../../../../components/Charts/PiePlot';
 
 const messageMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -190,8 +190,7 @@ class EmailPieCharts extends React.Component<Props> {
       <div>
         <Row>
           <Col span={7}>
-            <PieChart
-              identifier="pieDelivered1"
+            <PiePlot 
               dataset={generateData('delivered')}
               options={generateOptions(
                 false,
@@ -205,8 +204,7 @@ class EmailPieCharts extends React.Component<Props> {
           <Col span={17}>
             <Row>
               <Col span={12}>
-                <PieChart
-                  identifier="pieOpens1"
+                <PiePlot
                   dataset={generateData('opens')}
                   options={generateOptions(
                     true,
@@ -218,8 +216,7 @@ class EmailPieCharts extends React.Component<Props> {
                 />
               </Col>
               <Col span={12}>
-                <PieChart
-                  identifier="pieClicks1"
+                <PiePlot
                   dataset={generateData('clicks')}
                   options={generateOptions(
                     true,
@@ -233,8 +230,7 @@ class EmailPieCharts extends React.Component<Props> {
             </Row>
             <Row>
               <Col span={12}>
-                <PieChart
-                  identifier="pieClicks2Opens1"
+                <PiePlot
                   dataset={generateData('clicks2open')}
                   options={generateOptions(
                     true,
@@ -246,8 +242,7 @@ class EmailPieCharts extends React.Component<Props> {
                 />
               </Col>
               <Col span={12}>
-                <PieChart
-                  identifier="pieUnsubscribe1"
+                <PiePlot
                   dataset={generateData('unsubscribe')}
                   options={generateOptions(
                     true,

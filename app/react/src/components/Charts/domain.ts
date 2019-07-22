@@ -5,6 +5,7 @@ export const LINE_COLOR = (Highcharts as any).Color(GRAY_COLOR).setOpacity(0.4).
 export const CROSSHAIR_COLOR = (Highcharts as any).Color(GRAY_COLOR).setOpacity(0.6).get('rgba');
 export const AREA_OPACITY = 0.15
 
+// LINEAR CHART
 export const generateXAxisGridLine = (): Partial<Highcharts.XAxisOptions> => {
   return {
     gridLineWidth: 1,
@@ -26,8 +27,18 @@ export const generateYAxisGridLine = (): Partial<Highcharts.YAxisOptions> => {
   }
 }
 
-export const generateTooltip = (): Partial<Highcharts.TooltipOptions> => {
+// PIE CHARTS
+
+
+// COMMON
+export const generateLegend = (): Partial<Highcharts.LegendOptions> => {
   return {
+
+  }
+}
+
+export const generateTooltip = (showTooltip: boolean = true): Partial<Highcharts.TooltipOptions> => {
+  return showTooltip ? {
     crosshairs: true,
     useHTML: true,
     borderRadius: 2,
@@ -39,11 +50,5 @@ export const generateTooltip = (): Partial<Highcharts.TooltipOptions> => {
     hideDelay: 0,
     headerFormat: `<span style="font-size: 12px; font-weight: bold; margin-bottom: 13px;">{point.key}</span><br/><br/>`,
     pointFormat: `<span style="color:{point.color}; font-size: 20px; margin-right: 20px;">\u25CF</span> {series.name}: <b>{point.y}</b><br/>`
-  }
-}
-
-export const generateLegend = (): Partial<Highcharts.LegendOptions> => {
-  return {
-    
-  }
+  } : { enabled: false }
 }

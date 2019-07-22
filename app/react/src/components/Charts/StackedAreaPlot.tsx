@@ -3,7 +3,6 @@ import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import cuid from 'cuid';
 import moment from 'moment';
 import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateTooltip } from './domain';
 
@@ -28,7 +27,6 @@ type yKey = { key: string; message: FormattedMessage.MessageDescriptor };
 type Props = StackedAreaPlotProps & InjectedIntlProps;
 
 class StackedAreaPlot extends React.Component<Props, {}> {
-  id: string = cuid();
 
   constructor(props: Props) {
     super(props);
