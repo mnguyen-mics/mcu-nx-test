@@ -30,6 +30,7 @@ const TYPES = {
   IChannelService: Symbol.for('channelService'),
   ICommunityService: Symbol.for('communityService'),
   IConsentService: Symbol.for('consentService'),
+  IGeonameService: Symbol.for('geonameService'),
 };
 
 export { TYPES };

@@ -18,7 +18,6 @@ import ResourceTimelinePage, {
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
-import GeonameService from '../../../../../services/GeonameService';
 import CreativeService from '../../../../../services/CreativeService';
 import PlacementListsService from '../../../../../services/Library/PlacementListsService';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
@@ -32,6 +31,7 @@ import CatalogService from '../../../../../services/CatalogService';
 import { AdexInventoryServiceItemPublicResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { getLinkedResourceIdInSelection } from '../../../../../utils/ResourceHistoryHelper';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
+import { IGeonameService } from '../../../../../services/GeonameService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -61,6 +61,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
   @lazyInject(TYPES.IDealsListService)
   private _dealsListService: IDealsListService;
+
+  @lazyInject(TYPES.IGeonameService)
+  private _geonameService: IGeonameService;
 
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
@@ -439,7 +442,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         id,
                         'GEONAME',
                       ).then(geonameId => {
-                        return GeonameService.getGeoname(geonameId).then(
+                        return this._geonameService.getGeoname(geonameId).then(
                           res => {
                             return res.data.name;
                           },

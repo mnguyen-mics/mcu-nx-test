@@ -11,7 +11,9 @@ import SelectGeoname from './SelectGeoname';
 import { LocationFieldModel } from '../../domain';
 import ObjectRenderer from '../../../../../../ObjectRenderer/ObjectRenderer';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
-import GeonameService, { Geoname } from '../../../../../../../services/GeonameService';
+import { lazyInject } from '../../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../../constants/types';
+import { IGeonameService, Geoname } from '../../../../../../../services/GeonameService';
 
 const confirm = Modal.confirm;
 
@@ -30,6 +32,10 @@ type JoinedProps = LocationTargetingFormSectionProps &
   WrappedFieldArrayProps<LocationFieldModel>;
 
 class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
+
+  @lazyInject(TYPES.IGeonameService)
+  private _geonameService: IGeonameService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -154,7 +160,7 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
                 key={id}
                 id={id}
                 renderMethod={renderGeoname}
-                fetchingMethod={GeonameService.getGeoname}
+                fetchingMethod={this._geonameService.getGeoname}
               />
             );
           })}

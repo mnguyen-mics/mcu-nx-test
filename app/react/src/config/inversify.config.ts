@@ -2,6 +2,7 @@ import {
   NavigatorService,
   INavigatorService,
 } from './../services/NavigatorService';
+import { GeonameService, IGeonameService } from './../services/GeonameService';
 import { ConsentService, IConsentService } from './../services/ConsentService';
 import {
   CommunityService,
@@ -176,6 +177,7 @@ container.bind<IApiTokenService>(TYPES.IApiTokenService).to(ApiTokenService);
 container.bind<IChannelService>(TYPES.IChannelService).to(ChannelService);
 container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
 container.bind<IConsentService>(TYPES.IConsentService).to(ConsentService);
+container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 
 export const { lazyInject } = getDecorators(container, false);
 

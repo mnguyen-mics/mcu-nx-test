@@ -10,7 +10,9 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 
 import ObjectRenderer from '../../../../../../ObjectRenderer/ObjectRenderer';
-import GeonameService, { Geoname } from '../../../../../../../services/GeonameService';
+import { Geoname, IGeonameService } from '../../../../../../../services/GeonameService';
+import { lazyInject } from '../../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../../constants/types';
 
 interface MapStateProps {
   locationFields: LocationFieldModel[];
@@ -18,20 +20,24 @@ interface MapStateProps {
 
 type Props = MapStateProps & InjectedIntlProps;
 
-function printGeonames(geonameIds: string[] = []) {
-  return geonameIds.map((id, index) => {
-    const isLast = index === geonameIds.length - 1;
-    const renderMethod = (g: Geoname) => <span>{g.name}</span>
-    return (
-      <span key={id}>
-        <ObjectRenderer id={id} fetchingMethod={GeonameService.getGeoname} renderMethod={renderMethod} />
-        { isLast ? '' : ', ' }
-      </span>
-    );
-  });
-}
-
 class LocationSummary extends React.Component<Props> {
+
+  @lazyInject(TYPES.IGeonameService)
+  private _geonameService: IGeonameService;
+
+  printGeonames(geonameIds: string[] = []) {
+    return geonameIds.map((id, index) => {
+      const isLast = index === geonameIds.length - 1;
+      const renderMethod = (g: Geoname) => <span>{g.name}</span>
+      return (
+        <span key={id}>
+          <ObjectRenderer id={id} fetchingMethod={this._geonameService.getGeoname} renderMethod={renderMethod} />
+          { isLast ? '' : ', ' }
+        </span>
+      );
+    });
+  }
+
   render() {
     const { locationFields } = this.props;
 
@@ -62,7 +68,7 @@ class LocationSummary extends React.Component<Props> {
               locationCount: includedLocations.length,
             }}
           />
-          <p className="info-color">{printGeonames(includedLocations)}</p>
+          <p className="info-color">{this.printGeonames(includedLocations)}</p>
         </div>
       );
     } else if (includedLocations.length === 0 && excludedLocations.length > 0) {
@@ -75,7 +81,7 @@ class LocationSummary extends React.Component<Props> {
               locationCount: excludedLocations.length,
             }}
           />
-          <p className="info-color">{printGeonames(excludedLocations)}</p>
+          <p className="info-color">{this.printGeonames(excludedLocations)}</p>
         </div>
       );
     } else if (includedLocations.length > 0 && excludedLocations.length > 0) {
@@ -88,13 +94,13 @@ class LocationSummary extends React.Component<Props> {
               locationCount: includedLocations.length,
             }}
           />
-          <p className="info-color">{printGeonames(includedLocations)}</p>
+          <p className="info-color">{this.printGeonames(includedLocations)}</p>
           <br />
           <FormattedMessage
             id="display.campaign.edit.adGroup.locationSummary.exclude"
             defaultMessage="Except"
           />
-          <p className="info-color">{printGeonames(excludedLocations)}</p>
+          <p className="info-color">{this.printGeonames(excludedLocations)}</p>
         </div>
       );
     }
