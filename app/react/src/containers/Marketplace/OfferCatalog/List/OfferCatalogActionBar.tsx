@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import ActionBar from '../../../../components/ActionBar';
 import { RouteComponentProps } from 'react-router';

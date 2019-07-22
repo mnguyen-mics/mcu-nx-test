@@ -27,7 +27,7 @@ const dataColumns : Array<DataColumnDefinition<ServiceItemShape>> = [
     key: 'provider_id',
     isVisibleByDefault: true,
     isHideable: false,
-    render: (text: any) => (
+    render: (text: string) => (
       <span className={"mcs-offerCatalogTable_providerLogo"}>
           <OrgLogo organisationId={text} />
       </span>
@@ -38,7 +38,7 @@ const dataColumns : Array<DataColumnDefinition<ServiceItemShape>> = [
     key: 'name',
     isVisibleByDefault: true,
     isHideable: false,
-    render: (text: any) => text,
+    render: (text: string) => text,
   },
 ];
 
