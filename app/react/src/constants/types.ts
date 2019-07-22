@@ -25,9 +25,11 @@ const TYPES = {
   IMlAlgorithmService: Symbol.for('mlAlgorithmService'),
   IMlAlgorithmModelService: Symbol.for('mlAlgorithmModelService'),
   IStoredProcedureService: Symbol.for('storedProcedureService'),
-  INavigatorService: Symbol.for('navigatorService')
+  INavigatorService: Symbol.for('navigatorService'),
   IApiTokenService: Symbol.for('apiTokenService'),
   IChannelService: Symbol.for('channelService'),
+  ICommunityService: Symbol.for('communityService'),
+  IConsentService: Symbol.for('consentService'),
 };
 
 export { TYPES };

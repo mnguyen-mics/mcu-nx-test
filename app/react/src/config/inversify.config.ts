@@ -2,8 +2,12 @@ import {
   NavigatorService,
   INavigatorService,
 } from './../services/NavigatorService';
+import { ConsentService, IConsentService } from './../services/ConsentService';
 import {
-  UserDataService,
+  CommunityService,
+  ICommunityService,
+} from './../services/CommunityServices';
+import UserDataService, {
   IUserDataService,
 } from './../services/UserDataService';
 import { QueryService, IQueryService } from './../services/QueryService';
@@ -170,6 +174,8 @@ container
 container.bind<IMlModelService>(TYPES.IMlModelService).to(MlModelService);;
 container.bind<IApiTokenService>(TYPES.IApiTokenService).to(ApiTokenService);
 container.bind<IChannelService>(TYPES.IChannelService).to(ChannelService);
+container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
+container.bind<IConsentService>(TYPES.IConsentService).to(ConsentService);
 
 export const { lazyInject } = getDecorators(container, false);
 

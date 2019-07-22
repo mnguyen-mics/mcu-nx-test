@@ -1,7 +1,20 @@
 import ApiService, { DataResponse } from './ApiService';
 import { PasswordRequirementResource, PasswordValidityResource } from '../models/communities';
+import { injectable } from 'inversify';
 
-const CommunityService = {
+export interface ICommunityService {
+  getCommunityPasswordRequirements: (
+    technicalName: string,
+  ) => Promise<DataResponse<PasswordRequirementResource>>;
+
+  getCommunityPasswordValidity: (
+    technicalName: string,
+    password: string,
+  ) => Promise<DataResponse<PasswordValidityResource>>;
+}
+
+@injectable()
+export class CommunityService implements ICommunityService {
 
   getCommunityPasswordRequirements(
     technicalName: string,
@@ -11,7 +24,7 @@ const CommunityService = {
         authenticated: false,
     }
     return ApiService.getRequest(endpoint, {}, {}, options);
-  },
+  }
 
   getCommunityPasswordValidity(
     technicalName: string,
@@ -27,5 +40,3 @@ const CommunityService = {
     return ApiService.postRequest(endpoint, body, {}, {}, options);
   }
 };
-
-export default CommunityService;
