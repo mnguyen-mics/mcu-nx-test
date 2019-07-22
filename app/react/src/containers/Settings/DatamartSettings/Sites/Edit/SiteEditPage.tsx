@@ -11,7 +11,6 @@ import {
   INITIAL_SITE_FORM_DATA,
   SiteFormData,
 } from './domain';
-import ChannelService from '../../../../../services/ChannelService';
 import messages from './messages';
 import SiteEditForm, { FORM_ID } from './SiteEditForm';
 import Loading from '../../../../../components/Loading';
@@ -32,6 +31,9 @@ import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { IChannelService } from '../../../../../services/ChannelService';
+import { TYPES } from '../../../../../constants/types';
 
 interface State {
   siteData: SiteFormData;
@@ -50,6 +52,10 @@ type Props = InjectedIntlProps &
   InjectedDatamartProps;
 
 class SiteEditPage extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IChannelService)
+  private _channelService: IChannelService;
+
   constructor(props: Props) {
     super(props);
 
@@ -74,16 +80,16 @@ class SiteEditPage extends React.Component<Props, State> {
     const siteId = siteIdFromURLParam || siteIdFromLocState;
 
     if (siteId) {
-      const getSites = ChannelService.getChannel(
+      const getSites = this._channelService.getChannel(
         this.state.selectedDatamartId,
         siteId,
       );
-      const getEventRules = ChannelService.getEventRules(
+      const getEventRules = this._channelService.getEventRules(
         this.state.selectedDatamartId,
         siteId,
         organisationId,
       );
-      const getAliases = ChannelService.getAliases(
+      const getAliases = this._channelService.getAliases(
         this.state.selectedDatamartId,
         siteId,
         organisationId,
@@ -191,7 +197,7 @@ class SiteEditPage extends React.Component<Props, State> {
       const savedIds: string[] = [];
       const saveCreatePromises = siteFormData.eventRulesFields.map(erf => {
         if (!erf.model.id) {
-          return ChannelService.createEventRules(datamartId, site.id, {
+          return this._channelService.createEventRules(datamartId, site.id, {
             ...erf.model,
             datamart_id: datamartId,
             site_id: site.id,
@@ -206,7 +212,7 @@ class SiteEditPage extends React.Component<Props, State> {
           ) {
             eventRuleBody.compartment_id = null;
           }
-          return ChannelService.updateEventRules(
+          return this._channelService.updateEventRules(
             datamartId,
             site.id,
             organisationId,
@@ -219,7 +225,7 @@ class SiteEditPage extends React.Component<Props, State> {
       const deletePromises = startIds.map(
         sid =>
           sid && !savedIds.includes(sid)
-            ? ChannelService.deleteEventRules(
+            ? this._channelService.deleteEventRules(
                 datamartId,
                 site.id,
                 organisationId,
@@ -237,14 +243,14 @@ class SiteEditPage extends React.Component<Props, State> {
       const savedIds: string[] = [];
       const saveCreatePromises = siteFormData.aliases.map(alias => {
         if (!alias.model.id) {
-          return ChannelService.createAliases(datamartId, site.id, {
+          return this._channelService.createAliases(datamartId, site.id, {
             organisation_id: organisationId,
             site_id: site.id,
             name: alias.model.name,
           });
         } else if (startId.includes(alias.model.id)) {
           savedIds.push(alias.model.id);
-          return ChannelService.updateAliases(
+          return this._channelService.updateAliases(
             datamartId,
             site.id,
             organisationId,
@@ -261,7 +267,7 @@ class SiteEditPage extends React.Component<Props, State> {
       const deletePromises = startId.map(
         sid =>
           sid && !savedIds.includes(sid)
-            ? ChannelService.deleteAliases(
+            ? this._channelService.deleteAliases(
                 datamartId,
                 site.id,
                 organisationId,
@@ -287,14 +293,14 @@ class SiteEditPage extends React.Component<Props, State> {
           ),
         };
 
-        return ChannelService.updateSite(
+        return this._channelService.updateSite(
           datamartId,
           siteFormData.site.id,
           mbApp,
         ).then(site => Promise.all(generateAllPromises(site.data)));
       }
 
-      return ChannelService.createChannel(
+      return this._channelService.createChannel(
         this.props.match.params.organisationId,
         datamartId,
         {

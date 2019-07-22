@@ -4,7 +4,6 @@ import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Button, Layout, Icon } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import ChannelService from '../../../../../services/ChannelService';
 import settingsMessages from '../../../messages';
 import messages from './messages';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
@@ -26,6 +25,9 @@ import { Index } from '../../../../../utils';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { getWorkspace } from '../../../../../state/Session/selectors';
 import { connect } from 'react-redux';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { IChannelService } from '../../../../../services/ChannelService';
+import { TYPES } from '../../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -51,6 +53,10 @@ type Props = SitesListPageProps &
   InjectedNotificationProps;
 
 class SitesListPage extends React.Component<Props, SiteListState> {
+
+  @lazyInject(TYPES.IChannelService)
+  private _channelService: IChannelService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -184,7 +190,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       return options;
     };
 
-    return ChannelService.getChannels(
+    return this._channelService.getChannels(
       organisationId,
       datamartId,
       buildGetSitesOptions(),

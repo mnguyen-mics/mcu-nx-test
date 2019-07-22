@@ -95,6 +95,8 @@ import {
   IStoredProcedureService,
   StoredProcedureService,
 } from '../services/StoredProcedureService';
+import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
+import { ChannelService, IChannelService } from './../services/ChannelService';
 
 const container = new Container();
 
@@ -165,6 +167,9 @@ container
 container
   .bind<INavigatorService>(TYPES.INavigatorService)
   .to(NavigatorService);
+container.bind<IMlModelService>(TYPES.IMlModelService).to(MlModelService);;
+container.bind<IApiTokenService>(TYPES.IApiTokenService).to(ApiTokenService);
+container.bind<IChannelService>(TYPES.IChannelService).to(ChannelService);
 
 export const { lazyInject } = getDecorators(container, false);
 

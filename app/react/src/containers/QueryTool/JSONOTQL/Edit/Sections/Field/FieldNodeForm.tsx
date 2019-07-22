@@ -51,9 +51,9 @@ import { lazyInject } from '../../../../../../config/inversify.config';
 import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
 import ReferenceTableService from '../../../../../../services/ReferenceTableService';
 import DatamartService from '../../../../../../services/DatamartService';
-import channelService from '../../../../../../services/ChannelService';
 import { IComparmentService } from '../../../../../../services/CompartmentService';
 import { getCoreReferenceTypeAndModel, FieldProposalLookup } from '../../../domain';
+import { IChannelService } from '../../../../../../services/ChannelService';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -116,6 +116,9 @@ class FieldNodeForm extends React.Component<Props, State> {
 
   @lazyInject(TYPES.ICompartmentService)
   private _compartmentService: IComparmentService;
+
+  @lazyInject(TYPES.IChannelService)
+  private _channelService: IChannelService;
 
   private _computedTreeNodePath: number[];
 
@@ -618,9 +621,9 @@ class FieldNodeForm extends React.Component<Props, State> {
             break;
           case 'CHANNELS':
             fetchListMethod = (keywords: string) => {
-              return channelService.getChannels(organisationId, datamartId, { keywords: keywords }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
+              return this._channelService.getChannels(organisationId, datamartId, { keywords: keywords }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
             }
-            fetchSingleMethod = (id: string) => channelService.getChannel(datamartId, id).then(res => ({ key: res.data.id, label: res.data.name }))
+            fetchSingleMethod = (id: string) => this._channelService.getChannel(datamartId, id).then(res => ({ key: res.data.id, label: res.data.name }))
             break;
           case 'SEGMENTS':
             fetchListMethod = (keywords: string) => {
