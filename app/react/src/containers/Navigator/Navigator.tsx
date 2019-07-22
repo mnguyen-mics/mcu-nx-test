@@ -18,7 +18,6 @@ import { SetPassword } from '../Authentication/SetPassword';
 import routes from '../../routes/routes';
 import log from '../../utils/Logger';
 import AuthService from '../../services/AuthService';
-import NavigatorService from '../../services/NavigatorService';
 import { isAppInitialized } from '../../state/App/selectors';
 import * as loginActions from '../../state/Login/actions';
 import { setColorsStore } from '../../state/Theme/actions';
@@ -32,6 +31,9 @@ import { NavigatorRoute } from '../../routes/domain';
 import angularRedirect from '../../routes/angularRedirect';
 import RedirectAngular from './Route/RedirectAngular';
 import { CommunityChangePassword } from '../Communities/ChangePassword';
+import { lazyInject } from '../../config/inversify.config';
+import { TYPES } from '../../constants/types';
+import { INavigatorService } from '../../services/NavigatorService';
 
 interface MapStateToProps {
   initialized: boolean;
@@ -56,6 +58,9 @@ type JoinedProps = MapStateToProps &
 addLocaleData(enLocaleData || frLocaleData);
 
 class Navigator extends React.Component<JoinedProps, NavigatorState> {
+  @lazyInject(TYPES.INavigatorService)
+  private _navigatorService: INavigatorService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -66,7 +71,8 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
   }
 
   componentDidMount() {
-    NavigatorService.isAdBlockOn()
+    this._navigatorService
+      .isAdBlockOn()
       .then(() => {
         // Read theme colors in DOM and store them in redux for future usage
         const rgb2hex = (rgb: string) => {
@@ -106,7 +112,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
   }
 
   componentDidCatch() {
-    this.setState({ error: true })
+    this.setState({ error: true });
   }
 
   render() {
@@ -118,15 +124,12 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       initializationError,
     } = this.props;
 
-    const {
-      error,
-      adBlockOn
-    } = this.state;
+    const { error, adBlockOn } = this.state;
 
     if (adBlockOn) {
       return <Error message={formatMessage(errorMessages.adBlock)} />;
     }
-    
+
     if (initializationError) {
       return <Error message={formatMessage(errorMessages.generic)} />;
     }
@@ -139,7 +142,9 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     let selectorSize = 200;
 
-    const nbWorkspaces = this.props.workspaces ? Object.keys(this.props.workspaces).length : 0;
+    const nbWorkspaces = this.props.workspaces
+      ? Object.keys(this.props.workspaces).length
+      : 0;
 
     if (nbWorkspaces > 20) {
       selectorSize = 800;

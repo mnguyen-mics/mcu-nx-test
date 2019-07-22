@@ -19,7 +19,7 @@ if (state && state.app) {
 }
 
 if (state && state.drawableContents) {
-  state.drawableContents = []
+  state.drawableContents = [];
 }
 
 const store = configureStore(state);
@@ -31,7 +31,9 @@ store.subscribe(() => {
   );
 });
 
-class App extends React.Component<any, any> {
+interface Props {}
+
+class App extends React.Component<Props> {
   render() {
     return (
       <Provider store={store}>

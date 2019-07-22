@@ -60,6 +60,7 @@
     "redux-saga": "^0.16.2",
     "redux-thunk": "^2.3.0",
     "reflect-metadata": "^0.1.12",
+    "regenerator-runtime": "^0.13.2",
     "reselect": "^3.0.1",
     "storm-react-diagrams": "^5.2.1",
     "whatwg-fetch": "^2.0.4",
