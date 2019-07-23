@@ -11,7 +11,6 @@ import {
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
-import { StackedAreaPlotDoubleAxis } from '../../../../../components/StackedAreaPlot';
 import { LegendChartWithModal } from '../../../../../components/LegendChart';
 import MetricsColumn from '../../../../../components/MetricsColumn';
 import CampaignDisplayProgress from './CampaignDisplayProgress';
@@ -28,9 +27,9 @@ import McsMoment from '../../../../../utils/McsMoment';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
+import DoubleStackedAreaPlot from '../../../../../components/Charts/DoubleStackedAreaPlot';
 
 const LegendChartWithModalJS = LegendChartWithModal as any;
-const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
 
 export interface OverallStat {
   cpa: string;
@@ -224,13 +223,11 @@ class DisplayStackedAreaChart<T> extends React.Component<
             isLoading={isFetchingOverallStat || isFetchingOverallStat}
           />
         </div>
-        <StackedAreaPlotDoubleAxisJS
-          identifier="StackedAreaChartDisplayOverview"
-          dataset={dataSource}
+        {dataSource && <DoubleStackedAreaPlot
+          dataset={dataSource as any}
           options={optionsForChart}
           style={{ flex: '1' }}
-          intlMessages={messages}
-        />
+        />}
       </div>
     ) : (
       <LoadingChart />

@@ -4,7 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import moment from 'moment';
-import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateTooltip, BASE_CHART_HEIGHT } from './domain';
+import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateTooltip, BASE_CHART_HEIGHT, OnDragEnd } from './domain';
 
 export interface StackedAreaPlotProps {
   dataset: Dataset;
@@ -19,7 +19,7 @@ interface ChartOptions {
   yKeys: yKey[];
   xKey: string;
   isDraggable?: boolean;
-  onDragEnd?: any;
+  onDragEnd?: OnDragEnd;
 }
 
 type yKey = { key: string; message: FormattedMessage.MessageDescriptor };
