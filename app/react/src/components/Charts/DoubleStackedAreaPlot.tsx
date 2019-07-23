@@ -1,129 +1,182 @@
 import * as React from 'react';
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { generateTooltip } from './domain';
+import moment from 'moment';
+import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateTooltip, BASE_CHART_HEIGHT } from './domain';
 
-export interface DatasetProps {
-  key: string;
-  value: number;
-  color: string;
-}
-
-interface TextProps {
-  value?: string;
-  text?: string;
-}
-
-export interface PieChartOptionsProps {
-  innerRadius: boolean;
-  isHalf: boolean;
-  text?: TextProps;
-  colors: string[];
-  showTooltip?: boolean;
-  showLabels?: boolean;
-  showHover?: boolean;
-}
-
-export interface PiePlotProps {
-  dataset: DatasetProps[];
-  options: PieChartOptionsProps;
+export interface StackedAreaPlotProps {
+  dataset: Dataset;
+  options: ChartOptions;
   style?: any;
 }
 
-type Props = PiePlotProps & InjectedIntlProps;
+type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
 
-class PiePlot extends React.Component<Props, {}> {
+interface ChartOptions {
+  colors: string[];
+  yKeys: yKey[];
+  xKey: string;
+  isDraggable?: boolean;
+  onDragEnd?: any;
+}
+
+type yKey = { key: string; message: FormattedMessage.MessageDescriptor };
+
+type Props = StackedAreaPlotProps & InjectedIntlProps;
+
+class StackedAreaPlot extends React.Component<Props, {}> {
 
   constructor(props: Props) {
     super(props);
     this.state = {};
   }
 
-  formatSeries = (dataset: DatasetProps[], innerRadius: boolean, showLabels?: boolean): Highcharts.SeriesOptionsType[] => {
-    return [
-      {
-        type: 'pie',
-        name: '',
-        innerSize: innerRadius ? '65%' : "0%",
-        data: dataset.map(d => {
-          return { name: d.key, y: d.value, selected: showLabels ? !showLabels  : true}
-        })
-      },
-    ];
+  formatSeries = (
+    dataset: Dataset,
+    xKey: string,
+    yKeys: yKey[],
+    colors: string[],
+  ): Highcharts.SeriesOptionsType[] => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    return yKeys.map((y, i) => {
+      return {
+        type: 'area' as any,
+        data: dataset.map(data => {
+          const yValue = data[y.key];
+          return [
+            this.formatDateToTs(data[xKey] as string),
+            yValue && typeof yValue === 'string' ? parseFloat(yValue) : yValue,
+          ];
+        }),
+        name: formatMessage(y.message),
+        color: colors[i],
+        fillOpacity: 0.5,
+        fillColor: {
+          linearGradient: {
+            x1: 0,
+            y1: 0,
+            x2: 0,
+            y2: 1,
+          },
+          stops: [
+            [
+              0,
+              (Highcharts as any)
+                .Color(colors[i])
+                .setOpacity(AREA_OPACITY)
+                .get('rgba'),
+            ],
+            [
+              1,
+              (Highcharts as any)
+                .Color(colors[i])
+                .setOpacity(0)
+                .get('rgba'),
+            ],
+          ],
+        },
+      };
+    });
   };
+
+  formatDateToTs = (date: string) => {
+    return moment(date)
+      .seconds(0)
+      .hours(0)
+      .milliseconds(0)
+      .minutes(0)
+      .valueOf();
+  };
+
+  formatXAxis = (dataset: Dataset, xKey: string) => {
+    return dataset.map(d => this.formatDateToTs(d[xKey] as string));
+  };
+
+  generateMinValue = (dataset: Dataset, yKeys: yKey[],) => {
+    const values: number[] = [];
+    dataset.forEach(d => {
+      yKeys.forEach(y => {
+        values.push(d[y.key] as number);
+      })
+    })
+    return Math.min(...values);
+  }
 
   render() {
     const {
       dataset,
-      options: { innerRadius, isHalf, text, colors, showTooltip, showLabels, showHover },
+      options: { xKey, yKeys, colors },
     } = this.props;
 
     const options: Highcharts.Options = {
+      global: {
+        timezoneOffset: new Date().getTimezoneOffset(),
+      },
       chart: {
-        plotBackgroundColor: undefined,
-        plotBorderWidth: undefined,
-        plotShadow: false,
-        type: 'pie',
-        animation: false,
-        height: 300,
-        style: { fontFamily: "" }
+        height: BASE_CHART_HEIGHT
       },
       title: {
-        text: text ? `<div>${text.value}</div><br /><div>${text.text}</div>` : '',
-        align: 'center',
-        verticalAlign: 'middle',
-        y: isHalf ? -30 : -5
+        text: '',
       },
       colors: colors,
       plotOptions: {
-        pie: {
-          dataLabels: {
-            enabled: showLabels ? showLabels : false,
-            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+        area: {
+          animation: true,
+          marker: {
+            radius: 4,
+            symbol: 'circle',
           },
-          startAngle: isHalf ? -90 : 0,
-          endAngle: isHalf ? 90 : 0,
-          center: ['50%', '50%'],
-          size: showLabels ? '80%' : "100%",
+          lineWidth: 1,
           states: {
             hover: {
-              enabled: showHover ? showHover : false,
-              brightness: 0,
-              halo: {
-                opacity: showHover ? 0.25 : 1
-              },
-              animation: showHover ? false : true,
-
-            },
-            select: {
-              enabled: showHover ? showHover : false
+              lineWidth: 1,
             },
           },
-          selected: true
-        },
+          threshold: null,
+        } as any,
       },
-      series: this.formatSeries(dataset, innerRadius, showLabels),
+      xAxis: {
+        type: 'datetime',
+        dateTimeLabelFormats: {
+          month: '%e. %b' as any,
+          year: '%b' as any,
+        },
+        ...generateXAxisGridLine()
+      },
+      time: {
+        timezoneOffset: new Date().getTimezoneOffset(),
+        useUTC: true,
+      },
+      yAxis: {
+        title: {
+          text: null,
+        },
+        ...generateYAxisGridLine()
+      },
+      series: this.formatSeries(dataset, xKey, yKeys, colors),
       credits: {
         enabled: false,
       },
       tooltip: {
         shared: true,
-        ...generateTooltip(showTooltip ? showTooltip : false),
+        ...generateTooltip()
       },
     };
 
     return (
-      <div style={{ overflow: "hidden", height: isHalf ? 150 : 300 }}>
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          style={{width: '100%'}}
-        />
-      </div>
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        style={{ width: '100%' }}
+      />
     );
   }
 }
 
-export default compose<Props, PiePlotProps>(injectIntl)(PiePlot);
+export default compose<Props, StackedAreaPlotProps>(injectIntl)(
+  StackedAreaPlot,
+);

@@ -16,7 +16,7 @@ interface TextProps {
   text?: string;
 }
 
-export interface PieChartOptionsProps {
+export interface PiePlotOptionsProps {
   innerRadius: boolean;
   isHalf: boolean;
   text?: TextProps;
@@ -28,7 +28,7 @@ export interface PieChartOptionsProps {
 
 export interface PiePlotProps {
   dataset: DatasetProps[];
-  options: PieChartOptionsProps;
+  options: PiePlotOptionsProps;
   style?: any;
 }
 

@@ -7,21 +7,21 @@ import { generateTooltip, BASE_CHART_HEIGHT } from './domain';
 
 export interface StackedBarPlotProps {
   dataset: Dataset;
-  options: ChartOptions;
-  style?: any;
+  options: StackedBarPlotOptions;
 }
 
 type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
 
-interface ChartOptions {
+export interface StackedBarPlotOptions {
   colors: string[];
   yKeys: yKey[];
   xKey: string;
+  showLegend?: boolean;
   isDraggable?: boolean;
   onDragEnd?: any;
 }
 
-type yKey = { key: string; message: FormattedMessage.MessageDescriptor };
+type yKey = { key: string; message: FormattedMessage.MessageDescriptor | string };
 
 type Props = StackedBarPlotProps & InjectedIntlProps;
 
@@ -48,7 +48,7 @@ class StackedBarPlot extends React.Component<Props, {}> {
     const {intl: {formatMessage}} = this.props;
     return yKeys.map(y => {
       return {
-        name: formatMessage(y.message),
+        name: typeof y.message === "string" ? y.message : formatMessage(y.message),
         data: this.formatSerieData(dataset, y)
       } as any
     });
@@ -57,7 +57,7 @@ class StackedBarPlot extends React.Component<Props, {}> {
   render() {
     const {
       dataset,
-      options: { colors, xKey, yKeys },
+      options: { colors, xKey, yKeys, showLegend },
     } = this.props;
 
     const options: Highcharts.Options = {
@@ -85,6 +85,9 @@ class StackedBarPlot extends React.Component<Props, {}> {
         shared: true,
         ...generateTooltip(),
       },
+      legend: {
+        enabled: showLegend === undefined ? true : showLegend
+      }
     };
 
     return (

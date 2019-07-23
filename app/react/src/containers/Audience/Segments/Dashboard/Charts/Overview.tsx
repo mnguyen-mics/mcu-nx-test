@@ -25,7 +25,7 @@ import messages from '../messages';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-import StackedAreaPlotHC from '../../../../../components/Charts/StackedAreaPlot';
+import StackedAreaPlot from '../../../../../components/Charts/StackedAreaPlot';
 
 
 interface OverviewProps {
@@ -105,7 +105,7 @@ class Overview extends React.Component<Props> {
       ].slice(0, metrics.length),
     };
     return !isFetching ? (
-      <StackedAreaPlotHC
+      <StackedAreaPlot
         dataset={dataSource}
         options={optionsForChart}
       />
