@@ -93,7 +93,7 @@ import {
 } from '../services/MlAlgorithmService';
 import {
   IMlAlgorithmModelService,
-  MlAlgorithmModelService
+  MlAlgorithmModelService,
 } from '../services/MlAlgorithmModelService';
 
 import {
@@ -169,10 +169,10 @@ container
 container
   .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
   .to(MlAlgorithmModelService);
+container.bind<INavigatorService>(TYPES.INavigatorService).to(NavigatorService);
 container
-  .bind<INavigatorService>(TYPES.INavigatorService)
-  .to(NavigatorService);
-container.bind<IMlModelService>(TYPES.IMlModelService).to(MlModelService);;
+  .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
+  .to(MlAlgorithmModelService);
 container.bind<IApiTokenService>(TYPES.IApiTokenService).to(ApiTokenService);
 container.bind<IChannelService>(TYPES.IChannelService).to(ChannelService);
 container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
