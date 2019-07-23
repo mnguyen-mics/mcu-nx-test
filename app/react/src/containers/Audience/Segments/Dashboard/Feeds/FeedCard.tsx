@@ -25,10 +25,9 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { PluginCardModalTab } from '../../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import { withValidators } from '../../../../../components/Form';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
-import { IAudienceSegmentFeedService } from '../../../../../services/AudienceSegmentFeedService';
+import { IAudienceSegmentFeedService, AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { interfaces } from 'inversify';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -130,9 +129,10 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   private _pluginService: IPluginService;
 
   @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
-  private _audienceSegmentFeedServiceFactory: interfaces.Factory<
-    IAudienceSegmentFeedService
-  >;
+  private _audienceSegmentFeedServiceFactory: (
+    segmentId: string,
+    feedType: AudienceFeedType,
+  ) => IAudienceSegmentFeedService;
 
   constructor(props: Props) {
     super(props);
@@ -143,18 +143,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       modalTab: 'configuration',
       pluginProperties: [],
     };
-  }
-
-  componentWillMount() {
-    if (this.props.feed) {
-      // this.feedService = new AudienceSegmentFeedService(
-      //   this.props.segmentId,
-      //   this.props.feed.type,
-      // );
+    if (props.feed) {
       this.feedService = this._audienceSegmentFeedServiceFactory(
-        this.props.segmentId,
-        this.props.feed.type,
-      ) as IAudienceSegmentFeedService;
+        props.segmentId,
+        props.feed.type,
+      );
     }
   }
 
@@ -314,8 +307,16 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
+      propertiesPromises.push(
+        updatePromise(
+          organisationId,
+          pluginInstanceId,
+          item.technical_name,
+          item,
+        ),
+      );
+    });
     return Promise.all(propertiesPromises);
-    })
   };
 
   saveOrCreatePluginInstance = (
@@ -378,13 +379,9 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const editFeed = () => {
       switch (feed.type) {
         case 'EXTERNAL_FEED':
-          return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/external/${
-            feed.id
-          }/edit`;
+          return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/external/${feed.id}/edit`;
         case 'TAG_FEED':
-          return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/tag/${
-            feed.id
-          }/edit`;
+          return `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/tag/${feed.id}/edit`;
       }
     };
 

@@ -349,10 +349,7 @@ class CreateEmailTemplate extends React.Component<
       { name: formatMessage(messages.emailTemplateBreadCrumb) },
     ];
 
-    const sections: Array<{
-      sectionId: string;
-      title: { id: string; defaultMessage?: string };
-    }> =
+    const sections =
       this.state.pluginLayout === undefined
         ? [
             {

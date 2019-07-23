@@ -1,6 +1,11 @@
 import { IAudienceExternalFeedService } from './AudienceExternalFeedService';
 import PluginInstanceService from './PluginInstanceService';
-import { AudienceTagFeed, AudienceExternalFeed, Status, PluginProperty } from '../models/Plugins';
+import {
+  AudienceTagFeed,
+  AudienceExternalFeed,
+  Status,
+  PluginProperty,
+} from '../models/Plugins';
 import { DataListResponse, DataResponse } from './ApiService';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginLayout } from '../models/plugin/PluginLayout';
@@ -31,6 +36,8 @@ export interface GetFeeds extends PaginatedApiParam {
 export interface IAudienceSegmentFeedService {
   segmentId: string;
   feedType: AudienceFeedType;
+
+  getFeeds: (options: GetFeeds) => Promise<DataListResponse<AudienceFeed>>;
   getAudienceFeeds: (
     organisationId: string,
     options: object,
@@ -105,6 +112,7 @@ export default class AudienceSegmentFeedService
   @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
+  // TODO: make it work
   constructor(
     @inject(TYPES.IAudienceExternalFeedServiceFactory)
     _audienceExternalFeedServiceFactory: interfaces.Factory<
@@ -126,11 +134,9 @@ export default class AudienceSegmentFeedService
     }
   }
 
-  getFeeds = (
-    options: GetFeeds
-  ): Promise<DataListResponse<AudienceFeed>> => {
+  getFeeds = (options: GetFeeds): Promise<DataListResponse<AudienceFeed>> => {
     return this.service.getFeeds(options);
-  }
+  };
 
   getFeedsAggregationMetrics = (
     body: FeedAggregationRequest,

@@ -25,10 +25,11 @@ import {
 import { DataColumnDefinition, ActionsColumnDefinition, ActionsRenderer, ActionDefinition } from '../../../../components/TableView/TableView';
 import AudienceSegmentFeedService, {
   AudienceFeedType,
+  IAudienceSegmentFeedService,
 } from '../../../../services/AudienceSegmentFeedService';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { Icon, Tooltip } from 'antd';
-import PluginService from '../../../../services/PluginService';
+import { IPluginService } from '../../../../services/PluginService';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
@@ -147,6 +148,9 @@ const messages = defineMessages({
 class AudienceFeedsTable extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
 
   private externalFeedService: AudienceSegmentFeedService;
   private tagFeedService: AudienceSegmentFeedService;
@@ -340,7 +344,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   };
 
   fetchPlugins() {
-    PluginService.getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED' })
+    return this._pluginService
+      .getPlugins({
+        plugin_type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED',
+      })
       .then(res => {
         this.setState({
           externalPlugins: res.data,
@@ -352,18 +359,18 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         });
       });
 
-    PluginService.getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_TAG_FEED' })
-      .then(res => {
-        this.setState({
-          tagPlugins: res.data,
-        });
-      })
-      .catch(() => {
-        this.setState({
-          tagPlugins: [],
-        });
+    this._pluginService.getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_TAG_FEED' })
+    .then(res => {
+      this.setState({
+        tagPlugins: res.data,
       });
-  }
+    })
+    .catch(() => {
+      this.setState({
+        tagPlugins: [],
+      });
+  })
+}
 
   updateLocationSearch = (params: Index<any>) => {
     const {

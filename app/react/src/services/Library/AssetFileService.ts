@@ -9,7 +9,10 @@ export interface IAssetFileService {
     options: object,
   ) => Promise<DataListResponse<AssetFileResource>>;
   getAssetFile: (id: string) => Promise<AssetFileResource | null>;
-  deleteAssetsFile: (id: string, options?: object) => Promise<{}>;
+  deleteAssetsFile: (
+    id: string,
+    options?: object,
+  ) => Promise<DataResponse<AssetFileResource>>;
   uploadAssetsFile: (
     organisationId: string,
     file: FormData,
@@ -39,7 +42,10 @@ export class AssetFileService implements IAssetFileService {
         return null;
       });
   }
-  deleteAssetsFile(id: string, options: object = {}) {
+  deleteAssetsFile(
+    id: string,
+    options: object = {},
+  ): Promise<DataResponse<AssetFileResource>> {
     const endpoint = `asset_files/${id}`;
     const params = {
       ...options,

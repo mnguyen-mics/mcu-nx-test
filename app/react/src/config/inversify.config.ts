@@ -153,6 +153,8 @@ import {
   AssetFileService,
 } from '../services/Library/AssetFileService';
 import { IEmailRouterService } from '../services/Library/EmailRoutersService';
+import { CreativeService, ICreativeService } from '../services/CreativeService';
+import PluginService, { IPluginService } from '../services/PluginService';
 
 const container = new Container();
 
@@ -250,10 +252,6 @@ container
   .to(OrganisationService);
 container.bind<IAssetFileService>(TYPES.IAssetFileService).to(AssetFileService);
 container.bind<IPluginService>(TYPES.IPluginService).to(PluginService);
-// container
-//   .bind<IPluginInstanceService<any>>(TYPES.IPluginInstanceService)
-//   .to(PluginInstanceService);
-// type ?
 container
   .bind<ICreativeService<any>>(TYPES.ICreativeService)
   .to(CreativeService);

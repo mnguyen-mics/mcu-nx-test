@@ -41,7 +41,6 @@ const TYPES = {
   IFeedsStatsService: Symbol.for('feedsStatsService'),
   IAssetFileService: Symbol.for('assetFileService'),
   IPluginService: Symbol.for('pluginService'),
-  IPluginInstanceService: Symbol.for('pluginInstanceService'),
   ICreativeService: Symbol.for('creativeService'),
   IDisplayCreativeFormService: Symbol.for('displayCreativeFormService'),
   IAdGroupFormService: Symbol.for('adGroupFormService'),

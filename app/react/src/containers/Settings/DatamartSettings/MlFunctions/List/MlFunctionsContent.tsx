@@ -6,7 +6,6 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Modal, Button, Layout } from 'antd';
 import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import PluginService from '../../../../../services/PluginService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
@@ -18,6 +17,9 @@ import { ActionsColumnDefinition } from '../../../../../components/TableView/Tab
 import { MlFunctionResource } from '../../../../../models/datamart/MlFunction';
 import { IMlFunctionService, MlFunctionService } from '../../../../../services/MlFunctionService';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IPluginService } from '../../../../../services/PluginService';
 
 const { Content } = Layout;
 
@@ -58,18 +60,22 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps
+type Props = RouteComponentProps<RouterProps> &
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 class MlFunctionsContent extends Component<
   Props,
   MlFunctionsContentState
 > {
-
   private _mlFunctionService: IMlFunctionService = new MlFunctionService();
+
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
 
   constructor(props: Props) {
     super(props);
-    this.state = initialState
+    this.state = initialState;
   }
 
   archiveMlFunction = (mlFunctionService: string) => {
@@ -85,9 +91,9 @@ class MlFunctionsContent extends Component<
         (results) => {
           const promises = results.data.map(sp => {
             return new Promise((resolve, reject) => {
-              PluginService.getEngineVersion(sp.version_id)
+              this._pluginService.getEngineVersion(sp.version_id)
                 .then(mlFunction => {
-                  return PluginService.getEngineProperties(mlFunction.id);
+                  return this._pluginService.getEngineProperties(mlFunction.id);
                 })
                 .then(v => resolve(v));
             });
@@ -105,12 +111,11 @@ class MlFunctionsContent extends Component<
               total: results.total || results.count,
             });
           });
-        },
-      )
-      .catch(err => {
-        this.props.notifyError(err);
-        this.setState({ loading: false })
-      });
+        })
+        .catch(err => {
+          this.props.notifyError(err);
+          this.setState({ loading: false });
+        });
     });
   };
 
@@ -218,7 +223,6 @@ class MlFunctionsContent extends Component<
           </Link>
         ),
       },
-
     ];
 
     const emptyTable: {

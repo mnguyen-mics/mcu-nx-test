@@ -1,5 +1,6 @@
 import {
   Adlayout,
+  AdLayoutVersionResource,
   StylesheetVersionResource,
   PluginType,
   PluginPresetProperty,
@@ -76,7 +77,7 @@ export interface IPluginService {
   getAdLayoutVersion: (
     organisationId: string,
     adLayoutVersion: string,
-  ) => Promise<DataListResponse<StylesheetVersionResource>>;
+  ) => Promise<DataListResponse<AdLayoutVersionResource>>;
   handleSaveOfProperties: (
     params: any,
     organisationId: string,
@@ -89,6 +90,14 @@ export interface IPluginService {
     pluginVersionId: string,
     locale?: string,
   ) => Promise<PluginLayout | null>;
+  getPluginPresets: (
+    options: GetPluginPresetOptions,
+  ) => Promise<DataListResponse<PluginPresetResource>>;
+  getStyleSheets: (organisationId: string) => Promise<DataListResponse<any>>;
+  getStyleSheetsVersion: (
+    organisationId: string,
+    styleSheetId: string,
+  ) => Promise<DataListResponse<StylesheetVersionResource>>;
 }
 
 @injectable()
@@ -219,7 +228,7 @@ export class PluginService implements IPluginService {
   getAdLayoutVersion(
     organisationId: string,
     adLayoutVersion: string,
-  ): Promise<DataListResponse<any>> {
+  ): Promise<DataListResponse<AdLayoutVersionResource>> {
     const endpoint = `ad_layouts/${adLayoutVersion}/versions`;
     const params = {
       organisation_id: organisationId,

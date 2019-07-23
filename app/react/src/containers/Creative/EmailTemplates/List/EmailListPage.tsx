@@ -150,20 +150,22 @@ class EmailListPage extends React.Component<JoinedProps, State> {
         keywords: filter.keywords,
       };
     }
-    this._creativeService.getEmailTemplates(organisationId, options).then(result => {
-      const data = result.data;
-      const emailTemplatesById = normalizeArrayOfObject(data, 'id');
-      this.setState({
-        dataSource: Object.keys(emailTemplatesById).map(id => {
-          return {
-            ...emailTemplatesById[id],
-          };
-        }),
-        isLoadingEmailTemplates: false,
-        hasEmailTemplates: init ? result.count !== 0 : true,
-        totalEmailTemplates: result.total || 0,
+    this._creativeService
+      .getEmailTemplates(organisationId, options)
+      .then(result => {
+        const data = result.data;
+        const emailTemplatesById = normalizeArrayOfObject(data, 'id');
+        this.setState({
+          dataSource: Object.keys(emailTemplatesById).map(id => {
+            return {
+              ...emailTemplatesById[id],
+            };
+          }),
+          isLoadingEmailTemplates: false,
+          hasEmailTemplates: init ? result.count !== 0 : true,
+          totalEmailTemplates: result.total || 0,
+        });
       });
-    });
   };
 
   onSelectChange = (selectedRowKeys: string[]) => {
@@ -285,7 +287,7 @@ class EmailListPage extends React.Component<JoinedProps, State> {
     });
   };
 
-  archiveCreativeEmail(email: EmailTemplateResource) {
+  archiveCreativeEmail = (email: EmailTemplateResource) => {
     const {
       match: {
         params: { organisationId },
@@ -303,6 +305,13 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       this.fetchCreativeEmails(organisationId, filter, true);
     };
 
+    const updateEmailTemplate = () => {
+      return this._creativeService.updateEmailTemplate(email.id, {
+        ...email,
+        archived: true,
+      });
+    };
+
     Modal.confirm({
       title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
       content: intl.formatMessage(messages.creativeModalConfirmArchivedContent),
@@ -310,10 +319,7 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
       cancelText: intl.formatMessage(messages.cancelText),
       onOk() {
-        this._creativeService.updateEmailTemplate(email.id, {
-          ...email,
-          archived: true,
-        }).then(() => {
+        updateEmailTemplate().then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -334,7 +340,7 @@ class EmailListPage extends React.Component<JoinedProps, State> {
         //
       },
     });
-  }
+  };
 
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
