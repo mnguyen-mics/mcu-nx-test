@@ -95,9 +95,6 @@ class PluginContent<T extends PluginInstance> extends React.Component<
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
 
-  @lazyInject(TYPES.IPluginInstanceService)
-  private _pluginInstanceService: IPluginInstanceService<T>;
-
   constructor(props: JoinedProps<T>) {
     super(props);
 
@@ -198,10 +195,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
 
   fetchInitialValues = (pInstanceId: string) => {
     const { pluginInstanceService, notifyError } = this.props;
-    const promisePluginInstance = this._pluginInstanceService
+    const promisePluginInstance = pluginInstanceService
       .getInstanceById(pInstanceId)
       .then(res => res.data);
-    const promiseInstanceProperties = this._pluginInstanceService
+    const promiseInstanceProperties = pluginInstanceService
       .getInstanceProperties(pInstanceId)
       .then(res => res.data);
     const promisePluginLayout = pluginInstanceService.getLocalizedPluginLayout(

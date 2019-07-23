@@ -6,7 +6,6 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Modal, Button, Layout } from 'antd';
 import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import PluginService from '../../../../../services/PluginService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
@@ -58,18 +57,19 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps
+type Props = RouteComponentProps<RouterProps> &
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 class MlFunctionsContent extends Component<
   Props,
   MlFunctionsContentState
 > {
-
   private _mlFunctionService: IMlFunctionService = new MlFunctionService();
 
   constructor(props: Props) {
     super(props);
-    this.state = initialState
+    this.state = initialState;
   }
 
   archiveMlFunction = (mlFunctionService: string) => {
@@ -105,12 +105,11 @@ class MlFunctionsContent extends Component<
               total: results.total || results.count,
             });
           });
-        },
-      )
-      .catch(err => {
-        this.props.notifyError(err);
-        this.setState({ loading: false })
-      });
+        })
+        .catch(err => {
+          this.props.notifyError(err);
+          this.setState({ loading: false });
+        });
     });
   };
 
@@ -218,7 +217,6 @@ class MlFunctionsContent extends Component<
           </Link>
         ),
       },
-
     ];
 
     const emptyTable: {

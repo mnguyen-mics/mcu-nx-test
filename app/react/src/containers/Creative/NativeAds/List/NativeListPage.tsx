@@ -144,20 +144,22 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
         keywords: filter.keywords,
       };
     }
-    this._creativeService.getDisplayAds(organisationId, options).then(result => {
-      const data = result.data;
-      const displayAdsById = normalizeArrayOfObject(data, 'id');
-      this.setState({
-        dataSource: Object.keys(displayAdsById).map(id => {
-          return {
-            ...displayAdsById[id],
-          };
-        }),
-        isLoadingNatives: false,
-        hasNatives: init ? result.count !== 0 : true,
-        totalNativeCreatives: result.total || 0,
+    this._creativeService
+      .getDisplayAds(organisationId, options)
+      .then(result => {
+        const data = result.data;
+        const displayAdsById = normalizeArrayOfObject(data, 'id');
+        this.setState({
+          dataSource: Object.keys(displayAdsById).map(id => {
+            return {
+              ...displayAdsById[id],
+            };
+          }),
+          isLoadingNatives: false,
+          hasNatives: init ? result.count !== 0 : true,
+          totalNativeCreatives: result.total || 0,
+        });
       });
-    });
   };
 
   onSelectChange = (selectedRowKeys: string[]) => {
@@ -235,6 +237,13 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       this.fetchNativeAds(organisationId, filter);
     };
 
+    const updateDisplayCreative = () => {
+      return this._creativeService.updateDisplayCreative(native.id, {
+        ...native,
+        archived: true,
+      });
+    };
+
     Modal.confirm({
       title: intl.formatMessage(messagesMap.creativeModalConfirmArchivedTitle),
       content: intl.formatMessage(messagesMap.creativeModalNoArchiveMessage),
@@ -242,10 +251,7 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       okText: intl.formatMessage(messagesMap.creativeModalConfirmArchivedOk),
       cancelText: intl.formatMessage(messagesMap.cancelText),
       onOk() {
-        this._creativeService.updateDisplayCreative(native.id, {
-          ...native,
-          archived: true,
-        }).then(() => {
+        updateDisplayCreative().then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,

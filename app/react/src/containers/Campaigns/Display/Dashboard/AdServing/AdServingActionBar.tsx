@@ -20,8 +20,10 @@ import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 
 export interface AdServingActionBarProps {
   campaign: DisplayCampaignInfoResource;
@@ -34,6 +36,9 @@ type Props = AdServingActionBarProps &
   InjectedDrawerProps;
 
 class AdServingActionBar extends React.Component<Props> {
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
+
   getSnippet = (type: ClickParam) => {
     const {
       campaign,
@@ -132,11 +137,10 @@ class AdServingActionBar extends React.Component<Props> {
                       );
                     },
                     getName: (id: string) => {
-                        return DisplayCampaignService.getAdGroup(
-                          campaignId,
-                          id,
-                        ).then(response => {
-                          return response.data.name || id ;
+                      return this._displayCampaignService
+                        .getAdGroup(campaignId, id)
+                        .then(response => {
+                          return response.data.name || id;
                         });
                     },
                     goToResource: (id: string) => {
@@ -145,7 +149,7 @@ class AdServingActionBar extends React.Component<Props> {
                       );
                     },
                   },
-                }
+                },
               },
             },
           );

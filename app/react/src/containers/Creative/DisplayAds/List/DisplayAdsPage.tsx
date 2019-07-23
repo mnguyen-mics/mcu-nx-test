@@ -156,20 +156,22 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
         keywords: filter.keywords,
       };
     }
-    this._creativeService.getDisplayAds(organisationId, options).then(result => {
-      const data = result.data;
-      const displayAdsById = normalizeArrayOfObject(data, 'id');
-      this.setState({
-        dataSource: Object.keys(displayAdsById).map(id => {
-          return {
-            ...displayAdsById[id],
-          };
-        }),
-        isLoadingDisplayAds: false,
-        hasDisplayAds: init ? result.count !== 0 : true,
-        totalDisplayAds: result.total || 0,
+    this._creativeService
+      .getDisplayAds(organisationId, options)
+      .then(result => {
+        const data = result.data;
+        const displayAdsById = normalizeArrayOfObject(data, 'id');
+        this.setState({
+          dataSource: Object.keys(displayAdsById).map(id => {
+            return {
+              ...displayAdsById[id],
+            };
+          }),
+          isLoadingDisplayAds: false,
+          hasDisplayAds: init ? result.count !== 0 : true,
+          totalDisplayAds: result.total || 0,
+        });
       });
-    });
   };
 
   getAllCreativesIds = () => {
@@ -372,6 +374,13 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       this.fetchDisplayAds(organisationId, filter);
     };
 
+    const updateDisplayCreative = () => {
+      return this._creativeService.updateDisplayCreative(creative.id, {
+        ...creative,
+        archived: true,
+      });
+    };
+
     if (creative.audit_status === 'NOT_AUDITED') {
       Modal.confirm({
         title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
@@ -382,10 +391,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
         okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
         cancelText: intl.formatMessage(messages.cancelText),
         onOk() {
-          this._creativeService.updateDisplayCreative(creative.id, {
-            ...creative,
-            archived: true,
-          }).then(() => {
+          updateDisplayCreative().then(() => {
             if (dataSource.length === 1 && filter.currentPage !== 1) {
               const newFilter = {
                 ...filter,

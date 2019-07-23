@@ -36,7 +36,7 @@ export interface CreativesOptions {
 export interface ICreativeService<T extends GenericCreativeResource> {
   getCreatives: (
     organisationId: string,
-    options: GetCreativesOptions,
+    options: CreativesOptions,
   ) => Promise<DataListResponse<T>>;
 
   getCreative: (
@@ -44,11 +44,11 @@ export interface ICreativeService<T extends GenericCreativeResource> {
   ) => Promise<DataResponse<CreativeResourceShape>>;
   getDisplayAds: (
     organisationId: string,
-    options: GetCreativesOptions,
+    options: CreativesOptions,
   ) => Promise<DataListResponse<DisplayAdResource>>;
   getEmailTemplates: (
     organisationId: string,
-    options: GetCreativesOptions,
+    options: CreativesOptions,
   ) => Promise<DataListResponse<EmailTemplateResource>>;
 
   getEmailTemplate: (
@@ -352,7 +352,7 @@ export class CreativeService implements ICreativeService<any> {
 export const creativeService = {
   getCreatives<T extends GenericCreativeResource>(
     organisationId: string,
-    options: GetCreativesOptions = {},
+    options: CreativesOptions = {},
   ): Promise<DataListResponse<T>> {
     const endpoint = 'creatives';
 
@@ -364,7 +364,7 @@ export const creativeService = {
   },
   getDisplayAds(
     organisationId: string,
-    options: GetCreativesOptions = {},
+    options: CreativesOptions = {},
   ): Promise<DataListResponse<DisplayAdResource>> {
     return creativeService.getCreatives(organisationId, {
       type: 'DISPLAY_AD',
@@ -373,7 +373,7 @@ export const creativeService = {
   },
   getEmailTemplates(
     organisationId: string,
-    options: GetCreativesOptions = {},
+    options: CreativesOptions = {},
   ): Promise<DataListResponse<EmailTemplateResource>> {
     return creativeService.getCreatives(organisationId, {
       type: 'EMAIL_TEMPLATE',

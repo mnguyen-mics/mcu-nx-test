@@ -208,10 +208,6 @@ container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
 container.bind<IAssetFileService>(TYPES.IAssetFileService).to(AssetFileService);
 container.bind<IPluginService>(TYPES.IPluginService).to(PluginService);
-// container
-//   .bind<IPluginInstanceService<any>>(TYPES.IPluginInstanceService)
-//   .to(PluginInstanceService);
-// type ?
 container
   .bind<ICreativeService<any>>(TYPES.ICreativeService)
   .to(CreativeService);
