@@ -5,7 +5,7 @@ import { setOrgFeature } from './actions';
 import {
   APP_STARTUP,
 } from '../action-types';
-import log from '../../utils/Logger';
+import log from '../../utils/Logger.ts';
 
 function* watchInitializationSuccess() {
   yield take(APP_STARTUP.SUCCESS);

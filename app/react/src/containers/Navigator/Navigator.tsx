@@ -11,7 +11,6 @@ import LayoutManager from './Layout/LayoutManager';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { AuthenticatedRoute } from './Route';
-import { Notifications } from '../../containers/Notifications';
 import { ForgotPassword } from '../Authentication/ForgotPassword';
 import { Login } from '../Authentication/Login';
 import { SetPassword } from '../Authentication/SetPassword';
@@ -34,6 +33,7 @@ import { CommunityChangePassword } from '../Communities/ChangePassword';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { INavigatorService } from '../../services/NavigatorService';
+import { Notifications } from '../../containers/Notifications';
 
 interface MapStateToProps {
   initialized: boolean;
