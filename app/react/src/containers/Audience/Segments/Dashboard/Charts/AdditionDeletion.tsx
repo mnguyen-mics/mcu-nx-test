@@ -9,8 +9,6 @@ import {
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
-import { StackedBarCharts } from '../../../../../components/BarCharts/index';
-import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
 import {
@@ -22,8 +20,7 @@ import injectThemeColors, {
 } from '../../../../Helpers/injectThemeColors';
 import { RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
-const StackedBarChartsJS = StackedBarCharts as any;
+import StackedBarPlot from '../../../../../components/Charts/StackedBarPlot';
 
 interface AdditionDeletionProps {
   isFetching: boolean;
@@ -74,14 +71,17 @@ class AdditionDeletion extends React.Component<Props> {
   renderStackedAreaCharts() {
     const { dataSource, isFetching, colors } = this.props;
 
-    const formattedDataSource =
-      dataSource.length &&
-      dataSource.map(item => {
-        return {
-          ...item,
-          user_point_deletions: item && item.user_point_deletions ? -item.user_point_deletions : 0,
-        };
-      });
+    const formattedDataSource = dataSource.length
+      ? dataSource.map(item => {
+          return {
+            ...item,
+            user_point_deletions:
+              item && item.user_point_deletions
+                ? -item.user_point_deletions
+                : 0,
+          };
+        })
+      : [];
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
@@ -91,42 +91,20 @@ class AdditionDeletion extends React.Component<Props> {
       colors: [colors['mcs-success'], colors['mcs-error']],
     };
     return !isFetching ? (
-      <StackedBarChartsJS
-        identifier="StackedBarCharAdditionDeletion"
-        dataset={formattedDataSource}
-        options={optionsForChart}
-      />
+      <StackedBarPlot dataset={formattedDataSource} options={optionsForChart} />
     ) : (
       <LoadingChart />
     );
   }
 
   render() {
-    const { dataSource, isFetching, colors, intl } = this.props;
-
-    const options = [
-      {
-        domain: intl.formatMessage(messages.USER_POINT_ADDITIONS),
-        color: colors['mcs-success'],
-      },
-      {
-        domain: intl.formatMessage(messages.USER_POINT_DELETIONS),
-        color: colors['mcs-error'],
-      },
-    ];
+    const { dataSource, isFetching, intl } = this.props;
 
     return (
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {dataSource.length === 0 && isFetching ? (
-              <div />
-            ) : (
-              <LegendChart
-                identifier="LegendAdditionDeletion"
-                options={options}
-              />
-            )}
+            <div />
           </Col>
           <Col span={12}>
             <span className="mcs-card-button">{this.renderDatePicker()}</span>

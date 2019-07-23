@@ -3,7 +3,7 @@ import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { generateTooltip, BASE_CHART_HEIGHT } from './domain';
+import { generateTooltip } from './domain';
 
 export interface DatasetProps {
   key: string;
@@ -67,7 +67,7 @@ class PiePlot extends React.Component<Props, {}> {
         plotShadow: false,
         type: 'pie',
         animation: false,
-        height: BASE_CHART_HEIGHT,
+        height: 300,
         style: { fontFamily: "" }
       },
       title: {
@@ -115,7 +115,7 @@ class PiePlot extends React.Component<Props, {}> {
     };
 
     return (
-      <div style={{ overflow: "hidden", height: isHalf ? BASE_CHART_HEIGHT / 2 : BASE_CHART_HEIGHT }}>
+      <div style={{ overflow: "hidden", height: isHalf ? 150 : 300 }}>
         <HighchartsReact
           highcharts={Highcharts}
           options={options}

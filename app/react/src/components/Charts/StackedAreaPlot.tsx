@@ -4,7 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import moment from 'moment';
-import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateTooltip } from './domain';
+import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateTooltip, BASE_CHART_HEIGHT } from './domain';
 
 export interface StackedAreaPlotProps {
   dataset: Dataset;
@@ -116,6 +116,9 @@ class StackedAreaPlot extends React.Component<Props, {}> {
       global: {
         timezoneOffset: new Date().getTimezoneOffset(),
       },
+      chart: {
+        height: BASE_CHART_HEIGHT
+      },
       title: {
         text: '',
       },
@@ -168,7 +171,7 @@ class StackedAreaPlot extends React.Component<Props, {}> {
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
-        style={{ width: '100%', height: 400 }}
+        style={{ width: '100%' }}
       />
     );
   }

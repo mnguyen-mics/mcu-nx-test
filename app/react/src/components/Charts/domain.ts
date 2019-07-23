@@ -3,7 +3,8 @@ import * as Highcharts from "highcharts";
 export const GRAY_COLOR = "#8ca0b3";
 export const LINE_COLOR = (Highcharts as any).Color(GRAY_COLOR).setOpacity(0.4).get('rgba');
 export const CROSSHAIR_COLOR = (Highcharts as any).Color(GRAY_COLOR).setOpacity(0.6).get('rgba');
-export const AREA_OPACITY = 0.15
+export const AREA_OPACITY = 0.15;
+export const BASE_CHART_HEIGHT = 400;
 
 // LINEAR CHART
 export const generateXAxisGridLine = (): Partial<Highcharts.XAxisOptions> => {
