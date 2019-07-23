@@ -4,11 +4,13 @@ import cuid from 'cuid';
 import * as Antd from 'antd';
 import McsIcon from '../../../../../../../components/McsIcon';
 import messages from '../../../messages';
-import GeonameService, {
-  Geoname,
+import {
+  Geoname, IGeonameService,
 } from '../../../../../../../services/GeonameService';
 import { LocationFieldModel } from '../../domain';
 import { Select } from '../../../../../../../components/PopupContainers';
+import { lazyInject } from '../../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../../constants/types';
 
 const InputGroup = Antd.Input.Group;
 const Option = Antd.Select.Option;
@@ -278,6 +280,9 @@ type JoinedProps = Props & InjectedIntlProps;
 class SelectGeoname extends React.Component<JoinedProps, State> {
   randomId = cuid();
 
+  @lazyInject(TYPES.IGeonameService)
+  private _geonameService: IGeonameService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -308,7 +313,7 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
     countryCode = foundCountry ? foundCountry.code : 'FR';
 
     this.setState({ fetchingGeonames: true });
-    GeonameService.getGeonames(value, 'fr', countryCode)
+    this._geonameService.getGeonames(value, 'fr', countryCode)
       .then(res => res.data)
       .then(geonames => {
         const listOfGeonamesToDisplay = geonames.filter(geoname => {

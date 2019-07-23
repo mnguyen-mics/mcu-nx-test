@@ -1,7 +1,37 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import ApiTokenResource from '../models/directory/ApiTokenResource';
+import { injectable } from 'inversify';
 
-const ApiTokenService = {
+export interface IApiTokenService {
+  getApiTokens: (
+    userId: string,
+    organisationId: string,
+  ) => Promise<DataListResponse<ApiTokenResource>>;
+  getApiToken: (
+    apiTokenId: string,
+    userId: string,
+    organisationId: string,
+  ) => Promise<DataResponse<ApiTokenResource>>;
+  createApiToken: (
+    userId: string,
+    organisationId: string,
+    body?: Partial<ApiTokenResource>,
+  ) => Promise<DataResponse<ApiTokenResource>>;
+  updateApiToken: (
+    apiTokenId: string,
+    userId: string,
+    organisationId: string,
+    body: Partial<ApiTokenResource>,
+  ) => Promise<DataResponse<ApiTokenResource>>;
+  deleteApiToken: (
+    apiTokenId: string,
+    userId: string,
+    organisationId: string,
+  ) => Promise<DataResponse<ApiTokenResource>>;
+}
+
+@injectable()
+export class ApiTokenService implements IApiTokenService {
   getApiTokens(
     userId: string,
     organisationId: string,
@@ -11,7 +41,7 @@ const ApiTokenService = {
       organisation_id: organisationId,
     };
     return ApiService.getRequest(endpoint, options);
-  },
+  }
   getApiToken(
     apiTokenId: string,
     userId: string,
@@ -19,7 +49,7 @@ const ApiTokenService = {
   ): Promise<DataResponse<ApiTokenResource>> {
     const endpoint = `users/${userId}/api_tokens/${apiTokenId}?organisation_id=${organisationId}`;
     return ApiService.getRequest(endpoint);
-  },
+  }
   createApiToken(
     userId: string,
     organisationId: string,
@@ -27,7 +57,7 @@ const ApiTokenService = {
   ): Promise<DataResponse<ApiTokenResource>> {
     const endpoint = `users/${userId}/api_tokens?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, body);
-  },
+  }
   updateApiToken(
     apiTokenId: string,
     userId: string,
@@ -36,7 +66,7 @@ const ApiTokenService = {
   ): Promise<DataResponse<ApiTokenResource>> {
     const endpoint = `users/${userId}/api_tokens/${apiTokenId}?organisation_id=${organisationId}`;
     return ApiService.putRequest(endpoint, body);
-  },
+  }
   deleteApiToken(
     apiTokenId: string,
     userId: string,
@@ -44,7 +74,7 @@ const ApiTokenService = {
   ): Promise<DataResponse<ApiTokenResource>> {
     const endpoint = `users/${userId}/api_tokens/${apiTokenId}?organisation_id=${organisationId}`;
     return ApiService.deleteRequest(endpoint);
-  },
-};
+  }
+}
 
 export default ApiTokenService;

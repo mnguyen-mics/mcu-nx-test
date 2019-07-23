@@ -5,7 +5,6 @@ import { Button, Row, Layout, Icon } from 'antd';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import ChannelService from '../../../../../services/ChannelService';
 import { Index } from '../../../../../utils';
 import messages from './messages';
 import settingsMessages from '../../../messages';
@@ -28,6 +27,9 @@ import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { getWorkspace } from '../../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { IChannelService } from '../../../../../services/ChannelService';
+import { TYPES } from '../../../../../constants/types';
 
 const { Content } = Layout;
 export interface MobileApplicationsListPageProps {
@@ -57,6 +59,10 @@ class MobileApplicationsListPage extends React.Component<
   Props,
   MobileApplicationsListPageState
 > {
+
+  @lazyInject(TYPES.IChannelService)
+  private _channelService: IChannelService;
+  
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -227,7 +233,7 @@ class MobileApplicationsListPage extends React.Component<
       return options;
     };
 
-    return ChannelService.getChannels(
+    return this._channelService.getChannels(
       organisationId,
       datamartId,
       buildGetMobileApplicationsOptions(),

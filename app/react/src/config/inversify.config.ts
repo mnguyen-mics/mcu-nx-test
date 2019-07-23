@@ -2,8 +2,13 @@ import {
   NavigatorService,
   INavigatorService,
 } from './../services/NavigatorService';
+import { GeonameService, IGeonameService } from './../services/GeonameService';
+import { ConsentService, IConsentService } from './../services/ConsentService';
 import {
-  UserDataService,
+  CommunityService,
+  ICommunityService,
+} from './../services/CommunityServices';
+import UserDataService, {
   IUserDataService,
 } from './../services/UserDataService';
 import { QueryService, IQueryService } from './../services/QueryService';
@@ -88,13 +93,15 @@ import {
 } from '../services/MlAlgorithmService';
 import {
   IMlAlgorithmModelService,
-  MlAlgorithmModelService
+  MlAlgorithmModelService,
 } from '../services/MlAlgorithmModelService';
 
 import {
   IStoredProcedureService,
   StoredProcedureService,
 } from '../services/StoredProcedureService';
+import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
+import { ChannelService, IChannelService } from './../services/ChannelService';
 
 const container = new Container();
 
@@ -162,9 +169,15 @@ container
 container
   .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
   .to(MlAlgorithmModelService);
+container.bind<INavigatorService>(TYPES.INavigatorService).to(NavigatorService);
 container
-  .bind<INavigatorService>(TYPES.INavigatorService)
-  .to(NavigatorService);
+  .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
+  .to(MlAlgorithmModelService);
+container.bind<IApiTokenService>(TYPES.IApiTokenService).to(ApiTokenService);
+container.bind<IChannelService>(TYPES.IChannelService).to(ChannelService);
+container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
+container.bind<IConsentService>(TYPES.IConsentService).to(ConsentService);
+container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 
 export const { lazyInject } = getDecorators(container, false);
 

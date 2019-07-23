@@ -1,4 +1,5 @@
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
+import { injectable } from 'inversify';
 
 export interface Geoname {
   id: string;
@@ -10,7 +11,20 @@ export interface Geoname {
 
 export type Language = 'fr' | 'en';
 
-const GeonameService = {
+export interface IGeonameService {
+  getGeonames: (
+    keywords: string,
+    lang: Language,
+    country: string,
+  ) => Promise<DataListResponse<Geoname>>;
+
+  getGeoname: (
+    geonameId: string,
+  ) => Promise<DataResponse<Geoname>>;
+}
+
+@injectable()
+export class GeonameService implements IGeonameService {
   getGeonames(
     keywords: string,
     lang: Language = 'fr',
@@ -23,14 +37,13 @@ const GeonameService = {
       country,
     };
     return ApiService.getRequest(endpoint, params);
-  },
+  }
 
   getGeoname(
     geonameId: string,
   ): Promise<DataResponse<Geoname>> {
     const endpoint = `geonames/${geonameId}`;
     return ApiService.getRequest(endpoint);
-  },
+  }
 };
 
-export default GeonameService;

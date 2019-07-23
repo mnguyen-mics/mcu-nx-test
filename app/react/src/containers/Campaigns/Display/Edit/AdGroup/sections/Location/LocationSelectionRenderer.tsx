@@ -3,8 +3,10 @@ import { Row } from 'antd';
 import { ButtonStyleless } from '../../../../../../../components';
 import McsIcon, { McsIconType } from '../../../../../../../components/McsIcon';
 import { LocationFieldModel } from '../../domain';
-import GeonameService, { Geoname } from '../../../../../../../services/GeonameService';
+import { Geoname, IGeonameService } from '../../../../../../../services/GeonameService';
 import ObjectRenderer from '../../../../../../../containers/ObjectRenderer/ObjectRenderer';
+import { lazyInject } from '../../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../../constants/types';
 
 interface Props {
   locationFields: LocationFieldModel[];
@@ -17,6 +19,9 @@ class LocationSelectionRenderer extends React.Component<Props> {
   static defaultProps: Partial<Props> = {
     locationFields: [],
   };
+
+  @lazyInject(TYPES.IGeonameService)
+  private _geonameService: IGeonameService;
 
   render() {
 
@@ -47,7 +52,7 @@ class LocationSelectionRenderer extends React.Component<Props> {
                   key={locationField.key}
                   id={locationField.model.geoname_id}
                   renderMethod={renderGeoname}
-                  fetchingMethod={GeonameService.getGeoname}
+                  fetchingMethod={this._geonameService.getGeoname}
                 />
                 <ButtonStyleless
                   className="close-button"

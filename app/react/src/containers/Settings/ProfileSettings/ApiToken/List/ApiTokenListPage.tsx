@@ -16,15 +16,16 @@ import { Layout, Button, Modal, message, Input, Alert } from 'antd';
 import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
-import ApiTokenService from '../../../../../services/ApiTokenService';
 import { UserProfileResource } from '../../../../../models/directory/UserProfileResource';
 import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
-
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { connect } from 'react-redux';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { IApiTokenService } from '../../../../../services/ApiTokenService';
+import { TYPES } from '../../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -158,6 +159,10 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedNotificationProps;
 
 class ApiTokenListPage extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IApiTokenService)
+  private _apiTokenService: IApiTokenService;
+  
   constructor(props: Props) {
     super(props);
     this.state = initialState;
@@ -166,7 +171,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
   fetchApiTokens = (organisationId: string, filter: Filters) => {
     const { connectedUser } = this.props;
     this.setState({ loading: true }, () => {
-      ApiTokenService.getApiTokens(connectedUser.id, organisationId)
+      this._apiTokenService.getApiTokens(connectedUser.id, organisationId)
         .then(results => {
           this.setState({
             loading: false,
@@ -219,7 +224,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
       cancelText: intl.formatMessage(messages.ApiTokenModalCancelText),
       onOk: () => {
         this.setState({ loading: true });
-        ApiTokenService.deleteApiToken(
+        this._apiTokenService.deleteApiToken(
           apiToken.id,
           connectedUser.id,
           organisationId,
@@ -380,7 +385,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
         saving: true,
       });
 
-      ApiTokenService.createApiToken(connectedUser.id, organisationId, {
+      this._apiTokenService.createApiToken(connectedUser.id, organisationId, {
         name: this.state.name,
       })
         .then(resp => resp.data)

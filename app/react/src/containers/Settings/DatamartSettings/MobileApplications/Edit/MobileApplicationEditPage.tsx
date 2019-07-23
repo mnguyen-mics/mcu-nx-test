@@ -11,7 +11,6 @@ import {
   EditMobileAppRouteMatchParam,
   INITIAL_MOBILE_APP_FORM_DATA,
 } from './domain';
-import ChannelService from '../../../../../services/ChannelService';
 import messages from './messages';
 import MobileApplicationEditForm, {
   FORM_ID,
@@ -34,6 +33,9 @@ import FormLayoutActionbar, {
 } from '../../../../../components/Layout/FormLayoutActionbar';
 import { getWorkspace } from '../../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IChannelService } from '../../../../../services/ChannelService';
 
 interface State {
   mobileApplicationData: MobileApplicationFormData;
@@ -52,6 +54,10 @@ type Props = InjectedIntlProps &
   InjectedDatamartProps;
 
 class EditMobileAppPage extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IChannelService)
+  private _channelService: IChannelService;
+
   constructor(props: Props) {
     super(props);
 
@@ -80,11 +86,11 @@ class EditMobileAppPage extends React.Component<Props, State> {
       mobileApplicationIdFromURLParam || mobileApplicationIdFromLocState;
 
     if (mobileApplicationId) {
-      const getMobileApplication = ChannelService.getChannel(
+      const getMobileApplication = this._channelService.getChannel(
         this.state.selectedDatamartId,
         mobileApplicationId,
       );
-      const getEventRules = ChannelService.getEventRules(
+      const getEventRules = this._channelService.getEventRules(
         this.state.selectedDatamartId,
         mobileApplicationId,
         organisationId,
@@ -189,7 +195,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
       const saveCreatePromises = mobileApplicationFormData.eventRulesFields.map(
         erf => {
           if (!erf.model.id) {
-            return ChannelService.createEventRules(datamartId, channel.id, {
+            return this._channelService.createEventRules(datamartId, channel.id, {
               ...erf.model,
               datamart_id: datamartId,
               site_id: channel.id,
@@ -204,7 +210,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
             ) {
               eventRuleBody.compartment_id = null;
             }
-            return ChannelService.updateEventRules(
+            return this._channelService.updateEventRules(
               datamartId,
               channel.id,
               organisationId,
@@ -218,7 +224,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
       const deletePromises = startIds.map(
         sid =>
           sid && !savedIds.includes(sid)
-            ? ChannelService.deleteEventRules(
+            ? this._channelService.deleteEventRules(
                 datamartId,
                 channel.id,
                 organisationId,
@@ -246,7 +252,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
           type: type,
         };
         // TODO: use ChannelService.updateChannel when available
-        return ChannelService.updateMobileApplication(
+        return this._channelService.updateMobileApplication(
           datamartId,
           mobileApplicationFormData.mobileapplication.id,
           mbApp,
@@ -255,7 +261,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
         });
       }
 
-      return ChannelService.createChannel(
+      return this._channelService.createChannel(
         this.props.match.params.organisationId,
         datamartId,
         {

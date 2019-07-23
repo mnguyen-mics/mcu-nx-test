@@ -4,15 +4,16 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Spin } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
-
 import { FormSection, FormInputField, FormDatePickerField, FormDatePicker, FormSelectField } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import messages from '../../messages';
 import { ConsentResource } from '../../../../../../models/consent/ConsentResource';
-import ConsentService from '../../../../../../services/ConsentService';
 import { EditEmailBlastRouteMatchParam } from '../../domain';
 import FormInput from '../../../../../../components/Form/FormInput';
 import DefaultSelect from '../../../../../../components/Form/FormSelect/DefaultSelect';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { IConsentService } from '../../../../../../services/ConsentService';
+import { TYPES } from '../../../../../../constants/types';
 
 interface State {
   consents: ConsentResource[];
@@ -26,6 +27,9 @@ type Props =
 
 class GeneralFormSection extends React.Component<Props, State> {
 
+  @lazyInject(TYPES.IConsentService)
+  private _consentService: IConsentService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -36,7 +40,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
   componentDidMount() {
     this.setState({ fetchingConsents: true });
-    ConsentService.getConsents(
+    this._consentService.getConsents(
     this.props.match.params.organisationId,
     ).then(response => {
       this.setState({

@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { Form, Row, Col, Input, Button, Alert, Spin } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
-
 import {
   injectIntl,
   InjectedIntlProps,
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-
 import { compose } from 'recompose';
 import { FormComponentProps } from 'antd/lib/form';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -18,13 +16,15 @@ import {
 } from '../../../utils/LocationSearchHelper';
 import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
-import CommunityService from '../../../services/CommunityServices';
 import {
   PasswordRequirementResource,
   PasswordValidityResource,
 } from '../../../models/communities';
 import PasswReqChecker from '../Helpers/PasswReqChecker';
 import { takeLatest } from '../../../utils/ApiHelper';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { ICommunityService } from '../../../services/CommunityServices';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
@@ -75,9 +75,10 @@ const messages = defineMessages({
   },
 });
 
-const getLatestValidityCall = takeLatest(CommunityService.getCommunityPasswordValidity);
-
 class CommunityChangePassword extends React.Component<Props, State> {
+  @lazyInject(TYPES.ICommunityService)
+  private _communityService: ICommunityService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -88,23 +89,27 @@ class CommunityChangePassword extends React.Component<Props, State> {
   }
 
   requestValidity = (handler: any) => {
+    const getLatestValidityCall = takeLatest(
+      this._communityService.getCommunityPasswordValidity,
+    );
+
     getLatestValidityCall(
       this.props.match.params.communityToken,
       handler.target.value,
     )
-    .then(response => {
-      this.setState({ passVal: response.data });
-    })
-    .catch(() =>
-      this.setState({
-        isError: true,
-        errorMessage: messages.standardChangePasswordError.defaultMessage,
-      }),
-    );
+      .then(response => {
+        this.setState({ passVal: response.data });
+      })
+      .catch(() =>
+        this.setState({
+          isError: true,
+          errorMessage: messages.standardChangePasswordError.defaultMessage,
+        }),
+      );
   };
 
   componentDidMount() {
-    CommunityService.getCommunityPasswordRequirements(
+    this._communityService.getCommunityPasswordRequirements(
       this.props.match.params.communityToken,
     )
       .then(response => {
@@ -185,7 +190,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
         <Alert
           type="error"
           className="login-error-message"
-          style={{ marginBottom: 15, paddingLeft: 5, }}
+          style={{ marginBottom: 15, paddingLeft: 5 }}
           message={errorMessage}
         />
       ) : null;
@@ -268,7 +273,13 @@ class CommunityChangePassword extends React.Component<Props, State> {
                       ),
                     },
                   ],
-                })(<Input type="password" className="reset-password-input" autoComplete="off"/>)}
+                })(
+                  <Input
+                    type="password"
+                    className="reset-password-input"
+                    autoComplete="off"
+                  />,
+                )}
               </FormItem>
               <Row type="flex" align="middle" justify="center">
                 <Col span={12}>

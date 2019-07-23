@@ -20,8 +20,10 @@ import { Spin } from 'antd';
 import { EmailRouterResource } from '../../../../../../models/campaign/email';
 import EmailRoutersService from '../../../../../../services/Library/EmailRoutersService';
 import { ConsentResource } from '../../../../../../models/consent';
-import ConsentService from '../../../../../../services/ConsentService';
 import { EmailCampaignAutomationFormData } from '../domain';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { IConsentService } from '../../../../../../services/ConsentService';
+import { TYPES } from '../../../../../../constants/types';
 
 export const formMessages = defineMessages({
   sectionGeneralTitle: {
@@ -75,6 +77,10 @@ type Props = GeneralInformationFormSectionProps &
   NormalizerProps;
 
 class GeneralInformationFormSection extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IConsentService)
+  private _consentService: IConsentService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -89,7 +95,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
     this.setState({ fetchingRouters: true, fetchingConsents: true });
     EmailRoutersService.getEmailRouters(this.props.organisationId).then(
       routersResponse => {
-        ConsentService.getConsents(this.props.organisationId).then(
+        this._consentService.getConsents(this.props.organisationId).then(
           consentResponse => {
             this.setState({
               fetchingRouters: false,

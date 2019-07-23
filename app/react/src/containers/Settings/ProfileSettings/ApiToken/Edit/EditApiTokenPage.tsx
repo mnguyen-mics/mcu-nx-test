@@ -8,8 +8,10 @@ import { Loading } from '../../../../../components/index';
 import { UserProfileResource } from '../../../../../models/directory/UserProfileResource';
 import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
 import { notifyError } from '../../../../../state/Notifications/actions';
-import ApiTokenService from '../../../../../services/ApiTokenService';
 import EditApiTokenForm from './EditApiTokenForm';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IApiTokenService } from '../../../../../services/ApiTokenService';
 
 const messages = defineMessages({
   newApiToken: {
@@ -59,6 +61,9 @@ type Props = EditApiTokenPageProps &
   RouteComponentProps<{ organisationId: string; apiTokenId: string }>;
 
 class EditApiTokenPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IApiTokenService)
+  private _apiTokenService: IApiTokenService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -75,7 +80,8 @@ class EditApiTokenPage extends React.Component<Props, State> {
       connectedUser,
     } = this.props;
     if (apiTokenId) {
-      ApiTokenService.getApiToken(apiTokenId, connectedUser.id, organisationId)
+      this._apiTokenService
+        .getApiToken(apiTokenId, connectedUser.id, organisationId)
         .then(resp => resp.data)
         .then(apiTokenData => {
           this.setState({
@@ -124,14 +130,14 @@ class EditApiTokenPage extends React.Component<Props, State> {
     };
     let createOrUpdateApiTokenPromise;
     if (apiTokenId) {
-      createOrUpdateApiTokenPromise = ApiTokenService.updateApiToken(
+      createOrUpdateApiTokenPromise = this._apiTokenService.updateApiToken(
         apiTokenId,
         connectedUser.id,
         organisationId,
         formData,
       );
     } else {
-      createOrUpdateApiTokenPromise = ApiTokenService.createApiToken(
+      createOrUpdateApiTokenPromise = this._apiTokenService.createApiToken(
         connectedUser.id,
         organisationId,
         formData,
@@ -158,7 +164,7 @@ class EditApiTokenPage extends React.Component<Props, State> {
 
     const apiTokenName = apiTokenId
       ? formatMessage(messages.editApiToken, {
-          name: apiTokenData.name
+          name: apiTokenData.name,
         })
       : formatMessage(messages.apiToken);
     const breadcrumbPaths = [
@@ -167,7 +173,7 @@ class EditApiTokenPage extends React.Component<Props, State> {
         path: `/v2/o/${organisationId}/settings/account/api_tokens`,
       },
       {
-        name: apiTokenName
+        name: apiTokenName,
       },
     ];
 
@@ -193,5 +199,8 @@ const mapStateToProps = (state: any) => ({
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  connect(mapStateToProps, undefined),
+  connect(
+    mapStateToProps,
+    undefined,
+  ),
 )(EditApiTokenPage);
