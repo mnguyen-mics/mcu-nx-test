@@ -272,6 +272,20 @@ export default defineMessages({
         defaultMessage: 'My Offers', 
     },
 
+    // MARKETPLACE
+    marketplaceTitle: {
+        id: 'menu.marketplaceTitle.title',
+        defaultMessage: 'Marketplace',
+    },
+    marketplaceOfferCatalog: {
+        id: 'menu.marketplaceTitle.offer_catalog',
+        defaultMessage: 'Offer catalog',
+    },
+    marketplaceSubsribedOffers: {
+        id: 'menu.marketplaceTitle.subscribed_offers',
+        defaultMessage: 'Subscribed offers'
+    },
+
     // BACK TO APP
     backToAppSettings: {
         id: 'menu.organisation.backToApp',
