@@ -33,13 +33,13 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-models.empty',
     defaultMessage: 'No ML Models'
   },
-  newMlModel: {
+  newMlAlgorithmModel: {
     id: 'settings.organisation.ml-models.new',
-    defaultMessage: 'New ML Model'
+    defaultMessage: 'New ML Algorithm Model'
   },
-  mlModels: {
+  mlAlgorithmModels: {
     id: 'settings.organisation.ml-models.placeholder',
-    defaultMessage: 'ML Models'
+    defaultMessage: 'ML Algorithm Models'
   },
   uploadTitle: {
     id: 'settings.organisation.ml-models.upload.title',
@@ -73,9 +73,9 @@ const messages = defineMessages({
       id: 'settings.organisation.ml-models.create.error',
       defaultMessage: 'Error while creating the model'
   },
-  downloadModel: {
-    id: 'settings.organisation.ml-models.download.model',
-    defaultMessage: 'Download Model'
+  downloadBinary: {
+    id: 'settings.organisation.ml-models.download.binary',
+    defaultMessage: 'Download Binary'
   },
   downloadResult: {
     id: 'settings.organisation.ml-models.download.result',

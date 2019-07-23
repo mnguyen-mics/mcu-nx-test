@@ -76,7 +76,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
         } = this.props;
         if (mlAlgorithmId) {
             this._mlAlgorithmService
-                .getMlAlgorithm(organisationId, mlAlgorithmId)
+                .getMlAlgorithm(mlAlgorithmId)
                 .then(mlAlgorithmData => mlAlgorithmData.data)
                 .then(mlAlgorithm => {
                     this.setState({ mlAlgorithmFormData: mlAlgorithm, loading: false })
@@ -95,7 +95,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
               hideSaveInProgress();
               message.success(intl.formatMessage(messages.updateSuccess));
               return history.push(
-                `/v2/o/${organisationId}/settings/organisation/ml_algorithms`,
+                `/v2/o/${organisationId}/settings/datamart/ml_algorithms`,
               );
             } else {
               hideSaveInProgress();
@@ -121,13 +121,13 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
             0,
         );
 
-        
+        const newFormData = {...formData, organisation_id: organisationId}
 
         if (mlAlgorithmId) {
             this._mlAlgorithmService
-                .updateMlAlgorithm(organisationId, mlAlgorithmId, formData)
+                .updateMlAlgorithm(mlAlgorithmId, newFormData)
                 .then((res) => res.data)
-                .then(mlAlgorithmUdpated => {
+                .then(mlAlgorithmUpdated => {
                     redirectAndNotify(mlAlgorithmId)
                 })
                 .catch(err => {
@@ -135,7 +135,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
                 });
         } else {
             this._mlAlgorithmService
-                .createMlAlgorithm(organisationId, formData)
+                .createMlAlgorithm(newFormData)
                 .then((res) => res.data)
                 .then(mlAlgorithmCreated => {
                     redirectAndNotify(mlAlgorithmCreated.id)
@@ -159,7 +159,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
         const url =
           location.state && location.state.from
             ? location.state.from
-            : `/v2/o/${organisationId}/settings/organisation/ml_algorithms`;
+            : `/v2/o/${organisationId}/settings/datamart/ml_algorithms`;
     
         return history.push(url);
       };
@@ -183,7 +183,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
         const breadcrumbPaths = [
             {
                 name: formatMessage(messages.mlAlgorithms),
-                path: `/v2/o/${organisationId}/settings/organisation/ml_algorithms`
+                path: `/v2/o/${organisationId}/settings/datamart/ml_algorithms`
             },
             { name }
         ]

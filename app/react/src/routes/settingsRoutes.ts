@@ -45,7 +45,7 @@ import SourcesListPage from '../containers/Settings/DatamartSettings/Sources/Lis
 import DatamartViewPage from '../containers/Settings/DatamartSettings/Datamarts/Dashboard/DatamartDashboardPage';
 import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/List/MlAlgorithmsPage';
 import MlAlgorithmEditPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/Edit/MlAlgorithmEditPage';
-import MlModelsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlModels/MlModelsPage';
+import MlModelsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlModels/MlAlgorithmModelsPage';
 import { StoredProceduresContent } from '../containers/Settings/DatamartSettings/StoredProcedures/List';
 import CreateEditStoredProcedure from '../containers/Settings/DatamartSettings/StoredProcedures/Edit/EditStoredProcedurePage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
@@ -187,6 +187,33 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
 
+
+  settingsDatamartMlAlgorithmList: {
+    path: '/settings/datamart/ml_algorithms',
+    layout: 'settings',
+    contentComponent: MlAlgorithmsPage,
+    requiredFeature: 'datamartSettings.mlAlgorithms'
+  },
+  settingsDatamartMlAlgorithmCreation: {
+    path: '/settings/datamart/ml_algorithms/create',
+    layout: 'edit',
+    editComponent: MlAlgorithmEditPage,
+    requiredFeature: 'datamartSettings.mlAlgorithms'
+  },
+  settingsDatamartMlAlgorithmEdit: {
+    path: '/settings/datamart/ml_algorithms/:mlAlgorithmId/edit',
+    layout: 'edit',
+    editComponent: MlAlgorithmEditPage,
+    requiredFeature: 'datamartSettings.mlAlgorithms'
+  },
+  settingsDatamartMlModelsList: {
+    path: '/settings/datamart/ml_algorithms/:mlAlgorithmId/models',
+    layout: 'settings',
+    contentComponent: MlModelsPage,
+    requiredFeature: 'datamartSettings.mlAlgorithms'
+  },
+
+
   /*
   ORGANISATION SETTINGS
   */
@@ -226,31 +253,6 @@ export const settingsDefinition: NavigatorDefinition = {
     editComponent: EditUserPage,
     requiredFeature: 'organisationSettings.users',
   },
-  settingsOrganisationMlAlgorithmList: {
-    path: '/settings/organisation/ml_algorithms',
-    layout: 'settings',
-    contentComponent: MlAlgorithmsPage,
-    requiredFeature: 'organisationSettings.mlAlgorithms'
-  },
-  settingsOrganisationMlAlgorithmCreation: {
-    path: '/settings/organisation/ml_algorithms/create',
-    layout: 'edit',
-    editComponent: MlAlgorithmEditPage,
-    requiredFeature: 'organisationSettings.mlAlgorithms'
-  },
-  settingsOrganisationMlAlgorithmEdit: {
-    path: '/settings/organisation/ml_algorithms/:mlAlgorithmId/edit',
-    layout: 'edit',
-    editComponent: MlAlgorithmEditPage,
-    requiredFeature: 'organisationSettings.mlAlgorithms'
-  },
-  settingsOrganisationMlModelsList: {
-    path: '/settings/organisation/ml_algorithms/:mlAlgorithmId/ml_models',
-    layout: 'settings',
-    contentComponent: MlModelsPage,
-    requiredFeature: 'organisationSettings.mlAlgorithms'
-  },
-
   /*
   ACCOUNT SETTINGS
   

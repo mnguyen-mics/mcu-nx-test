@@ -1,7 +1,7 @@
 
 import * as React from 'react';
 import { Layout, Button, Modal, Spin, Upload, message, Input } from "antd";
-import MlModelResource from "../../../../../models/mlModel/MlModelResource";
+import MlAlgorithmModelResource from "../../../../../models/mlAlgorithmModel/MlAlgorithmModelResource";
 import { RouteComponentProps, withRouter } from "react-router";
 import { InjectedIntlProps, injectIntl, FormattedMessage } from "react-intl";
 import { InjectedThemeColorsProps } from "../../../../Helpers/injectThemeColors";
@@ -9,7 +9,7 @@ import { InjectedNotificationProps } from "../../../../Notifications/injectNotif
 import { compose } from 'recompose';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { IMlModelService } from '../../../../../services/MlModelService';
+import { IMlAlgorithmModelService } from '../../../../../services/MlAlgorithmModelService';
 import {  PAGINATION_SEARCH_SETTINGS, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
@@ -41,7 +41,7 @@ const initialState = {
 
 interface MlModelsListState {
     loading: boolean;
-    data: MlModelResource[],
+    data: MlAlgorithmModelResource[],
     total: number;
     isModalOpen: boolean;
     isPreviewModalOpened: boolean;
@@ -64,8 +64,8 @@ type JoinedProps = RouteComponentProps<RouterProps> &
     InjectedNotificationProps;
 
 class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
-    @lazyInject(TYPES.IMlModelService)
-    private _mlModelService: IMlModelService;
+    @lazyInject(TYPES.IMlAlgorithmModelService)
+    private _mlAlgorithmModelService: IMlAlgorithmModelService;
 
     constructor(props: JoinedProps){
         super(props);
@@ -89,7 +89,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             const options = {
                 ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
               };
-              this._mlModelService.getMlModels(organisationId, mlAlgorithmId, options)
+              this._mlAlgorithmModelService.getMlAlgorithmModels(organisationId, mlAlgorithmId, options)
                 .then(results => {
                   this.setState({
                     loading: false,
@@ -119,19 +119,19 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
           intlMessage: messages.name,
           key: 'name',
           isHideable: false,
-          render: (text: string, record: MlModelResource) => record.name,
+          render: (text: string, record: MlAlgorithmModelResource) => record.name,
         },
         {
           intlMessage: messages.status,
           key: 'status',
           isHideable: false,
-          render: (text: string, record: MlModelResource) => record.status,
+          render: (text: string, record: MlAlgorithmModelResource) => record.status,
         },
         {
           intlMessage: messages.lastUpdatedDate,
           key: 'last updated date',
           isHideable: false,
-          render: (text: string, record: MlModelResource) =>
+          render: (text: string, record: MlAlgorithmModelResource) =>
             record.last_updated_date
               ? moment(record.last_updated_date).format('DD/MM/YYYY h:mm:ss')
               : formatMessage(messages.lastUpdatedDate),
@@ -181,23 +181,24 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             const resultFormData = await this.formatFormData(resultFile[0]);
             const notebookFormData = await this.formatFormData(notebookFile[0]);
         
-            const mlModel = {
+            const mlAlgorithmModel = {
               "name": this.state.newModelName,
-              "status": "PAUSED"
+              "status": "PAUSED",
+              "organisation_id": organisationId
             }          
-            this._mlModelService.createMlModel(organisationId, mlAlgorithmId, mlModel)
+            this._mlAlgorithmModelService.createMlAlgorithmModel(mlAlgorithmId, mlAlgorithmModel)
               .then(res => res.data)
               .then(model => {
-                return this._mlModelService.uploadNotebook(organisationId, mlAlgorithmId, model.id, notebookFormData)
+                return this._mlAlgorithmModelService.uploadNotebook(mlAlgorithmId, model.id, notebookFormData)
               })
               .then(res => res.data)
               .then(modelWithNotebook => {
-                return this._mlModelService.uploadModel(organisationId, mlAlgorithmId, modelWithNotebook.id, modelFormData);
+                return this._mlAlgorithmModelService.uploadBinary(mlAlgorithmId, modelWithNotebook.id, modelFormData);
               })
 
               .then(res => res.data)
               .then(modelWithModel => {
-                return this._mlModelService.uploadResult(organisationId, mlAlgorithmId, modelWithModel.id, resultFormData)
+                return this._mlAlgorithmModelService.uploadResult(mlAlgorithmId, modelWithModel.id, resultFormData)
               })
               .then(values => {
                 const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
@@ -231,28 +232,28 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
       
     }
 
-    downloadModel = (mlModel: MlModelResource) => {
-      if (mlModel.model_uri) {
-        this.download(mlModel.model_uri);
+    downloadBinary = (mlAlgorithmModel: MlAlgorithmModelResource) => {
+      if (mlAlgorithmModel.binary_uri) {
+        this.download(mlAlgorithmModel.binary_uri);
       }
     }
 
 
-    downloadResult = (mlModel: MlModelResource) => {
-      if (mlModel.html_notebook_result_uri) {
-        this.download(mlModel.html_notebook_result_uri);
+    downloadResult = (mlAlgorithmModel: MlAlgorithmModelResource) => {
+      if (mlAlgorithmModel.html_notebook_result_uri) {
+        this.download(mlAlgorithmModel.html_notebook_result_uri);
       }
     }
 
-    downloadNotebook = (mlModel: MlModelResource) => {
-      if (mlModel.notebook_uri) {
-        this.download(mlModel.notebook_uri);
+    downloadNotebook = (mlAlgorithmModel: MlAlgorithmModelResource) => {
+      if (mlAlgorithmModel.notebook_uri) {
+        this.download(mlAlgorithmModel.notebook_uri);
       }
     }
 
-    previewResult = async (mlModel: MlModelResource) => {
-      if (mlModel.html_notebook_result_uri) {
-        DataFileService.getDatafileData(mlModel.html_notebook_result_uri)
+    previewResult = async (mlAlgorithmModel: MlAlgorithmModelResource) => {
+      if (mlAlgorithmModel.html_notebook_result_uri) {
+        DataFileService.getDatafileData(mlAlgorithmModel.html_notebook_result_uri)
           .then(blob => {
             return new Response(blob).text()
           })
@@ -269,7 +270,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
       });
     }
 
-    togglePause = (mlModel: MlModelResource) => {
+    togglePause = (mlAlgorithmModel: MlAlgorithmModelResource) => {
       const { 
         match: {
           params: { organisationId, mlAlgorithmId }
@@ -277,12 +278,12 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
         location: { search },
         intl
       } = this.props
-      if (mlModel.status === "PAUSED") {
-        mlModel.status = "LIVE";
+      if (mlAlgorithmModel.status === "PAUSED") {
+        mlAlgorithmModel.status = "LIVE";
       } else {
-        mlModel.status = "PAUSED";
+        mlAlgorithmModel.status = "PAUSED";
       }
-      this._mlModelService.updateMlModel(organisationId, mlAlgorithmId, mlModel.id, mlModel)
+      this._mlAlgorithmModelService.updateMlAlgorithmModel(mlAlgorithmId, mlAlgorithmModel.id, mlAlgorithmModel)
         .then(res => res.data)
         .then(model => {
           const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
@@ -404,15 +405,15 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             intlMessage: messages.empty,
           };
 
-          const actionsColumnsDefinition: Array<ActionsColumnDefinition<MlModelResource>> = [
+          const actionsColumnsDefinition: Array<ActionsColumnDefinition<MlAlgorithmModelResource>> = [
             {
               key: 'action',
-              actions: (mlModel: MlModelResource) => [
-                { intlMessage: messages.downloadModel, callback: this.downloadModel, disabled: !mlModel.model_uri},
-                { intlMessage: messages.downloadResult, callback: this.downloadResult, disabled: !mlModel.html_notebook_result_uri},
-                { intlMessage: messages.downloadNotebook, callback: this.downloadNotebook, disabled: !mlModel.notebook_uri},
-                { intlMessage: messages.previewResult, callback: this.previewResult, disabled: !mlModel.notebook_uri},
-                { intlMessage: mlModel.status === "PAUSED" ? messages.statusLive : messages.statusPaused, callback: this.togglePause, disabled: false }
+              actions: (mlAlgorithmModel: MlAlgorithmModelResource) => [
+                { intlMessage: messages.downloadBinary, callback: this.downloadBinary, disabled: !mlAlgorithmModel.binary_uri},
+                { intlMessage: messages.downloadResult, callback: this.downloadResult, disabled: !mlAlgorithmModel.html_notebook_result_uri},
+                { intlMessage: messages.downloadNotebook, callback: this.downloadNotebook, disabled: !mlAlgorithmModel.notebook_uri},
+                { intlMessage: messages.previewResult, callback: this.previewResult, disabled: !mlAlgorithmModel.notebook_uri},
+                { intlMessage: mlAlgorithmModel.status === "PAUSED" ? messages.statusLive : messages.statusPaused, callback: this.togglePause, disabled: false }
               ],
             },
           ];
@@ -423,7 +424,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
     
           const buttons = [
             <Button key="create" type="primary" onClick={onClick}>
-              <FormattedMessage {...messages.newMlModel} />
+              <FormattedMessage {...messages.newMlAlgorithmModel} />
             </Button>,
           ];
 
@@ -431,7 +432,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
             <div>
               <div className="mcs-card-header mcs-card-title">
                 <span className="mcs-card-title">
-                  <FormattedMessage {...messages.mlModels} />
+                  <FormattedMessage {...messages.mlAlgorithmModels} />
                 </span>
                 <span className="mcs-card-button">{buttons}</span>
               </div>

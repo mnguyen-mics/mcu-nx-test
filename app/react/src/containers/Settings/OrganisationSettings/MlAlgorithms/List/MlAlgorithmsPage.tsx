@@ -80,7 +80,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         history
       } = this.props
       history.push({
-        pathname: `/v2/o/${organisationId}/settings/organisation/ml_algorithms/${mlAlgorithm.id}/edit`,
+        pathname: `/v2/o/${organisationId}/settings/datamart/ml_algorithms/${mlAlgorithm.id}/edit`,
         state: { from: `${location.pathname}${location.search}`}
       });
     }
@@ -97,7 +97,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       mlAlgorithm.archived = true;
 
       this._mlAlgorithmService
-        .updateMlAlgorithm(organisationId, mlAlgorithm.id, mlAlgorithm)
+        .updateMlAlgorithm(mlAlgorithm.id, mlAlgorithm)
         .then(res => res.data)
         .then(mlAlgorithmArchived => {
           const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
@@ -143,9 +143,9 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           render: (text: string, record: MlAlgorithmResource) => (
             <Link
               className="mcs-campaigns-link"
-              to={`/v2/o/${record.organisation_id}/settings/organisation/ml_algorithms/${
+              to={`/v2/o/${record.organisation_id}/settings/datamart/ml_algorithms/${
                 record.id
-              }/ml_models`}
+              }/models`}
             >
               {record.name}
             </Link>
@@ -158,9 +158,9 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           render: (text: string, record: MlAlgorithmResource) => (
             <Link
               className="mcs-campaigns-link"
-              to={`/v2/o/${record.organisation_id}/settings/organisation/ml_algorithms/${
+              to={`/v2/o/${record.organisation_id}/settings/datamart/ml_algorithms/${
                 record.id
-              }/ml_models`}
+              }/models`}
             >
               {text}
             </Link>
@@ -220,7 +220,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       
       const onClick = () => {
         history.push(
-          `/v2/o/${organisationId}/settings/organisation/ml_algorithms/create`,
+          `/v2/o/${organisationId}/settings/datamart/ml_algorithms/create`,
         );
       }
 
