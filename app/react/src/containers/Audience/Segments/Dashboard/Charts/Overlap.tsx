@@ -24,7 +24,7 @@ import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import StackedBarPlot, {
   StackedBarPlotOptions,
-} from '../../../../../components/Charts/StackedBarPlot';
+} from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
 
 interface State {
   data: OverlapData;

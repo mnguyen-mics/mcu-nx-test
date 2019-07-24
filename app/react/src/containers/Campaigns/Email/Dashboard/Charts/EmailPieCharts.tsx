@@ -15,7 +15,7 @@ import {
   InjectedIntlProps,
   injectIntl,
 } from 'react-intl';
-import PiePlot from '../../../../../components/Charts/PiePlot';
+import PiePlot from '../../../../../components/Charts/CategoryBased/PiePlot';
 
 const messageMap: {
   [key: string]: FormattedMessage.MessageDescriptor;

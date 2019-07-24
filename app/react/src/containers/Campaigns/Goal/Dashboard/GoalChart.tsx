@@ -32,7 +32,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
-import DoubleStackedAreaPlot from '../../../../components/Charts/DoubleStackedAreaPlot';
+import DoubleStackedAreaPlot from '../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
 
 
 interface OverallStats {

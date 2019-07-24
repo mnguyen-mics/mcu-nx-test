@@ -3,7 +3,7 @@ import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import { generateTooltip, BASE_CHART_HEIGHT } from './domain';
+import { generateTooltip, BASE_CHART_HEIGHT } from '../domain';
 
 export interface StackedBarPlotProps {
   dataset: Dataset;

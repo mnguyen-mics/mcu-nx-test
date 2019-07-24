@@ -29,7 +29,7 @@ import { makeCancelable } from '../../../../../utils/ApiHelper';
 import { CancelablePromise } from '../../../../../services/ApiService';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { Index } from '../../../../../utils';
-import DoubleStackedAreaPlot from '../../../../../components/Charts/DoubleStackedAreaPlot';
+import DoubleStackedAreaPlot from '../../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
 
 const LegendChartTS = LegendChart as any;
 

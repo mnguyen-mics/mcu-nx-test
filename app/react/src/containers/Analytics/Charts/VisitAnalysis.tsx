@@ -18,7 +18,7 @@ import { RouteComponentProps } from 'react-router';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../Helpers/injectThemeColors';
-import DoubleStackedAreaPlot from '../../../components/Charts/DoubleStackedAreaPlot';
+import DoubleStackedAreaPlot from '../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
 
 const _messages: { [s: string]: FormattedMessage.MessageDescriptor } = messages;
 

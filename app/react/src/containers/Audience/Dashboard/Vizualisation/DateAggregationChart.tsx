@@ -10,7 +10,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { StackedAreaPlot } from '../../../../components/StackedAreaPlot';
+import StackedAreaPlot from '../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
 import messages from './messages';
@@ -163,8 +163,7 @@ class DateAggregationChart extends React.Component<Props, State> {
       } else {
         return (
           <StackedAreaPlot
-            identifier={`${this.identifier}-chart`}
-            dataset={this.state.queryResult}
+            dataset={this.state.queryResult as any}
             options={optionsForChart}
           />
         );

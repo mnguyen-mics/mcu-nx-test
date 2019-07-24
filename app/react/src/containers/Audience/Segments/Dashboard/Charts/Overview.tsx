@@ -25,7 +25,7 @@ import messages from '../messages';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-import StackedAreaPlot from '../../../../../components/Charts/StackedAreaPlot';
+import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 
 
 interface OverviewProps {

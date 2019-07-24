@@ -20,7 +20,7 @@ import injectThemeColors, {
 } from '../../../../Helpers/injectThemeColors';
 import { RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import StackedBarPlot from '../../../../../components/Charts/StackedBarPlot';
+import StackedBarPlot from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
 
 interface AdditionDeletionProps {
   isFetching: boolean;

@@ -16,7 +16,7 @@ import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
-import StackedBarPlot from '../../../../components/Charts/StackedBarPlot';
+import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 
 export interface MapBarChartProps {
   title?: string;

@@ -4,15 +4,15 @@ import HighchartsReact from 'highcharts-react-official';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import moment from 'moment';
-import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateTooltip, BASE_CHART_HEIGHT, OnDragEnd } from './domain';
+import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateTooltip, BASE_CHART_HEIGHT, OnDragEnd, generateDraggable } from '../domain';
 
-export interface StackedAreaPlotProps {
+export interface DoubleStackedAreaPlotProps {
   dataset: Dataset;
   options: ChartOptions;
   style?: any;
 }
 
-type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
+export type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
 
 interface ChartOptions {
   colors: string[];
@@ -24,9 +24,9 @@ interface ChartOptions {
 
 type yKey = { key: string; message: FormattedMessage.MessageDescriptor };
 
-type Props = StackedAreaPlotProps & InjectedIntlProps;
+type Props = DoubleStackedAreaPlotProps & InjectedIntlProps;
 
-class StackedAreaPlot extends React.Component<Props, {}> {
+class DoubleStackedAreaPlot extends React.Component<Props, {}> {
 
   constructor(props: Props) {
     super(props);
@@ -48,13 +48,14 @@ class StackedAreaPlot extends React.Component<Props, {}> {
         data: dataset.map(data => {
           const yValue = data[y.key];
           return [
-            this.formatDateToTs(data[xKey] as string),
+            this.formatDateToTs(data[xKey] as string, data.hour_of_day ? data.hour_of_day as number : data.hour ? data.hour as number : undefined),
             yValue && typeof yValue === 'string' ? parseFloat(yValue) : yValue,
           ];
         }),
         name: formatMessage(y.message),
         color: colors[i],
         fillOpacity: 0.5,
+        yAxis: i,
         fillColor: {
           linearGradient: {
             x1: 0,
@@ -83,10 +84,10 @@ class StackedAreaPlot extends React.Component<Props, {}> {
     });
   };
 
-  formatDateToTs = (date: string) => {
+  formatDateToTs = (date: string, hour?: number) => {
     return moment(date)
       .seconds(0)
-      .hours(0)
+      .hours(hour ? hour : 0)
       .milliseconds(0)
       .minutes(0)
       .valueOf();
@@ -109,7 +110,9 @@ class StackedAreaPlot extends React.Component<Props, {}> {
   render() {
     const {
       dataset,
-      options: { xKey, yKeys, colors },
+      options: { xKey, yKeys, colors, isDraggable, onDragEnd },
+      style,
+      intl
     } = this.props;
 
     const options: Highcharts.Options = {
@@ -117,7 +120,8 @@ class StackedAreaPlot extends React.Component<Props, {}> {
         timezoneOffset: new Date().getTimezoneOffset(),
       },
       chart: {
-        height: BASE_CHART_HEIGHT
+        height: BASE_CHART_HEIGHT,
+        ...isDraggable ? generateDraggable(onDragEnd) : {}
       },
       title: {
         text: '',
@@ -151,12 +155,17 @@ class StackedAreaPlot extends React.Component<Props, {}> {
         timezoneOffset: new Date().getTimezoneOffset(),
         useUTC: true,
       },
-      yAxis: {
+      yAxis: [{
         title: {
-          text: null,
+          text: intl.formatMessage(yKeys[0].message),
         },
         ...generateYAxisGridLine()
-      },
+      }, {
+        title: {
+          text: intl.formatMessage(yKeys[1].message),
+        },
+        opposite: true
+      }],
       series: this.formatSeries(dataset, xKey, yKeys, colors),
       credits: {
         enabled: false,
@@ -165,18 +174,23 @@ class StackedAreaPlot extends React.Component<Props, {}> {
         shared: true,
         ...generateTooltip()
       },
+      legend: {
+        enabled: false
+      }
     };
 
     return (
-      <HighchartsReact
-        highcharts={Highcharts}
-        options={options}
-        style={{ width: '100%' }}
-      />
+      <div style={style}>
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={options}
+          style={{ width: '100%' }}
+        />
+      </div>
     );
   }
 }
 
-export default compose<Props, StackedAreaPlotProps>(injectIntl)(
-  StackedAreaPlot,
+export default compose<Props, DoubleStackedAreaPlotProps>(injectIntl)(
+  DoubleStackedAreaPlot,
 );

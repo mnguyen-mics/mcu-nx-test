@@ -8,7 +8,7 @@ import {
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
-import StackedAreaPlot from '../../../../../components/Charts/StackedAreaPlot';
+import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
 import injectThemeColors, {

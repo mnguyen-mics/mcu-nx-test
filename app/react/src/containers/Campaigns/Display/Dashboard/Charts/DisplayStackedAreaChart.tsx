@@ -27,7 +27,7 @@ import McsMoment from '../../../../../utils/McsMoment';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-import DoubleStackedAreaPlot from '../../../../../components/Charts/DoubleStackedAreaPlot';
+import DoubleStackedAreaPlot from '../../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
 
 const LegendChartWithModalJS = LegendChartWithModal as any;
 
