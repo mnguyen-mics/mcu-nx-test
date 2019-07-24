@@ -85,7 +85,7 @@ export const generateTooltip = (
   return showTooltip
     ? {
         crosshairs: true,
-        useHTML: true,
+        useHTML: false,
         borderRadius: 2,
         borderWidth: 1,
         borderColor: '#e8e8e8',
