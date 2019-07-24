@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cuid from 'cuid';
 import { Select } from 'antd';
 import { WrappedFieldProps } from 'redux-form';
 import { OptionProps } from 'antd/lib/select';
@@ -30,7 +31,7 @@ class AddonSelect extends React.Component<
     );
 
     const optionsToDisplay = filteredOptions.map(option => (
-      <Option key={option.key} {...option}>
+      <Option key={option.key || cuid()} {...option}>
         {option.title || option.children}
       </Option>
     ));

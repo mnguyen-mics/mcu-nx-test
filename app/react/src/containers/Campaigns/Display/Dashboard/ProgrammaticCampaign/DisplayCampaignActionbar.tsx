@@ -260,7 +260,7 @@ class DisplayCampaignActionbar extends React.Component<
     this.state = { exportIsRunning: false };
   }
 
-  handleRunExport = () => {
+  handleRunExport = (e: React.MouseEvent) => {
     const {
       match: {
         params: { organisationId, campaignId },
@@ -303,7 +303,7 @@ class DisplayCampaignActionbar extends React.Component<
       });
   };
 
-  exportIsRunningModal = (e: React.FormEvent<HTMLButtonElement>) => {
+  exportIsRunningModal = (e: React.MouseEvent) => {
     const {
       intl: { formatMessage },
     } = this.props;

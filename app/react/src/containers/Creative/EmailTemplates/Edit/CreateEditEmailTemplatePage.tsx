@@ -339,7 +339,7 @@ class CreateEmailTemplate extends React.Component<
 
     const sections: Array<{
       sectionId: string;
-      title: { id: string; defaultMessage: string };
+      title: { id: string; defaultMessage?: string };
     }> =
       this.state.pluginLayout === undefined
         ? [

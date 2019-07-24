@@ -58,7 +58,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     this.state = { exportIsRunning: false };
   }
 
-  handleRunExport = () => {
+  handleRunExport = (e: React.MouseEvent) => {
     const {
       match: {
         params: { organisationId, campaignId },
@@ -255,7 +255,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     );
   };
 
-  exportIsRunningModal = (e: React.FormEvent<HTMLButtonElement>) => {
+  exportIsRunningModal = (e: React.MouseEvent) => {
     const {
       intl: { formatMessage },
     } = this.props;
