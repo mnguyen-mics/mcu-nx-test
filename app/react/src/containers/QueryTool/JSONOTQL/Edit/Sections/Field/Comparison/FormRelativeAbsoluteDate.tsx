@@ -168,7 +168,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
             value={moment(value)}
             onChange={onDatePickerChange}
             style={{ width: "100%" }}
-            defaultValue={moment()}
+            defaultValue={moment().seconds(0).milliseconds(0).minutes(0).hours(0)}
             {...this.props.datePickerProps}
           /> : <div>
              <InputGroup compact={true} >
