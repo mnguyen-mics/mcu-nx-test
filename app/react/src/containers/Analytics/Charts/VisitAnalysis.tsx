@@ -5,7 +5,6 @@ import MetricsColumn from '../../../components/MetricsColumn';
 import { formatMetric } from '../../../utils/MetricHelper';
 import { LegendChartWithModal } from '../../../components/LegendChart';
 import messages from '../Overview/messages';
-import StackedAreaPlotDoubleAxis from '../../../components/StackedAreaPlot/StackedAreaPlotDoubleAxis';
 import Col from 'antd/lib/grid/col';
 import Row from 'antd/lib/grid/row';
 import { compose } from 'recompose';
@@ -19,6 +18,7 @@ import { RouteComponentProps } from 'react-router';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../Helpers/injectThemeColors';
+import DoubleStackedAreaPlot from '../../../components/Charts/DoubleStackedAreaPlot';
 
 const _messages: { [s: string]: FormattedMessage.MessageDescriptor } = messages;
 
@@ -51,12 +51,10 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
 
   renderStackedAreaChart(report: any[], options: any) {
     return (
-      <StackedAreaPlotDoubleAxis
-        identifier="StackedAreaChartVisitOverview"
+      <DoubleStackedAreaPlot
         dataset={report}
         options={options}
         style={{ flex: '1' }}
-        intlMessages={_messages}
       />
     );
   }

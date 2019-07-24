@@ -23,16 +23,15 @@ import McsMoment from '../../../../../utils/McsMoment';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-import StackedAreaPlotDoubleAxis from '../../../../../components/StackedAreaPlot/StackedAreaPlotDoubleAxis';
 import { LegendChart } from '../../../../../components/LegendChart';
 import ReportService from '../../../../../services/ReportService';
 import { makeCancelable } from '../../../../../utils/ApiHelper';
 import { CancelablePromise } from '../../../../../services/ApiService';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { Index } from '../../../../../utils';
+import DoubleStackedAreaPlot from '../../../../../components/Charts/DoubleStackedAreaPlot';
 
 const LegendChartTS = LegendChart as any;
-const StackedAreaPlotDoubleAxisJS = StackedAreaPlotDoubleAxis as any;
 
 export interface AdCardProps {
   ad: AdInfoResource;
@@ -232,7 +231,7 @@ class AdCard extends React.Component<Props, State> {
   }
 
   renderChart() {
-    const { colors, ad } = this.props;
+    const { colors } = this.props;
     const { dataSource } = this.state;
 
     const optionsForChart = {
@@ -253,12 +252,10 @@ class AdCard extends React.Component<Props, State> {
 
     return (
       <div style={{ display: 'flex' }}>
-        <StackedAreaPlotDoubleAxisJS
-          identifier={`StackedAreaChartDisplayOverview-${ad.id}`}
-          dataset={dataSource}
+        <DoubleStackedAreaPlot
+          dataset={dataSource as any}
           options={optionsForChart}
           style={{ flex: '1' }}
-          intlMessages={messages}
         />
       </div>
     );

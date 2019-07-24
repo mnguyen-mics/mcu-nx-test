@@ -12,7 +12,7 @@ export interface DoubleStackedAreaPlotProps {
   style?: any;
 }
 
-type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
+export type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
 
 interface ChartOptions {
   colors: string[];
