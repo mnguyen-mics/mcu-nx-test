@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PieChart from '../../../components/PieChart';
+import PieChart from '../../../components/Charts/CategoryBased/PiePlot';
 import messages from '../Overview/messages';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -106,7 +106,6 @@ class NewUsers extends React.Component<JoinedProps> {
           <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
         ) : (
           <PieChart
-            identifier="newUsers"
             dataset={dataset}
             options={pieChartsOptions}
           />
