@@ -508,9 +508,16 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       workspace,
     } = this.props;
     const datamartId = dmId || queryString.parse(search).datamartId;
-    const datamart = workspace(organisationId).datamarts.find(
-      d => d.id === datamartId,
-    );
+    const datamarts = workspace(organisationId).datamarts;
+    const datamart = datamarts.find(d => d.id === datamartId);
+    // case where there is only one Pionus datamart in the organisation,
+    // and there is no datamartFilter and no datamartId in URL
+    if (
+      datamarts.length === 1 &&
+      datamarts[0].storage_model_version !== 'v201506'
+    ) {
+      return true;
+    }
     return datamart && datamart.storage_model_version !== 'v201506';
   };
 
