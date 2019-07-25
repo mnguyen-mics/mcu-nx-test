@@ -27,6 +27,13 @@ function readIvyCredentials() {
   }
 }
 
+function setEnvironnementVariables(propertyName) {
+  var fs = require("fs");
+  var envFile = JSON.parse(fs.readFileSync('env.json'));
+  var env = envFile[process.env.NODE_ENV][propertyName]
+  return "'" + propertyName + "' : '" + env + "'";
+}
+
 module.exports = function (grunt) {
 
   var nexusCreds = readIvyCredentials();
@@ -461,7 +468,32 @@ module.exports = function (grunt) {
 
           }
         ]
-      }
+      },
+      appConfig: {
+        src: ['./app/conf/app-configuration.js'],
+        actions: [
+          {
+            name: 'WS_URL',
+            search: "'WS_URL' : '.*'",
+            replace: setEnvironnementVariables("WS_URL")
+          },
+          {
+            name: 'ADS_UPLOAD_URL',
+            search: "'ADS_UPLOAD_URL' : '.*'",
+            replace: setEnvironnementVariables("ADS_UPLOAD_URL")
+          }
+        ]
+      },
+      reactConfig: {
+        src: ['./app/conf/react-configuration.js'],
+        actions: [
+          {
+            name: 'API_URL',
+            search: "'API_URL' : '.*'",
+            replace: setEnvironnementVariables("API_URL")
+          }
+        ]
+      },
     },
 
     // Compiles Sass to CSS and generates necessary files if requested
@@ -592,6 +624,7 @@ module.exports = function (grunt) {
     }
 
     grunt.task.run([
+      'setEnvVariablesConfig',
       'clean:server',
       'jshint:all',
       'shell:iab_placeholder',
@@ -607,6 +640,11 @@ module.exports = function (grunt) {
     grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
     grunt.task.run(['serve']);
   });
+
+  grunt.registerTask('setEnvVariablesConfig', [
+    'regex-replace:appConfig',
+    'regex-replace:reactConfig'
+  ]);
 
   grunt.registerTask('test', [
     'clean:server',
