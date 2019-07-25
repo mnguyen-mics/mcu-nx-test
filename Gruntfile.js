@@ -27,7 +27,9 @@ function readIvyCredentials() {
   }
 }
 
-function setEnvironnementVariable(propertyName) {
+function setEnvironmentVariable(match, propertyName) {
+  if (!process.env.NODE_ENV) { return match; }
+
   var fs = require("fs");
   var envFile = JSON.parse(fs.readFileSync('env.json'));
   var env = envFile[process.env.NODE_ENV][propertyName];
@@ -475,12 +477,16 @@ module.exports = function (grunt) {
           {
             name: 'WS_URL',
             search: "'WS_URL' : '.*'",
-            replace: setEnvironnementVariable("WS_URL")
+            replace: function (match) {
+              return setEnvironmentVariable(match, "WS_URL");
+            }
           },
           {
             name: 'ADS_UPLOAD_URL',
             search: "'ADS_UPLOAD_URL' : '.*'",
-            replace: setEnvironnementVariable("ADS_UPLOAD_URL")
+            replace: function (match) {
+              return setEnvironmentVariable(match, "ADS_UPLOAD_URL");
+            }
           }
         ]
       },
@@ -490,7 +496,9 @@ module.exports = function (grunt) {
           {
             name: 'API_URL',
             search: "'API_URL' : '.*'",
-            replace: setEnvironnementVariable("API_URL")
+            replace: function (match) {
+              return setEnvironmentVariable(match, "API_URL");
+            }
           }
         ]
       },
