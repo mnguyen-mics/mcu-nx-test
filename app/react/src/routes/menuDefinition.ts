@@ -8,7 +8,6 @@ import { analyticsDefinition } from './analyticsRoutes';
 import { NavigatorMenuDefinition, generateMissingdefinitionItemFromRoute } from './domain';
 import messages from '../containers/Menu/messages'
 import { marketplaceDefinition } from './marketplaceRoutes';
-import { settingsDefinition } from './settingsRoutes';
 
 
 
@@ -180,10 +179,6 @@ const marketplaceMenuDefinition: NavigatorMenuDefinition = {
     {
       ...generateMissingdefinitionItemFromRoute(marketplaceDefinition.marketplaceOfferCatalogList),
       translation: messages.marketplaceOfferCatalog,
-    },
-    {
-      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsSubscribedOffersList),
-      translation: messages.marketplaceSubsribedOffers,
     },
   ]
 }
