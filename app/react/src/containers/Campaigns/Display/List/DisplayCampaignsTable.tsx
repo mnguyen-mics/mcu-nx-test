@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
-import { Icon, Modal, Tooltip, message } from 'antd';
+import { Icon, Tooltip, message } from 'antd';
 import {
   FormattedMessage,
   InjectedIntlProps,
@@ -13,12 +13,8 @@ import {
   TableViewFilters,
 } from '../../../../components/TableView/index';
 import McsIcon from '../../../../components/McsIcon';
-import DisplayCampaignsService from '../../../../services/DisplayCampaignService';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import {
-  buildDefaultSearch,
-  compareSearches,
-  isSearchValid,
   parseSearch,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
@@ -27,15 +23,17 @@ import { campaignStatuses } from '../../constants';
 import messages from '../messages';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { RouteComponentProps } from 'react-router';
-import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
+import {
+  DisplayCampaignResource,
+  DisplayCampaignResourceWithStats,
+} from '../../../../models/campaign/display/DisplayCampaignResource';
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
-import { MapDispatchToProps, MapStateToProps } from './DisplayCampaignsPage';
+import { MapDispatchToProps } from './DisplayCampaignsPage';
 import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
-import { FilterParams } from './DisplayCampaignsActionbar';
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -58,10 +56,14 @@ const messagesMap: {
   },
 });
 
-interface DisplayCampaignsTableProps
-  extends MapDispatchToProps,
-    MapStateToProps {
+interface DisplayCampaignsTableProps extends MapDispatchToProps {
+  dataSource: DisplayCampaignResourceWithStats[];
+  archiveCampaign: (campaign: DisplayCampaignResource) => void;
   rowSelection: ExtendedTableRowSelection;
+  hasCampaigns: boolean;
+  isFetchingCampaigns: boolean;
+  isFetchingStats: boolean;
+  totalCampaigns: number;
   isUpdatingStatuses: boolean;
 }
 
@@ -70,119 +72,6 @@ type JoinedProps = DisplayCampaignsTableProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCampaignsTable extends React.Component<JoinedProps> {
-  componentDidMount() {
-    const {
-      history,
-      location: { search, pathname },
-      match: {
-        params: { organisationId },
-      },
-      loadDisplayCampaignsDataSource,
-    } = this.props;
-
-    if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(search, DISPLAY_SEARCH_SETTINGS),
-        state: { reloadDataSource: true },
-      });
-    } else {
-      const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
-      loadDisplayCampaignsDataSource(organisationId, filter, true);
-    }
-  }
-
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const {
-      location: { search },
-      match: {
-        params: { organisationId },
-      },
-      history,
-      loadDisplayCampaignsDataSource,
-    } = this.props;
-
-    const {
-      location: { pathname: nextPathname, search: nextSearch, state },
-      match: {
-        params: { organisationId: nextOrganisationId },
-      },
-    } = nextProps;
-
-    const checkEmptyDataSource = state && state.reloadDataSource;
-
-    if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
-    ) {
-      if (!isSearchValid(nextSearch, DISPLAY_SEARCH_SETTINGS)) {
-        history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, DISPLAY_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
-        });
-      } else {
-        const filter = parseSearch<FilterParams>(
-          nextSearch,
-          DISPLAY_SEARCH_SETTINGS,
-        );
-        loadDisplayCampaignsDataSource(
-          nextOrganisationId,
-          filter,
-          checkEmptyDataSource,
-        );
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.resetDisplayCampaignsTable();
-  }
-
-  archiveCampaign = (campaign: DisplayCampaignResource) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      location: { pathname, state, search },
-      loadDisplayCampaignsDataSource,
-      history,
-      dataSource,
-      intl,
-    } = this.props;
-
-    const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
-
-    Modal.confirm({
-      title: intl.formatMessage(messages.confirmArchiveModalTitle),
-      content: intl.formatMessage(messages.confirmArchiveModalContent),
-      iconType: 'exclamation-circle',
-      okText: intl.formatMessage(messages.confirmArchiveModalOk),
-      cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
-      onOk() {
-        return DisplayCampaignsService.deleteCampaign(campaign.id).then(() => {
-          if (dataSource.length === 1 && filter.currentPage !== 1) {
-            const newFilter = {
-              ...filter,
-              currentPage: filter.currentPage - 1,
-            };
-            loadDisplayCampaignsDataSource(organisationId, filter);
-            history.replace({
-              pathname: pathname,
-              search: updateSearch(search, newFilter),
-              state: state,
-            });
-          } else {
-            loadDisplayCampaignsDataSource(organisationId, filter);
-          }
-        });
-      },
-      onCancel() {
-        //
-      },
-    });
-  };
-
   editCampaign = (campaign: DisplayCampaignResource) => {
     const {
       match: {
@@ -242,12 +131,13 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       match: {
         params: { organisationId },
       },
+      archiveCampaign,
       location: { search },
-      hasDisplayCampaigns,
-      isFetchingDisplayCampaigns,
-      isFetchingCampaignsStat,
+      hasCampaigns,
+      isFetchingCampaigns,
+      isFetchingStats,
       dataSource,
-      totalDisplayCampaigns,
+      totalCampaigns,
       labels,
       rowSelection,
       isUpdatingStatuses,
@@ -286,7 +176,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalDisplayCampaigns,
+      total: totalCampaigns,
       onChange: (page: number) => {
         this.updateLocationSearch({
           currentPage: page,
@@ -311,8 +201,8 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       numeralFormat: string,
       currency = '',
     ) => {
-      if (isFetchingCampaignsStat) {
-        return <i className="mcs-table-cell-loading" />; // (<span>loading...</span>);
+      if (isFetchingStats) {
+        return <i className="mcs-table-cell-loading" />;
       }
       switch (currency) {
         case 'EUR': {
@@ -428,7 +318,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
           },
           {
             intlMessage: messages.archiveDisplayCampaign,
-            callback: this.archiveCampaign,
+            callback: archiveCampaign,
           },
         ],
       },
@@ -484,7 +374,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       buttonMessage: messages.filterByLabel,
     };
 
-    return hasDisplayCampaigns ? (
+    return hasCampaigns ? (
       <div className="mcs-table-container">
         <TableViewFilters
           columns={dataColumns}
@@ -494,7 +384,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
           filtersOptions={filtersOptions}
           columnsVisibilityOptions={columnsVisibilityOptions}
           dataSource={dataSource}
-          loading={isFetchingDisplayCampaigns || isUpdatingStatuses}
+          loading={isFetchingCampaigns || isUpdatingStatuses}
           pagination={pagination}
           labelsOptions={labelsOptions}
           rowSelection={rowSelection}

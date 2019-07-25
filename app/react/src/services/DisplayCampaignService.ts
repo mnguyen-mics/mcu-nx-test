@@ -13,6 +13,19 @@ import { KeywordListSelectionResource, KeywordListSelectionCreateRequest } from 
 import { DealsListSelectionCreateRequest, DealsListSelectionResource } from '../models/dealList/dealList';
 import { AdExchangeSelectionCreateRequest, AdExchangeSelectionResource } from '../models/adexchange/adexchange';
 import { DisplayNetworkSelectionCreateRequest, DisplayNetworkSelectionResource } from '../models/displayNetworks/displayNetworks'
+import { CampaignStatus } from '../models/campaign/constants';
+import { PaginatedApiParam } from '../utils/ApiHelper';
+
+export interface CampaignsOptions extends PaginatedApiParam {
+  administration_id?: string;
+  scope?: string;
+  keywords?: string;
+  status?: CampaignStatus[];
+  archived?: boolean;
+  label_id?: string[];
+  order_by?: string[];
+  automated?: boolean;
+}
 
 const DisplayCampaignService = {
 
@@ -22,6 +35,21 @@ const DisplayCampaignService = {
   ): Promise<DataResponse<DisplayCampaignResource>> {
     const endpoint = `display_campaigns/${campaignId}`;
     return ApiService.getRequest(endpoint);
+  },
+
+  getDisplayCampaigns(
+    organisationId: string,
+    campaignType: 'DISPLAY',
+    options: CampaignsOptions = {},
+  ): Promise<DataListResponse<DisplayCampaignResource>> {
+    const endpoint = 'campaigns';
+
+    const params = {
+      organisation_id: organisationId,
+      campaign_type: campaignType,
+      ...options,
+    };
+    return ApiService.getRequest(endpoint, params);
   },
 
   getCampaignDisplayViewDeep(

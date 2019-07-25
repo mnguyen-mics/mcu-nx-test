@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import { Icon, Tooltip, Modal } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import {
   TableViewFilters,
@@ -8,29 +8,23 @@ import {
 } from '../../../../components/TableView/index';
 import { McsIcon } from '../../../../components/index';
 import messages from './messages';
+import {
+  EmailCampaignResourceWithStats,
+  EmailCampaignResource,
+} from '../../../../models/campaign/email/EmailCampaignResource';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 import { Index } from '../../../../utils';
-import { EmailCampaignResource } from '../../../../models/campaign/email';
 import { LabelsSelectorProps } from '../../../../components/LabelsSelector';
-import {
-  parseSearch,
-  updateSearch,
-} from '../../../../utils/LocationSearchHelper';
+import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
-import { CampaignResource } from '../../../../models/campaign/CampaignResource';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
-import { CampaignStatus } from '../../../../models/campaign';
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { compose } from 'recompose';
+import { CampaignStatus } from '../../../../models/campaign/constants';
 
 interface EmailCampaignsTableProps {
-  dataSource: CampaignResource[];
-  fetchCampaignAndStats: (
-    organisationId: string,
-    filter: Index<any>,
-    checkHasCampaigns?: boolean,
-  ) => void;
+  dataSource: EmailCampaignResourceWithStats[];
+  archiveCampaign: (campaign: EmailCampaignResource) => void;
   totalCampaigns: number;
   hasEmailCampaigns: boolean;
   isFetchingCampaigns: boolean;
@@ -45,54 +39,6 @@ type Props = EmailCampaignsTableProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class EmailCampaignsTable extends React.Component<Props> {
-  handleArchiveCampaign = (campaign: EmailCampaignResource) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      fetchCampaignAndStats,
-      location: { pathname, state, search },
-      history,
-      intl,
-      dataSource,
-    } = this.props;
-
-    const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
-
-    const reloadEmailCampaign = () => {
-      fetchCampaignAndStats(organisationId, filter);
-    };
-
-    Modal.confirm({
-      title: intl.formatMessage(messages.confirmArchiveModalTitle),
-      content: intl.formatMessage(messages.confirmArchiveModalContent),
-      iconType: 'exclamation-circle',
-      okText: intl.formatMessage(messages.confirmArchiveModalOk),
-      cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
-      onOk() {
-        EmailCampaignService.deleteEmailCampaign(campaign.id).then(() => {
-          if (dataSource.length === 1 && filter.currentPage !== 1) {
-            const newFilter = {
-              ...filter,
-              currentPage: filter.currentPage - 1,
-              automated: true,
-            };
-            reloadEmailCampaign();
-            history.replace({
-              pathname: pathname,
-              search: updateSearch(search, newFilter),
-              state: state,
-            });
-          }
-          reloadEmailCampaign();
-        });
-      },
-      onCancel() {
-        //
-      },
-    });
-  };
-
   handleEditCampaign = (campaign: EmailCampaignResource) => {
     const {
       match: {
@@ -106,6 +52,7 @@ class EmailCampaignsTable extends React.Component<Props> {
   render() {
     const {
       dataSource,
+      archiveCampaign,
       isFetchingCampaigns,
       intl: { formatMessage },
       onFilterChange,
@@ -188,7 +135,7 @@ class EmailCampaignsTable extends React.Component<Props> {
         intlMessage: messages.emailHeaderName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: CampaignResource) => (
+        render: (text: string, record: EmailCampaignResource) => (
           <Link
             className="mcs-campaigns-link"
             to={`/v2/o/${record.organisation_id}/campaigns/email/${record.id}`}
@@ -244,7 +191,7 @@ class EmailCampaignsTable extends React.Component<Props> {
           },
           {
             intlMessage: messages.archiveCampaign,
-            callback: this.handleArchiveCampaign,
+            callback: archiveCampaign,
           },
         ],
       },
@@ -283,8 +230,6 @@ class EmailCampaignsTable extends React.Component<Props> {
     ];
 
     return hasEmailCampaigns ? (
-      <EmptyTableView iconType="email" text="EMPTY_EMAILS" />
-    ) : (
       <div className="mcs-table-container">
         <TableViewFilters
           columns={dataColumns}
@@ -299,6 +244,8 @@ class EmailCampaignsTable extends React.Component<Props> {
           labelsOptions={labelsOptions}
         />
       </div>
+    ) : (
+      <EmptyTableView iconType="email" text="EMPTY_EMAILS" />
     );
   }
 }

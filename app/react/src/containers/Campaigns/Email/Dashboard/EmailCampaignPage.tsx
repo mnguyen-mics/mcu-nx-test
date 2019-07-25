@@ -33,7 +33,7 @@ import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import ReportService from '../../../../services/ReportService';
 import log from '../../../../utils/Logger';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { CampaignStatus } from '../../../../models/campaign';
+import { CampaignStatus } from '../../../../models/campaign/constants';
 
 const { Content } = Layout;
 

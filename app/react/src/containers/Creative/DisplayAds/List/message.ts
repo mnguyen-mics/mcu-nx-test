@@ -55,4 +55,28 @@ export default defineMessages({
     id: 'creatives.display.list.actionColumn.archive',
     defaultMessage: 'Archive',
   },
+  archiveSuccess: {
+    id: 'archive.creatives.success.msg',
+    defaultMessage: 'Creatives successfully archived',
+  },
+  archiveNativeSuccess: {
+    id: 'archive.native.success.msg',
+    defaultMessage: 'Native creative successfully archived',
+  },
+  searchPlaceholder: {
+    id: 'creative.native.list.searchPlaceholder',
+    defaultMessage: 'Search Native Creatives',
+  },
+  archiveEmailSuccess: {
+    id: 'archive.email.success.msg',
+    defaultMessage: 'Email templates successfully archived',
+  },
+  searchPlaceholderEmail: {
+    id: 'creative.email.list.searchPlaceholder',
+    defaultMessage: 'Search Email Templates',
+  },
+  sendTest: {
+    id: 'creative.email.list.sendTest',
+    defaultMessage: 'Send a test Email',
+  },
 });

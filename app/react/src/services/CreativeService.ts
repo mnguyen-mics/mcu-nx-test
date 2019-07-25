@@ -18,7 +18,7 @@ import { PluginLayout } from '../models/plugin/PluginLayout';
 import PluginService from './PluginService';
 import log from '../utils/Logger';
 
-export interface GetCreativesOptions {
+export interface CreativesOptions {
   type?: CreativeType;
   subtype?: CreativeSubtype[];
   scope?: string;
@@ -34,7 +34,7 @@ export interface GetCreativesOptions {
 const CreativeService = {
   getCreatives<T extends GenericCreativeResource>(
     organisationId: string,
-    options: GetCreativesOptions = {},
+    options: CreativesOptions = {},
   ): Promise<DataListResponse<T>> {
     const endpoint = 'creatives';
 
@@ -54,7 +54,7 @@ const CreativeService = {
 
   getDisplayAds(
     organisationId: string,
-    options: GetCreativesOptions = {},
+    options: CreativesOptions = {},
   ): Promise<DataListResponse<DisplayAdResource>> {
     return CreativeService.getCreatives(organisationId, {
       type: 'DISPLAY_AD',
@@ -64,7 +64,7 @@ const CreativeService = {
 
   getEmailTemplates(
     organisationId: string,
-    options: GetCreativesOptions = {},
+    options: CreativesOptions = {},
   ): Promise<DataListResponse<EmailTemplateResource>> {
     return CreativeService.getCreatives(organisationId, {
       type: 'EMAIL_TEMPLATE',

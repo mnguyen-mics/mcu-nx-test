@@ -6,9 +6,6 @@ import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
-import CampaignService, {
-  GetCampaignsOptions,
-} from '../../../../services/CampaignService';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
@@ -16,12 +13,14 @@ import { EMAIL_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import messages from './messages';
 import { Index } from '../../../../utils';
+import { CampaignsOptions } from '../../../../services/DisplayCampaignService';
+import EmailCampaignService from '../../../../services/EmailCampaignService';
 
 const fetchExportData = (organisationId: string, filter: Index<any>) => {
   const campaignType = 'EMAIL';
 
   const buildOptionsForGetCampaigns = () => {
-    const options: GetCampaignsOptions = {
+    const options: CampaignsOptions = {
       archived: filter.statuses.includes('ARCHIVED'),
       first_result: 0,
       max_results: 2000,
@@ -39,7 +38,7 @@ const fetchExportData = (organisationId: string, filter: Index<any>) => {
   const dimension = ['campaign_id'];
 
   const apiResults = Promise.all([
-    CampaignService.getCampaigns(
+    EmailCampaignService.getEmailCampaigns(
       organisationId,
       campaignType,
       buildOptionsForGetCampaigns(),

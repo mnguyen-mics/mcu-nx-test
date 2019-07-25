@@ -1,70 +1,48 @@
 import * as React from 'react';
-import { Layout, message } from 'antd';
+import { Layout, message, Modal } from 'antd';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import NativeActionBar from './NativeActionBar';
 import NativeList from './NativeList';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import CreativeService, {
-  GetCreativesOptions,
+  CreativesOptions,
 } from '../../../../services/CreativeService';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import {
-  getNativeCreatives,
-  isFetchingNativeCreatives,
-  hasNativeCreatives,
-  getNativeCreativesTotal,
-} from '../../../../state/Creatives/Native/selectors';
-import {
   parseSearch,
   updateSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import { NATIVE_SEARCH_SETTINGS } from './constants';
-import * as NativeCreativesActions from '../../../../state/Creatives/Native/actions';
-import { Filters } from '../../../../components/ItemList';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
-
-const messages = defineMessages({
-  archiveSuccess: {
-    id: 'archive.native.success.msg',
-    defaultMessage: 'Native creative successfully archived',
-  },
-});
+import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import { Index } from '../../../../utils';
+import messagesMap from '../../DisplayAds/List/message';
 
 const { Content } = Layout;
-
-export interface MapDispatchToProps {
-  fetchNativeCreatives: (
-    organisationId: string,
-    filter: Filters,
-    bool?: boolean,
-  ) => void;
-  resetNativeCreatives: () => void;
-}
-
-export interface MapStateToProps {
-  hasNatives: boolean;
-  isFetchingNatives: boolean;
-  dataSource: object[]; // type better
-  totalNativeCreatives: number;
-}
 
 interface NativeListPageState {
   selectedRowKeys: string[];
   isArchiveModalVisible: boolean;
   allRowsAreSelected: boolean;
   isArchiving: boolean;
+  hasNatives: boolean;
+  isLoadingNatives: boolean;
+  dataSource: DisplayAdResource[];
+  totalNativeCreatives: number;
 }
 
 type JoinedProps = InjectedIntlProps &
-  MapStateToProps &
-  MapDispatchToProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
@@ -77,8 +55,105 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       isArchiveModalVisible: false,
       allRowsAreSelected: false,
       isArchiving: false,
+      hasNatives: true,
+      isLoadingNatives: false,
+      dataSource: [],
+      totalNativeCreatives: 0,
     };
   }
+
+  componentDidMount() {
+    const {
+      history,
+      location: { search, pathname },
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    if (!isSearchValid(search, NATIVE_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, NATIVE_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
+    } else {
+      const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
+      this.fetchNativeAds(organisationId, filter, true);
+    }
+  }
+
+  componentWillReceiveProps(nextProps: JoinedProps) {
+    const {
+      location: { search },
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
+
+    const {
+      location: { pathname: nextPathname, search: nextSearch, state },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
+    } = nextProps;
+
+    const checkEmptyDataSource = state && state.reloadDataSource;
+
+    if (
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
+    ) {
+      if (!isSearchValid(nextSearch, NATIVE_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, NATIVE_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
+        });
+      } else {
+        const filter = parseSearch(nextSearch, NATIVE_SEARCH_SETTINGS);
+        this.fetchNativeAds(nextOrganisationId, filter, checkEmptyDataSource);
+      }
+    }
+  }
+
+  fetchNativeAds = (
+    organisationId: string,
+    filter: Index<any>,
+    init: boolean = false,
+  ) => {
+    this.setState({
+      isLoadingNatives: true,
+    });
+    let options: CreativesOptions = {
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      archived: filter.archived,
+      subtype: ['NATIVE'],
+    };
+
+    if (filter.keywords) {
+      options = {
+        ...options,
+        keywords: filter.keywords,
+      };
+    }
+    CreativeService.getDisplayAds(organisationId, options).then(result => {
+      const data = result.data;
+      const displayAdsById = normalizeArrayOfObject(data, 'id');
+      this.setState({
+        dataSource: Object.keys(displayAdsById).map(id => {
+          return {
+            ...displayAdsById[id],
+          };
+        }),
+        isLoadingNatives: false,
+        hasNatives: init ? result.count !== 0 : true,
+        totalNativeCreatives: result.total || 0,
+      });
+    });
+  };
+
   onSelectChange = (selectedRowKeys: string[]) => {
     this.setState({ selectedRowKeys });
   };
@@ -113,13 +188,14 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
 
   getAllNativeCreativeIds = () => {
     const {
-      totalNativeCreatives,
       match: {
         params: { organisationId },
       },
       notifyError,
     } = this.props;
-    const options: GetCreativesOptions = {
+
+    const { totalNativeCreatives } = this.state;
+    const options: CreativesOptions = {
       type: 'DISPLAY_AD',
       subtype: ['NATIVE'],
       archived: false,
@@ -134,6 +210,56 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       });
   };
 
+  archiveNativeAd = (native: DisplayAdResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search, pathname, state },
+      history,
+      intl,
+    } = this.props;
+
+    const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
+
+    const { dataSource } = this.state;
+
+    const fetchDataSource = () => {
+      this.fetchNativeAds(organisationId, filter);
+    };
+
+    Modal.confirm({
+      title: intl.formatMessage(messagesMap.creativeModalConfirmArchivedTitle),
+      content: intl.formatMessage(messagesMap.creativeModalNoArchiveMessage),
+      iconType: 'exclamation-circle',
+      okText: intl.formatMessage(messagesMap.creativeModalConfirmArchivedOk),
+      cancelText: intl.formatMessage(messagesMap.cancelText),
+      onOk() {
+        CreativeService.updateDisplayCreative(native.id, {
+          ...native,
+          archived: true,
+        }).then(() => {
+          if (dataSource.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: filter.currentPage - 1,
+            };
+            fetchDataSource();
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
+          }
+          fetchDataSource();
+        });
+      },
+      onCancel() {
+        //
+      },
+    });
+  };
+
   redirectAndNotify = () => {
     const {
       location: { search, pathname, state },
@@ -142,29 +268,30 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       match: {
         params: { organisationId },
       },
-      dataSource,
     } = this.props;
+
+    const { dataSource } = this.state;
     const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
     if (dataSource.length === 1 && filter.currentPage !== 1) {
       const newFilter = {
         ...filter,
         currentPage: 1,
       };
-      this.props.fetchNativeCreatives(organisationId, filter, true);
+      this.fetchNativeAds(organisationId, filter, true);
       history.push({
         pathname: pathname,
         search: updateSearch(search, newFilter),
         state: state,
       });
     } else {
-      this.props.fetchNativeCreatives(organisationId, filter, true);
+      this.fetchNativeAds(organisationId, filter, true);
     }
 
     this.setState({
       isArchiveModalVisible: false,
       selectedRowKeys: [],
     });
-    message.success(intl.formatMessage(messages.archiveSuccess));
+    message.success(intl.formatMessage(messagesMap.archiveNativeSuccess));
   };
 
   makeArchiveAction = (nativeIds: string[]) => {
@@ -213,15 +340,15 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
   };
 
   render() {
-    const { selectedRowKeys, allRowsAreSelected } = this.state;
     const {
-      hasNatives,
-      isFetchingNatives,
+      selectedRowKeys,
+      allRowsAreSelected,
       dataSource,
+      hasNatives,
+      isLoadingNatives,
       totalNativeCreatives,
-      fetchNativeCreatives,
-      resetNativeCreatives,
-    } = this.props;
+    } = this.state;
+
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
@@ -239,16 +366,6 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       handleCancel: this.handleCancel,
       isArchiving: this.state.isArchiving,
     };
-
-    const reduxProps = {
-      hasNatives,
-      isFetchingNatives,
-      dataSource,
-      totalNativeCreatives,
-      fetchNativeCreatives,
-      resetNativeCreatives,
-    };
-
     return (
       <div className="ant-layout">
         <NativeActionBar
@@ -257,7 +374,14 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <NativeList rowSelection={rowSelection} {...reduxProps} />
+            <NativeList
+              rowSelection={rowSelection}
+              dataSource={dataSource}
+              archiveNativeAd={this.archiveNativeAd}
+              hasNativeAds={hasNatives}
+              isLoadingNativeAds={isLoadingNatives}
+              totalNativeAds={totalNativeCreatives}
+            />
           </Content>
         </div>
       </div>
@@ -265,24 +389,9 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
   }
 }
 
-const mapStateToProps = (state: MapStateToProps) => ({
-  hasNatives: hasNativeCreatives(state),
-  isFetchingNativeCreatives: isFetchingNativeCreatives(state),
-  dataSource: getNativeCreatives(state),
-  totalNativeCreatives: getNativeCreativesTotal(state),
-});
-
-const mapDispatchToProps = {
-  fetchNativeCreatives: NativeCreativesActions.fetchNativeCreatives.request,
-  resetNativeCreatives: NativeCreativesActions.resetNativeCreatives,
-};
 export default compose<JoinedProps, {}>(
   withRouter,
   injectIntl,
   injectDrawer,
   injectNotifications,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
 )(NativeListPage);

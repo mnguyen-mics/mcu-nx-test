@@ -1,19 +1,17 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Layout, message, Button } from 'antd';
+import { Layout, message, Button, Modal } from 'antd';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-
 import DisplayCampaignsActionbar, {
   FilterParams,
 } from './DisplayCampaignsActionbar';
 import DisplayCampaignsTable from './DisplayCampaignsTable';
 import { injectDrawer } from '../../../../components/Drawer';
-import CampaignService, {
-  GetCampaignsOptions,
-} from '../../../../services/CampaignService';
-import DisplayCampaignService from '../../../../services/DisplayCampaignService';
+import DisplayCampaignService, {
+  CampaignsOptions,
+} from '../../../../services/DisplayCampaignService';
 import EditCampaignsForm, {
   EditCampaignsFormProps,
   EditCampaignsFormData,
@@ -21,75 +19,63 @@ import EditCampaignsForm, {
 import {
   parseSearch,
   updateSearch,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
-import { getTableDataSource } from '../../../../state/Campaigns/Display/selectors';
-import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
+import {
+  DisplayCampaignResourceWithStats,
+  DisplayCampaignResource,
+} from '../../../../models/campaign/display/DisplayCampaignResource';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import messages from '../messages';
-import {
-  IDisplayCampaignFormService,
-} from '../Edit/DisplayCampaignFormService';
+import { IDisplayCampaignFormService } from '../Edit/DisplayCampaignFormService';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { UpdateMessage } from '../Dashboard/ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import * as DisplayCampaignsActions from '../../../../state/Campaigns/Display/actions';
 import { Label } from '../../../Labels/Labels';
 import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import { Index } from '../../../../utils';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import ReportService from '../../../../services/ReportService';
+import { normalizeReportView } from '../../../../utils/MetricHelper';
 
 export interface MapDispatchToProps {
   labels: Label[];
-  hasDisplayCampaigns: boolean;
-  isFetchingDisplayCampaigns: boolean;
-  isFetchingCampaignsStat: boolean;
-  dataSource: DisplayCampaignResource[];
-  totalDisplayCampaigns: number;
-}
-
-export interface MapStateToProps {
-  loadDisplayCampaignsDataSource: (
-    organisationId: string,
-    filer: FilterParams,
-    bool?: boolean,
-  ) => void;
-  resetDisplayCampaignsTable: () => void;
 }
 
 const { Content } = Layout;
-interface DisplayCampaignsPageProps {
-  totalDisplayCampaigns: number;
-  dataSource: DisplayCampaignResource[];
-}
 
-interface DisplayCampaignsPageState {
+interface State {
   selectedRowKeys: string[];
   allRowsAreSelected: boolean;
   visible: boolean;
   isUpdatingStatuses: boolean;
   isArchiving: boolean;
+  isLoadingCampaigns: boolean;
+  isLoadingStats: boolean;
+  dataSource: DisplayCampaignResourceWithStats[];
+  totalCampaigns: number;
+  hasCampaigns: boolean;
 }
 
-type JoinedProps = DisplayCampaignsPageProps &
-  InjectedIntlProps &
+type Props = InjectedIntlProps &
   InjectedDrawerProps &
   MapDispatchToProps &
-  MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class DisplayCampaignsPage extends React.Component<
-  JoinedProps,
-  DisplayCampaignsPageState
-> {
-  
+class DisplayCampaignsPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDisplayCampaignFormService)
   private _displayCampaignFormService: IDisplayCampaignFormService;
 
-  constructor(props: JoinedProps) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       selectedRowKeys: [],
@@ -97,8 +83,142 @@ class DisplayCampaignsPage extends React.Component<
       visible: false,
       isUpdatingStatuses: false,
       isArchiving: false,
+      isLoadingCampaigns: false,
+      isLoadingStats: false,
+      dataSource: [],
+      totalCampaigns: 0,
+      hasCampaigns: true,
     };
   }
+
+  componentDidMount() {
+    const {
+      history,
+      location: { search, pathname },
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, DISPLAY_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
+    } else {
+      const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
+      this.loadDisplayCampaignsDataSource(organisationId, filter, true);
+    }
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const {
+      location: { search },
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
+
+    const {
+      location: { pathname: nextPathname, search: nextSearch },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
+    } = nextProps;
+
+    if (
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
+    ) {
+      if (!isSearchValid(nextSearch, DISPLAY_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, DISPLAY_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
+        });
+      } else {
+        const filter = parseSearch<FilterParams>(
+          nextSearch,
+          DISPLAY_SEARCH_SETTINGS,
+        );
+        this.loadDisplayCampaignsDataSource(nextOrganisationId, filter);
+      }
+    }
+  }
+
+  loadDisplayCampaignsDataSource = (
+    organisationId: string,
+    filter: Index<any>,
+    init: boolean = false,
+  ) => {
+    this.setState({
+      isLoadingCampaigns: true,
+      isLoadingStats: true,
+    });
+    const campaignType = 'DISPLAY';
+
+    const options: CampaignsOptions = {
+      archived: filter.statuses.includes('ARCHIVED'),
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+    };
+
+    if (filter.label_id.length) {
+      options.label_id = filter.label_id;
+    }
+
+    const apiStatuses = filter.statuses.filter(
+      (status: string) => status !== 'ARCHIVED',
+    );
+
+    if (filter.keywords) {
+      options.keywords = filter.keywords;
+    }
+    if (apiStatuses.length > 0) {
+      options.status = apiStatuses;
+    }
+
+    DisplayCampaignService.getDisplayCampaigns(
+      organisationId,
+      campaignType,
+      options,
+    ).then(result => {
+      const data = result.data;
+      const campaignsById = normalizeArrayOfObject(data, 'id');
+      this.setState({
+        dataSource: Object.keys(campaignsById).map(campaignId => {
+          return {
+            ...campaignsById[campaignId],
+          };
+        }),
+        isLoadingCampaigns: false,
+        totalCampaigns: result.total || 0,
+        hasCampaigns: init ? result.count !== 0 : true,
+      });
+
+      ReportService.getDisplayCampaignPerformanceReport(
+        organisationId,
+        filter.from,
+        filter.to,
+        ['campaign_id'],
+      ).then(statsResult => {
+        const statsByCampaignlId = normalizeArrayOfObject(
+          normalizeReportView(statsResult.data.report_view),
+          'campaign_id',
+        );
+        this.setState({
+          isLoadingStats: false,
+          dataSource: Object.keys(campaignsById).map(campaignId => {
+            return {
+              ...statsByCampaignlId[campaignId],
+              ...campaignsById[campaignId],
+            };
+          }),
+        });
+      });
+    });
+  };
 
   showModal = () => {
     this.setState({
@@ -108,18 +228,22 @@ class DisplayCampaignsPage extends React.Component<
 
   getAllCampaignsIds = () => {
     const {
-      totalDisplayCampaigns,
       match: {
         params: { organisationId },
       },
       notifyError,
     } = this.props;
-    const options: GetCampaignsOptions = {
-      max_results: totalDisplayCampaigns,
+    const { totalCampaigns } = this.state;
+    const options: CampaignsOptions = {
+      max_results: totalCampaigns,
       automated: false,
       archived: false,
     };
-    return CampaignService.getCampaigns(organisationId, 'DISPLAY', options)
+    return DisplayCampaignService.getDisplayCampaigns(
+      organisationId,
+      'DISPLAY',
+      options,
+    )
       .then(apiResp =>
         apiResp.data.map(campaignResource => campaignResource.id),
       )
@@ -134,26 +258,25 @@ class DisplayCampaignsPage extends React.Component<
       location: { search, pathname, state },
       history,
       intl,
-      dataSource,
-      loadDisplayCampaignsDataSource,
       match: {
         params: { organisationId },
       },
     } = this.props;
+    const { dataSource } = this.state;
     const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
     if (dataSource.length === 1 && filter.currentPage !== 1) {
       const newFilter = {
         ...filter,
         currentPage: filter.currentPage - 1,
       };
-      loadDisplayCampaignsDataSource(organisationId, filter);
+      this.loadDisplayCampaignsDataSource(organisationId, filter);
       history.replace({
         pathname: pathname,
         search: updateSearch(search, newFilter),
         state: state,
       });
     } else {
-      loadDisplayCampaignsDataSource(organisationId, filter);
+      this.loadDisplayCampaignsDataSource(organisationId, filter);
     }
     this.setState({
       visible: false,
@@ -162,7 +285,7 @@ class DisplayCampaignsPage extends React.Component<
     message.success(intl.formatMessage(messages.campaignsArchived));
   };
 
-  makeAuditAction = (campaignIds: string[]) => {
+  archiveCampaigns = (campaignIds: string[]) => {
     this.setState({
       isArchiving: true,
     });
@@ -191,14 +314,62 @@ class DisplayCampaignsPage extends React.Component<
       });
   };
 
+  archiveCampaign = (campaign: DisplayCampaignResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { pathname, state, search },
+      history,
+      intl,
+    } = this.props;
+
+    const { dataSource } = this.state;
+
+    const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
+
+    const fetchDataSource = () => {
+      this.loadDisplayCampaignsDataSource(organisationId, filter);
+    };
+
+    Modal.confirm({
+      title: intl.formatMessage(messages.confirmArchiveModalTitle),
+      content: intl.formatMessage(messages.confirmArchiveModalContent),
+      iconType: 'exclamation-circle',
+      okText: intl.formatMessage(messages.confirmArchiveModalOk),
+      cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
+      onOk() {
+        return DisplayCampaignService.deleteCampaign(campaign.id).then(() => {
+          if (dataSource.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: filter.currentPage - 1,
+            };
+            fetchDataSource();
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
+          } else {
+            fetchDataSource();
+          }
+        });
+      },
+      onCancel() {
+        //
+      },
+    });
+  };
+
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
     if (allRowsAreSelected) {
       return this.getAllCampaignsIds().then((allCampaignsIds: string[]) => {
-        this.makeAuditAction(allCampaignsIds);
+        this.archiveCampaigns(allCampaignsIds);
       });
     } else {
-      return this.makeAuditAction(selectedRowKeys);
+      return this.archiveCampaigns(selectedRowKeys);
     }
   };
 
@@ -351,32 +522,32 @@ class DisplayCampaignsPage extends React.Component<
 
   handleStatusAction = (status: CampaignStatus) => {
     const {
-      totalDisplayCampaigns,
       match: {
         params: { organisationId },
       },
-      loadDisplayCampaignsDataSource,
       location: { search },
     } = this.props;
-    const { allRowsAreSelected, selectedRowKeys } = this.state;
+    const { allRowsAreSelected, selectedRowKeys, totalCampaigns } = this.state;
     this.setState({
       isUpdatingStatuses: true,
     });
     let campaignIdsToUpdate: string[] = [];
     if (allRowsAreSelected) {
-      const options: GetCampaignsOptions = {
-        max_results: totalDisplayCampaigns,
+      const options: CampaignsOptions = {
+        max_results: totalCampaigns,
         archived: false,
       };
       const allCampaignsIds: string[] = [];
-      CampaignService.getCampaigns(organisationId, 'DISPLAY', options).then(
-        apiResp => {
-          apiResp.data.forEach((campaignResource, index) => {
-            allCampaignsIds.push(campaignResource.id);
-          });
-          campaignIdsToUpdate = allCampaignsIds;
-        },
-      );
+      DisplayCampaignService.getDisplayCampaigns(
+        organisationId,
+        'DISPLAY',
+        options,
+      ).then(apiResp => {
+        apiResp.data.forEach((campaignResource, index) => {
+          allCampaignsIds.push(campaignResource.id);
+        });
+        campaignIdsToUpdate = allCampaignsIds;
+      });
     } else if (selectedRowKeys) {
       campaignIdsToUpdate = selectedRowKeys;
     }
@@ -400,7 +571,7 @@ class DisplayCampaignsPage extends React.Component<
               search,
               DISPLAY_SEARCH_SETTINGS,
             );
-            loadDisplayCampaignsDataSource(organisationId, filter);
+            this.loadDisplayCampaignsDataSource(organisationId, filter);
           },
         );
       })
@@ -413,23 +584,18 @@ class DisplayCampaignsPage extends React.Component<
   };
 
   render() {
+    const { labels } = this.props;
+
     const {
       selectedRowKeys,
       isUpdatingStatuses,
       allRowsAreSelected,
-    } = this.state;
-
-    const {
-      labels,
       dataSource,
-      hasDisplayCampaigns,
-      isFetchingDisplayCampaigns,
-      isFetchingCampaignsStat,
-      totalDisplayCampaigns,
-      removeNotification,
-      loadDisplayCampaignsDataSource,
-      resetDisplayCampaignsTable,
-    } = this.props;
+      hasCampaigns,
+      isLoadingCampaigns,
+      isLoadingStats,
+      totalCampaigns,
+    } = this.state;
 
     const rowSelection = {
       selectedRowKeys,
@@ -451,18 +617,6 @@ class DisplayCampaignsPage extends React.Component<
       handleStatusAction: this.handleStatusAction,
     };
 
-    const reduxProps = {
-      labels,
-      dataSource,
-      hasDisplayCampaigns,
-      isFetchingDisplayCampaigns,
-      isFetchingCampaignsStat,
-      totalDisplayCampaigns,
-      removeNotification,
-      loadDisplayCampaignsDataSource,
-      resetDisplayCampaignsTable,
-    };
-
     return (
       <div className="ant-layout">
         <DisplayCampaignsActionbar
@@ -472,9 +626,15 @@ class DisplayCampaignsPage extends React.Component<
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <DisplayCampaignsTable
+              dataSource={dataSource}
+              archiveCampaign={this.archiveCampaign}
               rowSelection={rowSelection}
+              hasCampaigns={hasCampaigns}
+              isFetchingCampaigns={isLoadingCampaigns}
+              isFetchingStats={isLoadingStats}
+              totalCampaigns={totalCampaigns}
               isUpdatingStatuses={isUpdatingStatuses}
-              {...reduxProps}
+              labels={labels}
             />
           </Content>
         </div>
@@ -485,29 +645,15 @@ class DisplayCampaignsPage extends React.Component<
 
 const mapStateToProps = (state: any) => ({
   labels: state.labels.labelsApi.data,
-  hasDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.hasItems,
-  isFetchingDisplayCampaigns:
-    state.displayCampaignsTable.displayCampaignsApi.isFetching,
-  isFetchingCampaignsStat:
-    state.displayCampaignsTable.performanceReportApi.isFetching,
-  dataSource: getTableDataSource(state),
-  totalDisplayCampaigns: state.displayCampaignsTable.displayCampaignsApi.total,
 });
 
-const mapDispatchToProps = {
-  loadDisplayCampaignsDataSource:
-    DisplayCampaignsActions.loadDisplayCampaignsDataSource,
-  resetDisplayCampaignsTable:
-    DisplayCampaignsActions.resetDisplayCampaignsTable,
-};
-
-export default compose<DisplayCampaignsPageProps, JoinedProps>(
+export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectDrawer,
   connect(
     mapStateToProps,
-    mapDispatchToProps,
+    undefined,
   ),
   injectNotifications,
 )(DisplayCampaignsPage);

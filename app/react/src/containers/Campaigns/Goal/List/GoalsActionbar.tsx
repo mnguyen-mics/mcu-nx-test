@@ -12,7 +12,7 @@ import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 
 import ExportService from '../../../../services/ExportService';
-import GoalService, { GetGoalsOption } from '../../../../services/GoalService';
+import GoalService, { GoalsOptions } from '../../../../services/GoalService';
 import ReportService from '../../../../services/ReportService';
 
 import { normalizeReportView } from '../../../../utils/MetricHelper';
@@ -42,7 +42,7 @@ interface State {
 
 const fetchExportData = (organisationId: string, filter: Index<any>) => {
   const buildOptionsForGetGoals = () => {
-    let options: GetGoalsOption = {};
+    let options: GoalsOptions = {};
     if (filter.statuses) {
       options = {
         archived: filter.statuses.includes('ARCHIVED'),
