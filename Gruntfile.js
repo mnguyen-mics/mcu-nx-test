@@ -30,7 +30,7 @@ function readIvyCredentials() {
 function setEnvironnementVariable(propertyName) {
   var fs = require("fs");
   var envFile = JSON.parse(fs.readFileSync('env.json'));
-  var env = envFile[process.env.NODE_ENV][propertyName]
+  var env = envFile[process.env.NODE_ENV][propertyName];
   return "'" + propertyName + "' : '" + env + "'";
 }
 
