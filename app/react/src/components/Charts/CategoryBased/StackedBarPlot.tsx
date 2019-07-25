@@ -17,8 +17,6 @@ export interface StackedBarPlotOptions {
   yKeys: yKey[];
   xKey: string;
   showLegend?: boolean;
-  isDraggable?: boolean;
-  onDragEnd?: any;
 }
 
 type yKey = { key: string; message: FormattedMessage.MessageDescriptor | string };
@@ -49,8 +47,9 @@ class StackedBarPlot extends React.Component<Props, {}> {
     return yKeys.map(y => {
       return {
         name: typeof y.message === "string" ? y.message : formatMessage(y.message),
-        data: this.formatSerieData(dataset, y)
-      } as any
+        data: this.formatSerieData(dataset, y),
+        type: "column" as any
+      }
     });
   }
 

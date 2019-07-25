@@ -9,7 +9,7 @@ import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateToo
 export interface DoubleStackedAreaPlotProps {
   dataset: Dataset;
   options: ChartOptions;
-  style?: any;
+  style?: React.CSSProperties;
 }
 
 export type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
@@ -140,14 +140,14 @@ class DoubleStackedAreaPlot extends React.Component<Props, {}> {
               lineWidth: 1,
             },
           },
-          threshold: null,
-        } as any,
+          threshold: undefined,
+        },
       },
       xAxis: {
         type: 'datetime',
         dateTimeLabelFormats: {
-          month: '%e. %b' as any,
-          year: '%b' as any,
+          month: { main: '%e. %b'},
+          year: { main: '%b'},
         },
         ...generateXAxisGridLine()
       },

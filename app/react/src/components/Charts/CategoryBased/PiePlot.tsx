@@ -29,7 +29,7 @@ export interface PiePlotOptionsProps {
 export interface PiePlotProps {
   dataset: DatasetProps[];
   options: PiePlotOptionsProps;
-  style?: any;
+  style?: React.CSSProperties;
 }
 
 type Props = PiePlotProps & InjectedIntlProps;

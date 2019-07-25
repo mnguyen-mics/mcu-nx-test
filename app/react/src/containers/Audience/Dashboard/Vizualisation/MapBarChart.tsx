@@ -159,7 +159,7 @@ class MapBarChart extends React.Component<Props, State> {
       ) {
         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
-        return (
+        return this.state.queryResult && this.state.queryResult.length && (
           <StackedBarPlot
             dataset={this.state.queryResult as any}
             options={optionsForChart}
