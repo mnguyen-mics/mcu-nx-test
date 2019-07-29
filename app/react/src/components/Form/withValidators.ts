@@ -110,11 +110,10 @@ const isValidInteger = (formatMessage: FormatMessageHandler): Validator => value
     formatMessage(defaultErrorMessages.invalidNumber) : undefined;
 };
 
+const isValidNumber = (value: any) => !/^\s*$/.test(value) && !isNaN(value);
+
 const isValidArrayOfNumber = (formatMessage: FormatMessageHandler): Validator => value => {
-  const containsOnlyNumber = value.reduce((acc: boolean, val: string) => {
-    return /^\d+$/.test(val) ? acc : false;
-  }, true)
-  return !(value && Array.isArray(value) && containsOnlyNumber) ? formatMessage(defaultErrorMessages.invalidNumber) : undefined
+  return !(value && Array.isArray(value) && value.every(v => isValidNumber(v))) ? formatMessage(defaultErrorMessages.invalidNumber) : undefined
 }
 
 const isCharLengthLessThan = (formatMessage: FormatMessageHandler) =>  (length: number): Validator => value => {
