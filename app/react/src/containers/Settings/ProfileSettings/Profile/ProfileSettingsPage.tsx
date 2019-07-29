@@ -9,7 +9,6 @@ import {
   defineMessages,
   InjectedIntlProps,
 } from 'react-intl';
-import SettingsService from '../../../../services/SettingsService';
 import * as SessionActions from '../../../../state/Session/actions';
 
 import { FormInput } from '../../../../components/Form/';
@@ -18,6 +17,9 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import UserResource from '../../../../models/directory/UserResource';
+import { lazyInject } from '../../../../config/inversify.config';
+import { ISettingsService } from '../../../../services/SettingsService';
+import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 export interface ProfileSettingsPageProps {
@@ -55,6 +57,10 @@ class ProfileSettingsPage extends React.Component<
   Props,
   ProfileSettingsPageState
 > {
+
+  @lazyInject(TYPES.ISettingsService)
+  private _settingsService: ISettingsService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -89,7 +95,7 @@ class ProfileSettingsPage extends React.Component<
     } = this.props;
 
     this.setState({ loading: true });
-    SettingsService.putProfile(organisationId, e)
+    this._settingsService.putProfile(organisationId, e)
       .then(res => {
         refreshConnectedUser();
         notifySuccess({

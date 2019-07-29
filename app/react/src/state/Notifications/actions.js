@@ -65,6 +65,7 @@ const notifyInfo = notifConfig => {
 };
 
 export {
+  addNotification,
   removeNotification,
   resetNotifications,
   notifyError,

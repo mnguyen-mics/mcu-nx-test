@@ -102,6 +102,7 @@ import {
 } from '../services/StoredProcedureService';
 import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
+import { ISettingsService, SettingsService } from '../services/SettingsService';
 
 const container = new Container();
 
@@ -178,6 +179,7 @@ container.bind<IChannelService>(TYPES.IChannelService).to(ChannelService);
 container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
 container.bind<IConsentService>(TYPES.IConsentService).to(ConsentService);
 container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
+container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 
 export const { lazyInject } = getDecorators(container, false);
 
