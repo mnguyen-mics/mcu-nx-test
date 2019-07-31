@@ -1,13 +1,18 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable camelcase */
 import { delay } from 'redux-saga';
-import { call, put, take, race, fork, all, select } from 'redux-saga/effects';
+import {
+  getContext,
+  call,
+  put,
+  take,
+  race,
+  fork,
+  all,
+  select,
+} from 'redux-saga/effects';
 import { SplitFactory } from '@splitsoftware/splitio';
-import MicsTagServices from '../../services/MicsTagServices.ts';
-
-import log from '../../utils/Logger.ts';
-import AuthService from '../../services/AuthService.ts';
-import PersistedStoreService from '../../services/PersistedStoreService.ts';
+import log from '../../utils/Logger';
 import {
   LOG_IN,
   LOG_OUT,
@@ -18,24 +23,23 @@ import { logIn } from './actions';
 import { getConnectedUser } from '../Session/actions';
 import { setOrgFeature, setClientFeature } from '../Features/actions';
 import { getStoredConnectedUser } from '../Session/selectors';
+import { UserProfileResource } from '../../models/directory/UserProfileResource';
 
-
-const persistedStoreService = new PersistedStoreService();
-
-function* authorize(credentialsOrRefreshToken) {
+function* authorize(credentialsOrRefreshToken: any) {
+  const _authService = yield getContext('authService');
   const response = yield call(
-    AuthService.createAccessToken,
+    _authService.createAccessToken,
     credentialsOrRefreshToken,
   );
   const { access_token, expires_in, refresh_token } = response.data;
-  yield call(AuthService.setAccessToken, access_token);
-  yield call(AuthService.setAccessTokenExpirationDate, expires_in);
+  yield call(_authService.setAccessToken, access_token);
+  yield call(_authService.setAccessTokenExpirationDate, expires_in);
   if (
-    window.angular &&
-    window.angular.element(global.document.body).injector()
+    (window as any).angular &&
+    (window as any).angular.element((global as any).document.body).injector()
   ) {
-    window.angular
-      .element(global.document.body)
+    (window as any).angular
+      .element((global as any).document.body)
       .injector()
       .get('Restangular')
       .setDefaultHeaders({ Authorization: access_token });
@@ -43,8 +47,8 @@ function* authorize(credentialsOrRefreshToken) {
   // Update refresh token if API sent a new one
   if (refresh_token) {
     log.debug(`Store refresh token ${refresh_token}`);
-    yield call(AuthService.setRefreshToken, refresh_token);
-    yield call(AuthService.setRefreshTokenExpirationDate, expires_in);
+    yield call(_authService.setRefreshToken, refresh_token);
+    yield call(_authService.setRefreshTokenExpirationDate, expires_in);
   }
 
   yield put(logIn.success(access_token));
@@ -52,25 +56,27 @@ function* authorize(credentialsOrRefreshToken) {
 }
 
 function* authorizeLoop(
-  credentialsOrRefreshToken,
-  isAuthenticated = false,
-  canAuthenticate = false,
-  isNewLogin = false,
+  credentialsOrRefreshToken: any,
+  isAuthenticated: boolean = false,
+  canAuthenticate: boolean = false,
+  isNewLogin: boolean = false,
 ) {
+  const _authService = yield getContext('authService');
+  const _micsTagService = yield getContext('authService');
   try {
     let refreshToken;
     if (isAuthenticated || canAuthenticate) {
-      refreshToken = yield call(AuthService.getRefreshToken);
+      refreshToken = yield call(_authService.getRefreshToken);
     }
     if (!isAuthenticated && canAuthenticate) {
       if (refreshToken) {
         yield call(authorize, { refreshToken });
       }
-      refreshToken = yield call(AuthService.getRefreshToken);
+      refreshToken = yield call(_authService.getRefreshToken);
     } else if (isNewLogin) {
       try {
         refreshToken = yield call(
-          AuthService.createRefreshToken,
+          _authService.createRefreshToken,
           credentialsOrRefreshToken,
         );
       } catch (error) {
@@ -85,15 +91,15 @@ function* authorizeLoop(
         yield call(authorize, { refreshToken });
       }
     } else if (!isAuthenticated && !canAuthenticate) {
-      yield put(LOG_OUT);
+      yield put(LOG_OUT as any);
     }
-    let connectedUser;
+    let connectedUser: UserProfileResource | undefined;
 
     const connectedUserStored = yield select(getStoredConnectedUser);
     if (connectedUserStored && connectedUserStored.id) {
       connectedUser = connectedUserStored;
     } else if (refreshToken) {
-      connectedUser = yield call(AuthService.getConnectedUser);
+      connectedUser = yield call(_authService.getConnectedUser);
     }
 
     if (connectedUser) {
@@ -118,32 +124,33 @@ function* authorizeLoop(
         }),
       };
 
-      yield put(setOrgFeature(global.window.MCS_CONSTANTS.FEATURES));
-
-      const clientPromise = () => new Promise((resolve, reject) => {
-        const factory = SplitFactory({
-          core: {
-            authorizationKey: '9o6sgmo2fbk275ao4cugtnd9ch6sb3fstv1d',
-            key: connectedUser.id,
-            trafficType: 'user'
-          }
+      yield put(setOrgFeature((global as any).window.MCS_CONSTANTS.FEATURES));
+      
+      const clientPromise = () =>
+        new Promise((resolve, reject) => {
+          const factory = SplitFactory({
+            core: {
+              authorizationKey: '9o6sgmo2fbk275ao4cugtnd9ch6sb3fstv1d',
+              key: connectedUser && connectedUser.id,
+              trafficType: 'user',
+            },
+          });
+          const client = factory.client();
+          client.on(client.Event.SDK_READY, () => {
+            return resolve(client);
+          });
+          client.on(client.Event.SDK_READY_TIMED_OUT, () => {
+            return reject();
+          });
         });
-        const client = factory.client();
-        client.on(client.Event.SDK_READY, () => {
-          return resolve(client);
-        });
-        client.on(client.Event.SDK_READY_TIMED_OUT, () => {
-          return reject();
-        });
-      });
 
-      const client = yield call(clientPromise);
-      yield put(setClientFeature(client));
+      const clientAction = yield call(clientPromise);
+      yield put(setClientFeature(clientAction));
 
-      MicsTagServices.addUserAccountProperty(connectedUser.id);
-      MicsTagServices.setUserProperties(filteredConnectedUser);
+      _micsTagService.addUserAccountProperty(connectedUser.id);
+      _micsTagService.setUserProperties(filteredConnectedUser);
       yield put(getConnectedUser.success(filteredConnectedUser));
-      window.organisationId =
+      (window as any).organisationId =
         connectedUser.workspaces[
           connectedUser.default_workspace
         ].organisation_id; // eslint-disable-line no-undef
@@ -151,12 +158,12 @@ function* authorizeLoop(
       while (true) {
         let expiresIn;
         // check expirein variable
-        expiresIn = AuthService.tokenExpiresIn(
-          AuthService.getAccessTokenExpirationDate(),
+        expiresIn = _authService.tokenExpiresIn(
+          _authService.getAccessTokenExpirationDate(),
         );
         log.debug(`Will refresh access token in ${expiresIn} ms`);
         yield call(delay, expiresIn);
-        const storedRefreshToken = yield call(AuthService.getRefreshToken);
+        const storedRefreshToken = yield call(_authService.getRefreshToken);
         log.debug(`Authorize user with refresh token ${storedRefreshToken}`);
         if (storedRefreshToken) {
           const results = yield call(authorize, {
@@ -170,26 +177,27 @@ function* authorizeLoop(
     // set global variable used by angular to run Session.init(organisationId) on stateChangeStart ui router hook
   } catch (e) {
     log.error('Authorize error : ', e);
-    yield call(AuthService.deleteCredentials);
+    yield call(_authService.deleteCredentials);
     yield put(logIn.failure(e));
   }
 }
 
 function* authentication() {
+  const _authService = yield getContext('authService');
   while (true) {
-    const isAuthenticated = yield call(AuthService.isAuthenticated);
-    const canAuthenticate = yield call(AuthService.canAuthenticate);
+    const isAuthenticated = yield call(_authService.isAuthenticated);
+    const canAuthenticate = yield call(_authService.canAuthenticate);
 
     let credentialsOrRefreshToken = null;
     let isNewLogin = false;
     // TODO check non expired storedRefreshToken
     // Is not logged in and has no refresh token
 
-    if (!isAuthenticated && !canAuthenticate) {
+    if (!isAuthenticated && !canAuthenticate && LOG_IN.REQUEST) {
       // Wait for LOG_IN.REQUEST
       const { payload } = yield take(LOG_IN.REQUEST);
       if (payload.remember) {
-        yield call(AuthService.setRememberMe, { rememberMe: true });
+        yield call(_authService.setRememberMe, { rememberMe: true });
       }
 
       credentialsOrRefreshToken = {
@@ -200,7 +208,7 @@ function* authentication() {
       isNewLogin = true;
     } else if (!isAuthenticated && canAuthenticate) {
       credentialsOrRefreshToken = {
-        refreshToken: AuthService.getRefreshToken(),
+        refreshToken: _authService.getRefreshToken(),
       };
     }
 
@@ -216,9 +224,10 @@ function* authentication() {
     });
 
     if (signOutAction) {
-      yield call(AuthService.revokeRefreshToken);
-      yield call(AuthService.deleteCredentials);
-      persistedStoreService.removeStringItem('store');
+      const _persistedStoreService = yield getContext('persistedStoreService');
+      yield call(_authService.revokeRefreshToken);
+      yield call(_authService.deleteCredentials);
+      _persistedStoreService.removeStringItem('store');
       if (signOutAction.meta && signOutAction.meta.redirectCb) {
         signOutAction.meta.redirectCb();
       }

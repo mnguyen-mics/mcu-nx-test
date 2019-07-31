@@ -110,9 +110,7 @@ export class AudienceTagFeedService
     id: string,
     options: object = {},
   ): Promise<DataListResponse<PropertyResourceShape>> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/tag_feeds/${id}/properties`;
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
   }
@@ -136,10 +134,8 @@ export class AudienceTagFeedService
     technicalName: string,
     params: object = {},
   ): Promise<DataResponse<PropertyResourceShape> | void> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/tag_feeds/${id}/properties/technical_name=${technicalName}`;
-    return PluginService.handleSaveOfProperties(
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties/technical_name=${technicalName}`;
+    return this._pluginService.handleSaveOfProperties(
       params,
       organisationId,
       this.entityPath,
@@ -152,9 +148,7 @@ export class AudienceTagFeedService
     organisationId: string,
     options: object = {},
   ): Promise<DataResponse<AudienceTagFeed>> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/tag_feeds?organisation_id=${organisationId}`;
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds?organisation_id=${organisationId}`;
 
     const params = {
       ...options,
@@ -167,9 +161,7 @@ export class AudienceTagFeedService
 
   // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
   getAudienceFeedProperties = (id: string, options: object = {}) => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/tag_feeds/${id}/properties`;
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options).then((res: any) => {
       return { ...res.data, id };

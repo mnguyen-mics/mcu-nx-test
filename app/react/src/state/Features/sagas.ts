@@ -5,7 +5,7 @@ import { setOrgFeature } from './actions';
 import {
   APP_STARTUP,
 } from '../action-types';
-import log from '../../utils/Logger.ts';
+import log from '../../utils/Logger';
 
 function* watchInitializationSuccess() {
   yield take(APP_STARTUP.SUCCESS);
@@ -23,8 +23,8 @@ function* watchInitializationComplete() {
   });
 
   if (!failure) {
-    const additionnalFeatures = global.window.localStorage.getItem('features');
-    let features = global.window.MCS_CONSTANTS.FEATURES;
+    const additionnalFeatures = (global as any).window.localStorage.getItem('features');
+    let features = (global as any).window.MCS_CONSTANTS.FEATURES;
     try {
       features = features.concat(JSON.parse(additionnalFeatures));
     } catch (e) {

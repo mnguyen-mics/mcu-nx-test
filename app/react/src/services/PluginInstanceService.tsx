@@ -3,9 +3,43 @@ import { PropertyResourceShape } from '../models/plugin';
 import { PluginInstance } from '../models/Plugins';
 import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
+import { injectable, unmanaged, inject } from 'inversify';
+import { TYPES } from '../constants/types';
 
-abstract class PluginInstanceService<T extends PluginInstance> {
-  constructor(public entityPath: string) {}
+export interface IPluginInstanceService<T> {
+  getInstanceById: (id: string, options?: object) => Promise<DataResponse<T>>;
+  getInstanceProperties: (
+    id: string,
+    options?: object,
+  ) => Promise<DataListResponse<PropertyResourceShape>>;
+  updatePluginInstance: (
+    id: string,
+    options: object,
+  ) => Promise<DataResponse<T>>;
+  updatePluginInstanceProperty: (
+    organisationId: string,
+    id: string,
+    technicalName: string,
+    params: object,
+  ) => Promise<DataResponse<PropertyResourceShape> | void>;
+  createPluginInstance: (
+    organisationId: string,
+    options: object,
+  ) => Promise<DataResponse<T>>;
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null>;
+}
+
+@injectable()
+abstract class PluginInstanceService<T extends PluginInstance>
+  implements IPluginInstanceService<T> {
+  entityPath: string;
+
+  @inject(TYPES.IPluginService)
+  private _pluginServiceAlias: IPluginService;
+
+  constructor(@unmanaged() _entityPath: string) {
+    this.entityPath = _entityPath;
+  }
 
   getInstanceById = (id: string, options: object = {}): Promise<DataResponse<T>> => {
     const endpoint = `${this.entityPath}/${id}`;
@@ -44,10 +78,8 @@ abstract class PluginInstanceService<T extends PluginInstance> {
     technicalName: string,
     params: object = {},
   ): Promise<DataResponse<PropertyResourceShape> | void> => {
-    const endpoint = `${
-      this.entityPath
-    }/${id}/properties/technical_name=${technicalName}`;
-    return PluginService.handleSaveOfProperties(
+    const endpoint = `${this.entityPath}/${id}/properties/technical_name=${technicalName}`;
+    return this._pluginServiceAlias.handleSaveOfProperties(
       params,
       organisationId,
       this.entityPath,

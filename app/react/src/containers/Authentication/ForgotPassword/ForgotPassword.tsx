@@ -5,7 +5,9 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Form, Input, Button, Alert, Col, Row } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import messages from './messages';
-import AuthService from '../../../services/AuthService';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IAuthService } from '../../../services/AuthService';
 
 const logoUrl = require('../../../assets/images/logo.png');
 const FormItem = Form.Item;
@@ -21,6 +23,10 @@ interface State {
 type Props = ForgotPasswordProps & InjectedIntlProps & FormComponentProps
 
 class ForgotPassword extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IAuthService)
+  private _authService: IAuthService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -35,7 +41,7 @@ class ForgotPassword extends React.Component<Props, State> {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         this.setState({ isRequesting: true })
-        AuthService
+        this._authService
           .sendPassword(values.email)
           .then(() => {
             this.setState({ passwordSentSuccess: true, isRequesting: false })

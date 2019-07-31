@@ -3,7 +3,7 @@ import { appSagas } from './App/sagas';
 import { loginSagas } from './Login/sagas';
 import { sessionSagas } from './Session/sagas';
 import { labelsSagas } from './Labels/sagas';
-import { versionSagas } from './Version/sagas.ts';
+import { versionSagas } from './Version/sagas';
 import { featuresSagas } from './Features/sagas';
 
 export default function* sagas() {

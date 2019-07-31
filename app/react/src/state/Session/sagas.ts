@@ -1,31 +1,19 @@
 import { call, put, fork, takeEvery } from 'redux-saga/effects';
-
 import { addNotification } from '../Notifications/actions';
-import log from '../../utils/Logger.ts';
-import OrganisationService from '../../services/OrganisationService.ts';
+import log from '../../utils/Logger';
+import OrganisationService from '../../services/OrganisationService';
+import { WORKSPACE, GET_LOGO, PUT_LOGO, CONNECTED_USER } from '../action-types';
+import { getWorkspace, getCookies, putLogo, getLogo } from './actions';
+import { fetchAllLabels } from '../Labels/actions';
+import { Payload } from '../../utils/ReduxHelper';
 
-import {
-  WORKSPACE,
-  GET_LOGO,
-  PUT_LOGO,
-  CONNECTED_USER,
-} from '../action-types';
-
-import {
-  getWorkspace,
-  getCookies,
-  putLogo,
-  getLogo,
-} from './actions';
-
-import {
-  fetchAllLabels
-} from '../Labels/actions';
-
-function* fetchOrganisationWorkspace({ payload }) {
+function* fetchOrganisationWorkspace({ payload }: Payload) {
   try {
     const organisationId = payload;
-    const response = yield call(OrganisationService.getWorkspace, organisationId);
+    const response = yield call(
+      OrganisationService.getWorkspace,
+      organisationId,
+    );
     yield put(getWorkspace.success(response.data));
     yield put(fetchAllLabels.request(organisationId));
   } catch (e) {
@@ -44,11 +32,9 @@ function* fetchUserCookies() {
   }
 }
 
-function* downloadLogo({ payload }) {
+function* downloadLogo({ payload }: Payload) {
   try {
-    const {
-      organisationId,
-    } = payload;
+    const { organisationId } = payload;
     const response = yield call(OrganisationService.getLogo, organisationId);
     const logoUrl = URL.createObjectURL(response); /* global URL */
     yield put(getLogo.success({ logoUrl }));
@@ -62,16 +48,12 @@ function* downloadLogo({ payload }) {
       log.error('Error while getting org logo: ', e);
       yield put(getLogo.failure(er));
     }
-
   }
 }
 
-function* uploadLogo({ payload }) {
+function* uploadLogo({ payload }: Payload) {
   try {
-    const {
-      organisationId,
-      file,
-    } = payload;
+    const { organisationId, file } = payload;
 
     const formData = new FormData(); /* global FormData */
     formData.append('file', file);
@@ -81,11 +63,13 @@ function* uploadLogo({ payload }) {
   } catch (e) {
     log.error('Error while putting logo: ', e);
     yield put(putLogo.failure(e));
-    yield put(addNotification({
-      type: 'error',
-      messageKey: 'NOTIFICATION_ERROR_TITLE',
-      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION',
-    }));
+    yield put(
+      addNotification({
+        type: 'error',
+        messageKey: 'NOTIFICATION_ERROR_TITLE',
+        descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION',
+      }),
+    );
   }
 }
 

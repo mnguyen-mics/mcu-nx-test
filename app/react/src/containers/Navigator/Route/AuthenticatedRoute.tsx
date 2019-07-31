@@ -10,13 +10,15 @@ import {
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import Error from '../../../components/Error';
-import AuthService from '../../../services/AuthService';
+import { IAuthService } from '../../../services/AuthService';
 import log from '../../../utils/Logger';
 import { getWorkspace } from '../../../state/Session/actions';
 import { fetchAllLabels } from '../../../state/Labels/actions';
 import * as SessionHelper from '../../../state/Session/selectors';
 import errorMessages from '../../Navigator/messages';
 import injectFeatures, { InjectedFeaturesProps } from '../../Features/injectFeatures';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
 
 export interface AuthenticatedRouteProps {
   render: (props: any) => JSX.Element;
@@ -52,6 +54,9 @@ class AuthenticatedRoute extends React.Component<Props> {
     requiredFeatures: undefined,
     requireDatamart: false
   }
+
+  @lazyInject(TYPES.IAuthService)
+  private _authService: IAuthService;
 
   componentDidMount() {
     const {
@@ -130,7 +135,7 @@ class AuthenticatedRoute extends React.Component<Props> {
       errorRender,
     } = this.props;
 
-    const authenticated = AuthService.isAuthenticated() && connectedUserLoaded; // if access token is present
+    const authenticated = this._authService.isAuthenticated() && connectedUserLoaded; // if access token is present
     const renderRoute = (props: SubComponentProps) => {
       if (authenticated) {
 
@@ -144,7 +149,7 @@ class AuthenticatedRoute extends React.Component<Props> {
         }
 
         return <Error message={formatMessage(errorMessages.notFound)} />;
-      } else if (AuthService.canAuthenticate()) {
+      } else if (this._authService.canAuthenticate()) {
         window.location.reload(); // Shouldn't happen since it can only occur if the access token is expired manually and the page is refreshed just after.
       }
       log.error(`Access denied to ${props.match.url}, redirect to login`);

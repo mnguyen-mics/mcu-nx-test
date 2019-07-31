@@ -1,7 +1,7 @@
 import 'whatwg-fetch';
 import { isEmpty } from 'lodash';
-
-import AuthService from './AuthService';
+import LocalStorage from './LocalStorage';
+import { ACCESS_TOKEN } from './AuthService';
 
 export type StatusCode = 'ok' | 'error';
 
@@ -85,7 +85,7 @@ function request(
   requestHeaders.append('X-Requested-By', 'mediarithmics-navigator');
 
   if (!options.localUrl && options.authenticated) {
-    const token = AuthService.getAccessToken();
+    const token = LocalStorage.getItem(ACCESS_TOKEN);
     if (token) {
       requestHeaders.append('Authorization', token);
     } else {
@@ -235,3 +235,14 @@ export default {
   putRequest,
   deleteRequest,
 };
+
+export class MicsApiService {
+  deleteRequest<T>(
+    endpoint: string,
+    params: { [key: string]: any } = {},
+    headers: { [key: string]: any } = {},
+    options: ApiOptions = {},
+  ): Promise<T> {
+    return deleteRequest(endpoint, params, headers, options);
+  }
+}

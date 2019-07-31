@@ -1,3 +1,5 @@
+import { injectable } from 'inversify';
+
 export interface Mics {
   init: (siteToken: string) => void;
   push: (eventName: string, properties: any) => void;
@@ -5,25 +7,33 @@ export interface Mics {
 }
 
 export interface MicsWindow extends Window {
-  mics: any;
+  mics: Mics;
 }
 
-export default {
-  pushPageView: (datalayer?: any): void => {
-    if ((window as MicsWindow).mics && (window as MicsWindow).mics.push) {
-      (window as MicsWindow).mics.push("PageView",  datalayer ? datalayer : {})
+export interface IMicsTagService {
+  pushPageView: (datalayer?: any) => void;
+  addUserAccountProperty: (userAccountId: string) => void;
+  setUserProperties: (user: { id: string }) => void;
+}
+
+@injectable()
+export class MicsTagService implements IMicsTagService {
+  window: MicsWindow;
+  pushPageView = (datalayer?: any): void => {
+    if (this.window.mics && this.window.mics.push) {
+      this.window.mics.push('PageView', datalayer ? datalayer : {});
     }
-  },
-  addUserAccountProperty: (userAccountId: string): void => {
-    if ((window as MicsWindow).mics && (window as MicsWindow).mics.push) {
-      (window as MicsWindow).mics.addProperty("$user_account_id", userAccountId)
+  };
+  addUserAccountProperty = (userAccountId: string): void => {
+    if (this.window.mics && this.window.mics.push) {
+      this.window.mics.addProperty('$user_account_id', userAccountId);
     }
-  },
-  setUserProperties: (user: { id: string }): void => {
-    if ((window as MicsWindow).mics && (window as MicsWindow).mics.push) {
-      (window as MicsWindow).mics.addProperty("$set_user_profile_properties", {
-        '$user_account_id': user.id
-      })
+  };
+  setUserProperties = (user: { id: string }): void => {
+    if (this.window.mics && this.window.mics.push) {
+      this.window.mics.addProperty('$set_user_profile_properties', {
+        $user_account_id: user.id,
+      });
     }
-  }
+  };
 }

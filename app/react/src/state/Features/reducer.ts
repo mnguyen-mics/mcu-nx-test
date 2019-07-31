@@ -1,11 +1,13 @@
-import {
-  STORE_ORG_FEATURES,
-  STORE_FEATURE_FLAG_CLIENT
-} from '../action-types';
+import { STORE_ORG_FEATURES, STORE_FEATURE_FLAG_CLIENT } from '../action-types';
+import { Action } from 'redux-actions';
+import { Payload } from '../../utils/ReduxHelper';
 
-const features = (state = {
-  organisation: [],
-}, action) => {
+const features = (
+  state = {
+    organisation: [],
+  },
+  action: Action<Payload>,
+) => {
   switch (action.type) {
     case STORE_ORG_FEATURES:
       return {
@@ -15,7 +17,7 @@ const features = (state = {
     case STORE_FEATURE_FLAG_CLIENT:
       return {
         ...state,
-        client: action.payload
+        client: action.payload,
       };
     default:
       return state;
@@ -27,4 +29,3 @@ const FeaturesReducer = {
 };
 
 export default FeaturesReducer;
-

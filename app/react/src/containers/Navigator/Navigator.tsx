@@ -16,7 +16,6 @@ import { Login } from '../Authentication/Login';
 import { SetPassword } from '../Authentication/SetPassword';
 import routes from '../../routes/routes';
 import log from '../../utils/Logger';
-import AuthService from '../../services/AuthService';
 import { isAppInitialized } from '../../state/App/selectors';
 import * as loginActions from '../../state/Login/actions';
 import { setColorsStore } from '../../state/Theme/actions';
@@ -34,6 +33,7 @@ import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { INavigatorService } from '../../services/NavigatorService';
 import { Notifications } from '../../containers/Notifications';
+import { IAuthService } from '../../services/AuthService';
 
 interface MapStateToProps {
   initialized: boolean;
@@ -60,6 +60,9 @@ addLocaleData(enLocaleData || frLocaleData);
 class Navigator extends React.Component<JoinedProps, NavigatorState> {
   @lazyInject(TYPES.INavigatorService)
   private _navigatorService: INavigatorService;
+
+  @lazyInject(TYPES.IAuthService)
+  private _authService: IAuthService;
 
   constructor(props: JoinedProps) {
     super(props);
@@ -102,7 +105,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         document.addEventListener(
           'unauthorizedEvent',
           e => {
-            AuthService.deleteCredentials();
+            this._authService.deleteCredentials();
             this.props.history.push({ pathname: '/' });
           },
           false,
@@ -167,7 +170,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       match,
       location,
     }: RouteComponentProps<{ organisationId: string }>) => {
-      const authenticated = AuthService.isAuthenticated();
+      const authenticated = this._authService.isAuthenticated();
       let redirectToUrl = '/login';
       if (authenticated) {
         redirectToUrl = homeUrl;
@@ -178,7 +181,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     };
     const loginRouteRender = () => {
       const authenticated =
-        AuthService.isAuthenticated() || AuthService.canAuthenticate();
+      this._authService.isAuthenticated() || this._authService.canAuthenticate();
       if (authenticated) return <Redirect to={homeUrl} />;
       this.props.logOut();
       return <Login />;

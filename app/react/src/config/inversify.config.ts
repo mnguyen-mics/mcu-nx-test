@@ -1,4 +1,10 @@
-import { IServiceOfferPageService, ServiceOfferPageService } from './../containers/Settings/ServicesSettings/ServiceOfferPageService';
+import { IMicsTagService, MicsTagService } from './../services/MicsTagServices';
+import { IDashboardService } from './../services/DashboardServices';
+import { IFeedsStatsService } from './../services/FeedsStatsService';
+import {
+  IServiceOfferPageService,
+  ServiceOfferPageService,
+} from './../containers/Settings/ServicesSettings/ServiceOfferPageService';
 import { ICatalogService, CatalogService } from './../services/CatalogService';
 import {
   NavigatorService,
@@ -105,14 +111,8 @@ import {
 import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
 import { ISettingsService, SettingsService } from '../services/SettingsService';
-import {
-  IDashboardService,
-  DashboardService,
-} from '../services/DashboardServices';
-import {
-  IFeedsStatsService,
-  FeedsStatsService,
-} from '../services/FeedsStatsService';
+import { DashboardService } from '../services/DashboardServices';
+import { FeedsStatsService } from '../services/FeedsStatsService';
 
 const container = new Container();
 
@@ -189,11 +189,14 @@ container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
 container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
-container.bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService).to(ServiceOfferPageService);
+container
+  .bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService)
+  .to(ServiceOfferPageService);
 container
   .bind<IFeedsStatsService>(TYPES.IFeedsStatsService)
   .to(FeedsStatsService);
-
+container.bind<IMicsTagService>(TYPES.IMicsTagService).to(MicsTagService);
+MicsTagService;
 export const { lazyInject } = getDecorators(container, false);
 
 export default { container };
