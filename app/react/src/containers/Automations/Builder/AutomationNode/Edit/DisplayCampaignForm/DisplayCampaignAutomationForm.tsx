@@ -30,6 +30,7 @@ import AdFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/section
 import { BidOptimizerFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections';
 import { GoalFieldArray } from '../../../../../Campaigns/Display/Edit/DisplayCampaignForm';
 import { GoalFormSection } from '../../../../../Campaigns/Display/Edit/Sections/Programmatic';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -215,7 +216,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

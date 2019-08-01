@@ -29,6 +29,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { TYPES } from '../../../../../constants/types';
 import queryString from 'query-string';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -385,7 +386,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 

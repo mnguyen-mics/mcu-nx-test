@@ -1,4 +1,13 @@
+import { Cookies } from './../models/timeline/timeline';
+import { DrawableContent } from './../components/Drawer/index';
+import { Label } from './../containers/Labels/Labels';
 import { Action } from 'redux-actions';
+import { ThemeColorsShape } from '../containers/Helpers/injectThemeColors';
+import {
+  UserWorkspaceResource,
+  UserProfileResource,
+} from '../models/directory/UserProfileResource';
+import { Notification } from '../containers/Notifications/Notifications';
 
 const REQUEST = 'REQUEST';
 const SUCCESS = 'SUCCESS';
@@ -12,7 +21,53 @@ export interface CreateRequestType {
   EXPIRED_PASSWORD: string;
 }
 
-export type MicsReduxState = any; // type
+export interface MicsReduxState {
+  form: {
+    [key: string]: any; // find a way to type all forms
+  };
+  app: {
+    initialized: boolean;
+    initializationError: boolean;
+  };
+  theme: {
+    colors: ThemeColorsShape;
+  };
+  features: {
+    organisation: string[];
+  };
+  notifications: Notification[];
+  login: {
+    hasError: boolean;
+    error: any; // ?
+  };
+  session: {
+    workspace: UserWorkspaceResource;
+    connectedUser: UserProfileResource;
+    cookies: Cookies;
+    connectedUserLoaded: boolean;
+    isFechingCookies: boolean;
+    isFetchingWorkspace: boolean;
+    isUploadingLogo: boolean;
+    logoUrl: string;
+  };
+  labels: {
+    labelsApi: {
+      isFetching: boolean;
+      data: Label[];
+      total: number;
+      status: string;
+      count: number;
+      first_result: number;
+      max_result: number;
+      max_results: number;
+    };
+  };
+  menu: {
+    collapsed: boolean;
+    mode: string;
+  };
+  DrawableContents: DrawableContent[];
+}
 
 export type Payload = { [key: string]: any };
 

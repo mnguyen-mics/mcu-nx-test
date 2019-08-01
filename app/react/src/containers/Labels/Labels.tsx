@@ -5,10 +5,13 @@ import messages from './messages';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { ILabelService } from '../../services/LabelsService';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface Label {
   id: string;
   name: string;
+  organisation_id: string;
+  creation_ts: number;
 }
 
 interface LabelsProps {
@@ -134,6 +137,6 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
   }
 }
 
-export default connect((state: any) => ({
+export default connect((state: MicsReduxState) => ({
   orgLabels: state.labels.labelsApi.data,
 }))(Labels);

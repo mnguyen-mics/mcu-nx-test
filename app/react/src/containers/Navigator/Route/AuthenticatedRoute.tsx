@@ -19,6 +19,7 @@ import errorMessages from '../../Navigator/messages';
 import injectFeatures, { InjectedFeaturesProps } from '../../Features/injectFeatures';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 export interface AuthenticatedRouteProps {
   render: (props: any) => JSX.Element;
@@ -166,7 +167,7 @@ class AuthenticatedRoute extends React.Component<Props> {
 }
 
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   accessGrantedToOrganisation: SessionHelper.hasAccessToOrganisation(state),
   hasWorkspaceLoaded: SessionHelper.hasWorkspace(state),
   connectedUserLoaded: state.session.connectedUserLoaded,

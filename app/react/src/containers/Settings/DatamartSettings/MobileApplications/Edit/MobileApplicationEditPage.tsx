@@ -36,6 +36,7 @@ import { UserWorkspaceResource } from '../../../../../models/directory/UserProfi
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IChannelService } from '../../../../../services/ChannelService';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 interface State {
   mobileApplicationData: MobileApplicationFormData;
@@ -371,7 +372,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
   hasFeature: FeatureSelectors.hasFeature(state),
 });

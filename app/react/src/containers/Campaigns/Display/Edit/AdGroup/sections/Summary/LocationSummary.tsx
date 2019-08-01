@@ -13,6 +13,7 @@ import ObjectRenderer from '../../../../../../ObjectRenderer/ObjectRenderer';
 import { Geoname, IGeonameService } from '../../../../../../../services/GeonameService';
 import { lazyInject } from '../../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../../constants/types';
+import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
 
 interface MapStateProps {
   locationFields: LocationFieldModel[];
@@ -109,13 +110,13 @@ class LocationSummary extends React.Component<Props> {
   }
 }
 
-const getAdGroupFormData = (state: any): AdGroupFormData => {
+const getAdGroupFormData = (state: MicsReduxState): AdGroupFormData => {
   return getFormValues(AD_GROUP_FORM_NAME)(state) as AdGroupFormData;
 };
 
 export default compose(
   injectIntl,
-  connect(state => ({
+  connect((state: MicsReduxState) => ({
     locationFields: getAdGroupFormData(state).locationFields,
   })),
 )(LocationSummary);

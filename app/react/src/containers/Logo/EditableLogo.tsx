@@ -15,6 +15,7 @@ import { MenuMode } from 'antd/lib/menu';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../Notifications/injectNotifications';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 const Dragger = Upload.Dragger;
 
@@ -153,7 +154,7 @@ class EditableLogo extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   isUploadingLogo: state.session.isUploadingLogo,
   logoUrl: state.session.logoUrl,
 });

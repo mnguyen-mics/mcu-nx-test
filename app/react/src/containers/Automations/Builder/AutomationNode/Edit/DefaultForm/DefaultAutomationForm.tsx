@@ -18,6 +18,7 @@ import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { DefaultFormData, FORM_ID } from '../domain';
 import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -117,7 +118,7 @@ class DefaultAutomationForm extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

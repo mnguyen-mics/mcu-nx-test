@@ -21,6 +21,7 @@ import {
   DatamartSearchSettings,
   TypeSearchSettings,
 } from '../../utils/LocationSearchHelper';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 const messages = defineMessages({
   audienceSegment: {
@@ -448,7 +449,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 

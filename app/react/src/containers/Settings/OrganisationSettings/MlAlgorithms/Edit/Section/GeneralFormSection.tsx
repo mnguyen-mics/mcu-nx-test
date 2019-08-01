@@ -15,6 +15,7 @@ import {
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { FORM_ID } from '../MlAlgorithmForm';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
 interface MapStateToProps {
     formValues: Partial<MlAlgorithmResource>;
@@ -84,7 +85,7 @@ class GeneralFormSection extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
     formValues: getFormValues(FORM_ID)(state),
   });
   

@@ -9,6 +9,7 @@ import { getWorkspace } from '../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -72,7 +73,7 @@ class DatamartSelector extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 

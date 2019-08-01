@@ -18,6 +18,7 @@ import {
 } from '../../../../../components/Form';
 import { FORM_ID } from '../ImportEditForm';
 import { Import } from '../../../../../models/imports/imports';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 const messages = defineMessages({
   sectionTitleGeneral: {
@@ -257,7 +258,7 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

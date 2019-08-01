@@ -22,6 +22,7 @@ import { AutomationFormData, INITIAL_AUTOMATION_DATA, generateInitialAutomationD
 import { IAutomationFormService } from '../Edit/AutomationFormService';
 import AutomationTemplateSelector from './AutomationTemplateSelector';
 import { QueryInputEvaluationMode, QueryInputEvaluationPeriodUnit } from '../../../models/automations/automations';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
@@ -284,7 +285,7 @@ export default compose(
   injectIntl,
   withRouter,
   injectNotifications,
-  connect((state: any) => ({
+  connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,
   })),
 )(AutomationBuilderPage);

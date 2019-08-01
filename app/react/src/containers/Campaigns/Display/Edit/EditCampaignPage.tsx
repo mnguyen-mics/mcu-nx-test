@@ -11,9 +11,7 @@ import {
   EditDisplayCampaignRouteMatchParam,
   INITIAL_DISPLAY_CAMPAIGN_FORM_DATA,
 } from './domain';
-import {
-  IDisplayCampaignFormService,
-} from './DisplayCampaignFormService';
+import { IDisplayCampaignFormService } from './DisplayCampaignFormService';
 import messages from './messages';
 import DisplayCampaignForm from './DisplayCampaignForm';
 import Loading from '../../../../components/Loading';
@@ -26,6 +24,7 @@ import { DisplayCampaignSubType } from '../../../../models/campaign/constants';
 import DisplayAdServingCampaignForm from './DisplayAdServingCampaignForm';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 interface State {
   displayCampaignFormData: DisplayCampaignFormData;
@@ -38,7 +37,6 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IDisplayCampaignFormService)
   private _displayCampaignFormService: IDisplayCampaignFormService;
 
@@ -226,6 +224,8 @@ export default compose(
   withRouter,
   injectIntl,
   injectDatamart,
-  connect(state => ({ hasFeature: FeatureSelectors.hasFeature(state) })),
+  connect((state: MicsReduxState) => ({
+    hasFeature: FeatureSelectors.hasFeature(state),
+  })),
   injectNotifications,
 )(EditCampaignPage);

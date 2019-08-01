@@ -1,10 +1,10 @@
 import { compose, mapProps } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-
 import log from '../../utils/Logger';
 import * as SessionHelper from '../../state/Session/selectors';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 let limiter = 0;
 
@@ -12,7 +12,7 @@ export interface InjectedDatamartProps {
   datamart: DatamartResource;
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: MicsReduxState) => {
   return {
     getDefaultDatamart: SessionHelper.getDefaultDatamart(state),
   };

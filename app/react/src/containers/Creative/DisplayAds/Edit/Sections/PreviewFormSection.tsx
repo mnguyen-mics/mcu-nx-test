@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { getFormInitialValues } from 'redux-form';
 import { compose } from 'recompose';
 import { Spin } from 'antd';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 const Dimensions = require('react-dimensions')
 
 interface MapStateProps {
@@ -123,7 +124,7 @@ class PreviewFormSection extends React.Component<MapStateProps, State> {
 }
 
 export default compose<MapStateProps, {}>(
-  connect((state: any) => ({
+  connect((state: MicsReduxState) => ({
     initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(
       state,
     ) as DisplayCreativeFormData,

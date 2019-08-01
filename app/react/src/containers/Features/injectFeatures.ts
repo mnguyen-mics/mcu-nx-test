@@ -1,11 +1,11 @@
 import { compose, mapProps } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps, match } from 'react-router-dom';
-
 import * as featureSelector from '../../state/Features/selectors';
 import * as SessionHelper from '../../state/Session/selectors';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { UserProfileResource } from '../../models/directory/UserProfileResource';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface InjectedFeaturesProps {
   hasFeature: (
@@ -25,7 +25,7 @@ type Props = RouteComponentProps<RouteParams> & {
   computedMatch: match<RouteParams>;
 } & { [key: string]: any };
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: MicsReduxState) => {
   return {
     getFeatureFlagClient: featureSelector.getFeatureFlagClient(state),
     hasFeatureStore: featureSelector.hasFeature(state),

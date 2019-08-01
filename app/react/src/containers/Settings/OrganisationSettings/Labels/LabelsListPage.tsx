@@ -15,6 +15,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { lazyInject } from '../../../../config/inversify.config';
 import { ILabelService } from '../../../../services/LabelsService';
 import { TYPES } from '../../../../constants/types';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 interface Options {
@@ -272,7 +273,7 @@ export default compose(
   withRouter,
   injectNotifications,
   connect(
-    (state: any) => ({
+    (state: MicsReduxState) => ({
       labels: state.labels.labelsApi.data,
       isFetching: state.labels.labelsApi.isFetching,
     }),

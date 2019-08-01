@@ -13,6 +13,7 @@ import OrgLogo from '../Logo/OrgLogo';
 import { ButtonStyleless } from '../../components/index';
 import Search from 'antd/lib/input/Search';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 const { Meta } = Card;
 
@@ -155,7 +156,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspaces: state.session.connectedUser.workspaces,
   workspace: SessionHelper.getWorkspace(state),
   hasDatamarts: SessionHelper.hasDatamarts(state),

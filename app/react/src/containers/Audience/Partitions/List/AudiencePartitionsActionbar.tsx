@@ -15,6 +15,7 @@ import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const messages = defineMessages({
   AUDIENCE_PARTITIONS: {
@@ -92,7 +93,7 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   defaultDatamart: getDefaultDatamart(state),
 });
 

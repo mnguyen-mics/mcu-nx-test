@@ -28,6 +28,7 @@ import { McsFormSection } from '../../../utils/FormHelper';
 import * as SessionSelectors from '../../../state/Session/selectors';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import AngularWidget from './sections/AutomationFormSection';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -132,7 +133,7 @@ class AutomationEditForm extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
   hasDatamarts: SessionSelectors.hasDatamarts(state),
 });

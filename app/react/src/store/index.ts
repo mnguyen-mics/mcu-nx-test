@@ -12,6 +12,7 @@ import { INavigatorService } from '../services/NavigatorService';
 import { IAuthService } from '../services/AuthService';
 import { ILabelService } from '../services/LabelsService';
 import { IOrganisationService } from '../services/OrganisationService';
+import { MicsReduxState } from '../utils/ReduxHelper';
 
 // Uncomment to ajust plugged middlewares accordingly
 // const IS_PROD = process.env.NODE_ENV !== 'production';
@@ -23,7 +24,7 @@ function bindDependencies(
     persistedStoreService: IPersistedStoreService,
     labelService: ILabelService,
     organisationService: IOrganisationService,
-    state: any,
+    state: MicsReduxState,
   ) => void,
   dependencies: symbol[],
 ) {
@@ -42,7 +43,7 @@ function configureStore(
   persistedStoreService: IPersistedStoreService,
   labelService: ILabelService,
   organisationService: IOrganisationService,
-  preloadedState: any,
+  preloadedState: MicsReduxState,
 ) {
   const middlewares = [];
 

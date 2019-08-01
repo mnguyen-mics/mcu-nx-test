@@ -54,6 +54,7 @@ import DatamartService from '../../../../../../services/DatamartService';
 import { IComparmentService } from '../../../../../../services/CompartmentService';
 import { getCoreReferenceTypeAndModel, FieldProposalLookup } from '../../../domain';
 import { IChannelService } from '../../../../../../services/ChannelService';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -757,7 +758,7 @@ class FieldNodeForm extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any, ownProps: FieldNodeFormProps) => ({
+const mapStateToProps = (state: MicsReduxState, ownProps: FieldNodeFormProps) => ({
   formValues: getFormValues(ownProps.formName || FORM_ID)(state),
 });
 

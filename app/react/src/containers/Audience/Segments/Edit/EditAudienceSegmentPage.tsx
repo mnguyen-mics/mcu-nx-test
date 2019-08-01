@@ -41,7 +41,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import { hasFeature } from '../../../../state/Features/selectors';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -410,6 +410,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   getSegmentTypesToDisplay = () => {
     const { selectedDatamart } = this.state;
+    const {
+      hasFeature
+    } = this.props;
     const segmentTypesToDisplay: Array<{
       title: string;
       value: AudienceSegmentType;
@@ -537,7 +540,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 

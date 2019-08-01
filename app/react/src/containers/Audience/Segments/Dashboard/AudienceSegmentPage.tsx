@@ -19,6 +19,7 @@ import { DatamartWithMetricResource } from '../../../../models/datamart/Datamart
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import * as SessionHelper from '../../../../state/Session/selectors';
 import { connect } from 'react-redux';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -29,7 +30,7 @@ interface MapStateToProps {
 }
 
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspaces: SessionHelper.getWorkspaces(state),
 });
 

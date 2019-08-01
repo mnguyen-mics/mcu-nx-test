@@ -30,6 +30,7 @@ import { UserWorkspaceResource } from '../../../../../models/directory/UserProfi
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { TYPES } from '../../../../../constants/types';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 export interface MobileApplicationsListPageProps {
@@ -372,7 +373,7 @@ class MobileApplicationsListPage extends React.Component<
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 

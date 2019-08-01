@@ -34,6 +34,7 @@ import { TYPES } from '../../constants/types';
 import { INavigatorService } from '../../services/NavigatorService';
 import { Notifications } from '../../containers/Notifications';
 import { IAuthService } from '../../services/AuthService';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 interface MapStateToProps {
   initialized: boolean;
@@ -330,7 +331,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   initialized: isAppInitialized(state),
   initializationError: state.app.initializationError,
   workspaces: SessionHelper.getWorkspaces(state),
