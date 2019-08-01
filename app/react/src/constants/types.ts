@@ -31,6 +31,7 @@ const TYPES = {
   ICommunityService: Symbol.for('communityService'),
   IConsentService: Symbol.for('consentService'),
   IGeonameService: Symbol.for('geonameService'),
+  ISettingsService: Symbol.for('settingsService'),
 };
 
 export { TYPES };
