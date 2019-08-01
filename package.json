@@ -197,7 +197,11 @@
     "test:tslint": "tslint -c tslint.json 'app/react/src/**/*.{ts,tsx}'",
     "test:lint": "eslint --cache --max-warnings 0 app/react/src",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
-    "start": "cross-env NODE_OPTIONS=--max_old_space_size=4000 grunt serve",
+    "start": "npm run start:local",
+    "start:local": "cross-env NODE_ENV=local NODE_OPTIONS=--max_old_space_size=4000 grunt serve",
+    "start:prod": "cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4000 grunt serve",
+    "prod": "cross-env NODE_ENV=production grunt setEnvVariablesConfig",
+    "local": "cross-env NODE_ENV=local grunt setEnvVariablesConfig",
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=4000 grunt build",
     "translation-file": "npm run build && node scripts/translate.js"
   }
