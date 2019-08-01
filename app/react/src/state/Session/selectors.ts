@@ -1,15 +1,17 @@
+import { UserWorkspaceResource } from './../../models/directory/UserProfileResource';
+import { MicsReduxState } from './../../utils/ReduxHelper';
 import { createSelector } from 'reselect';
 
-import { normalizeArrayOfObject } from '../../utils/Normalizer.ts';
+import { normalizeArrayOfObject } from '../../utils/Normalizer';
 
-const getConnectedUserWorkspaces = state =>
+const getConnectedUserWorkspaces = (state: MicsReduxState) =>
   state.session.connectedUser.workspaces;
 
-const getStoredConnectedUser = state => {
+const getStoredConnectedUser = (state: MicsReduxState) => {
   return state && state.session && state.session.connectedUser;
 };
 
-const getDefaultWorkspaceIndex = state => {
+const getDefaultWorkspaceIndex = (state: MicsReduxState) => {
   if (
     state.session &&
     state.session.connectedUser &&
@@ -25,17 +27,25 @@ const getDefaultWorkspace = createSelector(
   state => state.session.connectedUser.workspaces,
   getDefaultWorkspaceIndex,
   (userWorkspaces, defaultWorkspaceIndex) =>
-    userWorkspaces && userWorkspaces.length && userWorkspaces[defaultWorkspaceIndex],
+    userWorkspaces &&
+    userWorkspaces.length &&
+    userWorkspaces[defaultWorkspaceIndex],
 );
 
-const getWorkspaces = createSelector(
+// Improve typing here
+const getWorkspaces: any = createSelector(
   getConnectedUserWorkspaces,
-  (userWorkspaces) => {
-    return userWorkspaces && userWorkspaces.length && normalizeArrayOfObject(userWorkspaces, 'organisation_id');
+  // remove typing here when state will be typed
+  (userWorkspaces: UserWorkspaceResource[]) => {
+    return (
+      userWorkspaces &&
+      userWorkspaces.length &&
+      normalizeArrayOfObject(userWorkspaces, 'organisation_id')
+    );
   },
 );
 
-const getWorkspace = state => organisationId => {
+const getWorkspace = (state: MicsReduxState) => (organisationId: string) => {
   const workspaces = getWorkspaces(state);
   return workspaces[organisationId];
 };
@@ -56,22 +66,35 @@ const getDefaultWorkspaceOrganisationName = createSelector(
   },
 );
 
-const getDefaultDatamart = state => organisationId => {
+const getDefaultDatamart = (state: MicsReduxState) => (
+  organisationId: string,
+) => {
   const workspaces = getWorkspaces(state);
-  return workspaces && workspaces[organisationId] && workspaces[organisationId].datamarts && workspaces[organisationId].datamarts[0];
+  return (
+    workspaces &&
+    workspaces[organisationId] &&
+    workspaces[organisationId].datamarts &&
+    workspaces[organisationId].datamarts[0]
+  );
 };
 
-const hasDatamarts = state => organisationId => {
+const hasDatamarts = (state: MicsReduxState) => (organisationId: string) => {
   const workspaces = getWorkspaces(state);
-  return workspaces && workspaces[organisationId] && workspaces[organisationId].datamarts.length > 0;
+  return (
+    workspaces &&
+    workspaces[organisationId] &&
+    workspaces[organisationId].datamarts.length > 0
+  );
 };
 
-const hasWorkspace = state => organisationId => {
+const hasWorkspace = (state: MicsReduxState) => (organisationId: string) => {
   const workspaces = getWorkspaces(state);
   return !!workspaces[organisationId];
 };
 
-const hasAccessToOrganisation = state => organisationId => {
+const hasAccessToOrganisation = (state: MicsReduxState) => (
+  organisationId: string,
+) => {
   const workspaces = getWorkspaces(state);
   return !!workspaces[organisationId];
 };
@@ -85,5 +108,5 @@ export {
   getWorkspace,
   getWorkspaces,
   getDefaultDatamart,
-  getStoredConnectedUser
+  getStoredConnectedUser,
 };

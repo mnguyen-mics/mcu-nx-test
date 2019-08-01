@@ -1,5 +1,7 @@
 import { IMicsTagService, MicsTagService } from './../services/MicsTagServices';
-import { IDashboardService } from './../services/DashboardServices';
+import PersistedStoreService, {
+  IPersistedStoreService,
+} from './../services/PersistedStoreService';
 import { IFeedsStatsService } from './../services/FeedsStatsService';
 import {
   IServiceOfferPageService,
@@ -111,8 +113,15 @@ import {
 import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
 import { ISettingsService, SettingsService } from '../services/SettingsService';
-import { DashboardService } from '../services/DashboardServices';
 import { FeedsStatsService } from '../services/FeedsStatsService';
+import {
+  IDashboardService,
+  DashboardService,
+} from '../services/DashboardServices';
+import { ILabelService, LabelService } from '../services/LabelsService';
+import OrganisationService, {
+  IOrganisationService,
+} from '../services/OrganisationService';
 
 const container = new Container();
 
@@ -196,7 +205,14 @@ container
   .bind<IFeedsStatsService>(TYPES.IFeedsStatsService)
   .to(FeedsStatsService);
 container.bind<IMicsTagService>(TYPES.IMicsTagService).to(MicsTagService);
-MicsTagService;
+container
+  .bind<IPersistedStoreService>(TYPES.IPersistedStoreService)
+  .to(PersistedStoreService);
+container.bind<ILabelService>(TYPES.ILabelService).to(LabelService);
+container
+  .bind<IOrganisationService>(TYPES.IOrganisationService)
+  .to(OrganisationService);
+
 export const { lazyInject } = getDecorators(container, false);
 
 export default { container };

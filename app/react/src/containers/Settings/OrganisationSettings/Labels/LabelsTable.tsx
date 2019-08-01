@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { injectIntl } from 'react-intl';
 import moment from 'moment';
-
 import { EmptyTableView, TableView } from '../../../../components/TableView/index';
 import { Label } from '../../../Labels/Labels';
 import messages from './messages';

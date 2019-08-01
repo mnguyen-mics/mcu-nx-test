@@ -54,6 +54,8 @@ const TYPES = {
   IAuthService: Symbol('authService'),
   IPersistedStoreService: Symbol('persistedStoreService'),
   IMicsTagService: Symbol('micsTagService'),
+  ILabelService: Symbol('labelService'),
+  IOrganisationService: Symbol('organisationService')
 };
 
 export { TYPES };

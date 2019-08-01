@@ -10,6 +10,8 @@ import container from '../config/inversify.config';
 import { TYPES } from '../constants/types';
 import { INavigatorService } from '../services/NavigatorService';
 import { IAuthService } from '../services/AuthService';
+import { ILabelService } from '../services/LabelsService';
+import { IOrganisationService } from '../services/OrganisationService';
 
 // Uncomment to ajust plugged middlewares accordingly
 // const IS_PROD = process.env.NODE_ENV !== 'production';
@@ -19,6 +21,8 @@ function bindDependencies(
     navigatorService: INavigatorService,
     authService: IAuthService,
     persistedStoreService: IPersistedStoreService,
+    labelService: ILabelService,
+    organisationService: IOrganisationService,
     state: any,
   ) => void,
   dependencies: symbol[],
@@ -36,6 +40,8 @@ function configureStore(
   navigatorService: INavigatorService,
   authService: IAuthService,
   persistedStoreService: IPersistedStoreService,
+  labelService: ILabelService,
+  organisationService: IOrganisationService,
   preloadedState: any,
 ) {
   const middlewares = [];
@@ -45,6 +51,8 @@ function configureStore(
       navigatorService: navigatorService,
       authService: authService,
       persistedStoreService: persistedStoreService,
+      labelService: labelService,
+      organisationService: organisationService
     },
   });
 
@@ -76,4 +84,6 @@ export default bindDependencies(configureStore, [
   TYPES.INavigatorService,
   TYPES.IAuthService,
   TYPES.IPersistedStoreService,
+  TYPES.ILabelService,
+  TYPES.IOrganisationService
 ]);
