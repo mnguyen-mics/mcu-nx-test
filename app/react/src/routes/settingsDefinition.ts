@@ -91,6 +91,12 @@ const organisationSettingsDefinition: NavigatorMenuDefinition = {
       ),
       translation: messages.usersSettingsTitle,
     },
+    {
+      ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsOrganisationMlAlgorithmList,
+      ),
+      translation: messages.mlAlgorithmsSettingsTitle,
+    }
   ],
 };
 

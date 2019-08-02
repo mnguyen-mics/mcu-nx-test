@@ -9,6 +9,7 @@ export interface DatasetProps {
   key: string;
   value: number;
   color: string;
+  height?: number;
 }
 
 interface TextProps {
@@ -22,6 +23,8 @@ interface OptionsProps {
   text: TextProps;
   colors: string[];
   showTooltip?: boolean;
+  height?: number;
+  labelsEnabled?: boolean;
 }
 
 interface PieChartProps {
@@ -142,7 +145,7 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
   };
 
   renderPieChart = (svg: any) => {
-    const { dataset, options, identifier } = this.props;
+    const { dataset, options, identifier,  } = this.props;
     const scale = new Plottable.Scales.Linear();
     const colorScale = new Plottable.Scales.InterpolatedColor();
     colorScale.range(options.colors);
@@ -174,6 +177,10 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
 
     plot.xAlignment('center');
     plot.yAlignment('center');
+
+    if (this.props.options.labelsEnabled) {
+      plot.labelsEnabled(true);
+    }
 
     this.plot = plot;
     plot.renderTo(`#${identifier}`);
@@ -215,13 +222,14 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
           }}
           id={identifier}
           className={classNameInner}
+          style={options.height ? { height: options.height } : undefined}
         />
         <div className="mcs-donut-chart-title" />
         <div className="mcs-chart-title">
           {options.text ? (
             <div className="mcs-half-title">
               <div className="value">{options.text.value}</div>
-              <div className="helper">{options.text.text}</div>
+              {options.text.text && <div className="helper">{options.text.text}</div>}
             </div>
           ) : (
             <div />
@@ -236,13 +244,14 @@ class PieChart extends React.Component<PieChartProps, PieChartState> {
           }}
           id={identifier}
           className={classNameInner}
+          style={options.height ? { height: options.height } : undefined}
         />
-        <div className="mcs-donut-chart-title">
+        <div className={`mcs-donut-chart-title ${options.text.text ? '' : 'no-text'}`}>
           <div className="mcs-chart-title">
             {options.text ? (
               <div>
                 <div className="value">{options.text.value}</div>
-                <div className="helper">{options.text.text}</div>
+                {options.text.text && <div className="helper">{options.text.text}</div>}
               </div>
             ) : (
               <div />

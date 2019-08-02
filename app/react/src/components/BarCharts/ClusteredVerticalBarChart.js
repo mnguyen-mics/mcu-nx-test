@@ -172,7 +172,7 @@ class VerticalBarChart extends Component {
         });
         datasets[yKey] = (formatedDataset);
       });
-      const plot = new Plottable.Plots.Bar('vertical');
+      const plot = new Plottable.Plots.ClusteredBar('vertical');
       options.yKeys.forEach(yKey => {
         plot.addDataset(new Plottable.Dataset(datasets[yKey]).metadata(yKey));
       });

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { Card } from '../../../../components/Card';
 import {
   OTQLAggregationResult,
   isAggregateResult,
@@ -18,11 +17,14 @@ import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
+import CardFlex from '../Components/CardFlex';
 
 export interface MapPieChartProps {
   title?: string;
   queryId: string;
   datamartId: string;
+  showLegend?: boolean;
+  labelsEnabled?: boolean;
 }
 
 interface State {
@@ -104,7 +106,7 @@ class MapPieChart extends React.Component<Props, State> {
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
           return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text)
+            .runOTQLQuery(datamartId, res.data.query_text, {use_cache: true})
             .then(r => r.data)
             .then(r => {
               if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
@@ -134,12 +136,14 @@ class MapPieChart extends React.Component<Props, State> {
       text: {},
       colors: this.state.colors,
       showTooltip: true,
+      height: 300,
+      labelsEnabled: this.props.labelsEnabled
     };
     return options;
   };
 
   public render() {
-    const { title, intl } = this.props;
+    const { intl, showLegend } = this.props;
 
     const pieChartsOptions = this.generateOptions();
 
@@ -170,10 +174,9 @@ class MapPieChart extends React.Component<Props, State> {
     };
 
     return (
-      <Card title={title}>
-        <hr />
+      <CardFlex title={this.props.title}>
         {generateChart()}
-        {this.state.queryResult && this.state.queryResult.length ? (
+        {showLegend && this.state.queryResult && this.state.queryResult.length ? (
           <LegendChart
             identifier={`${this.identifier}-legend`}
             options={this.state.queryResult.map(qr => ({
@@ -182,7 +185,7 @@ class MapPieChart extends React.Component<Props, State> {
             }))}
           />
         ) : null}
-      </Card>
+      </CardFlex>
     );
   }
 }

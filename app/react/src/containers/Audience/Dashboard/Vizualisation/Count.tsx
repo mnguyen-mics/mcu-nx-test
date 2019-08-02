@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Card } from '../../../../components/Card';
 import { isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
+import CardFlex from '../Components/CardFlex';
 
 export interface CountProps {
   queryId: string;
@@ -53,7 +53,7 @@ export default class Count extends React.Component<CountProps, State> {
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
           return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text)
+            .runOTQLQuery(datamartId, res.data.query_text, {use_cache: true})
             .then(r => r.data)
             .then(r => {
               if (isCountResult(r.rows)) {
@@ -75,26 +75,27 @@ export default class Count extends React.Component<CountProps, State> {
 
   public render() {
     return (
-      <Card className="dashboard-counter">
-        <hr />
-        <div className="title">
-          {this.state.loading ? (
-            <i className="mcs-table-cell-loading" style={{ maxWidth: '40%' }} />
-          ) : (
-            this.props.title
-          )}
+      <CardFlex>
+        <div className="dashboard-counter">
+          <div className="count-title">
+            {this.state.loading ? (
+              <i className="mcs-table-cell-loading" style={{ maxWidth: '40%' }} />
+            ) : (
+              this.props.title
+            )}
+          </div>
+          <div className="count-result">
+            {this.state.loading ? (
+              <i
+                className="mcs-table-cell-loading-large"
+                style={{ maxWidth: '100%' }}
+              />
+            ) : (
+              formatMetric(this.state.queryResult, '0,0')
+            )}
+          </div>
         </div>
-        <div className="count-result">
-          {this.state.loading ? (
-            <i
-              className="mcs-table-cell-loading-large"
-              style={{ maxWidth: '100%' }}
-            />
-          ) : (
-            formatMetric(this.state.queryResult, '0,0')
-          )}
-        </div>
-      </Card>
+      </CardFlex>
     );
   }
 }
