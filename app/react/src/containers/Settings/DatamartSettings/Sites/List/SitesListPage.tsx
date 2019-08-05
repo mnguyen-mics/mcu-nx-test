@@ -28,6 +28,7 @@ import { connect } from 'react-redux';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { TYPES } from '../../../../../constants/types';
+import queryString from 'query-string';
 
 const { Content } = Layout;
 
@@ -99,7 +100,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       match: {
         params: { organisationId },
       },
-      datamartId,
+      datamart,
     } = this.props;
 
     const {
@@ -107,23 +108,20 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       match: {
         params: { organisationId: nextOrganisationId },
       },
-      datamartId: nextDatamartId,
     } = nextProps;
 
     if (
       nextOrganisationId !== organisationId ||
-      !compareSearches(search, nextSearch) ||
-      datamartId !== nextDatamartId
+      !compareSearches(search, nextSearch)
     ) {
-      const nextFilter = parseSearch(
-        nextSearch,
-        this.getSearchSetting(nextOrganisationId),
-      );
-      const calculatedDatamartId = datamartId ? datamartId : nextFilter.datamartId;
+
+      const selectedDatamartId = queryString.parse(nextSearch).datamartId || datamart.id;
+
       this.setState({
         isFetchingSites: true,
       });
-      this.fetchSites(organisationId, calculatedDatamartId, this.state.filter).then(
+
+      this.fetchSites(organisationId, selectedDatamartId, this.state.filter).then(
         () => {
           this.setState({
             isFetchingSites: false,
@@ -158,7 +156,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         params: { organisationId },
       },
       datamart,
-      datamartId,
+
       location: {
         search
       }
@@ -170,8 +168,6 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       filters.datamartId ? filters.datamartId : datamart.id,
       newFilter,
     );
-    const calculatedDatamartId = datamartId ? datamartId : (filters.datamartId ? filters.datamartId : datamart.id);
-    this.fetchSites(organisationId, calculatedDatamartId, newFilter);
   };
 
   fetchSites = (organisationId: string, datamartId: string, filter: Filter) => {
@@ -210,10 +206,16 @@ class SitesListPage extends React.Component<Props, SiteListState> {
   };
 
   buildNewActionElement = (organisationId: string, datamartId: string) => {
+
+    const {
+      location: { search },
+    } = this.props;
+
+    const selectedDatamartId = queryString.parse(search).datamartId || datamartId;
     return (
       <Link
         key={messages.newSite.id}
-        to={`/v2/o/${organisationId}/settings/datamart/sites/create`}
+        to={`/v2/o/${organisationId}/settings/datamart/sites/create?selectedDatamartId=${selectedDatamartId}`}
       >
         <Button key={messages.newSite.id} type="primary" htmlType="submit">
           <FormattedMessage {...messages.newSite} />
