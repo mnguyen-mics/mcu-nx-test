@@ -1,0 +1,9 @@
+{
+  "baseUrl": "https://navigator.dreamy-hugle.mics-sandbox.com",
+  "env": {
+    "apiDomain": "api.mediarithmics.local",
+    "navigatorDomain": "navigator.mediarithmics.local"
+  },
+  "ignoreTestFiles": ["**/integration/examples/**", "!*.spec.js", "timeline*"],
+  "watchForFileChanges": false
+}
