@@ -7,15 +7,16 @@ import {
   removeNotification,
   resetNotifications,
 } from '../../state/Notifications/actions.js';
+import { Action } from 'redux-actions';
 
 // TODO type any ( goes with notif action creators)
 export interface InjectedNotificationProps {
-  notifyError: (err: any, notifConfig?: any) => void;
-  notifySuccess: (notifConfig: any) => void;
-  notifyWarning: (notifConfig: any) => void;
-  notifyInfo: (notifConfig: any) => void;
-  removeNotification: (key: string) => void;
-  resetNotifications: () => void;
+  notifyError: (err: any, notifConfig?: any) => Action<any>;
+  notifySuccess: (notifConfig: any) => Action<any>;
+  notifyWarning: (notifConfig: any) => Action<any>;
+  notifyInfo: (notifConfig: any) => Action<any>;
+  removeNotification: (key: string) => Action<any>;
+  resetNotifications: () => Action<any>;
 }
 
 const mapDispatchToProps = {
