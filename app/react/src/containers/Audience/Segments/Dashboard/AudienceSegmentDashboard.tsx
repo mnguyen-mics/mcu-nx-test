@@ -4,14 +4,14 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Card } from '../../../../components/Card';
 import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
-import { EditAudienceSegmentParam } from '../Edit/domain';
+import { EditAudienceSegmentParam, isUserQuerySegment } from '../Edit/domain';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import UserListImportCard from './UserListImportCard';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
@@ -22,6 +22,13 @@ import {
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
 import FeedCardList from './Feeds/FeedCardList';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
+import ContentHeader from '../../../../components/ContentHeader';
+import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
+import AudienceDashboardReport from '../../Dashboard/AudienceDashboardReport';
+import {
+  deterministicLayout,
+  probabilisticLayout,
+} from '../../Dashboard/domain';
 
 interface State {
   loading: boolean;
@@ -31,13 +38,14 @@ interface State {
   };
 }
 export interface AudienceSegmentDashboardProps {
-  segment?: AudienceSegmentResource;
+  segment?: AudienceSegmentShape;
   isLoading: boolean;
   datamarts: DatamartWithMetricResource[];
 }
 
 type Props = AudienceSegmentDashboardProps &
   InjectedIntlProps &
+  InjectedFeaturesProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
@@ -185,16 +193,42 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { segment, datamarts } = this.props;
+    const { segment, datamarts, intl, hasFeature } = this.props;
+
     return (
       <div>
         <AudienceCounters
           datamarts={datamarts}
           datamartId={segment ? segment.datamart_id : undefined}
         />
+        {hasFeature('audience.dashboard') &&
+          segment &&
+          isUserQuerySegment(segment) && (
+            <div>
+              <AudienceDashboardReport
+                layout={deterministicLayout}
+                title={`Deterministic insights`}
+                segment={segment}
+              />
+              <AudienceDashboardReport
+                layout={probabilisticLayout}
+                title={`Probalistic insights`}
+                segment={segment}
+              />
+            </div>
+          )}
+        {hasFeature('audience.dashboard') && (
+          <ContentHeader
+            title={intl.formatMessage(messages.technicalReport)}
+            size={`medium`}
+          />
+        )}
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>
+        {hasFeature('audience.dashboard') && (
+          <ContentHeader title={`Feed Card List`} size={`medium`} />
+        )}
         <FeedCardList />
       </div>
     );
@@ -204,6 +238,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 export default compose<Props, AudienceSegmentDashboardProps>(
   injectIntl,
   withRouter,
+  injectFeatures,
   injectNotifications,
 )(AudienceSegmentDashboard);
 
@@ -223,5 +258,9 @@ const messages = defineMessages({
   imports: {
     id: 'audience-segment-dashboard-tab-title-user-list-imports',
     defaultMessage: 'Imports Status',
+  },
+  technicalReport: {
+    id: 'audience.segment.dashboard.TechnicalReport',
+    defaultMessage: 'Technical Report',
   },
 });

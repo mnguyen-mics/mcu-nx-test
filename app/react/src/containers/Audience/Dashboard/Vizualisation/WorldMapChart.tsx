@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
-import { formatMetric } from '../../../../utils/MetricHelper';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
+import WorldMap from '../../../../components/WorldMap';
+import { mapData } from '../mapData';
 
-export interface CountProps {
+export interface WorldMapChartProps {
   queryId: string;
-  reportQueryId: string;
   datamartId: string;
   title: string;
+  reportQueryId: string;
 }
 
 interface State {
@@ -19,11 +19,14 @@ interface State {
   loading: boolean;
 }
 
-export default class Count extends React.Component<CountProps, State> {
+export default class WorldMapChart extends React.Component<
+  WorldMapChartProps,
+  State
+> {
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
-  constructor(props: CountProps) {
+  constructor(props: WorldMapChartProps) {
     super(props);
     this.state = {
       error: false,
@@ -32,13 +35,13 @@ export default class Count extends React.Component<CountProps, State> {
   }
 
   componentDidMount() {
-    const { queryId, reportQueryId, datamartId } = this.props;
+    const { queryId, datamartId, reportQueryId } = this.props;
 
     this.fetchData(datamartId, queryId, reportQueryId);
   }
 
-  componentWillReceiveProps(nextProps: CountProps) {
-    const { queryId, reportQueryId, datamartId } = this.props;
+  componentWillReceiveProps(nextProps: WorldMapChartProps) {
+    const { queryId, datamartId, reportQueryId } = this.props;
     const {
       queryId: nextQueryId,
       datamartId: nextDatamartId,
@@ -82,17 +85,13 @@ export default class Count extends React.Component<CountProps, State> {
                     })
                     .then(r => r.data)
                     .then(r => {
-                      if (isCountResult(r.rows)) {
-                        this.setState({
-                          queryResult: r.rows[0].count,
-                          loading: false,
-                        });
-                        return Promise.resolve();
-                      }
+                      // if (isCountResult(r.rows)) {
+                      //   this.setState({ queryResult: r.rows[0].count, loading: false });
+                      //   return Promise.resolve();
+                      // }
                       const countErr = new Error('wrong query type');
                       return Promise.reject(countErr);
-                    })
-                    .catch(e => this.setState({ error: true, loading: false }));
+                    });
                 });
             })
             .catch(e => this.setState({ error: true, loading: false }));
@@ -101,7 +100,6 @@ export default class Count extends React.Component<CountProps, State> {
         return Promise.reject(err);
       })
       .catch(() => {
-        // TO REMOVE :
         this.setState({ error: false, loading: false, queryResult: 127659 });
       });
   };
@@ -120,16 +118,7 @@ export default class Count extends React.Component<CountProps, State> {
               this.props.title
             )}
           </div>
-          <div className="count-result">
-            {this.state.loading ? (
-              <i
-                className="mcs-table-cell-loading-large"
-                style={{ maxWidth: '100%' }}
-              />
-            ) : (
-              formatMetric(this.state.queryResult, '0,0')
-            )}
-          </div>
+          <WorldMap dataset={mapData} />
         </div>
       </CardFlex>
     );

@@ -18,7 +18,7 @@ import TimelinePage from '../containers/Audience/Timeline/TimelinePage';
 import Partition from '../containers/Audience/Partitions/Dashboard/Partition';
 import AudiencePartitionPage from '../containers/Audience/Partitions/Edit/AudiencePartitionPage';
 
-import AudienceDashboardPage from '../containers/Audience/Dashboard/AudienceDashboardPage';
+import AudienceDashboardReport from '../containers/Audience/Dashboard/AudienceDashboardReport';
 
 import {
   NavigatorRoute,
@@ -123,7 +123,7 @@ export const audienceDefinition: NavigatorDefinition = {
   audienceDashboard: {
     path: '/audience/dashboard',
     layout: 'main',
-    contentComponent: AudienceDashboardPage,
+    contentComponent: AudienceDashboardReport,
     requiredFeature: 'audience.dashboard',
     requireDatamart: true
   }

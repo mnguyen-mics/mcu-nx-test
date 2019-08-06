@@ -20,8 +20,8 @@ import CardFlex from '../Components/CardFlex';
 
 export interface GaugePieChartProps {
   title?: string;
-  totalQueryId: string;
-  partialQueryId: string;
+  queryId: string;
+  reportQueryIds: string[];
   datamartId: string;
   showPercentage: boolean;
 }
@@ -63,25 +63,25 @@ class GaugePieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { totalQueryId, partialQueryId, datamartId } = this.props;
+    const { queryId, reportQueryIds, datamartId } = this.props;
 
-    this.fetchData(datamartId, totalQueryId, partialQueryId);
+    this.fetchData(datamartId, queryId, reportQueryIds);
   }
 
   componentWillReceiveProps(nextProps: GaugePieChartProps) {
-    const { totalQueryId, partialQueryId, datamartId } = this.props;
+    const { queryId, reportQueryIds, datamartId } = this.props;
     const {
-      totalQueryId: nextTotalQueryId,
-      partialQueryId: nextPartialQueryId,
+      queryId: nextQueryId,
+      reportQueryIds: nextReportQueryIds,
       datamartId: nextDatamartId,
-    } = this.props;
+    } = nextProps;
 
     if (
-      totalQueryId !== nextTotalQueryId ||
-      partialQueryId !== nextPartialQueryId ||
+      queryId !== nextQueryId ||
+      reportQueryIds !== nextReportQueryIds ||
       datamartId !== nextDatamartId
     ) {
-      this.fetchData(nextDatamartId, nextTotalQueryId, nextPartialQueryId);
+      this.fetchData(nextDatamartId, nextQueryId, nextReportQueryIds);
     }
   }
 
@@ -108,62 +108,105 @@ class GaugePieChart extends React.Component<Props, State> {
 
   fetchData = (
     datamartId: string,
-    totalQueryId: string,
-    partialQueryId: string,
+    queryId: string,
+    reportQueryIds: string[],
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
-    return Promise.all([
-      this._queryService.getQuery(datamartId, totalQueryId),
-      this._queryService.getQuery(datamartId, partialQueryId),
-    ])
-      .then(([totalQuery, partialQuery]) => {
-        if (
-          totalQuery.data.query_language === 'OTQL' &&
-          totalQuery.data.query_text &&
-          partialQuery.data.query_language === 'OTQL' &&
-          totalQuery.data.query_text
-        ) {
-          return Promise.all([
-            this._queryService.runOTQLQuery(
-              datamartId,
-              totalQuery.data.query_text,
-              { use_cache: true },
-            ),
-            this._queryService.runOTQLQuery(
-              datamartId,
-              partialQuery.data.query_text,
-              { use_cache: true },
-            ),
-          ])
-            .then(([totalQueryResult, partialQueryResult]) => {
-              if (
-                !isAggregateResult(totalQueryResult.data.rows) &&
-                isCountResult(totalQueryResult.data.rows) &&
-                !isAggregateResult(partialQueryResult.data.rows) &&
-                isCountResult(partialQueryResult.data.rows)
-              ) {
-                this.setState({
-                  queryResult: this.formatData(
-                    totalQueryResult.data.rows,
-                    partialQueryResult.data.rows,
-                  ),
-                  loading: false,
-                  partialValue: partialQueryResult.data.rows[0].count,
-                  totalValue: totalQueryResult.data.rows[0].count
-                });
-                return Promise.resolve();
-              }
-              const mapErr = new Error('wrong query type');
-              return Promise.reject(mapErr);
+    return this._queryService
+      .getQuery(datamartId, queryId)
+      .then(res => {
+        if (res.data.query_language === 'OTQL' && res.data.query_text) {
+          this._queryService
+            .getWhereClause(datamartId, queryId)
+            .then(clauseResp => {
+              return Promise.all(
+                reportQueryIds.map(reportQueryId => {
+                  return this._queryService.getQuery(datamartId, reportQueryId);
+                }),
+              )
+                .then(reportQueryResp => {
+                  return Promise.all(
+                    reportQueryResp.map(reportQuery => {
+                      const query = {
+                        query: reportQuery.data.query_text,
+                        additional_expression: clauseResp.data,
+                      };
+                      return this._queryService.runOTQLQuery(
+                        datamartId,
+                        JSON.stringify(query),
+                        {
+                          use_cache: true,
+                          content_type: `application/json`,
+                        },
+                      );
+                    }),
+                  )
+                    .then(otqlResultListResp => {
+                      return otqlResultListResp.map(
+                        otqlResultResp => otqlResultResp.data,
+                      );
+                    })
+                    .then(otqlResultList => {
+                      
+                      if (
+                        !isAggregateResult(otqlResultList[0].rows) &&
+                        isCountResult(otqlResultList[0].rows) &&
+                        !isAggregateResult(otqlResultList[1].rows) &&
+                        isCountResult(otqlResultList[1].rows)
+                      ) {
+                        this.setState({
+                          queryResult: this.formatData(
+                            otqlResultList[0].rows as OTQLCountResult[],
+                            otqlResultList[1].rows as OTQLCountResult[],
+                          ),
+                          loading: false,
+                          partialValue: otqlResultList[1].rows[0].count,
+                          totalValue: otqlResultList[0].rows[0].count,
+                        });
+                        return Promise.resolve();
+                      }
+                      const mapErr = new Error('wrong query type');
+                      return Promise.reject(mapErr);
+                    })
+                    .catch(e => this.setState({ error: true, loading: false }));
+                })
+                .catch(e => this.setState({ error: true, loading: false }));
             })
             .catch(e => this.setState({ error: true, loading: false }));
         }
         const err = new Error('wrong query language');
         return Promise.reject(err);
       })
+
       .catch(() => {
-        this.setState({ error: true, loading: false });
+        // TO REMOVE :
+        this.setState({
+          error: false,
+          loading: false,
+          queryResult: [
+            {
+              key: 'abc',
+              value: 9,
+              color: '#00ab67',
+            },
+            {
+              key: 'def',
+              value: 4,
+              color: '#003056',
+            },
+            {
+              key: 'ghi',
+              value: 1,
+              color: '#fd7c12',
+            },
+            {
+              key: 'jkl',
+              value: 20,
+              color: '#00a1df',
+            },
+          ],
+        });
       });
   };
 
@@ -171,14 +214,16 @@ class GaugePieChart extends React.Component<Props, State> {
     const options = {
       innerRadius: true,
       isHalf: false,
-      text: partialValue && totalValue ? {
-        value: `${Math.round(partialValue / totalValue * 100)}%`,
-        text: ""
-      } : {},
+      text:
+        partialValue && totalValue
+          ? {
+              value: `${Math.round((partialValue / totalValue) * 100)}%`,
+              text: '',
+            }
+          : {},
       colors: this.state.colors,
       showTooltip: false,
       height: 300,
-
     };
     return options;
   };

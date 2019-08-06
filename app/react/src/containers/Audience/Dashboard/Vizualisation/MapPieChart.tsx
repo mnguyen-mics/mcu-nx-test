@@ -22,6 +22,7 @@ import CardFlex from '../Components/CardFlex';
 export interface MapPieChartProps {
   title?: string;
   queryId: string;
+  reportQueryId: string;
   datamartId: string;
   showLegend?: boolean;
   labelsEnabled?: boolean;
@@ -62,17 +63,25 @@ class MapPieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, datamartId } = this.props;
+    const { queryId, reportQueryId, datamartId } = this.props;
 
-    this.fetchData(datamartId, queryId);
+    this.fetchData(datamartId, queryId, reportQueryId);
   }
 
   componentWillReceiveProps(nextProps: MapPieChartProps) {
-    const { queryId, datamartId } = this.props;
-    const { queryId: nextQueryId, datamartId: nextDatamartId } = this.props;
+    const { queryId, reportQueryId, datamartId } = this.props;
+    const {
+      queryId: nextQueryId,
+      datamartId: nextDatamartId,
+      reportQueryId: nextReportQueryId,
+    } = nextProps;
 
-    if (queryId !== nextQueryId || datamartId !== nextDatamartId) {
-      this.fetchData(nextDatamartId, nextQueryId);
+    if (
+      queryId !== nextQueryId ||
+      datamartId !== nextDatamartId ||
+      reportQueryId !== nextReportQueryId
+    ) {
+      this.fetchData(nextDatamartId, nextQueryId, nextReportQueryId);
     }
   }
 
@@ -98,34 +107,79 @@ class MapPieChart extends React.Component<Props, State> {
       : [];
   };
 
-  fetchData = (datamartId: string, queryId: string): Promise<void> => {
+  fetchData = (
+    datamartId: string,
+    queryId: string,
+    reportQueryId: string,
+  ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
     return this._queryService
       .getQuery(datamartId, queryId)
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text, {use_cache: true})
-            .then(r => r.data)
-            .then(r => {
-              if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                this.setState({
-                  queryResult: this.formatData(r.rows),
-                  loading: false,
+          this._queryService
+            .getWhereClause(datamartId, queryId)
+            .then(clauseResp => {
+              this._queryService
+                .getQuery(datamartId, reportQueryId)
+                .then(reportQueryResp => {
+                  const query = {
+                    query: reportQueryResp.data.query_text,
+                    additional_expression: clauseResp.data,
+                  };
+                  return this._queryService
+                    .runOTQLQuery(datamartId, JSON.stringify(query), {
+                      use_cache: true,
+                      content_type: `application/json`,
+                    })
+                    .then(r => r.data)
+                    .then(r => {
+                      if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                        this.setState({
+                          queryResult: this.formatData(r.rows),
+                          loading: false,
+                        });
+                        return Promise.resolve();
+                      }
+                      const mapErr = new Error('wrong query type');
+                      return Promise.reject(mapErr);
+                    })
+                    .catch(e => this.setState({ error: true, loading: false }));
                 });
-                return Promise.resolve();
-              }
-              const mapErr = new Error('wrong query type');
-              return Promise.reject(mapErr);
-            })
-            .catch(e => this.setState({ error: true, loading: false }));
+            });
         }
         const err = new Error('wrong query language');
         return Promise.reject(err);
       })
       .catch(() => {
-        this.setState({ error: true, loading: false });
+        // TO REMOVE :
+        this.setState({
+          error: false,
+          loading: false,
+          queryResult: [
+            {
+              key: 'abc',
+              value: 9,
+              color: '#00ab67',
+            },
+            {
+              key: 'def',
+              value: 4,
+              color: '#003056',
+            },
+            {
+              key: 'ghi',
+              value: 1,
+              color: '#fd7c12',
+            },
+            {
+              key: 'jkl',
+              value: 20,
+              color: '#00a1df',
+            },
+          ],
+        });
       });
   };
 
@@ -137,7 +191,7 @@ class MapPieChart extends React.Component<Props, State> {
       colors: this.state.colors,
       showTooltip: true,
       height: 300,
-      labelsEnabled: this.props.labelsEnabled
+      labelsEnabled: this.props.labelsEnabled,
     };
     return options;
   };
@@ -176,7 +230,9 @@ class MapPieChart extends React.Component<Props, State> {
     return (
       <CardFlex title={this.props.title}>
         {generateChart()}
-        {showLegend && this.state.queryResult && this.state.queryResult.length ? (
+        {showLegend &&
+        this.state.queryResult &&
+        this.state.queryResult.length ? (
           <LegendChart
             identifier={`${this.identifier}-legend`}
             options={this.state.queryResult.map(qr => ({

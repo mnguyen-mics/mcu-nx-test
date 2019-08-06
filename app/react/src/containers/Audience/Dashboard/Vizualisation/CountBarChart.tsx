@@ -18,7 +18,7 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 
-export interface MapBarChartProps {
+export interface CountBarChartProps {
   title?: string;
   queryId: string;
   datamartId: string;
@@ -38,9 +38,9 @@ interface State {
   loading: boolean;
 }
 
-type Props = MapBarChartProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props = CountBarChartProps & InjectedThemeColorsProps & InjectedIntlProps;
 
-class MapBarChart extends React.Component<Props, State> {
+class CountBarChart extends React.Component<Props, State> {
   identifier = cuid();
 
   @lazyInject(TYPES.IQueryService)
@@ -71,9 +71,9 @@ class MapBarChart extends React.Component<Props, State> {
     this.fetchData(datamartId, queryId);
   }
 
-  componentWillReceiveProps(nextProps: MapBarChartProps) {
+  componentWillReceiveProps(nextProps: CountBarChartProps) {
     const { queryId, datamartId } = this.props;
-    const { queryId: nextQueryId, datamartId: nextDatamartId } = this.props;
+    const { queryId: nextQueryId, datamartId: nextDatamartId } = nextProps;
 
     if (queryId !== nextQueryId || datamartId !== nextDatamartId) {
       this.fetchData(nextDatamartId, nextQueryId);
@@ -102,7 +102,7 @@ class MapBarChart extends React.Component<Props, State> {
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
           return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text, {use_cache: true})
+            .runOTQLQuery(datamartId, res.data.query_text, { use_cache: true })
             .then(r => r.data)
             .then(r => {
               if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
@@ -121,7 +121,18 @@ class MapBarChart extends React.Component<Props, State> {
         return Promise.reject(err);
       })
       .catch(() => {
-        this.setState({ error: true, loading: false });
+        // TO REMOVE :
+        this.setState({
+          error: false,
+          loading: false,
+          queryResult: [
+            { xKey: '0', yKey: 2 },
+            { xKey: '1', yKey: 4 },
+            { xKey: '2', yKey: 6 },
+            { xKey: '3', yKey: 3 },
+            { xKey: '4', yKey: 1 },
+          ],
+        });
       });
   };
 
@@ -143,7 +154,7 @@ class MapBarChart extends React.Component<Props, State> {
       xKey: 'xKey',
       yKeys: ['yKey'],
       colors: [colors['mcs-info']],
-      labelsEnabled: this.props.labelsEnabled
+      labelsEnabled: this.props.labelsEnabled,
     };
 
     const generateChart = () => {
@@ -174,15 +185,11 @@ class MapBarChart extends React.Component<Props, State> {
       }
     };
 
-    return (
-      <CardFlex title={title}>
-        {generateChart()}
-      </CardFlex>
-    );
+    return <CardFlex title={title}>{generateChart()}</CardFlex>;
   }
 }
 
-export default compose<Props, MapBarChartProps>(
+export default compose<Props, CountBarChartProps>(
   injectThemeColors,
   injectIntl,
-)(MapBarChart);
+)(CountBarChart);

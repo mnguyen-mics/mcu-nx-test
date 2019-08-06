@@ -3,6 +3,7 @@ import { AudienceSegmentShape } from "../../../../models/audiencesegment/";
 import { FieldArrayModel } from "../../../../utils/FormHelper";
 import { PluginProperty, AudienceExternalFeed, AudienceTagFeed } from "../../../../models/Plugins";
 import { QueryResource } from "../../../../models/datamart/DatamartResource";
+import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 
 
 export interface EditAudienceSegmentParam {
@@ -47,3 +48,9 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   defaultLiftimeUnit: 'days',
   userListFiles: [],
 };
+
+export function isUserQuerySegment(
+  segment: AudienceSegmentShape,
+): segment is UserQuerySegment {
+  return (segment as UserQuerySegment).query_id !== undefined;
+}
