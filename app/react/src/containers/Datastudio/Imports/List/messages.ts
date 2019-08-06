@@ -45,6 +45,10 @@ export default defineMessages({
     id: 'imports.table.column.document.type',
     defaultMessage: 'Document Type',
   },
+  priority: {
+    id: 'imports.table.column.priority',
+    defaultMessage: 'Priority',
+  },
   id: {
     id: 'imports.table.column.id',
     defaultMessage: 'ID',
