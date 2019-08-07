@@ -54,13 +54,22 @@ const messages = defineMessages({
     defaultMessage: 'Choose the mime-type.',
   },
   labelImportDocumentType: {
-    id: 'edit.import.general.infos.label.dcoument.type',
+    id: 'edit.import.general.infos.label.document.type',
     defaultMessage: 'Document Type',
   },
   tootltipImportDocumentType: {
     id: 'edit.import.general.infos.tooltip.document.type',
     defaultMessage: 'Choose the document type.',
   },
+  labelImportPriority: {
+    id: 'edit.import.general.infos.label.priority',
+    defaultMessage: 'Priority',
+  },
+  tootltipImportPriority: {
+    id: 'edit.import.general.infos.tooltip.priority',
+    defaultMessage: 'Choose the document import priority.',
+  },
+
 });
 
 interface MapStateToProps {
@@ -213,6 +222,33 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
             helpToolTipProps={{
               title: formatMessage(messages.tootltipImportEncoding),
+            }}
+          />
+          <DefaultSelectField
+            name="priority"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            options={[
+              {
+                title: 'LOW',
+                value: 'LOW',
+              },
+              {
+                title: 'MEDIUM',
+                value: 'MEDIUM',
+              },
+              {
+                title: 'HIGH',
+                value: 'HIGH',
+              },
+            ]}
+            formItemProps={{
+              label: formatMessage(messages.labelImportPriority),
+              colon: false,
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.tootltipImportPriority),
             }}
           />
         </div>
