@@ -13,7 +13,7 @@ export interface Import {
   encoding: string;
   mime_type: "APPLICATION_X_NDJSON" | "TEXT_CSV";
   document_type: DocumentType;
-  priority: string
+  priority: "HIGH" | "MEDIUM" | "LOW";
 }
 
 export interface ImportExecution {
