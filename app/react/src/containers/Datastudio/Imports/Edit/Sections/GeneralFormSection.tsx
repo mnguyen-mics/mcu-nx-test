@@ -46,19 +46,19 @@ const messages = defineMessages({
     defaultMessage: 'Choose the encoding.',
   },
   labelImportMimeType: {
-    id: 'edit.import.general.infos.label.mime.type',
+    id: 'edit.import.general.infos.label.mimeType',
     defaultMessage: 'Mime-Type',
   },
   tootltipImportMimeType: {
-    id: 'edit.import.general.infos.tooltip.mime.type',
+    id: 'edit.import.general.infos.tooltip.mimeType',
     defaultMessage: 'Choose the mime-type.',
   },
   labelImportDocumentType: {
-    id: 'edit.import.general.infos.label.document.type',
+    id: 'edit.import.general.infos.label.documentType',
     defaultMessage: 'Document Type',
   },
   tootltipImportDocumentType: {
-    id: 'edit.import.general.infos.tooltip.document.type',
+    id: 'edit.import.general.infos.tooltip.documentType',
     defaultMessage: 'Choose the document type.',
   },
   labelImportPriority: {
