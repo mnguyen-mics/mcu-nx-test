@@ -2,6 +2,7 @@ import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   DatamartResource,
   UserAccountCompartmentDatamartSelectionResource,
+  UserAccountCompartmentResource,
 } from '../models/datamart/DatamartResource';
 import { EventRules } from '../models/settings/settings';
 import { UserEventCleaningRuleResource } from '../models/cleaningRules/CleaningRules';
@@ -77,6 +78,14 @@ const DatamartService = {
   > {
     const endpoint = `datamarts/${datamartId}/compartments`;
     return ApiService.getRequest(endpoint, options);
+  },
+  getUserAccountCompartment(
+    compartmentId: string
+  ): Promise<
+    DataResponse<UserAccountCompartmentResource>
+  > {
+    const endpoint = `user_account_compartments/${compartmentId}`;
+    return ApiService.getRequest(endpoint);
   },
   getSources(datamartId: string): Promise<DataListResponse<DatamartResource>> {
     const endpoint = `datamarts/${datamartId}/sources`;
