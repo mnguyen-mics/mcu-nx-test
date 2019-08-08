@@ -310,6 +310,14 @@ class ImportsContentContainer extends React.Component<
         ),
       },
       {
+        intlMessage: messages.priority,
+        key: 'priority',
+        isHideable: false,
+        render: (text: string) => (
+          <span>{text}</span>
+        ),
+      },
+      {
         intlMessage: messages.mimeType,
         key: 'mime_type',
         isHideable: false,
