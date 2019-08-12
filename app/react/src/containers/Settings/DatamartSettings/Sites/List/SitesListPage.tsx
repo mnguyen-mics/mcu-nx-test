@@ -206,16 +206,10 @@ class SitesListPage extends React.Component<Props, SiteListState> {
   };
 
   buildNewActionElement = (organisationId: string, datamartId: string) => {
-
-    const {
-      location: { search },
-    } = this.props;
-
-    const selectedDatamartId = queryString.parse(search).datamartId || datamartId;
     return (
       <Link
         key={messages.newSite.id}
-        to={`/v2/o/${organisationId}/settings/datamart/sites/create?selectedDatamartId=${selectedDatamartId}`}
+        to={`/v2/o/${organisationId}/settings/datamart/sites/create`}
       >
         <Button key={messages.newSite.id} type="primary" htmlType="submit">
           <FormattedMessage {...messages.newSite} />
