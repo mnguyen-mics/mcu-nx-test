@@ -17,10 +17,6 @@ const audienceMenuDefinition: NavigatorMenuDefinition = {
   type: 'multi',
   subMenuItems: [
     {
-      ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceDashboard),
-      translation: messages.audienceDashboard
-    },
-    {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceSegmentList),
       translation: messages.audienceSegment
     },

@@ -9,16 +9,12 @@ import { AudienceSegmentPage } from '../containers/Audience/Segments/Dashboard';
 
 import AudienceFeedPage from '../containers/Audience/Segments/Edit/AudienceFeedForm/AudienceFeedPage';
 
-import {
-  AudiencePartitionsPage,
-} from '../containers/Audience/Partitions/List';
+import { AudiencePartitionsPage } from '../containers/Audience/Partitions/List';
 
 import TimelinePage from '../containers/Audience/Timeline/TimelinePage';
 
 import Partition from '../containers/Audience/Partitions/Dashboard/Partition';
 import AudiencePartitionPage from '../containers/Audience/Partitions/Edit/AudiencePartitionPage';
-
-import AudienceDashboardReport from '../containers/Audience/Dashboard/AudienceDashboardReport';
 
 import {
   NavigatorRoute,
@@ -120,13 +116,6 @@ export const audienceDefinition: NavigatorDefinition = {
     requiredFeature: 'audience.monitoring',
     requireDatamart: true,
   },
-  audienceDashboard: {
-    path: '/audience/dashboard',
-    layout: 'main',
-    contentComponent: AudienceDashboardReport,
-    requiredFeature: 'audience.dashboard',
-    requireDatamart: true
-  }
 };
 
 export const audienceRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
