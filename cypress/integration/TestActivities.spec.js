@@ -19,7 +19,7 @@ describe('Activities test', function() {
         cy.viewport(1920, 1080)
         // Login
         cy.login()
-        cy.url({timeout: 10*second}).should('eq', Cypress.config().baseUrl + '/#/v2/o/1/audience/segments?currentPage=1&pageSize=10')
+        cy.url({timeout: 10*second}).should('contain', Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display')
   
         // Switch organisation
         cy.switchOrg(organisationName)

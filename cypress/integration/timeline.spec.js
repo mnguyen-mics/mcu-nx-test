@@ -9,7 +9,7 @@ describe('Timeline', () => {
     before(() => {
       // Login
       cy.login()
-      cy.url({timeout: 10*second}).should('eq', Cypress.config().baseUrl + '/#/v2/o/1/audience/segments?currentPage=1&pageSize=10')
+      cy.url({timeout: 10*second}).should('contain', Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display')
 
       cy.visit(Cypress.config().baseUrl + '/#/v2/o/504/audience/timeline/user_point_id/01356aaa-b6fa-4d2c-9352-18e0e2fa8ccf?datamartId=1162')
     })

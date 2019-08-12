@@ -1,5 +1,5 @@
 {
-  "baseUrl": "https://navigator.dreamy-hugle.mics-sandbox.com",
+  "baseUrl": "https://navigator.hopeful-bose.mics-sandbox.com",
   "env": {
     "apiDomain": "api.mediarithmics.local",
     "navigatorDomain": "navigator.mediarithmics.local"
