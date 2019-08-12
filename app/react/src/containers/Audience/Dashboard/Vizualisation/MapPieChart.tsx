@@ -22,7 +22,7 @@ import CardFlex from '../Components/CardFlex';
 export interface MapPieChartProps {
   title?: string;
   queryId: string;
-  reportQueryId: string;
+  clauseId: string;
   datamartId: string;
   showLegend?: boolean;
   labelsEnabled?: boolean;
@@ -63,25 +63,25 @@ class MapPieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, reportQueryId, datamartId } = this.props;
+    const { queryId, clauseId, datamartId } = this.props;
 
-    this.fetchData(datamartId, queryId, reportQueryId);
+    this.fetchData(datamartId, queryId, clauseId);
   }
 
   componentWillReceiveProps(nextProps: MapPieChartProps) {
-    const { queryId, reportQueryId, datamartId } = this.props;
+    const { queryId, clauseId, datamartId } = this.props;
     const {
       queryId: nextQueryId,
       datamartId: nextDatamartId,
-      reportQueryId: nextReportQueryId,
+      clauseId: nextClauseId,
     } = nextProps;
 
     if (
       queryId !== nextQueryId ||
       datamartId !== nextDatamartId ||
-      reportQueryId !== nextReportQueryId
+      clauseId !== nextClauseId
     ) {
-      this.fetchData(nextDatamartId, nextQueryId, nextReportQueryId);
+      this.fetchData(nextDatamartId, nextQueryId, nextClauseId);
     }
   }
 
@@ -110,7 +110,7 @@ class MapPieChart extends React.Component<Props, State> {
   fetchData = (
     datamartId: string,
     queryId: string,
-    reportQueryId: string,
+    clauseId: string,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
@@ -119,66 +119,40 @@ class MapPieChart extends React.Component<Props, State> {
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
           this._queryService
-            .getWhereClause(datamartId, queryId)
+            .getWhereClause(datamartId, clauseId)
             .then(clauseResp => {
-              this._queryService
-                .getQuery(datamartId, reportQueryId)
-                .then(reportQueryResp => {
-                  const query = {
-                    query: reportQueryResp.data.query_text,
-                    additional_expression: clauseResp.data,
-                  };
-                  return this._queryService
-                    .runOTQLQuery(datamartId, JSON.stringify(query), {
-                      use_cache: true,
-                      content_type: `application/json`,
-                    })
-                    .then(r => r.data)
-                    .then(r => {
-                      if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                        this.setState({
-                          queryResult: this.formatData(r.rows),
-                          loading: false,
-                        });
-                        return Promise.resolve();
-                      }
-                      const mapErr = new Error('wrong query type');
-                      return Promise.reject(mapErr);
-                    })
-                    .catch(e => this.setState({ error: true, loading: false }));
-                });
-            });
+              const query = {
+                query: res.data.query_text,
+                additional_expression: clauseResp.data,
+              };
+              return this._queryService
+                .runOTQLQuery(datamartId, JSON.stringify(query), {
+                  use_cache: true,
+                  content_type: `application/json`,
+                })
+                .then(r => r.data)
+                .then(r => {
+                  if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                    this.setState({
+                      queryResult: this.formatData(r.rows),
+                      loading: false,
+                    });
+                    return Promise.resolve();
+                  }
+                  const mapErr = new Error('wrong query type');
+                  return Promise.reject(mapErr);
+                })
+                .catch(() => this.setState({ error: true, loading: false }));
+            })
+            .catch(() => this.setState({ error: true, loading: false }));
         }
         const err = new Error('wrong query language');
         return Promise.reject(err);
       })
       .catch(() => {
-        // TO REMOVE :
         this.setState({
-          error: false,
+          error: true,
           loading: false,
-          queryResult: [
-            {
-              key: 'abc',
-              value: 9,
-              color: '#00ab67',
-            },
-            {
-              key: 'def',
-              value: 4,
-              color: '#003056',
-            },
-            {
-              key: 'ghi',
-              value: 1,
-              color: '#fd7c12',
-            },
-            {
-              key: 'jkl',
-              value: 20,
-              color: '#00a1df',
-            },
-          ],
         });
       });
   };

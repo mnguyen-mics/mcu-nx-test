@@ -22,6 +22,7 @@ export interface MapBarChartProps {
   title?: string;
   queryId: string;
   datamartId: string;
+  clauseId: string;
   height?: number;
   labelsEnabled?: boolean;
 }
@@ -66,17 +67,25 @@ class MapBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, datamartId } = this.props;
+    const { queryId, datamartId, clauseId } = this.props;
 
-    this.fetchData(datamartId, queryId);
+    this.fetchData(datamartId, queryId, clauseId);
   }
 
   componentWillReceiveProps(nextProps: MapBarChartProps) {
-    const { queryId, datamartId } = this.props;
-    const { queryId: nextQueryId, datamartId: nextDatamartId } = this.props;
+    const { queryId, datamartId, clauseId } = this.props;
+    const {
+      queryId: nextQueryId,
+      datamartId: nextDatamartId,
+      clauseId: nextClauseId,
+    } = nextProps;
 
-    if (queryId !== nextQueryId || datamartId !== nextDatamartId) {
-      this.fetchData(nextDatamartId, nextQueryId);
+    if (
+      queryId !== nextQueryId ||
+      datamartId !== nextDatamartId ||
+      clauseId !== nextClauseId
+    ) {
+      this.fetchData(nextDatamartId, nextQueryId, nextClauseId);
     }
   }
 
@@ -94,7 +103,11 @@ class MapBarChart extends React.Component<Props, State> {
     return [];
   };
 
-  fetchData = (datamartId: string, queryId: string): Promise<void> => {
+  fetchData = (
+    datamartId: string,
+    queryId: string,
+    clauseId: string,
+  ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
     return this._queryService
@@ -102,20 +115,37 @@ class MapBarChart extends React.Component<Props, State> {
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
           return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text, {use_cache: true})
-            .then(r => r.data)
-            .then(r => {
-              if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                this.setState({
-                  queryResult: this.formatData(r.rows),
-                  loading: false,
-                });
-                return Promise.resolve();
-              }
-              const mapErr = new Error('wrong query type');
-              return Promise.reject(mapErr);
+            .getWhereClause(datamartId, clauseId)
+            .then(clauseResp => {
+              return clauseResp.data;
             })
-            .catch(e => this.setState({ error: true, loading: false }));
+            .then(clause => {
+              const query = {
+                query: res.data.query_text,
+                additional_expression: clause,
+              };
+              return this._queryService
+                .runOTQLQuery(datamartId, JSON.stringify(query), {
+                  use_cache: true,
+                  content_type: `application/json`,
+                })
+                .then(resp => {
+                  return resp.data;
+                })
+                .then(r => {
+                  if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                    this.setState({
+                      queryResult: this.formatData(r.rows),
+                      loading: false,
+                    });
+                    return Promise.resolve();
+                  }
+                  const mapErr = new Error('wrong query type');
+                  return Promise.reject(mapErr);
+                })
+                .catch(() => this.setState({ error: true, loading: false }));
+            })
+            .catch(() => this.setState({ error: true, loading: false }));
         }
         const err = new Error('wrong query language');
         return Promise.reject(err);
@@ -143,7 +173,7 @@ class MapBarChart extends React.Component<Props, State> {
       xKey: 'xKey',
       yKeys: ['yKey'],
       colors: [colors['mcs-info']],
-      labelsEnabled: this.props.labelsEnabled
+      labelsEnabled: this.props.labelsEnabled,
     };
 
     const generateChart = () => {
@@ -174,11 +204,7 @@ class MapBarChart extends React.Component<Props, State> {
       }
     };
 
-    return (
-      <CardFlex title={title}>
-        {generateChart()}
-      </CardFlex>
-    );
+    return <CardFlex title={title}>{generateChart()}</CardFlex>;
   }
 }
 

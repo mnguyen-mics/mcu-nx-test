@@ -22,6 +22,7 @@ export interface CountBarChartProps {
   title?: string;
   queryId: string;
   datamartId: string;
+  clauseIds: string[];
   height?: number;
   labelsEnabled?: boolean;
 }
@@ -66,72 +67,102 @@ class CountBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, datamartId } = this.props;
+    const { queryId, datamartId, clauseIds } = this.props;
 
-    this.fetchData(datamartId, queryId);
+    this.fetchData(datamartId, queryId, clauseIds);
   }
 
   componentWillReceiveProps(nextProps: CountBarChartProps) {
-    const { queryId, datamartId } = this.props;
-    const { queryId: nextQueryId, datamartId: nextDatamartId } = nextProps;
+    const { queryId, datamartId, clauseIds } = this.props;
+    const {
+      queryId: nextQueryId,
+      datamartId: nextDatamartId,
+      clauseIds: nextClauseIds,
+    } = nextProps;
 
-    if (queryId !== nextQueryId || datamartId !== nextDatamartId) {
-      this.fetchData(nextDatamartId, nextQueryId);
+    if (
+      queryId !== nextQueryId ||
+      datamartId !== nextDatamartId ||
+      clauseIds !== nextClauseIds
+    ) {
+      this.fetchData(nextDatamartId, nextQueryId, nextClauseIds);
     }
   }
 
-  formatData = (queryResult: OTQLAggregationResult[]): QueryResult[] => {
-    if (
-      queryResult.length &&
-      queryResult[0].aggregations.buckets.length &&
-      queryResult[0].aggregations.buckets[0].buckets.length
-    ) {
-      return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
-        yKey: data.count,
-        xKey: data.key,
-      }));
-    }
+  formatData = (otqlResults: OTQLAggregationResult[]): QueryResult[] => {
     return [];
+    // if (
+    //   queryResult.length &&
+    //   queryResult[0].aggregations.buckets.length &&
+    //   queryResult[0].aggregations.buckets[0].buckets.length
+    // ) {
+    //   return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
+    //     yKey: data.count,
+    //     xKey: data.key,
+    //   }));
+    // }
+    // return [];
   };
 
-  fetchData = (datamartId: string, queryId: string): Promise<void> => {
+  fetchData = (
+    datamartId: string,
+    queryId: string,
+    clauseIds: string[],
+  ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
     return this._queryService
       .getQuery(datamartId, queryId)
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text, { use_cache: true })
-            .then(r => r.data)
-            .then(r => {
-              if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                this.setState({
-                  queryResult: this.formatData(r.rows),
-                  loading: false,
-                });
-                return Promise.resolve();
-              }
-              const mapErr = new Error('wrong query type');
-              return Promise.reject(mapErr);
+          return Promise.all(
+            clauseIds.map(clauseId =>
+              this._queryService.getWhereClause(datamartId, clauseId),
+            ),
+          )
+            .then(clauseListResp => {
+              return clauseListResp.map(cl => cl.data);
             })
-            .catch(e => this.setState({ error: true, loading: false }));
+            .then(clauseList => {
+              return Promise.all(
+                clauseList.map(clause => {
+                  const query = {
+                    query: res.data.query_text,
+                    additional_expression: clause,
+                  };
+                  return this._queryService.runOTQLQuery(
+                    datamartId,
+                    JSON.stringify(query),
+                    { use_cache: true, content_type: `application/json` },
+                  );
+                }),
+              )
+                .then(resp => {
+                  return resp.map(r => r.data);
+                })
+                .then(result => {
+                  const rows = result.map(r => r.rows);
+                  if (isAggregateResult(rows) && !isCountResult(rows)) {
+                    this.setState({
+                      queryResult: this.formatData(rows),
+                      loading: false,
+                    });
+                    return Promise.resolve();
+                  }
+                  const mapErr = new Error('wrong query type');
+                  return Promise.reject(mapErr);
+                })
+                .catch(() => this.setState({ error: true, loading: false }));
+            })
+            .catch(() => this.setState({ error: true, loading: false }));
         }
         const err = new Error('wrong query language');
         return Promise.reject(err);
       })
       .catch(() => {
-        // TO REMOVE :
         this.setState({
-          error: false,
+          error: true,
           loading: false,
-          queryResult: [
-            { xKey: '0', yKey: 2 },
-            { xKey: '1', yKey: 4 },
-            { xKey: '2', yKey: 6 },
-            { xKey: '3', yKey: 3 },
-            { xKey: '4', yKey: 1 },
-          ],
         });
       });
   };

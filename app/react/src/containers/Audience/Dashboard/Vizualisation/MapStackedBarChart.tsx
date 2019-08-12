@@ -19,7 +19,7 @@ import CardFlex from '../Components/CardFlex';
 
 export interface MapStackedBarChartProps {
   title?: string;
-  reportQueryIds: string[];
+  clauseIds: string[];
   queryId: string;
   keys: string[];
   datamartId: string;
@@ -69,25 +69,25 @@ class MapStackedBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { reportQueryIds, queryId, datamartId } = this.props;
+    const { clauseIds, queryId, datamartId } = this.props;
 
-    this.fetchData(datamartId, queryId, reportQueryIds);
+    this.fetchData(datamartId, queryId, clauseIds);
   }
 
   componentWillReceiveProps(nextProps: MapStackedBarChartProps) {
-    const { reportQueryIds, queryId, datamartId } = this.props;
+    const { clauseIds, queryId, datamartId } = this.props;
     const {
-      reportQueryIds: nextReportQueryIds,
+      clauseIds: nextClauseIds,
       queryId: nextQueryId,
       datamartId: nextDatamartId,
     } = nextProps;
 
     if (
-      reportQueryIds !== nextReportQueryIds ||
+      clauseIds !== nextClauseIds ||
       datamartId !== nextDatamartId ||
       queryId !== nextQueryId
     ) {
-      this.fetchData(nextDatamartId, nextQueryId, nextReportQueryIds);
+      this.fetchData(nextDatamartId, nextQueryId, nextClauseIds);
     }
   }
 
@@ -144,7 +144,7 @@ class MapStackedBarChart extends React.Component<Props, State> {
   fetchData = (
     datamartId: string,
     queryId: string,
-    reportQueryIds: string[],
+    clauseIds: string[],
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
@@ -152,56 +152,55 @@ class MapStackedBarChart extends React.Component<Props, State> {
       .getQuery(datamartId, queryId)
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          this._queryService
-            .getWhereClause(datamartId, queryId)
-            .then(clauseResp => {
+          return Promise.all(
+            clauseIds.map(clauseId => {
+              return this._queryService.getWhereClause(datamartId, clauseId);
+            }),
+          )
+            .then(clauseRespList => {
+              return clauseRespList.map(crl => crl.data);
+            })
+            .then(clauseList => {
               return Promise.all(
-                reportQueryIds.map(reportQueryId => {
-                  return this._queryService.getQuery(datamartId, reportQueryId);
+                clauseList.map(clause => {
+                  const query = {
+                    query: res.data.query_text,
+                    additional_expression: clause,
+                  };
+                  return this._queryService.runOTQLQuery(
+                    datamartId,
+                    JSON.stringify(query),
+                    {
+                      use_cache: true,
+                      content_type: `application/json`,
+                    },
+                  );
                 }),
-              )
-                .then(reportQueryResp => {
-                  return Promise.all(
-                    reportQueryResp.map(reportQuery => {
-                      const query = {
-                        query: reportQuery.data.query_text,
-                        additional_expression: clauseResp.data,
-                      };
-                      return this._queryService.runOTQLQuery(
-                        datamartId,
-                        JSON.stringify(query),
-                        {
-                          use_cache: true,
-                          content_type: `application/json`,
-                        },
-                      );
-                    }),
-                  )
-                    .then(otqlResultListResp => {
-                      return otqlResultListResp.map(
-                        otqlResultResp => otqlResultResp.data,
-                      );
-                    })
-                    .then(otqlResultList => {
-                      const result = otqlResultList.map(r => {
-                        if (!isAggregateResult(r.rows)) {
-                          throw new Error('wrong query type');
-                        }
-                        return r.rows;
-                      });
-                      this.setState({
-                        queryResult: this.formatData(
-                          result as OTQLAggregationResult[][],
-                        ),
-                        loading: false,
-                      });
-                      return Promise.resolve();
-                    });
-                })
-                .catch(e => this.setState({ error: true, loading: false }));
+              );
+            })
+            .then(otqlResultListResp => {
+              return otqlResultListResp.map(
+                otqlResultResp => otqlResultResp.data,
+              );
+            })
+            .then(otqlResultList => {
+              const result = otqlResultList.map(r => {
+                if (!isAggregateResult(r.rows)) {
+                  throw new Error('wrong query type');
+                }
+                return r.rows;
+              });
+              this.setState({
+                queryResult: this.formatData(
+                  result as OTQLAggregationResult[][],
+                ),
+                loading: false,
+              });
+              return Promise.resolve();
             })
             .catch(e => this.setState({ error: true, loading: false }));
         }
+
         const err = new Error('wrong query language');
         return Promise.reject(err);
       })

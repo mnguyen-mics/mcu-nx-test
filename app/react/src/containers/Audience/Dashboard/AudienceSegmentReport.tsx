@@ -24,7 +24,6 @@ interface State {
   currentBreakpoint: string;
   compactType: 'vertical' | 'horizontal' | null;
   mounted: boolean;
-  
 }
 
 export default class AudienceSegmentReport extends React.Component<
@@ -53,7 +52,7 @@ export default class AudienceSegmentReport extends React.Component<
               datamartId={segment.datamart_id}
               title={comp.title}
               queryId={segment.query_id}
-              reportQueryId={comp.query_id}
+              clauseId={comp.clause_id}
             />
           )
         );
@@ -64,7 +63,7 @@ export default class AudienceSegmentReport extends React.Component<
               datamartId={segment.datamart_id}
               title={comp.title}
               queryId={segment.query_id}
-              reportQueryId={comp.query_id}
+              clauseId={comp.clause_id}
               showLegend={comp.show_legend}
               labelsEnabled={comp.labels_enabled}
             />
@@ -78,6 +77,7 @@ export default class AudienceSegmentReport extends React.Component<
               title={comp.title}
               queryId={segment.query_id}
               labelsEnabled={comp.labels_enabled}
+              clauseId={comp.clause_id}
             />
           )
         );
@@ -88,7 +88,7 @@ export default class AudienceSegmentReport extends React.Component<
               datamartId={segment.datamart_id}
               title={comp.title}
               queryId={segment.query_id}
-              reportQueryId={comp.query_id}
+              clauseId={comp.clause_id}
             />
           )
         );
@@ -99,7 +99,7 @@ export default class AudienceSegmentReport extends React.Component<
               datamartId={segment.datamart_id}
               title={comp.title}
               queryId={segment.query_id}
-              reportQueryIds={comp.report_query_ids}
+              clauseIds={comp.clause_ids}
               showPercentage={comp.show_percentage}
             />
           )
@@ -110,7 +110,7 @@ export default class AudienceSegmentReport extends React.Component<
             <MapStackedBarChart
               datamartId={segment.datamart_id}
               keys={comp.keys}
-              reportQueryIds={comp.query_ids}
+              clauseIds={comp.clause_ids}
               queryId={segment.query_id}
               title={comp.title}
             />
@@ -122,18 +122,19 @@ export default class AudienceSegmentReport extends React.Component<
             <WorldMapChart
               datamartId={segment.datamart_id}
               title={comp.title}
-              reportQueryId={comp.query_id}
+              clauseId={comp.clause_id}
               queryId={segment.query_id}
             />
           )
         );
-        case 'COUNT_BAR_CHART':
+      case 'COUNT_BAR_CHART':
         return (
           segment.query_id && (
             <CountBarChart
               datamartId={segment.datamart_id}
               title={comp.title}
               queryId={segment.query_id}
+              clauseIds={comp.clause_ids}
             />
           )
         );

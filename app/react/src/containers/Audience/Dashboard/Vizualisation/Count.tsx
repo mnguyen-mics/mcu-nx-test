@@ -8,7 +8,7 @@ import CardFlex from '../Components/CardFlex';
 
 export interface CountProps {
   queryId: string;
-  reportQueryId: string;
+  clauseId: string;
   datamartId: string;
   title: string;
 }
@@ -32,32 +32,32 @@ export default class Count extends React.Component<CountProps, State> {
   }
 
   componentDidMount() {
-    const { queryId, reportQueryId, datamartId } = this.props;
+    const { queryId, clauseId, datamartId } = this.props;
 
-    this.fetchData(datamartId, queryId, reportQueryId);
+    this.fetchData(datamartId, queryId, clauseId);
   }
 
   componentWillReceiveProps(nextProps: CountProps) {
-    const { queryId, reportQueryId, datamartId } = this.props;
+    const { queryId, clauseId, datamartId } = this.props;
     const {
       queryId: nextQueryId,
       datamartId: nextDatamartId,
-      reportQueryId: nextReportQueryId,
+      clauseId: nextClauseId,
     } = nextProps;
 
     if (
       queryId !== nextQueryId ||
       datamartId !== nextDatamartId ||
-      reportQueryId !== nextReportQueryId
+      clauseId !== nextClauseId
     ) {
-      this.fetchData(nextDatamartId, nextQueryId, nextReportQueryId);
+      this.fetchData(nextDatamartId, nextQueryId, nextClauseId);
     }
   }
 
   fetchData = (
     datamartId: string,
     queryId: string,
-    reportQueryId: string,
+    clauseId: string,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
@@ -66,43 +66,38 @@ export default class Count extends React.Component<CountProps, State> {
       .then(res => {
         if (res.data.query_language === 'OTQL' && res.data.query_text) {
           this._queryService
-            .getWhereClause(datamartId, queryId)
+            .getWhereClause(datamartId, clauseId)
             .then(clauseResp => {
-              this._queryService
-                .getQuery(datamartId, reportQueryId)
-                .then(reportQueryResp => {
-                  const query = {
-                    query: reportQueryResp.data.query_text,
-                    additional_expression: clauseResp.data,
-                  };
-                  return this._queryService
-                    .runOTQLQuery(datamartId, JSON.stringify(query), {
-                      use_cache: true,
-                      content_type: `application/json`,
-                    })
-                    .then(r => r.data)
-                    .then(r => {
-                      if (isCountResult(r.rows)) {
-                        this.setState({
-                          queryResult: r.rows[0].count,
-                          loading: false,
-                        });
-                        return Promise.resolve();
-                      }
-                      const countErr = new Error('wrong query type');
-                      return Promise.reject(countErr);
-                    })
-                    .catch(e => this.setState({ error: true, loading: false }));
-                });
+              const query = {
+                query: res.data.query_text,
+                additional_expression: clauseResp.data,
+              };
+              return this._queryService
+                .runOTQLQuery(datamartId, JSON.stringify(query), {
+                  use_cache: true,
+                  content_type: `application/json`,
+                })
+                .then(r => r.data)
+                .then(r => {
+                  if (isCountResult(r.rows)) {
+                    this.setState({
+                      queryResult: r.rows[0].count,
+                      loading: false,
+                    });
+                    return Promise.resolve();
+                  }
+                  const countErr = new Error('wrong query type');
+                  return Promise.reject(countErr);
+                })
+                .catch(() => this.setState({ error: true, loading: false }));
             })
-            .catch(e => this.setState({ error: true, loading: false }));
+            .catch(() => this.setState({ error: true, loading: false }));
         }
         const err = new Error('wrong query language');
         return Promise.reject(err);
       })
       .catch(() => {
-        // TO REMOVE :
-        this.setState({ error: false, loading: false, queryResult: 127659 });
+        this.setState({ error: false, loading: false });
       });
   };
 

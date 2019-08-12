@@ -15,34 +15,33 @@ export interface BaseComponent {
 export interface ComponentChart extends BaseComponent {
   component_type: 'MAP_BAR_CHART' | 'MAP_PIE_CHART' | 'DATE_AGGREGATION_CHART';
   show_legend: boolean;
-  query_id: string;
+  clause_id: string;
   labels_enabled?: boolean;
 }
 
 export interface ComponentCountBar extends BaseComponent {
   component_type: 'COUNT_BAR_CHART';
   show_legend: boolean;
-  query_ids: string[];
+  clause_ids: string[];
   labels_enabled?: boolean;
 }
 
 export interface ComponentCount extends BaseComponent {
   component_type: 'COUNT';
-  query_id: string;
+  clause_id: string;
   prefix?: string;
   suffix?: string;
 }
 
 export interface GaugeComponent extends BaseComponent {
   component_type: 'GAUGE_PIE_CHART';
-  query_id: string;
-  report_query_ids: string[];
+  clause_ids: string[];
   show_percentage: boolean;
 }
 
 export interface MapStackedBarChart extends BaseComponent {
   component_type: 'MAP_STACKED_BAR_CHART';
-  query_ids: string[];
+  clause_ids: string[];
   keys: string[];
   show_legend: boolean;
   labels_enabled?: boolean;
@@ -50,7 +49,7 @@ export interface MapStackedBarChart extends BaseComponent {
 
 export interface WorldMapChart extends BaseComponent {
   component_type: 'WORLD_MAP_CHART';
-  query_id: string;
+  clause_id: string;
 }
 
 export type Component =
@@ -84,9 +83,8 @@ export const deterministicLayout: ComponentLayout[] = [
     component: {
       component_type: 'GAUGE_PIE_CHART',
       datamart_id: '1393',
-      query_id: '21807',
-      report_query_ids: ['21805'],
-      title: 'Global Pragmatists',
+      clause_ids: ['22447', '22448'], // clause ids
+      title: 'Gender',
       show_percentage: true,
     },
   },
@@ -103,8 +101,8 @@ export const deterministicLayout: ComponentLayout[] = [
       component_type: 'COUNT_BAR_CHART',
       show_legend: false,
       datamart_id: '1393',
-      query_ids: ['21825'],
-      title: 'Country Breakdown',
+      clause_ids: ['21825'],
+      title: 'Age',
     },
   },
   {
@@ -120,8 +118,8 @@ export const deterministicLayout: ComponentLayout[] = [
       component_type: 'WORLD_MAP_CHART',
       // show_legend: false,
       datamart_id: '1393',
-      query_id: '21823',
-      title: 'Interest Group',
+      clause_id: '21823',
+      title: 'Location',
     },
   },
   {
@@ -136,8 +134,8 @@ export const deterministicLayout: ComponentLayout[] = [
     component: {
       component_type: 'COUNT_BAR_CHART',
       datamart_id: '1390',
-      query_ids: ['21818'],
-      title: 'Home Owner Status',
+      clause_ids: ['21818'],
+      title: 'Reader status',
       show_legend: false,
       labels_enabled: true,
     },
@@ -154,8 +152,8 @@ export const deterministicLayout: ComponentLayout[] = [
     component: {
       component_type: 'MAP_PIE_CHART',
       datamart_id: '1390',
-      query_id: '21818',
-      title: 'Home Owner Status',
+      clause_id: '21818',
+      title: 'Author interaction',
       show_legend: false,
       labels_enabled: true,
     },
@@ -172,8 +170,8 @@ export const deterministicLayout: ComponentLayout[] = [
     component: {
       component_type: 'MAP_PIE_CHART',
       datamart_id: '1390',
-      query_id: '21818',
-      title: 'Home Owner Status',
+      clause_id: '21818',
+      title: 'Page type interaction',
       show_legend: false,
       labels_enabled: true,
     },
@@ -190,8 +188,8 @@ export const deterministicLayout: ComponentLayout[] = [
     component: {
       component_type: 'MAP_PIE_CHART',
       datamart_id: '1390',
-      query_id: '21818',
-      title: 'Home Owner Status',
+      clause_id: '21818',
+      title: 'Category interaction',
       show_legend: false,
       labels_enabled: true,
     },
@@ -211,9 +209,8 @@ export const probabilisticLayout: ComponentLayout[] = [
     component: {
       component_type: 'GAUGE_PIE_CHART',
       datamart_id: '1393',
-      query_id: '21807',
-      report_query_ids: ['21805'],
-      title: 'Global Pragmatists',
+      clause_ids: ['21805'],
+      title: 'Gender',
       show_percentage: true,
     },
   },
@@ -230,8 +227,8 @@ export const probabilisticLayout: ComponentLayout[] = [
       component_type: 'COUNT_BAR_CHART',
       show_legend: false,
       datamart_id: '1393',
-      query_ids: ['21825'],
-      title: 'Country Breakdown',
+      clause_ids: ['21825'],
+      title: 'Age',
     },
   },
   {
@@ -247,8 +244,8 @@ export const probabilisticLayout: ComponentLayout[] = [
       component_type: 'WORLD_MAP_CHART',
       // show_legend: false,
       datamart_id: '1393',
-      query_id: '21823',
-      title: 'Interest Group',
+      clause_id: '21823',
+      title: 'Location',
     },
   },
 ];
