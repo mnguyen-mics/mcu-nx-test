@@ -42,7 +42,7 @@ export type PluginType =
  | 'ACTIVITY_ANALYZER'
  | 'DATA_CONNECTOR'
  | 'SCENARIO_NODE_PROCESSOR'
- | 'STORED_PROCEDURE';
+ | 'ML_FUNCTION';
 
 export interface PluginVersionResource {
   id: string;

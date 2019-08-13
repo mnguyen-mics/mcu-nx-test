@@ -46,8 +46,8 @@ import DatamartViewPage from '../containers/Settings/DatamartSettings/Datamarts/
 import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/List/MlAlgorithmsPage';
 import MlAlgorithmEditPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/Edit/MlAlgorithmEditPage';
 import MlModelsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlModels/MlAlgorithmModelsPage';
-import { StoredProceduresContent } from '../containers/Settings/DatamartSettings/StoredProcedures/List';
-import CreateEditStoredProcedure from '../containers/Settings/DatamartSettings/StoredProcedures/Edit/EditStoredProcedurePage';
+import { MlFunctionsContent } from '../containers/Settings/DatamartSettings/MlFunctions/List';
+import CreateEditMlFunction from '../containers/Settings/DatamartSettings/MlFunctions/Edit/EditMlFunctionPage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -164,26 +164,26 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
 
-  // stored procedure 
-  settingsDatamartStoredProcedureList: {
-    path: '/settings/datamart/stored_procedures',
+  // ml function 
+  settingsDatamartMlFunctionList: {
+    path: '/settings/datamart/ml_functions',
     layout: 'settings',
-    contentComponent: StoredProceduresContent,
-    requiredFeature: 'datamartSettings.stored_procedure',
+    contentComponent: MlFunctionsContent,
+    requiredFeature: 'datamartSettings.ml_function',
     requireDatamart: true,
   },
-  settingsDatamartStoredProcedureEdition: {
-    path: '/settings/datamart/stored_procedures/:storedProcedureId(\\d+)/edit',
+  settingsDatamartMlFunctionEdition: {
+    path: '/settings/datamart/ml_functions/:mlFunctionId(\\d+)/edit',
     layout: 'edit',
-    editComponent: CreateEditStoredProcedure,
-    requiredFeature: 'datamartSettings.stored_procedure',
+    editComponent: CreateEditMlFunction,
+    requiredFeature: 'datamartSettings.ml_function',
     requireDatamart: true,
   },
   settingsDatamartStoredProcedureCreation: {
-    path: '/settings/datamart/stored_procedures/create',
+    path: '/settings/datamart/ml_functions/create',
     layout: 'edit',
-    editComponent: CreateEditStoredProcedure,
-    requiredFeature: 'datamartSettings.stored_procedure',
+    editComponent: CreateEditMlFunction,
+    requiredFeature: 'datamartSettings.ml_function',
     requireDatamart: true,
   },
 
