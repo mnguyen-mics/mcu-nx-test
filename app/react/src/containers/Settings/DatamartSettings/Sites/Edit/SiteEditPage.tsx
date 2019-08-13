@@ -34,6 +34,7 @@ import { UserWorkspaceResource } from '../../../../../models/directory/UserProfi
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { TYPES } from '../../../../../constants/types';
+import queryString from 'query-string';
 
 interface State {
   siteData: SiteFormData;
@@ -62,7 +63,7 @@ class SiteEditPage extends React.Component<Props, State> {
     this.state = {
       loading: true, // default true to avoid render x2 on mounting
       siteData: INITIAL_SITE_FORM_DATA,
-      selectedDatamartId: props.match.params.datamartId,
+      selectedDatamartId: queryString.parse(props.location.search).selectedDatamartId || props.match.params.datamartId,
     };
   }
 

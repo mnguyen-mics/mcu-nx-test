@@ -42,6 +42,7 @@ interface SiteListState {
   isFetchingSites: boolean;
   noSiteYet: boolean;
   filter: Filter;
+  hasSingleDatamart: boolean;
 }
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
@@ -70,6 +71,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         pageSize: 10,
         keywords: '',
       },
+      hasSingleDatamart: false
     };
   }
 
@@ -81,6 +83,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       location: { search },
       datamart,
       datamartId,
+      workspace
     } = this.props;
     const filter = parseSearch(search, this.getSearchSetting(organisationId));
     const calculatedDatamartId = datamartId ? datamartId : (filter.datamartId ? filter.datamartId : datamart.id);
@@ -92,6 +95,12 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         isFetchingSites: false,
       });
     });
+    workspace(organisationId).datamarts.length = 1;
+    if (workspace(organisationId).datamarts.length === 1) {
+      this.setState({
+        hasSingleDatamart: true
+      })
+    }
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -205,7 +214,28 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       });
   };
 
-  buildNewActionElement = (organisationId: string, datamartId: string) => {
+  buildNewActionElement = (organisationId: string, datamartId: string, skipDatamartSelector: boolean) => {
+
+    if (skipDatamartSelector) {
+
+      const {
+        location: { search },
+      } = this.props;
+  
+      const selectedDatamartId = queryString.parse(search).datamartId || datamartId;
+
+      return (
+        <Link
+          key={messages.newSite.id}
+          to={`/v2/o/${organisationId}/settings/datamart/sites/create?selectedDatamartId=${selectedDatamartId}`}
+        >
+          <Button key={messages.newSite.id} type="primary" htmlType="submit">
+            <FormattedMessage {...messages.newSite} />
+          </Button>
+        </Link>
+      );
+    }
+
     return (
       <Link
         key={messages.newSite.id}
@@ -216,6 +246,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         </Button>
       </Link>
     );
+
   };
 
   getSearchSetting(organisationId: string) {
@@ -260,9 +291,10 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       sites,
       noSiteYet,
       filter,
+      hasSingleDatamart
     } = this.state;
 
-    const newButton = this.buildNewActionElement(organisationId, datamart.id);
+    const newButton = this.buildNewActionElement(organisationId, datamart.id, hasSingleDatamart);
     const buttons = [newButton];
 
     const datamartItems = workspace(organisationId).datamarts.map(d => ({
