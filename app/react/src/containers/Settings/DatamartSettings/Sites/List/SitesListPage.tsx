@@ -42,7 +42,6 @@ interface SiteListState {
   isFetchingSites: boolean;
   noSiteYet: boolean;
   filter: Filter;
-  hasSingleDatamart: boolean;
 }
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
@@ -55,7 +54,6 @@ type Props = SitesListPageProps &
   InjectedNotificationProps;
 
 class SitesListPage extends React.Component<Props, SiteListState> {
-
   @lazyInject(TYPES.IChannelService)
   private _channelService: IChannelService;
 
@@ -71,7 +69,6 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         pageSize: 10,
         keywords: '',
       },
-      hasSingleDatamart: false
     };
   }
 
@@ -83,24 +80,25 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       location: { search },
       datamart,
       datamartId,
-      workspace
     } = this.props;
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
-    const calculatedDatamartId = datamartId ? datamartId : (filter.datamartId ? filter.datamartId : datamart.id);
+    const filter = parseSearch(search, this.getSearchSetting());
+    const calculatedDatamartId = datamartId
+      ? datamartId
+      : filter.datamartId
+      ? filter.datamartId
+      : datamart.id;
     this.setState({
       isFetchingSites: true,
     });
-    this.fetchSites(organisationId, calculatedDatamartId, this.state.filter).then(() => {
+    this.fetchSites(
+      organisationId,
+      calculatedDatamartId,
+      this.state.filter,
+    ).then(() => {
       this.setState({
         isFetchingSites: false,
       });
     });
-    workspace(organisationId).datamarts.length = 1;
-    if (workspace(organisationId).datamarts.length === 1) {
-      this.setState({
-        hasSingleDatamart: true
-      })
-    }
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -123,20 +121,22 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       nextOrganisationId !== organisationId ||
       !compareSearches(search, nextSearch)
     ) {
-
-      const selectedDatamartId = queryString.parse(nextSearch).datamartId || datamart.id;
+      const selectedDatamartId =
+        queryString.parse(nextSearch).datamartId || datamart.id;
 
       this.setState({
         isFetchingSites: true,
       });
 
-      this.fetchSites(organisationId, selectedDatamartId, this.state.filter).then(
-        () => {
-          this.setState({
-            isFetchingSites: false,
-          });
-        },
-      );
+      this.fetchSites(
+        organisationId,
+        selectedDatamartId,
+        this.state.filter,
+      ).then(() => {
+        this.setState({
+          isFetchingSites: false,
+        });
+      });
     }
   }
 
@@ -154,8 +154,10 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     } = this.props;
 
     history.push({
-      pathname: `/v2/o/${organisationId}/settings/datamart/${site.datamart_id}/sites/${site.id}/edit`,
-      state: { from: `${location.pathname}${location.search}`}
+      pathname: `/v2/o/${organisationId}/settings/datamart/${
+        site.datamart_id
+      }/sites/${site.id}/edit`,
+      state: { from: `${location.pathname}${location.search}` },
     });
   };
 
@@ -166,12 +168,10 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       },
       datamart,
 
-      location: {
-        search
-      }
+      location: { search },
     } = this.props;
     this.setState({ filter: newFilter });
-    const filters = parseSearch(search, this.getSearchSetting(organisationId));
+    const filters = parseSearch(search, this.getSearchSetting());
     this.fetchSites(
       organisationId,
       filters.datamartId ? filters.datamartId : datamart.id,
@@ -195,11 +195,8 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       return options;
     };
 
-    return this._channelService.getChannels(
-      organisationId,
-      datamartId,
-      buildGetSitesOptions(),
-    )
+    return this._channelService
+      .getChannels(organisationId, datamartId, buildGetSitesOptions())
       .then(response => {
         this.setState({
           isFetchingSites: false,
@@ -214,61 +211,38 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       });
   };
 
-  buildNewActionElement = (organisationId: string, datamartId: string, skipDatamartSelector: boolean) => {
+  buildNewActionElement = (organisationId: string) => {
+    const { workspace } = this.props;
+    const datamarts = workspace(organisationId).datamarts;
 
-    if (skipDatamartSelector) {
-
-      const {
-        location: { search },
-      } = this.props;
-  
-      const selectedDatamartId = queryString.parse(search).datamartId || datamartId;
-
-      return (
-        <Link
-          key={messages.newSite.id}
-          to={`/v2/o/${organisationId}/settings/datamart/sites/create?selectedDatamartId=${selectedDatamartId}`}
-        >
-          <Button key={messages.newSite.id} type="primary" htmlType="submit">
-            <FormattedMessage {...messages.newSite} />
-          </Button>
-        </Link>
-      );
-    }
-
+    const url =
+      datamarts.length > 1
+        ? `/v2/o/${organisationId}/settings/datamart/sites/create`
+        : `/v2/o/${organisationId}/settings/datamart/sites/create?selectedDatamartId=${
+            datamarts[0].id
+          }`;
     return (
-      <Link
-        key={messages.newSite.id}
-        to={`/v2/o/${organisationId}/settings/datamart/sites/create`}
-      >
-        <Button key={messages.newSite.id} type="primary" htmlType="submit">
+      <Link key={messages.newSite.id} to={url}>
+        <Button key={messages.newSite.id} type="primary">
           <FormattedMessage {...messages.newSite} />
         </Button>
       </Link>
     );
-
   };
 
-  getSearchSetting(organisationId: string) {
+  getSearchSetting() {
     return [...KEYWORD_SEARCH_SETTINGS, ...DATAMART_SEARCH_SETTINGS];
   }
 
   updateLocationSearch = (params: Index<any>) => {
     const {
       history,
-      match: {
-        params: { organisationId },
-      },
       location: { search: currentSearch, pathname },
     } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        this.getSearchSetting(organisationId),
-      ),
+      search: updateSearch(currentSearch, params, this.getSearchSetting()),
     };
 
     history.push(nextLocation);
@@ -280,8 +254,6 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         params: { organisationId },
       },
       location: { search },
-      datamart,
-      datamartId,
       workspace,
     } = this.props;
 
@@ -291,10 +263,9 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       sites,
       noSiteYet,
       filter,
-      hasSingleDatamart
     } = this.state;
 
-    const newButton = this.buildNewActionElement(organisationId, datamart.id, hasSingleDatamart);
+    const newButton = this.buildNewActionElement(organisationId);
     const buttons = [newButton];
 
     const datamartItems = workspace(organisationId).datamarts.map(d => ({
@@ -304,15 +275,15 @@ class SitesListPage extends React.Component<Props, SiteListState> {
 
     const filtersOptions: Array<MultiSelectProps<any>> = [];
 
-    if (workspace(organisationId).datamarts.length > 1) {
-      const filterData = parseSearch(
-        search,
-        this.getSearchSetting(organisationId),
-      );
+    if (datamartItems.length > 1) {
+      const filterData = parseSearch(search, this.getSearchSetting());
       const datamartFilter = {
         displayElement: (
           <div>
-            <FormattedMessage id="settings.datamart.site.list.datamartFilter" defaultMessage="Datamart" />{' '}
+            <FormattedMessage
+              id="settings.datamart.site.list.datamartFilter"
+              defaultMessage="Datamart"
+            />{' '}
             <Icon type="down" />
           </div>
         ),
@@ -331,9 +302,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
           });
         },
       };
-      if (!datamartId) {
-        filtersOptions.push(datamartFilter);
-      }
+      filtersOptions.push(datamartFilter);
     }
 
     return (
