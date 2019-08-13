@@ -2,7 +2,6 @@ import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import moment from 'moment';
 import {
-  EmptyTableView,
   TableViewFilters,
 } from '../../../../../components/TableView';
 import messages from './messages';
@@ -37,7 +36,6 @@ class SitesTable extends React.Component<Props> {
       isFetchingSites,
       dataSource,
       totalSites,
-      noSiteYet,
       onFilterChange,
       onArchiveSite,
       onEditSite,
@@ -128,13 +126,7 @@ class SitesTable extends React.Component<Props> {
       defaultValue: filter.keywords,
     };
 
-    return noSiteYet ? (
-      <EmptyTableView
-        iconType="settings"
-        intlMessage={messages.emptySites}
-        className="mcs-table-view-empty mcs-empty-card"
-      />
-    ) : (
+    return (
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
