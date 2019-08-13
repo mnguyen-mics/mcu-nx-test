@@ -3,8 +3,13 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
-import WorldMap from '../../../../components/WorldMap';
-import { mapData } from '../mapData';
+import WorldMap, { MapData } from '../../../../components/WorldMap';
+import {
+  isAggregateResult,
+  isCountResult,
+  OTQLAggregationResult,
+} from '../../../../models/datamart/graphdb/OTQLResult';
+import { mapData2 } from '../mapData';
 
 export interface WorldMapChartProps {
   queryId: string;
@@ -14,7 +19,7 @@ export interface WorldMapChartProps {
 }
 
 interface State {
-  queryResult?: number;
+  mapData: MapData[];
   error: boolean;
   loading: boolean;
 }
@@ -31,6 +36,7 @@ export default class WorldMapChart extends React.Component<
     this.state = {
       error: false,
       loading: true,
+      mapData: mapData2,
     };
   }
 
@@ -57,65 +63,93 @@ export default class WorldMapChart extends React.Component<
     }
   }
 
+  formatData = (queryResult: OTQLAggregationResult[]): any => {
+    // to type better
+    // return [
+    //   {
+    //     code3: 'USA',
+    //     name: 'United States',
+    //     value: 35.32,
+    //     code: 'US',
+    //   },
+    // ];
+
+    return queryResult.length &&
+      queryResult[0].aggregations.buckets.length &&
+      queryResult[0].aggregations.buckets[0].buckets.length
+      ? queryResult[0].aggregations.buckets[0].buckets.map((data, i) => {
+          const countryData = mapData2.find(md => md.code === data.key);
+          return {
+            code3: countryData ? countryData.code3 : '',
+            name: 'country name',
+            value: data.count,
+            code: data.key,
+          };
+        })
+      : [];
+  };
+
   fetchData = (
     datamartId: string,
-    queryId: string,
-    clauseId: string,
+    segmentQueryId: string,
+    chartQueryId: string,
   ): Promise<void> => {
-    this.setState({ error: false, loading: true });
+    this.setState({ error: false });
 
     return this._queryService
-      .getQuery(datamartId, queryId)
-      .then(res => {
-        if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          this._queryService
-            .getWhereClause(datamartId, queryId)
-            .then(clauseResp => {
-              const query = {
-                query: res.data.query_text,
-                additional_expression: clauseResp.data,
-              };
-              return this._queryService
-                .runOTQLQuery(datamartId, JSON.stringify(query), {
-                  use_cache: true,
-                  content_type: `application/json`,
-                })
-                .then(r => r.data)
-                .then(r => {
-                  // if (isCountResult(r.rows)) {
-                  //   this.setState({ queryResult: r.rows[0].count, loading: false });
-                  //   return Promise.resolve();
-                  // }
-                  const countErr = new Error('wrong query type');
-                  return Promise.reject(countErr);
-                });
-            })
-            .catch(e => this.setState({ error: true, loading: false }));
-        }
-        const err = new Error('wrong query language');
-        return Promise.reject(err);
+      .getWhereClause(datamartId, segmentQueryId)
+      .then(clauseResp => {
+        return this._queryService
+          .getQuery(datamartId, chartQueryId)
+
+          .then(queryResp => {
+            return queryResp.data;
+          })
+          .then(q => {
+            const query = {
+              query: q.query_text,
+              additional_expression: clauseResp,
+            };
+            return this._queryService
+              .runOTQLQuery(datamartId, JSON.stringify(query), {
+                use_cache: true,
+                content_type: `application/json`,
+              })
+
+              .then(otqlResultResp => {
+                return otqlResultResp.data;
+              })
+              .then(r => {
+                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                  this.setState({
+                    mapData: this.formatData(r.rows),
+                    loading: false,
+                  });
+                  return Promise.resolve();
+                }
+                const countErr = new Error('wrong query type');
+                return Promise.reject(countErr);
+              });
+          });
       })
       .catch(() => {
-        this.setState({ error: false, loading: false, queryResult: 127659 });
+        this.setState({ error: false, loading: false });
       });
+  };
+
+  generateChart = () => {
+    const { loading } = this.state;
+    const { mapData } = this.state;
+    if (!loading && mapData) {
+      return <WorldMap dataset={mapData} />;
+    }
+    return;
   };
 
   public render() {
     return (
-      <CardFlex>
-        <div className="dashboard-counter">
-          <div className="count-title">
-            {this.state.loading ? (
-              <i
-                className="mcs-table-cell-loading"
-                style={{ maxWidth: '40%' }}
-              />
-            ) : (
-              this.props.title
-            )}
-          </div>
-          <WorldMap dataset={mapData} />
-        </div>
+      <CardFlex title={this.props.title}>
+        <div style={{ width: '100%' }}>{this.generateChart()}</div>
       </CardFlex>
     );
   }

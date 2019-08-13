@@ -21,8 +21,8 @@ import CardFlex from '../Components/CardFlex';
 
 export interface MapPieChartProps {
   title?: string;
-  queryId: string;
-  clauseId: string;
+  segmentQueryId: string;
+  chartQueryId: string;
   datamartId: string;
   showLegend?: boolean;
   labelsEnabled?: boolean;
@@ -63,25 +63,25 @@ class MapPieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, clauseId, datamartId } = this.props;
+    const { segmentQueryId, chartQueryId, datamartId } = this.props;
 
-    this.fetchData(datamartId, queryId, clauseId);
+    this.fetchData(datamartId, segmentQueryId, chartQueryId);
   }
 
   componentWillReceiveProps(nextProps: MapPieChartProps) {
-    const { queryId, clauseId, datamartId } = this.props;
+    const { segmentQueryId, chartQueryId, datamartId } = this.props;
     const {
-      queryId: nextQueryId,
+      segmentQueryId: nextQueryId,
       datamartId: nextDatamartId,
-      clauseId: nextClauseId,
+      chartQueryId: nextChartQueryId,
     } = nextProps;
 
     if (
-      queryId !== nextQueryId ||
+      segmentQueryId !== nextQueryId ||
       datamartId !== nextDatamartId ||
-      clauseId !== nextClauseId
+      chartQueryId !== nextChartQueryId
     ) {
-      this.fetchData(nextDatamartId, nextQueryId, nextClauseId);
+      this.fetchData(nextDatamartId, nextQueryId, nextChartQueryId);
     }
   }
 
@@ -109,45 +109,46 @@ class MapPieChart extends React.Component<Props, State> {
 
   fetchData = (
     datamartId: string,
-    queryId: string,
-    clauseId: string,
+    segmentQueryId: string,
+    chartQueryId: string,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
     return this._queryService
-      .getQuery(datamartId, queryId)
-      .then(res => {
-        if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          this._queryService
-            .getWhereClause(datamartId, clauseId)
-            .then(clauseResp => {
-              const query = {
-                query: res.data.query_text,
-                additional_expression: clauseResp.data,
-              };
-              return this._queryService
-                .runOTQLQuery(datamartId, JSON.stringify(query), {
-                  use_cache: true,
-                  content_type: `application/json`,
-                })
-                .then(r => r.data)
-                .then(r => {
-                  if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                    this.setState({
-                      queryResult: this.formatData(r.rows),
-                      loading: false,
-                    });
-                    return Promise.resolve();
-                  }
-                  const mapErr = new Error('wrong query type');
-                  return Promise.reject(mapErr);
-                })
-                .catch(() => this.setState({ error: true, loading: false }));
-            })
-            .catch(() => this.setState({ error: true, loading: false }));
-        }
-        const err = new Error('wrong query language');
-        return Promise.reject(err);
+      .getWhereClause(datamartId, segmentQueryId)
+      .then(clauseResp => {
+        return this._queryService
+          .getQuery(datamartId, chartQueryId)
+
+          .then(queryResp => {
+            return queryResp.data;
+          })
+          .then(q => {
+            const query = {
+              query: q.query_text,
+              additional_expression: clauseResp,
+            };
+            return this._queryService
+              .runOTQLQuery(datamartId, JSON.stringify(query), {
+                use_cache: true,
+                content_type: `application/json`,
+              })
+
+              .then(otqlResultResp => {
+                return otqlResultResp.data;
+              })
+              .then(r => {
+                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                  this.setState({
+                    queryResult: this.formatData(r.rows),
+                    loading: false,
+                  });
+                  return Promise.resolve();
+                }
+                const mapErr = new Error('wrong query type');
+                return Promise.reject(mapErr);
+              });
+          });
       })
       .catch(() => {
         this.setState({

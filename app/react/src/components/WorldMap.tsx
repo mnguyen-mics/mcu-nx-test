@@ -7,10 +7,10 @@ import world from './Charts/world.js';
 import log from '../utils/Logger';
 
 export interface WorldMapProps {
-  dataset: Dataset[];
+  dataset: MapData[];
 }
 
-interface Dataset {
+export interface MapData {
   [key: string]: string | number;
 }
 
@@ -238,7 +238,7 @@ class WorldMap extends React.Component<Props> {
     this.generateMap(dataset);
   }
 
-  generateMap = (dataset: Dataset[]) => {
+  generateMap = (dataset: MapData[]) => {
     // dataset.forEach(data => {
     //   this.value = this.value < 1 ? 1 : this.value;
     // });
@@ -284,7 +284,7 @@ class WorldMap extends React.Component<Props> {
   };
 
   render() {
-    return <div id={this.cuid} style={{ width: '100%' }} />;
+    return <div id={this.cuid} />
   }
 }
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
+import _ from 'lodash';
 import cuid from 'cuid';
 import {
-  OTQLAggregationResult,
-  isAggregateResult,
+  OTQLCountResult,
   isCountResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, {
@@ -20,11 +20,12 @@ import CardFlex from '../Components/CardFlex';
 
 export interface CountBarChartProps {
   title?: string;
-  queryId: string;
+  segmentQueryId: string;
   datamartId: string;
-  clauseIds: string[];
+  chartQueryIds: string[];
   height?: number;
   labelsEnabled?: boolean;
+  type: string;
 }
 
 interface QueryResult {
@@ -67,102 +68,118 @@ class CountBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, datamartId, clauseIds } = this.props;
+    const { segmentQueryId, datamartId, chartQueryIds } = this.props;
 
-    this.fetchData(datamartId, queryId, clauseIds);
+    this.fetchData(datamartId, segmentQueryId, chartQueryIds);
   }
 
   componentWillReceiveProps(nextProps: CountBarChartProps) {
-    const { queryId, datamartId, clauseIds } = this.props;
+    const { segmentQueryId, datamartId, chartQueryIds } = this.props;
     const {
-      queryId: nextQueryId,
+      segmentQueryId: nextSegmentQueryId,
       datamartId: nextDatamartId,
-      clauseIds: nextClauseIds,
+      chartQueryIds: nextChartQueryIds,
     } = nextProps;
 
     if (
-      queryId !== nextQueryId ||
+      segmentQueryId !== nextSegmentQueryId ||
       datamartId !== nextDatamartId ||
-      clauseIds !== nextClauseIds
+      chartQueryIds !== nextChartQueryIds
     ) {
-      this.fetchData(nextDatamartId, nextQueryId, nextClauseIds);
+      this.fetchData(nextDatamartId, nextSegmentQueryId, nextChartQueryIds);
     }
   }
 
-  formatData = (otqlResults: OTQLAggregationResult[]): QueryResult[] => {
+  formatData = (otqlResults: OTQLCountResult[]): QueryResult[] => {
+    const { type } = this.props;
+    let xkeys: string[];
+    switch (type) {
+      case 'age_det':
+      case 'age_prob':
+        xkeys = ['0-15 yo', '15-25 yo', '25-35 yo', '35-55 yo', '55+ yo'];
+        break;
+      case 'reader_status':
+        xkeys = ['Is a contributor', 'Is a subscriber', 'Is a free reader'];
+        break;
+
+      default:
+        xkeys = [];
+        break;
+    }
+
+    if (otqlResults.length) {
+      return otqlResults.map((data, i) => ({
+        yKey: data.count,
+        xKey: xkeys[i],
+      }));
+    }
     return [];
-    // if (
-    //   queryResult.length &&
-    //   queryResult[0].aggregations.buckets.length &&
-    //   queryResult[0].aggregations.buckets[0].buckets.length
-    // ) {
-    //   return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
-    //     yKey: data.count,
-    //     xKey: data.key,
-    //   }));
-    // }
-    // return [];
   };
 
   fetchData = (
     datamartId: string,
-    queryId: string,
-    clauseIds: string[],
+    segmentQueryId: string,
+    chartQueryIds: string[],
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
     return this._queryService
-      .getQuery(datamartId, queryId)
-      .then(res => {
-        if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          return Promise.all(
-            clauseIds.map(clauseId =>
-              this._queryService.getWhereClause(datamartId, clauseId),
-            ),
-          )
-            .then(clauseListResp => {
-              return clauseListResp.map(cl => cl.data);
-            })
-            .then(clauseList => {
-              return Promise.all(
-                clauseList.map(clause => {
-                  const query = {
-                    query: res.data.query_text,
-                    additional_expression: clause,
-                  };
-                  return this._queryService.runOTQLQuery(
-                    datamartId,
-                    JSON.stringify(query),
-                    { use_cache: true, content_type: `application/json` },
-                  );
-                }),
-              )
-                .then(resp => {
-                  return resp.map(r => r.data);
-                })
-                .then(result => {
-                  const rows = result.map(r => r.rows);
-                  if (isAggregateResult(rows) && !isCountResult(rows)) {
-                    this.setState({
-                      queryResult: this.formatData(rows),
-                      loading: false,
-                    });
-                    return Promise.resolve();
-                  }
-                  const mapErr = new Error('wrong query type');
-                  return Promise.reject(mapErr);
-                })
-                .catch(() => this.setState({ error: true, loading: false }));
-            })
-            .catch(() => this.setState({ error: true, loading: false }));
-        }
-        const err = new Error('wrong query language');
-        return Promise.reject(err);
+      .getWhereClause(datamartId, segmentQueryId)
+      .then(clauseResp => {
+        const promises = chartQueryIds.map(chartQueryId => {
+          return this._queryService.getQuery(datamartId, chartQueryId);
+        });
+        return Promise.all(promises)
+          .then(queryListResp => {
+            return queryListResp.map(ql => ql.data);
+          })
+          .then(queryList => {
+            const queryListPromises = queryList.map(q => {
+              const query = {
+                query: q.query_text,
+                additional_expression: clauseResp,
+              };
+              return this._queryService.runOTQLQuery(
+                datamartId,
+                JSON.stringify(query),
+                {
+                  use_cache: true,
+                  content_type: `application/json`,
+                },
+              );
+            });
+            return Promise.all(queryListPromises)
+              .then(otqlResultListResp => {
+                return otqlResultListResp.map(
+                  otqlResultResp => otqlResultResp.data,
+                );
+              })
+              .then(result => {
+                const rows = _.flattenDepth(result.map(r => r.rows), 1);
+                if (isCountResult(rows)) {
+                  this.setState({
+                    queryResult: this.formatData(rows),
+                    loading: false,
+                  });
+                  return Promise.resolve();
+                }
+                const mapErr = new Error('wrong query type');
+                return Promise.reject(mapErr);
+              });
+          });
       })
       .catch(() => {
+        // To remove
         this.setState({
-          error: true,
+          error: false,
           loading: false,
+          queryResult: [
+            { xKey: '0', yKey: 2 },
+            { xKey: '1', yKey: 4 },
+            { xKey: '2', yKey: 6 },
+            { xKey: '3', yKey: 3 },
+            { xKey: '4', yKey: 1 },
+          ],
         });
       });
   };
@@ -186,6 +203,7 @@ class CountBarChart extends React.Component<Props, State> {
       yKeys: ['yKey'],
       colors: [colors['mcs-info']],
       labelsEnabled: this.props.labelsEnabled,
+      showTooltip: true,
     };
 
     const generateChart = () => {

@@ -1,4 +1,4 @@
-export const mapData = [
+export const mapData2 = [
   {
     code3: 'ABW',
     name: 'Aruba',

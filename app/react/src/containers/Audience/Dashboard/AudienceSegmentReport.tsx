@@ -51,8 +51,8 @@ export default class AudienceSegmentReport extends React.Component<
             <Count
               datamartId={segment.datamart_id}
               title={comp.title}
-              queryId={segment.query_id}
-              clauseId={comp.clause_id}
+              segmentQueryId={segment.query_id}
+              chartQueryId={comp.chart_id}
             />
           )
         );
@@ -62,8 +62,8 @@ export default class AudienceSegmentReport extends React.Component<
             <MapPieChart
               datamartId={segment.datamart_id}
               title={comp.title}
-              queryId={segment.query_id}
-              clauseId={comp.clause_id}
+              segmentQueryId={segment.query_id}
+              chartQueryId={comp.chart_id}
               showLegend={comp.show_legend}
               labelsEnabled={comp.labels_enabled}
             />
@@ -77,7 +77,7 @@ export default class AudienceSegmentReport extends React.Component<
               title={comp.title}
               queryId={segment.query_id}
               labelsEnabled={comp.labels_enabled}
-              clauseId={comp.clause_id}
+              clauseId={comp.chart_id}
             />
           )
         );
@@ -88,7 +88,7 @@ export default class AudienceSegmentReport extends React.Component<
               datamartId={segment.datamart_id}
               title={comp.title}
               queryId={segment.query_id}
-              clauseId={comp.clause_id}
+              clauseId={comp.chart_id}
             />
           )
         );
@@ -98,9 +98,8 @@ export default class AudienceSegmentReport extends React.Component<
             <GaugePieChart
               datamartId={segment.datamart_id}
               title={comp.title}
-              queryId={segment.query_id}
-              clauseIds={comp.clause_ids}
-              showPercentage={comp.show_percentage}
+              segmentQueryId={segment.query_id}
+              chartQueryIds={comp.chart_ids}
             />
           )
         );
@@ -110,7 +109,7 @@ export default class AudienceSegmentReport extends React.Component<
             <MapStackedBarChart
               datamartId={segment.datamart_id}
               keys={comp.keys}
-              clauseIds={comp.clause_ids}
+              clauseIds={comp.chart_ids}
               queryId={segment.query_id}
               title={comp.title}
             />
@@ -122,7 +121,7 @@ export default class AudienceSegmentReport extends React.Component<
             <WorldMapChart
               datamartId={segment.datamart_id}
               title={comp.title}
-              clauseId={comp.clause_id}
+              clauseId={comp.chart_id}
               queryId={segment.query_id}
             />
           )
@@ -133,8 +132,10 @@ export default class AudienceSegmentReport extends React.Component<
             <CountBarChart
               datamartId={segment.datamart_id}
               title={comp.title}
-              queryId={segment.query_id}
-              clauseIds={comp.clause_ids}
+              segmentQueryId={segment.query_id}
+              chartQueryIds={comp.chart_ids}
+              labelsEnabled={true}
+              type={comp.type}
             />
           )
         );
@@ -167,6 +168,7 @@ export default class AudienceSegmentReport extends React.Component<
 
   onLayoutChange(layout: Layout[], layouts: Layouts) {
     this.props.onLayoutChange(layout, layouts);
+    window.dispatchEvent(new Event('resize'));
   }
 
   render() {

@@ -193,11 +193,11 @@ class ActivityCard extends React.Component<Props, State> {
     const agent = this.getAgentInfoFromAgentId(activity.$user_agent_id);
     const device = agent && agent.device ? agent.device : undefined;
     const longitude =
-      activity && activity.$location
+      activity && activity.$location && activity.$location.$latlon
         ? parseInt(activity.$location.$latlon[1], 10)
         : 0;
     const latitude =
-      activity && activity.$location
+      activity && activity.$location && activity.$location.$latlon
         ? parseInt(activity.$location.$latlon[0], 10)
         : 0;
     return (
