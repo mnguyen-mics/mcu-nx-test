@@ -183,9 +183,9 @@ export default defineMessages({
         id: 'menu.datamart.visit_analyzer',
         defaultMessage: 'Visit Analyzers',
     },
-    storedProcedureSettingsTitle: {
-        id: 'menu.datamart.stored_procedure',
-        defaultMessage: 'Stored Procedures',
+    mlFunctionSettingsTitle: {
+        id: 'menu.datamart.ml_functions',
+        defaultMessage: 'Ml Functions',
     },
     myDatamartSettingsTitle: {
         id: 'menu.datamart.myDatamart',

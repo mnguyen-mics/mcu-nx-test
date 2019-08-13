@@ -15,8 +15,8 @@ import {
 import messages from './messages';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
-import { StoredProcedureResource } from '../../../../../models/datamart/StoredProcedure';
-import { IStoredProcedureService, StoredProcedureService } from '../../../../../services/StoredProcedureService';
+import { MlFunctionResource } from '../../../../../models/datamart/MlFunction';
+import { IMlFunctionService, MlFunctionService } from '../../../../../services/MlFunctionService';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
@@ -36,7 +36,7 @@ interface PluginProperty {
   writable: boolean;
 }
 
-interface StoredProcedure extends StoredProcedureResource {
+interface MlFunction extends MlFunctionResource {
   id: string;
   artifact_id: string;
   name: string;
@@ -48,9 +48,9 @@ interface StoredProcedure extends StoredProcedureResource {
   properties?: PluginProperty[];
 }
 
-interface StoredProceduresContentState {
+interface MlFunctionsContentState {
   loading: boolean;
-  data: StoredProcedure[];
+  data: MlFunction[];
   total: number;
 }
 
@@ -60,34 +60,34 @@ interface RouterProps {
 
 type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps
 
-class StoredProceduresContent extends Component<
+class MlFunctionsContent extends Component<
   Props,
-  StoredProceduresContentState
+  MlFunctionsContentState
 > {
 
-  private _storedProcedureService: IStoredProcedureService = new StoredProcedureService();
+  private _mlFunctionService: IMlFunctionService = new MlFunctionService();
 
   constructor(props: Props) {
     super(props);
     this.state = initialState
   }
 
-  archiveStoredProcedure = (storedProcedureService: string) => {
+  archiveMlFunction = (mlFunctionService: string) => {
     return Promise.resolve()
   };
 
-  fetchStoredProdecure = (organisationId: string, filter: Filters) => {
+  fetchMlFunctions = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._storedProcedureService.listStoredProcedure(options).then(
+      this._mlFunctionService.listMlFunctions(options).then(
         (results) => {
           const promises = results.data.map(sp => {
             return new Promise((resolve, reject) => {
               PluginService.getEngineVersion(sp.version_id)
-                .then(storedProcedure => {
-                  return PluginService.getEngineProperties(storedProcedure.id);
+                .then(mlFunction => {
+                  return PluginService.getEngineProperties(mlFunction.id);
                 })
                 .then(v => resolve(v));
             });
@@ -114,7 +114,7 @@ class StoredProceduresContent extends Component<
     });
   };
 
-  onClickArchive = (storedProcedure: StoredProcedure) => {
+  onClickArchive = (mlFunction: MlFunction) => {
     const {
       location: { search, state, pathname },
       history,
@@ -130,12 +130,12 @@ class StoredProceduresContent extends Component<
 
     Modal.confirm({
       iconType: 'exclamation-circle',
-      title: formatMessage(messages.storedProcedureArchiveTitle),
-      content: formatMessage(messages.storedProcedureArchiveMessage),
-      okText: formatMessage(messages.storedProcedureArchiveOk),
-      cancelText: formatMessage(messages.storedProcedureArchiveCancel),
+      title: formatMessage(messages.mlFunctionArchiveTitle),
+      content: formatMessage(messages.mlFunctionArchiveMessage),
+      okText: formatMessage(messages.mlFunctionArchiveOk),
+      cancelText: formatMessage(messages.mlFunctionArchiveCancel),
       onOk: () => {
-        this.archiveStoredProcedure(storedProcedure.id).then(() => {
+        this.archiveMlFunction(mlFunction.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -148,7 +148,7 @@ class StoredProceduresContent extends Component<
             });
             return Promise.resolve();
           }
-          return this.fetchStoredProdecure(organisationId, filter);
+          return this.fetchMlFunctions(organisationId, filter);
         });
       },
       onCancel: () => {
@@ -157,7 +157,7 @@ class StoredProceduresContent extends Component<
     });
   };
 
-  onClickEdit = (storedProcedure: StoredProcedure) => {
+  onClickEdit = (mlFunction: MlFunction) => {
     const {
       history,
       match: {
@@ -166,8 +166,8 @@ class StoredProceduresContent extends Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/stored_procedures/${
-        storedProcedure.id
+      `/v2/o/${organisationId}/settings/datamart/ml_functions/${
+        mlFunction.id
       }/edit`,
     );
   };
@@ -181,7 +181,7 @@ class StoredProceduresContent extends Component<
     } = this.props;
 
     const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<StoredProcedure>
+      ActionsColumnDefinition<MlFunction>
     > = [
       {
         key: 'action',
@@ -197,7 +197,7 @@ class StoredProceduresContent extends Component<
         intlMessage: messages.name,
         key: 'status',
         isHideable: false,
-        render: (text: string, record: StoredProcedure) => (
+        render: (text: string, record: MlFunction) => (
           <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
             <McsIcon type="status" />
           </span>
@@ -207,10 +207,10 @@ class StoredProceduresContent extends Component<
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: StoredProcedure) => (
+        render: (text: string, record: MlFunction) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/datamart/stored_procedures/${
+            to={`/v2/o/${organisationId}/settings/datamart/ml_functions/${
               record.id
             }/edit`}
           >
@@ -231,12 +231,12 @@ class StoredProceduresContent extends Component<
 
     const onClick = () =>
       history.push(
-        `/v2/o/${organisationId}/settings/datamart/stored_procedures/create`,
+        `/v2/o/${organisationId}/settings/datamart/ml_functions/create`,
       );
 
     const buttons = [
       <Button key="create" type="primary" onClick={onClick}>
-        <FormattedMessage {...messages.newStoredProcedure} />
+        <FormattedMessage {...messages.newMlFunction} />
       </Button>,
     ];
 
@@ -244,7 +244,7 @@ class StoredProceduresContent extends Component<
       <div>
         <div className="mcs-card-header mcs-card-title">
           <span className="mcs-card-title">
-            <FormattedMessage {...messages.storedProcedure} />
+            <FormattedMessage {...messages.mlFunction} />
           </span>
           <span className="mcs-card-button">{buttons}</span>
         </div>
@@ -256,7 +256,7 @@ class StoredProceduresContent extends Component<
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <ItemList
-            fetchList={this.fetchStoredProdecure}
+            fetchList={this.fetchMlFunctions}
             dataSource={this.state.data}
             loading={this.state.loading}
             total={this.state.total}
@@ -276,4 +276,4 @@ export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectNotifications
-)(StoredProceduresContent);
+)(MlFunctionsContent);

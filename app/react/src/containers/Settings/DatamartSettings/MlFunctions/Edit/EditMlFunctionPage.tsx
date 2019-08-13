@@ -11,8 +11,8 @@ import {
 
 import messages from './messages';
 import { Omit } from '../../../../../utils/Types';
-import { StoredProcedureResource } from '../../../../../models/datamart/StoredProcedure';
-import { IStoredProcedureService, StoredProcedureService } from '../../../../../services/StoredProcedureService';
+import { MlFunctionResource } from '../../../../../models/datamart/MlFunction';
+import { IMlFunctionService, MlFunctionService } from '../../../../../services/MlFunctionService';
 import { SpecificFieldsFunction } from '../../../../Plugin/Edit/PluginEditForm';
 import { withDatamartSelector, WithDatamartSelectorProps } from '../../../../Datamart/WithDatamartSelector';
 import GeneralInformation from './GeneralInformationSection';
@@ -20,11 +20,11 @@ import RuntimeSchemaService from '../../../../../services/RuntimeSchemaService';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { Loading } from '../../../../../components';
 
-const StoredProcedurePluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<StoredProcedureResource>>
+const MlFunctionPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<MlFunctionResource>>
 
-interface StoredProcedureRouteParam {
+interface MlFunctionRouteParam {
   organisationId: string;
-  storedProcedureId?: string;
+  mlFunctionId?: string;
 }
 
 interface IState {
@@ -32,12 +32,12 @@ interface IState {
   loading: boolean;
 }
 
-type JoinedProps = RouteComponentProps<StoredProcedureRouteParam> &
+type JoinedProps = RouteComponentProps<MlFunctionRouteParam> &
   InjectedIntlProps & WithDatamartSelectorProps & InjectedNotificationProps;
 
-class EditStoredProcedurePage extends React.Component<JoinedProps, IState> {
+class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
 
-  private _storedProcedureService: IStoredProcedureService = new StoredProcedureService();
+  private _mlFunctionService: IMlFunctionService = new MlFunctionService();
 
   constructor(props: JoinedProps) {
     super(props);
@@ -79,7 +79,7 @@ class EditStoredProcedurePage extends React.Component<JoinedProps, IState> {
   
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
-    const attributionModelUrl = `/v2/o/${organisationId}/settings/datamart/stored_procedures`;
+    const attributionModelUrl = `/v2/o/${organisationId}/settings/datamart/ml_functions`;
     history.push(attributionModelUrl);
   };
 
@@ -89,7 +89,7 @@ class EditStoredProcedurePage extends React.Component<JoinedProps, IState> {
   }
 
   onSaveOrCreatePluginInstance = (
-    plugin: StoredProcedureResource,
+    plugin: MlFunctionResource,
     properties: PluginProperty[],
   ) => {
 
@@ -98,18 +98,18 @@ class EditStoredProcedurePage extends React.Component<JoinedProps, IState> {
       history,
     } = this.props;
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/stored_procedures`,
+      `/v2/o/${organisationId}/settings/datamart/ml_functions`,
     );
   };
 
   createPluginInstance = (
     organisationId: string,
     plugin: PluginResource,
-    pluginInstance: StoredProcedureResource,
+    pluginInstance: MlFunctionResource,
   ): PluginInstance => {
     const { selectedDatamartId } = this.props;
 
-    const result: Omit<StoredProcedureResource, "id"> = {
+    const result: Omit<MlFunctionResource, "id"> = {
       version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
       artifact_id: plugin.artifact_id,
@@ -130,14 +130,14 @@ class EditStoredProcedurePage extends React.Component<JoinedProps, IState> {
   render() {
     const {
       intl: { formatMessage },
-      match: { params: { storedProcedureId } },
+      match: { params: { mlFunctionId } },
     } = this.props;
 
     const {
       loading,
     } = this.state;
 
-    const breadcrumbPaths = (visitAnalyzer?: StoredProcedureResource) => [
+    const breadcrumbPaths = (visitAnalyzer?: MlFunctionResource) => [
       {
         name: visitAnalyzer
           ? formatMessage(messages.editBreadcrumb, { name: visitAnalyzer.name })
@@ -150,13 +150,13 @@ class EditStoredProcedurePage extends React.Component<JoinedProps, IState> {
     }
 
     return (
-      <StoredProcedurePluginContent
-        pluginType={'STORED_PROCEDURE'}
+      <MlFunctionPluginContent
+        pluginType={'ML_FUNCTION'}
         listTitle={messages.listTitle}
         listSubTitle={messages.listSubTitle}
         breadcrumbPaths={breadcrumbPaths}
-        pluginInstanceService={this._storedProcedureService}
-        pluginInstanceId={storedProcedureId}
+        pluginInstanceService={this._mlFunctionService}
+        pluginInstanceId={mlFunctionId}
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}
@@ -170,4 +170,4 @@ export default compose(
   withDatamartSelector,
   injectNotifications,
   injectIntl,
-)(EditStoredProcedurePage);
+)(EditMlFunctionPage);
