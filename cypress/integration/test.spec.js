@@ -20,8 +20,9 @@ context('Test - Resource history', () => {
 
   it('Campaign history', () => {
     //Move to campaign page
+    if (cy.get(".ant-menu-item").contains("Display") )
     cy.get(".ant-menu-submenu").contains("Campaigns").click()
-    cy.get(".ant-menu-item").contains("Display").click()
+    cy.get(".ant-menu-item").contains("Display").click({force : true})
 
     // Create campaign
     cy.get('.mcs-actionbar').contains("New Campaign").click({force: true})
@@ -48,7 +49,7 @@ context('Test - Resource history', () => {
     // assert campaign name in header
     
     // E/S index refresh
-    cy.wait(20*second)
+    cy.wait(10*second)
 
     // Open history
     cy.get('.mcs-actionbar').find('.ant-dropdown-trigger').click()
