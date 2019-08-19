@@ -5,7 +5,9 @@ import {
   isAggregateResult,
   isCountResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import PieChart, { DatasetProps } from '../../../../components/Charts/CategoryBased/PiePlot';
+import PieChart, {
+  DatasetProps,
+} from '../../../../components/Charts/CategoryBased/PiePlot';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
@@ -18,14 +20,16 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getWhereClausePromise } from '../domain';
 
 export interface MapPieChartProps {
   title?: string;
-  segmentQueryId: string;
+  segment: AudienceSegmentShape;
   chartQueryId: string;
-  datamartId: string;
   showLegend?: boolean;
   labelsEnabled?: boolean;
+  height: number;
 }
 
 interface State {
@@ -63,25 +67,16 @@ class MapPieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segmentQueryId, chartQueryId, datamartId } = this.props;
-
-    this.fetchData(datamartId, segmentQueryId, chartQueryId);
+    const { segment, chartQueryId } = this.props;
+    this.fetchData(segment, chartQueryId);
   }
 
   componentWillReceiveProps(nextProps: MapPieChartProps) {
-    const { segmentQueryId, chartQueryId, datamartId } = this.props;
-    const {
-      segmentQueryId: nextQueryId,
-      datamartId: nextDatamartId,
-      chartQueryId: nextChartQueryId,
-    } = nextProps;
+    const { segment, chartQueryId } = this.props;
+    const { segment: nextSegment, chartQueryId: nextChartQueryId } = nextProps;
 
-    if (
-      segmentQueryId !== nextQueryId ||
-      datamartId !== nextDatamartId ||
-      chartQueryId !== nextChartQueryId
-    ) {
-      this.fetchData(nextDatamartId, nextQueryId, nextChartQueryId);
+    if (segment.id !== nextSegment.id || chartQueryId !== nextChartQueryId) {
+      this.fetchData(nextSegment, nextChartQueryId);
     }
   }
 
@@ -108,14 +103,13 @@ class MapPieChart extends React.Component<Props, State> {
   };
 
   fetchData = (
-    datamartId: string,
-    segmentQueryId: string,
+    segment: AudienceSegmentShape,
     chartQueryId: string,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
-    return this._queryService
-      .getWhereClause(datamartId, segmentQueryId)
+    const datamartId = segment.datamart_id;
+    return getWhereClausePromise(datamartId, segment, this._queryService)
       .then(clauseResp => {
         return this._queryService
           .getQuery(datamartId, chartQueryId)
@@ -162,17 +156,20 @@ class MapPieChart extends React.Component<Props, State> {
     const options = {
       innerRadius: true,
       isHalf: false,
-      text: {},
+      text: {
+        text: '',
+        value: '',
+      },
       colors: this.state.colors,
       showTooltip: true,
       height: 300,
-      labelsEnabled: this.props.labelsEnabled,
+      showLabels: this.props.labelsEnabled,
     };
     return options;
   };
 
   public render() {
-    const { intl, showLegend } = this.props;
+    const { intl, showLegend, height } = this.props;
 
     const pieChartsOptions = this.generateOptions();
 
@@ -196,6 +193,7 @@ class MapPieChart extends React.Component<Props, State> {
           <PieChart
             dataset={this.state.queryResult}
             options={pieChartsOptions}
+            height={height}
           />
         );
       }

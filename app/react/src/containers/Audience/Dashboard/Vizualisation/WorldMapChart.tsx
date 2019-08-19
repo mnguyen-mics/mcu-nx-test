@@ -10,12 +10,14 @@ import {
   OTQLAggregationResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import { mapData2 } from '../mapData';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getWhereClausePromise } from '../domain';
 
 export interface WorldMapChartProps {
-  queryId: string;
-  datamartId: string;
+  segment: AudienceSegmentShape;
   title: string;
-  clauseId: string;
+  chartQueryId: string;
+  height: number;
 }
 
 interface State {
@@ -41,39 +43,20 @@ export default class WorldMapChart extends React.Component<
   }
 
   componentDidMount() {
-    const { queryId, datamartId, clauseId } = this.props;
-
-    this.fetchData(datamartId, queryId, clauseId);
+    const { segment, chartQueryId } = this.props;
+    this.fetchData(segment, chartQueryId);
   }
 
   componentWillReceiveProps(nextProps: WorldMapChartProps) {
-    const { queryId, datamartId, clauseId } = this.props;
-    const {
-      queryId: nextQueryId,
-      datamartId: nextDatamartId,
-      clauseId: nextClauseId,
-    } = nextProps;
+    const { segment, chartQueryId } = this.props;
+    const { segment: nextSegment, chartQueryId: nextChartQueryId } = nextProps;
 
-    if (
-      queryId !== nextQueryId ||
-      datamartId !== nextDatamartId ||
-      clauseId !== nextClauseId
-    ) {
-      this.fetchData(nextDatamartId, nextQueryId, nextClauseId);
+    if (segment.id !== nextSegment.id || chartQueryId !== nextChartQueryId) {
+      this.fetchData(nextSegment, nextChartQueryId);
     }
   }
 
   formatData = (queryResult: OTQLAggregationResult[]): any => {
-    // to type better
-    // return [
-    //   {
-    //     code3: 'USA',
-    //     name: 'United States',
-    //     value: 35.32,
-    //     code: 'US',
-    //   },
-    // ];
-
     return queryResult.length &&
       queryResult[0].aggregations.buckets.length &&
       queryResult[0].aggregations.buckets[0].buckets.length
@@ -90,14 +73,13 @@ export default class WorldMapChart extends React.Component<
   };
 
   fetchData = (
-    datamartId: string,
-    segmentQueryId: string,
+    segment: AudienceSegmentShape,
     chartQueryId: string,
   ): Promise<void> => {
     this.setState({ error: false });
 
-    return this._queryService
-      .getWhereClause(datamartId, segmentQueryId)
+    const datamartId = segment.datamart_id;
+    return getWhereClausePromise(datamartId, segment, this._queryService)
       .then(clauseResp => {
         return this._queryService
           .getQuery(datamartId, chartQueryId)
@@ -138,10 +120,10 @@ export default class WorldMapChart extends React.Component<
   };
 
   generateChart = () => {
-    const { loading } = this.state;
-    const { mapData } = this.state;
+    const { loading, mapData } = this.state;
+    const { height } = this.props;
     if (!loading && mapData) {
-      return <WorldMap dataset={mapData} />;
+      return <WorldMap dataset={mapData} height={height} />;
     }
     return;
   };

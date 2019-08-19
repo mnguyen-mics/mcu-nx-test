@@ -8,6 +8,7 @@ import { generateTooltip, BASE_CHART_HEIGHT } from '../domain';
 export interface StackedBarPlotProps {
   dataset: Dataset;
   options: StackedBarPlotOptions;
+  height?: number;
 }
 
 type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
@@ -57,12 +58,13 @@ class StackedBarPlot extends React.Component<Props, {}> {
     const {
       dataset,
       options: { colors, xKey, yKeys, showLegend },
+      height
     } = this.props;
 
     const options: Highcharts.Options = {
       chart: {
         type: 'column',
-        height: BASE_CHART_HEIGHT,
+        height: height ? height : BASE_CHART_HEIGHT,
       },
       title: {
         text: ''

@@ -17,13 +17,14 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getWhereClausePromise } from '../domain';
 
 export interface CountBarChartProps {
   title?: string;
-  segmentQueryId: string;
-  datamartId: string;
+  segment: AudienceSegmentShape;
   chartQueryIds: string[];
-  height?: number;
+  height: number;
   labelsEnabled?: boolean;
   type: string;
 }
@@ -68,25 +69,23 @@ class CountBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segmentQueryId, datamartId, chartQueryIds } = this.props;
+    const { segment, chartQueryIds } = this.props;
 
-    this.fetchData(datamartId, segmentQueryId, chartQueryIds);
+    this.fetchData(segment, chartQueryIds);
   }
 
   componentWillReceiveProps(nextProps: CountBarChartProps) {
-    const { segmentQueryId, datamartId, chartQueryIds } = this.props;
+    const { segment } = this.props;
     const {
-      segmentQueryId: nextSegmentQueryId,
-      datamartId: nextDatamartId,
+      segment: nextSegment,
       chartQueryIds: nextChartQueryIds,
     } = nextProps;
 
     if (
-      segmentQueryId !== nextSegmentQueryId ||
-      datamartId !== nextDatamartId ||
-      chartQueryIds !== nextChartQueryIds
+      segment.id !== nextSegment.id ||
+      segment.datamart_id !== nextSegment.datamart_id
     ) {
-      this.fetchData(nextDatamartId, nextSegmentQueryId, nextChartQueryIds);
+      this.fetchData(nextSegment, nextChartQueryIds);
     }
   }
 
@@ -117,14 +116,12 @@ class CountBarChart extends React.Component<Props, State> {
   };
 
   fetchData = (
-    datamartId: string,
-    segmentQueryId: string,
+    segment: AudienceSegmentShape,
     chartQueryIds: string[],
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-
-    return this._queryService
-      .getWhereClause(datamartId, segmentQueryId)
+    const datamartId = segment.datamart_id;
+    return getWhereClausePromise(datamartId, segment, this._queryService)
       .then(clauseResp => {
         const promises = chartQueryIds.map(chartQueryId => {
           return this._queryService.getQuery(datamartId, chartQueryId);
@@ -196,11 +193,11 @@ class CountBarChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl } = this.props;
+    const { title, colors, intl, height } = this.props;
 
     const optionsForChart = {
       xKey: 'xKey',
-      yKeys: [{ key: 'yKey', message: ""}],
+      yKeys: [{ key: 'yKey', message: '' }],
       colors: [colors['mcs-info']],
       labelsEnabled: this.props.labelsEnabled,
       showTooltip: true,
@@ -226,6 +223,7 @@ class CountBarChart extends React.Component<Props, State> {
           <StackedBarPlot
             dataset={this.state.queryResult as any}
             options={optionsForChart}
+            height={height}
           />
         );
       }

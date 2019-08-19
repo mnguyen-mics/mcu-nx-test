@@ -7,23 +7,24 @@ import MapPieChart from './Vizualisation/MapPieChart';
 import MapBarChart from './Vizualisation/MapBarChart';
 import DateAggregationChart from './Vizualisation/DateAggregationChart';
 import GaugePieChart from './Vizualisation/GaugePieChart';
-import MapStackedBarChart from './Vizualisation/MapStackedBarChart';
 import WorldMapChart from './Vizualisation/WorldMapChart';
-import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
+import { AudienceSegmentShape } from '../../../models/audiencesegment/AudienceSegmentResource';
 import CountBarChart from './Vizualisation/CountBarChart';
+import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 interface Props {
   layout: ComponentLayout[];
   onLayoutChange: (layout: Layout[], allLayouts: Layouts) => void;
-  segment: UserQuerySegment;
+  segment: AudienceSegmentShape;
 }
 
 interface State {
   currentBreakpoint: string;
   compactType: 'vertical' | 'horizontal' | null;
   mounted: boolean;
+  componentHeights: number[];
 }
 
 export default class AudienceSegmentReport extends React.Component<
@@ -36,6 +37,15 @@ export default class AudienceSegmentReport extends React.Component<
       currentBreakpoint: 'lg',
       compactType: 'vertical',
       mounted: false,
+      componentHeights: [
+        BASE_CHART_HEIGHT,
+        BASE_CHART_HEIGHT,
+        BASE_CHART_HEIGHT,
+        BASE_CHART_HEIGHT,
+        BASE_CHART_HEIGHT,
+        BASE_CHART_HEIGHT,
+        BASE_CHART_HEIGHT,
+      ],
     };
 
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
@@ -44,100 +54,72 @@ export default class AudienceSegmentReport extends React.Component<
 
   generateComponent = (comp: Component) => {
     const { segment } = this.props;
+    const { componentHeights } = this.state;
     switch (comp.component_type) {
       case 'COUNT':
         return (
-          segment.query_id && (
-            <Count
-              datamartId={segment.datamart_id}
-              title={comp.title}
-              segmentQueryId={segment.query_id}
-              chartQueryId={comp.chart_id}
-            />
-          )
+          <Count
+            segment={segment}
+            title={comp.title}
+            chartQueryId={comp.chart_id}
+          />
         );
       case 'MAP_PIE_CHART':
         return (
-          segment.query_id && (
-            <MapPieChart
-              datamartId={segment.datamart_id}
-              title={comp.title}
-              segmentQueryId={segment.query_id}
-              chartQueryId={comp.chart_id}
-              showLegend={comp.show_legend}
-              labelsEnabled={comp.labels_enabled}
-            />
-          )
+          <MapPieChart
+            segment={segment}
+            title={comp.title}
+            chartQueryId={comp.chart_id}
+            showLegend={comp.show_legend}
+            labelsEnabled={comp.labels_enabled}
+            height={componentHeights[comp.id]}
+          />
         );
       case 'MAP_BAR_CHART':
         return (
-          segment.query_id && (
-            <MapBarChart
-              datamartId={segment.datamart_id}
-              title={comp.title}
-              queryId={segment.query_id}
-              labelsEnabled={comp.labels_enabled}
-              clauseId={comp.chart_id}
-            />
-          )
+          <MapBarChart
+            segment={segment}
+            title={comp.title}
+            labelsEnabled={comp.labels_enabled}
+            chartQueryId={comp.chart_id}
+          />
         );
       case 'DATE_AGGREGATION_CHART':
         return (
-          segment.query_id && (
-            <DateAggregationChart
-              datamartId={segment.datamart_id}
-              title={comp.title}
-              queryId={segment.query_id}
-              clauseId={comp.chart_id}
-            />
-          )
+          <DateAggregationChart
+            segment={segment}
+            title={comp.title}
+            chartQueryId={comp.chart_id}
+          />
         );
       case 'GAUGE_PIE_CHART':
         return (
-          segment.query_id && (
-            <GaugePieChart
-              datamartId={segment.datamart_id}
-              title={comp.title}
-              segmentQueryId={segment.query_id}
-              chartQueryIds={comp.chart_ids}
-            />
-          )
-        );
-      case 'MAP_STACKED_BAR_CHART':
-        return (
-          segment.query_id && (
-            <MapStackedBarChart
-              datamartId={segment.datamart_id}
-              keys={comp.keys}
-              clauseIds={comp.chart_ids}
-              queryId={segment.query_id}
-              title={comp.title}
-            />
-          )
+          <GaugePieChart
+            segment={segment}
+            title={comp.title}
+            chartQueryIds={comp.chart_ids}
+            height={componentHeights[comp.id]}
+          />
         );
       case 'WORLD_MAP_CHART':
         return (
-          segment.query_id && (
-            <WorldMapChart
-              datamartId={segment.datamart_id}
-              title={comp.title}
-              clauseId={comp.chart_id}
-              queryId={segment.query_id}
-            />
-          )
+          <WorldMapChart
+            segment={segment}
+            title={comp.title}
+            chartQueryId={comp.chart_id}
+            height={componentHeights[comp.id]}
+          />
         );
       case 'COUNT_BAR_CHART':
         return (
-          segment.query_id && (
-            <CountBarChart
-              datamartId={segment.datamart_id}
-              title={comp.title}
-              segmentQueryId={segment.query_id}
-              chartQueryIds={comp.chart_ids}
-              labelsEnabled={true}
-              type={comp.type}
-            />
-          )
+          <CountBarChart
+            segment={segment}
+            title={comp.title}
+            chartQueryIds={comp.chart_ids}
+            labelsEnabled={true}
+            type={comp.type}
+            height={componentHeights[comp.id]}
+          />
         );
       default:
         return null;
@@ -169,6 +151,10 @@ export default class AudienceSegmentReport extends React.Component<
   onLayoutChange(layout: Layout[], layouts: Layouts) {
     this.props.onLayoutChange(layout, layouts);
     window.dispatchEvent(new Event('resize'));
+    const componentHeights = layout.map(l => (BASE_CHART_HEIGHT * l.h) / 3);
+    this.setState({
+      componentHeights: componentHeights,
+    });
   }
 
   render() {

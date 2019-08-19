@@ -29,7 +29,7 @@ export interface PiePlotOptionsProps {
 export interface PiePlotProps {
   dataset: DatasetProps[];
   options: PiePlotOptionsProps;
-  style?: React.CSSProperties;
+  height?: number;
 }
 
 type Props = PiePlotProps & InjectedIntlProps;
@@ -58,6 +58,7 @@ class PiePlot extends React.Component<Props, {}> {
     const {
       dataset,
       options: { innerRadius, isHalf, text, colors, showTooltip, showLabels, showHover },
+      height
     } = this.props;
 
     const options: Highcharts.Options = {
@@ -67,7 +68,7 @@ class PiePlot extends React.Component<Props, {}> {
         plotShadow: false,
         type: 'pie',
         animation: false,
-        height: BASE_CHART_HEIGHT,
+        height: height,
         style: { fontFamily: "" }
       },
       title: {

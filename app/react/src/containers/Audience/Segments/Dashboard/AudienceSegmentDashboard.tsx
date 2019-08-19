@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Card } from '../../../../components/Card';
 import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
-import { EditAudienceSegmentParam, isUserQuerySegment } from '../Edit/domain';
+import { EditAudienceSegmentParam, isUserQuerySegment, isUserListSegment } from '../Edit/domain';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -203,7 +203,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         />
         {hasFeature('audience.dashboard') &&
           segment &&
-          isUserQuerySegment(segment) && (
+          (isUserQuerySegment(segment) || isUserListSegment(segment)) && (
             <div>
               <AudienceDashboardReport
                 layout={deterministicLayout}

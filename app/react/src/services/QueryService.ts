@@ -79,8 +79,8 @@ export interface IQueryService {
   ) => Promise<DataResponse<QueryResource>>;
   getWhereClause: (
     datamartId: string,
-    queryId: string,
-  ) => Promise<DataResponse<any>>;
+    queryId: string
+  ) => Promise<DataResponse<string>>;
 }
 
 @injectable()

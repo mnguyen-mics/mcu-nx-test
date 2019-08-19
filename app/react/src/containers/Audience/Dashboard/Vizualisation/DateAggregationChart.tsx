@@ -17,12 +17,13 @@ import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getWhereClausePromise } from '../domain';
 
 export interface DateAggregationChartProps {
   title?: string;
-  queryId: string;
-  clauseId: string;
-  datamartId: string;
+  segment: AudienceSegmentShape;
+  chartQueryId: string;
 }
 
 interface QueryResult {
@@ -67,25 +68,16 @@ class DateAggregationChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, datamartId, clauseId } = this.props;
-
-    this.fetchData(datamartId, queryId, clauseId);
+    const { segment, chartQueryId } = this.props;
+    this.fetchData(segment, chartQueryId);
   }
 
   componentWillReceiveProps(nextProps: DateAggregationChartProps) {
-    const { queryId, datamartId, clauseId } = this.props;
-    const {
-      queryId: nextQueryId,
-      datamartId: nextDatamartId,
-      clauseId: nextClauseId,
-    } = nextProps;
+    const { segment, chartQueryId } = this.props;
+    const { segment: nextSegment, chartQueryId: nextChartQueryId } = nextProps;
 
-    if (
-      queryId !== nextQueryId ||
-      datamartId !== nextDatamartId ||
-      clauseId !== nextClauseId
-    ) {
-      this.fetchData(nextDatamartId, nextQueryId, nextClauseId);
+    if (segment.id !== nextSegment.id || chartQueryId !== nextChartQueryId) {
+      this.fetchData(nextSegment, nextChartQueryId);
     }
   }
 
@@ -104,46 +96,44 @@ class DateAggregationChart extends React.Component<Props, State> {
   };
 
   fetchData = (
-    datamartId: string,
-    queryId: string,
-    clauseId: string,
+    segment: AudienceSegmentShape,
+    chartQueryId: string,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
+    const datamartId = segment.datamart_id;
+    return getWhereClausePromise(datamartId, segment, this._queryService)
+      .then(clauseResp => {
+        return this._queryService
+          .getQuery(datamartId, chartQueryId)
 
-    return this._queryService
-      .getQuery(datamartId, queryId)
-      .then(res => {
-        if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          this._queryService
-            .getWhereClause(datamartId, clauseId)
-            .then(clauseResp => {
-              const query = {
-                query: res.data.query_text,
-                additional_expression: clauseResp.data,
-              };
-              return this._queryService
-                .runOTQLQuery(datamartId, JSON.stringify(query), {
-                  use_cache: true,
-                  content_type: `application/json`,
-                })
-                .then(r => r.data)
-                .then(r => {
-                  if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                    this.setState({
-                      queryResult: this.formatData(r.rows),
-                      loading: false,
-                    });
-                    return Promise.resolve();
-                  }
-                  const mapErr = new Error('wrong query type');
-                  return Promise.reject(mapErr);
-                })
-                .catch(() => this.setState({ error: true, loading: false }));
-            })
-            .catch(() => this.setState({ error: true, loading: false }));
-        }
-        const err = new Error('wrong query language');
-        return Promise.reject(err);
+          .then(queryResp => {
+            return queryResp.data;
+          })
+          .then(q => {
+            const query = {
+              query: q.query_text,
+              additional_expression: clauseResp,
+            };
+            return this._queryService
+              .runOTQLQuery(datamartId, JSON.stringify(query), {
+                use_cache: true,
+                content_type: `application/json`,
+              })
+              .then(r => r.data)
+              .then(r => {
+                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                  this.setState({
+                    queryResult: this.formatData(r.rows),
+                    loading: false,
+                  });
+                  return Promise.resolve();
+                }
+                const mapErr = new Error('wrong query type');
+                return Promise.reject(mapErr);
+              })
+              .catch(() => this.setState({ error: true, loading: false }));
+          })
+          .catch(() => this.setState({ error: true, loading: false }));
       })
       .catch(() => {
         this.setState({ error: true, loading: false });
@@ -186,11 +176,14 @@ class DateAggregationChart extends React.Component<Props, State> {
       ) {
         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
-        return this.state.queryResult && this.state.queryResult.length &&  (
-          <StackedAreaPlot
-            dataset={this.state.queryResult as any}
-            options={optionsForChart}
-          />
+        return (
+          this.state.queryResult &&
+          this.state.queryResult.length && (
+            <StackedAreaPlot
+              dataset={this.state.queryResult as any}
+              options={optionsForChart}
+            />
+          )
         );
       }
     };

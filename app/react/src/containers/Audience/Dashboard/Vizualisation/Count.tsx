@@ -5,12 +5,13 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { getWhereClausePromise } from '../domain';
 
 export interface CountProps {
-  segmentQueryId: string;
   chartQueryId: string;
-  datamartId: string;
   title: string;
+  segment: AudienceSegmentShape;
 }
 
 interface State {
@@ -32,37 +33,26 @@ export default class Count extends React.Component<CountProps, State> {
   }
 
   componentDidMount() {
-    const { segmentQueryId, chartQueryId, datamartId } = this.props;
-
-    this.fetchData(datamartId, segmentQueryId, chartQueryId);
+    const { segment, chartQueryId } = this.props;
+    this.fetchData(segment, chartQueryId);
   }
 
   componentWillReceiveProps(nextProps: CountProps) {
-    const { segmentQueryId, chartQueryId, datamartId } = this.props;
-    const {
-      segmentQueryId: nextSegmentQueryId,
-      datamartId: nextDatamartId,
-      chartQueryId: nextChartQueryId,
-    } = nextProps;
+    const { segment, chartQueryId } = this.props;
+    const { segment: nextSegment, chartQueryId: nextChartQueryId } = nextProps;
 
-    if (
-      segmentQueryId !== nextSegmentQueryId ||
-      datamartId !== nextDatamartId ||
-      chartQueryId !== nextChartQueryId
-    ) {
-      this.fetchData(nextDatamartId, nextSegmentQueryId, nextChartQueryId);
+    if (segment.id !== nextSegment.id || chartQueryId !== nextChartQueryId) {
+      this.fetchData(nextSegment, nextChartQueryId);
     }
   }
 
   fetchData = (
-    datamartId: string,
-    segmentQueryId: string,
+    segment: AudienceSegmentShape,
     chartQueryId: string,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-
-    return this._queryService
-      .getWhereClause(datamartId, segmentQueryId)
+    const datamartId = segment.datamart_id;
+    return getWhereClausePromise(datamartId, segment, this._queryService)
       .then(clauseResp => {
         return this._queryService
           .getQuery(datamartId, chartQueryId)

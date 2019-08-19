@@ -5,7 +5,9 @@ import {
   isCountResult,
   OTQLCountResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import PieChart, { DatasetProps } from '../../../../components/PieChart';
+import PieChart, {
+  DatasetProps,
+} from '../../../../components/Charts/CategoryBased/PiePlot';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
@@ -17,12 +19,14 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { getWhereClausePromise } from '../domain';
 
 export interface GaugePieChartProps {
   title?: string;
-  segmentQueryId: string;
+  segment: AudienceSegmentShape;
   chartQueryIds: string[];
-  datamartId: string;
+  height: number;
 }
 
 interface State {
@@ -62,25 +66,23 @@ class GaugePieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segmentQueryId, chartQueryIds, datamartId } = this.props;
+    const { segment, chartQueryIds } = this.props;
 
-    this.fetchData(datamartId, segmentQueryId, chartQueryIds);
+    this.fetchData(segment, chartQueryIds);
   }
 
   componentWillReceiveProps(nextProps: GaugePieChartProps) {
-    const { segmentQueryId, chartQueryIds, datamartId } = this.props;
+    const { segment } = this.props;
     const {
-      segmentQueryId: nextSegmentQueryId,
+      segment: nextSegment,
       chartQueryIds: nextChartQueryIds,
-      datamartId: nextDatamartId,
     } = nextProps;
 
     if (
-      segmentQueryId !== nextSegmentQueryId ||
-      chartQueryIds !== nextChartQueryIds ||
-      datamartId !== nextDatamartId
+      segment.id !== nextSegment.id ||
+      segment.datamart_id !== nextSegment.datamart_id
     ) {
-      this.fetchData(nextDatamartId, nextSegmentQueryId, nextChartQueryIds);
+      this.fetchData(nextSegment, nextChartQueryIds);
     }
   }
 
@@ -104,14 +106,13 @@ class GaugePieChart extends React.Component<Props, State> {
   };
 
   fetchData = (
-    datamartId: string,
-    segmentQueryId: string,
+    segment: AudienceSegmentShape,
     chartQueryIds: string[],
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
-    return this._queryService
-      .getWhereClause(datamartId, segmentQueryId)
+    const datamartId = segment.datamart_id;
+    return getWhereClausePromise(datamartId, segment, this._queryService)
       .then(clauseResp => {
         const promises = chartQueryIds.map(chartQueryId => {
           return this._queryService.getQuery(datamartId, chartQueryId);
@@ -200,7 +201,7 @@ class GaugePieChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { intl } = this.props;
+    const { intl, height } = this.props;
     const { totalNumber1, totalNumber2 } = this.state;
 
     const pieChartsOptions = this.generateOptions(totalNumber1, totalNumber2);
@@ -223,9 +224,9 @@ class GaugePieChart extends React.Component<Props, State> {
       } else {
         return (
           <PieChart
-            identifier={`${this.identifier}-chart`}
             dataset={this.state.queryResult}
             options={pieChartsOptions}
+            height={height}
           />
         );
       }

@@ -17,12 +17,13 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getWhereClausePromise } from '../domain';
 
 export interface MapBarChartProps {
   title?: string;
-  queryId: string;
-  datamartId: string;
-  clauseId: string;
+  segment: AudienceSegmentShape;
+  chartQueryId: string;
   height?: number;
   labelsEnabled?: boolean;
 }
@@ -67,25 +68,16 @@ class MapBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, datamartId, clauseId } = this.props;
-
-    this.fetchData(datamartId, queryId, clauseId);
+    const { segment, chartQueryId } = this.props;
+    this.fetchData(segment, chartQueryId);
   }
 
   componentWillReceiveProps(nextProps: MapBarChartProps) {
-    const { queryId, datamartId, clauseId } = this.props;
-    const {
-      queryId: nextQueryId,
-      datamartId: nextDatamartId,
-      clauseId: nextClauseId,
-    } = nextProps;
+    const { segment, chartQueryId } = this.props;
+    const { segment: nextSegment, chartQueryId: nextChartQueryId } = nextProps;
 
-    if (
-      queryId !== nextQueryId ||
-      datamartId !== nextDatamartId ||
-      clauseId !== nextClauseId
-    ) {
-      this.fetchData(nextDatamartId, nextQueryId, nextClauseId);
+    if (segment.id !== nextSegment.id || chartQueryId !== nextChartQueryId) {
+      this.fetchData(nextSegment, nextChartQueryId);
     }
   }
 
@@ -104,55 +96,49 @@ class MapBarChart extends React.Component<Props, State> {
   };
 
   fetchData = (
-    datamartId: string,
-    queryId: string,
-    clauseId: string,
+    segment: AudienceSegmentShape,
+    chartQueryId: string,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
-    return this._queryService
-      .getQuery(datamartId, queryId)
-      .then(res => {
-        if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          return this._queryService
-            .getWhereClause(datamartId, clauseId)
-            .then(clauseResp => {
-              return clauseResp.data;
-            })
-            .then(clause => {
-              const query = {
-                query: res.data.query_text,
-                additional_expression: clause,
-              };
-              return this._queryService
-                .runOTQLQuery(datamartId, JSON.stringify(query), {
-                  use_cache: true,
-                  content_type: `application/json`,
-                })
-                .then(resp => {
-                  return resp.data;
-                })
-                .then(r => {
-                  if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                    this.setState({
-                      queryResult: this.formatData(r.rows),
-                      loading: false,
-                    });
-                    return Promise.resolve();
-                  }
-                  const mapErr = new Error('wrong query type');
-                  return Promise.reject(mapErr);
-                })
-                .catch(() => this.setState({ error: true, loading: false }));
-            })
-            .catch(() => this.setState({ error: true, loading: false }));
-        }
-        const err = new Error('wrong query language');
-        return Promise.reject(err);
+    const datamartId = segment.datamart_id;
+    return getWhereClausePromise(datamartId, segment, this._queryService)
+      .then(clauseResp => {
+        return this._queryService
+          .getQuery(datamartId, chartQueryId)
+
+          .then(queryResp => {
+            return queryResp.data;
+          })
+          .then(q => {
+            const query = {
+              query: q.query_text,
+              additional_expression: clauseResp,
+            };
+            return this._queryService
+              .runOTQLQuery(datamartId, JSON.stringify(query), {
+                use_cache: true,
+                content_type: `application/json`,
+              })
+              .then(resp => {
+                return resp.data;
+              })
+              .then(r => {
+                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                  this.setState({
+                    queryResult: this.formatData(r.rows),
+                    loading: false,
+                  });
+                  return Promise.resolve();
+                }
+                const mapErr = new Error('wrong query type');
+                return Promise.reject(mapErr);
+              })
+              .catch(() => this.setState({ error: true, loading: false }));
+          })
+          .catch(() => this.setState({ error: true, loading: false }));
       })
-      .catch(() => {
-        this.setState({ error: true, loading: false });
-      });
+      .catch(() => this.setState({ error: true, loading: false }));
   };
 
   generateOptions = () => {
@@ -171,7 +157,7 @@ class MapBarChart extends React.Component<Props, State> {
 
     const optionsForChart = {
       xKey: 'xKey',
-      yKeys: [{ key: 'yKey', message: ""}],
+      yKeys: [{ key: 'yKey', message: '' }],
       colors: [colors['mcs-info']],
       labelsEnabled: this.props.labelsEnabled,
     };
@@ -192,11 +178,14 @@ class MapBarChart extends React.Component<Props, State> {
       ) {
         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
-        return this.state.queryResult && this.state.queryResult.length && (
-          <StackedBarPlot
-            dataset={this.state.queryResult as any}
-            options={optionsForChart}
-          />
+        return (
+          this.state.queryResult &&
+          this.state.queryResult.length && (
+            <StackedBarPlot
+              dataset={this.state.queryResult as any}
+              options={optionsForChart}
+            />
+          )
         );
       }
     };
