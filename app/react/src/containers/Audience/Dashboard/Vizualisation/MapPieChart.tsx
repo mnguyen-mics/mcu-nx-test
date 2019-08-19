@@ -5,7 +5,7 @@ import {
   isAggregateResult,
   isCountResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import PieChart, { DatasetProps } from '../../../../components/PieChart';
+import PieChart, { DatasetProps } from '../../../../components/Charts/CategoryBased/PiePlot';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
@@ -194,7 +194,6 @@ class MapPieChart extends React.Component<Props, State> {
       } else {
         return (
           <PieChart
-            identifier={`${this.identifier}-chart`}
             dataset={this.state.queryResult}
             options={pieChartsOptions}
           />

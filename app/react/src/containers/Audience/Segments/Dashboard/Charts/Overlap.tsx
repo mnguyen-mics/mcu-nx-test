@@ -1,16 +1,14 @@
 import * as React from 'react';
-import {withRouter} from 'react-router-dom';
-import {Row, Col, Button, Modal} from 'antd';
+import { withRouter } from 'react-router-dom';
+import { Row, Col, Button, Modal } from 'antd';
 import moment from 'moment';
-import {FormattedMessage, injectIntl, InjectedIntlProps} from 'react-intl';
-import {compose} from 'recompose';
-import {RouteComponentProps} from 'react-router';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { compose } from 'recompose';
+import { RouteComponentProps } from 'react-router';
 import {
   EmptyCharts,
   LoadingChart,
 } from '../../../../../components/EmptyCharts/index';
-import {VerticalBarChart} from '../../../../../components/BarCharts/index';
-import {LegendChart} from '../../../../../components/LegendChart';
 import McsIcon from '../../../../../components/McsIcon';
 import messages from '../messages';
 import injectThemeColors, {
@@ -20,12 +18,13 @@ import {
   injectDatamart,
   InjectedDatamartProps,
 } from '../../../../Datamart/index';
-import {IOverlapInterval} from '../OverlapServices';
-import {OverlapData} from '../constants';
-import {TYPES} from '../../../../../constants/types';
-import {lazyInject} from '../../../../../config/inversify.config';
-
-const VerticalBarChartJS = VerticalBarChart as any;
+import { IOverlapInterval } from '../OverlapServices';
+import { OverlapData } from '../constants';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
+import StackedBarPlot, {
+  StackedBarPlotOptions,
+} from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
 
 interface State {
   data: OverlapData;
@@ -40,7 +39,8 @@ export interface OverlapProps {
 type Props = InjectedThemeColorsProps &
   InjectedDatamartProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
-  InjectedIntlProps & OverlapProps;
+  InjectedIntlProps &
+  OverlapProps;
 
 class Overlap extends React.Component<Props, State> {
   @lazyInject(TYPES.IOverlapInterval)
@@ -63,35 +63,37 @@ class Overlap extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: {segmentId},
+        params: { segmentId },
       },
     } = this.props;
 
     this._overlapInterval
       .fetchOverlapAnalysisLoop(segmentId)
       .then(() => this._overlapInterval.fetchOverlapAnalysis(segmentId))
-      .then(res => this.setState({data: res, isFetchingOverlap: false}))
-      .catch(() => this.setState({overlapFetchingError: true, isFetchingOverlap: false}));
+      .then(res => this.setState({ data: res, isFetchingOverlap: false }))
+      .catch(() =>
+        this.setState({ overlapFetchingError: true, isFetchingOverlap: false }),
+      );
   }
 
   componentWillReceiveProps(nextProps: Props) {
     const {
       match: {
-        params: {segmentId},
+        params: { segmentId },
       },
     } = this.props;
     const {
       match: {
-        params: {segmentId: nextSegmentId},
+        params: { segmentId: nextSegmentId },
       },
     } = nextProps;
 
     if (segmentId !== nextSegmentId) {
-      this.setState({isFetchingOverlap: true}, () => {
+      this.setState({ isFetchingOverlap: true }, () => {
         this._overlapInterval
           .fetchOverlapAnalysisLoop(nextSegmentId)
           .then(() => this._overlapInterval.fetchOverlapAnalysis(nextSegmentId))
-          .then(res => this.setState({data: res, isFetchingOverlap: false}));
+          .then(res => this.setState({ data: res, isFetchingOverlap: false }));
       });
     }
   }
@@ -101,10 +103,10 @@ class Overlap extends React.Component<Props, State> {
   }
 
   renderStackedAreaCharts() {
-    const {colors} = this.props;
-    const {data, isFetchingOverlap} = this.state;
+    const { colors } = this.props;
+    const { data, isFetchingOverlap } = this.state;
 
-    if (isFetchingOverlap) return <LoadingChart/>;
+    if (isFetchingOverlap) return <LoadingChart />;
 
     const dataSource: Array<{ xKey: string; yKey: number }> = [];
 
@@ -123,21 +125,25 @@ class Overlap extends React.Component<Props, State> {
       });
     }
 
-    const optionsForChart = {
+    const optionsForChart: StackedBarPlotOptions = {
       xKey: 'xKey',
-      yKeys: ['yKey'],
+      yKeys: [
+        {
+          key: 'yKey',
+          message: { id: 'overlap.name', defaultMessage: 'Overlaping %' },
+        },
+      ],
       colors: [colors['mcs-info']],
+      showLegend: false,
     };
 
     return !isFetchingOverlap ? (
-      <VerticalBarChartJS
-        identifier="StackedAreaChartEmailOverlap"
+      <StackedBarPlot
         dataset={dataSource.sort((a, b) => b.yKey - a.yKey).slice(0, 20)}
         options={optionsForChart}
-        colors={{base: colors['mcs-info'], hover: colors['mcs-warning']}}
       />
     ) : (
-      <LoadingChart/>
+      <LoadingChart />
     );
   }
 
@@ -145,20 +151,20 @@ class Overlap extends React.Component<Props, State> {
     const {
       datamartId,
       match: {
-        params: {organisationId, segmentId},
+        params: { organisationId, segmentId },
       },
-      intl: {formatMessage},
+      intl: { formatMessage },
     } = this.props;
 
     const createOv = () => {
-      this.setState({isFetchingOverlap: true});
+      this.setState({ isFetchingOverlap: true });
       this._overlapInterval
         .createOverlapAnalysis(datamartId, segmentId, organisationId)
         .then(() => {
           this._overlapInterval
             .fetchOverlapAnalysis(segmentId)
             .then(res =>
-              this.setState({data: res, isFetchingOverlap: false}),
+              this.setState({ data: res, isFetchingOverlap: false }),
             );
         });
     };
@@ -180,26 +186,15 @@ class Overlap extends React.Component<Props, State> {
   };
 
   render() {
-    const {colors, intl} = this.props;
+    const { intl } = this.props;
 
-    const {data, isFetchingOverlap, overlapFetchingError} = this.state;
-
-    const options = [
-      {
-        domain: intl.formatMessage(messages.overlapNumber),
-        color: colors['mcs-info'],
-      },
-    ];
+    const { data, isFetchingOverlap, overlapFetchingError } = this.state;
 
     const chartArea = (
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {isFetchingOverlap || !data.hasOverlap ? (
-              <div/>
-            ) : (
-              <LegendChart identifier="LegendOverlap" options={options}/>
-            )}
+            <div />
           </Col>
           <Col span={12} className="text-right">
             {!isFetchingOverlap && data.hasOverlap && (
@@ -210,7 +205,7 @@ class Overlap extends React.Component<Props, State> {
             )}{' '}
             {!isFetchingOverlap && (
               <Button onClick={this.renderModalExtend}>
-                <McsIcon type="extend"/>{' '}
+                <McsIcon type="extend" />{' '}
                 {data.hasOverlap ? (
                   <FormattedMessage {...messages.refresh} />
                 ) : (
@@ -220,13 +215,17 @@ class Overlap extends React.Component<Props, State> {
             )}
           </Col>
         </Row>
-        {
-          overlapFetchingError ?
-            (<EmptyCharts title={intl.formatMessage(messages.overlapFetchingError)}/>) :
-            !data.hasOverlap && !isFetchingOverlap ?
-              (<EmptyCharts title={intl.formatMessage(messages.noAdditionDeletion)}/>) :
-              (this.renderStackedAreaCharts())
-        }
+        {overlapFetchingError ? (
+          <EmptyCharts
+            title={intl.formatMessage(messages.overlapFetchingError)}
+          />
+        ) : !data.hasOverlap && !isFetchingOverlap ? (
+          <EmptyCharts
+            title={intl.formatMessage(messages.noAdditionDeletion)}
+          />
+        ) : (
+          this.renderStackedAreaCharts()
+        )}
       </div>
     );
 

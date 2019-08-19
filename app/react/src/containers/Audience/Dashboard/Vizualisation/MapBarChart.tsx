@@ -9,7 +9,6 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { VerticalBarChart } from '../../../../components/BarCharts';
 import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
@@ -17,6 +16,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
+import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 
 export interface MapBarChartProps {
   title?: string;
@@ -167,11 +167,11 @@ class MapBarChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl, height } = this.props;
+    const { title, colors, intl } = this.props;
 
     const optionsForChart = {
       xKey: 'xKey',
-      yKeys: ['yKey'],
+      yKeys: [{ key: 'yKey', message: ""}],
       colors: [colors['mcs-info']],
       labelsEnabled: this.props.labelsEnabled,
     };
@@ -192,13 +192,10 @@ class MapBarChart extends React.Component<Props, State> {
       ) {
         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
-        return (
-          <VerticalBarChart
-            identifier={`${this.identifier}-chart`}
-            dataset={this.state.queryResult}
+        return this.state.queryResult && this.state.queryResult.length && (
+          <StackedBarPlot
+            dataset={this.state.queryResult as any}
             options={optionsForChart}
-            colors={{ base: colors['mcs-info'], hover: colors['mcs-warning'] }}
-            height={height}
           />
         );
       }

@@ -5,7 +5,6 @@ import { Row, Col } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import { EmptyCharts, LoadingChart } from '../../../../components/EmptyCharts';
-import { StackedAreaPlotDoubleAxis } from '../../../../components/StackedAreaPlot';
 import { LegendChartWithModal } from '../../../../components/LegendChart';
 import MetricsColumn from '../../../../components/MetricsColumn';
 
@@ -33,6 +32,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import DoubleStackedAreaPlot from '../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
 
 
 interface OverallStats {
@@ -279,12 +279,10 @@ class GoalStackedAreaChart extends React.Component<
         <div style={{ float: 'left' }}>
           <MetricsColumn metrics={metrics} isLoading={isLoading} />
         </div>
-        <StackedAreaPlotDoubleAxis
-          identifier="StackedAreaChartGoalOverview"
-          dataset={items}
+        <DoubleStackedAreaPlot
+          dataset={items as any}
           options={optionsForChart}
           style={{ flex: '1' }}
-          intlMessages={messages}
         />
       </div>
     ) : (

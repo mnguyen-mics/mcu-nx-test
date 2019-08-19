@@ -16,8 +16,6 @@ import {
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
-import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
-import { LegendChart } from '../../../../../components/LegendChart';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
 import {
   updateSearch,
@@ -27,8 +25,8 @@ import messages from '../messages';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
+import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 
-const StackedAreaPlotJS = StackedAreaPlot as any;
 
 interface OverviewProps {
   isFetching: boolean;
@@ -103,11 +101,11 @@ class Overview extends React.Component<Props> {
         colors['mcs-info'],
         colors['mcs-success'],
         colors['mcs-error'],
+        colors['mcs-highlight']
       ].slice(0, metrics.length),
     };
     return !isFetching ? (
-      <StackedAreaPlotJS
-        identifier="StackedAreaChartEmailOverview"
+      <StackedAreaPlot
         dataset={dataSource}
         options={optionsForChart}
       />
@@ -134,31 +132,12 @@ class Overview extends React.Component<Props> {
 
   render() {
     const { dataSource, isFetching, intl } = this.props;
-    const metrics =
-      dataSource && dataSource[0]
-        ? Object.keys(dataSource[0]).filter(
-            el =>
-              el !== 'day' &&
-              el !== 'user_point_additions' &&
-              el !== 'user_point_deletions',
-          )
-        : [];
-    const options = metrics.map(metric => {
-      return {
-        domain: intl.formatMessage(messagesMap[metric]),
-        color: this.getColor(metric),
-      };
-    });
 
     return (
       <div>
         <Row className="mcs-chart-header">
           <Col span={12}>
-            {dataSource.length === 0 && !isFetching ? (
-              <div />
-            ) : (
-              <LegendChart identifier="LegendOverview" options={options} />
-            )}
+            <div />
           </Col>
           <Col span={12}>
             <span className="mcs-card-button">{this.renderDatePicker()}</span>

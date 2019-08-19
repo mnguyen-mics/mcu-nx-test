@@ -9,7 +9,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { VerticalBarChart } from '../../../../components/BarCharts';
+import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
@@ -196,11 +196,11 @@ class CountBarChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl, height } = this.props;
+    const { title, colors, intl } = this.props;
 
     const optionsForChart = {
       xKey: 'xKey',
-      yKeys: ['yKey'],
+      yKeys: [{ key: 'yKey', message: ""}],
       colors: [colors['mcs-info']],
       labelsEnabled: this.props.labelsEnabled,
       showTooltip: true,
@@ -223,12 +223,9 @@ class CountBarChart extends React.Component<Props, State> {
         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
         return (
-          <VerticalBarChart
-            identifier={`${this.identifier}-chart`}
-            dataset={this.state.queryResult}
+          <StackedBarPlot
+            dataset={this.state.queryResult as any}
             options={optionsForChart}
-            colors={{ base: colors['mcs-info'], hover: colors['mcs-warning'] }}
-            height={height}
           />
         );
       }

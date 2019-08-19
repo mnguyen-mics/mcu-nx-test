@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PieChart from '../../../components/PieChart';
+import PieChart from '../../../components/Charts/CategoryBased/PiePlot';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from '../Overview/messages';
@@ -119,7 +119,6 @@ class DeviceType extends React.Component<
           <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
         ) : (
           <PieChart
-            identifier="DeviceType"
             dataset={dataset}
             options={pieChartsOptions}
           />
