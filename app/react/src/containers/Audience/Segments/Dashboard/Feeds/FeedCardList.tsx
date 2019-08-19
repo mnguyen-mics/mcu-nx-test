@@ -11,6 +11,8 @@ import { compose } from 'recompose';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { hasFeature } from '../../../../../state/Features/selectors';
+import ContentHeader from '../../../../../components/ContentHeader';
 
 export interface FeedCardListProps {}
 
@@ -157,6 +159,9 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
 
     return (
       <div ref={this.getRef}>
+        {hasFeature('audience.dashboard') && feeds.length > 1 && (
+          <ContentHeader title={`Feed Card List`} size={`medium`} />
+        )}
         <Row gutter={24}>
           {feeds &&
             feeds.map(cf => {

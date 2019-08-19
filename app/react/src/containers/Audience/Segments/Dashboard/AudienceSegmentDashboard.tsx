@@ -226,9 +226,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>
-        {hasFeature('audience.dashboard') && (
-          <ContentHeader title={`Feed Card List`} size={`medium`} />
-        )}
         <FeedCardList />
       </div>
     );
