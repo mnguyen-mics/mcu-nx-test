@@ -169,6 +169,9 @@ export default class AudienceSegmentReport extends React.Component<
         useCSSTransforms={this.state.mounted}
         compactType={this.state.compactType}
         preventCollision={!this.state.compactType}
+        // Disable dragging & resizabling
+        isDraggable={false}
+        isResizable={false}
       >
         {this.generateDOM()}
       </ResponsiveReactGridLayout>

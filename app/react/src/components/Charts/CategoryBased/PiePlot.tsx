@@ -35,21 +35,28 @@ export interface PiePlotProps {
 type Props = PiePlotProps & InjectedIntlProps;
 
 class PiePlot extends React.Component<Props, {}> {
-
   constructor(props: Props) {
     super(props);
     this.state = {};
   }
 
-  formatSeries = (dataset: DatasetProps[], innerRadius: boolean, showLabels?: boolean): Highcharts.SeriesOptionsType[] => {
+  formatSeries = (
+    dataset: DatasetProps[],
+    innerRadius: boolean,
+    showLabels?: boolean,
+  ): Highcharts.SeriesOptionsType[] => {
     return [
       {
         type: 'pie',
         name: '',
-        innerSize: innerRadius ? '65%' : "0%",
+        innerSize: innerRadius ? '65%' : '0%',
         data: dataset.map(d => {
-          return { name: d.key, y: d.value, selected: showLabels ? !showLabels  : true}
-        })
+          return {
+            name: d.key,
+            y: d.value,
+            selected: showLabels ? !showLabels : true,
+          };
+        }),
       },
     ];
   };
@@ -57,8 +64,8 @@ class PiePlot extends React.Component<Props, {}> {
   render() {
     const {
       dataset,
-      options: { innerRadius, isHalf, text, colors, showTooltip, showLabels, showHover },
-      height
+      options: { innerRadius, isHalf, text, colors, showTooltip, showLabels },
+      height,
     } = this.props;
 
     const options: Highcharts.Options = {
@@ -69,40 +76,31 @@ class PiePlot extends React.Component<Props, {}> {
         type: 'pie',
         animation: false,
         height: height,
-        style: { fontFamily: "" }
+        style: { fontFamily: '' },
       },
       title: {
-        text: text ? `<div>${text.value}</div><br /><div>${text.text}</div>` : '',
+        text: text
+          ? `<div>${text.value}</div><br /><div>${text.text}</div>`
+          : '',
         align: 'center',
         verticalAlign: 'middle',
-        y: isHalf ? -30 : -5
+        y: isHalf ? -30 : -5,
       },
       colors: colors,
       plotOptions: {
         pie: {
           dataLabels: {
             enabled: showLabels ? showLabels : false,
-            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+            style: {
+              color: 'rgba(0, 0, 0, 0.65)',
+            },
           },
           startAngle: isHalf ? -90 : 0,
           endAngle: isHalf ? 90 : 0,
           center: ['50%', '50%'],
-          size: showLabels ? '80%' : "100%",
-          states: {
-            hover: {
-              enabled: showHover ? showHover : false,
-              brightness: 0,
-              halo: {
-                opacity: showHover ? 0.25 : 1
-              },
-              animation: showHover ? false : true,
-
-            },
-            select: {
-              enabled: showHover ? showHover : false
-            },
-          },
-          selected: true
+          size: showLabels ? '80%' : '100%',
+          selected: true,
         },
       },
       series: this.formatSeries(dataset, innerRadius, showLabels),
@@ -116,11 +114,16 @@ class PiePlot extends React.Component<Props, {}> {
     };
 
     return (
-      <div style={{ overflow: "hidden", height: isHalf ? BASE_CHART_HEIGHT / 2 : BASE_CHART_HEIGHT }}>
+      <div
+        style={{
+          overflow: 'hidden',
+          height: isHalf ? BASE_CHART_HEIGHT / 2 : BASE_CHART_HEIGHT,
+        }}
+      >
         <HighchartsReact
           highcharts={Highcharts}
           options={options}
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
         />
       </div>
     );

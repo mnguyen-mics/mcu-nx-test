@@ -2,10 +2,11 @@ import * as React from 'react';
 import AudienceSegmentReport from './AudienceSegmentReport';
 import { Layout, Layouts } from 'react-grid-layout';
 import ContentHeader from '../../../components/ContentHeader';
-import { UserQuerySegment, UserListSegment } from '../../../models/audiencesegment/AudienceSegmentResource';
+import {
+  UserQuerySegment,
+  UserListSegment,
+} from '../../../models/audiencesegment/AudienceSegmentResource';
 import { ComponentLayout } from './domain';
-import { Button } from 'antd';
-import { FormattedMessage } from 'react-intl';
 
 interface AudienceDashboardReportProps {
   layout: ComponentLayout[];
@@ -30,42 +31,12 @@ class AudienceDashboardReport extends React.Component<Props, State> {
     this.setState({ layout: layout });
   }
 
-  handleSaveGridLayout = () => {
-    //
-  };
-
-  getReportHeaderContent = () => {
-    const { title } = this.props;
-    const content = (
-      <div>
-        {title}
-        <Button
-          className="mcs-primary"
-          type="primary"
-          onClick={this.handleSaveGridLayout}
-        >
-          <FormattedMessage
-            id="audience.segments.dashboard.reportDashboard.saveGridLayout"
-            defaultMessage="Save Grid Layout"
-          />
-        </Button>
-      </div>
-    );
-    return (
-      title && (
-        <div>
-          <ContentHeader title={content} size={`medium`} />
-        </div>
-      )
-    );
-  };
-
   render() {
-    const { segment, layout } = this.props;
+    const { segment, layout, title } = this.props;
 
     return (
       <div>
-        {this.getReportHeaderContent()}
+        <ContentHeader title={title} size={`medium`} />
         <AudienceSegmentReport
           layout={layout}
           onLayoutChange={this.onLayoutChange}

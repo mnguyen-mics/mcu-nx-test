@@ -87,7 +87,7 @@ class StackedBarPlot extends React.Component<Props, {}> {
         ...generateTooltip(),
       },
       legend: {
-        enabled: showLegend === undefined ? true : showLegend
+        enabled: showLegend === undefined ? false : showLegend
       }
     };
 
