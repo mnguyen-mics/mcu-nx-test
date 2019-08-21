@@ -185,7 +185,7 @@ export default defineMessages({
     },
     mlFunctionSettingsTitle: {
         id: 'menu.datamart.ml_functions',
-        defaultMessage: 'Ml Functions',
+        defaultMessage: 'ML Functions',
     },
     myDatamartSettingsTitle: {
         id: 'menu.datamart.myDatamart',
