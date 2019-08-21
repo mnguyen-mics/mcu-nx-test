@@ -98,6 +98,18 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-algorithms.edit.list.loadingErrorMessage',
     defaultMessage: 'Error while loading ML Algorithms',
   },
+  mlVariableLabel: {
+    id: 'settings.organisation.ml-algorithms.ml-variable.label',
+    defaultMessage: 'ML Variable',
+  },
+  mlVariableKeyPlaceholder: {
+    id: 'settings.organisation.ml-algorithms.ml-variable.placeholder.key',
+    defaultMessage: 'Key',
+  },
+  mlVariableValuePlaceholder: {
+    id: 'settings.organisation.ml-algorithms.ml-variable.placeholder.value',
+    defaultMessage: 'Value',
+  },
 });
 
 export default messages;

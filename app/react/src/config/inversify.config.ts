@@ -106,6 +106,10 @@ import {
   MlAlgorithmModelService,
 } from '../services/MlAlgorithmModelService';
 import {
+  IMlAlgorithmVariableService,
+  MlAlgorithmVariableService,
+} from '../services/MlAlgorithmVariableService';
+import {
   IMlFunctionService,
   MlFunctionService,
 } from '../services/MlFunctionService';
@@ -189,6 +193,9 @@ container
 container
   .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
   .to(MlAlgorithmModelService);
+container
+  .bind<IMlAlgorithmVariableService>(TYPES.IMlAlgorithmVariableService)
+  .to(MlAlgorithmVariableService);
 container.bind<INavigatorService>(TYPES.INavigatorService).to(NavigatorService);
 container.bind<IApiTokenService>(TYPES.IApiTokenService).to(ApiTokenService);
 container.bind<IChannelService>(TYPES.IChannelService).to(ChannelService);

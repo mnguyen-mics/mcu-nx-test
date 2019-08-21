@@ -6,17 +6,19 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IMlAlgorithmService } from '../../../../../services/MlAlgorithmService';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import MlAlgorithmResource from '../../../../../models/mlAlgorithm/MlAlgorithmResource';
 import { message } from 'antd';
 import messages from '../messages';
-import { INITIAL_ML_ALGORITHM_FORM_DATA } from '../domain';
+import { MlAlgorithmFormData, INITIAL_ML_ALGORITHM_FORM_DATA } from '../domain';
 import { Loading } from '../../../../../components';
 import MlAlgorithmForm from './MlAlgorithmForm';
+import { IMlAlgorithmVariableService } from '../../../../../services/MlAlgorithmVariableService';
+import MlAlgorithmVariableResource from '../../../../../models/mlAlgorithmVariable/MlAlgorithmVariableResource'
+import { FormLinkedTextInputModel } from '../../../../../components/Form/FormProperties';
 
 
 interface MlAlgorithmCreateEditState {
     loading: boolean;
-    mlAlgorithmFormData: Partial<MlAlgorithmResource>;
+    mlAlgorithmFormData: MlAlgorithmFormData
 }
 
 type Props = InjectedDrawerProps &
@@ -29,11 +31,15 @@ type Props = InjectedDrawerProps &
 class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditState> {
     @lazyInject(TYPES.IMlAlgorithmService)
     private _mlAlgorithmService: IMlAlgorithmService;
+
+    @lazyInject(TYPES.IMlAlgorithmVariableService)
+    private _mlAlgorithmVariableService: IMlAlgorithmVariableService;
+
     constructor(props: Props) {
         super(props);
         this.state = {
             loading: false,
-            mlAlgorithmFormData: INITIAL_ML_ALGORITHM_FORM_DATA
+            mlAlgorithmFormData: INITIAL_ML_ALGORITHM_FORM_DATA,
         }
     }
 
@@ -70,6 +76,15 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
         }
     }
 
+    variablesToKeyValues = (variables: MlAlgorithmVariableResource[]): FormLinkedTextInputModel[] => {
+        return variables.map(variable => {
+            return {
+                leftValue: variable.key,
+                rightValue: variable.value
+            }
+        })
+    }
+
     loadInitialValues(organisationId: string, mlAlgorithmId: string) {
         const {
             intl,
@@ -79,7 +94,26 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
                 .getMlAlgorithm(mlAlgorithmId)
                 .then(mlAlgorithmData => mlAlgorithmData.data)
                 .then(mlAlgorithm => {
-                    this.setState({ mlAlgorithmFormData: mlAlgorithm, loading: false })
+                    this.setState({ 
+                        loading: true, 
+                        mlAlgorithmFormData: { 
+                            mlAlgorithm: mlAlgorithm, 
+                            mlAlgorithmVariables: [],
+                            mlAlgorithmVariablesKeyValues: []
+                        }
+                    })
+                })
+                .then(() => {
+                    return this._mlAlgorithmVariableService.getMlAlgorithmVariables(organisationId, mlAlgorithmId)
+                })
+                .then(mlAlgorithmVariablesData => mlAlgorithmVariablesData.data)
+                .then(mlAlgorithmVariables => {
+                    const newMlAlgorithmFormData: MlAlgorithmFormData = {
+                        mlAlgorithm: this.state.mlAlgorithmFormData.mlAlgorithm,
+                        mlAlgorithmVariables: mlAlgorithmVariables,
+                        mlAlgorithmVariablesKeyValues: this.variablesToKeyValues(mlAlgorithmVariables)
+                    }
+                    this.setState({ mlAlgorithmFormData: newMlAlgorithmFormData, loading: false })
                 })
                 .catch((err) => {
                     message.error(intl.formatMessage(messages.loadingError));
@@ -89,7 +123,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
         }
     }
 
-    save = (formData: Partial<MlAlgorithmResource>) => {
+    save = (formData: MlAlgorithmFormData) => {
         const redirectAndNotify = (id?: string) => {
             if (id) {
               hideSaveInProgress();
@@ -114,6 +148,25 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
             intl,
         } = this.props;
 
+        const { mlAlgorithmFormData } = this.state;
+
+        const keyToIds: {[key: string]: string} = {}
+        const previousIds = mlAlgorithmFormData.mlAlgorithmVariables.map(variable => {
+            if (variable.key && variable.id) {
+                keyToIds[variable.key!] = variable.id;
+            }
+            return variable.id
+        });
+
+        const newMlAlgorithmVariables: Array<Partial<MlAlgorithmVariableResource>> = formData.mlAlgorithmVariablesKeyValues.map(entry => {
+            return {
+                key: entry.leftValue,
+                value: entry.rightValue,
+                ml_algorithm_id: formData.mlAlgorithm.id || undefined,
+                id: (entry.leftValue in keyToIds) ? keyToIds[entry.leftValue] : undefined
+            }
+        });
+
         this.setState({ loading: true });
 
         const hideSaveInProgress = message.loading(
@@ -121,25 +174,47 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
             0,
         );
 
-        const newFormData = {...formData, organisation_id: organisationId}
+        const newFormDataMlAlgorithm = {...formData.mlAlgorithm, organisation_id: organisationId}
 
         if (mlAlgorithmId) {
             this._mlAlgorithmService
-                .updateMlAlgorithm(mlAlgorithmId, newFormData)
+                .updateMlAlgorithm(mlAlgorithmId, newFormDataMlAlgorithm)
                 .then((res) => res.data)
                 .then(mlAlgorithmUpdated => {
-                    redirectAndNotify(mlAlgorithmId)
+                    return Promise.all(newMlAlgorithmVariables.map(variable => {
+                        if (variable.id) {
+                            return this._mlAlgorithmVariableService.updateMlAlgorithmVariable(mlAlgorithmId, variable.id, variable)
+                        } else {
+                            return this._mlAlgorithmVariableService.createMlAlgorithmVariable(mlAlgorithmId, variable)
+                        }
+                    }));
+        
                 })
+                .then(mlAlgorithmVariablesData => {
+                    return mlAlgorithmVariablesData.map(res => res.data.id) 
+                })
+                .then(mlAlgorithmVariableIds => {
+                    return (previousIds as string[]).filter(id => !mlAlgorithmVariableIds.includes(id))
+                })
+                .then((toDeleteIds) => {
+                    Promise.all((toDeleteIds as string[]).map(remainingId => this._mlAlgorithmVariableService.deleteMlAlgorithmVariable(mlAlgorithmId, remainingId)))
+                })
+                .then(() => redirectAndNotify(mlAlgorithmId))
                 .catch(err => {
                     redirectAndNotify();
                 });
         } else {
             this._mlAlgorithmService
-                .createMlAlgorithm(newFormData)
+                .createMlAlgorithm(newFormDataMlAlgorithm)
                 .then((res) => res.data)
                 .then(mlAlgorithmCreated => {
-                    redirectAndNotify(mlAlgorithmCreated.id)
+                    return mlAlgorithmCreated.id
                 })
+                .then(async (createdMlAlgorithmId) => {
+                    await Promise.all(mlAlgorithmFormData.mlAlgorithmVariables.map(variable => this._mlAlgorithmVariableService.createMlAlgorithmVariable(createdMlAlgorithmId, variable)))
+                    return createdMlAlgorithmId
+                })
+                .then((id) => redirectAndNotify(id))
                 .catch(err => {
                     redirectAndNotify();
                 });
@@ -176,7 +251,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
 
         const name = mlAlgorithmId
             ? formatMessage(messages.editMlAlgorithm, {
-                name: mlAlgorithmFormData.name ? mlAlgorithmFormData.name : formatMessage(messages.mlAlgorithms)
+                name: mlAlgorithmFormData.mlAlgorithm.name ? mlAlgorithmFormData.mlAlgorithm.name : formatMessage(messages.mlAlgorithms)
             }) 
             : formatMessage(messages.newMlAlgorithm)
 

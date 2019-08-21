@@ -1,7 +1,6 @@
 import * as React from 'react';
-import MlAlgorithmResource from "../../../../../../models/mlAlgorithm/MlAlgorithmResource";
 import { InjectedIntlProps, injectIntl } from "react-intl";
-import { getFormValues } from 'redux-form';
+import { getFormValues, FieldArray, GenericFieldArray, Field } from 'redux-form';
 import withValidators, { ValidatorProps } from "../../../../../../components/Form/withValidators";
 import withNormalizer, { NormalizerProps } from "../../../../../../components/Form/withNormalizer";
 import messages from '../../messages';
@@ -17,8 +16,14 @@ import { connect } from 'react-redux';
 import { FORM_ID } from '../MlAlgorithmForm';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
+import PropertyFields from '../../../../../../components/Form/FormProperties';
+
+import { FormLinkedTextInputProps } from '../../../../../../components/Form/FormLinkedTextInput';
+import { MlAlgorithmFormData } from '../../domain';
+
+
 interface MapStateToProps {
-    formValues: Partial<MlAlgorithmResource>;
+    formValues: MlAlgorithmFormData;
 }
 
 type Props = InjectedIntlProps &
@@ -26,7 +31,11 @@ type Props = InjectedIntlProps &
  NormalizerProps & 
  MapStateToProps;
 
-class GeneralFormSection extends React.Component<Props> {
+const PropertyFieldArray = FieldArray as new () => GenericFieldArray<
+    Field,
+    FormLinkedTextInputProps>;
+
+class   GeneralFormSection extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
     }
@@ -47,7 +56,7 @@ class GeneralFormSection extends React.Component<Props> {
 
                 <div>
                     <FormInputField
-                        name="name"
+                        name="mlAlgorithm.name"
                         component={FormInput}
                         validate={[isRequired]}
                         formItemProps={{
@@ -62,7 +71,7 @@ class GeneralFormSection extends React.Component<Props> {
                         }}
                     />
                     <FormTextAreaField
-                        name="description"
+                        name="mlAlgorithm.description"
                         component={FormTextArea}
                         validate={[isCharLengthLessThan(255), isRequired]}
                         formItemProps={{
@@ -79,6 +88,22 @@ class GeneralFormSection extends React.Component<Props> {
                             messages.labelMlAlgorithmDescription),
                         }}
                     />
+
+                    <PropertyFieldArray
+                            name="mlAlgorithmVariablesKeyValues"
+                            component={PropertyFields}
+                            formItemProps={{ label: formatMessage(messages.mlVariableLabel), colon: false }}
+                            leftFormInput={{
+                                placeholder: formatMessage(
+                                messages.mlVariableKeyPlaceholder,
+                                ),
+                            }}
+                            rightFormInput={{
+                                placeholder: formatMessage(
+                                messages.mlVariableValuePlaceholder,
+                                ),
+                            }}
+                            />
                 </div>
             </div>
         );
