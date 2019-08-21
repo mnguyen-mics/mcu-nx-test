@@ -163,7 +163,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
                 key: entry.leftValue,
                 value: entry.rightValue,
                 ml_algorithm_id: formData.mlAlgorithm.id || undefined,
-                id: (entry.leftValue in keyToIds) ? keyToIds[entry.leftValue] : undefined
+                id: (entry.leftValue in previousIds) ? keyToIds[entry.leftValue] : undefined
             }
         });
 
