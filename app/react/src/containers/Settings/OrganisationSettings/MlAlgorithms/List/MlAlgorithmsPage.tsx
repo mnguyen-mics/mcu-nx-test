@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Button, message } from 'antd';
+import { Layout, Button, message, Modal, Spin, Input } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 
@@ -18,19 +18,42 @@ import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors'
 import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { McsIconType } from '../../../../../components/McsIcon';
 import { Link } from 'react-router-dom';
+import MlAlgorithmVariableResource from '../../../../../models/mlAlgorithmVariable/MlAlgorithmVariableResource';
+import { IMlAlgorithmModelService } from '../../../../../services/MlAlgorithmModelService';
+import { IMlAlgorithmVariableService } from '../../../../../services/MlAlgorithmVariableService';
+import MlAlgorithmModelResource from '../../../../../models/mlAlgorithmModel/MlAlgorithmModelResource';
 
 const { Content } = Layout;
+
+
+const initialMlAlgorithmForkModalData = {
+  modalLoading: false,
+  isModalOpen: false,
+  mlAlgorithmVariables: [],
+  newMlAlgorithmVariables: {}
+}
 
 const initialState = {
     loading: false,
     data: [],
     total: 0,
+    mlAlgorithmForkModalData: initialMlAlgorithmForkModalData
 };
+
+interface MlAlgorithmForkModalData {
+  mlAlgorithm?: MlAlgorithmResource;
+  mlAlgorithmVariables: MlAlgorithmVariableResource[];
+  mlAlgorithmModel?: MlAlgorithmModelResource;
+  newMlAlgorithmVariables: { [key: string]: string }
+  modalLoading: boolean;
+  isModalOpen: boolean;
+}
 
 interface MlAlgorithmListState {
     loading: boolean;
     data: MlAlgorithmResource[];
     total: number;
+    mlAlgorithmForkModalData: MlAlgorithmForkModalData;
 }
 
 interface RouterProps {
@@ -45,6 +68,12 @@ type JoinedProps = RouteComponentProps<RouterProps> &
 class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState> {
     @lazyInject(TYPES.IMlAlgorithmService)
     private _mlAlgorithmService: IMlAlgorithmService;
+
+    @lazyInject(TYPES.IMlAlgorithmModelService)
+    private _mlAlgorithmModelService: IMlAlgorithmModelService;
+
+    @lazyInject(TYPES.IMlAlgorithmVariableService)
+    private _mlAlgorithmVariableService: IMlAlgorithmVariableService;
 
     constructor(props: JoinedProps) {
       super(props);
@@ -108,6 +137,40 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           message.error(intl.formatMessage(messages.updateError));
         })
 
+    }
+
+
+    forkMlAlgorithm = async (mlAlgorithm: MlAlgorithmResource) => {
+      this.setState({ 
+        mlAlgorithmForkModalData: { ...this.state.mlAlgorithmForkModalData, mlAlgorithm, modalLoading: true, isModalOpen: true }
+      });
+
+      const { match: { params: {organisationId} } } = this.props
+        const [models, variables] = await Promise.all([
+            this._mlAlgorithmModelService.getMlAlgorithmModels(organisationId, mlAlgorithm.id, { status: 'LIVE' }),
+            this._mlAlgorithmVariableService.getMlAlgorithmVariables(organisationId, mlAlgorithm.id)
+        ]);
+
+        if (models.total === 1) {
+            this.setState({ 
+              mlAlgorithmForkModalData: { 
+                ...this.state.mlAlgorithmForkModalData,
+                mlAlgorithmModel: models.data[0],
+              },
+            });
+        }
+
+        this.setState({ 
+          mlAlgorithmForkModalData: { 
+            ...this.state.mlAlgorithmForkModalData,
+            modalLoading: false,
+            mlAlgorithmVariables: variables.data,
+            newMlAlgorithmVariables: variables.data.reduce<{ [key: string]: string }>((m, variable) => {
+              m[variable.key] = variable.value;
+              return m;
+            }, {})
+          }
+        }); 
     }
 
     updateLocationSearch = (params: Filters) => {
@@ -189,6 +252,94 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         dataColumnsDefinition: dataColumns,
       };
     };
+
+    renderModal = () => {
+      const {
+          intl,
+          history
+      } = this.props;
+
+      const redirectAndNotify = (id?: string) => {
+        if (id) {
+          message.success(intl.formatMessage(messages.forkSuccess));
+          return history.push(
+            `/v2/o/${organisationId}/settings/datamart/ml_algorithms`,
+          );
+        } else {
+          this.setState({
+            loading: false,
+          });
+          message.error(intl.formatMessage(messages.forkError));
+        }
+      };
+
+      const { mlAlgorithmForkModalData: {isModalOpen, mlAlgorithmVariables, modalLoading} } = this.state;
+
+      const { match: { params: { organisationId } } } = this.props;
+
+      const variableFormSection = mlAlgorithmVariables.map((variable, index) => {
+
+        const onChange = (e: any) => {
+          const v = this.state.mlAlgorithmForkModalData.newMlAlgorithmVariables
+          v[variable.key] = e.target.value
+          this.setState({ mlAlgorithmForkModalData: { ...this.state.mlAlgorithmForkModalData, newMlAlgorithmVariables: v } })
+        }
+        return <Input key={index} defaultValue={variable.value} onChange={onChange} placeholder={variable.key}/>
+      })
+
+      const onCancel = () => {
+        this.setState({
+          mlAlgorithmForkModalData: initialMlAlgorithmForkModalData
+        })
+      }
+
+      const onOk = async () => {
+        const { mlAlgorithmForkModalData: { newMlAlgorithmVariables, mlAlgorithm, mlAlgorithmModel } } = this.state
+        
+        this._mlAlgorithmService.createMlAlgorithm({
+          archived: false,
+          name: (mlAlgorithm as MlAlgorithmResource).name + ' (Copy)',
+          description: (mlAlgorithm as MlAlgorithmResource).description,
+          organisation_id: organisationId
+        })
+        .then(res => res.data)
+        .then(async createdMlAlgorithm => {
+          await Promise.all(Object.entries(newMlAlgorithmVariables).map(([key, value], idx) => {
+            this._mlAlgorithmVariableService.createMlAlgorithmVariable(createdMlAlgorithm.id, {
+              key,
+              value
+            })
+          }))
+          return createdMlAlgorithm.id
+        })
+        .then(createdMlAlgorithmId => {
+          return this._mlAlgorithmModelService.createMlAlgorithmModel(createdMlAlgorithmId, {
+            id: undefined,
+            ...mlAlgorithmModel
+          });
+        })
+        .then((createMlAlgorithmModel) => {
+          this.setState({ mlAlgorithmForkModalData: initialMlAlgorithmForkModalData });
+          redirectAndNotify(createMlAlgorithmModel.data.id);
+        })
+        .catch(err => redirectAndNotify())
+      }
+
+      return (
+        <Modal
+          visible={isModalOpen}
+          confirmLoading={modalLoading}
+          onCancel={onCancel}
+          onOk={onOk}
+        >
+          <Spin spinning={modalLoading}>
+            <br /><br />
+            {variableFormSection}
+          </Spin>
+
+        </Modal>
+      )
+    }
     
 
     render() {
@@ -214,6 +365,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           actions: (mlAlgorithm: MlAlgorithmResource) => [
             { intlMessage: messages.editMlAlgorithmRaw, callback: this.handleEditMlAlgorithm, disabled: mlAlgorithm.archived },
             { intlMessage: messages.archive, callback: this.handleArchiveMlAlgorithm, disabled: mlAlgorithm.archived },
+            { intlMessage: messages.fork, callback: this.forkMlAlgorithm, disabled: mlAlgorithm.archived }
           ],
         },
       ];
@@ -245,6 +397,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       return (
         <div className="ant-layout">
           <Content className="mcs-content-container">
+          {this.renderModal()}
           <ItemList
             fetchList={this.fetchMlAlgorithms}
             dataSource={this.state.data}

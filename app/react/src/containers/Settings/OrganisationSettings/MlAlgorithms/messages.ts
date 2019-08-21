@@ -29,6 +29,10 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-algorithms.archive',
     defaultMessage: 'Archive'
   },
+  fork: {
+    id: 'settings.organisation.ml-algorithms.fork',
+    defaultMessage: 'Fork ML Algorithm'
+  },
   archived: {
     id: 'settings.organisation.ml-algorithms.archived',
     defaultMessage: 'Archived'
@@ -93,6 +97,14 @@ const messages = defineMessages({
   updateError: {
     id: 'settings.organisation.ml-algorithms.edit.list.errorMessage',
     defaultMessage: 'ML Algorithm update failed ',
+  },
+  forkSuccess: {
+    id: 'settings.organisation.ml-algorithms.fork.successMessage',
+    defaultMessage: 'Fork created with success',
+  },
+  forkError: {
+    id: 'settings.organisation.ml-algorithms.fork.errorMessage',
+    defaultMessage: 'Error while creating fork',
   },
   loadingError: {
     id: 'settings.organisation.ml-algorithms.edit.list.loadingErrorMessage',
