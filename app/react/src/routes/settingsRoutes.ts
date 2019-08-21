@@ -45,7 +45,7 @@ import SourcesListPage from '../containers/Settings/DatamartSettings/Sources/Lis
 import DatamartViewPage from '../containers/Settings/DatamartSettings/Datamarts/Dashboard/DatamartDashboardPage';
 import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/List/MlAlgorithmsPage';
 import MlAlgorithmEditPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/Edit/MlAlgorithmEditPage';
-import MlModelsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlModels/MlAlgorithmModelsPage';
+import MlAlgorithmModelsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlAlgorithmModels/MlAlgorithmModelsPage';
 import { MlFunctionsContent } from '../containers/Settings/DatamartSettings/MlFunctions/List';
 import CreateEditMlFunction from '../containers/Settings/DatamartSettings/MlFunctions/Edit/EditMlFunctionPage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
@@ -179,7 +179,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'datamartSettings.ml_function',
     requireDatamart: true,
   },
-  settingsDatamartStoredProcedureCreation: {
+  settingsDatamartMlFunctionCreation: {
     path: '/settings/datamart/ml_functions/create',
     layout: 'edit',
     editComponent: CreateEditMlFunction,
@@ -206,10 +206,10 @@ export const settingsDefinition: NavigatorDefinition = {
     editComponent: MlAlgorithmEditPage,
     requiredFeature: 'datamartSettings.mlAlgorithms'
   },
-  settingsDatamartMlModelsList: {
+  settingsDatamartMlAlgorithmModelsList: {
     path: '/settings/datamart/ml_algorithms/:mlAlgorithmId/models',
     layout: 'settings',
-    contentComponent: MlModelsPage,
+    contentComponent: MlAlgorithmModelsPage,
     requiredFeature: 'datamartSettings.mlAlgorithms'
   },
 

@@ -39,7 +39,7 @@ const initialState = {
     newModelName: ''
 }
 
-interface MlModelsListState {
+interface MlAlgorithmModelsListState {
     loading: boolean;
     data: MlAlgorithmModelResource[],
     total: number;
@@ -63,7 +63,7 @@ type JoinedProps = RouteComponentProps<RouterProps> &
     InjectedThemeColorsProps &
     InjectedNotificationProps;
 
-class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
+class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModelsListState> {
     @lazyInject(TYPES.IMlAlgorithmModelService)
     private _mlAlgorithmModelService: IMlAlgorithmModelService;
 
@@ -72,7 +72,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
         this.state = initialState;
     }
 
-    fetchMlModels = (organisationId: string, filter: Filters) => {
+    fetchMlAlgorithmModels = (organisationId: string, filter: Filters) => {
         const {
             match: {
                 params: {
@@ -80,10 +80,10 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
                 }
             }
         } = this.props;
-        this.fetchMlModelsWithMlAlgorithmId(organisationId, mlAlgorithmId, filter)
+        this.fetchMlAlgorithmModelsWithMlAlgorithmId(organisationId, mlAlgorithmId, filter)
     }
 
-    fetchMlModelsWithMlAlgorithmId =  (organisationId: string, mlAlgorithmId: string, filter: Filters) => {
+    fetchMlAlgorithmModelsWithMlAlgorithmId =  (organisationId: string, mlAlgorithmId: string, filter: Filters) => {
       const { intl } = this.props;
         this.setState({ loading: true}, () => {
             const options = {
@@ -202,7 +202,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
               })
               .then(values => {
                 const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-                this.fetchMlModels(organisationId, filter);
+                this.fetchMlAlgorithmModels(organisationId, filter);
                 this.setState({
                   loading: false,
                   isModalOpen: false,
@@ -287,7 +287,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
         .then(res => res.data)
         .then(model => {
           const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-          this.fetchMlModels(organisationId, filter)
+          this.fetchMlAlgorithmModels(organisationId, filter)
           message.success(intl.formatMessage(messages.updateSuccess));
         })
         .catch(err => {
@@ -448,7 +448,7 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
               {this.renderModal()}
               <NotebookResultPreviewModal opened={isPreviewModalOpened} html={previewModalHtml} onClose={this.onClosePreviewModal}/>
               <ItemList
-                fetchList={this.fetchMlModels}
+                fetchList={this.fetchMlAlgorithmModels}
                 dataSource={this.state.data}
                 loading={this.state.loading}
                 total={this.state.total}
@@ -468,4 +468,4 @@ class MlModelList extends React.Component<JoinedProps, MlModelsListState> {
 
 }
 
-export default compose(withRouter, injectIntl, withValidators)(MlModelList);
+export default compose(withRouter, injectIntl, withValidators)(MlAlgorithmModelList);

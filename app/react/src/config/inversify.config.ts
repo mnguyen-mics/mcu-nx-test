@@ -171,9 +171,6 @@ container
   .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
   .to(MlAlgorithmModelService);
 container.bind<INavigatorService>(TYPES.INavigatorService).to(NavigatorService);
-container
-  .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
-  .to(MlAlgorithmModelService);
 container.bind<IApiTokenService>(TYPES.IApiTokenService).to(ApiTokenService);
 container.bind<IChannelService>(TYPES.IChannelService).to(ChannelService);
 container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
