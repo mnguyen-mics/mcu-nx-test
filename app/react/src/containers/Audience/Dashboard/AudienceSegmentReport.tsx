@@ -161,7 +161,7 @@ export default class AudienceSegmentReport extends React.Component<
     const layouts = this.props.layout.map(cl => cl.layout);
     return (
       <ResponsiveReactGridLayout
-        cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+        cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
         layouts={{ lg: layouts }}
         onBreakpointChange={this.onBreakpointChange}
         onLayoutChange={this.onLayoutChange}
