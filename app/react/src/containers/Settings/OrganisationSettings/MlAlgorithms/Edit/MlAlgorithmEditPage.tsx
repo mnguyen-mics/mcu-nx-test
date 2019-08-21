@@ -151,11 +151,14 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
         const { mlAlgorithmFormData } = this.state;
 
         const keyToIds: {[key: string]: string} = {}
-        const previousIds = mlAlgorithmFormData.mlAlgorithmVariables.map(variable => {
+        const previousIds: string[] = []
+        const previousKeys: string[] = []
+        mlAlgorithmFormData.mlAlgorithmVariables.forEach(variable => {
             if (variable.key && variable.id) {
-                keyToIds[variable.key!] = variable.id;
+                keyToIds[variable.key] = variable.id;
+                previousIds.push(variable.id)
+                previousKeys.push(variable.key)
             }
-            return variable.id
         });
 
         const newMlAlgorithmVariables: Array<Partial<MlAlgorithmVariableResource>> = formData.mlAlgorithmVariablesKeyValues.map(entry => {
@@ -163,7 +166,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
                 key: entry.leftValue,
                 value: entry.rightValue,
                 ml_algorithm_id: formData.mlAlgorithm.id || undefined,
-                id: (entry.leftValue in previousIds) ? keyToIds[entry.leftValue] : undefined
+                id: previousKeys.includes(entry.leftValue) ? keyToIds[entry.leftValue] : undefined
             }
         });
 
