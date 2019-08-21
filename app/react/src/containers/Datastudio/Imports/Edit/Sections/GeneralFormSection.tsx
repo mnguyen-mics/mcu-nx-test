@@ -46,21 +46,30 @@ const messages = defineMessages({
     defaultMessage: 'Choose the encoding.',
   },
   labelImportMimeType: {
-    id: 'edit.import.general.infos.label.mime.type',
+    id: 'edit.import.general.infos.label.mimeType',
     defaultMessage: 'Mime-Type',
   },
   tootltipImportMimeType: {
-    id: 'edit.import.general.infos.tooltip.mime.type',
+    id: 'edit.import.general.infos.tooltip.mimeType',
     defaultMessage: 'Choose the mime-type.',
   },
   labelImportDocumentType: {
-    id: 'edit.import.general.infos.label.dcoument.type',
+    id: 'edit.import.general.infos.label.documentType',
     defaultMessage: 'Document Type',
   },
   tootltipImportDocumentType: {
-    id: 'edit.import.general.infos.tooltip.document.type',
+    id: 'edit.import.general.infos.tooltip.documentType',
     defaultMessage: 'Choose the document type.',
   },
+  labelImportPriority: {
+    id: 'edit.import.general.infos.label.priority',
+    defaultMessage: 'Priority',
+  },
+  tootltipImportPriority: {
+    id: 'edit.import.general.infos.tooltip.priority',
+    defaultMessage: 'Choose the document import priority.',
+  },
+
 });
 
 interface MapStateToProps {
@@ -213,6 +222,33 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
             helpToolTipProps={{
               title: formatMessage(messages.tootltipImportEncoding),
+            }}
+          />
+          <DefaultSelectField
+            name="priority"
+            component={DefaultSelect}
+            validate={[isRequired]}
+            options={[
+              {
+                title: 'LOW',
+                value: 'LOW',
+              },
+              {
+                title: 'MEDIUM',
+                value: 'MEDIUM',
+              },
+              {
+                title: 'HIGH',
+                value: 'HIGH',
+              },
+            ]}
+            formItemProps={{
+              label: formatMessage(messages.labelImportPriority),
+              colon: false,
+              required: true,
+            }}
+            helpToolTipProps={{
+              title: formatMessage(messages.tootltipImportPriority),
             }}
           />
         </div>

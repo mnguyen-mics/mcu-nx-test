@@ -1,8 +1,8 @@
-export interface StoredProcedureResource {
+export interface MlFunctionResource {
   id: string;
   organisation_id: string;
   datamart_id: string;
-  status: StoredProcedureStatus;
+  status: MlFunctionStatus;
   name: string;
   hosting_object_type_name: string;
   field_name: string;
@@ -15,4 +15,4 @@ export interface StoredProcedureResource {
   expiration_period: string;
 }
 
-export type StoredProcedureStatus = "INITIAL" | "ACTIVE" | "PAUSED" | "ERROR"
+export type MlFunctionStatus = "INITIAL" | "ACTIVE" | "PAUSED" | "ERROR"

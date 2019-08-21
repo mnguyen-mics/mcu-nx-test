@@ -38,12 +38,16 @@ export default defineMessages({
     defaultMessage: 'Type',
   },
   mimeType: {
-    id: 'imports.table.column.mime.type',
+    id: 'imports.table.column.mimeType',
     defaultMessage: 'Mime-Type',
   },
   documentType: {
-    id: 'imports.table.column.document.type',
+    id: 'imports.table.column.documentType',
     defaultMessage: 'Document Type',
+  },
+  priority: {
+    id: 'imports.table.column.priority',
+    defaultMessage: 'Priority',
   },
   id: {
     id: 'imports.table.column.id',

@@ -49,9 +49,9 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
     },
     {
       ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartStoredProcedureList
+        settingsDefinition.settingsDatamartMlFunctionList
       ),
-      translation: messages.storedProcedureSettingsTitle,
+      translation: messages.mlFunctionSettingsTitle,
     },
     {
       ...generateMissingdefinitionItemFromRoute(

@@ -34,6 +34,7 @@ import { UserWorkspaceResource } from '../../../../../models/directory/UserProfi
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { TYPES } from '../../../../../constants/types';
+import queryString from 'query-string';
 
 interface State {
   siteData: SiteFormData;
@@ -62,7 +63,7 @@ class SiteEditPage extends React.Component<Props, State> {
     this.state = {
       loading: true, // default true to avoid render x2 on mounting
       siteData: INITIAL_SITE_FORM_DATA,
-      selectedDatamartId: props.match.params.datamartId,
+      selectedDatamartId: queryString.parse(props.location.search).selectedDatamartId || props.match.params.datamartId,
     };
   }
 
@@ -316,7 +317,7 @@ class SiteEditPage extends React.Component<Props, State> {
     generateSavingPromise()
       .then(() => {
         hideSaveInProgress();
-        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/sites?datamartId=${this.state.selectedDatamartId}`;
+        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/sites`;
         history.push(mobileApplicationUrl);
       })
       .catch(err => {
@@ -336,8 +337,8 @@ class SiteEditPage extends React.Component<Props, State> {
         params: { organisationId },
       },
     } = this.props;
-
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/sites?datamartId=${this.state.selectedDatamartId}`;
+    
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/sites`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
@@ -374,7 +375,7 @@ class SiteEditPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: messages.breadcrumbTitle1,
-        path: `/v2/o/${organisationId}/settings/datamart/sites?datamartId=${this.state.selectedDatamartId}`,
+        path: `/v2/o/${organisationId}/settings/datamart/sites`,
       },
       {
         name: mobileName,

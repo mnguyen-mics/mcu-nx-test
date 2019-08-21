@@ -97,9 +97,9 @@ import {
 } from '../services/MlAlgorithmModelService';
 
 import {
-  IStoredProcedureService,
-  StoredProcedureService,
-} from '../services/StoredProcedureService';
+  IMlFunctionService,
+  MlFunctionService,
+} from '../services/MlFunctionService';
 import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
 import { ISettingsService, SettingsService } from '../services/SettingsService';
@@ -161,8 +161,8 @@ container
   .bind<IMonitoringService>(TYPES.IMonitoringService)
   .to(MonitoringService);
 container
-  .bind<IStoredProcedureService>(TYPES.IStoredProcedureService)
-  .to(StoredProcedureService);
+  .bind<IMlFunctionService>(TYPES.IMlFunctionService)
+  .to(MlFunctionService);
 
 container
   .bind<IMlAlgorithmService>(TYPES.IMlAlgorithmService)
@@ -171,9 +171,6 @@ container
   .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
   .to(MlAlgorithmModelService);
 container.bind<INavigatorService>(TYPES.INavigatorService).to(NavigatorService);
-container
-  .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
-  .to(MlAlgorithmModelService);
 container.bind<IApiTokenService>(TYPES.IApiTokenService).to(ApiTokenService);
 container.bind<IChannelService>(TYPES.IChannelService).to(ChannelService);
 container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
