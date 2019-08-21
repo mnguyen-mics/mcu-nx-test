@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Button, message, Modal, Spin, Input } from 'antd';
+import { Layout, Button, message, Modal, Spin, Input, Form} from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 
@@ -22,6 +22,7 @@ import MlAlgorithmVariableResource from '../../../../../models/mlAlgorithmVariab
 import { IMlAlgorithmModelService } from '../../../../../services/MlAlgorithmModelService';
 import { IMlAlgorithmVariableService } from '../../../../../services/MlAlgorithmVariableService';
 import MlAlgorithmModelResource from '../../../../../models/mlAlgorithmModel/MlAlgorithmModelResource';
+import { FormFieldWrapper } from '../../../../../components/Form';
 
 const { Content } = Layout;
 
@@ -284,7 +285,9 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           v[variable.key] = e.target.value
           this.setState({ mlAlgorithmForkModalData: { ...this.state.mlAlgorithmForkModalData, newMlAlgorithmVariables: v } })
         }
-        return <Input key={index} defaultValue={variable.value} onChange={onChange} placeholder={variable.key}/>
+        return (<FormFieldWrapper key={index} label={variable.key} small={true}>
+            <Input key={index} defaultValue={variable.value} onChange={onChange} placeholder={variable.key}/>
+          </FormFieldWrapper>)
       })
 
       const onCancel = () => {
@@ -327,14 +330,18 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
 
       return (
         <Modal
+          title={intl.formatMessage(messages.forkMlAlgorithmModalTitle)}
           visible={isModalOpen}
           confirmLoading={modalLoading}
           onCancel={onCancel}
           onOk={onOk}
         >
           <Spin spinning={modalLoading}>
-            <br /><br />
+            <div>{intl.formatMessage(messages.forkMlAlgorithmModalSubtitle)}</div>
+            <br />
+            <Form layout={"vertical"}>
             {variableFormSection}
+            </Form>
           </Spin>
 
         </Modal>
