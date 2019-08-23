@@ -10,9 +10,11 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { TimelinePageParams } from '../TimelinePage';
 import ProfileInfo from './ProfileInfo';
+import { UserProfilePerCompartmentAndUserAccountId } from '../../../../models/timeline/timeline';
+import cuid from 'cuid';
 
 interface ProfileCardProps {
-  dataSource: any;
+  dataSource: UserProfilePerCompartmentAndUserAccountId;
   isLoading: boolean;
 }
 
@@ -27,17 +29,17 @@ class ProfileCard extends React.Component<Props> {
   }
 
   render() {
-    const { dataSource: profileByCompartments, intl, isLoading } = this.props;
+    const { dataSource: userProfilePerCompartmentAndUserAccountId, intl, isLoading } = this.props;
     return (
       <Card
         title={intl.formatMessage(messages.profileTitle)}
         isLoading={isLoading}
       >
-        {Object.keys(profileByCompartments).map(key => {
+        {Object.keys(userProfilePerCompartmentAndUserAccountId).map(key => {
           return (
-            <Row gutter={10} key={key} className="table-line border-top">
-              <div className="sub-title">{key}</div>
-              <ProfileInfo profile={profileByCompartments[key]} />
+            <Row gutter={10} key={cuid()} className="table-line border-top">
+              <div className="sub-title">{userProfilePerCompartmentAndUserAccountId[key].compartmentName}</div>
+              <ProfileInfo profiles={userProfilePerCompartmentAndUserAccountId[key].profiles} />
             </Row>
           );
         })}
