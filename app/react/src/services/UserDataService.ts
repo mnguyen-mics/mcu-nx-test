@@ -27,6 +27,12 @@ export interface IUserDataService {
     options?: object,
   ) => Promise<DataResponse<UserProfileResource> | undefined>;
 
+  getProfiles: (
+    datamartId: string,
+    identifier: Identifier,
+    options?: object,
+  ) => Promise<DataListResponse<UserProfileResource> | undefined>;
+
   getSegments: (
     datamartId: string,
     identifier: Identifier,
@@ -63,6 +69,9 @@ export interface IUserDataService {
 
 @injectable()
 export class UserDataService implements IUserDataService {
+
+  // Deprecated: Rely on a deprecated route
+  // TO DO: Remove it
   getProfile(
     datamartId: string,
     identifier: Identifier,
@@ -83,6 +92,35 @@ export class UserDataService implements IUserDataService {
     return ApiService.getRequest<DataResponse<UserProfileResource> | undefined>(
       endpoint,
       params,
+    ).catch(error => {
+      // api send 404 when channel doesn't exist
+      if (error && error.error === 'Resource Not Found') {
+        return Promise.resolve(undefined);
+      }
+      throw error;
+    });
+  }
+
+  getProfiles(
+    datamartId: string,
+    identifier: Identifier,
+    options: object = {},
+  ): Promise<DataListResponse<UserProfileResource> | undefined> {
+
+    if (identifier.type !== 'user_point_id') {
+      throw new Error(`Only the 'user_point_id' identifier is currently supported by the backend.`);
+    }
+
+    const endpoint =
+      identifier.type !== 'user_point_id'
+        ? `datamarts/${datamartId}/user_points/${identifier.type}=${
+            identifier.id
+          }/user_profiles`
+        : `datamarts/${datamartId}/user_points/${identifier.id}/user_profiles`;
+
+    return ApiService.getRequest<DataListResponse<UserProfileResource> | undefined>(
+      endpoint,
+      options,
     ).catch(error => {
       // api send 404 when channel doesn't exist
       if (error && error.error === 'Resource Not Found') {

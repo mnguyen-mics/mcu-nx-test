@@ -116,26 +116,46 @@ export default defineMessages({
   },
   audienceSegmentsExportTitle: {
     id: 'audience.segments.actionbar.export.title',
-    defaultMessage: 'Audience Segments Export'
+    defaultMessage: 'Audience Segments Export',
   },
   type: {
     id: 'audience.segments.export.column.type',
-    defaultMessage: 'Type'
+    defaultMessage: 'Type',
   },
   name: {
     id: 'audience.segments.export.column.name',
-    defaultMessage: 'Name'
+    defaultMessage: 'Name',
   },
   technicalName: {
     id: 'audience.segments.export.column.technicalName',
-    defaultMessage: 'Technical Name'
+    defaultMessage: 'Technical Name',
   },
   addition: {
     id: 'audience.segments.export.column.addition',
-    defaultMessage: 'Addition'
+    defaultMessage: 'Addition',
   },
   deletion: {
     id: 'audience.segments.export.column.deletion',
-    defaultMessage: 'Deletion'
+    defaultMessage: 'Deletion',
+  },
+  lookalikeTypeSelectorTitle: {
+    id: 'audience.segments.lookaliketypeSelector.title',
+    defaultMessage: 'Select your lookalike type',
+  },
+  lookalikeTypeSelectorsubTitle: {
+    id: 'audience.segments.lookaliketypeSelector.subtitle',
+    defaultMessage: 'Choose between the two following lookalike types',
+  },
+  extensionFactor: {
+    id: 'audience.segments.lookalikeCreation.extension',
+    defaultMessage: 'Extension Factor',
+  },
+  similarity: {
+    id: 'audience.segments.lookalikeCreation.similarity',
+    defaultMessage: 'Similarity',
+  },
+  lookalikeTooBroad: {
+    id: 'audience.segments.lookalikeCreation.lookalikeTooBroad',
+    defaultMessage: 'Lookalike is too broad.',
   },
 });

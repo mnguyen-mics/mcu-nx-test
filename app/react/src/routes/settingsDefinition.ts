@@ -55,16 +55,16 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
     },
     {
       ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsDatamartMlAlgorithmList,
+      ),
+      translation: messages.mlAlgorithmsSettingsTitle,
+    },
+    {
+      ...generateMissingdefinitionItemFromRoute(
         settingsDefinition.settingsDatamartDatamartList,
       ),
       translation: messages.myDatamartSettingsTitle,
     },
-    {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartMlAlgorithmList,
-      ),
-      translation: messages.mlAlgorithmsSettingsTitle,
-    }
   ],
 };
 

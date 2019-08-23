@@ -16,6 +16,8 @@ import {
   isUserAccountIdentifier,
   UserAccountIdentifierInfo,
   UserSegmentResource,
+  UserProfilePerCompartmentAndUserAccountId,
+  UserProfileResource,
 } from '../../../models/timeline/timeline';
 import DatamartService from '../../../services/DatamartService';
 
@@ -23,7 +25,7 @@ export interface IMonitoringService {
   fetchProfileData: (
     datamart: DatamartResource,
     userPointId: string,
-  ) => Promise<any>; // type it
+  ) => Promise<UserProfilePerCompartmentAndUserAccountId>; // type it
   fetchSegmentsData: (
     datamart: DatamartResource,
     userPointId: string,
@@ -63,40 +65,53 @@ export class MonitoringService implements IMonitoringService {
 
   private identifierType: string = 'user_point_id';
 
-  fetchProfileData(datamart: DatamartResource, userPointId: string) {
-    // TO DO: inject DatamartService
-    return DatamartService.getUserAccountCompartments(datamart.id).then(res => {
-      return Promise.all(
-        res.data.map(userCompartiment => {
-          return this._userDataService
-            .getProfile(datamart.id, {
-              id: userPointId,
-              type: this.identifierType,
-              compartmentId: userCompartiment.compartment_id,
-            })
-            .then(r => ({
-              profile: r ? r.data : {},
-              compartment: userCompartiment,
-            }))
-            .catch(() =>
-              Promise.resolve({
-                profile: undefined,
-                compartment: userCompartiment,
-              }),
-            );
-        }),
-      ).then(profiles => {
-        const formatedProfile: any = {};
-        profiles.forEach(profile => {
-          formatedProfile[
-            profile.compartment.name
-              ? profile.compartment.name
-              : profile.compartment.token
-          ] = profile.profile;
-        });
-        return formatedProfile;
+  async fetchProfileData(datamart: DatamartResource, userPointId: string): Promise<UserProfilePerCompartmentAndUserAccountId> {
+
+    try {
+      const profilesResponse = await this._userDataService.getProfiles(datamart.id, {
+        id: userPointId,
+        type: this.identifierType
       });
-    });
+
+      if (!profilesResponse) return {};
+
+      // Default accumulator value
+      const seedAcc: Promise<UserProfilePerCompartmentAndUserAccountId> = Promise.resolve({});
+
+      // Async reducing
+      const userProfilePerCompartmentAndUserAccountId = await profilesResponse.data.reduce(async (accP: Promise<UserProfilePerCompartmentAndUserAccountId>, curr: UserProfileResource) => {
+
+        const acc = await accP;
+
+        const compartmentId = curr.compartment_id ? curr.compartment_id : 'default';
+        const userAccountId = curr.user_account_id ? curr.user_account_id : 'anonymous';
+        const newProfile = {
+          userAccountId: userAccountId,
+          profile: curr
+        };
+
+        if(!acc[compartmentId]) {
+
+          // TO DO: inject DatamartService 
+          const compartment = await DatamartService.getUserAccountCompartment(compartmentId);
+
+          acc[compartmentId] = {
+            compartmentName: compartment.data.name ? compartment.data.name : compartment.data.token,
+            profiles: [newProfile]
+          }
+        } else {
+          acc[compartmentId].profiles = acc[compartmentId].profiles.concat(newProfile);
+        }
+
+        return acc;
+      }, seedAcc);
+
+      return userProfilePerCompartmentAndUserAccountId;
+
+    } catch (e) {
+      return {};
+    }
+
   }
 
   fetchSegmentsData(datamart: DatamartResource, userPointId: string) {
@@ -239,7 +254,7 @@ export class MonitoringService implements IMonitoringService {
               userAccountCompartments: res[3],
               lastSeen: res[4],
               userSegmentList: res[5],
-              profileByCompartments: res[6],
+              profileByCompartmentsAndUserAccountId: res[6],
               userPointList: [],
               userPointId: userPointId,
             };
@@ -252,7 +267,7 @@ export class MonitoringService implements IMonitoringService {
           userAccountCompartments: [],
           lastSeen: 0,
           userSegmentList: [],
-          profileByCompartments: {},
+          profileByCompartmentsAndUserAccountId: {},
           userPointList: [],
           userPointId: '',
         });

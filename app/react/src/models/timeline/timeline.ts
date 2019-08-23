@@ -175,18 +175,36 @@ export interface MonitoringData {
   userEmailList: UserEmailIdentifierInfo[];
   userPointList: UserPointIdentifierInfo[];
   userSegmentList: UserSegmentResource[];
-  profileByCompartments: any; // TO DO : Type it
+  profileByCompartmentsAndUserAccountId: UserProfilePerCompartmentAndUserAccountId;
   lastSeen: number;
   userPointId: string;
 }
 
+export interface UserProfileWithAccountId {
+  userAccountId: string;
+  profile: UserProfileResource
+}
+
+export interface UserProfilePerCompartmentAndUserAccountId {
+  [compartmentId: string]: {
+    compartmentName: string
+    profiles: UserProfileWithAccountId[]
+  }
+}
+
 export interface UserProfileResource {
+  compartment_id?: string; // Should have a `$` prefix but the routes are buggy right now
+  user_account_id?: string; // Should have a `$` prefix but the routes are buggy right now
+  $compartment_id?: string; // Future proof
+  $user_account_id?: string; // Future proof
   creation_date?: number;
   birth_date?: number;
   first_name?: string;
   last_name?: string;
   email?: string;
   isClient?: boolean;
+  // Custom fields
+  [key: string]: any;
 }
 
 export interface UserSegmentResource {
