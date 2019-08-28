@@ -14,7 +14,7 @@ export interface GetExportOptions extends PaginatedApiParam {
 
 export interface IExportService {
   getExports: (options?: object) => Promise<DataListResponse<Export>>;
-  deleteExport: (id: string, options?: object) => Promise<DataResponse<any>>;
+  deleteExport: (id: string) => Promise<DataResponse<any>>;
   getExport: (id: string, options?: object) => Promise<DataResponse<Export>>;
   getExportExecutions: (
     id: string,
@@ -40,9 +40,9 @@ export class ExportService implements IExportService {
     const endpoint = `exports`;
     return ApiService.getRequest(endpoint, options);
   }
-  deleteExport(id: string, options: object = {}): Promise<DataResponse<any>> {
+  deleteExport(id: string): Promise<DataResponse<any>> {
     const endpoint = `exports/${id}`;
-    return ApiService.deleteRequest(endpoint, options);
+    return ApiService.deleteRequest(endpoint);
   }
   getExport(id: string, options: object = {}): Promise<DataResponse<Export>> {
     const endpoint = `exports/${id}`;

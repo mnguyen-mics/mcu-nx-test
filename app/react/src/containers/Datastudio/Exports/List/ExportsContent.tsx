@@ -61,6 +61,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       },
       location: { search },
     } = this.props;
+
     const { currentPage, pageSize, keywords } = parseSearch(
       search,
       this.getSearchSetting(),

@@ -260,6 +260,10 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
   render() {
     const {
       location: { search },
+      match: {
+        params: { organisationId },
+      },
+      history,
     } = this.props;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
@@ -284,10 +288,21 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       );
     };
 
+    const handleArchive = () => {
+      if (this.state.exportObject.item) {
+        const exportId = this.state.exportObject.item.id;
+        return this._exportService.deleteExport(exportId).then(() => {
+          history.push(`/v2/o/${organisationId}/datastudio/exports`)
+        });
+      }
+      return;
+    }
+
     return (
       <div className="ant-layout">
         <ExportActionbar
           exportObject={this.state.exportObject.item}
+          archiveObject={handleArchive}
           isExportExecutionRunning={
             this.state.exportExecutions.items.length &&
             (this.state.exportExecutions.items[0].status === 'PENDING' ||
