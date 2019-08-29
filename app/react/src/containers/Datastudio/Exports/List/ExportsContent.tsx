@@ -15,8 +15,9 @@ import {
   updateSearch,
   PaginationSearchSettings,
   KeywordSearchSettings,
-  SearchSetting,
-  KEYWORD_SEARCH_SETTINGS,
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 import { Export } from '../../../../models/exports/exports';
 import messages from './messages';
@@ -25,6 +26,7 @@ import { TableViewFilters } from '../../../../components/TableView';
 import { Index } from '../../../../utils';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { EXPORT_SEARCH_SETTINGS } from './constants';
 
 const initialState = {
   loading: false,
@@ -59,48 +61,54 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       match: {
         params: { organisationId },
       },
-      location: { search },
+      history,
+      location: { search, pathname },
     } = this.props;
-    const { currentPage, pageSize, keywords } = parseSearch(
-      search,
-      this.getSearchSetting(),
-    );
-    this.fetchExport(organisationId, {
-      currentPage: currentPage || 1,
-      pageSize: pageSize || 10,
-      keywords: keywords || '',
-    });
+
+    if (!isSearchValid(search, EXPORT_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, EXPORT_SEARCH_SETTINGS),
+      });
+    } else {
+      const filter = parseSearch<ExportFilterParams>(search,EXPORT_SEARCH_SETTINGS);
+      this.fetchExport(organisationId, filter);
+    }
+
   }
 
   componentWillReceiveProps(nextProps: Props) {
     const {
       location: { search },
+      match: {
+        params: { organisationId },
+      },
+      history,
     } = this.props;
+
     const {
-      location: { search: nextSearch },
+      location: { pathname: nextPathname, search: nextSearch },
       match: {
         params: { organisationId: nextOrganisationId },
       },
     } = nextProps;
-    const { currentPage, pageSize, keywords } = parseSearch(
-      search,
-      this.getSearchSetting(),
-    );
-    const {
-      currentPage: nextCurrentPage,
-      pageSize: nextPageSize,
-      keywords: nextKeywords,
-    } = parseSearch(nextSearch, this.getSearchSetting());
+
     if (
-      currentPage !== nextCurrentPage ||
-      pageSize !== nextPageSize ||
-      keywords !== nextKeywords
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
     ) {
-      this.fetchExport(nextOrganisationId, {
-        currentPage: nextCurrentPage || 1,
-        pageSize: nextPageSize || 10,
-        keywords: nextKeywords || '',
-      });
+      if (!isSearchValid(nextSearch, EXPORT_SEARCH_SETTINGS)) {
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(
+            nextSearch,
+            EXPORT_SEARCH_SETTINGS,
+          ),
+        });
+      } else {
+        const filter = parseSearch<ExportFilterParams>(nextSearch, EXPORT_SEARCH_SETTINGS);
+        this.fetchExport(organisationId, filter);
+      }
     }
   }
 
@@ -174,10 +182,6 @@ class ExportContent extends React.Component<Props, ExportContentState> {
     });
   };
 
-  getSearchSetting(): SearchSetting[] {
-    return [...KEYWORD_SEARCH_SETTINGS, ...PAGINATION_SEARCH_SETTINGS];
-  }
-
   onClickEdit = (keyword: Export) => {
     const {
       history,
@@ -197,7 +201,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, this.getSearchSetting()),
+      search: updateSearch(currentSearch, params, EXPORT_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -250,7 +254,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       ],
     };
 
-    const filter = parseSearch(search, this.getSearchSetting());
+    const filter = parseSearch(search, EXPORT_SEARCH_SETTINGS);
 
     const searchOptions = {
       placeholder: intl.formatMessage(messages.searchTitle),

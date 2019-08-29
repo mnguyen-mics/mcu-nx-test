@@ -16,7 +16,7 @@ import { IExportService } from '../../../../services/Library/ExportService';
 
 interface ExportActionbarProps {
   exportObject?: Export;
-  archiveObject?: any;
+  archiveObject: () => void;
   isExportExecutionRunning: boolean;
   onNewExecution: () => void;
 }
@@ -123,12 +123,11 @@ class ExportsActionbar extends React.Component<
 
   buildMenu = () => {
     const {
-      exportObject,
       archiveObject,
       intl: { formatMessage },
     } = this.props;
 
-    const handleArchiveGoal = (exportObjectId?: string) => {
+    const handleArchiveGoal = () => {
       Modal.confirm({
         title: formatMessage(modalMessages.archiveExportConfirm),
         content: formatMessage(modalMessages.archiveExportMessage),
@@ -136,7 +135,7 @@ class ExportsActionbar extends React.Component<
         okText: formatMessage(modalMessages.confirm),
         cancelText: formatMessage(modalMessages.cancel),
         onOk() {
-          return archiveObject(exportObjectId);
+          return archiveObject();
         },
         // onCancel() {},
       });
@@ -145,7 +144,7 @@ class ExportsActionbar extends React.Component<
     const onClick = (event: any) => {
       switch (event.key) {
         case 'ARCHIVED':
-          return handleArchiveGoal(exportObject && exportObject.id);
+          return handleArchiveGoal();
         default:
           return () => {
             log.error('onclick error');
