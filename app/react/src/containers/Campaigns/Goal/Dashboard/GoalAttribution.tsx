@@ -22,10 +22,9 @@ import { Row, Select } from 'antd';
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../components/McsDateRangePicker';
-import { takeLatest } from '../../../../utils/ApiHelper';
 import messages from './messages';
 import MetricsHighlight from '../../../../components/MetricsHighlight';
-import moment from 'moment';
+import {formatSecondsIntoDhmsFormat} from '../../../../utils/DurationHelper';
 
 const Option = Select.Option;
 
@@ -80,8 +79,6 @@ export interface SourceStatData {
 interface Filters extends DateSearchSettings { }
 
 const ReportType: Array<'SOURCE' | 'CAMPAIGN' | 'CREATIVES'> = ['SOURCE', 'CAMPAIGN', 'CREATIVES'];
-
-const takeLatestAttributionPerformance = takeLatest(ReportService.getConversionAttributionPerformance);
 
 // export type SelectedView = 'SOURCE' | 'CAMPAIGN' | 'CREATIVES';
 export type SelectedView = CampaignStatData | CreativeStatData | SourceStatData;
@@ -211,7 +208,7 @@ class GoalAttribution extends React.Component<
     filters: Filters,
   ) => {
     this.setState({ overall: { isLoading: true, items: [] } });
-    return takeLatestAttributionPerformance(
+    return ReportService.getConversionAttributionPerformance(
       organisationId,
       filters.from,
       filters.to,
@@ -276,7 +273,7 @@ class GoalAttribution extends React.Component<
     attributionModelId: string,
     filters: Filters,
   ) => {
-    return takeLatestAttributionPerformance(
+    return ReportService.getConversionAttributionPerformance(
       organisationId,
       filters.from,
       filters.to,
@@ -306,7 +303,7 @@ class GoalAttribution extends React.Component<
     attributionModelId: string,
     filters: Filters,
   ) => {
-    return takeLatestAttributionPerformance(
+    return ReportService.getConversionAttributionPerformance(
       organisationId,
       filters.from,
       filters.to,
@@ -336,7 +333,7 @@ class GoalAttribution extends React.Component<
     attributionModelId: string,
     filters: Filters,
   ) => {
-    return takeLatestAttributionPerformance(
+    return ReportService.getConversionAttributionPerformance(
       organisationId,
       filters.from,
       filters.to,
@@ -461,7 +458,7 @@ class GoalAttribution extends React.Component<
                 ),
                 '0,0',
               ),
-              duration: postViewInteractionDuration && !isNaN(postViewInteractionDuration) ? moment.utc(postViewInteractionDuration * 1000).format("HH:mm:ss") : '--'
+              duration: postViewInteractionDuration && !isNaN(postViewInteractionDuration) ? formatSecondsIntoDhmsFormat(postViewInteractionDuration) : '--'
             })
             : '--',
       },
@@ -480,7 +477,7 @@ class GoalAttribution extends React.Component<
                 ),
                 '0,0',
               ),
-              duration: postClickInteractionDuration && !isNaN(postClickInteractionDuration) ? moment.utc(postClickInteractionDuration * 1000).format("HH:mm:ss") : '--'
+              duration: postClickInteractionDuration && !isNaN(postClickInteractionDuration) ? formatSecondsIntoDhmsFormat(postClickInteractionDuration) : '--'
             })
             : '--',
       },
@@ -488,7 +485,7 @@ class GoalAttribution extends React.Component<
         name: formatMessage(messages.interactionToConversionDuration),
         value:
           !this.state.overall.isLoading && this.state.overall.items.length
-            ? InteractionDuration && !isNaN(InteractionDuration) ? moment.utc(InteractionDuration * 1000).format("HH:mm:ss") : '--'
+            ? InteractionDuration && !isNaN(InteractionDuration) ? formatSecondsIntoDhmsFormat(InteractionDuration) : '--'
             : '--',
       },
     ];
