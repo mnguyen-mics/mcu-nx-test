@@ -122,19 +122,20 @@ function getAllPalettes(
   context: CanvasRenderingContext2D,
 ) {
   const distinctPalettes = [];
-  let data: ImageData;
-  for (let i = 0; i <= height; i++) {
-    for (let j = 0; j <= width; j++) {
-      try {
-        data = context.getImageData(i, j, 1, 1);
-        if (data.data.toString().trim() !== '0,0,0,0') {
-          distinctPalettes.push(data.data);
+
+  try {
+    const imgData = context.getImageData(0, 0, height, width).data;
+
+    for (let i = 0; i <= width * height; i += 4) {
+        const pixelData = imgData.slice(i, i + 4)
+        if (pixelData.toString().trim() !== '0,0,0,0') {
+          distinctPalettes.push(pixelData);
         }
-      } catch (e) {
-        throw new Error(e);
-      }
     }
+  } catch (e) {
+    throw new Error(e);
   }
+
   return distinctPalettes;
 }
 
