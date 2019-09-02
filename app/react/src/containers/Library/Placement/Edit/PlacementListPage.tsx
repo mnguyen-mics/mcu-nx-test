@@ -47,6 +47,9 @@ const messages = defineMessages({
   },
 });
 
+// Can't use Number.MAX_SAFE_INTEGER as it is greater than the Max value of an Int in Scala
+const MAX_RESULTS = 1000000 
+
 interface PlacementListPageProps {}
 
 interface PlacementListPageState {
@@ -81,7 +84,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
       PlacementListService.getPlacementList(placementListId)
         .then(placementListData => placementListData.data)
         .then(placementList => {
-          PlacementListService.getPlacementDescriptors(placementListId)
+          PlacementListService.getPlacementDescriptors(placementListId, { first_result: 0, max_results: MAX_RESULTS})
             .then(
               placementDescriptorListData => placementDescriptorListData.data,
             )

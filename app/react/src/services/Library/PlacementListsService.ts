@@ -39,9 +39,15 @@ const PlacementListService = {
   },
   getPlacementDescriptors(
     placementListId: string,
+    options: object = {},
   ): Promise<DataListResponse<PlacementDescriptorResource>> {
     const endpoint = `placement_lists/${placementListId}/placement_descriptors`;
-    return ApiService.getRequest(endpoint);
+
+    const params = {
+      ...options,
+    };
+
+    return ApiService.getRequest(endpoint, params);
   },
   updatePlacementDescriptor(
     placementListId: string,
