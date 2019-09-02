@@ -84,7 +84,6 @@ export const generateTooltip = (
 ): Partial<Highcharts.TooltipOptions> => {
   return showTooltip
     ? {
-        crosshairs: true,
         useHTML: false,
         borderRadius: 2,
         borderWidth: 1,

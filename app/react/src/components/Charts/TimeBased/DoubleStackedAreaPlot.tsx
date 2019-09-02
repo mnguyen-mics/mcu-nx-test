@@ -116,9 +116,6 @@ class DoubleStackedAreaPlot extends React.Component<Props, {}> {
     } = this.props;
 
     const options: Highcharts.Options = {
-      global: {
-        timezoneOffset: new Date().getTimezoneOffset(),
-      },
       chart: {
         height: BASE_CHART_HEIGHT,
         ...isDraggable ? generateDraggable(onDragEnd) : {}
