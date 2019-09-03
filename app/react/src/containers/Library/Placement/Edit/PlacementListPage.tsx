@@ -15,6 +15,8 @@ import { notifyError } from '../../../../state/Notifications/actions';
 import { Loading } from '../../../../components/index';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
 import PlacementListFormService from './PlacementListFormService';
+import { connect } from 'react-redux';
+import { getFormValues } from 'redux-form';
 
 const messages = defineMessages({
   newPlacementList: {
@@ -50,7 +52,9 @@ const messages = defineMessages({
 // Can't use Number.MAX_SAFE_INTEGER as it is greater than the Max value of an Int in Scala
 const MAX_RESULTS = 1000000 
 
-interface PlacementListPageProps {}
+interface PlacementListPageProps {
+  placementListFormData: PlacementListFormData
+}
 
 interface PlacementListPageState {
   placementList: PlacementListFormData;
@@ -117,7 +121,11 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
     return history.push(url);
   };
 
-  save = (formData: PlacementListFormData) => {
+  saveCSV = (file: File) => {
+    this.save(this.props.placementListFormData, file)
+  }
+
+  save = (formData: PlacementListFormData, file?: File) => {
     const {
       match: {
         params: { placementListId, organisationId },
@@ -148,7 +156,8 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
       formData,
       initialPlacementListData,
       placementListId,
-    )
+      file
+      )
       .then(() => {
         redirectAndNotify(true);
       })
@@ -156,7 +165,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
         redirectAndNotify();
         notifyError(err);
       });
-  };
+  }
 
   render() {
     const {
@@ -194,6 +203,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
         onSave={this.save}
         onClose={this.close}
         breadCrumbPaths={breadcrumbPaths}
+        saveCSV={this.saveCSV}
       />
     );
   }
@@ -203,4 +213,7 @@ export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectDrawer,
+  connect((state) => ({
+    placementListFormData: (getFormValues('placementListForm')(state))
+  }))
 )(PlacementListPage);

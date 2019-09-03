@@ -23,11 +23,10 @@ import ScrollspySider, {
 import { PlacementListFormData } from './domain';
 import {
   McsFormSection,
-  ReduxFormChangeProps,
 } from '../../../../utils/FormHelper';
 import { Path } from '../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
-import PlacementsFormSection from './Sections/PlacementsFormSection';
+import PlacementsFormSection, { PlacementsFormSectionProps } from './Sections/PlacementsFormSection';
 import { Omit } from '../../../../utils/Types';
 import { PlacementList } from '../../../../models/placementList/PlacementList';
 
@@ -39,7 +38,7 @@ const Content = Layout.Content as React.ComponentClass<
 
 const PlacementDescriptorFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
-  ReduxFormChangeProps
+  PlacementsFormSectionProps
 >;
 
 const messages = defineMessages({
@@ -74,6 +73,7 @@ interface PlacementListFormProps
   onClose: () => void;
   onSave: (formData: Partial<PlacementList>) => void;
   breadCrumbPaths: Path[];
+  saveCSV: (file: File) => void;
 }
 
 interface PlacementListFormState {}
@@ -84,6 +84,11 @@ type Props = InjectedFormProps<PlacementListFormData, PlacementListFormProps> &
   InjectedIntlProps;
 
 class PlacementListForm extends React.Component<Props, PlacementListFormState> {
+
+  constructor(props: Props) {
+    super(props)
+  }
+
   buildFormSections = () => {
     const sections: McsFormSection[] = [];
     const general = {
@@ -100,6 +105,7 @@ class PlacementListForm extends React.Component<Props, PlacementListFormState> {
           component={PlacementsFormSection}
           formChange={this.props.change}
           rerenderOnEveryChange={true}
+          saveCSV={this.props.saveCSV}
         />
       ),
     };
@@ -155,6 +161,7 @@ class PlacementListForm extends React.Component<Props, PlacementListFormState> {
       </Layout>
     );
   }
+  
 }
 
 export default compose<Props, PlacementListFormProps>(

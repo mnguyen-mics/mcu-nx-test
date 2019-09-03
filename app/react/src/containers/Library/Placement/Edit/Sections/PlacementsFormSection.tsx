@@ -72,7 +72,7 @@ const messages = defineMessages({
   emptyRecordTitle: {
     id: 'placement.placementList.edit.no.placementDescriptor.title',
     defaultMessage:
-      'Click on the pen to add a placement to your placement list',
+      'Click on the pen to add a placement to your placement list.',
   },
   dragAndDrop: {
     id: 'placement.placementList.edit.dragAndDropOrClick.line.1',
@@ -80,11 +80,11 @@ const messages = defineMessages({
   },
   csvRules: {
     id: 'placement.placementList.edit.dragAndDropOrClick.line.2',
-    defaultMessage: 'Your CSV file must have 3 columns and no empty cells',
+    defaultMessage: 'Your CSV file must have 3 or 4 columns, no empty cells and 5000 lines at most. If you want to import more than 5000 placements, you can split your CSV and create others lists.',
   },
   modalTitle: {
     id: 'placement.placementList.edit.dragAndDrop.modal.title',
-    defaultMessage: 'Replace the current placements by CSV ',
+    defaultMessage: 'Replace the current placements by CSV',
   },
   formError: {
     id: 'placement.placementList.edit.dragAndDrop.empty.select.messageError',
@@ -92,7 +92,11 @@ const messages = defineMessages({
   },
 });
 
-interface PlacementsFormSectionProps extends ReduxFormChangeProps {}
+const MAX_LINES_CSV = 5000;
+
+export interface PlacementsFormSectionProps extends ReduxFormChangeProps {
+  saveCSV: (file: File) => void
+}
 
 type Props = PlacementsFormSectionProps &
   InjectedDrawerProps &
@@ -155,36 +159,25 @@ class PlacementsFormSection extends React.Component<Props, State> {
 
   validateFormat = (fileData: string[][]) => {
     return new Promise((resolve, reject) => {
-      fileData.filter(row => row.length !== 1).forEach((row, i) => {
-        if (row.length === 3) {
-          row.forEach((cell, j) => {
-            if (!cell || cell === '') {
-              return reject('failed');
-            }
-          });
-        } else {
-          return reject('failed');
-        }
-      });
+      const rows = fileData.filter(row => row.length !== 1)
+      if (rows.length <= MAX_LINES_CSV) {
+        rows.forEach((row, i) => {
+          if (row.length === 3 || row.length === 4) {
+            row.forEach((cell, j) => {
+              if (!cell || cell === '') {
+                return reject('failed');
+              }
+            });
+          } else {
+            return reject('failed');
+          }
+        });
+      }
+      else {
+        return reject('failed');
+      }
       return resolve('succes');
     });
-  };
-
-  handleCSVreplacement = (data: string[][]) => {
-    const { fields, formChange } = this.props;
-    const newFields: PlacementDescriptorListFieldModel[] = [];
-    data.filter(row => row.length === 3).forEach(row => {
-      newFields.push({
-        key: cuid(),
-        model: {
-          value: row[0],
-          descriptor_type: row[1],
-          placement_holder: row[2],
-        },
-      });
-    });
-
-    formChange((fields as any).name, newFields);
   };
 
   closeModalAndNotify = (validationSuccess: boolean = false) => {
@@ -200,12 +193,14 @@ class PlacementsFormSection extends React.Component<Props, State> {
 
   handleOk = () => {
     const { fileList } = this.state;
+    const { saveCSV } = this.props;
+
     const config = {
-      complete: (results: any, file: any) => {
+      complete: (results: any, file: File) => {
         this.validateFormat(results.data)
           .then(res => {
-            this.closeModalAndNotify(true);
-            this.handleCSVreplacement(results.data);
+            this.closeModalAndNotify(true)
+            saveCSV(file)
           })
           .catch(() => {
             this.closeModalAndNotify();
@@ -213,6 +208,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
       },
     };
     const fileToParse = fileList[0] as any;
+    
     Papa.parse(fileToParse, config);
   };
 
@@ -308,7 +304,7 @@ class PlacementsFormSection extends React.Component<Props, State> {
         title={this.props.intl.formatMessage(messages.modalTitle)}
         visible={this.state.isModalOpen}
         onOk={this.handleOk}
-        okText={'ok'}
+        okText={'Ok'}
         onCancel={this.handleOpenClose}
       >
         <Dragger {...props}>

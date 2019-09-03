@@ -17,6 +17,7 @@ const PlacementListFormService = {
     formData: PlacementListFormData,
     initialFormData: PlacementListFormData = INITIAL_PLACECMENT_LIST_FORM_DATA,
     placementListId?: string,
+    file?: File,
   ) {
     let createOrUpdatePlacementListPromise;
     const body = {
@@ -35,7 +36,6 @@ const PlacementListFormService = {
     }
     return createOrUpdatePlacementListPromise.then(resp => {
       const newPlacementListId = resp.data.id;
-
       const tasks: Task[] = [];
 
       tasks.push(
@@ -43,6 +43,7 @@ const PlacementListFormService = {
           newPlacementListId,
           formData.placementDescriptorList,
           initialFormData.placementDescriptorList,
+          file,
         ),
       );
       return executeTasksInSequence(tasks).then(() => newPlacementListId);
@@ -58,76 +59,85 @@ function getPlacementDescriptorTasks(
   placementListId: string,
   placementDescriptorFields: PlacementDescriptorListFieldModel[],
   initialPlacementDescriptorFields: PlacementDescriptorListFieldModel[] = [],
+  file?: File,
 ): Task[] {
-  const initialPlacementDescriptorIds: string[] = [];
-  initialPlacementDescriptorFields.forEach(field => {
-    if (
-      hasId<
-        PlacementDescriptorResource,
-        Partial<PlacementDescriptorCreateRequest>
-      >(field.model)
-    ) {
-      initialPlacementDescriptorIds.push(field.model.id);
-    }
-  });
-
-  const currentPlacementDescriptorIds: string[] = [];
-  placementDescriptorFields.forEach(field => {
-    if (
-      hasId<
-        PlacementDescriptorResource,
-        Partial<PlacementDescriptorCreateRequest>
-      >(field.model)
-    ) {
-      currentPlacementDescriptorIds.push(field.model.id);
-    }
-  });
-
+  const initialPlacementDescriptor: Map<
+    string,
+    PlacementDescriptorResource
+  > = new Map();
+  const currentPlacementDescriptor: Map<
+    string,
+    PlacementDescriptorResource
+  > = new Map();
   const tasks: Task[] = [];
-  // create or update PlacementDescriptor tasks
-  placementDescriptorFields.forEach(field => {
-    if (
-      hasId<
-        PlacementDescriptorResource,
-        Partial<PlacementDescriptorCreateRequest>
-      >(field.model)
-    ) {
-      // update descriptor if needed
-      const exisitingDescriptorField = initialPlacementDescriptorFields.find(
-        v => v.key === field.key,
-      );
-      const currentDescriptor = field.model;
+
+  // Redux seems to returns dispatch() instead on undefined
+  if (file && file.size > 0) {
+    const formData = new FormData();
+    formData.append('file', file as any, file.name);
+
+    tasks.push(() =>
+      PlacementListService.updatePlacementDescriptorBatch(
+        placementListId,
+        formData,
+      ),
+    );
+  } else {
+    initialPlacementDescriptorFields.forEach(field => {
       if (
-        exisitingDescriptorField &&
-        !isEqual(currentDescriptor, exisitingDescriptorField.model)
+        hasId<
+          PlacementDescriptorResource,
+          Partial<PlacementDescriptorCreateRequest>
+        >(field.model)
       ) {
+        initialPlacementDescriptor.set(field.model.id, field.model);
+      }
+    });
+
+    placementDescriptorFields.forEach(field => {
+      if (
+        hasId<
+          PlacementDescriptorResource,
+          Partial<PlacementDescriptorCreateRequest>
+        >(field.model)
+      ) {
+        // Updating already existing PlacementDescriptor
+        currentPlacementDescriptor.set(field.model.id, field.model);
+        const exisitingDescriptorField = initialPlacementDescriptor.get(
+          field.key,
+        );
+        const currentDescriptor = field.model;
+        if (
+          exisitingDescriptorField &&
+          !isEqual(currentDescriptor, exisitingDescriptorField)
+        ) {
+          tasks.push(() =>
+            PlacementListService.updatePlacementDescriptor(
+              placementListId,
+              currentDescriptor.id,
+              currentDescriptor,
+            ),
+          );
+        }
+      } else {
+        // new descriptor
         tasks.push(() =>
-          PlacementListService.updatePlacementDescriptor(
+          PlacementListService.createPlacementDescriptor(
             placementListId,
-            currentDescriptor.id,
-            currentDescriptor,
+            field.model,
           ),
         );
       }
-    } else {
-      // new descriptor
-      tasks.push(() =>
-        PlacementListService.createPlacementDescriptor(
-          placementListId,
-          field.model,
-        ),
-      );
-    }
-  });
-
-  // removed placement descriptor tasks
-  initialPlacementDescriptorIds
-    .filter(id => !currentPlacementDescriptorIds.includes(id))
-    .forEach(id => {
-      tasks.push(() =>
-        PlacementListService.deletePlacementDescriptor(placementListId, id),
-      );
     });
+
+    for (const [key] of initialPlacementDescriptor.entries()) {
+      if (currentPlacementDescriptor.get(key) === undefined) {
+        tasks.push(() =>
+          PlacementListService.deletePlacementDescriptor(placementListId, key),
+        );
+      }
+    }
+  }
 
   return tasks;
 }
