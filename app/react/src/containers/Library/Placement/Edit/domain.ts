@@ -15,9 +15,11 @@ export type PlacementDescriptorListFieldModel = FieldArrayModel<
 export interface PlacementListFormData {
   name: string;
   placementDescriptorList: PlacementDescriptorListFieldModel[];
+  file?: File;
 }
 
-export const INITIAL_PLACECMENT_LIST_FORM_DATA: PlacementListFormData = {
+export const INITIAL_PLACEMENT_LIST_FORM_DATA: PlacementListFormData = {
   name: '',
   placementDescriptorList: [],
+  file: undefined
 };

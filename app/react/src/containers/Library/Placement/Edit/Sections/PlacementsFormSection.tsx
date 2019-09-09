@@ -5,7 +5,7 @@ import cuid from 'cuid';
 import Papa from 'papaparse';
 import { compose } from 'recompose';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { WrappedFieldArrayProps } from 'redux-form';
+import { WrappedFieldArrayProps, change, submit, FormAction } from 'redux-form';
 
 import withValidators, {
   ValidatorProps,
@@ -29,6 +29,9 @@ import {
   EmptyRecords,
   RelatedRecords,
 } from '../../../../../components/RelatedRecord/index';
+
+import { FORM_ID } from '../PlacementListForm';
+import { connect } from 'react-redux'
 
 const Dragger = Upload.Dragger;
 
@@ -95,7 +98,8 @@ const messages = defineMessages({
 const MAX_LINES_CSV = 5000;
 
 export interface PlacementsFormSectionProps extends ReduxFormChangeProps {
-  saveCSV: (file: File) => void
+  change:(form:string, field:string, value:File) => void
+  submit:(form: string) => FormAction
 }
 
 type Props = PlacementsFormSectionProps &
@@ -193,14 +197,22 @@ class PlacementsFormSection extends React.Component<Props, State> {
 
   handleOk = () => {
     const { fileList } = this.state;
-    const { saveCSV } = this.props;
-
+    
     const config = {
       complete: (results: any, file: File) => {
         this.validateFormat(results.data)
           .then(res => {
             this.closeModalAndNotify(true)
-            saveCSV(file)
+            // We submit the form when the user upload a file.
+            // This means that if there is no name given for the placement list,
+            // the form is not submit.
+            // If the user is updating an already existing placement list
+            // that contains data, he can remove the name and try to submit new data.
+            // In this case, we erase the data that are displayed in order
+            // to make him understand that his data will be erased by the submit.
+            this.props.formChange((this.props.fields as any).name, []);
+            this.props.change(FORM_ID, 'file', file)
+            this.props.submit(FORM_ID)
           })
           .catch(() => {
             this.closeModalAndNotify();
@@ -441,9 +453,18 @@ class PlacementsFormSection extends React.Component<Props, State> {
   }
 }
 
+const mapDispatchToProps = {
+  change,
+  submit
+}; 
+
 export default compose<Props, PlacementsFormSectionProps>(
   injectIntl,
   withValidators,
   withNormalizer,
   injectDrawer,
+  connect(
+    undefined,
+    mapDispatchToProps,
+  ),
 )(PlacementsFormSection);

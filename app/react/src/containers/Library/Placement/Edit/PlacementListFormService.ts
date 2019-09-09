@@ -5,7 +5,7 @@ import {
 } from './../../../../models/placement/PlacementDescriptorResource';
 import {
   PlacementListFormData,
-  INITIAL_PLACECMENT_LIST_FORM_DATA,
+  INITIAL_PLACEMENT_LIST_FORM_DATA,
   PlacementDescriptorListFieldModel,
 } from './domain';
 import PlacementListService from '../../../../services/Library/PlacementListsService';
@@ -15,9 +15,8 @@ const PlacementListFormService = {
   savePlacementList(
     organisationId: string,
     formData: PlacementListFormData,
-    initialFormData: PlacementListFormData = INITIAL_PLACECMENT_LIST_FORM_DATA,
+    initialFormData: PlacementListFormData = INITIAL_PLACEMENT_LIST_FORM_DATA,
     placementListId?: string,
-    file?: File,
   ) {
     let createOrUpdatePlacementListPromise;
     const body = {
@@ -43,7 +42,7 @@ const PlacementListFormService = {
           newPlacementListId,
           formData.placementDescriptorList,
           initialFormData.placementDescriptorList,
-          file,
+          formData.file,
         ),
       );
       return executeTasksInSequence(tasks).then(() => newPlacementListId);

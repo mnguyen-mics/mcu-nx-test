@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
 import {
-  INITIAL_PLACECMENT_LIST_FORM_DATA,
+  INITIAL_PLACEMENT_LIST_FORM_DATA,
   PlacementListFormData,
 } from './domain';
 import PlacementListService from '../../../../services/Library/PlacementListsService';
@@ -15,8 +15,7 @@ import { notifyError } from '../../../../state/Notifications/actions';
 import { Loading } from '../../../../components/index';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
 import PlacementListFormService from './PlacementListFormService';
-import { connect } from 'react-redux';
-import { getFormValues } from 'redux-form';
+
 
 const messages = defineMessages({
   newPlacementList: {
@@ -70,7 +69,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      placementList: INITIAL_PLACECMENT_LIST_FORM_DATA,
+      placementList: INITIAL_PLACEMENT_LIST_FORM_DATA,
       loading: false,
     };
   }
@@ -121,11 +120,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
     return history.push(url);
   };
 
-  saveCSV = (file: File) => {
-    this.save(this.props.placementListFormData, file)
-  }
-
-  save = (formData: PlacementListFormData, file?: File) => {
+  save = (formData: PlacementListFormData) => {
     const {
       match: {
         params: { placementListId, organisationId },
@@ -144,7 +139,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
       hideSaveInProgress();
       success
         ? message.success(intl.formatMessage(messages.updateSuccess))
-        : message.success(intl.formatMessage(messages.updateError));
+        : message.error(intl.formatMessage(messages.updateError));
     };
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -156,7 +151,6 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
       formData,
       initialPlacementListData,
       placementListId,
-      file
       )
       .then(() => {
         redirectAndNotify(true);
@@ -203,7 +197,6 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
         onSave={this.save}
         onClose={this.close}
         breadCrumbPaths={breadcrumbPaths}
-        saveCSV={this.saveCSV}
       />
     );
   }
@@ -213,7 +206,4 @@ export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectDrawer,
-  connect((state) => ({
-    placementListFormData: (getFormValues('placementListForm')(state))
-  }))
 )(PlacementListPage);

@@ -30,7 +30,7 @@ import PlacementsFormSection, { PlacementsFormSectionProps } from './Sections/Pl
 import { Omit } from '../../../../utils/Types';
 import { PlacementList } from '../../../../models/placementList/PlacementList';
 
-const FORM_ID = 'placementListForm';
+export const FORM_ID = 'placementListForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -73,7 +73,6 @@ interface PlacementListFormProps
   onClose: () => void;
   onSave: (formData: Partial<PlacementList>) => void;
   breadCrumbPaths: Path[];
-  saveCSV: (file: File) => void;
 }
 
 interface PlacementListFormState {}
@@ -105,7 +104,6 @@ class PlacementListForm extends React.Component<Props, PlacementListFormState> {
           component={PlacementsFormSection}
           formChange={this.props.change}
           rerenderOnEveryChange={true}
-          saveCSV={this.props.saveCSV}
         />
       ),
     };
