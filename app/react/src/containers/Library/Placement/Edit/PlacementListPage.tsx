@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
 import {
-  INITIAL_PLACECMENT_LIST_FORM_DATA,
+  INITIAL_PLACEMENT_LIST_FORM_DATA,
   PlacementListFormData,
 } from './domain';
 import PlacementListService from '../../../../services/Library/PlacementListsService';
@@ -15,6 +15,7 @@ import { notifyError } from '../../../../state/Notifications/actions';
 import { Loading } from '../../../../components/index';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
 import PlacementListFormService from './PlacementListFormService';
+
 
 const messages = defineMessages({
   newPlacementList: {
@@ -50,7 +51,9 @@ const messages = defineMessages({
 // Can't use Number.MAX_SAFE_INTEGER as it is greater than the Max value of an Int in Scala
 const MAX_RESULTS = 1000000 
 
-interface PlacementListPageProps {}
+interface PlacementListPageProps {
+  placementListFormData: PlacementListFormData
+}
 
 interface PlacementListPageState {
   placementList: PlacementListFormData;
@@ -66,7 +69,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      placementList: INITIAL_PLACECMENT_LIST_FORM_DATA,
+      placementList: INITIAL_PLACEMENT_LIST_FORM_DATA,
       loading: false,
     };
   }
@@ -136,7 +139,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
       hideSaveInProgress();
       success
         ? message.success(intl.formatMessage(messages.updateSuccess))
-        : message.success(intl.formatMessage(messages.updateError));
+        : message.error(intl.formatMessage(messages.updateError));
     };
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -148,7 +151,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
       formData,
       initialPlacementListData,
       placementListId,
-    )
+      )
       .then(() => {
         redirectAndNotify(true);
       })
@@ -156,7 +159,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
         redirectAndNotify();
         notifyError(err);
       });
-  };
+  }
 
   render() {
     const {
