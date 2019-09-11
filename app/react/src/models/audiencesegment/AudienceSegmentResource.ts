@@ -22,7 +22,8 @@ export type AudienceSegmentType =
   | 'USER_ACTIVATION'
   | 'USER_PARTITION'
   | 'USER_PIXEL'
-  | 'USER_LOOKALIKE';
+  | 'USER_LOOKALIKE'
+  | 'USER_CLIENT';
 
 export type UserQueryEvaluationMode = 'REAL_TIME' | 'AUTOMATIC' | 'ON_DEMAND';
 
@@ -42,6 +43,8 @@ export type AudienceLookalikeStatus =
 export interface UserListSegment extends AudienceSegmentResource {
   feed_type: FeedType;
   type: 'USER_LIST';
+  query_id?: string;
+  sub_type: 'STANDARD' | 'USER_PIXEL' | 'USER_CLIENT'
 }
 
 export interface UserLookalikeSegment extends AudienceSegmentResource {

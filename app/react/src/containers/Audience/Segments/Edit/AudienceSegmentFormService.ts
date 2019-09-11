@@ -35,7 +35,10 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
   private _queryService: IQueryService;
   loadSegmentInitialValue(segmentId: string): Promise<AudienceSegmentFormData> {
     return this._audienceSegmentService.getSegment(segmentId).then(res => {
-      if (res.data.type === 'USER_QUERY' && res.data.query_id) {
+      if (
+        (res.data.type === 'USER_QUERY' || res.data.type === 'USER_LIST') &&
+        res.data.query_id
+      ) {
         return this._queryService
           .getQuery(res.data.datamart_id, res.data.query_id)
           .then(r => r.data)
@@ -67,10 +70,17 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
           audienceSegmentFormData,
         );
       case 'USER_LIST':
-        return this.createOrUpdateAudienceSegmentUserList(
-          organisationId,
-          audienceSegmentFormData,
-        );
+        return audienceSegmentFormData.audienceSegment.sub_type === 'USER_CLIENT'
+          ? this.createOrUpdateAudienceSegmentUserQuery(
+              organisationId,
+              audienceSegmentFormData,
+              queryLanguage as QueryLanguage,
+              queryContainer,
+            )
+          : this.createOrUpdateAudienceSegmentUserList(
+              organisationId,
+              audienceSegmentFormData,
+            );
       case 'USER_QUERY':
         return this.createOrUpdateAudienceSegmentUserQuery(
           organisationId,
