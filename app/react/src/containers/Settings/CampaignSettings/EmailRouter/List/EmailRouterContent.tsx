@@ -134,8 +134,8 @@ class EmailRouterContent extends React.Component<
       {
         key: 'action',
         actions: () => [
-          { intlmessage: messages.edit, callback: this.onClickEdit },
-          { intlmessage: messages.archive, callback: this.onClickArchive },
+          { intlMessage: messages.edit, callback: this.onClickEdit },
+          { intlMessage: messages.archive, callback: this.onClickArchive },
         ],
       },
     ];
