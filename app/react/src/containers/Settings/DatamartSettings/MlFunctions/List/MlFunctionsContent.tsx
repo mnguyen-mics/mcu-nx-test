@@ -17,6 +17,9 @@ import { ActionsColumnDefinition } from '../../../../../components/TableView/Tab
 import { MlFunctionResource } from '../../../../../models/datamart/MlFunction';
 import { IMlFunctionService, MlFunctionService } from '../../../../../services/MlFunctionService';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IPluginService } from '../../../../../services/PluginService';
 
 const { Content } = Layout;
 
@@ -67,6 +70,9 @@ class MlFunctionsContent extends Component<
 > {
   private _mlFunctionService: IMlFunctionService = new MlFunctionService();
 
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
+
   constructor(props: Props) {
     super(props);
     this.state = initialState;
@@ -85,9 +91,9 @@ class MlFunctionsContent extends Component<
         (results) => {
           const promises = results.data.map(sp => {
             return new Promise((resolve, reject) => {
-              PluginService.getEngineVersion(sp.version_id)
+              this._pluginService.getEngineVersion(sp.version_id)
                 .then(mlFunction => {
-                  return PluginService.getEngineProperties(mlFunction.id);
+                  return this._pluginService.getEngineProperties(mlFunction.id);
                 })
                 .then(v => resolve(v));
             });
