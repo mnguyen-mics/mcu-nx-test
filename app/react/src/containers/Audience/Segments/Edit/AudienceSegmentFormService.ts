@@ -70,7 +70,7 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
           audienceSegmentFormData,
         );
       case 'USER_LIST':
-        return audienceSegmentFormData.audienceSegment.sub_type === 'USER_CLIENT'
+        return audienceSegmentFormData.audienceSegment.subtype === 'USER_CLIENT'
           ? this.createOrUpdateAudienceSegmentUserQuery(
               organisationId,
               audienceSegmentFormData,

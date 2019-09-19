@@ -361,7 +361,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     const renderDotsMenu = () => {
       return (
         segment &&
-        (segment as UserListSegment).sub_type !== 'USER_CLIENT' && (
+        (segment as UserListSegment).subtype !== 'USER_CLIENT' && (
           <Dropdown overlay={dropdowMenu} trigger={['click']}>
             <Button>
               <McsIcon className="compact" type={'dots'} />

@@ -79,7 +79,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
     const renderName = () => {
       const userClient = 'USER_CLIENT';
       if (segment) {
-        return (segment as UserListSegment).sub_type === 'USER_CLIENT' ? (
+        return (segment as UserListSegment).subtype === 'USER_CLIENT' ? (
           <FormattedMessage {...localMessages[userClient]} />
         ) : (
           <FormattedMessage {...localMessages[segment.type]} />

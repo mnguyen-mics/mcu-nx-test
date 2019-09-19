@@ -44,7 +44,7 @@ export interface UserListSegment extends AudienceSegmentResource {
   feed_type: FeedType;
   type: 'USER_LIST';
   query_id?: string;
-  sub_type: 'STANDARD' | 'USER_PIXEL' | 'USER_CLIENT'
+  subtype: 'STANDARD' | 'USER_PIXEL' | 'USER_CLIENT'
 }
 
 export interface UserLookalikeSegment extends AudienceSegmentResource {

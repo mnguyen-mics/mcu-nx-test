@@ -289,7 +289,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               response.data.type === 'USER_LIST' &&
               !audienceSegmentFormData.audienceSegment.id &&
               (audienceSegmentFormData.audienceSegment as UserListSegment)
-                .sub_type === 'USER_PIXEL'
+                .subtype === 'USER_PIXEL'
             ) {
               redirect = `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit`;
             } else {
@@ -353,7 +353,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               .audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'TAG',
-            sub_type: 'USER_PIXEL',
+            subtype: 'USER_PIXEL',
           },
         },
       });
@@ -366,7 +366,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               .audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'FILE_IMPORT',
-            sub_type: 'STANDARD',
+            subtype: 'STANDARD',
           },
         },
       });
@@ -392,7 +392,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               .audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'TAG',
-            sub_type: 'USER_CLIENT',
+            subtype: 'USER_CLIENT',
           },
         },
       });
