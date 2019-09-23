@@ -253,10 +253,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return undefined;
     };
 
-    if (
-      !audienceSegmentFormData.query &&
-      audienceSegmentFormData.audienceSegment.type === 'USER_QUERY'
-    ) {
+    const isQueryContainerQueryEmpty = queryContainer && 
+                                  (
+                                    queryContainer.groupContainers.length === 0 ||  
+                                    (queryContainer.groupContainers.length > 0 && queryContainer.groupContainers[0].elementContainers.length === 0)
+                                  );                                
+    if ( audienceSegmentFormData.audienceSegment.type === 'USER_QUERY' &&
+      isQueryContainerQueryEmpty && !audienceSegmentFormData.query) {
       message.error(intl.formatMessage(messagesMap.noQueryText));
     } else {
       this.setState({ loading: true });
