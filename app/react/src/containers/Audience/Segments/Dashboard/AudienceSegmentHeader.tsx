@@ -52,7 +52,7 @@ export const localMessages: {
   },
   USER_CLIENT: {
     id: 'audience.segments.dashboard.header.type.USER_CLIENT',
-    defaultMessage: 'User Client',
+    defaultMessage: 'Edge',
   },
 });
 

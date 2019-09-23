@@ -422,7 +422,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     }
     if (hasFeature('audience.user_client_segment')) {
       segmentTypesToDisplay.push({
-        title: 'User Client',
+        title: 'Edge',
         value: 'USER_CLIENT',
       });
     }
