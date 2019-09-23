@@ -10,6 +10,7 @@ import {
   WaitNodeResource,
   QueryInputEvaluationMode,
   QueryInputEvaluationPeriodUnit,
+  EdgeHandler,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
@@ -18,6 +19,7 @@ import {
   DisplayCampaignAutomationFormData,
   EmailCampaignAutomationFormData,
   WaitFormData,
+  isIfNode,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
@@ -39,7 +41,7 @@ export interface TreeNodeOperations {
   updateLayout: () => void;
 }
 
-export type AntIcon = 'flag' | 'fork' | 'clock-circle';
+export type AntIcon = 'flag' | 'fork' | 'clock-circle' | 'branches';
 
 export type AutomationNodeShape = ScenarioNodeShape | DropNode;
 
@@ -110,50 +112,39 @@ export class AddNodeOperation implements NodeOperation {
             },
             out_edges: child.out_edges,
           };
-          const newId = generateFakeId();
 
-          const generateNewEmptyOutEdges = (
-            branchNumber: number,
-          ): StorylineNodeModel[] => {
-            const newEmptyOutEdges = [];
-            for (let i = 2; i <= branchNumber; i++) {
-              const emptyNode: StorylineNodeModel = {
-                node: {
-                  id: newId,
-                  name: 'Exit automation',
-                  scenario_id: '',
-                  type: 'END_NODE',
-                },
-                in_edge: {
-                  id: generateFakeId(),
-                  source_id: this.node.id,
-                  target_id: newId,
-                  handler: 'OUT',
-                  scenario_id: child.in_edge!.scenario_id,
-                },
-                out_edges: [],
-              };
-              newEmptyOutEdges.push(emptyNode);
-            }
-            return newEmptyOutEdges;
-          };
           let newOutEdges: StorylineNodeModel[] = [];
-          if (this.node.type === 'ABN_NODE') {
-            const emptyNodes = generateNewEmptyOutEdges(
+
+          if (isAbnNode(this.node)) {
+            const emptyNodes = this.generateNewEmptyOutEdges( 
+              child,
               this.node.formData ? this.node.formData.branch_number : 2,
             );
             newOutEdges = [childNode].concat(emptyNodes);
+
+          } else if (isIfNode(this.node)) {
+            const emptyNodes = this.generateNewEmptyOutEdges(child, 2)
+            newOutEdges = [childNode].concat(emptyNodes)
+
+            const firstEdge =  newOutEdges[0]
+            const secondEdge =  newOutEdges[1]
+
+            if (firstEdge.in_edge !== undefined) {
+              firstEdge.in_edge.handler = 'IF_CONDITION_TRUE'
+            }
+            if (secondEdge.in_edge !== undefined) {
+              secondEdge.in_edge.handler = 'IF_CONDITION_FALSE'
+            }
           } else {
             newOutEdges = [childNode];
           }
-
           const newNode: StorylineNodeModel = {
             node: this.node,
             in_edge: {
               id: generateFakeId(),
               source_id: parentNodeId,
               target_id: this.node.id,
-              handler: this.node.type === 'DISPLAY_CAMPAIGN' ? 'ON_VISIT' : 'OUT',
+              handler: this.getInEdgeHandler(child),
               scenario_id: '',
             },
             out_edges: newOutEdges,
@@ -170,6 +161,46 @@ export class AddNodeOperation implements NodeOperation {
       in_edge: automationData.in_edge,
       out_edges: outEdges,
     };
+  }
+
+  generateNewEmptyOutEdges = (
+    child: StorylineNodeModel,
+    branchNumber: number,
+  ): StorylineNodeModel[] => {
+    const newId = generateFakeId();
+
+    const newEmptyOutEdges = [];
+    for (let i = 2; i <= branchNumber; i++) {
+      const emptyNode: StorylineNodeModel = {
+        node: {
+          id: newId,
+          name: 'Exit automation',
+          scenario_id: '',
+          type: 'END_NODE',
+        },
+        in_edge: {
+          id: generateFakeId(),
+          source_id: this.node.id,
+          target_id: newId,
+          handler: 'OUT',
+          scenario_id: child.in_edge!.scenario_id,
+        },
+        out_edges: [],
+      };
+      newEmptyOutEdges.push(emptyNode);
+    }
+    return newEmptyOutEdges;
+  };
+  
+
+  getInEdgeHandler(child: StorylineNodeModel): EdgeHandler {
+    if (child.in_edge !== undefined && (child.in_edge.handler === 'IF_CONDITION_TRUE' ||  child.in_edge.handler === 'IF_CONDITION_FALSE')) {
+      return child.in_edge.handler
+    } else if (this.node.type === 'DISPLAY_CAMPAIGN') {
+      return 'ON_VISIT'
+    } else {
+      return 'OUT'
+    }
   }
 }
 
@@ -196,7 +227,7 @@ export class DeleteNodeOperation implements NodeOperation {
       (child, index) => {
         if (
           child.node.id === idNodeToBeDeleted &&
-          child.node.type === 'ABN_NODE'
+          (isAbnNode(child.node) || isIfNode(child.node))
         ) {
           const newNode: StorylineNodeModel = {
             node: {
@@ -211,15 +242,15 @@ export class DeleteNodeOperation implements NodeOperation {
           return newNode;
         } else if (
           child.node.id === idNodeToBeDeleted &&
-          child.node.type !== 'ABN_NODE'
+          !isAbnNode(child.node) && !isIfNode(child.node)
         ) {
-          const inEdge = child.out_edges[0].in_edge;
+          const inEdge = child.in_edge;
           const storylineNodeModel: StorylineNodeModel = {
             node: child.out_edges[0].node,
             in_edge: inEdge ? {
               ...inEdge,
               source_id: automationData.node.id,
-              target_id: inEdge.target_id
+              target_id: inEdge.target_id,
             } : undefined,
             out_edges: child.out_edges[0].out_edges,
           }
@@ -294,6 +325,7 @@ export class UpdateNodeOperation implements NodeOperation {
         };
         break;
       case 'QUERY_INPUT':
+      case 'IF_NODE':
         nodeBody = {
           ...storylineNode.node,
           ...this.node as QueryInputNodeResource,
@@ -497,6 +529,11 @@ export function generateNodeProperties(
         iconAnt: 'fork',
         color: '#fbc02d',
         branchNumber: node.branch_number,
+      };
+    case 'IF_NODE':
+      return {
+        iconAnt: 'branches',
+        color: '#fbc02d',
       };
     case 'END_NODE':
       return {

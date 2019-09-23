@@ -23,12 +23,8 @@ export const messages = defineMessages({
     id: 'automation.builder.node.edition.form.general.subtitle',
     defaultMessage: 'Modify the general information of the node',
   },
-  automationNodeName: {
-    id: 'automation.builder.node.form.name',
-    defaultMessage: 'Automation Node name',
-  },
-  automationNodeBranch: {
-    id: 'automation.builder.node.form.wait.branch_number',
+  waitNodeTimeout: {
+    id: 'automation.builder.node.form.wait.timeout',
     defaultMessage: 'Timeout',
   },
 });
@@ -75,26 +71,11 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
         <div className="automation-node-form">
           <FormInputField
-            name="name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.automationNodeName),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(messages.automationNodeName),
-              disabled: !!disabled
-            }}
-            small={true}
-          />
-
-          <FormInputField
             name="timeout"
             component={FormInput}
             validate={[isRequired, isValidInteger]}
             formItemProps={{
-              label: formatMessage(messages.automationNodeBranch),
+              label: formatMessage(messages.waitNodeTimeout),
               required: true,
             }}
             inputProps={{

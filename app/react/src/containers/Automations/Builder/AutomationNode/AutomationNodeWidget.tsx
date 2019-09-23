@@ -128,9 +128,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     
   }
 
- 
-  
-
   editNode = () => {
     const { node, lockGlobalInteraction, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId } = this.props;
 
@@ -156,6 +153,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             };
             break;
           case 'QUERY_INPUT':
+          case 'IF_NODE':
             // add here query input
             initialValue = {
               ... scenarioNodeShape.formData,
@@ -250,9 +248,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           </div>
         ))
       }
-     
     }
-
+    
     return content
   }
 
@@ -332,7 +329,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     return content;
   }
 
-  renderWaitNodeEdit = (): React.ReactNodeArray => {
+  defaultEditRemoveNode = (): React.ReactNodeArray => {
     const { viewer, node } = this.props;
 
     const content: React.ReactNodeArray = [];
@@ -361,34 +358,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     return content;
   }
 
-  rendePluginNodeEdit = (): React.ReactNodeArray => {
-    const { viewer, node } = this.props;
-
-    const content: React.ReactNodeArray = [];
-    if (!viewer) {
-      content.push((
-        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
-          <FormattedMessage {...messages.edit} />
-        </div>
-      ))
-
-      if (!node.isFirstNode) {
-        content.push((
-          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
-            <FormattedMessage {...messages.remove} />
-          </div>
-        ))
-      }
-    } else {
-      content.push((
-        <div key="view" onClick={this.editNode} className="boolean-menu-item">
-          <FormattedMessage {...messages.view} />
-        </div>
-      ))
-    }
-
-    return content;
-  }
 
   renderEditMenu = (nodeType: ScenarioNodeType): React.ReactNodeArray => {
     switch(nodeType) {
@@ -401,17 +370,16 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         return this.renderQueryEdit();
       case 'END_NODE':
         return this.renderEndNodeEdit();
+      case 'IF_NODE':
       case 'WAIT_NODE':
-        return this.renderWaitNodeEdit();
       case 'PLUGIN_NODE':
-        return this.rendePluginNodeEdit();
+        return this.defaultEditRemoveNode();
       default:
         return [];
     }
   }
 
   renderSubTitle = (node: AutomationNodeShape) => {
-
     switch(node.type) {
       case 'DISPLAY_CAMPAIGN':
         return node.formData.goalFields.length ? 'exit on goal' : 'exit on visit';
