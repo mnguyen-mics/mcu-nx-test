@@ -32,6 +32,7 @@ import { AudienceSegmentFormData, EditAudienceSegmentParam } from './domain';
 import {
   FeedType,
   AudienceSegmentType,
+  UserListSegment,
 } from '../../../../models/audiencesegment/';
 import * as FeatureSelectors from '../../../../state/Features/selectors';
 
@@ -121,7 +122,21 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 
     switch (type) {
       case 'USER_LIST':
-        return (
+        return initialValues &&
+          initialValues.audienceSegment &&
+          (initialValues.audienceSegment as UserListSegment).feed_type ===
+            'TAG' ? (
+          this.generateUserQueryTemplate(
+            <FormJSONQL
+              name={'query.query_text'}
+              component={JSONQL}
+              inputProps={{
+                datamartId: datamartId!,
+                context: 'GOALS',
+              }}
+            />,
+          )
+        ) : (
           <UserListSection
             segmentId={audienceSegmentFormData.audienceSegment.id as string}
           />
@@ -225,13 +240,22 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         />
       ),
     });
-    if (!(segmentCreation && (type === 'USER_PIXEL' || type === 'USER_LIST'))) {
+    if (
+      !(segmentCreation && (type === 'USER_PIXEL' || type === 'USER_LIST')) ||
+      (type === 'USER_LIST' &&
+        initialValues &&
+        initialValues.audienceSegment &&
+        (initialValues.audienceSegment as UserListSegment).feed_type === 'TAG')
+    ) {
       sections.push({
         id: 'properties',
         title:
           type === 'USER_PIXEL'
             ? messages.audienceSegmentSiderMenuProperties
-            : type === 'USER_QUERY'
+            : type === 'USER_QUERY' ||
+              (type === 'USER_LIST' &&
+                initialValues &&
+                initialValues.feedType === 'TAG')
             ? messages.audienceSegmentSectionQueryTitle
             : messages.audienceSegmentSiderMenuImport,
         component: this.renderPropertiesField(),
