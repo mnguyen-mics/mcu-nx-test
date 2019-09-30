@@ -25,9 +25,40 @@ export interface SegmentImportResult {
   total_user_segment_treated: number;
 }
 
+export interface SegmentExportInput {
+  datamart_id: string;
+  audience_segment_id: string;
+  export_user_identifier: ExportUserIdentifier;
+  mime_type: AudienceSegmentExportJobResultMimeType;
+}
+
+export interface ExportUserIdentifier {
+  type: AudienceSegmentExportJobIdentifierType,
+  compartment_id?: string;
+}
+
+export type AudienceSegmentExportJobIdentifierType =
+  'USER_ACCOUNT' |
+  'USER_EMAIL' |
+  'USER_AGENT';
+
+export type AudienceSegmentExportJobResultMimeType =
+  'TEXT_CSV';
+
+export interface SegmentExportResult {
+  total_user_points: number;
+  total_exported_identifiers: number;
+  export_file_uri: string;
+}
+
 export interface UserSegmentImportJobExecutionResource
   extends BaseExecutionResource<{}, SegmentImportResult> {
   job_type: 'USER_SEGMENT_IMPORT';
+}
+
+export interface AudienceSegmentExportJobExecutionResource
+  extends BaseExecutionResource<SegmentExportInput, SegmentExportResult> {
+  job_type: 'AUDIENCE_SEGMENT_EXPORT';
 }
 
 export interface GetSegmentsOption extends PaginatedApiParam {
@@ -93,6 +124,21 @@ export interface IAudienceSegmentService {
       max_results?: number;
     },
   ) => Promise<DataListResponse<OverlapJobResult>>;
+
+  createAudienceSegmentExport: (
+    segmentId: string,
+    exportUserIdentifier: ExportUserIdentifier,
+    mimeType?: AudienceSegmentExportJobResultMimeType
+  ) => Promise<DataResponse<AudienceSegmentExportJobExecutionResource>>;
+
+  findAudienceSegmentExportExecutionsBySegment: (
+    segmentId: string,
+    options?: {
+      first_result?: number;
+      max_results?: number;
+      status?: string;
+    },
+  ) => Promise<DataListResponse<AudienceSegmentExportJobExecutionResource>>;
 
   // DEPRECATED, will be removed in a near future
   getSegmentMetaData: (organisationId: string) => Promise<any>;
@@ -302,6 +348,34 @@ export class AudienceSegmentService implements IAudienceSegmentService {
       job_type: 'FIRST_PARTY_OVERLAP_ANALYSIS',
       ...options,
     };
+
+    return ApiService.getRequest(endpoint, params);
+  }
+
+  createAudienceSegmentExport = (
+    segmentId: string,
+    exportUserIdentifier: ExportUserIdentifier,
+    mimeType: AudienceSegmentExportJobResultMimeType = 'TEXT_CSV'
+  ): Promise<DataResponse<AudienceSegmentExportJobExecutionResource>> => {
+    const endpoint = `audience_segments/${segmentId}/exports`;
+    const body = {
+      export_user_identifier: exportUserIdentifier,
+      mime_type: mimeType,
+    };
+
+    return ApiService.postRequest(endpoint, body);
+  }
+
+  findAudienceSegmentExportExecutionsBySegment = (
+    segmentId: string,
+    options?: {
+      first_result?: number;
+      max_results?: number;
+      status?: string;
+    },
+  ): Promise<DataListResponse<AudienceSegmentExportJobExecutionResource>> => {
+    const endpoint = `audience_segments/${segmentId}/exports`;
+    const params = {...options};
 
     return ApiService.getRequest(endpoint, params);
   }

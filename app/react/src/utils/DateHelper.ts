@@ -12,10 +12,11 @@ export function areDatesSameDay(date1: Moment, date2: Moment) {
 export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY';
 
 export function formatUnixTimestamp(
-  ts: number | null | undefined
+  ts: number | null | undefined,
+  format?: string
 ) {
   if (!ts) return '--/--/----';
-  return moment(ts).format(DEFAULT_DATE_FORMAT);
+  return moment(ts).format(format || DEFAULT_DATE_FORMAT);
 }
 
 export function truncateUpToHour(date: Date, hourOfDay: number) {
