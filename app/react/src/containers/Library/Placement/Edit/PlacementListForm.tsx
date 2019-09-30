@@ -23,15 +23,14 @@ import ScrollspySider, {
 import { PlacementListFormData } from './domain';
 import {
   McsFormSection,
-  ReduxFormChangeProps,
 } from '../../../../utils/FormHelper';
 import { Path } from '../../../../components/ActionBar';
 import GeneralFormSection from './Sections/GeneralFormSection';
-import PlacementsFormSection from './Sections/PlacementsFormSection';
+import PlacementsFormSection, { PlacementsFormSectionProps } from './Sections/PlacementsFormSection';
 import { Omit } from '../../../../utils/Types';
 import { PlacementList } from '../../../../models/placementList/PlacementList';
 
-const FORM_ID = 'placementListForm';
+export const FORM_ID = 'placementListForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -39,7 +38,7 @@ const Content = Layout.Content as React.ComponentClass<
 
 const PlacementDescriptorFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
-  ReduxFormChangeProps
+  PlacementsFormSectionProps
 >;
 
 const messages = defineMessages({
@@ -84,6 +83,11 @@ type Props = InjectedFormProps<PlacementListFormData, PlacementListFormProps> &
   InjectedIntlProps;
 
 class PlacementListForm extends React.Component<Props, PlacementListFormState> {
+
+  constructor(props: Props) {
+    super(props)
+  }
+
   buildFormSections = () => {
     const sections: McsFormSection[] = [];
     const general = {
@@ -155,6 +159,7 @@ class PlacementListForm extends React.Component<Props, PlacementListFormState> {
       </Layout>
     );
   }
+  
 }
 
 export default compose<Props, PlacementListFormProps>(

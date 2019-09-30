@@ -57,6 +57,13 @@ const PlacementListService = {
     const endpoint = `placement_lists/${placementListId}/placement_descriptors/${placementDescriptorId}`;
     return ApiService.putRequest(endpoint, body);
   },
+  updatePlacementDescriptorBatch(
+    placementListId: string,
+    body: FormData,
+  ): Promise<any> {
+    const endpoint = `placement_lists/${placementListId}/placement_descriptors/batch`;
+    return ApiService.postRequest(endpoint, body);
+  },
   createPlacementDescriptor(
     placementListId: string,
     body: Partial<PlacementDescriptorResource>,

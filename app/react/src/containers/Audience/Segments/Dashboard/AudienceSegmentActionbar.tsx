@@ -19,7 +19,10 @@ import AudienceLookalikeCreation, {
 import { injectDrawer } from '../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
-import { UserLookalikeSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import {
+  UserLookalikeSegment,
+  UserListSegment,
+} from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { SEGMENT_QUERY_SETTINGS, OverlapData } from './constants';
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
@@ -141,7 +144,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       location: { search },
       intl: { formatMessage },
       segment,
-      datamarts
+      datamarts,
     } = this.props;
     const filters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
     this.setState({ exportIsRunning: true });
@@ -150,16 +153,15 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       0,
     );
 
-    const datamartId = segment && segment.datamart_id
-    const datamart = datamarts.find(
-      dm => dm.id === datamartId,
-    );
+    const datamartId = segment && segment.datamart_id;
+    const datamart = datamarts.find(dm => dm.id === datamartId);
 
     const additionalMetrics =
-          datamart && datamart.audience_segment_metrics
-            ? datamart.audience_segment_metrics
-                .filter(metric => metric.status === 'LIVE')
-            : undefined;
+      datamart && datamart.audience_segment_metrics
+        ? datamart.audience_segment_metrics.filter(
+            metric => metric.status === 'LIVE',
+          )
+        : undefined;
 
     this.fetchExportData(organisationId, segmentId, filters.from, filters.to)
       .then(res => {
@@ -171,7 +173,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
           filters,
           formatMessage,
           segment,
-          additionalMetrics
+          additionalMetrics,
         );
       })
       .then(() => {
@@ -245,8 +247,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     ];
 
     const onClick = () => {
-      if (!datamartId)
-        return;
+      if (!datamartId) return;
 
       this.props.openNextDrawer<AudienceLookalikeCreationProps>(
         AudienceLookalikeCreation,
@@ -274,7 +275,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
           },
         },
       );
-    }
+    };
 
     const onRecalibrateClick = () => onCalibrationClick();
 
@@ -357,26 +358,48 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       </Menu>
     );
 
+    const renderDotsMenu = () => {
+      return (
+        segment &&
+        (segment as UserListSegment).subtype !== 'USER_CLIENT' && (
+          <Dropdown overlay={dropdowMenu} trigger={['click']}>
+            <Button>
+              <McsIcon className="compact" type={'dots'} />
+            </Button>
+          </Dropdown>
+        )
+      );
+    };
+
     return (
       <Actionbar paths={breadcrumbPaths}>
         {actionButton}
-        <Button className="mcs-primary" type="primary" onClick={this.handleCreateNewFeed}>
+        <Button
+          className="mcs-primary"
+          type="primary"
+          onClick={this.handleCreateNewFeed}
+        >
           <McsIcon type="bolt" />
-          <FormattedMessage id="audience.segments.dashboard.actionbar.feedButton" defaultMessage="Add a Feed" />
+          <FormattedMessage
+            id="audience.segments.dashboard.actionbar.feedButton"
+            defaultMessage="Add a Feed"
+          />
         </Button>
         <Button onClick={this.onEditClick}>
           <McsIcon type="pen" />
-          <FormattedMessage id="audience.segments.dashboard.actionbar.editButton" defaultMessage="Edit" />
+          <FormattedMessage
+            id="audience.segments.dashboard.actionbar.editButton"
+            defaultMessage="Edit"
+          />
         </Button>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           <McsIcon type="download" />
-          <FormattedMessage id="audience.segments.dashboard.actionbar.exportButton" defaultMessage="Export" />
+          <FormattedMessage
+            id="audience.segments.dashboard.actionbar.exportButton"
+            defaultMessage="Export"
+          />
         </Button>
-        <Dropdown overlay={dropdowMenu} trigger={['click']}>
-          <Button>
-            <McsIcon className="compact" type={'dots'} />
-          </Button>
-        </Dropdown>
+        {renderDotsMenu()}
       </Actionbar>
     );
   }

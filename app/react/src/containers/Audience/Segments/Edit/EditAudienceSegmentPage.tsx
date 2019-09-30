@@ -40,6 +40,8 @@ import DatamartService from '../../../../services/DatamartService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
+import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
+import { hasFeature } from '../../../../state/Features/selectors';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -71,6 +73,7 @@ interface MapStateToProps {
 
 type Props = InjectedIntlProps &
   MapStateToProps &
+  InjectedFeaturesProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
@@ -120,16 +123,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         };
       }
     }
-  };
-
-  extractSegmentType = (audienceSegment: AudienceSegmentShape) => {
-    if (
-      audienceSegment.type === 'USER_LIST' &&
-      audienceSegment.feed_type === 'TAG'
-    ) {
-      return 'USER_PIXEL';
-    }
-    return audienceSegment.type as AudienceSegmentType;
   };
 
   initialLoading = (props: Props) => {
@@ -253,10 +246,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return undefined;
     };
 
-    if (
-      !audienceSegmentFormData.query &&
-      audienceSegmentFormData.audienceSegment.type === 'USER_QUERY'
-    ) {
+    const isQueryContainerQueryEmpty = queryContainer && 
+                                  (
+                                    queryContainer.groupContainers.length === 0 ||  
+                                    (queryContainer.groupContainers.length > 0 && queryContainer.groupContainers[0].elementContainers.length === 0)
+                                  );                                
+    if ( audienceSegmentFormData.audienceSegment.type === 'USER_QUERY' &&
+      isQueryContainerQueryEmpty && !audienceSegmentFormData.query) {
       message.error(intl.formatMessage(messagesMap.noQueryText));
     } else {
       this.setState({ loading: true });
@@ -294,15 +290,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
             let redirect = '';
             if (
               response.data.type === 'USER_LIST' &&
-              !audienceSegmentFormData.audienceSegment.id
+              !audienceSegmentFormData.audienceSegment.id &&
+              (audienceSegmentFormData.audienceSegment as UserListSegment)
+                .subtype === 'USER_PIXEL'
             ) {
-              redirect = `/v2/o/${organisationId}/audience/segments/${
-                response.data.id
-              }/edit`;
+              redirect = `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit`;
             } else {
-              redirect = `/v2/o/${organisationId}/audience/segments/${
-                response.data.id
-              }`;
+              redirect = `/v2/o/${organisationId}/audience/segments/${response.data.id}`;
             }
 
             history.push(redirect);
@@ -362,6 +356,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               .audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'TAG',
+            subtype: 'USER_PIXEL',
           },
         },
       });
@@ -374,6 +369,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               .audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'FILE_IMPORT',
+            subtype: 'STANDARD',
           },
         },
       });
@@ -386,6 +382,20 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
             ...(this.state.audienceSegmentFormData
               .audienceSegment as UserQuerySegment),
             type: 'USER_QUERY',
+          },
+        },
+      });
+    } else if (segmentType === 'USER_CLIENT') {
+      this.setState({
+        queryLanguage: 'JSON_OTQL',
+        audienceSegmentFormData: {
+          ...this.state.audienceSegmentFormData,
+          audienceSegment: {
+            ...(this.state.audienceSegmentFormData
+              .audienceSegment as UserListSegment),
+            type: 'USER_LIST',
+            feed_type: 'TAG',
+            subtype: 'USER_CLIENT',
           },
         },
       });
@@ -413,6 +423,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         },
       );
     }
+    if (hasFeature('audience.user_client_segment')) {
+      segmentTypesToDisplay.push({
+        title: 'Edge',
+        value: 'USER_CLIENT',
+      });
+    }
     return segmentTypesToDisplay;
   };
 
@@ -429,6 +445,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       selectedDatamart,
       loading,
       displayDatamartSelector,
+      queryLanguage,
     } = this.state;
 
     const audienceSegmentName =
@@ -474,7 +491,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       selectedSegmentType =
         audienceSegmentFormData.audienceSegment.type === 'USER_LIST' &&
         audienceSegmentFormData.audienceSegment.feed_type === 'TAG'
-          ? 'USER_PIXEL'
+          ? queryLanguage === 'JSON_OTQL'
+            ? 'USER_LIST'
+            : 'USER_PIXEL'
           : audienceSegmentFormData.audienceSegment.type;
     }
 
@@ -520,5 +539,6 @@ export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectNotifications,
+  injectFeatures,
   connect(mapStateToProps),
 )(EditAudienceSegmentPage);

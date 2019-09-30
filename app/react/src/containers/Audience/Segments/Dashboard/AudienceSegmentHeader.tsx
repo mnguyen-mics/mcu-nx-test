@@ -3,7 +3,10 @@ import { withRouter } from 'react-router-dom';
 import { Icon } from 'antd';
 
 import ContentHeader from '../../../../components/ContentHeader';
-import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import {
+  AudienceSegmentShape,
+  UserListSegment,
+} from '../../../../models/audiencesegment';
 import {
   InjectedIntlProps,
   defineMessages,
@@ -15,12 +18,14 @@ import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 
 export interface AudienceSegmentHeaderProps {
   segment?: AudienceSegmentShape;
-  isLoading: boolean
+  isLoading: boolean;
 }
 
 type Props = AudienceSegmentHeaderProps & InjectedIntlProps;
 
-export const localMessages = defineMessages({
+export const localMessages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
   USER_ACTIVATION: {
     id: 'audience.segments.dashboard.header.type.USER_ACTIVATION',
     defaultMessage: 'User Activation',
@@ -45,13 +50,16 @@ export const localMessages = defineMessages({
     id: 'audience.segments.dashboard.header.type.USER_LOOKALIKE',
     defaultMessage: 'User Lookalike',
   },
+  USER_CLIENT: {
+    id: 'audience.segments.dashboard.header.type.USER_CLIENT',
+    defaultMessage: 'Edge',
+  },
 });
 
-class AudienceSegmentHeader extends React.Component<Props> {  
+class AudienceSegmentHeader extends React.Component<Props> {
   render() {
     const { segment, isLoading } = this.props;
 
-    
     let iconType = '';
 
     if (segment) {
@@ -61,23 +69,28 @@ class AudienceSegmentHeader extends React.Component<Props> {
         iconType = 'database';
       } else if (segment.type === 'USER_LIST') {
         iconType = 'solution';
-      } else if (
-        segment.type === 'USER_LOOKALIKE'
-      ) {
+      } else if (segment.type === 'USER_LOOKALIKE') {
         iconType = 'usergroup-add';
-      } else if (
-        segment.type === 'USER_PARTITION'
-      ) {
+      } else if (segment.type === 'USER_PARTITION') {
         iconType = 'api';
       }
     }
 
+    const renderName = () => {
+      const userClient = 'USER_CLIENT';
+      if (segment) {
+        return (segment as UserListSegment).subtype === 'USER_CLIENT' ? (
+          <FormattedMessage {...localMessages[userClient]} />
+        ) : (
+          <FormattedMessage {...localMessages[segment.type]} />
+        );
+      }
+      return;
+    };
+
     const segmentType = segment ? (
       <span>
-        <Icon type={iconType} />{' '}
-        <FormattedMessage
-          {...localMessages[segment.type]}
-        />
+        <Icon type={iconType} /> {renderName()}
       </span>
     ) : (
       <span />
@@ -85,9 +98,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
 
     return (
       <ContentHeader
-        title={
-          <SegmentNameDisplay audienceSegmentResource={segment}/>
-        }
+        title={<SegmentNameDisplay audienceSegmentResource={segment} />}
         subTitle={segmentType}
         loading={isLoading}
       />
@@ -95,6 +106,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceSegmentHeaderProps>(withRouter, injectIntl)(
-  AudienceSegmentHeader,
-);
+export default compose<Props, AudienceSegmentHeaderProps>(
+  withRouter,
+  injectIntl,
+)(AudienceSegmentHeader);

@@ -326,7 +326,7 @@ class AudienceLookalikeCreation extends React.Component<
     // const defaultValue = this.state.partitions.length && this.state.partitions[0].id ? this.state.partitions[0].id : '';
 
     if (
-      !hasFeature('audience.score_based_lookalike') ||
+      !hasFeature('audience.score_based_lookalike') &&
       lookalikeType === 'partition_based_lookalike'
     ) {
       return (
