@@ -19,7 +19,11 @@ import {
   parseSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
+import {
+  SEGMENT_QUERY_SETTINGS,
+  AudienceReport,
+  AudienceReportData,
+} from './constants';
 import FeedCardList from './Feeds/FeedCardList';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 
@@ -131,7 +135,9 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       this.setState({
         dashboard: {
           isLoading: false,
-          reports: normalizeReportView(res.data.report_view),
+          reports: normalizeReportView<AudienceReportData>(
+            res.data.report_view,
+          ).filter(r => !!r.user_points),
         },
       }),
     );
