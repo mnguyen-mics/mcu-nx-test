@@ -54,7 +54,7 @@ interface State {
   isModalVisible: boolean;
   executions: AudienceSegmentExportJobExecutionResource[];
   compartments?: UserAccountCompartmentDatamartSelectionResource[];
-  selectedCompartment?: string;
+  selectedCompartmentId?: string;
   identifierType: AudienceSegmentExportJobIdentifierType;
 }
 
@@ -113,6 +113,10 @@ const messages = defineMessages({
     id: 'audience.segments.dashboard.segmentExportsList.startNew',
     defaultMessage: 'New export',
   },
+  popupTitle: {
+    id: 'audience.segments.dashboard.segmentExportsList.startNew.modal.title',
+    defaultMessage: 'Enter the type of user identifier that you want to export',
+  },
 });
 
 class AudienceSegmentExportsCard extends React.Component<Props, State> {
@@ -143,7 +147,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
       this.setState({
         compartments: res.data,
         isLoading: false,
-        selectedCompartment: res.data.filter(c => c.default)[0]
+        selectedCompartmentId: res.data.filter(c => c.default)[0]
           ? res.data.filter(c => c.default)[0].compartment_id
           : undefined,
       });
@@ -229,10 +233,10 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         params: { segmentId },
       },
     } = this.props;
-    const { identifierType, selectedCompartment } = this.state;
+    const { identifierType, selectedCompartmentId } = this.state;
     const exportUserIdentifier =
       identifierType === 'USER_ACCOUNT'
-        ? { type: identifierType, compartment_id: selectedCompartment }
+        ? { type: identifierType, compartment_id: selectedCompartmentId }
         : { type: identifierType };
 
     this._audienceSegmentService.createAudienceSegmentExport(
@@ -267,12 +271,12 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
 
   updateCompartment = (compartmentId: string) => {
     this.setState({
-      selectedCompartment: compartmentId,
+      selectedCompartmentId: compartmentId,
     });
   };
 
   render() {
-    const { isLoading, compartments, selectedCompartment } = this.state;
+    const { isLoading, compartments, selectedCompartmentId } = this.state;
 
     const onReturnClick = () => this.handleModal(false);
     const onSubmitClick = (e: any) => this.submitModal();
@@ -336,8 +340,6 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           formatMetric(
             record.result ? record.result.total_user_points : '-',
             '0',
-            '',
-            '',
           ),
       },
       {
@@ -349,8 +351,6 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           formatMetric(
             record.result ? record.result.total_exported_identifiers : '-',
             '0',
-            '',
-            '',
           ),
       },
       {
@@ -368,8 +368,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
       },
     ];
 
-    const executionsData = this.state
-      .executions;
+    const executionsData = this.state.executions;
 
     if (isLoading || !compartments) {
       return <Loading className="loading-full-screen" />;
@@ -384,23 +383,25 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
       return (
         <div className="ant-layout">
           <Modal
-            title="Enter the type of user identifier that you want to export" // formatted message
+            title={<FormattedMessage {...messages.popupTitle} />}
             wrapClassName="vertical-center-modal"
             visible={this.state.isModalVisible}
-            footer={[
-              <Button key="back" size="large" onClick={onReturnClick}>
-                Return
-              </Button>,
-              <Button
-                disabled={false}
-                key="submit"
-                type="primary"
-                size="large"
-                onClick={onSubmitClick}
-              >
-                Submit
-              </Button>,
-            ]}
+            footer={
+              <React.Fragment>
+                <Button key="back" size="large" onClick={onReturnClick}>
+                  Return
+                </Button>
+                <Button
+                  disabled={false}
+                  key="submit"
+                  type="primary"
+                  size="large"
+                  onClick={onSubmitClick}
+                >
+                  Submit
+                </Button>
+              </React.Fragment>
+            }
             onCancel={onReturnClick}
           >
             <InputGroup compact={true} style={{ display: 'flex' }}>
@@ -427,9 +428,8 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
                   </div>
                   <Select
                     showSearch={true}
-                    defaultValue={selectedCompartment}
+                    defaultValue={selectedCompartmentId}
                     onChange={this.updateCompartment}
-                    placeholder="Select a compartment id"
                   >
                     {compartmentOptions}
                   </Select>
