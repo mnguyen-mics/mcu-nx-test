@@ -42,7 +42,7 @@ const messages = defineMessages({
   },
   export: {
     id: 'audiencesegment.actionbar.export',
-    defaultMessage: 'Export',
+    defaultMessage: 'Export stats',
   },
   userQuery: {
     id: 'audiencesegment.actionbar.userQuery',
