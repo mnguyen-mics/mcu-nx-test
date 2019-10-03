@@ -33,20 +33,21 @@ export interface SegmentExportInput {
 }
 
 export interface ExportUserIdentifier {
-  type: AudienceSegmentExportJobIdentifierType,
+  type: AudienceSegmentExportJobIdentifierType;
   compartment_id?: string;
 }
 
-export type AudienceSegmentExportJobIdentifierType =
-  'USER_ACCOUNT' |
-  'USER_EMAIL' |
-  'USER_AGENT';
+export type AudienceSegmentExportJobIdentifierType =
+  | 'USER_ACCOUNT'
+  | 'USER_EMAIL'
+  | 'USER_AGENT';
 
-export type AudienceSegmentExportJobResultMimeType =
-  'TEXT_CSV';
+export type AudienceSegmentExportJobResultMimeType = 'TEXT_CSV';
 
 export interface SegmentExportResult {
-  total_user_points: number;
+  total_user_points_in_segment: number;
+  total_user_points_with_identifiers: number;
+  total_exported_user_points: number;
   total_exported_identifiers: number;
   export_file_uri: string;
 }
@@ -128,7 +129,7 @@ export interface IAudienceSegmentService {
   createAudienceSegmentExport: (
     segmentId: string,
     exportUserIdentifier: ExportUserIdentifier,
-    mimeType?: AudienceSegmentExportJobResultMimeType
+    mimeType?: AudienceSegmentExportJobResultMimeType,
   ) => Promise<DataResponse<AudienceSegmentExportJobExecutionResource>>;
 
   findAudienceSegmentExportExecutionsBySegment: (
@@ -247,12 +248,14 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     };
 
     return ApiService.getRequest(endpoint, params);
-  }
+  };
 
-  getSegment = (segmentId: string): Promise<DataResponse<AudienceSegmentShape>> => {
+  getSegment = (
+    segmentId: string,
+  ): Promise<DataResponse<AudienceSegmentShape>> => {
     const endpoint = `audience_segments/${segmentId}`;
     return ApiService.getRequest(endpoint);
-  }
+  };
 
   updateAudienceSegment = (
     segmentId: string,
@@ -260,12 +263,12 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataResponse<AudienceSegmentShape>> => {
     const endpoint = `audience_segments/${segmentId}`;
     return ApiService.putRequest(endpoint, body);
-  }
+  };
 
   deleteAudienceSegment = (segmentId: string): Promise<any> => {
     const endpoint = `audience_segments/${segmentId}`;
     return ApiService.deleteRequest(endpoint);
-  }
+  };
 
   saveSegment = (
     organisationId: string,
@@ -285,7 +288,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     }
 
     return createOrUpdatePromise;
-  }
+  };
 
   // TODO return type (JobExec...)
   createOverlap = (datamartId: string, segmentId: string): Promise<any> => {
@@ -302,12 +305,12 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     };
 
     return ApiService.postRequest(endpoint, body);
-  }
+  };
 
   importUserList = (datamartId: string, file: FormData): Promise<any> => {
     const endpoint = `datamarts/${datamartId}/user_list_imports`;
     return ApiService.postRequest(endpoint, file);
-  }
+  };
 
   importUserListForOneSegment = (
     datamartId: string,
@@ -316,7 +319,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<any> => {
     const endpoint = `datamarts/${datamartId}/audience_segments/${segmentId}/user_list_imports`;
     return ApiService.postRequest(endpoint, file);
-  }
+  };
 
   findUserListImportExecutionsBySegment = (
     datamartId: string,
@@ -333,7 +336,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     };
 
     return ApiService.getRequest(endpoint, params);
-  }
+  };
 
   retrieveOverlap = (
     segmentId: string,
@@ -350,12 +353,12 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     };
 
     return ApiService.getRequest(endpoint, params);
-  }
+  };
 
   createAudienceSegmentExport = (
     segmentId: string,
     exportUserIdentifier: ExportUserIdentifier,
-    mimeType: AudienceSegmentExportJobResultMimeType = 'TEXT_CSV'
+    mimeType: AudienceSegmentExportJobResultMimeType = 'TEXT_CSV',
   ): Promise<DataResponse<AudienceSegmentExportJobExecutionResource>> => {
     const endpoint = `audience_segments/${segmentId}/exports`;
     const body = {
@@ -364,7 +367,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     };
 
     return ApiService.postRequest(endpoint, body);
-  }
+  };
 
   findAudienceSegmentExportExecutionsBySegment = (
     segmentId: string,
@@ -375,10 +378,10 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     },
   ): Promise<DataListResponse<AudienceSegmentExportJobExecutionResource>> => {
     const endpoint = `audience_segments/${segmentId}/exports`;
-    const params = {...options};
+    const params = { ...options };
 
     return ApiService.getRequest(endpoint, params);
-  }
+  };
 
   // DEPRECATED, will be removed in a near future
   getSegmentMetaData = (organisationId: string): Promise<any> => {
@@ -393,7 +396,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
         'audience_segment_id',
       ),
     );
-  }
+  };
 
   // DEPRECATED, will be removed in a near future
   getSegmentsWithMetadata = (
@@ -422,7 +425,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
         data: augmentedSegments,
       };
     });
-  }
+  };
 
   createAudienceSegment = (
     organisationId: string,
@@ -433,7 +436,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
       ...options,
     };
     return ApiService.postRequest(endpoint, params);
-  }
+  };
 
   getAudienceExternalFeeds = (
     audienceSegmentId: string,
@@ -441,7 +444,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataListResponse<AudienceExternalFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds`;
     return ApiService.getRequest(endpoint);
-  }
+  };
   getAudienceExternalFeed = (
     audienceSegmentId: string,
     feedId: string,
@@ -449,7 +452,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataResponse<AudienceExternalFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${feedId}`;
     return ApiService.getRequest(endpoint);
-  }
+  };
   createAudienceExternalFeeds = (
     audienceSegmentId: string,
     audienceExternalFeed: Partial<AudienceExternalFeed>,
@@ -457,7 +460,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataResponse<AudienceExternalFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds`;
     return ApiService.postRequest(endpoint, audienceExternalFeed);
-  }
+  };
   updateAudienceExternalFeeds = (
     audienceSegmentId: string,
     audienceExternalFeedId: string,
@@ -466,7 +469,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataResponse<AudienceExternalFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${audienceExternalFeedId}`;
     return ApiService.putRequest(endpoint, audienceExternalFeed);
-  }
+  };
   deleteAudienceExternalFeeds = (
     audienceSegmentId: string,
     audienceExternalFeedId: string,
@@ -474,7 +477,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataListResponse<AudienceExternalFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${audienceExternalFeedId}`;
     return ApiService.deleteRequest(endpoint);
-  }
+  };
   getAudienceExternalFeedProperty = (
     audienceSegmentId: string,
     feedId: string,
@@ -482,7 +485,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataListResponse<PluginProperty>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${feedId}/properties`;
     return ApiService.getRequest(endpoint);
-  }
+  };
   getAudienceTagFeed = (
     audienceSegmentId: string,
     feedId: string,
@@ -490,14 +493,14 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataResponse<AudienceTagFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${feedId}`;
     return ApiService.getRequest(endpoint);
-  }
+  };
   getAudienceTagFeeds = (
     audienceSegmentId: string,
     options: object = {},
   ): Promise<DataListResponse<AudienceTagFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds`;
     return ApiService.getRequest(endpoint);
-  }
+  };
   createAudienceTagFeeds = (
     audienceSegmentId: string,
     audienceTagFeed: Partial<AudienceTagFeed>,
@@ -505,7 +508,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataResponse<AudienceTagFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds`;
     return ApiService.postRequest(endpoint, audienceTagFeed);
-  }
+  };
   updateAudienceTagFeeds = (
     audienceSegmentId: string,
     audienceTagFeedId: string,
@@ -514,7 +517,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataResponse<AudienceTagFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${audienceTagFeedId}`;
     return ApiService.putRequest(endpoint, audienceTagFeed);
-  }
+  };
   deleteAudienceTagFeeds = (
     audienceSegmentId: string,
     audienceTagFeedId: string,
@@ -522,7 +525,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataListResponse<AudienceTagFeed>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${audienceTagFeedId}`;
     return ApiService.deleteRequest(endpoint);
-  }
+  };
   getAudienceTagFeedProperty = (
     audienceSegmentId: string,
     feedId: string,
@@ -530,7 +533,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataListResponse<PluginProperty>> => {
     const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${feedId}/properties`;
     return ApiService.getRequest(endpoint);
-  }
+  };
 
   updateAudienceSegmentExternalFeedProperty = (
     organisationId: string,
@@ -547,7 +550,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
       id,
       endpoint,
     );
-  }
+  };
 
   updateAudienceSegmentTagFeedProperty = (
     organisationId: string,
@@ -564,10 +567,12 @@ export class AudienceSegmentService implements IAudienceSegmentService {
       id,
       endpoint,
     );
-  }
+  };
 
-  recalibrateAudienceLookAlike = (segmentId: string): Promise<DataResponse<void>> => {
+  recalibrateAudienceLookAlike = (
+    segmentId: string,
+  ): Promise<DataResponse<void>> => {
     const endpoint = `audience_segment_lookalikes/${segmentId}/calibrate`;
     return ApiService.postRequest(endpoint, {});
-  }
+  };
 }

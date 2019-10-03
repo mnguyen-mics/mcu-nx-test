@@ -49,10 +49,15 @@ type Props = AudienceSegmentExportsCardProps &
   InjectedIntlProps &
   RouteComponentProps<{ segmentId: string }>;
 
+interface AudienceSegmentExportExecutionItems {
+  items: AudienceSegmentExportJobExecutionResource[];
+  total: number;
+}
+
 interface State {
   isLoading: boolean;
   isModalVisible: boolean;
-  executions: AudienceSegmentExportJobExecutionResource[];
+  executions: AudienceSegmentExportExecutionItems;
   compartments?: UserAccountCompartmentDatamartSelectionResource[];
   selectedCompartmentId?: string;
   identifierType: AudienceSegmentExportJobIdentifierType;
@@ -79,18 +84,27 @@ const messages = defineMessages({
     id: 'audience.segments.dashboard.segmentExportsList.startDate',
     defaultMessage: 'Start Date',
   },
+  endDate: {
+    id: 'audience.segments.dashboard.segmentExportsList.endDate',
+    defaultMessage: 'End Date',
+  },
   userIdentifierType: {
     id: 'audience.segments.dashboard.segmentExportsList.userIdentifierType',
     defaultMessage: 'User Identifier type',
   },
   totalUserPoints: {
     id: 'audience.segments.dashboard.segmentExportsList.totalUserPoints',
-    defaultMessage: 'Number of User Points',
+    defaultMessage: 'User Points in segment',
+  },
+  totalExportedUserPoints: {
+    id:
+      'audience.segments.dashboard.segmentExportsList.totalExportedUserPoints',
+    defaultMessage: 'Exported User Points (with identifiers)',
   },
   totalExportedIdentifiers: {
     id:
       'audience.segments.dashboard.segmentExportsList.totalExportedIdentifiers',
-    defaultMessage: 'Number of Identifiers',
+    defaultMessage: 'Exported Identifiers',
   },
   download: {
     id: 'audience.segments.dashboard.segmentExportsList.download',
@@ -125,17 +139,21 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isLoading: false,
+      isLoading: true,
       isModalVisible: false,
-      executions: [],
+      executions: {
+        items: [],
+        total: 0,
+      },
       identifierType: 'USER_AGENT',
     };
   }
 
   componentDidMount() {
+    const { datamartId } = this.props;
     this.refreshData();
 
-    this.fetchCompartments(this.props.datamartId);
+    this.fetchCompartments(datamartId);
   }
 
   fetchCompartments = (datamartId: string) => {
@@ -166,7 +184,10 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
       .then(res => {
         this.setState({
           isLoading: false,
-          executions: res.data,
+          executions: {
+            items: res.data,
+            total: res.total ? res.total : res.count,
+          },
         });
       })
       .catch(err => {
@@ -182,7 +203,8 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     // move this later, and replace it in Imports.tsx
     const { colors } = this.props;
     const tasks = execution.num_tasks || 0;
-    const completedTasks = execution.completed_tasks || 0;
+    const completedTasks =
+      (execution.completed_tasks || 0) + (execution.erroneous_tasks || 0);
 
     const setColor = (status: string) => {
       switch (status) {
@@ -219,11 +241,9 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     } else if (execution.status === 'SUCCEEDED') {
       (window as any).location = `${
         (window as any).MCS_CONSTANTS.API_URL
-      }/v1/audience_segments/${this.props.match.params.segmentId}/exports/${
-        execution.id
-      }?access_token=${encodeURIComponent(
+      }/v1/data_file/data?access_token=${encodeURIComponent(
         LocalStorage.getItem('access_token')!,
-      )}`;
+      )}&uri=${execution.result ? execution.result.export_file_uri : ''}`;
     }
   };
 
@@ -323,6 +343,19 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           formatUnixTimestamp(record.start_date, 'DD/MM/YYYY HH:mm:ss'),
       },
       {
+        intlMessage: messages.endDate,
+        key: 'endDate',
+        isVisibleByDefault: true,
+        isHideable: false,
+        render: (text, record) =>
+          formatUnixTimestamp(
+            record.start_date && record.duration
+              ? record.start_date + record.duration
+              : undefined,
+            'DD/MM/YYYY HH:mm:ss',
+          ),
+      },
+      {
         intlMessage: messages.userIdentifierType,
         key: 'userIdentifierType',
         isHideable: false,
@@ -338,7 +371,18 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         isHideable: false,
         render: (text, record) =>
           formatMetric(
-            record.result ? record.result.total_user_points : '-',
+            record.result ? record.result.total_user_points_in_segment : '-',
+            '0',
+          ),
+      },
+      {
+        intlMessage: messages.totalExportedUserPoints,
+        key: 'totalExportedUserPoints',
+        isVisibleByDefault: true,
+        isHideable: false,
+        render: (text, record) =>
+          formatMetric(
+            record.result ? record.result.total_exported_user_points : '-',
             '0',
           ),
       },
@@ -368,7 +412,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
       },
     ];
 
-    const executionsData = this.state.executions;
+    const executionsData = this.state.executions.items;
 
     if (isLoading || !compartments) {
       return <Loading className="loading-full-screen" />;
