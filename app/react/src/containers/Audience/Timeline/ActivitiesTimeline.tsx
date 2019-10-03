@@ -94,7 +94,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   }
 
   fetchUserAgents = (datamart: DatamartResource, userPointId: string) => {
-    const identifierType = 'user_point_id';
+    const identifierType = 'user_agent_id';
 
     this._userDataService
       .getIdentifiers(
@@ -224,7 +224,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   ) => {
     const identifier: Identifier = {
       id: userPointId,
-      type: 'user_point_id',
+      type: 'user_agent_id',
     };
 
     const { nextDate, activityCountOnOldestDate } = this.state;

@@ -141,12 +141,12 @@ export class DealsListService implements IDealsListService {
   //
   //  DEAL LIST SELECTION
   //
-  addDealToDealList(dealListId: string, dealId: string) {
+  addDealToDealList(dealListId: string, dealId: string): Promise<DataResponse<DealResource>> {
     const endpoint = `deal_lists/${dealListId}/deal/${dealId}`;
     return ApiService.putRequest(endpoint, {});
   }
 
-  removeDealToDealList(dealListId: string, dealId: string) {
+  removeDealToDealList(dealListId: string, dealId: string): Promise<DataResponse<DealResource>> {
     const endpoint = `deal_lists/${dealListId}/deal/${dealId}`;
     return ApiService.deleteRequest(endpoint, {});
   }

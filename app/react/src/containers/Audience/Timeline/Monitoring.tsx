@@ -69,7 +69,7 @@ class Monitoring extends React.Component<Props, State> {
         userSegmentList: [],
         profileByCompartmentsAndUserAccountId: {},
         lastSeen: 0,
-        userPointId: '',
+        userAgentId: '',
       },
       isLoading: false,
     };
@@ -194,7 +194,7 @@ class Monitoring extends React.Component<Props, State> {
 
     const { isModalVisible, monitoringData, isLoading } = this.state;
 
-    const userPointId = monitoringData.userPointId;
+    const userPointId = monitoringData.userAgentId;
 
     return (
       <div className="ant-layout">

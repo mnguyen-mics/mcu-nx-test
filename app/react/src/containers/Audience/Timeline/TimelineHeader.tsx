@@ -23,7 +23,7 @@ class TimelineHeader extends React.Component<Props> {
   render() {
     const { dataSource, isLoading } = this.props;
     const lastSeen = dataSource.lastSeen;
-    const userPointId = dataSource.userPointId;
+    const userPointId = dataSource.userAgentId;
 
     const subtitle = !isLoading && lastSeen !== 0 && (
       <span>
