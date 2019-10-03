@@ -156,7 +156,7 @@ class FormSearchObject extends React.Component<
       >
         <Spin spinning={this.state.initialFetch}>
           <Select
-            mode="tags"
+            mode="multiple"
             labelInValue={true}
             value={this.state.value}
             placeholder={'Search'}
