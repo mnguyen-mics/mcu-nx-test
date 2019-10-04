@@ -220,6 +220,17 @@ export class MonitoringService implements IMonitoringService {
     identifierId: string,
     compartmentId?: string,
   ) {
+    const emptyData = {
+      userAgentList: [],
+      userEmailList: [],
+      userAccountsByCompartmentId: {},
+      userAccountCompartments: [],
+      lastSeen: 0,
+      userSegmentList: [],
+      profileByCompartmentsAndUserAccountId: {},
+      userPointList: [],
+      userAgentId: ''
+    }
     return this._userDataService
       .getIdentifiers(
         organisationId,
@@ -232,52 +243,32 @@ export class MonitoringService implements IMonitoringService {
         const userAgentIdentifierInfo = response.data.find(
           isUserAgentIdentifier,
         );
-
-        return userAgentIdentifierInfo;
-      })
-      .then(userAgentIdentifierInfo => {
         const userAgentId =
-          userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id;
+        userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id;
         if (userAgentId) {
           return Promise.all([
-            this._userDataService.getIdentifiers(
-                datamart.organisation_id,
-                datamart.id,
-                identifierType,
-                userAgentId
-              ),
             this.fetchCompartments(datamart),
             this.getLastSeen(datamart, userAgentId),
             this.fetchSegmentsData(datamart, userAgentId),
             this.fetchProfileData(datamart, userAgentId),
           ]).then(res => {
             return {
-              userAgentList: res[0].data.filter(isUserAgentIdentifier),
-              userEmailList: res[0].data.filter(isUserEmailIdentifier),
+              userAgentList: response.data.filter(isUserAgentIdentifier),
+              userEmailList: response.data.filter(isUserEmailIdentifier),
               userAccountsByCompartmentId: groupBy(
-                res[0].data.filter(isUserAccountIdentifier),
+                response.data.filter(isUserAccountIdentifier),
                 'compartment_id',
               ),
-              userAccountCompartments: res[1],
-              lastSeen: res[2],
-              userSegmentList: res[3],
-              profileByCompartmentsAndUserAccountId: res[4],
+              userAccountCompartments: res[0],
+              lastSeen: res[1],
+              userSegmentList: res[2],
+              profileByCompartmentsAndUserAccountId: res[3],
               userPointList: [],
               userAgentId: userAgentId,
             };
           });
         }
-        return Promise.resolve({
-          userAgentList: [],
-          userEmailList: [],
-          userAccountsByCompartmentId: {},
-          userAccountCompartments: [],
-          lastSeen: 0,
-          userSegmentList: [],
-          profileByCompartmentsAndUserAccountId: {},
-          userPointList: [],
-          userAgentId: '',
-        });
-      });
+        return Promise.resolve(emptyData);
+      }).catch(() => Promise.resolve(emptyData));
   }
 }
