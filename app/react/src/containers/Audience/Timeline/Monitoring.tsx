@@ -153,6 +153,17 @@ class Monitoring extends React.Component<Props, State> {
           })
           .catch(() => {
             this.setState({
+              monitoringData: {
+                userAgentList: [],
+                userEmailList: [],
+                userAccountsByCompartmentId: {},
+                userAccountCompartments: [],
+                userPointList: [],
+                userSegmentList: [],
+                profileByCompartmentsAndUserAccountId: {},
+                lastSeen: 0,
+                userPointId: '',
+              },
               isLoading: false,
             });
           });
