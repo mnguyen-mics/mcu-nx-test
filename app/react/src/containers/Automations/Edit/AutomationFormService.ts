@@ -638,6 +638,9 @@ export class AutomationFormService implements IAutomationFormService {
     initialFormData: DisplayCampaignAutomationFormData = INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
     campaignId?: string,
   ): Promise<{ ad_group_id?: string; campaign_id: string }> => {
+    formData.campaign.technical_name = undefined
+    initialFormData.campaign.technical_name = undefined
+
     return this._displayCampaignFormService
       .saveCampaign(
         organisationId,
@@ -662,12 +665,12 @@ export class AutomationFormService implements IAutomationFormService {
     if (campaignId) {
       createOrUpdateCampaignPromise = EmailCampaignService.updateEmailCampaign(
         campaignId,
-        formData.campaign,
+        _.omit(formData.campaign, ['technical_name']),
       );
     } else {
       createOrUpdateCampaignPromise = EmailCampaignService.createEmailCampaign(
         organisationId,
-        formData.campaign,
+        _.omit(formData.campaign, ['technical_name']),
       );
     }
 
