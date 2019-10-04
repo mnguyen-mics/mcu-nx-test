@@ -18,13 +18,13 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import { getWhereClausePromise } from '../domain';
 
 export interface DateAggregationChartProps {
   title?: string;
   segment?: AudienceSegmentShape;
-  queryId: string;
+  queryIds: string[];
   datamartId: string;
+  plotLabels: string[];
 }
 
 interface QueryResult {
@@ -69,15 +69,15 @@ class DateAggregationChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, queryId, datamartId } = this.props;
-    this.fetchData(queryId, datamartId, segment);
+    const { segment, queryIds, datamartId } = this.props;
+    this.fetchData(queryIds, datamartId, segment);
   }
 
   componentWillReceiveProps(nextProps: DateAggregationChartProps) {
-    const { segment, queryId, datamartId } = this.props;
-    const { segment: nextSegment, queryId: nextChartQueryId, datamartId: nextDatamartId } = nextProps;
+    const { segment, queryIds, datamartId } = this.props;
+    const { segment: nextSegment, queryIds: nextChartQueryId, datamartId: nextDatamartId } = nextProps;
 
-    if (segment !== nextSegment || queryId !== nextChartQueryId || datamartId !== nextDatamartId) {
+    if (segment !== nextSegment || queryIds !== nextChartQueryId || datamartId !== nextDatamartId) {
       this.fetchData(nextChartQueryId, datamartId, nextSegment);
     }
   }
@@ -97,48 +97,47 @@ class DateAggregationChart extends React.Component<Props, State> {
   };
 
   fetchData = (
-    chartQueryId: string,
+    chartQueryIds: string[],
     datamartId: string,
     segment?: AudienceSegmentShape,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-    return getWhereClausePromise(datamartId, this._queryService, segment)
-      .then(clauseResp => {
-        return this._queryService
-          .getQuery(datamartId, chartQueryId)
+    return Promise.all(chartQueryIds.map(c => {
+      return this.fetchQuery(c, datamartId, segment)
+    }))
+    .then(q => {
+      this.setState({
 
+      })
+    })
+    .catch(() => {
+      this.setState({ error: true, loading: false });
+    });
+  };
+
+  fetchQuery = (
+    chartQueryId: string,
+    datamartId: string,
+    segment?: AudienceSegmentShape,
+  ): Promise<QueryResult[]> => {
+    return this._queryService
+          .getQuery(datamartId, chartQueryId)
           .then(queryResp => {
             return queryResp.data;
           })
           .then(q => {
-            const query = {
-              query: q.query_text,
-              additional_expression: clauseResp,
-            };
             return this._queryService
-              .runOTQLQuery(datamartId, JSON.stringify(query), {
+              .runOTQLQuery(datamartId, q.query_text, {
                 use_cache: true,
-                content_type: `application/json`,
               })
               .then(r => r.data)
               .then(r => {
                 if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                  this.setState({
-                    queryResult: this.formatData(r.rows),
-                    loading: false,
-                  });
-                  return Promise.resolve();
+                  return Promise.resolve(this.formatData(r.rows),);
                 }
-                const mapErr = new Error('wrong query type');
-                return Promise.reject(mapErr);
+                throw new Error('wrong query type');
               })
-              .catch(() => this.setState({ error: true, loading: false }));
           })
-          .catch(() => this.setState({ error: true, loading: false }));
-      })
-      .catch(() => {
-        this.setState({ error: true, loading: false });
-      });
   };
 
   generateOptions = () => {

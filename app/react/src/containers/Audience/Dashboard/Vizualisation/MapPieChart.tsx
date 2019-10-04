@@ -12,7 +12,6 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { LegendChart } from '../../../../components/LegendChart';
 import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
@@ -21,7 +20,6 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import { getWhereClausePromise } from '../domain';
 
 export interface MapPieChartProps {
   title?: string;
@@ -74,9 +72,17 @@ class MapPieChart extends React.Component<Props, State> {
 
   componentWillReceiveProps(nextProps: MapPieChartProps) {
     const { segment, queryId, datamartId } = this.props;
-    const { segment: nextSegment, queryId: nextChartQueryId, datamartId: nextDatamartId } = nextProps;
+    const {
+      segment: nextSegment,
+      queryId: nextChartQueryId,
+      datamartId: nextDatamartId,
+    } = nextProps;
 
-    if (segment !== nextSegment || queryId !== nextChartQueryId || datamartId !== nextDatamartId) {
+    if (
+      segment !== nextSegment ||
+      queryId !== nextChartQueryId ||
+      datamartId !== nextDatamartId
+    ) {
       this.fetchData(nextChartQueryId, nextDatamartId, nextSegment);
     }
   }
@@ -110,39 +116,31 @@ class MapPieChart extends React.Component<Props, State> {
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
-    return getWhereClausePromise(datamartId, this._queryService, segment)
-      .then(clauseResp => {
+    return this._queryService
+      .getQuery(datamartId, chartQueryId)
+
+      .then(queryResp => {
+        return queryResp.data;
+      })
+      .then(q => {
+        const query = q.query_text;
         return this._queryService
-          .getQuery(datamartId, chartQueryId)
-
-          .then(queryResp => {
-            return queryResp.data;
+          .runOTQLQuery(datamartId, query, {
+            use_cache: true,
           })
-          .then(q => {
-            const query = {
-              query: q.query_text,
-              additional_expression: clauseResp,
-            };
-            return this._queryService
-              .runOTQLQuery(datamartId, JSON.stringify(query), {
-                use_cache: true,
-                content_type: `application/json`,
-              })
-
-              .then(otqlResultResp => {
-                return otqlResultResp.data;
-              })
-              .then(r => {
-                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                  this.setState({
-                    queryResult: this.formatData(r.rows),
-                    loading: false,
-                  });
-                  return Promise.resolve();
-                }
-                const mapErr = new Error('wrong query type');
-                return Promise.reject(mapErr);
+          .then(otqlResultResp => {
+            return otqlResultResp.data;
+          })
+          .then(r => {
+            if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+              this.setState({
+                queryResult: this.formatData(r.rows),
+                loading: false,
               });
+              return Promise.resolve();
+            }
+            const mapErr = new Error('wrong query type');
+            return Promise.reject(mapErr);
           });
       })
       .catch(() => {
@@ -170,7 +168,7 @@ class MapPieChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { intl, showLegend, height } = this.props;
+    const { intl, height } = this.props;
 
     const pieChartsOptions = this.generateOptions();
 
@@ -203,17 +201,6 @@ class MapPieChart extends React.Component<Props, State> {
     return (
       <CardFlex title={this.props.title}>
         {generateChart()}
-        {showLegend &&
-        this.state.queryResult &&
-        this.state.queryResult.length ? (
-          <LegendChart
-            identifier={`${this.identifier}-legend`}
-            options={this.state.queryResult.map(qr => ({
-              color: qr.color,
-              domain: qr.key,
-            }))}
-          />
-        ) : null}
       </CardFlex>
     );
   }

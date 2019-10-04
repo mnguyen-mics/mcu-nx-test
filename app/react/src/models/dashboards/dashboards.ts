@@ -23,9 +23,16 @@ export interface BaseComponent {
 }
 
 export interface ComponentChart extends BaseComponent {
-  component_type: 'MAP_BAR_CHART' | 'MAP_PIE_CHART' | 'DATE_AGGREGATION_CHART';
+  component_type: 'MAP_BAR_CHART' | 'MAP_PIE_CHART';
   show_legend: boolean;
   query_id: string;
+  labels_enabled?: boolean;
+}
+
+export interface DateAggregationComponent extends BaseComponent {
+  component_type: 'DATE_AGGREGATION_CHART';
+  query_ids: string[];
+  plot_labels: string[];
   labels_enabled?: boolean;
 }
 
@@ -42,6 +49,13 @@ export interface ComponentCount extends BaseComponent {
   query_id: string;
   prefix?: string;
   suffix?: string;
+}
+
+
+export interface ComponentPercentage extends BaseComponent {
+  component_type: 'PERCENTAGE';
+  query_id: string;
+  total_query_id: string;
 }
 
 export interface GaugeComponent extends BaseComponent {
@@ -69,13 +83,16 @@ export type Component =
   | GaugeComponent
   | MapStackedBarChart
   | WorldMapChart
-  | ComponentCountBar;
+  | ComponentCountBar
+  | ComponentPercentage
+  | DateAggregationComponent;
 
 export type ComponentType =
   | 'MAP_BAR_CHART'
   | 'MAP_PIE_CHART'
   | 'DATE_AGGREGATION_CHART'
   | 'COUNT'
+  | 'PERCENTAGE'
   | 'GAUGE_PIE_CHART'
   | 'MAP_STACKED_BAR_CHART'
   | 'WORLD_MAP_CHART'

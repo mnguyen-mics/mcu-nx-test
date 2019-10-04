@@ -77,9 +77,10 @@ const myDashboards: DashboardResource[] = [
         },
         component: {
           id: 1,
-          component_type: 'COUNT',
-          query_id: '25365',
-          title: 'Nombre de tickets global',
+          component_type: 'PERCENTAGE',
+          query_id: '25344',
+          total_query_id: '25345',
+          title: 'Pourcentage de visites reconnues',
         },
       },
       {
@@ -125,6 +126,22 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT',
           query_id: '25347',
           title: 'Nombre de userpoints web',
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 1,
+        },
+        component: {
+          id: 5,
+          component_type: 'MAP_PIE_CHART',
+          query_id: '25348',
+          title: 'Repartion des visites par type de profil matching',
+          show_legend: true
         },
       },
      

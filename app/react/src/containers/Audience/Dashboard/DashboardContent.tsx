@@ -10,6 +10,7 @@ import WorldMapChart from './Vizualisation/WorldMapChart';
 import { AudienceSegmentShape } from '../../../models/audiencesegment/AudienceSegmentResource';
 import CountBarChart from './Vizualisation/CountBarChart';
 import { ComponentLayout, Component } from '../../../models/dashboards/dashboards';
+import Percentage from './Vizualisation/Percentage';
 
 
 const BASE_FRAMEWORK_HEIGHT = 150;
@@ -61,6 +62,16 @@ export default class DashboardContent extends React.Component<
             queryId={comp.query_id}
           />
         );
+      case 'PERCENTAGE':
+        return (
+          <Percentage 
+            segment={segment}
+            datamartId={datamartId}
+            title={comp.title}
+            queryId={comp.query_id}
+            totalQueryId={comp.total_query_id}
+          />
+        )
       case 'MAP_PIE_CHART':
         return (
           <MapPieChart
@@ -68,8 +79,7 @@ export default class DashboardContent extends React.Component<
             title={comp.title}
             queryId={comp.query_id}
             datamartId={datamartId}
-            showLegend={comp.show_legend}
-            labelsEnabled={comp.labels_enabled}
+            labelsEnabled={comp.show_legend}
             height={height}
           />
         );
@@ -88,7 +98,8 @@ export default class DashboardContent extends React.Component<
           <DateAggregationChart
             segment={segment}
             title={comp.title}
-            queryId={comp.query_id}
+            queryIds={comp.query_ids}
+            plotLabels={comp.plot_labels}
             datamartId={datamartId}
           />
         );
