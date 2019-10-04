@@ -22,8 +22,16 @@ import {
   generateRoutesFromDefinition,
 } from './domain';
 import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
+import HomePage from '../containers/Audience/Home/Dashboard/HomePage';
 
 export const audienceDefinition: NavigatorDefinition = {
+  audienceHome: {
+    path: "/audience/home",
+    layout: "main",
+    contentComponent: HomePage,
+    requiredFeature: 'audience.dashboards',
+    requireDatamart: true,
+  },
   audienceSegmentList: {
     path: '/audience/segments',
     layout: 'main',

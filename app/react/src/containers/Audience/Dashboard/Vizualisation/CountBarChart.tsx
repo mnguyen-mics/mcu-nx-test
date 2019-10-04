@@ -22,8 +22,9 @@ import { getWhereClausePromise } from '../domain';
 
 export interface CountBarChartProps {
   title?: string;
-  segment: AudienceSegmentShape;
-  chartQueryIds: string[];
+  segment?: AudienceSegmentShape;
+  queryIds: string[];
+  datamartId: string;
   height: number;
   labelsEnabled?: boolean;
   type: string;
@@ -69,23 +70,25 @@ class CountBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, chartQueryIds } = this.props;
+    const { segment, queryIds, datamartId } = this.props;
 
-    this.fetchData(segment, chartQueryIds);
+    this.fetchData(queryIds, datamartId, segment);
   }
 
   componentWillReceiveProps(nextProps: CountBarChartProps) {
-    const { segment } = this.props;
+    const { segment, queryIds, datamartId } = this.props;
     const {
       segment: nextSegment,
-      chartQueryIds: nextChartQueryIds,
+      queryIds: nextChartQueryIds,
+      datamartId: nextDatamartId
     } = nextProps;
 
     if (
-      segment.id !== nextSegment.id ||
-      segment.datamart_id !== nextSegment.datamart_id
+      segment !== nextSegment ||
+      queryIds !== nextChartQueryIds ||
+      datamartId !== nextDatamartId
     ) {
-      this.fetchData(nextSegment, nextChartQueryIds);
+      this.fetchData(nextChartQueryIds, nextDatamartId, nextSegment);
     }
   }
 
@@ -116,12 +119,11 @@ class CountBarChart extends React.Component<Props, State> {
   };
 
   fetchData = (
-    segment: AudienceSegmentShape,
     chartQueryIds: string[],
+    datamartId: string,
+    segment?: AudienceSegmentShape,
   ): Promise<void> => {
-    this.setState({ error: false, loading: true });
-    const datamartId = segment.datamart_id;
-    return getWhereClausePromise(datamartId, segment, this._queryService)
+    return getWhereClausePromise(datamartId, this._queryService, segment)
       .then(clauseResp => {
         const promises = chartQueryIds.map(chartQueryId => {
           return this._queryService.getQuery(datamartId, chartQueryId);

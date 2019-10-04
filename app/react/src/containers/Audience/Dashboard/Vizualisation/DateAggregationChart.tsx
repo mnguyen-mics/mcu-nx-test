@@ -22,8 +22,9 @@ import { getWhereClausePromise } from '../domain';
 
 export interface DateAggregationChartProps {
   title?: string;
-  segment: AudienceSegmentShape;
-  chartQueryId: string;
+  segment?: AudienceSegmentShape;
+  queryId: string;
+  datamartId: string;
 }
 
 interface QueryResult {
@@ -68,16 +69,16 @@ class DateAggregationChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, chartQueryId } = this.props;
-    this.fetchData(segment, chartQueryId);
+    const { segment, queryId, datamartId } = this.props;
+    this.fetchData(queryId, datamartId, segment);
   }
 
   componentWillReceiveProps(nextProps: DateAggregationChartProps) {
-    const { segment, chartQueryId } = this.props;
-    const { segment: nextSegment, chartQueryId: nextChartQueryId } = nextProps;
+    const { segment, queryId, datamartId } = this.props;
+    const { segment: nextSegment, queryId: nextChartQueryId, datamartId: nextDatamartId } = nextProps;
 
-    if (segment.id !== nextSegment.id || chartQueryId !== nextChartQueryId) {
-      this.fetchData(nextSegment, nextChartQueryId);
+    if (segment !== nextSegment || queryId !== nextChartQueryId || datamartId !== nextDatamartId) {
+      this.fetchData(nextChartQueryId, datamartId, nextSegment);
     }
   }
 
@@ -96,12 +97,12 @@ class DateAggregationChart extends React.Component<Props, State> {
   };
 
   fetchData = (
-    segment: AudienceSegmentShape,
     chartQueryId: string,
+    datamartId: string,
+    segment?: AudienceSegmentShape,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-    const datamartId = segment.datamart_id;
-    return getWhereClausePromise(datamartId, segment, this._queryService)
+    return getWhereClausePromise(datamartId, this._queryService, segment)
       .then(clauseResp => {
         return this._queryService
           .getQuery(datamartId, chartQueryId)

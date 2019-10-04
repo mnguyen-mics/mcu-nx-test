@@ -1,7 +1,6 @@
 import * as React from 'react';
 import _ from 'lodash';
 import { Responsive, WidthProvider, Layout, Layouts } from 'react-grid-layout';
-import { Component, ComponentLayout } from './domain';
 import Count from './Vizualisation/Count';
 import MapPieChart from './Vizualisation/MapPieChart';
 import MapBarChart from './Vizualisation/MapBarChart';
@@ -10,24 +9,28 @@ import GaugePieChart from './Vizualisation/GaugePieChart';
 import WorldMapChart from './Vizualisation/WorldMapChart';
 import { AudienceSegmentShape } from '../../../models/audiencesegment/AudienceSegmentResource';
 import CountBarChart from './Vizualisation/CountBarChart';
-import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
+import { ComponentLayout, Component } from '../../../models/dashboards/dashboards';
+
+
+const BASE_FRAMEWORK_HEIGHT = 150;
+const BASE_PADDING = 5;
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 interface Props {
   layout: ComponentLayout[];
   onLayoutChange: (layout: Layout[], allLayouts: Layouts) => void;
-  segment: AudienceSegmentShape;
+  segment?: AudienceSegmentShape;
+  datamartId: string;
 }
 
 interface State {
   currentBreakpoint: string;
   compactType: 'vertical' | 'horizontal' | null;
   mounted: boolean;
-  componentHeights: number[];
 }
 
-export default class AudienceSegmentReport extends React.Component<
+export default class DashboardContent extends React.Component<
   Props,
   State
 > {
@@ -37,31 +40,25 @@ export default class AudienceSegmentReport extends React.Component<
       currentBreakpoint: 'lg',
       compactType: 'vertical',
       mounted: false,
-      componentHeights: [
-        BASE_CHART_HEIGHT,
-        BASE_CHART_HEIGHT,
-        BASE_CHART_HEIGHT,
-        BASE_CHART_HEIGHT,
-        BASE_CHART_HEIGHT,
-        BASE_CHART_HEIGHT,
-        BASE_CHART_HEIGHT,
-      ],
     };
 
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
     this.onLayoutChange = this.onLayoutChange.bind(this);
   }
 
-  generateComponent = (comp: Component) => {
-    const { segment } = this.props;
-    const { componentHeights } = this.state;
+  generateComponent = (comp: Component, layout: Layout) => {
+    const { segment, datamartId } = this.props;
+
+    const height =  this.computeHeight(layout.h);
+
     switch (comp.component_type) {
       case 'COUNT':
         return (
           <Count
             segment={segment}
+            datamartId={datamartId}
             title={comp.title}
-            chartQueryId={comp.chart_id}
+            queryId={comp.query_id}
           />
         );
       case 'MAP_PIE_CHART':
@@ -69,19 +66,21 @@ export default class AudienceSegmentReport extends React.Component<
           <MapPieChart
             segment={segment}
             title={comp.title}
-            chartQueryId={comp.chart_id}
+            queryId={comp.query_id}
+            datamartId={datamartId}
             showLegend={comp.show_legend}
             labelsEnabled={comp.labels_enabled}
-            height={componentHeights[comp.id]}
+            height={height}
           />
         );
       case 'MAP_BAR_CHART':
         return (
           <MapBarChart
             segment={segment}
+            datamartId={datamartId}
+            queryId={comp.query_id}
             title={comp.title}
             labelsEnabled={comp.labels_enabled}
-            chartQueryId={comp.chart_id}
           />
         );
       case 'DATE_AGGREGATION_CHART':
@@ -89,16 +88,18 @@ export default class AudienceSegmentReport extends React.Component<
           <DateAggregationChart
             segment={segment}
             title={comp.title}
-            chartQueryId={comp.chart_id}
+            queryId={comp.query_id}
+            datamartId={datamartId}
           />
         );
       case 'GAUGE_PIE_CHART':
         return (
           <GaugePieChart
             segment={segment}
+            datamartId={datamartId}
             title={comp.title}
-            chartQueryIds={comp.chart_ids}
-            height={componentHeights[comp.id]}
+            queryIds={comp.query_ids}
+            height={height}
           />
         );
       case 'WORLD_MAP_CHART':
@@ -106,8 +107,9 @@ export default class AudienceSegmentReport extends React.Component<
           <WorldMapChart
             segment={segment}
             title={comp.title}
-            chartQueryId={comp.chart_id}
-            height={componentHeights[comp.id]}
+            datamartId={datamartId}
+            queryId={comp.query_id}
+            height={height}
           />
         );
       case 'COUNT_BAR_CHART':
@@ -115,10 +117,11 @@ export default class AudienceSegmentReport extends React.Component<
           <CountBarChart
             segment={segment}
             title={comp.title}
-            chartQueryIds={comp.chart_ids}
+            queryIds={comp.query_ids}
+            datamartId={datamartId}
             labelsEnabled={true}
             type={comp.type}
-            height={componentHeights[comp.id]}
+            height={height}
           />
         );
       default:
@@ -132,11 +135,11 @@ export default class AudienceSegmentReport extends React.Component<
       const layout = compLayout.layout;
       return (
         <div
-          key={layout.i}
+          key={i.toString()}
           className={layout.static ? 'static' : ''}
           style={{ backgroundColor: '#fff' }}
         >
-          {this.generateComponent(comp)}
+          {this.generateComponent(comp, layout)}
         </div>
       );
     });
@@ -151,20 +154,19 @@ export default class AudienceSegmentReport extends React.Component<
   onLayoutChange(layout: Layout[], layouts: Layouts) {
     this.props.onLayoutChange(layout, layouts);
     window.dispatchEvent(new Event('resize'));
-    const componentHeights = layout.map(l => (BASE_CHART_HEIGHT * l.h) / 3);
-    this.setState({
-      componentHeights: componentHeights,
-    });
+  }
+
+  computeHeight = (h: number) => {
+    return BASE_FRAMEWORK_HEIGHT * h + (h > 1 ? h * BASE_PADDING : 0);
   }
 
   render() {
-    const layouts = this.props.layout.map(cl => cl.layout);
+    const layouts = this.props.layout.map((cl, i) => ({...cl.layout, i: i.toString()}));
     return (
       <ResponsiveReactGridLayout
         cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
         layouts={{ lg: layouts }}
         onBreakpointChange={this.onBreakpointChange}
-        onLayoutChange={this.onLayoutChange}
         measureBeforeMount={false}
         useCSSTransforms={this.state.mounted}
         compactType={this.state.compactType}

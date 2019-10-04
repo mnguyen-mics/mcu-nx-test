@@ -1,26 +1,28 @@
 import * as React from 'react';
-import AudienceSegmentReport from './AudienceSegmentReport';
+import DashboardContent from './DashboardContent';
 import { Layout, Layouts } from 'react-grid-layout';
 import ContentHeader from '../../../components/ContentHeader';
 import {
   UserQuerySegment,
   UserListSegment,
 } from '../../../models/audiencesegment/AudienceSegmentResource';
-import { ComponentLayout } from './domain';
+import { ComponentLayout } from '../../../models/dashboards/dashboards';
 
-interface AudienceDashboardReportProps {
+interface DashboardWrapperProps {
+  key?: any;
   layout: ComponentLayout[];
   title?: string;
-  segment: UserQuerySegment | UserListSegment;
+  segment?: UserQuerySegment | UserListSegment;
+  datamartId: string;
 }
 
 interface State {
   layout: Layout[];
 }
 
-type Props = AudienceDashboardReportProps;
+type Props = DashboardWrapperProps;
 
-class AudienceDashboardReport extends React.Component<Props, State> {
+class DashboardWrapper extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { layout: [] };
@@ -32,19 +34,20 @@ class AudienceDashboardReport extends React.Component<Props, State> {
   }
 
   render() {
-    const { segment, layout, title } = this.props;
+    const { segment, layout, title, datamartId } = this.props;
 
     return (
       <div>
-        <ContentHeader title={title} size={`medium`} />
-        <AudienceSegmentReport
+        <ContentHeader title={title} size={`large`} />
+        <DashboardContent
           layout={layout}
           onLayoutChange={this.onLayoutChange}
           segment={segment}
+          datamartId={datamartId}
         />
       </div>
     );
   }
 }
 
-export default AudienceDashboardReport;
+export default DashboardWrapper;

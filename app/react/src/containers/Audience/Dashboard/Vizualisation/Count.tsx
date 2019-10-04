@@ -6,12 +6,12 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import { getWhereClausePromise } from '../domain';
 
 export interface CountProps {
-  chartQueryId: string;
+  queryId: string;
+  datamartId: string;
   title: string;
-  segment: AudienceSegmentShape;
+  segment?: AudienceSegmentShape;
 }
 
 interface State {
@@ -33,58 +33,59 @@ export default class Count extends React.Component<CountProps, State> {
   }
 
   componentDidMount() {
-    const { segment, chartQueryId } = this.props;
-    this.fetchData(segment, chartQueryId);
+    const { segment, datamartId, queryId } = this.props;
+    this.fetchData(queryId, datamartId, segment);
   }
 
   componentWillReceiveProps(nextProps: CountProps) {
-    const { segment, chartQueryId } = this.props;
-    const { segment: nextSegment, chartQueryId: nextChartQueryId } = nextProps;
+    const { segment, queryId, datamartId } = this.props;
+    const {
+      segment: nextSegment,
+      queryId: nextChartQueryId,
+      datamartId: nextDatamartId,
+    } = nextProps;
 
-    if (segment.id !== nextSegment.id || chartQueryId !== nextChartQueryId) {
-      this.fetchData(nextSegment, nextChartQueryId);
+    if (
+      segment !== nextSegment ||
+      queryId !== nextChartQueryId ||
+      datamartId !== nextDatamartId
+    ) {
+      this.fetchData(nextChartQueryId, nextDatamartId, nextSegment);
     }
   }
 
   fetchData = (
-    segment: AudienceSegmentShape,
     chartQueryId: string,
+    datamartId: string,
+    segment?: AudienceSegmentShape,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-    const datamartId = segment.datamart_id;
-    return getWhereClausePromise(datamartId, segment, this._queryService)
-      .then(clauseResp => {
+    return this._queryService
+      .getQuery(datamartId, chartQueryId)
+
+      .then(queryResp => {
+        return queryResp.data;
+      })
+      .then(q => {
+        const query = q.query_text;
         return this._queryService
-          .getQuery(datamartId, chartQueryId)
-
-          .then(queryResp => {
-            return queryResp.data;
+          .runOTQLQuery(datamartId, query, {
+            use_cache: true,
           })
-          .then(q => {
-            const query = {
-              query: q.query_text,
-              additional_expression: clauseResp,
-            };
-            return this._queryService
-              .runOTQLQuery(datamartId, JSON.stringify(query), {
-                use_cache: true,
-                content_type: `application/json`,
-              })
 
-              .then(otqlResultResp => {
-                return otqlResultResp.data;
-              })
-              .then(r => {
-                if (isCountResult(r.rows)) {
-                  this.setState({
-                    queryResult: r.rows[0].count,
-                    loading: false,
-                  });
-                  return Promise.resolve();
-                }
-                const countErr = new Error('wrong query type');
-                return Promise.reject(countErr);
+          .then(otqlResultResp => {
+            return otqlResultResp.data;
+          })
+          .then(r => {
+            if (isCountResult(r.rows)) {
+              this.setState({
+                queryResult: r.rows[0].count,
+                loading: false,
               });
+              return Promise.resolve();
+            }
+            const countErr = new Error('wrong query type');
+            return Promise.reject(countErr);
           });
       })
       .catch(() => {

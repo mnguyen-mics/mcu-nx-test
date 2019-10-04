@@ -14,9 +14,10 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getWhereClausePromise } from '../domain';
 
 export interface WorldMapChartProps {
-  segment: AudienceSegmentShape;
+  segment?: AudienceSegmentShape;
   title: string;
-  chartQueryId: string;
+  queryId: string;
+  datamartId: string;
   height: number;
 }
 
@@ -43,16 +44,16 @@ export default class WorldMapChart extends React.Component<
   }
 
   componentDidMount() {
-    const { segment, chartQueryId } = this.props;
-    this.fetchData(segment, chartQueryId);
+    const { segment, queryId, datamartId } = this.props;
+    this.fetchData(queryId, datamartId, segment);
   }
 
   componentWillReceiveProps(nextProps: WorldMapChartProps) {
-    const { segment, chartQueryId } = this.props;
-    const { segment: nextSegment, chartQueryId: nextChartQueryId } = nextProps;
+    const { segment, queryId, datamartId } = this.props;
+    const { segment: nextSegment, queryId: nextChartQueryId, datamartId:nextDatamartId } = nextProps;
 
-    if (segment.id !== nextSegment.id || chartQueryId !== nextChartQueryId) {
-      this.fetchData(nextSegment, nextChartQueryId);
+    if (segment !== nextSegment || queryId !== nextChartQueryId || datamartId !== nextDatamartId) {
+      this.fetchData(nextChartQueryId, nextDatamartId, nextSegment);
     }
   }
 
@@ -73,13 +74,12 @@ export default class WorldMapChart extends React.Component<
   };
 
   fetchData = (
-    segment: AudienceSegmentShape,
     chartQueryId: string,
+    datamartId: string,
+    segment?: AudienceSegmentShape,
   ): Promise<void> => {
     this.setState({ error: false });
-
-    const datamartId = segment.datamart_id;
-    return getWhereClausePromise(datamartId, segment, this._queryService)
+    return getWhereClausePromise(datamartId, this._queryService, segment)
       .then(clauseResp => {
         return this._queryService
           .getQuery(datamartId, chartQueryId)

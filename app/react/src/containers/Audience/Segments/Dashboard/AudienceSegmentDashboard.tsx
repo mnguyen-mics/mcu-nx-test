@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Card } from '../../../../components/Card';
 import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
-import { EditAudienceSegmentParam, isUserQuerySegment, isUserListSegment } from '../Edit/domain';
+import { EditAudienceSegmentParam } from '../Edit/domain';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -22,13 +22,7 @@ import {
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
 import FeedCardList from './Feeds/FeedCardList';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
-import ContentHeader from '../../../../components/ContentHeader';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import AudienceDashboardReport from '../../Dashboard/AudienceDashboardReport';
-import {
-  deterministicLayout,
-  probabilisticLayout,
-} from '../../Dashboard/domain';
 
 interface State {
   loading: boolean;
@@ -193,7 +187,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { segment, datamarts, intl, hasFeature } = this.props;
+    const { segment, datamarts } = this.props;
 
     return (
       <div>
@@ -201,28 +195,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           datamarts={datamarts}
           datamartId={segment ? segment.datamart_id : undefined}
         />
-        {hasFeature('audience.dashboard') &&
-          segment &&
-          (isUserQuerySegment(segment) || isUserListSegment(segment)) && (
-            <div>
-              <AudienceDashboardReport
-                layout={deterministicLayout}
-                title={`Deterministic insights`}
-                segment={segment}
-              />
-              <AudienceDashboardReport
-                layout={probabilisticLayout}
-                title={`Probalistic insights`}
-                segment={segment}
-              />
-            </div>
-          )}
-        {hasFeature('audience.dashboard') && (
-          <ContentHeader
-            title={intl.formatMessage(messages.technicalReport)}
-            size={`medium`}
-          />
-        )}
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>
