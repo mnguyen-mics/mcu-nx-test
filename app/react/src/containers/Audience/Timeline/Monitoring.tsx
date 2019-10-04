@@ -162,7 +162,7 @@ class Monitoring extends React.Component<Props, State> {
                 userSegmentList: [],
                 profileByCompartmentsAndUserAccountId: {},
                 lastSeen: 0,
-                userPointId: '',
+                userAgentId: '',
               },
               isLoading: false,
             });
