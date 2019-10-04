@@ -194,7 +194,7 @@ class Monitoring extends React.Component<Props, State> {
 
     const { isModalVisible, monitoringData, isLoading } = this.state;
 
-    const userPointId = monitoringData.userAgentId;
+    const userAgentId = monitoringData.userAgentId;
 
     return (
       <div className="ant-layout">
@@ -206,7 +206,7 @@ class Monitoring extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            {userPointId ? (
+            {userAgentId ? (
               <Row>
                 <TimelineHeader
                   dataSource={monitoringData}
@@ -237,7 +237,7 @@ class Monitoring extends React.Component<Props, State> {
 
                     <ActivitiesTimeline
                       selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      userAgentId={userAgentId}
                     />
                   </Col>
                   <Col span={6}>

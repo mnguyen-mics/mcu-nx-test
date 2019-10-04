@@ -44,11 +44,11 @@ export interface IMonitoringService {
   ) => Promise<Dictionary<UserAccountIdentifierInfo[]>>;
   fetchUserAgents: (
     datamart: DatamartResource,
-    userPointId: string,
+    userAgentId: string,
   ) => Promise<UserAgentIdentifierInfo[]>;
   fetchUserEmails: (
     datamart: DatamartResource,
-    userPointId: string,
+    userAgentId: string,
   ) => Promise<UserEmailIdentifierInfo[]>;
   fetchMonitoringData: (
     organisationId: string,
@@ -240,22 +240,28 @@ export class MonitoringService implements IMonitoringService {
           userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id;
         if (userAgentId) {
           return Promise.all([
-            this.fetchUserAgents(datamart, userAgentId),
-            this.fetchUserEmails(datamart, userAgentId),
-            this.fetchUserAccountsByCompartmentId(datamart, userAgentId),
+            this._userDataService.getIdentifiers(
+                datamart.organisation_id,
+                datamart.id,
+                identifierType,
+                userAgentId
+              ),
             this.fetchCompartments(datamart),
             this.getLastSeen(datamart, userAgentId),
             this.fetchSegmentsData(datamart, userAgentId),
             this.fetchProfileData(datamart, userAgentId),
           ]).then(res => {
             return {
-              userAgentList: res[0],
-              userEmailList: res[1],
-              userAccountsByCompartmentId: res[2],
-              userAccountCompartments: res[3],
-              lastSeen: res[4],
-              userSegmentList: res[5],
-              profileByCompartmentsAndUserAccountId: res[6],
+              userAgentList: res[0].data.filter(isUserAgentIdentifier),
+              userEmailList: res[0].data.filter(isUserEmailIdentifier),
+              userAccountsByCompartmentId: groupBy(
+                res[0].data.filter(isUserAccountIdentifier),
+                'compartment_id',
+              ),
+              userAccountCompartments: res[1],
+              lastSeen: res[2],
+              userSegmentList: res[3],
+              profileByCompartmentsAndUserAccountId: res[4],
               userPointList: [],
               userAgentId: userAgentId,
             };

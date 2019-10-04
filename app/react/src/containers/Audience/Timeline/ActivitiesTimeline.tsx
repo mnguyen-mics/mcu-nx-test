@@ -37,7 +37,7 @@ export interface Activities {
 
 interface ActivitiesTimelineProps {
   selectedDatamart: DatamartResource;
-  userPointId: string;
+  userAgentId: string;
 }
 
 interface State {
@@ -70,30 +70,30 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { selectedDatamart, userPointId } = this.props;
+    const { selectedDatamart, userAgentId } = this.props;
 
-    this.fetchActivities(selectedDatamart, userPointId);
-    this.fetchUserAgents(selectedDatamart, userPointId);
+    this.fetchActivities(selectedDatamart, userAgentId);
+    this.fetchUserAgents(selectedDatamart, userAgentId);
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { selectedDatamart, userPointId } = this.props;
+    const { selectedDatamart, userAgentId } = this.props;
 
     const {
       selectedDatamart: prevSelectedDatamart,
-      userPointId: prevUserPointId,
+      userAgentId: prevUserPointId,
     } = prevProps;
 
     if (
-      userPointId !== prevUserPointId ||
+      userAgentId !== prevUserPointId ||
       selectedDatamart !== prevSelectedDatamart
     ) {
-      this.fetchActivities(selectedDatamart, userPointId, true);
-      this.fetchUserAgents(selectedDatamart, userPointId);
+      this.fetchActivities(selectedDatamart, userAgentId, true);
+      this.fetchUserAgents(selectedDatamart, userAgentId);
     }
   }
 
-  fetchUserAgents = (datamart: DatamartResource, userPointId: string) => {
+  fetchUserAgents = (datamart: DatamartResource, userAgentId: string) => {
     const identifierType = 'user_agent_id';
 
     this._userDataService
@@ -101,7 +101,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         datamart.organisation_id,
         datamart.id,
         identifierType,
-        userPointId,
+        userAgentId,
       )
       .then(response => {
         const userAgentsIdentifierInfo = response.data.filter(
@@ -219,11 +219,11 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   fetchActivities = (
     datamart: DatamartResource,
-    userPointId: string,
+    userAgentId: string,
     dataSourceHasChanged: boolean = false,
   ) => {
     const identifier: Identifier = {
-      id: userPointId,
+      id: userAgentId,
       type: 'user_agent_id',
     };
 
@@ -315,9 +315,9 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   };
 
   fetchNewActivities = (e: any) => {
-    const { userPointId, selectedDatamart } = this.props;
+    const { userAgentId, selectedDatamart } = this.props;
     e.preventDefault();
-    this.fetchActivities(selectedDatamart, userPointId);
+    this.fetchActivities(selectedDatamart, userAgentId);
   };
 
   renderPendingTimeline = (activities: Activities) => {
