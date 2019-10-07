@@ -18,7 +18,6 @@ import {
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import log from '../../../../utils/Logger';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import {
@@ -33,7 +32,7 @@ import injectThemeColors, {
 import LocalStorage from '../../../../services/LocalStorage';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
 import DatamartService from '../../../../services/DatamartService';
-import { Loading, McsIcon } from '../../../../components';
+import { McsIcon } from '../../../../components';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -55,10 +54,11 @@ interface AudienceSegmentExportExecutionItems {
 }
 
 interface State {
-  isLoading: boolean;
+  isLoadingExecutions: boolean;
+  isLoadingCompartments: boolean;
   isModalVisible: boolean;
   executions: AudienceSegmentExportExecutionItems;
-  compartments?: UserAccountCompartmentDatamartSelectionResource[];
+  compartments: UserAccountCompartmentDatamartSelectionResource[];
   selectedCompartmentId?: string;
   identifierType: AudienceSegmentExportJobIdentifierType;
 }
@@ -134,13 +134,29 @@ const messages = defineMessages({
 });
 
 class AudienceSegmentExportsCard extends React.Component<Props, State> {
+  fetchLoop = window.setInterval(() => {
+    const { executions } = this.state;
+
+    if (
+      executions.items.length > 0 &&
+      executions.items.some(
+        (value, index, array) =>
+          value.status === 'PENDING' || value.status === 'RUNNING',
+      )
+    ) {
+      this.refreshData();
+    }
+  }, 5000);
+
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
     super(props);
     this.state = {
-      isLoading: true,
+      isLoadingExecutions: true,
+      isLoadingCompartments: true,
       isModalVisible: false,
+      compartments: [],
       executions: {
         items: [],
         total: 0,
@@ -157,19 +173,20 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   }
 
   fetchCompartments = (datamartId: string) => {
-    this.setState({
-      isLoading: true,
-    });
-
-    DatamartService.getUserAccountCompartments(datamartId).then(res => {
-      this.setState({
-        compartments: res.data,
-        isLoading: false,
-        selectedCompartmentId: res.data.filter(c => c.default)[0]
-          ? res.data.filter(c => c.default)[0].compartment_id
-          : undefined,
+    DatamartService.getUserAccountCompartments(datamartId)
+      .then(res => {
+        this.setState({
+          compartments: res.data,
+          isLoadingCompartments: false,
+          selectedCompartmentId: res.data.filter(c => c.default)[0]
+            ? res.data.filter(c => c.default)[0].compartment_id
+            : undefined,
+        });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({ isLoadingCompartments: false });
       });
-    });
   };
 
   refreshData = () => {
@@ -178,12 +195,11 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         params: { segmentId },
       },
     } = this.props;
-    this.setState({ isLoading: true });
     this._audienceSegmentService
       .findAudienceSegmentExportExecutionsBySegment(segmentId)
       .then(res => {
         this.setState({
-          isLoading: false,
+          isLoadingExecutions: false,
           executions: {
             items: res.data,
             total: res.total ? res.total : res.count,
@@ -191,9 +207,8 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         });
       })
       .catch(err => {
-        log.error(err);
         this.props.notifyError(err);
-        this.setState({ isLoading: false });
+        this.setState({ isLoadingExecutions: false });
       });
   };
 
@@ -259,10 +274,12 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         ? { type: identifierType, compartment_id: selectedCompartmentId }
         : { type: identifierType };
 
-    this._audienceSegmentService.createAudienceSegmentExport(
-      segmentId,
-      exportUserIdentifier,
-    );
+    this._audienceSegmentService
+      .createAudienceSegmentExport(segmentId, exportUserIdentifier)
+      .then(() => this.refreshData())
+      .catch(err => {
+        this.props.notifyError(err);
+      });
     this.handleModal(false);
   };
 
@@ -295,8 +312,17 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     });
   };
 
+  componentWillUnmount() {
+    window.clearInterval(this.fetchLoop);
+  }
+
   render() {
-    const { isLoading, compartments, selectedCompartmentId } = this.state;
+    const {
+      isLoadingExecutions,
+      isLoadingCompartments,
+      compartments,
+      selectedCompartmentId,
+    } = this.state;
 
     const onReturnClick = () => this.handleModal(false);
     const onSubmitClick = (e: any) => this.submitModal();
@@ -414,98 +440,93 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
 
     const executionsData = this.state.executions.items;
 
-    if (isLoading || !compartments) {
-      return <Loading className="loading-full-screen" />;
-    } else {
-      const showCompartment =
-        this.state.identifierType === 'USER_ACCOUNT' && compartments.length > 0;
+    const showCompartment =
+      this.state.identifierType === 'USER_ACCOUNT' && compartments.length > 0;
 
-      const compartmentOptions = this.createCompartmentOptions(compartments);
+    const compartmentOptions = this.createCompartmentOptions(compartments);
 
-      const onUserLookupClick = () => this.handleModal(true);
+    const onClickNewExport = () => this.handleModal(true);
 
-      return (
-        <div className="ant-layout">
-          <Modal
-            title={<FormattedMessage {...messages.popupTitle} />}
-            wrapClassName="vertical-center-modal"
-            visible={this.state.isModalVisible}
-            footer={
-              <React.Fragment>
-                <Button key="back" size="large" onClick={onReturnClick}>
-                  Return
-                </Button>
-                <Button
-                  disabled={false}
-                  key="submit"
-                  type="primary"
-                  size="large"
-                  onClick={onSubmitClick}
-                >
-                  Submit
-                </Button>
-              </React.Fragment>
-            }
-            onCancel={onReturnClick}
-          >
-            <InputGroup compact={true} style={{ display: 'flex' }}>
-              <Select
-                style={{ width: '30%' }}
-                defaultValue={this.state.identifierType}
-                onChange={this.updateIdentifierType}
+    return (
+      <div className="ant-layout">
+        <Modal
+          title={<FormattedMessage {...messages.popupTitle} />}
+          wrapClassName="vertical-center-modal"
+          visible={this.state.isModalVisible}
+          footer={
+            <React.Fragment>
+              <Button key="back" size="large" onClick={onReturnClick}>
+                Return
+              </Button>
+              <Button
+                disabled={false}
+                key="submit"
+                type="primary"
+                size="large"
+                onClick={onSubmitClick}
               >
-                <Option value="USER_AGENT">User Agents</Option>
-                <Option value="USER_ACCOUNT">User Accounts</Option>
-                <Option value="USER_EMAIL">Email Hash</Option>
-              </Select>
-              {showCompartment && (
-                <div style={{ display: 'flex' }}>
-                  <div
-                    style={{
-                      paddingLeft: '30px',
-                      paddingRight: '5px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    Compartment Id :
-                  </div>
-                  <Select
-                    showSearch={true}
-                    defaultValue={selectedCompartmentId}
-                    onChange={this.updateCompartment}
-                  >
-                    {compartmentOptions}
-                  </Select>
-                </div>
-              )}
-            </InputGroup>
-          </Modal>
-          <div
-            style={{ flex: 1, justifyContent: 'flex-start', display: 'flex' }}
-          >
-            <Button
-              className="mcs-primary"
-              style={{
-                marginBottom: '15px',
-                marginLeft: '15px',
-                width: '14%',
-              }}
-              type="primary"
-              onClick={onUserLookupClick}
+                Submit
+              </Button>
+            </React.Fragment>
+          }
+          onCancel={onReturnClick}
+        >
+          <InputGroup compact={true} style={{ display: 'flex' }}>
+            <Select
+              style={{ width: '30%' }}
+              defaultValue={this.state.identifierType}
+              onChange={this.updateIdentifierType}
             >
-              <McsIcon type="extend" />{' '}
-              <FormattedMessage {...messages.createExport} />
-            </Button>
-          </div>
-          <AudienceSegmentExportJobTableView
-            columns={dataColumns}
-            dataSource={executionsData}
-            loading={isLoading}
-          />
+              <Option value="USER_AGENT">User Agents</Option>
+              <Option value="USER_ACCOUNT">User Accounts</Option>
+              <Option value="USER_EMAIL">Email Hash</Option>
+            </Select>
+            {showCompartment && (
+              <div style={{ display: 'flex' }}>
+                <div
+                  style={{
+                    paddingLeft: '30px',
+                    paddingRight: '5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  Compartment Id :
+                </div>
+                <Select
+                  showSearch={true}
+                  defaultValue={selectedCompartmentId}
+                  onChange={this.updateCompartment}
+                >
+                  {compartmentOptions}
+                </Select>
+              </div>
+            )}
+          </InputGroup>
+        </Modal>
+        <div style={{ flex: 1, justifyContent: 'flex-start', display: 'flex' }}>
+          <Button
+            className="mcs-primary"
+            style={{
+              marginBottom: '15px',
+              marginLeft: '15px',
+              width: '14%',
+            }}
+            type="primary"
+            onClick={onClickNewExport}
+            loading={isLoadingCompartments}
+          >
+            <McsIcon type="extend" />{' '}
+            <FormattedMessage {...messages.createExport} />
+          </Button>
         </div>
-      );
-    }
+        <AudienceSegmentExportJobTableView
+          columns={dataColumns}
+          dataSource={executionsData}
+          loading={isLoadingExecutions}
+        />
+      </div>
+    );
   }
 }
 
