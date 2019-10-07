@@ -22,7 +22,7 @@ import {
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from './constants';
 import FeedCardList from './Feeds/FeedCardList';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
-import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
+import AudienceSegmentExportsCard from './AudienceSegmentExportsCard';
 
 interface State {
   loading: boolean;
@@ -147,7 +147,13 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   buildItems = () => {
-    const { intl, segment } = this.props;
+    const {
+      intl,
+      segment,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     const { dashboard } = this.state;
     const items = [
       {
@@ -182,9 +188,41 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           display: <UserListImportCard datamartId={segment.datamart_id} />,
         });
       }
+      if (
+        segment.persisted &&
+        this.isDatamartPionus() &&
+        this.isValiuzOrg(organisationId)
+      ) {
+        items.push({
+          title: intl.formatMessage(messages.exports),
+          display: (
+            <AudienceSegmentExportsCard datamartId={segment.datamart_id} />
+          ),
+        });
+      }
     }
     return items;
   };
+
+  isValiuzOrg(orgId: string): boolean {
+    const valiuzOrgIds = [
+      '1327',
+      '1319',
+      '1318',
+      '1314',
+      '1312',
+      '1311',
+      '1310',
+      '1309',
+      '1308',
+      '1304',
+      '1301',
+      '1294',
+      '1288',
+      '1282',
+    ];
+    return valiuzOrgIds.includes(orgId);
+  }
 
   render() {
     const { segment, datamarts } = this.props;
@@ -228,8 +266,8 @@ const messages = defineMessages({
     id: 'audience-segment-dashboard-tab-title-user-list-imports',
     defaultMessage: 'Imports Status',
   },
-  technicalReport: {
-    id: 'audience.segment.dashboard.TechnicalReport',
-    defaultMessage: 'Technical Report',
+  exports: {
+    id: 'audience-segment-dashboard-tab-title-exports',
+    defaultMessage: 'Exports Status',
   },
 });

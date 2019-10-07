@@ -9,6 +9,7 @@ export interface PublicJobExecutionResource {
     debug?: string,
     num_tasks?: number,
     completed_tasks?: number,
+    erroneous_tasks?: number,
     external_model_name: ExternalModelName,
 }
 

@@ -396,7 +396,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
           <McsIcon type="download" />
           <FormattedMessage
             id="audience.segments.dashboard.actionbar.exportButton"
-            defaultMessage="Export"
+            defaultMessage="Export stats"
           />
         </Button>
         {renderDotsMenu()}
