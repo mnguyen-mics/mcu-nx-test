@@ -134,6 +134,20 @@ const messages = defineMessages({
 });
 
 class AudienceSegmentExportsCard extends React.Component<Props, State> {
+  fetchLoop = window.setInterval(() => {
+    const { executions } = this.state;
+
+    if (
+      executions.items.length > 0 &&
+      executions.items.some(
+        (value, index, array) =>
+          value.status === 'PENDING' || value.status === 'RUNNING',
+      )
+    ) {
+      this.refreshData();
+    }
+  }, 5000);
+
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   constructor(props: Props) {
@@ -297,6 +311,10 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
       selectedCompartmentId: compartmentId,
     });
   };
+
+  componentWillUnmount() {
+    window.clearInterval(this.fetchLoop);
+  }
 
   render() {
     const {
