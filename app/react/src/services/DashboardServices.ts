@@ -144,6 +144,23 @@ const myDashboards: DashboardResource[] = [
           show_legend: true
         },
       },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 4,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          query_ids: ['25359', '25360'],
+          plot_labels: ["1rst", "2nd"],
+          title: 'Nombre de visites par jour par type de profil matching',
+          labels_enabled: true
+        },
+      }
      
     ]
   }

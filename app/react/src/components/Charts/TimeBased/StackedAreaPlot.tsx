@@ -22,7 +22,7 @@ interface ChartOptions {
   onDragEnd?: OnDragEnd;
 }
 
-type yKey = { key: string; message: FormattedMessage.MessageDescriptor };
+type yKey = { key: string; message: FormattedMessage.MessageDescriptor | string; };
 
 type Props = StackedAreaPlotProps & InjectedIntlProps;
 
@@ -52,7 +52,7 @@ class StackedAreaPlot extends React.Component<Props, {}> {
             yValue && typeof yValue === 'string' ? parseFloat(yValue) : yValue,
           ];
         }),
-        name: formatMessage(y.message),
+        name: typeof y.message === "string" ? y.message : formatMessage(y.message),
         color: colors[i],
         fillOpacity: 0.5,
         fillColor: {
