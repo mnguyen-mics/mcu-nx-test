@@ -39,7 +39,6 @@ export interface AudienceSegmentDashboardProps {
 
 type Props = AudienceSegmentDashboardProps &
   InjectedIntlProps &
-  InjectedFeaturesProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
@@ -245,7 +244,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 export default compose<Props, AudienceSegmentDashboardProps>(
   injectIntl,
   withRouter,
-  injectFeatures,
   injectNotifications,
 )(AudienceSegmentDashboard);
 
