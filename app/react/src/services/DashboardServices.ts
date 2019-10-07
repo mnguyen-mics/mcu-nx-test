@@ -148,9 +148,80 @@ const myDashboards: DashboardResource[] = [
         layout: {
           h: 3,
           static: false,
-          w: 12,
+          w: 6,
+          x: 6,
+          y: 1,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          query_ids: ['25349', '25350', '25351'],
+          labels_enabled: true,
+          plot_labels: ["2nd", "1rst_email_click", "1rst loggé"],
+          title: 'Nombre de user par type de profil matching',
+          show_legend: false
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
           x: 0,
           y: 4,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          query_ids: ['25352', '25353', '25354', '25355', '25356'],
+          labels_enabled: true,
+          plot_labels: ["Autres", "Basket View", "Purchase", "Search", "Email Click"],
+          title: "Nombre d'évènements par typologie",
+          show_legend: false
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 4,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          query_ids: ['25357', '25358'],
+          labels_enabled: true,
+          plot_labels: ["Contact CRM avec activités", "Contact CRM sans activités"],
+          title: 'Activité web des contacts CRM ',
+          show_legend: false
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 7,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          query_ids: ['25398', '25399', '25400', '25401'],
+          plot_labels: ["email clicks", "basket view", "purchase", "search"],
+          title: "Nombre d'évènements par jour par typologie",
+          labels_enabled: true
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 10,
         },
         component: {
           id: 5,
@@ -160,8 +231,24 @@ const myDashboards: DashboardResource[] = [
           title: 'Nombre de visites par jour par type de profil matching',
           labels_enabled: true
         },
-      }
-     
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 13,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          query_ids: ['25362'],
+          plot_labels: ["tickets"],
+          title: "Nombre de ticket réalisé par les contacts CRM sur les 12 derniers mois",
+          labels_enabled: true
+        },
+      },
     ]
   }
 ]

@@ -11,6 +11,7 @@ import { AudienceSegmentShape } from '../../../models/audiencesegment/AudienceSe
 import CountBarChart from './Vizualisation/CountBarChart';
 import { ComponentLayout, Component } from '../../../models/dashboards/dashboards';
 import Percentage from './Vizualisation/Percentage';
+import CountPieChart from './Vizualisation/CountPieChart';
 
 
 const BASE_FRAMEWORK_HEIGHT = 150;
@@ -135,6 +136,17 @@ export default class DashboardContent extends React.Component<
             height={height}
           />
         );
+      case 'COUNT_PIE_CHART':
+          return (
+            <CountPieChart 
+              datamartId={datamartId}
+              height={height}
+              labelsEnabled={comp.labels_enabled}
+              plotLabels={comp.plot_labels}
+              queryIds={comp.query_ids}
+              title={comp.title}
+            />
+          )
       default:
         return null;
     }

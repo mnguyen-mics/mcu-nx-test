@@ -36,6 +36,14 @@ export interface DateAggregationComponent extends BaseComponent {
   labels_enabled?: boolean;
 }
 
+export interface CountPieComponent extends BaseComponent {
+  component_type: 'COUNT_PIE_CHART';
+  show_legend: boolean;
+  query_ids: string[];
+  labels_enabled?: boolean;
+  plot_labels: string[];
+}
+
 export interface ComponentCountBar extends BaseComponent {
   component_type: 'COUNT_BAR_CHART';
   show_legend: boolean;
@@ -85,7 +93,8 @@ export type Component =
   | WorldMapChart
   | ComponentCountBar
   | ComponentPercentage
-  | DateAggregationComponent;
+  | DateAggregationComponent
+  | CountPieComponent;
 
 export type ComponentType =
   | 'MAP_BAR_CHART'
@@ -96,4 +105,5 @@ export type ComponentType =
   | 'GAUGE_PIE_CHART'
   | 'MAP_STACKED_BAR_CHART'
   | 'WORLD_MAP_CHART'
-  | 'COUNT_BAR_CHART';
+  | 'COUNT_BAR_CHART'
+  | 'COUNT_PIE_CHART';

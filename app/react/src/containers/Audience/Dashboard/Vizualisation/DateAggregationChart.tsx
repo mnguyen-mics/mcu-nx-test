@@ -1,6 +1,5 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { Card } from '../../../../components/Card';
 import {
   OTQLAggregationResult,
   isAggregateResult,
@@ -18,6 +17,7 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
+import CardFlex from '../Components/CardFlex';
 
 export interface DateAggregationChartProps {
   title?: string;
@@ -222,10 +222,10 @@ class DateAggregationChart extends React.Component<Props, State> {
     };
 
     return (
-      <Card title={title}>
+      <CardFlex title={title}>
         <hr />
         {generateChart()}
-      </Card>
+      </CardFlex>
     );
   }
 }
