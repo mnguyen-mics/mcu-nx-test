@@ -25,6 +25,7 @@ export interface DateAggregationChartProps {
   queryIds: string[];
   datamartId: string;
   plotLabels: string[];
+  height?: number;
 }
 
 interface QueryResult {
@@ -170,7 +171,7 @@ class DateAggregationChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl, plotLabels, queryIds } = this.props;
+    const { title, colors, intl, plotLabels, queryIds, height } = this.props;
 
     const computeChartLabels = () => {
       return queryIds.map((q, i) => {
@@ -215,6 +216,7 @@ class DateAggregationChart extends React.Component<Props, State> {
             <StackedBarPlot
               dataset={this.state.queryResult as any}
               options={optionsForChart}
+              height={height}
             />
           )
         );

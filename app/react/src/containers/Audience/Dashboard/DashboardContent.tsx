@@ -102,6 +102,7 @@ export default class DashboardContent extends React.Component<
             queryIds={comp.query_ids}
             plotLabels={comp.plot_labels}
             datamartId={datamartId}
+            height={height}
           />
         );
       case 'GAUGE_PIE_CHART':
@@ -180,7 +181,7 @@ export default class DashboardContent extends React.Component<
   }
 
   computeHeight = (h: number) => {
-    return BASE_FRAMEWORK_HEIGHT * h + (h > 1 ? h * BASE_PADDING : 0);
+    return BASE_FRAMEWORK_HEIGHT * h + (h > 1 ? h * BASE_PADDING : 0) - 51;
   }
 
   render() {
