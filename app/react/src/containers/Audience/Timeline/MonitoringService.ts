@@ -1,3 +1,4 @@
+import { isUserPointIdentifier } from './../../../models/timeline/timeline';
 import { groupBy, Dictionary } from 'lodash';
 import { IUserDataService } from './../../../services/UserDataService';
 import {
@@ -229,7 +230,7 @@ export class MonitoringService implements IMonitoringService {
       userSegmentList: [],
       profileByCompartmentsAndUserAccountId: {},
       userPointList: [],
-      userAgentId: ''
+      userIdentifier: ''
     }
     return this._userDataService
       .getIdentifiers(
@@ -240,17 +241,17 @@ export class MonitoringService implements IMonitoringService {
         compartmentId,
       )
       .then(response => {
-        const userAgentIdentifierInfo = response.data.find(
-          isUserAgentIdentifier,
-        );
-        const userAgentId =
-        userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id;
-        if (userAgentId) {
+        const userPointIdentifierInfo = response.data.find(isUserPointIdentifier)
+        const userAgentIdentifierInfo = response.data.find(isUserAgentIdentifier)
+        const userIdentifier =
+          userPointIdentifierInfo && userPointIdentifierInfo.user_point_id ||
+          userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id
+        if (userIdentifier) {
           return Promise.all([
             this.fetchCompartments(datamart),
-            this.getLastSeen(datamart, userAgentId),
-            this.fetchSegmentsData(datamart, userAgentId),
-            this.fetchProfileData(datamart, userAgentId),
+            this.getLastSeen(datamart, userIdentifier),
+            this.fetchSegmentsData(datamart, userIdentifier),
+            this.fetchProfileData(datamart, userIdentifier),
           ]).then(res => {
             return {
               userAgentList: response.data.filter(isUserAgentIdentifier),
@@ -264,7 +265,7 @@ export class MonitoringService implements IMonitoringService {
               userSegmentList: res[2],
               profileByCompartmentsAndUserAccountId: res[3],
               userPointList: [],
-              userAgentId: userAgentId,
+              userIdentifier: userIdentifier,
             };
           });
         }

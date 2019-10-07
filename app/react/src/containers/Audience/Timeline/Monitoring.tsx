@@ -69,7 +69,7 @@ class Monitoring extends React.Component<Props, State> {
         userSegmentList: [],
         profileByCompartmentsAndUserAccountId: {},
         lastSeen: 0,
-        userAgentId: '',
+        userIdentifier: '',
       },
       isLoading: false,
     };
@@ -162,7 +162,7 @@ class Monitoring extends React.Component<Props, State> {
                 userSegmentList: [],
                 profileByCompartmentsAndUserAccountId: {},
                 lastSeen: 0,
-                userAgentId: '',
+                userIdentifier: '',
               },
               isLoading: false,
             });
@@ -205,7 +205,7 @@ class Monitoring extends React.Component<Props, State> {
 
     const { isModalVisible, monitoringData, isLoading } = this.state;
 
-    const userAgentId = monitoringData.userAgentId;
+    const userIdentifier = monitoringData.userIdentifier;
 
     return (
       <div className="ant-layout">
@@ -217,7 +217,7 @@ class Monitoring extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            {userAgentId ? (
+            {userIdentifier ? (
               <Row>
                 <TimelineHeader
                   dataSource={monitoringData}
@@ -248,7 +248,7 @@ class Monitoring extends React.Component<Props, State> {
 
                     <ActivitiesTimeline
                       selectedDatamart={selectedDatamart}
-                      userAgentId={userAgentId}
+                      userIdentifier={userIdentifier}
                     />
                   </Col>
                   <Col span={6}>

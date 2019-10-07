@@ -37,7 +37,7 @@ export interface Activities {
 
 interface ActivitiesTimelineProps {
   selectedDatamart: DatamartResource;
-  userAgentId: string;
+  userIdentifier: string;
 }
 
 interface State {
@@ -70,26 +70,26 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { selectedDatamart, userAgentId } = this.props;
+    const { selectedDatamart, userIdentifier } = this.props;
 
-    this.fetchActivities(selectedDatamart, userAgentId);
-    this.fetchUserAgents(selectedDatamart, userAgentId);
+    this.fetchActivities(selectedDatamart, userIdentifier);
+    this.fetchUserAgents(selectedDatamart, userIdentifier);
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { selectedDatamart, userAgentId } = this.props;
+    const { selectedDatamart, userIdentifier } = this.props;
 
     const {
       selectedDatamart: prevSelectedDatamart,
-      userAgentId: prevUserPointId,
+      userIdentifier: prevUserPointId,
     } = prevProps;
 
     if (
-      userAgentId !== prevUserPointId ||
+      userIdentifier !== prevUserPointId ||
       selectedDatamart !== prevSelectedDatamart
     ) {
-      this.fetchActivities(selectedDatamart, userAgentId, true);
-      this.fetchUserAgents(selectedDatamart, userAgentId);
+      this.fetchActivities(selectedDatamart, userIdentifier, true);
+      this.fetchUserAgents(selectedDatamart, userIdentifier);
     }
   }
 
@@ -315,9 +315,9 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   };
 
   fetchNewActivities = (e: any) => {
-    const { userAgentId, selectedDatamart } = this.props;
+    const { userIdentifier, selectedDatamart } = this.props;
     e.preventDefault();
-    this.fetchActivities(selectedDatamart, userAgentId);
+    this.fetchActivities(selectedDatamart, userIdentifier);
   };
 
   renderPendingTimeline = (activities: Activities) => {

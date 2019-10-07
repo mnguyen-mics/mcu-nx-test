@@ -177,7 +177,7 @@ export interface MonitoringData {
   userSegmentList: UserSegmentResource[];
   profileByCompartmentsAndUserAccountId: UserProfilePerCompartmentAndUserAccountId;
   lastSeen: number;
-  userAgentId: string;
+  userIdentifier: string;
 }
 
 export interface UserProfileWithAccountId {
