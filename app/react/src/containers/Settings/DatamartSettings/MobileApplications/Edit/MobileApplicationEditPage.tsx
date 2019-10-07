@@ -300,7 +300,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/mobile_applications?datamartId=${this.state.selectedDatamartId}`;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/mobile_applications`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
