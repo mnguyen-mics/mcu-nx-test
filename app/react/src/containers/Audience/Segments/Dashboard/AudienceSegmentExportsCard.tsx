@@ -33,6 +33,8 @@ import LocalStorage from '../../../../services/LocalStorage';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
 import DatamartService from '../../../../services/DatamartService';
 import { McsIcon } from '../../../../components';
+import { Filters } from '../../../../components/ItemList';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -61,6 +63,7 @@ interface State {
   compartments: UserAccountCompartmentDatamartSelectionResource[];
   selectedCompartmentId?: string;
   identifierType: AudienceSegmentExportJobIdentifierType;
+  filter: Filters;
 }
 
 const AudienceSegmentExportJobTableView = TableView as React.ComponentClass<
@@ -135,8 +138,7 @@ const messages = defineMessages({
 
 class AudienceSegmentExportsCard extends React.Component<Props, State> {
   fetchLoop = window.setInterval(() => {
-    const { executions } = this.state;
-
+    const { executions, filter } = this.state;
     if (
       executions.items.length > 0 &&
       executions.items.some(
@@ -144,7 +146,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           value.status === 'PENDING' || value.status === 'RUNNING',
       )
     ) {
-      this.refreshData();
+      this.refreshData(filter);
     }
   }, 5000);
 
@@ -162,12 +164,16 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         total: 0,
       },
       identifierType: 'USER_AGENT',
+      filter: {
+        currentPage: 1,
+        pageSize: 10,
+      },
     };
   }
 
   componentDidMount() {
     const { datamartId } = this.props;
-    this.refreshData();
+    this.refreshData(this.state.filter);
 
     this.fetchCompartments(datamartId);
   }
@@ -189,14 +195,21 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
       });
   };
 
-  refreshData = () => {
+  refreshData = (newFilter: Filters) => {
     const {
       match: {
         params: { segmentId },
       },
     } = this.props;
+
+    this.setState({ filter: newFilter });
+
+    const params = {
+      ...getPaginatedApiParam(newFilter.currentPage, newFilter.pageSize),
+    };
+
     this._audienceSegmentService
-      .findAudienceSegmentExportExecutionsBySegment(segmentId)
+      .findAudienceSegmentExportExecutionsBySegment(segmentId, params)
       .then(res => {
         this.setState({
           isLoadingExecutions: false,
@@ -215,11 +228,12 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   getExecutionProgress = (
     execution: AudienceSegmentExportJobExecutionResource,
   ) => {
-    // move this later, and replace it in Imports.tsx
     const { colors } = this.props;
     const tasks = execution.num_tasks || 0;
     const completedTasks =
-      (execution.completed_tasks || 0) + (execution.erroneous_tasks || 0);
+      execution.status === 'SUCCEEDED'
+        ? execution.num_tasks || 0 // dirty hack, to fix small possible margin between completed and num_tasks
+        : (execution.completed_tasks || 0) + (execution.erroneous_tasks || 0);
 
     const setColor = (status: string) => {
       switch (status) {
@@ -274,9 +288,19 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         ? { type: identifierType, compartment_id: selectedCompartmentId }
         : { type: identifierType };
 
+    // On submit, we go back to the 1st page, to display the new execution.
+    // (But we keep the same page)
+    const newFilter = {
+      ...this.state.filter,
+      currentPage: 1,
+    };
+    this.setState({
+      filter: newFilter,
+    });
+
     this._audienceSegmentService
       .createAudienceSegmentExport(segmentId, exportUserIdentifier)
-      .then(() => this.refreshData())
+      .then(() => this.refreshData(newFilter))
       .catch(err => {
         this.props.notifyError(err);
       });
@@ -294,7 +318,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   ) => {
     const compartmentOptions = compartments.map(compartment => (
       <Select.Option key={compartment.compartment_id}>
-        {compartment.compartment_id}
+        {`${compartment.compartment_id} - ${compartment.name}`}
       </Select.Option>
     ));
     return compartmentOptions;
@@ -323,6 +347,26 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
       compartments,
       selectedCompartmentId,
     } = this.state;
+
+    const pagination = {
+      current: this.state.filter.currentPage,
+      pageSize: this.state.filter.pageSize,
+      total: this.state.executions.total,
+      onChange: (page: number, size: number) => {
+        this.setState({ isLoadingExecutions: true });
+        this.refreshData({
+          currentPage: page,
+          pageSize: size,
+        });
+      },
+      onShowSizeChange: (current: number, size: number) => {
+        this.setState({ isLoadingExecutions: true });
+        this.refreshData({
+          pageSize: size,
+          currentPage: 1,
+        });
+      },
+    };
 
     const onReturnClick = () => this.handleModal(false);
     const onSubmitClick = (e: any) => this.submitModal();
@@ -427,7 +471,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         key: 'action',
         render: (text, record) => {
           return (
-            record.status === 'SUCCEEDED' && (
+            record.status === 'SUCCEEDED' && record.result && record.result.export_file_uri && (
               <Button type="primary" onClick={this.downloadFile(record)}>
                 <McsIcon type="download" />{' '}
                 {this.props.intl.formatMessage(messages.download)}
@@ -491,7 +535,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
                     alignItems: 'center',
                   }}
                 >
-                  Compartment Id :
+                  Compartment :
                 </div>
                 <Select
                   showSearch={true}
@@ -524,6 +568,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           columns={dataColumns}
           dataSource={executionsData}
           loading={isLoadingExecutions}
+          pagination={pagination}
         />
       </div>
     );
