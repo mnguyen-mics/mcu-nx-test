@@ -317,7 +317,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   ) => {
     const compartmentOptions = compartments.map(compartment => (
       <Select.Option key={compartment.compartment_id}>
-        {compartment.compartment_id}
+        {`${compartment.compartment_id} - ${compartment.name}`}
       </Select.Option>
     ));
     return compartmentOptions;
@@ -534,7 +534,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
                     alignItems: 'center',
                   }}
                 >
-                  Compartment Id :
+                  Compartment :
                 </div>
                 <Select
                   showSearch={true}
