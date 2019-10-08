@@ -54,7 +54,6 @@ class MapPieChart extends React.Component<Props, State> {
       colors['mcs-info'],
       colors['mcs-highlight'],
       colors['mcs-success'],
-      colors['mcs-normal'],
       colors['mcs-primary'],
       colors['mcs-error'],
     ];

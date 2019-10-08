@@ -157,7 +157,7 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           query_ids: ['25349', '25350', '25351'],
           labels_enabled: true,
-          plot_labels: ["2nd", "1rst_email_click", "1rst loggé"],
+          plot_labels: ["2nd", "1rst_email_click", "1rst logged"],
           title: 'Nombre de user par type de profil matching',
           show_legend: false
         },

@@ -182,9 +182,9 @@ class DateAggregationChart extends React.Component<Props, State> {
     }
 
     const computeChartColors = () => {
-      const availableColors = Object.keys(colors);
+      const availableColors = Object.keys(colors).filter(c => c !== "mcs-normal");
       return queryIds.map((q, i) =>{
-        return colors[availableColors[i%availableColors.length] as keyof ThemeColorsShape] as string
+        return colors[availableColors[i%(availableColors.length - 1)] as keyof ThemeColorsShape] as string
       })
     }
 
