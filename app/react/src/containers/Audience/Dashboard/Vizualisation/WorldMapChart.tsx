@@ -1,0 +1,138 @@
+import * as React from 'react';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IQueryService } from '../../../../services/QueryService';
+import CardFlex from '../Components/CardFlex';
+import WorldMap, { MapData } from '../../../../components/WorldMap';
+import {
+  isAggregateResult,
+  isCountResult,
+  OTQLAggregationResult,
+} from '../../../../models/datamart/graphdb/OTQLResult';
+import { mapData2 } from '../mapData';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getWhereClausePromise } from '../domain';
+
+export interface WorldMapChartProps {
+  segment?: AudienceSegmentShape;
+  title: string;
+  queryId: string;
+  datamartId: string;
+  height: number;
+}
+
+interface State {
+  mapData: MapData[];
+  error: boolean;
+  loading: boolean;
+}
+
+export default class WorldMapChart extends React.Component<
+  WorldMapChartProps,
+  State
+> {
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
+  constructor(props: WorldMapChartProps) {
+    super(props);
+    this.state = {
+      error: false,
+      loading: true,
+      mapData: mapData2,
+    };
+  }
+
+  componentDidMount() {
+    const { segment, queryId, datamartId } = this.props;
+    this.fetchData(queryId, datamartId, segment);
+  }
+
+  componentWillReceiveProps(nextProps: WorldMapChartProps) {
+    const { segment, queryId, datamartId } = this.props;
+    const { segment: nextSegment, queryId: nextChartQueryId, datamartId:nextDatamartId } = nextProps;
+
+    if (segment !== nextSegment || queryId !== nextChartQueryId || datamartId !== nextDatamartId) {
+      this.fetchData(nextChartQueryId, nextDatamartId, nextSegment);
+    }
+  }
+
+  formatData = (queryResult: OTQLAggregationResult[]): any => {
+    return queryResult.length &&
+      queryResult[0].aggregations.buckets.length &&
+      queryResult[0].aggregations.buckets[0].buckets.length
+      ? queryResult[0].aggregations.buckets[0].buckets.map((data, i) => {
+          const countryData = mapData2.find(md => md.code === data.key);
+          return {
+            code3: countryData ? countryData.code3 : '',
+            name: 'country name',
+            value: data.count,
+            code: data.key,
+          };
+        })
+      : [];
+  };
+
+  fetchData = (
+    chartQueryId: string,
+    datamartId: string,
+    segment?: AudienceSegmentShape,
+  ): Promise<void> => {
+    this.setState({ error: false });
+    return getWhereClausePromise(datamartId, this._queryService, segment)
+      .then(clauseResp => {
+        return this._queryService
+          .getQuery(datamartId, chartQueryId)
+
+          .then(queryResp => {
+            return queryResp.data;
+          })
+          .then(q => {
+            const query = {
+              query: q.query_text,
+              additional_expression: clauseResp,
+            };
+            return this._queryService
+              .runOTQLQuery(datamartId, JSON.stringify(query), {
+                use_cache: true,
+                content_type: `application/json`,
+              })
+
+              .then(otqlResultResp => {
+                return otqlResultResp.data;
+              })
+              .then(r => {
+                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                  this.setState({
+                    mapData: this.formatData(r.rows),
+                    loading: false,
+                  });
+                  return Promise.resolve();
+                }
+                const countErr = new Error('wrong query type');
+                return Promise.reject(countErr);
+              });
+          });
+      })
+      .catch(() => {
+        this.setState({ error: false, loading: false });
+      });
+  };
+
+  generateChart = () => {
+    const { loading, mapData } = this.state;
+    const { height } = this.props;
+    if (!loading && mapData) {
+      return <WorldMap dataset={mapData} height={height} />;
+    }
+    return;
+  };
+
+  public render() {
+    return (
+      <CardFlex title={this.props.title}>
+        <div style={{ width: '100%' }}>{this.generateChart()}</div>
+      </CardFlex>
+    );
+  }
+}

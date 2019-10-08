@@ -12,7 +12,6 @@ import {
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
-import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 
 import {
@@ -36,8 +35,8 @@ import log from '../../../../../utils/Logger';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
+import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 
-const StackedAreaPlotTS = StackedAreaPlot as any;
 const LegendChartTS = LegendChart as any;
 
 interface RouterMatchParams {
@@ -276,7 +275,7 @@ class GoalStackedAreaChart extends React.Component<
   }
 
   renderStackedAreaCharts() {
-    const { colors, goal } = this.props;
+    const { colors } = this.props;
 
     const { performance, isFetchingPerformance } = this.state;
 
@@ -290,9 +289,8 @@ class GoalStackedAreaChart extends React.Component<
     };
 
     return !isFetchingPerformance && performance.length !== 0 ? (
-      <StackedAreaPlotTS
-        identifier={`Goal${goal.id}StackedAreaChartDisplayOverview`}
-        dataset={performance}
+      <StackedAreaPlot
+        dataset={performance as any}
         options={optionsForChart}
       />
     ) : (

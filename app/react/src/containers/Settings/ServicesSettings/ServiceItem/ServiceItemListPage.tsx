@@ -21,7 +21,7 @@ import {
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { McsIcon } from '../../../../components';
 import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
-import { StackedLinePlot } from '../../../../components/StackedAreaPlot';
+import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
@@ -31,7 +31,6 @@ import { ButtonProps } from 'antd/lib/button';
 
 const { Content } = Layout;
 
-const ServiceItemPriceChartJS = StackedLinePlot as any;
 
 interface ServiceItemListPageProps {
   offerOwnership: offerType;
@@ -198,7 +197,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
     } = this.props;
 
     const optionsForChart = {
-      xKey: ['cost'],
+      xKey: 'cost',
       xLabel: intl.formatMessage(messages.usageCost),
       yKeys: [{ key: 'usage_price', message: messages.usagePrice }],
       colors: [colors['mcs-primary']],
@@ -248,8 +247,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
     const priceChart = dataset ?
       (
-        <ServiceItemPriceChartJS
-          identifier="servicePriceChart"
+        <StackedBarPlot
           dataset={dataset}
           options={optionsForChart}
         />

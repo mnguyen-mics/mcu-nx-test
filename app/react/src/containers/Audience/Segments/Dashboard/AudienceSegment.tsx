@@ -6,7 +6,6 @@ import { Labels } from '../../../Labels/index';
 import AudienceSegmentDashboard from './AudienceSegmentDashboard';
 import LookalikeStatusWarning from './Lookalike/LookalikeStatusWarning';
 
-
 import { compose } from 'recompose';
 import { InjectedIntlProps } from 'react-intl';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';

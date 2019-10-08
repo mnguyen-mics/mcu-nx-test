@@ -1,6 +1,5 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { Card } from '../../../../components/Card';
 import {
   OTQLAggregationResult,
   isAggregateResult,
@@ -10,18 +9,24 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { VerticalBarChart } from '../../../../components/BarCharts';
 import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
+import CardFlex from '../Components/CardFlex';
+import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getWhereClausePromise } from '../domain';
 
 export interface MapBarChartProps {
   title?: string;
+  segment?: AudienceSegmentShape;
   queryId: string;
   datamartId: string;
+  height?: number;
+  labelsEnabled?: boolean;
 }
 
 interface QueryResult {
@@ -64,17 +69,16 @@ class MapBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, datamartId } = this.props;
-
-    this.fetchData(datamartId, queryId);
+    const { segment, queryId, datamartId } = this.props;
+    this.fetchData(queryId, datamartId, segment);
   }
 
   componentWillReceiveProps(nextProps: MapBarChartProps) {
-    const { queryId, datamartId } = this.props;
-    const { queryId: nextQueryId, datamartId: nextDatamartId } = this.props;
+    const { segment, queryId, datamartId } = this.props;
+    const { segment: nextSegment, queryId: nextChartQueryId, datamartId: nextDatamartId } = nextProps;
 
-    if (queryId !== nextQueryId || datamartId !== nextDatamartId) {
-      this.fetchData(nextDatamartId, nextQueryId);
+    if (segment !== nextSegment || queryId !== nextChartQueryId || datamartId !== nextDatamartId) {
+      this.fetchData(nextChartQueryId, nextDatamartId, nextSegment);
     }
   }
 
@@ -92,35 +96,49 @@ class MapBarChart extends React.Component<Props, State> {
     return [];
   };
 
-  fetchData = (datamartId: string, queryId: string): Promise<void> => {
+  fetchData = (
+    chartQueryId: string,
+    datamartId: string,
+    segment?: AudienceSegmentShape,
+  ): Promise<void> => {
     this.setState({ error: false, loading: true });
+    return getWhereClausePromise(datamartId, this._queryService, segment)
+      .then(clauseResp => {
+        return this._queryService
+          .getQuery(datamartId, chartQueryId)
 
-    return this._queryService
-      .getQuery(datamartId, queryId)
-      .then(res => {
-        if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text)
-            .then(r => r.data)
-            .then(r => {
-              if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                this.setState({
-                  queryResult: this.formatData(r.rows),
-                  loading: false,
-                });
-                return Promise.resolve();
-              }
-              const mapErr = new Error('wrong query type');
-              return Promise.reject(mapErr);
-            })
-            .catch(e => this.setState({ error: true, loading: false }));
-        }
-        const err = new Error('wrong query language');
-        return Promise.reject(err);
+          .then(queryResp => {
+            return queryResp.data;
+          })
+          .then(q => {
+            const query = {
+              query: q.query_text,
+              additional_expression: clauseResp,
+            };
+            return this._queryService
+              .runOTQLQuery(datamartId, JSON.stringify(query), {
+                use_cache: true,
+                content_type: `application/json`,
+              })
+              .then(resp => {
+                return resp.data;
+              })
+              .then(r => {
+                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                  this.setState({
+                    queryResult: this.formatData(r.rows),
+                    loading: false,
+                  });
+                  return Promise.resolve();
+                }
+                const mapErr = new Error('wrong query type');
+                return Promise.reject(mapErr);
+              })
+              .catch(() => this.setState({ error: true, loading: false }));
+          })
+          .catch(() => this.setState({ error: true, loading: false }));
       })
-      .catch(() => {
-        this.setState({ error: true, loading: false });
-      });
+      .catch(() => this.setState({ error: true, loading: false }));
   };
 
   generateOptions = () => {
@@ -139,8 +157,9 @@ class MapBarChart extends React.Component<Props, State> {
 
     const optionsForChart = {
       xKey: 'xKey',
-      yKeys: ['yKey'],
+      yKeys: [{ key: 'yKey', message: '' }],
       colors: [colors['mcs-info']],
+      labelsEnabled: this.props.labelsEnabled,
     };
 
     const generateChart = () => {
@@ -160,22 +179,18 @@ class MapBarChart extends React.Component<Props, State> {
         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
         return (
-          <VerticalBarChart
-            identifier={`${this.identifier}-chart`}
-            dataset={this.state.queryResult}
-            options={optionsForChart}
-            colors={{ base: colors['mcs-info'], hover: colors['mcs-warning'] }}
-          />
+          this.state.queryResult &&
+          this.state.queryResult.length && (
+            <StackedBarPlot
+              dataset={this.state.queryResult as any}
+              options={optionsForChart}
+            />
+          )
         );
       }
     };
 
-    return (
-      <Card title={title}>
-        <hr />
-        {generateChart()}
-      </Card>
-    );
+    return <CardFlex title={title}>{generateChart()}</CardFlex>;
   }
 }
 

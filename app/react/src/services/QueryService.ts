@@ -4,7 +4,11 @@ import {
   AutoCompleteResource,
   ErrorQueryResource,
 } from '../models/datamart/DatamartResource';
-import { OTQLResult, QueryPrecisionMode, GraphQLResult } from '../models/datamart/graphdb/OTQLResult';
+import {
+  OTQLResult,
+  QueryPrecisionMode,
+  GraphQLResult,
+} from '../models/datamart/graphdb/OTQLResult';
 import { QueryDocument } from '../models/datamart/graphdb/QueryDocument';
 import log from '../utils/Logger';
 import { injectable } from 'inversify';
@@ -32,7 +36,8 @@ export interface IQueryService {
       limit?: number;
       offset?: number;
       use_cache?: boolean;
-      precision?: QueryPrecisionMode
+      precision?: QueryPrecisionMode;
+      content_type?: string;
     },
   ) => Promise<DataResponse<OTQLResult>>;
   runGraphQLQuery: (
@@ -50,7 +55,7 @@ export interface IQueryService {
       query_id?: string;
       limit?: number;
       offset?: number;
-      precision?: QueryPrecisionMode
+      precision?: QueryPrecisionMode;
       use_cache?: boolean;
     },
   ) => Promise<DataResponse<OTQLResult>>;
@@ -66,12 +71,16 @@ export interface IQueryService {
   ) => Promise<AutoCompleteResource[] | undefined>;
   checkOtqlQuery: (
     datamartId: string,
-    query: string
+    query: string,
   ) => Promise<DataResponse<ErrorQueryResource>>;
   convertJsonOtql2Otql: (
     datamartId: string,
-    query: QueryResource
-  ) => Promise<DataResponse<QueryResource>>
+    query: QueryResource,
+  ) => Promise<DataResponse<QueryResource>>;
+  getWhereClause: (
+    datamartId: string,
+    queryId: string
+  ) => Promise<DataResponse<string>>;
 }
 
 @injectable()
@@ -108,11 +117,19 @@ export class QueryService implements IQueryService {
       limit?: number;
       offset?: number;
       useCache?: boolean;
-      precision?: QueryPrecisionMode
+      precision?: QueryPrecisionMode;
+      content_type?: string;
     } = {},
   ): Promise<DataResponse<OTQLResult>> {
     const endpoint = `datamarts/${datamartId}/query_executions/otql`;
-    const headers = { 'Content-Type': 'text/plain; charset=utf-8' };
+
+    const headers = {
+      'Content-Type': `${
+        options.content_type
+          ? options.content_type
+          : 'text/plain; charset=utf-8'
+      }`,
+    }; // to finish
     return ApiService.postRequest(endpoint, query, options, headers);
   }
 
@@ -137,7 +154,7 @@ export class QueryService implements IQueryService {
       limit?: number;
       offset?: number;
       use_cache?: boolean;
-      precision?: QueryPrecisionMode
+      precision?: QueryPrecisionMode;
     } = {},
   ): Promise<DataResponse<OTQLResult>> {
     const endpoint = `datamarts/${datamartId}/query_executions/jsonotql`;
@@ -175,21 +192,36 @@ export class QueryService implements IQueryService {
         return undefined;
       });
   }
-  
+
   checkOtqlQuery(
     datamartId: string,
-    query: string
+    query: string,
   ): Promise<DataResponse<ErrorQueryResource>> {
     const payload = {
-      query: query
-    }
-    return ApiService.postRequest(`datamarts/${datamartId}/query_check/otql`, payload)
+      query: query,
+    };
+    return ApiService.postRequest(
+      `datamarts/${datamartId}/query_check/otql`,
+      payload,
+    );
   }
 
   convertJsonOtql2Otql(
     datamartId: string,
-    query: QueryResource
+    query: QueryResource,
   ): Promise<DataResponse<QueryResource>> {
-    return ApiService.postRequest(`datamarts/${datamartId}/query_translations/to/otql`, query)
+    return ApiService.postRequest(
+      `datamarts/${datamartId}/query_translations/to/otql`,
+      query,
+    );
+  }
+
+  getWhereClause(
+    datamartId: string,
+    queryId: string,
+  ): Promise<DataResponse<any>> {
+    return ApiService.getRequest(
+      `datamarts/${datamartId}/queries/${queryId}/object_tree_expression`,
+    );
   }
 }

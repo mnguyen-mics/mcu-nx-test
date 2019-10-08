@@ -1,15 +1,28 @@
-export type LayoutShape = Rows[]
+import { AudienceSegmentShape } from '../../../models/audiencesegment';
+import { isUserQuerySegment, isUserListSegment } from '../Segments/Edit/domain';
+import { DataResponse } from '../../../services/ApiService';
+import { IQueryService } from '../../../services/QueryService';
 
-export interface Rows {
-  columns: Column[]
-}
 
-export interface Column {
-  span: number;
-  query_id: string;
-  datamart_id: string;
-  component_type: ComponentType;
-  title: string;
-}
 
-type ComponentType = 'MAP_BAR_CHART' | 'MAP_PIE_CHART' | 'DATE_AGGREGATION_CHART' | 'COUNT'
+export const getWhereClausePromise = (
+  datamartId: string,
+  queryService: IQueryService,
+  segment?: AudienceSegmentShape,
+) => {
+  let whereClausePromise: Promise<DataResponse<string> | string>;
+  if (!segment) {
+    return Promise.resolve('')
+  }
+  if (isUserQuerySegment(segment) && segment.query_id) {
+    whereClausePromise = queryService.getWhereClause(
+      datamartId,
+      segment.query_id,
+    );
+  } else if (isUserListSegment(segment)) {
+    whereClausePromise = Promise.resolve(`segments { id = \"${segment.id}\"}`);
+  } else {
+    whereClausePromise = Promise.resolve('');
+  }
+  return whereClausePromise;
+};

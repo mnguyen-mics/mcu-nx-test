@@ -1,32 +1,36 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { Card } from '../../../../components/Card';
 import {
   OTQLAggregationResult,
   isAggregateResult,
   isCountResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, {
-  InjectedThemeColorsProps,
+  InjectedThemeColorsProps, ThemeColorsShape,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { StackedAreaPlot } from '../../../../components/StackedAreaPlot';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
+import CardFlex from '../Components/CardFlex';
 
 export interface DateAggregationChartProps {
   title?: string;
-  queryId: string;
+  segment?: AudienceSegmentShape;
+  queryIds: string[];
   datamartId: string;
+  plotLabels: string[];
+  height?: number;
 }
 
 interface QueryResult {
   xKey: number | string;
-  yKey: number | string;
+  [yKey: string]: number | string;
 }
 
 interface State {
@@ -66,63 +70,93 @@ class DateAggregationChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, datamartId } = this.props;
-
-    this.fetchData(datamartId, queryId);
+    const { segment, queryIds, datamartId } = this.props;
+    this.fetchData(queryIds, datamartId, segment);
   }
 
   componentWillReceiveProps(nextProps: DateAggregationChartProps) {
-    const { queryId, datamartId } = this.props;
-    const { queryId: nextQueryId, datamartId: nextDatamartId } = this.props;
+    const { segment, queryIds, datamartId } = this.props;
+    const { segment: nextSegment, queryIds: nextChartQueryId, datamartId: nextDatamartId } = nextProps;
 
-    if (queryId !== nextQueryId || datamartId !== nextDatamartId) {
-      this.fetchData(nextDatamartId, nextQueryId);
+    if (segment !== nextSegment || queryIds !== nextChartQueryId || datamartId !== nextDatamartId) {
+      this.fetchData(nextChartQueryId, datamartId, nextSegment);
     }
   }
 
-  formatData = (queryResult: OTQLAggregationResult[]): QueryResult[] => {
+  formatDataQuery = (queryResult: OTQLAggregationResult[], plotLabelIndex: string): QueryResult[] => {
     if (
       queryResult.length &&
       queryResult[0].aggregations.buckets.length &&
       queryResult[0].aggregations.buckets[0].buckets.length
     ) {
       return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
-        yKey: data.count,
+        [plotLabelIndex]: data.count,
         xKey: data.key,
       }));
     }
     return [];
   };
 
-  fetchData = (datamartId: string, queryId: string): Promise<void> => {
-    this.setState({ error: false, loading: true });
+  groupQueryResult = (groupKey: string, q: QueryResult[][]): QueryResult[] => {
+    return q.reduce((acc, v, i) => {
+      return acc.concat(v);
+    }, [] as QueryResult[])
+    .reduce((acc, v, i) => {
+      const foundValue = acc.findIndex(s => s[groupKey] === v[groupKey]);
+      if (foundValue > -1) {
+        acc[foundValue] = {...acc[foundValue], ...v};
+        return acc;
+      } else {
+        acc.push(v);
+        return acc;
+      }
+    }, [] as QueryResult[]);
+  }
 
-    return this._queryService
-      .getQuery(datamartId, queryId)
-      .then(res => {
-        if (res.data.query_language === 'OTQL' && res.data.query_text) {
-          return this._queryService
-            .runOTQLQuery(datamartId, res.data.query_text)
-            .then(r => r.data)
-            .then(r => {
-              if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                this.setState({
-                  queryResult: this.formatData(r.rows),
-                  loading: false,
-                });
-                return Promise.resolve();
-              }
-              const mapErr = new Error('wrong query type');
-              return Promise.reject(mapErr);
-            })
-            .catch(e => this.setState({ error: true, loading: false }));
-        }
-        const err = new Error('wrong query language');
-        return Promise.reject(err);
+  fetchData = (
+    chartQueryIds: string[],
+    datamartId: string,
+    segment?: AudienceSegmentShape,
+  ): Promise<void> => {
+    this.setState({ error: false, loading: true });
+    return Promise.all(chartQueryIds.map((c, i) => {
+      return this.fetchQuery(c, datamartId, i, segment)
+    }))
+    .then(q => {
+      this.setState({
+        loading: false,
+        queryResult: this.groupQueryResult('xKey', q)
       })
-      .catch(() => {
-        this.setState({ error: true, loading: false });
-      });
+    })
+    .catch(() => {
+      this.setState({ error: true, loading: false });
+    });
+  };
+
+  fetchQuery = (
+    chartQueryId: string,
+    datamartId: string,
+    plotLabelIndex: number,
+    segment?: AudienceSegmentShape,
+  ): Promise<QueryResult[]> => {
+    return this._queryService
+          .getQuery(datamartId, chartQueryId)
+          .then(queryResp => {
+            return queryResp.data;
+          })
+          .then(q => {
+            return this._queryService
+              .runOTQLQuery(datamartId, q.query_text, {
+                use_cache: true,
+              })
+              .then(r => r.data)
+              .then(r => {
+                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+                  return Promise.resolve(this.formatDataQuery(r.rows, this.props.plotLabels[plotLabelIndex] ? this.props.plotLabels[plotLabelIndex] : plotLabelIndex.toString()),);
+                }
+                throw new Error('wrong query type');
+              })
+          })
   };
 
   generateOptions = () => {
@@ -137,12 +171,27 @@ class DateAggregationChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl } = this.props;
+    const { title, colors, intl, plotLabels, queryIds, height } = this.props;
+
+    const computeChartLabels = () => {
+      return queryIds.map((q, i) => {
+        return { 
+          key: plotLabels[i] ? plotLabels[i] : i.toString(), 
+          message:  plotLabels[i] ? plotLabels[i] : i.toString()};
+      })
+    }
+
+    const computeChartColors = () => {
+      const availableColors = Object.keys(colors).filter(c => c !== "mcs-normal");
+      return queryIds.map((q, i) =>{
+        return colors[availableColors[i%(availableColors.length - 1)] as keyof ThemeColorsShape] as string
+      })
+    }
 
     const optionsForChart = {
       xKey: 'xKey',
-      yKeys: [{ key: 'yKey', message: messages.count }],
-      colors: [colors['mcs-warning']],
+      yKeys: computeChartLabels(),
+      colors: computeChartColors(),
     };
 
     const generateChart = () => {
@@ -162,20 +211,23 @@ class DateAggregationChart extends React.Component<Props, State> {
         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
         return (
-          <StackedAreaPlot
-            identifier={`${this.identifier}-chart`}
-            dataset={this.state.queryResult}
-            options={optionsForChart}
-          />
+          this.state.queryResult &&
+          this.state.queryResult.length && (
+            <StackedBarPlot
+              dataset={this.state.queryResult as any}
+              options={optionsForChart}
+              height={height}
+            />
+          )
         );
       }
     };
 
     return (
-      <Card title={title}>
+      <CardFlex title={title}>
         <hr />
         {generateChart()}
-      </Card>
+      </CardFlex>
     );
   }
 }

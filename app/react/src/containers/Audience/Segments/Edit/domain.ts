@@ -3,6 +3,7 @@ import { AudienceSegmentShape } from "../../../../models/audiencesegment/";
 import { FieldArrayModel } from "../../../../utils/FormHelper";
 import { PluginProperty, AudienceExternalFeed, AudienceTagFeed } from "../../../../models/Plugins";
 import { QueryResource } from "../../../../models/datamart/DatamartResource";
+import { UserQuerySegment, UserListSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 
 
 export interface EditAudienceSegmentParam {
@@ -48,3 +49,14 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   userListFiles: [],
 };
 
+export function isUserQuerySegment(
+  segment: AudienceSegmentShape,
+): segment is UserQuerySegment {
+  return (segment as UserQuerySegment).query_id !== undefined;
+}
+
+export function isUserListSegment(
+  segment: AudienceSegmentShape,
+): segment is UserListSegment {
+  return (segment as UserListSegment).type === 'USER_LIST';
+}

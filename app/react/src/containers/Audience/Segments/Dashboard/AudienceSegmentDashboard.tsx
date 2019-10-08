@@ -11,7 +11,7 @@ import injectNotifications, {
 import UserListImportCard from './UserListImportCard';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
-import { AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
@@ -32,7 +32,7 @@ interface State {
   };
 }
 export interface AudienceSegmentDashboardProps {
-  segment?: AudienceSegmentResource;
+  segment?: AudienceSegmentShape;
   isLoading: boolean;
   datamarts: DatamartWithMetricResource[];
 }
@@ -225,6 +225,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
   render() {
     const { segment, datamarts } = this.props;
+
     return (
       <div>
         <AudienceCounters

@@ -9,16 +9,12 @@ import { AudienceSegmentPage } from '../containers/Audience/Segments/Dashboard';
 
 import AudienceFeedPage from '../containers/Audience/Segments/Edit/AudienceFeedForm/AudienceFeedPage';
 
-import {
-  AudiencePartitionsPage,
-} from '../containers/Audience/Partitions/List';
+import { AudiencePartitionsPage } from '../containers/Audience/Partitions/List';
 
 import TimelinePage from '../containers/Audience/Timeline/TimelinePage';
 
 import Partition from '../containers/Audience/Partitions/Dashboard/Partition';
 import AudiencePartitionPage from '../containers/Audience/Partitions/Edit/AudiencePartitionPage';
-
-import AudienceDashboardPage from '../containers/Audience/Dashboard/AudienceDashboardPage';
 
 import {
   NavigatorRoute,
@@ -26,8 +22,16 @@ import {
   generateRoutesFromDefinition,
 } from './domain';
 import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
+import HomePage from '../containers/Audience/Home/Dashboard/HomePage';
 
 export const audienceDefinition: NavigatorDefinition = {
+  audienceHome: {
+    path: "/audience/home",
+    layout: "main",
+    contentComponent: HomePage,
+    requiredFeature: 'audience.dashboards',
+    requireDatamart: true,
+  },
   audienceSegmentList: {
     path: '/audience/segments',
     layout: 'main',
@@ -120,13 +124,6 @@ export const audienceDefinition: NavigatorDefinition = {
     requiredFeature: 'audience.monitoring',
     requireDatamart: true,
   },
-  audienceDashboard: {
-    path: '/audience/dashboard',
-    layout: 'main',
-    contentComponent: AudienceDashboardPage,
-    requiredFeature: 'audience.dashboard',
-    requireDatamart: true
-  }
 };
 
 export const audienceRoutes: NavigatorRoute[] = generateRoutesFromDefinition(

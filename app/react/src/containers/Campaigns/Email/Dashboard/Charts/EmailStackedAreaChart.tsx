@@ -8,7 +8,7 @@ import {
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
-import { StackedAreaPlot } from '../../../../../components/StackedAreaPlot';
+import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
 import injectThemeColors, {
@@ -50,7 +50,6 @@ class EmailStackedAreaChart extends React.Component<Props> {
     };
     return !isLoading ? (
       <StackedAreaPlot
-        identifier="StackedAreaChartEmailOverview"
         dataset={emailReport}
         options={optionsForChart}
       />
