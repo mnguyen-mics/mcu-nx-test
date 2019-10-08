@@ -228,11 +228,12 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   getExecutionProgress = (
     execution: AudienceSegmentExportJobExecutionResource,
   ) => {
-    // move this later, and replace it in Imports.tsx
     const { colors } = this.props;
     const tasks = execution.num_tasks || 0;
     const completedTasks =
-      (execution.completed_tasks || 0) + (execution.erroneous_tasks || 0);
+      execution.status === 'SUCCEEDED'
+        ? execution.num_tasks || 0 // dirty hack, to fix small possible margin between completed and num_tasks
+        : (execution.completed_tasks || 0) + (execution.erroneous_tasks || 0);
 
     const setColor = (status: string) => {
       switch (status) {
@@ -470,7 +471,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         key: 'action',
         render: (text, record) => {
           return (
-            record.status === 'SUCCEEDED' && (
+            record.status === 'SUCCEEDED' && record.result && record.result.export_file_uri && (
               <Button type="primary" onClick={this.downloadFile(record)}>
                 <McsIcon type="download" />{' '}
                 {this.props.intl.formatMessage(messages.download)}
