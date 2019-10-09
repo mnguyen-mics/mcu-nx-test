@@ -106,7 +106,7 @@ class Overview extends React.Component<Props> {
     };
     return !isFetching ? (
       <StackedAreaPlot
-        dataset={dataSource}
+        dataset={dataSource as any}
         options={optionsForChart}
       />
     ) : (

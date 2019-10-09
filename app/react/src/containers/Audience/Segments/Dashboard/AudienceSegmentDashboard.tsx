@@ -138,7 +138,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           isLoading: false,
           reports: normalizeReportView<AudienceReportData>(
             res.data.report_view,
-          ).filter(r => !!r.user_points),
+          ).filter(r => r.user_points !== undefined || r.user_points !== null),
         },
       }),
     );
