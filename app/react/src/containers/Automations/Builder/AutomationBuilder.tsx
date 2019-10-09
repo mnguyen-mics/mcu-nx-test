@@ -3,6 +3,7 @@ import {
   DiagramEngine,
   DiagramWidget,
   DiagramModel,
+  LabelModel,
 } from 'storm-react-diagrams';
 import { ROOT_NODE_POSITION } from '../../QueryTool/JSONOTQL/domain';
 import { Col } from 'antd';
@@ -31,6 +32,20 @@ import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 import { AutomationFormDataType } from './AutomationNode/Edit/domain';
+import { defineMessages } from 'react-intl';
+import { generateFakeId } from '../../../utils/FakeIdHelper';
+
+
+export const messages = defineMessages({
+  ifNodeFalsePathLabel: {
+    id: 'automation.builder.ifNode.label.false',
+    defaultMessage: 'If Condition False',
+  },
+  ifNodeTruePathLabel: {
+    id: 'automation.builder.ifNode.label.true',
+    defaultMessage: 'If Condition True',
+  },
+});
 
 export interface AutomationBuilderBaseProps {
   datamartId: string;
@@ -156,6 +171,9 @@ class AutomationBuilder extends React.Component<Props, State> {
   ): StorylineNodeModel | void => {
     const props = this.props;
     if (isAutomationBuilderEditorProp(props) && props.automationTreeData) {
+      // Otherwise every node of the same type have the same id
+      // The id seems to be generated only once for all the class instances
+      node.id = generateFakeId()
       return props.updateAutomationData(
         new AddNodeOperation(idParentNode, childNodeId, node).execute(
           props.automationTreeData,
@@ -243,6 +261,8 @@ class AutomationBuilder extends React.Component<Props, State> {
         outLink.setSourcePort(nodeModel.ports.center);
         outLink.setTargetPort(storylineNode.ports.center);
         outLink.setColor('#afafaf');
+        this.addLabelForIfNodeLink(outLink, child)
+
         model.addLink(outLink);
       }
       if (index !== 0) {
@@ -254,6 +274,8 @@ class AutomationBuilder extends React.Component<Props, State> {
           nodeModel.x + nodeModel.getNodeSize().width + 21.5,
           linkPointHeight,
         );
+        this.addLabelForIfNodeLink(link, child)
+
         model.addLink(link);
       }
       return this.drawAutomationTree(
@@ -265,6 +287,19 @@ class AutomationBuilder extends React.Component<Props, State> {
       );
     }, maxHeight);
   };
+
+  addLabelForIfNodeLink = (
+    link: AutomationLinkModel, 
+    child: StorylineNodeModel
+  ) => {
+    if (child.in_edge !== undefined) {
+      if (child.in_edge.handler === 'IF_CONDITION_FALSE') {
+        link.addLabel(new LabelModel(messages.ifNodeFalsePathLabel.defaultMessage))
+      } else if (child.in_edge.handler === 'IF_CONDITION_TRUE') {
+        link.addLabel(new LabelModel(messages.ifNodeTruePathLabel.defaultMessage))
+      }
+    }
+  }
 
   startAutomationTree = (
     automationData?: StorylineNodeModel,

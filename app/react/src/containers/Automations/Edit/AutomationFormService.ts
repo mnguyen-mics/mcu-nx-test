@@ -25,6 +25,7 @@ import {
   isWaitNode,
   ABNFormData,
   WaitFormData,
+  isIfNode,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
@@ -175,7 +176,7 @@ export class AutomationFormService implements IAutomationFormService {
                 const abnFormData: ABNFormData = {
                   branch_number: n.branch_number ? n.branch_number : 2,
                   edges_selection: n.edges_selection,
-                  name: n.name ? n.name : 'Split',
+                  name: 'Split',
                 };
                 getPromise = Promise.resolve().then(() => ({
                   ...n,
@@ -185,7 +186,7 @@ export class AutomationFormService implements IAutomationFormService {
               case 'WAIT_NODE':
                 const waitFormData: WaitFormData = {
                   timeout: n.timeout,
-                  name: n.name ? n.name : 'Wait',
+                  name: 'Wait',
                 };
                 getPromise = Promise.resolve().then(() => ({
                   ...n,
@@ -199,7 +200,18 @@ export class AutomationFormService implements IAutomationFormService {
                     ...n,
                     formData: {
                       ...q.data,
-                      name: n.name,
+                      name: name,
+                    },
+                  }));
+                break;
+              case 'IF_NODE':
+                getPromise = this._queryService
+                  .getQuery(datamartId, n.query_id)
+                  .then(q => ({
+                    ...n,
+                    name: "If",
+                    formData: {
+                      ...q.data,
                     },
                   }));
                 break;
@@ -398,7 +410,7 @@ export class AutomationFormService implements IAutomationFormService {
               });
             }),
           );
-        } else if (isQueryInputNode(node)) {
+        } else if (isQueryInputNode(node) || isIfNode(node)) {
           const saveOrCreateQueryPromise = node.query_id
             ? this._queryService.updateQuery(
                 datamartId,
@@ -430,43 +442,7 @@ export class AutomationFormService implements IAutomationFormService {
               });
             }),
           );
-        } else if (isAbnNode(node)) {
-          return prev.then(() =>
-            this.saveOrCreateNode(automationId, storylineNode).then(res => {
-              return this.saveOrCreateEdges(automationId, {
-                source_id: parentNodeId,
-                target_id: res.data.id,
-                edgeResource: storylineNode.in_edge,
-              }).then(() => {
-                return this.iterate(
-                  organisationId,
-                  datamartId,
-                  automationId,
-                  storylineNode.out_edges,
-                  res.data.id,
-                );
-              });
-            }),
-          );
-        } else if (isEndNode(node)) {
-          return prev.then(() =>
-            this.saveOrCreateNode(automationId, storylineNode).then(res => {
-              return this.saveOrCreateEdges(automationId, {
-                source_id: parentNodeId,
-                target_id: res.data.id,
-                edgeResource: storylineNode.in_edge,
-              }).then(() => {
-                return this.iterate(
-                  organisationId,
-                  datamartId,
-                  automationId,
-                  storylineNode.out_edges,
-                  res.data.id,
-                );
-              });
-            }),
-          );
-        } else if (isWaitNode(node)) {
+        } else if (isAbnNode(node) || isEndNode(node) || isWaitNode(node)) {
           return prev.then(() =>
             this.saveOrCreateNode(automationId, storylineNode).then(res => {
               return this.saveOrCreateEdges(automationId, {
@@ -548,6 +524,17 @@ export class AutomationFormService implements IAutomationFormService {
       };
       resourceId =
         node.query_id && !isFakeId(node.query_id) ? node.query_id : undefined;
+    } else if (isIfNode(node)) {
+      scenarioNodeResource = {
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
+        name: node.name,
+        scenario_id: automationId,
+        x: node.x,
+        y: node.y,
+        query_id: queryId,
+        type: 'IF_NODE',
+      };
+      resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
     } else if (isAbnNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,

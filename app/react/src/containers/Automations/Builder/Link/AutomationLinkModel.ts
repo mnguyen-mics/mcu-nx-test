@@ -1,7 +1,7 @@
 import {
-  LinkModel,
   DefaultLinkModelListener,
   BaseEvent,
+  LinkModel,
 } from 'storm-react-diagrams';
 
 export default class AutomationLinkModel extends LinkModel {

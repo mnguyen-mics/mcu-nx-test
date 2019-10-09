@@ -12,10 +12,35 @@ type Props = AutomationLinkProps;
 
 class AutomationLinkWidget extends React.Component<Props> {
   refPaths: SVGPathElement[];
+  refLabel: HTMLElement | null;
 
   constructor(props: Props) {
     super(props);
     this.refPaths = [];
+  }
+
+  generateLabel() {
+    return this.props.link.labels.map(label => {
+      return (
+        <foreignObject key={label.type} className="link-label" width='100%' height='100%'>
+          <div ref={lab => (this.refLabel = lab)}>{label.type}</div>
+        </foreignObject>	
+      );
+    });
+	}
+
+  updateLabelPosition() {
+    if (this.refLabel !== null && this.refLabel !== undefined) {
+      this.refLabel.setAttribute("style" , `position: relative; top: ${this.props.link.points[0].y - 20}px; left: ${this.props.link.points[0].x + 10}px;`);
+    }
+  }
+
+  componentDidUpdate() {
+    this.updateLabelPosition()
+	}
+
+	componentDidMount() {
+   this.updateLabelPosition()
   }
 
   generateLink(
@@ -85,8 +110,14 @@ class AutomationLinkWidget extends React.Component<Props> {
         ),
       );
     }
-
-    return <g>{paths}</g>;
+      
+    return (
+      
+			<g>
+        {paths}
+        {this.generateLabel()}
+			</g>
+    );
   }
 }
 

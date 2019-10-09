@@ -39,7 +39,7 @@ export interface StorylineResource {
   begin_node_id: string;
 }
 
-export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT_NODE' | 'DROP_NODE'
+export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT_NODE' | 'DROP_NODE' | 'IF_NODE'
 
 export interface ScenarioNodeResource {
   id: string;
@@ -105,6 +105,12 @@ export interface WaitNodeResource extends ScenarioNodeResource {
   formData?: WaitFormData;
 }
 
+export interface IfNodeResource extends ScenarioNodeResource {
+  type: 'IF_NODE';
+  formData: Partial<QueryResource>;
+  query_id: string;
+}
+
 export type ScenarioNodeShape =
   | DisplayCampaignNodeResource
   | EmailCampaignNodeResource
@@ -112,7 +118,8 @@ export type ScenarioNodeShape =
   | ABNNodeResource
   | PluginNodeResource
   | EndNodeResource
-  | WaitNodeResource;
+  | WaitNodeResource
+  | IfNodeResource;
 
 export interface ScenarioEdgeResource {
   id: string;
@@ -122,7 +129,7 @@ export interface ScenarioEdgeResource {
   scenario_id: string;
 }
 
-export type EdgeHandler = 'ON_VISIT' | 'ON_GOAL' | 'OUT';
+export type EdgeHandler = 'ON_VISIT' | 'ON_GOAL' | 'OUT' | 'IF_CONDITION_TRUE' | 'IF_CONDITION_FALSE';
 
 export interface StorylineNodeResource {
   node: ScenarioNodeShape;

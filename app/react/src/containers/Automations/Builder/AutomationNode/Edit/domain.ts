@@ -7,6 +7,7 @@ import {
   EndNodeResource,
   EmailCampaignNodeResource,
   WaitNodeResource,
+  IfNodeResource,
 } from '../../../../../models/automations/automations';
 
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
@@ -193,6 +194,9 @@ export function isWaitNode(
   );
 }
 
+export function isIfNode(node: AutomationNodeShape): node is IfNodeResource {
+  return node.type === 'IF_NODE';
+}
 
 export function isEndNode(node: AutomationNodeShape): node is EndNodeResource {
   return node.type === 'END_NODE';

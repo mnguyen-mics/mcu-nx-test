@@ -67,6 +67,9 @@ export default class AutomationNodeModel extends NodeModel {
       case 'WAIT_NODE':
         this.editFormComponent = WaitForm;
         break;
+      case 'IF_NODE':
+        this.editFormComponent = QueryAutomationForm;
+        break;
       default:
         this.editFormComponent = DefaultAutomationForm;
         break;

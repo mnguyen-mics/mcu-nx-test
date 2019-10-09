@@ -2,7 +2,7 @@ import * as React from 'react';
 import { McsIconType } from '../../../../components/McsIcon';
 import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
-import { ScenarioNodeShape } from '../../../../models/automations/automations';
+import { ScenarioNodeShape, IfNodeResource } from '../../../../models/automations/automations';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { AntIcon } from '../domain';
 import {
@@ -86,6 +86,16 @@ const conditionNode2: ScenarioNodeShape = {
   },
 };
 
+const conditionNode3: IfNodeResource = {
+  id: generateFakeId(),
+  name: 'If',
+  type: 'IF_NODE',
+  scenario_id: '',
+  query_id: '',
+  formData: {
+  },
+};
+
 type Props = InjectedIntlProps;
 
 class AvailableNodeVisualizer extends React.Component<Props, State> {
@@ -101,7 +111,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
   componentWillMount() {
     this.setState({
       actionNodes: [emailCampaignNode, displayCampaignNode],
-      conditionNodes: [conditionNode1, conditionNode2],
+      conditionNodes: [conditionNode1, conditionNode2, conditionNode3],
       exitsNodes: [],
     });
   }
