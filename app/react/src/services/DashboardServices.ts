@@ -250,5 +250,5 @@ const myDashboards: DashboardResource[] = [
         },
       },
     ]
-  }
+  },
 ]
