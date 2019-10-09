@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import {
@@ -17,12 +17,16 @@ import { DashboardResource } from '../../../../models/dashboards/dashboards';
 import { withDatamartSelector, WithDatamartSelectorProps } from '../../../Datamart/WithDatamartSelector';
 import { Loading } from '../../../../components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
+import Error from '../../../../components/Error';
 
 const { Content } = Layout;
 
-// const messages = defineMessages({
- 
-// });
+const messages = defineMessages({
+  comingSoon: {
+    id: "audience.home.dashboard",
+    defaultMessage: "Coming Soon..."
+  }
+});
 
 interface HomeProps {}
 
@@ -96,7 +100,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
 
 
   render() {
-    // const { intl } = this.props;
+    const { intl } = this.props;
     const { isLoading, dashboards } = this.state;
 
     if (isLoading) {
@@ -104,7 +108,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     }
 
     if (!isLoading && dashboards.length === 0) {
-      return <div>: [</div>
+      return <Error message={intl.formatMessage(messages.comingSoon)} />
     }
 
     return (
