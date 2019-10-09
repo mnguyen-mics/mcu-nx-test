@@ -27,7 +27,7 @@ export const SEGMENT_QUERY_SETTINGS = [
   typeSearchSetting,
 ];
 
-export type AudienceReport = Array<{
+export interface AudienceReportData {
   day: string;
   user_points: number;
   user_accounts?: number;
@@ -37,7 +37,9 @@ export type AudienceReport = Array<{
   user_point_additions?: number;
   mobile_cookie_ids?: number;
   mobile_ad_ids?: number;
-}>;
+}
+
+export type AudienceReport = AudienceReportData[];
 
 export interface OverlapData {
   hasOverlap: boolean;
