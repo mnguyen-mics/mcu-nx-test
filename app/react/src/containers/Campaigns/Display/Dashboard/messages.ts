@@ -217,6 +217,10 @@ const messages: {
     id: 'campaign.chart.displayNetworkName',
     defaultMessage: 'Display Network',
   },
+  displayNetworkNameUncategorized: {
+    id: 'display.metrics.displayNetworkNameUncategorized',
+    defaultMessage: 'Uncategorized'
+  },
   format: {
     id: 'campaign.chart.format',
     defaultMessage: 'Format',

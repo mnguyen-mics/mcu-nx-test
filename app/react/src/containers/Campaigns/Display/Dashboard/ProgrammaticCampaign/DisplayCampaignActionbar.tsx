@@ -282,6 +282,14 @@ class DisplayCampaignActionbar extends React.Component<
 
     fetchAllExportData(organisationId, campaignId, filter)
       .then(exportData => {
+        // We don't want to display empty cells in the export
+        exportData.mediaData.map( media => {
+          media.display_network_name = media.display_network_name || formatMessage(messages.displayNetworkNameUncategorized)
+          media.cpa = media.cpa || 0;
+          media.cpc = media.cpc || 0;
+          media.cpm = media.cpm || 0;
+          media.ctr = media.ctr || 0;
+        });
         ExportService.exportDisplayCampaignDashboard(
           organisationId,
           exportData.displayData,
