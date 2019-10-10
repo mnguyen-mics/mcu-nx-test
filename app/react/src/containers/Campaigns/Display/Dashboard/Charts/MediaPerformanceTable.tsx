@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Row, Col } from 'antd';
 import messages from '../messages';
 import { TableView } from '../../../../../components/TableView';
@@ -36,7 +37,7 @@ interface RouterProps {
   adGroupId: string;
 }
 
-type JoinedProps = RouteComponentProps<RouterProps> & MediaPerformanceTableProps;
+type JoinedProps = RouteComponentProps<RouterProps> & MediaPerformanceTableProps & InjectedIntlProps;
 
 class MediaPerformanceTable extends React.Component<JoinedProps> {
 
@@ -77,6 +78,9 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
     const {
       isFetchingMediaStat,
       dataSet,
+      intl: {
+        formatMessage
+      }
     } = this.props;
 
     const renderMetricData = (value: string | number, numeralFormat: string, currency: string = '') => {
@@ -102,7 +106,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         intlMessage: messages.displayNetworkName,
         key: 'display_network_name',
         isHideable: false,
-        render: (text: string) => <span>{text}</span>,
+        render: (text: string) =>  text ? <span>{text}</span> : <span>{formatMessage(messages.displayNetworkNameUncategorized)}</span>,
       },
       {
         intlMessage: messages.name,
@@ -194,5 +198,6 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
 }
 
 export default compose<JoinedProps, MediaPerformanceTableProps>(
+  injectIntl,
   withRouter,
 )(MediaPerformanceTable);
