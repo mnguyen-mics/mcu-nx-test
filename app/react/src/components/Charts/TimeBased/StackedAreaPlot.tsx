@@ -133,7 +133,10 @@ class StackedAreaPlot extends React.Component<Props, {}> {
               lineWidth: 1,
             },
           },
-          threshold: undefined,
+          // The Y axis value to serve as the base for the
+          // area, for distinguishing between values above and below a threshold.
+          // The area between the graph and the threshold is filled.
+          threshold: 0,
         },
       },
       xAxis: {
