@@ -277,7 +277,7 @@ const myDashboards: DashboardResource[] = [
   },
   {
     id: "2",
-    name: "Home",
+    name: "Overall Status",
     datamart_id: "1409",
     type: "HOME",
     components: [
@@ -409,13 +409,22 @@ const myDashboards: DashboardResource[] = [
           total_query_id: "25526"
         }
       },
+     
+    ]
+  },
+  {
+    id: "3",
+    name: "Audience Insight",
+    datamart_id: "1409",
+    type: "HOME",
+    components: [
       {
         layout: {
           h: 3,
           static: false,
           w: 6,
           x: 0,
-          y: 2,
+          y: 0,
         },
         component: {
           component_type: "TOP_INFO_COMPONENT",
@@ -431,7 +440,7 @@ const myDashboards: DashboardResource[] = [
           static: false,
           w: 6,
           x: 6,
-          y: 2,
+          y: 0,
         },
         component: {
           component_type: "TOP_INFO_COMPONENT",
@@ -447,7 +456,7 @@ const myDashboards: DashboardResource[] = [
           static: false,
           w: 6,
           x: 0,
-          y: 5,
+          y: 3,
         },
         component: {
           component_type: "TOP_INFO_COMPONENT",
@@ -463,7 +472,7 @@ const myDashboards: DashboardResource[] = [
           static: false,
           w: 6,
           x: 6,
-          y: 5,
+          y: 3,
         },
         component: {
           component_type: "TOP_INFO_COMPONENT",
@@ -473,13 +482,21 @@ const myDashboards: DashboardResource[] = [
           show_legend: false
         }
       },
+    ]
+  },
+  {
+    id: "4",
+    datamart_id: "1409",
+    type: "HOME",
+    name: "Trending",
+    components: [
       {
         layout: {
           h: 3,
           static: false,
           w: 6,
           x: 0,
-          y: 8,
+          y: 0,
         },
         component: {
           component_type: "TOP_INFO_COMPONENT",
@@ -495,7 +512,7 @@ const myDashboards: DashboardResource[] = [
           static: false,
           w: 6,
           x: 6,
-          y: 8,
+          y: 0,
         },
         component: {
           component_type: "TOP_INFO_COMPONENT",
@@ -511,7 +528,7 @@ const myDashboards: DashboardResource[] = [
           static: false,
           w: 6,
           x: 0,
-          y: 11,
+          y: 3,
         },
         component: {
           component_type: "TOP_INFO_COMPONENT",
@@ -527,7 +544,7 @@ const myDashboards: DashboardResource[] = [
           static: false,
           w: 6,
           x: 6,
-          y: 11,
+          y: 3,
         },
         component: {
           component_type: "TOP_INFO_COMPONENT",
