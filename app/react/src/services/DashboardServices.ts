@@ -283,15 +283,255 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          h: 3,
+          h: 1,
           static: false,
-          w: 6,
+          w: 3,
           x: 0,
           y: 0,
         },
         component: {
+          component_type: "PERCENTAGE",
+          title: "# of UserPoints",
+          id: 1,
+          query_id: "25525",
+          total_query_id: "25526"
+        }
+      },
+      {
+        layout: {
+          h: 1,
+          static: false,
+          w: 3,
+          x: 3,
+          y: 0,
+        },
+        component: {
+          component_type: "PERCENTAGE",
+          title: "# of Page Views",
+          id: 1,
+          query_id: "25525",
+          total_query_id: "25526"
+        }
+      },
+      {
+        layout: {
+          h: 1,
+          static: false,
+          w: 3,
+          x: 6,
+          y: 0,
+        },
+        component: {
+          component_type: "PERCENTAGE",
+          title: "% of Subscriptions",
+          id: 1,
+          query_id: "25525",
+          total_query_id: "25526"
+        }
+      },
+      {
+        layout: {
+          h: 1,
+          static: false,
+          w: 3,
+          x: 9,
+          y: 0,
+        },
+        component: {
+          component_type: "PERCENTAGE",
+          title: "Gender Probalistic Reach",
+          id: 1,
+          query_id: "25525",
+          total_query_id: "25526"
+        }
+      },
+      {
+        layout: {
+          h: 1,
+          static: false,
+          w: 3,
+          x: 0,
+          y: 1,
+        },
+        component: {
+          component_type: "PERCENTAGE",
+          title: "Avg Bid Won",
+          id: 1,
+          query_id: "25525",
+          total_query_id: "25526"
+        }
+      },
+      {
+        layout: {
+          h: 1,
+          static: false,
+          w: 3,
+          x: 3,
+          y: 1,
+        },
+        component: {
+          component_type: "PERCENTAGE",
+          title: "Ad Slot Viewed per Page",
+          id: 1,
+          query_id: "25525",
+          total_query_id: "25526"
+        }
+      },
+      {
+        layout: {
+          h: 1,
+          static: false,
+          w: 3,
+          x: 6,
+          y: 1,
+        },
+        component: {
+          component_type: "PERCENTAGE",
+          title: "Avg Page View per Session",
+          id: 1,
+          query_id: "25525",
+          total_query_id: "25526"
+        }
+      },
+      {
+        layout: {
+          h: 1,
+          static: false,
+          w: 3,
+          x: 9,
+          y: 1,
+        },
+        component: {
+          component_type: "PERCENTAGE",
+          title: "Avg Session Duration",
+          id: 1,
+          query_id: "25525",
+          total_query_id: "25526"
+        }
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 2,
+        },
+        component: {
           component_type: "TOP_INFO_COMPONENT",
-          title: "Top Events",
+          title: "Age Repartition",
+          id: 1,
+          query_id: "25531",
+          show_legend: false
+        }
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 2,
+        },
+        component: {
+          component_type: "TOP_INFO_COMPONENT",
+          title: "Country Repartition",
+          id: 1,
+          query_id: "25531",
+          show_legend: false
+        }
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 5,
+        },
+        component: {
+          component_type: "TOP_INFO_COMPONENT",
+          title: "Gender Repartition",
+          id: 1,
+          query_id: "25531",
+          show_legend: false
+        }
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 5,
+        },
+        component: {
+          component_type: "TOP_INFO_COMPONENT",
+          title: "Plan Subscription Repartition",
+          id: 1,
+          query_id: "25531",
+          show_legend: false
+        }
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 8,
+        },
+        component: {
+          component_type: "TOP_INFO_COMPONENT",
+          title: "Top URLS",
+          id: 1,
+          query_id: "25531",
+          show_legend: false
+        }
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 8,
+        },
+        component: {
+          component_type: "TOP_INFO_COMPONENT",
+          title: "Top Tags",
+          id: 1,
+          query_id: "25531",
+          show_legend: false
+        }
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 11,
+        },
+        component: {
+          component_type: "TOP_INFO_COMPONENT",
+          title: "Top Sections",
+          id: 1,
+          query_id: "25531",
+          show_legend: false
+        }
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 11,
+        },
+        component: {
+          component_type: "TOP_INFO_COMPONENT",
+          title: "Top Authors",
           id: 1,
           query_id: "25531",
           show_legend: false
