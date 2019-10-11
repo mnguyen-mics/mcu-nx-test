@@ -167,7 +167,7 @@ class AudienceLookalikeCreation extends React.Component<
     return this.setState({ loading: true }, () => {
       const { extension_factor, ...rest } = formData;
       const formattedFormData = extension_factor
-        ? { ...rest, extension_factor: extension_factor / 100 }
+        ? { ...rest, extension_factor: extension_factor }
         : { ...rest };
       const promise =
         lookalikeType === 'partition_based_lookalike'
@@ -270,9 +270,7 @@ class AudienceLookalikeCreation extends React.Component<
 
   onAfterChange = (value: number) => {
     const { datamartId, formValues } = this.props;
-    const q1 = `SELECT @count{} FROM UserPoint WHERE segments { id = "${
-      formValues.source_segment_id
-    }" }`;
+    const q1 = `SELECT @count{} FROM UserPoint WHERE segments { id = "${formValues.source_segment_id}" }`;
 
     const q2 = `SELECT @count{} FROM UserPoint WHERE segments { id = "${
       formValues.source_segment_id
@@ -396,8 +394,18 @@ class AudienceLookalikeCreation extends React.Component<
                       ...fieldGridConfig,
                     }}
                     inputProps={{
-                      defaultValue: 30,
+                      max: this.state.partitions
+                        .filter(
+                          partition =>
+                            partition.id ===
+                            this.props.formValues.audience_partition_id,
+                        )
+                        .map(p => p.part_count)[0],
+                      defaultValue: 1,
                     }}
+                    helpToolTipProps={{
+                      title: intl.formatMessage(messages.tooltipExtensionFactor),
+                    }}          
                   />
                 </div>
               </Content>
@@ -460,7 +468,7 @@ class AudienceLookalikeCreation extends React.Component<
                         max: -Math.round(min),
                         onChange: this.onChange,
                         onAfterChange: this.onAfterChange,
-                        tooltipVisible: false
+                        tooltipVisible: false,
                       }}
                     />
                   ) : (

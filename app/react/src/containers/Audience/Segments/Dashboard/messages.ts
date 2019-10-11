@@ -158,4 +158,8 @@ export default defineMessages({
     id: 'audience.segments.lookalikeCreation.lookalikeTooBroad',
     defaultMessage: 'Lookalike is too broad.',
   },
+  tooltipExtensionFactor: {
+    id: 'audience.segments.lookalikeCreation.extension.tooltip',
+    defaultMessage: 'An extension factor of N means that the N most overlapping partitions will be added to your base segment.',
+  },
 });
