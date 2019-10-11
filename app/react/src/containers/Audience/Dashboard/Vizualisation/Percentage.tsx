@@ -6,6 +6,7 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { getFormattedQuery } from '../domain';
 
 export interface PercentageProps {
   queryId: string;
@@ -99,6 +100,9 @@ export default class Percentage extends React.Component<PercentageProps, State> 
 
       .then(queryResp => {
         return queryResp.data;
+      })
+      .then(q => {
+        return getFormattedQuery(datamartId, this._queryService, q, segment);
       })
       .then(q => {
         const query = q.query_text;

@@ -42,7 +42,7 @@ export const formatQuery = (
   return {
     ...query,
     query_language: "OTQL",
-    query_text: `${query.query_text} AND ${additionnalQuery}`
+    query_text: hasWhereClause(query.query_text) ? `${query.query_text} AND ${additionnalQuery}` : `${query.query_text} WHERE ${additionnalQuery}`
   }
 }
 
@@ -51,4 +51,8 @@ export const extractOtqlWhereClause = (text: string) => {
   const wherePosition = formattedText.indexOf("where");
   const whereClause = text.substr(wherePosition + 5, formattedText.length);
   return whereClause;
+}
+
+export const hasWhereClause = (text: string) => {
+  return text.toLowerCase().indexOf("where") > -1
 }

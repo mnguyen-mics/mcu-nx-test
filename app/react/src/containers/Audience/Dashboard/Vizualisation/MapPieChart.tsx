@@ -20,6 +20,7 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getFormattedQuery } from '../domain';
 
 export interface MapPieChartProps {
   title?: string;
@@ -120,6 +121,9 @@ class MapPieChart extends React.Component<Props, State> {
 
       .then(queryResp => {
         return queryResp.data;
+      })
+      .then(q => {
+        return getFormattedQuery(datamartId, this._queryService, q, segment);
       })
       .then(q => {
         const query = q.query_text;

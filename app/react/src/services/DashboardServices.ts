@@ -251,4 +251,29 @@ const myDashboards: DashboardResource[] = [
       },
     ]
   },
+  {
+    id: "2",
+    name: "Test Dashboard",
+    datamart_id: "1398",
+    type: "SEGMENT",
+    components: [
+      {
+        layout: {
+          h: 1,
+          static: false,
+          w: 3,
+          x: 0,
+          y: 0,
+        },
+        component: {
+          component_type: "PERCENTAGE",
+          title: "English Users",
+          id: 1,
+          query_id: "25525",
+          total_query_id: "25526"
+        }
+      }
+    ]
+
+  }
 ]

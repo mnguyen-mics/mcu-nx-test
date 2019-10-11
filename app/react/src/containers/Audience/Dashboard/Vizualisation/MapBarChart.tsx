@@ -18,6 +18,7 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getFormattedQuery } from '../domain';
 
 export interface MapBarChartProps {
   title?: string;
@@ -106,6 +107,9 @@ class MapBarChart extends React.Component<Props, State> {
 
           .then(queryResp => {
             return queryResp.data;
+          })
+          .then(q => {
+            return getFormattedQuery(datamartId, this._queryService, q, segment);
           })
           .then(q => {
             return this._queryService
