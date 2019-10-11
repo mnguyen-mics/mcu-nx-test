@@ -18,7 +18,6 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import { getWhereClausePromise } from '../domain';
 
 export interface MapBarChartProps {
   title?: string;
@@ -102,8 +101,6 @@ class MapBarChart extends React.Component<Props, State> {
     segment?: AudienceSegmentShape,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-    return getWhereClausePromise(datamartId, this._queryService, segment)
-      .then(clauseResp => {
         return this._queryService
           .getQuery(datamartId, chartQueryId)
 
@@ -111,14 +108,9 @@ class MapBarChart extends React.Component<Props, State> {
             return queryResp.data;
           })
           .then(q => {
-            const query = {
-              query: q.query_text,
-              additional_expression: clauseResp,
-            };
             return this._queryService
-              .runOTQLQuery(datamartId, JSON.stringify(query), {
+              .runOTQLQuery(datamartId, q.query_text, {
                 use_cache: true,
-                content_type: `application/json`,
               })
               .then(resp => {
                 return resp.data;
@@ -137,8 +129,6 @@ class MapBarChart extends React.Component<Props, State> {
               .catch(() => this.setState({ error: true, loading: false }));
           })
           .catch(() => this.setState({ error: true, loading: false }));
-      })
-      .catch(() => this.setState({ error: true, loading: false }));
   };
 
   generateOptions = () => {

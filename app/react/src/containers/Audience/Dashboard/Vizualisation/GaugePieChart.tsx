@@ -20,7 +20,6 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import { getWhereClausePromise } from '../domain';
 
 export interface GaugePieChartProps {
   title?: string;
@@ -114,8 +113,6 @@ class GaugePieChart extends React.Component<Props, State> {
    
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-    return getWhereClausePromise(datamartId, this._queryService, segment)
-      .then(clauseResp => {
         const promises = chartQueryIds.map(chartQueryId => {
           return this._queryService.getQuery(datamartId, chartQueryId);
         });
@@ -125,16 +122,11 @@ class GaugePieChart extends React.Component<Props, State> {
           })
           .then(queryList => {
             const queryListPromises = queryList.map(q => {
-              const query = {
-                query: q.query_text,
-                additional_expression: clauseResp,
-              };
               return this._queryService.runOTQLQuery(
                 datamartId,
-                JSON.stringify(query),
+                q.query_text,
                 {
                   use_cache: true,
-                  content_type: `application/json`,
                 },
               );
             });
@@ -165,8 +157,7 @@ class GaugePieChart extends React.Component<Props, State> {
                 const mapErr = new Error('wrong query type');
                 return Promise.reject(mapErr);
               });
-          });
-      })
+          })
       .catch(() => {
         this.setState({
           error: true,

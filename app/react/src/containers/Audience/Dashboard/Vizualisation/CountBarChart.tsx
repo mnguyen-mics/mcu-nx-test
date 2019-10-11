@@ -18,7 +18,6 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import { getWhereClausePromise } from '../domain';
 
 export interface CountBarChartProps {
   title?: string;
@@ -123,8 +122,6 @@ class CountBarChart extends React.Component<Props, State> {
     datamartId: string,
     segment?: AudienceSegmentShape,
   ): Promise<void> => {
-    return getWhereClausePromise(datamartId, this._queryService, segment)
-      .then(clauseResp => {
         const promises = chartQueryIds.map(chartQueryId => {
           return this._queryService.getQuery(datamartId, chartQueryId);
         });
@@ -134,16 +131,11 @@ class CountBarChart extends React.Component<Props, State> {
           })
           .then(queryList => {
             const queryListPromises = queryList.map(q => {
-              const query = {
-                query: q.query_text,
-                additional_expression: clauseResp,
-              };
               return this._queryService.runOTQLQuery(
                 datamartId,
-                JSON.stringify(query),
+                q.query_text,
                 {
                   use_cache: true,
-                  content_type: `application/json`,
                 },
               );
             });
@@ -165,8 +157,7 @@ class CountBarChart extends React.Component<Props, State> {
                 const mapErr = new Error('wrong query type');
                 return Promise.reject(mapErr);
               });
-          });
-      })
+          })
       .catch(() => {
         // To remove
         this.setState({
