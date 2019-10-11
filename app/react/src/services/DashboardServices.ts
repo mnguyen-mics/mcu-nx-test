@@ -253,8 +253,8 @@ const myDashboards: DashboardResource[] = [
   },
   {
     id: "2",
-    name: "Test Dashboard",
-    datamart_id: "1398",
+    name: "Deterministic Insights",
+    datamart_id: "1409",
     type: "SEGMENT",
     components: [
       {
@@ -274,6 +274,29 @@ const myDashboards: DashboardResource[] = [
         }
       }
     ]
-
+  },
+  {
+    id: "2",
+    name: "Home",
+    datamart_id: "1409",
+    type: "HOME",
+    components: [
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 0,
+        },
+        component: {
+          component_type: "TOP_INFO_COMPONENT",
+          title: "Top Events",
+          id: 1,
+          query_id: "25531",
+          show_legend: false
+        }
+      }
+    ]
   }
 ]
