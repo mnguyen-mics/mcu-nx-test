@@ -1,3 +1,6 @@
+[general]
+ignore=B3
+
 [title-max-length]
 line-length=72
 
@@ -8,10 +11,11 @@ line-length=72
 words=wip
 
 [title-match-regex]
-regex=^[A-Z]+-[^ ]+ [^ ]+
+regex=^(:?Revert ")?[A-Z]+-[^ ]+ [^ ]+
 
 [body-max-line-length]
-line-length=72
+# With 72, we cant paste stacktraces
+line-length=112
 
 [author-valid-email]
 regex=[^@]+@(mediarithmics.com|users.noreply.github.com)
