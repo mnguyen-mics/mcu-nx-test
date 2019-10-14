@@ -105,7 +105,6 @@ import {
   IMlAlgorithmModelService,
   MlAlgorithmModelService,
 } from '../services/MlAlgorithmModelService';
-
 import {
   IMlFunctionService,
   MlFunctionService,
@@ -122,6 +121,7 @@ import { ILabelService, LabelService } from '../services/LabelsService';
 import OrganisationService, {
   IOrganisationService,
 } from '../services/OrganisationService';
+import { IAuthService, AuthService } from '../services/AuthService';
 
 const container = new Container();
 
@@ -205,6 +205,7 @@ container
   .bind<IFeedsStatsService>(TYPES.IFeedsStatsService)
   .to(FeedsStatsService);
 container.bind<IMicsTagService>(TYPES.IMicsTagService).to(MicsTagService);
+container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
 container
   .bind<IPersistedStoreService>(TYPES.IPersistedStoreService)
   .to(PersistedStoreService);

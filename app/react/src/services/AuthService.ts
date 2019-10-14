@@ -64,7 +64,7 @@ export interface IAuthService {
 
   getConnectedUser: () => Promise<UserProfileResource>;
 
-  sendPassword: (email: string) => Promise<{}>;
+  sendPassword: (email: string) => Promise<any>;
 
   resetPassword: (
     email: string,

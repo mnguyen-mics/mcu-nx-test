@@ -240,6 +240,6 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
 }
 
 export default compose<Props, FeedCardListProps>(
-  injectFeatures,
   withRouter,
+  injectFeatures,
 )(FeedCardList);

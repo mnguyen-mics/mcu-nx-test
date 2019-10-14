@@ -51,12 +51,12 @@ const PluginService = {
             return filteredPlugins;
           }, []),
         ).then(pluginVersions => {
-          const archivedPVersion = pluginVersions.filter(pv => !!pv.archived);
+          const archivedPVersion = pluginVersions.filter((pv: PluginVersionResource) => !!pv.archived);
           return {
             ...plugins,
             data: plugins.data.filter(
               p =>
-                !archivedPVersion.find(apv => apv.id === p.current_version_id),
+                !archivedPVersion.find((apv: PluginVersionResource) => apv.id === p.current_version_id),
             ),
           };
         });

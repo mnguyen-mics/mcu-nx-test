@@ -135,7 +135,7 @@ export class AudienceTagFeedService
     params: object = {},
   ): Promise<DataResponse<PropertyResourceShape> | void> => {
     const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties/technical_name=${technicalName}`;
-    return this._pluginService.handleSaveOfProperties(
+    return PluginService.handleSaveOfProperties(
       params,
       organisationId,
       this.entityPath,
