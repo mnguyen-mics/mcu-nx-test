@@ -5,7 +5,6 @@ import { Button } from 'antd';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import DisplayCampaign from './DisplayCampaign';
 import ReportService from '../../../../../services/ReportService';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import GoalService from '../../../../../services/GoalService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
@@ -18,7 +17,6 @@ import {
   compareSearches,
   DateSearchSettings,
 } from '../../../../../utils/LocationSearchHelper';
-
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -35,6 +33,9 @@ import {
 } from '../../../../../models/campaign/display';
 import { ReportView } from '../../../../../models/ReportView';
 import { UpdateMessage } from './DisplayCampaignAdGroupTable';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 
 type Props = RouteComponentProps<{
   organisationId: string;
@@ -47,6 +48,9 @@ class DisplayCampaignPage extends React.Component<
   DisplayCampaignPageState
 > {
   cancelablePromises: Array<CancelablePromise<any>> = [];
+
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
 
   constructor(props: Props) {
     super(props);
@@ -135,7 +139,7 @@ class DisplayCampaignPage extends React.Component<
       filter.to.toMoment().unix() - filter.from.toMoment().unix();
     const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
     const getCampaignAdGroupAndAd = () =>
-      DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, {
+      this._displayCampaignService.getCampaignDisplayViewDeep(campaignId, {
         view: 'deep',
       });
     const getCampaignPerf = makeCancelable(
@@ -287,7 +291,8 @@ class DisplayCampaignPage extends React.Component<
       });
     });
 
-    DisplayCampaignService.getGoals(campaignId)
+    this._displayCampaignService
+      .getGoals(campaignId)
       .then(goals => goals.data)
       .then(goals => {
         const promises = goals.map(goal => {
@@ -440,7 +445,8 @@ class DisplayCampaignPage extends React.Component<
     const adGroupId = adAdGroup ? adAdGroup.ad_group_id : undefined;
 
     return campaignId && adGroupId
-      ? DisplayCampaignService.updateAd(adId, campaignId, adGroupId, body)
+      ? this._displayCampaignService
+          .updateAd(adId, campaignId, adGroupId, body)
           .then(response => {
             this.setState(prevState => {
               const nextState = {
@@ -504,7 +510,8 @@ class DisplayCampaignPage extends React.Component<
         ? adGroupCampaign[adGroupId].campaign_id
         : undefined;
     return campaignId
-      ? DisplayCampaignService.updateAdGroup(campaignId, adGroupId, body)
+      ? this._displayCampaignService
+          .updateAdGroup(campaignId, adGroupId, body)
           .then(response => {
             this.setState(prevState => {
               const nextState = {
@@ -557,8 +564,11 @@ class DisplayCampaignPage extends React.Component<
   ): Promise<any> => {
     const { notifyError } = this.props;
 
-    return DisplayCampaignService.updateCampaign(campaignId, body)
-      .then(() => DisplayCampaignService.getCampaignDisplayViewDeep(campaignId))
+    return this._displayCampaignService
+      .updateCampaign(campaignId, body)
+      .then(() =>
+        this._displayCampaignService.getCampaignDisplayViewDeep(campaignId),
+      )
       .then(response => {
         this.setState(prevState => {
           const nextState = {

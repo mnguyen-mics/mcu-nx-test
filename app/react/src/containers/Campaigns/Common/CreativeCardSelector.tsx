@@ -13,8 +13,9 @@ import CollectionSelector, {
   CollectionSelectorProps,
 } from '../../../components/ElementSelector/CollectionSelector';
 import { SearchFilter } from '../../../components/ElementSelector';
-import CreativeService, {
+import {
   CreativesOptions,
+  ICreativeService,
 } from '../../../services/CreativeService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import {
@@ -22,6 +23,8 @@ import {
   CreativeResourceShape,
 } from '../../../models/creative/CreativeResource';
 import CreativeCard, { CreativeCardProps } from './CreativeCard';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
 
 const CreativeCollectionSelector: React.ComponentClass<
   CollectionSelectorProps<CreativeResourceShape>
@@ -72,6 +75,9 @@ type Props = CreativeCardSelectorProps &
 const SUPPORTED_CREATIVES: CreativeType[] = ['DISPLAY_AD', 'EMAIL_TEMPLATE'];
 
 class CreativeCardSelector extends React.Component<Props> {
+  @lazyInject(TYPES.ICreativeService)
+  private _creativeService: ICreativeService<any>;
+
   constructor(props: Props) {
     super(props);
     const { creativeType } = this.props;
@@ -81,7 +87,12 @@ class CreativeCardSelector extends React.Component<Props> {
   }
 
   fetchCreatives = (filter: SearchFilter) => {
-    const { creativeType, match: { params: { organisationId } } } = this.props;
+    const {
+      creativeType,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const options: CreativesOptions = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
@@ -92,13 +103,13 @@ class CreativeCardSelector extends React.Component<Props> {
     }
 
     if (creativeType === 'EMAIL_TEMPLATE') {
-      return CreativeService.getEmailTemplates(organisationId, options);
+      return this._creativeService.getEmailTemplates(organisationId, options);
     }
-    return CreativeService.getDisplayAds(organisationId, options);
+    return this._creativeService.getDisplayAds(organisationId, options);
   };
 
   fetchCreative = (creativeId: string) => {
-    return CreativeService.getCreative(creativeId);
+    return this._creativeService.getCreative(creativeId);
   };
 
   renderCreativeTitle = (creative: CreativeResourceShape) => (

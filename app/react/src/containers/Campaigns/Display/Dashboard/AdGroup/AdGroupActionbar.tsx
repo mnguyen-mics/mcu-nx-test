@@ -18,7 +18,6 @@ import ResourceTimelinePage, {
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
-import CreativeService from '../../../../../services/CreativeService';
 import PlacementListsService from '../../../../../services/Library/PlacementListsService';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
 import { TYPES } from '../../../../../constants/types';
@@ -26,12 +25,13 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IDisplayNetworkService } from '../../../../../services/DisplayNetworkService';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { IKeywordListService } from '../../../../../services/Library/KeywordListsService';
-import { IDealsListService } from '../../../../../services/Library/DealListsService';
+import { IDealListService } from '../../../../../services/Library/DealListService';
 import CatalogService from '../../../../../services/CatalogService';
 import { AdexInventoryServiceItemPublicResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { getLinkedResourceIdInSelection } from '../../../../../utils/ResourceHistoryHelper';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { IGeonameService } from '../../../../../services/GeonameService';
+import { ICreativeService } from '../../../../../services/CreativeService';
+import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -59,8 +59,14 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
   @lazyInject(TYPES.IKeywordListService)
   private _keywordsListService: IKeywordListService;
 
-  @lazyInject(TYPES.IDealsListService)
-  private _dealsListService: IDealsListService;
+  @lazyInject(TYPES.IDealListService)
+  private _dealsListService: IDealListService;
+
+  @lazyInject(TYPES.ICreativeService)
+  private _creativeService: ICreativeService<any>;
+
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
 
   @lazyInject(TYPES.IGeonameService)
   private _geonameService: IGeonameService;
@@ -161,7 +167,8 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                 handleClose: () => this.props.closeNextDrawer(),
                 formatProperty: formatAdGroupProperty,
                 resourceLinkHelper: {
-                  DISPLAY_CAMPAIGN: { // this one is only kept for backward compatibility, all the new events are related to "CAMPAIGN"
+                  DISPLAY_CAMPAIGN: {
+                    // this one is only kept for backward compatibility, all the new events are related to "CAMPAIGN"
                     direction: 'PARENT',
                     getType: () => {
                       return (
@@ -171,7 +178,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return DisplayCampaignService.getCampaignName(id);
+                      return this._displayCampaignService.getCampaignName(id);
                     },
                     goToResource: (id: string) => {
                       history.push(
@@ -189,7 +196,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return DisplayCampaignService.getCampaignName(id);
+                      return this._displayCampaignService.getCampaignName(id);
                     },
                     goToResource: (id: string) => {
                       history.push(
@@ -312,11 +319,11 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         id,
                         'CREATIVE',
                       ).then(adId => {
-                        return CreativeService.getCreative(adId).then(
-                          creativeResponse => {
+                        return this._creativeService
+                          .getCreative(adId)
+                          .then(creativeResponse => {
                             return creativeResponse.data.name;
-                          },
-                        );
+                          });
                       });
                     },
                     goToResource: (id: string) => {
@@ -326,8 +333,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         id,
                         'CREATIVE',
                       ).then(adId => {
-                        return CreativeService.getCreative(adId).then(
-                          creativeResponse => {
+                        return this._creativeService
+                          .getCreative(adId)
+                          .then(creativeResponse => {
                             if (
                               creativeIsDisplayAdResource(creativeResponse.data)
                             ) {
@@ -351,8 +359,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                                 }`,
                               );
                             }
-                          },
-                        );
+                          });
                       });
                     },
                   },
@@ -442,11 +449,11 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         id,
                         'GEONAME',
                       ).then(geonameId => {
-                        return this._geonameService.getGeoname(geonameId).then(
-                          res => {
+                        return this._geonameService
+                          .getGeoname(geonameId)
+                          .then(res => {
                             return res.data.name;
-                          },
-                        );
+                          });
                       });
                     },
                     goToResource: (id: string) => {

@@ -13,8 +13,8 @@ import { Dropdown } from '../../../../components/PopupContainers';
 import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
-import CampaignService, {
-  CampaignsOptions,
+import {
+  CampaignsOptions, IDisplayCampaignService,
 } from '../../../../services/DisplayCampaignService';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
@@ -38,6 +38,8 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -93,65 +95,14 @@ interface DisplayCampaignsActionbarState {
   allCampaignsPaused: boolean;
 }
 
-const fetchExportData = (organisationId: string, filter: FilterParams) => {
-  const campaignType = 'DISPLAY';
-  const buildOptionsForGetCampaigns = () => {
-    const options: CampaignsOptions = {
-      archived: filter.statuses.includes('ARCHIVED'),
-      first_result: 0,
-      max_results: 2000,
-    };
-
-    const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
-
-    if (filter.keywords) {
-      options.keywords = filter.keywords;
-    }
-    if (apiStatuses.length > 0) {
-      options.status = apiStatuses;
-    }
-
-    return options;
-  };
-
-  const startDate = filter.from;
-  const endDate = filter.to;
-  const dimension = [''];
-
-  const apiResults = Promise.all([
-    CampaignService.getDisplayCampaigns(
-      organisationId,
-      campaignType,
-      buildOptionsForGetCampaigns(),
-    ),
-    ReportService.getDisplayCampaignPerformanceReport(
-      organisationId,
-      startDate,
-      endDate,
-      dimension,
-    ),
-  ]);
-
-  return apiResults.then(results => {
-    const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
-    const performanceReport = normalizeArrayOfObject(
-      normalizeReportView(results[1].data.report_view),
-      'campaign_id',
-    );
-
-    return Object.keys(displayCampaigns).map(campaignId => {
-      return {
-        ...displayCampaigns[campaignId],
-        ...performanceReport[campaignId],
-      };
-    });
-  });
-};
-
 class DisplayCampaignsActionbar extends React.Component<
   JoinedProps,
   DisplayCampaignsActionbarState
 > {
+
+@lazyInject(TYPES.IDisplayCampaignService)
+private _displayCampaignService: IDisplayCampaignService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -160,6 +111,61 @@ class DisplayCampaignsActionbar extends React.Component<
       allCampaignsPaused: false,
     };
   }
+
+  fetchExportData = (organisationId: string, filter: FilterParams) => {
+    const campaignType = 'DISPLAY';
+    const buildOptionsForGetCampaigns = () => {
+      const options: CampaignsOptions = {
+        archived: filter.statuses.includes('ARCHIVED'),
+        first_result: 0,
+        max_results: 2000,
+      };
+  
+      const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
+  
+      if (filter.keywords) {
+        options.keywords = filter.keywords;
+      }
+      if (apiStatuses.length > 0) {
+        options.status = apiStatuses;
+      }
+  
+      return options;
+    };
+  
+    const startDate = filter.from;
+    const endDate = filter.to;
+    const dimension = [''];
+  
+    const apiResults = Promise.all([
+      this._displayCampaignService.getDisplayCampaigns(
+        organisationId,
+        campaignType,
+        buildOptionsForGetCampaigns(),
+      ),
+      ReportService.getDisplayCampaignPerformanceReport(
+        organisationId,
+        startDate,
+        endDate,
+        dimension,
+      ),
+    ]);
+  
+    return apiResults.then(results => {
+      const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
+      const performanceReport = normalizeArrayOfObject(
+        normalizeReportView(results[1].data.report_view),
+        'campaign_id',
+      );
+  
+      return Object.keys(displayCampaigns).map(campaignId => {
+        return {
+          ...displayCampaigns[campaignId],
+          ...performanceReport[campaignId],
+        };
+      });
+    });
+  };
 
   handleRunExport = () => {
     const {
@@ -181,7 +187,7 @@ class DisplayCampaignsActionbar extends React.Component<
       0,
     );
 
-    fetchExportData(organisationId, filter)
+    this.fetchExportData(organisationId, filter)
       .then(data => {
         ExportService.exportDisplayCampaigns(
           organisationId,

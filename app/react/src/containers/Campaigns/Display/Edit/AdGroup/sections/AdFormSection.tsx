@@ -20,7 +20,7 @@ import {
   DisplayAdCreateRequest,
 } from '../../../../../../models/creative/CreativeResource';
 import { Index } from '../../../../../../utils/index';
-import CreativeService from '../../../../../../services/CreativeService';
+import { ICreativeService } from '../../../../../../services/CreativeService';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
 import CreativeCardSelector, {
   CreativeCardSelectorProps,
@@ -42,6 +42,8 @@ import {
   CancelablePromise,
 } from '../../../../../../utils/ApiHelper';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../constants/types';
 
 export interface AdFormSectionProps extends ReduxFormChangeProps {
   disabled?: boolean;
@@ -68,6 +70,9 @@ type Props = AdFormSectionProps &
 class AdFormSection extends React.Component<Props, AdsSectionState> {
   cancelablePromise: CancelablePromise<DisplayAdResource[]>;
 
+  @lazyInject(TYPES.ICreativeService)
+  private _creativeService: ICreativeService<any>;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -91,7 +96,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     this.cancelablePromise = makeCancelable(
       Promise.all(
         creativeIdsToBeLoaded.map(id =>
-          CreativeService.getDisplayAd(id).then(res => res.data),
+          this._creativeService.getDisplayAd(id).then(res => res.data),
         ),
       ),
     );
@@ -138,7 +143,6 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
 
     formChange((fields as any).name, newFields);
   };
-
 
   openCreativeCardSelector = () => {
     const { fields } = this.props;
@@ -239,7 +243,6 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
             <div className="dimensions">{data.creativeResource.format}</div>
           </Col>
           <Col className="inline buttons" span={4}>
-
             <ButtonStyleless disabled={disabled} onClick={removeField}>
               <McsIcon className="button" type="delete" />
             </ButtonStyleless>
@@ -255,7 +258,12 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
   };
 
   render() {
-    const { intl: { formatMessage }, fields, disabled, small } = this.props;
+    const {
+      intl: { formatMessage },
+      fields,
+      disabled,
+      small,
+    } = this.props;
 
     const { displayCreativeCacheById } = this.state;
 
@@ -300,7 +308,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
               id: messages.dropdownAddExisting.id,
               message: messages.dropdownAddExisting,
               onClick: this.openCreativeCardSelector,
-              disabled: disabled
+              disabled: disabled,
             },
           ]}
           subtitle={messages.sectionSubtitleAds}

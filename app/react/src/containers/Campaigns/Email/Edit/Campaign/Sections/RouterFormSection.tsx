@@ -14,8 +14,10 @@ import DefaultSelect, {
 } from '../../../../../../components/Form/FormSelect/DefaultSelect';
 import messages from '../../messages';
 import { EmailRouterResource } from '../../../../../../models/campaign/email';
-import EmailRoutersService from '../../../../../../services/Library/EmailRoutersService';
 import { EditEmailBlastRouteMatchParam } from '../../domain';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { IEmailRouterService } from '../../../../../../services/Library/EmailRoutersService';
+import { TYPES } from '../../../../../../constants/types';
 
 const FormSelectField = Field as new () => GenericField<DefaultSelectProps>;
 
@@ -29,6 +31,9 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 
 class RouterFormSection extends React.Component<Props, State> {
+  @lazyInject(TYPES.IEmailRouterService)
+  private _emailRouterService: IEmailRouterService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -39,14 +44,14 @@ class RouterFormSection extends React.Component<Props, State> {
 
   componentDidMount() {
     this.setState({ fetchingRouters: true });
-    EmailRoutersService.getEmailRouters(
-      this.props.match.params.organisationId,
-    ).then(response => {
-      this.setState({
-        fetchingRouters: false,
-        routers: response.data,
+    this._emailRouterService
+      .getEmailRouters(this.props.match.params.organisationId)
+      .then(response => {
+        this.setState({
+          fetchingRouters: false,
+          routers: response.data,
+        });
       });
-    });
   }
 
   render() {
@@ -87,6 +92,8 @@ class RouterFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withRouter, withValidators)(
-  RouterFormSection,
-);
+export default compose(
+  injectIntl,
+  withRouter,
+  withValidators,
+)(RouterFormSection);

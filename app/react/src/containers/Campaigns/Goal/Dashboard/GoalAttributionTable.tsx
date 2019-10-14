@@ -11,11 +11,13 @@ import { TableView } from '../../../../components/TableView/index';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import messages from './messages';
 import { Link } from 'react-router-dom';
-import ObjectRenderer from '../../../ObjectRenderer/ObjectRenderer'
-import DisplayCampaignService from '../../../../services/DisplayCampaignService'
-import CreativeService from '../../../../services/CreativeService'
+import ObjectRenderer from '../../../ObjectRenderer/ObjectRenderer';
 import { DisplayCampaignResource } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { GenericCreativeResource } from '../../../../models/creative/CreativeResource';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { ICreativeService } from '../../../../services/CreativeService';
+import { IDisplayCampaignService } from '../../../../services/DisplayCampaignService';
 
 export interface GoalAttributionTableProps {
   dataSource: CampaignStatData | CreativeStatData | SourceStatData;
@@ -37,8 +39,19 @@ type JoinedProps = GoalAttributionTableProps &
   InjectedIntlProps;
 
 class GoalAttributionTable extends React.Component<JoinedProps> {
+  @lazyInject(TYPES.ICreativeService)
+  private _creativeService: ICreativeService<any>;
+
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
+
   buildNameColumn = () => {
-    const { dataSource, match: { params: { organisationId } } } = this.props;
+    const {
+      dataSource,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     let columns: Array<DataColumnDefinition<Record>> = [];
 
@@ -73,8 +86,24 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
             const link = `/v2/o/${organisationId}/campaigns/display/${
               record.id
             }`;
-            const renderName = (c: DisplayCampaignResource) => <span>{c.name}</span>
-            return <Link to={link}>{name ? name : <ObjectRenderer fetchingMethod={DisplayCampaignService.getCampaignDisplay} id={record.id} renderMethod={renderName} />}</Link>;
+            const renderName = (c: DisplayCampaignResource) => (
+              <span>{c.name}</span>
+            );
+            return (
+              <Link to={link}>
+                {name ? (
+                  name
+                ) : (
+                  <ObjectRenderer
+                    fetchingMethod={
+                      this._displayCampaignService.getCampaignDisplay
+                    }
+                    id={record.id}
+                    renderMethod={renderName}
+                  />
+                )}
+              </Link>
+            );
           },
         },
       ];
@@ -91,8 +120,22 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
             const link = `/v2/o/${organisationId}/creatives/display/edit/${
               record.id
             }`;
-            const renderName = (c: GenericCreativeResource) => <span>{c.name}</span>
-            return <Link to={link}>{name ? name : <ObjectRenderer fetchingMethod={CreativeService.getCreative} id={record.id} renderMethod={renderName} />}</Link>;
+            const renderName = (c: GenericCreativeResource) => (
+              <span>{c.name}</span>
+            );
+            return (
+              <Link to={link}>
+                {name ? (
+                  name
+                ) : (
+                  <ObjectRenderer
+                    fetchingMethod={this._creativeService.getCreative}
+                    id={record.id}
+                    renderMethod={renderName}
+                  />
+                )}
+              </Link>
+            );
           },
         },
       ];
