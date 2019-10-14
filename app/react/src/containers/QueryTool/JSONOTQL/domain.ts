@@ -601,6 +601,12 @@ function buildSchemaItem(
       } else {
         return {...field, closestParentType: rootObjectType.name};
       }
+    }).sort((a, b) => {
+      const isAObjectType = isSchemaItem(a)
+      const isBObjectType = isSchemaItem(b)
+      const aName = (a.decorator && !a.decorator.hidden ? a.decorator.label : a.name)
+      const bName = (b.decorator && !b.decorator.hidden ? b.decorator.label : b.name)
+      return isAObjectType && !isBObjectType ? 1 : (isAObjectType && isBObjectType) || (!isAObjectType && !isBObjectType) ? aName.localeCompare(bName) : -1 
     }),
   };
 }
