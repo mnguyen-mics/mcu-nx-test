@@ -19,13 +19,7 @@ export default class SchemaVizualizer extends React.Component<
     const { schema, disableDragAndDrop } = this.props;
     const loop = (gData: SchemaItem, objectType?: string) =>
       gData &&
-      gData.fields.sort((a, b) => {
-        const isAObjectType = isSchemaItem(a)
-        const isBObjectType = isSchemaItem(b)
-        const aName = (a.decorator && !a.decorator.hidden ? a.decorator.label : a.name)
-        const bName = (b.decorator && !b.decorator.hidden ? b.decorator.label : b.name)
-        return isAObjectType && !isBObjectType ? 1 : (isAObjectType && isBObjectType) || (!isAObjectType && !isBObjectType) ? aName.localeCompare(bName) : -1 
-      }).map(
+      gData.fields.map(
         (item): React.ReactNode => {
           if (
             isSchemaItem(item)
