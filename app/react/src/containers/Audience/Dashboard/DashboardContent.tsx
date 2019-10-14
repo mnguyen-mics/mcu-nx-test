@@ -103,6 +103,7 @@ export default class DashboardContent extends React.Component<
             plotLabels={comp.plot_labels}
             datamartId={datamartId}
             height={height}
+            format={comp.format}
           />
         );
       case 'GAUGE_PIE_CHART':
