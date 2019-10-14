@@ -80,7 +80,7 @@ const myDashboards: DashboardResource[] = [
           component_type: 'PERCENTAGE',
           query_id: '25344',
           total_query_id: '25345',
-          title: 'Pourcentage de visites reconnues',
+          title: 'Pourcentage de visites reconnues (30j)',
         },
       },
       {
@@ -140,7 +140,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'MAP_PIE_CHART',
           query_id: '25348',
-          title: 'Repartion des visites par type de profil matching',
+          title: 'Repartion des visites par type de profil matching (30j)',
           show_legend: true
         },
       },
@@ -157,7 +157,7 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           query_ids: ['25349', '25350', '25351'],
           labels_enabled: true,
-          plot_labels: ["2nd", "1rst_email_click", "1rst logged"],
+          plot_labels: ["2nd", "1st_email_click", "1st logged"],
           title: 'Nombre de user par type de profil matching',
           show_legend: false
         },
@@ -175,8 +175,8 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           query_ids: ['25352', '25353', '25354', '25355', '25356'],
           labels_enabled: true,
-          plot_labels: ["Autres", "Basket View", "Purchase", "Search", "Email Click"],
-          title: "Nombre d'évènements par typologie",
+          plot_labels: ["Page View", "Basket View", "Purchase", "Search", "Email Click"],
+          title: "Nombre d'évènements par typologie (30j)",
           show_legend: false
         },
       },
@@ -211,8 +211,9 @@ const myDashboards: DashboardResource[] = [
           component_type: 'DATE_AGGREGATION_CHART',
           query_ids: ['25398', '25399', '25400', '25401'],
           plot_labels: ["email clicks", "basket view", "purchase", "search"],
-          title: "Nombre d'évènements par jour par typologie",
-          labels_enabled: true
+          title: "Nombre d'évènements par jour par typologie (30j)",
+          labels_enabled: true,
+          format: 'YYYY/MM/DD'
         },
       },
       {
@@ -227,9 +228,10 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
           query_ids: ['25359', '25360'],
-          plot_labels: ["1rst", "2nd"],
-          title: 'Nombre de visites par jour par type de profil matching',
-          labels_enabled: true
+          plot_labels: ["1st", "2nd"],
+          title: 'Nombre de visites par jour par type de profil matching (30j)',
+          labels_enabled: true,
+          format: 'YYYY/MM/DD'
         },
       },
       {
@@ -245,8 +247,9 @@ const myDashboards: DashboardResource[] = [
           component_type: 'DATE_AGGREGATION_CHART',
           query_ids: ['25362'],
           plot_labels: ["tickets"],
-          title: "Nombre de ticket réalisé par les contacts CRM sur les 12 derniers mois",
-          labels_enabled: true
+          title: "Nombre de ticket réalisé par les contacts CRM",
+          labels_enabled: true,
+          format: 'YYYY/MM/DD'
         },
       },
     ]

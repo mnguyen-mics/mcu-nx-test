@@ -8,6 +8,7 @@ import {
 import injectThemeColors, {
   InjectedThemeColorsProps, ThemeColorsShape,
 } from '../../../Helpers/injectThemeColors';
+import moment from 'moment';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
@@ -26,6 +27,7 @@ export interface DateAggregationChartProps {
   datamartId: string;
   plotLabels: string[];
   height?: number;
+  format?: string;
 }
 
 interface QueryResult {
@@ -84,6 +86,7 @@ class DateAggregationChart extends React.Component<Props, State> {
   }
 
   formatDataQuery = (queryResult: OTQLAggregationResult[], plotLabelIndex: string): QueryResult[] => {
+    const { format } = this.props;
     if (
       queryResult.length &&
       queryResult[0].aggregations.buckets.length &&
@@ -91,7 +94,7 @@ class DateAggregationChart extends React.Component<Props, State> {
     ) {
       return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
         [plotLabelIndex]: data.count,
-        xKey: data.key,
+        xKey: format ? moment(data.key).format(format) : data.key,
       }));
     }
     return [];
