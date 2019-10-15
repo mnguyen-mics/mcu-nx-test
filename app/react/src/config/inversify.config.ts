@@ -1,23 +1,3 @@
-import { EmailRouterService } from './../services/Library/EmailRoutersService';
-import {
-  VisitAnalyzerService,
-  IVisitAnalyzerService,
-} from './../services/Library/VisitAnalyzerService';
-import AudienceSegmentFeedService, {
-  IAudienceSegmentFeedService,
-  AudienceFeedType,
-} from './../services/AudienceSegmentFeedService';
-import {
-  DisplayCampaignService,
-  IDisplayCampaignService,
-} from './../services/DisplayCampaignService';
-import AdGroupFormService, {
-  IAdGroupFormService,
-} from './../containers/Campaigns/Display/Edit/AdGroup/AdGroupFormService';
-import {
-  IDisplayCreativeFormService,
-  DisplayCreativeFormService,
-} from './../containers/Creative/DisplayAds/Edit/DisplayCreativeFormService';
 import {
   NavigatorService,
   INavigatorService,
@@ -54,7 +34,7 @@ import {
   IAudienceSegmentService,
 } from './../services/AudienceSegmentService';
 import getDecorators from 'inversify-inject-decorators';
-import { Container, interfaces } from 'inversify';
+import { Container } from 'inversify';
 import {
   IKeywordListService,
   KeywordListService,
@@ -82,9 +62,9 @@ import {
   DisplayNetworkService,
 } from '../services/DisplayNetworkService';
 import {
-  IDealListService,
-  DealListService,
-} from '../services/Library/DealListService';
+  IDealsListService,
+  DealsListService,
+} from '../services/Library/DealListsService';
 import {
   IDealListFormService,
   DealListFormService,
@@ -124,13 +104,6 @@ import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
 import { ISettingsService, SettingsService } from '../services/SettingsService';
 import { IDashboardService, DashboardService } from '../services/DashboardServices';
-import {
-  IAssetFileService,
-  AssetFileService,
-} from '../services/Library/AssetFileService';
-import { PluginService, IPluginService } from '../services/PluginService';
-import { CreativeService, ICreativeService } from '../services/CreativeService';
-import { IEmailRouterService } from '../services/Library/EmailRoutersService';
 
 const container = new Container();
 
@@ -160,9 +133,6 @@ container
   .bind<IAudienceExternalFeedService>(TYPES.IAudienceExternalFeedService)
   .to(AudienceExternalFeedService);
 container
-  .bind<IAudienceSegmentFeedService>(TYPES.IAudienceSegmentFeedService)
-  .to(AudienceSegmentFeedService);
-container
   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
   .toConstructor(AudienceTagFeedService);
 container.bind<IImportService>(TYPES.IImportService).to(ImportService);
@@ -171,7 +141,10 @@ container.bind<IScenarioService>(TYPES.IScenarioService).to(ScenarioService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
   .to(DisplayNetworkService);
-container.bind<IDealListService>(TYPES.IDealListService).to(DealListService);
+container.bind<IDealsListService>(TYPES.IDealsListService).to(DealsListService);
+container
+  .bind<IDealListFormService>(TYPES.IDealListFormService)
+  .to(DealListFormService);
 container
   .bind<IDealListFormService>(TYPES.IDealListFormService)
   .to(DealListFormService);
@@ -205,68 +178,7 @@ container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
 container.bind<IConsentService>(TYPES.IConsentService).to(ConsentService);
 container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
-container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
-container.bind<IAssetFileService>(TYPES.IAssetFileService).to(AssetFileService);
-container.bind<IPluginService>(TYPES.IPluginService).to(PluginService);
-container
-  .bind<ICreativeService<any>>(TYPES.ICreativeService)
-  .to(CreativeService);
-container
-  .bind<IDisplayCreativeFormService>(TYPES.IDisplayCreativeFormService)
-  .to(DisplayCreativeFormService);
-container
-  .bind<IAdGroupFormService>(TYPES.IAdGroupFormService)
-  .to(AdGroupFormService);
-container
-  .bind<IDisplayCampaignService>(TYPES.IDisplayCampaignService)
-  .to(DisplayCampaignService);
-container
-  .bind<IVisitAnalyzerService>(TYPES.IVisitAnalyzerService)
-  .to(VisitAnalyzerService);
-container
-  .bind<IEmailRouterService>(TYPES.IEmailRouterService)
-  .to(EmailRouterService);
-
-container
-  .bind<interfaces.Factory<IAudienceExternalFeedService>>(
-    TYPES.IAudienceExternalFeedServiceFactory,
-  )
-  .toFactory<IAudienceExternalFeedService>((context: interfaces.Context) => {
-    return (segmentId: string) => {
-      const audienceExternalFeedService = context.container.get<
-        IAudienceExternalFeedService
-      >(TYPES.IAudienceExternalFeedService);
-      audienceExternalFeedService.segmentId = segmentId;
-      return audienceExternalFeedService;
-    };
-  });
-container
-  .bind<interfaces.Factory<IAudienceTagFeedService>>(
-    TYPES.IAudienceTagFeedServiceFactory,
-  )
-  .toFactory<IAudienceTagFeedService>((context: interfaces.Context) => {
-    return (segmentId: string) => {
-      const audienceTagFeedService = context.container.get<
-        IAudienceTagFeedService
-      >(TYPES.IAudienceTagFeedService);
-      audienceTagFeedService.segmentId = segmentId;
-      return audienceTagFeedService;
-    };
-  });
-container
-  .bind<interfaces.Factory<IAudienceSegmentFeedService>>(
-    TYPES.IAudienceSegmentFeedServiceFactory,
-  )
-  .toFactory<IAudienceSegmentFeedService>((context: interfaces.Context) => {
-    return (segmentId: string, feedType: AudienceFeedType) => {
-      const audienceSegmentFeedService = context.container.get<
-        IAudienceSegmentFeedService
-      >(TYPES.IAudienceSegmentFeedService);
-      audienceSegmentFeedService.segmentId = segmentId;
-      audienceSegmentFeedService.feedType = feedType;
-      return audienceSegmentFeedService;
-    };
-  });
+container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService)
 
 export const { lazyInject } = getDecorators(container, false);
 

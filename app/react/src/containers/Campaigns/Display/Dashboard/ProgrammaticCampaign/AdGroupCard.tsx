@@ -32,15 +32,13 @@ import EditAdGroupsForm, {
   EditAdGroupsFormProps,
   EditAdGroupsFormData,
 } from '../../Edit/AdGroup/MultiEdit/EditAdGroupsForm';
+import AdGroupFormService from '../..//Edit/AdGroup/AdGroupFormService';
 import { Task, executeTasksInSequence } from '../../../../../utils/FormHelper';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { IAdGroupFormService } from '../../Edit/AdGroup/AdGroupFormService';
-import { TYPES } from '../../../../../constants/types';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -94,9 +92,6 @@ type JoinedProps = AdGroupCardProps &
   InjectedIntlProps;
 
 class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
-  @lazyInject(TYPES.IAdGroupFormService)
-  private _adGroupFormService: IAdGroupFormService;
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -125,9 +120,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     history.push(nextLocation);
   }
   renderDatePicker() {
-    const {
-      location: { search },
-    } = this.props;
+    const { location: { search } } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
@@ -182,9 +175,9 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       onSave: (formData: EditAdGroupsFormData) => Promise<any>;
       selectedRowKeys?: string[];
     } = {
-      close: this.props.closeNextDrawer,
-      onSave: this.saveAdGroups,
-    };
+        close: this.props.closeNextDrawer,
+        onSave: this.saveAdGroups,
+      };
     if (allRowsAreSelected) {
       additionalProps.selectedRowKeys = undefined;
     } else {
@@ -197,13 +190,8 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
   };
 
   makeEditAction = (adGroupIds: string[], formData: EditAdGroupsFormData) => {
-    const {
-      match: {
-        params: { campaignId },
-      },
-    } = this.props;
-    return this._adGroupFormService
-      .saveAdGroups(campaignId, adGroupIds, formData)
+    const { match: { params: { campaignId } } } = this.props;
+    return AdGroupFormService.saveAdGroups(campaignId, adGroupIds, formData)
       .then(result => {
         this.closeDrawerAndNotify();
         return result;
@@ -315,9 +303,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
   render() {
     const {
       history,
-      match: {
-        params: { campaignId, organisationId },
-      },
+      match: { params: { campaignId, organisationId } },
       updateAdGroup,
       title,
       isFetching,
@@ -353,11 +339,9 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     };
     const adGroupButtons: JSX.Element = (
       <span>
-        {campaign && campaign.model_version !== 'V2014_06' && (
-          <Button className="m-r-10" type="primary" onClick={onClick}>
-            <FormattedMessage {...messages.newAdGroups} />
-          </Button>
-        )}
+        {campaign && campaign.model_version !== 'V2014_06' && <Button className="m-r-10" type="primary" onClick={onClick}>
+          <FormattedMessage {...messages.newAdGroups} />
+        </Button>}
         {this.renderDatePicker()}
         <Slide
           toShow={hasSelected}
@@ -384,21 +368,19 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
             </p>
           </Modal>
         ) : null}
-        {campaign && campaign.model_version !== 'V2014_06' ? (
-          <Slide
-            toShow={hasSelected}
-            horizontal={true}
-            content={
-              <Button
-                className="m-r-10 button-slider button-glow"
-                onClick={this.openEditAdGroupsDrawer}
-              >
-                <McsIcon type="pen" />
-                <FormattedMessage {...messages.editAdGroup} />
-              </Button>
-            }
-          />
-        ) : null}
+        {campaign && campaign.model_version !== 'V2014_06' ? <Slide
+          toShow={hasSelected}
+          horizontal={true}
+          content={
+            <Button
+              className="m-r-10 button-slider button-glow"
+              onClick={this.openEditAdGroupsDrawer}
+            >
+              <McsIcon type="pen" />
+              <FormattedMessage {...messages.editAdGroup} />
+            </Button>
+          }
+        /> : null}
         <Slide
           toShow={hasSelected}
           horizontal={true}

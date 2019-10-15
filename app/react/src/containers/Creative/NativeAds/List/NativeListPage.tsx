@@ -6,9 +6,8 @@ import NativeList from './NativeList';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import {
+import CreativeService, {
   CreativesOptions,
-  ICreativeService,
 } from '../../../../services/CreativeService';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
@@ -29,8 +28,6 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { Index } from '../../../../utils';
 import messagesMap from '../../DisplayAds/List/message';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -51,9 +48,6 @@ type JoinedProps = InjectedIntlProps &
   RouteComponentProps<CampaignRouteParams>;
 
 class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -144,22 +138,20 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
         keywords: filter.keywords,
       };
     }
-    this._creativeService
-      .getDisplayAds(organisationId, options)
-      .then(result => {
-        const data = result.data;
-        const displayAdsById = normalizeArrayOfObject(data, 'id');
-        this.setState({
-          dataSource: Object.keys(displayAdsById).map(id => {
-            return {
-              ...displayAdsById[id],
-            };
-          }),
-          isLoadingNatives: false,
-          hasNatives: init ? result.count !== 0 : true,
-          totalNativeCreatives: result.total || 0,
-        });
+    CreativeService.getDisplayAds(organisationId, options).then(result => {
+      const data = result.data;
+      const displayAdsById = normalizeArrayOfObject(data, 'id');
+      this.setState({
+        dataSource: Object.keys(displayAdsById).map(id => {
+          return {
+            ...displayAdsById[id],
+          };
+        }),
+        isLoadingNatives: false,
+        hasNatives: init ? result.count !== 0 : true,
+        totalNativeCreatives: result.total || 0,
       });
+    });
   };
 
   onSelectChange = (selectedRowKeys: string[]) => {
@@ -209,8 +201,7 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       archived: false,
       max_results: totalNativeCreatives, // mandatory
     };
-    return this._creativeService
-      .getDisplayAds(organisationId, options)
+    return CreativeService.getDisplayAds(organisationId, options)
       .then(apiResp =>
         apiResp.data.map(nativeCreativesResource => nativeCreativesResource.id),
       )
@@ -237,13 +228,6 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       this.fetchNativeAds(organisationId, filter);
     };
 
-    const updateDisplayCreative = () => {
-      return this._creativeService.updateDisplayCreative(native.id, {
-        ...native,
-        archived: true,
-      });
-    };
-
     Modal.confirm({
       title: intl.formatMessage(messagesMap.creativeModalConfirmArchivedTitle),
       content: intl.formatMessage(messagesMap.creativeModalNoArchiveMessage),
@@ -251,7 +235,10 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       okText: intl.formatMessage(messagesMap.creativeModalConfirmArchivedOk),
       cancelText: intl.formatMessage(messagesMap.cancelText),
       onOk() {
-        updateDisplayCreative().then(() => {
+        CreativeService.updateDisplayCreative(native.id, {
+          ...native,
+          archived: true,
+        }).then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -314,11 +301,10 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
     const tasks: Task[] = [];
     nativeIds.forEach(nativeId => {
       tasks.push(() => {
-        return this._creativeService
-          .getDisplayAd(nativeId)
+        return CreativeService.getDisplayAd(nativeId)
           .then(apiResp => apiResp.data)
           .then(nativeData => {
-            return this._creativeService.updateDisplayCreative(nativeId, {
+            return CreativeService.updateDisplayCreative(nativeId, {
               ...nativeData,
               archived: true,
             });

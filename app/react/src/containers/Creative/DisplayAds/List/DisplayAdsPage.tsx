@@ -12,9 +12,8 @@ import {
   DisplayAdResource,
   CreativeAuditAction,
 } from '../../../../models/creative/CreativeResource';
-import {
+import CreativeService, {
   CreativesOptions,
-  ICreativeService,
 } from '../../../../services/CreativeService';
 import {
   parseSearch,
@@ -32,8 +31,6 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { Index } from '../../../../utils';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import messages from './message';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -56,9 +53,6 @@ type JoinedProps = DisplayAdsPage &
   RouteComponentProps<CampaignRouteParams>;
 
 class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -156,22 +150,20 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
         keywords: filter.keywords,
       };
     }
-    this._creativeService
-      .getDisplayAds(organisationId, options)
-      .then(result => {
-        const data = result.data;
-        const displayAdsById = normalizeArrayOfObject(data, 'id');
-        this.setState({
-          dataSource: Object.keys(displayAdsById).map(id => {
-            return {
-              ...displayAdsById[id],
-            };
-          }),
-          isLoadingDisplayAds: false,
-          hasDisplayAds: init ? result.count !== 0 : true,
-          totalDisplayAds: result.total || 0,
-        });
+    CreativeService.getDisplayAds(organisationId, options).then(result => {
+      const data = result.data;
+      const displayAdsById = normalizeArrayOfObject(data, 'id');
+      this.setState({
+        dataSource: Object.keys(displayAdsById).map(id => {
+          return {
+            ...displayAdsById[id],
+          };
+        }),
+        isLoadingDisplayAds: false,
+        hasDisplayAds: init ? result.count !== 0 : true,
+        totalDisplayAds: result.total || 0,
       });
+    });
   };
 
   getAllCreativesIds = () => {
@@ -188,8 +180,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       archived: false,
       max_results: totalDisplayAds,
     };
-    return this._creativeService
-      .getDisplayAds(organisationId, options)
+    return CreativeService.getDisplayAds(organisationId, options)
       .then(apiResp =>
         apiResp.data.map(creativeResource => creativeResource.id),
       )
@@ -206,14 +197,13 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
     const { notifyError } = this.props;
     creativesIds.forEach(creativeId => {
       tasks.push(() => {
-        return this._creativeService
-          .getDisplayAd(creativeId)
+        return CreativeService.getDisplayAd(creativeId)
           .then(apiResp => apiResp.data)
           .then(creative => {
             if (creative.available_user_audit_actions.includes(action)) {
-              this._creativeService
-                .makeAuditAction(creative.id, action)
-                .catch(err => notifyError(err));
+              CreativeService.makeAuditAction(creative.id, action).catch(err =>
+                notifyError(err),
+              );
             }
           });
       });
@@ -319,8 +309,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
     const tasks: Task[] = [];
     creativesIds.forEach(creativeId => {
       tasks.push(() => {
-        return this._creativeService
-          .getDisplayAd(creativeId)
+        return CreativeService.getDisplayAd(creativeId)
           .then(apiResp => apiResp.data)
           .then(creativeData => {
             if (
@@ -328,7 +317,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
               creativeData.audit_status !== 'AUDIT_FAILED' &&
               creativeData.audit_status !== 'AUDIT_PASSED'
             ) {
-              return this._creativeService.updateDisplayCreative(creativeId, {
+              return CreativeService.updateDisplayCreative(creativeId, {
                 ...creativeData,
                 archived: true,
               });
@@ -374,13 +363,6 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
       this.fetchDisplayAds(organisationId, filter);
     };
 
-    const updateDisplayCreative = () => {
-      return this._creativeService.updateDisplayCreative(creative.id, {
-        ...creative,
-        archived: true,
-      });
-    };
-
     if (creative.audit_status === 'NOT_AUDITED') {
       Modal.confirm({
         title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
@@ -391,7 +373,10 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
         okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
         cancelText: intl.formatMessage(messages.cancelText),
         onOk() {
-          updateDisplayCreative().then(() => {
+          CreativeService.updateDisplayCreative(creative.id, {
+            ...creative,
+            archived: true,
+          }).then(() => {
             if (dataSource.length === 1 && filter.currentPage !== 1) {
               const newFilter = {
                 ...filter,

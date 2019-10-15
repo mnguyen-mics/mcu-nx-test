@@ -5,8 +5,10 @@ import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
 import Actionbar from '../../../../components/ActionBar';
+import AssetsFilesService from '../../../../services/Library/AssetsFilesService';
 import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
+
 import { UploadFile } from 'antd/lib/upload/interface';
 import { Filters } from '../../../../components/ItemList';
 import {
@@ -17,9 +19,6 @@ import {
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { IAssetFileService } from '../../../../services/Library/AssetFileService';
 
 const maxFileSize = 200 * 1024;
 
@@ -45,8 +44,6 @@ type Props = RouteComponentProps<RouterProps> &
   AssetsActionbarProps;
 
 class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
-  @lazyInject(TYPES.IAssetFileService)
-  private _assetFileService: IAssetFileService;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -73,10 +70,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
       this.state.fileList.map(item => {
         const formData = new FormData(); /* global FormData */
         formData.append('file', item as any, item.name);
-        return this._assetFileService.uploadAssetsFile(
-          organisationId,
-          formData,
-        );
+        return AssetsFilesService.uploadAssetsFile(organisationId, formData);
       }),
     )
       .then(item => {

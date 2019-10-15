@@ -12,16 +12,9 @@ import messages from './messages';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
-import { IPluginService } from '../../../../services/PluginService';
+import PluginService from '../../../../services/PluginService';
 import { Submenu } from '../../../../components/FormMenu/MenuSubList';
-import {
-  IMAGE_SKINS_AD_RENDERER,
-  EXTERNAL_AD_RENDERER,
-  HTML_AD_RENDRER,
-  IMAGE_AD_RENDERER,
-} from './domain';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
+import { IMAGE_SKINS_AD_RENDERER, EXTERNAL_AD_RENDERER, HTML_AD_RENDRER, IMAGE_AD_RENDERER } from './domain';
 
 const { Content } = Layout;
 
@@ -46,9 +39,6 @@ type Props = DisplayCreativeRendererSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCreativeRendererSelector extends React.Component<Props, State> {
-  @lazyInject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -65,12 +55,10 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
       imageSkinsAdRendererId,
     ];
 
-    return this._pluginService
-      .getPlugins({
-        max_results: 1000,
-        plugin_type: 'DISPLAY_AD_RENDERER',
-      })
-      .then(resp => resp.data)
+    return PluginService.getPlugins({
+      max_results: 1000,
+      plugin_type: 'DISPLAY_AD_RENDERER',
+    }).then(resp => resp.data)
       .then(adRendererList => {
         return adRendererList
           .filter(ad => !previousAdRendererIds.includes(ad.id))

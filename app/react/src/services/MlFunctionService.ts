@@ -1,22 +1,19 @@
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { MlFunctionResource } from '../models/datamart/MlFunction';
 import PluginInstanceService from './PluginInstanceService';
-import { IPluginService } from './PluginService';
+import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
-import { inject } from 'inversify';
-import { TYPES } from '../constants/types';
 
-export interface IMlFunctionService
-  extends PluginInstanceService<MlFunctionResource> {
+export interface IMlFunctionService extends PluginInstanceService<MlFunctionResource> {
   listMlFunctions: (
-    options?: MlFunctionQueryStringParameters,
+    options?: MlFunctionQueryStringParameters
   ) => Promise<DataListResponse<MlFunctionResource>>;
   getMlFunctions: (
     mlFunctionId: string,
   ) => Promise<DataResponse<MlFunctionResource>>;
   createMlFunctions: (
-    mlFunction: Partial<MlFunctionResource>,
-  ) => Promise<DataResponse<MlFunctionResource>>;
+    mlFunction: Partial<MlFunctionResource>
+  ) => Promise<DataResponse<MlFunctionResource>>
 }
 
 export interface MlFunctionQueryStringParameters {
@@ -27,17 +24,15 @@ export interface MlFunctionQueryStringParameters {
   keywords?: string;
 }
 
-export class MlFunctionService extends PluginInstanceService<MlFunctionResource>
-  implements IMlFunctionService {
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
+
+export class MlFunctionService extends PluginInstanceService<MlFunctionResource> implements IMlFunctionService {
 
   constructor() {
-    super('ml_functions');
+    super("ml_functions")
   }
 
   listMlFunctions(
-    options?: MlFunctionQueryStringParameters,
+    options?: MlFunctionQueryStringParameters
   ): Promise<DataListResponse<MlFunctionResource>> {
     const endpoint = `ml_functions`;
     return ApiService.getRequest(endpoint);
@@ -49,7 +44,7 @@ export class MlFunctionService extends PluginInstanceService<MlFunctionResource>
     return ApiService.getRequest(endpoint, {});
   }
   createMlFunctions(
-    mlFunction: Partial<MlFunctionResource>,
+    mlFunction: Partial<MlFunctionResource>
   ): Promise<DataResponse<MlFunctionResource>> {
     const endpoint = `ml_functions`;
     return ApiService.postRequest(endpoint, mlFunction);
@@ -58,15 +53,13 @@ export class MlFunctionService extends PluginInstanceService<MlFunctionResource>
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.getInstanceById(pInstanceId).then(res => {
       const mlFunction = res.data;
-      return this._pluginService
-        .findPluginFromVersionId(mlFunction.version_id)
-        .then(pluginResourceRes => {
-          const pluginResource = pluginResourceRes.data;
-          return this._pluginService.getLocalizedPluginLayout(
-            pluginResource.id,
-            mlFunction.version_id,
-          );
-        });
+      return PluginService.findPluginFromVersionId(mlFunction.version_id).then(pluginResourceRes => {
+        const pluginResource = pluginResourceRes.data;
+        return PluginService.getLocalizedPluginLayout(
+          pluginResource.id,
+          mlFunction.version_id
+        );
+      });
     });
   }
 }

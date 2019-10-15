@@ -7,7 +7,7 @@ import AttributionModelService from '../../../../../services/AttributionModelSer
 import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import { IPluginService } from '../../../../../services/PluginService';
+import PluginService from '../../../../../services/PluginService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
@@ -20,8 +20,6 @@ import {
 } from '../../../../../models/Plugins';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { TYPES } from '../../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -51,9 +49,6 @@ class AttributionModelContent extends React.Component<
 > {
   state = initialState;
 
-  @lazyInject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
   archiveAttributionModel = (attributionModelId: string) => {
     return AttributionModelService.deleteAttributionModel(attributionModelId);
   };
@@ -68,7 +63,7 @@ class AttributionModelContent extends React.Component<
         options,
       ).then(results => {
         const promises = results.data.map(am => {
-          return this._pluginService.getEngineProperties(
+          return PluginService.getEngineProperties(
             am.attribution_processor_id,
           );
         });

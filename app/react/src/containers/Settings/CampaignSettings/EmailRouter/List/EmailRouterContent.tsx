@@ -6,6 +6,7 @@ import { Modal, Button, Layout } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
+import EmailRoutersService from '../../../../../services/Library/EmailRoutersService';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -15,9 +16,6 @@ import {
 import { EmailRouter } from '../../../../../models/Plugins';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { IEmailRouterService } from '../../../../../services/Library/EmailRoutersService';
-import { TYPES } from '../../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -43,11 +41,8 @@ class EmailRouterContent extends React.Component<
 > {
   state = initialState;
 
-  @lazyInject(TYPES.IEmailRouterService)
-  private _emailRouterService: IEmailRouterService;
-
   archiveEmailRouter = (routerId: string) => {
-    return this._emailRouterService.deleteEmailRouter(routerId);
+    return EmailRoutersService.deleteEmailRouter(routerId);
   };
 
   fetchEmailRouter = (organisationId: string, filter: Filters) => {
@@ -55,15 +50,15 @@ class EmailRouterContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._emailRouterService
-        .getEmailRouters(organisationId, options)
-        .then(results => {
+      EmailRoutersService.getEmailRouters(organisationId, options).then(
+        results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        });
+        },
+      );
     });
   };
 

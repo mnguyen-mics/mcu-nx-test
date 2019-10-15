@@ -10,14 +10,12 @@ import {
   DisplayCreativeFormData,
   EditDisplayCreativeRouteMatchParams,
 } from './domain';
+import DisplayCreativeFormService from './DisplayCreativeFormService';
+import CreativeService from '../../../../services/CreativeService';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { ICreativeService } from '../../../../services/CreativeService';
-import { IDisplayCreativeFormService } from './DisplayCreativeFormService';
 
 interface State {
   loading: boolean;
@@ -29,12 +27,6 @@ type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams> &
   InjectedIntlProps;
 
 class EditDisplayCreativePage extends React.Component<Props, State> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
-  @lazyInject(TYPES.IDisplayCreativeFormService)
-  private _displayCreativeFormService: IDisplayCreativeFormService;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -50,8 +42,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       },
     } = this.props;
     if (creativeId) {
-      this._creativeService
-        .getCreative(creativeId)
+      CreativeService.getCreative(creativeId)
         .then(resp => resp.data)
         .then(creativeData => {
           this.setState({
@@ -61,9 +52,9 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
           });
         })
         .catch(err => {
-          this.setState({ loading: false });
-          this.props.notifyError(err);
-        });
+          this.setState({ loading: false })
+          this.props.notifyError(err)
+        });;
     }
   }
 
@@ -80,23 +71,22 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       },
     } = nextProps;
 
-    if (creativeId !== nextCreativeId) {
-      this.setState({ loading: true });
-      this._creativeService
-        .getCreative(nextCreativeId)
-        .then(resp => resp.data)
-        .then(creativeData => {
-          this.setState({
-            loading: false,
-            creativeName: creativeData.name
-              ? creativeData.name
-              : `creative ${creativeData.id}`,
-          });
-        })
-        .catch(err => {
-          this.setState({ loading: false });
-          this.props.notifyError(err);
+    if (creativeId !== nextCreativeId) {
+      this.setState({ loading: true })
+      CreativeService.getCreative(nextCreativeId)
+      .then(resp => resp.data)
+      .then(creativeData => {
+        this.setState({
+          loading: false,
+          creativeName: creativeData.name
+            ? creativeData.name
+            : `creative ${creativeData.id}`,
         });
+      })
+      .catch(err => {
+        this.setState({ loading: false })
+        this.props.notifyError(err)
+      });
     }
   }
 
@@ -113,7 +103,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       state && state.from
         ? state.from
         : `/v2/o/${organisationId}/creatives/display`;
-
+    
     if (savedId) {
       url = `/v2/o/${organisationId}/creatives/display/edit/${savedId}`;
     }
@@ -121,12 +111,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
   };
 
   onSave = (creativeData: DisplayCreativeFormData) => {
-    const {
-      match: {
-        params: { organisationId, creativeId },
-      },
-      intl,
-    } = this.props;
+    const { match: { params: { organisationId, creativeId } }, intl } = this.props;
 
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
@@ -137,24 +122,18 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    const savePromise =
-      creativeData.repeatFields && creativeData.repeatFields.length
-        ? this._displayCreativeFormService.handleSaveMutipleCreatives(
-            organisationId,
-            creativeData,
-          )
-        : this._displayCreativeFormService.saveDisplayCreative(
-            organisationId,
-            creativeData,
-          );
+    const savePromise = creativeData.repeatFields && creativeData.repeatFields.length ? DisplayCreativeFormService.handleSaveMutipleCreatives(
+      organisationId,
+      creativeData 
+    ) : DisplayCreativeFormService.saveDisplayCreative(organisationId, creativeData)
 
     savePromise
-      .then(savedId => {
+      .then((savedId) => {
         hideSaveInProgress();
         if (creativeId) {
-          this.setState({ loading: false });
+          this.setState({ loading: false })
         } else if (typeof savedId === 'string') {
-          this.redirect(savedId);
+          this.redirect(savedId)
         } else {
           this.redirect();
         }
@@ -206,8 +185,8 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
           name: creativeName,
         })
       : from && location.state.from.includes('native')
-      ? messages.nativeCreationBreadCrumb
-      : messages.creativeCreationBreadCrumb;
+        ? messages.nativeCreationBreadCrumb
+        : messages.creativeCreationBreadCrumb;
 
     const breadCrumbPaths = [
       {
@@ -221,9 +200,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     const props = {
       close: () => this.redirect(),
       onSubmit: this.onSave,
-      actionBarButtonText: creativeId
-        ? actionBarButtonSaveRefresh
-        : actionBarButtonSave,
+      actionBarButtonText: creativeId ? actionBarButtonSaveRefresh : actionBarButtonSave,
       breadCrumbPaths: breadCrumbPaths,
       onSubmitFail: this.onSubmitFail,
     };
@@ -233,7 +210,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     }
 
     if (!creativeId) {
-      return <DisplayCreativeCreator {...props} />;
+      return (<DisplayCreativeCreator {...props} />)
     }
 
     return <DisplayCreativeFormLoader {...props} creativeId={creativeId} />;

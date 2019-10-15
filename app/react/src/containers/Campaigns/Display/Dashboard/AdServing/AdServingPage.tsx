@@ -15,13 +15,11 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import messages from '../messages';
 import { FormattedMessage } from 'react-intl';
+import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { flatten } from 'plottable/build/src/utils/arrayUtils';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { TYPES } from '../../../../../constants/types';
-import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 
 const { Content } = Layout;
 
@@ -34,9 +32,6 @@ type Props = DisplayCampaignProps &
   InjectedNotificationProps;
 
 class AdServing extends React.Component<Props> {
-  @lazyInject(TYPES.IDisplayCampaignService)
-  private _displayCampaignService: IDisplayCampaignService;
-
   componentDidMount() {
     const {
       history,
@@ -81,8 +76,7 @@ class AdServing extends React.Component<Props> {
         params: { organisationId },
       },
     } = this.props;
-    return this._displayCampaignService
-      .updateCampaign(campaignId, { archived: true })
+    return DisplayCampaignService.updateCampaign(campaignId, { archived: true })
       .then(() => {
         history.push({
           pathname: `/v2/o/${organisationId}/campaigns/display`,

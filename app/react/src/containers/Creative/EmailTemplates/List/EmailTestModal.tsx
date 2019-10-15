@@ -2,12 +2,10 @@ import * as React from 'react';
 import { Modal, Input, Alert } from 'antd';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { ICreativeService } from '../../../../services/CreativeService';
+import CreativeService from '../../../../services/CreativeService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
 
 const messages = defineMessages({
   modalTitle: {
@@ -59,9 +57,6 @@ type JoinedProps = EmailTestModalProps &
   InjectedIntlProps;
 
 class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -77,12 +72,11 @@ class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
     } = this.props;
     if (this.state.inputValue && this.state.inputValue.length) {
       return this.setState({ isLoading: true }, () => {
-        this._creativeService
-          .sendTestBlast(
-            this.props.selectedtemplateId,
-            this.props.organisationId,
-            this.state.inputValue,
-          )
+        CreativeService.sendTestBlast(
+          this.props.selectedtemplateId,
+          this.props.organisationId,
+          this.state.inputValue,
+        )
           .then(() => {
             return this.setState({ isLoading: false }, () => {
               this.props.notifySuccess({

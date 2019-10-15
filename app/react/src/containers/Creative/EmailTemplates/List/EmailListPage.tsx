@@ -6,9 +6,8 @@ import EmailList from './EmailList';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import {
+import CreativeService, {
   CreativesOptions,
-  ICreativeService,
 } from '../../../../services/CreativeService';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
@@ -29,8 +28,6 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { Index } from '../../../../utils';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import messages from '../../DisplayAds/List/message';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -51,9 +48,6 @@ type JoinedProps = InjectedIntlProps &
   RouteComponentProps<CampaignRouteParams>;
 
 class EmailListPage extends React.Component<JoinedProps, State> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -150,22 +144,20 @@ class EmailListPage extends React.Component<JoinedProps, State> {
         keywords: filter.keywords,
       };
     }
-    this._creativeService
-      .getEmailTemplates(organisationId, options)
-      .then(result => {
-        const data = result.data;
-        const emailTemplatesById = normalizeArrayOfObject(data, 'id');
-        this.setState({
-          dataSource: Object.keys(emailTemplatesById).map(id => {
-            return {
-              ...emailTemplatesById[id],
-            };
-          }),
-          isLoadingEmailTemplates: false,
-          hasEmailTemplates: init ? result.count !== 0 : true,
-          totalEmailTemplates: result.total || 0,
-        });
+    CreativeService.getEmailTemplates(organisationId, options).then(result => {
+      const data = result.data;
+      const emailTemplatesById = normalizeArrayOfObject(data, 'id');
+      this.setState({
+        dataSource: Object.keys(emailTemplatesById).map(id => {
+          return {
+            ...emailTemplatesById[id],
+          };
+        }),
+        isLoadingEmailTemplates: false,
+        hasEmailTemplates: init ? result.count !== 0 : true,
+        totalEmailTemplates: result.total || 0,
       });
+    });
   };
 
   onSelectChange = (selectedRowKeys: string[]) => {
@@ -215,8 +207,7 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       archived: false,
       max_results: totalEmailTemplates, // mandatory
     };
-    return this._creativeService
-      .getEmailTemplates(organisationId, options)
+    return CreativeService.getEmailTemplates(organisationId, options)
       .then(apiResp =>
         apiResp.data.map(emailTemplateResource => emailTemplateResource.id),
       )
@@ -268,11 +259,10 @@ class EmailListPage extends React.Component<JoinedProps, State> {
     const tasks: Task[] = [];
     emailTemplateIds.forEach(emailTemplateId => {
       tasks.push(() => {
-        return this._creativeService
-          .getEmailTemplate(emailTemplateId)
+        return CreativeService.getEmailTemplate(emailTemplateId)
           .then(apiResp => apiResp.data)
           .then(emailTemplateData => {
-            return this._creativeService.updateEmailTemplate(emailTemplateId, {
+            return CreativeService.updateEmailTemplate(emailTemplateId, {
               ...emailTemplateData,
               archived: true,
             });
@@ -287,7 +277,7 @@ class EmailListPage extends React.Component<JoinedProps, State> {
     });
   };
 
-  archiveCreativeEmail = (email: EmailTemplateResource) => {
+  archiveCreativeEmail(email: EmailTemplateResource) {
     const {
       match: {
         params: { organisationId },
@@ -305,13 +295,6 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       this.fetchCreativeEmails(organisationId, filter, true);
     };
 
-    const updateEmailTemplate = () => {
-      return this._creativeService.updateEmailTemplate(email.id, {
-        ...email,
-        archived: true,
-      });
-    };
-
     Modal.confirm({
       title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
       content: intl.formatMessage(messages.creativeModalConfirmArchivedContent),
@@ -319,7 +302,10 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
       cancelText: intl.formatMessage(messages.cancelText),
       onOk() {
-        updateEmailTemplate().then(() => {
+        CreativeService.updateEmailTemplate(email.id, {
+          ...email,
+          archived: true,
+        }).then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -340,7 +326,7 @@ class EmailListPage extends React.Component<JoinedProps, State> {
         //
       },
     });
-  };
+  }
 
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;

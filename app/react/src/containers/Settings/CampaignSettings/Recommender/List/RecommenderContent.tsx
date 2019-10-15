@@ -7,7 +7,7 @@ import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import RecommenderService from '../../../../../services/Library/RecommenderService';
-import { IPluginService } from '../../../../../services/PluginService';
+import PluginService from '../../../../../services/PluginService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
@@ -21,8 +21,6 @@ import {
 } from '../../../../../models/Plugins';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { TYPES } from '../../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -52,9 +50,6 @@ class RecommenderContent extends React.Component<
 > {
   state = initialState;
 
-  @lazyInject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
   archiveRecommender = (recommenderId: string) => {
     return RecommenderService.deleteRecommender(recommenderId);
   };
@@ -68,12 +63,9 @@ class RecommenderContent extends React.Component<
         (results: { data: Recommender[]; total?: number; count: number }) => {
           const promises = results.data.map(va => {
             return new Promise((resolve, reject) => {
-              this._pluginService
-                .getEngineVersion(va.version_id)
+              PluginService.getEngineVersion(va.version_id)
                 .then((recommender: PluginVersionResource) => {
-                  return this._pluginService.getEngineProperties(
-                    recommender.id,
-                  );
+                  return PluginService.getEngineProperties(recommender.id);
                 })
                 .then((v: PluginProperty[]) => resolve(v));
             });

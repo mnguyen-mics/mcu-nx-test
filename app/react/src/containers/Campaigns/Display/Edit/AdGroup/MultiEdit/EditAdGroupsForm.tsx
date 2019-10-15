@@ -12,20 +12,17 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
+
 import AdGroupsInfos from './AdGroupsInfos';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../../components/Layout/FormLayoutActionbar';
 import messages from '../../messages';
 import { FormSection } from '../../../../../../components/Form/index';
+import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import { AdGroupsInfosFieldModel } from '../domain';
 import Loading from '../../../../../../components/Loading';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../../../Notifications/injectNotifications';
-import { lazyInject } from '../../../../../../config/inversify.config';
-import { TYPES } from '../../../../../../constants/types';
-import { IDisplayCampaignService } from '../../../../../../services/DisplayCampaignService';
+import injectNotifications, { InjectedNotificationProps } from '../../../../../Notifications/injectNotifications';
 
 const FORM_ID = 'editAdGroupsForm';
 
@@ -73,9 +70,6 @@ class EditAdGroupsForm extends React.Component<
   JoinedProps,
   EditAdGroupsFormState
 > {
-  @lazyInject(TYPES.IDisplayCampaignService)
-  private _displayCampaignService: IDisplayCampaignService;
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -112,15 +106,10 @@ class EditAdGroupsForm extends React.Component<
   }
 
   fetchData = (selectedRowKeys: string[]) => {
-    const {
-      match: {
-        params: { campaignId },
-      },
-    } = this.props;
+    const { match: { params: { campaignId } } } = this.props;
     Promise.all(
       selectedRowKeys.map(adGroupId => {
-        return this._displayCampaignService
-          .getAdGroup(campaignId, adGroupId)
+        return DisplayCampaignService.getAdGroup(campaignId, adGroupId)
           .then(apiResp => apiResp.data)
           .then(adGroupData => {
             return adGroupData.name || '';
@@ -151,11 +140,13 @@ class EditAdGroupsForm extends React.Component<
       this.setState({
         loading: true,
       });
-      return this.props.onSave(formData).catch((err: any) => {
-        this.setState({
-          loading: false,
+      return this.props
+        .onSave(formData)
+        .catch((err: any) => {
+          this.setState({
+            loading: false,
+          });
         });
-      });
     }
   };
 

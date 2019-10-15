@@ -2,15 +2,13 @@ import * as React from 'react';
 import { Spin } from 'antd';
 import cuid from 'cuid';
 import McsIcon from '../../../components/McsIcon';
-import { ICreativeService } from '../../../services/CreativeService';
+import CreativeService from '../../../services/CreativeService';
 import { DataResponse } from '../../../services/ApiService';
 import {
   GenericCreativeResource,
   CreativeScreenshotResource,
 } from '../../../models/creative/CreativeResource';
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
-import { lazyInject } from '../../../config/inversify.config';
-import { TYPES } from '../../../constants/types';
 
 export interface CreativeCardProps<T> {
   creative: T;
@@ -30,9 +28,6 @@ class CreativeCard<
   cancelablePromise: CancelablePromise<
     DataResponse<CreativeScreenshotResource>
   >;
-
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
 
   constructor(props: CreativeCardProps<T>) {
     super(props);
@@ -56,7 +51,7 @@ class CreativeCard<
   fetchScreenshotIfNeeded = (creative: T) => {
     if (creative.id) {
       this.cancelablePromise = makeCancelable(
-        this._creativeService.getCreativeScreenshotStatus(creative.id),
+        CreativeService.getCreativeScreenshotStatus(creative.id),
       );
 
       this.cancelablePromise.promise
@@ -138,9 +133,7 @@ class CreativeCard<
     // use formatmessage
     const renderedTitle = renderTitle
       ? renderTitle(creative)
-      : creative
-      ? creative.name
-      : 'No title';
+      : creative ? creative.name : 'No title';
 
     return (
       <div className="mcs-creative-card">
