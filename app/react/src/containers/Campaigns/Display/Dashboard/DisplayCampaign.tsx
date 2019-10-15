@@ -1,92 +1,76 @@
 import * as React from 'react';
 import { DisplayCampaignInfoResource } from '../../../../models/campaign/display';
+import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../Notifications/injectNotifications';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import DisplayCampaignProgrammaticPage from './ProgrammaticCampaign/DisplayCampaignPage';
 import DisplayCampaignAdServingPage from './AdServing/AdServingPage';
 import { Loading } from '../../../../components';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { IDisplayCampaignService } from '../../../../services/DisplayCampaignService';
 
 export interface DisplayCampaignProps {}
 
-type Props = DisplayCampaignProps &
-  RouteComponentProps<{ organisationId: string; campaignId: string }> &
-  InjectedNotificationProps;
+type Props = DisplayCampaignProps & RouteComponentProps<{ organisationId: string, campaignId: string }> & InjectedNotificationProps
 
 interface State {
   campaign?: DisplayCampaignInfoResource;
-  loading: boolean;
+  loading: boolean
 }
 
-class DisplayCampaign extends React.Component<Props, State> {
-  @lazyInject(TYPES.IDisplayCampaignService)
-  private _displayCampaignService: IDisplayCampaignService;
-  
+class DisplayCampaign extends React.Component<
+Props,
+  State
+> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      loading: true,
-    };
-  }
-
-  componentDidMount() {
-    const {
-      match: {
-        params: { campaignId },
-      },
-    } = this.props;
-
-    this.fetchAllData(campaignId);
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    const {
-      match: {
-        params: { campaignId },
-      },
-    } = this.props;
-    const {
-      match: {
-        params: { campaignId: nextCampaignId },
-      },
-    } = nextProps;
-
-    if (campaignId !== nextCampaignId) {
-      this.fetchAllData(nextCampaignId);
+      loading: true
     }
   }
 
-  fetchAllData = (campaignId: string) => {
-    return this._displayCampaignService
-      .getCampaignDisplayViewDeep(campaignId, {
-        view: 'deep',
-      })
-      .then(res => {
-        this.setState({ campaign: res.data, loading: false });
-      })
-      .catch(err => this.props.notifyError(err));
+  componentDidMount() {
+    const { match: { params: { campaignId } } } = this.props;
+
+    this.fetchAllData(campaignId)
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const { match: { params: { campaignId } } } = this.props;
+    const { match: { params: { campaignId: nextCampaignId } } } = nextProps;
+
+    if (campaignId !== nextCampaignId) {
+      this.fetchAllData(nextCampaignId)
+    }
+  }
+  
+
+  fetchAllData = (
+    campaignId: string,
+  ) => {
+    return DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, {
+      view: 'deep',
+    }).then(res => {
+      this.setState({ campaign: res.data, loading: false })
+    }).catch((err) => this.props.notifyError(err));
   };
 
   public render() {
-    if (this.state.loading || !this.state.campaign)
-      return <Loading className="loading-full-screen" />;
 
-    switch (this.state.campaign.subtype) {
+    if (this.state.loading || !this.state.campaign) return <Loading className="loading-full-screen" />;
+  
+    switch(this.state.campaign.subtype) {
       case 'PROGRAMMATIC':
       case 'TRACKING':
-        return <DisplayCampaignProgrammaticPage />;
+        return <DisplayCampaignProgrammaticPage />
       case 'AD_SERVING':
-        return <DisplayCampaignAdServingPage campaign={this.state.campaign} />;
+        return <DisplayCampaignAdServingPage
+          campaign={this.state.campaign}
+        />
     }
   }
 }
 
 export default compose<Props, DisplayCampaignProps>(
   withRouter,
-  injectNotifications,
-)(DisplayCampaign);
+  injectNotifications
+)(DisplayCampaign)

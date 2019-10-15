@@ -5,18 +5,15 @@ import { compose } from 'recompose';
 import FormFieldWrapper, {
   FormFieldWrapperProps,
 } from '../../../../../components/Form/FormFieldWrapper';
+import AssetsFilesService from '../../../../../services/Library/AssetsFilesService';
+
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipProps } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../../Notifications/injectNotifications';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { TYPES } from '../../../../../constants/types';
-import { IAssetFileService } from '../../../../../services/Library/AssetFileService';
+import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 
 export interface QuickAssetUploadProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
@@ -35,14 +32,13 @@ type OuterProps = QuickAssetUploadProps &
   WrappedFieldProps &
   RouteComponentProps<{ organisationId: string }>;
 
+
 type JoinedProps = OuterProps & InjectedDrawerProps & InjectedNotificationProps;
 
 class QuickAssetUpload extends React.Component<
   JoinedProps,
   QuickAssetUploadState
 > {
-  @lazyInject(TYPES.IAssetFileService)
-  private _assetFileService: IAssetFileService;
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -60,20 +56,20 @@ class QuickAssetUpload extends React.Component<
     const formData = new FormData(); /* global FormData */
     formData.append('file', file as any, file.name);
     this.setState({ loading: true }, () => {
-      this._assetFileService
-        .uploadAssetsFile(this.props.match.params.organisationId, formData)
+      AssetsFilesService.uploadAssetsFile(
+        this.props.match.params.organisationId,
+        formData,
+      )
         .then(item => item.data)
         .then(item => {
-          const imageUrl = `${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${
-            item.path
-          }`;
+          const imageUrl = `${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${item.path}`;
           this.setState({ loading: false, imageUrl: imageUrl });
           this.props.input.onChange(imageUrl);
           return false;
         })
         .catch(e => {
           this.props.notifyError(e);
-          this.setState({ loading: false });
+          this.setState({ loading: false })
           return false;
         });
       return false;

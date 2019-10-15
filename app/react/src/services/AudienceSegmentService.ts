@@ -16,10 +16,9 @@ import {
   AudienceTagFeed,
 } from '../models/Plugins';
 
-import { IPluginService } from './PluginService';
+import PluginService from './PluginService';
 import { BaseExecutionResource } from '../models/Job/JobResource';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../constants/types';
+import { injectable } from 'inversify';
 
 export interface SegmentImportResult {
   total_user_segment_imported: number;
@@ -238,8 +237,6 @@ export interface IAudienceSegmentService {
 
 @injectable()
 export class AudienceSegmentService implements IAudienceSegmentService {
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
   getSegments = (
     organisationId?: string,
     options: GetSegmentsOption = {},
@@ -546,7 +543,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     params: object = {},
   ): Promise<DataResponse<PluginProperty> | void> => {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${id}/properties/technical_name=${technicalName}`;
-    return this._pluginService.handleSaveOfProperties(
+    return PluginService.handleSaveOfProperties(
       params,
       organisationId,
       'attribution_models',
@@ -563,7 +560,7 @@ export class AudienceSegmentService implements IAudienceSegmentService {
     params: object = {},
   ): Promise<DataResponse<PluginProperty> | void> => {
     const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${id}/properties/technical_name=${technicalName}`;
-    return this._pluginService.handleSaveOfProperties(
+    return PluginService.handleSaveOfProperties(
       params,
       organisationId,
       'attribution_models',

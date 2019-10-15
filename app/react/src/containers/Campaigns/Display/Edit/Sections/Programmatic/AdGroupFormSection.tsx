@@ -4,6 +4,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
+
 import { injectDrawer } from '../../../../../../components/Drawer';
 import { FormSection } from '../../../../../../components/Form';
 import {
@@ -14,10 +15,7 @@ import messages from '../../messages';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import AdGroupForm, { AdGroupFormProps } from '../../AdGroup/AdGroupForm';
 import { AdGroupFieldModel } from '../../domain';
-import {
-  AdGroupFormData,
-  INITIAL_AD_GROUP_FORM_DATA,
-} from '../../AdGroup/domain';
+import { AdGroupFormData, INITIAL_AD_GROUP_FORM_DATA } from '../../AdGroup/domain';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
 export interface AdGroupFormSectionProps extends ReduxFormChangeProps {}
@@ -57,9 +55,7 @@ class AdGroupFormSection extends React.Component<Props> {
   };
 
   openAdGroupForm = (field?: AdGroupFieldModel) => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
     const breadCrumbPaths = [
       {
@@ -113,9 +109,7 @@ class AdGroupFormSection extends React.Component<Props> {
   };
 
   render() {
-    const {
-      intl: { formatMessage },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
     const newAdGroup = () => this.openAdGroupForm();
 

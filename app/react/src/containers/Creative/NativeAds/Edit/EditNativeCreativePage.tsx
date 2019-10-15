@@ -9,15 +9,13 @@ import {
   NativeCreativeFormData,
   EditNativeCreativeRouteMatchParams,
 } from './domain';
-import { ICreativeService } from '../../../../services/CreativeService';
+import DisplayCreativeFormService from '../../DisplayAds/Edit/DisplayCreativeFormService';
+import CreativeService from '../../../../services/CreativeService';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import NativeCreativeFormLoader from './NativeCreativeFormLoader';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { IDisplayCreativeFormService } from '../../DisplayAds/Edit/DisplayCreativeFormService';
 
 interface State {
   loading: boolean;
@@ -29,12 +27,6 @@ type Props = RouteComponentProps<EditNativeCreativeRouteMatchParams> &
   InjectedIntlProps;
 
 class EditNativeCreativePage extends React.Component<Props, State> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
-  @lazyInject(TYPES.IDisplayCreativeFormService)
-  private _displayCreativeFormService: IDisplayCreativeFormService;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -50,8 +42,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
       },
     } = this.props;
     if (nativeId) {
-      this._creativeService
-        .getCreative(nativeId)
+      CreativeService.getCreative(nativeId)
         .then(resp => resp.data)
         .then(nativeData => {
           this.setState({
@@ -75,8 +66,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
       },
     } = nextProps;
     if (nextNativeId && nativeId !== nextNativeId) {
-      this._creativeService
-        .getCreative(nextNativeId)
+      CreativeService.getCreative(nextNativeId)
         .then(resp => resp.data)
         .then(nativeData => {
           this.setState({
@@ -116,7 +106,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     const url = `/v2/o/${organisationId}/creatives/native/edit/${createdId}`;
 
     history.push(url);
-  };
+  }
 
   onSave = (nativeData: NativeCreativeFormData) => {
     const {
@@ -135,15 +125,14 @@ class EditNativeCreativePage extends React.Component<Props, State> {
       loading: true,
     });
 
-    this._displayCreativeFormService
-      .saveDisplayCreative(organisationId, nativeData)
-      .then(createdId => {
+    DisplayCreativeFormService.saveDisplayCreative(organisationId, nativeData)
+      .then((createdId) => {
         hideSaveInProgress();
         this.setState({
-          loading: false,
-        });
+          loading: false
+        })
         this.redirectWithCreatedId(createdId);
-        message.success(intl.formatMessage(messages.successfulSaving));
+        message.success(intl.formatMessage(messages.successfulSaving))
       })
       .catch(err => {
         hideSaveInProgress();

@@ -3,29 +3,31 @@ import { WrappedFieldArrayProps } from 'redux-form';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import cuid from 'cuid';
 import { compose } from 'recompose';
+
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { VisitAnalyzerFieldModel } from './domain';
 import FormSection from '../../../../components/Form/FormSection';
 import RelatedRecords from '../../../../components/RelatedRecord/RelatedRecords';
 import RecordElement from '../../../../components/RelatedRecord/RecordElement';
 import VisitAnalyzerSelector, {
-  VisitAnalyzerSelectorProps,
+    VisitAnalyzerSelectorProps,
 } from '../Common/VisitAnalyzerSelector';
 import { VisitAnalyzer } from '../../../../models/Plugins';
 import {
   PropertyResourceShape,
   StringPropertyResource,
 } from '../../../../models/plugin/index';
+import VisitAnalyzerService from '../../../../services/Library/VisitAnalyzerService';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import {
   DataResponse,
   DataListResponse,
 } from '../../../../services/ApiService';
-import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
+import {
+  makeCancelable,
+  CancelablePromise,
+} from '../../../../utils/ApiHelper';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import { lazyInject } from '../../../../config/inversify.config';
-import { IVisitAnalyzerService } from '../../../../services/Library/VisitAnalyzerService';
-import { TYPES } from '../../../../constants/types';
 
 export interface VisitAnalyzerSectionProps extends ReduxFormChangeProps {}
 
@@ -42,32 +44,28 @@ interface State {
 }
 
 const messages = defineMessages({
-  dropdownAddExisting: {
-    id: 'settings.form.activityAnalyzer.addExisting',
-    defaultMessage: 'Add Existing',
-  },
-  sectionSubtitleVisitAnalyzer: {
-    id: 'settings.form.activityAnalyzer.subtitle',
-    defaultMessage:
-      'Add a Visit Analyzer to your property. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your DMP.',
-  },
-  sectionTitleVisitAnalyzer: {
-    id: 'settings.form.activityAnalyzer.title',
-    defaultMessage: 'Visit Analyzer',
-  },
-  sectionEmptyVisitAnalyzer: {
-    id: 'settings.form.activityAnalyzer.empty',
-    defaultMessage: 'There is no Visit Analyzer selected yet!',
-  },
-});
+    dropdownAddExisting: {
+        id: 'settings.form.activityAnalyzer.addExisting',
+        defaultMessage: 'Add Existing',
+    },
+    sectionSubtitleVisitAnalyzer: {
+        id: 'settings.form.activityAnalyzer.subtitle',
+        defaultMessage: 'Add a Visit Analyzer to your property. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your DMP.',
+    },
+    sectionTitleVisitAnalyzer: {
+        id: 'settings.form.activityAnalyzer.title',
+        defaultMessage: 'Visit Analyzer',
+    },
+    sectionEmptyVisitAnalyzer: {
+        id: 'settings.form.activityAnalyzer.empty',
+        defaultMessage: 'There is no Visit Analyzer selected yet!',
+    },
+})
 
 class VisitAnalyzerSection extends React.Component<Props, State> {
   cancelablePromise: CancelablePromise<
     [DataResponse<VisitAnalyzer>, DataListResponse<PropertyResourceShape>]
   >;
-
-  @lazyInject(TYPES.IVisitAnalyzerService)
-  private _visitAnalyzerService: IVisitAnalyzerService;
 
   constructor(props: Props) {
     super(props);
@@ -81,17 +79,13 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
   componentDidMount() {
     const visitAnalyzerField = this.props.fields.getAll()[0];
     if (visitAnalyzerField)
-      this.fetchActivityAnalyzer(
-        visitAnalyzerField.model.visit_analyzer_model_id,
-      );
+      this.fetchActivityAnalyzer(visitAnalyzerField.model.visit_analyzer_model_id);
   }
 
   componentWillReceiveProps(nextProps: Props) {
     const visitAnalyzerField = nextProps.fields.getAll()[0];
     if (visitAnalyzerField)
-      this.fetchActivityAnalyzer(
-        visitAnalyzerField.model.visit_analyzer_model_id,
-      );
+      this.fetchActivityAnalyzer(visitAnalyzerField.model.visit_analyzer_model_id);
   }
 
   componentWillUnmount() {
@@ -101,8 +95,8 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
   fetchActivityAnalyzer = (visitAnalyzerId: string) => {
     this.cancelablePromise = makeCancelable(
       Promise.all([
-        this._visitAnalyzerService.getInstanceById(visitAnalyzerId),
-        this._visitAnalyzerService.getInstanceProperties(visitAnalyzerId),
+        VisitAnalyzerService.getInstanceById(visitAnalyzerId),
+        VisitAnalyzerService.getInstanceProperties(visitAnalyzerId),
       ]),
     );
 
@@ -143,12 +137,9 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
       save: this.updateActivityAnalyzer,
     };
 
-    this.props.openNextDrawer<VisitAnalyzerSelectorProps>(
-      VisitAnalyzerSelector,
-      {
-        additionalProps: props,
-      },
-    );
+    this.props.openNextDrawer<VisitAnalyzerSelectorProps>(VisitAnalyzerSelector, {
+      additionalProps: props,
+    });
   };
 
   getActivityAnalyzerRecords = () => {
@@ -192,9 +183,7 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      intl: { formatMessage },
-    } = this.props;
+    const { intl: { formatMessage } } = this.props;
 
     return (
       <div>

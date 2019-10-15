@@ -5,7 +5,7 @@ import {
 } from '../../models/dealList/dealList';
 import { injectable } from 'inversify';
 
-export interface IDealListService {
+export interface IDealsListService {
   getDealLists(
     organisationId: string,
     options: object,
@@ -41,18 +41,12 @@ export interface IDealListService {
     dealList: Partial<DealResource>,
   ): Promise<DataResponse<DealResource>>;
   deleteDeal(dealId: string): Promise<DataResponse<DealResource>>;
-  addDealToDealList(
-    dealListId: string,
-    dealId: string,
-  ): Promise<DataResponse<DealResource>>;
-  removeDealToDealList(
-    dealListId: string,
-    dealId: string,
-  ): Promise<DataResponse<DealResource>>;
+  addDealToDealList(dealListId: string, dealId: string): Promise<{}>;
+  removeDealToDealList(dealListId: string, dealId: string): Promise<{}>;
 }
 
 @injectable()
-export class DealListService implements IDealListService {
+export class DealsListService implements IDealsListService {
   //
   //  DEAL LIST
   //
@@ -147,18 +141,12 @@ export class DealListService implements IDealListService {
   //
   //  DEAL LIST SELECTION
   //
-  addDealToDealList(
-    dealListId: string,
-    dealId: string,
-  ): Promise<DataResponse<DealResource>> {
+  addDealToDealList(dealListId: string, dealId: string) {
     const endpoint = `deal_lists/${dealListId}/deal/${dealId}`;
     return ApiService.putRequest(endpoint, {});
   }
 
-  removeDealToDealList(
-    dealListId: string,
-    dealId: string,
-  ): Promise<DataResponse<DealResource>> {
+  removeDealToDealList(dealListId: string, dealId: string) {
     const endpoint = `deal_lists/${dealListId}/deal/${dealId}`;
     return ApiService.deleteRequest(endpoint, {});
   }

@@ -6,14 +6,12 @@ import NativeCreativeRendererSelector from './NativeCreativeRendererSelector';
 import log from '../../../../utils/Logger';
 import { NativeCreativeFormData } from './domain';
 import Loading from '../../../../components/Loading';
+import DisplayCreativeFormService from './../../DisplayAds/Edit/DisplayCreativeFormService';
 import { DisplayCreativeFormProps } from '../../DisplayAds/Edit/DisplayCreativeForm';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import NativeCreativeForm from './NativeCreativeForm';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { IDisplayCreativeFormService } from '../../DisplayAds/Edit/DisplayCreativeFormService';
 
 export interface NativeCreativeCreatorProps extends DisplayCreativeFormProps {}
 
@@ -27,9 +25,6 @@ type Props = NativeCreativeCreatorProps &
   InjectedNotificationProps;
 
 class NativeCreativeCreator extends React.Component<Props, State> {
-  @lazyInject(TYPES.IDisplayCreativeFormService)
-  private _displayCreativeFormService: IDisplayCreativeFormService;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -40,8 +35,7 @@ class NativeCreativeCreator extends React.Component<Props, State> {
 
   loadFormData = (adRendererId: string) => {
     this.setState({ isLoading: true });
-    this._displayCreativeFormService
-      .initializeFormData(adRendererId, 'NATIVE', '640x190')
+    DisplayCreativeFormService.initializeFormData(adRendererId, 'NATIVE', '640x190')
       .then(nativeFormData =>
         this.setState({
           nativeFormData,
@@ -86,5 +80,5 @@ class NativeCreativeCreator extends React.Component<Props, State> {
 }
 
 export default compose<Props, NativeCreativeCreatorProps>(injectNotifications)(
-  NativeCreativeCreator,
+    NativeCreativeCreator,
 );

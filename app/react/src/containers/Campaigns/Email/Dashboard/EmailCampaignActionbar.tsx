@@ -33,9 +33,7 @@ import ResourceTimelinePage, {
 } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistoryHelper';
-import { lazyInject } from '../../../../config/inversify.config';
-import { IEmailRouterService } from '../../../../services/Library/EmailRoutersService';
-import { TYPES } from '../../../../constants/types';
+import EmailRoutersService from '../../../../services/Library/EmailRoutersService';
 
 export interface EmailCampaignActionbarProps {
   campaign?: EmailCampaignResource;
@@ -55,9 +53,6 @@ type Props = EmailCampaignActionbarProps &
   InjectedDrawerProps;
 
 class EmailCampaignActionbar extends React.Component<Props, State> {
-  @lazyInject(TYPES.IEmailRouterService)
-  private _emailRoutersService: IEmailRouterService;
-
   constructor(props: Props) {
     super(props);
     this.state = { exportIsRunning: false };
@@ -215,11 +210,11 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                         id,
                         'EMAIL_ROUTER',
                       ).then(emailRouterId => {
-                        return this._emailRoutersService
-                          .getEmailRouter(emailRouterId)
-                          .then(response => {
-                            return response.data.name;
-                          });
+                        return EmailRoutersService.getEmailRouter(
+                          emailRouterId,
+                        ).then(response => {
+                          return response.data.name;
+                        });
                       });
                     },
                     goToResource: (id: string) => {

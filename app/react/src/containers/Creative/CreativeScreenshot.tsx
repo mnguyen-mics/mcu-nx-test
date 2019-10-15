@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { Spin } from 'antd';
 import McsIcon from '../../components/McsIcon';
+import CreativeService from '../../services/CreativeService';
 import {
   DisplayAdResource,
   EmailTemplateResource,
 } from '../../models/creative/CreativeResource';
-import { lazyInject } from '../../config/inversify.config';
-import { TYPES } from '../../constants/types';
-import { ICreativeService } from '../../services/CreativeService';
 
 interface CreativeScreenshotProps {
   item: DisplayAdResource | EmailTemplateResource;
@@ -23,9 +21,6 @@ class CreativeScreenshot extends React.Component<
   CreativeScreenshotProps,
   CreativeScreenshotState
 > {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
   constructor(props: CreativeScreenshotProps) {
     super(props);
     this.state = {
@@ -51,8 +46,7 @@ class CreativeScreenshot extends React.Component<
   }
 
   fetchData = (id: string) => {
-    this._creativeService
-      .getCreativeScreenshotStatus(id)
+    CreativeService.getCreativeScreenshotStatus(id)
       .then(response => {
         if (response && response.data && response.data.status) {
           if (response.data.status === 'SUCCEEDED') {

@@ -4,12 +4,11 @@ import { Input, Select } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
+
 import FormFieldWrapper from '../../../../components/Form/FormFieldWrapper';
 import ButtonStyleless from '../../../../components/ButtonStyleless';
+import CreativeService from '../../../../services/CreativeService';
 import messages from '../Edit/messages';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { ICreativeService } from '../../../../services/CreativeService';
 
 const Option = Select.Option;
 
@@ -28,9 +27,6 @@ interface State {
 }
 
 class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -46,21 +42,19 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
       },
       input,
     } = this.props;
-    this._creativeService
-      .getCreativeFormats(organisationId, {
-        type: 'DISPLAY_AD',
-      })
-      .then(res => {
-        const formats = res.data
-          .sort((a, b) => {
-            return a.width - b.width;
-          })
-          .map(adFormat => `${adFormat.width}x${adFormat.height}`);
-        this.setState({ availableFormats: formats });
-        if (!input.value) {
-          input.onChange(formats[0]);
-        }
-      });
+    CreativeService.getCreativeFormats(organisationId, {
+      type: 'DISPLAY_AD',
+    }).then(res => {
+      const formats = res.data
+        .sort((a, b) => {
+          return a.width - b.width;
+        })
+        .map(adFormat => `${adFormat.width}x${adFormat.height}`);
+      this.setState({ availableFormats: formats });
+      if (!input.value) {
+        input.onChange(formats[0]);
+      }
+    });
   }
 
   render() {
@@ -69,7 +63,7 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
       input,
       meta,
       disabled,
-      small,
+      small
     } = this.props;
     const { standardFormat, availableFormats } = this.state;
 

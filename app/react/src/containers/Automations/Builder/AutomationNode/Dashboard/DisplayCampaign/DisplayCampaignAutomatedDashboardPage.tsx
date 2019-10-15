@@ -2,8 +2,11 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { Button, Layout, Alert } from 'antd';
+
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../../../../../Campaigns/Display/Dashboard/constants';
+
 import ReportService from '../../../../../../services/ReportService';
+import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import GoalService from '../../../../../../services/GoalService';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
@@ -18,19 +21,10 @@ import {
   DateSearchSettings,
 } from '../../../../../../utils/LocationSearchHelper';
 
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../../../Notifications/injectNotifications';
-import {
-  initialPageState,
-  DisplayCampaignPageState,
-  GoalsCampaignRessource,
-} from '../../../../../Campaigns/Display/Dashboard/ProgrammaticCampaign/domain';
+import injectNotifications, { InjectedNotificationProps } from '../../../../../Notifications/injectNotifications';
+import { initialPageState, DisplayCampaignPageState, GoalsCampaignRessource } from '../../../../../Campaigns/Display/Dashboard/ProgrammaticCampaign/domain';
 import { CancelablePromise } from '../../../../../../services/ApiService';
-import {
-  AdInfoResource,
-  AdResource,
-} from '../../../../../../models/campaign/display';
+import { AdInfoResource, AdResource } from '../../../../../../models/campaign/display';
 import { ReportView } from '../../../../../../models/ReportView';
 import { UpdateMessage } from '../../../../../Campaigns/Display/Dashboard/ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { Index } from '../../../../../../utils';
@@ -41,30 +35,18 @@ import DisplayCampaignDashboard from '../../../../../Campaigns/Display/Dashboard
 import messages from '../../../../../Campaigns/Display/Dashboard/messages';
 import { McsIcon } from '../../../../../../components';
 import ActionBar from '../../../../../../components/ActionBar';
-import { lazyInject } from '../../../../../../config/inversify.config';
-import { TYPES } from '../../../../../../constants/types';
-import { IDisplayCampaignService } from '../../../../../../services/DisplayCampaignService';
 
-const { Content } = Layout;
+const { Content } = Layout
 
 export interface DisplayCampaignAutomatedDashboardPageProps {
   campaignId: string;
-  close: () => void;
+  close: () => void
 }
 
-type Props = DisplayCampaignAutomatedDashboardPageProps &
-  RouteComponentProps<{ organisationId: string; automationId: string }> &
-  InjectedNotificationProps &
-  InjectedIntlProps;
+type Props = DisplayCampaignAutomatedDashboardPageProps & RouteComponentProps<{ organisationId: string, automationId: string }> & InjectedNotificationProps & InjectedIntlProps;
 
-class DisplayCampaignAutomatedDashboardPage extends React.Component<
-  Props,
-  DisplayCampaignPageState
-> {
+class DisplayCampaignAutomatedDashboardPage extends React.Component<Props, DisplayCampaignPageState> {
   cancelablePromises: Array<CancelablePromise<any>> = [];
-
-  @lazyInject(TYPES.IDisplayCampaignService)
-  private _displayCampaignService: IDisplayCampaignService;
 
   constructor(props: Props) {
     super(props);
@@ -81,10 +63,8 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
     const {
       history,
       location: { search, pathname },
-      match: {
-        params: { organisationId },
-      },
-      campaignId,
+      match: { params: { organisationId } },
+      campaignId
     } = this.props;
 
     if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
@@ -93,10 +73,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
         search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch<DateSearchSettings>(
-        search,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      );
+      const filter = parseSearch<DateSearchSettings>(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
       this.fetchAllData(organisationId, campaignId, filter);
     }
@@ -112,9 +89,11 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
     const {
       location: { pathname: nextPathname, search: nextSearch },
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: {
+          organisationId: nextOrganisationId,
+        },
       },
-      campaignId: nextCampaignId,
+      campaignId: nextCampaignId
     } = nextProps;
 
     if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
@@ -141,16 +120,12 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
     this.cancelablePromises.forEach(promise => promise.cancel());
   }
 
-  fetchAllData = (
-    organisationId: string,
-    campaignId: string,
-    filter: DateSearchSettings,
-  ) => {
+  fetchAllData = (organisationId: string, campaignId: string, filter: DateSearchSettings) => {
     const lookbackWindow =
       filter.to.toMoment().unix() - filter.from.toMoment().unix();
     const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
     const getCampaignAdGroupAndAd = () =>
-      this._displayCampaignService.getCampaignDisplayViewDeep(campaignId, {
+      DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, {
         view: 'deep',
       });
     const getCampaignPerf = makeCancelable(
@@ -219,6 +194,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
         ...prevState,
       };
 
+      
       nextState.campaign.data.isLoading = true;
       nextState.adGroups.data.isLoading = true;
       nextState.ads.data.isLoading = true;
@@ -258,11 +234,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
       });
 
       const ads: AdInfoResource[] = [];
-      const adAdGroup: Array<{
-        ad_id: string;
-        ad_group_id: string;
-        campaign_id: string;
-      }> = [];
+      const adAdGroup: Array<{ ad_id: string, ad_group_id: string, campaign_id: string }> = [];
 
       data.ad_groups.forEach(adGroup => {
         adGroup.ads.forEach(ad => {
@@ -302,17 +274,14 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
       });
     });
 
-    this._displayCampaignService
-      .getGoals(campaignId)
+
+    DisplayCampaignService.getGoals(campaignId)
       .then(goals => goals.data)
       .then(goals => {
         const promises = goals.map(goal => {
           return GoalService.getAttributionModels(goal.goal_id).then(
             attribution => {
-              const goalCampaign: GoalsCampaignRessource = {
-                ...goal,
-                attribution: attribution.data,
-              };
+              const goalCampaign: GoalsCampaignRessource = { ...goal, attribution: attribution.data };
               return goalCampaign;
             },
           );
@@ -344,7 +313,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
       })
       .catch(err =>
         this.catchCancellablePromises(err, 'campaign', 'performance'),
-      );
+    );
 
     getAdGroupPerf.promise
       .then(response => {
@@ -352,12 +321,15 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
           'adGroups',
           'performance',
           'performanceById',
-          this.formatReportView(response.data.report_view, 'sub_campaign_id'),
+          this.formatReportView(
+            response.data.report_view,
+            'sub_campaign_id',
+          ),
         );
       })
       .catch(err =>
         this.catchCancellablePromises(err, 'adGroups', 'performance'),
-      );
+    );
 
     getAdPerf.promise
       .then(response => {
@@ -365,7 +337,10 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
           'ads',
           'performance',
           'performanceById',
-          this.formatReportView(response.data.report_view, 'message_id'),
+          this.formatReportView(
+            response.data.report_view,
+            'message_id',
+          ),
         );
       })
       .catch(err => this.catchCancellablePromises(err, 'ads', 'performance'));
@@ -385,7 +360,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
       })
       .catch(err =>
         this.catchCancellablePromises(err, 'campaign', 'mediaPerformance'),
-      );
+    );
 
     getOverallCampaignPerf.promise
       .then(response => {
@@ -398,7 +373,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
       })
       .catch(err =>
         this.catchCancellablePromises(err, 'campaign', 'overallPerformance'),
-      );
+    );
   };
 
   updateStateOnPerf(
@@ -413,19 +388,13 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
       };
       (nextState[firstLevelKey] as any)[secondLevelKey].isLoading = false;
       (nextState[firstLevelKey] as any)[secondLevelKey].hasFetched = true;
-      (nextState[firstLevelKey] as any)[secondLevelKey][
-        thirdLevel
-      ] = performanceReport;
+      (nextState[firstLevelKey] as any)[secondLevelKey][thirdLevel] = performanceReport;
 
       return nextState;
     });
   }
 
-  catchCancellablePromises = (
-    err: any,
-    firstLevelKey: keyof DisplayCampaignPageState,
-    secondLevelKey: string,
-  ) => {
+  catchCancellablePromises = (err: any, firstLevelKey: keyof DisplayCampaignPageState, secondLevelKey: string) => {
     if (!err.isCanceled) {
       log.error(err);
       this.setState(prevState => {
@@ -468,8 +437,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
     const adGroupId = adAdGroup ? adAdGroup.ad_group_id : undefined;
 
     return campaignId && adGroupId
-      ? this._displayCampaignService
-          .updateAd(adId, campaignId, adGroupId, body)
+      ? DisplayCampaignService.updateAd(adId, campaignId, adGroupId, body)
           .then(response => {
             this.setState(prevState => {
               const nextState = {
@@ -515,9 +483,12 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
       : Promise.resolve();
   };
 
+  
   render() {
+
     const {
       intl: { formatMessage },
+
     } = this.props;
 
     const { campaign, ads, goals } = this.state;
@@ -527,6 +498,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
     //   isLoadingPerf: this.state.campaign.performance.isLoading,
     //   items: this.state.campaign.items.itemById,
     // };
+
 
     // const ads = {
     //   isLoadingList: this.state.ads.items.isLoading,
@@ -560,45 +532,29 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
         isArchiving: false,
       },
     };
-
+    
     return (
       <div className="ant-layout">
         <ActionBar
           paths={[
             {
-              name:
-                campaign &&
-                campaign.data &&
-                campaign.data.items &&
-                campaign.data.items[0]
-                  ? campaign.data.items[0].name
-                  : '',
-            },
+              name: campaign && campaign.data && campaign.data.items && campaign.data.items[0] ? campaign.data.items[0].name : ''
+            }
           ]}
           edition={true}
         >
           <McsIcon
             type="close"
             className="close-icon"
-            style={{ cursor: 'pointer' }}
+            style={{cursor: 'pointer'}}
             onClick={this.props.close}
           />
-        </ActionBar>
+        </ActionBar> 
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <CampaignDashboardHeader campaign={campaign.data.items[0]} />
-            {campaign &&
-            campaign.data &&
-            campaign.data.items &&
-            campaign.data.items[0] &&
-            campaign.data.items[0].model_version === 'V2014_06' ? (
-              <Alert
-                className="m-b-20"
-                message={formatMessage(messages.editionNotAllowed)}
-                type="warning"
-              />
-            ) : null}
-
+            {campaign && campaign.data && campaign.data.items && campaign.data.items[0] && campaign.data.items[0].model_version === 'V2014_06' ? < Alert className="m-b-20" message={formatMessage(messages.editionNotAllowed)} type="warning" /> : null}
+          
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}
               campaignStat={dashboardPerformance.campaign.items}
@@ -609,12 +565,13 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
               goals={goals.items}
             />
 
+            
             <AdCard
-              title={formatMessage(messages.creatives)}
-              isFetching={ads.data.isLoading}
-              isFetchingStat={ads.performance.isLoading}
-              dataSet={this.formatListView(ads.data, ads.performance)}
-              updateAd={this.updateAd}
+             title={formatMessage(messages.creatives)}
+             isFetching={ads.data.isLoading}
+             isFetchingStat={ads.performance.isLoading}
+             dataSet={this.formatListView(ads.data, ads.performance)}
+             updateAd={this.updateAd}
             />
           </Content>
         </div>
@@ -623,8 +580,9 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
   }
 }
 
+
 export default compose<Props, DisplayCampaignAutomatedDashboardPageProps>(
   withRouter,
   injectNotifications,
-  injectIntl,
+  injectIntl
 )(DisplayCampaignAutomatedDashboardPage);

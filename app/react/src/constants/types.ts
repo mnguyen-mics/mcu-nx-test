@@ -9,10 +9,9 @@ const TYPES = {
   IDisplayCampaignFormService: Symbol.for('displayCampaignFormService'),
   IAudienceTagFeedService: Symbol.for('audienceTagFeedService'),
   IAudienceExternalFeedService: Symbol.for('audienceExternalFeedService'),
-  IAudienceSegmentFeedService: Symbol.for('audienceSegmentFeedService'),
   IImportService: Symbol.for('importService'),
   IDisplayNetworkService: Symbol.for('displayNetworkService'),
-  IDealListService: Symbol.for('dealListService'),
+  IDealsListService: Symbol.for('dealsListService'),
   IDealListFormService: Symbol.for('dealListFormService'),
   ICompartmentService: Symbol.for('compartmentService'),
   IScenarioService: Symbol.for('scenarioService'),
@@ -34,21 +33,6 @@ const TYPES = {
   IGeonameService: Symbol.for('geonameService'),
   ISettingsService: Symbol.for('settingsService'),
   IDashboardService: Symbol.for('dashboardService'),
-  IAssetFileService: Symbol.for('assetFileService'),
-  IPluginService: Symbol.for('pluginService'),
-  ICreativeService: Symbol.for('creativeService'),
-  IDisplayCreativeFormService: Symbol.for('displayCreativeFormService'),
-  IAdGroupFormService: Symbol.for('adGroupFormService'),
-  IDisplayCampaignService: Symbol.for('displayCampaignService'),
-  IEmailRouterService: Symbol.for('emailRouterService'),
-  IVisitAnalyzerService: Symbol.for('visitAnalyzerService'),
-  IAudienceExternalFeedServiceFactory: Symbol.for(
-    'audienceExternalFeedServiceFactory',
-  ),
-  IAudienceTagFeedServiceFactory: Symbol.for('audienceTagFeedServiceFactory'),
-  IAudienceSegmentFeedServiceFactory: Symbol.for(
-    'audienceSegmentFeedServiceFactory',
-  ),
 };
 
 export { TYPES };

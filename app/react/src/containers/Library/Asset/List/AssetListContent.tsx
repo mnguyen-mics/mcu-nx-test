@@ -3,8 +3,10 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Modal, Layout } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
+import AssetsFilesService from '../../../../services/Library/AssetsFilesService';
 import { AssetFileResource } from '../../../../models/assets/assets';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -15,9 +17,6 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import AssetListActionBar from './AssetListActionBar';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { IAssetFileService } from '../../../../services/Library/AssetFileService';
 
 const { Content } = Layout;
 
@@ -43,11 +42,8 @@ class AssetListContent extends React.Component<
 > {
   state = initialState;
 
-  @lazyInject(TYPES.IAssetFileService)
-  private _assetFileService: IAssetFileService;
-
   archiveAssetList = (assetId: string) => {
-    return this._assetFileService.deleteAssetsFile(assetId);
+    return AssetsFilesService.deleteAssetsFile(assetId);
   };
 
   fetchAssetList = (organisationId: string, filter: Filters) => {
@@ -55,15 +51,15 @@ class AssetListContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._assetFileService
-        .getAssetsFiles(organisationId, options)
-        .then(results => {
+      AssetsFilesService.getAssetsFiles(organisationId, options).then(
+        results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        });
+        },
+      );
     });
   };
 

@@ -1,14 +1,11 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { AudienceTagFeed } from '../models/Plugins';
 import PluginInstanceService from './PluginInstanceService';
-import { IPluginService } from './PluginService';
+import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../constants/types';
 
 export interface IAudienceTagFeedService {
-  segmentId: string;
   getAudienceFeeds: (
     organisationId: string,
     options: object,
@@ -45,20 +42,18 @@ export interface IAudienceTagFeedService {
     options: object,
   ) => Promise<DataResponse<AudienceTagFeed>>;
   getAudienceFeedProperties: (id: string, options: object) => Promise<any>;
-  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null>;
+  getLocalizedPluginLayout(
+    pInstanceId: string,
+  ): Promise<PluginLayout | null>;
 }
 
-@injectable()
 export class AudienceTagFeedService
   extends PluginInstanceService<AudienceTagFeed>
   implements IAudienceTagFeedService {
   segmentId: string;
-
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
-  constructor() {
+  constructor(segmentId: string) {
     super('audience_tag_feeds');
+    this.segmentId = segmentId;
   }
 
   getAudienceFeeds(
@@ -97,7 +92,7 @@ export class AudienceTagFeedService
       ...options,
     };
     return ApiService.getRequest(endpoint, params);
-  };
+  }
 
   getInstanceProperties = (
     id: string,
@@ -108,7 +103,7 @@ export class AudienceTagFeedService
     }/tag_feeds/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
-  };
+  }
 
   updatePluginInstance = (
     id: string,
@@ -121,7 +116,7 @@ export class AudienceTagFeedService
     };
 
     return ApiService.putRequest(endpoint, params);
-  };
+  }
 
   updatePluginInstanceProperty = (
     organisationId: string,
@@ -132,14 +127,14 @@ export class AudienceTagFeedService
     const endpoint = `audience_segments/${
       this.segmentId
     }/tag_feeds/${id}/properties/technical_name=${technicalName}`;
-    return this._pluginService.handleSaveOfProperties(
+    return PluginService.handleSaveOfProperties(
       params,
       organisationId,
       this.entityPath,
       id,
       endpoint,
     );
-  };
+  }
 
   createPluginInstance = (
     organisationId: string,
@@ -154,7 +149,7 @@ export class AudienceTagFeedService
     };
 
     return ApiService.postRequest(endpoint, params);
-  };
+  }
 
   // STOP
 
@@ -167,20 +162,20 @@ export class AudienceTagFeedService
     return ApiService.getRequest(endpoint, options).then((res: any) => {
       return { ...res.data, id };
     });
-  };
+  }
 
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.getInstanceById(pInstanceId).then(res => {
       const audienceTagFeed = res.data;
-      return this._pluginService
-        .findPluginFromVersionId(audienceTagFeed.version_id)
-        .then(pluginResourceRes => {
-          const pluginResource = pluginResourceRes.data;
-          return this._pluginService.getLocalizedPluginLayout(
-            pluginResource.id,
-            audienceTagFeed.version_id,
-          );
-        });
+      return PluginService.findPluginFromVersionId(
+        audienceTagFeed.version_id,
+      ).then(pluginResourceRes => {
+        const pluginResource = pluginResourceRes.data;
+        return PluginService.getLocalizedPluginLayout(
+          pluginResource.id,
+          audienceTagFeed.version_id,
+        );
+      });
     });
   }
 }

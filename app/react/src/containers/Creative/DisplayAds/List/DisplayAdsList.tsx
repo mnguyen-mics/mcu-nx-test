@@ -36,7 +36,6 @@ type JoinedProps = DisplayAdsListProps &
   InjectedIntlProps;
 
 class CreativeDisplayTable extends React.Component<JoinedProps> {
-
   constructor(props: JoinedProps) {
     super(props);
   }

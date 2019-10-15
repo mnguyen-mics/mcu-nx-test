@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Spin } from 'antd';
+import CreativeService from '../../../../services/CreativeService';
 import {
   DisplayAdResource,
   AuditStatusResource,
@@ -10,9 +11,6 @@ import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { ICreativeService } from '../../../../services/CreativeService';
 
 export interface AuditComponentContainerProps {
   creativeId: string;
@@ -27,9 +25,6 @@ interface State {
 type Props = AuditComponentContainerProps & InjectedNotificationProps;
 
 class AuditComponentContainer extends React.Component<Props, State> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -42,8 +37,8 @@ class AuditComponentContainer extends React.Component<Props, State> {
     const { creativeId } = this.props;
     this.setState({ loading: true });
     Promise.all([
-      this._creativeService.getDisplayAd(creativeId),
-      this._creativeService.getAuditStatus(creativeId),
+      CreativeService.getDisplayAd(creativeId),
+      CreativeService.getAuditStatus(creativeId),
     ]).then(([creativeRes, auditRes]) => {
       this.setState({
         loading: false,
@@ -55,8 +50,7 @@ class AuditComponentContainer extends React.Component<Props, State> {
 
   makeAuditAction = (action: CreativeAuditAction) => {
     const { creativeId, notifyError } = this.props;
-    this._creativeService
-      .makeAuditAction(creativeId, action)
+    CreativeService.makeAuditAction(creativeId, action)
       .then(this.fetchData)
       .catch(err => notifyError(err));
   };

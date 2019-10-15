@@ -1,4 +1,3 @@
-import { IDisplayCampaignService } from './../../../../services/DisplayCampaignService';
 import {
   INITIAL_GOAL_FORM_DATA,
   isExistingGoal,
@@ -6,6 +5,7 @@ import {
 import { DisplayCampaignResource } from './../../../../models/campaign/display/DisplayCampaignResource';
 import { omit } from 'lodash';
 import { extractDataList, extractData } from '../../../../services/ApiService';
+import DisplayCampaignService from '../../../../services/DisplayCampaignService';
 import {
   createFieldArrayModelWithMeta,
   createFieldArrayModel,
@@ -20,7 +20,7 @@ import {
   isGoalFormData,
   isGoalSelectionResource,
 } from './domain';
-import { IAdGroupFormService } from './AdGroup/AdGroupFormService';
+import AdGroupFormService from './AdGroup/AdGroupFormService';
 import { EditCampaignsFormData } from './Campaign/MutiEdit/EditCampaignsForm';
 import operation from '../Edit/Campaign/domain';
 import GoalService from '../../../../services/GoalService';
@@ -28,7 +28,6 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../constants/types';
 import { IGoalFormService } from '../../Goal/Edit/GoalFormService';
-import { INITIAL_AD_GROUP_FORM_DATA } from './AdGroup/domain';
 
 type DisplayCampaignId = string;
 
@@ -63,24 +62,16 @@ export interface IDisplayCampaignFormService {
 export class DisplayCampaignFormService implements IDisplayCampaignFormService {
   @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
-
   @inject(TYPES.IGoalFormService)
   private _goalFormService: IGoalFormService;
-
-  @inject(TYPES.IDisplayCampaignService)
-  private _displayCampaignService: IDisplayCampaignService;
-
-  @inject(TYPES.IAdGroupFormService)
-  private _adGroupFormService: IAdGroupFormService;
-
   loadCampaign(
     displayCampaignId: string,
     duplicate?: boolean,
   ): Promise<DisplayCampaignFormData> {
     return Promise.all([
-      this._displayCampaignService
-        .getCampaignDisplay(displayCampaignId)
-        .then(extractData),
+      DisplayCampaignService.getCampaignDisplay(displayCampaignId).then(
+        extractData,
+      ),
       this.loadCampaignDependencies(displayCampaignId, duplicate),
     ]).then(([campaign, dependencies]) => {
       return {
@@ -98,13 +89,11 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
     adGroupFields: AdGroupFieldModel[];
   }> {
     return Promise.all([
-      this._displayCampaignService
-        .getGoals(displayCampaignId)
-        .then(extractDataList),
-      this._displayCampaignService.getAdGroups(displayCampaignId).then(res => {
+      DisplayCampaignService.getGoals(displayCampaignId).then(extractDataList),
+      DisplayCampaignService.getAdGroups(displayCampaignId).then(res => {
         return Promise.all(
           res.data.map(adGroup => {
-            return this._adGroupFormService.loadAdGroup(
+            return AdGroupFormService.loadAdGroup(
               displayCampaignId,
               adGroup.id,
               duplicate,
@@ -153,26 +142,27 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
     let createOrUpdatePromise;
 
     if (formData.campaign.id) {
-      createOrUpdatePromise = this._displayCampaignService.updateCampaign(
+      createOrUpdatePromise = DisplayCampaignService.updateCampaign(
         formData.campaign.id,
         formData.campaign,
       );
     } else {
-      createOrUpdatePromise = this._displayCampaignService
-        .createCampaign(organisationId, formData.campaign)
-        .then(res => {
-          return datamartId
-            ? executeTasksInSequence(
-                this.getExposedClickersTasks(
-                  organisationId,
-                  res.data.id,
-                  datamartId,
-                ),
-              ).then(() => {
-                return res;
-              })
-            : res;
-        });
+      createOrUpdatePromise = DisplayCampaignService.createCampaign({
+        ...formData.campaign,
+        organisation_id: organisationId,
+      }).then(res => {
+        return datamartId
+          ? executeTasksInSequence(
+              this.getExposedClickersTasks(
+                organisationId,
+                res.data.id,
+                datamartId,
+              ),
+            ).then(() => {
+              return res;
+            })
+          : res;
+      });
     }
 
     return createOrUpdatePromise.then(res => {
@@ -188,7 +178,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
           initialFormData.goalFields,
           datamartId,
         ),
-        ...this.getAdGroupTasks(
+        ...getAdGroupTasks(
           organisationId,
           campaignId,
           formData.adGroupFields,
@@ -204,8 +194,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
     const tasks: Task[] = [];
     campaignIds.forEach(campaignId => {
       tasks.push(() => {
-        return this._displayCampaignService
-          .getCampaignDisplay(campaignId)
+        return DisplayCampaignService.getCampaignDisplay(campaignId)
           .then(apiRes => apiRes.data)
           .then((campaignData: any) => {
             const updatedData = formData.fields.reduce((acc, field) => {
@@ -220,7 +209,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
                 ),
               };
             }, {});
-            return this._displayCampaignService.updateCampaign(
+            return DisplayCampaignService.updateCampaign(
               campaignId,
               updatedData,
             );
@@ -291,7 +280,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
             return this._goalFormService
               .saveGoal(organisationId, goalFormData, initialGoalFormData)
               .then(goalResource => {
-                return this._displayCampaignService.createGoal(campaignId, {
+                return DisplayCampaignService.createGoal(campaignId, {
                   goal_id: goalResource.id,
                   goal_selection_type: 'CONVERSION',
                   default: true,
@@ -302,7 +291,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
       } else if (!isGoalSelectionResource(field.model)) {
         const goalSelectionCreateRequest = field.model;
         tasks.push(() =>
-          this._displayCampaignService.createGoal(
+          DisplayCampaignService.createGoal(
             campaignId,
             goalSelectionCreateRequest,
           ),
@@ -313,57 +302,51 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
     initialIds
       .filter(id => !currentIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deleteGoal(campaignId, id),
-        );
+        tasks.push(() => DisplayCampaignService.deleteGoal(campaignId, id));
       });
 
     return tasks;
   };
-
-  getAdGroupTasks(
-    organisationId: string,
-    campaignId: string,
-    adGroupFields: AdGroupFieldModel[],
-    initialAdGroupFields: AdGroupFieldModel[],
-  ): Task[] {
-    const initialIds: string[] = [];
-    initialAdGroupFields.forEach(field => {
-      if (field.model.adGroup.id) {
-        initialIds.push(field.model.adGroup.id);
-      }
-    });
-
-    const currentIds: string[] = [];
-    adGroupFields.forEach(field => {
-      if (field.model.adGroup.id) {
-        currentIds.push(field.model.adGroup.id);
-      }
-    });
-
-    const tasks: Task[] = [];
-    adGroupFields.forEach(field => {
-      const initialField = initialAdGroupFields.find(f => f.key === field.key);
-      tasks.push(() =>
-        this._adGroupFormService.saveAdGroup(
-          organisationId,
-          campaignId,
-          field.model,
-          initialField ? initialField.model : INITIAL_AD_GROUP_FORM_DATA,
-        ),
-      );
-    });
-
-    initialIds
-      .filter(id => !currentIds.includes(id))
-      .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deleteAdGroup(campaignId, id),
-        );
-      });
-
-    return tasks;
-  }
 }
 
-export default DisplayCampaignFormService;
+function getAdGroupTasks(
+  organisationId: string,
+  campaignId: string,
+  adGroupFields: AdGroupFieldModel[],
+  initialAdGroupFields: AdGroupFieldModel[],
+): Task[] {
+  const initialIds: string[] = [];
+  initialAdGroupFields.forEach(field => {
+    if (field.model.adGroup.id) {
+      initialIds.push(field.model.adGroup.id);
+    }
+  });
+
+  const currentIds: string[] = [];
+  adGroupFields.forEach(field => {
+    if (field.model.adGroup.id) {
+      currentIds.push(field.model.adGroup.id);
+    }
+  });
+
+  const tasks: Task[] = [];
+  adGroupFields.forEach(field => {
+    const initialField = initialAdGroupFields.find(f => f.key === field.key);
+    tasks.push(() =>
+      AdGroupFormService.saveAdGroup(
+        organisationId,
+        campaignId,
+        field.model,
+        initialField ? initialField.model : undefined,
+      ),
+    );
+  });
+
+  initialIds
+    .filter(id => !currentIds.includes(id))
+    .forEach(id => {
+      tasks.push(() => DisplayCampaignService.deleteAdGroup(campaignId, id));
+    });
+
+  return tasks;
+}

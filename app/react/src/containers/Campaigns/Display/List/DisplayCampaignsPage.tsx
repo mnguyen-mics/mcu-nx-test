@@ -9,8 +9,7 @@ import DisplayCampaignsActionbar, {
 } from './DisplayCampaignsActionbar';
 import DisplayCampaignsTable from './DisplayCampaignsTable';
 import { injectDrawer } from '../../../../components/Drawer';
-import {
-  IDisplayCampaignService,
+import DisplayCampaignService, {
   CampaignsOptions,
 } from '../../../../services/DisplayCampaignService';
 import EditCampaignsForm, {
@@ -75,9 +74,6 @@ type Props = InjectedIntlProps &
 class DisplayCampaignsPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDisplayCampaignFormService)
   private _displayCampaignFormService: IDisplayCampaignFormService;
-
-  @lazyInject(TYPES.IDisplayCampaignService)
-  private _displayCampaignService: IDisplayCampaignService;
 
   constructor(props: Props) {
     super(props);
@@ -183,43 +179,45 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       options.status = apiStatuses;
     }
 
-    this._displayCampaignService
-      .getDisplayCampaigns(organisationId, campaignType, options)
-      .then(result => {
-        const data = result.data;
-        const campaignsById = normalizeArrayOfObject(data, 'id');
+    DisplayCampaignService.getDisplayCampaigns(
+      organisationId,
+      campaignType,
+      options,
+    ).then(result => {
+      const data = result.data;
+      const campaignsById = normalizeArrayOfObject(data, 'id');
+      this.setState({
+        dataSource: Object.keys(campaignsById).map(campaignId => {
+          return {
+            ...campaignsById[campaignId],
+          };
+        }),
+        isLoadingCampaigns: false,
+        totalCampaigns: result.total || 0,
+        hasCampaigns: init ? result.count !== 0 : true,
+      });
+
+      ReportService.getDisplayCampaignPerformanceReport(
+        organisationId,
+        filter.from,
+        filter.to,
+        ['campaign_id'],
+      ).then(statsResult => {
+        const statsByCampaignlId = normalizeArrayOfObject(
+          normalizeReportView(statsResult.data.report_view),
+          'campaign_id',
+        );
         this.setState({
+          isLoadingStats: false,
           dataSource: Object.keys(campaignsById).map(campaignId => {
             return {
+              ...statsByCampaignlId[campaignId],
               ...campaignsById[campaignId],
             };
           }),
-          isLoadingCampaigns: false,
-          totalCampaigns: result.total || 0,
-          hasCampaigns: init ? result.count !== 0 : true,
-        });
-
-        ReportService.getDisplayCampaignPerformanceReport(
-          organisationId,
-          filter.from,
-          filter.to,
-          ['campaign_id'],
-        ).then(statsResult => {
-          const statsByCampaignlId = normalizeArrayOfObject(
-            normalizeReportView(statsResult.data.report_view),
-            'campaign_id',
-          );
-          this.setState({
-            isLoadingStats: false,
-            dataSource: Object.keys(campaignsById).map(campaignId => {
-              return {
-                ...statsByCampaignlId[campaignId],
-                ...campaignsById[campaignId],
-              };
-            }),
-          });
         });
       });
+    });
   };
 
   showModal = () => {
@@ -241,8 +239,11 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       automated: false,
       archived: false,
     };
-    return this._displayCampaignService
-      .getDisplayCampaigns(organisationId, 'DISPLAY', options)
+    return DisplayCampaignService.getDisplayCampaigns(
+      organisationId,
+      'DISPLAY',
+      options,
+    )
       .then(apiResp =>
         apiResp.data.map(campaignResource => campaignResource.id),
       )
@@ -291,7 +292,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
     const tasks: Task[] = [];
     campaignIds.forEach(campaignId => {
       tasks.push(() => {
-        return this._displayCampaignService.updateCampaign(campaignId, {
+        return DisplayCampaignService.updateCampaign(campaignId, {
           status: 'PAUSED',
           archived: true,
           type: 'DISPLAY',
@@ -331,10 +332,6 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       this.loadDisplayCampaignsDataSource(organisationId, filter);
     };
 
-    const deleteCampaign = () => {
-      return this._displayCampaignService.deleteCampaign(campaign.id);
-    };
-
     Modal.confirm({
       title: intl.formatMessage(messages.confirmArchiveModalTitle),
       content: intl.formatMessage(messages.confirmArchiveModalContent),
@@ -342,7 +339,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       okText: intl.formatMessage(messages.confirmArchiveModalOk),
       cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
       onOk() {
-        return deleteCampaign().then(() => {
+        return DisplayCampaignService.deleteCampaign(campaign.id).then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -462,16 +459,16 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       ...undoBody,
     };
 
-    return this._displayCampaignService
-      .updateCampaign(campaignId, campaignBody)
+    return DisplayCampaignService.updateCampaign(campaignId, campaignBody)
       .then(response => {
         if (successMessage) {
           const undo = () => {
-            this._displayCampaignService
-              .updateCampaign(campaignId, campaignUndoBody)
-              .then(() => {
-                removeNotification(campaignId);
-              });
+            DisplayCampaignService.updateCampaign(
+              campaignId,
+              campaignUndoBody,
+            ).then(() => {
+              removeNotification(campaignId);
+            });
           };
 
           notifySuccess({
@@ -541,14 +538,16 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
         archived: false,
       };
       const allCampaignsIds: string[] = [];
-      this._displayCampaignService
-        .getDisplayCampaigns(organisationId, 'DISPLAY', options)
-        .then(apiResp => {
-          apiResp.data.forEach((campaignResource, index) => {
-            allCampaignsIds.push(campaignResource.id);
-          });
-          campaignIdsToUpdate = allCampaignsIds;
+      DisplayCampaignService.getDisplayCampaigns(
+        organisationId,
+        'DISPLAY',
+        options,
+      ).then(apiResp => {
+        apiResp.data.forEach((campaignResource, index) => {
+          allCampaignsIds.push(campaignResource.id);
         });
+        campaignIdsToUpdate = allCampaignsIds;
+      });
     } else if (selectedRowKeys) {
       campaignIdsToUpdate = selectedRowKeys;
     }

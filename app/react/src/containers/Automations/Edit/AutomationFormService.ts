@@ -1,4 +1,3 @@
-import { IDisplayCampaignService } from './../../../services/DisplayCampaignService';
 import _ from 'lodash';
 import {
   AutomationResource,
@@ -39,6 +38,7 @@ import EmailCampaignFormService, {
 } from '../../Campaigns/Email/Edit/EmailCampaignFormService';
 import { isFakeId } from '../../../utils/FakeIdHelper';
 import { IDisplayCampaignFormService } from '../../Campaigns/Display/Edit/DisplayCampaignFormService';
+import DisplayCampaignService from '../../../services/DisplayCampaignService';
 
 interface CustomEdgeResource {
   source_id: string;
@@ -69,9 +69,6 @@ export class AutomationFormService implements IAutomationFormService {
 
   @inject(TYPES.IDisplayCampaignFormService)
   private _displayCampaignFormService: IDisplayCampaignFormService;
-
-  @inject(TYPES.IDisplayCampaignService)
-  private _displayCampaignService: IDisplayCampaignService;
 
   private ids: string[] = [];
 
@@ -638,7 +635,7 @@ export class AutomationFormService implements IAutomationFormService {
         initialFormData,
       )
       .then(res =>
-        this._displayCampaignService.getAdGroups(res).then(r => ({
+        DisplayCampaignService.getAdGroups(res).then(r => ({
           campaign_id: res,
           ad_group_id: r && r.data.length ? r.data[0].id : undefined,
         })),

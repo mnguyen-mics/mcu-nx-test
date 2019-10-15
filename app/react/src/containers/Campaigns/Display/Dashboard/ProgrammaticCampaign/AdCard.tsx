@@ -35,9 +35,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { CreativeAuditAction } from '../../../../../models/creative/CreativeResource';
-import { ICreativeService } from '../../../../../services/CreativeService';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { TYPES } from '../../../../../constants/types';
+import CreativeService from '../../../../../services/CreativeService';
 
 const messagesMap = defineMessages({
   setStatus: {
@@ -98,9 +96,6 @@ type JoinedProps = AdCardProps &
   RouteComponentProps<CampaignRouteParams>;
 
 class AdCard extends React.Component<JoinedProps, AdCardState> {
-  @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -130,9 +125,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
     history.push(nextLocation);
   }
   renderDatePicker() {
-    const {
-      location: { search },
-    } = this.props;
+    const { location: { search } } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
@@ -249,12 +242,11 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
     const tasks: Task[] = [];
     creativesIds.forEach(creativeId => {
       tasks.push(() => {
-        return this._creativeService
-          .getDisplayAd(creativeId)
+        return CreativeService.getDisplayAd(creativeId)
           .then(apiResp => apiResp.data)
           .then(creative => {
             if (creative.available_user_audit_actions.includes(action)) {
-              this._creativeService.makeAuditAction(creative.id, action);
+              CreativeService.makeAuditAction(creative.id, action);
             }
           });
       });
