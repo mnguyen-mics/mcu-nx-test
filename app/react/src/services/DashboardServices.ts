@@ -158,7 +158,7 @@ const myDashboards: DashboardResource[] = [
           query_ids: ['25349', '25350', '25351'],
           labels_enabled: true,
           plot_labels: ["2nd", "1st_email_click", "1st logged"],
-          title: 'Nombre de user par type de profil matching',
+          title: 'Nombre de user par type de profil matching (30j)',
           show_legend: false
         },
       },
@@ -176,7 +176,7 @@ const myDashboards: DashboardResource[] = [
           query_ids: ['25352', '25353', '25354', '25355', '25356'],
           labels_enabled: true,
           plot_labels: ["Page View", "Basket View", "Purchase", "Search", "Email Click"],
-          title: "Nombre d'évènements par typologie (30j)",
+          title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false
         },
       },
@@ -211,7 +211,7 @@ const myDashboards: DashboardResource[] = [
           component_type: 'DATE_AGGREGATION_CHART',
           query_ids: ['25398', '25399', '25400', '25401'],
           plot_labels: ["email clicks", "basket view", "purchase", "search"],
-          title: "Nombre d'évènements par jour par typologie (30j)",
+          title: "Nombre d'évènements web par jour par typologie (30j)",
           labels_enabled: true,
           format: 'YYYY/MM/DD'
         },
@@ -247,7 +247,7 @@ const myDashboards: DashboardResource[] = [
           component_type: 'DATE_AGGREGATION_CHART',
           query_ids: ['25362'],
           plot_labels: ["tickets"],
-          title: "Nombre de ticket réalisé par les contacts CRM",
+          title: "Nombre de tickets réalisés par les contacts CRM",
           labels_enabled: true,
           format: 'YYYY/MM/DD'
         },
