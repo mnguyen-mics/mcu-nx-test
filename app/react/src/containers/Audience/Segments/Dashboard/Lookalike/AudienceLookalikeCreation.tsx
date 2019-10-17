@@ -32,14 +32,14 @@ import FormLayoutActionbar, {
 } from '../../../../../components/Layout/FormLayoutActionbar';
 import messages from '../messages';
 import { Omit } from '../../../../../utils/Types';
-import { Layout, Row, Spin, Alert } from 'antd';
+import { Layout, Row, Spin, Alert, Col } from 'antd';
 import { Path } from '../../../../../components/ActionBar';
 import { UserLookalikeSegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
-import { Loading } from '../../../../../components';
+import { Loading, McsIcon } from '../../../../../components';
 import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
@@ -382,31 +382,51 @@ class AudienceLookalikeCreation extends React.Component<
                 </div>
 
                 <div>
-                  <FormSliderField
-                    name="extension_factor"
-                    component={FormSlider}
-                    validate={[isRequired]}
-                    formItemProps={{
-                      label: intl.formatMessage(
-                        messages.lookAlikeModalExtentionFactorLabel,
-                      ),
-                      required: true,
-                      ...fieldGridConfig,
-                    }}
-                    inputProps={{
-                      max: this.state.partitions
-                        .filter(
-                          partition =>
-                            partition.id ===
-                            this.props.formValues.audience_partition_id,
-                        )
-                        .map(p => p.part_count)[0],
-                      defaultValue: 1,
-                    }}
-                    helpToolTipProps={{
-                      title: intl.formatMessage(messages.tooltipExtensionFactor),
-                    }}          
-                  />
+                  {this.props.formValues.audience_partition_id ? (
+                    <FormSliderField
+                      name="extension_factor"
+                      component={FormSlider}
+                      validate={[isRequired]}
+                      formItemProps={{
+                        label: intl.formatMessage(
+                          messages.lookAlikeModalExtentionFactorLabel,
+                        ),
+                        required: true,
+                        ...fieldGridConfig,
+                      }}
+                      inputProps={{
+                        min: 1,
+                        max: this.state.partitions
+                          .filter(
+                            partition =>
+                              partition.id ===
+                              this.props.formValues.audience_partition_id,
+                          )
+                          .map(p => p.part_count)[0],
+                      }}
+                      helpToolTipProps={{
+                        title: intl.formatMessage(
+                          messages.tooltipExtensionFactor,
+                        ),
+                      }}
+                    />
+                  ) : (
+                    <Row>
+                      <Col offset={4} style={{ width: '66%' }}>
+                        <Alert
+                          message={
+                            <div>
+                              <McsIcon type={'warning'} />
+                              {intl.formatMessage(
+                                messages.extensionFactorError,
+                              )}
+                            </div>
+                          }
+                          type={'error'}
+                        />
+                      </Col>
+                    </Row>
+                  )}
                 </div>
               </Content>
             </Form>
