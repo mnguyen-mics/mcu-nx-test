@@ -69,7 +69,10 @@ class Monitoring extends React.Component<Props, State> {
         userSegmentList: [],
         profileByCompartmentsAndUserAccountId: {},
         lastSeen: 0,
-        userIdentifier: '',
+        userIdentifier: {
+          type: '',
+          id: ''
+        },
       },
       isLoading: false,
     };
@@ -162,7 +165,10 @@ class Monitoring extends React.Component<Props, State> {
                 userSegmentList: [],
                 profileByCompartmentsAndUserAccountId: {},
                 lastSeen: 0,
-                userIdentifier: '',
+                userIdentifier: {
+                  type: '',
+                  id: ''
+                },
               },
               isLoading: false,
             });

@@ -1,3 +1,4 @@
+import { Identifier } from './../../containers/Audience/Timeline/Monitoring';
 import { Index } from '../../utils';
 import { UserActivityEventResource } from '../datamart/UserActivityResource';
 import {
@@ -177,7 +178,7 @@ export interface MonitoringData {
   userSegmentList: UserSegmentResource[];
   profileByCompartmentsAndUserAccountId: UserProfilePerCompartmentAndUserAccountId;
   lastSeen: number;
-  userIdentifier: string;
+  userIdentifier: Identifier;
 }
 
 export interface UserProfileWithAccountId {

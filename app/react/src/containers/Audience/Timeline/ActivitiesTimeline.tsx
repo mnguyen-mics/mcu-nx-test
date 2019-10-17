@@ -37,7 +37,7 @@ export interface Activities {
 
 interface ActivitiesTimelineProps {
   selectedDatamart: DatamartResource;
-  userIdentifier: string;
+  userIdentifier: Identifier;
 }
 
 interface State {
@@ -93,15 +93,14 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     }
   }
 
-  fetchUserAgents = (datamart: DatamartResource, userAgentId: string) => {
-    const identifierType = 'user_agent_id';
+  fetchUserAgents = (datamart: DatamartResource, userIdentifier: Identifier) => {
 
     this._userDataService
       .getIdentifiers(
         datamart.organisation_id,
         datamart.id,
-        identifierType,
-        userAgentId,
+        userIdentifier.type,
+        userIdentifier.id,
       )
       .then(response => {
         const userAgentsIdentifierInfo = response.data.filter(
@@ -219,13 +218,9 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   fetchActivities = (
     datamart: DatamartResource,
-    userAgentId: string,
+    userIdentifier: Identifier,
     dataSourceHasChanged: boolean = false,
   ) => {
-    const identifier: Identifier = {
-      id: userAgentId,
-      type: 'user_agent_id',
-    };
 
     const { nextDate, activityCountOnOldestDate } = this.state;
     const params =
@@ -245,13 +240,13 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       () =>
         takeLatest(this._userDataService.getActivities)(
           datamart.id,
-          identifier,
+          userIdentifier,
           params,
         )
           .then(response => {
             takeLatest(this._userDataService.getActivities)(
               datamart.id,
-              identifier,
+              userIdentifier,
               {
                 ...params,
                 limit: params.limit + 1,

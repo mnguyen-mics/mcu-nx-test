@@ -1,3 +1,4 @@
+import { Identifier } from './Monitoring';
 import { isUserPointIdentifier } from './../../../models/timeline/timeline';
 import { groupBy, Dictionary } from 'lodash';
 import { IUserDataService } from './../../../services/UserDataService';
@@ -26,30 +27,30 @@ import DatamartService from '../../../services/DatamartService';
 export interface IMonitoringService {
   fetchProfileData: (
     datamart: DatamartResource,
-    userAgentId: string,
+    userIdentifier: Identifier,
   ) => Promise<UserProfilePerCompartmentAndUserAccountId>; // type it
   fetchSegmentsData: (
     datamart: DatamartResource,
-    userAgentId: string,
+    userIdentifier: Identifier,
   ) => Promise<UserSegmentResource[]>;
   fetchCompartments: (
     datamart: DatamartResource,
   ) => Promise<UserAccountCompartmentDatamartSelectionResource[]>;
   getLastSeen: (
     datamart: DatamartResource,
-    userAgentId: string,
+    userIdentifier: Identifier,
   ) => Promise<number>;
   fetchUserAccountsByCompartmentId: (
     datamart: DatamartResource,
-    userAgentId: string,
+    userIdentifier: Identifier,
   ) => Promise<Dictionary<UserAccountIdentifierInfo[]>>;
   fetchUserAgents: (
     datamart: DatamartResource,
-    userAgentId: string,
+    userIdentifier: Identifier,
   ) => Promise<UserAgentIdentifierInfo[]>;
   fetchUserEmails: (
     datamart: DatamartResource,
-    userAgentId: string,
+    userIdentifier: Identifier,
   ) => Promise<UserEmailIdentifierInfo[]>;
   fetchMonitoringData: (
     organisationId: string,
@@ -65,15 +66,10 @@ export class MonitoringService implements IMonitoringService {
   @inject(TYPES.IUserDataService)
   private _userDataService: IUserDataService;
 
-  private identifierType: string = 'user_agent_id';
-
-  async fetchProfileData(datamart: DatamartResource, userAgentId: string): Promise<UserProfilePerCompartmentAndUserAccountId> {
+  async fetchProfileData(datamart: DatamartResource, userIdentifier: Identifier): Promise<UserProfilePerCompartmentAndUserAccountId> {
 
     try {
-      const profilesResponse = await this._userDataService.getProfiles(datamart.id, {
-        id: userAgentId,
-        type: this.identifierType
-      });
+      const profilesResponse = await this._userDataService.getProfiles(datamart.id, userIdentifier);
 
       if (!profilesResponse) return {};
 
@@ -116,12 +112,9 @@ export class MonitoringService implements IMonitoringService {
 
   }
 
-  fetchSegmentsData(datamart: DatamartResource, userAgentId: string) {
+  fetchSegmentsData(datamart: DatamartResource, userIdentifier: Identifier) {
     return this._userDataService
-      .getSegments(datamart.id, {
-        id: userAgentId,
-        type: this.identifierType,
-      })
+      .getSegments(datamart.id, userIdentifier)
       .then(res => {
         return res.data;
       });
@@ -136,12 +129,9 @@ export class MonitoringService implements IMonitoringService {
     );
   }
 
-  getLastSeen(datamart: DatamartResource, userAgentId: string) {
+  getLastSeen(datamart: DatamartResource, userIdentifier: Identifier) {
     return this._userDataService
-      .getActivities(datamart.id, {
-        id: userAgentId,
-        type: this.identifierType,
-      })
+      .getActivities(datamart.id, userIdentifier)
       .then(res => {
         const timestamps = res.data.map(item => {
           return item.$ts;
@@ -157,14 +147,14 @@ export class MonitoringService implements IMonitoringService {
 
   fetchUserAccountsByCompartmentId(
     datamart: DatamartResource,
-    userAgentId: string,
+    userIdentifier: Identifier,
   ) {
     return this._userDataService
       .getIdentifiers(
         datamart.organisation_id,
         datamart.id,
-        this.identifierType,
-        userAgentId,
+        userIdentifier.type,
+        userIdentifier.id,
       )
       .then(response => {
         const userAccountIdentifierInfos = response.data.filter(
@@ -180,15 +170,13 @@ export class MonitoringService implements IMonitoringService {
       });
   }
 
-  fetchUserAgents(datamart: DatamartResource, userAgentId: string) {
-    const identifierType = 'user_agent_id';
-
+  fetchUserAgents(datamart: DatamartResource, userIdentifier: Identifier) {
     return this._userDataService
       .getIdentifiers(
         datamart.organisation_id,
         datamart.id,
-        identifierType,
-        userAgentId,
+        userIdentifier.type,
+        userIdentifier.id,
       )
       .then(response => {
         const userAgentsIdentifierInfo = response.data.filter(
@@ -198,13 +186,13 @@ export class MonitoringService implements IMonitoringService {
       });
   }
 
-  fetchUserEmails(datamart: DatamartResource, userAgentId: string) {
+  fetchUserEmails(datamart: DatamartResource, userIdentifier: Identifier) {
     return this._userDataService
       .getIdentifiers(
         datamart.organisation_id,
         datamart.id,
-        this.identifierType,
-        userAgentId,
+        userIdentifier.type,
+        userIdentifier.id,
       )
       .then(response => {
         const userEmailsIdentifierInfo = response.data.filter(
@@ -230,7 +218,7 @@ export class MonitoringService implements IMonitoringService {
       userSegmentList: [],
       profileByCompartmentsAndUserAccountId: {},
       userPointList: [],
-      userIdentifier: ''
+      userIdentifier: {type: '', id : ''}
     }
     return this._userDataService
       .getIdentifiers(
@@ -243,10 +231,17 @@ export class MonitoringService implements IMonitoringService {
       .then(response => {
         const userPointIdentifierInfo = response.data.find(isUserPointIdentifier)
         const userAgentIdentifierInfo = response.data.find(isUserAgentIdentifier)
-        const userIdentifier =
-          userPointIdentifierInfo && userPointIdentifierInfo.user_point_id ||
-          userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id
-        if (userIdentifier) {
+        const userIdentifier = userPointIdentifierInfo ? {
+          type: 'user_point_id',
+          id: userPointIdentifierInfo && userPointIdentifierInfo.user_point_id
+        } : {
+          type: 'user_agent_id',
+          id: userAgentIdentifierInfo ?
+            userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id :
+            ''
+        }
+          
+        if (userIdentifier.id) {
           return Promise.all([
             this.fetchCompartments(datamart),
             this.getLastSeen(datamart, userIdentifier),
