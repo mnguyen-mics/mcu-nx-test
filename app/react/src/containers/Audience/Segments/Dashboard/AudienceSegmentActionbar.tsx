@@ -268,7 +268,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
               persisted: true,
               type: 'USER_LOOKALIKE',
               lookalike_algorithm: 'CLUSTER_OVERLAP',
-              extension_factor: 30,
+              extension_factor: 1,
               datamart_id: datamartId,
               organisation_id: organisationId,
             },
