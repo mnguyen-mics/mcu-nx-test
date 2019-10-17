@@ -26,6 +26,10 @@ const messages = defineMessages({
     defaultMessage:
       'There was an error with the information you entered, please check your username / password.',
   },
+  expiredPassword: {
+    id: 'authentication.login.expired.password',
+    defaultMessage: 'Your password has expired. Please create a new one.',
+  },
   forgotPassword: {
     id: 'authentication.login.forgot.password',
     defaultMessage: 'Forgot password',
@@ -62,6 +66,9 @@ interface State {
 
 interface MapStateToProps {
   hasError: boolean;
+  error: {
+    [key: string]: string;
+  };
   connectedUser: UserProfileResource;
 }
 
@@ -135,6 +142,7 @@ class Login extends React.Component<Props, State> {
     const {
       form: { getFieldDecorator },
       hasError,
+      error,
       intl,
       connectedUser,
     } = this.props;
@@ -144,11 +152,19 @@ class Login extends React.Component<Props, State> {
     const hasFetchedConnectedUser = connectedUser && connectedUser.id;
 
     const errorMsg = hasError ? (
-      <Alert
-        type="error"
-        className="login-error-message"
-        message={<FormattedMessage {...messages.logInError} />}
-      />
+      error.error === 'Your password has expired. Please create a new one.' ? (
+        <Alert
+          type="error"
+          className="login-error-message"
+          message={<FormattedMessage {...messages.expiredPassword} />}
+        />
+      ) : (
+        <Alert
+          type="error"
+          className="login-error-message"
+          message={<FormattedMessage {...messages.logInError} />}
+        />
+      )
     ) : null;
 
     return (
@@ -228,6 +244,7 @@ class Login extends React.Component<Props, State> {
 
 const mapStateToProps = (state: any) => ({
   hasError: state.login.hasError,
+  error: state.login.error,
   connectedUser: state.session.connectedUser,
 });
 
