@@ -46,7 +46,7 @@ class EventActivity extends React.Component<Props, State> {
 
   renderAnyJson = (json: AnyJson, isRoot = false): React.ReactNode => {
     let returnValue: React.ReactNode = '';
-    if (!json) return (
+    if (!json && json !== 0 && json !== false) return (
       <i className="empty">
         <FormattedMessage {...messages.empty} />
       </i>
@@ -60,7 +60,7 @@ class EventActivity extends React.Component<Props, State> {
     } else if (typeof json === 'string' || typeof json === 'number' || typeof json === 'boolean') {
       returnValue = (
         <span>
-          <Tooltip title={json}>{json}</Tooltip>
+          <Tooltip title={json}>{typeof json === 'boolean' ? json.toString() : json}</Tooltip>
         </span>
       );
     } else {
