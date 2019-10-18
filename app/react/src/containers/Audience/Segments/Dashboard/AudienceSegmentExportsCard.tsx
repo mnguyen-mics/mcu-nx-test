@@ -548,19 +548,15 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
             )}
           </InputGroup>
         </Modal>
-        <div style={{ flex: 1, justifyContent: 'flex-start', display: 'flex' }}>
+        <div style={{ flex: 1, justifyContent: 'flex-end', display: 'flex' }}>
           <Button
-            className="mcs-primary"
             style={{
-              marginBottom: '15px',
-              marginLeft: '15px',
+              marginBottom: '20px',
               width: '14%',
             }}
-            type="primary"
             onClick={onClickNewExport}
             loading={isLoadingCompartments}
           >
-            <McsIcon type="extend" />{' '}
             <FormattedMessage {...messages.createExport} />
           </Button>
         </div>

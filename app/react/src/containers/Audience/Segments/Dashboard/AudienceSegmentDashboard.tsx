@@ -27,6 +27,7 @@ import {
 import FeedCardList from './Feeds/FeedCardList';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import AudienceSegmentExportsCard from './AudienceSegmentExportsCard';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 
 interface State {
   loading: boolean;
@@ -44,6 +45,7 @@ export interface AudienceSegmentDashboardProps {
 type Props = AudienceSegmentDashboardProps &
   InjectedIntlProps &
   InjectedNotificationProps &
+  InjectedFeaturesProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class AudienceSegmentDashboard extends React.Component<Props, State> {
@@ -155,9 +157,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     const {
       intl,
       segment,
-      match: {
-        params: { organisationId },
-      },
     } = this.props;
     const { dashboard } = this.state;
     const items = [
@@ -196,7 +195,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       if (
         segment.persisted &&
         this.isDatamartPionus() &&
-        this.isValiuzOrg(organisationId)
+        this.props.hasFeature('audience.segment_exports')
       ) {
         items.push({
           title: intl.formatMessage(messages.exports),
@@ -208,26 +207,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     }
     return items;
   };
-
-  isValiuzOrg(orgId: string): boolean {
-    const valiuzOrgIds = [
-      '1327',
-      '1319',
-      '1318',
-      '1314',
-      '1312',
-      '1311',
-      '1310',
-      '1309',
-      '1308',
-      '1304',
-      '1301',
-      '1294',
-      '1288',
-      '1282',
-    ];
-    return valiuzOrgIds.includes(orgId);
-  }
 
   render() {
     const { segment, datamarts } = this.props;
@@ -251,6 +230,7 @@ export default compose<Props, AudienceSegmentDashboardProps>(
   injectIntl,
   withRouter,
   injectNotifications,
+  injectFeatures,
 )(AudienceSegmentDashboard);
 
 const messages = defineMessages({
@@ -272,6 +252,6 @@ const messages = defineMessages({
   },
   exports: {
     id: 'audience-segment-dashboard-tab-title-exports',
-    defaultMessage: 'Exports Status',
+    defaultMessage: 'Exports',
   },
 });
