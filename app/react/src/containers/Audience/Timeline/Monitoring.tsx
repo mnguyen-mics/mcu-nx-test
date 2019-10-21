@@ -80,7 +80,7 @@ class Monitoring extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      location,
+      
       match: {
         params: { organisationId, identifierType, identifierId },
       },

@@ -81,12 +81,14 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
     const {
       selectedDatamart: prevSelectedDatamart,
-      userIdentifier: prevUserPointId,
+      userIdentifier: prevUserIdentifier,
     } = prevProps;
 
-    if (
-      userIdentifier !== prevUserPointId ||
-      selectedDatamart !== prevSelectedDatamart
+    if (!!userIdentifier.id && !!userIdentifier.type && (
+      userIdentifier.id !== prevUserIdentifier.id ||
+      selectedDatamart.id !== prevSelectedDatamart.id ||
+      userIdentifier.type !== prevUserIdentifier.type
+      )
     ) {
       this.fetchActivities(selectedDatamart, userIdentifier, true);
       this.fetchUserAgents(selectedDatamart, userIdentifier);
