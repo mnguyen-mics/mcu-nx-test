@@ -1,6 +1,4 @@
-import {
-  LOG_IN,
-} from '../action-types';
+import { LOG_IN } from '../action-types';
 
 const defaultLoginState = {
   hasError: false,
@@ -8,9 +6,7 @@ const defaultLoginState = {
 };
 
 const login = (state = defaultLoginState, action) => {
-
   switch (action.type) {
-
     case LOG_IN.REQUEST:
       return {
         ...state,
@@ -20,12 +16,16 @@ const login = (state = defaultLoginState, action) => {
         hasError: true,
         error: action.payload,
       };
+    case LOG_IN.EXPIRED_PASSWORD:
+      return {
+        hasError: true,
+        error: action.payload,
+      };
     case LOG_IN.SUCCESS:
       return defaultLoginState;
     default:
       return state;
   }
-
 };
 
 const LoginStateReducers = {
