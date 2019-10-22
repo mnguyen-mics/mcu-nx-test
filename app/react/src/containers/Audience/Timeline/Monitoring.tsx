@@ -223,7 +223,7 @@ class Monitoring extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            {userIdentifier ? (
+            {userIdentifier.id ? (
               <Row>
                 <TimelineHeader
                   dataSource={monitoringData}

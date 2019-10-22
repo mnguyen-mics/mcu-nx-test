@@ -72,8 +72,10 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   componentDidMount() {
     const { selectedDatamart, userIdentifier } = this.props;
 
-    this.fetchActivities(selectedDatamart, userIdentifier);
-    this.fetchUserAgents(selectedDatamart, userIdentifier);
+    if (!!userIdentifier.id && !!userIdentifier.type) {
+      this.fetchActivities(selectedDatamart, userIdentifier);
+      this.fetchUserAgents(selectedDatamart, userIdentifier);
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
