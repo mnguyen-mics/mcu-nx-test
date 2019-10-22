@@ -160,7 +160,7 @@ class FormSearchObject extends React.Component<
             labelInValue={true}
             value={this.state.value}
             placeholder={'Search'}
-            defaultActiveFirstOption={false}
+            defaultActiveFirstOption={true}
             filterOption={false}
             onSearch={loadOnlyOnce ? this.onSearch : this.fetchData}
             onInputKeyDown={loadOnlyOnce ? this.onInputKeyDown : undefined}
