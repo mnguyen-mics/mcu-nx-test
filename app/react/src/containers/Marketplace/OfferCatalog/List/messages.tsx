@@ -13,4 +13,20 @@ export default defineMessages({
     id: 'marketplace.offercatalog.name',
     defaultMessage: 'Name',
   },
+  priceLabel: {
+    id: 'marketplace.offercatalog.price',
+    defaultMessage: 'Price',
+  },
+  quoteLabel: {
+    id: 'marketplace.offercatalog.quote',
+    defaultMessage: 'Quote',
+  },
+  freeLabel: {
+    id: 'marketplace.offercatalog.free',
+    defaultMessage: 'Free',
+  },
+  cpmLabel: {
+    id: 'marketplace.offercatalog.cpm',
+    defaultMessage: 'CPM',
+  }
 });

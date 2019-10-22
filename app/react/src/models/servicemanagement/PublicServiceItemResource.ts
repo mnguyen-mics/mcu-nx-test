@@ -133,7 +133,40 @@ export interface ServiceItemResource {
   reseller_agreement_id?: string;
 }
 
-export type AutomaticRecordType = "AUDIENCE_SEGMENT" | "DEAL_LIST" | "PLACEMENT_LIST" | "KEYWORDS_LIST";
+export interface CombinedServiceItemsAndConditions {
+  service_item_id: number;
+  provider_id: number;
+  service_offer_id: number;
+  service_item_conditions_id: number;
+}
+
+export interface ServiceProviderResource {
+  id: string;
+  name: string;
+  description: string;
+  locale: string;
+}
+
+export interface ServiceOfferLocaleResource {
+  id: string;
+  name: string;
+  description: string;
+  locale: string;
+  service_item_offer_id: string;
+}
+
+export interface CombinedServiceItemData {
+  serviceProvider: ServiceProviderResource;
+  serviceOffer: ServiceOfferLocaleResource;
+  serviceCondition: ServiceItemConditionShape;
+  serviceItem: ServiceItemShape;
+}
+
+export type AutomaticRecordType =
+  | 'AUDIENCE_SEGMENT'
+  | 'DEAL_LIST'
+  | 'PLACEMENT_LIST'
+  | 'KEYWORDS_LIST';
 
 export type ServiceItemConditionShape =
   | LinearServiceItemConditionResource
@@ -159,7 +192,7 @@ export interface PluginServiceItemConditionResource
 }
 
 export interface ProvidedServiceItemConditionResource
-  extends ServiceItemConditionsResource { }
+  extends ServiceItemConditionsResource {}
 
 export interface ServiceAgreement {
   id: string;
@@ -173,7 +206,25 @@ export function isLinearServiceItemConditionsResource(
   return (
     (serviceItemCondition as LinearServiceItemConditionResource)
       .percent_value !== undefined &&
-    (serviceItemCondition as LinearServiceItemConditionResource)
-      .fixed_value !== undefined
+    (serviceItemCondition as LinearServiceItemConditionResource).fixed_value !==
+      undefined
+  );
+}
+
+export function isPluginServiceItemConditionsResource(
+  serviceItemCondition: ServiceItemConditionShape,
+): serviceItemCondition is PluginServiceItemConditionResource {
+  return (
+    (serviceItemCondition as PluginServiceItemConditionResource).valuator_id !==
+    undefined
+  );
+}
+
+export function isProvidedServiceItemConditionResource(
+  serviceItemCondition: ServiceItemConditionShape,
+): serviceItemCondition is ProvidedServiceItemConditionResource {
+  return (
+    !isLinearServiceItemConditionsResource(serviceItemCondition) &&
+    !isPluginServiceItemConditionsResource(serviceItemCondition)
   );
 }
