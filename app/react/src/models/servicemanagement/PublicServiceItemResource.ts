@@ -152,7 +152,6 @@ export interface ServiceOfferLocaleResource {
   name: string;
   description: string;
   locale: string;
-  service_item_offer_id: string;
 }
 
 export interface CombinedServiceItemData {

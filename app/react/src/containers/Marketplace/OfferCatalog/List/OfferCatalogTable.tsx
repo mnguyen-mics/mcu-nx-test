@@ -130,7 +130,7 @@ class OfferCatalogTable extends React.Component<Props, State> {
                 provider => provider.id === ids.provider_id.toString(),
               );
               const serviceOffer = item[1].data.find(
-                offer => offer.service_item_offer_id === ids.service_offer_id.toString(),
+                offer => offer.id === ids.service_offer_id.toString(),
               );
               const serviceCondition = item[2].data.find(
                 condition => condition.id === ids.service_item_conditions_id.toString(),
