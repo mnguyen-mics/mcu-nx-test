@@ -598,7 +598,7 @@ class FieldNodeForm extends React.Component<Props, State> {
     const field = this.getField(formValues, expressionIndex);
 
 
-    let fetchListMethod = (keywords: string) => {
+    let fetchListMethod = (keywords: string): Promise<Array<{ key: string; label: JSX.Element | string }>> => {
       if (field) {
         return ReferenceTableService.getReferenceTable(datamartId, runtimeSchemaId, objectType.name, field.field)
         .then(res => res.data.map(r => ({ key: r.value, label:r.display_value })))
@@ -627,7 +627,7 @@ class FieldNodeForm extends React.Component<Props, State> {
             break;
           case 'SEGMENTS':
             fetchListMethod = (keywords: string) => {
-              return this._audienceSegmentService.getSegments(organisationId, { keywords: keywords, datamart_id: datamartId }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
+              return this._audienceSegmentService.getSegments(organisationId, { keywords: keywords, datamart_id: datamartId }).then(res => res.data.map(r => ({ key: r.id, label: <SegmentNameDisplay audienceSegmentResource={r}/> })))
             }
             fetchSingleMethod = (id: string) => this._audienceSegmentService.getSegment(id).then(res => ({ key: res.data.id, label: res.data.name }))
             break;
