@@ -10,7 +10,7 @@ import {
   defineMessages,
 } from 'react-intl';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
-import CatalogService from '../../../../../services/CatalogService';
+import { ICatalogService } from '../../../../../services/CatalogService';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -18,6 +18,8 @@ import injectNotifications, {
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { ServiceItemOfferResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const { Content } = Layout;
 
@@ -114,6 +116,10 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedNotificationProps;
 
 class SubscribedOffersListPage extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.ICatalogService)
+  private _catalogService: ICatalogService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -130,7 +136,7 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
     const options = {
       ...getPaginatedApiParam(filters.currentPage, filters.pageSize),
     };
-    CatalogService.getSubscribedOffers(organisationId, options)
+    this._catalogService.getSubscribedOffers(organisationId, options)
       .then(resp => {
         this.setState({
           loading: false,

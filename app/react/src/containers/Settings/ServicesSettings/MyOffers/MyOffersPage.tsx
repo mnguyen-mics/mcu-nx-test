@@ -6,7 +6,7 @@ import messages from '../../messages';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import { Filters } from '../../OrganisationSettings/Labels/LabelsTable';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import CatalogService from '../../../../services/CatalogService';
+import { ICatalogService } from '../../../../services/CatalogService';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../utils/LocationSearchHelper';
 import { ServiceItemOfferResource } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -14,6 +14,8 @@ import { Link } from 'react-router-dom';
 import McsIcon, { McsIconType } from '../../../../components/McsIcon';
 import ItemList from '../../../../components/ItemList';
 import Button, { ButtonProps } from 'antd/lib/button';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 const { Content } = Layout;
 
@@ -31,7 +33,15 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedNotificationProps;
 
 class MyOffersPage extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.ICatalogService)
+  private _catalogService: ICatalogService;
+
   constructor(props: Props) {
+
+
+
+
     super(props);
     this.state = {
       loading: false,
@@ -49,7 +59,7 @@ class MyOffersPage extends React.Component<Props, State> {
       organisation_id: organisationId,
       ...getPaginatedApiParam(filters.currentPage, filters.pageSize)
     }
-    CatalogService.getMyOffers(options)
+    this._catalogService.getMyOffers(options)
       .then(myOffersResult => {
         this.setState({
           loading: false,

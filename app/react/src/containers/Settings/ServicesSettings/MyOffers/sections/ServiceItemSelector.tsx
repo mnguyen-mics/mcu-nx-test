@@ -1,5 +1,5 @@
 import * as React from 'react';
-import CatalogService, { GetServiceItemsOptions } from '../../../../../services/CatalogService';
+import { GetServiceItemsOptions, ICatalogService } from '../../../../../services/CatalogService';
 import { ServiceItemShape } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { DataColumnDefinition } from '../../../../../components/TableView/TableView';
 import TableSelector, { TableSelectorProps } from '../../../../../components/ElementSelector/TableSelector';
@@ -9,7 +9,9 @@ import messages from './messages';
 import { compose } from 'recompose';
 import { SearchFilter } from '../../../../../components/ElementSelector';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import ServiceOfferPageService from '../../ServiceOfferPageService';
+import { IServiceOfferPageService } from '../../ServiceOfferPageService';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const ServiceItemTableSelector: React.ComponentClass<TableSelectorProps<ServiceItemShape>> = TableSelector;
 
@@ -28,6 +30,13 @@ interface State {
 }
 
 class ServiceItemSelector extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.ICatalogService)
+  private _catalogService: ICatalogService;
+
+  @lazyInject(TYPES.IServiceOfferPageService)
+  private _serviceOfferPageService: IServiceOfferPageService;
+
   saveServiceItems = (serviceItemIds: string[], serviceItems: ServiceItemShape[]) => {
     this.props.save(serviceItems);
   }
@@ -53,7 +62,7 @@ class ServiceItemSelector extends React.Component<Props, State> {
       options.type = filter.type;
     };
 
-    return CatalogService.getServiceItems(organisationId, options);
+    return this._catalogService.getServiceItems(organisationId, options);
   }
 
   render() {
@@ -74,11 +83,11 @@ class ServiceItemSelector extends React.Component<Props, State> {
       {
         intlMessage: messages.serviceItemSelectorColumnType,
         key: 'type',
-        render: (text, record) => <span>{ServiceOfferPageService.transformServiceType(record.type, formatMessage)}</span>,
+        render: (text, record) => <span>{this._serviceOfferPageService.transformServiceType(record.type, formatMessage)}</span>,
       },
     ];
 
-    const fetchServiceItem = (serviceItemId: string) => CatalogService.findServiceItem(serviceItemId);
+    const fetchServiceItem = (serviceItemId: string) => this._catalogService.findServiceItem(serviceItemId);
 
     return (
       <ServiceItemTableSelector

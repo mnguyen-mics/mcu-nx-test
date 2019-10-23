@@ -7,8 +7,10 @@ import OfferTypeSelector from './OfferTypeSelector';
 import CreateOfferForm from './CreateOfferForm';
 import messages from '../../messages';
 import { OfferFormData, INITIAL_SERVICE_OFFER_FORM_DATA } from '../domain';
-import ServiceOfferPageService from '../ServiceOfferPageService';
+import { IServiceOfferPageService } from '../ServiceOfferPageService';
 import { Loading } from '../../../../components';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 export enum OfferType {
   Automatic,
@@ -31,6 +33,9 @@ type Props = RouteComponentProps<{ organisationId: string; offerId?: string }> &
 
 class CreateOfferPage extends React.Component<Props, State> {
 
+  @lazyInject(TYPES.IServiceOfferPageService)
+  private _serviceOfferPageService: IServiceOfferPageService;
+
   constructor(props: Props) {
     super(props);
 
@@ -45,15 +50,15 @@ class CreateOfferPage extends React.Component<Props, State> {
     const { match: { params: { organisationId, offerId } } } = this.props;
 
     if (offerId) {
-      ServiceOfferPageService.loadOffer(organisationId, offerId)
-        .then(formData => {
+      this._serviceOfferPageService.loadOffer(organisationId, offerId)
+        .then((formData: OfferFormData) => {
           this.setState({
             loading: false,
             offerType: (formData.offer.automatic_on === null) ? OfferType.Manual : OfferType.Automatic,
             offerFormData: formData,
           });
         })
-        .catch(err => {
+        .catch((err: any) => {
           this.setState({ loading: false });
           this.props.notifyError(err);
         })
@@ -107,12 +112,12 @@ class CreateOfferPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    ServiceOfferPageService.createOrUpdateServiceOffer(
+    this._serviceOfferPageService.createOrUpdateServiceOffer(
       organisationId,
       offerFormData,
       initialOfferFormData,
     ).then(
-      returnedOfferId => {
+      (returnedOfferId: string) => {
         const displayOfferUrl = `/v2/o/${organisationId}/settings/services/my_offers/${returnedOfferId}/service_item_conditions`;
         this.setState({
           loading: false,
@@ -120,7 +125,7 @@ class CreateOfferPage extends React.Component<Props, State> {
         history.push(displayOfferUrl);
       }
     )
-      .catch(err => {
+      .catch((err: any) => {
         notifyError(err);
         this.setState({
           loading: false,

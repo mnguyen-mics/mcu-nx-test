@@ -18,7 +18,7 @@ import ScrollspySider, {
 import { BasicProps } from 'antd/lib/layout/layout';
 import { PlacementDescriptorResource } from '../../../../../models/placement/PlacementDescriptorResource';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import CatalogService from '../../../../../services/CatalogService';
+import { ICatalogService } from '../../../../../services/CatalogService';
 import {
   FormInput,
   FormSection,
@@ -37,6 +37,8 @@ import injectNotifications, {
 import { DealResource } from '../../../../../models/dealList/dealList';
 import { AdexInventoryServiceItemPublicResource, DisplayNetworkServiceItemPublicResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { Loading } from '../../../../../components';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const FORM_ID = 'dealForm';
 
@@ -160,6 +162,9 @@ type JoinedProps = DealFormProps &
 
 class DealForm extends React.Component<JoinedProps, State> {
 
+  @lazyInject(TYPES.ICatalogService)
+  private _catalogService: ICatalogService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -189,7 +194,7 @@ class DealForm extends React.Component<JoinedProps, State> {
 
 
   fetchAdexchanges = (organisationId: string) => {
-    return CatalogService.getServices(organisationId, {
+    return this._catalogService.getServices(organisationId, {
       serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS']
     })
     .then(res => res.data)

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import CatalogService from '../../../../../../../services/CatalogService';
+import { ICatalogService } from '../../../../../../../services/CatalogService';
 import { AudienceSegmentResource } from '../../../../../../../models/audiencesegment';
 import {
   ServiceCategoryTree,
@@ -40,8 +40,13 @@ const provideAudienceCatalog = (
   Component: React.ComponentClass<InjectedAudienceCatalogProps>,
 ) => {
   class ProvidedComponent extends React.Component<Props, State> {
+
     @lazyInject(TYPES.IAudienceSegmentService)
     private _audienceSegmentService: IAudienceSegmentService;
+
+    @lazyInject(TYPES.ICatalogService)
+    private _catalogService: ICatalogService;
+
     constructor(props: Props) {
       super(props);
       this.state = {
@@ -85,14 +90,14 @@ const provideAudienceCatalog = (
         },
       }));
 
-      CatalogService.getCategoryTree(organisationId, {
+      this._catalogService.getCategoryTree(organisationId, {
         serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'],
       })
         .then(categoryTree => {
-          function fetchServices(
+          const fetchServices = (
             category: ServiceCategoryTree,
-          ): Promise<ServiceCategoryTree> {
-            const servicesP = CatalogService.getServices(organisationId, {
+          ): Promise<ServiceCategoryTree> => {
+            const servicesP = this._catalogService.getServices(organisationId, {
               parentCategoryId: category.node.id,
             });
             const childrenCategoryP = Promise.all(
@@ -150,7 +155,7 @@ const provideAudienceCatalog = (
         },
       }));
 
-      CatalogService.getAudienceSegmentServices(organisationId, {
+      this._catalogService.getAudienceSegmentServices(organisationId, {
         categorySubtype: ['AUDIENCE.GENDER'],
       })
         .then(res => res.data)
@@ -178,7 +183,7 @@ const provideAudienceCatalog = (
         },
       }));
 
-      CatalogService.getAudienceSegmentServices(organisationId, {
+      this._catalogService.getAudienceSegmentServices(organisationId, {
         categorySubtype: ['AUDIENCE.AGE'],
       })
         .then(res => res.data)

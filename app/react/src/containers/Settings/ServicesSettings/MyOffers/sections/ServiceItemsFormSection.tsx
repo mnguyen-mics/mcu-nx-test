@@ -11,7 +11,9 @@ import messages from './messages';
 import ServiceItemSelector, { ServiceItemSelectorProps } from './ServiceItemSelector';
 import { ServiceConditionsModel } from '../../domain';
 import { ServiceItemShape } from '../../../../../models/servicemanagement/PublicServiceItemResource';
-import ServiceOfferPageService from '../../ServiceOfferPageService';
+import { IServiceOfferPageService } from '../../ServiceOfferPageService';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 export interface ServiceItemsFormSectionProps extends ReduxFormChangeProps { }
 
@@ -23,6 +25,9 @@ type Props = InjectedIntlProps &
   InjectedDrawerProps;
 
 class ServiceItemsFormSection extends React.Component<Props> {
+
+  @lazyInject(TYPES.IServiceOfferPageService)
+  private _serviceOfferPageService: IServiceOfferPageService;
 
   updateServiceConditions = (serviceItems: ServiceItemShape[]) => {
     const {
@@ -86,7 +91,7 @@ class ServiceItemsFormSection extends React.Component<Props> {
       serviceConditionField.meta.name;
 
     const getServiceItemServiceType = (serviceConditionField: ServiceConditionsModel) =>
-      ServiceOfferPageService.transformServiceType(serviceConditionField.meta.type, formatMessage);
+      this._serviceOfferPageService.transformServiceType(serviceConditionField.meta.type, formatMessage);
 
     return fields.getAll().map((serviceConditionField, index) => {
       const removeRecord = () => fields.remove(index);
