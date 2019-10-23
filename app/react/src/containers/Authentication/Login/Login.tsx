@@ -152,7 +152,7 @@ class Login extends React.Component<Props, State> {
     const hasFetchedConnectedUser = connectedUser && connectedUser.id;
 
     const errorMsg = hasError ? (
-      error.error === 'Your password has expired. Please create a new one.' ? (
+      error.error_code === 'EXPIRED_PASSWORD_ERROR' ? (
         <Alert
           type="error"
           className="login-error-message"

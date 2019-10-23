@@ -120,7 +120,13 @@ function request(
   const checkAndParse = (response: Response) => {
     const contentType = response.headers.get('Content-Type');
 
-    if (response.status === 401) {
+    if (
+      // redirect to login page when 401 except for expired password
+      // because we want to catch the error on Login/sagas.js
+      response.status === 401 &&
+      response.url !==
+        'https://api.mediarithmics.local/v1/authentication/refresh_tokens'
+    ) {
       const event = new Event('unauthorizedEvent');
       document.dispatchEvent(event);
     }
@@ -141,9 +147,7 @@ function request(
         ? Promise.resolve()
         : Promise.reject(response);
     } else if (contentType && contentType.indexOf('text/plain') !== -1) {
-      return response.status < 400
-        ? response.text()
-        : Promise.reject(response)
+      return response.status < 400 ? response.text() : Promise.reject(response);
     }
 
     // Considered as a json response by default
