@@ -13,14 +13,29 @@ import {
   LinearServiceItemConditionResource,
   isProvidedServiceItemConditionResource,
   CombinedServiceItemData,
+  ServiceType,
+  CombinedServiceItemsAndConditions,
+  ServiceProviderResource,
+  ServiceOfferLocaleResource,
+  ServiceItemShape,
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { compose } from 'recompose';
 import OrgLogo from '../../../Logo/OrgLogo';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { uniq, map } from 'lodash';
+import { CancelablePromise, makeCancelable } from '../../../../utils/ApiHelper';
+import { DataListResponse } from '../../../../services/ApiService';
+
+interface ServiceTypeLabel {
+  id: string;
+  name: string;
+  type: ServiceType;
+}
 
 interface State {
   loading: boolean;
+  labels: ServiceTypeLabel[];
+  selectedLabels: ServiceTypeLabel[];
   dataSource: CombinedServiceItemData[];
 }
 
@@ -38,13 +53,33 @@ const processPrice = (data: ServiceItemConditionShape) => {
   } else if (isLinearServiceItemConditionsResource(data) === true) {
     const linear = data as LinearServiceItemConditionResource;
     if (linear.percent_value === 0) {
-      return `${Math.floor(linear.fixed_value * 1000).toString()} ${messages.cpmLabel.defaultMessage}`;
+      return `${Math.floor(linear.fixed_value * 1000).toString()} ${
+        messages.cpmLabel.defaultMessage
+      }`;
     }
     return messages.quoteLabel.defaultMessage;
   } else {
     return messages.quoteLabel.defaultMessage;
   }
 };
+
+const displayServiceItemType = (type: string) => {
+  return type
+    .split('_')
+    .map(s => {return `${s.charAt(0).toUpperCase()}${s.slice(1)}`;})
+    .join(' ');
+};
+
+const serviceTypeLabels: ServiceTypeLabel[] = [
+  { id: '1', name: 'Audience Segment', type: 'AUDIENCE_DATA.AUDIENCE_SEGMENT' },
+  { id: '2', name: 'User Data Type', type: 'AUDIENCE_DATA.USER_DATA_TYPE' },
+  { id: '3', name: 'Adex Inventory', type: 'DISPLAY_CAMPAIGN.ADEX_INVENTORY' },
+  { id: '4', name: 'Real Time Bidding', type: 'DISPLAY_CAMPAIGN.REAL_TIME_BIDDING'},
+  { id: '5', name: 'Visibility', type: 'DISPLAY_CAMPAIGN.VISIBILITY' },
+  { id: '6', name: 'Inventory Access', type: 'DISPLAY_CAMPAIGN.INVENTORY_ACCESS' },
+  { id: '7', name: 'Ad Exchance Hub Inventory', type: 'DISPLAY_CAMPAIGN.AD_EXCHANGE_HUB_INVENTORY' },
+  { id: '8', name: 'Display Network Inventory', type: 'DISPLAY_CAMPAIGN.DISPLAY_NETWORK_INVENTORY' },
+];
 
 const dataColumns: Array<DataColumnDefinition<CombinedServiceItemData>> = [
   {
@@ -57,6 +92,13 @@ const dataColumns: Array<DataColumnDefinition<CombinedServiceItemData>> = [
         <OrgLogo organisationId={text} />
       </span>
     ),
+  },
+  {
+    intlMessage: messages.typeLabel,
+    key: 'serviceItem.type',
+    isVisibleByDefault: true,
+    isHideable: false,
+    render: (text: string) => displayServiceItemType(text),
   },
   {
     intlMessage: messages.nameLabel,
@@ -76,104 +118,152 @@ const dataColumns: Array<DataColumnDefinition<CombinedServiceItemData>> = [
 ];
 
 class OfferCatalogTable extends React.Component<Props, State> {
+  cancelableCombinedIdPromise: CancelablePromise<
+    DataListResponse<CombinedServiceItemsAndConditions>
+  >;
+  cancelableServiceItemIds: CancelablePromise<
+    [
+      DataListResponse<ServiceProviderResource>,
+      DataListResponse<ServiceOfferLocaleResource>,
+      DataListResponse<ServiceItemConditionShape>,
+      DataListResponse<ServiceItemShape>
+    ]
+  >;
+
   constructor(props: Props) {
     super(props);
 
     this.state = {
       loading: true,
+      labels: serviceTypeLabels,
+      selectedLabels: [],
       dataSource: [],
     };
   }
 
-  componentDidMount() {
+  fetchServiceItemData() {
     const organisationId = this.props.organisationId;
+    const selectedLabels = this.state.selectedLabels;
+    const serviceTypes = selectedLabels.length === 0 ? undefined : { service_types: selectedLabels.map(label => label.type) };
 
-    this.setState({
-      loading: true,
-    });
+    this.setState({ loading: true });
+    this.cancelableCombinedIdPromise = makeCancelable(
+      CatalogService.findAvailableCombinedServiceItemsIds(organisationId, {...serviceTypes }),
+    );
 
-    CatalogService.findAvailableCombinedServiceItemsAndConditions(
-      organisationId,
-    ).then(serviceItemIdList => {
-      const idFieldNames = [
-        'provider_id',
-        'service_offer_id',
-        'service_item_conditions_id',
-        'service_item_id',
-      ];
-      const fieldsMultiIds = idFieldNames.map(field =>
-        uniq(map(serviceItemIdList.data, field)),
-      );
-
-      Promise.all([
-        CatalogService.findAvailableServiceProvidersMultiId(
-          organisationId,
-          fieldsMultiIds[0],
-        ),
-        CatalogService.findAvailableServiceOffersMultiId(
-          organisationId,
-          fieldsMultiIds[1],
-        ),
-        CatalogService.findAvailableServiceConditionsMultiId(
-          organisationId,
-          fieldsMultiIds[2],
-        ),
-        CatalogService.findAvailableServiceItemsMultiId(
-          organisationId,
-          fieldsMultiIds[3],
-        ),
-      ])
-        .then(item => {
-          const metaDataSource: CombinedServiceItemData[] = serviceItemIdList.data.map(
-            ids => {
-              const serviceProvider = item[0].data.find(
-                provider => provider.id === ids.provider_id.toString(),
-              );
-              const serviceOffer = item[1].data.find(
-                offer => offer.id === ids.service_offer_id.toString(),
-              );
-              const serviceCondition = item[2].data.find(
-                condition => condition.id === ids.service_item_conditions_id.toString(),
-              );
-              const serviceItem = item[3].data.find(
-                sItem => sItem.id === ids.service_item_id.toString(),
-              );
-
-              if (
-                serviceProvider === undefined ||
-                serviceOffer === undefined ||
-                serviceCondition === undefined ||
-                serviceItem === undefined
-              ) {
-                throw new Error('Error while fetching data');
-              }
-              return {
-                serviceProvider,
-                serviceOffer,
-                serviceCondition,
-                serviceItem,
-              };
-            },
-          );
-          this.setState({
-            loading: false,
-            dataSource: metaDataSource,
-          });
-        })
-        .catch(err => {
+    this.cancelableCombinedIdPromise.promise
+      .then(idList => {
+        if (idList.data === undefined || idList.data.length === 0) {
           this.setState({ loading: false });
-          this.props.notifyError(err);
-        });
-    });
+        } else {
+          const idFieldNames = [
+            'provider_id',
+            'service_offer_id',
+            'service_item_conditions_id',
+            'service_item_id',
+          ];
+          const fieldsMultiIds = idFieldNames.map(field =>
+            uniq(map(idList.data, field)),
+          );
+          this.cancelableServiceItemIds = makeCancelable(
+            Promise.all([
+              CatalogService.findAvailableServiceProvidersMultiId(
+                organisationId,
+                fieldsMultiIds[0],
+              ),
+              CatalogService.findAvailableServiceOffersMultiId(
+                organisationId,
+                fieldsMultiIds[1],
+              ),
+              CatalogService.findAvailableServiceConditionsMultiId(
+                organisationId,
+                fieldsMultiIds[2],
+              ),
+              CatalogService.findAvailableServiceItemsMultiId(
+                organisationId,
+                fieldsMultiIds[3],
+              ),
+            ]),
+          );
+          this.cancelableServiceItemIds.promise
+            .then(item => {
+              const metaDataSource: CombinedServiceItemData[] = idList.data.map(
+                ids => {
+                  const serviceProvider = item[0].data.find(
+                    provider => provider.id === ids.provider_id.toString(),
+                  );
+                  const serviceOffer = item[1].data.find(
+                    offer => offer.id === ids.service_offer_id.toString(),
+                  );
+                  const serviceCondition = item[2].data.find(
+                    condition => condition.id === ids.service_item_conditions_id.toString(),
+                  );
+                  const serviceItem = item[3].data.find(
+                    sItem => sItem.id === ids.service_item_id.toString(),
+                  );
+
+                  if (serviceProvider === undefined || serviceOffer === undefined || serviceCondition === undefined || serviceItem === undefined) {
+                    throw new Error('Error while fetching data');
+                  }
+                  return { serviceProvider, serviceOffer, serviceCondition, serviceItem };
+                },
+              );
+              this.setState({
+                loading: false,
+                dataSource: metaDataSource,
+              });
+            })
+            .catch(err => {
+              this.setState({ loading: false });
+              this.props.notifyError(err);
+            });
+        }
+      })
+      .catch(() => {
+        this.setState({ loading: false });
+      });
   }
+
+  componentDidMount() {
+    this.fetchServiceItemData();
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.state.selectedLabels !== prevState.selectedLabels) {
+      this.fetchServiceItemData();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.cancelableCombinedIdPromise) this.cancelableCombinedIdPromise.cancel();
+    if (this.cancelableServiceItemIds) this.cancelableServiceItemIds.cancel();
+  }
+
+  updateLabels = (labels: ServiceTypeLabel[]) => {
+    this.setState({ selectedLabels: labels });
+  };
+
   render() {
-    const { dataSource, loading } = this.state;
+    const { dataSource, loading, labels, selectedLabels } = this.state;
+
+    const labelsOptions = {
+      labels: labels,
+      selectedLabels: labels.filter(label => {
+        return selectedLabels.find(l => l.id === label.id) ? true : false;
+      }),
+      onChange: (newLabels: ServiceTypeLabel[]) => {
+        this.updateLabels(newLabels);
+      },
+      buttonMessage: messages.filterLabel,
+    };
+
     return (
       <div className="mcs-table-container mcs-offerCatalogTable">
         <TableViewFilters
           columns={dataColumns}
           dataSource={dataSource}
           loading={loading}
+          labelsOptions={labelsOptions}
         />
       </div>
     );

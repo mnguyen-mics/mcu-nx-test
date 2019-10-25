@@ -269,11 +269,12 @@ const CatalogService = {
     return ApiService.getRequest(endpoint);
   },
 
-  findAvailableCombinedServiceItemsAndConditions(
+  findAvailableCombinedServiceItemsIds(
     organisationId: string,
+    serviceType?: any,
   ): Promise<DataListResponse<CombinedServiceItemsAndConditions>> {
     const endpoint = `organisations/${organisationId}/available_combined_service_items_and_conditions`;
-    return ApiService.getRequest(endpoint);
+    return ApiService.getRequest(endpoint, serviceType);
   },
 
   findAvailableServiceProvidersMultiId(
