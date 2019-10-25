@@ -154,7 +154,10 @@ class OfferCatalogTable extends React.Component<Props, State> {
     this.cancelableCombinedIdPromise.promise
       .then(idList => {
         if (idList.data === undefined || idList.data.length === 0) {
-          this.setState({ loading: false });
+          this.setState({
+            loading: false,
+            dataSource: [],
+            });
         } else {
           const idFieldNames = [
             'provider_id',
