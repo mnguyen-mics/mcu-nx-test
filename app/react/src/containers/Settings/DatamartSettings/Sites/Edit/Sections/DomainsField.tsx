@@ -9,13 +9,15 @@ import messages from '../messages';
 import FormMultiValueInput from '../../../../../../components/Form/FormMultiValueInput';
 
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
-import { FormSection } from '../../../../../../components/Form';
+import { FormSection, withValidators } from '../../../../../../components/Form';
 import { AliasesFieldModel } from '../domain';
+import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 
 export interface DomainFieldProps extends ReduxFormChangeProps {}
 
 type Props = WrappedFieldArrayProps<AliasesFieldModel> &
   InjectedIntlProps &
+  ValidatorProps &
   DomainFieldProps;
 
 class DomainField extends React.Component<Props> {
@@ -58,7 +60,7 @@ class DomainField extends React.Component<Props> {
   };
 
   render() {
-    const { intl } = this.props;
+    const { intl, fieldValidators: { isValidDomain }, } = this.props;
 
     return (
       <div>
@@ -73,6 +75,7 @@ class DomainField extends React.Component<Props> {
               values={this.getStringValues()}
               handleClickOnRemove={this.markAsDeleted}
               handleClickOnItem={this.addItem}
+              validate={[isValidDomain]}
               formItemProps={{
                 label: intl.formatMessage(
                   messages.contentSectionAliasesNameLabel,
@@ -96,4 +99,4 @@ class DomainField extends React.Component<Props> {
   }
 }
 
-export default compose<Props, DomainFieldProps>(injectIntl)(DomainField);
+export default compose<Props, DomainFieldProps>(injectIntl, withValidators)(DomainField);
