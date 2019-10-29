@@ -53,17 +53,19 @@ class FormMultiInput extends React.Component<
 
   onPressEnter = (stringValue: string) => {
 
+    const { validate } = this.props;
+
     if (stringValue) {
 
       let errorMsg = [];
 
       // Check if we need to validate the input
-      if (this.props.validate) {
+      if (validate) {
 
         // If we have an array of validator
-        if (Array.isArray(this.props.validate)) {
+        if (Array.isArray(validate)) {
 
-          const errors = this.props.validate.map((validator) => {
+          const errors = validate.map((validator) => {
             return validator(stringValue); 
           }).filter(msg => !!msg);
 
@@ -72,7 +74,7 @@ class FormMultiInput extends React.Component<
           // If we have a single validator
         } else {
 
-          const error = this.props.validate(stringValue);
+          const error = validate(stringValue);
 
           if(error) {
             errorMsg.push(error);
@@ -84,7 +86,8 @@ class FormMultiInput extends React.Component<
       if(errorMsg.length === 0) {
 
         this.setState({
-          value: ''
+          value: '',
+          errors: []
         });
 
         return this.props.handleClickOnItem(stringValue);
