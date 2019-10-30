@@ -78,6 +78,16 @@ class MonitoringActionbar extends React.Component<Props, State> {
           compartments: res.data,
           isLoading: false
         });
+
+        // console.log(res.data)
+        // console.log(this.props)
+
+        const defaultCompartment = res.data.length > 0 ? res.data.filter(c => c.default)[0] : undefined;
+        if (defaultCompartment) {
+          this.setState({
+            selectedCompartment: defaultCompartment.compartment_id,
+          })
+        }
       });
 
   }
@@ -134,7 +144,8 @@ class MonitoringActionbar extends React.Component<Props, State> {
       identifierId,
       identifierType,
       compartments,
-      isLoading
+      isLoading,
+      selectedCompartment,
     } = this.state;
 
     const breadcrumbPaths = [
@@ -161,9 +172,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
         selectedDatamart.datafarm !== 'DF_EU_LEGACY' &&
         compartments.length > 0;
 
-      const compartmentDefaultValue = showCompartment && compartments.filter(c => c.default)[0] ?
-        compartments.filter(c => c.default)[0].compartment_id :
-        undefined;
+      const compartmentDefaultValue = showCompartment ? selectedCompartment : undefined;
 
       const inputValueWidth = showCompartment ? '50%' : '70%';
       const compartmentOptions = this.createCompartmentOptions(compartments);
