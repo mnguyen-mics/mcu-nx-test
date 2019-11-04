@@ -29,7 +29,7 @@ export const defaultErrorMessages = defineMessages({
   },
   invalidDomain: {
     id: 'common.form.field.error.invalid_domain',
-    defaultMessage: 'invalid domain',
+    defaultMessage: 'Invalid domain. A domain should be in the `example.com` or `sub.example.com` format. Please remove any `http://` part or `/` from the entered value.',
   },
   positiveNumber: {
     id: 'common.form.field.error.positive_number',
@@ -54,6 +54,7 @@ export interface FieldValidatorsProps {
   formatIsNotZero: Validator;
   isRequired: Validator;
   isNotZero: Validator;
+  isValidDomain: Validator;
   isValidEmail: Validator;
   isValidFloat: Validator;
   isValidInteger: Validator;
@@ -88,6 +89,17 @@ const formatIsNotZero = (formatMessage: FormatMessageHandler): Validator => valu
   ? formatMessage(defaultErrorMessages.formatNotZero)
   : ''
   );
+};
+
+/**
+ * 
+ * From: https://www.regextester.com/93928
+ * 
+ * @param formatMessage 
+ */
+const isValidDomain = (formatMessage: FormatMessageHandler): Validator => value => {
+  return value && !/^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}?$/igm.test(value) ?
+    formatMessage(defaultErrorMessages.invalidDomain) : undefined;
 };
 
 const isValidEmail = (formatMessage: FormatMessageHandler): Validator => value => {
@@ -136,6 +148,7 @@ export default compose<{}, ValidatorProps>(
           formatIsNotZero: formatIsNotZero(formatMessage),
           isNotZero: isNotZero(formatMessage),
           isRequired: isRequired(formatMessage),
+          isValidDomain: isValidDomain(formatMessage),
           isValidEmail: isValidEmail(formatMessage),
           isValidFloat: isValidFloat(formatMessage),
           isValidInteger: isValidInteger(formatMessage),
