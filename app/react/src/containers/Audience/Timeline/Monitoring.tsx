@@ -80,7 +80,7 @@ class Monitoring extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      
+      location: { search },
       match: {
         params: { organisationId, identifierType, identifierId },
       },
@@ -97,7 +97,7 @@ class Monitoring extends React.Component<Props, State> {
           selectedDatamart,
           identifierType,
           identifierId,
-          queryString.parse(location.search).compartmentId,
+          queryString.parse(search).compartmentId,
         )
         .then(monitoringData => {
           this.setState({
