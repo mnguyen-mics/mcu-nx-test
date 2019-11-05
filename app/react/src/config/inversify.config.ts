@@ -1,3 +1,5 @@
+import { IServiceOfferPageService, ServiceOfferPageService } from './../containers/Settings/ServicesSettings/ServiceOfferPageService';
+import { ICatalogService, CatalogService } from './../services/CatalogService';
 import {
   NavigatorService,
   INavigatorService,
@@ -178,7 +180,9 @@ container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
 container.bind<IConsentService>(TYPES.IConsentService).to(ConsentService);
 container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
-container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService)
+container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
+container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
+container.bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService).to(ServiceOfferPageService);
 
 export const { lazyInject } = getDecorators(container, false);
 

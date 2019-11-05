@@ -2,7 +2,6 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import CatalogService from '../../../../../../../services/CatalogService';
 import { ServiceCategoryTree } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 import { EditAdGroupRouteMatchParam } from '../../domain';
 import injectDatamart, {
@@ -16,6 +15,7 @@ import { IKeywordListService } from '../../../../../../../services/Library/Keywo
 import { TYPES } from '../../../../../../../constants/types';
 import { lazyInject } from '../../../../../../../config/inversify.config';
 import { KeywordListResource } from '../../../../../../../models/keywordList/keywordList';
+import { ICatalogService } from '../../../../../../../services/CatalogService';
 
 export interface DataLoadingContainer<T> {
   data: T;
@@ -47,6 +47,9 @@ const provideInventoryCatalog = (
 
     @lazyInject(TYPES.IDealsListService)
     private _dealsListService: IDealsListService;
+
+    @lazyInject(TYPES.ICatalogService)
+    private _catalogService: ICatalogService;
 
     public constructor(props: Props) {
       super(props);
@@ -93,14 +96,14 @@ const provideInventoryCatalog = (
         },
       }));
 
-      CatalogService.getCategoryTree(organisationId, {
+      this._catalogService.getCategoryTree(organisationId, {
         serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS'],
       })
         .then(categoryTree => {
-          function fetchServices(
+          const fetchServices = (
             category: ServiceCategoryTree,
-          ): Promise<ServiceCategoryTree> {
-            const servicesP = CatalogService.getServices(organisationId, {
+          ): Promise<ServiceCategoryTree> => {
+            const servicesP = this._catalogService.getServices(organisationId, {
               parentCategoryId: category.node.id,
               serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS'],
             });
