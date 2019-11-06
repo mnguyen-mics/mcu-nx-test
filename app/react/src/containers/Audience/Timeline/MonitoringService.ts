@@ -202,7 +202,7 @@ export class MonitoringService implements IMonitoringService {
       });
   }
 
-  fetchMonitoringDataByIdentifier(userIdentifier: Identifier, datamart: DatamartResource, response: any) {
+  fetchMonitoringDataByIdentifier(userIdentifier: Identifier, datamart: DatamartResource) {
     return Promise.all([
       this.fetchCompartments(datamart),
       this.getLastSeen(datamart, userIdentifier),
@@ -251,7 +251,7 @@ export class MonitoringService implements IMonitoringService {
         }
           
         if (userIdentifier.id) {
-          return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart, response).then(res => {
+          return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart).then(res => {
             return {
               userAgentList: response.data.filter(isUserAgentIdentifier),
               userEmailList: response.data.filter(isUserEmailIdentifier),
@@ -274,7 +274,7 @@ export class MonitoringService implements IMonitoringService {
           id: identifierId,
           type: identifierType
         }
-        return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart, undefined).then(res => {
+        return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart).then(res => {
           return {
             userAgentList: [],
             userEmailList: [],
