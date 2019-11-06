@@ -131,7 +131,7 @@ export class MonitoringService implements IMonitoringService {
 
   getLastSeen(datamart: DatamartResource, userIdentifier: Identifier) {
     return this._userDataService
-      .getActivities(datamart.id, userIdentifier)
+      .getActivities(datamart.id, userIdentifier, {live: true})
       .then(res => {
         const timestamps = res.data.map(item => {
           return item.$ts;
@@ -202,6 +202,15 @@ export class MonitoringService implements IMonitoringService {
       });
   }
 
+  fetchMonitoringDataByIdentifier(userIdentifier: Identifier, datamart: DatamartResource, response: any) {
+    return Promise.all([
+      this.fetchCompartments(datamart),
+      this.getLastSeen(datamart, userIdentifier),
+      this.fetchSegmentsData(datamart, userIdentifier),
+      this.fetchProfileData(datamart, userIdentifier),
+    ])
+  }
+
   fetchMonitoringData(
     organisationId: string,
     datamart: DatamartResource,
@@ -242,12 +251,7 @@ export class MonitoringService implements IMonitoringService {
         }
           
         if (userIdentifier.id) {
-          return Promise.all([
-            this.fetchCompartments(datamart),
-            this.getLastSeen(datamart, userIdentifier),
-            this.fetchSegmentsData(datamart, userIdentifier),
-            this.fetchProfileData(datamart, userIdentifier),
-          ]).then(res => {
+          return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart, response).then(res => {
             return {
               userAgentList: response.data.filter(isUserAgentIdentifier),
               userEmailList: response.data.filter(isUserEmailIdentifier),
@@ -265,6 +269,24 @@ export class MonitoringService implements IMonitoringService {
           });
         }
         return Promise.resolve(emptyData);
-      }).catch(() => Promise.resolve(emptyData));
+      }).catch(() => {
+        const userIdentifier = {
+          id: identifierId,
+          type: identifierType
+        }
+        return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart, undefined).then(res => {
+          return {
+            userAgentList: [],
+            userEmailList: [],
+            userAccountsByCompartmentId: {},
+            userAccountCompartments: res[0],
+            lastSeen: res[1],
+            userSegmentList: res[2],
+            profileByCompartmentsAndUserAccountId: res[3],
+            userPointList: [],
+            userIdentifier: userIdentifier,
+          };
+        });
+      });
   }
 }
