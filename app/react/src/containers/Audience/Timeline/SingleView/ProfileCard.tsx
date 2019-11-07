@@ -10,11 +10,12 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { TimelinePageParams } from '../TimelinePage';
 import ProfileInfo from './ProfileInfo';
-import { UserProfilePerCompartmentAndUserAccountId } from '../../../../models/timeline/timeline';
+import { UserProfileGlobal } from '../../../../models/timeline/timeline';
 import cuid from 'cuid';
+import SingleProfileInfoLegacy from './SingleProfileInfoLegacy';
 
 interface ProfileCardProps {
-  dataSource: UserProfilePerCompartmentAndUserAccountId;
+  dataSource: UserProfileGlobal;
   isLoading: boolean;
 }
 
@@ -29,21 +30,27 @@ class ProfileCard extends React.Component<Props> {
   }
 
   render() {
-    const { dataSource: userProfilePerCompartmentAndUserAccountId, intl, isLoading } = this.props;
+    
+    const { dataSource, intl, isLoading } = this.props;
     return (
       <Card
         title={intl.formatMessage(messages.profileTitle)}
         isLoading={isLoading}
       >
-        {Object.keys(userProfilePerCompartmentAndUserAccountId).map(key => {
+        {dataSource.type === 'pionus' && Object.keys(dataSource.profileType).map(key => {
           return (
             <Row gutter={10} key={cuid()} className="table-line border-top">
-              <div className="sub-title">{userProfilePerCompartmentAndUserAccountId[key].compartmentName}</div>
-              <ProfileInfo profiles={userProfilePerCompartmentAndUserAccountId[key].profiles} />
+              <div className="sub-title">{dataSource.profileType[key].compartmentName}</div>
+              <ProfileInfo profiles={dataSource.profileType[key].profiles} />
             </Row>
           );
         })}
-        {Object.keys(userProfilePerCompartmentAndUserAccountId).length === 0 && (
+        {dataSource.type === 'legacy' && (
+            <Row gutter={10} key={cuid()} className="table-line border-top">
+              <SingleProfileInfoLegacy profile={dataSource.profileType} />
+            </Row>
+        )}
+        {dataSource.type === undefined && (
           <span>
             <FormattedMessage {...messages.emptyProfile} />
           </span>
