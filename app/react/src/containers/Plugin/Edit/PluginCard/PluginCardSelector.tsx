@@ -1,43 +1,65 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import {
+  injectIntl,
+  InjectedIntlProps,
+  FormattedMessage,
+  defineMessages,
+} from 'react-intl';
 import { Layout, Row, Col } from 'antd';
 import PluginCard from './PluginCard';
 import { LayoutablePlugin } from '../../../../models/Plugins';
 import { FormTitle } from '../../../../components/Form';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 
 const { Content } = Layout;
 
+const titleMessages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  presetTitle: {
+    id: 'plugin.preset.list.default.title',
+    defaultMessage: 'Presets',
+  },
+  presetSubtitle: {
+    id: 'plugin.preset.list.default.subtitle',
+    defaultMessage: 'Add a pre-configured Plugin.',
+  },
+});
+
 interface PluginCardSelectorProps<T> {
   onSelect: (item: T) => void;
-  availablePlugins: T[];
-  listTitle: FormattedMessage.MessageDescriptor;
-  listSubTitle: FormattedMessage.MessageDescriptor;
+  availablePresetLayouts: T[];
+  pluginPresetListTitle?: FormattedMessage.MessageDescriptor;
+  pluginPresetListSubTitle?: FormattedMessage.MessageDescriptor;
+  availablePluginLayouts: T[];
+  pluginListTitle: FormattedMessage.MessageDescriptor;
+  pluginListSubTitle: FormattedMessage.MessageDescriptor;
 }
 
 type Props<T> = PluginCardSelectorProps<T> &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<{ organisationId: string }> &
+  InjectedFeaturesProps;
 
 class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
   Props<T> & InjectedIntlProps
 > {
-  renderCards = () => {
+  renderPluginCards = (layouts: T[]) => {
     const {
-      availablePlugins,
       match: {
         params: { organisationId },
       },
     } = this.props;
 
-    const plugins = availablePlugins
-      .map(plugin => {
-        const onPluginSelect = () => this.props.onSelect(plugin);
+    const cards = layouts
+      .map(layoutablePlugin => {
+        const onPluginSelect = () => this.props.onSelect(layoutablePlugin);
         return (
-          !!plugin.plugin_layout && (
-            <Col key={plugin.id} span={4} className="text-center">
+          !!layoutablePlugin.plugin_layout && (
+            <Col key={layoutablePlugin.id} span={4} className="text-center">
               <PluginCard
-                plugin={plugin}
+                plugin={layoutablePlugin}
                 organisationId={organisationId}
                 onSelect={onPluginSelect}
                 hoverable={true}
@@ -51,26 +73,54 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
     const array = [];
     const size = 6;
 
-    while (plugins.length > 0) array.push(plugins.splice(0, size));
+    while (cards.length > 0) array.push(cards.splice(0, size));
 
     return array.map((arr, i) => (
-      <Row key={i} style={{ marginTop: 40 }} type={'flex'} gutter={40}>
+      <Row
+        key={i}
+        style={{ marginTop: 30, marginBottom: 40 }}
+        type={'flex'}
+        gutter={40}
+      >
         {arr}
       </Row>
     ));
   };
 
   render() {
-    const { listTitle, listSubTitle } = this.props;
+    const {
+      availablePluginLayouts,
+      pluginListTitle,
+      pluginListSubTitle,
+      availablePresetLayouts,
+      pluginPresetListTitle,
+      pluginPresetListSubTitle,
+    } = this.props;
 
     return (
       <Layout>
         <div className="edit-layout ant-layout">
           <Layout>
             <Content className="mcs-content-container mcs-form-container">
-              <FormTitle title={listTitle} subtitle={listSubTitle} />
-
-              {this.renderCards()}
+              {availablePresetLayouts.length > 0 &&
+                this.props.hasFeature('plugins.presets') && (
+                  <div>
+                    <FormTitle
+                      title={pluginPresetListTitle || titleMessages.presetTitle}
+                      subtitle={
+                        pluginPresetListSubTitle || titleMessages.presetSubtitle
+                      }
+                    />
+                    {this.renderPluginCards(availablePresetLayouts)}
+                  </div>
+                )}
+              <div>
+                <FormTitle
+                  title={pluginListTitle}
+                  subtitle={pluginListSubTitle}
+                />
+              </div>
+              {this.renderPluginCards(availablePluginLayouts)}
             </Content>
           </Layout>
         </div>
@@ -85,4 +135,5 @@ export default compose<
 >(
   injectIntl,
   withRouter,
+  injectFeatures,
 )(PluginCardSelector);
