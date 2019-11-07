@@ -69,7 +69,10 @@ class Monitoring extends React.Component<Props, State> {
         userSegmentList: [],
         profileByCompartmentsAndUserAccountId: {},
         lastSeen: 0,
-        userPointId: '',
+        userIdentifier: {
+          type: '',
+          id: ''
+        },
       },
       isLoading: false,
     };
@@ -77,7 +80,7 @@ class Monitoring extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      location,
+      location: { search },
       match: {
         params: { organisationId, identifierType, identifierId },
       },
@@ -94,7 +97,7 @@ class Monitoring extends React.Component<Props, State> {
           selectedDatamart,
           identifierType,
           identifierId,
-          queryString.parse(location.search).compartmentId,
+          queryString.parse(search).compartmentId,
         )
         .then(monitoringData => {
           this.setState({
@@ -162,7 +165,10 @@ class Monitoring extends React.Component<Props, State> {
                 userSegmentList: [],
                 profileByCompartmentsAndUserAccountId: {},
                 lastSeen: 0,
-                userPointId: '',
+                userIdentifier: {
+                  type: '',
+                  id: ''
+                },
               },
               isLoading: false,
             });
@@ -205,7 +211,7 @@ class Monitoring extends React.Component<Props, State> {
 
     const { isModalVisible, monitoringData, isLoading } = this.state;
 
-    const userPointId = monitoringData.userPointId;
+    const userIdentifier = monitoringData.userIdentifier;
 
     return (
       <div className="ant-layout">
@@ -217,7 +223,7 @@ class Monitoring extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            {userPointId ? (
+            {userIdentifier.id && monitoringData.lastSeen ? (
               <Row>
                 <TimelineHeader
                   dataSource={monitoringData}
@@ -248,7 +254,7 @@ class Monitoring extends React.Component<Props, State> {
 
                     <ActivitiesTimeline
                       selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      userIdentifier={userIdentifier}
                     />
                   </Col>
                   <Col span={6}>

@@ -1,12 +1,16 @@
 const REQUEST = 'REQUEST';
 const SUCCESS = 'SUCCESS';
 const FAILURE = 'FAILURE';
+const EXPIRED_PASSWORD = 'EXPIRED_PASSWORD';
 
 export const createRequestTypes = base => {
-  return [REQUEST, SUCCESS, FAILURE].reduce((acc, type) => ({
-    ...acc,
-    [type]: `${base}_${type}`,
-  }), {});
+  return [REQUEST, SUCCESS, FAILURE, EXPIRED_PASSWORD].reduce(
+    (acc, type) => ({
+      ...acc,
+      [type]: `${base}_${type}`,
+    }),
+    {},
+  );
 };
 
 const defaultMetadata = {
@@ -15,7 +19,10 @@ const defaultMetadata = {
   total: 0,
 };
 
-export const createRequestMetadataReducer = requestTypes => (state = defaultMetadata, action) => {
+export const createRequestMetadataReducer = requestTypes => (
+  state = defaultMetadata,
+  action,
+) => {
   switch (action.type) {
     case requestTypes.REQUEST:
       return {
@@ -34,6 +41,13 @@ export const createRequestMetadataReducer = requestTypes => (state = defaultMeta
         isFetching: false,
         error: action.payload,
       };
-    default: return state;
+    case requestTypes.EXPIRED_PASSWORD:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.payload,
+      };
+    default:
+      return state;
   }
 };

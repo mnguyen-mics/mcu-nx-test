@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Row } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import messages from '../messages';
 import { Card } from '../../../../components/Card/index';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -43,6 +43,11 @@ class ProfileCard extends React.Component<Props> {
             </Row>
           );
         })}
+        {Object.keys(userProfilePerCompartmentAndUserAccountId).length === 0 && (
+          <span>
+            <FormattedMessage {...messages.emptyProfile} />
+          </span>
+        )}
       </Card>
     );
   }

@@ -10,8 +10,10 @@ import { ButtonStyleless, McsIcon } from '../';
 import FormFieldWrapper, {
   FormFieldWrapperProps,
 } from '../../components/Form/FormFieldWrapper';
+import { Validator } from 'redux-form';
 
 export interface FormMultiInputProps {
+  validate?: Validator | Validator[];
   formItemProps?: FormItemProps;
   inputProps?: InputProps;
   helpToolTipProps?: TooltipProps;
@@ -21,8 +23,16 @@ export interface FormMultiInputProps {
   small?: boolean;
 }
 
+export interface FormMultiValueState {
+  errors: string[];
+  value: string;
+}
+
+type Props = FormMultiInputProps & FormFieldWrapperProps;
+
 class FormMultiInput extends React.Component<
-  FormMultiInputProps & FormFieldWrapperProps
+  Props, 
+  FormMultiValueState
 > {
   static defaultProps = {
     formItemProps: {},
@@ -30,17 +40,65 @@ class FormMultiInput extends React.Component<
     helpToolTipProps: {},
   };
 
-  inputField: any = null;
+  constructor(props: Props) {
+    
+    super(props);
 
-  saveInputRef = (e: any) => {
-    this.inputField = e;
-  };
+    this.state = {
+      errors: [],
+      value: ''
+    }
+
+  }
 
   onPressEnter = (stringValue: string) => {
-    if (event) event.stopImmediatePropagation();
+
+    const { validate } = this.props;
+
     if (stringValue) {
-      this.inputField.input.input.value = ''; // use state local
-      return this.props.handleClickOnItem(stringValue);
+
+      let errorMsg = [];
+
+      // Check if we need to validate the input
+      if (validate) {
+
+        // If we have an array of validator
+        if (Array.isArray(validate)) {
+
+          const errors = validate.map((validator) => {
+            return validator(stringValue); 
+          }).filter(msg => !!msg);
+
+          errorMsg = errors;
+
+          // If we have a single validator
+        } else {
+
+          const error = validate(stringValue);
+
+          if(error) {
+            errorMsg.push(error);
+          }
+
+        }
+      }
+
+      if(errorMsg.length === 0) {
+
+        this.setState({
+          value: '',
+          errors: []
+        });
+
+        return this.props.handleClickOnItem(stringValue);
+
+      } else {
+
+        this.setState({
+          errors: errorMsg
+        });
+
+      }
     }
   };
 
@@ -60,15 +118,15 @@ class FormMultiInput extends React.Component<
     });
   };
 
+  formatErrors(errors: string[]): string{
+    return errors.join('\n');
+  }
+
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      this.setState({value: e.target.value})
+  }
+
   render() {
-    const cancelEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter' || e.which === 13 /* Enter */) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }
-      return;
-    };
 
     return (
       <FormFieldWrapper
@@ -82,10 +140,11 @@ class FormMultiInput extends React.Component<
         <Input.Search
           {...this.props.inputProps}
           onSearch={this.onPressEnter}
+          onChange={this.onChange}
           enterButton={'Add'}
-          ref={this.saveInputRef}
-          onKeyDown={cancelEvent}
+          value={this.state.value}
         />
+       { this.state.errors.length > 0 ? <div className="mics-error-text">{this.formatErrors(this.state.errors)}</div> : null} 
       </FormFieldWrapper>
     );
   }

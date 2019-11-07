@@ -36,7 +36,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
   render() {
     const {
-      fieldValidators: { isRequired },
+      fieldValidators: { isRequired, isValidDomain },
       intl: { formatMessage },
     } = this.props;
 
@@ -89,7 +89,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         <FormInputField
           name="site.domain"
           component={FormInput}
-          validate={[isRequired]}
+          validate={[isRequired, isValidDomain]}
           formItemProps={{
             label: formatMessage(messages.contentSectionGeneralDomainLabel),
             required: true,

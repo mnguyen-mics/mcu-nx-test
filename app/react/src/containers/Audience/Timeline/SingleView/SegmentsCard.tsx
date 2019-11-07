@@ -62,8 +62,8 @@ class SegmentsCard extends React.Component<Props, State> {
 
     return (
       <Card title={formatMessage(messages.segmentTitle)} isLoading={isLoading}>
-        {segmentsFormatted.length &&
-          segmentsFormatted.map(segment => {
+        {(segmentsFormatted.length) &&
+          segmentsFormatted.forEach(segment => {
             return (
               <SegmentsTag
                 key={segment.segment_id}

@@ -113,14 +113,16 @@ class SegmentNameDisplay extends React.Component<Props, State> {
 
         if (audienceSegmentResource.type === "USER_ACTIVATION") {
             if (audienceSegmentResource.clickers) {
-                return (<span>{`${audienceSegmentResource.name} - ${intl.formatMessage(localMessages.CLICKERS)}`}</span>)
+                const audienceSegmentName = `${audienceSegmentResource.name} - ${intl.formatMessage(localMessages.CLICKERS)}`;
+                return (<span title={audienceSegmentName}>{audienceSegmentName}</span>)
             } else if (audienceSegmentResource.exposed) {
-                return (<span>{`${audienceSegmentResource.name} - ${intl.formatMessage(localMessages.EXPOSED)}`}</span>)
+                const audienceSegmentName = `${audienceSegmentResource.name} - ${intl.formatMessage(localMessages.EXPOSED)}`;
+                return (<span title={audienceSegmentName}>{audienceSegmentName}</span>)
             } else {
-                return (<span>{audienceSegmentResource.name}</span>)
+                return (<span title={audienceSegmentResource.name}>{audienceSegmentResource.name}</span>)
             }
         } else {
-            return (<span>{audienceSegmentResource.name}</span>)
+            return (<span title={audienceSegmentResource.name}>{audienceSegmentResource.name}</span>)
         }
 
     }

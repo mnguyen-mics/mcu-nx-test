@@ -27,11 +27,11 @@ import { IDisplayNetworkService } from '../../../../../services/DisplayNetworkSe
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { IKeywordListService } from '../../../../../services/Library/KeywordListsService';
 import { IDealsListService } from '../../../../../services/Library/DealListsService';
-import CatalogService from '../../../../../services/CatalogService';
 import { AdexInventoryServiceItemPublicResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { getLinkedResourceIdInSelection } from '../../../../../utils/ResourceHistoryHelper';
 import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { IGeonameService } from '../../../../../services/GeonameService';
+import { ICatalogService } from '../../../../../services/CatalogService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -64,6 +64,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
   @lazyInject(TYPES.IGeonameService)
   private _geonameService: IGeonameService;
+
+  @lazyInject(TYPES.ICatalogService)
+  private _catalogService: ICatalogService;
 
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
@@ -408,7 +411,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         id,
                         'AD_EXCHANGE',
                       ).then(adExchangeId => {
-                        return CatalogService.getServices(organisationId, {
+                        return this._catalogService.getServices(organisationId, {
                           serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS'],
                         }).then(res => {
                           const inventoryAccessExchanges = res.data.filter(

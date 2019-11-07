@@ -3,7 +3,6 @@ import * as React from 'react';
 import messages from './messages';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { TableViewFilters } from '../../../../components/TableView/index';
-import CatalogService from '../../../../services/CatalogService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -25,6 +24,9 @@ import { DataColumnDefinition } from '../../../../components/TableView/TableView
 import { uniq, map } from 'lodash';
 import { CancelablePromise, makeCancelable } from '../../../../utils/ApiHelper';
 import { DataListResponse } from '../../../../services/ApiService';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
+import { ICatalogService } from '../../../../services/CatalogService';
 
 interface ServiceTypeLabel {
   id: string;
@@ -130,6 +132,9 @@ class OfferCatalogTable extends React.Component<Props, State> {
     ]
   >;
 
+  @lazyInject(TYPES.ICatalogService)
+  private _catalogService: ICatalogService;
+
   constructor(props: Props) {
     super(props);
 
@@ -148,7 +153,7 @@ class OfferCatalogTable extends React.Component<Props, State> {
 
     this.setState({ loading: true });
     this.cancelableCombinedIdPromise = makeCancelable(
-      CatalogService.findAvailableCombinedServiceItemsIds(organisationId, {...serviceTypes }),
+      this._catalogService.findAvailableCombinedServiceItemsIds(organisationId, {...serviceTypes }),
     );
 
     this.cancelableCombinedIdPromise.promise
@@ -170,19 +175,19 @@ class OfferCatalogTable extends React.Component<Props, State> {
           );
           this.cancelableServiceItemIds = makeCancelable(
             Promise.all([
-              CatalogService.findAvailableServiceProvidersMultiId(
+              this._catalogService.findAvailableServiceProvidersMultiId(
                 organisationId,
                 fieldsMultiIds[0],
               ),
-              CatalogService.findAvailableServiceOffersMultiId(
+              this._catalogService.findAvailableServiceOffersMultiId(
                 organisationId,
                 fieldsMultiIds[1],
               ),
-              CatalogService.findAvailableServiceConditionsMultiId(
+              this._catalogService.findAvailableServiceConditionsMultiId(
                 organisationId,
                 fieldsMultiIds[2],
               ),
-              CatalogService.findAvailableServiceItemsMultiId(
+              this._catalogService.findAvailableServiceItemsMultiId(
                 organisationId,
                 fieldsMultiIds[3],
               ),
