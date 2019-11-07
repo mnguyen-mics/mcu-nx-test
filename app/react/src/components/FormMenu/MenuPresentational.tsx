@@ -25,8 +25,13 @@ const MenuPresentational: React.SFC<MenuPresentationalProps> = ({
             {title}
           </div>
           <div className="subtitle">
-            {subtitles && subtitles.map(subtitle => {
-              return `${subtitle}, `;
+            {subtitles && subtitles.map((subtitle, index, arr) => {
+              // If it's the last subtitle, the comma is not needed
+              if(index === arr.length - 1) {
+                return `${subtitle}`;
+              } else {
+                return `${subtitle}, `;
+              }
             })}
           </div>
         </div>

@@ -18,7 +18,7 @@ const messages = defineMessages({
   },
   listSubtitle: {
     id: 'audience.segments.form.audienceFeedSelector.subtitle',
-    defaultMessage: 'Chose your feed types. Tags will display a pixel to all your users within your segment and external feed will transfer them from server to server.',
+    defaultMessage: 'Chose your feed type.',
   },
   segmentTypeOr: {
     id: 'audience.segments.form.audienceFeedSelector.or',
@@ -45,7 +45,8 @@ class AudienceFeedSelector extends React.Component<AudienceFeedSelectorProps> {
                 <Row className="menu">
                   <div className="presentation">
                     <MenuPresentational
-                      title={'External Feed'}
+                      title={'Server side'}
+                      subtitles={['Triggered when users are added / deleted from segment']}
                       type="data"
                       select={this.onSelect('external')}
                     />
@@ -53,7 +54,8 @@ class AudienceFeedSelector extends React.Component<AudienceFeedSelectorProps> {
                       <FormattedMessage {...messages.segmentTypeOr} />
                     </div>
                     <MenuPresentational
-                      title={'Tag Feed'}
+                      title={'Client side'}
+                      subtitles={['Triggered when users are visiting your webpages / apps']}
                       type="code"
                       select={this.onSelect('tag')}
                     />
