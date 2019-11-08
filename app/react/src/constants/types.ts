@@ -35,6 +35,7 @@ const TYPES = {
   IDashboardService: Symbol.for('dashboardService'),
   ICatalogService: Symbol.for('catalogService'),
   IServiceOfferPageService: Symbol.for('serviceOfferPageService'),
+  IFeedsStatsService: Symbol.for('feedsStatsService'),
 };
 
 export { TYPES };

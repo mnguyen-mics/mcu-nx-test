@@ -105,7 +105,14 @@ import {
 import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
 import { ISettingsService, SettingsService } from '../services/SettingsService';
-import { IDashboardService, DashboardService } from '../services/DashboardServices';
+import {
+  IDashboardService,
+  DashboardService,
+} from '../services/DashboardServices';
+import {
+  IFeedsStatsService,
+  FeedsStatsService,
+} from '../services/FeedsStatsService';
 
 const container = new Container();
 
@@ -183,6 +190,9 @@ container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
 container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
 container.bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService).to(ServiceOfferPageService);
+container
+  .bind<IFeedsStatsService>(TYPES.IFeedsStatsService)
+  .to(FeedsStatsService);
 
 export const { lazyInject } = getDecorators(container, false);
 
