@@ -197,7 +197,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
             <Layout>
               <Sider
                 style={collapsed ? {} : { overflow: 'auto' }}
-                collapsible={false}
+                collapsible={true}
                 collapsed={false}
                 trigger={this.renderSettingsTrigger()}
               >
