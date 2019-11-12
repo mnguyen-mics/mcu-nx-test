@@ -194,8 +194,8 @@ export interface UserProfilePerCompartmentAndUserAccountId {
 }
 
 export interface UserProfileGlobal {
-  type: "legacy" | "pionus" | undefined
-  profileType: UserProfilePerCompartmentAndUserAccountId | UserProfileResource
+  type?: "legacy" | "pionus"
+  profile: UserProfilePerCompartmentAndUserAccountId | UserProfileResource
 }
 
 export interface UserProfileResource {

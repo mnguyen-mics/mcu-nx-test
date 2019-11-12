@@ -67,7 +67,7 @@ class Monitoring extends React.Component<Props, State> {
         userAccountCompartments: [],
         userPointList: [],
         userSegmentList: [],
-        userProfile: {type: undefined, profileType: {}},
+        userProfile: {type: undefined, profile: {}},
         lastSeen: 0,
         userIdentifier: {
           type: '',
@@ -163,7 +163,7 @@ class Monitoring extends React.Component<Props, State> {
                 userAccountCompartments: [],
                 userPointList: [],
                 userSegmentList: [],
-                userProfile: {type: undefined, profileType: {}},
+                userProfile: {type: undefined, profile: {}},
                 lastSeen: 0,
                 userIdentifier: {
                   type: '',

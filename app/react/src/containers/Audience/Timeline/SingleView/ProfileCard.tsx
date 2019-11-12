@@ -12,7 +12,7 @@ import { TimelinePageParams } from '../TimelinePage';
 import ProfileInfo from './ProfileInfo';
 import { UserProfileGlobal } from '../../../../models/timeline/timeline';
 import cuid from 'cuid';
-import SingleProfileInfoLegacy from './SingleProfileInfoLegacy';
+import SingleProfileInfo from './SingleProfileInfo';
 
 interface ProfileCardProps {
   dataSource: UserProfileGlobal;
@@ -23,6 +23,29 @@ type Props = ProfileCardProps &
   InjectedNotificationProps &
   InjectedIntlProps &
   RouteComponentProps<TimelinePageParams>;
+
+  const renderProfile = (dataSource: UserProfileGlobal) => {
+    if (dataSource.type === 'pionus' && Object.keys(dataSource.profile).length > 0) {
+      return Object.keys(dataSource.profile).map(key => {
+        return (
+          <Row gutter={10} key={cuid()} className="table-line border-top">
+            <div className="sub-title">{dataSource.profile[key].compartmentName}</div>
+            <ProfileInfo profiles={dataSource.profile[key].profiles} />
+          </Row>
+        );
+      })
+    } else if (dataSource.type === 'legacy') {
+      return (
+        <Row gutter={10} key={cuid()} className="table-line border-top">
+            <SingleProfileInfo profileGlobal={dataSource.profile} />
+          </Row>)
+    } else {
+      return <span>
+            <FormattedMessage {...messages.emptyProfile} />
+          </span>
+    }
+    
+  }
 
 class ProfileCard extends React.Component<Props> {
   constructor(props: Props) {
@@ -37,24 +60,7 @@ class ProfileCard extends React.Component<Props> {
         title={intl.formatMessage(messages.profileTitle)}
         isLoading={isLoading}
       >
-        {dataSource.type === 'pionus' && Object.keys(dataSource.profileType).map(key => {
-          return (
-            <Row gutter={10} key={cuid()} className="table-line border-top">
-              <div className="sub-title">{dataSource.profileType[key].compartmentName}</div>
-              <ProfileInfo profiles={dataSource.profileType[key].profiles} />
-            </Row>
-          );
-        })}
-        {dataSource.type === 'legacy' && (
-            <Row gutter={10} key={cuid()} className="table-line border-top">
-              <SingleProfileInfoLegacy profile={dataSource.profileType} />
-            </Row>
-        )}
-        {dataSource.type === undefined && (
-          <span>
-            <FormattedMessage {...messages.emptyProfile} />
-          </span>
-        )}
+        {renderProfile(dataSource)}
       </Card>
     );
   }

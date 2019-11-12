@@ -66,7 +66,7 @@ export class MonitoringService implements IMonitoringService {
 
   async fetchProfileData(datamart: DatamartResource, userIdentifier: Identifier): Promise<UserProfileGlobal> {
 
-    const emptyResponse = { type: undefined, profileType: {}}
+    const emptyResponse: UserProfileGlobal = { type: undefined, profile: {}}
 
     try {
       const profilesResponse = await this._userDataService.getProfiles(datamart.id, userIdentifier);
@@ -74,7 +74,7 @@ export class MonitoringService implements IMonitoringService {
       if (!profilesResponse) return emptyResponse;
 
       if (profilesResponse.data.length === 1 && profilesResponse.data[0].compartment_id === undefined) {
-        return { type: 'legacy', profileType: profilesResponse.data[0]}
+        return { type: 'legacy', profile: profilesResponse.data[0]}
       }
 
       // Default accumulator value
@@ -108,7 +108,7 @@ export class MonitoringService implements IMonitoringService {
         return acc;
       }, seedAcc);
 
-      return {type: 'pionus', profileType: userProfilePerCompartmentAndUserAccountId};
+      return {type: 'pionus', profile: userProfilePerCompartmentAndUserAccountId};
 
     } catch (e) {
       return emptyResponse;
@@ -229,7 +229,7 @@ export class MonitoringService implements IMonitoringService {
       userAccountCompartments: [],
       lastSeen: 0,
       userSegmentList: [],
-      userProfile: {type: undefined, profileType: {}},
+      userProfile: {type: undefined, profile: {}},
       userPointList: [],
       userIdentifier: {type: '', id : ''}
     }
