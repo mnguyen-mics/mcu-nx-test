@@ -5,7 +5,7 @@ import {
 } from './../models/Plugins';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { PluginResource, PluginVersionResource } from '../models/Plugins';
+import { PluginResource, PluginPresetResource, PluginVersionResource } from '../models/Plugins';
 import { PropertyResourceShape } from '../models/plugin';
 import DataFileService from './DataFileService';
 import AssetsFilesService from './Library/AssetsFilesService';
@@ -19,6 +19,11 @@ interface GetPluginOptions extends Omit<PaginatedApiParam, 'first_result'> {
   plugin_type?: PluginType;
   artifact_id?: string;
   group_id?: string;
+  organisation_id?: number;
+}
+
+interface GetPluginPresetOptions extends Omit<PaginatedApiParam, 'first_result'> {
+  plugin_type?: PluginType;
   organisation_id?: number;
 }
 
@@ -92,6 +97,12 @@ const PluginService = {
   ): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/properties`;
     return ApiService.getRequest(endpoint, params);
+  },
+  getPluginPresets(
+    options: GetPluginPresetOptions = {}
+  ): Promise<DataListResponse<PluginPresetResource>> {
+    const endpoint = `plugins.versions.presets`;
+    return ApiService.getRequest(endpoint, options);
   },
   getEngineProperties(
     engineVersionId: string,

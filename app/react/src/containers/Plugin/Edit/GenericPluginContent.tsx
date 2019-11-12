@@ -7,6 +7,7 @@ import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm, { SpecificFieldsFunction } from './PluginEditForm';
 import {
   PluginResource,
+  PluginPresetResource,
   PluginProperty,
   PluginType,
   PluginInstance,
@@ -41,6 +42,8 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
   pluginType: PluginType;
   listTitle: FormattedMessage.MessageDescriptor;
   listSubTitle: FormattedMessage.MessageDescriptor;
+  pluginPresetListTitle?: FormattedMessage.MessageDescriptor;
+  pluginPresetListSubTitle?: FormattedMessage.MessageDescriptor;
   breadcrumbPaths: (pluginInstance?: T) => Path[];
   pluginInstanceService: PluginInstanceService<T>;
   pluginInstanceId?: string;
@@ -68,6 +71,7 @@ interface PluginContentState<T> {
   isLoadingPlugin: boolean;
   pluginProperties: PropertyResourceShape[];
   pluginLayout?: PluginLayout;
+  availablePluginPresets: LayoutablePlugin[];
   availablePlugins: LayoutablePlugin[];
   initialValues?: PluginInstanceForm<T>;
 }
@@ -98,6 +102,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       isLoadingList: true,
       isLoadingPlugin: false,
       pluginProperties: [],
+      availablePluginPresets: [],
       availablePlugins: [],
     };
   }
@@ -108,7 +113,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       this.fetchInitialValues(pluginInstanceId);
       return;
     }
-    this.getPluginsList();
+    this.getPluginsAndPresetList()
   }
 
   componentWillReceiveProps(nextProps: JoinedProps<T>) {
@@ -133,45 +138,25 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       this.fetchInitialValues(nextPluginInstanceId);
     }
   }
-
-  getPluginsList = () => {
+ 
+  getPluginsAndPresetList() {
     const { notifyError } = this.props;
     this.setState(
       {
         isLoadingList: true,
       },
       () => {
-        PluginService.getPlugins({
-          plugin_type: this.props.pluginType,
-        })
-          .then(res => res.data)
-          .then((response: PluginResource[]) => {
-            const pluginsWithLayouts = response.reduce((filteredPlugins, pResourceWoutLayout) => {
-              if (!pResourceWoutLayout.current_version_id) return filteredPlugins;
-
-              return [
-                ...filteredPlugins,
-                PluginService.getLocalizedPluginLayout(
-                  pResourceWoutLayout.id,
-                  pResourceWoutLayout.current_version_id,
-                ).then(resultPluginLayout => {
-                  return Promise.resolve({
-                    ...pResourceWoutLayout,
-                    plugin_layout:
-                      resultPluginLayout !== null
-                        ? resultPluginLayout
-                        : undefined,
-                  });
-                }),
-              ];
-            }, []);
-
-            Promise.all(pluginsWithLayouts).then(availablePluginsResponse => {
-              this.setState({
-                availablePlugins: availablePluginsResponse,
-                isLoadingList: false,
-              });
-            });
+        this.getPluginsList()
+          .then((availablePlugins: LayoutablePlugin[]) => {
+            this.getPluginPresetsList(availablePlugins).then(
+              (pluginPresets: LayoutablePlugin[]) => {
+                this.setState({
+                  availablePlugins: availablePlugins,
+                  availablePluginPresets: pluginPresets,
+                  isLoadingList: false,
+                });
+              },
+            );
           })
           .catch(err => {
             notifyError(err);
@@ -179,7 +164,71 @@ class PluginContent<T extends PluginInstance> extends React.Component<
           });
       },
     );
-  };
+  }
+
+  getPluginsList() {
+    return PluginService.getPlugins({
+      plugin_type: this.props.pluginType,
+    })
+      .then(res => res.data)
+      .then((response: PluginResource[]) => {
+        return Promise.all(
+          response.reduce((filteredPlugins, pResourceWoutLayout) => {
+            if (!pResourceWoutLayout.current_version_id) return filteredPlugins;
+
+            return [
+              ...filteredPlugins,
+              PluginService.getLocalizedPluginLayout(
+                pResourceWoutLayout.id,
+                pResourceWoutLayout.current_version_id,
+              ).then(resultPluginLayout => {
+                return Promise.resolve({
+                  ...pResourceWoutLayout,
+                  plugin_layout:
+                    resultPluginLayout !== null
+                      ? resultPluginLayout
+                      : undefined,
+                });
+              }),
+            ];
+          }, []),
+        );
+      });
+  }
+
+  getPluginPresetsList(plugins: LayoutablePlugin[]) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    return PluginService.getPluginPresets({
+      organisation_id: +organisationId,
+      plugin_type: this.props.pluginType,
+    })
+      .then(res => res.data)
+      .then((response: PluginPresetResource[]) => {
+        const pluginPresets: LayoutablePlugin[] = response.reduce(
+          (pluginsWithPresets, preset) => {
+            const foundPlugin = plugins.find(
+              plugin => plugin.id === preset.plugin_id,
+            );
+            if (!foundPlugin || !foundPlugin.plugin_layout)
+              return pluginsWithPresets;
+            return [
+              ...pluginsWithPresets,
+              {
+                ...foundPlugin,
+                plugin_preset: preset,
+              },
+            ];
+          },
+          [],
+        );
+        return pluginPresets;
+      });
+  }
 
   fetchInitialValues = (pInstanceId: string) => {
     const { pluginInstanceService, notifyError } = this.props;
@@ -468,9 +517,12 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         >
           <PluginCardSelector
             onSelect={this.onSelectPlugin}
-            availablePlugins={this.state.availablePlugins}
-            listTitle={this.props.listTitle}
-            listSubTitle={this.props.listSubTitle}
+            availablePresetLayouts={this.state.availablePluginPresets}
+            pluginPresetListTitle={this.props.pluginPresetListTitle}
+            pluginPresetListSubTitle={this.props.pluginPresetListSubTitle}
+            availablePluginLayouts={this.state.availablePlugins}
+            pluginListTitle={this.props.listTitle}
+            pluginListSubTitle={this.props.listSubTitle}
           />
           <PluginCardModal
             onClose={this.onReset}

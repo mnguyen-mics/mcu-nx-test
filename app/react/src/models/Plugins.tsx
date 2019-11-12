@@ -11,6 +11,7 @@ export interface PluginResource {
 
 export interface LayoutablePlugin extends PluginResource {
   plugin_layout?: PluginLayout;
+  plugin_preset?: PluginPresetResource;
 }
 
 export interface PluginProperty {
@@ -20,6 +21,23 @@ export interface PluginProperty {
   technical_name: string;
   value: any;
   writable: boolean;
+}
+
+export interface PluginPresetResource {
+  id: string;
+  plugin_id: string;
+  plugin_version_id: string;
+  organisation_id: string;
+  plugin_type?: PluginType;
+  name: string;
+  description?: string;
+  properties: PluginPresetProperty[];
+}
+
+export interface PluginPresetProperty {
+  property_type: string;
+  technical_name: string;
+  value: any;
 }
 
 export type PluginType =

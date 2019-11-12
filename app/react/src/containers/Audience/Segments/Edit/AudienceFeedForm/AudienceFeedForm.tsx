@@ -33,11 +33,11 @@ const titleMessages: {
 } = defineMessages({
   AUDIENCE_SEGMENT_EXTERNAL_FEED: {
     id: 'audience.segment.audienceExternalFeed.list.title',
-    defaultMessage: 'Choose your Audience External Feed Type',
+    defaultMessage: 'Choose your Server Side Feed Type',
   },
   AUDIENCE_SEGMENT_TAG_FEED: {
     id: 'audience.segment.audienceTagFeed.list.title',
-    defaultMessage: 'Choose your Audience Tag Feed Type',
+    defaultMessage: 'Choose your Client Side Feed Type',
   },
   GENERIC_PLUGIN: {
     id: 'audience.segment.genericPlugin.list.title',
@@ -51,17 +51,51 @@ const subtitleMessages: {
   AUDIENCE_SEGMENT_EXTERNAL_FEED: {
     id: 'audience.segment.audienceExternalFeed.list.subtitle',
     defaultMessage:
-      'Add an Audience External Feed. An Audience External Feed Type will trigger a pixel on your properties to push cookies to third parties receivers.',
+      'Add a Server Side Feed. A Server Side Feed Type will trigger a pixel on your properties to push cookies to third parties receivers.',
   },
   AUDIENCE_SEGMENT_TAG_FEED: {
     id: 'audience.segment.audienceTagFeed.list.subtitle',
     defaultMessage:
-      'Add an Audience Tag Feed. An Audience Tag Feed Type will trigger a pixel on your properties to push cookies to third parties receivers.',
+      'Add a Client Side Feed. A Client Side Feed Type will trigger a pixel on your properties to push cookies to third parties receivers.',
   },
   GENERIC_PLUGIN: {
     id: 'audience.segment.genericPlugin.list.subtitle',
     defaultMessage:
       'Add a Plugin. A Plugin will trigger a pixel on your properties to push cookies to third parties receivers.',
+  },
+});
+
+const pluginPresetTitleMessages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  AUDIENCE_SEGMENT_EXTERNAL_FEED: {
+    id: 'audience.segment.audienceExternalFeed.preset.list.title',
+    defaultMessage: 'Presets',
+  },
+  AUDIENCE_SEGMENT_TAG_FEED: {
+    id: 'audience.segment.audienceTagFeed.preset.list.title',
+    defaultMessage: 'Presets',
+  },
+  GENERIC_PLUGIN: {
+    id: 'audience.segment.genericPlugin.preset.list.title',
+    defaultMessage: 'Presets',
+  },
+});
+
+const pluginPresetSubtitleMessages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  AUDIENCE_SEGMENT_EXTERNAL_FEED: {
+    id: 'audience.segment.audienceExternalFeed.preset.list.subtitle',
+    defaultMessage: 'Add a pre-configured Server Side Feed.',
+  },
+  AUDIENCE_SEGMENT_TAG_FEED: {
+    id: 'audience.segment.audienceTagFeed.preset.list.subtitle',
+    defaultMessage: 'Add a pre-configured Client Side Feed.',
+  },
+  GENERIC_PLUGIN: {
+    id: 'audience.segment.genericPlugin.preset.list.subtitle',
+    defaultMessage: 'Add a pre-configured Plugin.',
   },
 });
 
@@ -174,8 +208,10 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
     return (
       <GenericPluginContent
         pluginType={type}
-        listTitle={titleMessages[type] || titleMessages.GENERIC_PLUGIN}
-        listSubTitle={subtitleMessages[type] || titleMessages.GENERIC_PLUGIN}
+        listTitle={titleMessages[type] || titleMessages.genericPlugin}
+        listSubTitle={subtitleMessages[type] || titleMessages.genericPlugin}
+        pluginPresetListTitle={pluginPresetTitleMessages[type] || pluginPresetTitleMessages.genericPlugin}
+        pluginPresetListSubTitle={pluginPresetSubtitleMessages[type] || pluginPresetSubtitleMessages.genericPlugin}
         breadcrumbPaths={paths}
         pluginInstanceService={this.feedService}
         pluginInstanceId={feedId}
