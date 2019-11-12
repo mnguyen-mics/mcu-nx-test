@@ -23,8 +23,8 @@ define(['./module'], function (module) {
       service.getAccessToken = function() {
         // get the access token in a cookie
         $.cookie.raw = true;
-        $log.debug("getAccessToken : ", $.cookie("access_token"));
-        return $.cookie("access_token");
+        $log.debug("getAccessToken : ", $.cookie("access_token") || $window.localStorage.getItem("access_token"));
+        return $.cookie("access_token") || $window.localStorage.getItem("access_token");
       };
 
       service.getAccessTokenExpirationDate = function () {
@@ -43,7 +43,7 @@ define(['./module'], function (module) {
 
       service.hasAccessToken = function() {
         $.cookie.raw = true;
-        var accessToken = $.cookie("access_token");
+        var accessToken = $.cookie("access_token") || $window.localStorage.getItem("access_token");
         if (accessToken) {
           Restangular.setDefaultHeaders({Authorization: accessToken});
           return true;
