@@ -75,6 +75,8 @@ function* authorizeLoop(
         // if expired password we catch the 401 error
         if (error.error_code === 'EXPIRED_PASSWORD_ERROR') {
           yield put(logIn.expiredPassword(error));
+        } else {
+          throw error;
         }
       }
       if (refreshToken) {
