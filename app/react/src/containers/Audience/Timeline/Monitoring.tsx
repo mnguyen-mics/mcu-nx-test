@@ -73,6 +73,7 @@ class Monitoring extends React.Component<Props, State> {
           type: '',
           id: ''
         },
+        isUserFound: false,
       },
       isLoading: false,
     };
@@ -169,6 +170,7 @@ class Monitoring extends React.Component<Props, State> {
                   type: '',
                   id: ''
                 },
+                isUserFound: false,
               },
               isLoading: false,
             });
@@ -211,8 +213,6 @@ class Monitoring extends React.Component<Props, State> {
 
     const { isModalVisible, monitoringData, isLoading } = this.state;
 
-    const userIdentifier = monitoringData.userIdentifier;
-
     return (
       <div className="ant-layout">
         <MonitoringActionbar
@@ -223,7 +223,7 @@ class Monitoring extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            {userIdentifier.id && monitoringData.lastSeen ? (
+            {monitoringData.isUserFound ? (
               <Row>
                 <TimelineHeader
                   dataSource={monitoringData}
@@ -254,7 +254,7 @@ class Monitoring extends React.Component<Props, State> {
 
                     <ActivitiesTimeline
                       selectedDatamart={selectedDatamart}
-                      userIdentifier={userIdentifier}
+                      userIdentifier={monitoringData.userIdentifier}
                     />
                   </Col>
                   <Col span={6}>

@@ -179,6 +179,7 @@ export interface MonitoringData {
   profileByCompartmentsAndUserAccountId: UserProfilePerCompartmentAndUserAccountId;
   lastSeen: number;
   userIdentifier: Identifier;
+  isUserFound: boolean;
 }
 
 export interface UserProfileWithAccountId {
