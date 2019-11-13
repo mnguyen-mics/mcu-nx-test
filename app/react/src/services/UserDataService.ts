@@ -62,8 +62,8 @@ export interface IUserDataService {
   ) => Promise<DataListResponse<Activity>>;
 
   getChannel: (
-    datamartId: string,
     channelId: string,
+    options?: object
   ) => Promise<DataResponse<ChannelResource> | undefined>;
 }
 
@@ -267,13 +267,14 @@ export class UserDataService implements IUserDataService {
   }
 
   getChannel(
-    datamartId: string,
     channelId: string,
+    options?: object,
   ): Promise<DataResponse<ChannelResource> | undefined> {
-    const endpoint = `datamarts/${datamartId}/channels/${channelId}`;
+    const endpoint = `channels/${channelId}`;
 
     return ApiService.getRequest<DataResponse<ChannelResource> | undefined>(
       endpoint,
+      options
     ).catch(error => {
       // api send 404 when channel doesn't exist
       if (error && error.error === 'Resource Not Found') {
