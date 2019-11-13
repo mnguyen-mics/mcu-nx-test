@@ -179,6 +179,7 @@ export interface MonitoringData {
   userProfile: UserProfileGlobal;
   lastSeen: number;
   userIdentifier: Identifier;
+  isUserFound: boolean;
 }
 
 export interface UserProfileWithAccountId {

@@ -231,7 +231,8 @@ export class MonitoringService implements IMonitoringService {
       userSegmentList: [],
       userProfile: {type: undefined, profile: {}},
       userPointList: [],
-      userIdentifier: {type: '', id : ''}
+      userIdentifier: {type: '', id : ''},
+      isUserFound: false,
     }
     return this._userDataService
       .getIdentifiers(
@@ -269,6 +270,7 @@ export class MonitoringService implements IMonitoringService {
               userProfile: res[3],
               userPointList: [],
               userIdentifier: userIdentifier,
+              isUserFound: true,
             };
           });
         }
@@ -279,17 +281,20 @@ export class MonitoringService implements IMonitoringService {
           type: identifierType
         }
         return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart).then(res => {
-          return {
-            userAgentList: [],
-            userEmailList: [],
-            userAccountsByCompartmentId: {},
-            userAccountCompartments: res[0],
-            lastSeen: res[1],
-            userSegmentList: res[2],
-            userProfile: res[3],
-            userPointList: [],
-            userIdentifier: userIdentifier,
-          };
+          if (res[1]) {
+            return {
+              userAgentList: [],
+              userEmailList: [],
+              userAccountsByCompartmentId: {},
+              userAccountCompartments: res[0],
+              lastSeen: res[1],
+              userSegmentList: res[2],
+              userProfile: res[3],
+              userPointList: [],
+              userIdentifier: userIdentifier,
+              isUserFound: true,
+            };
+          } else { return emptyData }
         });
       });
   }
