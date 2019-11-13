@@ -281,18 +281,20 @@ export class MonitoringService implements IMonitoringService {
           type: identifierType
         }
         return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart).then(res => {
-          return {
-            userAgentList: [],
-            userEmailList: [],
-            userAccountsByCompartmentId: {},
-            userAccountCompartments: res[0],
-            lastSeen: res[1],
-            userSegmentList: res[2],
-            userProfile: res[3],
-            userPointList: [],
-            userIdentifier: userIdentifier,
-            isUserFound: true,
-          };
+          if (res[1]) {
+            return {
+              userAgentList: [],
+              userEmailList: [],
+              userAccountsByCompartmentId: {},
+              userAccountCompartments: res[0],
+              lastSeen: res[1],
+              userSegmentList: res[2],
+              userProfile: res[3],
+              userPointList: [],
+              userIdentifier: userIdentifier,
+              isUserFound: true,
+            };
+          } else { return emptyData }
         });
       });
   }
