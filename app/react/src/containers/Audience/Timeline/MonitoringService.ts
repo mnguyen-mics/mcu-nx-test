@@ -1,5 +1,5 @@
 import { Identifier } from './Monitoring';
-import { isUserPointIdentifier } from './../../../models/timeline/timeline';
+import { isUserPointIdentifier, UserProfileGlobal } from './../../../models/timeline/timeline';
 import { groupBy, Dictionary } from 'lodash';
 import { IUserDataService } from './../../../services/UserDataService';
 import {
@@ -22,13 +22,11 @@ import {
 } from '../../../models/timeline/timeline';
 import DatamartService from '../../../services/DatamartService';
 
-
-
 export interface IMonitoringService {
   fetchProfileData: (
     datamart: DatamartResource,
     userIdentifier: Identifier,
-  ) => Promise<UserProfilePerCompartmentAndUserAccountId>; // type it
+  ) => Promise<UserProfileGlobal>; // type it
   fetchSegmentsData: (
     datamart: DatamartResource,
     userIdentifier: Identifier,
@@ -66,12 +64,18 @@ export class MonitoringService implements IMonitoringService {
   @inject(TYPES.IUserDataService)
   private _userDataService: IUserDataService;
 
-  async fetchProfileData(datamart: DatamartResource, userIdentifier: Identifier): Promise<UserProfilePerCompartmentAndUserAccountId> {
+  async fetchProfileData(datamart: DatamartResource, userIdentifier: Identifier): Promise<UserProfileGlobal> {
+
+    const emptyResponse: UserProfileGlobal = { type: undefined, profile: {}}
 
     try {
       const profilesResponse = await this._userDataService.getProfiles(datamart.id, userIdentifier);
 
-      if (!profilesResponse) return {};
+      if (!profilesResponse) return emptyResponse;
+
+      if (profilesResponse.data.length === 1 && profilesResponse.data[0].compartment_id === undefined) {
+        return { type: 'legacy', profile: profilesResponse.data[0]}
+      }
 
       // Default accumulator value
       const seedAcc: Promise<UserProfilePerCompartmentAndUserAccountId> = Promise.resolve({});
@@ -104,10 +108,10 @@ export class MonitoringService implements IMonitoringService {
         return acc;
       }, seedAcc);
 
-      return userProfilePerCompartmentAndUserAccountId;
+      return {type: 'pionus', profile: userProfilePerCompartmentAndUserAccountId};
 
     } catch (e) {
-      return {};
+      return emptyResponse;
     }
 
   }
@@ -217,15 +221,15 @@ export class MonitoringService implements IMonitoringService {
     identifierType: string,
     identifierId: string,
     compartmentId?: string,
-  ) {
-    const emptyData = {
+  ): Promise<MonitoringData> {
+    const emptyData: MonitoringData = {
       userAgentList: [],
       userEmailList: [],
       userAccountsByCompartmentId: {},
       userAccountCompartments: [],
       lastSeen: 0,
       userSegmentList: [],
-      profileByCompartmentsAndUserAccountId: {},
+      userProfile: {type: undefined, profile: {}},
       userPointList: [],
       userIdentifier: {type: '', id : ''}
     }
@@ -262,7 +266,7 @@ export class MonitoringService implements IMonitoringService {
               userAccountCompartments: res[0],
               lastSeen: res[1],
               userSegmentList: res[2],
-              profileByCompartmentsAndUserAccountId: res[3],
+              userProfile: res[3],
               userPointList: [],
               userIdentifier: userIdentifier,
             };
@@ -282,7 +286,7 @@ export class MonitoringService implements IMonitoringService {
             userAccountCompartments: res[0],
             lastSeen: res[1],
             userSegmentList: res[2],
-            profileByCompartmentsAndUserAccountId: res[3],
+            userProfile: res[3],
             userPointList: [],
             userIdentifier: userIdentifier,
           };

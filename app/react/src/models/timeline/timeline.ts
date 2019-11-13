@@ -176,7 +176,7 @@ export interface MonitoringData {
   userEmailList: UserEmailIdentifierInfo[];
   userPointList: UserPointIdentifierInfo[];
   userSegmentList: UserSegmentResource[];
-  profileByCompartmentsAndUserAccountId: UserProfilePerCompartmentAndUserAccountId;
+  userProfile: UserProfileGlobal;
   lastSeen: number;
   userIdentifier: Identifier;
 }
@@ -191,6 +191,11 @@ export interface UserProfilePerCompartmentAndUserAccountId {
     compartmentName: string
     profiles: UserProfileWithAccountId[]
   }
+}
+
+export interface UserProfileGlobal {
+  type?: "legacy" | "pionus"
+  profile: UserProfilePerCompartmentAndUserAccountId | UserProfileResource
 }
 
 export interface UserProfileResource {
