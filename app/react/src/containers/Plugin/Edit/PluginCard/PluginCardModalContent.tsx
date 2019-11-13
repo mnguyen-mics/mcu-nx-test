@@ -156,6 +156,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
             pluginLayoutSection={section}
             organisationId={organisationId}
             pluginProperties={pluginProperties}
+            pluginPresetProperties={plugin.plugin_preset ? plugin.plugin_preset.properties : undefined}
             disableFields={!!disableFields}
             pluginVersionId={plugin.current_version_id!}
             small={true}

@@ -74,6 +74,7 @@ interface PluginContentState<T> {
   availablePluginPresets: LayoutablePlugin[];
   availablePlugins: LayoutablePlugin[];
   initialValues?: PluginInstanceForm<T>;
+  initializedPresetValues?: { properties: any };
 }
 
 function initEmptyPluginSelection() {
@@ -371,43 +372,33 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     return Promise.all(propertiesPromises);
   };
 
-  onSelectPlugin = (plugin: PluginResource) => {
+  onSelectPlugin = (layoutablePlugin: LayoutablePlugin) => {
     this.setState(
       {
         isLoadingPlugin: true,
-        plugin: plugin,
+        plugin: layoutablePlugin,
+        pluginLayout: layoutablePlugin.plugin_layout,
       },
       () => {
-        PluginService.getPluginVersions(plugin.id)
+        PluginService.getPluginVersions(layoutablePlugin.id)
           .then(res => {
             const lastVersion = res.data[res.data.length - 1];
-            const promiseVersionProperty = PluginService.getPluginVersionProperty(
-              plugin.id,
-              plugin.current_version_id
-                ? plugin.current_version_id
+            const promiseVersionProperties = PluginService.getPluginVersionProperty(
+              layoutablePlugin.id,
+              layoutablePlugin.current_version_id
+                ? layoutablePlugin.current_version_id
                 : lastVersion.id,
             );
-            const promisePluginLayout = PluginService.getLocalizedPluginLayout(
-              plugin.id,
-              plugin.current_version_id
-                ? plugin.current_version_id
-                : lastVersion.id,
-            );
-            return Promise.all([promiseVersionProperty, promisePluginLayout]);
+            return promiseVersionProperties
           })
-          .then(([resultVersionProperty, resultPluginLayout]) => {
-            if (resultPluginLayout !== null) {
-              this.setState({
-                pluginProperties: resultVersionProperty.data,
-                pluginLayout: resultPluginLayout,
-                isLoadingPlugin: false,
-              });
-            } else {
-              this.setState({
-                pluginProperties: resultVersionProperty.data,
-                isLoadingPlugin: false,
-              });
-            }
+          .then((resultVersionProperties) => {
+            this.setState({
+              pluginProperties: resultVersionProperties.data,
+              initializedPresetValues : layoutablePlugin.plugin_preset ?
+                this.formatInitialPresetValues(resultVersionProperties.data, layoutablePlugin.plugin_preset)
+                : undefined,
+              isLoadingPlugin: false,
+            });
           })
           .catch(err => {
             actions.notifyError(err);
@@ -417,6 +408,28 @@ class PluginContent<T extends PluginInstance> extends React.Component<
           });
       },
     );
+  };
+
+  formatInitialPresetValues = (
+    properties: PropertyResourceShape[],
+    preset: PluginPresetResource,
+  ) => {
+    const formattedProperties: any = {};
+
+    properties.forEach((property: PluginProperty) => {
+      const presetProperty = preset.properties.find(
+        presetProp => presetProp.technical_name === property.technical_name,
+      );
+      if (presetProperty) {
+        formattedProperties[property.technical_name] = {
+          value: presetProperty.value,
+        };
+      }
+    });
+
+    return {
+      properties: formattedProperties,
+    };
   };
 
   onReset = () => {
@@ -459,7 +472,14 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       renderSpecificFields
     } = this.props;
 
-    const { pluginProperties, isLoadingList, isLoadingPlugin, plugin, initialValues } = this.state;
+    const { 
+      pluginProperties, 
+      isLoadingList, 
+      isLoadingPlugin, 
+      plugin, 
+      initialValues, 
+      initializedPresetValues 
+    } = this.state;
 
     const sidebarItems: SideBarItem[] = [];
 
@@ -530,7 +550,9 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             opened={!!plugin.id}
             plugin={plugin}
             save={this.saveOrCreatePluginInstance}
-            initialValues={this.formatInitialValues(initialValues)}
+            initialValues={initializedPresetValues 
+              ? initializedPresetValues 
+              : this.formatInitialValues(initialValues)}
             pluginProperties={pluginProperties}
             disableFields={(isLoadingPlugin || disableFields) ? true : false}
             pluginLayout={this.state.pluginLayout!}
