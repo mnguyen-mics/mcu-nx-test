@@ -24,7 +24,14 @@ type Props = ProfileCardProps &
   InjectedIntlProps &
   RouteComponentProps<TimelinePageParams>;
 
-  const renderProfile = (dataSource: UserProfileGlobal) => {
+  
+
+class ProfileCard extends React.Component<Props> {
+  constructor(props: Props) {
+    super(props);
+  }
+
+  renderProfile = (dataSource: UserProfileGlobal) => {
     if (dataSource.type === 'pionus' && Object.keys(dataSource.profile).length > 0) {
       return Object.keys(dataSource.profile).map(key => {
         return (
@@ -47,11 +54,6 @@ type Props = ProfileCardProps &
     
   }
 
-class ProfileCard extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
-
   render() {
     
     const { dataSource, intl, isLoading } = this.props;
@@ -60,7 +62,7 @@ class ProfileCard extends React.Component<Props> {
         title={intl.formatMessage(messages.profileTitle)}
         isLoading={isLoading}
       >
-        {renderProfile(dataSource)}
+        {this.renderProfile(dataSource)}
       </Card>
     );
   }
