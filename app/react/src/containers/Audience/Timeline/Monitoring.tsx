@@ -67,7 +67,7 @@ class Monitoring extends React.Component<Props, State> {
         userAccountCompartments: [],
         userPointList: [],
         userSegmentList: [],
-        profileByCompartmentsAndUserAccountId: {},
+        userProfile: {type: undefined, profile: {}},
         lastSeen: 0,
         userIdentifier: {
           type: '',
@@ -164,7 +164,7 @@ class Monitoring extends React.Component<Props, State> {
                 userAccountCompartments: [],
                 userPointList: [],
                 userSegmentList: [],
-                profileByCompartmentsAndUserAccountId: {},
+                userProfile: {type: undefined, profile: {}},
                 lastSeen: 0,
                 userIdentifier: {
                   type: '',
@@ -239,7 +239,7 @@ class Monitoring extends React.Component<Props, State> {
                       <FormattedMessage {...messages.visitor} />
                     </div>
                     <ProfileCard
-                      dataSource={monitoringData.profileByCompartmentsAndUserAccountId}
+                      dataSource={monitoringData.userProfile}
                       isLoading={isLoading}
                     />
                     <SegmentsCard

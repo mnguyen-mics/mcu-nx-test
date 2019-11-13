@@ -10,11 +10,12 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { TimelinePageParams } from '../TimelinePage';
 import ProfileInfo from './ProfileInfo';
-import { UserProfilePerCompartmentAndUserAccountId } from '../../../../models/timeline/timeline';
+import { UserProfileGlobal } from '../../../../models/timeline/timeline';
 import cuid from 'cuid';
+import SingleProfileInfo from './SingleProfileInfo';
 
 interface ProfileCardProps {
-  dataSource: UserProfilePerCompartmentAndUserAccountId;
+  dataSource: UserProfileGlobal;
   isLoading: boolean;
 }
 
@@ -23,31 +24,45 @@ type Props = ProfileCardProps &
   InjectedIntlProps &
   RouteComponentProps<TimelinePageParams>;
 
+  
+
 class ProfileCard extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
 
+  renderProfile = (dataSource: UserProfileGlobal) => {
+    if (dataSource.type === 'pionus' && Object.keys(dataSource.profile).length > 0) {
+      return Object.keys(dataSource.profile).map(key => {
+        return (
+          <Row gutter={10} key={cuid()} className="table-line border-top">
+            <div className="sub-title">{dataSource.profile[key].compartmentName}</div>
+            <ProfileInfo profiles={dataSource.profile[key].profiles} />
+          </Row>
+        );
+      })
+    } else if (dataSource.type === 'legacy') {
+      return (
+        <Row gutter={10} key={cuid()} className="table-line border-top">
+            <SingleProfileInfo profileGlobal={dataSource.profile} />
+          </Row>)
+    } else {
+      return <span>
+            <FormattedMessage {...messages.emptyProfile} />
+          </span>
+    }
+    
+  }
+
   render() {
-    const { dataSource: userProfilePerCompartmentAndUserAccountId, intl, isLoading } = this.props;
+    
+    const { dataSource, intl, isLoading } = this.props;
     return (
       <Card
         title={intl.formatMessage(messages.profileTitle)}
         isLoading={isLoading}
       >
-        {Object.keys(userProfilePerCompartmentAndUserAccountId).map(key => {
-          return (
-            <Row gutter={10} key={cuid()} className="table-line border-top">
-              <div className="sub-title">{userProfilePerCompartmentAndUserAccountId[key].compartmentName}</div>
-              <ProfileInfo profiles={userProfilePerCompartmentAndUserAccountId[key].profiles} />
-            </Row>
-          );
-        })}
-        {Object.keys(userProfilePerCompartmentAndUserAccountId).length === 0 && (
-          <span>
-            <FormattedMessage {...messages.emptyProfile} />
-          </span>
-        )}
+        {this.renderProfile(dataSource)}
       </Card>
     );
   }
