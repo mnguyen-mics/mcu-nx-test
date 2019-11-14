@@ -25,7 +25,7 @@ export const messages = defineMessages({
   },
   waitNodeTimeout: {
     id: 'automation.builder.node.form.wait.timeout',
-    defaultMessage: 'Timeout',
+    defaultMessage: 'Timeout in milliseconds (ms)',
   },
 });
 
