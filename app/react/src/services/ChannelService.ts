@@ -24,6 +24,10 @@ export interface IChannelService {
     siteId: string,
     body: Partial<SiteResource>,
   ) => Promise<DataResponse<SiteResource>>;
+  deleteSite: (
+    datamartId: string,
+    siteId: string,
+  ) => Promise<DataResponse<SiteResource>>;
   updateMobileApplication: (
     datamartId: string,
     mobileApplicationsId: string,
@@ -112,6 +116,13 @@ export class ChannelService implements IChannelService {
   ): Promise<DataResponse<SiteResource>> {
     const endpoint = `datamarts/${datamartId}/sites/${siteId}`;
     return ApiService.putRequest(endpoint, body);
+  }
+  deleteSite(
+    datamartId: string,
+    siteId: string,
+  ): Promise<DataResponse<SiteResource>> {
+    const endpoint = `datamarts/${datamartId}/sites/${siteId}`;
+    return ApiService.deleteRequest(endpoint);
   }
   updateMobileApplication(
     datamartId: string,

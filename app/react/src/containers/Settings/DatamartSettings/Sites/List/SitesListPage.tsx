@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Row, Button, Layout, Icon } from 'antd';
-import { FormattedMessage } from 'react-intl';
+import { Row, Button, Layout, Icon, Modal } from 'antd';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import settingsMessages from '../../../messages';
 import messages from './messages';
@@ -50,6 +50,7 @@ interface MapStateToProps {
 type Props = SitesListPageProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedDatamartProps &
+  InjectedIntlProps &
   MapStateToProps &
   InjectedNotificationProps;
 
@@ -140,8 +141,56 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     }
   }
 
-  handleArchiveSite = () => {
-    // to do
+  handleDeleteSite = (site: ChannelResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { pathname, state, search },
+      history,
+      intl: { formatMessage },
+      datamart,
+    } = this.props;
+
+    const {
+      sites,
+      filter
+    } = this.state;
+    
+    Modal.confirm({
+      iconType: 'exclamation-circle',
+      title: formatMessage(messages.deleteSiteModalTitle),
+      okText: formatMessage(messages.deleteSiteModalOk),
+      cancelText: formatMessage(messages.deleteSiteModalCancel),
+      onOk: () => {
+        this._channelService.deleteSite(datamart.id, site.id).then(() => {
+          if (sites.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: filter.currentPage - 1,
+            };
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
+            return Promise.resolve();
+          }
+          return this.fetchSites(
+            organisationId,
+            datamart.id,
+            this.state.filter,
+          ).then(() => {
+            this.setState({
+              isFetchingSites: false,
+            });
+          });
+        });
+      },
+      onCancel: () => {
+        // cancel
+      },
+    });
   };
 
   handleEditSite = (site: ChannelResource) => {
@@ -324,7 +373,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
                 noSiteYet={noSiteYet}
                 filter={filter}
                 onFilterChange={this.handleFilterChange}
-                onArchiveSite={this.handleArchiveSite}
+                onDeleteSite={this.handleDeleteSite}
                 onEditSite={this.handleEditSite}
                 filtersOptions={filtersOptions}
               />
@@ -343,6 +392,7 @@ const mapStateToProps = (state: any) => ({
 export default compose<Props, SitesListPageProps>(
   withRouter,
   injectDatamart,
+  injectIntl,
   injectNotifications,
   connect(mapStateToProps),
 )(SitesListPage);
