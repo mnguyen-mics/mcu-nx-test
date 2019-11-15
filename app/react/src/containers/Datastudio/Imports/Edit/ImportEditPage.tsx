@@ -170,11 +170,11 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
           redirectAndNotify(createdImport.data.id, selectedDatamart.id);
         })
         .catch(err => {
-          redirectAndNotify();
+          redirectAndNotify(undefined, undefined, err.error);
         });
     }
 
-    const redirectAndNotify = (id?: string, selectedDatamartId?: string) => {
+    const redirectAndNotify = (id?: string, selectedDatamartId?: string, customErrorMessage?: string) => {
       if (id) {
         hideSaveInProgress();
         message.success(intl.formatMessage(messages.updateSuccess));
@@ -186,7 +186,11 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
         this.setState({
           loading: false,
         });
-        message.error(intl.formatMessage(messages.updateError));
+        if (customErrorMessage) {
+          message.error(`${intl.formatMessage(messages.updateError)}: ${customErrorMessage}`);
+        } else {
+          message.error(intl.formatMessage(messages.updateError));
+        } 
       }
     };
   };
