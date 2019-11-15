@@ -57,7 +57,16 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
         const onPluginSelect = () => this.props.onSelect(layoutablePlugin);
         return (
           !!layoutablePlugin.plugin_layout && (
-            <Col key={layoutablePlugin.id} span={4} className="text-center">
+            <Col
+              key={
+                layoutablePlugin.id +
+                (layoutablePlugin.plugin_preset
+                  ? '-' + layoutablePlugin.plugin_preset.id
+                  : '')
+              }
+              span={4}
+              className="text-center"
+            >
               <PluginCard
                 plugin={layoutablePlugin}
                 organisationId={organisationId}

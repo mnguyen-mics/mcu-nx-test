@@ -11,10 +11,12 @@ import { PluginFieldGenerator } from '.';
 import { compose } from 'recompose';
 import messages from './Edit/messages';
 import { PropertyResourceShape } from '../../models/plugin';
+import { PluginPresetProperty } from '../../models/Plugins';
 
 interface PluginSectionGeneratorProps {
     organisationId: string;
     pluginProperties: PropertyResourceShape[];
+    pluginPresetProperties?: PluginPresetProperty[];
     pluginLayoutSection: PluginLayoutSectionResource;
     pluginVersionId: string;
     noUploadModal?: () => void;
@@ -44,12 +46,18 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
             organisationId,
             pluginVersionId,
             pluginProperties,
+            pluginPresetProperties,
             noUploadModal,
             disableFields,
             small
         } = this.props;
 
         const currentPluginProperty = pluginProperties.find(prop => prop.technical_name === field.property_technical_name);
+        const pluginPresetProperty = pluginPresetProperties
+            ? pluginPresetProperties.find(
+                prop => prop.technical_name === field.property_technical_name,
+                )
+            : undefined;
 
         if (currentPluginProperty !== undefined) {
             return (
@@ -57,6 +65,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                     <PluginFieldGenerator
                         definition={currentPluginProperty}
                         pluginLayoutFieldDefinition={field}
+                        pluginPresetProperty={pluginPresetProperty}
                         organisationId={organisationId}
                         pluginVersionId={pluginVersionId}
                         disabled={disableFields}
