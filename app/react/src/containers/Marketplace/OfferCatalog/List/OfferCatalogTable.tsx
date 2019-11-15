@@ -52,15 +52,15 @@ type Props = InjectedIntlProps &
 const processPrice = (data: ServiceItemConditionShape) => {
   if (isProvidedServiceItemConditionResource(data)) {
     return messages.freeLabel.defaultMessage;
-  } else if (isLinearServiceItemConditionsResource(data) === true) {
-    const linear = data as LinearServiceItemConditionResource;
-    if (linear.percent_value === 0) {
-      return `${Math.floor(linear.fixed_value * 1000).toString()} ${
-        messages.cpmLabel.defaultMessage
-      }`;
-    }
-    return messages.quoteLabel.defaultMessage;
   } else {
+    if (isLinearServiceItemConditionsResource(data)) {
+      const linear = data as LinearServiceItemConditionResource;
+      if (linear.percent_value === 0) {
+        return `${Math.floor(linear.fixed_value * 1000).toString()} ${
+          messages.cpmLabel.defaultMessage
+        }`;
+      }
+    }
     return messages.quoteLabel.defaultMessage;
   }
 };
