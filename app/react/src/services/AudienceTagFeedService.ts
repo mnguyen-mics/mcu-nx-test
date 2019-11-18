@@ -4,8 +4,13 @@ import PluginInstanceService from './PluginInstanceService';
 import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
+import { GetFeeds } from './AudienceSegmentFeedService';
 
 export interface IAudienceTagFeedService {
+  getFeeds: (
+    options: GetFeeds
+  ) => Promise<DataListResponse<AudienceTagFeed>>;
+
   getAudienceFeeds: (
     organisationId: string,
     options: object,
@@ -54,6 +59,13 @@ export class AudienceTagFeedService
   constructor(segmentId: string) {
     super('audience_tag_feeds');
     this.segmentId = segmentId;
+  }
+
+  getFeeds(
+    options: GetFeeds
+  ): Promise<DataListResponse<AudienceTagFeed>> {
+    const endpoint = 'audience_segments.tag_feeds';
+    return ApiService.getRequest(endpoint, options);
   }
 
   getAudienceFeeds(
