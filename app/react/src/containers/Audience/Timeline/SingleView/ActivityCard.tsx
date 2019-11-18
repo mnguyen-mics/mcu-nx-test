@@ -79,7 +79,7 @@ class ActivityCard extends React.Component<Props, State> {
       const prefix = activity.$site_id ? 'Site' : 'App';
       this.getChannelPromise = makeCancelable(
         (community_id === organisation_id) ?
-          this._userDataService.getChannel(id, { community_id: community_id, datamart_id: selectedDatamart.id }) :
+          this._userDataService.getChannel(id, { community_id: community_id, with_source_datamarts: true }) :
           this._userDataService.getChannel(id, { organisation_id: organisation_id, datamart_id: selectedDatamart.id })
       );
       this.getChannelPromise.promise
