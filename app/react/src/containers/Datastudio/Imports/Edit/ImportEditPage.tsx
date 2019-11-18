@@ -161,7 +161,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
           redirectAndNotify(importId, importData.datamart_id);
         })
         .catch(err => {
-          redirectAndNotify();
+          redirectAndNotify(undefined, undefined, err.error);
         });
     } else if (selectedDatamart) {
       this._importService
