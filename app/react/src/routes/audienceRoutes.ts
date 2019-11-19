@@ -46,7 +46,7 @@ export const audienceDefinition: NavigatorDefinition = {
     layout: 'main',
     contentComponent: AudienceFeedsTable,
     actionBarComponent: FeedsActionbar,
-    requiredFeature: 'audience.segments',
+    requiredFeature: 'audience.feeds',
     requireDatamart: true,
   },
   audienceSegmentCreation: {
