@@ -3,10 +3,10 @@ import Highcharts from 'highcharts/highmaps';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import cuid from 'cuid';
-import world from './Charts/world.js';
-import log from '../utils/Logger';
+import world from '../../../../../components/Charts/world';
+import log from '../../../../../utils/Logger';
 import { isUndefined } from 'lodash';
-export interface WorldMapProps {
+export interface GenericWorldMapProps {
   dataset: MapData[];
   height: number;
   legend?: Boolean;
@@ -16,9 +16,9 @@ export interface MapData {
   [key: string]: string | number;
 }
 
-type Props = WorldMapProps & InjectedIntlProps;
+type Props = GenericWorldMapProps & InjectedIntlProps;
 
-class WorldMap extends React.Component<Props> {
+class GenericWorldMap extends React.Component<Props> {
   cuid: string;
 
   constructor(props: Props) {
@@ -50,7 +50,7 @@ class WorldMap extends React.Component<Props> {
     );
 
     (Highcharts as any).theme = {
-      colors: ['#003056'],
+      colors: ['rgba(57,95,189,1)'],
       chart: {
         backgroundColor: '#ffffff',
         style: {
@@ -133,38 +133,19 @@ class WorldMap extends React.Component<Props> {
       colorAxis: {
         dataClasses: [
           {
-            color: 'rgba(0,48,86,0.05)',
-            to: 1000,
+            color: 'rgba(161,211,234,1)',
+            to: 5,
           },
           {
-            color: 'rgba(0,48,86,0.2)',
-            from: 1000,
-            to: 5000,
+            color: 'rgba(93,164,239,1)',
+            from: 10,
+            to: 20,
           },
           {
-            color: 'rgba(0,48,86,0.4',
-            from: 5000,
-            to: 10000,
-          },
-          {
-            color: 'rgba(0,48,86,0.5)',
-            from: 10000,
-            to: 15000,
-          },
-          {
-            color: 'rgba(0,48,86,0.6)',
-            from: 15000,
-            to: 20000,
-          },
-          {
-            color: 'rgba(0,48,86,0.8)',
-            from: 20000,
-            to: 25000,
-          },
-          {
-            color: 'rgba(0,48,86,1)',
-            from: 25000,
-          },
+            color: 'rgba(57,95,189,1)',
+            from: 20,
+            to: 25,
+          }
         ],
       },
       mapNavigation: {
@@ -192,4 +173,4 @@ class WorldMap extends React.Component<Props> {
   }
 }
 
-export default compose<Props, WorldMapProps>(injectIntl)(WorldMap);
+export default compose<Props, GenericWorldMapProps>(injectIntl)(GenericWorldMap);

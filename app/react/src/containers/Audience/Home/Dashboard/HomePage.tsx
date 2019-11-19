@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import {
@@ -17,18 +17,19 @@ import { DashboardResource } from '../../../../models/dashboards/dashboards';
 import { withDatamartSelector, WithDatamartSelectorProps } from '../../../Datamart/WithDatamartSelector';
 import { Loading } from '../../../../components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
-import Error from '../../../../components/Error';
+//import Error from '../../../../components/Error';
+import DatamartAnalysisWrapper from '../../DatamartAnalysis/DatamartAnalysisWrapper';
 
 const { Content } = Layout;
 
-const messages = defineMessages({
-  comingSoon: {
-    id: "audience.home.dashboard",
-    defaultMessage: "Coming Soon..."
-  }
-});
+// const messages = defineMessages({
+//   comingSoon: {
+//     id: "audience.home.dashboard",
+//     defaultMessage: "Coming Soon..."
+//   }
+// });
 
-interface HomeProps {}
+interface HomeProps { }
 
 interface HomeState {
   dashboards: DashboardResource[];
@@ -83,24 +84,24 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     this._dashboardService.getDashboards(selectedDatamartId, {
       type: "HOME"
     })
-    .then(d => {
-      return d.data
-    })
-    .then(d => {
-      this.setState({ isLoading: false, dashboards: d })
-    })
-    .catch(err => {
-      this.props.notifyError(err);
-      this.setState({
-        isLoading: false,
+      .then(d => {
+        return d.data
+      })
+      .then(d => {
+        this.setState({ isLoading: false, dashboards: d })
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          isLoading: false,
+        });
       });
-    });
   };
 
 
 
   render() {
-    const { intl } = this.props;
+    // const { intl } = this.props;
     const { isLoading, dashboards } = this.state;
 
     if (isLoading) {
@@ -108,7 +109,14 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     }
 
     if (!isLoading && dashboards.length === 0) {
-      return <Error message={intl.formatMessage(messages.comingSoon)} />
+      //return <Error message={intl.formatMessage(messages.comingSoon)} />
+      return (<div className="ant-layout">
+        <div className="ant-layout">
+          <Content className="mcs-content-container">
+            <DatamartAnalysisWrapper title={"Segment Dashboard"} />
+          </Content>
+        </div>
+      </div>)
     }
 
     return (

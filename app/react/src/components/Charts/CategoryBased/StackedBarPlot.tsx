@@ -18,6 +18,7 @@ export interface StackedBarPlotOptions {
   yKeys: yKey[];
   xKey: string;
   showLegend?: boolean;
+  type?: string 
 }
 
 type yKey = { key: string; message: FormattedMessage.MessageDescriptor | string };
@@ -57,13 +58,13 @@ class StackedBarPlot extends React.Component<Props, {}> {
   render() {
     const {
       dataset,
-      options: { colors, xKey, yKeys, showLegend },
+      options: { colors, xKey, yKeys, showLegend, type },
       height
     } = this.props;
 
     const options: Highcharts.Options = {
       chart: {
-        type: 'column',
+        type: type || 'column',
         height: height ? height : BASE_CHART_HEIGHT,
       },
       title: {
