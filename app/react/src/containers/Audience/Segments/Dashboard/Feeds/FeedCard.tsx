@@ -84,6 +84,10 @@ const messages = defineMessages({
     id: 'audienceFeed.card.actions.edit',
     defaultMessage: 'Edit',
   },
+  stats: {
+    id: 'audienceFeed.card.actions.stats',
+    defaultMessage: 'Stats',
+  },
   view: {
     id: 'audienceFeed.card.actions.view',
     defaultMessage: 'View',
@@ -394,6 +398,9 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       <Menu>
         <Menu.Item key="0">
           <a onClick={openModal}>{intl.formatMessage(messages.edit)}</a>
+        </Menu.Item>
+        <Menu.Item key="0">
+          <a onClick={openModal}>{intl.formatMessage(messages.stats)}</a>
         </Menu.Item>
         <Menu.Item key="1">
           <a onClick={removeFeed}>{intl.formatMessage(messages.delete)}</a>

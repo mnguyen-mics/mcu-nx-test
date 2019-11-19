@@ -17,6 +17,7 @@ import { ValidatorProps } from '../../../../components/Form/withValidators';
 import ColoredButton from '../../../../components/ColoredButton';
 import { ColorPalletteOption, getColorPalettes, rgbToHex, getPerceivedBrightness } from '../../../../utils/ColorHelpers';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
+import FeedChart from '../../../Audience/Segments/Dashboard/Feeds/Charts/FeedChart';
 
 
 const FORM_NAME = 'pluginForm';
@@ -212,6 +213,14 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
     )
   }
 
+  renderStats = () => {
+    const {
+      organisationId
+    } = this.props;
+
+    return <FeedChart organisationId={organisationId} feedId="1680"/>;
+  }
+
   public render() {
 
     const { onClose, handleSubmit, isLoading, pluginLayout } = this.props;
@@ -221,6 +230,12 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       return  (<div className="plugin-modal-loading"><Spin size="large"  /></div>);
 
     const items = [
+      {
+        title: 'Stats',
+        key: 'stats',
+        // display: <div> test beach </div>
+        display: <div className="tab">{this.renderStats()}</div>
+      },
       {
         title: 'Configuration',
         key: 'configuration',
