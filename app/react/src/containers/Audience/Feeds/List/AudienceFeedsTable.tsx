@@ -23,6 +23,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { Link } from 'react-router-dom';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 
 type Props = RouteComponentProps<{ organisationId: string }> & InjectedIntlProps;
 
@@ -103,47 +104,66 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         } else {
             const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
             this.fetchFeeds(organisationId, filter);
-            this.fetchPlugins();
         }
+        this.fetchPlugins();
     }
 
-    componentWillReceiveProps(nextProps: Props) {
+    shouldComponentUpdate(nextProps: Props, nextState: State) {
         const {
             location: { search },
+            match: {
+                params: { organisationId },
+            },
+        } = this.props;
+
+        const {
+            location: { search: nextSearch },
+            match: {
+                params: { organisationId: nextOrganisationId },
+            },
+        } = nextProps;
+
+        const { list, plugins } = this.state;
+
+        const { list: nextList, plugins: nextPlugins } = nextState;
+
+        return (
+            !compareSearches(search, nextSearch) ||
+            organisationId !== nextOrganisationId ||
+            (list.isLoading && !nextList.isLoading) ||
+            plugins.length !== nextPlugins.length
+        );
+    }
+
+    componentDidUpdate(prevProps: Props, prevState: State) {
+        const {
+            location: { pathname, search },
             match: {
                 params: { organisationId },
             },
             history,
         } = this.props;
 
-        const {
-            location: { pathname: nextPathname, search: nextSearch, state: nextState },
-            match: {
-                params: { organisationId: nextOrganisationId },
-            },
-        } = nextProps;
-
-        if (
-            !compareSearches(search, nextSearch) ||
-            organisationId !== nextOrganisationId ||
-            (nextState && nextState.reloadDataSource === true)
-        ) {
-            if (!isSearchValid(nextSearch, FEEDS_SEARCH_SETTINGS)) {
-                history.replace({
-                    pathname: nextPathname,
-                    search: buildDefaultSearch(nextSearch, FEEDS_SEARCH_SETTINGS),
-                    state: { reloadDataSource: organisationId !== nextOrganisationId },
-                });
-            } else {
-                const nextFilter = parseSearch(nextSearch, FEEDS_SEARCH_SETTINGS);
-                this.fetchFeeds(organisationId, nextFilter);
-                this.fetchPlugins();
-            }
+        if (!isSearchValid(search, FEEDS_SEARCH_SETTINGS)) {
+            history.replace({
+                pathname: pathname,
+                search: buildDefaultSearch(search, FEEDS_SEARCH_SETTINGS),
+            });
+        } else if (!prevState.list.isLoading || this.state.list.isLoading) {
+            const nextFilter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
+            this.fetchFeeds(organisationId, nextFilter);
         }
     }
 
     buildApiSearchFilters = (filter: Index<any>) => {
         let formattedFilters: Index<any> = {};
+
+        if (filter.currentPage && filter.pageSize) {
+            formattedFilters = {
+                ...formattedFilters,
+                ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+            };
+        }
 
         if (filter.status && filter.status.length > 0) {
             formattedFilters = {
@@ -163,6 +183,12 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     };
 
     fetchFeeds = (organisationId: string, filter: Index<any>) => {
+        this.setState({
+            list: {
+                ...this.state.list,
+                isLoading: true,
+            },
+        });
         return this.feedService
             .getFeeds({
                 organisation_id: organisationId,
