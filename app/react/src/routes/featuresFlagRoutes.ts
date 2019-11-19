@@ -9,7 +9,7 @@ export const featureFlagDefinition: NavigatorDefinition = {
        path: '/ui-feature-flag',
        layout: 'edit',
        editComponent: FeatureFlagPage,
-       requiredFeature: 'features.ui-feature-flag',
+       requiredFeature: 'features.ui_feature_flag',
        requireDatamart: false,
      },
    }
