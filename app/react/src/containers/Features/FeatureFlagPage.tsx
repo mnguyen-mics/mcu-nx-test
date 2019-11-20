@@ -122,7 +122,10 @@ class FeatureFlagPage extends React.Component<Props, State> {
     } = this.props;
 
     // Used to redirect after 5 secs
-    const redirect = () => {history.push(`/v2/o/${organisationId}/audience/segments`)};
+    const redirect = () => {
+      history.push(`/v2/o/${organisationId}/audience/segments`);
+      (location as any).reload();
+    };
 
     const queryStringParams = parseSearch<FilterParams>(search);
     const token = queryStringParams.token;
