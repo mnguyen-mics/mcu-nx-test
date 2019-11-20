@@ -5,11 +5,10 @@ import { compose } from 'recompose';
 import cuid from 'cuid';
 import world from './Charts/world.js';
 import log from '../utils/Logger';
-import { isUndefined } from 'lodash';
+
 export interface WorldMapProps {
   dataset: MapData[];
   height: number;
-  legend?: Boolean;
 }
 
 export interface MapData {
@@ -36,11 +35,10 @@ class WorldMap extends React.Component<Props> {
   }
 
   generateMap = (dataset: MapData[]) => {
-    const { height, legend } = this.props;
+    const { height } = this.props;
     // dataset.forEach(data => {
     //   this.value = this.value < 1 ? 1 : this.value;
     // });
-
 
     Highcharts.createElement(
       'link',
@@ -112,13 +110,11 @@ class WorldMap extends React.Component<Props> {
         },
       },
       legend: {
-        enabled: isUndefined(legend) ? true :legend,
         itemStyle: {
           color: 'rgba(0, 0, 0, 0.65)',
         },
       },
     };
-    
 
     // Apply the theme
     Highcharts.setOptions((Highcharts as any).theme);
@@ -168,12 +164,10 @@ class WorldMap extends React.Component<Props> {
         ],
       },
       mapNavigation: {
+        enabled: true,
         buttonOptions: {
           verticalAlign: 'bottom',
         },
-      },
-      credits: {
-        enabled: false,
       },
       series: [
         {

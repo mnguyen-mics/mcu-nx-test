@@ -35,7 +35,11 @@ class SessionsByDevice extends React.Component {
             "unit": "%",
             "title": "Desktop",
             "value": 83.9,
-            "loading": false
+            "loading": false,
+            "trend": {
+              "value": 0.6,
+              "type": "up"
+            }
           },
           {
             "iconType": "smartphone",
@@ -43,7 +47,11 @@ class SessionsByDevice extends React.Component {
             "unit": "%",
             "title": "Mobile",
             "value": 15.4,
-            "loading": false
+            "loading": false,
+            "trend": {
+              "value": 3.2,
+              "type": "down"
+            }
           },
           {
             "iconType": "tablet",
@@ -51,7 +59,11 @@ class SessionsByDevice extends React.Component {
             "unit": "%",
             "title": "Tablet",
             "value": 0.8,
-            "loading": false
+            "loading": false,
+            "trend": {
+              "value": 50.0,
+              "type": "down"
+            }
           }
         ]} />
       </CardFlex>

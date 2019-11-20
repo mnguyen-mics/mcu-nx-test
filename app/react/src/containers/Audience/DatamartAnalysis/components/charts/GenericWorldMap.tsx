@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import cuid from 'cuid';
 import world from '../../../../../components/Charts/world';
 import log from '../../../../../utils/Logger';
-import { isUndefined } from 'lodash';
+
 export interface GenericWorldMapProps {
   dataset: MapData[];
   height: number;
@@ -36,7 +36,7 @@ class GenericWorldMap extends React.Component<Props> {
   }
 
   generateMap = (dataset: MapData[]) => {
-    const { height, legend } = this.props;
+    const { height } = this.props;
     // dataset.forEach(data => {
     //   this.value = this.value < 1 ? 1 : this.value;
     // });
@@ -112,10 +112,7 @@ class GenericWorldMap extends React.Component<Props> {
         },
       },
       legend: {
-        enabled: isUndefined(legend) ? true :legend,
-        itemStyle: {
-          color: 'rgba(0, 0, 0, 0.65)',
-        },
+        enabled: false
       },
     };
     
@@ -161,7 +158,7 @@ class GenericWorldMap extends React.Component<Props> {
           data: dataset,
           mapData: Highcharts.maps['custom/world'],
           joinBy: ['iso-a3', 'code3'] as any,
-          name: 'Population density',
+          name: 'Session by country',
           type: 'map',
         },
       ],
