@@ -138,11 +138,11 @@ Also we strongly recommend you download the React and Redux extensions for your 
 Features flags
 ---------------
 
-Some components of this application requires features to be activated on the end user browser. Some features are public and given to everybody, and some features are overriden as a per user basis.
+Some components of this application require features to be activated on the end user browser. Some features are public and given to everybody, and some features are overriden on a per user basis.
 
 In order to activate or remove a feature from an end user browser, we need to make them access a navigator link.
 
-This link contains a token that is generated as explained below, to be executed in a Node REPL:
+This link contains a token that is generated as explained below (to be executed in a Node REPL):
 ```
 Buffer.from(JSON.stringify({version: 1, method: 'add', featureName:
 "mysuperfeature"})).toString('base64')
@@ -155,7 +155,7 @@ Buffer.from(JSON.stringify({version: 1, method: 'remove', featureName:
 # Returns: 'eyJ2ZXJzaW9uIjoxLCJtZXRob2QiOiJyZW1vdmUiLCJmZWF0dXJlTmFtZSI6Im15c3VwZXJmZWF0dXJlIn0='
 ```
 
-Then, those token should appended to: `/#/v2/o/1/ui-feature-flag?token=` Navigator route.
+Then, this token should appended to: `/#/v2/o/1/ui-feature-flag?token=` Navigator route.
 
 Ex:
 ```
