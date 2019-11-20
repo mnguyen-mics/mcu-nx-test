@@ -10,22 +10,24 @@ export interface LoadingCounterValue {
 
 export interface CounterProps extends LoadingCounterValue {
   iconType: McsIconType;
+  iconStyle?: React.CSSProperties;
+  unit?: string;
   title: React.ReactNode | string;
 }
 
 export default class Counter extends React.Component<CounterProps> {
   render() {
-    const { iconType, title, value, loading } = this.props;
+    const { iconType, iconStyle, unit, title, value, loading } = this.props;
 
     return (
-      <div className="counter">
-        <McsIcon type={iconType} />
-        <div className="title">{title}</div>
+      <div className="counter" >
+        <McsIcon type={iconType} style={iconStyle ? iconStyle : {}}/>
+        <div className="counter_title">{title}</div>
         <div className="number">
           {loading ? (
             <Spin />
           ) : (value !== undefined && value !== null) ? (
-            <FormattedNumber value={value} />
+            <span><FormattedNumber value={value} />{unit || ''}</span>
           ) : (
             '--'
           )}
