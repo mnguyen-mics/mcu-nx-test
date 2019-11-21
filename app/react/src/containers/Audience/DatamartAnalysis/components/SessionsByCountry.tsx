@@ -61,8 +61,8 @@ class SessionsByCountry extends React.Component {
           code: 'RU',
           value: 5
         },
-        ]} height={300} legend={true} />
-        <StackedBarPlot dataset={data} options={optionsForChart} />
+        ]} height={350} legend={true} />
+        <StackedBarPlot dataset={data} options={optionsForChart} height={200} />
       </CardFlex>
     );
   }

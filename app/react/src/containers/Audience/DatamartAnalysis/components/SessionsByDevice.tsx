@@ -27,7 +27,7 @@ class SessionsByDevice extends React.Component {
           key: 'tablet',
           value: 0.8,
           color: '#95cdcb'
-        }]} options={optionsForChart} />
+        }]} options={optionsForChart} height={300} />
         <CounterDashboard counters={[
           {
             "iconType": "laptop",
