@@ -49,6 +49,10 @@ const messages = defineMessages({
         id: 'audience.feeds.list.column.segmentNameNotFound',
         defaultMessage: 'Untitled',
     },
+    segmentDeleted: {
+        id: 'audience.feeds.list.column.segmentDeleted',
+        defaultMessage: 'Segment deleted',
+    },
     artifactId: {
         id: 'audience.feeds.list.column.artifactId',
         defaultMessage: 'Connector',
@@ -194,27 +198,29 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                 organisation_id: organisationId,
                 ...this.buildApiSearchFilters(filter),
             })
-            .then(res => {
+            .then(feedResults => {
                 // We optimize the number of calls as we don't want to call the same segment multiple times
-                const audienceSegmentIds = res.data
+                const audienceSegmentIds = feedResults.data
                     .map(feeds => feeds.audience_segment_id)
                     .filter((v, i, s) => s.indexOf(v) === i);
                 return Promise.all(
                     audienceSegmentIds.map(id => {
-                        return this._audienceSegmentService.getSegment(id);
+                        return this._audienceSegmentService.getSegment(id).catch(() => ({ data: undefined }));
                     }),
-                ).then(results => {
-                    const feeds = res.data.map(feed => ({
+                ).then(segmentResults => {
+                    const feeds = feedResults.data.map(feed => ({
                         feed: feed,
-                        audienceSegment: results
+                        audienceSegment: segmentResults
                             .map(r => r.data)
-                            .find(segment => segment.id === feed.audience_segment_id),
+                            .find(segment => {
+                                return !!segment && segment.id === feed.audience_segment_id;
+                            }),
                     }));
 
                     this.setState({
                         list: {
                             feeds: feeds,
-                            total: res.total ? res.total : res.count,
+                            total: feedResults.total ? feedResults.total : feedResults.count,
                             isLoading: false,
                         },
                     });
@@ -235,6 +241,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         return PluginService.getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED' }).then(res => {
             this.setState({
                 plugins: res.data,
+            });
+        }).catch(() => {
+            this.setState({
+                plugins: [],
             });
         });
     }
@@ -273,7 +283,9 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                     record: { feed: AudienceExternalFeed; audienceSegment?: AudienceSegmentResource },
                 ) => (
                     <span>
-                        {record.audienceSegment && record.audienceSegment.name ? (
+                        {!record.audienceSegment ? (
+                            <FormattedMessage {...messages.segmentDeleted} />
+                        ) : record.audienceSegment.name ? (
                             <Link
                                 className="mcs-campaigns-link"
                                 to={`/v2/o/${organisationId}/audience/segments/${record.audienceSegment.id}`}
@@ -342,7 +354,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         const filtersOptions: Array<MultiSelectProps<any>> = [];
 
         if (plugins.length > 0) {
-            const artifactIds = Array.from(new Set(plugins.map(plugin => plugin.artifact_id)));
+            const artifactIds = Array.from(new Set(plugins.map(plugin => plugin.artifact_id))).sort();
 
             filtersOptions.push({
                 displayElement: (
