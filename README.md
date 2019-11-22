@@ -155,7 +155,9 @@ Buffer.from(JSON.stringify({version: 1, method: 'remove', featureName:
 # Returns: 'eyJ2ZXJzaW9uIjoxLCJtZXRob2QiOiJyZW1vdmUiLCJmZWF0dXJlTmFtZSI6Im15c3VwZXJmZWF0dXJlIn0='
 ```
 
-Then, this token should appended to: `/#/v2/o/1/ui-feature-flag?token=` Navigator route.
+Then, this token should appended to: `/#/v2/o/<USER_ORGANISATION_ID>/ui-feature-flag?token=` Navigator route.
+
+Replace `<USER_ORGANISATION_ID>` by the id of an organisation the user has access to.
 
 Ex:
 ```
