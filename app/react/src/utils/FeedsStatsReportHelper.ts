@@ -35,7 +35,6 @@ type FeedsStatsMetric =
 export function buildFeedCardStatsRequestBody(
   segmentId: string,
 ): ReportRequestBody {
-  const date7daysAgo: string = new McsMoment('now-7d').toMoment().format();
   const dimensionsList: FeedsStatsDimension[] = ['FEED_ID'];
   const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_IDENTIFIERS_COUNT'];
   
@@ -50,8 +49,13 @@ export function buildFeedCardStatsRequestBody(
     filters: [dimensionFilter],
   };
 
+  const dateRange7daysAgo: DateRange = {
+    start_date: new McsMoment('now-7d').toMoment().format(),
+    end_date: new McsMoment('now').toMoment().format(),
+  };
+
   return buildReport(
-    date7daysAgo,
+    dateRange7daysAgo,
     dimensionsList,
     dimensionsFilterClauses,
     metricsList
@@ -60,8 +64,8 @@ export function buildFeedCardStatsRequestBody(
 
 export function buildFeedStatsByFeedRequestBody(
   feedId: string,
+  dateRange: DateRange
 ): ReportRequestBody {
-  const date7daysAgo: string = new McsMoment('now-7d').toMoment().format();
   const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', 'DAY', 'DAY', 'SYNC_TYPE'];
   const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_IDENTIFIERS_COUNT'];
   
@@ -77,7 +81,7 @@ export function buildFeedStatsByFeedRequestBody(
   };
 
   return buildReport(
-    date7daysAgo,
+    dateRange,
     dimensionsList,
     dimensionsFilterClauses,
     metricsList
@@ -85,18 +89,12 @@ export function buildFeedStatsByFeedRequestBody(
 }
 
 function buildReport(
-  startDate: string,
+  dateRange: DateRange,
   dimensionsList: FeedsStatsDimension[],
   dimensionFilterClauses: DimensionFilterClause,
   metricsList: FeedsStatsMetric[]
 ): ReportRequestBody {
-  // DATE RANGE
-  // const dateNow: string = new McsMoment('now').toMoment().format();
 
-  const dateRange: DateRange = {
-    start_date: "2019-09-01",
-    end_date: "2019-09-10",
-  };
   const dateRanges: DateRange[] = [dateRange];
 
   // DIMENSIONS

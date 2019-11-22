@@ -23,6 +23,8 @@ import FeedChart from '../../../Audience/Segments/Dashboard/Feeds/Charts/FeedCha
 const FORM_NAME = 'pluginForm';
 const BRIGHTNESS_THRESHOLD = 160;
 
+export type PluginCardModalTab = 'configuration' | 'stats';
+
 export interface PluginCardModalContentProps<T> {
   plugin: T;
   onClose: () => void
@@ -35,6 +37,7 @@ export interface PluginCardModalContentProps<T> {
   pluginVersionId: string;
   initialValues?: any;
   editionMode: boolean;
+  selectedTab: PluginCardModalTab;
 }
 
 type Props<T extends LayoutablePlugin> = PluginCardModalContentProps<T> &
@@ -45,7 +48,7 @@ interface State {
   backgroundColor: string;
   color: string;
   loading: boolean;
-  showConfiguration: boolean;
+  selectedTab: PluginCardModalTab;
   imageUrl?: string;
 }
 
@@ -62,7 +65,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       loading: true,
       backgroundColor: '',
       color: '',
-      showConfiguration: true
+      selectedTab: props.selectedTab
     };
   }
 
@@ -224,7 +227,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
   public render() {
 
     const { onClose, handleSubmit, isLoading, pluginLayout } = this.props;
-    const { backgroundColor, color, loading } = this.state;
+    const { backgroundColor, color, loading, selectedTab } = this.state;
 
     if (loading || !pluginLayout || isLoading) 
       return  (<div className="plugin-modal-loading"><Spin size="large"  /></div>);
@@ -249,8 +252,8 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       // }
     ]
 
-    const onActiveKeyChange = (activeKey: string) => {
-      this.setState({ showConfiguration: activeKey === 'configuration' ? true : false })
+    const onActiveKeyChange = (activeKey: PluginCardModalTab) => {
+      this.setState({ selectedTab: activeKey })
     }
 
     return (
@@ -297,9 +300,9 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
             </div>
           </div>
            <div className="tabs">
-            <McsTabs items={items} defaultActiveKey={'configuration'} onChange={onActiveKeyChange} />
+            <McsTabs items={items} defaultActiveKey={selectedTab} onChange={onActiveKeyChange} />
           </div>
-          {this.state.showConfiguration ? <div className="footer">
+          {selectedTab === 'configuration' ? <div className="footer">
             <ButtonStyleless className={" m-r-20"} onClick={onClose}>Close</ButtonStyleless>
             <ColoredButton className="mcs-primary" backgroundColor={backgroundColor} color={color} onClick={handleSubmit(this.onSubmit)}> { isLoading ? (<Icon type="loading" />) : null} Save</ColoredButton>
           </div> : null}

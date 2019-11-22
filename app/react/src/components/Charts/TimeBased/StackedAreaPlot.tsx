@@ -167,8 +167,6 @@ class StackedAreaPlot extends React.Component<Props, {}> {
       },
     };
 
-    console.log(options);
-
     return (
       <HighchartsReact
         highcharts={Highcharts}

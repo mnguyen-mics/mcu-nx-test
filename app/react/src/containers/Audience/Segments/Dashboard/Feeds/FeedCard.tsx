@@ -23,6 +23,7 @@ import { PropertyResourceShape } from '../../../../../models/plugin';
 import { withRouter, RouteComponentProps } from 'react-router';
 import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
+import { PluginCardModalTab } from '../../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -42,6 +43,7 @@ interface FeedCardState {
   cardHeaderTitle?: string;
   cardHeaderThumbnail?: string;
   opened?: boolean;
+  modalTab: PluginCardModalTab;
   pluginLayout?: PluginLayout;
   isLoadingCard: boolean;
   pluginProperties?: PropertyResourceShape[];
@@ -114,6 +116,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       isLoading: true,
       isLoadingCard: true,
       opened: false,
+      modalTab: 'configuration',
       pluginProperties: [],
     };
 
@@ -376,12 +379,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     if (isLoading) {
       return <FeedPlaceholder />;
     }
-    const openModal = () => {
+    const openModal = (tab: PluginCardModalTab) => () => {
       if (!this.state.pluginLayout) {
         return history.push(editFeed());
       } else {
-        this.setState({ opened: true });
-        this.setState({ isLoadingCard: true });
+        this.setState({ opened: true, modalTab: tab, isLoadingCard: true });
         return Promise.all([
           this.getPluginProperties(),
           this.getInitialValues(),
@@ -397,12 +399,12 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const menu = (
       <Menu>
         <Menu.Item key="0">
-          <a onClick={openModal}>{intl.formatMessage(messages.edit)}</a>
-        </Menu.Item>
-        <Menu.Item key="0">
-          <a onClick={openModal}>{intl.formatMessage(messages.stats)}</a>
+          <a onClick={openModal('configuration')}>{intl.formatMessage(messages.edit)}</a>
         </Menu.Item>
         <Menu.Item key="1">
+          <a onClick={openModal('stats')}>{intl.formatMessage(messages.stats)}</a>
+        </Menu.Item>
+        <Menu.Item key="2">
           <a onClick={removeFeed}>{intl.formatMessage(messages.delete)}</a>
         </Menu.Item>
       </Menu>
@@ -475,6 +477,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               pluginProperties={this.state.pluginProperties!}
               pluginVersionId={feed.version_id}
               save={this.saveOrCreatePluginInstance}
+              selectedTab={this.state.modalTab}
             />
           )}
       </Card>

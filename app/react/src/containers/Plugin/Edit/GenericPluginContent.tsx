@@ -559,6 +559,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             isLoading={isLoadingPlugin || isLoadingList || !this.state.pluginLayout}
             pluginVersionId={plugin.id}
             editionMode={false}
+            selectedTab='configuration'
           />
         </EditContentLayout>
       )

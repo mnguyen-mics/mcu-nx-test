@@ -88,7 +88,7 @@ class DoubleStackedAreaPlot extends React.Component<Props, {}> {
     return moment(date)
       .utc()
       .seconds(0)
-      .hours((hour ? hour : 0) +24)
+      .hours((hour ? hour : 0) + 24)
       .milliseconds(0)
       .minutes(0)
       .valueOf();
