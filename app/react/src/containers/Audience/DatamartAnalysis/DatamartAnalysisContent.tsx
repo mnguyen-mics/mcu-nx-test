@@ -3,6 +3,7 @@ import SessionsByCountry from './components/SessionsByCountry';
 import SessionsByDevice from './components/SessionsByDevice';
 import UsersByTimeOfDay from './components/UsersByTimeOfDay';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+import ActiveUsers from './components/ActiveUsers';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -30,13 +31,19 @@ var layout = [
     "w": 6,
     "x": 0,
     "y": 5
+  },
+  {
+    "i": "3",
+    "h": 3,
+    "static": false,
+    "w": 6,
+    "x": 6,
+    "y": 5
   }
 ];
 export default class DatamartAnalysisContent extends React.Component {
   render() {
     return (
-
-
       <ResponsiveGridLayout className="layout" layouts={{ lg: layout }}
         cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
         isDraggable={false}
@@ -45,6 +52,7 @@ export default class DatamartAnalysisContent extends React.Component {
         <div key="0"> <SessionsByCountry /></div>
         <div key="1"><SessionsByDevice /></div>
         <div key="2"><UsersByTimeOfDay /></div>
+        <div key="3"><ActiveUsers /></div>
       </ResponsiveGridLayout>
 
     );
