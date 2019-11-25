@@ -6,22 +6,26 @@ import { lazyInject } from '../../../../../../config/inversify.config';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
 import StackedAreaPlot from '../../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { LoadingChart } from '../../../../../../components/EmptyCharts';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  injectIntl,
+  InjectedIntlProps,
+} from 'react-intl';
 import { compose } from 'recompose';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../../Helpers/injectThemeColors';
 import McsMoment, { formatMcsDate } from '../../../../../../utils/McsMoment';
-import {
-  McsDateRangeValue,
-} from '../../../../../../components/McsDateRangePicker';
+import { McsDateRangeValue } from '../../../../../../components/McsDateRangePicker';
+import { Card } from 'antd';
 
 interface FeedChartProps {
   organisationId: string;
   feedId: string;
 }
 
-type Props = FeedChartProps & InjectedThemeColorsProps;
+type Props = FeedChartProps & InjectedThemeColorsProps & InjectedIntlProps;
 
 interface FeedReport {
   day: string;
@@ -72,11 +76,11 @@ class FeedChart extends React.Component<Props, State> {
       isLoading: true,
     });
 
-    const formatedDateRange = formatMcsDate(dateRange);
+    const formatedInclusiveDateRange = formatMcsDate(dateRange, true);
 
     const reportBody = buildFeedStatsByFeedRequestBody(feedId, {
-      start_date: formatedDateRange.from,
-      end_date: formatedDateRange.to,
+      start_date: formatedInclusiveDateRange.from,
+      end_date: formatedInclusiveDateRange.to,
     });
 
     return this._feedsStatsService
@@ -103,18 +107,22 @@ class FeedChart extends React.Component<Props, State> {
           };
         });
 
-        if (!feedReports.find(fr => fr.day === formatedDateRange.from))
+        if (!feedReports.find(fr => fr.day === formatedInclusiveDateRange.from))
           feedReports = [
             {
-              day: formatedDateRange.from,
+              day: formatedInclusiveDateRange.from,
               upserted_user_points: 0,
               deleted_user_points: 0,
             },
           ].concat(feedReports);
 
-        if (!feedReports.find(fr => fr.day === formatedDateRange.to))
+        const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
+
+        if (
+          !feedReports.find(fr => fr.day === formatedNonInclusiveDateRange.to)
+        )
           feedReports.push({
-            day: formatedDateRange.to,
+            day: formatedNonInclusiveDateRange.to,
             upserted_user_points: 0,
             deleted_user_points: 0,
           });
@@ -132,7 +140,7 @@ class FeedChart extends React.Component<Props, State> {
   }
 
   render() {
-    const { colors } = this.props;
+    const { colors, intl } = this.props;
     const { dataSource, isLoading } = this.state;
 
     const metrics =
@@ -154,12 +162,23 @@ class FeedChart extends React.Component<Props, State> {
     return isLoading ? (
       <LoadingChart />
     ) : (
-      <StackedAreaPlot dataset={dataSource as any} options={optionsForChart} />
+      <Card
+        className="mcs-card-container compact"
+        title={intl.formatMessage(messagesMap.graph_title)}
+      >
+        <StackedAreaPlot
+          dataset={dataSource as any}
+          options={optionsForChart}
+        />
+      </Card>
     );
   }
 }
 
-export default compose<Props, FeedChartProps>(injectThemeColors)(FeedChart);
+export default compose<Props, FeedChartProps>(
+  injectThemeColors,
+  injectIntl,
+)(FeedChart);
 
 const messagesMap: {
   [metric: string]: FormattedMessage.MessageDescriptor;
@@ -171,5 +190,9 @@ const messagesMap: {
   deleted_user_points: {
     id: 'feed.deleted_user_points',
     defaultMessage: 'Deleted User Points',
+  },
+  graph_title: {
+    id: 'feed.graph_title',
+    defaultMessage: 'Last 7 days',
   },
 });

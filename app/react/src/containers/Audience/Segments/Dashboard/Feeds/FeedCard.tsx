@@ -399,11 +399,17 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const menu = (
       <Menu>
         <Menu.Item key="0">
-          <a onClick={openModal('configuration')}>{intl.formatMessage(messages.edit)}</a>
+          <a onClick={openModal('configuration')}>
+            {intl.formatMessage(messages.edit)}
+          </a>
         </Menu.Item>
-        <Menu.Item key="1">
-          <a onClick={openModal('stats')}>{intl.formatMessage(messages.stats)}</a>
-        </Menu.Item>
+        {hasFeature('audience.feeds_stats') ? (
+          <Menu.Item key="1">
+            <a onClick={openModal('stats')}>
+              {intl.formatMessage(messages.stats)}
+            </a>
+          </Menu.Item>
+        ) : null}
         <Menu.Item key="2">
           <a onClick={removeFeed}>{intl.formatMessage(messages.delete)}</a>
         </Menu.Item>
@@ -448,14 +454,16 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               <McsIcon type="status" className={this.generateStatusColor()} />{' '}
               {feed.status}
             </div>
-            {hasFeature('audience.feeds_stats') && <div className="content-right">
-              {exportedUserIdentifiersCount || '-'}{' '}
-              {intl.formatMessage(messages.identifiersSent)}{' '}
-              <Tooltip placement="topRight" title="In the last 7 days">
-                {' '}
-                <McsIcon style={{ marginRight: '0px' }} type="info" />
-              </Tooltip>
-            </div>}
+            {hasFeature('audience.feeds_stats') && (
+              <div className="content-right">
+                {exportedUserIdentifiersCount || '-'}{' '}
+                {intl.formatMessage(messages.identifiersSent)}{' '}
+                <Tooltip placement="topRight" title="In the last 7 days">
+                  {' '}
+                  <McsIcon style={{ marginRight: '0px' }} type="info" />
+                </Tooltip>
+              </div>
+            )}
           </div>
           <div className="actions">{this.renderActionButton()}</div>
         </div>

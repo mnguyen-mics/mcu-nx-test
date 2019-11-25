@@ -18,6 +18,7 @@ import ColoredButton from '../../../../components/ColoredButton';
 import { ColorPalletteOption, getColorPalettes, rgbToHex, getPerceivedBrightness } from '../../../../utils/ColorHelpers';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import FeedChart from '../../../Audience/Segments/Dashboard/Feeds/Charts/FeedChart';
+import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 
 
 const FORM_NAME = 'pluginForm';
@@ -41,7 +42,10 @@ export interface PluginCardModalContentProps<T> {
 }
 
 type Props<T extends LayoutablePlugin> = PluginCardModalContentProps<T> &
-  InjectedThemeColorsProps & InjectedNotificationProps & InjectedFormProps &
+  InjectedThemeColorsProps & 
+  InjectedNotificationProps & 
+  InjectedFormProps &
+  InjectedFeaturesProps &
   ValidatorProps;
 
 interface State {
@@ -218,27 +222,22 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
 
   renderStats = () => {
     const {
+      plugin,
       organisationId
     } = this.props;
 
-    return <FeedChart organisationId={organisationId} feedId="1680"/>;
+    return <FeedChart organisationId={organisationId} feedId={plugin.id}/>;
   }
 
   public render() {
 
-    const { onClose, handleSubmit, isLoading, pluginLayout } = this.props;
+    const { onClose, handleSubmit, isLoading, pluginLayout, editionMode, hasFeature } = this.props;
     const { backgroundColor, color, loading, selectedTab } = this.state;
 
     if (loading || !pluginLayout || isLoading) 
       return  (<div className="plugin-modal-loading"><Spin size="large"  /></div>);
 
-    const items = [
-      {
-        title: 'Stats',
-        key: 'stats',
-        // display: <div> test beach </div>
-        display: <div className="tab">{this.renderStats()}</div>
-      },
+    let items = [
       {
         title: 'Configuration',
         key: 'configuration',
@@ -251,6 +250,15 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       //   display: <div className="tab"><Markdown source={markdown} /><div style={{ height: 50, width: '100%' }} /></div>
       // }
     ]
+
+    if(hasFeature('audience.feeds_stats') && editionMode) {
+      items = [{
+        title: 'Stats',
+        key: 'stats',
+        // display: <div> test beach </div>
+        display: <div className="tab">{this.renderStats()}</div>
+      }].concat(items);
+    }
 
     const onActiveKeyChange = (activeKey: PluginCardModalTab) => {
       this.setState({ selectedTab: activeKey })
@@ -322,5 +330,6 @@ export default compose<
     form: FORM_NAME,
     enableReinitialize: true,
   }),
-  injectNotifications
+  injectNotifications,
+  injectFeatures
 )(PluginCardModalContent);

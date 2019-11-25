@@ -110,7 +110,7 @@ class StackedAreaPlot extends React.Component<Props, {}> {
   render() {
     const {
       dataset,
-      options: { xKey, yKeys, colors },
+      options: { xKey, yKeys, colors},
     } = this.props;
 
     const options: Highcharts.Options = {
