@@ -85,8 +85,9 @@ class StackedAreaPlot extends React.Component<Props, {}> {
 
   formatDateToTs = (date: string) => {
     return moment(date)
+      .utc()
       .seconds(0)
-      .hours(0)
+      .hours(24)
       .milliseconds(0)
       .minutes(0)
       .valueOf();
@@ -109,7 +110,7 @@ class StackedAreaPlot extends React.Component<Props, {}> {
   render() {
     const {
       dataset,
-      options: { xKey, yKeys, colors },
+      options: { xKey, yKeys, colors},
     } = this.props;
 
     const options: Highcharts.Options = {
@@ -148,7 +149,6 @@ class StackedAreaPlot extends React.Component<Props, {}> {
         ...generateXAxisGridLine()
       },
       time: {
-        timezoneOffset: new Date().getTimezoneOffset(),
         useUTC: true,
       },
       yAxis: {

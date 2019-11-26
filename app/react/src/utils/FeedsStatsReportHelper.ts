@@ -28,43 +28,18 @@ type FeedsStatsMetric =
   | 'UNIQ_TAG_KEYS'
   | 'UNIQ_TAG_VALUES';
 
+  export interface FeedStatsDimensionFilter extends DimensionFilter {
+    dimension_name: FeedsStatsDimension;
+  }
+
 export function buildFeedCardStatsRequestBody(
   segmentId: string,
 ): ReportRequestBody {
-  const date7daysAgo: string = new McsMoment('now-7d').toMoment().format();
   const dimensionsList: FeedsStatsDimension[] = ['FEED_ID'];
   const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_IDENTIFIERS_COUNT'];
-
-  return buildReport(
-    date7daysAgo,
-    dimensionsList,
-    metricsList,
-    segmentId,
-  );
-}
-
-function buildReport(
-  startDate: string,
-  dimensionsList: FeedsStatsDimension[],
-  metricsList: FeedsStatsMetric[],
-  segmentId: string,
-): ReportRequestBody {
-  // DATE RANGE
-  const dateNow: string = new McsMoment('now').toMoment().format();
-
-  const dateRange: DateRange = {
-    start_date: startDate,
-    end_date: dateNow,
-  };
-  const dateRanges: DateRange[] = [dateRange];
-
-  // DIMENSIONS
-  const dimensions: Dimension[] = dimensionsList.map(dimension => {
-    return { name: dimension };
-  });
-
+  
   // DIMENSION FILTERS
-  const dimensionFilter: DimensionFilter = {
+  const dimensionFilter: FeedStatsDimensionFilter = {
     dimension_name: 'AUDIENCE_SEGMENT_ID',
     operator: 'EXACT',
     expressions: [segmentId],
@@ -74,6 +49,59 @@ function buildReport(
     filters: [dimensionFilter],
   };
 
+  const dateRange7daysAgo: DateRange = {
+    start_date: new McsMoment('now-7d').toMoment().format(),
+    end_date: new McsMoment('now').toMoment().format(),
+  };
+
+  return buildReport(
+    dateRange7daysAgo,
+    dimensionsList,
+    dimensionsFilterClauses,
+    metricsList
+  );
+}
+
+export function buildFeedStatsByFeedRequestBody(
+  feedId: string,
+  dateRange: DateRange
+): ReportRequestBody {
+  const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', 'DAY', 'DAY', 'SYNC_TYPE'];
+  const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_IDENTIFIERS_COUNT'];
+  
+  // DIMENSION FILTERS
+  const dimensionFilter: FeedStatsDimensionFilter = {
+    dimension_name: 'FEED_ID',
+    operator: 'EXACT',
+    expressions: [feedId],
+  };
+  const dimensionsFilterClauses: DimensionFilterClause = {
+    operator: 'OR',
+    filters: [dimensionFilter],
+  };
+
+  return buildReport(
+    dateRange,
+    dimensionsList,
+    dimensionsFilterClauses,
+    metricsList
+  );
+}
+
+function buildReport(
+  dateRange: DateRange,
+  dimensionsList: FeedsStatsDimension[],
+  dimensionFilterClauses: DimensionFilterClause,
+  metricsList: FeedsStatsMetric[]
+): ReportRequestBody {
+
+  const dateRanges: DateRange[] = [dateRange];
+
+  // DIMENSIONS
+  const dimensions: Dimension[] = dimensionsList.map(dimension => {
+    return { name: dimension };
+  });
+
   // METRICS
   const metrics: Metric[] = metricsList.map(metric => {
     return { expression: metric };
@@ -82,7 +110,7 @@ function buildReport(
   const report: ReportRequestBody = {
     date_ranges: dateRanges,
     dimensions: dimensions,
-    dimension_filter_clauses: dimensionsFilterClauses,
+    dimension_filter_clauses: dimensionFilterClauses,
     metrics: metrics,
   };
   return report;
