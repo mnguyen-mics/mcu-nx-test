@@ -215,7 +215,6 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       >
         {this.generateFormFromPluginLayout(pluginLayout)}
         <div style={{ height: 110, width: '100%' }} />
-        
       </Form>
     )
   }
@@ -241,7 +240,6 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       {
         title: 'Configuration',
         key: 'configuration',
-        // display: <div> test beach </div>
         display: <div className="tab">{this.renderForm(pluginLayout!)}</div>
       },
       // {
@@ -255,7 +253,6 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       items = [{
         title: 'Stats',
         key: 'stats',
-        // display: <div> test beach </div>
         display: <div className="tab">{this.renderStats()}</div>
       }].concat(items);
     }
