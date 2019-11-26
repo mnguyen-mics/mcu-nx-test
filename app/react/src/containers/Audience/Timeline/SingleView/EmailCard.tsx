@@ -219,7 +219,7 @@ class EmailCard extends React.Component<Props, State> {
     };
 
     return (
-      <Card title={formatMessage(messages.emailTitle)} isLoading={isLoading}>
+      <Card title={formatMessage(messages.emailTitle)} isLoading={isLoading} className={"mcs-emailCard"}>
         {this.renderModal()}
         {accountsFormatted &&
           accountsFormatted.map(agent => {
@@ -259,7 +259,7 @@ class EmailCard extends React.Component<Props, State> {
           !this.state.showMore ? (
             <div className="mcs-card-footer">
               <button
-                className="mcs-card-footer-link"
+                className="mcs-card-footer-link mcs-emailCard_viewMoreLink"
                 onClick={handleShowMore(true)}
               >
                 <FormattedMessage {...messages.viewMore} />
@@ -268,7 +268,7 @@ class EmailCard extends React.Component<Props, State> {
           ) : (
             <div className="mcs-card-footer">
               <button
-                className="mcs-card-footer-link"
+                className="mcs-card-footer-link mcs-emailCard_viewLessLink"
                 onClick={handleShowMore(false)}
               >
                 <FormattedMessage {...messages.viewLess} />

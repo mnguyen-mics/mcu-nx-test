@@ -61,6 +61,7 @@ class ProfileCard extends React.Component<Props> {
       <Card
         title={intl.formatMessage(messages.profileTitle)}
         isLoading={isLoading}
+        className={'mcs-profileCard'}
       >
         {this.renderProfile(dataSource)}
       </Card>

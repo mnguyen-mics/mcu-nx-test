@@ -325,7 +325,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         <Spin size="small" />
       ) : (
         <button
-          className="mcs-card-inner-action"
+          className="mcs-card-inner-action mcs-monitoring_seeMoreBtn"
           onClick={this.fetchNewActivities}
         >
           <FormattedMessage {...messages.seeMore} />

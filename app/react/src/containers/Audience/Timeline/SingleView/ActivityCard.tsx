@@ -266,7 +266,7 @@ class ActivityCard extends React.Component<Props, State> {
       );
 
       return (
-        <Card title={this.state.siteName} buttons={buttons}>
+        <Card title={this.state.siteName} buttons={buttons} className={"mcs-activityCard"}>
           {this.generateCardContent(activity)}
           <Row className="border-top sm-footer timed-footer text-right">
             {moment(activity.$ts).format('H:mm:ss')}
