@@ -36,7 +36,7 @@ export default class Counter extends React.Component<CounterProps> {
             <span>
               <FormattedNumber value={value} />{unit || ''}
               {trend ? <Statistic
-                title="Active"
+                title=""
                 value={trend.value}
                 precision={1}
                 valueStyle={{ color: trend.type === 'up' ? '#4ea500' : '#ed2333' }}

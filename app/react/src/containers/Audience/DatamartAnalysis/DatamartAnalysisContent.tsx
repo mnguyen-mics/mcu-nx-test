@@ -4,6 +4,7 @@ import SessionsByDevice from './components/SessionsByDevice';
 import UsersByTimeOfDay from './components/UsersByTimeOfDay';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import ActiveUsers from './components/ActiveUsers';
+import MultipleData from './components/MultipleData';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -39,6 +40,14 @@ var layout = [
     "w": 6,
     "x": 6,
     "y": 5
+  },
+  {
+    "i": "4",
+    "h": 3,
+    "static": false,
+    "w": 12,
+    "x": 0,
+    "y": 8
   }
 ];
 export default class DatamartAnalysisContent extends React.Component {
@@ -53,8 +62,8 @@ export default class DatamartAnalysisContent extends React.Component {
         <div key="1"><SessionsByDevice /></div>
         <div key="2"><UsersByTimeOfDay /></div>
         <div key="3"><ActiveUsers /></div>
+        <div key="4"><MultipleData /></div>
       </ResponsiveGridLayout>
-
     );
   }
 }

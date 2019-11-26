@@ -79,6 +79,11 @@ class StackedBarPlot extends React.Component<Props, {}> {
       xAxis: {
         categories: this.getXAxisValues(dataset, xKey)
       },
+      yAxis: {
+        title: {
+          text: ''
+        }
+      },
       series: this.formatSeries(dataset, yKeys),
       credits: {
         enabled: false,

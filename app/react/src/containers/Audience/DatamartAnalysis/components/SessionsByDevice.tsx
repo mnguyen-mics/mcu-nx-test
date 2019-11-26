@@ -14,7 +14,7 @@ const optionsForChart: PiePlotOptionsProps = {
 class SessionsByDevice extends React.Component {
   render() {
     return (
-      <CardFlex title={'Session by Device'}>
+      <CardFlex title={'Session by Device'}  className={'mics-SessionsByCountry'}>
         <PiePlot dataset={[{
           key: 'Desktop',
           value: 83.9,
@@ -27,7 +27,7 @@ class SessionsByDevice extends React.Component {
           key: 'tablet',
           value: 0.8,
           color: '#95cdcb'
-        }]} options={optionsForChart} height={300} />
+        }]} options={optionsForChart} height={350} />
         <CounterDashboard counters={[
           {
             "iconType": "laptop",

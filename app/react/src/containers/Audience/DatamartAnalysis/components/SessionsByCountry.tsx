@@ -32,7 +32,8 @@ const data = [
     xKey: 'Pakistan',
     yKey: 9
   }
-]
+];
+
 class SessionsByCountry extends React.Component {
   render() {
     return (
