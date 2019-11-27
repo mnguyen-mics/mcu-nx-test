@@ -89,7 +89,7 @@ class FeedChart extends React.Component<Props, State> {
         const normalized = normalizeReportView<{
           day: string;
           sync_type: string;
-          uniq_user_identifiers_count: number;
+          uniq_user_points_count: number;
         }>(res.data.report_view);
 
         const upserts = normalized.filter(rv => rv.sync_type === 'UPSERT');
@@ -100,9 +100,9 @@ class FeedChart extends React.Component<Props, State> {
 
           return {
             day: upsertReport.day,
-            upserted_user_points: upsertReport.uniq_user_identifiers_count,
+            upserted_user_points: upsertReport.uniq_user_points_count,
             deleted_user_points: deleteReport
-              ? deleteReport.uniq_user_identifiers_count
+              ? deleteReport.uniq_user_points_count
               : 0,
           };
         });
