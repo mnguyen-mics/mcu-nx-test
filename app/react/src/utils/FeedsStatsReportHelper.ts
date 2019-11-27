@@ -66,8 +66,8 @@ export function buildFeedStatsByFeedRequestBody(
   feedId: string,
   dateRange: DateRange
 ): ReportRequestBody {
-  const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', 'DAY', 'DAY', 'SYNC_TYPE'];
-  const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_IDENTIFIERS_COUNT'];
+  const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', 'DAY', 'SYNC_TYPE'];
+  const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_POINTS_COUNT'];
   
   // DIMENSION FILTERS
   const dimensionFilter: FeedStatsDimensionFilter = {
