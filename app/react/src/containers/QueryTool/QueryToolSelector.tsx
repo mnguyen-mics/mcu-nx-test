@@ -39,7 +39,7 @@ class QueryToolSelector extends React.Component<
   constructor(props: Props) {
     super(props);
     this.state = {
-      queryLanguage: props.hasFeature('datamart.graphql') ? undefined : 'OTQL'
+      queryLanguage: props.hasFeature('datamart-graphql') ? undefined : 'OTQL'
     };
   }
 

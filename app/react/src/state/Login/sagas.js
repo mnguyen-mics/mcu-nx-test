@@ -2,6 +2,7 @@
 /* eslint-disable camelcase */
 import { delay } from 'redux-saga';
 import { call, put, take, race, fork, all, select } from 'redux-saga/effects';
+import { SplitFactory } from '@splitsoftware/splitio';
 import MicsTagServices from '../../services/MicsTagServices.ts';
 
 import log from '../../utils/Logger.ts';
@@ -15,8 +16,9 @@ import {
 } from '../action-types';
 import { logIn } from './actions';
 import { getConnectedUser } from '../Session/actions';
-import { setOrgFeature } from '../Features/actions';
+import { setOrgFeature, setClientFeature } from '../Features/actions';
 import { getStoredConnectedUser } from '../Session/selectors';
+
 
 const persistedStoreService = new PersistedStoreService();
 
@@ -117,6 +119,27 @@ function* authorizeLoop(
       };
 
       yield put(setOrgFeature(global.window.MCS_CONSTANTS.FEATURES));
+
+      const clientPromise = () => new Promise((resolve, reject) => {
+        const factory = SplitFactory({
+          core: {
+            authorizationKey: '9o6sgmo2fbk275ao4cugtnd9ch6sb3fstv1d',
+            key: connectedUser.id,
+            trafficType: 'user'
+          }
+        });
+        const client = factory.client();
+        client.on(client.Event.SDK_READY, () => {
+          return resolve(client);
+        });
+        client.on(client.Event.SDK_READY_TIMED_OUT, () => {
+          return reject();
+        });
+      });
+
+      const client = yield call(clientPromise);
+      yield put(setClientFeature(client));
+
       MicsTagServices.addUserAccountProperty(connectedUser.id);
       MicsTagServices.setUserProperties(filteredConnectedUser);
       yield put(getConnectedUser.success(filteredConnectedUser));

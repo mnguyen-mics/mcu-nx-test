@@ -249,7 +249,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       // }
     ]
 
-    if(hasFeature('audience.feeds_stats') && editionMode) {
+    if(hasFeature('audience-feeds_stats') && editionMode) {
       items = [{
         title: 'Stats',
         key: 'stats',

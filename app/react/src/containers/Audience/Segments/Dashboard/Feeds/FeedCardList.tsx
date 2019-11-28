@@ -64,7 +64,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
 
     if (segmentId) {
       this.fetchFeeds(segmentId);
-      if (hasFeature('audience.feeds_stats')) {
+      if (hasFeature('audience-feeds_stats')) {
         this.fetchFeedsStats();
       }
     }
@@ -198,7 +198,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
 
     return (
       <div ref={this.getRef}>
-        {hasFeature('audience.dashboards') && feeds.length > 1 && (
+        {hasFeature('audience-dashboards') && feeds.length > 1 && (
           <ContentHeader title={`Feed Card List`} size={`medium`} />
         )}
         <Row gutter={24}>

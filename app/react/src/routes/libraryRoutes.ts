@@ -19,19 +19,19 @@ export const libraryDefinition: NavigatorDefinition = {
     layout: 'main',
     actionBarComponent: PlacementList.actionBarComponent,
     contentComponent: PlacementList.contentComponent,
-    requiredFeature: 'library.placements'
+    requiredFeature: 'library-placements'
   },
   libraryPlacementEdition: {
     path: '/library/placementlist/:placementListId(\\d+)/edit',
     layout: 'edit',
     editComponent: PlacementListPage,
-    requiredFeature: 'library.placements'
+    requiredFeature: 'library-placements'
   },
   libraryPlacementCreation: {
     path: '/library/placementlist/create',
     layout: 'edit',
     editComponent: PlacementListPage,
-    requiredFeature: 'library.placements'
+    requiredFeature: 'library-placements'
   },
   // ========================================
   //            Keywords
@@ -41,19 +41,19 @@ export const libraryDefinition: NavigatorDefinition = {
     layout: 'main',
     actionBarComponent: KeywordList.actionBarComponent,
     contentComponent: KeywordList.contentComponent,
-    requiredFeature: 'library.keywords'
+    requiredFeature: 'library-keywords'
   },
   libraryKeywordEdition: {
     path: '/library/keywordslist/:keywordsListId(\\d+)/edit',
     layout: 'edit',
     editComponent: KeywordListPage,
-    requiredFeature: 'library.keywords'
+    requiredFeature: 'library-keywords'
   },
   libraryKeywordCreation: {
     path: '/library/keywordslist/create',
     layout: 'edit',
     editComponent: KeywordListPage,
-    requiredFeature: 'library.keywords'
+    requiredFeature: 'library-keywords'
   },
    // ========================================
   //            DEALLIST
@@ -63,19 +63,19 @@ export const libraryDefinition: NavigatorDefinition = {
     layout: 'main',
     actionBarComponent: DealList.actionBarComponent,
     contentComponent: DealList.contentComponent,
-    requiredFeature: 'library.keywords'
+    requiredFeature: 'library-keywords'
   },
   libraryDealEdition: {
     path: '/library/deallist/:dealListId(\\d+)/edit',
     layout: 'edit',
     editComponent: DealListPage,
-    requiredFeature: 'library.keywords'
+    requiredFeature: 'library-keywords'
   },
   libraryDealCreation: {
     path: '/library/deallist/create',
     layout: 'edit',
     editComponent: DealListPage,
-    requiredFeature: 'library.keywords'
+    requiredFeature: 'library-keywords'
   },
 
   // ========================================
@@ -85,7 +85,7 @@ export const libraryDefinition: NavigatorDefinition = {
     path: '/library/assets',
     layout: 'main',
     contentComponent: AssetList.contentComponent,
-    requiredFeature: 'library.assets'
+    requiredFeature: 'library-assets'
   },
   
   // ========================================
@@ -96,7 +96,7 @@ export const libraryDefinition: NavigatorDefinition = {
     layout: 'main',
     actionBarComponent: Catalog.actionBarComponent,
     contentComponent: Catalog.contentComponent,
-    requiredFeature: 'library.catalog',
+    requiredFeature: 'library-catalog',
     requireDatamart: true,
   },
   // ========================================
@@ -106,7 +106,7 @@ export const libraryDefinition: NavigatorDefinition = {
     path: '/library/zone/create',
     layout: 'edit',
     editComponent: ZoneBuilderPage,
-    requiredFeature: 'library.zone',
+    requiredFeature: 'library-zone',
     requireDatamart: true,
   },
 }

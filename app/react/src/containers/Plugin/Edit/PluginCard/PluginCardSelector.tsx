@@ -112,7 +112,7 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
           <Layout>
             <Content className="mcs-content-container mcs-form-container">
               {availablePresetLayouts.length > 0 &&
-                this.props.hasFeature('plugins.presets') && (
+                this.props.hasFeature('plugins-presets') && (
                   <div>
                     <FormTitle
                       title={pluginPresetListTitle || titleMessages.presetTitle}
