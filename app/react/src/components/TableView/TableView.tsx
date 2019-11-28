@@ -16,7 +16,7 @@ const DEFAULT_PAGINATION_OPTION = {
 };
 
 export interface DataColumnDefinition<T> extends ColumnProps<T> {
-  intlMessage?: FormattedMessage.MessageDescriptor;
+  intlMessage?: FormattedMessage.MessageDescriptor | React.ReactNode;
   key: string;
   render?: (text: string, record: T, index: number) => React.ReactNode;
   sorter?: boolean | ((a: any, b: any) => number);
@@ -55,9 +55,7 @@ export interface TableViewProps<T> extends TableProps<T> {
 
 class TableView<
   T extends { key?: string; id?: string; [key: string]: any }
-> extends React.Component<
-  TableViewProps<T> & InjectedIntlProps
-> {
+> extends React.Component<TableViewProps<T> & InjectedIntlProps> {
   static defaultProps: Partial<TableViewProps<any>> = {
     visibilitySelectedColumns: [],
     actionsColumnsDefinition: [],
@@ -88,6 +86,13 @@ class TableView<
   buildDataColumns = (): Array<ColumnProps<T>> => {
     const { columns, visibilitySelectedColumns } = this.props;
 
+    const isIntlMessage = (
+      dataTitle: FormattedMessage.MessageDescriptor | React.ReactNode,
+    ): dataTitle is FormattedMessage.MessageDescriptor => {
+      const dt = (dataTitle as FormattedMessage.MessageDescriptor);
+      return dt && dt.id !== undefined;
+    };
+
     const visibilitySelectedColumnsValues: string[] = visibilitySelectedColumns!.map(
       column => {
         return column.key;
@@ -109,10 +114,10 @@ class TableView<
       })
       .map(dataColumn => {
         return {
-          title: dataColumn.intlMessage ? (
+          title: isIntlMessage(dataColumn.intlMessage) ? (
             <FormattedMessage {...dataColumn.intlMessage} />
           ) : (
-            undefined
+            dataColumn.intlMessage
           ),
           dataIndex: dataColumn.key,
           key: dataColumn.key,
@@ -135,11 +140,11 @@ class TableView<
         {actions(record).map((action, index) => {
           return (
             <Menu.Item key={index.toString()} disabled={action.disabled}>
-                {action.intlMessage ? (
-                  <FormattedMessage {...action.intlMessage!} />
-                ): (
-                  index
-                )}
+              {action.intlMessage ? (
+                <FormattedMessage {...action.intlMessage!} />
+              ) : (
+                index
+              )}
             </Menu.Item>
           );
         })}
@@ -206,6 +211,6 @@ class TableView<
   }
 }
 
-export default compose(
-  injectIntl,
-)(TableView) as React.ComponentClass<TableViewProps<any>>;
+export default compose(injectIntl)(TableView) as React.ComponentClass<
+  TableViewProps<any>
+>;

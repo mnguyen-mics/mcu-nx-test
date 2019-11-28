@@ -11,9 +11,6 @@ import { compose } from 'recompose';
 import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
-import ReportService from '../../../../services/ReportService';
-import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
@@ -21,7 +18,6 @@ import { Index } from '../../../../utils';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import McsMoment from '../../../../utils/McsMoment';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -127,45 +123,21 @@ class SegmentsActionbar extends React.Component<Props, State> {
       return options;
     };
 
-    const startDate = new McsMoment('now');
-    const endDate = new McsMoment('now');
-    const dimension = ['audience_segment_id'];
 
-    const results = await Promise.all([
-      this._audienceSegmentService.getSegments(organisationId, buildOptions()),
-      ReportService.getAudienceSegmentReport(
-        organisationId,
-        startDate,
-        endDate,
-        dimension,
-      ),
-    ]);
+    return this._audienceSegmentService.getSegments(organisationId, buildOptions()).then(response => {
+      const result = response.data
 
-    const segmentsWithUpdatedName = results[0].data.map(res => {
-      const name =
-        res.type === 'USER_ACTIVATION'
-          ? this.formatUserActivationSegmentName(res)
-          : res.name;
-      return { ...res, name };
+      return result.map(res => {
+        const name =
+          res.type === 'USER_ACTIVATION'
+            ? this.formatUserActivationSegmentName(res)
+            : res.name;
+        return { ...res, name };
+      });
+
+    }).catch(e => {
+      this.props.notifyError(e);
     });
-
-    const audienceSegments = normalizeArrayOfObject(
-      segmentsWithUpdatedName,
-      'id',
-    );
-    const performanceReport = normalizeArrayOfObject(
-      normalizeReportView(results[1].data.report_view),
-      'audience_segment_id',
-    );
-
-    const mergedData = Object.keys(audienceSegments).map(segmentId => {
-      return {
-        ...audienceSegments[segmentId],
-        ...performanceReport[segmentId],
-      };
-    });
-
-    return mergedData;
   };
 
   handleRunExport = () => {
