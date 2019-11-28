@@ -6,7 +6,7 @@ import {
   Metric,
   DimensionFilter,
 } from '../models/ReportRequestBody';
-import McsMoment from './McsMoment';
+import McsMoment, { formatMcsDate } from './McsMoment';
 
 type FeedsStatsDimension =
   | 'ORGANISATION_ID'
@@ -28,16 +28,16 @@ type FeedsStatsMetric =
   | 'UNIQ_TAG_KEYS'
   | 'UNIQ_TAG_VALUES';
 
-  export interface FeedStatsDimensionFilter extends DimensionFilter {
-    dimension_name: FeedsStatsDimension;
-  }
+export interface FeedStatsDimensionFilter extends DimensionFilter {
+  dimension_name: FeedsStatsDimension;
+}
 
 export function buildFeedCardStatsRequestBody(
   segmentId: string,
 ): ReportRequestBody {
   const dimensionsList: FeedsStatsDimension[] = ['FEED_ID'];
-  const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_IDENTIFIERS_COUNT'];
-  
+  const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_POINTS_COUNT'];
+
   // DIMENSION FILTERS
   const dimensionFilter: FeedStatsDimensionFilter = {
     dimension_name: 'AUDIENCE_SEGMENT_ID',
@@ -49,26 +49,32 @@ export function buildFeedCardStatsRequestBody(
     filters: [dimensionFilter],
   };
 
-  const dateRange7daysAgo: DateRange = {
-    start_date: new McsMoment('now-7d').toMoment().format(),
-    end_date: new McsMoment('now').toMoment().format(),
-  };
+  const dateRange7daysAgo = formatMcsDate(
+    {
+      from: new McsMoment('now-7d'),
+      to: new McsMoment('now'),
+    },
+    true,
+  );
 
   return buildReport(
-    dateRange7daysAgo,
+    {
+      start_date: dateRange7daysAgo.from,
+      end_date: dateRange7daysAgo.to,
+    },
     dimensionsList,
     dimensionsFilterClauses,
-    metricsList
+    metricsList,
   );
 }
 
 export function buildFeedStatsByFeedRequestBody(
   feedId: string,
-  dateRange: DateRange
+  dateRange: DateRange,
 ): ReportRequestBody {
   const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', 'DAY', 'SYNC_TYPE'];
   const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_POINTS_COUNT'];
-  
+
   // DIMENSION FILTERS
   const dimensionFilter: FeedStatsDimensionFilter = {
     dimension_name: 'FEED_ID',
@@ -84,7 +90,7 @@ export function buildFeedStatsByFeedRequestBody(
     dateRange,
     dimensionsList,
     dimensionsFilterClauses,
-    metricsList
+    metricsList,
   );
 }
 
@@ -92,9 +98,8 @@ function buildReport(
   dateRange: DateRange,
   dimensionsList: FeedsStatsDimension[],
   dimensionFilterClauses: DimensionFilterClause,
-  metricsList: FeedsStatsMetric[]
+  metricsList: FeedsStatsMetric[],
 ): ReportRequestBody {
-
   const dateRanges: DateRange[] = [dateRange];
 
   // DIMENSIONS

@@ -35,7 +35,7 @@ export interface FeedCardProps {
   ) => void;
   segmentId: string;
   organisationId: string;
-  exportedUserIdentifiersCount?: number;
+  exportedUserPointsCount?: number;
 }
 
 interface FeedCardState {
@@ -68,7 +68,7 @@ const messages = defineMessages({
   modalDescription: {
     id: 'audienceFeed.modal.description',
     defaultMessage:
-      'Are you sure you want delete this feed ? Carefull this action cannot be undone.',
+      'Are you sure you want delete this feed ? Careful this action cannot be undone.',
   },
   pause: {
     id: 'audienceFeed.status.actions.pause',
@@ -98,9 +98,9 @@ const messages = defineMessages({
     id: 'audienceFeed.card.actions.delete',
     defaultMessage: 'Delete',
   },
-  identifiersSent: {
-    id: 'audienceFeed.card.identifiersSent',
-    defaultMessage: 'identifiers sent',
+  userPointsSent: {
+    id: 'audienceFeed.card.userPointsSent',
+    defaultMessage: 'user points sent',
   },
 });
 
@@ -335,7 +335,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       onFeedDelete,
       segmentId,
       organisationId,
-      exportedUserIdentifiersCount,
+      exportedUserPointsCount,
       notifyError,
       hasFeature,
       history,
@@ -456,8 +456,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             </div>
             {hasFeature('audience.feeds_stats') && (
               <div className="content-right">
-                {exportedUserIdentifiersCount || '-'}{' '}
-                {intl.formatMessage(messages.identifiersSent)}{' '}
+                {exportedUserPointsCount || '-'}{' '}
+                {intl.formatMessage(messages.userPointsSent)}{' '}
                 <Tooltip placement="topRight" title="In the last 7 days">
                   {' '}
                   <McsIcon style={{ marginRight: '0px' }} type="info" />
