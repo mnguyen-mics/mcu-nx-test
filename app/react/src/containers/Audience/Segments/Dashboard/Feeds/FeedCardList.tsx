@@ -164,8 +164,20 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
           uniq_user_points_count: number;
         }>(res.data.report_view);
 
+        const normalizedObjects = normalizeArrayOfObject(normalized, 'feed_id');
+
+        // For each feed that doesn't have any stats in the response, we add it with '0' identifiers count.
+        this.state.feeds.forEach(feed => {
+          if (!normalizedObjects[feed.id]) {
+            normalizedObjects[feed.id] = {
+              feed_id: feed.id,
+              uniq_user_points_count: 0,
+            };
+          }
+        });
+
         return this.setState({
-          feedsStatsByFeedId: normalizeArrayOfObject(normalized, 'feed_id'),
+          feedsStatsByFeedId: normalizedObjects,
         });
       });
   };
