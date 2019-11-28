@@ -60,6 +60,22 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    const {
+      match: {
+        params: {
+          segmentId,
+          organisationId,
+        },
+      },
+      location: { search },
+      segment,
+      datamarts,
+    } = this.props;
+
+    this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
+  }
+
   componentWillReceiveProps(nextProps: Props) {
     const {
       match: {
@@ -67,7 +83,9 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       },
       location: { search },
       datamarts,
+      segment
     } = this.props;
+
     const {
       match: {
         params: {
@@ -79,46 +97,51 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       segment: nextSegment,
     } = nextProps;
 
-    if (
-      (!compareSearches(search, nextSearch) ||
-        segmentId !== nextSegmentId ||
-        datamarts) &&
-      nextSegment
-    ) {
-      const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
-      const metrics: string[] = [
-        'user_points',
-        'user_point_additions',
-        'user_point_deletions',
-      ];
-      let additionalMetrics;
-
-      if (datamarts) {
-        const datamart = datamarts.find(
-          dm => dm.id === nextSegment.datamart_id,
-        );
-
-        additionalMetrics =
-          datamart && datamart.audience_segment_metrics
-            ? datamart.audience_segment_metrics.map(el => el.technical_name)
-            : undefined;
-      }
-      this.fetchDashboardView(
-        nextOrganisationId,
-        nextFilters.from,
-        nextFilters.to,
-        [
-          {
-            name: 'audience_segment_id',
-            value: nextSegmentId,
-          },
-        ],
-        additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
-      );
+    if (!compareSearches(search, nextSearch) || segmentId !== nextSegmentId || segment !== nextSegment) {
+      this.fetchDashboardView(nextSearch, nextOrganisationId, nextSegmentId, datamarts, nextSegment);
     }
   }
 
   fetchDashboardView = (
+    search: string,
+    organisationId: string,
+    segmentId: string,
+    datamarts: DatamartWithMetricResource[],
+    segment?: AudienceSegmentShape,
+  ) => {
+    const nextFilters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
+    const metrics: string[] = [
+      'user_points',
+      'user_point_additions',
+      'user_point_deletions',
+    ];
+    let additionalMetrics;
+
+    if (datamarts && segment) {
+      const datamart = datamarts.find(
+        dm => dm.id === segment.datamart_id,
+      );
+
+      additionalMetrics =
+        datamart && datamart.audience_segment_metrics
+          ? datamart.audience_segment_metrics.map(el => el.technical_name)
+          : undefined;
+    }
+    this.fetchAudienceSegmentReport(
+      organisationId,
+      nextFilters.from,
+      nextFilters.to,
+      [
+        {
+          name: 'audience_segment_id',
+          value: segmentId,
+        },
+      ],
+      additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
+    );
+  }
+
+  fetchAudienceSegmentReport = (
     organisationId: string,
     from: McsMoment,
     to: McsMoment,
@@ -154,10 +177,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   buildItems = () => {
-    const {
-      intl,
-      segment,
-    } = this.props;
+    const { intl, segment } = this.props;
     const { dashboard } = this.state;
     const items = [
       {

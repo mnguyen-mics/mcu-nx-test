@@ -23,6 +23,7 @@ import { PropertyResourceShape } from '../../../../../models/plugin';
 import { withRouter, RouteComponentProps } from 'react-router';
 import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
+import { PluginCardModalTab } from '../../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -34,7 +35,7 @@ export interface FeedCardProps {
   ) => void;
   segmentId: string;
   organisationId: string;
-  exportedUserIdentifiersCount?: number;
+  exportedUserPointsCount?: number;
 }
 
 interface FeedCardState {
@@ -42,6 +43,7 @@ interface FeedCardState {
   cardHeaderTitle?: string;
   cardHeaderThumbnail?: string;
   opened?: boolean;
+  modalTab: PluginCardModalTab;
   pluginLayout?: PluginLayout;
   isLoadingCard: boolean;
   pluginProperties?: PropertyResourceShape[];
@@ -66,7 +68,7 @@ const messages = defineMessages({
   modalDescription: {
     id: 'audienceFeed.modal.description',
     defaultMessage:
-      'Are you sure you want delete this feed ? Carefull this action cannot be undone.',
+      'Are you sure you want delete this feed ? Careful this action cannot be undone.',
   },
   pause: {
     id: 'audienceFeed.status.actions.pause',
@@ -84,6 +86,10 @@ const messages = defineMessages({
     id: 'audienceFeed.card.actions.edit',
     defaultMessage: 'Edit',
   },
+  stats: {
+    id: 'audienceFeed.card.actions.stats',
+    defaultMessage: 'Stats',
+  },
   view: {
     id: 'audienceFeed.card.actions.view',
     defaultMessage: 'View',
@@ -92,9 +98,9 @@ const messages = defineMessages({
     id: 'audienceFeed.card.actions.delete',
     defaultMessage: 'Delete',
   },
-  identifiersSent: {
-    id: 'audienceFeed.card.identifiersSent',
-    defaultMessage: 'identifiers sent',
+  userPointsSent: {
+    id: 'audienceFeed.card.userPointsSent',
+    defaultMessage: 'user points sent',
   },
 });
 
@@ -110,6 +116,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       isLoading: true,
       isLoadingCard: true,
       opened: false,
+      modalTab: 'configuration',
       pluginProperties: [],
     };
 
@@ -328,7 +335,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       onFeedDelete,
       segmentId,
       organisationId,
-      exportedUserIdentifiersCount,
+      exportedUserPointsCount,
       notifyError,
       hasFeature,
       history,
@@ -372,12 +379,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     if (isLoading) {
       return <FeedPlaceholder />;
     }
-    const openModal = () => {
+    const openModal = (tab: PluginCardModalTab) => () => {
       if (!this.state.pluginLayout) {
         return history.push(editFeed());
       } else {
-        this.setState({ opened: true });
-        this.setState({ isLoadingCard: true });
+        this.setState({ opened: true, modalTab: tab, isLoadingCard: true });
         return Promise.all([
           this.getPluginProperties(),
           this.getInitialValues(),
@@ -393,9 +399,18 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const menu = (
       <Menu>
         <Menu.Item key="0">
-          <a onClick={openModal}>{intl.formatMessage(messages.edit)}</a>
+          <a onClick={openModal('configuration')}>
+            {intl.formatMessage(messages.edit)}
+          </a>
         </Menu.Item>
-        <Menu.Item key="1">
+        {hasFeature('audience.feeds_stats') ? (
+          <Menu.Item key="1">
+            <a onClick={openModal('stats')}>
+              {intl.formatMessage(messages.stats)}
+            </a>
+          </Menu.Item>
+        ) : null}
+        <Menu.Item key="2">
           <a onClick={removeFeed}>{intl.formatMessage(messages.delete)}</a>
         </Menu.Item>
       </Menu>
@@ -439,14 +454,16 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               <McsIcon type="status" className={this.generateStatusColor()} />{' '}
               {feed.status}
             </div>
-            {hasFeature('audience.feeds_stats') && <div className="content-right">
-              {exportedUserIdentifiersCount || '-'}{' '}
-              {intl.formatMessage(messages.identifiersSent)}{' '}
-              <Tooltip placement="topRight" title="In the last 7 days">
-                {' '}
-                <McsIcon style={{ marginRight: '0px' }} type="info" />
-              </Tooltip>
-            </div>}
+            {hasFeature('audience.feeds_stats') && (
+              <div className="content-right">
+                {exportedUserPointsCount || '-'}{' '}
+                {intl.formatMessage(messages.userPointsSent)}{' '}
+                <Tooltip placement="topRight" title="In the last 7 days">
+                  {' '}
+                  <McsIcon style={{ marginRight: '0px' }} type="info" />
+                </Tooltip>
+              </div>
+            )}
           </div>
           <div className="actions">{this.renderActionButton()}</div>
         </div>
@@ -468,6 +485,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               pluginProperties={this.state.pluginProperties!}
               pluginVersionId={feed.version_id}
               save={this.saveOrCreatePluginInstance}
+              selectedTab={this.state.modalTab}
             />
           )}
       </Card>

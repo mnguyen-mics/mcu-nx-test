@@ -3,6 +3,7 @@
 
  const defaultFeatures = [
     'audience.segments',
+    'audience.feeds',
     'audience.partitions',
     'audience.segment_builder',
     'audience.monitoring',

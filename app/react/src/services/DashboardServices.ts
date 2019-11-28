@@ -676,4 +676,143 @@ const myDashboards: DashboardResource[] = [
       },
     ],
   },
+  {
+    id: '1',
+    name: 'Home',
+    type: 'HOME',
+    components: [
+      {
+        layout: { h: 1, static: false, w: 3, x: 0, y: 0 },
+        component: {
+          id: 1,
+          component_type: 'PERCENTAGE',
+          title: 'Pourcentage de visites reconnues (30j)',
+          query_id: '29525',
+          total_query_id: '29521',
+        },
+      },
+      {
+        layout: { h: 1, static: false, w: 3, x: 3, y: 0 },
+        component: {
+          id: 2,
+          component_type: 'COUNT',
+          title: 'Nombre de tickets global',
+          query_id: '29523',
+        },
+      },
+      {
+        layout: { h: 1, static: false, w: 3, x: 6, y: 0 },
+        component: {
+          id: 3,
+          component_type: 'COUNT',
+          title: 'Nombre de contacts CRM',
+          query_id: '29526',
+        },
+      },
+      {
+        layout: { h: 1, static: false, w: 3, x: 9, y: 0 },
+        component: {
+          id: 4,
+          component_type: 'COUNT',
+          title: 'Nombre de userpoints web',
+          query_id: '29522',
+        },
+      },
+      {
+        layout: { h: 3, static: false, w: 6, x: 0, y: 1 },
+        component: {
+          id: 5,
+          component_type: 'MAP_PIE_CHART',
+          title: 'Repartion des visites par type de profil matching (30j)',
+          show_legend: true,
+          query_id: '29524',
+        },
+      },
+      {
+        layout: { h: 3, static: false, w: 6, x: 6, y: 1 },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['2nd', '1st_email_click', '1st logged'],
+          title: 'Nombre de user par type de profil matching (30j)',
+          show_legend: false,
+          query_ids: ['29529', '29532', '29531'],
+        },
+      },
+      {
+        layout: { h: 3, static: false, w: 6, x: 0, y: 4 },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: [
+            'Page View',
+            'Basket View',
+            'Purchase',
+            'Search',
+            'Email Click',
+          ],
+          title: "Nombre d'évènements web par typologie (30j)",
+          show_legend: false,
+          query_ids: ['29527', '29528', '29530', '29533', '29534'],
+        },
+      },
+      {
+        layout: { h: 3, static: false, w: 6, x: 6, y: 4 },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: [
+            'Contact CRM avec activités',
+            'Contact CRM sans activités',
+          ],
+          title: 'Activité web des contacts CRM ',
+          show_legend: false,
+          query_ids: ['29535', '29537'],
+        },
+      },
+      {
+        layout: { h: 3, static: false, w: 12, x: 0, y: 7 },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['email clicks', 'basket view', 'purchase', 'search'],
+          title: "Nombre d'évènements web par jour par typologie (30j)",
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['29536', '29538', '29539', '29542'],
+        },
+      },
+      {
+        layout: { h: 3, static: false, w: 12, x: 0, y: 10 },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['1st', '2nd'],
+          title: 'Nombre de visites par jour par type de profil matching (30j)',
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: [ 
+            "29572",
+            "29574"
+         ]
+        },
+      },
+      {
+        layout: { h: 3, static: false, w: 12, x: 0, y: 13 },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['tickets'],
+          title: 'Nombre de tickets réalisés par les contacts CRM',
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['29541'],
+        },
+      },
+    ],
+    datamart_id: '1287',
+  },
 ];

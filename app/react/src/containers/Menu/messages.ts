@@ -19,6 +19,10 @@ export default defineMessages({
         id: 'menu.audience.segments',
         defaultMessage: 'Segments',
     },
+    audienceFeeds: {
+        id: 'menu.audience.feeds',
+        defaultMessage: 'Feeds',
+    },
     audiencePartitions: {
         id: 'menu.audience.partitions',
         defaultMessage: 'Partitions',

@@ -1,3 +1,4 @@
+import { CombinedServiceItemsAndConditions, ServiceOfferLocaleResource, ServiceProviderResource, ServiceItemConditionShape } from './../models/servicemanagement/PublicServiceItemResource';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
@@ -10,7 +11,6 @@ import {
   ServiceItemOfferResource,
   ServiceCategoryPublicResource,
   ServiceItemShape,
-  ServiceItemConditionShape,
   AudienceSegmentServiceItemPublicResource,
 } from '../models/servicemanagement/PublicServiceItemResource';
 import { Locale } from '../models/Locale';
@@ -154,6 +154,31 @@ export interface ICatalogService {
   ) => Promise<DataResponse<{}>>;
 
   findAvailableServiceItems: () => Promise<DataListResponse<ServiceItemShape>>;
+
+  findAvailableCombinedServiceItemsIds: (
+    organisationId: string,
+    serviceType?: any,
+  ) => Promise<DataListResponse<CombinedServiceItemsAndConditions>>;
+
+  findAvailableServiceProvidersMultiId: (
+    organisationId: string,
+    serviceProviderIds: number[],
+  ) => Promise<DataListResponse<ServiceProviderResource>>;
+
+  findAvailableServiceOffersMultiId: (
+    organisationId: string,
+    serviceOfferIds: number[],
+  ) => Promise<DataListResponse<ServiceOfferLocaleResource>>;
+
+  findAvailableServiceConditionsMultiId: (
+    organisationId: string,
+    serviceConditionIds: number[],
+  ) => Promise<DataListResponse<ServiceItemConditionShape>>;
+
+  findAvailableServiceItemsMultiId: (
+    organisationId: string,
+    offerIds: number[],
+  ) => Promise<DataListResponse<ServiceItemShape>>;
 }
 
 @injectable()
@@ -373,6 +398,51 @@ export class CatalogService implements ICatalogService {
 
   findAvailableServiceItems(): Promise<DataListResponse<ServiceItemShape>> {
     const endpoint = `available_service_items`;
+    return ApiService.getRequest(endpoint);
+
+  }
+
+  findAvailableCombinedServiceItemsIds(
+    organisationId: string,
+    serviceType?: any,
+  ): Promise<DataListResponse<CombinedServiceItemsAndConditions>> {
+    const endpoint = `organisations/${organisationId}/available_combined_service_items_and_conditions`;
+    return ApiService.getRequest(endpoint, serviceType);
+  }
+
+  findAvailableServiceProvidersMultiId(
+    organisationId: string,
+    serviceProviderIds: number[],
+  ): Promise<DataListResponse<ServiceProviderResource>> {
+    const serviceProviderIdsStr = serviceProviderIds.join(',');
+    const endpoint = `organisations/${organisationId}/available_service_providers?id=${serviceProviderIdsStr}`;
+    return ApiService.getRequest(endpoint);
+  }
+
+  findAvailableServiceOffersMultiId(
+    organisationId: string,
+    serviceOfferIds: number[],
+  ): Promise<DataListResponse<ServiceOfferLocaleResource>> {
+    const serviceOfferIdsStr = serviceOfferIds.join(',');
+    const endpoint = `organisations/${organisationId}/available_service_offers?service_item_offer_id=${serviceOfferIdsStr}`;
+    return ApiService.getRequest(endpoint);
+  }
+
+  findAvailableServiceConditionsMultiId(
+    organisationId: string,
+    serviceConditionIds: number[],
+  ): Promise<DataListResponse<ServiceItemConditionShape>> {
+    const serviceConditionIdsStr = serviceConditionIds.join(',');
+    const endpoint = `organisations/${organisationId}/available_service_items_conditions?service_item_offer_id=${serviceConditionIdsStr}`;
+    return ApiService.getRequest(endpoint);
+  }
+
+  findAvailableServiceItemsMultiId(
+    organisationId: string,
+    offerIds: number[],
+  ): Promise<DataListResponse<ServiceItemShape>> {
+    const offerIdsStr = offerIds.join(',');
+    const endpoint = `organisations/${organisationId}/available_service_items?offer_id=${offerIdsStr}`;
     return ApiService.getRequest(endpoint);
   }
 };

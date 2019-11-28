@@ -86,8 +86,9 @@ class DoubleStackedAreaPlot extends React.Component<Props, {}> {
 
   formatDateToTs = (date: string, hour?: number) => {
     return moment(date)
+      .utc()
       .seconds(0)
-      .hours(hour ? hour : 0)
+      .hours((hour ? hour : 0) + 24)
       .milliseconds(0)
       .minutes(0)
       .valueOf();
@@ -152,7 +153,6 @@ class DoubleStackedAreaPlot extends React.Component<Props, {}> {
         ...generateXAxisGridLine()
       },
       time: {
-        timezoneOffset: new Date().getTimezoneOffset(),
         useUTC: true,
       },
       yAxis: [{

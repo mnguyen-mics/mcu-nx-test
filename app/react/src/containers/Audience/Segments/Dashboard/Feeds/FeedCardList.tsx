@@ -30,7 +30,7 @@ export interface FeedCardListState {
   shouldScrollWhenLoaded: boolean;
   feedsStatsByFeedId: Index<{
     feed_id: string;
-    uniq_user_identifiers_count: number;
+    uniq_user_points_count: number;
   }>;
 }
 
@@ -161,7 +161,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
       .then(res => {
         const normalized = normalizeReportView<{
           feed_id: string;
-          uniq_user_identifiers_count: number;
+          uniq_user_points_count: number;
         }>(res.data.report_view);
 
         return this.setState({
@@ -212,9 +212,9 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
                     onFeedUpdate={this.onFeedUpdate}
                     segmentId={segmentId}
                     organisationId={organisationId}
-                    exportedUserIdentifiersCount={
+                    exportedUserPointsCount={
                       feedsStatsByFeedId[cf.id]
-                        ? feedsStatsByFeedId[cf.id].uniq_user_identifiers_count
+                        ? feedsStatsByFeedId[cf.id].uniq_user_points_count
                         : undefined
                     }
                   />

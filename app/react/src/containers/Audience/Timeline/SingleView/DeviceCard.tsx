@@ -45,7 +45,7 @@ class DeviceCard extends React.Component<Props, State> {
     };
 
     return (
-      <Card title={formatMessage(messages.deviceTitle)} isLoading={isLoading}>
+      <Card title={formatMessage(messages.deviceTitle)} isLoading={isLoading} className={'mcs-deviceCard'}>
         {accountsFormatted &&
           accountsFormatted.map(agent => {
             return agent.device ? (
@@ -67,7 +67,7 @@ class DeviceCard extends React.Component<Props, State> {
           !this.state.showMore ? (
             <div className="mcs-card-footer">
               <button
-                className="mcs-card-footer-link"
+                className="mcs-card-footer-link mcs-deviceCard_viewMoreLink"
                 onClick={handleViewMore(true)}
               >
                 <FormattedMessage {...messages.viewMore} />
@@ -76,7 +76,7 @@ class DeviceCard extends React.Component<Props, State> {
           ) : (
             <div className="mcs-card-footer">
               <button
-                className="mcs-card-footer-link"
+                className="mcs-card-footer-link mcs-deviceCard_viewLessLink"
                 onClick={handleViewMore(false)}
               >
                 <FormattedMessage {...messages.viewLess} />

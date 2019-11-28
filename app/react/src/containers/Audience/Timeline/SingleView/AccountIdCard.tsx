@@ -72,7 +72,7 @@ class AccountIdCard extends React.Component<Props, State> {
     const isLoading = userAccountsByCompartmentId === undefined;
 
     return (
-      <Card title={formatMessage(messages.accountTitle)} isLoading={isLoading}>
+      <Card title={formatMessage(messages.accountTitle)} isLoading={isLoading}  className={"mcs-accountIdCard"}>
         {userAccountsByCompartmentId ? (
           Object.keys(userAccountsByCompartmentId).length === 0 ? (
             <span>
@@ -111,7 +111,7 @@ class AccountIdCard extends React.Component<Props, State> {
                     !this.state.expandedItems.find(e => e === key) ? (
                       <div className="mcs-card-footer">
                         <button
-                          className="mcs-card-footer-link"
+                          className="mcs-card-footer-link mcs-accountIdCard_viewMoreLink"
                           onClick={handleShowMore(key)}
                         >
                           <FormattedMessage {...messages.viewMore} />
@@ -120,7 +120,7 @@ class AccountIdCard extends React.Component<Props, State> {
                     ) : (
                       <div className="mcs-card-footer">
                         <button
-                          className="mcs-card-footer-link"
+                          className="mcs-card-footer-link mcs-accountIdCard_viewLessLink"
                           onClick={handleShowMore(key)}
                         >
                           <FormattedMessage {...messages.viewLess} />
