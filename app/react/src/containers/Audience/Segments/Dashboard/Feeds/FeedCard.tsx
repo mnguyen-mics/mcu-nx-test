@@ -456,7 +456,9 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             </div>
             {hasFeature('audience.feeds_stats') && (
               <div className="content-right">
-                {exportedUserPointsCount || '-'}{' '}
+                {exportedUserPointsCount == null
+                  ? '-'
+                  : exportedUserPointsCount}{' '}
                 {intl.formatMessage(messages.userPointsSent)}{' '}
                 <Tooltip placement="topRight" title="In the last 7 days">
                   {' '}
