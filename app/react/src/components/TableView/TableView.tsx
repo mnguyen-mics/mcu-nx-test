@@ -16,7 +16,7 @@ const DEFAULT_PAGINATION_OPTION = {
 };
 
 export interface DataColumnDefinition<T> extends ColumnProps<T> {
-  intlMessage?: FormattedMessage.MessageDescriptor | React.ReactNode;
+  intlMessage?: FormattedMessage.MessageDescriptor;
   key: string;
   render?: (text: string, record: T, index: number) => React.ReactNode;
   sorter?: boolean | ((a: any, b: any) => number);
@@ -86,8 +86,8 @@ class TableView<
   buildDataColumns = (): Array<ColumnProps<T>> => {
     const { columns, visibilitySelectedColumns } = this.props;
 
-    const isIntlMessage = (
-      dataTitle: FormattedMessage.MessageDescriptor | React.ReactNode,
+    const isMessagDescriptor = (
+      dataTitle?: FormattedMessage.MessageDescriptor | React.ReactNode,
     ): dataTitle is FormattedMessage.MessageDescriptor => {
       const dt = (dataTitle as FormattedMessage.MessageDescriptor);
       return dt && dt.id !== undefined;
@@ -114,10 +114,10 @@ class TableView<
       })
       .map(dataColumn => {
         return {
-          title: isIntlMessage(dataColumn.intlMessage) ? (
+          title: isMessagDescriptor(dataColumn.intlMessage) ? (
             <FormattedMessage {...dataColumn.intlMessage} />
           ) : (
-            dataColumn.intlMessage
+            dataColumn.title
           ),
           dataIndex: dataColumn.key,
           key: dataColumn.key,

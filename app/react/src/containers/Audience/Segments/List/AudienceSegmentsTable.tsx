@@ -500,6 +500,20 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     history.push(nextLocation);
   };
 
+  getColumnButton (columnName: string): React.ReactNode {
+    const { isAsc, sortField } = this.state;
+    const searchOnClick = () => this.columnStatSort(columnName);
+    return (
+      <ButtonStyleless onClick={searchOnClick}>
+       <FormattedMessage {...messages.userPoints} />
+        <div className="mcs-table-header-icons">
+          <McsIcon type="chevron" className={`${isAsc && sortField === columnName ? 'mcs-table-header-icon' : ''}`}/>
+          <McsIcon type="chevron" className={`${isAsc === false && sortField === columnName ? 'mcs-table-header-icon' : ''}`} />
+        </div>
+      </ButtonStyleless>
+    );
+  }
+
   buildDataColumns = () => {
     const {
       match: {
@@ -507,8 +521,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
       intl,
     } = this.props;
-
-    const { isAsc, sortField } = this.state;
 
     const dataColumns: Array<DataColumnDefinition<AudienceSegmentShape>> = [
       {
@@ -608,74 +620,28 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: () => {
-          const searchOnClick = () => this.columnStatSort('user_points_count');
-          return (
-            <ButtonStyleless onClick={searchOnClick}>
-              <span style={{lineHeight: '27px'}}><FormattedMessage {...messages.userPoints} /></span>
-              <div className="mcs-table-header-icons">
-                <McsIcon type="chevron" className={`${isAsc && sortField === 'user_points_count' ? 'mcs-table-header-icon' : ''}`}/>
-                <McsIcon type="chevron" className={`${isAsc === false && sortField === 'user_points_count' ? 'mcs-table-header-icon' : ''}`} />
-              </div>
-            </ButtonStyleless>
-          );
-        },
+        title: this.getColumnButton('user_points_count'),
         key: 'user_points_count',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: () => {
-          const searchOnClick = () =>
-            this.columnStatSort('user_accounts_count');
-          return (
-            <ButtonStyleless onClick={searchOnClick}>
-              <span style={{lineHeight: '27px'}}><FormattedMessage {...messages.userAccounts} /></span>
-              <div className="mcs-table-header-icons">
-                <McsIcon type="chevron" className={`${isAsc && sortField === 'user_accounts_count' ? 'mcs-table-header-icon' : ''}`}/>
-                <McsIcon type="chevron" className={`${isAsc === false && sortField === 'user_accounts_count' ? 'mcs-table-header-icon' : ''}`} />
-              </div>
-            </ButtonStyleless>
-          );
-        },
+        title: () => this.getColumnButton('user_accounts_count'),
         key: 'user_accounts_count',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: () => {
-          const searchOnClick = () => this.columnStatSort('emails_count');
-          return (
-            <ButtonStyleless onClick={searchOnClick}>
-              <span style={{lineHeight: '27px'}}><FormattedMessage {...messages.emails} /></span>
-              <div className="mcs-table-header-icons">
-                <McsIcon type="chevron" className={`${isAsc && sortField === 'emails_count' ? 'mcs-table-header-icon' : ''}`}/>
-                <McsIcon type="chevron" className={`${isAsc === false && sortField === 'emails_count' ? 'mcs-table-header-icon' : ''}`} />
-              </div>
-            </ButtonStyleless>
-          );
-        },
+        title: () => this.getColumnButton('emails_count'),
         key: 'emails_count',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: () => {
-          const searchOnClick = () =>
-            this.columnStatSort('desktop_cookie_ids_count');
-          return (
-            <ButtonStyleless onClick={searchOnClick}>
-              <span style={{lineHeight: '27px'}}><FormattedMessage {...messages.cookies} /></span>
-              <div className="mcs-table-header-icons">
-                <McsIcon type="chevron" className={`${isAsc && sortField === 'desktop_cookie_ids_count' ? 'mcs-table-header-icon' : ''}`}/>
-                <McsIcon type="chevron" className={`${isAsc === false && sortField === 'desktop_cookie_ids_count' ? 'mcs-table-header-icon' : ''}`} />
-              </div>
-            </ButtonStyleless>
-          );
-        },
+        title: () => this.getColumnButton('desktop_cookie_ids_count'),
         key: 'desktop_cookie_ids_count',
         isVisibleByDefault: true,
         isHideable: true,
@@ -774,7 +740,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             callback: this.editSegment,
           },
           // {
-          //   intlMessage: messageMap.archive,
+          //   title: messageMap.archive,
           //   callback: this.archiveSegment,
           // },
         ],

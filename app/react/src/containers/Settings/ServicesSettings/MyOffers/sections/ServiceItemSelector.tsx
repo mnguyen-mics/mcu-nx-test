@@ -76,12 +76,12 @@ class ServiceItemSelector extends React.Component<Props, State> {
 
     const columns: Array<DataColumnDefinition<ServiceItemShape>> = [
       {
-        intlMessage: messages.serviceItemSelectorColumnName,
+        title: messages.serviceItemSelectorColumnName,
         key: 'name',
         render: (text, record) => <span>{record.name}</span>,
       },
       {
-        intlMessage: messages.serviceItemSelectorColumnType,
+        title: messages.serviceItemSelectorColumnType,
         key: 'type',
         render: (text, record) => <span>{this._serviceOfferPageService.transformServiceType(record.type, formatMessage)}</span>,
       },
