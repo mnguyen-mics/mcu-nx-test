@@ -28,6 +28,7 @@ type Props = RouteComponentProps<RouteParams> & {
 const mapStateToProps = (state: any) => {
   return {
     getFeatureFlagClient: featureSelector.getFeatureFlagClient(state),
+    hasFeatureStore: featureSelector.hasFeature(state),
     getDefaultDatamart: SessionHelper.getDefaultDatamart(state),
     getConnectedUser: SessionHelper.getStoredConnectedUser(state),
   };
@@ -41,6 +42,7 @@ export default compose<any, InjectedFeaturesProps>(
       getDefaultDatamart,
       getFeatureFlagClient,
       getConnectedUser,
+      hasFeatureStore,
       ...rest
     } = props;
     const organisationId =
@@ -65,6 +67,24 @@ export default compose<any, InjectedFeaturesProps>(
       requiredFeatures?: string | string[],
       requireDatamart?: boolean,
     ): boolean => {
+
+      // we first check if the feature is part of the experience defined at the domain name level
+      if (requiredFeatures && typeof requiredFeatures === 'string') {
+        if (hasFeatureStore(requiredFeatures)) {
+          return hasFeatureStore(requiredFeatures) && (!!defaultDatamart || !requireDatamart);
+        }
+      } else if (requiredFeatures && Array.isArray(requiredFeatures)) {
+        const hasAccess = requiredFeatures.reduce((acc, val) => {
+          return hasFeatureStore(val) && (!!defaultDatamart || !requireDatamart);
+        }, false);
+        if (hasAccess) {
+          return hasAccess
+        }
+      } else if (!requiredFeatures) {
+        return !!defaultDatamart || !requireDatamart;
+      }
+
+      // if it is not defined at the domain name level we try to see if the product team is running an experiment
       if (client) {
         if (requiredFeatures && typeof requiredFeatures === 'string') {
           if (!!defaultDatamart || !requireDatamart) {
