@@ -1,3 +1,4 @@
+import { ProcessingResource } from './../models/timeline/timeline';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { Cookie, OrganisationResource } from '../models/organisation/organisation';
 import { UserWorkspaceResource } from '../models/directory/UserProfileResource';
@@ -39,6 +40,10 @@ export default {
   },
   getOrganisation(organisationId: string): Promise<DataResponse<OrganisationResource>> {
     const endpoint = `organisations/${organisationId}`;
+    return ApiService.getRequest(endpoint);
+  },
+  getProcessings(organisationId: string): Promise<DataListResponse<ProcessingResource>> {
+    const endpoint = `processings?community_id=${organisationId}`;
     return ApiService.getRequest(endpoint);
   }
 }

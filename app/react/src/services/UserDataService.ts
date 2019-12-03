@@ -3,6 +3,7 @@ import {
   UserProfileResource,
   Activity,
   UserIdentifierInfo,
+  UserConsentResource,
 } from './../models/timeline/timeline';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { Identifier } from '../containers/Audience/Timeline/Monitoring';
@@ -65,6 +66,12 @@ export interface IUserDataService {
     channelId: string,
     options?: object
   ) => Promise<DataResponse<ChannelResource> | undefined>;
+
+  getConsents: (
+    datamartId: string,
+    identifier: Identifier,
+    options?: object
+  ) => Promise<DataListResponse<UserConsentResource>>;
 }
 
 @injectable()
@@ -282,6 +289,42 @@ export class UserDataService implements IUserDataService {
       }
       throw error;
     });
+  }
+
+  getConsents(
+    datamartId: string,
+    identifier: Identifier,
+    options: object = {},
+  ): Promise<DataListResponse<UserConsentResource>> {
+    const inBetweenCompartmentId = identifier.compartmentId
+    ? `compartment_id=${identifier.compartmentId}/`
+    : ``;
+  const endpoint =
+    identifier.type !== 'user_point_id'
+      ? identifier.type === 'user_account_id'
+        ? `datamarts/${datamartId}/user_points/${inBetweenCompartmentId}${identifier.type}=${identifier.id}/user_consents`
+        : `datamarts/${datamartId}/user_points/${identifier.type}=${identifier.id}/user_consents`
+      : `datamarts/${datamartId}/user_points/${identifier.id}/user_consents`;
+
+  const params = {
+    ...options,
+  };
+
+  return ApiService.getRequest<DataListResponse<UserConsentResource>>(
+    endpoint,
+    params,
+  ).catch(error => {
+    // api send 404 when consents don't exist
+    if (error && error.error === 'Resource Not Found') {
+      const result: DataListResponse<UserConsentResource> = {
+        data: [],
+        status: 'ok',
+        count: 0,
+      };
+      return Promise.resolve(result);
+    }
+    throw error;
+  });
   }
 }
 

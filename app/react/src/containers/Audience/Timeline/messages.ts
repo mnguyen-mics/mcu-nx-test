@@ -268,7 +268,23 @@ const messages: {
     id: 'audience.monitoring.timeline.activity.scenario.node.movement.content',
     defaultMessage:
       'Moved from {scenarioOldNodeName} to {scenarioNodeName} within {scenarioName}',
-  }
+  },
+  userChoicesTitle: {
+    id: 'audience.monitoring.timeline.card.userChoices.title',
+    defaultMessage: 'User Choices',
+  },
+  userChoicesviewJsonButton: {
+    id: 'audience.monitoring.timeline.card.userChoices.viewJsonButton',
+    defaultMessage: 'View JSON source',
+  },
+  userChoicesJson: {
+    id: 'audience.monitoring.timeline.card.userChoices.json',
+    defaultMessage: 'User Choices JSON',
+  },
+  userChoicesJsonModalOkText: {
+    id: 'audience.monitoring.timeline.card.userChoices.json.modal.ok.text',
+    defaultMessage: 'Close',
+  },
 });
 
 export default messages;
