@@ -1,11 +1,9 @@
-import { IPluginService } from './PluginService';
 import { AttributionModel } from './../models/Plugins';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import PluginInstanceService from './PluginInstanceService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
-import { TYPES } from '../constants/types';
-import { injectable, inject } from 'inversify';
+import { injectable } from 'inversify';
 
 export interface IAttributionModelService {
   getAttributionModels: (
@@ -26,9 +24,6 @@ export interface IAttributionModelService {
 export class AttributionModelService
   extends PluginInstanceService<AttributionModel>
   implements IAttributionModelService {
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
   constructor() {
     super('attribution_models');
   }

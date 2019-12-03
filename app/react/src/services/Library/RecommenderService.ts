@@ -1,10 +1,8 @@
-import { IPluginService } from './../PluginService';
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import { PluginProperty, Recommender } from '../../models/Plugins';
 import PluginInstanceService from '../PluginInstanceService';
 import { PluginLayout } from '../../models/plugin/PluginLayout';
-import { TYPES } from '../../constants/types';
-import { injectable, inject } from 'inversify';
+import { injectable } from 'inversify';
 
 export interface IRecommenderService {
   getRecommenders: (
@@ -15,7 +13,10 @@ export interface IRecommenderService {
     id: string,
     options: object,
   ) => Promise<DataListResponse<PluginProperty>>;
-  deleteRecommender: (id: string, options: object) => Promise<{}>;
+  deleteRecommender: (
+    id: string,
+    options: object,
+  ) => Promise<DataResponse<Recommender>>;
   getRecommender: (
     id: string,
     options: object,
@@ -42,9 +43,6 @@ export interface IRecommenderService {
 @injectable()
 export class RecommenderService extends PluginInstanceService<Recommender>
   implements IRecommenderService {
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
   constructor() {
     super('recommenders');
   }
@@ -72,7 +70,10 @@ export class RecommenderService extends PluginInstanceService<Recommender>
     return ApiService.getRequest(endpoint, options);
   }
 
-  deleteRecommender(id: string, options: object = {}) {
+  deleteRecommender(
+    id: string,
+    options: object = {},
+  ): Promise<DataResponse<Recommender>> {
     const endpoint = `recommenders/${id}`;
 
     const params = {

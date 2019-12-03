@@ -1,5 +1,4 @@
-import { IPluginService } from './PluginService';
-import { injectable, inject } from 'inversify';
+import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { AudienceExternalFeed } from '../models/Plugins';
 import PluginInstanceService from './PluginInstanceService';
@@ -7,14 +6,13 @@ import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
 import { GetFeeds } from './AudienceSegmentFeedService';
 import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
-import { TYPES } from '../constants/types';
 
 export interface IAudienceExternalFeedService
   extends PluginInstanceService<AudienceExternalFeed> {
   segmentId: string;
 
   getFeeds: (
-    options: GetFeeds
+    options: GetFeeds,
   ) => Promise<DataListResponse<AudienceExternalFeed>>;
   
   getFeedsAggregationMetrics: (
@@ -72,19 +70,17 @@ export class AudienceExternalFeedService
   implements IAudienceExternalFeedService {
   segmentId: string;
 
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
-  constructor() {
+  constructor(segmentId: string) {
     super('audience_external_feeds');
+    this.segmentId = segmentId;
   }
 
   getFeeds = (
-    options: GetFeeds
+    options: GetFeeds,
   ): Promise<DataListResponse<AudienceExternalFeed>> => {
     const endpoint = 'audience_segments.external_feeds';
     return ApiService.getRequest(endpoint, options);
-  }
+  };
 
   getFeedsAggregationMetrics = (
     body: FeedAggregationRequest,
@@ -136,9 +132,7 @@ export class AudienceExternalFeedService
     id: string,
     options: object = {},
   ): Promise<DataListResponse<PropertyResourceShape>> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/external_feeds/${id}/properties`;
+    const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
   };
@@ -161,9 +155,7 @@ export class AudienceExternalFeedService
     technicalName: string,
     params: object = {},
   ): Promise<DataResponse<PropertyResourceShape> | void> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/external_feeds/${id}/properties/technical_name=${technicalName}`;
+    const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}/properties/technical_name=${technicalName}`;
     return this._pluginService.handleSaveOfProperties(
       params,
       organisationId,
@@ -177,9 +169,7 @@ export class AudienceExternalFeedService
     organisationId: string,
     options: object = {},
   ): Promise<DataResponse<AudienceExternalFeed>> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/external_feeds?organisation_id=${organisationId}`;
+    const endpoint = `audience_segments/${this.segmentId}/external_feeds?organisation_id=${organisationId}`;
 
     const params = {
       ...options,
@@ -192,9 +182,7 @@ export class AudienceExternalFeedService
 
   // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
   getAudienceFeedProperties = (id: string, options: object = {}) => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/external_feeds/${id}/properties`;
+    const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options).then((res: any) => {
       return { ...res.data, id };

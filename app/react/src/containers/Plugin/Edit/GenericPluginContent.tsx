@@ -529,7 +529,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
 
     const { 
       pluginProperties, 
-      isLoadingList, 
+      isLoadingList,
       isLoadingPlugin, 
       plugin, 
       initialValues, 

@@ -1,13 +1,11 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { AudienceTagFeed } from '../models/Plugins';
 import PluginInstanceService from './PluginInstanceService';
-import { IPluginService } from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
 import { GetFeeds } from './AudienceSegmentFeedService';
 import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../constants/types';
+import { injectable } from 'inversify';
 
 export interface IAudienceTagFeedService {
   segmentId: string;
@@ -65,16 +63,12 @@ export class AudienceTagFeedService
   implements IAudienceTagFeedService {
   segmentId: string;
 
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
-  constructor() {
+  constructor(segmentId: string) {
     super('audience_tag_feeds');
+    this.segmentId = segmentId;
   }
 
-  getFeeds(
-    options: GetFeeds
-  ): Promise<DataListResponse<AudienceTagFeed>> {
+  getFeeds(options: GetFeeds): Promise<DataListResponse<AudienceTagFeed>> {
     const endpoint = 'audience_segments.tag_feeds';
     return ApiService.getRequest(endpoint, options);
   }
@@ -153,9 +147,7 @@ export class AudienceTagFeedService
     technicalName: string,
     params: object = {},
   ): Promise<DataResponse<PropertyResourceShape> | void> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/tag_feeds/${id}/properties/technical_name=${technicalName}`;
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties/technical_name=${technicalName}`;
     return this._pluginService.handleSaveOfProperties(
       params,
       organisationId,

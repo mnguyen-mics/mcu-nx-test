@@ -850,6 +850,3 @@ export class DisplayCampaignService implements IDisplayCampaignService {
   }
 }
 
-// this instance is only used for AdGroupPage because this file is in JS.
-// To remove when https://github.com/MEDIARITHMICS/mediarithmics-navigator/pull/964 is merged
-export const displayCampaignService = new DisplayCampaignService();

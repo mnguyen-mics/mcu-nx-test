@@ -25,7 +25,6 @@ import {
 import { DataColumnDefinition, ActionsColumnDefinition, ActionsRenderer, ActionDefinition } from '../../../../components/TableView/TableView';
 import AudienceSegmentFeedService, {
   AudienceFeedType,
-  IAudienceSegmentFeedService,
 } from '../../../../services/AudienceSegmentFeedService';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { Icon, Tooltip } from 'antd';
@@ -169,7 +168,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       modalTab: 'configuration',
     };
 
-    this.externalFeedService = new AudienceSegmentFeedService('', 'EXTERNAL_FEED');
+    this.externalFeedService = new AudienceSegmentFeedService(
+      '',
+      'EXTERNAL_FEED',
+    );
     this.tagFeedService = new AudienceSegmentFeedService('', 'TAG_FEED');
   }
 
@@ -250,7 +252,9 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
 
-    return filter.feedType && filter.feedType.length > 0 ? filter.feedType[0] : 'EXTERNAL_FEED';
+    return filter.feedType && filter.feedType.length > 0
+      ? filter.feedType[0]
+      : 'EXTERNAL_FEED';
   }
 
   buildApiSearchFilters = (filter: Index<any>) => {
@@ -288,7 +292,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       },
     });
 
-    const feedService = filter.feedType && filter.feedType[0] === 'TAG_FEED' ? this.tagFeedService : this.externalFeedService;
+    const feedService =
+      filter.feedType && filter.feedType[0] === 'TAG_FEED'
+        ? this.tagFeedService
+        : this.externalFeedService;
 
     return feedService
       .getFeeds({
@@ -359,18 +366,19 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         });
       });
 
-    this._pluginService.getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_TAG_FEED' })
-    .then(res => {
-      this.setState({
-        tagPlugins: res.data,
+    this._pluginService
+      .getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_TAG_FEED' })
+      .then(res => {
+        this.setState({
+          tagPlugins: res.data,
+        });
+      })
+      .catch(() => {
+        this.setState({
+          tagPlugins: [],
+        });
       });
-    })
-    .catch(() => {
-      this.setState({
-        tagPlugins: [],
-      });
-  })
-}
+  }
 
   updateLocationSearch = (params: Index<any>) => {
     const {
@@ -586,7 +594,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
               placement="top"
               title={intl.formatMessage(messages[record.feed.status])}
             >
-              <McsIcon type="status" className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`} />
+              <McsIcon
+                type="status"
+                className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`}
+              />
             </Tooltip>
           );
         },
@@ -617,7 +628,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   render() {
     const {
       location: { search },
-      intl
+      intl,
     } = this.props;
 
     const {
@@ -657,25 +668,26 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const statusItems = feedStatus.map(type => ({ key: type, value: type }));
 
-    const filtersOptions: Array<MultiSelectProps<any>> = [{
-      displayElement: (
-        <div>
-          {intl.formatMessage(messages[feedType])}{' '}
-          <Icon type="down" />
-        </div>
-      ),
-      selectedItems: [feedType],
-      items: ['EXTERNAL_FEED', 'TAG_FEED'],
-      getKey: (type: AudienceFeedType) => type,
-      display: (type: AudienceFeedType) => intl.formatMessage(messages[type]),
-      handleItemClick: (selectedType: AudienceFeedType) =>
-        this.updateLocationSearch({
-          feedType: [selectedType],
-          artifactId: [],
-          status: [],
-          currentPage: 1,
-        }),
-    }];
+    const filtersOptions: Array<MultiSelectProps<any>> = [
+      {
+        displayElement: (
+          <div>
+            {intl.formatMessage(messages[feedType])} <Icon type="down" />
+          </div>
+        ),
+        selectedItems: [feedType],
+        items: ['EXTERNAL_FEED', 'TAG_FEED'],
+        getKey: (type: AudienceFeedType) => type,
+        display: (type: AudienceFeedType) => intl.formatMessage(messages[type]),
+        handleItemClick: (selectedType: AudienceFeedType) =>
+          this.updateLocationSearch({
+            feedType: [selectedType],
+            artifactId: [],
+            status: [],
+            currentPage: 1,
+          }),
+      },
+    ];
 
     const plugins = feedType === 'TAG_FEED' ? tagPlugins : externalPlugins;
 

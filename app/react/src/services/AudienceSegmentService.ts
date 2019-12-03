@@ -237,9 +237,11 @@ export interface IAudienceSegmentService {
 }
 
 @injectable()
-export class AudienceSegmentService implements IAudienceSegmentService {
+export default class AudienceSegmentService implements IAudienceSegmentService {
+  
   @inject(TYPES.IPluginService)
   private _pluginService: IPluginService;
+
   getSegments = (
     organisationId?: string,
     options: GetSegmentsOption = {},
@@ -249,7 +251,6 @@ export class AudienceSegmentService implements IAudienceSegmentService {
       organisation_id: organisationId,
       ...options,
     };
-
     return ApiService.getRequest(endpoint, params);
   };
 

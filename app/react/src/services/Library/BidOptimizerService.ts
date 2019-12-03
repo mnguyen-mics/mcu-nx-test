@@ -1,18 +1,14 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import { BidOptimizer } from '../../models/Plugins';
 import PluginInstanceService from '../PluginInstanceService';
-import { IPluginService } from '../PluginService';
 import { PluginLayout } from '../../models/plugin/PluginLayout';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../constants/types';
+import { injectable } from 'inversify';
 
 export interface IBidOptimizerService {}
 
 @injectable()
 export class BidOptimizerService extends PluginInstanceService<BidOptimizer>
   implements IBidOptimizerService {
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
   constructor() {
     super('bid_optimizers');
   }

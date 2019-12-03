@@ -1,10 +1,9 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginInstance } from '../models/Plugins';
-import { IPluginService } from './PluginService';
+import PluginService, { IPluginService } from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../constants/types';
+import { injectable } from 'inversify';
 
 export interface IPluginInstanceService<T> {
   getInstanceById: (id: string, options?: object) => Promise<DataResponse<T>>;
@@ -32,8 +31,9 @@ export interface IPluginInstanceService<T> {
 @injectable()
 abstract class PluginInstanceService<T extends PluginInstance>
   implements IPluginInstanceService<T> {
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
+  // TODO: make plugin service injection work
+  // @inject(TYPES.IPluginService)
+  _pluginService: IPluginService = new PluginService();
 
   constructor(public entityPath: string) {}
 
@@ -108,5 +108,3 @@ abstract class PluginInstanceService<T extends PluginInstance>
 }
 
 export default PluginInstanceService;
-
-

@@ -1,10 +1,8 @@
-import { IPluginService } from './../PluginService';
 import ApiService, { DataResponse, DataListResponse } from '../ApiService';
 import { EmailRouter } from '../../models/Plugins';
 import PluginInstanceService from '../PluginInstanceService';
 import { PluginLayout } from '../../models/plugin/PluginLayout';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../constants/types';
+import { injectable } from 'inversify';
 
 export interface IEmailRouterService {
   getEmailRouters: (
@@ -27,9 +25,6 @@ export interface IEmailRouterService {
 @injectable()
 export class EmailRouterService extends PluginInstanceService<EmailRouter>
   implements IEmailRouterService {
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
   constructor() {
     super('email_routers');
   }

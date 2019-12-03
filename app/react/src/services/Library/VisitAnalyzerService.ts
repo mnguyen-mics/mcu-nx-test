@@ -1,10 +1,8 @@
-import { IPluginService } from './../PluginService';
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import PluginInstanceService from '../PluginInstanceService';
 import { VisitAnalyzer } from '../../models/Plugins';
 import { PluginLayout } from '../../models/plugin/PluginLayout';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../constants/types';
+import { injectable } from 'inversify';
 
 export interface IVisitAnalyzerService
   extends PluginInstanceService<VisitAnalyzer> {
@@ -24,9 +22,6 @@ export interface IVisitAnalyzerService
 @injectable()
 export class VisitAnalyzerService extends PluginInstanceService<VisitAnalyzer>
   implements IVisitAnalyzerService {
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
   constructor() {
     super('visit_analyzer_models');
   }

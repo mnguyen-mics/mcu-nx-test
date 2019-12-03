@@ -26,12 +26,9 @@ import injectNotifications, {
 import { AudienceFeedFormModel, FeedRouteParams } from './domain';
 import { Path } from '../../../../../components/ActionBar';
 import GenericPluginContent from '../../../../Plugin/Edit/GenericPluginContent';
-import {
-  AudienceFeedType,
+import AudienceSegmentFeedService, {
   IAudienceSegmentFeedService,
 } from '../../../../../services/AudienceSegmentFeedService';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { TYPES } from '../../../../../constants/types';
 
 const titleMessages: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -120,11 +117,7 @@ type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
 class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
   feedService: IAudienceSegmentFeedService;
 
-  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
-  private _audienceSegmentFeedServiceFactory: (
-    segmentId: string,
-    feedType: AudienceFeedType,
-  ) => IAudienceSegmentFeedService;
+  // TODO: inject audienceSegmentFeedService factory
 
   constructor(props: JoinedProps<T>) {
     super(props);
@@ -132,7 +125,7 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
       props.type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
         ? 'EXTERNAL_FEED'
         : 'TAG_FEED';
-    this.feedService = this._audienceSegmentFeedServiceFactory(
+    this.feedService = new AudienceSegmentFeedService(
       props.match.params.segmentId,
       type,
     );
@@ -222,8 +215,14 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
         pluginType={type}
         listTitle={titleMessages[type] || titleMessages.genericPlugin}
         listSubTitle={subtitleMessages[type] || titleMessages.genericPlugin}
-        pluginPresetListTitle={pluginPresetTitleMessages[type] || pluginPresetTitleMessages.genericPlugin}
-        pluginPresetListSubTitle={pluginPresetSubtitleMessages[type] || pluginPresetSubtitleMessages.genericPlugin}
+        pluginPresetListTitle={
+          pluginPresetTitleMessages[type] ||
+          pluginPresetTitleMessages.genericPlugin
+        }
+        pluginPresetListSubTitle={
+          pluginPresetSubtitleMessages[type] ||
+          pluginPresetSubtitleMessages.genericPlugin
+        }
         breadcrumbPaths={paths}
         pluginInstanceService={this.feedService}
         pluginInstanceId={feedId}

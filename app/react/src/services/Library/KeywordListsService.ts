@@ -3,7 +3,6 @@ import { KeywordResource } from './../../models/keywordList/keywordList';
 import ApiService, { DataResponse, DataListResponse } from '../ApiService';
 import { KeywordListResource } from '../../models/keywordList/keywordList';
 
-
 export interface IKeywordListService {
   getKeywordLists: (
     organisationId: string,

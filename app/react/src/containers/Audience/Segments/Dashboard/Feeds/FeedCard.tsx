@@ -25,7 +25,9 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { PluginCardModalTab } from '../../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import { withValidators } from '../../../../../components/Form';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
-import { IAudienceSegmentFeedService, AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
+import AudienceSegmentFeedService, {
+  IAudienceSegmentFeedService,
+} from '../../../../../services/AudienceSegmentFeedService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 
@@ -128,11 +130,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
 
-  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
-  private _audienceSegmentFeedServiceFactory: (
-    segmentId: string,
-    feedType: AudienceFeedType,
-  ) => IAudienceSegmentFeedService;
+  // @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
+  // private _audienceSegmentFeedServiceFactory: (
+  //   segmentId: string,
+  //   feedType: AudienceFeedType,
+  // ) => IAudienceSegmentFeedService;
 
   constructor(props: Props) {
     super(props);
@@ -143,10 +145,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       modalTab: 'configuration',
       pluginProperties: [],
     };
-    if (props.feed) {
-      this.feedService = this._audienceSegmentFeedServiceFactory(
-        props.segmentId,
-        props.feed.type,
+
+    if (this.props.feed) {
+      this.feedService = new AudienceSegmentFeedService(
+        this.props.segmentId,
+        this.props.feed.type,
       );
     }
   }

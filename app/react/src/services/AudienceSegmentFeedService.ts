@@ -1,4 +1,5 @@
-import { IAudienceExternalFeedService } from './AudienceExternalFeedService';
+import AudienceExternalFeedService from './AudienceExternalFeedService';
+import { AudienceTagFeedService } from './AudienceTagFeedService';
 import PluginInstanceService from './PluginInstanceService';
 import {
   AudienceTagFeed,
@@ -9,10 +10,7 @@ import {
 import { DataListResponse, DataResponse } from './ApiService';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginLayout } from '../models/plugin/PluginLayout';
-import { IAudienceTagFeedService } from './AudienceTagFeedService';
-import { injectable, inject, interfaces } from 'inversify';
-import { IAudienceSegmentService } from './AudienceSegmentService';
-import { TYPES } from '../constants/types';
+import AudienceSegmentService, { IAudienceSegmentService } from './AudienceSegmentService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
 
@@ -101,36 +99,29 @@ export interface IAudienceSegmentFeedService {
   ) => Promise<DataResponse<PluginProperty> | void>;
 }
 
-@injectable()
+// @injectable()
 export default class AudienceSegmentFeedService
   extends PluginInstanceService<AudienceFeed>
   implements IAudienceSegmentFeedService {
+  service: AudienceTagFeedService | AudienceExternalFeedService;
   feedType: AudienceFeedType;
   segmentId: string;
-  private service: IAudienceTagFeedService | IAudienceExternalFeedService;
+  // TODO: make service injection work
+  audienceSegmentService: IAudienceSegmentService = new AudienceSegmentService();
 
-  @inject(TYPES.IAudienceSegmentService)
-  private _audienceSegmentService: IAudienceSegmentService;
-
-  // TODO: make it work
-  constructor(
-    @inject(TYPES.IAudienceExternalFeedServiceFactory)
-    _audienceExternalFeedServiceFactory: interfaces.Factory<
-      IAudienceExternalFeedService
-    >,
-    @inject(TYPES.IAudienceTagFeedServiceFactory)
-    _audienceTagFeedServiceFactory: interfaces.Factory<IAudienceTagFeedService>,
-  ) {
+  // TODO: make service factory injection work 
+  constructor(segmentId: string, feedType: AudienceFeedType) {
     super('audience_feed');
-    if (this.feedType === 'EXTERNAL_FEED') {
-      this.service = _audienceExternalFeedServiceFactory(
-        this.segmentId,
-      ) as IAudienceExternalFeedService;
+    this.segmentId = segmentId;
+    this.feedType = feedType;
+
+    if (feedType === 'EXTERNAL_FEED') {
+      const audienceExtFeed = new AudienceExternalFeedService(segmentId);
+      this.service = audienceExtFeed;
     }
-    if (this.feedType === 'TAG_FEED') {
-      this.service = _audienceTagFeedServiceFactory(
-        this.segmentId,
-      ) as IAudienceTagFeedService;
+    if (feedType === 'TAG_FEED') {
+      const audienceTagFeed = new AudienceTagFeedService(segmentId);
+      this.service = audienceTagFeed;
     }
   }
 
@@ -216,12 +207,12 @@ export default class AudienceSegmentFeedService
   // reimplemention of audience segment service to make them type agnostic
   getAudienceFeed = (feedId: string, options: object = {}) => {
     return this.feedType === 'EXTERNAL_FEED'
-      ? this._audienceSegmentService.getAudienceExternalFeed(
+      ? this.audienceSegmentService.getAudienceExternalFeed(
           this.segmentId,
           feedId,
           options,
         )
-      : this._audienceSegmentService.getAudienceTagFeed(
+      : this.audienceSegmentService.getAudienceTagFeed(
           this.segmentId,
           feedId,
           options,
@@ -233,12 +224,12 @@ export default class AudienceSegmentFeedService
     options: object = {},
   ) => {
     return this.feedType === 'EXTERNAL_FEED'
-      ? this._audienceSegmentService.createAudienceExternalFeeds(
+      ? this.audienceSegmentService.createAudienceExternalFeeds(
           this.segmentId,
           audienceFeed,
           options,
         )
-      : this._audienceSegmentService.createAudienceTagFeeds(
+      : this.audienceSegmentService.createAudienceTagFeeds(
           this.segmentId,
           audienceFeed,
           options,
@@ -251,13 +242,13 @@ export default class AudienceSegmentFeedService
     options: object = {},
   ) => {
     return this.feedType === 'EXTERNAL_FEED'
-      ? this._audienceSegmentService.updateAudienceExternalFeeds(
+      ? this.audienceSegmentService.updateAudienceExternalFeeds(
           this.segmentId,
           audienceFeedId,
           audienceFeed,
           options,
         )
-      : this._audienceSegmentService.updateAudienceTagFeeds(
+      : this.audienceSegmentService.updateAudienceTagFeeds(
           this.segmentId,
           audienceFeedId,
           audienceFeed,
@@ -267,12 +258,12 @@ export default class AudienceSegmentFeedService
 
   getAudienceFeedProperty = (feedId: string, options: object = {}) => {
     return this.feedType === 'EXTERNAL_FEED'
-      ? this._audienceSegmentService.getAudienceExternalFeedProperty(
+      ? this.audienceSegmentService.getAudienceExternalFeedProperty(
           this.segmentId,
           feedId,
           options,
         )
-      : this._audienceSegmentService.getAudienceTagFeedProperty(
+      : this.audienceSegmentService.getAudienceTagFeedProperty(
           this.segmentId,
           feedId,
           options,
@@ -286,14 +277,14 @@ export default class AudienceSegmentFeedService
     params: object = {},
   ) => {
     return this.feedType === 'EXTERNAL_FEED'
-      ? this._audienceSegmentService.updateAudienceSegmentExternalFeedProperty(
+      ? this.audienceSegmentService.updateAudienceSegmentExternalFeedProperty(
           organisationId,
           this.segmentId,
           id,
           technicalName,
           params,
         )
-      : this._audienceSegmentService.updateAudienceSegmentTagFeedProperty(
+      : this.audienceSegmentService.updateAudienceSegmentTagFeedProperty(
           organisationId,
           this.segmentId,
           id,

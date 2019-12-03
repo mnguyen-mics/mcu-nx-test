@@ -1,3 +1,4 @@
+import { Container, interfaces } from 'inversify';
 import { IMicsTagService, MicsTagService } from '../services/MicsTagService';
 import PersistedStoreService, {
   IPersistedStoreService,
@@ -14,7 +15,6 @@ import {
 } from './../services/Library/VisitAnalyzerService';
 import AudienceSegmentFeedService, {
   IAudienceSegmentFeedService,
-  AudienceFeedType,
 } from './../services/AudienceSegmentFeedService';
 import {
   DisplayCampaignService,
@@ -58,16 +58,9 @@ import {
   IAudiencePartitionsService,
   AudiencePartitionsService,
 } from './../services/AudiencePartitionsService';
-import {
-  AudienceSegmentService,
+import AudienceSegmentService, {
   IAudienceSegmentService,
-} from './../services/AudienceSegmentService';
-import getDecorators from 'inversify-inject-decorators';
-import { Container, interfaces } from 'inversify';
-import {
-  IKeywordListService,
-  KeywordListService,
-} from '../services/Library/KeywordListsService';
+} from '../services/AudienceSegmentService';
 import {
   IKeywordListFormService,
   KeywordListFormService,
@@ -155,6 +148,10 @@ import {
 import { IEmailRouterService } from '../services/Library/EmailRoutersService';
 import { CreativeService, ICreativeService } from '../services/CreativeService';
 import PluginService, { IPluginService } from '../services/PluginService';
+import {
+  IKeywordListService,
+  KeywordListService,
+} from '../services/Library/KeywordListsService';
 
 const container = new Container();
 
@@ -183,9 +180,6 @@ container
 container
   .bind<IAudienceExternalFeedService>(TYPES.IAudienceExternalFeedService)
   .to(AudienceExternalFeedService);
-container
-  .bind<IAudienceSegmentFeedService>(TYPES.IAudienceSegmentFeedService)
-  .to(AudienceSegmentFeedService);
 container
   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
   .toConstructor(AudienceTagFeedService);
@@ -270,7 +264,9 @@ container
 container
   .bind<IEmailRouterService>(TYPES.IEmailRouterService)
   .to(EmailRouterService);
-
+container
+  .bind<IAudienceSegmentFeedService>(TYPES.IAudienceSegmentFeedService)
+  .to(AudienceSegmentFeedService);
 container
   .bind<interfaces.Factory<IAudienceExternalFeedService>>(
     TYPES.IAudienceExternalFeedServiceFactory,
@@ -297,20 +293,21 @@ container
       return audienceTagFeedService;
     };
   });
-container
-  .bind<interfaces.Factory<IAudienceSegmentFeedService>>(
-    TYPES.IAudienceSegmentFeedServiceFactory,
-  )
-  .toFactory<IAudienceSegmentFeedService>((context: interfaces.Context) => {
-    return (segmentId: string, feedType: AudienceFeedType) => {
-      const audienceSegmentFeedService = context.container.get<
-        IAudienceSegmentFeedService
-      >(TYPES.IAudienceSegmentFeedService);
-      audienceSegmentFeedService.segmentId = segmentId;
-      audienceSegmentFeedService.feedType = feedType;
-      return audienceSegmentFeedService;
-    };
-  });
+// TODO: make factory injection work
+// container
+//   .bind<interfaces.Factory<IAudienceSegmentFeedService>>(
+//     TYPES.IAudienceSegmentFeedServiceFactory,
+//   )
+//   .toFactory<IAudienceSegmentFeedService>((context: interfaces.Context) => {
+//     return (segmentId: string, feedType: AudienceFeedType) => {
+//       const audienceSegmentFeedService = context.container.get<
+//         IAudienceSegmentFeedService
+//       >(TYPES.IAudienceSegmentFeedService);
+//       audienceSegmentFeedService.segmentId = segmentId;
+//       audienceSegmentFeedService.feedType = feedType;
+//       return audienceSegmentFeedService;
+//     };
+//   });
 
 export const { lazyInject } = getDecorators(container, false);
 

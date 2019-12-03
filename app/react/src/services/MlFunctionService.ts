@@ -1,10 +1,7 @@
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { MlFunctionResource } from '../models/datamart/MlFunction';
 import PluginInstanceService from './PluginInstanceService';
-import { IPluginService } from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
-import { inject } from 'inversify';
-import { TYPES } from '../constants/types';
 
 export interface IMlFunctionService
   extends PluginInstanceService<MlFunctionResource> {
@@ -29,9 +26,6 @@ export interface MlFunctionQueryStringParameters {
 
 export class MlFunctionService extends PluginInstanceService<MlFunctionResource>
   implements IMlFunctionService {
-  @inject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
-
   constructor() {
     super('ml_functions');
   }
