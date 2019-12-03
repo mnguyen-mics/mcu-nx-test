@@ -1,5 +1,5 @@
 import { Identifier } from './Monitoring';
-import { isUserPointIdentifier, UserProfileGlobal } from './../../../models/timeline/timeline';
+import { isUserPointIdentifier, UserProfileGlobal, UserConsentResource, ProcessingResource } from './../../../models/timeline/timeline';
 import { groupBy, Dictionary } from 'lodash';
 import { IUserDataService } from './../../../services/UserDataService';
 import {
@@ -21,6 +21,7 @@ import {
   isUserAccountIdentifier,
 } from '../../../models/timeline/timeline';
 import DatamartService from '../../../services/DatamartService';
+import OrganisationService from '../../../services/OrganisationService';
 
 export interface IMonitoringService {
   fetchProfileData: (
@@ -50,6 +51,13 @@ export interface IMonitoringService {
     datamart: DatamartResource,
     userIdentifier: Identifier,
   ) => Promise<UserEmailIdentifierInfo[]>;
+  fetchProcessings: (
+    datamart: DatamartResource,
+  ) => Promise<ProcessingResource[]>;
+  fetchConsents: (
+    datamart: DatamartResource,
+    userIdentifier: Identifier,
+  ) => Promise<UserConsentResource[]>;
   fetchMonitoringData: (
     organisationId: string,
     datamart: DatamartResource,
@@ -206,12 +214,33 @@ export class MonitoringService implements IMonitoringService {
       });
   }
 
+  fetchProcessings(datamart: DatamartResource) {
+    return OrganisationService
+    .getProcessings(datamart.organisation_id)
+    .then(response => {
+      return response.data;
+    });
+  }
+
+  fetchConsents(datamart: DatamartResource, userIdentifier: Identifier) {
+    return this._userDataService
+    .getConsents(
+      datamart.id,
+      userIdentifier
+    )
+    .then(response => {
+      return response.data;
+    });
+  }
+
   fetchMonitoringDataByIdentifier(userIdentifier: Identifier, datamart: DatamartResource) {
     return Promise.all([
       this.fetchCompartments(datamart),
       this.getLastSeen(datamart, userIdentifier),
       this.fetchSegmentsData(datamart, userIdentifier),
       this.fetchProfileData(datamart, userIdentifier),
+      this.fetchProcessings(datamart),
+      this.fetchConsents(datamart, userIdentifier),
     ])
   }
 
@@ -229,6 +258,7 @@ export class MonitoringService implements IMonitoringService {
       userAccountCompartments: [],
       lastSeen: 0,
       userSegmentList: [],
+      userChoices: {userConsents: [], processings: []},
       userProfile: {type: undefined, profile: {}},
       userPointList: [],
       userIdentifier: {type: '', id : ''},
@@ -267,6 +297,7 @@ export class MonitoringService implements IMonitoringService {
               userAccountCompartments: res[0],
               lastSeen: res[1],
               userSegmentList: res[2],
+              userChoices: {userConsents: res[5], processings: res[4]},
               userProfile: res[3],
               userPointList: [],
               userIdentifier: userIdentifier,
@@ -289,6 +320,7 @@ export class MonitoringService implements IMonitoringService {
               userAccountCompartments: res[0],
               lastSeen: res[1],
               userSegmentList: res[2],
+              userChoices: {userConsents: res[5], processings: res[4]},
               userProfile: res[3],
               userPointList: [],
               userIdentifier: userIdentifier,

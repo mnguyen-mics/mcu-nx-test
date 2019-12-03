@@ -11,6 +11,7 @@ import SegmentsCard from './SingleView/SegmentsCard';
 import AccountIdCard from './SingleView/AccountIdCard';
 import DeviceCard from './SingleView/DeviceCard';
 import EmailCard from './SingleView/EmailCard';
+import UserChoicesCard from './SingleView/UserChoicesCard';
 import TimelineHeader from './TimelineHeader';
 import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
@@ -67,6 +68,7 @@ class Monitoring extends React.Component<Props, State> {
         userAccountCompartments: [],
         userPointList: [],
         userSegmentList: [],
+        userChoices: {userConsents: [], processings: []},
         userProfile: {type: undefined, profile: {}},
         lastSeen: 0,
         userIdentifier: {
@@ -164,6 +166,7 @@ class Monitoring extends React.Component<Props, State> {
                 userAccountCompartments: [],
                 userPointList: [],
                 userSegmentList: [],
+                userChoices: {userConsents: [], processings: []},
                 userProfile: {type: undefined, profile: {}},
                 lastSeen: 0,
                 userIdentifier: {
@@ -277,6 +280,10 @@ class Monitoring extends React.Component<Props, State> {
                     <EmailCard
                       dataSource={monitoringData.userEmailList}
                       isLoading={isLoading}
+                    />
+                    <UserChoicesCard
+                      dataSource={monitoringData.userChoices}
+                      isLoading={isLoading}                   
                     />
                   </Col>
                 </Row>
