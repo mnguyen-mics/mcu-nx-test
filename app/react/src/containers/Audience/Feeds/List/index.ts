@@ -1,7 +1,13 @@
 import AudienceFeedsTable from './AudienceFeedsTable';
-import FeedsActionbar from './FeedsActionbar';
+import AudienceSegmentExternalFeedsActionbar from './AudienceSegmentExternalFeedsActionBar';
+import AudienceSegmentTagFeedsActionbar from './AudienceSegmentTagFeedsActionBar';
+import AudienceSegmentExternalFeedsPage from './AudienceSegmentExternalFeedsPage';
+import AudienceSegmentTagFeedsPage from './AudienceSegmentTagFeedsPage';
 
 export {
   AudienceFeedsTable,
-  FeedsActionbar,
+  AudienceSegmentExternalFeedsActionbar,
+  AudienceSegmentTagFeedsActionbar,
+  AudienceSegmentExternalFeedsPage,
+  AudienceSegmentTagFeedsPage,
 };

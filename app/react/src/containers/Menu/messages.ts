@@ -19,9 +19,13 @@ export default defineMessages({
         id: 'menu.audience.segments',
         defaultMessage: 'Segments',
     },
-    audienceFeeds: {
-        id: 'menu.audience.feeds',
-        defaultMessage: 'Feeds',
+    audienceExternalFeeds: {
+        id: 'menu.audience.externalFeeds',
+        defaultMessage: 'External Feeds',
+    },
+    audienceTagFeeds: {
+        id: 'menu.audience.tagFeeds',
+        defaultMessage: 'Tag Feeds',
     },
     audiencePartitions: {
         id: 'menu.audience.partitions',

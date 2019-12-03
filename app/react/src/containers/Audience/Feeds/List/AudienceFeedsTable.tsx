@@ -12,11 +12,11 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { Index } from '../../../../utils';
 import { FEEDS_SEARCH_SETTINGS } from './constants';
-import { AudienceExternalFeed, PluginResource, Status } from '../../../../models/Plugins';
+import { AudienceExternalFeed, PluginResource, Status, PluginType } from '../../../../models/Plugins';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
-import AudienceSegmentFeedService from '../../../../services/AudienceSegmentFeedService';
+import AudienceSegmentFeedService, { AudienceFeedType } from '../../../../services/AudienceSegmentFeedService';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
-import { Icon } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import PluginService from '../../../../services/PluginService';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -24,8 +24,13 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { TYPES } from '../../../../constants/types';
 import { Link } from 'react-router-dom';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { McsIcon } from '../../../../components';
 
-type Props = RouteComponentProps<{ organisationId: string }> & InjectedIntlProps;
+type AudienceFeedsTableProps = { feedType: AudienceFeedType }
+
+type Props = AudienceFeedsTableProps & 
+RouteComponentProps<{ organisationId: string }> & 
+InjectedIntlProps;
 
 interface State {
     list: {
@@ -69,6 +74,22 @@ const messages = defineMessages({
         id: 'audience.feeds.list.filter.status',
         defaultMessage: 'Status',
     },
+    INITIAL: {
+        id: 'audience.feeds.list.status.initial',
+        defaultMessage: 'Initial',
+    },
+    ACTIVE: {
+        id: 'audience.feeds.list.status.active',
+        defaultMessage: 'Active',
+    },
+    PAUSED: {
+        id: 'audience.feeds.list.status.paused',
+        defaultMessage: 'Paused',
+    },
+    PUBLISHED: {
+        id: 'audience.feeds.list.status.published',
+        defaultMessage: 'Published',
+    },
 });
 
 class AudienceFeedsTable extends React.Component<Props, State> {
@@ -78,6 +99,11 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
+
+        const {
+            feedType
+        } = this.props;
+
         this.state = {
             list: {
                 feeds: [],
@@ -87,7 +113,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
             plugins: [],
         };
 
-        this.feedService = new AudienceSegmentFeedService('', 'EXTERNAL_FEED');
+        this.feedService = new AudienceSegmentFeedService('', feedType);
     }
 
     componentDidMount() {
@@ -238,7 +264,11 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     };
 
     fetchPlugins() {
-        return PluginService.getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED' }).then(res => {
+        const pluginType: PluginType = this.props.feedType === 'EXTERNAL_FEED' ? 
+        'AUDIENCE_SEGMENT_EXTERNAL_FEED' : 
+        'AUDIENCE_SEGMENT_TAG_FEED';
+
+        return PluginService.getPlugins({ plugin_type: pluginType }).then(res => {
             this.setState({
                 plugins: res.data,
             });
@@ -268,6 +298,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
             match: {
                 params: { organisationId },
             },
+            intl,
         } = this.props;
 
         const dataColumns: Array<DataColumnDefinition<{
@@ -314,7 +345,13 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                 render: (
                     text: string,
                     record: { feed: AudienceExternalFeed; audienceSegment?: AudienceSegmentResource },
-                ) => <span>{record.feed.status}</span>,
+                ) => {
+                    return <Tooltip placement="top" title={intl.formatMessage(messages[record.feed.status])}>
+                        <span className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`}>
+                            <McsIcon type="status" />
+                        </span>
+                    </Tooltip>
+                }
             },
         ];
 
@@ -323,6 +360,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     render() {
         const {
+            feedType,
             location: { search },
         } = this.props;
 
@@ -349,7 +387,16 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                 }),
         };
 
-        const statusItems = ['INITIAL', 'PAUSED', 'ACTIVE', 'PUBLISHED'].map(type => ({ key: type, value: type }));
+        
+        let feedStatus: Status[] = [];
+
+        if(feedType === 'EXTERNAL_FEED') {
+            feedStatus = ['INITIAL', 'ACTIVE', 'PAUSED', 'PUBLISHED']
+        } else if(feedType === 'TAG_FEED') {
+            feedStatus = ['ACTIVE', 'PAUSED']
+        }
+
+        const statusItems = feedStatus.map(type => ({ key: type, value: type }));
 
         const filtersOptions: Array<MultiSelectProps<any>> = [];
 
@@ -408,4 +455,4 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     }
 }
 
-export default compose<Props, {}>(withRouter, injectIntl)(AudienceFeedsTable);
+export default compose<Props, AudienceFeedsTableProps>(withRouter, injectIntl)(AudienceFeedsTable);

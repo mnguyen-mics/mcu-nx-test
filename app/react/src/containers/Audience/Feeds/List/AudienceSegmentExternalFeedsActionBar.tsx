@@ -17,12 +17,12 @@ interface State {
 
 const messages = defineMessages({
 	audienceFeeds: {
-	  id: 'audiencefeeds.actionbar.audienceFeeds',
-	  defaultMessage: 'Feeds',
+	  id: 'audiencefeeds.actionbar.externalFeeds',
+	  defaultMessage: 'External Feeds',
 	}
 });
 
-class FeedsActionBar extends React.Component<Props, State> {
+class AudienceSegmentExternalFeedsActionBar extends React.Component<Props, State> {
 	render() {
 		const {
 			match: {
@@ -34,7 +34,7 @@ class FeedsActionBar extends React.Component<Props, State> {
 		const breadcrumbPaths = [
 			{
 			  name: intl.formatMessage(messages.audienceFeeds),
-			  path: `/v2/o/${organisationId}/audience/feeds`,
+			  path: `/v2/o/${organisationId}/audience/external_feeds`,
 			},
 		];
 
@@ -48,4 +48,4 @@ export default compose<Props, {}>(
 	injectIntl,
 	injectDatamart,
 	injectNotifications,
-)(FeedsActionBar);
+)(AudienceSegmentExternalFeedsActionBar);

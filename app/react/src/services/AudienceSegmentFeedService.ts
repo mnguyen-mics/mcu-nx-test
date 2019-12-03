@@ -15,7 +15,7 @@ import { lazyInject } from '../config/inversify.config';
 import { TYPES } from '../constants/types';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 
-type AudienceFeedType = 'EXTERNAL_FEED' | 'TAG_FEED';
+export type AudienceFeedType = 'EXTERNAL_FEED' | 'TAG_FEED';
 type AudienceFeed = AudienceTagFeed | AudienceExternalFeed;
 
 export interface GetFeeds extends PaginatedApiParam {
