@@ -76,7 +76,8 @@ const messages = defineMessages({
   },
   datamartNotFoundError: {
     id: 'partition.dashboard.err',
-    defaultMessage: 'The datamart related to this partition is no longer a datamart of this organisation.',
+    defaultMessage:
+      'The datamart related to this partition is no longer a datamart of this organisation.',
   },
 });
 
@@ -181,11 +182,13 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
           ),
         ];
 
-        const promises = audiencePromises.concat(
-          !datamart
-            ? Promise.reject(intl.formatMessage(messages.datamartNotFoundError))
-            : this.fetchTotalUsers(datamart),
-        );
+        const promises = datamart
+          ? audiencePromises.concat(this.fetchTotalUsers(datamart))
+          : [
+              Promise.reject(
+                intl.formatMessage(messages.datamartNotFoundError),
+              ),
+            ];
 
         return Promise.all(promises)
           .then(res => {
