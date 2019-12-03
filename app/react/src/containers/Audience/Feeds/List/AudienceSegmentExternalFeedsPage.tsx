@@ -12,14 +12,14 @@ type Props = RouteComponentProps<{ organisationId: string }> &
 class AudienceSegmentExternalFeedsPage extends React.Component<Props, {}> {
   render() {
     return (
-		<div className="ant-layout">
-		  <AudienceSegmentExternalFeedsActionBar />
-		  <div className="ant-layout">
-			<Layout className="mcs-content-container">
-			  <AudienceFeedsTable feedType="EXTERNAL_FEED" />
-			</Layout>
-		  </div>
-		</div>
+      <div className="ant-layout">
+        <AudienceSegmentExternalFeedsActionBar />
+        <div className="ant-layout">
+          <Layout className="mcs-content-container">
+            <AudienceFeedsTable feedType="EXTERNAL_FEED" />
+          </Layout>
+        </div>
+      </div>
     );
   }
 }

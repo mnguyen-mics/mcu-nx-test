@@ -3,16 +3,17 @@ import { Index } from '../../../../utils';
 import { Status } from '../../../../models/Plugins';
 
 const artifactIdSearchSetting = {
-    paramName: 'artifactId',
-    defaultValue: [],
-    deserialize: (query: Index<string>) => {
-        if (query.artifactId) {
-            return query.artifactId.split(',');
-        }
-        return [];
-    },
-    serialize: (value: string[]) => value.join(','),
-    isValid: (query: Index<string>) => !query.artifactId || query.artifactId.split(',').length > 0,
+  paramName: 'artifactId',
+  defaultValue: [],
+  deserialize: (query: Index<string>) => {
+    if (query.artifactId) {
+      return query.artifactId.split(',');
+    }
+    return [];
+  },
+  serialize: (value: string[]) => value.join(','),
+  isValid: (query: Index<string>) =>
+    !query.artifactId || query.artifactId.split(',').length > 0,
 };
 
 const statusSearchSetting = {
