@@ -13,18 +13,14 @@ type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedDatamartProps &
   InjectedNotificationProps;
 
-interface State {
-  exportIsRunning: boolean;
-}
-
 const messages = defineMessages({
   audienceFeeds: {
-    id: 'audiencefeeds.actionbar.tagFeeds',
-    defaultMessage: 'Tag Feeds',
+    id: 'audiencefeeds.actionbar.feeds',
+    defaultMessage: 'Feeds',
   },
 });
 
-class AudienceSegmentTagFeedsActionBar extends React.Component<Props, State> {
+class AudienceFeedsActionBar extends React.Component<Props, {}> {
   render() {
     const {
       match: {
@@ -36,7 +32,7 @@ class AudienceSegmentTagFeedsActionBar extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.audienceFeeds),
-        path: `/v2/o/${organisationId}/audience/tag_feeds`,
+        path: `/v2/o/${organisationId}/audience/feeds`,
       },
     ];
 
@@ -48,4 +44,4 @@ export default compose<Props, {}>(
   injectIntl,
   injectDatamart,
   injectNotifications,
-)(AudienceSegmentTagFeedsActionBar);
+)(AudienceFeedsActionBar);
