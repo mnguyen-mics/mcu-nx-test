@@ -134,14 +134,6 @@ const messages = defineMessages({
     id: 'audience.segments.list.column.type',
     defaultMessage: 'Type',
   },
-  userAccounts: {
-    id: 'audience.segments.list.column.userAccounts',
-    defaultMessage: 'User Accounts',
-  },
-  userPoints: {
-    id: 'audience.segments.list.column.userPoints',
-    defaultMessage: 'User Points',
-  },
   addition: {
     id: 'audience.segments.list.column.addition',
     defaultMessage: 'Addition',
@@ -150,18 +142,31 @@ const messages = defineMessages({
     id: 'audience.segments.list.column.deletion',
     defaultMessage: 'Deletion',
   },
-  cookies: {
-    id: 'audience.segments.list.column.cookies',
-    defaultMessage: 'Cookies',
-  },
-  emails: {
-    id: 'audience.segments.list.column.emails',
-    defaultMessage: 'Emails',
-  },
   editSegment: {
     id: 'audience.segments.list.editSegment',
     defaultMessage: 'Edit',
+  }
+});
+
+const messageMap: {
+  [key: string]: FormattedMessage.MessageDescriptor
+} = defineMessages({
+  user_accounts_count: {
+    id: 'audience.segments.list.column.userAccounts',
+    defaultMessage: 'User Accounts',
   },
+  user_points_count: {
+    id: 'audience.segments.list.column.userPoints',
+    defaultMessage: 'User Points',
+  },
+  desktop_cookie_ids_count: {
+    id: 'audience.segments.list.column.cookies',
+    defaultMessage: 'Cookies',
+  },
+  emails_count: {
+    id: 'audience.segments.list.column.emails',
+    defaultMessage: 'Emails',
+  }
 });
 
 export interface AudienceSegmentsTableProps {}
@@ -505,7 +510,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     const searchOnClick = () => this.columnStatSort(columnName);
     return (
       <ButtonStyleless onClick={searchOnClick}>
-       <FormattedMessage {...messages.userPoints} />
+       <FormattedMessage {...messageMap[columnName]} />
         <div className="mcs-table-header-icons">
           <McsIcon type="chevron" className={`${isAsc && sortField === columnName ? 'mcs-table-header-icon' : ''}`}/>
           <McsIcon type="chevron" className={`${isAsc === false && sortField === columnName ? 'mcs-table-header-icon' : ''}`} />
