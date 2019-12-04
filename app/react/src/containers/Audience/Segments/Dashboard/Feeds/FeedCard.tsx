@@ -403,7 +403,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             {intl.formatMessage(messages.edit)}
           </a>
         </Menu.Item>
-        {hasFeature('audience.feeds_stats') ? (
+        {hasFeature('audience-feeds_stats') ? (
           <Menu.Item key="1">
             <a onClick={openModal('stats')}>
               {intl.formatMessage(messages.stats)}
@@ -454,7 +454,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               <McsIcon type="status" className={this.generateStatusColor()} />{' '}
               {feed.status}
             </div>
-            {hasFeature('audience.feeds_stats') && (
+            {hasFeature('audience-feeds_stats') && (
               <div className="content-right">
                 {exportedUserPointsCount == null
                   ? '-'

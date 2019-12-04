@@ -1,5 +1,6 @@
 import {
   STORE_ORG_FEATURES,
+  STORE_FEATURE_FLAG_CLIENT
 } from '../action-types';
 
 const features = (state = {
@@ -10,6 +11,11 @@ const features = (state = {
       return {
         ...state,
         organisation: action.payload,
+      };
+    case STORE_FEATURE_FLAG_CLIENT:
+      return {
+        ...state,
+        client: action.payload
       };
     default:
       return state;

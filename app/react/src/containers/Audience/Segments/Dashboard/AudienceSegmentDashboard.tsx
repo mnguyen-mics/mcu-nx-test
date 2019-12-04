@@ -215,7 +215,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       if (
         segment.persisted &&
         this.isDatamartPionus() &&
-        this.props.hasFeature('audience.segment_exports')
+        this.props.hasFeature('audience-segment_exports')
       ) {
         items.push({
           title: intl.formatMessage(messages.exports),
