@@ -215,10 +215,17 @@ export class MonitoringService implements IMonitoringService {
   }
 
   fetchProcessings(datamart: DatamartResource) {
-    return OrganisationService
-    .getProcessings(datamart.organisation_id)
-    .then(response => {
-      return response.data;
+    return OrganisationService.getOrganisation(datamart.organisation_id).then(
+      res => {
+        const communityId = res.data.community_id;
+        return OrganisationService.getProcessings(communityId).then(
+          response => {
+            return response.data;
+          },
+        );
+      },
+    ).catch(e => {
+      return [];
     });
   }
 
