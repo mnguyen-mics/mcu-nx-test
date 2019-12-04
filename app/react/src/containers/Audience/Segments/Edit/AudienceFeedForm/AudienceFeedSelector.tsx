@@ -1,15 +1,18 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
-import { defineMessages, FormattedMessage } from 'react-intl';
-import { MenuPresentational } from '../../../../../components/FormMenu';
+import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { MenuPresentational, MenuList } from '../../../../../components/FormMenu';
 import { FeedType } from './domain';
+import { compose } from 'recompose';
 
 const { Content } = Layout;
 
 export interface AudienceFeedSelectorProps {
   onSelect: (feedType: FeedType) => void;
 }
+
+type Props = AudienceFeedSelectorProps & InjectedIntlProps;
 
 const messages = defineMessages({
   listTitle: {
@@ -24,14 +27,30 @@ const messages = defineMessages({
     id: 'audience.segments.form.audienceFeedSelector.or',
     defaultMessage: 'Or',
   },
+  feedAdvanced: {
+    id: 'audience.segments.form.audienceFeedSelector.advanced',
+    defaultMessage: 'Advanced'
+  },
+  createServerSidePreset: {
+    id: 'audience.segments.form.audienceFeedSelector.createServerSidePreset',
+    defaultMessage: 'Create a server side preset',
+  },
+  createClientSidePreset: {
+    id: 'audience.segments.form.audienceFeedSelector.createClientSidePreset',
+    defaultMessage: 'Create a client side preset',
+  }
 });
 
-class AudienceFeedSelector extends React.Component<AudienceFeedSelectorProps> {
+class AudienceFeedSelector extends React.Component<Props> {
   onSelect = (feedType: FeedType) => () => {
     this.props.onSelect(feedType)
   }
 
   render() {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
     return (
       <Layout>
         <div className="edit-layout ant-layout">
@@ -61,6 +80,19 @@ class AudienceFeedSelector extends React.Component<AudienceFeedSelectorProps> {
                     />
                   </div>
                 </Row>
+                <Row className="intermediate-title">
+                    <FormattedMessage {...messages.feedAdvanced} />
+                  </Row>
+                  <Row className="menu">
+                    <MenuList
+                      title={formatMessage(messages.createServerSidePreset)}
+                      select={this.onSelect('external')}
+                    />
+                    <MenuList
+                      title={formatMessage(messages.createClientSidePreset)}
+                      select={this.onSelect('tag')}
+                    />
+                </Row>
               </Row>
             </Content>
           </Layout>
@@ -70,4 +102,4 @@ class AudienceFeedSelector extends React.Component<AudienceFeedSelectorProps> {
   }
 }
 
-export default AudienceFeedSelector
+export default compose<Props, AudienceFeedSelectorProps>(injectIntl)(AudienceFeedSelector)
