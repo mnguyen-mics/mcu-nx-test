@@ -18,20 +18,19 @@ export interface IMicsTagService {
 
 @injectable()
 export class MicsTagService implements IMicsTagService {
-  window: MicsWindow;
   pushPageView = (datalayer?: any): void => {
-    if (this.window.mics && this.window.mics.push) {
-      this.window.mics.push('PageView', datalayer ? datalayer : {});
+    if ((window as any).mics && (window as any).mics.push) {
+      (window as any).mics.push('PageView', datalayer ? datalayer : {});
     }
   };
   addUserAccountProperty = (userAccountId: string): void => {
-    if (this.window.mics && this.window.mics.push) {
-      this.window.mics.addProperty('$user_account_id', userAccountId);
+    if ((window as any).mics && (window as any).mics.addProperty) {
+      (window as any).mics.addProperty('$user_account_id', userAccountId);
     }
   };
   setUserProperties = (user: { id: string }): void => {
-    if (this.window.mics && this.window.mics.push) {
-      this.window.mics.addProperty('$set_user_profile_properties', {
+    if ((window as any).mics && (window as any).mics.addProperty) {
+      (window as any).mics.addProperty('$set_user_profile_properties', {
         $user_account_id: user.id,
       });
     }

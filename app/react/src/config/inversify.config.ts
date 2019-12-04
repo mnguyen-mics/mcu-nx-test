@@ -1,4 +1,4 @@
-import { IMicsTagService, MicsTagService } from './../services/MicsTagServices';
+import { IMicsTagService, MicsTagService } from '../services/MicsTagService';
 import PersistedStoreService, {
   IPersistedStoreService,
 } from './../services/PersistedStoreService';

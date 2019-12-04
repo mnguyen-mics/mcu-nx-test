@@ -23,6 +23,9 @@ export interface IOrganisationService {
   getOrganisation: (
     organisationId: string,
   ) => Promise<DataResponse<OrganisationResource>>;
+  getProcessings: (
+    organisationId: string,
+  ) => Promise<DataListResponse<ProcessingResource>>;
 }
 
 @injectable()
@@ -69,8 +72,10 @@ export default class OrganisationService implements IOrganisationService {
   ): Promise<DataResponse<OrganisationResource>> {
     const endpoint = `organisations/${organisationId}`;
     return ApiService.getRequest(endpoint);
-  },
-  getProcessings(organisationId: string): Promise<DataListResponse<ProcessingResource>> {
+  }
+  getProcessings(
+    organisationId: string,
+  ): Promise<DataListResponse<ProcessingResource>> {
     const endpoint = `processings?community_id=${organisationId}`;
     return ApiService.getRequest(endpoint);
   }

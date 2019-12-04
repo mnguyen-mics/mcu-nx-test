@@ -72,6 +72,8 @@ const displayServiceItemType = (type: string) => {
     .join(' ');
 };
 
+// TODO: when backend is available, retrieve all types and create
+// a proper array of labels typed like this: Label[]
 const serviceTypeLabels: ServiceTypeLabel[] = [
   { id: '1', name: 'Audience Segment', type: 'AUDIENCE_DATA.AUDIENCE_SEGMENT' },
   { id: '2', name: 'User Data Type', type: 'AUDIENCE_DATA.USER_DATA_TYPE' },
@@ -254,7 +256,8 @@ class OfferCatalogTable extends React.Component<Props, State> {
   render() {
     const { dataSource, loading, labels, selectedLabels } = this.state;
 
-    const labelsOptions = {
+    // TO
+    const labelsOptions: any = {
       labels: labels,
       selectedLabels: labels.filter(label => {
         return selectedLabels.find(l => l.id === label.id) ? true : false;

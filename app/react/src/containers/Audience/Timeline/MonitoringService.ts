@@ -21,7 +21,7 @@ import {
   isUserAccountIdentifier,
 } from '../../../models/timeline/timeline';
 import DatamartService from '../../../services/DatamartService';
-import OrganisationService from '../../../services/OrganisationService';
+import { IOrganisationService } from '../../../services/OrganisationService';
 
 export interface IMonitoringService {
   fetchProfileData: (
@@ -71,6 +71,9 @@ export interface IMonitoringService {
 export class MonitoringService implements IMonitoringService {
   @inject(TYPES.IUserDataService)
   private _userDataService: IUserDataService;
+
+  @inject(TYPES.IOrganisationService)
+  private _organisationService: IOrganisationService;
 
   async fetchProfileData(datamart: DatamartResource, userIdentifier: Identifier): Promise<UserProfileGlobal> {
 
@@ -215,10 +218,10 @@ export class MonitoringService implements IMonitoringService {
   }
 
   fetchProcessings(datamart: DatamartResource) {
-    return OrganisationService.getOrganisation(datamart.organisation_id).then(
+    return this._organisationService.getOrganisation(datamart.organisation_id).then(
       res => {
         const communityId = res.data.community_id;
-        return OrganisationService.getProcessings(communityId).then(
+        return this._organisationService.getProcessings(communityId).then(
           response => {
             return response.data;
           },

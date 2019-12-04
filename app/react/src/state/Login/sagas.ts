@@ -62,7 +62,7 @@ function* authorizeLoop(
   isNewLogin: boolean = false,
 ) {
   const _authService = yield getContext('authService');
-  const _micsTagService = yield getContext('authService');
+  const _micsTagService = yield getContext('micsTagService');
   try {
     let refreshToken;
     if (isAuthenticated || canAuthenticate) {
@@ -131,7 +131,7 @@ function* authorizeLoop(
           const factory = SplitFactory({
             core: {
               authorizationKey: '9o6sgmo2fbk275ao4cugtnd9ch6sb3fstv1d',
-              key: connectedUser && connectedUser.id,
+              key: connectedUser!.id,
               trafficType: 'user',
             },
           });

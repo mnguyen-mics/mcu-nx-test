@@ -34,6 +34,7 @@ export interface MicsReduxState {
   };
   features: {
     organisation: string[];
+    client: string;
   };
   notifications: Notification[];
   login: {
