@@ -226,7 +226,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         intlMessage: messages.creationDate,
         key: 'creation_date',
         isHideable: false,
-        render: (text: string) => moment(text).format('DD/MM/YYYY h:mm:ss'),
+        render: (text: string) => moment(text).format('DD/MM/YYYY HH:mm:ss'),
       },
       {
         intlMessage: messages.startDate,
@@ -234,7 +234,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         isHideable: false,
         render: (text: string) =>
           text
-            ? moment(text).format('DD/MM/YYYY h:mm:ss')
+            ? moment(text).format('DD/MM/YYYY HH:mm:ss')
             : formatMessage(messages.notStarted),
       },
       {

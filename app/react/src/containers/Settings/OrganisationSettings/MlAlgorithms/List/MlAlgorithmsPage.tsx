@@ -172,7 +172,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           isHideable: false,
           render: (text: string, record: MlAlgorithmResource) =>
             record.last_updated_date
-              ? moment(record.last_updated_date).format('DD/MM/YYYY h:mm:ss')
+              ? moment(record.last_updated_date).format('DD/MM/YYYY HH:mm:ss')
               : formatMessage(messages.lastUpdatedDate),
         },
         {

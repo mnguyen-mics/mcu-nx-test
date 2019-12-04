@@ -360,7 +360,7 @@ class Imports extends React.Component<JoinedProps, State> {
         isHideable: false,
         render: (text: string) =>
           text
-            ? moment(text).format('DD/MM/YYYY h:mm:ss')
+            ? moment(text).format('DD/MM/YYYY HH:mm:ss')
             : formatMessage(messages.notStarted),
       },
       {
@@ -370,7 +370,7 @@ class Imports extends React.Component<JoinedProps, State> {
         render: (text: string, record: ImportExecution) =>
           record.start_date && record.duration
             ? moment(record.start_date + record.duration).format(
-                'DD/MM/YYYY h:mm:ss',
+                'DD/MM/YYYY HH:mm:ss',
               )
             : formatMessage(messages.notEnded),
       },
