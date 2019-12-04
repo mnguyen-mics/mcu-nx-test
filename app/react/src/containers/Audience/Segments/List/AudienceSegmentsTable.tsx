@@ -1,6 +1,7 @@
 import * as React from 'react';
 import queryString from 'query-string';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Icon, Tooltip } from 'antd';
 import {
@@ -9,45 +10,41 @@ import {
   InjectedIntlProps,
   injectIntl,
 } from 'react-intl';
-
 import {
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView';
-
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
-  compareSearches,
   SearchSetting,
+  KeywordSearchSettings,
+  PaginationSearchSettings,
+  TypeSearchSettings,
+  LabelsSearchSettings,
+  DatamartSearchSettings,
+  compareSearches,
 } from '../../../../utils/LocationSearchHelper';
 
-import {
-  formatMetric,
-  normalizeReportView,
-} from '../../../../utils/MetricHelper';
+import { formatMetric } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
 import {
   AudienceSegmentResource,
   AudienceSegmentShape,
 } from '../../../../models/audiencesegment';
-import ReportService from '../../../../services/ReportService';
-import McsMoment from '../../../../utils/McsMoment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { Index } from '../../../../utils';
 import { Label } from '../../../../components/LabelsSelector';
 import {
   getPaginatedApiParam,
   CancelablePromise,
-  makeCancelable,
 } from '../../../../utils/ApiHelper';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,
@@ -56,6 +53,8 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
+import { notifyError } from '../../../../state/Notifications/actions';
+import { ButtonStyleless, McsIcon } from '../../../../components';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -135,14 +134,6 @@ const messages = defineMessages({
     id: 'audience.segments.list.column.type',
     defaultMessage: 'Type',
   },
-  userAccounts: {
-    id: 'audience.segments.list.column.userAccounts',
-    defaultMessage: 'User Accounts',
-  },
-  userPoints: {
-    id: 'audience.segments.list.column.userPoints',
-    defaultMessage: 'User Points',
-  },
   addition: {
     id: 'audience.segments.list.column.addition',
     defaultMessage: 'Addition',
@@ -151,18 +142,31 @@ const messages = defineMessages({
     id: 'audience.segments.list.column.deletion',
     defaultMessage: 'Deletion',
   },
-  cookies: {
-    id: 'audience.segments.list.column.cookies',
-    defaultMessage: 'Cookies',
-  },
-  emails: {
-    id: 'audience.segments.list.column.emails',
-    defaultMessage: 'Emails',
-  },
   editSegment: {
     id: 'audience.segments.list.editSegment',
     defaultMessage: 'Edit',
+  }
+});
+
+const messageMap: {
+  [key: string]: FormattedMessage.MessageDescriptor
+} = defineMessages({
+  user_accounts_count: {
+    id: 'audience.segments.list.column.userAccounts',
+    defaultMessage: 'User Accounts',
   },
+  user_points_count: {
+    id: 'audience.segments.list.column.userPoints',
+    defaultMessage: 'User Points',
+  },
+  desktop_cookie_ids_count: {
+    id: 'audience.segments.list.column.cookies',
+    defaultMessage: 'Cookies',
+  },
+  emails_count: {
+    id: 'audience.segments.list.column.emails',
+    defaultMessage: 'Emails',
+  }
 });
 
 export interface AudienceSegmentsTableProps {}
@@ -177,17 +181,24 @@ type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
   InjectedDatamartProps;
 
+interface AudienceSegmentsFilterParams
+  extends KeywordSearchSettings,
+    PaginationSearchSettings,
+    TypeSearchSettings,
+    LabelsSearchSettings,
+    DatamartSearchSettings {
+  orderBy?: string;
+}
+
 interface State {
   list: {
-    segments: AudienceSegmentResource[];
+    segments: AudienceSegmentShape[];
     total: number;
     isLoading: boolean;
   };
-  reportView: {
-    data: Array<Index<any>>;
-    isLoading: boolean;
-  };
   hasItem: boolean;
+  isAsc?: boolean;
+  sortField?: string;
 }
 
 class AudienceSegmentsTable extends React.Component<Props, State> {
@@ -203,10 +214,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         total: 0,
         segments: [],
       },
-      reportView: {
-        data: [],
-        isLoading: true,
-      },
       hasItem: true,
     };
   }
@@ -220,21 +227,59 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
     } = this.props;
 
-    if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
+    if (!isSearchValid(search, this.getSearchSetting())) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(
-          search,
-          this.getSearchSetting(organisationId),
-        ),
+        search: buildDefaultSearch(search, this.getSearchSetting()),
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, this.getSearchSetting(organisationId));
+      const filter = parseSearch(search, this.getSearchSetting());
       const datamartId = filter.datamartId;
       this.fetchAudienceSegments(organisationId, datamartId, filter);
-      this.fetchAudienceSegmentStatistics(organisationId, datamartId);
-      this.checkIfHasItem(organisationId, filter);
+    }
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      datamart,
+      match: {
+        params: { organisationId },
+      },
+      location: { search },
+    } = this.props;
+
+    const {
+      match: {
+        params: { organisationId: prevOrganisationId },
+      },
+      location: { search: prevSearch },
+    } = prevProps;
+
+    const filter = parseSearch<AudienceSegmentsFilterParams>(
+      search,
+      this.getSearchSetting(),
+    );
+
+    const prevFilter = parseSearch<AudienceSegmentsFilterParams>(
+      prevSearch,
+      this.getSearchSetting(),
+    );
+
+    // Changing the sort field : new API call with current
+    if (
+      !compareSearches(prevSearch, search) ||
+      prevOrganisationId !== organisationId ||
+      prevFilter.pageSize !== filter.pageSize ||
+      prevFilter.currentPage !== filter.currentPage ||
+      prevFilter.keywords !== filter.keywords ||
+      !_.isEqual(prevFilter.type, filter.type) ||
+      (prevFilter.orderBy !== filter.orderBy &&
+        filter.pageSize < this.state.list.total)
+    ) {
+      if (isSearchValid(search, this.getSearchSetting())) {
+        this.fetchAudienceSegments(organisationId, datamart.id, filter);
+      }
     }
   }
 
@@ -243,18 +288,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       promise.cancel();
     });
   }
-
-  checkIfHasItem = (organisationId: string, filter: Index<any>) => {
-    const newFilters = {
-      with_third_parties: true,
-      ...getPaginatedApiParam(1, 1),
-    };
-    return this._audienceSegmentService
-      .getSegments(organisationId, newFilters)
-      .then(res => {
-        this.setState({ hasItem: res.count !== 0 });
-      });
-  };
 
   fetchAudienceSegments = (
     organisationId: string,
@@ -273,33 +306,13 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             total: res.total ? res.total : res.count,
             isLoading: false,
           },
+          hasItem: res.count !== 0,
         });
+      })
+      .catch(e => {
+        notifyError(e);
       });
   };
-
-  fetchAudienceSegmentStatistics = (
-    organisationId: string,
-    datamartId: string,
-  ) => {
-    const cancelablePromise = makeCancelable(
-      ReportService.getAudienceSegmentReport(
-        organisationId,
-        new McsMoment('now'),
-        new McsMoment('now'),
-        ['audience_segment_id'],
-      ),
-    );
-    this.cancellablePromises.push(cancelablePromise);
-    return cancelablePromise.promise.then(res => {
-      this.setState({
-        reportView: {
-          data: normalizeReportView(res.data.report_view),
-          isLoading: false,
-        },
-      });
-    });
-  };
-
   buildApiSearchFilters = (filter: Index<any>, datamartId?: string) => {
     let formattedFilters: Index<any> = {
       with_third_parties: true,
@@ -322,6 +335,12 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         keywords: filter.keywords,
       };
     }
+    if (filter.orderBy) {
+      formattedFilters = {
+        ...formattedFilters,
+        order_by: filter.orderBy,
+      };
+    }
     if (filter.type.length) {
       formattedFilters = {
         ...formattedFilters,
@@ -342,68 +361,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     }
     return formattedFilters;
   };
-
-  componentWillReceiveProps(nextProps: Props) {
-    const {
-      location: { search },
-      match: {
-        params: { organisationId },
-      },
-      history,
-    } = this.props;
-
-    const {
-      location: {
-        pathname: nextPathname,
-        search: nextSearch,
-        state: nextState,
-      },
-      match: {
-        params: { organisationId: nextOrganisationId },
-      },
-    } = nextProps;
-
-    if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId ||
-      (nextState && nextState.reloadDataSource === true)
-    ) {
-      if (
-        !isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))
-      ) {
-        history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(
-            nextSearch,
-            this.getSearchSetting(nextOrganisationId),
-          ),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
-        });
-      } else {
-        const filter = parseSearch(
-          search,
-          this.getSearchSetting(organisationId),
-        );
-        const nextFilter = parseSearch(
-          nextSearch,
-          this.getSearchSetting(nextOrganisationId),
-        );
-        const datamartId = nextFilter.datamartId;
-        this.setState({ list: { ...this.state.list, isLoading: true } });
-        this.fetchAudienceSegments(nextOrganisationId, datamartId, nextFilter);
-        this.checkIfHasItem(organisationId, filter);
-        if (
-          organisationId !== nextOrganisationId ||
-          (nextState && nextState.reloadDataSource === true)
-        ) {
-          this.setState({
-            reportView: { ...this.state.reportView, isLoading: true },
-          });
-          this.fetchAudienceSegmentStatistics(nextOrganisationId, datamartId);
-        }
-      }
-    }
-  }
 
   // archiveSegment = (segment: AudienceSegmentResource) => {
   //   const {
@@ -450,53 +407,27 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       history,
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/audience/segments/${
-      segment.id
-    }/edit`;
+    const editUrl = `/v2/o/${organisationId}/audience/segments/${segment.id}/edit`;
 
     history.push(editUrl);
   };
 
-  getSearchSetting(organisationId: string): SearchSetting[] {
+  getSearchSetting(): SearchSetting[] {
     return [...SEGMENTS_SEARCH_SETTINGS];
   }
 
   updateLocationSearch = (params: Index<any>) => {
     const {
       history,
-      match: {
-        params: { organisationId },
-      },
       location: { search: currentSearch, pathname },
     } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        this.getSearchSetting(organisationId),
-      ),
+      search: updateSearch(currentSearch, params, this.getSearchSetting()),
     };
 
     history.push(nextLocation);
-  };
-
-  buildDataset = (
-    segments: AudienceSegmentResource[],
-    report: Array<Index<any>>,
-  ) => {
-    const formattedReport = normalizeArrayOfObject(
-      report,
-      'audience_segment_id',
-    );
-
-    return segments.map(segment => {
-      return {
-        ...formattedReport[segment.id as any],
-        ...segment,
-      };
-    });
   };
 
   isPionusDatamart = (dmId?: string) => {
@@ -526,12 +457,67 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     numeralFormat: string,
     currency: string = '',
   ) => {
-    if (this.state.reportView.isLoading) {
+    if (this.state.list.isLoading) {
       return <i className="mcs-table-cell-loading" />;
     }
     const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
     return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
   };
+
+  columnStatSort = (key: string, a?: number, b?: number) => {
+    const getUrlString = (
+      colunmKey: string,
+      urlString?: string,
+    ): string | undefined => {
+      if (urlString) {
+        if (urlString.startsWith('-')) {
+          this.setState({ isAsc: undefined, sortField: undefined });
+          return undefined;
+        } else {
+          this.setState({ isAsc: false, sortField: colunmKey });
+          return `-${colunmKey}`;
+        }
+      }
+      this.setState({ isAsc: true, sortField: colunmKey });
+      return colunmKey;
+    };
+
+    const {
+      history,
+      location: { search: currentSearch, pathname },
+    } = this.props;
+
+    const filter = parseSearch<AudienceSegmentsFilterParams>(
+      currentSearch,
+      this.getSearchSetting(),
+    );
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(
+        currentSearch,
+        {
+          orderBy: getUrlString(key, filter.orderBy),
+        },
+        this.getSearchSetting(),
+      ),
+    };
+    history.push(nextLocation);
+  };
+
+  getColumnButton (columnName: string): React.ReactNode {
+    const { isAsc, sortField } = this.state;
+    const searchOnClick = () => this.columnStatSort(columnName);
+    return (
+      <ButtonStyleless onClick={searchOnClick}>
+       <FormattedMessage {...messageMap[columnName]} />
+        <div className="mcs-table-header-icons">
+          <McsIcon type="chevron" className={`${isAsc && sortField === columnName ? 'mcs-table-header-icon' : ''}`}/>
+          <McsIcon type="chevron" className={`${isAsc === false && sortField === columnName ? 'mcs-table-header-icon' : ''}`} />
+        </div>
+      </ButtonStyleless>
+    );
+  }
 
   buildDataColumns = () => {
     const {
@@ -639,29 +625,29 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: messages.userPoints,
-        key: 'user_points',
+        title: this.getColumnButton('user_points_count'),
+        key: 'user_points_count',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: messages.userAccounts,
-        key: 'user_accounts',
+        title: () => this.getColumnButton('user_accounts_count'),
+        key: 'user_accounts_count',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: messages.emails,
-        key: 'emails',
+        title: () => this.getColumnButton('emails_count'),
+        key: 'emails_count',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: messages.cookies,
-        key: 'desktop_cookie_ids',
+        title: () => this.getColumnButton('desktop_cookie_ids_count'),
+        key: 'desktop_cookie_ids_count',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
@@ -714,7 +700,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       workspace,
     } = this.props;
 
-    const filter = parseSearch(search, this.getSearchSetting(organisationId));
+    const { hasItem, list } = this.state;
+
+    const filter = parseSearch(search, this.getSearchSetting());
 
     const searchOptions = {
       placeholder: intl.formatMessage(messages.searchTitle),
@@ -746,9 +734,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         }),
     };
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<AudienceSegmentResource>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<
+      AudienceSegmentShape
+    >> = [
       {
         key: 'action',
         actions: () => [
@@ -757,7 +745,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             callback: this.editSegment,
           },
           // {
-          //   intlMessage: messageMap.archive,
+          //   title: messageMap.archive,
           //   callback: this.archiveSegment,
           // },
         ],
@@ -854,7 +842,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       buttonMessage: messages.filterByLabel,
     };
 
-    return this.state.hasItem ? (
+    return hasItem ? (
       <div className="mcs-table-container">
         <TableViewFilters
           columns={this.buildDataColumns()}
@@ -862,11 +850,8 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           searchOptions={searchOptions}
           filtersOptions={filtersOptions}
           columnsVisibilityOptions={columnsVisibilityOptions}
-          dataSource={this.buildDataset(
-            this.state.list.segments,
-            this.state.reportView.data,
-          )}
-          loading={this.state.list.isLoading}
+          dataSource={list.segments}
+          loading={list.isLoading}
           pagination={pagination}
           labelsOptions={labelsOptions}
         />
