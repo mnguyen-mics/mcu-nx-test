@@ -269,13 +269,13 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     const { isLoadingStats, statBySegmentId, totalUserPoint } = this.state;
     return [
       {
-        title: messages.partNumber,
+        intlMessage: messages.partNumber,
         key: 'part_number',
         isHideable: false,
         render: (text, record) => record.part_number,
       },
       {
-        title: messages.users,
+        intlMessage: messages.users,
         key: 'users',
         isHideable: false,
         render: (text, record) => {
@@ -287,7 +287,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         },
       },
       {
-        title: messages.percentage,
+        intlMessage: messages.percentage,
         key: 'percentage',
         isHideable: false,
         render: (text, record) => {

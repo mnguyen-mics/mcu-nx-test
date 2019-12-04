@@ -275,7 +275,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
             audienceSegment?: AudienceSegmentResource;
         }>> = [
             {
-                title: messages.segmentName,
+                intlMessage: messages.segmentName,
                 key: 'segmentName',
                 isHideable: false,
                 render: (
@@ -299,7 +299,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                 ),
             },
             {
-                title: messages.artifactId,
+                intlMessage: messages.artifactId,
                 key: 'artifactId',
                 isHideable: false,
                 render: (
@@ -308,7 +308,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                 ) => <span>{record.feed.artifact_id}</span>,
             },
             {
-                title: messages.status,
+                intlMessage: messages.status,
                 key: 'status',
                 isHideable: false,
                 render: (
