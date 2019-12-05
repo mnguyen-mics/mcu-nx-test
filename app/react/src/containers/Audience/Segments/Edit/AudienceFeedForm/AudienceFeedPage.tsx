@@ -10,7 +10,7 @@ import { Loading } from '../../../../../components';
 import {
   IAudienceFeedFormService,
 } from './AudienceFeedFormService';
-import { AudienceFeedFormModel, FeedRouteParams, FeedType } from './domain';
+import { AudienceFeedFormModel, FeedRouteParams, FeedAction } from './domain';
 import AudienceFeedSelector from './AudienceFeedSelector';
 import { EditContentLayout } from '../../../../../components/Layout';
 import messages from '../messages';
@@ -18,6 +18,8 @@ import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import CreateFeedPresetSelectionPage from './CreateFeedPresetSelectionPage';
+import { Path } from '../../../../../components/ActionBar';
 
 export interface AudienceFeedPageProps {}
 
@@ -31,7 +33,7 @@ interface AudienceFeedPageState {
   edition: boolean;
   initialValue?: AudienceFeedFormModel;
   audienceSegment?: AudienceSegmentShape;
-  type?: FeedType;
+  type?: FeedAction;
 }
 
 class AudienceFeedPage extends React.Component<
@@ -150,7 +152,7 @@ class AudienceFeedPage extends React.Component<
     );
   };
 
-  onSelectFeedType = (feedType: FeedType) => {
+  onSelectFeedType = (feedType: FeedAction) => {
     this.setState({ type: feedType });
   };
 
@@ -164,12 +166,12 @@ class AudienceFeedPage extends React.Component<
     const { type } = this.state;
 
     if (feedType)
-      return feedType === 'tag'
+      return feedType === 'create_tag'
         ? 'AUDIENCE_SEGMENT_TAG_FEED'
         : 'AUDIENCE_SEGMENT_EXTERNAL_FEED';
 
     return type
-      ? type === 'tag'
+      ? type === 'create_tag'
         ? 'AUDIENCE_SEGMENT_TAG_FEED'
         : 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
       : 'AUDIENCE_SEGMENT_EXTERNAL_FEED';
@@ -182,13 +184,16 @@ class AudienceFeedPage extends React.Component<
       },
     } = this.props;
 
-    if (this.state.loading) {
+    const {
+      loading,
+      type,
+    } = this.state;
+
+    if (loading) {
       return <Loading className="loading-full-screen" />;
     }
 
-    const type = this.getFeedType();
-
-    const breadcrumbPaths = [
+    const breadcrumbPaths: Path[] = [
       {
         name: messages.actionBarSegmentTitle,
         path: `/v2/o/${organisationId}/audience/segments`,
@@ -200,14 +205,15 @@ class AudienceFeedPage extends React.Component<
             : '',
         path: `/v2/o/${organisationId}/audience/segments/${segmentId}`,
       },
-      {
-        name: feedId
-          ? messages.actionBarSegmentFeedsEdit
-          : messages.actionBarSegmentFeedsCreate,
-      },
     ];
 
-    if (!feedType && !this.state.type) {
+    const feedBreadcrumbPaths: Path[] = breadcrumbPaths.concat({
+      name: feedId
+        ? messages.actionBarSegmentFeedsEdit
+        : messages.actionBarSegmentFeedsCreate,
+    });
+
+    if (!feedType && !type) {
       const actionbarProps = {
         onClose: this.onClose,
         formId: 'audienceSegmentForm',
@@ -220,13 +226,27 @@ class AudienceFeedPage extends React.Component<
       );
     }
 
+    if(type === 'create_external_preset' || type === 'create_tag_preset') {
+      const presetBreadcrumbPaths: Path[] = breadcrumbPaths.concat({
+        name: messages.actionBarSegmentPresetCreate
+      });
+
+      return (
+        <CreateFeedPresetSelectionPage 
+          feedType={type === 'create_external_preset' ? 'EXTERNAL_FEED' : 'TAG_FEED'}
+          breadcrumbPaths={presetBreadcrumbPaths}
+          onClose={this.onClose}
+        />
+      )
+    }
+
     return (
       <AudienceFeedForm
         onClose={this.onClose}
         initialValues={this.state.initialValue}
         onSave={this.save}
-        breadcrumbPaths={breadcrumbPaths}
-        type={type}
+        breadcrumbPaths={feedBreadcrumbPaths}
+        type={this.getFeedType()}
       />
     );
   }

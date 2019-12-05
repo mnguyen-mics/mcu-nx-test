@@ -3,13 +3,13 @@ import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
 import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { MenuPresentational, MenuList } from '../../../../../components/FormMenu';
-import { FeedType } from './domain';
+import { FeedAction } from './domain';
 import { compose } from 'recompose';
 
 const { Content } = Layout;
 
 export interface AudienceFeedSelectorProps {
-  onSelect: (feedType: FeedType) => void;
+  onSelect: (feedType: FeedAction) => void;
 }
 
 type Props = AudienceFeedSelectorProps & InjectedIntlProps;
@@ -42,7 +42,7 @@ const messages = defineMessages({
 });
 
 class AudienceFeedSelector extends React.Component<Props> {
-  onSelect = (feedType: FeedType) => () => {
+  onSelect = (feedType: FeedAction) => () => {
     this.props.onSelect(feedType)
   }
 
@@ -67,7 +67,7 @@ class AudienceFeedSelector extends React.Component<Props> {
                       title={'Server side'}
                       subtitles={['Triggered when users are added / deleted from segment']}
                       type="data"
-                      select={this.onSelect('external')}
+                      select={this.onSelect('create_external')}
                     />
                     <div className="separator">
                       <FormattedMessage {...messages.segmentTypeOr} />
@@ -76,7 +76,7 @@ class AudienceFeedSelector extends React.Component<Props> {
                       title={'Client side'}
                       subtitles={['Triggered when users are visiting your webpages / apps']}
                       type="code"
-                      select={this.onSelect('tag')}
+                      select={this.onSelect('create_tag')}
                     />
                   </div>
                 </Row>
@@ -86,11 +86,11 @@ class AudienceFeedSelector extends React.Component<Props> {
                   <Row className="menu">
                     <MenuList
                       title={formatMessage(messages.createServerSidePreset)}
-                      select={this.onSelect('external')}
+                      select={this.onSelect('create_external_preset')}
                     />
                     <MenuList
                       title={formatMessage(messages.createClientSidePreset)}
-                      select={this.onSelect('tag')}
+                      select={this.onSelect('create_tag_preset')}
                     />
                 </Row>
               </Row>

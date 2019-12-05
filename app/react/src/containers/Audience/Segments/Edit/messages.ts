@@ -274,4 +274,8 @@ export default defineMessages({
     id: 'audience.segment.actionbar.feeds.edit',
     defaultMessage: 'Edit your Feed',
   },
+  actionBarSegmentPresetCreate: {
+    id: 'audience.segment.actionbar.preset.create',
+    defaultMessage: 'Create a new Preset',
+  },
 });

@@ -9,6 +9,6 @@ export interface AudienceFeedFormModel {
   properties?: PluginProperty[];
 }
 
-export type FeedType = 'tag' | 'external'
+export type FeedAction = 'create_tag' | 'create_external' | 'create_tag_preset' | 'create_external_preset'
 
-export interface FeedRouteParams { organisationId: string, segmentId: string, feedId: string, feedType: FeedType }
+export interface FeedRouteParams { organisationId: string, segmentId: string, feedId: string, feedType: FeedAction }
