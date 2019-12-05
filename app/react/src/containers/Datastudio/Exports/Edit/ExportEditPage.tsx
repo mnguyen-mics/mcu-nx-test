@@ -254,7 +254,11 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
     this.setState({
       selectedDatamart: datamart,
       export: {
-        ...this.state.export,
+        export: {
+          ...this.state.export.export,
+          output_format:
+            datamart.storage_model_version === 'v201506' ? 'CSV' : 'JSON',
+        },
         query:
           datamart.storage_model_version === 'v201506'
             ? this.generateV1Query(datamart.id)
