@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 
 import { MenuPresentational, MenuList } from '../../../../../components/FormMenu';
 import { FeedAction } from './domain';
 import { compose } from 'recompose';
+import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 
 const { Content } = Layout;
 
@@ -12,7 +13,7 @@ export interface AudienceFeedSelectorProps {
   onSelect: (feedType: FeedAction) => void;
 }
 
-type Props = AudienceFeedSelectorProps & InjectedIntlProps;
+type Props = AudienceFeedSelectorProps & InjectedIntlProps & InjectedFeaturesProps;
 
 const messages = defineMessages({
   listTitle: {
@@ -49,6 +50,7 @@ class AudienceFeedSelector extends React.Component<Props> {
   render() {
     const {
       intl: { formatMessage },
+      hasFeature,
     } = this.props;
 
     return (
@@ -80,19 +82,24 @@ class AudienceFeedSelector extends React.Component<Props> {
                     />
                   </div>
                 </Row>
-                <Row className="intermediate-title">
-                    <FormattedMessage {...messages.feedAdvanced} />
-                  </Row>
-                  <Row className="menu">
-                    <MenuList
-                      title={formatMessage(messages.createServerSidePreset)}
-                      select={this.onSelect('create_external_preset')}
+                { hasFeature("plugins-presets") ?
+                  <div>
+                    <Row className="intermediate-title">
+                      <FormattedMessage {...messages.feedAdvanced} />
+                    </Row>
+                    <Row className="menu">
+                      <MenuList
+                        title={formatMessage(messages.createServerSidePreset)}
+                        select={this.onSelect('create_external_preset')}
+                      />
+                      <MenuList
+                        title={formatMessage(messages.createClientSidePreset)}
+                        select={this.onSelect('create_tag_preset')}
                     />
-                    <MenuList
-                      title={formatMessage(messages.createClientSidePreset)}
-                      select={this.onSelect('create_tag_preset')}
-                    />
-                </Row>
+                    </Row>
+                  </div>
+                  : null
+                }
               </Row>
             </Content>
           </Layout>
@@ -102,4 +109,4 @@ class AudienceFeedSelector extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceFeedSelectorProps>(injectIntl)(AudienceFeedSelector)
+export default compose<Props, AudienceFeedSelectorProps>(injectIntl, injectFeatures)(AudienceFeedSelector)

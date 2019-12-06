@@ -166,19 +166,19 @@ export default compose<Props, CreateFeedPresetSelectionPageProps>()(
 const messages = defineMessages({
   createExternalFeedPresetTitle: {
     id: 'audience.segment.externalFeed.create.title',
-    defaultMessage: 'Presets',
+    defaultMessage: 'Preset creation',
   },
   createExternalFeedPresetSubtitle: {
     id: 'audience.segment.externalFeed.create.subtitle',
     defaultMessage:
-      'Add a pre-configured external feed to send the segment to an external destination',
+      'Choose the server side connector to create a preset from',
   },
   createTagFeedPresetTitle: {
     id: 'audience.segment.tagFeed.create.title',
-    defaultMessage: 'Presets',
+    defaultMessage: 'Preset creation',
   },
   createTagFeedPresetSubtitle: {
     id: 'audience.segment.tagFeed.create.subtitle',
-    defaultMessage: 'Choose the server side connector to create a preset from',
+    defaultMessage: 'Choose the client side connector to create a preset from',
   },
 });
