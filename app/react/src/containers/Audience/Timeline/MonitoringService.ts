@@ -129,6 +129,8 @@ export class MonitoringService implements IMonitoringService {
       .getSegments(datamart.id, userIdentifier)
       .then(res => {
         return res.data;
+      }).catch(e => {
+        return [];
       });
   }
 
@@ -138,7 +140,9 @@ export class MonitoringService implements IMonitoringService {
       resp => {
         return resp.data;
       },
-    );
+    ).catch(e => {
+      return [];
+    });
   }
 
   getLastSeen(datamart: DatamartResource, userIdentifier: Identifier) {
@@ -154,6 +158,8 @@ export class MonitoringService implements IMonitoringService {
         }
 
         return lastSeen;
+      }).catch(e => {
+        return 0;
       });
   }
 
@@ -237,6 +243,8 @@ export class MonitoringService implements IMonitoringService {
     )
     .then(response => {
       return response.data;
+    }).catch(e => {
+      return [];
     });
   }
 
