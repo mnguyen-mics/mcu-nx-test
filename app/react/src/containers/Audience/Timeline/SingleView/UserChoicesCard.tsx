@@ -10,11 +10,17 @@ import { Card } from '../../../../components/Card';
 import { Row, Col, Tooltip, Modal, Tag } from 'antd';
 import messages from '../messages';
 import { McsIcon } from '../../../../components';
-import moment from 'moment';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../Helpers/injectThemeColors';
+import moment from 'moment';
+import CustomObjectRenderer, {
+  RenderingTemplates,
+  TemplateDefinitions,
+} from '../../../../components/CustomObjectRenderer';
 
 interface UserChoicesCardProps {
   dataSource: UserChoices;
@@ -29,9 +35,9 @@ interface ProcessingUserChoice {
 interface State {}
 
 type Props = UserChoicesCardProps &
-InjectedIntlProps &
-InjectedFeaturesProps &
-InjectedThemeColorsProps;
+  InjectedIntlProps &
+  InjectedFeaturesProps &
+  InjectedThemeColorsProps;
 
 class UserChoicesCard extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -60,73 +66,36 @@ class UserChoicesCard extends React.Component<Props, State> {
     return associatedProcessingUserChoices;
   };
 
-  renderConsent = (consent: UserConsentResource) => {
+  renderConsent = (consent: UserConsentResource): JSX.Element => {
     const { colors } = this.props;
-    const restOfObject = Object.entries(consent).filter(keyValue => {
-      const value = keyValue[1];
-      return value !== null;
-    });
 
-    const returnedColumnsRestOfObject = restOfObject.map(keyValue => {
-      const key = keyValue[0];
-      const value = keyValue[1];
-
-      if (key === '$creation_ts' || key === '$consent_ts') {
-        const returnedValue = moment(value).format('YYYY-MM-DD, hh:mm:ss');
-        return [
-          (<span>{key} :</span>),
-          (<span>{returnedValue}</span>)
-        ];
-      } else if (key === '$consent_value') {
-        const returnedValue = value ? 
-          (<Tag color={colors["mcs-success"]}>True</Tag>) :
-          (<Tag color={colors["mcs-error"]}>False</Tag>);
-        return [
-          (<span>{key} :</span>),
-          (<span>{returnedValue}</span>)
-        ];
-      } else if (typeof value === 'boolean') {
-        const returnedValue = value ? 'True' : 'False';
-        return [
-          (<span>{key} :</span>),
-          (<span>{returnedValue}</span>)
-        ];
-      } else if (typeof value === 'string' || typeof value === 'number') {
-        return [
-          (<span>{key} :</span>),
-          (<span>{value}</span>)
-        ];
-      } else {
-        return [
-          (<span>{key} :</span>),
-          (<span>{JSON.stringify(value)}</span>)
-        ];
-      }
-    });
-
-    const renderColumn = (columnNumber: number) => {
-      return (columns: any[]) => {
-        return (
-          <span>
-            {columns[columnNumber]}
-            <br />
-          </span>
-        );
-      };
+    const functionConsentValue = (consentValue: boolean) => {
+      return consentValue ? (
+        <Tag color={colors['mcs-success']}>True</Tag>
+      ) : (
+        <Tag color={colors['mcs-error']}>False</Tag>
+      );
     };
 
-    const leftColumn = returnedColumnsRestOfObject.map(renderColumn(0));
-    const rightColumn = returnedColumnsRestOfObject.map(renderColumn(1));
+    const functionTimestamp = (timestampValue: number) =>
+      moment(timestampValue).format('YYYY-MM-DD, hh:mm:ss');
+
+    const absoluteTemplates: TemplateDefinitions = {
+      $consent_value: functionConsentValue,
+      $creation_ts: functionTimestamp,
+      $consent_ts: functionTimestamp,
+    };
+
+    const renderingTemplates: RenderingTemplates = {
+      absoluteTemplates: absoluteTemplates,
+      relativeTemplates: {},
+    };
 
     return (
-      <Row>
-        <Col className="table-left" span={12}>
-          {leftColumn}
-        </Col>
-        <Col className="table-right" span={12}>
-          {rightColumn}
-        </Col>
-      </Row>
+      <CustomObjectRenderer
+        customRenderingTemplates={renderingTemplates}
+        customObject={consent}
+      />
     );
   };
 
@@ -188,36 +157,48 @@ class UserChoicesCard extends React.Component<Props, State> {
       intl: { formatMessage },
       dataSource,
       isLoading,
-      hasFeature
+      hasFeature,
     } = this.props;
 
-    const filteredData = this.buildData(dataSource);
+    if (hasFeature('audience-monitoring-user_choices')) {
+      const filteredData = this.buildData(dataSource);
 
-    const handleViewJsonModal = this.createHandleJSONViewModal(filteredData);
+      const handleViewJsonModal = this.createHandleJSONViewModal(filteredData);
 
-    const viewJsonButton = (
-      <Row>
-        <button className="button-sm" onClick={handleViewJsonModal}>
-          <FormattedMessage {...messages.userChoicesviewJsonButton} />
-        </button>
-      </Row>
-    );
+      const viewJsonButton =
+        filteredData.length !== 0 ? (
+          <Row>
+            <button className="button-sm" onClick={handleViewJsonModal}>
+              <FormattedMessage {...messages.userChoicesviewJsonButton} />
+            </button>
+          </Row>
+        ) : (
+          undefined
+        );
 
-    return hasFeature('audience-monitoring-user_choices') ? (
-      <Card
-        title={formatMessage(messages.userChoicesTitle)}
-        isLoading={isLoading}
-        className={'mcs-userChoicesCard'}
-        buttons={viewJsonButton}
-      >
-        {filteredData.map(this.renderProcessing)}
-      </Card>
-    ) : null;
+      return (
+        <Card
+          title={formatMessage(messages.userChoicesTitle)}
+          isLoading={isLoading}
+          className={'mcs-userChoicesCard'}
+          buttons={viewJsonButton}
+        >
+          {filteredData.length !== 0 ? (
+            filteredData.map(this.renderProcessing)
+          ) : (
+            <span>
+              <FormattedMessage {...messages.emptyUserChoices} />
+            </span>
+          )}
+        </Card>
+      );
+    }
+    return undefined;
   }
 }
 
 export default compose<Props, UserChoicesCardProps>(
   injectFeatures,
   injectIntl,
-  injectThemeColors
+  injectThemeColors,
 )(UserChoicesCard);

@@ -285,6 +285,10 @@ const messages: {
     id: 'audience.monitoring.timeline.card.userChoices.json.modal.ok.text',
     defaultMessage: 'Close',
   },
+  emptyUserChoices: {
+    id: 'audience.monitoring.timeline.card.userChoices.empty',
+    defaultMessage: 'This user has no user choices.',
+  },
 });
 
 export default messages;
