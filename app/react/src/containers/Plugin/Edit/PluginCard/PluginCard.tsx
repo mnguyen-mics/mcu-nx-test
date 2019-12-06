@@ -5,7 +5,6 @@ import { LayoutablePlugin } from '../../../../models/Plugins';
 
 export interface PluginCardProps<T> {
   plugin: T;
-  organisationId: string;
   onSelect: () => void;
   hoverable?: boolean;
 }

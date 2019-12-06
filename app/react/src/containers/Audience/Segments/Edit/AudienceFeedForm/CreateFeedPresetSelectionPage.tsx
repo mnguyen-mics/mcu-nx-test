@@ -109,7 +109,6 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
         >
           <PluginCard
             plugin={layoutablePlugin}
-            organisationId=""
             onSelect={onPluginSelect}
             hoverable={true}
           />
