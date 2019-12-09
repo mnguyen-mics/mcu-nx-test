@@ -1,7 +1,7 @@
 import AudienceFeedsTable from './AudienceFeedsTable';
-import FeedsActionbar from './FeedsActionbar';
+import AudienceFeedsActionbar from './AudienceFeedsActionBar';
 
 export {
   AudienceFeedsTable,
-  FeedsActionbar,
+  AudienceFeedsActionbar,
 };

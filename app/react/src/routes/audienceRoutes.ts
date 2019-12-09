@@ -23,7 +23,8 @@ import {
 } from './domain';
 import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
 import HomePage from '../containers/Audience/Home/Dashboard/HomePage';
-import { AudienceFeedsTable, FeedsActionbar } from '../containers/Audience/Feeds/List';
+import AudienceFeedsActionBar from '../containers/Audience/Feeds/List/AudienceFeedsActionBar';
+import { AudienceFeedsTable } from '../containers/Audience/Feeds/List';
 
 export const audienceDefinition: NavigatorDefinition = {
   audienceHome: {
@@ -45,7 +46,7 @@ export const audienceDefinition: NavigatorDefinition = {
     path: '/audience/feeds',
     layout: 'main',
     contentComponent: AudienceFeedsTable,
-    actionBarComponent: FeedsActionbar,
+    actionBarComponent: AudienceFeedsActionBar,
     requiredFeature: 'audience-feeds',
     requireDatamart: true,
   },
