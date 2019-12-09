@@ -145,11 +145,11 @@ const messages = defineMessages({
   editSegment: {
     id: 'audience.segments.list.editSegment',
     defaultMessage: 'Edit',
-  }
+  },
 });
 
 const messageMap: {
-  [key: string]: FormattedMessage.MessageDescriptor
+  [key: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   user_accounts_count: {
     id: 'audience.segments.list.column.userAccounts',
@@ -166,7 +166,7 @@ const messageMap: {
   emails_count: {
     id: 'audience.segments.list.column.emails',
     defaultMessage: 'Emails',
-  }
+  },
 });
 
 export interface AudienceSegmentsTableProps {}
@@ -196,7 +196,7 @@ interface State {
     total: number;
     isLoading: boolean;
   };
-  hasItem: boolean;
+  hasItems: boolean;
   isAsc?: boolean;
   sortField?: string;
 }
@@ -214,7 +214,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         total: 0,
         segments: [],
       },
-      hasItem: true,
+      hasItems: true,
     };
   }
 
@@ -237,16 +237,17 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       const filter = parseSearch(search, this.getSearchSetting());
       const datamartId = filter.datamartId;
       this.fetchAudienceSegments(organisationId, datamartId, filter);
+      this.checkIfHasItem(organisationId);
     }
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      datamart,
       match: {
         params: { organisationId },
       },
-      location: { search },
+      location: { search, pathname },
+      history,
     } = this.props;
 
     const {
@@ -266,21 +267,28 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       this.getSearchSetting(),
     );
 
-    // Changing the sort field : new API call with current
-    if (
-      !compareSearches(prevSearch, search) ||
-      prevOrganisationId !== organisationId ||
-      prevFilter.pageSize !== filter.pageSize ||
-      prevFilter.currentPage !== filter.currentPage ||
-      prevFilter.keywords !== filter.keywords ||
-      !_.isEqual(prevFilter.type, filter.type) ||
-      (prevFilter.orderBy !== filter.orderBy &&
-        filter.pageSize < this.state.list.total)
-    ) {
-      if (isSearchValid(search, this.getSearchSetting())) {
-        this.fetchAudienceSegments(organisationId, datamart.id, filter);
+    const datamartId = filter.datamartId;
+
+    if (!isSearchValid(search, this.getSearchSetting())) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, this.getSearchSetting()),
+        state: { reloadDataSource: true },
+      });
+    } else if (
+      // Changing the sort field : new API call with current
+        !compareSearches(prevSearch, search) ||
+        prevOrganisationId !== organisationId ||
+        prevFilter.pageSize !== filter.pageSize ||
+        prevFilter.currentPage !== filter.currentPage ||
+        prevFilter.keywords !== filter.keywords ||
+        !_.isEqual(prevFilter.type, filter.type) ||
+        (prevFilter.orderBy !== filter.orderBy &&
+          filter.pageSize < this.state.list.total)
+      ) {
+        this.fetchAudienceSegments(organisationId, datamartId, filter);
       }
-    }
+    
   }
 
   componentWillUnmount() {
@@ -289,9 +297,21 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     });
   }
 
+  checkIfHasItem = (organisationId: string) => {
+    const newFilters = {
+      with_third_parties: true,
+      ...getPaginatedApiParam(1, 1),
+    };
+    return this._audienceSegmentService
+      .getSegments(organisationId, newFilters)
+      .then(res => {
+        this.setState({ hasItems: res.count !== 0 });
+      });
+  };
+
   fetchAudienceSegments = (
     organisationId: string,
-    datamartId: string,
+    datamartId: string | undefined,
     filter: Index<any>,
   ) => {
     return this._audienceSegmentService
@@ -306,7 +326,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             total: res.total ? res.total : res.count,
             isLoading: false,
           },
-          hasItem: res.count !== 0,
         });
       })
       .catch(e => {
@@ -505,15 +524,27 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     history.push(nextLocation);
   };
 
-  getColumnButton (columnName: string): React.ReactNode {
+  getColumnButton(columnName: string): React.ReactNode {
     const { isAsc, sortField } = this.state;
     const searchOnClick = () => this.columnStatSort(columnName);
     return (
       <ButtonStyleless onClick={searchOnClick}>
-       <FormattedMessage {...messageMap[columnName]} />
+        <FormattedMessage {...messageMap[columnName]} />
         <div className="mcs-table-header-icons">
-          <McsIcon type="chevron" className={`${isAsc && sortField === columnName ? 'mcs-table-header-icon' : ''}`}/>
-          <McsIcon type="chevron" className={`${isAsc === false && sortField === columnName ? 'mcs-table-header-icon' : ''}`} />
+          <McsIcon
+            type="chevron"
+            className={`${
+              isAsc && sortField === columnName ? 'mcs-table-header-icon' : ''
+            }`}
+          />
+          <McsIcon
+            type="chevron"
+            className={`${
+              isAsc === false && sortField === columnName
+                ? 'mcs-table-header-icon'
+                : ''
+            }`}
+          />
         </div>
       </ButtonStyleless>
     );
@@ -606,7 +637,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/audience/segments/${record.id}`}
           >
-            <SegmentNameDisplay audienceSegmentResource={record} />
+            <SegmentNameDisplay
+              audienceSegmentResource={record}
+              tableViewMode={true}
+            />
           </Link>
         ),
       },
@@ -700,7 +734,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       workspace,
     } = this.props;
 
-    const { hasItem, list } = this.state;
+    const { hasItems, list } = this.state;
 
     const filter = parseSearch(search, this.getSearchSetting());
 
@@ -842,7 +876,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       buttonMessage: messages.filterByLabel,
     };
 
-    return hasItem ? (
+    return hasItems ? (
       <div className="mcs-table-container">
         <TableViewFilters
           columns={this.buildDataColumns()}
