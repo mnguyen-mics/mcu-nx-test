@@ -123,40 +123,23 @@ class SegmentNameDisplay extends React.Component<Props, State> {
     // This can happen when the component isrenderloading the segment name (or if something shitty happened)
     // We decided to simply print nothing inrenderthis case for now
     if (!audienceSegmentResource) return <span />;
-
+    let audienceSegmentName = audienceSegmentResource.name;
     if (audienceSegmentResource.type === 'USER_ACTIVATION') {
       if (audienceSegmentResource.clickers) {
-        const audienceSegmentName = `${
-          audienceSegmentResource.name
+        audienceSegmentName = `${
+          this.ellipsizeSegmentName(audienceSegmentResource.name)
         } - ${intl.formatMessage(localMessages.CLICKERS)}`;
-        return (
-          <span title={audienceSegmentName}>
-            {this.ellipsizeSegmentName(audienceSegmentName)}
-          </span>
-        );
       } else if (audienceSegmentResource.exposed) {
-        const audienceSegmentName = `${
-          audienceSegmentResource.name
+        audienceSegmentName = `${
+          this.ellipsizeSegmentName(audienceSegmentResource.name)
         } - ${intl.formatMessage(localMessages.EXPOSED)}`;
-        return (
-          <span title={audienceSegmentName}>
-            {this.ellipsizeSegmentName(audienceSegmentName)}
-          </span>
-        );
-      } else {
-        return (
-          <span title={audienceSegmentResource.name}>
-            {this.ellipsizeSegmentName(audienceSegmentResource.name)}
-          </span>
-        );
       }
-    } else {
-      return (
-        <span title={audienceSegmentResource.name}>
-          {this.ellipsizeSegmentName(audienceSegmentResource.name)}
-        </span>
-      );
     }
+    return (
+      <span title={audienceSegmentResource.name}>
+        {this.ellipsizeSegmentName(audienceSegmentName)}
+      </span>
+    );
   }
 }
 

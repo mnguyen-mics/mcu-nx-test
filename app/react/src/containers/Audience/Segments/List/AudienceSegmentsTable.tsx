@@ -196,7 +196,7 @@ interface State {
     total: number;
     isLoading: boolean;
   };
-  hasItem: boolean;
+  hasItems: boolean;
   isAsc?: boolean;
   sortField?: string;
 }
@@ -214,7 +214,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         total: 0,
         segments: [],
       },
-      hasItem: true,
+      hasItems: true,
     };
   }
 
@@ -237,7 +237,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       const filter = parseSearch(search, this.getSearchSetting());
       const datamartId = filter.datamartId;
       this.fetchAudienceSegments(organisationId, datamartId, filter);
-      this.checkIfHasItem(organisationId, filter);
+      this.checkIfHasItem(organisationId);
     }
   }
 
@@ -275,9 +275,8 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         search: buildDefaultSearch(search, this.getSearchSetting()),
         state: { reloadDataSource: true },
       });
-    } else {
+    } else if (
       // Changing the sort field : new API call with current
-      if (
         !compareSearches(prevSearch, search) ||
         prevOrganisationId !== organisationId ||
         prevFilter.pageSize !== filter.pageSize ||
@@ -289,7 +288,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       ) {
         this.fetchAudienceSegments(organisationId, datamartId, filter);
       }
-    }
+    
   }
 
   componentWillUnmount() {
@@ -298,7 +297,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     });
   }
 
-  checkIfHasItem = (organisationId: string, filter: Index<any>) => {
+  checkIfHasItem = (organisationId: string) => {
     const newFilters = {
       with_third_parties: true,
       ...getPaginatedApiParam(1, 1),
@@ -306,7 +305,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     return this._audienceSegmentService
       .getSegments(organisationId, newFilters)
       .then(res => {
-        this.setState({ hasItem: res.count !== 0 });
+        this.setState({ hasItems: res.count !== 0 });
       });
   };
 
@@ -735,7 +734,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       workspace,
     } = this.props;
 
-    const { hasItem, list } = this.state;
+    const { hasItems, list } = this.state;
 
     const filter = parseSearch(search, this.getSearchSetting());
 
@@ -877,7 +876,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       buttonMessage: messages.filterByLabel,
     };
 
-    return hasItem ? (
+    return hasItems ? (
       <div className="mcs-table-container">
         <TableViewFilters
           columns={this.buildDataColumns()}
