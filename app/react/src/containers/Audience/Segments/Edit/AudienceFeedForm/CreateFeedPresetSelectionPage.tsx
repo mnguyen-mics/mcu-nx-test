@@ -100,12 +100,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
       return (
         <div
           key={layoutablePlugin.id}
-          style={{
-            maxHeight: '340px',
-            maxWidth: '300px',
-            minWidth: '300px',
-            padding: '20px',
-          }}
+          className="plugin-card-wrapper"
         >
           <PluginCard
             plugin={layoutablePlugin}
@@ -142,13 +137,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
           <Layout className="mcs-content-container mcs-form-container ant-layout-content">
             <FormTitle title={title} subtitle={subtitle} />
             <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                margin: '-20px',
-                paddingTop: '30px',
-              }}
+              className="plugin-card-container"
             >
               {this.renderPluginCards()}
             </div>
