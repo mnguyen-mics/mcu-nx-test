@@ -73,7 +73,7 @@ export function normalizeReportView<T = Index<any>>(
  *
  * {
  *  "clicks" : 4
- *  "clicks" : 4
+ *  "views" : 4
  * }
  *
  * @param {Object} normilizedReportView an object comming from performance api
