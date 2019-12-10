@@ -61,6 +61,27 @@ const dashboardJsonConfig = [
       type: 'api',
       playload: 'this the playload'
     },
+    layout: {
+      "i": "1",
+      "h": 4,
+      "static": false,
+      "w": 6,
+      "x": 6,
+      "y": 0
+    },
+    charts: [
+      {
+        type: 'LINE',
+        height: 300
+      }
+    ]
+  },
+  {
+    title: 'Session by device',
+    query: {
+      type: 'api',
+      playload: 'this the playload'
+    },
     layout:   {
       "i": "0",
       "h": 4,
@@ -71,11 +92,8 @@ const dashboardJsonConfig = [
     },
     charts: [
       {
-        type: 'LINE',
+        type: 'PIE',
         height: 300
-      },
-      {
-        type: 'heatmap'
       }
     ]
   }
