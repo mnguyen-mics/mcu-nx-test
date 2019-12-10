@@ -46,12 +46,6 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
   Props<T> & InjectedIntlProps
 > {
   renderPluginCards = (layouts: T[]) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-
     const cards = layouts
       .map(layoutablePlugin => {
         const onPluginSelect = () => this.props.onSelect(layoutablePlugin);
@@ -69,7 +63,6 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
             >
               <PluginCard
                 plugin={layoutablePlugin}
-                organisationId={organisationId}
                 onSelect={onPluginSelect}
                 hoverable={true}
               />
