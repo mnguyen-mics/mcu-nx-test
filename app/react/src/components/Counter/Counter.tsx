@@ -42,7 +42,7 @@ export default class Counter extends React.Component<CounterProps> {
                 valueStyle={{ color: trend.type === 'up' ? '#4ea500' : '#ed2333' }}
                 prefix={<Icon type={`arrow-${trend.type}`} />}
                 suffix="%"
-              /> : {}}
+              /> : ''}
             </span>
           ) : (
                 '--'

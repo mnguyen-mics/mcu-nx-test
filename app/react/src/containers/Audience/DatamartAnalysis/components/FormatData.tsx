@@ -2,6 +2,7 @@ import * as React from 'react';
 import LineChart from './charts/LineChart';
 import PieChart from './charts/PieChart';
 import _ from 'lodash';
+import { CounterDashboard } from '../../../../components/Counter';
 
 
 export interface FormatDataProps {
@@ -13,55 +14,53 @@ const normalizedData = [
   {
     "user_point_count": 10,
     "day": "2019-12-02",
-    "sync_type": "toto"
+    "sync_type": "laptop"
   },
   {
     "user_point_count": 15,
     "day": "2019-12-03",
-    "sync_type": "toto"
+    "sync_type": "laptop"
   },
   {
     "user_point_count": 20,
     "day": "2019-12-04",
-    "sync_type": "toto"
+    "sync_type": "laptop"
   },
   {
     "user_point_count": 54,
     "day": "2019-12-02",
-    "sync_type": "tata"
+    "sync_type": "smartphone"
   },
   {
     "user_point_count": 23,
     "day": "2019-12-03",
-    "sync_type": "tata"
+    "sync_type": "smartphone"
   },
   {
     "user_point_count": 12,
     "day": "2019-12-04",
-    "sync_type": "tata"
+    "sync_type": "smartphone"
   },
   {
     "user_point_count": 15,
     "day": "2019-12-02",
-    "sync_type": "titi"
+    "sync_type": "tablet"
   },
   {
     "user_point_count": 12,
     "day": "2019-12-03",
-    "sync_type": "titi"
+    "sync_type": "tablet"
   },
   {
     "user_point_count": 8,
     "day": "2019-12-04",
-    "sync_type": "titi"
+    "sync_type": "tablet"
   }
 ];
-
 
 type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
 
 class FormatData extends React.Component<FormatDataProps, {}> {
-
 
   getXAxisValues = (dataset: Dataset, xKey: string) => {
     return dataset.map(d => {
@@ -75,7 +74,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
       //const value = { name: d.name, val: d.value };
       const value = d[metric]; // the element in data property
       if (!found) {
-        acc.push({'name': d[yKey], data: [value], type: 'line'}) // not found, so need to add data property
+        acc.push({ 'name': d[yKey], data: [value], type: 'line' }) // not found, so need to add data property
       }
       else {
         found.data.push(value) // if found, that means data property exists, so just push new element to found.data.
@@ -96,7 +95,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           //const value = { name: d.name, val: d.value };
           const value = d[metric]; // the element in data property
           if (!found) {
-            acc.push({'name': d[yKey], y: value }) // not found, so need to add data property
+            acc.push({ 'name': d[yKey], y: value, selected: false }) // not found, so need to add data property
           }
           else {
             found.y += value // if found, that means data property exists, so just push new element to found.data.
@@ -105,6 +104,22 @@ class FormatData extends React.Component<FormatDataProps, {}> {
         }, []),
       }
     ];
+  }
+
+  formatSeries3 = (dataset: Dataset, yKey: string, metric: string, colors: string[]) => {
+    return dataset.reduce((acc: any, d: any) => {
+          const found = acc.find((a: any) => a.title === d[yKey]);
+          //const value = { name: d.name, val: d.value };
+          const value = d[metric]; // the element in data property
+          if (!found) {
+            acc.push({ 'title': d[yKey], 'iconType': d[yKey], value, "unit": "%", "iconStyle": {color: colors[0]}, loading: false }) // not found, so need to add data property
+            colors.splice(0, 1);
+          }
+          else {
+            found.value += value // if found, that means data property exists, so just push new element to found.data.
+          }
+          return acc;
+        }, [])
   }
 
   options: Highcharts.Options = {
@@ -138,17 +153,20 @@ class FormatData extends React.Component<FormatDataProps, {}> {
       "plotShadow": false,
       "type": "pie",
       "animation": false,
-      "height": 414,
+      "height": 350,
       "style": {
         "fontFamily": ""
       }
     },
     "title": "Object",
     "colors": ["#5c94d1", "#5eabd2", "#95cdcb"],
+    "credits": {
+      enabled: false
+    },
     "plotOptions": {
       "pie": {
         "dataLabels": {
-          "enabled": true,
+          "enabled": false,
           "format": "<b>{point.name}</b>: {point.percentage:.1f} %",
           "style": {
             "color": "rgba(0, 0, 0, 0.65)"
@@ -165,10 +183,11 @@ class FormatData extends React.Component<FormatDataProps, {}> {
       }
     },
     series: this.formatSeries2(normalizedData, 'sync_type', 'user_point_count')
-  }
+  };
 
-
-
+  option3 = this.formatSeries3(normalizedData, 'sync_type', 'user_point_count', ["#5c94d1", "#5eabd2", "#95cdcb"]);
+  
+  
   generateComponent = (charts: any) => {
     return _.map(charts, chart => {
       switch (chart.type) {
@@ -182,11 +201,14 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           return (
             <PieChart options={this.options2} />
           )
+        case 'COUNT':
+          return (<CounterDashboard counters={this.option3} />)
         default:
           return null;
       }
     });
   };
+
   render() {
     const { charts } = this.props;
     return (<div>{this.generateComponent(charts)}</div>)
@@ -195,3 +217,9 @@ class FormatData extends React.Component<FormatDataProps, {}> {
 
 export default FormatData;
 
+// iconStyle: {color: "#5eabd2"}
+// iconType: "smartphone"
+// loading: false
+// title: "smartphone"
+// unit: "%"
+// value: 89

@@ -10,50 +10,7 @@ import ApiQueryWrapper from './components/ApiQueryWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
-/* 
-var layout = [
-  {
-    "i": "0",
-    "h": 4,
-    "static": false,
-    "w": 6,
-    "x": 0,
-    "y": 0
-  },
-  {
-    "i": "1",
-    "h": 4,
-    "static": false,
-    "w": 6,
-    "x": 6,
-    "y": 0
-  },
-  {
-    "i": "2",
-    "h": 3,
-    "static": false,
-    "w": 6,
-    "x": 0,
-    "y": 5
-  },
-  {
-    "i": "3",
-    "h": 3,
-    "static": false,
-    "w": 6,
-    "x": 6,
-    "y": 5
-  },
-  {
-    "i": "4",
-    "h": 3,
-    "static": false,
-    "w": 12,
-    "x": 0,
-    "y": 8
-  }
-];
- */
+
 const dashboardJsonConfig = [
   {
     title: 'Test toto',
@@ -82,7 +39,7 @@ const dashboardJsonConfig = [
       type: 'api',
       playload: 'this the playload'
     },
-    layout:   {
+    layout: {
       "i": "0",
       "h": 4,
       "static": false,
@@ -94,6 +51,9 @@ const dashboardJsonConfig = [
       {
         type: 'PIE',
         height: 300
+      },
+      {
+        type: 'COUNT'
       }
     ]
   }
