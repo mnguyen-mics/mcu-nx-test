@@ -56,6 +56,10 @@ const messagesMap = defineMessages({
     id: 'audience.segment.form.save.error.noQUeryText',
     defaultMessage: 'You must edit a query in order to save the segment.',
   },
+  editionNotAllowed: {
+    id: 'audience.segments.edit.editionNotAllowed',
+    defaultMessage: 'Edition is not allowed on USER_ACTIVATION segment.',
+  },
 });
 
 interface State {
@@ -260,6 +264,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         !audienceSegmentFormData.query)
     ) {
       message.error(intl.formatMessage(messagesMap.noQueryText));
+    } else if (audienceSegmentFormData.audienceSegment.type === 'USER_ACTIVATION') {
+      message.error(intl.formatMessage(messagesMap.editionNotAllowed));
     } else {
       this.setState({ loading: true });
 
