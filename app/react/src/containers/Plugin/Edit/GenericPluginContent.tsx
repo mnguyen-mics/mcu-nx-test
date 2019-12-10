@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import PluginEditSelector from './PluginEditSelector';
 import PluginEditForm, { SpecificFieldsFunction } from './PluginEditForm';
@@ -66,7 +66,7 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
 }
 
 interface PluginContentState<T> {
-  plugin: PluginResource;
+  plugin: LayoutablePlugin;
   isLoadingList: boolean;
   isLoadingPlugin: boolean;
   pluginProperties: PropertyResourceShape[];
@@ -89,7 +89,8 @@ function initEmptyPluginSelection() {
 
 type JoinedProps<T extends PluginInstance> = PluginContentOuterProps<T> &
   RouteComponentProps<RouterProps> &
-  InjectedNotificationProps;
+  InjectedNotificationProps &
+  InjectedIntlProps;
 
 class PluginContent<T extends PluginInstance> extends React.Component<
   JoinedProps<T>,
@@ -289,6 +290,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
   saveOrCreatePluginInstance = (
     pluginInstance: T,
     properties: PropertyResourceShape[],
+    name?: string
   ) => {
     const {
       match: {
@@ -334,7 +336,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     return this.setState({ isLoadingPlugin: true }, () => {
       const createInstancePromise = pluginInstanceService.createPluginInstance(
         organisationId,
-        formattedFormValues,
+        {
+          ...formattedFormValues,
+          name: name
+        }
       )
         .then(res => res.data)
       const updatePropertiesPromise = createInstancePromise.then(res => {
@@ -469,7 +474,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       showGeneralInformation,
       disableFields,
       isCardLayout,
-      renderSpecificFields
+      renderSpecificFields,
+      intl: {
+        formatMessage,
+      }
     } = this.props;
 
     const { 
@@ -559,6 +567,22 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             isLoading={isLoadingPlugin || isLoadingList || !this.state.pluginLayout}
             pluginVersionId={plugin.id}
             editionMode={false}
+            nameField={plugin.plugin_preset && {
+              label: formatMessage(messages.feedModalNameFieldLabel),
+              title: formatMessage(messages.feedModalNameFieldTitle),
+              placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
+              display: true, 
+              disabled: true, 
+              value: plugin.plugin_preset.name
+            }}
+            descriptionField={plugin.plugin_preset && {
+              label: formatMessage(messages.feedModalDescriptionFieldLabel),
+              title: formatMessage(messages.feedModalDescriptionFieldTitle),
+              placeholder: formatMessage(messages.feedModalDescriptionFieldPlaceholder),
+              display: true, 
+              disabled: true, 
+              value: plugin.plugin_preset.description
+            }}
             selectedTab='configuration'
           />
         </EditContentLayout>
@@ -615,6 +639,7 @@ export default compose<
   PluginContentOuterProps<PluginInstance>
 >(
   withRouter,
+  injectIntl,
   connect(
     undefined,
     { notifyError: actions.notifyError },

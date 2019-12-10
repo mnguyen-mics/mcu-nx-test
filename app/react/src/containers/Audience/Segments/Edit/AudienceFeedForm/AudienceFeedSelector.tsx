@@ -82,8 +82,7 @@ class AudienceFeedSelector extends React.Component<Props> {
                     />
                   </div>
                 </Row>
-                {/* TODO DISPLAY WHEN CREATING PRESETS IS FINISHED */}
-                { hasFeature("plugins-presets") && false ?
+                { hasFeature("plugins-presets") ?
                   <div>
                     <Row className="intermediate-title">
                       <FormattedMessage {...messages.feedAdvanced} />

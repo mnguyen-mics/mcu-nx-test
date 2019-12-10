@@ -145,6 +145,7 @@ export interface AudienceExternalFeed extends PluginInstance  {
   organisation_id: string;
   status: Status;
   version_id: string;
+  name?: string;
 }
 
 export interface AudienceTagFeed extends PluginInstance {
@@ -155,6 +156,7 @@ export interface AudienceTagFeed extends PluginInstance {
   status: Status;
   organisation_id: string;
   version_id: string;
+  name?: string;
 }
 
 export interface Adlayout {
