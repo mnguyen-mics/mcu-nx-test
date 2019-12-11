@@ -3,60 +3,60 @@ import LineChart from './charts/LineChart';
 import PieChart from './charts/PieChart';
 import _ from 'lodash';
 import { CounterDashboard } from '../../../../components/Counter';
-
+import { normalizeReportView } from '../../../../utils/MetricHelper';
 
 export interface FormatDataProps {
-  data: any
+  apiResponse: any
   charts: any
 }
 
-const normalizedData = [
-  {
-    "user_point_count": 10,
-    "day": "2019-12-02",
-    "sync_type": "laptop"
-  },
-  {
-    "user_point_count": 15,
-    "day": "2019-12-03",
-    "sync_type": "laptop"
-  },
-  {
-    "user_point_count": 20,
-    "day": "2019-12-04",
-    "sync_type": "laptop"
-  },
-  {
-    "user_point_count": 54,
-    "day": "2019-12-02",
-    "sync_type": "smartphone"
-  },
-  {
-    "user_point_count": 23,
-    "day": "2019-12-03",
-    "sync_type": "smartphone"
-  },
-  {
-    "user_point_count": 12,
-    "day": "2019-12-04",
-    "sync_type": "smartphone"
-  },
-  {
-    "user_point_count": 15,
-    "day": "2019-12-02",
-    "sync_type": "tablet"
-  },
-  {
-    "user_point_count": 12,
-    "day": "2019-12-03",
-    "sync_type": "tablet"
-  },
-  {
-    "user_point_count": 8,
-    "day": "2019-12-04",
-    "sync_type": "tablet"
-  }
-];
+// const normalizedData = [
+//   {
+//     "user_point_count": 10,
+//     "day": "2019-12-02",
+//     "sync_type": "laptop"
+//   },
+//   {
+//     "user_point_count": 15,
+//     "day": "2019-12-03",
+//     "sync_type": "laptop"
+//   },
+//   {
+//     "user_point_count": 20,
+//     "day": "2019-12-04",
+//     "sync_type": "laptop"
+//   },
+//   {
+//     "user_point_count": 54,
+//     "day": "2019-12-02",
+//     "sync_type": "smartphone"
+//   },
+//   {
+//     "user_point_count": 23,
+//     "day": "2019-12-03",
+//     "sync_type": "smartphone"
+//   },
+//   {
+//     "user_point_count": 12,
+//     "day": "2019-12-04",
+//     "sync_type": "smartphone"
+//   },
+//   {
+//     "user_point_count": 15,
+//     "day": "2019-12-02",
+//     "sync_type": "tablet"
+//   },
+//   {
+//     "user_point_count": 12,
+//     "day": "2019-12-03",
+//     "sync_type": "tablet"
+//   },
+//   {
+//     "user_point_count": 8,
+//     "day": "2019-12-04",
+//     "sync_type": "tablet"
+//   }
+// ];
 
 type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
 
@@ -68,141 +68,80 @@ class FormatData extends React.Component<FormatDataProps, {}> {
     })
   }
 
-  formatSeries = (dataset: Dataset, yKey: string, metric: string) => {
-    return dataset.reduce((acc: any, d: any) => {
-      const found = acc.find((a: any) => a.name === d[yKey]);
-      //const value = { name: d.name, val: d.value };
-      const value = d[metric]; // the element in data property
-      if (!found) {
-        acc.push({ 'name': d[yKey], data: [value], type: 'line' }) // not found, so need to add data property
-      }
-      else {
-        found.data.push(value) // if found, that means data property exists, so just push new element to found.data.
-      }
-      return acc;
-    }, []);
-  }
-  // name: d.key,
-  // y: d.value,
-  formatSeries2 = (dataset: Dataset, yKey: string, metric: string) => {
-    return [
-      {
-        type: 'pie',
-        name: '',
-        innerSize: '65%',
-        data: dataset.reduce((acc: any, d: any) => {
-          const found = acc.find((a: any) => a.name === d[yKey]);
+  formatSeries = (chart: any, dataset: Dataset) => {
+    switch (chart.type) {
+      case 'PIE':
+        return [
+          {
+            type: 'pie',
+            name: '',
+            innerSize: '65%',
+            data: dataset.reduce((acc: any, d: any) => {
+              const found = acc.find((a: any) => a.name === d[chart.yKey]);
+              //const value = { name: d.name, val: d.value };
+              const value = d[chart.metricName]; // the element in data property
+              if (!found) {
+                acc.push({ 'name': d[chart.yKey], y: value, selected: false, color: chart.options.colors[0] }) // not found, so need to add data property
+                chart.options.colors.splice(0, 1);
+              }
+              else {
+                found.y += value // if found, that means data property exists, so just push new element to found.data.
+              }
+              return acc;
+            }, [])
+          }
+        ];
+      case 'LINE':
+        return dataset.reduce((acc: any, d: any) => {
+          const found = acc.find((a: any) => a.name === d[chart.yKey]);
           //const value = { name: d.name, val: d.value };
-          const value = d[metric]; // the element in data property
+          const value = d[chart.metricName]; // the element in data property
           if (!found) {
-            acc.push({ 'name': d[yKey], y: value, selected: false }) // not found, so need to add data property
+            acc.push({ 'name': d[chart.yKey], data: [value], type: 'line', color: chart.options.colors[0] }) // not found, so need to add data property
+            chart.options.colors.splice(0, 1);
           }
           else {
-            found.y += value // if found, that means data property exists, so just push new element to found.data.
+            found.data.push(value) // if found, that means data property exists, so just push new element to found.data.
           }
           return acc;
-        }, []),
-      }
-    ];
-  }
-
-  formatSeries3 = (dataset: Dataset, yKey: string, metric: string, colors: string[]) => {
-    return dataset.reduce((acc: any, d: any) => {
-          const found = acc.find((a: any) => a.title === d[yKey]);
+        }, []);
+      case 'COUNT':
+        return dataset.reduce((acc: any, d: any) => {
+          const found = acc.find((a: any) => a.title === d[chart.yKey]);
           //const value = { name: d.name, val: d.value };
-          const value = d[metric]; // the element in data property
+          const value = d[chart.metricName]; // the element in data property
           if (!found) {
-            acc.push({ 'title': d[yKey], 'iconType': d[yKey], value, "unit": "%", "iconStyle": {color: colors[0]}, loading: false }) // not found, so need to add data property
-            colors.splice(0, 1);
+            acc.push({ 'title': d[chart.yKey], 'iconType': chart.icons[0], value, "unit": "%", "iconStyle": { color: chart.options.colors[0] }, loading: false }) // not found, so need to add data property
+            chart.options.colors.splice(0, 1);
+            chart.icons.splice(0, 1);
           }
           else {
             found.value += value // if found, that means data property exists, so just push new element to found.data.
           }
           return acc;
-        }, [])
+        }, []);
+      default:
+        return null;
+    }
   }
 
-  options: Highcharts.Options = {
-    title: {
-      text: undefined,
-    },
-    credits: {
-      enabled: false
-    },
-    chart: {
-      reflow: true
-    },
-    xAxis: {
-      categories: this.getXAxisValues(normalizedData, 'day'),
-      title: undefined
-    },
-    yAxis: {
-      title: undefined
-    },
-    legend: {
-      align: 'right',
-      layout: 'vertical',
-      verticalAlign: 'middle',
-      itemMarginBottom: 25
-    },
-    series: this.formatSeries(normalizedData, 'sync_type', 'user_point_count')
-  };
-
-  options2 = {
-    "chart": {
-      "plotShadow": false,
-      "type": "pie",
-      "animation": false,
-      "height": 350,
-      "style": {
-        "fontFamily": ""
-      }
-    },
-    "title": "Object",
-    "colors": ["#5c94d1", "#5eabd2", "#95cdcb"],
-    "credits": {
-      enabled: false
-    },
-    "plotOptions": {
-      "pie": {
-        "dataLabels": {
-          "enabled": false,
-          "format": "<b>{point.name}</b>: {point.percentage:.1f} %",
-          "style": {
-            "color": "rgba(0, 0, 0, 0.65)"
-          }
-        },
-        "startAngle": 0,
-        "endAngle": 0,
-        "center": [
-          "50%",
-          "50%"
-        ],
-        "size": "80%",
-        "selected": true
-      }
-    },
-    series: this.formatSeries2(normalizedData, 'sync_type', 'user_point_count')
-  };
-
-  option3 = this.formatSeries3(normalizedData, 'sync_type', 'user_point_count', ["#5c94d1", "#5eabd2", "#95cdcb"]);
-  
-  
-  generateComponent = (charts: any) => {
+  generateComponent = (charts: any, data: any) => {
     return _.map(charts, chart => {
+      
+      chart.options.series = this.formatSeries(chart, data);
       switch (chart.type) {
         case 'LINE':
-          return (
+          return ( 
             <LineChart
-              options={this.options}
+              options={chart.options}
             />
           )
         case 'PIE':
           return (
-            <PieChart options={this.options2} />
+            <PieChart options={chart.options} />
           )
         case 'COUNT':
-          return (<CounterDashboard counters={this.option3} />)
+          return (<CounterDashboard counters={chart.options.series} />)
         default:
           return null;
       }
@@ -210,16 +149,14 @@ class FormatData extends React.Component<FormatDataProps, {}> {
   };
 
   render() {
-    const { charts } = this.props;
-    return (<div>{this.generateComponent(charts)}</div>)
+    const { charts, apiResponse } = this.props;
+    const normalizedData = normalizeReportView<{
+      device_name: string;
+      user_point_count: number;
+    }>(apiResponse);
+
+    return (<div>{this.generateComponent(charts, normalizedData)}</div>)
   }
 }
 
 export default FormatData;
-
-// iconStyle: {color: "#5eabd2"}
-// iconType: "smartphone"
-// loading: false
-// title: "smartphone"
-// unit: "%"
-// value: 89
