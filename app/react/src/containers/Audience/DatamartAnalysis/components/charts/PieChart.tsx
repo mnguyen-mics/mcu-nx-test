@@ -10,11 +10,11 @@ export interface DatasetProps {
   color: string;
 }
 
-export interface PiePlotProps {
+export interface PieChartProps {
   options: any;
 }
 
-type Props = PiePlotProps & InjectedIntlProps;
+type Props = PieChartProps & InjectedIntlProps;
 
 class PieChart extends React.Component<Props, {}> {
   constructor(props: Props) {
@@ -43,5 +43,5 @@ class PieChart extends React.Component<Props, {}> {
   }
 }
 
-export default compose<Props, PiePlotProps>(injectIntl)(PieChart);
+export default compose<Props, PieChartProps>(injectIntl)(PieChart);
 

@@ -4,10 +4,19 @@ import PieChart from './charts/PieChart';
 import _ from 'lodash';
 import { CounterDashboard } from '../../../../components/Counter';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { ReportView } from '../../../../models/ReportView';
 
 export interface FormatDataProps {
-  apiResponse: any
-  charts: any
+  apiResponse: ReportView;
+  charts: Chart[];
+
+}
+
+export interface Chart {
+  type: string;
+  options: Highcharts.Options;
+  yKey: string;
+  metricName: string;
 }
 
 // const normalizedData = [
@@ -68,7 +77,8 @@ class FormatData extends React.Component<FormatDataProps, {}> {
     })
   }
 
-  formatSeries = (chart: any, dataset: Dataset) => {
+  formatSeries = (chart: Chart, dataset: Dataset): Highcharts.SeriesOptionsType[] => {
+    
     switch (chart.type) {
       case 'PIE':
         return [
@@ -81,8 +91,8 @@ class FormatData extends React.Component<FormatDataProps, {}> {
               //const value = { name: d.name, val: d.value };
               const value = d[chart.metricName]; // the element in data property
               if (!found) {
-                acc.push({ 'name': d[chart.yKey], y: value, selected: false, color: chart.options.colors[0] }) // not found, so need to add data property
-                chart.options.colors.splice(0, 1);
+                acc.push({ 'name': d[chart.yKey], y: value, selected: false, color: chart.options.colors ? chart.options.colors[0] : undefined}) // not found, so need to add data property
+                if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
               }
               else {
                 found.y += value // if found, that means data property exists, so just push new element to found.data.
@@ -97,8 +107,8 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           //const value = { name: d.name, val: d.value };
           const value = d[chart.metricName]; // the element in data property
           if (!found) {
-            acc.push({ 'name': d[chart.yKey], data: [value], type: 'line', color: chart.options.colors[0] }) // not found, so need to add data property
-            chart.options.colors.splice(0, 1);
+            acc.push({ 'name': d[chart.yKey], data: [value], type: 'line', color: chart.options.colors ? chart.options.colors[0] : undefined }) // not found, so need to add data property
+            if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
           }
           else {
             found.data.push(value) // if found, that means data property exists, so just push new element to found.data.
@@ -111,8 +121,8 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           //const value = { name: d.name, val: d.value };
           const value = d[chart.metricName]; // the element in data property
           if (!found) {
-            acc.push({ 'title': d[chart.yKey], 'iconType': chart.icons[0], value, "unit": "%", "iconStyle": { color: chart.options.colors[0] }, loading: false }) // not found, so need to add data property
-            chart.options.colors.splice(0, 1);
+            acc.push({ 'title': d[chart.yKey], 'iconType': chart.icons[0], value, "unit": "%", "iconStyle": { color: chart.options.colors ? chart.options.colors[0] : undefined }, loading: false }) // not found, so need to add data property
+            if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
             chart.icons.splice(0, 1);
           }
           else {
@@ -121,7 +131,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           return acc;
         }, []);
       default:
-        return null;
+        return [];
     }
   }
 
