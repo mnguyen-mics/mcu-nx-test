@@ -5,12 +5,17 @@ import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
 import { GetFeeds } from './AudienceSegmentFeedService';
+import { FeedAggregationResponse, ExternalFeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
 
 export interface IAudienceTagFeedService {
   getFeeds: (
     options: GetFeeds
   ) => Promise<DataListResponse<AudienceTagFeed>>;
 
+  getFeedsAggregationMetrics: (
+    body: ExternalFeedAggregationRequest,
+  ) => Promise<DataResponse<FeedAggregationResponse>>;
+  
   getAudienceFeeds: (
     organisationId: string,
     options: object,
@@ -66,6 +71,14 @@ export class AudienceTagFeedService
   ): Promise<DataListResponse<AudienceTagFeed>> {
     const endpoint = 'audience_segments.tag_feeds';
     return ApiService.getRequest(endpoint, options);
+  }
+
+  getFeedsAggregationMetrics = (
+    body: ExternalFeedAggregationRequest,
+  ): Promise<DataResponse<FeedAggregationResponse>> => {
+    const endpoint = `audience_segments.external_feeds/aggregates`
+
+    return ApiService.postRequest(endpoint, body)
   }
 
   getAudienceFeeds(

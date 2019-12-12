@@ -4,12 +4,21 @@ import {
   AudienceSegmentType,
   FeedType,
   UserListSegment,
-  UserActivationSegment
+  UserActivationSegment,
 } from './AudienceSegmentResource';
 import {
   AudienceSegmentSelectionResource,
-  AudienceSegmentSelectionCreateRequest
+  AudienceSegmentSelectionCreateRequest,
 } from './AudienceSegmentSelectionResource';
+import {
+  ExternalFeedAggregationRequest,
+  FeedAggregationOrderBy,
+  FeedAggregationResponse,
+  FeedAggregationResponseCell,
+  FeedAggregationResponseDimensionValue,
+  FeedAggregationResponseMetricTotal,
+  FeedAggregationResponseRow,
+} from './AudienceFeedsAggregation';
 
 export {
   AudienceSegmentResource,
@@ -19,6 +28,12 @@ export {
   AudienceSegmentSelectionResource,
   AudienceSegmentSelectionCreateRequest,
   AudienceSegmentShape,
-  UserActivationSegment
-
+  UserActivationSegment,
+  ExternalFeedAggregationRequest,
+  FeedAggregationOrderBy,
+  FeedAggregationResponse,
+  FeedAggregationResponseRow,
+  FeedAggregationResponseCell,
+  FeedAggregationResponseMetricTotal,
+  FeedAggregationResponseDimensionValue,
 };

@@ -14,6 +14,7 @@ import {
 import { lazyInject } from '../config/inversify.config';
 import { TYPES } from '../constants/types';
 import { PaginatedApiParam } from '../utils/ApiHelper';
+import { FeedAggregationResponse, ExternalFeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
 
 export type AudienceFeedType = 'EXTERNAL_FEED' | 'TAG_FEED';
 type AudienceFeed = AudienceTagFeed | AudienceExternalFeed;
@@ -63,6 +64,12 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
     options: GetFeeds
   ): Promise<DataListResponse<AudienceFeed>> => {
     return this.service.getFeeds(options);
+  }
+
+  getFeedsAggregationMetrics = (
+    body: ExternalFeedAggregationRequest,
+  ): Promise<DataResponse<FeedAggregationResponse>> => {
+    return this.service.getFeedsAggregationMetrics(body);
   }
 
   getAudienceFeeds = (
