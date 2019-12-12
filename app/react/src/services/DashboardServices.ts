@@ -149,7 +149,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'MAP_PIE_CHART',
           query_id: '25348',
-          title: 'Répartion des visites par type de profil matching (30j)',
+          title: 'Répartition des visites par type de profil matching (30j)',
           show_legend: true,
         },
       },
@@ -351,7 +351,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'MAP_PIE_CHART',
           query_id: '27832',
-          title: 'Répartion des visites par type de profil matching (30j)',
+          title: 'Répartition des visites par type de profil matching (30j)',
           show_legend: true,
         },
       },
@@ -553,7 +553,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'MAP_PIE_CHART',
           query_id: '27874',
-          title: 'Répartion des visites par type de profil matching (30j)',
+          title: 'Répartition des visites par type de profil matching (30j)',
           show_legend: true,
         },
       },
@@ -723,7 +723,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 5,
           component_type: 'MAP_PIE_CHART',
-          title: 'Répartion des visites par type de profil matching (30j)',
+          title: 'Répartition des visites par type de profil matching (30j)',
           show_legend: true,
           query_id: '29524',
         },
@@ -892,7 +892,7 @@ const myDashboards: DashboardResource[] = [
         "component": {
           "id": 5,
           "component_type": "MAP_PIE_CHART",
-          "title": "Répartion des visites par type de profil matching (30j)",
+          "title": "Répartition des visites par type de profil matching (30j)",
           "show_legend": true,
           "query_id": "29689"
         }
@@ -1131,7 +1131,7 @@ const myDashboards: DashboardResource[] = [
         "component": {
           "id": 5,
           "component_type": "MAP_PIE_CHART",
-          "title": "Répartion des visites par type de profil matching (30j)",
+          "title": "Répartition des visites par type de profil matching (30j)",
           "show_legend": true,
           "query_id": "29711"
         }
@@ -1370,7 +1370,7 @@ const myDashboards: DashboardResource[] = [
         "component": {
           "id": 5,
           "component_type": "MAP_PIE_CHART",
-          "title": "Répartion des visites par type de profil matching (30j)",
+          "title": "Répartition des visites par type de profil matching (30j)",
           "show_legend": true,
           "query_id": "29857"
         }
@@ -1609,7 +1609,7 @@ const myDashboards: DashboardResource[] = [
         "component": {
           "id": 5,
           "component_type": "MAP_PIE_CHART",
-          "title": "Répartion des visites par type de profil matching (30j)",
+          "title": "Répartition des visites par type de profil matching (30j)",
           "show_legend": true,
           "query_id": "29762"
         }
@@ -1848,7 +1848,7 @@ const myDashboards: DashboardResource[] = [
         "component": {
           "id": 5,
           "component_type": "MAP_PIE_CHART",
-          "title": "Répartion des visites par type de profil matching (30j)",
+          "title": "Répartition des visites par type de profil matching (30j)",
           "show_legend": true,
           "query_id": "29786"
         }
@@ -2087,7 +2087,7 @@ const myDashboards: DashboardResource[] = [
         "component": {
           "id": 5,
           "component_type": "MAP_PIE_CHART",
-          "title": "Répartion des visites par type de profil matching (30j)",
+          "title": "Répartition des visites par type de profil matching (30j)",
           "show_legend": true,
           "query_id": "29806"
         }
