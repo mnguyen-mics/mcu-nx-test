@@ -11,7 +11,7 @@ export interface DatasetProps {
 }
 
 export interface PieChartProps {
-  options: any;
+  options: Highcharts.Options;
 }
 
 type Props = PieChartProps & InjectedIntlProps;

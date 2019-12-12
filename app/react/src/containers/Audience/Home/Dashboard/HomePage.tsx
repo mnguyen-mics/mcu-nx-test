@@ -17,7 +17,7 @@ import { DashboardResource } from '../../../../models/dashboards/dashboards';
 import { withDatamartSelector, WithDatamartSelectorProps } from '../../../Datamart/WithDatamartSelector';
 import { Loading } from '../../../../components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
-//import Error from '../../../../components/Error';
+// import Error from '../../../../components/Error';
 import DatamartAnalysisWrapper from '../../DatamartAnalysis/DatamartAnalysisWrapper';
 
 const { Content } = Layout;
@@ -109,7 +109,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     }
 
     if (!isLoading && dashboards.length === 0) {
-      //return <Error message={intl.formatMessage(messages.comingSoon)} />
+      // return <Error message={intl.formatMessage(messages.comingSoon)} />
       return (<div className="ant-layout">
         <div className="ant-layout">
           <Content className="mcs-content-container">

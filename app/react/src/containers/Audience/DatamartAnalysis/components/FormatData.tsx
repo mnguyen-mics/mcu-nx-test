@@ -3,13 +3,14 @@ import LineChart from './charts/LineChart';
 import PieChart from './charts/PieChart';
 import _ from 'lodash';
 import { CounterDashboard } from '../../../../components/Counter';
+import { CounterProps } from '../../../../components/Counter/Counter';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { ReportView } from '../../../../models/ReportView';
+import { ReportView } from '../../../../models/ReportView';;
 
 export interface FormatDataProps {
   apiResponse: ReportView;
   charts: Chart[];
-
 }
 
 export interface Chart {
@@ -17,6 +18,8 @@ export interface Chart {
   options: Highcharts.Options;
   yKey: string;
   metricName: string;
+  icons?: string[];
+  counterFormatedProps?: CounterProps[];
 }
 
 // const normalizedData = [
@@ -77,8 +80,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
     })
   }
 
-  formatSeries = (chart: Chart, dataset: Dataset): Highcharts.SeriesOptionsType[] => {
-    
+  formatSeriesForChart = (chart: Chart, dataset: Dataset): Highcharts.SeriesOptionsType[] => {
     switch (chart.type) {
       case 'PIE':
         return [
@@ -86,12 +88,11 @@ class FormatData extends React.Component<FormatDataProps, {}> {
             type: 'pie',
             name: '',
             innerSize: '65%',
-            data: dataset.reduce((acc: any, d: any) => {
+            data: dataset.reduce((acc: any, d) => {
               const found = acc.find((a: any) => a.name === d[chart.yKey]);
-              //const value = { name: d.name, val: d.value };
               const value = d[chart.metricName]; // the element in data property
               if (!found) {
-                acc.push({ 'name': d[chart.yKey], y: value, selected: false, color: chart.options.colors ? chart.options.colors[0] : undefined}) // not found, so need to add data property
+                acc.push({ name: d[chart.yKey], y: value, color: chart.options.colors ? chart.options.colors[0] : undefined }) // not found, so need to add data property
                 if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
               }
               else {
@@ -102,9 +103,8 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           }
         ];
       case 'LINE':
-        return dataset.reduce((acc: any, d: any) => {
+        return dataset.reduce((acc: any, d) => {
           const found = acc.find((a: any) => a.name === d[chart.yKey]);
-          //const value = { name: d.name, val: d.value };
           const value = d[chart.metricName]; // the element in data property
           if (!found) {
             acc.push({ 'name': d[chart.yKey], data: [value], type: 'line', color: chart.options.colors ? chart.options.colors[0] : undefined }) // not found, so need to add data property
@@ -135,13 +135,29 @@ class FormatData extends React.Component<FormatDataProps, {}> {
     }
   }
 
-  generateComponent = (charts: any, data: any) => {
+  formatSeriesForCounters = (chart: Chart, dataset: Dataset): CounterProps[] => {
+    return dataset.reduce((acc: any, d) => {
+      const found = acc.find((a: any) => a.title === d[chart.yKey]);
+      const value = d[chart.metricName]; // the element in data property
+      if (!found) {
+        acc.push({ 'title': d[chart.yKey], 'iconType': chart.icons ? chart.icons[0] : undefined, value, "unit": "%", "iconStyle": { color: chart.options.colors ? chart.options.colors[0] : undefined } }) // not found, so need to add data property
+        if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
+        if (chart.icons && chart.icons.length > 0) chart.icons.splice(0, 1);
+      }
+      else {
+        found.value += value // if found, that means data property exists, so just push new element to found.data.
+      }
+      return acc;
+    }, []);
+  }
+
+  generateComponent = (charts: Chart[], data: any) => {
     return _.map(charts, chart => {
-      
-      chart.options.series = this.formatSeries(chart, data);
+
+      chart.options.series = this.formatSeriesForChart(chart, data);
       switch (chart.type) {
         case 'LINE':
-          return ( 
+          return (
             <LineChart
               options={chart.options}
             />
@@ -151,7 +167,8 @@ class FormatData extends React.Component<FormatDataProps, {}> {
             <PieChart options={chart.options} />
           )
         case 'COUNT':
-          return (<CounterDashboard counters={chart.options.series} />)
+          chart.counterFormatedProps = this.formatSeriesForCounters(chart, data);
+          return (<CounterDashboard counters={chart.counterFormatedProps} />)
         default:
           return null;
       }
