@@ -49,11 +49,11 @@ const TYPES = {
   IAudienceSegmentFeedServiceFactory: Symbol.for(
     'audienceSegmentFeedServiceFactory',
   ),
-  IAuthService: Symbol('authService'),
-  IPersistedStoreService: Symbol('persistedStoreService'),
-  IMicsTagService: Symbol('micsTagService'),
-  ILabelService: Symbol('labelService'),
-  IOrganisationService: Symbol('organisationService')
+  IAuthService: Symbol.for('authService'),
+  IPersistedStoreService: Symbol.for('persistedStoreService'),
+  IMicsTagService: Symbol.for('micsTagService'),
+  ILabelService: Symbol.for('labelService'),
+  IOrganisationService: Symbol.for('organisationService')
 };
 
 export { TYPES };
