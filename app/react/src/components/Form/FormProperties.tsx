@@ -4,77 +4,77 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Row, Col } from 'antd';
 import { McsIcon } from '..';
 import FormLinkedTextInput, {
-    FormLinkedTextInputProps,
+  FormLinkedTextInputProps,
 } from './FormLinkedTextInput';
 
 export interface FormLinkedTextInputModel {
-    leftValue: string;
-    rightValue: string;
+  leftValue: string;
+  rightValue: string;
 }
 
 
 const messages = defineMessages({
-    AddFilterButtonText: {
-        id: 'settings.form.eventRules.uriMatch.eventName.addProperty',
-        defaultMessage : 'Add Property'
-    },
+  AddFilterButtonText: {
+    id: 'settings.form.eventRules.uriMatch.eventName.addProperty',
+    defaultMessage: 'Add Property'
+  },
 });
 
-type JoinedProps = InjectedIntlProps & 
-    FormLinkedTextInputProps &
-    WrappedFieldArrayProps<FormLinkedTextInputModel>;
+type JoinedProps = InjectedIntlProps &
+  FormLinkedTextInputProps &
+  WrappedFieldArrayProps<FormLinkedTextInputModel>;
 
 const FormLinkedTextInputField = Field as new () => GenericField<
-    FormLinkedTextInputProps
+  FormLinkedTextInputProps
 >;
 
 class PropertyFields extends React.Component<JoinedProps> {
-    render() {
-      const { fields, intl } = this.props;
+  render() {
+    const { fields, intl } = this.props;
 
-      const handleOnClick = () => fields.push({ leftValue: '', rightValue: '' });
+    const handleOnClick = () => fields.push({ leftValue: '', rightValue: '' });
 
-      const renderedFields = fields.length ? ((fields || [])).map((name, index, _fields) => {
-        const handleRemove = () => fields.remove(index);
-        const removeButton = () => (
-          <div onClick={handleRemove}>
-            <McsIcon type="close" />
-          </div>
-        );
-        return (
-          <div key={index}>
-            <FormLinkedTextInputField
-              {...this.props}
-              name={`${name}`}
-              component={FormLinkedTextInput}
-              renderFieldAction={removeButton}
-            />
-          </div>
-        );
-      }) : null;
-
-      return (
-        <div>
-          <Row>
-            <Col span={24} offset={this.props.formItemProps.label ? 0 : 3}>
-              {renderedFields}
-            </Col>
-          </Row>
-          <Row>
-            <Col span={10} offset={4}>
-              <div onClick={handleOnClick}>
-                <Col span={20} className="add-field-button">
-                  <p>
-                    <McsIcon type="plus" />
-                    {intl.formatMessage(messages.AddFilterButtonText)}
-                  </p>
-                </Col>
-              </div>
-            </Col>
-          </Row>
+    const renderedFields = fields.length ? ((fields || [])).map((name, index, _fields) => {
+      const handleRemove = () => fields.remove(index);
+      const removeButton = () => (
+        <div onClick={handleRemove}>
+          <McsIcon type="close" />
         </div>
       );
-    }
+      return (
+        <div key={index}>
+          <FormLinkedTextInputField
+            {...this.props}
+            name={`${name}`}
+            component={FormLinkedTextInput}
+            renderFieldAction={removeButton}
+          />
+        </div>
+      );
+    }) : null;
+
+    return (
+      <div>
+        <Row>
+          <Col span={24} offset={this.props.formItemProps.label ? 0 : 3}>
+            {renderedFields}
+          </Col>
+        </Row>
+        <Row>
+          <Col span={15} offset={4}>
+            <div onClick={handleOnClick}>
+              <Col span={20} className="add-field-button">
+                <p>
+                  <McsIcon type="plus" />
+                  {intl.formatMessage(messages.AddFilterButtonText)}
+                </p>
+              </Col>
+            </div>
+          </Col>
+        </Row>
+      </div>
+    );
+  }
 }
 
 export default injectIntl(PropertyFields);
