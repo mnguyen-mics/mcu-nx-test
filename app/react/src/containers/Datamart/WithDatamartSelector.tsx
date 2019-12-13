@@ -66,7 +66,7 @@ export function withDatamartSelector<T>(
         )
       }
     }
-    
+
     assignAvailableDatamart = (
       connectedUser: UserProfileResource,
       currentOrganisationId: string,
@@ -76,7 +76,7 @@ export function withDatamartSelector<T>(
         currentOrganisationId,
       );
       if (foundDatamarts && foundDatamarts.length === 1) {
-        this.setState({ datamartId: foundDatamarts[0].id })
+        this.setState({ datamartId: foundDatamarts[0].id })
       }
     }
 
