@@ -21,6 +21,7 @@ type CreateFeedPresetSelectionPageProps = {
   feedType: AudienceFeedType;
   breadcrumbPaths: Path[];
   onClose: () => void;
+  onPresetSave: (feedType: AudienceFeedType) => void;
 };
 
 type Props = CreateFeedPresetSelectionPageProps &
@@ -133,6 +134,8 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
     description?: string,
   ) => {
     const {
+      feedType,
+      onPresetSave,
       match: {
         params: { organisationId },
       },
@@ -157,6 +160,9 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
         },
       ).then(() => {
         this.modalOnClose();
+        onPresetSave(feedType);
+      }).catch(() => {
+        onPresetSave(feedType);
       });
   };
 
