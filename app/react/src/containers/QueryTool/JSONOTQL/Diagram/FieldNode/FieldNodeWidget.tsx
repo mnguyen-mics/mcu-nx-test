@@ -18,6 +18,7 @@ import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import { FormattedMessage } from 'react-intl';
 import messages from '../Common/messages';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 interface FieldNodeWidgetProps {
   node: FieldNodeModel;
@@ -392,7 +393,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

@@ -1,13 +1,14 @@
 import { createAction } from 'redux-actions';
-import log from '../../utils/Logger.ts';
+import log from '../../utils/Logger';
 
 import {
   NOTIFICATIONS_ADD,
   NOTIFICATIONS_REMOVE,
   NOTIFICATIONS_RESET,
 } from '../action-types';
+import { Notification } from '../../containers/Notifications/Notifications';
 
-const addNotification = (opts, level = 'success') => {
+const addNotification = (opts: any, level:string = 'success') => {
   return createAction(NOTIFICATIONS_ADD)({
     ...opts,
     uid: opts.uid || Date.now(),
@@ -15,13 +16,13 @@ const addNotification = (opts, level = 'success') => {
   });
 };
 
-const removeNotification = key => {
+const removeNotification = (key: string) => {
   return createAction(NOTIFICATIONS_REMOVE)(key);
 };
 
 const resetNotifications = createAction(NOTIFICATIONS_RESET);
 
-const notifyError = (error, notifConfig = {}) => {
+const notifyError = (error: any, notifConfig:Notification | {} = {}) => {
   log.error(error);
   return addNotification(
     {
@@ -33,7 +34,7 @@ const notifyError = (error, notifConfig = {}) => {
   );
 };
 
-const notifySuccess = notifConfig => {
+const notifySuccess = (notifConfig: Notification | {} = {}) => {
   return addNotification(
     {
       // default success duration is 4.5 secondes
@@ -44,7 +45,7 @@ const notifySuccess = notifConfig => {
   );
 };
 
-const notifyWarning = notifConfig => {
+const notifyWarning = (notifConfig: Notification | {} = {}) => {
   return addNotification(
     {
       duration: 0,
@@ -54,7 +55,7 @@ const notifyWarning = notifConfig => {
   );
 };
 
-const notifyInfo = notifConfig => {
+const notifyInfo = (notifConfig: Notification | {} = {}) => {
   return addNotification(
     {
       duration: 0,

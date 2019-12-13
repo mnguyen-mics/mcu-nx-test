@@ -8,6 +8,7 @@ export interface UserWorkspaceResource {
   administrator: boolean;
   role: string;
   datamarts: DatamartWithMetricResource[];
+  administrator_id: string;
 }
 
 export interface UserProfileResource {

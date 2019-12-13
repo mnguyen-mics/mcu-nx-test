@@ -20,6 +20,7 @@ import UserResource from '../../../../models/directory/UserResource';
 import { lazyInject } from '../../../../config/inversify.config';
 import { ISettingsService } from '../../../../services/SettingsService';
 import { TYPES } from '../../../../constants/types';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 export interface ProfileSettingsPageProps {
@@ -232,7 +233,7 @@ class ProfileSettingsPage extends React.Component<
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   initialValues: state.session.connectedUser,
 });
 

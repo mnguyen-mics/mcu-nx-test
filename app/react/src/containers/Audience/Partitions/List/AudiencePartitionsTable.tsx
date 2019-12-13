@@ -19,6 +19,7 @@ import {
   DataColumnDefinition,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
@@ -191,7 +192,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 

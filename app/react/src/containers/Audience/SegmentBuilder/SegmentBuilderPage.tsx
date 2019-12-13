@@ -23,6 +23,7 @@ import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 import { IQueryService } from '../../../services/QueryService';
 import { IExportService } from '../../../services/Library/ExportService';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -245,7 +246,7 @@ export default compose(
   injectIntl,
   withRouter,
   injectNotifications,
-  connect((state: any) => ({
+  connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,
   })),
 )(SegmentBuilderPage);

@@ -10,6 +10,7 @@ import messages from './messages';
 import { compose } from 'recompose';
 import { injectDatamart, InjectedDatamartProps } from '../Datamart';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 const { Header } = Layout;
 
@@ -116,7 +117,7 @@ class NavigatorHeader extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: SessionHelper.getWorkspace(state),
   userEmail: state.session.connectedUser.email,
 });

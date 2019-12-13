@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as FeatureSelectors from '../state/Features/selectors';
+import { MicsReduxState } from '../utils/ReduxHelper';
 
 interface FeatureSwitchProps {
   featureName: string;
@@ -27,5 +28,5 @@ FeatureSwitch.defaultProps = {
 };
 
 export default connect(
-  state => ({ hasFeature: FeatureSelectors.hasFeature(state) }),
+  (state: MicsReduxState) => ({ hasFeature: FeatureSelectors.hasFeature(state) }),
 )(FeatureSwitch);

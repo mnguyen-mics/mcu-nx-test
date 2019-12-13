@@ -19,6 +19,7 @@ import {
 import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 import PluginSectionGenerator from '../../../../Plugin/PluginSectionGenerator';
 import { PropertyResourceShape } from '../../../../../models/plugin';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
@@ -146,7 +147,7 @@ class PropertiesFormSection extends React.Component<Props> {
 export default compose<Props, PropertiesFormSectionProps>(
   withRouter,
   injectIntl,
-  connect((state: any, ownProps: Props) => ({
+  connect((state: MicsReduxState, ownProps: Props) => ({
     initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(
       state,
     ) as DisplayCreativeFormData,

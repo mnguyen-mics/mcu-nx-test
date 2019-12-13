@@ -22,6 +22,7 @@ import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { createFieldArrayModel } from '../../../../../utils/FormHelper';
 import { EventRules } from '../../../../../models/settings/settings';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 interface State {
   datamartFormData: DatamartFormData;
@@ -243,6 +244,6 @@ export default compose(
   withRouter,
   injectIntl,
   injectDatamart,
-  connect(state => ({ hasFeature: FeatureSelectors.hasFeature(state) })),
+  connect((state: MicsReduxState) => ({ hasFeature: FeatureSelectors.hasFeature(state) })),
   injectNotifications,
 )(DatamartEditPage);

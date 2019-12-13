@@ -8,6 +8,7 @@ import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { EditEmailBlastRouteMatchParam } from './domain';
 import { formatMetric } from '../../../../utils/MetricHelper';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 interface SegmentReachProps {
   segmentIds: string[];
@@ -117,7 +118,7 @@ class SegmentReach extends React.Component<Props, State> {
 
 export default compose<Props, SegmentReachProps>(
   withRouter,
-  connect(state => ({
+  connect((state: MicsReduxState) => ({
     defaultDatamart: getDefaultDatamart(state),
   })),
 )(SegmentReach);

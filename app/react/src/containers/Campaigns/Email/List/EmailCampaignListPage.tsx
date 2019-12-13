@@ -21,7 +21,6 @@ import { EMAIL_SEARCH_SETTINGS } from './constants';
 import ReportService from '../../../../services/ReportService';
 import * as notifyActions from '../../../../state/Notifications/actions';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Label } from '../../../../components/LabelsSelector';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -32,6 +31,8 @@ import { CampaignsOptions } from '../../../../services/DisplayCampaignService';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { Modal } from 'antd';
 import { EmailCampaignResourceWithStats } from '../../../../models/campaign/email/EmailCampaignResource';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { Label } from '../../../Labels/Labels';
 
 const getLatestDeliveryReport = takeLatest(
   ReportService.getEmailDeliveryReport,
@@ -338,7 +339,7 @@ export default compose(
   withRouter,
   injectNotifications,
   connect(
-    (state: any) => ({
+    (state: MicsReduxState) => ({
       labels: state.labels.labelsApi.data,
     }),
     { notifyError: notifyActions.notifyError },

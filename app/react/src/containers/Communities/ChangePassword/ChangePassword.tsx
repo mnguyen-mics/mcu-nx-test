@@ -14,7 +14,6 @@ import {
   SET_PASSWORD_SEARCH_SETTINGS,
   parseSearch,
 } from '../../../utils/LocationSearchHelper';
-import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import {
   PasswordRequirementResource,
@@ -25,6 +24,7 @@ import { takeLatest } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { ICommunityService } from '../../../services/CommunityServices';
+import { IAuthService } from '../../../services/AuthService';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
@@ -76,8 +76,12 @@ const messages = defineMessages({
 });
 
 class CommunityChangePassword extends React.Component<Props, State> {
+  
   @lazyInject(TYPES.ICommunityService)
   private _communityService: ICommunityService;
+
+  @lazyInject(TYPES.IAuthService)
+  private _authService: IAuthService;
 
   constructor(props: Props) {
     super(props);
@@ -153,7 +157,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
         )
       ) {
         // validate
-        AuthService.resetPassword(filter.email, filter.token, values.password1)
+        this._authService.resetPassword(filter.email, filter.token, values.password1)
           .then(() => {
             history.push('/login');
           })

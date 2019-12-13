@@ -22,6 +22,7 @@ import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDraw
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 interface State {
   campaign?: DisplayCampaignResource;
@@ -185,7 +186,7 @@ class EditAdGroupPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   hasFeature: FeatureSelectors.hasFeature(state),
 });
 

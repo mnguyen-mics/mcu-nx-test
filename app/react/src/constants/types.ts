@@ -36,6 +36,24 @@ const TYPES = {
   ICatalogService: Symbol.for('catalogService'),
   IServiceOfferPageService: Symbol.for('serviceOfferPageService'),
   IFeedsStatsService: Symbol.for('feedsStatsService'),
+  IPluginService: Symbol.for('pluginService'),
+  ICreativeService: Symbol.for('creativeService'),
+  IDisplayCreativeFormService: Symbol.for('displayCreativeFormService'),
+  IAdGroupFormService: Symbol.for('adGroupFormService'),
+  IDisplayCampaignService: Symbol.for('displayCampaignService'),
+  IVisitAnalyzerService: Symbol.for('visitAnalyzerService'),
+  IAudienceExternalFeedServiceFactory: Symbol.for(
+    'audienceExternalFeedServiceFactory',
+  ),
+  IAudienceTagFeedServiceFactory: Symbol.for('audienceTagFeedServiceFactory'),
+  IAudienceSegmentFeedServiceFactory: Symbol.for(
+    'audienceSegmentFeedServiceFactory',
+  ),
+  IAuthService: Symbol('authService'),
+  IPersistedStoreService: Symbol('persistedStoreService'),
+  IMicsTagService: Symbol('micsTagService'),
+  ILabelService: Symbol('labelService'),
+  IOrganisationService: Symbol('organisationService')
 };
 
 export { TYPES };

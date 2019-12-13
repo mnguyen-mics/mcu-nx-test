@@ -1,6 +1,18 @@
+import { injectable } from 'inversify';
+
 const LOCAL_STORAGE_TEST = 'localStorageSupported';
 
-export default class PersistedStoreService {
+export interface IPersistedStoreService {
+  isLocalStorageSupported: () => boolean;
+
+  setStringItem: (property: string, item: string) => void | undefined;
+
+  getStringItem: (property: string) => string | undefined | null;
+
+  removeStringItem: (property: string) => void | undefined;
+}
+@injectable()
+export default class PersistedStoreService implements IPersistedStoreService {
   isLocalStorageSupported() {
     try {
       localStorage.setItem(LOCAL_STORAGE_TEST, 'true');

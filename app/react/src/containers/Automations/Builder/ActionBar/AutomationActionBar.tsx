@@ -19,6 +19,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../../Edit/domain';
 import { McsIcon } from '../../../../components';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 interface AutomationActionBarProps {
   automationData?: Partial<AutomationFormData>;
@@ -144,7 +145,7 @@ class AutomationActionBar extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

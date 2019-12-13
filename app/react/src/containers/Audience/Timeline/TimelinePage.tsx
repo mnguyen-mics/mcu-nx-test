@@ -14,6 +14,7 @@ import { UserWorkspaceResource } from '../../../models/directory/UserProfileReso
 import { DatamartSelector } from '../../Datamart';
 import { Cookies } from '../../../models/timeline/timeline';
 import ErrorBoundary from '../../../components/ErrorBoundary';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const messages = defineMessages({
   selectMonitoringDatamart: {
@@ -135,7 +136,7 @@ class TimelinePage extends React.Component<JoinedProps> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   cookies: state.session.cookies,
   workspace: getWorkspace(state),
 });

@@ -1,9 +1,8 @@
 import { combineReducers } from 'redux';
 
-import {
-  LABELS_FETCH,
-  LABELS_RESET,
-} from '../action-types';
+import { LABELS_FETCH, LABELS_RESET } from '../action-types';
+import { Action } from 'redux-actions';
+import { Payload } from '../../utils/ReduxHelper';
 
 const defaultLabelsApiState = {
   isFetching: false,
@@ -11,7 +10,7 @@ const defaultLabelsApiState = {
   total: 0,
 };
 
-const labelsApi = (state = defaultLabelsApiState, action) => {
+const labelsApi = (state = defaultLabelsApiState, action: Action<Payload>) => {
   switch (action.type) {
     case LABELS_FETCH.REQUEST:
       return {

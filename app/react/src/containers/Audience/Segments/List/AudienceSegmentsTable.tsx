@@ -37,7 +37,6 @@ import {
 } from '../../../../models/audiencesegment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { Index } from '../../../../utils';
-import { Label } from '../../../../components/LabelsSelector';
 import {
   getPaginatedApiParam,
   CancelablePromise,
@@ -55,6 +54,8 @@ import { lazyInject } from '../../../../config/inversify.config';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 import { notifyError } from '../../../../state/Notifications/actions';
 import { ButtonStyleless, McsIcon } from '../../../../components';
+import { Label } from '../../../Labels/Labels';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -896,7 +897,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   labels: state.labels.labelsApi.data,
   workspace: getWorkspace(state),
 });

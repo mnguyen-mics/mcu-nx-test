@@ -9,6 +9,7 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { printStringArray } from './utils';
+import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
 
 interface MapStateProps {
   placementListFields: PlacementListFieldModel[];
@@ -111,13 +112,13 @@ class PlacementListSummary extends React.Component<Props> {
   }
 }
 
-const getAdGroupFormData = (state: any): AdGroupFormData => {
+const getAdGroupFormData = (state: MicsReduxState): AdGroupFormData => {
   return getFormValues(AD_GROUP_FORM_NAME)(state) as AdGroupFormData;
 };
 
 export default compose(
   injectIntl,
-  connect(state => ({
+  connect((state: any) => ({ // compilation error if we replace any by MicsReduxState
     placementListFields: getAdGroupFormData(state).inventoryCatalFields,
   })),
 )(PlacementListSummary);

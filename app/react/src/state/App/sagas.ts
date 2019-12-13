@@ -1,11 +1,8 @@
 /* eslint-disable no-constant-condition */
 import 'regenerator-runtime/runtime';
-import { fork, put, take, all, call } from 'redux-saga/effects';
+import { fork, put, take, all, call, getContext } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
-import AuthService from '../../services/AuthService.ts';
-
 import { appStartup } from './actions';
-
 import {
   LOG_IN,
   CONNECTED_USER,
@@ -13,7 +10,9 @@ import {
 } from '../action-types';
 
 function* watchInitializationSuccess() {
-  if (AuthService.isAuthenticated() || AuthService.canAuthenticate()) {
+  const _authService = yield getContext('authService');
+  if (_authService.isAuthenticated() || _authService.canAuthenticate()) {
+
     yield all([
       take([CONNECTED_USER.SUCCESS, LOG_IN.FAILURE, CONNECTED_USER.FAILURE]),
       take(ANGULAR_LOADED_SUCCESS),
@@ -23,7 +22,7 @@ function* watchInitializationSuccess() {
 
 function* watchAngularInitializationSuccess() {
   while (true) {
-    if (window.angularLoaded === true) {
+    if ((window as any).angularLoaded === true) {
       yield put({ type: ANGULAR_LOADED_SUCCESS });
       break;
     }
@@ -32,17 +31,6 @@ function* watchAngularInitializationSuccess() {
 }
 
 function* watchInitializationComplete() {
-  // const { failure } = yield race({
-  //   success: call(watchInitializationSuccess),
-  //   failure: call(watchInitializationFailure),
-  // });
-
-  // if (failure) {
-  //   yield put(appStartup.failure());
-  // } else {
-  //  yield put(appStartup.success());
-  // }
-
   yield call(watchInitializationSuccess);
   yield put(appStartup.success());
 }
@@ -51,3 +39,4 @@ export const appSagas = [
   fork(watchInitializationComplete),
   fork(watchAngularInitializationSuccess),
 ];
+

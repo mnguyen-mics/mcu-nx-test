@@ -33,6 +33,7 @@ import McsMoment from '../../../../../../utils/McsMoment';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
 export interface SegmentFormSectionProps extends ReduxFormChangeProps {
   formName: string;
@@ -226,7 +227,7 @@ class SegmentFormSection extends React.Component<Props, State> {
 
 const getEmailBlastFormData = (
   formName: string,
-  state: any,
+  state: MicsReduxState,
 ): EmailBlastFormData => {
   return getFormValues(formName)(state) as EmailBlastFormData;
 };
@@ -235,7 +236,7 @@ export default compose<Props, SegmentFormSectionProps>(
   withRouter,
   injectIntl,
   injectDrawer,
-  connect((state: any, ownProps: Props) => ({
+  connect((state: MicsReduxState, ownProps: Props) => ({
     consents: getEmailBlastFormData(ownProps.formName, state).consentFields,
   })),
 )(SegmentFormSection);

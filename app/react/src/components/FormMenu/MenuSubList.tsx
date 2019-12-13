@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import McsIcon from '../McsIcon';
 import cuid from 'cuid';
 import { Spin } from 'antd';
@@ -25,10 +25,9 @@ export interface MenuListState {
   fetched: boolean;
 }
 
-class MenuList extends Component<
-  MenuListProps & InjectedNotificationProps,
-  MenuListState
-> {
+type Props = MenuListProps & InjectedNotificationProps;
+
+class MenuList extends React.Component<Props, MenuListState> {
   constructor(props: MenuListProps & InjectedNotificationProps) {
     super(props);
     this.state = {
@@ -109,7 +108,10 @@ class MenuList extends Component<
           {!fetching && !displayMenu.length && (
             <div className="menu-item small">
               <div className="content alone small text-center">
-                <FormattedMessage id="components.formMenu.menuSubList.empty" defaultMessage="Empty" />
+                <FormattedMessage
+                  id="components.formMenu.menuSubList.empty"
+                  defaultMessage="Empty"
+                />
               </div>
             </div>
           )}

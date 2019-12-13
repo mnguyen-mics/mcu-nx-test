@@ -11,6 +11,7 @@ import {
 import * as notificationsActions from '../../state/Notifications/actions';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
 import { ArgsProps } from 'antd/lib/notification';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 const messages = defineMessages({
   newVersionMessage: {
@@ -48,7 +49,7 @@ const messages = defineMessages({
   },
 });
 
-interface Notification {
+export interface Notification {
   level: string;
   uid: string;
   error: {
@@ -236,7 +237,7 @@ class Notifications extends React.Component<Props> {
 
 export default compose(
   connect(
-    (state: any) => ({ notifications: state.notifications }),
+    (state: MicsReduxState) => ({ notifications: state.notifications }),
     { removeNotification: notificationsActions.removeNotification },
   ),
   injectIntl,

@@ -4,11 +4,7 @@ import { ClickParam } from 'antd/lib/menu';
 import McsIcon from './McsIcon';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Dropdown } from '../components/PopupContainers';
-
-export interface Label {
-  id: string;
-  name: string;
-}
+import { Label } from '../containers/Labels/Labels';
 
 export interface LabelsSelectorProps {
   labels: Label[];

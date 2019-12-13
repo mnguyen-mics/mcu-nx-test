@@ -16,6 +16,7 @@ import log from '../../../utils/Logger';
 import { logIn } from '../../../state/Login/actions';
 import { Credentials } from '../../../services/AuthService';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const logoUrl = require('../../../assets/images/logo.png');
 const FormItem = Form.Item;
@@ -242,7 +243,7 @@ class Login extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   hasError: state.login.hasError,
   error: state.login.error,
   connectedUser: state.session.connectedUser,

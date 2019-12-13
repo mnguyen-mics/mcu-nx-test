@@ -1,14 +1,13 @@
-import {
-  MENU_OPEN_CLOSE,
-} from '../action-types';
+import { MENU_OPEN_CLOSE } from '../action-types';
+import { Action } from 'redux-actions';
+import { Payload } from '../../utils/ReduxHelper';
 
 const openMenuDefaultState = {
   collapsed: false,
   mode: 'inline',
 };
 
-const menu = (state = openMenuDefaultState, action) => {
-
+const menu = (state = openMenuDefaultState, action: Action<Payload>) => {
   switch (action.type) {
     case MENU_OPEN_CLOSE:
       return {
@@ -19,7 +18,6 @@ const menu = (state = openMenuDefaultState, action) => {
     default:
       return state;
   }
-
 };
 
 const MenuReducers = {

@@ -2,7 +2,9 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
-import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
+import GenericPluginContent, {
+  PluginContentOuterProps,
+} from '../../../../Plugin/Edit/GenericPluginContent';
 import {
   PluginProperty,
   PluginResource,
@@ -14,10 +16,15 @@ import { Omit } from '../../../../../utils/Types';
 import { MlFunctionResource } from '../../../../../models/datamart/MlFunction';
 import { IMlFunctionService, MlFunctionService } from '../../../../../services/MlFunctionService';
 import { SpecificFieldsFunction } from '../../../../Plugin/Edit/PluginEditForm';
-import { withDatamartSelector, WithDatamartSelectorProps } from '../../../../Datamart/WithDatamartSelector';
+import {
+  withDatamartSelector,
+  WithDatamartSelectorProps,
+} from '../../../../Datamart/WithDatamartSelector';
 import GeneralInformation from './GeneralInformationSection';
 import RuntimeSchemaService from '../../../../../services/RuntimeSchemaService';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 import { Loading } from '../../../../../components';
 
 const MlFunctionPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<MlFunctionResource>>
@@ -43,58 +50,66 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
     super(props);
     this.state = {
       objects: [],
-      loading: true
-    }
+      loading: true,
+    };
   }
 
   componentDidMount() {
-    this.fetchObjectTypes(this.props.selectedDatamartId)
+    this.fetchObjectTypes(this.props.selectedDatamartId);
   }
-  
+
   componentDidUpdate(prevProps: JoinedProps, prevState: IState) {
     if (this.props.selectedDatamartId !== prevProps.selectedDatamartId) {
-      this.fetchObjectTypes(this.props.selectedDatamartId)
+      this.fetchObjectTypes(this.props.selectedDatamartId);
     }
   }
 
-  fetchObjectTypes = (
-    datamartId: string,
-  ) => {
-    this.setState({ loading: true })
-    return RuntimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
+  fetchObjectTypes = (datamartId: string) => {
+    this.setState({ loading: true });
+    return RuntimeSchemaService.getRuntimeSchemas(datamartId)
+      .then(schemaRes => {
         const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
         if (!liveSchema) return [];
         return RuntimeSchemaService.getObjectTypeInfoResources(
           datamartId,
           liveSchema.id,
-        )
-      },
-    )
-    .then(r =>  this.setState({ objects: r.map(a => a.name), loading: false }))
-    .catch((err) => {
-      this.setState({ loading: false })
-      this.props.notifyError(err)
-    });
+        );
+      })
+      .then(r => this.setState({ objects: r.map(a => a.name), loading: false }))
+      .catch(err => {
+        this.setState({ loading: false });
+        this.props.notifyError(err);
+      });
   };
-  
+
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/settings/datamart/ml_functions`;
     history.push(attributionModelUrl);
   };
 
-  renderSpecificFields: SpecificFieldsFunction = (disabled: boolean, fieldNamePrefix: string) => {
+  renderSpecificFields: SpecificFieldsFunction = (
+    disabled: boolean,
+    fieldNamePrefix: string,
+  ) => {
     const { objects } = this.state;
-    return <GeneralInformation disabled={disabled} fieldNamePrefix={fieldNamePrefix} objects={objects} />
-  }
+    return (
+      <GeneralInformation
+        disabled={disabled}
+        fieldNamePrefix={fieldNamePrefix}
+        objects={objects}
+      />
+    );
+  };
 
   onSaveOrCreatePluginInstance = (
     plugin: MlFunctionResource,
     properties: PluginProperty[],
   ) => {
-
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
     } = this.props;
     history.push(
@@ -121,11 +136,11 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
       field_type_name: pluginInstance.field_type_name,
       hosting_object_type_name: pluginInstance.hosting_object_type_name,
       query: pluginInstance.query,
-      expiration_period: "P1D",
-      status: "INITIAL",
-    }
-    return result
-  }
+      expiration_period: 'P1D',
+      status: 'INITIAL',
+    };
+    return result;
+  };
 
   render() {
     const {
@@ -133,9 +148,7 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
       match: { params: { mlFunctionId } },
     } = this.props;
 
-    const {
-      loading,
-    } = this.state;
+    const { loading } = this.state;
 
     const breadcrumbPaths = (visitAnalyzer?: MlFunctionResource) => [
       {
@@ -146,7 +159,7 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
     ];
 
     if (loading) {
-      return <Loading />
+      return <Loading />;
     }
 
     return (

@@ -25,6 +25,7 @@ import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IMonitoringService } from './MonitoringService';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -301,7 +302,7 @@ class Monitoring extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   isFechingCookies: state.session.isFechingCookies,
 });
 

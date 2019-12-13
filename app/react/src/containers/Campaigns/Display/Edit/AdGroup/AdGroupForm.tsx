@@ -46,6 +46,7 @@ import * as SessionSelectors from '../../../../../state/Session/selectors';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
 import DeviceFormSection from './sections/DeviceFormSection';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -282,5 +283,5 @@ export default compose<Props, AdGroupFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
+  connect((state: MicsReduxState) => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
 )(AdGroupForm);

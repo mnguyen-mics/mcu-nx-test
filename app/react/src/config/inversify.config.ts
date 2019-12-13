@@ -1,4 +1,12 @@
-import { IServiceOfferPageService, ServiceOfferPageService } from './../containers/Settings/ServicesSettings/ServiceOfferPageService';
+import { IMicsTagService, MicsTagService } from '../services/MicsTagService';
+import PersistedStoreService, {
+  IPersistedStoreService,
+} from './../services/PersistedStoreService';
+import { IFeedsStatsService } from './../services/FeedsStatsService';
+import {
+  IServiceOfferPageService,
+  ServiceOfferPageService,
+} from './../containers/Settings/ServicesSettings/ServiceOfferPageService';
 import { ICatalogService, CatalogService } from './../services/CatalogService';
 import {
   NavigatorService,
@@ -97,7 +105,6 @@ import {
   IMlAlgorithmModelService,
   MlAlgorithmModelService,
 } from '../services/MlAlgorithmModelService';
-
 import {
   IMlFunctionService,
   MlFunctionService,
@@ -105,14 +112,16 @@ import {
 import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
 import { ISettingsService, SettingsService } from '../services/SettingsService';
+import { FeedsStatsService } from '../services/FeedsStatsService';
 import {
   IDashboardService,
   DashboardService,
 } from '../services/DashboardServices';
-import {
-  IFeedsStatsService,
-  FeedsStatsService,
-} from '../services/FeedsStatsService';
+import { ILabelService, LabelService } from '../services/LabelsService';
+import OrganisationService, {
+  IOrganisationService,
+} from '../services/OrganisationService';
+import { IAuthService, AuthService } from '../services/AuthService';
 
 const container = new Container();
 
@@ -189,10 +198,21 @@ container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
 container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
-container.bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService).to(ServiceOfferPageService);
+container
+  .bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService)
+  .to(ServiceOfferPageService);
 container
   .bind<IFeedsStatsService>(TYPES.IFeedsStatsService)
   .to(FeedsStatsService);
+container.bind<IMicsTagService>(TYPES.IMicsTagService).to(MicsTagService);
+container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
+container
+  .bind<IPersistedStoreService>(TYPES.IPersistedStoreService)
+  .to(PersistedStoreService);
+container.bind<ILabelService>(TYPES.ILabelService).to(LabelService);
+container
+  .bind<IOrganisationService>(TYPES.IOrganisationService)
+  .to(OrganisationService);
 
 export const { lazyInject } = getDecorators(container, false);
 

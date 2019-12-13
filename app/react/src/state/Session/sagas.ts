@@ -1,31 +1,19 @@
-import { call, put, fork, takeEvery } from 'redux-saga/effects';
-
+import { call, put, fork, takeEvery, getContext } from 'redux-saga/effects';
 import { addNotification } from '../Notifications/actions';
-import log from '../../utils/Logger.ts';
-import OrganisationService from '../../services/OrganisationService.ts';
+import log from '../../utils/Logger';
+import { WORKSPACE, GET_LOGO, PUT_LOGO, CONNECTED_USER } from '../action-types';
+import { getWorkspace, getCookies, putLogo, getLogo } from './actions';
+import { fetchAllLabels } from '../Labels/actions';
+import { Payload } from '../../utils/ReduxHelper';
 
-import {
-  WORKSPACE,
-  GET_LOGO,
-  PUT_LOGO,
-  CONNECTED_USER,
-} from '../action-types';
-
-import {
-  getWorkspace,
-  getCookies,
-  putLogo,
-  getLogo,
-} from './actions';
-
-import {
-  fetchAllLabels
-} from '../Labels/actions';
-
-function* fetchOrganisationWorkspace({ payload }) {
+function* fetchOrganisationWorkspace({ payload }: Payload) {
+  const _organisationService = yield getContext('organisationService');
   try {
     const organisationId = payload;
-    const response = yield call(OrganisationService.getWorkspace, organisationId);
+    const response = yield call(
+      _organisationService.getWorkspace,
+      organisationId,
+    );
     yield put(getWorkspace.success(response.data));
     yield put(fetchAllLabels.request(organisationId));
   } catch (e) {
@@ -35,8 +23,9 @@ function* fetchOrganisationWorkspace({ payload }) {
 }
 
 function* fetchUserCookies() {
+  const _organisationService = yield getContext('organisationService');
   try {
-    const response = yield call(OrganisationService.getCookies);
+    const response = yield call(_organisationService.getCookies);
     yield put(getCookies.success(response.data));
   } catch (e) {
     log.error(e);
@@ -44,48 +33,45 @@ function* fetchUserCookies() {
   }
 }
 
-function* downloadLogo({ payload }) {
+function* downloadLogo({ payload }: Payload) {
+  const _organisationService = yield getContext('organisationService');
   try {
-    const {
-      organisationId,
-    } = payload;
-    const response = yield call(OrganisationService.getLogo, organisationId);
+    const { organisationId } = payload;
+    const response = yield call(_organisationService.getLogo, organisationId);
     const logoUrl = URL.createObjectURL(response); /* global URL */
     yield put(getLogo.success({ logoUrl }));
   } catch (e) {
     log.error('Cannot get specific logo: ', e);
     try {
-      const response = yield call(OrganisationService.getStandardLogo);
+      const response = yield call(_organisationService.getStandardLogo);
       const logoUrl = URL.createObjectURL(response); /* global URL */
       yield put(getLogo.success({ logoUrl }));
     } catch (er) {
       log.error('Error while getting org logo: ', e);
       yield put(getLogo.failure(er));
     }
-
   }
 }
 
-function* uploadLogo({ payload }) {
+function* uploadLogo({ payload }: Payload) {
   try {
-    const {
-      organisationId,
-      file,
-    } = payload;
-
+    const { organisationId, file } = payload;
+    const _organisationService = yield getContext('organisationService');
     const formData = new FormData(); /* global FormData */
     formData.append('file', file);
-    yield call(OrganisationService.putLogo, organisationId, formData);
+    yield call(_organisationService.putLogo, organisationId, formData);
     yield put(putLogo.success());
     yield put(getLogo.request({ organisationId }));
   } catch (e) {
     log.error('Error while putting logo: ', e);
     yield put(putLogo.failure(e));
-    yield put(addNotification({
-      type: 'error',
-      messageKey: 'NOTIFICATION_ERROR_TITLE',
-      descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION',
-    }));
+    yield put(
+      addNotification({
+        type: 'error',
+        messageKey: 'NOTIFICATION_ERROR_TITLE',
+        descriptionKey: 'NOTIFICATION_ERROR_DESCRIPTION',
+      }),
+    );
   }
 }
 

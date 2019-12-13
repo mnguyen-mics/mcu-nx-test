@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface InjectedThemeColorsProps {
   colors: ThemeColorsShape
@@ -14,7 +15,7 @@ export interface ThemeColorsShape {
   'mcs-warning': string;
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   colors: state.theme.colors,
 });
 

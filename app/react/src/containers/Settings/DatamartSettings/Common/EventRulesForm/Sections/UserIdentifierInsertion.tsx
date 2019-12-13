@@ -15,6 +15,7 @@ import { FORM_ID } from '../EventRulesForm'
 import { EventRulesFormData } from '../../domain';
 import DatamartService from '../../../../../../services/DatamartService';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../../models/datamart/DatamartResource';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
 interface UserIdentifierInsertionProps {
   datamartId: string;
@@ -137,7 +138,7 @@ class UserIdentifierInsertion extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

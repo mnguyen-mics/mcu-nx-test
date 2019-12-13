@@ -19,6 +19,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import { IQueryService } from '../../../services/QueryService';
 import { IExportService } from '../../../services/Library/ExportService';
 import QueryToolSelector from '../../QueryTool/QueryToolSelector';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -255,7 +256,7 @@ class QueryToolPage extends React.Component<Props> {
 export default compose(
   injectIntl,
   withRouter,
-  connect((state: any) => ({
+  connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,
   })),
 )(QueryToolPage);

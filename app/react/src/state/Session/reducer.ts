@@ -6,7 +6,8 @@ import {
   PUT_LOGO,
   GET_LOGO,
 } from '../action-types';
-
+import { Action } from 'redux-actions';
+import { Payload } from '../../utils/ReduxHelper';
 
 const defaultSessionState = {
   workspace: {
@@ -26,7 +27,7 @@ const defaultSessionState = {
   isUploadingLogo: false,
 };
 
-const session = (state = defaultSessionState, action) => {
+const session = (state = defaultSessionState, action: Action<Payload>) => {
   switch (action.type) {
     case CONNECTED_USER.SUCCESS:
       return {

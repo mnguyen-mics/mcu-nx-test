@@ -1,10 +1,13 @@
-import {
-  STORE_THEME_COLOR,
-} from '../action-types';
+import { STORE_THEME_COLOR } from '../action-types';
+import { Action } from 'redux-actions';
+import { Payload } from '../../utils/ReduxHelper';
 
-const theme = (state = {
-  colors: {},
-}, action) => {
+const theme = (
+  state = {
+    colors: {},
+  },
+  action: Action<Payload>,
+) => {
   switch (action.type) {
     case STORE_THEME_COLOR:
       return {
@@ -21,4 +24,3 @@ const ThemeReducer = {
 };
 
 export default ThemeReducer;
-

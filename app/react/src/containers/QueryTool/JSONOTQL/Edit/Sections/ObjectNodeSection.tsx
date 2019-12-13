@@ -30,6 +30,7 @@ import {
 import { SelectValue } from 'antd/lib/select';
 import { frequencyModeMessageMap } from '../../messages';
 import { typesTrigger } from '../../domain';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 export interface ObjectNodeSectionProps {
   objectTypeFields: FieldInfoResource[];
@@ -190,7 +191,7 @@ class ObjectNodeSection extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

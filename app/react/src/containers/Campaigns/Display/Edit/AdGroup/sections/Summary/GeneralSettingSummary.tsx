@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { AdGroupResource } from '../../../../../../../models/campaign/display/index';
 import { BudgetPeriod } from '../../../../../../../models/campaign/constants/index';
 import { formatUnixTimestamp } from '../../../../../../../utils/DateHelper';
+import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
 
 interface MapStateProps {
   adGroup: Partial<AdGroupResource>;
@@ -72,13 +73,13 @@ class GeneralSettingSummary extends React.Component<Props> {
   }
 }
 
-const getAdGroupFormData = (state: any): AdGroupFormData => {
+const getAdGroupFormData = (state: MicsReduxState): AdGroupFormData => {
   return getFormValues(AD_GROUP_FORM_NAME)(state) as AdGroupFormData;
 };
 
 export default compose(
   injectIntl,
-  connect(state => ({
+  connect((state: MicsReduxState) => ({
     adGroup: getAdGroupFormData(state).adGroup,
   })),
 )(GeneralSettingSummary);

@@ -26,6 +26,7 @@ import { ActionsColumnDefinition } from '../../../../../components/TableView/Tab
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IApiTokenService } from '../../../../../services/ApiTokenService';
 import { TYPES } from '../../../../../constants/types';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -462,7 +463,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   connectedUser: state.session.connectedUser,
 });
 
