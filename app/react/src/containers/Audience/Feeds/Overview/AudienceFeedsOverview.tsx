@@ -6,10 +6,14 @@ import AudienceSegmentFeedService from '../../../../services/AudienceSegmentFeed
 import { Status, StatusEnum } from '../../../../models/Plugins';
 import { Spin } from 'antd';
 import AudienceFeedsOverviewCard from './AudienceFeedsOverviewCard';
-import { ExternalFeedAggregationRequest } from '../../../../models/audiencesegment';
+import { FeedAggregationRequest } from '../../../../models/audiencesegment';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps;
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 type AggregatesByStatus = { [status in Status]?: string };
 
@@ -66,9 +70,14 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      notifyError,
     } = this.props;
 
-    const body: ExternalFeedAggregationRequest = {
+    this.setState({
+      feedsAggregationMetrics: { aggregates: {}, isLoading: true },
+    });
+
+    const body: FeedAggregationRequest = {
       primary_dimension: 'PLUGIN_VERSION_ID',
       secondary_dimension: 'STATUS',
       metric: 'FEED_COUNT',
@@ -79,27 +88,36 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
       max_results: 100,
     };
 
-    this.feedService.getFeedsAggregationMetrics(body).then(response => {
-      const tmpAggregates: StatusAggregatesByPluginVersion = {};
+    this.feedService
+      .getFeedsAggregationMetrics(body)
+      .then(response => {
+        const tmpAggregates: StatusAggregatesByPluginVersion = {};
 
-      response.data.rows.map(responseRow => {
-        const pluginVersionId = responseRow.primary_dimension_value.value;
-        const tmpStatusAggregate: AggregatesByStatus = {};
-        responseRow.cells.map(cell => {
-          const dimensionValue = cell.secondary_dimension_value.value;
-          if (dimensionValue in StatusEnum)
-            tmpStatusAggregate[dimensionValue as Status] = cell.metric_value;
+        response.data.rows.map(responseRow => {
+          const pluginVersionId = responseRow.primary_dimension_value.value;
+          const tmpStatusAggregate: AggregatesByStatus = {};
+          responseRow.cells.map(cell => {
+            const dimensionValue = cell.secondary_dimension_value.value;
+            if (dimensionValue in StatusEnum)
+              tmpStatusAggregate[dimensionValue as Status] = cell.metric_value;
+          });
+          tmpAggregates[pluginVersionId] = tmpStatusAggregate;
         });
-        tmpAggregates[pluginVersionId] = tmpStatusAggregate;
-      });
 
-      this.setState({
-        feedsAggregationMetrics: {
-          aggregates: tmpAggregates,
-          isLoading: false,
-        },
+        this.setState({
+          feedsAggregationMetrics: {
+            aggregates: tmpAggregates,
+            isLoading: false,
+          },
+        });
+      })
+      .catch(err => {
+        notifyError(err);
+
+        this.setState({
+          feedsAggregationMetrics: { aggregates: {}, isLoading: false },
+        });
       });
-    }); // <- add catch here
   }
 
   render() {
@@ -135,4 +153,5 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
+  injectNotifications,
 )(AudienceFeedsOverview);

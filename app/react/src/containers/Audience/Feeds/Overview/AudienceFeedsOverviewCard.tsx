@@ -13,9 +13,13 @@ import { FEEDS_SEARCH_SETTINGS } from '../List/constants';
 import { updateSearch } from '../../../../utils/LocationSearchHelper';
 import PluginService from '../../../../services/PluginService';
 import { Spin } from 'antd';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
+  InjectedNotificationProps &
   AudienceFeedsOverviewCardProps;
 
 export type AgggregatesByStatus = { [status in IconColor]?: string };
@@ -77,13 +81,14 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {} = this.props;
-
     this.fetchPluginAndLayout();
   }
 
   fetchPluginAndLayout() {
-    const { pluginVersionId } = this.props;
+    const { pluginVersionId, notifyError } = this.props;
+
+    this.setState({ isLoading: true });
+
     PluginService.getLocalizedPluginLayoutFromVersionId(pluginVersionId)
       .then(res => {
         const { plugin, layout } = res;
@@ -107,13 +112,12 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
             }
           },
         );
-      })
-
-      .catch(() =>
+      }).catch(err => {
+        notifyError(err);
         this.setState({
           isLoading: false,
-        }),
-      );
+        });
+      });
   }
 
   goToFeedsTable = (artifactId: string, status: string) => () => {
@@ -130,10 +134,8 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
       status: [status],
     };
 
-    const pathname = `/v2/o/${organisationId}/audience/feeds`;
-
     const nextLocation = {
-      pathname,
+      pathname: `/v2/o/${organisationId}/audience/feeds`,
       search: updateSearch(currentSearch, params, FEEDS_SEARCH_SETTINGS),
     };
 
@@ -179,9 +181,7 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
                   src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${assetUrl}`}
                 />
               ) : (
-                <div>
-                  <i className="image-title placeholder" />
-                </div>
+                <i className="image-title placeholder" />
               )}
             </div>
 
@@ -216,4 +216,5 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
 export default compose<Props, AudienceFeedsOverviewCardProps>(
   withRouter,
   injectIntl,
+  injectNotifications,
 )(AudienceFeedsOverviewCard);

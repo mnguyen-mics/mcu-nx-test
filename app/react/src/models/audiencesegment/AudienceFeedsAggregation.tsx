@@ -1,6 +1,6 @@
 import { PaginatedApiParam } from "../../utils/ApiHelper";
 
-export interface ExternalFeedAggregationRequest extends PaginatedApiParam {
+export interface FeedAggregationRequest extends PaginatedApiParam {
   primary_dimension: FeedAggregationDimension;
   secondary_dimension: FeedAggregationDimension;
   metric: FeedAggregationMetric;

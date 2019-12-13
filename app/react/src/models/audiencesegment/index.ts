@@ -11,7 +11,7 @@ import {
   AudienceSegmentSelectionCreateRequest,
 } from './AudienceSegmentSelectionResource';
 import {
-  ExternalFeedAggregationRequest,
+  FeedAggregationRequest,
   FeedAggregationOrderBy,
   FeedAggregationResponse,
   FeedAggregationResponseCell,
@@ -29,7 +29,7 @@ export {
   AudienceSegmentSelectionCreateRequest,
   AudienceSegmentShape,
   UserActivationSegment,
-  ExternalFeedAggregationRequest,
+  FeedAggregationRequest,
   FeedAggregationOrderBy,
   FeedAggregationResponse,
   FeedAggregationResponseRow,

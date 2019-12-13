@@ -41,17 +41,13 @@ class MetricInfo extends React.Component<Props, State> {
     }
   };
 
-  showTooltip() {
-    return () => {
-      this.setState({ isTooltipVisible: true });
-    };
-  }
+  showTooltip = () => {
+    this.setState({ isTooltipVisible: true });
+  };
 
-  hideTooltip() {
-    return () => {
-      this.setState({ isTooltipVisible: false });
-    };
-  }
+  hideTooltip = () => {
+    this.setState({ isTooltipVisible: false });
+  };
 
   render() {
     const {
@@ -75,8 +71,8 @@ class MetricInfo extends React.Component<Props, State> {
         <div
           onClick={onClick}
           className="metric-info"
-          onMouseEnter={this.showTooltip()}
-          onMouseLeave={this.hideTooltip()}
+          onMouseEnter={this.showTooltip}
+          onMouseLeave={this.hideTooltip}
         >
           <McsIcon
             style={{ marginRight: 0, flex: 1 }}
