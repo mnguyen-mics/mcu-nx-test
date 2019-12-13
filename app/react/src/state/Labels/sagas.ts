@@ -4,7 +4,7 @@ import { fetchAllLabels } from './actions';
 
 import { LABELS_FETCH } from '../action-types';
 
-function* loadLabels({ payload }: any) {
+function* loadLabels(payload: any) {
   const _labelService = yield getContext('labelService');
   try {
     const { organisationId } = payload;

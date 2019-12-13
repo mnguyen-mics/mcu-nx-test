@@ -6,8 +6,9 @@ import {
   NOTIFICATIONS_REMOVE,
   NOTIFICATIONS_RESET,
 } from '../action-types';
+import { Notification } from '../../containers/Notifications/Notifications';
 
-const addNotification = (opts: any, level = 'success') => {
+const addNotification = (opts: any, level:string = 'success') => {
   return createAction(NOTIFICATIONS_ADD)({
     ...opts,
     uid: opts.uid || Date.now(),
@@ -21,7 +22,7 @@ const removeNotification = (key: string) => {
 
 const resetNotifications = createAction(NOTIFICATIONS_RESET);
 
-const notifyError = (error: any, notifConfig:any = {}) => {
+const notifyError = (error: any, notifConfig:Notification | {} = {}) => {
   log.error(error);
   return addNotification(
     {
@@ -33,7 +34,7 @@ const notifyError = (error: any, notifConfig:any = {}) => {
   );
 };
 
-const notifySuccess = (notifConfig: any) => {
+const notifySuccess = (notifConfig: Notification | {} = {}) => {
   return addNotification(
     {
       // default success duration is 4.5 secondes
@@ -44,7 +45,7 @@ const notifySuccess = (notifConfig: any) => {
   );
 };
 
-const notifyWarning = (notifConfig: any) => {
+const notifyWarning = (notifConfig: Notification | {} = {}) => {
   return addNotification(
     {
       duration: 0,
@@ -54,7 +55,7 @@ const notifyWarning = (notifConfig: any) => {
   );
 };
 
-const notifyInfo = (notifConfig: any) => {
+const notifyInfo = (notifConfig: Notification | {} = {}) => {
   return addNotification(
     {
       duration: 0,
