@@ -31,7 +31,7 @@ interface LayoutablePluginWithProperties extends LayoutablePlugin {
   plugin_properties?: PropertyResourceShape[];
 }
 
-type State = {
+interface State {
   plugins: LayoutablePlugin[];
   isLoading: boolean;
   selectedPlugin?: LayoutablePluginWithProperties;

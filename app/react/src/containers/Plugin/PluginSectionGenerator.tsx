@@ -101,7 +101,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
 
     generateNameAndDescriptionFields() {
         const { nameField, descriptionField } = this.props;
-        const inputs: any[] = [];
+        const inputs: React.ReactNode[] = [];
 
         if(nameField && nameField.display) {
             inputs.push(
