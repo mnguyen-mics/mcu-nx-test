@@ -22,11 +22,11 @@ interface MlAlgorithmCreateEditState {
 }
 
 type Props = InjectedDrawerProps &
-  RouteComponentProps<{
-    organisationId: string;
-    mlAlgorithmId: string;
-  }> &
-  InjectedIntlProps;
+    RouteComponentProps<{
+        organisationId: string;
+        mlAlgorithmId: string;
+    }> &
+    InjectedIntlProps;
 
 class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditState> {
     @lazyInject(TYPES.IMlAlgorithmService)
@@ -71,7 +71,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
         if (mlAlgorithmId !== nextMlAlgorithmId || organisationId !== nextOrganisationId) {
             this.setState({
                 loading: true,
-              });
+            });
             this.loadInitialValues(nextOrganisationId, nextMlAlgorithmId)
         }
     }
@@ -94,10 +94,10 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
                 .getMlAlgorithm(mlAlgorithmId)
                 .then(mlAlgorithmData => mlAlgorithmData.data)
                 .then(mlAlgorithm => {
-                    this.setState({ 
-                        loading: true, 
-                        mlAlgorithmFormData: { 
-                            mlAlgorithm: mlAlgorithm, 
+                    this.setState({
+                        loading: true,
+                        mlAlgorithmFormData: {
+                            mlAlgorithm: mlAlgorithm,
                             mlAlgorithmVariables: [],
                             mlAlgorithmVariablesKeyValues: []
                         }
@@ -126,31 +126,31 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
     save = (formData: MlAlgorithmFormData) => {
         const redirectAndNotify = (id?: string) => {
             if (id) {
-              hideSaveInProgress();
-              message.success(intl.formatMessage(messages.updateSuccess));
-              return history.push(
-                `/v2/o/${organisationId}/settings/datamart/ml_algorithms`,
-              );
+                hideSaveInProgress();
+                message.success(intl.formatMessage(messages.updateSuccess));
+                return history.push(
+                    `/v2/o/${organisationId}/settings/datamart/ml_algorithms`,
+                );
             } else {
-              hideSaveInProgress();
-              this.setState({
-                loading: false,
-              });
-              message.error(intl.formatMessage(messages.updateError));
+                hideSaveInProgress();
+                this.setState({
+                    loading: false,
+                });
+                message.error(intl.formatMessage(messages.updateError));
             }
-          };
+        };
 
         const {
             history,
             match: {
-              params: { mlAlgorithmId, organisationId },
+                params: { mlAlgorithmId, organisationId },
             },
             intl,
         } = this.props;
 
         const { mlAlgorithmFormData } = this.state;
 
-        const keyToIds: {[key: string]: string} = {}
+        const keyToIds: { [key: string]: string } = {}
         const previousIds: string[] = []
         const previousKeys: string[] = []
         mlAlgorithmFormData.mlAlgorithmVariables.forEach(variable => {
@@ -177,7 +177,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
             0,
         );
 
-        const newFormDataMlAlgorithm = {...formData.mlAlgorithm, organisation_id: organisationId}
+        const newFormDataMlAlgorithm = { ...formData.mlAlgorithm, organisation_id: organisationId }
 
         if (mlAlgorithmId) {
             this._mlAlgorithmService
@@ -191,10 +191,10 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
                             return this._mlAlgorithmVariableService.createMlAlgorithmVariable(mlAlgorithmId, variable)
                         }
                     }));
-        
+
                 })
                 .then(mlAlgorithmVariablesData => {
-                    return mlAlgorithmVariablesData.map(res => res.data.id) 
+                    return mlAlgorithmVariablesData.map(res => res.data.id)
                 })
                 .then(mlAlgorithmVariableIds => {
                     return (previousIds as string[]).filter(id => !mlAlgorithmVariableIds.includes(id))
@@ -213,8 +213,8 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
                 .then(mlAlgorithmCreated => {
                     return mlAlgorithmCreated.id
                 })
-                .then(async (createdMlAlgorithmId) => {
-                    await Promise.all(mlAlgorithmFormData.mlAlgorithmVariables.map(variable => this._mlAlgorithmVariableService.createMlAlgorithmVariable(createdMlAlgorithmId, variable)))
+                .then((createdMlAlgorithmId) => {
+                    Promise.all(mlAlgorithmFormData.mlAlgorithmVariables.map(variable => this._mlAlgorithmVariableService.createMlAlgorithmVariable(createdMlAlgorithmId, variable)))
                     return createdMlAlgorithmId
                 })
                 .then((id) => redirectAndNotify(id))
@@ -227,20 +227,20 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
 
     close = () => {
         const {
-          history,
-          location,
-          match: {
-            params: { organisationId },
-          },
+            history,
+            location,
+            match: {
+                params: { organisationId },
+            },
         } = this.props;
-    
+
         const url =
-          location.state && location.state.from
-            ? location.state.from
-            : `/v2/o/${organisationId}/settings/datamart/ml_algorithms`;
-    
+            location.state && location.state.from
+                ? location.state.from
+                : `/v2/o/${organisationId}/settings/datamart/ml_algorithms`;
+
         return history.push(url);
-      };
+    };
 
     render() {
         const {
@@ -255,7 +255,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
         const name = mlAlgorithmId
             ? formatMessage(messages.editMlAlgorithm, {
                 name: mlAlgorithmFormData.mlAlgorithm.name ? mlAlgorithmFormData.mlAlgorithm.name : formatMessage(messages.mlAlgorithms)
-            }) 
+            })
             : formatMessage(messages.newMlAlgorithm)
 
         const breadcrumbPaths = [
@@ -270,7 +270,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
             return <Loading className="loading-full-screen" />;
         }
 
-    
+
         return (
             <MlAlgorithmForm
                 initialValues={this.state.mlAlgorithmFormData}

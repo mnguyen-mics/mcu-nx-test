@@ -39,7 +39,7 @@ const messages = defineMessages({
   },
   forkMlAlgorithmModalSubtitle: {
     id: 'settings.organisation.ml-algorithms.fork-modal.subtitle',
-    defaultMessage: 'Specify the ml algorithm variable values for the new ML Algorithm'
+    defaultMessage: 'Specify the ML Algorithm variable values for the new ML Algorithm'
   },
   archived: {
     id: 'settings.organisation.ml-algorithms.archived',
