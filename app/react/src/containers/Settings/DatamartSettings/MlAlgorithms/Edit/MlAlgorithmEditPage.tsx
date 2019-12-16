@@ -214,7 +214,7 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
                     return mlAlgorithmCreated.id
                 })
                 .then((createdMlAlgorithmId) => {
-                    Promise.all(mlAlgorithmFormData.mlAlgorithmVariables.map(variable => this._mlAlgorithmVariableService.createMlAlgorithmVariable(createdMlAlgorithmId, variable)))
+                    Promise.all(newMlAlgorithmVariables.map(variable => this._mlAlgorithmVariableService.createMlAlgorithmVariable(createdMlAlgorithmId, variable)))
                     return createdMlAlgorithmId
                 })
                 .then((id) => redirectAndNotify(id))
