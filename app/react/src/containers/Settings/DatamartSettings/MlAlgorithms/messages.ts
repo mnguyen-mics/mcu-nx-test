@@ -129,7 +129,7 @@ const messages = defineMessages({
   mlVariableValuePlaceholder: {
     id: 'settings.organisation.ml-algorithms.ml-variable.placeholder.value',
     defaultMessage: 'Value',
-  },
+  }
 });
 
 export default messages;
