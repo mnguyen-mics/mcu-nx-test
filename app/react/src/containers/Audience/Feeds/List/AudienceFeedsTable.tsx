@@ -46,7 +46,7 @@ type RecordType = {feed: AudienceExternalFeedTyped | AudienceTagFeedTyped,
 
 interface State {
   list: {
-    feeds: Array<RecordType>;
+    feeds: RecordType[];
     total: number;
     isLoading: boolean;
   };
@@ -283,16 +283,18 @@ class AudienceFeedsTable extends React.Component<Props, State> {
               .catch(() => ({ data: undefined }));
           }),
         ).then(segmentResults => {
-          const feeds = feedResults.data.map(feed => ({
-            feed: this.getFeedType() === 'TAG_FEED' ?
-              { ...feed, type: 'TAG_FEED' } as AudienceTagFeedTyped :
-              { ...feed, type: 'EXTERNAL_FEED' } as AudienceExternalFeedTyped,
+         
+          const feeds = feedResults.data.map(feed => {
+            const feedTyped: AudienceTagFeedTyped | AudienceExternalFeedTyped =this.getFeedType() === 'TAG_FEED' ?
+            { ...feed, type: 'TAG_FEED' } :
+            { ...feed, type: 'EXTERNAL_FEED' }
+            return {feed: feedTyped,
             audienceSegment: segmentResults
               .map(r => r.data)
               .find(segment => {
                 return !!segment && segment.id === feed.audience_segment_id;
-              }),
-          }));
+              }),}
+          });
 
           this.setState({
             list: {
@@ -446,7 +448,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     return actionColumns
   }
 
-  buildDataColumns = (feedType: String) => {
+  buildDataColumns = (feedType: string) => {
     const {
       match: {
         params: { organisationId },
