@@ -26,6 +26,8 @@ import { PropertyResourceShape } from '../../../models/plugin';
 import { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import PluginCardSelector from './PluginCard/PluginCardSelector';
 import PluginCardModal from './PluginCard/PluginCardModal';
+import { withValidators } from '../../../components/Form';
+import { ValidatorProps } from '../../../components/Form/withValidators';
 
 const formId = 'pluginForm';
 
@@ -90,7 +92,8 @@ function initEmptyPluginSelection() {
 type JoinedProps<T extends PluginInstance> = PluginContentOuterProps<T> &
   RouteComponentProps<RouterProps> &
   InjectedNotificationProps &
-  InjectedIntlProps;
+  InjectedIntlProps &
+  ValidatorProps;
 
 class PluginContent<T extends PluginInstance> extends React.Component<
   JoinedProps<T>,
@@ -477,6 +480,9 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       renderSpecificFields,
       intl: {
         formatMessage,
+      },
+      fieldValidators: {
+        isRequired
       }
     } = this.props;
 
@@ -573,7 +579,8 @@ class PluginContent<T extends PluginInstance> extends React.Component<
               placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
               display: true, 
               disabled: true, 
-              value: plugin.plugin_preset.name
+              value: plugin.plugin_preset.name,
+              validator: [isRequired]
             }}
             descriptionField={plugin.plugin_preset && {
               label: formatMessage(messages.feedModalDescriptionFieldLabel),
@@ -581,7 +588,8 @@ class PluginContent<T extends PluginInstance> extends React.Component<
               placeholder: formatMessage(messages.feedModalDescriptionFieldPlaceholder),
               display: true, 
               disabled: true, 
-              value: plugin.plugin_preset.description
+              value: plugin.plugin_preset.description,
+              validator: [isRequired]
             }}
             selectedTab='configuration'
           />
@@ -640,6 +648,7 @@ export default compose<
 >(
   withRouter,
   injectIntl,
+  withValidators,
   connect(
     undefined,
     { notifyError: actions.notifyError },

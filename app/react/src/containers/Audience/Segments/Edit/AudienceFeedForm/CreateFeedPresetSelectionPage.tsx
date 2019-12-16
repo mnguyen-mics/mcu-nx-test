@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout } from 'antd';
+import { Layout, Row, Col } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
@@ -16,6 +16,7 @@ import { Loading } from '../../../../../components';
 import PluginCardModal from '../../../../Plugin/Edit/PluginCard/PluginCardModal';
 import { PropertyResourceShape } from '../../../../../models/plugin';
 import { withRouter, RouteComponentProps } from 'react-router';
+import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 
 type CreateFeedPresetSelectionPageProps = {
   feedType: AudienceFeedType;
@@ -26,7 +27,8 @@ type CreateFeedPresetSelectionPageProps = {
 
 type Props = CreateFeedPresetSelectionPageProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps;
+  InjectedIntlProps &
+  ValidatorProps;
 
 interface LayoutablePluginWithProperties extends LayoutablePlugin {
   plugin_properties?: PropertyResourceShape[];
@@ -173,20 +175,48 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
   };
 
   renderPluginCards() {
-    return this.state.plugins.map(layoutablePlugin => {
-      if (!layoutablePlugin || !layoutablePlugin.plugin_layout) return;
-
+    const cards = this.state.plugins
+    .filter(layoutablePlugin => layoutablePlugin && layoutablePlugin.plugin_layout)
+    .map(layoutablePlugin => {
       const onPluginSelect = () => this.onSelect(layoutablePlugin);
       return (
-        <div key={layoutablePlugin.id} className="plugin-card-wrapper">
-          <PluginCard
-            plugin={layoutablePlugin}
-            onSelect={onPluginSelect}
-            hoverable={true}
-          />
-        </div>
+        !!layoutablePlugin.plugin_layout && (
+          <Col
+            key={
+              layoutablePlugin.id +
+              (layoutablePlugin.plugin_preset
+                ? '-' + layoutablePlugin.plugin_preset.id
+                : '')
+            }
+            span={4}
+            className="text-center"
+          >
+            <PluginCard
+              plugin={layoutablePlugin}
+              onSelect={onPluginSelect}
+              hoverable={true}
+            />
+          </Col>
+        )
       );
-    });
+    })
+    .filter(a => !!a);
+
+    const array = [];
+    const size = 6;
+
+    while (cards.length > 0) array.push(cards.splice(0, size));
+
+    return array.map((arr, i) => (
+      <Row
+        key={i}
+        style={{ marginTop: 30, marginBottom: 40 }}
+        type={'flex'}
+        gutter={40}
+      >
+        {arr}
+      </Row>
+    ));
   }
 
   render() {
@@ -199,8 +229,12 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
       onClose,
       intl: {
         formatMessage
+      },
+      fieldValidators: {
+        isRequired
       }
     } = this.props;
+
     const { selectedPlugin } = this.state;
 
     const title =
@@ -224,7 +258,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
         ) : (
           <Layout className="mcs-content-container mcs-form-container ant-layout-content">
             <FormTitle title={title} subtitle={subtitle} />
-            <div className="plugin-card-container">
+            <div>
               {this.renderPluginCards()}
             </div>
             {selectedPlugin &&
@@ -248,14 +282,16 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
                     title: formatMessage(messages.feedModalNameFieldTitle),
                     placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
                     display: true,
-                    disabled: false
+                    disabled: false,
+                    validator: [isRequired]
                   }}
                   descriptionField={{ 
                     label: formatMessage(messages.feedModalDescriptionFieldLabel),
                     title: formatMessage(messages.feedModalDescriptionFieldTitle),
                     placeholder: formatMessage(messages.feedModalDescriptionFieldPlaceholder),
                     display: true,
-                    disabled: false
+                    disabled: false,
+                    validator: [isRequired]
                   }}
                   selectedTab="configuration"
                 />
@@ -267,7 +303,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, CreateFeedPresetSelectionPageProps>(withRouter, injectIntl)(
+export default compose<Props, CreateFeedPresetSelectionPageProps>(withRouter, injectIntl, withValidators)(
   CreateFeedPresetSelectionPage,
 );
 

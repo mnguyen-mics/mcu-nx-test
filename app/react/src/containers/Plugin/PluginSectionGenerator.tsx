@@ -12,6 +12,7 @@ import { compose } from 'recompose';
 import messages from './Edit/messages';
 import { PropertyResourceShape } from '../../models/plugin';
 import { PluginPresetProperty } from '../../models/Plugins';
+import { Validator } from 'redux-form';
 
 export interface PluginExtraField {
     label: string,
@@ -19,7 +20,8 @@ export interface PluginExtraField {
     placeholder: string,
     display: boolean,
     disabled: boolean,
-    value?: string
+    value?: string,
+    validator?: Validator | Validator[],
 }
 
 interface PluginSectionGeneratorProps {
@@ -123,6 +125,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                             }}
                             small={true}
                             helpToolTipProps={{title: nameField.title}}
+                            validate={nameField.validator}
                         />
                     </Row>
                 </div>
@@ -149,6 +152,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                             }}
                             small={true}
                             helpToolTipProps={{ title: descriptionField.title }}
+                            validate={descriptionField.validator}
                         />
                     </Row>
                 </div>
