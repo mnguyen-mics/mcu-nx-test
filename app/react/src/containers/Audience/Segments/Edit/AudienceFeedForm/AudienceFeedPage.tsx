@@ -140,7 +140,7 @@ class AudienceFeedPage extends React.Component<
     });
   };
 
-  onPresetSave = () => (feedType: AudienceFeedType) => {
+  onPresetSave = (feedType: AudienceFeedType) => {
     this.setState({
       type: feedType === 'EXTERNAL_FEED' ? 'create_external' : 'create_tag',
     });
@@ -243,7 +243,7 @@ class AudienceFeedPage extends React.Component<
           feedType={type === 'create_external_preset' ? 'EXTERNAL_FEED' : 'TAG_FEED'}
           breadcrumbPaths={presetBreadcrumbPaths}
           onClose={this.onClose}
-          onPresetSave={this.onPresetSave()}
+          onPresetSave={this.onPresetSave}
         />
       )
     }
