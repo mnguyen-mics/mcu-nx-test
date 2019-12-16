@@ -89,7 +89,7 @@ function request(
     if (token) {
       requestHeaders.append('Authorization', token);
     } else {
-      throw new Error(
+      Promise.reject(
         `Error. Authenticated without token, endpoint:${endpoint}`,
       );
     }
