@@ -152,6 +152,7 @@ import {
   IKeywordListService,
   KeywordListService,
 } from '../services/Library/KeywordListsService';
+import getDecorators from 'inversify-inject-decorators';
 
 const container = new Container();
 
