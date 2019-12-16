@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ConfigProps, reduxForm, InjectedFormProps, Form } from 'redux-form';
-import MlAlgorithmResource from "../../../../../models/mlAlgorithm/MlAlgorithmResource";
 import { RouteComponentProps, withRouter } from "react-router";
 import { InjectedIntlProps, injectIntl } from "react-intl";
 import { compose } from 'recompose';
@@ -13,6 +12,7 @@ import FormLayoutActionbar, { FormLayoutActionbarProps } from '../../../../../co
 import ScrollspySider, { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspySider';
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
+import { MlAlgorithmFormData } from '../domain';
 
 
 export const FORM_ID = 'mlAlgorithmForm'
@@ -22,13 +22,13 @@ const Content = Layout.Content as React.ComponentClass<
 >;
 
 interface MlAlgorithmFormProps
-    extends Omit<ConfigProps<Partial<MlAlgorithmResource>>, 'form'> {
+    extends Omit<ConfigProps<MlAlgorithmFormData>, 'form'> {
         onClose: () => void;
-        onSave: (formData: Partial<MlAlgorithmResource>) => void;
+        onSave: (formData: MlAlgorithmFormData) => void;
         breadCrumbPaths: Path[];
     }
 
-type Props = InjectedFormProps<Partial<MlAlgorithmResource>, MlAlgorithmFormProps> &
+type Props = InjectedFormProps<MlAlgorithmFormData, MlAlgorithmFormProps> &
  MlAlgorithmFormProps &
  RouteComponentProps<{
     organisationId: string;
@@ -99,7 +99,7 @@ class MlAlgorithmForm extends React.Component<Props> {
 export default compose<Props, MlAlgorithmFormProps>(
     withRouter,
     injectIntl,
-    reduxForm<Partial<MlAlgorithmResource>, MlAlgorithmFormProps>({
+    reduxForm<MlAlgorithmFormData, MlAlgorithmFormProps>({
       form: FORM_ID,
       enableReinitialize: true,
     }),

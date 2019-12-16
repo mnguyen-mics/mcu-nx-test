@@ -69,7 +69,8 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
                 </Tooltip>
               </Col>
             ) : (
-              small ? null : <Col span={2} className="no-field-tooltip" />
+              small ? null : <Col span={2} className="
+              " />
             )
           }
           {(typeof renderFieldAction !== 'undefined')

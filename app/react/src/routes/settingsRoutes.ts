@@ -43,9 +43,9 @@ import MyOfferServiceItemListPage from '../containers/Settings/ServicesSettings/
 import CreateOfferPage from '../containers/Settings/ServicesSettings/MyOffers/CreateOfferPage';
 import SourcesListPage from '../containers/Settings/DatamartSettings/Sources/List/SourcesListPage';
 import DatamartViewPage from '../containers/Settings/DatamartSettings/Datamarts/Dashboard/DatamartDashboardPage';
-import MlAlgorithmsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/List/MlAlgorithmsPage';
-import MlAlgorithmEditPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/Edit/MlAlgorithmEditPage';
-import MlAlgorithmModelsPage from '../containers/Settings/OrganisationSettings/MlAlgorithms/MlAlgorithmModels/MlAlgorithmModelsPage';
+import MlAlgorithmsPage from '../containers/Settings/DatamartSettings/MlAlgorithms/List/MlAlgorithmsPage';
+import MlAlgorithmEditPage from '../containers/Settings/DatamartSettings/MlAlgorithms/Edit/MlAlgorithmEditPage';
+import MlAlgorithmModelsPage from '../containers/Settings/DatamartSettings/MlAlgorithms/MlAlgorithmModels/MlAlgorithmModelsPage';
 import { MlFunctionsContent } from '../containers/Settings/DatamartSettings/MlFunctions/List';
 import CreateEditMlFunction from '../containers/Settings/DatamartSettings/MlFunctions/Edit/EditMlFunctionPage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
@@ -415,7 +415,7 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: CreateOfferPage,
     requiredFeature: 'servicesSettings-my_offers',
-  },  
+  },
   // settingsServiceCatalog: {
   //   path: '/settings/services/service_catalog',
   //   layout: 'settings',

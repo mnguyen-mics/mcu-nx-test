@@ -1,18 +1,24 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps, Field, GenericField } from 'redux-form';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Row, Col } from 'antd';
-
-import messages from '../messages';
-import McsIcon from '../../../../../../components/McsIcon';
+import { McsIcon } from '..';
 import FormLinkedTextInput, {
   FormLinkedTextInputProps,
-} from '../../../../../../components/Form/FormLinkedTextInput';
+} from './FormLinkedTextInput';
 
-interface FormLinkedTextInputModel {
+export interface FormLinkedTextInputModel {
   leftValue: string;
   rightValue: string;
 }
+
+
+const messages = defineMessages({
+  AddFilterButtonText: {
+    id: 'settings.form.eventRules.uriMatch.eventName.addProperty',
+    defaultMessage: 'Add Property'
+  },
+});
 
 type JoinedProps = InjectedIntlProps &
   FormLinkedTextInputProps &
@@ -55,8 +61,7 @@ class PropertyFields extends React.Component<JoinedProps> {
           </Col>
         </Row>
         <Row>
-          <Col span={15
-          } offset={4}>
+          <Col span={15} offset={4}>
             <div onClick={handleOnClick}>
               <Col span={20} className="add-field-button">
                 <p>

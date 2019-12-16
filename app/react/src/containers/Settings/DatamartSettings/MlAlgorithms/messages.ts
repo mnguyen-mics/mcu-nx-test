@@ -29,6 +29,18 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-algorithms.archive',
     defaultMessage: 'Archive'
   },
+  fork: {
+    id: 'settings.organisation.ml-algorithms.fork',
+    defaultMessage: 'Fork ML Algorithm'
+  },
+  forkMlAlgorithmModalTitle: {
+    id: 'settings.organisation.ml-algorithms.fork-modal.title',
+    defaultMessage: 'Fork ML Algorithm'
+  },
+  forkMlAlgorithmModalSubtitle: {
+    id: 'settings.organisation.ml-algorithms.fork-modal.subtitle',
+    defaultMessage: 'Specify the ML Algorithm variable values for the new ML Algorithm'
+  },
   archived: {
     id: 'settings.organisation.ml-algorithms.archived',
     defaultMessage: 'Archived'
@@ -94,10 +106,30 @@ const messages = defineMessages({
     id: 'settings.organisation.ml-algorithms.edit.list.errorMessage',
     defaultMessage: 'ML Algorithm update failed ',
   },
+  forkSuccess: {
+    id: 'settings.organisation.ml-algorithms.fork.successMessage',
+    defaultMessage: 'Fork created with success',
+  },
+  forkError: {
+    id: 'settings.organisation.ml-algorithms.fork.errorMessage',
+    defaultMessage: 'Error while creating fork',
+  },
   loadingError: {
     id: 'settings.organisation.ml-algorithms.edit.list.loadingErrorMessage',
     defaultMessage: 'Error while loading ML Algorithms',
   },
+  mlVariableLabel: {
+    id: 'settings.organisation.ml-algorithms.ml-variable.label',
+    defaultMessage: 'ML Variable',
+  },
+  mlVariableKeyPlaceholder: {
+    id: 'settings.organisation.ml-algorithms.ml-variable.placeholder.key',
+    defaultMessage: 'Key',
+  },
+  mlVariableValuePlaceholder: {
+    id: 'settings.organisation.ml-algorithms.ml-variable.placeholder.value',
+    defaultMessage: 'Value',
+  }
 });
 
 export default messages;
