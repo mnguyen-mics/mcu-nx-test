@@ -1,28 +1,55 @@
 import * as React from 'react';
 import CustomPropertyRenderer from './CustomPropertyRenderer';
 import { Tooltip, Tag } from 'antd';
+import {
+  injectIntl,
+  FormattedMessage,
+  InjectedIntlProps,
+  defineMessages,
+} from 'react-intl';
+import {
+  TemplateDefinitions,
+  ExtendedTemplates,
+  ExpandAllStatus,
+} from './CustomObjectRendererWrapper';
 
-export interface TemplateDefinitions {
-  [varName: string]: (value: any) => any;
-}
-
-export interface RenderingTemplates {
-  absoluteTemplates: TemplateDefinitions;
-  relativeTemplates: TemplateDefinitions;
-}
-
-interface ExtendedTemplates extends RenderingTemplates {
-  transformedTemplates: TemplateDefinitions;
-}
+const messages = defineMessages({
+  viewMore: {
+    id: 'components.customObjectRenderer.viewMore',
+    defaultMessage: 'View more...',
+  },
+  viewLess: {
+    id: 'components.customObjectRenderer.viewLess',
+    defaultMessage: 'View less',
+  },
+});
 
 interface CustomObjectRendererProps {
-  customObject: any;
-  customRenderingTemplates: RenderingTemplates;
+  objectToBeRendered: any;
+  customRenderingTemplates: ExtendedTemplates;
+  leftBorder: boolean;
+  expandAllStatus: ExpandAllStatus;
+  authorizeExpandAll: () => void;
 }
 
-class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
+type Props = CustomObjectRendererProps & InjectedIntlProps;
+
+type ViewMoreStatus = 'INIT_OR_NOT_NEEDED' | 'VIEW_MORE' | 'VIEW_LESS';
+
+interface State {
+  viewMoreStatus: ViewMoreStatus;
+}
+
+class CustomObjectRenderer extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      viewMoreStatus: 'INIT_OR_NOT_NEEDED',
+    };
+  }
+
   // formatObject transforms an object to an array
-  // of key, value tuples. It also eliminates properties
+  // of key and value tuples. It also eliminates properties
   // of the object with a null value.
   formatObject = (object: any): Array<[string, any]> => {
     return Object.entries(object).filter((keyAndValue: [string, any]) => {
@@ -31,6 +58,7 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
     });
   };
 
+  // Used to apply a custom template to display the value
   getApplyTemplateOpt = (key: string, value: any) => (
     layer: TemplateDefinitions,
   ): JSX.Element | undefined => {
@@ -43,7 +71,7 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
     return undefined;
   };
 
-  // Function used to create extended templates from other extended templates, relatively
+  // Function used to create extended templates from other extended templates, relatively (using key)
   createRecLocalTemplates = (
     localTemplates: ExtendedTemplates,
     key: string,
@@ -89,7 +117,10 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
   };
 
   // Used to add a left border to the object
-  createDisplayedObject = (leftBorder: boolean, valueToBeDisplayed: any) => {
+  createDisplayedObject = (
+    leftBorder: boolean,
+    valueToBeDisplayed: any,
+  ): JSX.Element => {
     return leftBorder ? (
       <div className="left-border-object">{valueToBeDisplayed}</div>
     ) : (
@@ -98,22 +129,89 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
   };
 
   // Same as createDisplayedObject, but with a CustomPropertyRenderer as value
-  createDisplayedObjectWithProperty = (leftBorder: boolean, value: any) => {
+  createDisplayedObjectWithProperty = (
+    leftBorder: boolean,
+    value: any,
+  ): JSX.Element => {
     const valueToBeDisplayed = <CustomPropertyRenderer value={value} />;
     return this.createDisplayedObject(leftBorder, valueToBeDisplayed);
   };
 
-  // Recursive function used to render an object
-  recRenderFunction = (
-    objectToBeRendered: any,
-    localTemplates: ExtendedTemplates,
-    leftBorder: boolean,
-  ): JSX.Element => {
+  // Used to adapt the data to View more, View less, Expand all, Collapse all,
+  // if needed
+  reduceListAndGetViewMore = (
+    value: any[],
+  ): { listToBeRendered: any[]; viewMoreButton?: JSX.Element } => {
+    const { expandAllStatus, authorizeExpandAll } = this.props;
+    const { viewMoreStatus } = this.state;
+    const nbMaxItems = 5;
+
+    const invertViewMoreStatus = () => {
+      if (viewMoreStatus === 'VIEW_MORE') {
+        this.setState({ viewMoreStatus: 'VIEW_LESS' });
+      } else if (viewMoreStatus === 'VIEW_LESS') {
+        this.setState({ viewMoreStatus: 'VIEW_MORE' });
+      }
+    };
+
+    const viewMoreButton = (plus: boolean) => {
+      const message = plus ? messages.viewMore : messages.viewLess;
+      return (
+        <button className="button-sm" onClick={invertViewMoreStatus}>
+          <FormattedMessage {...message} />
+        </button>
+      );
+    };
+
+    switch (expandAllStatus) {
+      case 'INIT_OR_NOT_NEEDED':
+      case 'EXPAND_ALL':
+        switch (viewMoreStatus) {
+          case 'INIT_OR_NOT_NEEDED':
+            if (value.length > nbMaxItems) {
+              authorizeExpandAll();
+              this.setState({ viewMoreStatus: 'VIEW_MORE' });
+              return {
+                listToBeRendered: value.slice(0, nbMaxItems),
+                viewMoreButton: viewMoreButton(true),
+              };
+            }
+            return { listToBeRendered: value };
+          case 'VIEW_MORE':
+            return {
+              listToBeRendered: value.slice(0, nbMaxItems),
+              viewMoreButton: viewMoreButton(true),
+            };
+          case 'VIEW_LESS':
+            return {
+              listToBeRendered: value,
+              viewMoreButton: viewMoreButton(false),
+            };
+        }
+        break;
+      case 'COLLAPSE_ALL':
+        if (viewMoreStatus !== 'INIT_OR_NOT_NEEDED') {
+          this.setState({ viewMoreStatus: 'INIT_OR_NOT_NEEDED' });
+        }
+        return { listToBeRendered: value };
+    }
+    return { listToBeRendered: [] };
+  };
+
+  renderAux = (): JSX.Element => {
+    const {
+      objectToBeRendered,
+      customRenderingTemplates,
+      leftBorder,
+      expandAllStatus,
+      authorizeExpandAll,
+    } = this.props;
+
     const {
       absoluteTemplates: absoluteLayer,
       transformedTemplates: transformedLayer,
       relativeTemplates: relativeLayer,
-    } = localTemplates;
+    } = customRenderingTemplates;
 
     // Simple cases first: boolean, string, number
 
@@ -134,19 +232,42 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
     // First complex case : Array
 
     if (Array.isArray(objectToBeRendered)) {
-      const renderedElements =
-        objectToBeRendered.length !== 0
-          ? objectToBeRendered.map((element: any) => {
-              return this.recRenderFunction(element, localTemplates, true);
+      const {
+        listToBeRendered,
+        viewMoreButton: viewMoreButtonForList,
+      } = this.reduceListAndGetViewMore(objectToBeRendered);
+
+      const renderedElements: JSX.Element | JSX.Element[] =
+        listToBeRendered.length !== 0
+          ? listToBeRendered.map((element: any, index: number) => {
+              return (
+                <CustomObjectRenderer
+                  key={index}
+                  objectToBeRendered={element}
+                  customRenderingTemplates={customRenderingTemplates}
+                  leftBorder={true}
+                  intl={this.props.intl}
+                  expandAllStatus={expandAllStatus}
+                  authorizeExpandAll={authorizeExpandAll}
+                />
+              );
             })
           : // Empty list case
             this.createDisplayedObject(
               leftBorder,
-              <Tooltip title="Empty list">
-                <Tag className="card-tag">[]</Tag>
-              </Tooltip>,
+              <span className="EmptyListPropertyValue">
+                <Tooltip title="Empty list">
+                  <Tag className="card-tag">[]</Tag>
+                </Tooltip>
+              </span>,
             );
-      return <span>{renderedElements}</span>;
+      return (
+        <span className="PropertyList">
+          {renderedElements}
+          {viewMoreButtonForList &&
+            this.createDisplayedObject(true, viewMoreButtonForList)}
+        </span>
+      );
     }
 
     // Second complex case : objects
@@ -159,16 +280,23 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
     if (nonNullPropertiesOfTheObject.length === 0) {
       return this.createDisplayedObject(
         leftBorder,
-        <Tooltip title="Empty object">
-          <Tag className="card-tag">{'{}'}</Tag>
-        </Tooltip>,
+        <span className="EmptyObjectPropertyValue">
+          <Tooltip title="Empty object">
+            <Tag className="card-tag">{'{}'}</Tag>
+          </Tooltip>
+        </span>,
       );
     }
+
+    const {
+      listToBeRendered: transformedProperties,
+      viewMoreButton: viewMoreButtonObject,
+    } = this.reduceListAndGetViewMore(nonNullPropertiesOfTheObject);
 
     //
     // Map to render each property of the object
     //
-    const keysAndValuesToBeDisplayed: JSX.Element[] = nonNullPropertiesOfTheObject.map(
+    const keysAndValuesToBeDisplayed: JSX.Element[] = transformedProperties.map(
       (keyAndValue: [string, any]): JSX.Element => {
         const key = keyAndValue[0];
         const value = keyAndValue[1];
@@ -180,7 +308,7 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
         // 1) with an absolute property name;
         // 2) with a relative property name (transformed into an absolute one in a context);
         // 3) with a relative property name.
-        const customJSX =
+        const customJSX: JSX.Element | undefined =
           applyTemplateOpt(absoluteLayer) ||
           applyTemplateOpt(transformedLayer) ||
           applyTemplateOpt(relativeLayer);
@@ -191,7 +319,7 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
         // If no custom rendering is asked, recursive treatment
 
         const recTemplates: ExtendedTemplates = this.createRecLocalTemplates(
-          localTemplates,
+          customRenderingTemplates,
           key,
         );
 
@@ -202,10 +330,15 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
           (Array.isArray(value) && value.length === 0) || // No need of a new line for []
           Object.keys(value).length === 0; // No need of a new line for {}
 
-        const renderedValue = this.recRenderFunction(
-          value,
-          recTemplates,
-          !isBaseCase,
+        const renderedValue = (
+          <CustomObjectRenderer
+            objectToBeRendered={value}
+            customRenderingTemplates={recTemplates}
+            leftBorder={!isBaseCase}
+            intl={this.props.intl}
+            expandAllStatus={expandAllStatus}
+            authorizeExpandAll={authorizeExpandAll}
+          />
         );
 
         return (
@@ -219,21 +352,19 @@ class CustomObjectRenderer extends React.Component<CustomObjectRendererProps> {
       },
     );
 
-    return this.createDisplayedObject(leftBorder, keysAndValuesToBeDisplayed);
+    const keysWithButton = (
+      <span>
+        {keysAndValuesToBeDisplayed}
+        {viewMoreButtonObject}
+      </span>
+    );
+
+    return this.createDisplayedObject(leftBorder, keysWithButton);
   };
 
   render() {
-    const { customObject, customRenderingTemplates } = this.props;
-    const extendedCustomRenderings: ExtendedTemplates = {
-      transformedTemplates: {},
-      ...customRenderingTemplates,
-    };
-    return (
-      <div className="custom-object-renderer">
-        {this.recRenderFunction(customObject, extendedCustomRenderings, false)}
-      </div>
-    );
+    return <span>{this.renderAux()}</span>;
   }
 }
 
-export default CustomObjectRenderer;
+export default injectIntl(CustomObjectRenderer);

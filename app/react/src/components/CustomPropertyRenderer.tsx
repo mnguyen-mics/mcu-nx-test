@@ -14,16 +14,16 @@ class CustomPropertyRenderer extends React.Component<
     const { name, value, nameNewLineValue } = this.props;
 
     return name ? (
-      <div>
+      <div className={nameNewLineValue ? "PropertyWithNameAndNewLine" : "PropertyWithNameNoNewLine"}>
         <Tooltip title={name}>
           <Tag className="card-tag">{name}</Tag>
         </Tooltip>
-        {': '}
+        {' : '}
         {nameNewLineValue && <br />}
         {value}
       </div>
     ) : (
-      <span>{value}</span>
+      <span className="PropertyValueOnly">{value}</span>
     );
   }
 }

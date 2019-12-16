@@ -17,10 +17,10 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import moment from 'moment';
-import CustomObjectRenderer, {
+import CustomObjectRendererWrapper, {
   RenderingTemplates,
   TemplateDefinitions,
-} from '../../../../components/CustomObjectRenderer';
+} from '../../../../components/CustomObjectRendererWrapper';
 
 interface UserChoicesCardProps {
   dataSource: UserChoices;
@@ -92,7 +92,7 @@ class UserChoicesCard extends React.Component<Props, State> {
     };
 
     return (
-      <CustomObjectRenderer
+      <CustomObjectRendererWrapper
         customRenderingTemplates={renderingTemplates}
         customObject={consent}
       />
