@@ -343,7 +343,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
 
     if (pluginLayoutFieldDefinition !== undefined) {
 
-      const fieldDisabled = !!pluginPresetProperty || !fieldDefinition.writable || disabled
+      const fieldDisabled = (!!pluginPresetProperty && pluginPresetProperty.value.value) || !fieldDefinition.writable || disabled
 
       const pluginFieldProps: {
         formItemProps: FormItemProps,

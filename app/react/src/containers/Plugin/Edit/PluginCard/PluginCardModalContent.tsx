@@ -9,7 +9,7 @@ import { McsIcon, ButtonStyleless } from '../../../../components';
 import McsTabs from '../../../../components/McsTabs';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../models/plugin';
-import PluginSectionGenerator from '../../PluginSectionGenerator';
+import PluginSectionGenerator, { PluginExtraField } from '../../PluginSectionGenerator';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import { reduxForm, InjectedFormProps } from 'redux-form';
 import { Form, Spin, Icon } from 'antd';
@@ -30,7 +30,7 @@ export interface PluginCardModalContentProps<T> {
   plugin: T;
   onClose: () => void
   organisationId: string;
-  save: (pluginValue: any, propertiesValue: PropertyResourceShape[]) => void;
+  save: (pluginValue: any, propertiesValue: PropertyResourceShape[], name?: string, description?: string) => void;
   pluginProperties: PropertyResourceShape[];
   disableFields: boolean;
   pluginLayout?: PluginLayout;
@@ -39,6 +39,8 @@ export interface PluginCardModalContentProps<T> {
   initialValues?: any;
   editionMode: boolean;
   selectedTab: PluginCardModalTab;
+  nameField?: PluginExtraField;
+  descriptionField?: PluginExtraField;
 }
 
 type Props<T extends LayoutablePlugin> = PluginCardModalContentProps<T> &
@@ -150,7 +152,9 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       organisationId,
       plugin,
       pluginProperties,
-      disableFields
+      disableFields,
+      nameField,
+      descriptionField
     } = this.props;
 
     return pluginLayout.sections.map((section, index) => {
@@ -167,6 +171,8 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
             pluginPresetProperties={plugin.plugin_preset ? plugin.plugin_preset.properties : undefined}
             disableFields={!!disableFields}
             pluginVersionId={plugin.current_version_id!}
+            nameField={index === 0 && nameField ? nameField : undefined}
+            descriptionField={index === 0 && descriptionField ? descriptionField: undefined}
             small={true}
           />
           {hrBooleanCondition ? <hr /> : null}
@@ -177,7 +183,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
   };
 
   onSubmit = (formValues: any) => {
-    const { editionMode, save } = this.props;
+    const { editionMode, save, nameField, descriptionField } = this.props;
     if (editionMode === false) {
       formValues.id = formValues.id ? formValues.id : generateFakeId();
     }
@@ -193,12 +199,16 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       .map(item => {
         return {
           ...item,
-          value: formValues.properties[item.technical_name]
+          value: formValues.properties && formValues.properties[item.technical_name]
             ? formValues.properties[item.technical_name].value
             : item.value,
         };
       });
-    save(pluginData, formattedProperties);
+    save(
+      pluginData, 
+      formattedProperties, 
+      formValues.name || (nameField && nameField.value), 
+      formValues.description || (descriptionField && descriptionField.value));
   }
 
   renderForm = (pluginLayout: PluginLayout) => {

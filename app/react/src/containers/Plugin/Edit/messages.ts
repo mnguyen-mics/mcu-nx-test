@@ -53,4 +53,28 @@ export default defineMessages({
     id: 'plugin.edit.advanced.button',
     defaultMessage: 'Advanced',
   },
+  feedModalNameFieldLabel: {
+    id: 'audience.segment.feed.create.nameField.label',
+    defaultMessage: 'Name',
+  },
+  feedModalNameFieldTitle: {
+    id: 'audience.segment.feed.create.nameField.title',
+    defaultMessage: 'The name that will be used to identify this feed preset and the feeds created with it.',
+  },
+  feedModalNameFieldPlaceholder: {
+    id: 'audience.segment.feed.create.nameField.placeholder',
+    defaultMessage: 'Name',
+  },
+  feedModalDescriptionFieldLabel: {
+    id: 'audience.segment.feed.create.descriptionField.label',
+    defaultMessage: 'Description',
+  },
+  feedModalDescriptionFieldTitle: {
+    id: 'audience.segment.feed.create.descriptionField.title',
+    defaultMessage: 'A description of the feed preset to help understand what this preset is about.',
+  },
+  feedModalDescriptionFieldPlaceholder: {
+    id: 'audience.segment.feed.create.descriptionField.placeholder',
+    defaultMessage: 'Description',
+  },
 });

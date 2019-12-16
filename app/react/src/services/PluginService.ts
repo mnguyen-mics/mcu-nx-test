@@ -2,6 +2,7 @@ import {
   Adlayout,
   StylesheetVersionResource,
   PluginType,
+  PluginPresetProperty,
 } from './../models/Plugins';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
@@ -25,6 +26,14 @@ interface GetPluginOptions extends Omit<PaginatedApiParam, 'first_result'> {
 interface GetPluginPresetOptions extends Omit<PaginatedApiParam, 'first_result'> {
   plugin_type?: PluginType;
   organisation_id?: number;
+}
+
+interface PostPluginPresetResource {
+  organisation_id: string;
+  name: string;
+  description?: string;
+  plugin_type: PluginType;
+  properties: PluginPresetProperty[];
 }
 
 const PluginService = {
@@ -103,6 +112,14 @@ const PluginService = {
   ): Promise<DataListResponse<PluginPresetResource>> {
     const endpoint = `plugins.versions.presets`;
     return ApiService.getRequest(endpoint, options);
+  },
+  createPluginPreset(
+    pluginId: string, 
+    pluginVersionId: string, 
+    resource: PostPluginPresetResource
+    ): Promise<DataResponse<PluginPresetResource>> {
+    const endpoint = `plugins/${pluginId}/versions/${pluginVersionId}/presets`;
+    return ApiService.postRequest(endpoint, resource);
   },
   getEngineProperties(
     engineVersionId: string,

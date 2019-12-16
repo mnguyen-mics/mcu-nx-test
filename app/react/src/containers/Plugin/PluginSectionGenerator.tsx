@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PluginLayoutSectionResource, PluginLayoutFieldResource } from '../../models/plugin/PluginLayout';
 import { ButtonStyleless, McsIcon } from '../../components';
 import { Row } from 'antd';
-import { FormTitle } from '../../components/Form';
+import { FormTitle, FormInputField, FormInput, FormTextAreaField, FormTextArea } from '../../components/Form';
 import withValidators from '../../components/Form/withValidators';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import injectDrawer from '../../components/Drawer/injectDrawer';
@@ -12,6 +12,17 @@ import { compose } from 'recompose';
 import messages from './Edit/messages';
 import { PropertyResourceShape } from '../../models/plugin';
 import { PluginPresetProperty } from '../../models/Plugins';
+import { Validator } from 'redux-form';
+
+export interface PluginExtraField {
+    label: string,
+    title: string,
+    placeholder: string,
+    display: boolean,
+    disabled: boolean,
+    value?: string,
+    validator?: Validator | Validator[],
+}
 
 interface PluginSectionGeneratorProps {
     organisationId: string;
@@ -22,6 +33,8 @@ interface PluginSectionGeneratorProps {
     noUploadModal?: () => void;
     disableFields: boolean;
     small?: boolean;
+    nameField?: PluginExtraField;
+    descriptionField?: PluginExtraField;
 }
 
 type JoinedProps = PluginSectionGeneratorProps &
@@ -88,14 +101,75 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
         });
     }
 
+    generateNameAndDescriptionFields() {
+        const { nameField, descriptionField } = this.props;
+        const inputs: React.ReactNode[] = [];
 
+        if(nameField && nameField.display) {
+            inputs.push(
+                <div>
+                    <Row>
+                        <FormInputField
+                            key="name"
+                            name="name"
+                            component={FormInput}
+                            formItemProps={{ label: nameField.label, required: true }}
+                            inputProps={nameField.disabled ? { 
+                                placeholder: nameField.placeholder, 
+                                disabled: nameField.disabled,
+                                value: nameField.value
+                            } : {
+                                placeholder: nameField.placeholder, 
+                                disabled: nameField.disabled,
+                                defaultValue: nameField.value
+                            }}
+                            small={true}
+                            helpToolTipProps={{title: nameField.title}}
+                            validate={nameField.validator}
+                        />
+                    </Row>
+                </div>
+            );
+        }
+
+        if(descriptionField && descriptionField.display)
+            inputs.push(
+                <div>
+                    <Row>
+                        <FormTextAreaField
+                            key="description"
+                            name="description"
+                            component={ FormTextArea }
+                            formItemProps={{ label: descriptionField.label, required: true }}
+                            inputProps={descriptionField.disabled ? { 
+                                placeholder: descriptionField.placeholder, 
+                                disabled: descriptionField.disabled,
+                                value: descriptionField.value
+                            } : {
+                                placeholder: descriptionField.placeholder, 
+                                disabled: descriptionField.disabled,
+                                defaultValue: descriptionField.value
+                            }}
+                            small={true}
+                            helpToolTipProps={{ title: descriptionField.title }}
+                            validate={descriptionField.validator}
+                        />
+                    </Row>
+                </div>
+            );
+
+        return inputs;
+    }
 
     render() {
         const {
             intl: { formatMessage },
             pluginLayoutSection,
+            nameField,
+            descriptionField
         } = this.props;
 
+        const nameAndDescriptionFields = this.generateNameAndDescriptionFields()
         const returnedFields = pluginLayoutSection.fields.map(this.generateFormField)
         const advancedFields = (pluginLayoutSection.advanced_fields !== null && pluginLayoutSection.advanced_fields.length !== 0) ?
             (
@@ -124,7 +198,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
             null;
 
         return (
-            (returnedFields.length > 0 || advancedFields) &&
+            (returnedFields.length > 0 || advancedFields || nameField || descriptionField) ?
             <div id={pluginLayoutSection.title}>
                 <Row type="flex" align="middle" justify="space-between" className="section-header">
                     <FormTitle
@@ -132,10 +206,10 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                         subtitle={{ id: `section.${pluginLayoutSection.sub_title}.subTitle`, defaultMessage: pluginLayoutSection.sub_title }}
                     />
                 </Row>
+                {nameAndDescriptionFields}
                 {returnedFields}
                 {advancedFields}
-            </div>
-
+            </div> : null
         );
     }
 }

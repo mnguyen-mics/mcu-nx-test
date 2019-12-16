@@ -6,6 +6,7 @@ import { MenuPresentational, MenuList } from '../../../../../components/FormMenu
 import { FeedAction } from './domain';
 import { compose } from 'recompose';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
+import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 
 const { Content } = Layout;
 
@@ -13,7 +14,7 @@ export interface AudienceFeedSelectorProps {
   onSelect: (feedType: FeedAction) => void;
 }
 
-type Props = AudienceFeedSelectorProps & InjectedIntlProps & InjectedFeaturesProps;
+type Props = AudienceFeedSelectorProps & InjectedIntlProps & InjectedFeaturesProps & InjectedWorkspaceProps;
 
 const messages = defineMessages({
   listTitle: {
@@ -45,6 +46,19 @@ const messages = defineMessages({
 class AudienceFeedSelector extends React.Component<Props> {
   onSelect = (feedType: FeedAction) => () => {
     this.props.onSelect(feedType)
+  }
+
+  hasRightToCreatePreset(): boolean {
+    const { workspace: { role } } = this.props;
+
+    if(
+      role === 'ORGANISATION_ADMIN' ||
+      role === 'COMMUNITY_ADMIN' ||
+      role === 'CUSTOMER_ADMIN'
+    )
+      return true;
+
+    return false;
   }
 
   render() {
@@ -82,8 +96,7 @@ class AudienceFeedSelector extends React.Component<Props> {
                     />
                   </div>
                 </Row>
-                {/* TODO DISPLAY WHEN CREATING PRESETS IS FINISHED */}
-                { hasFeature("plugins-presets") && false ?
+                { hasFeature("plugins-presets") && this.hasRightToCreatePreset() ?
                   <div>
                     <Row className="intermediate-title">
                       <FormattedMessage {...messages.feedAdvanced} />
@@ -110,4 +123,4 @@ class AudienceFeedSelector extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceFeedSelectorProps>(injectIntl, injectFeatures)(AudienceFeedSelector)
+export default compose<Props, AudienceFeedSelectorProps>(injectIntl, injectFeatures, injectWorkspace)(AudienceFeedSelector)

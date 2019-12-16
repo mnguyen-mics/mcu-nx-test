@@ -20,6 +20,7 @@ import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import CreateFeedPresetSelectionPage from './CreateFeedPresetSelectionPage';
 import { Path } from '../../../../../components/ActionBar';
+import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
 
 export interface AudienceFeedPageProps {}
 
@@ -139,6 +140,12 @@ class AudienceFeedPage extends React.Component<
     });
   };
 
+  onPresetSave = (feedType: AudienceFeedType) => {
+    this.setState({
+      type: feedType === 'EXTERNAL_FEED' ? 'create_external' : 'create_tag',
+    });
+  }
+
   onClose = () => {
     const {
       history,
@@ -236,6 +243,7 @@ class AudienceFeedPage extends React.Component<
           feedType={type === 'create_external_preset' ? 'EXTERNAL_FEED' : 'TAG_FEED'}
           breadcrumbPaths={presetBreadcrumbPaths}
           onClose={this.onClose}
+          onPresetSave={this.onPresetSave}
         />
       )
     }
