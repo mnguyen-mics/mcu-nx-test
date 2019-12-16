@@ -135,7 +135,7 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
     };
 
     const nextLocation = {
-      pathname: `/v2/o/${organisationId}/audience/feeds`,
+      pathname: `/v2/o/${organisationId}/audience/feeds/list`,
       search: updateSearch(currentSearch, params, FEEDS_SEARCH_SETTINGS),
     };
 

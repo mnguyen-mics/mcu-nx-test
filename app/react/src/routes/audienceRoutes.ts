@@ -45,7 +45,7 @@ export const audienceDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
   audienceFeedList: {
-    path: '/audience/feeds',
+    path: '/audience/feeds/list',
     layout: 'main',
     contentComponent: AudienceFeedsTable,
     actionBarComponent: AudienceFeedsActionBar,
@@ -53,7 +53,7 @@ export const audienceDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
   audienceFeedOverview: {
-    path: '/audience/feeds_overview',
+    path: '/audience/feeds',
     layout: 'main',
     contentComponent: AudienceFeedsOverview,
     actionBarComponent: FeedsOverviewActionbar,

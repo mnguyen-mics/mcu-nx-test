@@ -4,12 +4,12 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import AudienceSegmentFeedService from '../../../../services/AudienceSegmentFeedService';
 import { Status, StatusEnum } from '../../../../models/Plugins';
-import { Spin } from 'antd';
 import AudienceFeedsOverviewCard from './AudienceFeedsOverviewCard';
 import { FeedAggregationRequest } from '../../../../models/audiencesegment';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { Loading } from '../../../../components';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
@@ -123,27 +123,25 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
   render() {
     const { feedsAggregationMetrics } = this.state;
 
-    return (
+    return feedsAggregationMetrics.isLoading ? (
+      <Loading className="loading-full-screen full-height" />
+    ) : (
       <div className="feed-overview">
-        {feedsAggregationMetrics.isLoading ? (
-          <Spin size="small" />
-        ) : (
-          Object.keys(feedsAggregationMetrics.aggregates).map(
-            pluginVersionId => {
-              const obj = feedsAggregationMetrics.aggregates[pluginVersionId];
-              return (
-                <div
-                  className="feed-overview-card"
-                  key={`card-${pluginVersionId}`}
-                >
-                  <AudienceFeedsOverviewCard
-                    pluginVersionId={pluginVersionId}
-                    aggregatesByStatus={obj}
-                  />
-                </div>
-              );
-            },
-          )
+        {Object.keys(feedsAggregationMetrics.aggregates).map(
+          pluginVersionId => {
+            const obj = feedsAggregationMetrics.aggregates[pluginVersionId];
+            return (
+              <div
+                className="feed-overview-card"
+                key={`card-${pluginVersionId}`}
+              >
+                <AudienceFeedsOverviewCard
+                  pluginVersionId={pluginVersionId}
+                  aggregatesByStatus={obj}
+                />
+              </div>
+            );
+          },
         )}
       </div>
     );
