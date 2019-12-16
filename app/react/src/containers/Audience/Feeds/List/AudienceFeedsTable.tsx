@@ -22,7 +22,7 @@ import {
   PluginResource,
   Status,
 } from '../../../../models/Plugins';
-import { DataColumnDefinition } from '../../../../components/TableView/TableView';
+import { DataColumnDefinition, ActionsColumnDefinition, ActionsRenderer, ActionDefinition } from '../../../../components/TableView/TableView';
 import AudienceSegmentFeedService, {
   AudienceFeedType,
 } from '../../../../services/AudienceSegmentFeedService';
@@ -36,15 +36,17 @@ import { TYPES } from '../../../../constants/types';
 import { Link } from 'react-router-dom';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { McsIcon } from '../../../../components';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import { AudienceExternalFeedTyped, AudienceTagFeedTyped } from '../../Segments/Edit/domain';
 
-type Props = RouteComponentProps<{ organisationId: string }> & InjectedIntlProps;
+type Props = InjectedNotificationProps & RouteComponentProps<{ organisationId: string }> & InjectedIntlProps;
+
+type RecordType = {feed: AudienceExternalFeedTyped | AudienceTagFeedTyped,
+  audienceSegment?: AudienceSegmentResource}
 
 interface State {
   list: {
-    feeds: Array<{
-      feed: AudienceExternalFeed;
-      audienceSegment?: AudienceSegmentResource;
-    }>;
+    feeds: Array<RecordType>;
     total: number;
     isLoading: boolean;
   };
@@ -109,6 +111,19 @@ const messages = defineMessages({
     id: 'audience.feeds.list.status.published',
     defaultMessage: 'Published',
   },
+  activate: {
+    id: 'audience.feeds.list.column.action.activate',
+    defaultMessage: 'Activate',
+  },
+  pause: {
+    id: 'audience.feeds.list.column.action.pause',
+    defaultMessage: 'Pause',
+  },
+  delete: {
+    id: 'audience.feeds.list.column.action.delete',
+    defaultMessage: 'Delete',
+  },
+
 });
 
 class AudienceFeedsTable extends React.Component<Props, State> {
@@ -269,7 +284,9 @@ class AudienceFeedsTable extends React.Component<Props, State> {
           }),
         ).then(segmentResults => {
           const feeds = feedResults.data.map(feed => ({
-            feed: feed,
+            feed: this.getFeedType() === 'TAG_FEED' ?
+              { ...feed, type: 'TAG_FEED' } as AudienceTagFeedTyped :
+              { ...feed, type: 'EXTERNAL_FEED' } as AudienceExternalFeedTyped,
             audienceSegment: segmentResults
               .map(r => r.data)
               .find(segment => {
@@ -311,16 +328,16 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       });
 
     PluginService.getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_TAG_FEED' })
-    .then(res => {
-      this.setState({
-        tagPlugins: res.data,
+      .then(res => {
+        this.setState({
+          tagPlugins: res.data,
+        });
+      })
+      .catch(() => {
+        this.setState({
+          tagPlugins: [],
+        });
       });
-    })
-    .catch(() => {
-      this.setState({
-        tagPlugins: [],
-      });
-    });
   }
 
   updateLocationSearch = (params: Index<any>) => {
@@ -337,7 +354,99 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     history.push(nextLocation);
   };
 
-  buildDataColumns = () => {
+
+  activateFeed = (record: RecordType) => {
+
+    const externalFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'EXTERNAL_FEED');
+    const tagFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'TAG_FEED');
+    const feedService = record.feed.type === 'TAG_FEED' ? tagFeedService : externalFeedService;
+
+    const {
+      notifyError,
+    } = this.props;
+
+    const updatedFeed = {
+      ...record.feed,
+      status: "ACTIVE" as Status,
+    };
+    return feedService
+      .updateAudienceFeed(record.feed.id, updatedFeed)
+      .then(res => res.data)
+      .catch(err => {
+        notifyError(err);
+      });
+
+  };
+
+  pauseFeed = (record: RecordType) => {
+
+    const externalFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'EXTERNAL_FEED');
+    const tagFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'TAG_FEED');
+    const feedService = record.feed.type === 'TAG_FEED' ? tagFeedService : externalFeedService;
+
+    const {
+      notifyError,
+    } = this.props;
+
+    const updatedFeed = {
+      ...record.feed,
+      status: "PAUSED" as Status,
+    };
+    return feedService
+      .updateAudienceFeed(record.feed.id, updatedFeed)
+      .then(res => res.data)
+      .catch(err => {
+        notifyError(err);
+      });
+
+  };
+
+  deleteFeed = (record: RecordType) => {
+
+    const externalFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'EXTERNAL_FEED');
+    const tagFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'TAG_FEED');
+    const feedService = record.feed.type === 'TAG_FEED' ? tagFeedService : externalFeedService;
+
+    const {
+      notifyError,
+    } = this.props;
+
+
+    return feedService.deleteAudienceFeed(record.feed.id)
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
+  renderActionColumnDefinition: ActionsRenderer<RecordType> = (record: RecordType) => {
+      const actionsDefinitions: Array<ActionDefinition<RecordType>> = [];
+
+      if (record.feed.status === 'PAUSED' || record.feed.status === 'INITIAL') {
+        actionsDefinitions.push({ callback: this.activateFeed, intlMessage: messages.activate })
+      } else {
+        actionsDefinitions.push({ callback: this.pauseFeed, intlMessage: messages.pause })
+      }
+      actionsDefinitions.push({ intlMessage: messages.delete, callback: this.deleteFeed })
+      return actionsDefinitions;
+    }
+
+
+  buildActionColumns = () => {
+
+    const actionColumns: Array<
+      ActionsColumnDefinition<RecordType>
+
+    > = [
+        {
+          key: 'action',
+          actions: this.renderActionColumnDefinition
+        },
+      ];
+
+    return actionColumns
+  }
+
+  buildDataColumns = (feedType: String) => {
     const {
       match: {
         params: { organisationId },
@@ -345,71 +454,62 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const dataColumns: Array<DataColumnDefinition<{
-      feed: AudienceExternalFeed;
-      audienceSegment?: AudienceSegmentResource;
-    }>> = [
-      {
-        intlMessage: messages.segmentName,
-        key: 'segmentName',
-        isHideable: false,
-        render: (
-          text: string,
-          record: {
-            feed: AudienceExternalFeed;
-            audienceSegment?: AudienceSegmentResource;
-          },
-        ) => (
-          <span>
-            {!record.audienceSegment ? (
-              <FormattedMessage {...messages.segmentDeleted} />
-            ) : record.audienceSegment.name ? (
-              <Link
-                className="mcs-campaigns-link"
-                to={`/v2/o/${organisationId}/audience/segments/${record.audienceSegment.id}`}
-              >
-                {record.audienceSegment.name}
-              </Link>
-            ) : (
-              <FormattedMessage {...messages.segmentNameNotFound} />
-            )}
-          </span>
-        ),
-      },
-      {
-        intlMessage: messages.artifactId,
-        key: 'artifactId',
-        isHideable: false,
-        render: (
-          text: string,
-          record: {
-            feed: AudienceExternalFeed;
-            audienceSegment?: AudienceSegmentResource;
-          },
-        ) => <span>{record.feed.artifact_id}</span>,
-      },
-      {
-        intlMessage: messages.status,
-        key: 'status',
-        isHideable: false,
-        render: (
-          text: string,
-          record: {
-            feed: AudienceExternalFeed;
-            audienceSegment?: AudienceSegmentResource;
-          },
-        ) => {
-          return (
-            <Tooltip
-              placement="top"
-              title={intl.formatMessage(messages[record.feed.status])}
-            >
-              <McsIcon type="status" className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`} />
-            </Tooltip>
-          );
+    const dataColumns: Array<DataColumnDefinition<RecordType>> = [
+        {
+          intlMessage: messages.segmentName,
+          key: 'segmentName',
+          isHideable: false,
+          render: (
+            text: string,
+            record: RecordType,
+          ) => (
+              <span>
+                {!record.audienceSegment ? (
+                  <FormattedMessage {...messages.segmentDeleted} />
+                ) : record.audienceSegment.name ? (
+                  <Link
+                    className="mcs-campaigns-link"
+                    to={`/v2/o/${organisationId}/audience/segments/${record.audienceSegment.id}`}
+                  >
+                    {record.audienceSegment.name}
+                  </Link>
+                ) : (
+                      <FormattedMessage {...messages.segmentNameNotFound} />
+                    )}
+              </span>
+            ),
         },
-      },
-    ];
+        {
+          intlMessage: messages.artifactId,
+          key: 'artifactId',
+          isHideable: false,
+          render: (
+            text: string,
+            record: RecordType,
+          ) => <span>{record.feed.artifact_id}</span>,
+        },
+        {
+          intlMessage: messages.status,
+          key: 'status',
+          isHideable: false,
+          render: (
+            text: string,
+            record: {
+              feed: AudienceExternalFeed;
+              audienceSegment?: AudienceSegmentResource;
+            },
+          ) => {
+            return (
+              <Tooltip
+                placement="top"
+                title={intl.formatMessage(messages[record.feed.status])}
+              >
+                <McsIcon type="status" className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`} />
+              </Tooltip>
+            );
+          },
+        },
+      ];
 
     return dataColumns;
   };
@@ -524,11 +624,12 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     return (
       <div className="mcs-table-container">
         <TableViewFilters
-          columns={this.buildDataColumns()}
+          columns={this.buildDataColumns(feedType)}
           loading={isLoading}
           pagination={pagination}
           filtersOptions={filtersOptions}
           dataSource={feeds}
+          actionsColumnsDefinition={this.buildActionColumns()}
         />
       </div>
     );
@@ -538,4 +639,5 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
+  injectNotifications,
 )(AudienceFeedsTable);
