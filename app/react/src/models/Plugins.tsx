@@ -136,8 +136,15 @@ export interface Recommender extends PluginInstance {
   organisation_id: string;
 }
 
-export type Status = 'INITIAL' | 'PAUSED' | 'ACTIVE' | 'PUBLISHED';
-export interface AudienceExternalFeed extends PluginInstance  {
+export enum StatusEnum {
+  'INITIAL',
+  'PAUSED',
+  'ACTIVE',
+  'PUBLISHED',
+}
+export type Status = keyof typeof StatusEnum;
+
+export interface AudienceExternalFeed extends PluginInstance {
   artifact_id: string;
   audience_segment_id: string;
   group_id: string;

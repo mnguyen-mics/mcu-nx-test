@@ -320,6 +320,25 @@ const PluginService = {
         return null;
       });
   },
+  
+  getLocalizedPluginLayoutFromVersionId(
+    pluginVersionId: string,
+  ): Promise<{ plugin: PluginResource, layout?: PluginLayout }> {
+    return PluginService.findPluginFromVersionId(pluginVersionId).then(
+      pluginResponse => {
+        if (
+          pluginResponse !== null &&
+          pluginResponse.status !== 'error' &&
+          pluginResponse.data.current_version_id
+        ) {
+          return PluginService.getLocalizedPluginLayout(
+            pluginResponse.data.id,
+            pluginVersionId,
+          ).then(res => { return { plugin: pluginResponse.data, layout: res || undefined } });
+        } else return { plugin: pluginResponse.data, layout: undefined };
+      },
+    );
+  },
 };
 
 export default PluginService;
