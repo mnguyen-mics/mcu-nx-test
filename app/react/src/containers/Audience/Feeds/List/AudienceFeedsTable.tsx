@@ -65,6 +65,10 @@ const messages = defineMessages({
     id: 'audience.feeds.list.column.segmentName',
     defaultMessage: 'Segment Name',
   },
+  feedName: {
+    id: 'audience.feeds.list.column.feedName',
+    defaultMessage: 'Name',
+  },
   segmentNameNotFound: {
     id: 'audience.feeds.list.column.segmentNameNotFound',
     defaultMessage: 'Untitled',
@@ -510,6 +514,14 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                   )}
             </span>
           ),
+      },
+      {
+        intlMessage: messages.feedName,
+        key: 'feedName',
+        isHideable: false,
+        render: (text: string, record: RecordType) => (
+          <span> {record.feed.name ? record.feed.name : '-'} </span>
+        ),
       },
       {
         intlMessage: messages.artifactId,
