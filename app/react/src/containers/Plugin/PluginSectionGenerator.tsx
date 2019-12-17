@@ -125,7 +125,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                             }}
                             small={true}
                             helpToolTipProps={{title: nameField.title}}
-                            validate={nameField.validator}
+                            validate={!nameField.disabled ? nameField.validator: []}
                         />
                     </Row>
                 </div>
@@ -152,7 +152,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                             }}
                             small={true}
                             helpToolTipProps={{ title: descriptionField.title }}
-                            validate={descriptionField.validator}
+                            validate={!descriptionField.disabled ? descriptionField.validator: []}
                         />
                     </Row>
                 </div>
