@@ -446,7 +446,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               undefined
             )}
             <div className="title">
-              {cardHeaderTitle ? cardHeaderTitle : feed.artifact_id}
+              {feed.name ? feed.name : (cardHeaderTitle ? cardHeaderTitle : feed.artifact_id)}
             </div>
           </div>
           <div className="content">
