@@ -103,12 +103,12 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
             defaultMessage="User Query Segment"
           />
         </Menu.Item>
-        <Menu.Item key="EXPORT" disabled={!saveAsExort}>
+        {saveAsExort && <Menu.Item key="EXPORT">
           <FormattedMessage
             id="queryTool.query-builder-page-actionbar-saveas-export"
             defaultMessage="Export"
           />
-        </Menu.Item>
+        </Menu.Item>}
       </Menu>
     );
 
