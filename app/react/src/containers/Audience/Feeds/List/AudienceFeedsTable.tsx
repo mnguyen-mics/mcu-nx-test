@@ -41,8 +41,10 @@ import { AudienceExternalFeedTyped, AudienceTagFeedTyped } from '../../Segments/
 
 type Props = InjectedNotificationProps & RouteComponentProps<{ organisationId: string }> & InjectedIntlProps;
 
-type RecordType = {feed: AudienceExternalFeedTyped | AudienceTagFeedTyped,
-  audienceSegment?: AudienceSegmentResource}
+type RecordType = {
+  feed: AudienceExternalFeedTyped | AudienceTagFeedTyped,
+  audienceSegment?: AudienceSegmentResource
+}
 
 interface State {
   list: {
@@ -283,17 +285,19 @@ class AudienceFeedsTable extends React.Component<Props, State> {
               .catch(() => ({ data: undefined }));
           }),
         ).then(segmentResults => {
-         
+
           const feeds = feedResults.data.map(feed => {
-            const feedTyped: AudienceTagFeedTyped | AudienceExternalFeedTyped =this.getFeedType() === 'TAG_FEED' ?
-            { ...feed, type: 'TAG_FEED' } :
-            { ...feed, type: 'EXTERNAL_FEED' }
-            return {feed: feedTyped,
-            audienceSegment: segmentResults
-              .map(r => r.data)
-              .find(segment => {
-                return !!segment && segment.id === feed.audience_segment_id;
-              }),}
+            const feedTyped: AudienceTagFeedTyped | AudienceExternalFeedTyped = this.getFeedType() === 'TAG_FEED' ?
+              { ...feed, type: 'TAG_FEED' } :
+              { ...feed, type: 'EXTERNAL_FEED' }
+            return {
+              feed: feedTyped,
+              audienceSegment: segmentResults
+                .map(r => r.data)
+                .find(segment => {
+                  return !!segment && segment.id === feed.audience_segment_id;
+                }),
+            }
           });
 
           this.setState({
@@ -365,7 +369,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const {
       notifyError,
+      location: { search },
     } = this.props;
+
+    const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
 
     const updatedFeed = {
       ...record.feed,
@@ -373,7 +380,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     };
     return feedService
       .updateAudienceFeed(record.feed.id, updatedFeed)
-      .then(res => res.data)
+      .then(() => this.fetchFeeds(record.feed.organisation_id,filter))
       .catch(err => {
         notifyError(err);
       });
@@ -388,7 +395,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const {
       notifyError,
+      location: { search },
     } = this.props;
+
+    const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
 
     const updatedFeed = {
       ...record.feed,
@@ -396,7 +406,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     };
     return feedService
       .updateAudienceFeed(record.feed.id, updatedFeed)
-      .then(res => res.data)
+      .then(() => this.fetchFeeds(record.feed.organisation_id,filter)
+      )
       .catch(err => {
         notifyError(err);
       });
@@ -411,26 +422,45 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const {
       notifyError,
+      location: { search },
     } = this.props;
-
+   
+    
+    const {
+      list: {
+        feeds,
+      },
+    } = this.state
+    
+    const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
 
     return feedService.deleteAudienceFeed(record.feed.id)
-      .catch(err => {
+    .then(() => {
+      if(feeds.length === 1 && filter.currentPage !== 1){
+        const newFilter = {
+          ...filter,
+          currentPage: filter.currentPage - 1,
+        };
+        this.fetchFeeds(record.feed.organisation_id,newFilter);
+      }else{
+        this.fetchFeeds(record.feed.organisation_id,filter);
+      }
+    }).catch(err => {
         notifyError(err);
       });
   };
 
   renderActionColumnDefinition: ActionsRenderer<RecordType> = (record: RecordType) => {
-      const actionsDefinitions: Array<ActionDefinition<RecordType>> = [];
+    const actionsDefinitions: Array<ActionDefinition<RecordType>> = [];
 
-      if (record.feed.status === 'PAUSED' || record.feed.status === 'INITIAL') {
-        actionsDefinitions.push({ callback: this.activateFeed, intlMessage: messages.activate })
-      } else {
-        actionsDefinitions.push({ callback: this.pauseFeed, intlMessage: messages.pause })
-      }
-      actionsDefinitions.push({ intlMessage: messages.delete, callback: this.deleteFeed })
-      return actionsDefinitions;
+    if (record.feed.status === 'PAUSED' || record.feed.status === 'INITIAL') {
+      actionsDefinitions.push({ callback: this.activateFeed, intlMessage: messages.activate })
+    } else {
+      actionsDefinitions.push({ callback: this.pauseFeed, intlMessage: messages.pause })
     }
+    actionsDefinitions.push({ intlMessage: messages.delete, callback: this.deleteFeed })
+    return actionsDefinitions;
+  }
 
 
   buildActionColumns = () => {
@@ -448,7 +478,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     return actionColumns
   }
 
-  buildDataColumns = (feedType: string) => {
+  buildDataColumns = () => {
     const {
       match: {
         params: { organisationId },
@@ -457,61 +487,61 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     } = this.props;
 
     const dataColumns: Array<DataColumnDefinition<RecordType>> = [
-        {
-          intlMessage: messages.segmentName,
-          key: 'segmentName',
-          isHideable: false,
-          render: (
-            text: string,
-            record: RecordType,
-          ) => (
-              <span>
-                {!record.audienceSegment ? (
-                  <FormattedMessage {...messages.segmentDeleted} />
-                ) : record.audienceSegment.name ? (
-                  <Link
-                    className="mcs-campaigns-link"
-                    to={`/v2/o/${organisationId}/audience/segments/${record.audienceSegment.id}`}
-                  >
-                    {record.audienceSegment.name}
-                  </Link>
-                ) : (
-                      <FormattedMessage {...messages.segmentNameNotFound} />
-                    )}
-              </span>
-            ),
-        },
-        {
-          intlMessage: messages.artifactId,
-          key: 'artifactId',
-          isHideable: false,
-          render: (
-            text: string,
-            record: RecordType,
-          ) => <span>{record.feed.artifact_id}</span>,
-        },
-        {
-          intlMessage: messages.status,
-          key: 'status',
-          isHideable: false,
-          render: (
-            text: string,
-            record: {
-              feed: AudienceExternalFeed;
-              audienceSegment?: AudienceSegmentResource;
-            },
-          ) => {
-            return (
-              <Tooltip
-                placement="top"
-                title={intl.formatMessage(messages[record.feed.status])}
-              >
-                <McsIcon type="status" className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`} />
-              </Tooltip>
-            );
+      {
+        intlMessage: messages.segmentName,
+        key: 'segmentName',
+        isHideable: false,
+        render: (
+          text: string,
+          record: RecordType,
+        ) => (
+            <span>
+              {!record.audienceSegment ? (
+                <FormattedMessage {...messages.segmentDeleted} />
+              ) : record.audienceSegment.name ? (
+                <Link
+                  className="mcs-campaigns-link"
+                  to={`/v2/o/${organisationId}/audience/segments/${record.audienceSegment.id}`}
+                >
+                  {record.audienceSegment.name}
+                </Link>
+              ) : (
+                    <FormattedMessage {...messages.segmentNameNotFound} />
+                  )}
+            </span>
+          ),
+      },
+      {
+        intlMessage: messages.artifactId,
+        key: 'artifactId',
+        isHideable: false,
+        render: (
+          text: string,
+          record: RecordType,
+        ) => <span>{record.feed.artifact_id}</span>,
+      },
+      {
+        intlMessage: messages.status,
+        key: 'status',
+        isHideable: false,
+        render: (
+          text: string,
+          record: {
+            feed: AudienceExternalFeed;
+            audienceSegment?: AudienceSegmentResource;
           },
+        ) => {
+          return (
+            <Tooltip
+              placement="top"
+              title={intl.formatMessage(messages[record.feed.status])}
+            >
+              <McsIcon type="status" className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`} />
+            </Tooltip>
+          );
         },
-      ];
+      },
+    ];
 
     return dataColumns;
   };
@@ -626,7 +656,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     return (
       <div className="mcs-table-container">
         <TableViewFilters
-          columns={this.buildDataColumns(feedType)}
+          columns={this.buildDataColumns()}
           loading={isLoading}
           pagination={pagination}
           filtersOptions={filtersOptions}
