@@ -15,7 +15,11 @@ type Props = RouteComponentProps<{ organisationId: string }> &
 
 const messages = defineMessages({
   audienceFeeds: {
-    id: 'audiencefeeds.actionbar.feeds',
+    id: 'audiencefeeds.actionbar.overview',
+    defaultMessage: 'Feeds Overview',
+  },
+  audienceFeedsList: {
+    id: 'audiencefeeds.actionbar.list',
     defaultMessage: 'Feeds',
   },
 });
@@ -33,6 +37,10 @@ class AudienceFeedsActionBar extends React.Component<Props, {}> {
       {
         name: intl.formatMessage(messages.audienceFeeds),
         path: `/v2/o/${organisationId}/audience/feeds`,
+      },
+      {
+        name: intl.formatMessage(messages.audienceFeedsList),
+        path: `/v2/o/${organisationId}/audience/feeds/list`,
       },
     ];
 

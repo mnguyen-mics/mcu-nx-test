@@ -32,7 +32,7 @@ class FeedsOverviewActionBar extends React.Component<Props, {}> {
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.audienceFeeds),
-        path: `/v2/o/${organisationId}/audience/feeds_overview`,
+        path: `/v2/o/${organisationId}/audience/feeds`,
       },
     ];
 
