@@ -13,9 +13,12 @@ export interface FormatDataProps {
   charts: Chart[];
 }
 
+
+
 export interface Chart {
   type: string;
   options: Highcharts.Options;
+  xKey?: string;
   yKey: string;
   metricName: string;
   icons?: string[];
@@ -73,12 +76,6 @@ export interface Chart {
 type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
 
 class FormatData extends React.Component<FormatDataProps, {}> {
-
-  getXAxisValues = (dataset: Dataset, xKey: string) => {
-    return dataset.map(d => {
-      return d[xKey] as string;
-    })
-  }
 
   formatSeriesForChart = (chart: Chart, dataset: Dataset): Highcharts.SeriesOptionsType[] => {
     switch (chart.type) {
@@ -151,12 +148,23 @@ class FormatData extends React.Component<FormatDataProps, {}> {
     }, []);
   }
 
+  getXAxisValues = (dataset: Dataset, xKey: string) => {
+    return dataset.map(d => {
+      return d[xKey] as string;
+    })
+  }
+
   generateComponent = (charts: Chart[], data: any) => {
     return _.map(charts, chart => {
 
       chart.options.series = this.formatSeriesForChart(chart, data);
       switch (chart.type) {
+
         case 'LINE':
+          if (!chart.xKey) return null
+          chart.options.xAxis = {
+            categories: this.getXAxisValues(data, chart.xKey)
+          };
           return (
             <LineChart
               options={chart.options}

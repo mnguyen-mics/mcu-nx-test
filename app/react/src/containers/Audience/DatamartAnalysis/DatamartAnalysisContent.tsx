@@ -12,51 +12,52 @@ import CardFlex from '../Dashboard/Components/CardFlex';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const dashboardJsonConfig = [
-  // {
-  //   title: 'Test toto',
-  //   query: {
-  //     type: 'api',
-  //     playload: 'this the playload'
-  //   },
-  //   layout: {
-  //     "i": "1",
-  //     "h": 4,
-  //     "static": false,
-  //     "w": 6,
-  //     "x": 6,
-  //     "y": 0
-  //   },
-  //   charts: [
-  //     {
-  //       type: 'LINE',
-  //       options: {
-  //         height: 300,
-  //         "colors": ["#5c94d1", "#5eabd2", "#95cdcb"],
-  //         credits: {
-  //           enabled: false
-  //         },
-  //         chart: {
-  //           reflow: true
-  //         },
-  //         xAxis: {
-  //           //categories: this.getXAxisValues(normalizedData, 'day'),
-  //           title: undefined
-  //         },
-  //         yAxis: {
-  //           title: undefined
-  //         },
-  //         legend: {
-  //           align: 'right',
-  //           layout: 'vertical',
-  //           verticalAlign: 'middle',
-  //           itemMarginBottom: 25
-  //         }
-  //       },
-  //       yKey: 'device_name',
-  //       metricName: 'user_point_count'
-  //     }
-  //   ]
-  // },
+  {
+    title: 'Active users',
+    query: {
+      type: 'api',
+      playload: 'this the playload'
+    },
+    layout: {
+      "i": "1",
+      "h": 4,
+      "static": false,
+      "w": 6,
+      "x": 6,
+      "y": 0
+    },
+    charts: [
+      {
+        type: 'LINE',
+        options: {
+          "title": undefined,
+          height: 300,
+          "colors": ["#5c94d1", "#5eabd2", "#95cdcb"],
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            title: undefined
+          },
+          yAxis: {
+            title: undefined
+          },
+          legend: {
+            align: 'right',
+            layout: 'vertical',
+            verticalAlign: 'middle',
+            itemMarginBottom: 25
+          }
+        },
+        xKey: 'date',
+        yKey: 'type',
+        metricName: 'active_users_count'
+      }
+    ]
+  },
   {
     title: 'Session by device',
     query: {
@@ -85,7 +86,7 @@ const dashboardJsonConfig = [
               "fontFamily": ""
             }
           },
-          "title": "Object",
+          "title": undefined,
           "credits": {
             enabled: false
           },
