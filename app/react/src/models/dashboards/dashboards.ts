@@ -34,6 +34,7 @@ export interface DateAggregationComponent extends BaseComponent {
   query_ids: string[];
   plot_labels: string[];
   labels_enabled?: boolean;
+  format?: string;
 }
 
 export interface CountPieComponent extends BaseComponent {

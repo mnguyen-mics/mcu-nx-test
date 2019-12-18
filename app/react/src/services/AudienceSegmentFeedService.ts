@@ -4,7 +4,7 @@ import {
   IAudienceSegmentService,
 } from './AudienceSegmentService';
 import PluginInstanceService from './PluginInstanceService';
-import { AudienceTagFeed, AudienceExternalFeed } from '../models/Plugins';
+import { AudienceTagFeed, AudienceExternalFeed, Status } from '../models/Plugins';
 import { DataListResponse, DataResponse } from './ApiService';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginLayout } from '../models/plugin/PluginLayout';
@@ -13,9 +13,22 @@ import {
 } from './AudienceTagFeedService';
 import { lazyInject } from '../config/inversify.config';
 import { TYPES } from '../constants/types';
+import { PaginatedApiParam } from '../utils/ApiHelper';
+import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
 
-type AudienceFeedType = 'EXTERNAL_FEED' | 'TAG_FEED';
+export type AudienceFeedType = 'EXTERNAL_FEED' | 'TAG_FEED';
 type AudienceFeed = AudienceTagFeed | AudienceExternalFeed;
+
+export interface GetFeeds extends PaginatedApiParam {
+  organisation_id?: string,
+  community_id?: string,
+  audience_segment_id?: string,
+  status?: Status,
+  group_id?: string,
+  artifact_id?: string,
+  version_id?: string,
+  administrated?: boolean
+}
 
 export default class AudienceSegmentFeedService extends PluginInstanceService<
   AudienceFeed
@@ -45,6 +58,18 @@ export default class AudienceSegmentFeedService extends PluginInstanceService<
       const audienceTagFeed = new AudienceTagFeedService(segmentId);
       this.service = audienceTagFeed;
     }
+  }
+
+  getFeeds = (
+    options: GetFeeds
+  ): Promise<DataListResponse<AudienceFeed>> => {
+    return this.service.getFeeds(options);
+  }
+
+  getFeedsAggregationMetrics = (
+    body: FeedAggregationRequest,
+  ): Promise<DataResponse<FeedAggregationResponse>> => {
+    return this.service.getFeedsAggregationMetrics(body);
   }
 
   getAudienceFeeds = (

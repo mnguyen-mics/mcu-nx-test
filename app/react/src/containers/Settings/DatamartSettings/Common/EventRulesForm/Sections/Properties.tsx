@@ -28,7 +28,7 @@ class PropertyFields extends React.Component<JoinedProps> {
 
     const handleOnClick = () => fields.push({ leftValue: '', rightValue: '' });
 
-    const renderedFields = fields.length ? ((fields || [])).map((name, index, _fields) => {
+    const renderedFields = fields.length ? ((fields || [])).map((name, index, _fields) => {
       const handleRemove = () => fields.remove(index);
       const removeButton = () => (
         <div onClick={handleRemove}>
@@ -55,7 +55,8 @@ class PropertyFields extends React.Component<JoinedProps> {
           </Col>
         </Row>
         <Row>
-          <Col span={10} offset={4}>
+          <Col span={15
+          } offset={4}>
             <div onClick={handleOnClick}>
               <Col span={20} className="add-field-button">
                 <p>

@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { InjectedIntlProps, defineMessages } from 'react-intl';
 import { FormDataFileField, FormDataFile } from './ConnectedFields/FormDataFile';
 import { ValidatorProps } from '../../components/Form/withValidators';
-import { PluginProperty } from '../../models/Plugins';
+import { PluginProperty, PluginPresetProperty } from '../../models/Plugins';
 import { injectDrawer } from '../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../components/Drawer/injectDrawer';
 import { PluginLayoutFieldResource } from '../../models/plugin/PluginLayout';
@@ -47,6 +47,7 @@ interface AcceptedFilePropertyResource extends StringPropertyResource {
 interface PluginFieldGeneratorProps {
   definition: PropertyResourceShape;
   pluginLayoutFieldDefinition?: PluginLayoutFieldResource;
+  pluginPresetProperty?: PluginPresetProperty;
   disabled?: boolean;
   organisationId: string;
   noUploadModal?: () => void; // check type
@@ -333,6 +334,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
   ): any => {
     const {
       pluginLayoutFieldDefinition,
+      pluginPresetProperty,
       disabled,
       fieldValidators: { isRequired },
       small,
@@ -340,6 +342,8 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
     } = this.props;
 
     if (pluginLayoutFieldDefinition !== undefined) {
+
+      const fieldDisabled = (!!pluginPresetProperty && pluginPresetProperty.value.value) || !fieldDefinition.writable || disabled
 
       const pluginFieldProps: {
         formItemProps: FormItemProps,
@@ -349,7 +353,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
       } = {
         inputProps: {
           placeholder: this.technicalNameToName(pluginLayoutFieldDefinition.property_technical_name),
-          disabled: !fieldDefinition.writable || disabled,
+          disabled: fieldDisabled,
         },
         formItemProps: { label: pluginLayoutFieldDefinition.label },
       };
@@ -378,7 +382,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               {...helpToolTipProps}
               component={FormTextArea}
               inputProps={{
-                disabled: disabled
+                disabled: fieldDisabled
               }}
               validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
@@ -410,7 +414,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value`}
               validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={FormDataFile}
-              disabled={disabled}
+              disabled={fieldDisabled}
               {...dataFileProps}
               {...pluginFieldProps}
             />
@@ -430,7 +434,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                 height: '200px',
                 showGutter: false,
               }}
-              disabled={disabled}
+              disabled={fieldDisabled}
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               small={pluginFieldProps.small}
             />
@@ -459,7 +463,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               options={pluginLayoutFieldDefinition.enum !== undefined ?
                 pluginLayoutFieldDefinition.enum.map(option => { return { value: option.value, title: option.label } }) :
                 []}
-              disabled={disabled}
+              disabled={fieldDisabled}
               formItemProps={pluginFieldProps.formItemProps}
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               small={pluginFieldProps.small}
@@ -478,7 +482,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                 options: pluginLayoutFieldDefinition.enum !== undefined ?
                   pluginLayoutFieldDefinition.enum : []
               }}
-              disabled={disabled}
+              disabled={fieldDisabled}
               formItemProps={pluginFieldProps.formItemProps}
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               valueAsString={true}
@@ -497,7 +501,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               buttonText={intl.formatMessage(messages.uploadFileImage)}
               noUploadModal={this.props.noUploadModal}
               formItemProps={pluginFieldProps.formItemProps}
-              disabled={disabled}
+              disabled={fieldDisabled}
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               small={pluginFieldProps.small}
             />
@@ -543,7 +547,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                 name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
                 validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
                 component={FormSwitch}
-                disabled={disabled}
+                disabled={fieldDisabled}
                 {...pluginFieldProps}
               />
             </FormFieldWrapper>
@@ -572,7 +576,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                 validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
                 component={FormRadioGroup}
                 elements={elements}
-                disabled={disabled}
+                disabled={fieldDisabled}
                 {...pluginFieldProps}
               />
             </FormFieldWrapper>
@@ -599,7 +603,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                 component={FormCheckboxGroup}
                 options={options}
                 valueAsString={true}
-                disabled={disabled}
+                disabled={fieldDisabled}
                 {...pluginFieldProps}
               />
             </FormFieldWrapper>
@@ -615,7 +619,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               component={FormDatePicker}
               datePickerProps={{}}
               isoDate={true}
-              disabled={disabled}
+              disabled={fieldDisabled}
               {...pluginFieldProps}
             />
           );
@@ -630,7 +634,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               component={FormDateRangePicker}
               startDatePickerProps={{}}
               endDatePickerProps={{}}
-              disabled={disabled}
+              disabled={fieldDisabled}
               {...pluginFieldProps}
             />
           );

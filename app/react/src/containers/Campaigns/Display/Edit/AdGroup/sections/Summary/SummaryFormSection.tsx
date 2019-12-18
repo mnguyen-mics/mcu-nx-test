@@ -11,6 +11,7 @@ import messages from '../../../messages';
 import AudienceSegmentSummary from './AudienceSegmentSummary';
 import LocationSummary from './LocationSummary';
 import GeneralSettingSummary from './GeneralSettingSummary';
+import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
 
 const Section: React.SFC = props => {
   if (!props.children) return null;
@@ -95,10 +96,10 @@ class SummaryFormSection extends React.Component<Props> {
   }
 }
 
-const getAdGroupFormData = (state: any): AdGroupFormData => {
+const getAdGroupFormData = (state: MicsReduxState): AdGroupFormData => {
   return getFormValues(AD_GROUP_FORM_NAME)(state) as AdGroupFormData;
 };
 
 export default compose(
-  connect(state => ({ adGroupFormData: getAdGroupFormData(state) })),
+  connect((state: MicsReduxState) => ({ adGroupFormData: getAdGroupFormData(state) })),
 )(SummaryFormSection);

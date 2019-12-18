@@ -45,6 +45,7 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 export interface MapDispatchToProps {
   labels: Label[];
@@ -643,7 +644,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   labels: state.labels.labelsApi.data,
 });
 

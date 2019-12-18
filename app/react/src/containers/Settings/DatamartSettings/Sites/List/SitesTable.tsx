@@ -19,7 +19,7 @@ export interface SitesTableProps {
   totalSites: number;
   noSiteYet: boolean;
   onFilterChange: (a: Partial<Filter>) => void;
-  onArchiveSite: (a: ChannelResource) => void;
+  onDeleteSite: (a: ChannelResource) => void;
   onEditSite: (a: ChannelResource) => void;
   filter: Filter;
   filtersOptions: Array<MultiSelectProps<any>>;
@@ -37,7 +37,7 @@ class SitesTable extends React.Component<Props> {
       dataSource,
       totalSites,
       onFilterChange,
-      onArchiveSite,
+      onDeleteSite,
       onEditSite,
       filter,
       intl: { formatMessage },
@@ -110,8 +110,8 @@ class SitesTable extends React.Component<Props> {
             callback: onEditSite,
           },
           {
-            intlMessage: messages.archiveSite,
-            callback: onArchiveSite,
+            intlMessage: messages.deleteSite,
+            callback: onDeleteSite,
           },
         ],
       },

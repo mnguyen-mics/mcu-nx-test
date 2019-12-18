@@ -13,6 +13,7 @@ import NewExportSimpleForm, {
 
 export interface SaveAsExportModalProps extends Omit<ModalProps, 'onOk'> {
   onOk: (exportFormData: NewExportSimpleFormData) => void;
+  csvExportDisabled?: boolean;
 }
 
 interface MapDispatchToProps {
@@ -23,7 +24,7 @@ type Props = MapDispatchToProps & SaveAsExportModalProps;
 
 class SaveAsExportModal extends React.Component<Props, FormData> {
   render() {
-    const { onOk, submit, visible, ...modalProps } = this.props;
+    const { onOk, submit, visible, csvExportDisabled, ...modalProps } = this.props;
 
     const handleOnOk = () => {
       submit(FORM_ID);
@@ -45,7 +46,7 @@ class SaveAsExportModal extends React.Component<Props, FormData> {
           />
         }
       >
-        { visible && <NewExportSimpleForm onSubmit={handleOnSubmit} /> }
+        { visible && <NewExportSimpleForm onSubmit={handleOnSubmit} csvExportDisabled={csvExportDisabled} /> }
       </Modal>
     );
   }

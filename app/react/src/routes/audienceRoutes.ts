@@ -23,13 +23,17 @@ import {
 } from './domain';
 import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
 import HomePage from '../containers/Audience/Home/Dashboard/HomePage';
+import AudienceFeedsActionBar from '../containers/Audience/Feeds/List/AudienceFeedsActionBar';
+import { AudienceFeedsTable } from '../containers/Audience/Feeds/List';
+import FeedsOverviewActionbar from '../containers/Audience/Feeds/Overview/FeedsOverviewActionbar';
+import { AudienceFeedsOverview } from '../containers/Audience/Feeds/Overview';
 
 export const audienceDefinition: NavigatorDefinition = {
   audienceHome: {
     path: "/audience/home",
     layout: "main",
     contentComponent: HomePage,
-    requiredFeature: 'audience.dashboards',
+    requiredFeature: 'audience-dashboards',
     requireDatamart: true,
   },
   audienceSegmentList: {
@@ -37,91 +41,107 @@ export const audienceDefinition: NavigatorDefinition = {
     layout: 'main',
     contentComponent: AudienceSegmentsTable,
     actionBarComponent: SegmentsActionbar,
-    requiredFeature: 'audience.segments',
+    requiredFeature: 'audience-segments',
     requireDatamart: true,
+  },
+  audienceFeedList: {
+    path: '/audience/feeds/list',
+    layout: 'main',
+    contentComponent: AudienceFeedsTable,
+    actionBarComponent: AudienceFeedsActionBar,
+    requiredFeature: 'audience-feeds',
+    requireDatamart: true,
+  },
+  audienceFeedOverview: {
+    path: '/audience/feeds',
+    layout: 'main',
+    contentComponent: AudienceFeedsOverview,
+    actionBarComponent: FeedsOverviewActionbar,
+    requiredFeature: 'audience-feeds',
+    requireDatamart: false,
   },
   audienceSegmentCreation: {
     path: '/audience/segments/create',
     layout: 'edit',
     editComponent: EditAudienceSegmentPage,
-    requiredFeature: 'audience.segments',
+    requiredFeature: 'audience-segments',
     requireDatamart: true,
   },
   audienceSegmentEdit: {
     path: '/audience/segments/:segmentId/edit',
     layout: 'edit',
     editComponent: EditAudienceSegmentPage,
-    requiredFeature: 'audience.segments',
+    requiredFeature: 'audience-segments',
     requireDatamart: true,
   },
   audienceSegmentDashboard: {
     path: '/audience/segments/:segmentId',
     layout: 'main',
     contentComponent: AudienceSegmentPage,
-    requiredFeature: 'audience.segments',
+    requiredFeature: 'audience-segments',
     requireDatamart: true,
   },
   feedCreate: {
     path: '/audience/segments/:segmentId/feeds/create',
     layout: 'edit',
     editComponent: AudienceFeedPage,
-    requiredFeature: 'audience.segments',
+    requiredFeature: 'audience-segments',
     requireDatamart: true,
   },
   feedEdit: {
     path: '/audience/segments/:segmentId/feeds/:feedType/:feedId/edit',
     layout: 'edit',
     editComponent: AudienceFeedPage,
-    requiredFeature: 'audience.segments',
+    requiredFeature: 'audience-segments',
     requireDatamart: true,
   },
   audiencePartitionsList: {
     path: '/audience/partitions',
     layout: 'main',
     contentComponent: AudiencePartitionsPage,
-    requiredFeature: 'audience.partitions',
+    requiredFeature: 'audience-partitions',
     requireDatamart: true,
   },
   audiencePartitionsEdit: {
     path: '/audience/partitions/:partitionId/edit',
     layout: 'edit',
     editComponent: AudiencePartitionPage,
-    requiredFeature: 'audience.partitions',
+    requiredFeature: 'audience-partitions',
     requireDatamart: true,
   },
   audiencePartitionsCreate: {
     path: '/audience/partitions/create',
     layout: 'edit',
     editComponent: AudiencePartitionPage,
-    requiredFeature: 'audience.partitions',
+    requiredFeature: 'audience-partitions',
     requireDatamart: true,
   },
   audiencePartitionsDashboard: {
     path: '/audience/partitions/:partitionId',
     layout: 'main',
     contentComponent: Partition,
-    requiredFeature: 'audience.partitions',
+    requiredFeature: 'audience-partitions',
     requireDatamart: true,
   },
   audienceSegmentBuilder: {
     path: '/audience/segment-builder',
     layout: 'main',
     contentComponent: SegmentBuilderPage,
-    requiredFeature: 'audience.segment_builder',
+    requiredFeature: 'audience-segment_builder',
     requireDatamart: true,
   },
   audienceTimeline: {
     path: '/audience/timeline/:identifierType/:identifierId',
     layout: 'main',
     contentComponent: TimelinePage,
-    requiredFeature: 'audience.monitoring',
+    requiredFeature: 'audience-monitoring',
     requireDatamart: true,
   },
   audienceTimelineHome: {
     path: '/audience/timeline',
     layout: 'main',
     contentComponent: TimelinePage,
-    requiredFeature: 'audience.monitoring',
+    requiredFeature: 'audience-monitoring',
     requireDatamart: true,
   },
 };

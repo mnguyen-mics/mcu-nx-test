@@ -45,6 +45,7 @@ import {
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import ReportService from '../../../../services/ReportService';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 export interface ParamFilters
   extends PaginationSearchSettings,
@@ -520,7 +521,7 @@ class GoalsTable extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   labels: state.labels.labelsApi.data,
   workspace: getWorkspace(state),
 });

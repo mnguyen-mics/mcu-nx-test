@@ -29,7 +29,7 @@ class OfferCatalogPage extends React.Component<JoinedProps>  {
                 <OfferCatalogActionBar organisationId={organisationId} />
                 <div className="ant-layout">
                     <Content className="mcs-content-container" >
-                        <OfferCatalogTable />
+                        <OfferCatalogTable organisationId={organisationId} />
                     </Content>
                 </div>
             </div>

@@ -24,6 +24,7 @@ const TYPES = {
   IMonitoringService: Symbol.for('monitoringService'),
   IMlAlgorithmService: Symbol.for('mlAlgorithmService'),
   IMlAlgorithmModelService: Symbol.for('mlAlgorithmModelService'),
+  IMlAlgorithmVariableService: Symbol.for('mlAlgorithmVariableService'),
   IMlFunctionService: Symbol.for('mlFunctionService'),
   INavigatorService: Symbol.for('navigatorService'),
   IApiTokenService: Symbol.for('apiTokenService'),
@@ -33,6 +34,27 @@ const TYPES = {
   IGeonameService: Symbol.for('geonameService'),
   ISettingsService: Symbol.for('settingsService'),
   IDashboardService: Symbol.for('dashboardService'),
+  ICatalogService: Symbol.for('catalogService'),
+  IServiceOfferPageService: Symbol.for('serviceOfferPageService'),
+  IFeedsStatsService: Symbol.for('feedsStatsService'),
+  IPluginService: Symbol.for('pluginService'),
+  ICreativeService: Symbol.for('creativeService'),
+  IDisplayCreativeFormService: Symbol.for('displayCreativeFormService'),
+  IAdGroupFormService: Symbol.for('adGroupFormService'),
+  IDisplayCampaignService: Symbol.for('displayCampaignService'),
+  IVisitAnalyzerService: Symbol.for('visitAnalyzerService'),
+  IAudienceExternalFeedServiceFactory: Symbol.for(
+    'audienceExternalFeedServiceFactory',
+  ),
+  IAudienceTagFeedServiceFactory: Symbol.for('audienceTagFeedServiceFactory'),
+  IAudienceSegmentFeedServiceFactory: Symbol.for(
+    'audienceSegmentFeedServiceFactory',
+  ),
+  IAuthService: Symbol.for('authService'),
+  IPersistedStoreService: Symbol.for('persistedStoreService'),
+  IMicsTagService: Symbol.for('micsTagService'),
+  ILabelService: Symbol.for('labelService'),
+  IOrganisationService: Symbol.for('organisationService')
 };
 
 export { TYPES };

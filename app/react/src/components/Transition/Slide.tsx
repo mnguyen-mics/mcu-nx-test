@@ -42,7 +42,7 @@ class Slide extends React.Component<SlideProps> {
 
     return (
       <Transition in={toShow} timeout={duration}>
-        {(state: any) => (
+        {(state: any) => ( // it's not the redux state
           <div
             style={{
               ...defaultStyle,

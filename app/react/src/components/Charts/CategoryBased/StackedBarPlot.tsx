@@ -39,7 +39,7 @@ class StackedBarPlot extends React.Component<Props, {}> {
 
   formatSerieData = (dataset: Dataset, y: yKey) => {
     return dataset.map(d => {
-      return d[y.key] as number;
+      return d[y.key] ? d[y.key] as number : 0;
     });
   }
 

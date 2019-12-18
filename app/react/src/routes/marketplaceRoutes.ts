@@ -6,7 +6,7 @@ export const marketplaceDefinition: NavigatorDefinition = {
         path: '/marketplace/offercatalog',
         layout: 'main',
         contentComponent: OfferCatalogPage,
-        requiredFeature: 'marketplace.offer_catalog'
+        requiredFeature: 'marketplace-offer_catalog'
     }
 }
 

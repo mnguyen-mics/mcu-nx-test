@@ -31,6 +31,7 @@ import AdGroupFormSection, {
   AdGroupFormSectionProps,
 } from './Sections/Programmatic/AdGroupFormSection';
 import * as SessionSelectors from '../../../../state/Session/selectors';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -170,5 +171,5 @@ export default compose<Props, DisplayCampaignFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
+  connect((state: MicsReduxState) => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
 )(DisplayCampaignForm);

@@ -4,8 +4,18 @@ import PluginInstanceService from './PluginInstanceService';
 import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
+import { GetFeeds } from './AudienceSegmentFeedService';
+import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
 
 export interface IAudienceTagFeedService {
+  getFeeds: (
+    options: GetFeeds
+  ) => Promise<DataListResponse<AudienceTagFeed>>;
+
+  getFeedsAggregationMetrics: (
+    body: FeedAggregationRequest,
+  ) => Promise<DataResponse<FeedAggregationResponse>>;
+  
   getAudienceFeeds: (
     organisationId: string,
     options: object,
@@ -56,6 +66,21 @@ export class AudienceTagFeedService
     this.segmentId = segmentId;
   }
 
+  getFeeds(
+    options: GetFeeds
+  ): Promise<DataListResponse<AudienceTagFeed>> {
+    const endpoint = 'audience_segments.tag_feeds';
+    return ApiService.getRequest(endpoint, options);
+  }
+
+  getFeedsAggregationMetrics = (
+    body: FeedAggregationRequest,
+  ): Promise<DataResponse<FeedAggregationResponse>> => {
+    const endpoint = `audience_segments.external_feeds/aggregates`
+
+    return ApiService.postRequest(endpoint, body)
+  }
+
   getAudienceFeeds(
     organisationId: string,
     options: object = {},
@@ -98,9 +123,7 @@ export class AudienceTagFeedService
     id: string,
     options: object = {},
   ): Promise<DataListResponse<PropertyResourceShape>> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/tag_feeds/${id}/properties`;
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
   }
@@ -124,9 +147,7 @@ export class AudienceTagFeedService
     technicalName: string,
     params: object = {},
   ): Promise<DataResponse<PropertyResourceShape> | void> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/tag_feeds/${id}/properties/technical_name=${technicalName}`;
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties/technical_name=${technicalName}`;
     return PluginService.handleSaveOfProperties(
       params,
       organisationId,
@@ -140,9 +161,7 @@ export class AudienceTagFeedService
     organisationId: string,
     options: object = {},
   ): Promise<DataResponse<AudienceTagFeed>> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/tag_feeds?organisation_id=${organisationId}`;
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds?organisation_id=${organisationId}`;
 
     const params = {
       ...options,
@@ -155,9 +174,7 @@ export class AudienceTagFeedService
 
   // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
   getAudienceFeedProperties = (id: string, options: object = {}) => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/tag_feeds/${id}/properties`;
+    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options).then((res: any) => {
       return { ...res.data, id };

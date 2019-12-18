@@ -37,7 +37,7 @@ export interface Activities {
 
 interface ActivitiesTimelineProps {
   selectedDatamart: DatamartResource;
-  userPointId: string;
+  userIdentifier: Identifier;
 }
 
 interface State {
@@ -70,38 +70,41 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { selectedDatamart, userPointId } = this.props;
+    const { selectedDatamart, userIdentifier } = this.props;
 
-    this.fetchActivities(selectedDatamart, userPointId);
-    this.fetchUserAgents(selectedDatamart, userPointId);
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { selectedDatamart, userPointId } = this.props;
-
-    const {
-      selectedDatamart: prevSelectedDatamart,
-      userPointId: prevUserPointId,
-    } = prevProps;
-
-    if (
-      userPointId !== prevUserPointId ||
-      selectedDatamart !== prevSelectedDatamart
-    ) {
-      this.fetchActivities(selectedDatamart, userPointId, true);
-      this.fetchUserAgents(selectedDatamart, userPointId);
+    if (!!userIdentifier.id && !!userIdentifier.type) {
+      this.fetchActivities(selectedDatamart, userIdentifier);
+      this.fetchUserAgents(selectedDatamart, userIdentifier);
     }
   }
 
-  fetchUserAgents = (datamart: DatamartResource, userPointId: string) => {
-    const identifierType = 'user_point_id';
+  componentDidUpdate(prevProps: Props) {
+    const { selectedDatamart, userIdentifier } = this.props;
+
+    const {
+      selectedDatamart: prevSelectedDatamart,
+      userIdentifier: prevUserIdentifier,
+    } = prevProps;
+
+    if (!!userIdentifier.id && !!userIdentifier.type && (
+      userIdentifier.id !== prevUserIdentifier.id ||
+      selectedDatamart.id !== prevSelectedDatamart.id ||
+      userIdentifier.type !== prevUserIdentifier.type
+      )
+    ) {
+      this.fetchActivities(selectedDatamart, userIdentifier, true);
+      this.fetchUserAgents(selectedDatamart, userIdentifier);
+    }
+  }
+
+  fetchUserAgents = (datamart: DatamartResource, userIdentifier: Identifier) => {
 
     this._userDataService
       .getIdentifiers(
         datamart.organisation_id,
         datamart.id,
-        identifierType,
-        userPointId,
+        userIdentifier.type,
+        userIdentifier.id,
       )
       .then(response => {
         const userAgentsIdentifierInfo = response.data.filter(
@@ -219,13 +222,9 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   fetchActivities = (
     datamart: DatamartResource,
-    userPointId: string,
+    userIdentifier: Identifier,
     dataSourceHasChanged: boolean = false,
   ) => {
-    const identifier: Identifier = {
-      id: userPointId,
-      type: 'user_point_id',
-    };
 
     const { nextDate, activityCountOnOldestDate } = this.state;
     const params =
@@ -245,13 +244,13 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       () =>
         takeLatest(this._userDataService.getActivities)(
           datamart.id,
-          identifier,
+          userIdentifier,
           params,
         )
           .then(response => {
             takeLatest(this._userDataService.getActivities)(
               datamart.id,
-              identifier,
+              userIdentifier,
               {
                 ...params,
                 limit: params.limit + 1,
@@ -315,9 +314,9 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   };
 
   fetchNewActivities = (e: any) => {
-    const { userPointId, selectedDatamart } = this.props;
+    const { userIdentifier, selectedDatamart } = this.props;
     e.preventDefault();
-    this.fetchActivities(selectedDatamart, userPointId);
+    this.fetchActivities(selectedDatamart, userIdentifier);
   };
 
   renderPendingTimeline = (activities: Activities) => {
@@ -326,7 +325,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         <Spin size="small" />
       ) : (
         <button
-          className="mcs-card-inner-action"
+          className="mcs-card-inner-action mcs-monitoring_seeMoreBtn"
           onClick={this.fetchNewActivities}
         >
           <FormattedMessage {...messages.seeMore} />

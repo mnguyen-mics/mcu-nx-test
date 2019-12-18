@@ -74,6 +74,11 @@ const messages = defineMessages({
     id: 'partition.dashboard.publish.modal.ok.button',
     defaultMessage: 'Ok',
   },
+  datamartNotFoundError: {
+    id: 'partition.dashboard.err',
+    defaultMessage:
+      'The datamart related to this partition is no longer a datamart of this organisation.',
+  },
 });
 
 interface PartitionProps {}
@@ -153,6 +158,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       match: {
         params: { organisationId },
       },
+      intl,
     } = this.props;
     this.setState({ isLoading: true, isLoadingStats: true });
     this._audiencePartitionsService
@@ -160,51 +166,54 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       .then(partitionRes => {
         const datamart = workspace.datamarts.find(
           d => d.id === partitionRes.data.datamart_id,
-        )!;
-        return Promise.all([
-          this._audienceSegmentService
-            .getSegments(organisationId, {
-              audience_partition_id: partitionId,
-              type: 'USER_PARTITION',
-              max_results: 500,
-            })
-            .then(segmentsRes => {
-              this.setState({
-                isLoading: false,
-                audiencePartition: partitionRes.data,
-                userPartitionSegments: segmentsRes.data as UserPartitionSegment[],
-              });
-              return segmentsRes;
-            }),
-          Promise.all([
-            this.fetchTotalUsers(datamart),
-            ReportService.getAudienceSegmentReport(
-              organisationId,
-              new McsMoment('now'),
-              new McsMoment('now'),
-              ['audience_segment_id'],
-              ['user_points'],
-            ),
-          ]).then(([total, reportViewRes]) => {
+        );
+        const audiencePromises: Array<Promise<any>> = [
+          this._audienceSegmentService.getSegments(organisationId, {
+            audience_partition_id: partitionId,
+            type: 'USER_PARTITION',
+            max_results: 500,
+          }),
+          ReportService.getAudienceSegmentReport(
+            organisationId,
+            new McsMoment('now'),
+            new McsMoment('now'),
+            ['audience_segment_id'],
+            ['user_points'],
+          ),
+        ];
+
+        const promises = datamart
+          ? audiencePromises.concat(this.fetchTotalUsers(datamart))
+          : [
+              Promise.reject(
+                intl.formatMessage(messages.datamartNotFoundError),
+              ),
+            ];
+
+        return Promise.all(promises)
+          .then(res => {
             const normalized = normalizeReportView<{
               audience_segment_id: number;
               user_points: number;
-            }>(reportViewRes.data.report_view);
-
+            }>(res[1].data.report_view);
             this.setState({
+              isLoading: false,
+              audiencePartition: partitionRes.data,
+              userPartitionSegments: res[0].data as UserPartitionSegment[],
               isLoadingStats: false,
-              totalUserPoint: total,
+              totalUserPoint: res[2] ? res[2] : 0,
               statBySegmentId: normalizeArrayOfObject(
                 normalized,
                 'audience_segment_id',
               ),
             });
-            return reportViewRes;
-          }),
-        ]);
+          })
+          .catch(e => Promise.reject(e));
       })
       .catch(err => {
-        this.props.notifyError(err);
+        this.props.notifyError(err, {
+          description: err,
+        });
         this.setState({
           isLoading: false,
           isLoadingStats: false,

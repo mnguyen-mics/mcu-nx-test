@@ -17,6 +17,7 @@ import { MenuMode } from 'antd/lib/menu';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition, NavigatorSubMenuDefinition } from '../../routes/domain';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
+import { MicsReduxState } from '../../utils/ReduxHelper';
  
 const { SubMenu } = Menu;
 
@@ -266,7 +267,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   defaultDatamart: getDefaultDatamart(state),
 });
 

@@ -1,16 +1,13 @@
-
 // Deprecated -> For further dev, use ChangePassword component
 import * as React from 'react';
 import { Form, Input, Button, Alert, Row, Col } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
-
 import {
   injectIntl,
   InjectedIntlProps,
   FormattedMessage,
   defineMessages,
 } from 'react-intl';
-
 import { compose } from 'recompose';
 import { FormComponentProps } from 'antd/lib/form';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
@@ -18,8 +15,10 @@ import {
   SET_PASSWORD_SEARCH_SETTINGS,
   parseSearch,
 } from '../../../utils/LocationSearchHelper';
-import AuthService from '../../../services/AuthService';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
+import { lazyInject } from '../../../config/inversify.config';
+import { IAuthService } from '../../../services/AuthService';
+import { TYPES } from '../../../constants/types';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
@@ -57,6 +56,10 @@ const messages = defineMessages({
 });
 
 class SetPassword extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IAuthService)
+  private _authService: IAuthService;
+  
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -79,7 +82,7 @@ class SetPassword extends React.Component<Props, State> {
       if (!err) {
         if (this.checkPasswordValidity(values.password1, values.password2)) {
           // validate
-          AuthService.resetPassword(
+          this._authService.resetPassword(
             filter.email,
             filter.token,
             values.password1,

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 import * as SessionHelper from '../../state/Session/selectors';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface WhenDatamartProps {
   hasDatamarts: (organisationId: string) => boolean;
@@ -23,7 +24,7 @@ class WhenDatamart extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: MicsReduxState) => {
   return {
     hasDatamarts: SessionHelper.hasDatamarts(state),
   };

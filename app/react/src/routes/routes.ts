@@ -9,6 +9,7 @@ import { analyticsRoutes } from './analyticsRoutes';
 import { marketplaceRoutes } from './marketplaceRoutes';
 
 import { NavigatorRoute } from './domain'
+import { featureFlagRoutes } from './featuresFlagRoutes';
 /**
  * Route object definition
  * {
@@ -31,7 +32,8 @@ const routes: NavigatorRoute[] = [
   ...settingsRoutes,
   ...datastudioRoutes,
   ...analyticsRoutes,
-  ...marketplaceRoutes
+  ...marketplaceRoutes,
+  ...featureFlagRoutes
 ];
 
 export default routes;

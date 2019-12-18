@@ -5,8 +5,18 @@ import PluginInstanceService from './PluginInstanceService';
 import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
+import { GetFeeds } from './AudienceSegmentFeedService';
+import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
 
 export interface IAudienceExternalFeedService {
+
+  getFeeds: (
+    options: GetFeeds
+  ) => Promise<DataListResponse<AudienceExternalFeed>>;
+  
+  getFeedsAggregationMetrics: (
+    body: FeedAggregationRequest,
+  ) => Promise<DataResponse<FeedAggregationResponse>>;
 
   getAudienceFeeds: (
     organisationId: string,
@@ -63,6 +73,21 @@ export class AudienceExternalFeedService
   constructor(segmentId: string) {
     super('audience_external_feeds');
     this.segmentId = segmentId;
+  }
+
+  getFeeds = (
+    options: GetFeeds
+  ): Promise<DataListResponse<AudienceExternalFeed>> => {
+    const endpoint = 'audience_segments.external_feeds';
+    return ApiService.getRequest(endpoint, options);
+  }
+
+  getFeedsAggregationMetrics = (
+    body: FeedAggregationRequest,
+  ): Promise<DataResponse<FeedAggregationResponse>> => {
+    const endpoint = `audience_segments.external_feeds/aggregates`
+
+    return ApiService.postRequest(endpoint, body);
   }
 
   getAudienceFeeds = (

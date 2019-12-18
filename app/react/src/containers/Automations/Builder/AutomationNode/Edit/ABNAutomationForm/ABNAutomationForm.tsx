@@ -18,6 +18,7 @@ import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { FORM_ID, ABNFormData } from '../domain';
 import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -118,7 +119,7 @@ class ABNAutomationForm extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

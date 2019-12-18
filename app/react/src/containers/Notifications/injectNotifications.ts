@@ -6,7 +6,7 @@ import {
   notifyInfo,
   removeNotification,
   resetNotifications,
-} from '../../state/Notifications/actions.js';
+} from '../../state/Notifications/actions';
 import { Action } from 'redux-actions';
 
 // TODO type any ( goes with notif action creators)
@@ -28,4 +28,7 @@ const mapDispatchToProps = {
   resetNotifications,
 };
 
-export default connect(undefined, mapDispatchToProps);
+export default connect(
+  undefined,
+  mapDispatchToProps,
+);

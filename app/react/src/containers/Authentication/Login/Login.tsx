@@ -16,6 +16,7 @@ import log from '../../../utils/Logger';
 import { logIn } from '../../../state/Login/actions';
 import { Credentials } from '../../../services/AuthService';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const logoUrl = require('../../../assets/images/logo.png');
 const FormItem = Form.Item;
@@ -25,6 +26,10 @@ const messages = defineMessages({
     id: 'authentication.login.login.error',
     defaultMessage:
       'There was an error with the information you entered, please check your username / password.',
+  },
+  expiredPassword: {
+    id: 'authentication.login.expired.password',
+    defaultMessage: 'Your password has expired. Please create a new one.',
   },
   forgotPassword: {
     id: 'authentication.login.forgot.password',
@@ -62,6 +67,9 @@ interface State {
 
 interface MapStateToProps {
   hasError: boolean;
+  error: {
+    [key: string]: string;
+  };
   connectedUser: UserProfileResource;
 }
 
@@ -135,6 +143,7 @@ class Login extends React.Component<Props, State> {
     const {
       form: { getFieldDecorator },
       hasError,
+      error,
       intl,
       connectedUser,
     } = this.props;
@@ -144,11 +153,19 @@ class Login extends React.Component<Props, State> {
     const hasFetchedConnectedUser = connectedUser && connectedUser.id;
 
     const errorMsg = hasError ? (
-      <Alert
-        type="error"
-        className="login-error-message"
-        message={<FormattedMessage {...messages.logInError} />}
-      />
+      error && error.error_code === 'EXPIRED_PASSWORD_ERROR' ? (
+        <Alert
+          type="error"
+          className="login-error-message"
+          message={<FormattedMessage {...messages.expiredPassword} />}
+        />
+      ) : (
+        <Alert
+          type="error"
+          className="login-error-message"
+          message={<FormattedMessage {...messages.logInError} />}
+        />
+      )
     ) : null;
 
     return (
@@ -226,8 +243,9 @@ class Login extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   hasError: state.login.hasError,
+  error: state.login.error,
   connectedUser: state.session.connectedUser,
 });
 

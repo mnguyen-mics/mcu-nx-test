@@ -204,6 +204,18 @@ export const DATAMART_SEARCH_SETTINGS: SearchSetting[] = [
   },
 ];
 
+export const SORT_SEARCH_SETTINGS: SearchSetting[] = [
+  {
+    paramName: 'orderBy',
+    defaultValue: '',
+    deserialize: query => {
+      return query.orderBy;
+    },
+    serialize: (value: any) => value,
+    isValid: () => true,
+  },
+];
+
 export interface DatamartSearchSettings {
   datamartId?: string;
 }

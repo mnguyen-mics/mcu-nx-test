@@ -14,7 +14,17 @@ export interface AudienceSegmentResource {
   provider_name?: string;
   persisted: boolean;
   type: AudienceSegmentType;
+  user_points_count?: number;
+  user_accounts_count?: number;
+  emails_count?: number;
+  desktop_cookie_ids_count?: number;
 }
+
+export type SortField =
+  | 'user_points_count'
+  | 'user_accounts_count'
+  | 'emails_count'
+  | 'desktop_cookie_ids_count';
 
 export type AudienceSegmentType =
   | 'USER_LIST'

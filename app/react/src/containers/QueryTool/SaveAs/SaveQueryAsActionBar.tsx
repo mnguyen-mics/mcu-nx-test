@@ -19,6 +19,7 @@ export interface SaveQueryAsActionBarProps {
   saveAsExort?: (formData: NewExportSimpleFormData) => Promise<any>;
   convertToOtql?: () => Promise<DataResponse<QueryResource>>;
   breadcrumb: Path[];
+  csvExportDisabled?: boolean;
 }
 
 interface State {
@@ -48,7 +49,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
   }
 
   render() {
-    const { saveAsExort, saveAsUserQuery, convertToOtql, breadcrumb } = this.props;
+    const { saveAsExort, saveAsUserQuery, convertToOtql, breadcrumb, csvExportDisabled } = this.props;
     const handleMenuClick = (e: ClickParam) => {
       if (e.key === 'USER_QUERY') {
         this.setState({ segmentModalVisible: true });
@@ -102,12 +103,12 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
             defaultMessage="User Query Segment"
           />
         </Menu.Item>
-        <Menu.Item key="EXPORT" disabled={!saveAsExort}>
+        {saveAsExort && <Menu.Item key="EXPORT">
           <FormattedMessage
             id="queryTool.query-builder-page-actionbar-saveas-export"
             defaultMessage="Export"
           />
-        </Menu.Item>
+        </Menu.Item>}
       </Menu>
     );
 
@@ -145,6 +146,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
           onCancel={closeExportModal}
           visible={this.state.exportModalVisible}
           confirmLoading={this.state.exportModalLoading}
+          csvExportDisabled={csvExportDisabled}
         />
       </ActionBar>
     );

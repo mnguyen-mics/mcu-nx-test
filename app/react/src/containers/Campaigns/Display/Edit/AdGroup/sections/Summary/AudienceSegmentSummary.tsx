@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import WhenDatamart from '../../../../../../Datamart/WhenDatamart';
 import { printStringArray } from './utils';
 import { SegmentFieldModel } from '../../../../../Email/Edit/domain';
+import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
 
 interface MapStateProps {
   segmentFields: SegmentFieldModel[];
@@ -100,13 +101,13 @@ class AudienceSegmentSummary extends React.Component<Props> {
   }
 }
 
-const getAdGroupFormData = (state: any): AdGroupFormData => {
+const getAdGroupFormData = (state: MicsReduxState): AdGroupFormData => {
   return getFormValues(AD_GROUP_FORM_NAME)(state) as AdGroupFormData;
 };
 
 export default compose(
   injectIntl,
-  connect(state => ({
+  connect((state: MicsReduxState) => ({
     segmentFields: getAdGroupFormData(state).segmentFields,
   })),
 )(AudienceSegmentSummary);

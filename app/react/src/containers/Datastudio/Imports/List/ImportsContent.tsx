@@ -19,6 +19,7 @@ import { IMPORTS_SEARCH_SETTINGS } from './constants';
 import { Index } from '../../../../utils';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import ImportsContentContainer from './ImportsContentContainer';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 export interface ImportFilterParams
   extends PaginationSearchSettings,
@@ -203,7 +204,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 

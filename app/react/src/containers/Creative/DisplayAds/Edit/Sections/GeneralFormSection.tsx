@@ -24,6 +24,7 @@ import {
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
 import { ButtonStyleless, McsIcon } from '../../../../../components';
 import { RouteComponentProps } from 'react-router';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
@@ -198,7 +199,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 export default compose<Props, GeneralFormSectionProps>(
   injectIntl,
   withValidators,
-  connect((state: any, ownProps: Props) => ({
+  connect((state: MicsReduxState, ownProps: Props) => ({
     initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(
       state,
     ) as DisplayCreativeFormData,

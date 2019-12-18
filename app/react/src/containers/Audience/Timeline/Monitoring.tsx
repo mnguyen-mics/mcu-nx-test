@@ -11,6 +11,7 @@ import SegmentsCard from './SingleView/SegmentsCard';
 import AccountIdCard from './SingleView/AccountIdCard';
 import DeviceCard from './SingleView/DeviceCard';
 import EmailCard from './SingleView/EmailCard';
+import UserChoicesCard from './SingleView/UserChoicesCard';
 import TimelineHeader from './TimelineHeader';
 import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
@@ -24,6 +25,7 @@ import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IMonitoringService } from './MonitoringService';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -67,9 +69,14 @@ class Monitoring extends React.Component<Props, State> {
         userAccountCompartments: [],
         userPointList: [],
         userSegmentList: [],
-        profileByCompartmentsAndUserAccountId: {},
+        userChoices: {userConsents: [], processings: []},
+        userProfile: {type: undefined, profile: {}},
         lastSeen: 0,
-        userPointId: '',
+        userIdentifier: {
+          type: '',
+          id: ''
+        },
+        isUserFound: false,
       },
       isLoading: false,
     };
@@ -77,7 +84,7 @@ class Monitoring extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      location,
+      location: { search },
       match: {
         params: { organisationId, identifierType, identifierId },
       },
@@ -94,7 +101,7 @@ class Monitoring extends React.Component<Props, State> {
           selectedDatamart,
           identifierType,
           identifierId,
-          queryString.parse(location.search).compartmentId,
+          queryString.parse(search).compartmentId,
         )
         .then(monitoringData => {
           this.setState({
@@ -160,9 +167,14 @@ class Monitoring extends React.Component<Props, State> {
                 userAccountCompartments: [],
                 userPointList: [],
                 userSegmentList: [],
-                profileByCompartmentsAndUserAccountId: {},
+                userChoices: {userConsents: [], processings: []},
+                userProfile: {type: undefined, profile: {}},
                 lastSeen: 0,
-                userPointId: '',
+                userIdentifier: {
+                  type: '',
+                  id: ''
+                },
+                isUserFound: false,
               },
               isLoading: false,
             });
@@ -205,8 +217,6 @@ class Monitoring extends React.Component<Props, State> {
 
     const { isModalVisible, monitoringData, isLoading } = this.state;
 
-    const userPointId = monitoringData.userPointId;
-
     return (
       <div className="ant-layout">
         <MonitoringActionbar
@@ -217,7 +227,7 @@ class Monitoring extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            {userPointId ? (
+            {monitoringData.isUserFound ? (
               <Row>
                 <TimelineHeader
                   dataSource={monitoringData}
@@ -233,7 +243,7 @@ class Monitoring extends React.Component<Props, State> {
                       <FormattedMessage {...messages.visitor} />
                     </div>
                     <ProfileCard
-                      dataSource={monitoringData.profileByCompartmentsAndUserAccountId}
+                      dataSource={monitoringData.userProfile}
                       isLoading={isLoading}
                     />
                     <SegmentsCard
@@ -248,7 +258,7 @@ class Monitoring extends React.Component<Props, State> {
 
                     <ActivitiesTimeline
                       selectedDatamart={selectedDatamart}
-                      userPointId={userPointId}
+                      userIdentifier={monitoringData.userIdentifier}
                     />
                   </Col>
                   <Col span={6}>
@@ -272,6 +282,10 @@ class Monitoring extends React.Component<Props, State> {
                       dataSource={monitoringData.userEmailList}
                       isLoading={isLoading}
                     />
+                    <UserChoicesCard
+                      dataSource={monitoringData.userChoices}
+                      isLoading={isLoading}                   
+                    />
                   </Col>
                 </Row>
               </Row>
@@ -288,7 +302,7 @@ class Monitoring extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   isFechingCookies: state.session.isFechingCookies,
 });
 

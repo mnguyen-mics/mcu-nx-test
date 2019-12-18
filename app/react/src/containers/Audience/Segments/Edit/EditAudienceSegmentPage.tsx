@@ -41,7 +41,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import { hasFeature } from '../../../../state/Features/selectors';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -55,6 +55,10 @@ const messagesMap = defineMessages({
   noQueryText: {
     id: 'audience.segment.form.save.error.noQUeryText',
     defaultMessage: 'You must edit a query in order to save the segment.',
+  },
+  editionNotAllowed: {
+    id: 'audience.segments.edit.editionNotAllowed',
+    defaultMessage: 'Edition is not allowed on USER_ACTIVATION segment.',
   },
 });
 
@@ -260,6 +264,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         !audienceSegmentFormData.query)
     ) {
       message.error(intl.formatMessage(messagesMap.noQueryText));
+    } else if (audienceSegmentFormData.audienceSegment.type === 'USER_ACTIVATION') {
+      message.error(intl.formatMessage(messagesMap.editionNotAllowed));
     } else {
       this.setState({ loading: true });
 
@@ -410,6 +416,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   getSegmentTypesToDisplay = () => {
     const { selectedDatamart } = this.state;
+    const {
+      hasFeature
+    } = this.props;
     const segmentTypesToDisplay: Array<{
       title: string;
       value: AudienceSegmentType;
@@ -429,7 +438,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         },
       );
     }
-    if (hasFeature('audience.user_client_segment')) {
+    if (hasFeature('audience-user_client_segment')) {
       segmentTypesToDisplay.push({
         title: 'Edge',
         value: 'USER_CLIENT',
@@ -537,7 +546,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 

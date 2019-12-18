@@ -11,23 +11,35 @@ import { compose } from 'recompose';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { hasFeature } from '../../../../../state/Features/selectors';
 import ContentHeader from '../../../../../components/ContentHeader';
+import { IFeedsStatsService } from '../../../../../services/FeedsStatsService';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
+import { Index } from '../../../../../utils';
+import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 export interface FeedCardListProps {}
 
 type Props = FeedCardListProps &
+  InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }>;
 
 export interface FeedCardListState {
   isLoading: boolean;
   feeds: Array<AudienceTagFeedTyped | AudienceExternalFeedTyped>;
   shouldScrollWhenLoaded: boolean;
+  feedsStatsByFeedId: Index<{
+    feed_id: string;
+    uniq_user_points_count: number;
+  }>;
 }
 
 class FeedCardList extends React.Component<Props, FeedCardListState> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.IFeedsStatsService)
+  private _feedsStatsService: IFeedsStatsService;
 
   constructor(props: Props) {
     super(props);
@@ -38,6 +50,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
         props.location.state && props.location.state.scrollToFeed
           ? true
           : false,
+      feedsStatsByFeedId: {},
     };
   }
 
@@ -46,10 +59,14 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
       match: {
         params: { segmentId },
       },
+      hasFeature,
     } = this.props;
 
     if (segmentId) {
       this.fetchFeeds(segmentId);
+      if (hasFeature('audience-feeds_stats')) {
+        this.fetchFeedsStats();
+      }
     }
   }
 
@@ -132,14 +149,48 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
     }
   };
 
-  render() {
+  fetchFeedsStats = () => {
     const {
       match: {
         params: { segmentId, organisationId },
       },
     } = this.props;
 
-    const { feeds, isLoading } = this.state;
+    return this._feedsStatsService
+      .getSegmentStats(organisationId, segmentId)
+      .then(res => {
+        const normalized = normalizeReportView<{
+          feed_id: string;
+          uniq_user_points_count: number;
+        }>(res.data.report_view);
+
+        const normalizedObjects = normalizeArrayOfObject(normalized, 'feed_id');
+
+        // For each feed that doesn't have any stats in the response, we add it with '0' identifiers count.
+        this.state.feeds.forEach(feed => {
+          if (!normalizedObjects[feed.id]) {
+            normalizedObjects[feed.id] = {
+              feed_id: feed.id,
+              uniq_user_points_count: 0,
+            };
+          }
+        });
+
+        return this.setState({
+          feedsStatsByFeedId: normalizedObjects,
+        });
+      });
+  };
+
+  render() {
+    const {
+      match: {
+        params: { segmentId, organisationId },
+      },
+      hasFeature,
+    } = this.props;
+
+    const { feeds, isLoading, feedsStatsByFeedId } = this.state;
 
     if (isLoading) {
       return (
@@ -159,7 +210,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
 
     return (
       <div ref={this.getRef}>
-        {hasFeature('audience.dashboard') && feeds.length > 1 && (
+        {hasFeature('audience-dashboards') && feeds.length > 1 && (
           <ContentHeader title={`Feed Card List`} size={`medium`} />
         )}
         <Row gutter={24}>
@@ -173,6 +224,11 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
                     onFeedUpdate={this.onFeedUpdate}
                     segmentId={segmentId}
                     organisationId={organisationId}
+                    exportedUserPointsCount={
+                      feedsStatsByFeedId[cf.id]
+                        ? feedsStatsByFeedId[cf.id].uniq_user_points_count
+                        : undefined
+                    }
                   />
                 </Col>
               );
@@ -183,4 +239,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
   }
 }
 
-export default compose<Props, FeedCardListProps>(withRouter)(FeedCardList);
+export default compose<Props, FeedCardListProps>(
+  withRouter,
+  injectFeatures,
+)(FeedCardList);

@@ -12,6 +12,7 @@ import * as MenuActions from '../../../state/Menu/actions';
 import { ButtonStyleless } from '../../../components';
 import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const { Sider } = Layout;
 
@@ -198,7 +199,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
               <Sider
                 style={collapsed ? {} : { overflow: 'auto' }}
                 collapsible={true}
-                collapsed={collapsed}
+                collapsed={false}
                 trigger={this.renderSettingsTrigger()}
               >
                 <NavigatorSettingsSideMenu
@@ -219,7 +220,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   collapsed: state.menu.collapsed,
   mode: state.menu.mode,
 });

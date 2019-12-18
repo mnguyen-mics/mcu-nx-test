@@ -19,13 +19,15 @@ export interface NewExportSimpleFormData {
 }
 
 const initialFormData: Partial<NewExportSimpleFormData> = {
-  outputFormat: 'CSV',
+  outputFormat: 'JSON',
 };
 
 export const FORM_ID = 'exportSimpleForm';
 
 export interface FormProps
-  extends Omit<ConfigProps<NewExportSimpleFormData, FormProps>, 'form'> {}
+  extends Omit<ConfigProps<NewExportSimpleFormData, FormProps>, 'form'> {
+    csvExportDisabled?: boolean;
+  }
 
 type Props = FormProps & InjectedIntlProps & ValidatorProps;
 
@@ -41,8 +43,30 @@ class NewExportSimleForm extends React.Component<
     };
   }
 
+  getOptionList(csvExportDisabled: boolean = false) {
+    if (csvExportDisabled) {
+      return [
+        {
+          value: 'JSON',
+          title: 'JSON',
+        },
+      ];
+    } else {
+      return [
+        {
+          value: 'JSON',
+          title: 'JSON',
+        },
+        {
+          value: 'CSV',
+          title: 'CSV',
+        },
+      ];
+    }
+  }
+
   render() {
-    const { fieldValidators, intl, handleSubmit } = this.props;
+    const { fieldValidators, intl, handleSubmit, csvExportDisabled } = this.props;
 
     return (
       <Form
@@ -69,16 +93,7 @@ class NewExportSimleForm extends React.Component<
                 <FormAddonSelectField 
                   name="outputFormat"
                   component={AddonSelect}
-                  options={[
-                    {
-                      value: 'CSV',
-                      title: 'CSV',
-                    },
-                    {
-                      value: 'JSON',
-                      title: 'JSON',
-                    },
-                  ]}
+                  options={this.getOptionList(csvExportDisabled)}
                 />
               )
             }}

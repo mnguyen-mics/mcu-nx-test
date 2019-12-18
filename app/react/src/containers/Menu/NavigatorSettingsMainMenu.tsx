@@ -12,6 +12,7 @@ import {
 import { getOrgFeatures } from '../../state/Features/selectors';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition } from '../../routes/domain';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface NavigatorSettingsMainMenuProps {
 }
@@ -138,7 +139,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   organisationHasDatamarts: hasDatamarts(state),
   orgFeatures: getOrgFeatures(state),
 });

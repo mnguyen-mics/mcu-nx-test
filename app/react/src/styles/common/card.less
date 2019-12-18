@@ -93,6 +93,12 @@
       }
       .content {
         padding: 20px 0;
+        .content-left {
+          display: inline;
+        }
+        .content-right {
+          float: right;
+        }
       }
     }
   }
@@ -143,7 +149,7 @@
   .table-line {
     margin: 3px 0;
     .sub-title,
-    .sub-title-2  {
+    .sub-title-2 {
       color: @primary-color;
       padding-bottom: 20px;
     }
@@ -151,7 +157,7 @@
       font-size: 1.2em;
     }
     .sub-title-2 {
-      font-size: 1.0em;
+      font-size: 1em;
     }
 
     .single-profile-info:not(:last-child) {
@@ -190,6 +196,11 @@
       font-size: 2.5em;
       color: #919191;
       width: 30px;
+    }
+
+    .mcs-timeline-info {
+      font-size: 1.5em;
+      text-align: right;
     }
 
     .icon-left {
@@ -276,6 +287,7 @@
 
 .mcs-card-button {
   float: right;
+  line-height: 40px;
   div {
     margin-left: 8px;
   }

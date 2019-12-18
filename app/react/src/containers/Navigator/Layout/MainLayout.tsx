@@ -13,6 +13,7 @@ import * as MenuActions from '../../../state/Menu/actions';
 import { ButtonStyleless } from '../../../components';
 import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const { Content, Sider } = Layout;
 
@@ -200,7 +201,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   collapsed: state.menu.collapsed,
   mode: state.menu.mode,
 });

@@ -1,4 +1,4 @@
-import { UserProfileWithAccountId } from "../../../../models/timeline/timeline";
+import { UserProfileWithAccountId, UserProfileResource } from "../../../../models/timeline/timeline";
 import React from "react";
 import { FormattedMessage } from "react-intl";
 import { Row, Col, Tooltip, Tag } from "antd";
@@ -6,12 +6,16 @@ import cuid from "cuid";
 import messages from "../messages";
 
 export interface SingleProfileInfoProps {
-    profileWithAccountId: UserProfileWithAccountId
+    profileGlobal: UserProfileWithAccountId | UserProfileResource
 }
 
 interface State {
     showMore: boolean;
 }
+
+function isProfileWithAccountId(profile: UserProfileWithAccountId | UserProfileResource): profile is UserProfileWithAccountId {
+    return (profile as UserProfileWithAccountId).userAccountId !== undefined;
+  }
 
 export default class SingleProfileInfo extends React.Component<SingleProfileInfoProps, State> {
 
@@ -25,10 +29,12 @@ export default class SingleProfileInfo extends React.Component<SingleProfileInfo
             showMore: false,
         }
     }
+    
+    render() {
+        const { profileGlobal } = this.props;
 
-    public render() {
-        const { profileWithAccountId } = this.props;
-        const { profile, userAccountId } = profileWithAccountId;
+        const userAccountId = isProfileWithAccountId(profileGlobal) ? profileGlobal.userAccountId : undefined;
+        const profile = isProfileWithAccountId(profileGlobal) ? profileGlobal.profile : profileGlobal
 
         const convertedObjectToArray = Object.keys(profile).map(key => {
             return [key, profile[key]];
@@ -51,7 +57,7 @@ export default class SingleProfileInfo extends React.Component<SingleProfileInfo
             this.setState({ showMore: false });
         };
 
-        const hasItems = !!Object.keys(profileWithAccountId.profile).length;
+        const hasItems = !!Object.keys(profile).length;
 
         const generateValues = (t: object) => {
             return Object.keys(t).map(k => [k, (t as any)[k]])
@@ -110,12 +116,12 @@ export default class SingleProfileInfo extends React.Component<SingleProfileInfo
 
         return (
             <div className="single-profile-info">
-                <div className="sub-title-2">
+                {userAccountId && <div className="sub-title-2">
                     User Account Id: <br />
                     <Tooltip title={userAccountId}>
                         <Tag className="card-tag alone">{userAccountId}</Tag>
                     </Tooltip>
-                </div>
+                </div>}
                 {profileFormatted &&
                     profileFormatted.map(profil => {
                         return generateItems(profil as any)

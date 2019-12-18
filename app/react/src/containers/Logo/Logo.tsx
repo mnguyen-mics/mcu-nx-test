@@ -5,6 +5,7 @@ import { compose } from 'recompose';
 
 import { getLogo } from '../../state/Session/actions';
 import { MenuMode } from 'antd/lib/menu';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface LogoProps {
   mode: MenuMode;
@@ -75,7 +76,7 @@ class Logo extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   logoUrl: state.session.logoUrl,
 });
 

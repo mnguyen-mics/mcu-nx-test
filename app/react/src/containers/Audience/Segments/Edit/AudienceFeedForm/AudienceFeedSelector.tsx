@@ -1,15 +1,20 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
-import { defineMessages, FormattedMessage } from 'react-intl';
-import { MenuPresentational } from '../../../../../components/FormMenu';
-import { FeedType } from './domain';
+import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { MenuPresentational, MenuList } from '../../../../../components/FormMenu';
+import { FeedAction } from './domain';
+import { compose } from 'recompose';
+import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
+import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 
 const { Content } = Layout;
 
 export interface AudienceFeedSelectorProps {
-  onSelect: (feedType: FeedType) => void;
+  onSelect: (feedType: FeedAction) => void;
 }
+
+type Props = AudienceFeedSelectorProps & InjectedIntlProps & InjectedFeaturesProps & InjectedWorkspaceProps;
 
 const messages = defineMessages({
   listTitle: {
@@ -18,20 +23,50 @@ const messages = defineMessages({
   },
   listSubtitle: {
     id: 'audience.segments.form.audienceFeedSelector.subtitle',
-    defaultMessage: 'Chose your feed types. Tags will display a pixel to all your users within your segment and external feed will transfer them from server to server.',
+    defaultMessage: 'Chose your feed type.',
   },
   segmentTypeOr: {
     id: 'audience.segments.form.audienceFeedSelector.or',
     defaultMessage: 'Or',
   },
+  feedAdvanced: {
+    id: 'audience.segments.form.audienceFeedSelector.advanced',
+    defaultMessage: 'Advanced'
+  },
+  createServerSidePreset: {
+    id: 'audience.segments.form.audienceFeedSelector.createServerSidePreset',
+    defaultMessage: 'Create a server side preset',
+  },
+  createClientSidePreset: {
+    id: 'audience.segments.form.audienceFeedSelector.createClientSidePreset',
+    defaultMessage: 'Create a client side preset',
+  }
 });
 
-class AudienceFeedSelector extends React.Component<AudienceFeedSelectorProps> {
-  onSelect = (feedType: FeedType) => () => {
+class AudienceFeedSelector extends React.Component<Props> {
+  onSelect = (feedType: FeedAction) => () => {
     this.props.onSelect(feedType)
   }
 
+  hasRightToCreatePreset(): boolean {
+    const { workspace: { role } } = this.props;
+
+    if(
+      role === 'ORGANISATION_ADMIN' ||
+      role === 'COMMUNITY_ADMIN' ||
+      role === 'CUSTOMER_ADMIN'
+    )
+      return true;
+
+    return false;
+  }
+
   render() {
+    const {
+      intl: { formatMessage },
+      hasFeature,
+    } = this.props;
+
     return (
       <Layout>
         <div className="edit-layout ant-layout">
@@ -45,20 +80,40 @@ class AudienceFeedSelector extends React.Component<AudienceFeedSelectorProps> {
                 <Row className="menu">
                   <div className="presentation">
                     <MenuPresentational
-                      title={'External Feed'}
+                      title={'Server side'}
+                      subtitles={['Triggered when users are added / deleted from segment']}
                       type="data"
-                      select={this.onSelect('external')}
+                      select={this.onSelect('create_external')}
                     />
                     <div className="separator">
                       <FormattedMessage {...messages.segmentTypeOr} />
                     </div>
                     <MenuPresentational
-                      title={'Tag Feed'}
+                      title={'Client side'}
+                      subtitles={['Triggered when users are visiting your webpages / apps']}
                       type="code"
-                      select={this.onSelect('tag')}
+                      select={this.onSelect('create_tag')}
                     />
                   </div>
                 </Row>
+                { hasFeature("plugins-presets") && this.hasRightToCreatePreset() ?
+                  <div>
+                    <Row className="intermediate-title">
+                      <FormattedMessage {...messages.feedAdvanced} />
+                    </Row>
+                    <Row className="menu">
+                      <MenuList
+                        title={formatMessage(messages.createServerSidePreset)}
+                        select={this.onSelect('create_external_preset')}
+                      />
+                      <MenuList
+                        title={formatMessage(messages.createClientSidePreset)}
+                        select={this.onSelect('create_tag_preset')}
+                    />
+                    </Row>
+                  </div>
+                  : null
+                }
               </Row>
             </Content>
           </Layout>
@@ -68,4 +123,4 @@ class AudienceFeedSelector extends React.Component<AudienceFeedSelectorProps> {
   }
 }
 
-export default AudienceFeedSelector
+export default compose<Props, AudienceFeedSelectorProps>(injectIntl, injectFeatures, injectWorkspace)(AudienceFeedSelector)

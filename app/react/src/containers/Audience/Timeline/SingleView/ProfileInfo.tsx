@@ -26,7 +26,7 @@ export default class ProfileInfo extends React.Component<ProfileInfoProps, State
       <div>
         {
           profiles.map(profil => {
-            return <SingleProfileInfo key={cuid()} profileWithAccountId={profil} />
+            return <SingleProfileInfo key={cuid()} profileGlobal={profil} />
           })}
       </div>
     );

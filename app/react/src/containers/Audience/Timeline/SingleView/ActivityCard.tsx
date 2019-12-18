@@ -26,6 +26,7 @@ import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IUserDataService } from '../../../../services/UserDataService';
+import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
 enum scenarioActivityTypes {
@@ -48,6 +49,7 @@ export interface ActivityCardProps {
 
 type Props = ActivityCardProps &
   InjectedIntlProps &
+  InjectedWorkspaceProps &
   RouteComponentProps<TimelinePageParams>;
 
 class ActivityCard extends React.Component<Props, State> {
@@ -70,13 +72,15 @@ class ActivityCard extends React.Component<Props, State> {
   }
 
   getChannelInformation(activity: Activity) {
-    const { selectedDatamart } = this.props;
+    const { selectedDatamart, workspace: { community_id, organisation_id }  } = this.props;
 
     if (activity && needToDisplayDurationFor.indexOf(activity.$type) > -1) {
       const id = activity.$site_id ? activity.$site_id : activity.$app_id;
       const prefix = activity.$site_id ? 'Site' : 'App';
       this.getChannelPromise = makeCancelable(
-        this._userDataService.getChannel(selectedDatamart.id, id),
+        (community_id === organisation_id) ?
+          this._userDataService.getChannel(id, { community_id: community_id, with_source_datamarts: true }) :
+          this._userDataService.getChannel(id, { organisation_id: organisation_id, datamart_id: selectedDatamart.id })
       );
       this.getChannelPromise.promise
         .then(response => {
@@ -262,7 +266,7 @@ class ActivityCard extends React.Component<Props, State> {
       );
 
       return (
-        <Card title={this.state.siteName} buttons={buttons}>
+        <Card title={this.state.siteName} buttons={buttons} className={"mcs-activityCard"}>
           {this.generateCardContent(activity)}
           <Row className="border-top sm-footer timed-footer text-right">
             {moment(activity.$ts).format('H:mm:ss')}
@@ -275,5 +279,6 @@ class ActivityCard extends React.Component<Props, State> {
 
 export default compose<Props, ActivityCardProps>(
   injectIntl,
+  injectWorkspace,
   withRouter,
 )(ActivityCard);

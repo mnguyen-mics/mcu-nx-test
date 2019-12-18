@@ -214,7 +214,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
     const {datamartId, isTrigger, hasFeature} = this.props;
     const {queryHistory: {present: query}, objectTypes} = this.state;
 
-    if (!hasFeature('audience.segment_builder.reference_table')) {
+    if (!hasFeature('audience-segment_builder-reference_table')) {
       return Promise.resolve([]);
     }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         

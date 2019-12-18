@@ -33,6 +33,7 @@ import { IDashboardService } from '../../../../services/DashboardServices';
 import { DashboardResource } from '../../../../models/dashboards/dashboards';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 import ContentHeader from '../../../../components/ContentHeader';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 
 interface State {
   loading: boolean;
@@ -51,6 +52,7 @@ export interface AudienceSegmentDashboardProps {
 type Props = AudienceSegmentDashboardProps &
   InjectedIntlProps &
   InjectedNotificationProps &
+  InjectedFeaturesProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class AudienceSegmentDashboard extends React.Component<Props, State> {
@@ -70,6 +72,22 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    const {
+      match: {
+        params: {
+          segmentId,
+          organisationId,
+        },
+      },
+      location: { search },
+      segment,
+      datamarts,
+    } = this.props;
+
+    this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
+  }
+
   componentWillReceiveProps(nextProps: Props) {
     const {
       match: {
@@ -77,7 +95,9 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       },
       location: { search },
       datamarts,
+      segment
     } = this.props;
+
     const {
       match: {
         params: {
@@ -89,44 +109,49 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       segment: nextSegment,
     } = nextProps;
 
-    if (
-      (!compareSearches(search, nextSearch) ||
-        segmentId !== nextSegmentId ||
-        datamarts) &&
-      nextSegment
-    ) {
-      const nextFilters = parseSearch(nextSearch, SEGMENT_QUERY_SETTINGS);
-      const metrics: string[] = [
-        'user_points',
-        'user_point_additions',
-        'user_point_deletions',
-      ];
-      let additionalMetrics;
-
-      if (datamarts) {
-        const datamart = datamarts.find(
-          dm => dm.id === nextSegment.datamart_id,
-        );
-
-        additionalMetrics =
-          datamart && datamart.audience_segment_metrics
-            ? datamart.audience_segment_metrics.map(el => el.technical_name)
-            : undefined;
-      }
-      this.fetchDashboardView(
-        nextOrganisationId,
-        nextFilters.from,
-        nextFilters.to,
-        [
-          {
-            name: 'audience_segment_id',
-            value: nextSegmentId,
-          },
-        ],
-        additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
-      );
-      this.fetchDashboardChartView(nextSegment.datamart_id);
+    if (!compareSearches(search, nextSearch) || segmentId !== nextSegmentId || segment !== nextSegment) {
+      this.fetchDashboardView(nextSearch, nextOrganisationId, nextSegmentId, datamarts, nextSegment);
     }
+  }
+
+  fetchDashboardView = (
+    search: string,
+    organisationId: string,
+    segmentId: string,
+    datamarts: DatamartWithMetricResource[],
+    segment?: AudienceSegmentShape,
+  ) => {
+    const nextFilters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
+    const metrics: string[] = [
+      'user_points',
+      'user_point_additions',
+      'user_point_deletions',
+    ];
+    let additionalMetrics;
+
+    if (datamarts && segment) {
+      const datamart = datamarts.find(
+        dm => dm.id === segment.datamart_id,
+      );
+      this.fetchDashboardChartView(segment.datamart_id);
+
+      additionalMetrics =
+        datamart && datamart.audience_segment_metrics
+          ? datamart.audience_segment_metrics.map(el => el.technical_name)
+          : undefined;
+    }
+    this.fetchAudienceSegmentReport(
+      organisationId,
+      nextFilters.from,
+      nextFilters.to,
+      [
+        {
+          name: 'audience_segment_id',
+          value: segmentId,
+        },
+      ],
+      additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
+    );
   }
 
   fetchDashboardChartView = (selectedDatamartId: string) => {
@@ -144,7 +169,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     });
   };
 
-  fetchDashboardView = (
+  fetchAudienceSegmentReport = (
     organisationId: string,
     from: McsMoment,
     to: McsMoment,
@@ -180,13 +205,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   buildItems = () => {
-    const {
-      intl,
-      segment,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
+    const { intl, segment } = this.props;
     const { dashboard } = this.state;
     const items = [
       {
@@ -224,7 +243,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       if (
         segment.persisted &&
         this.isDatamartPionus() &&
-        this.isValiuzOrg(organisationId)
+        this.props.hasFeature('audience-segment_exports')
       ) {
         items.push({
           title: intl.formatMessage(messages.exports),
@@ -236,26 +255,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     }
     return items;
   };
-
-  isValiuzOrg(orgId: string): boolean {
-    const valiuzOrgIds = [
-      '1327',
-      '1319',
-      '1318',
-      '1314',
-      '1312',
-      '1311',
-      '1310',
-      '1309',
-      '1308',
-      '1304',
-      '1301',
-      '1294',
-      '1288',
-      '1282',
-    ];
-    return valiuzOrgIds.includes(orgId);
-  }
 
   render() {
     const { segment, datamarts } = this.props;
@@ -281,6 +280,7 @@ export default compose<Props, AudienceSegmentDashboardProps>(
   injectIntl,
   withRouter,
   injectNotifications,
+  injectFeatures,
 )(AudienceSegmentDashboard);
 
 const messages = defineMessages({
@@ -302,6 +302,6 @@ const messages = defineMessages({
   },
   exports: {
     id: 'audience-segment-dashboard-tab-title-exports',
-    defaultMessage: 'Exports Status',
+    defaultMessage: 'Exports',
   },
 });

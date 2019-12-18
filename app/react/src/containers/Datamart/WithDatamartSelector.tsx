@@ -8,6 +8,7 @@ import { Layout, Row } from 'antd';
 import { MenuList } from '../../components/FormMenu';
 import { FormTitle } from '../../components/Form';
 import { defineMessages } from 'react-intl';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface WithDatamartSelectorProps
   extends RouteComponentProps<{ organisationId: string }> {
@@ -150,7 +151,7 @@ export function withDatamartSelector<T>(
 
   return compose<Props<T>, T>(
     withRouter,
-    connect((state: any) => ({
+    connect((state: MicsReduxState) => ({
       connectedUser: state.session.connectedUser,
     })),
   )(NewComponent);

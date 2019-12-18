@@ -23,6 +23,7 @@ import {
 } from '../../../../../Campaigns/Email/Edit/Blast/Sections';
 import { BlastTemplateSectionFieldArray } from '../../../../../Campaigns/Email/Edit/Blast/EmailBlastForm';
 import GeneralInformationFormSection from './GeneralInformationSectionForm';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -156,7 +157,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

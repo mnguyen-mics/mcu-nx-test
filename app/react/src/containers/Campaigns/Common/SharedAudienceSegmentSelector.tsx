@@ -9,10 +9,12 @@ import { SearchFilter } from '../../../components/ElementSelector';
 import { DataColumnDefinition } from '../../../components/TableView/TableView';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
-import CatalogService, { GetServiceOptions } from '../../../services/CatalogService';
+import { GetServiceOptions, ICatalogService } from '../../../services/CatalogService';
 import { AudienceSegmentServiceItemPublicResource } from '../../../models/servicemanagement/PublicServiceItemResource';
 import { DataResponse } from '../../../services/ApiService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { TYPES } from '../../../constants/types';
+import { lazyInject } from '../../../config/inversify.config';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentServiceItemPublicResource>
@@ -60,6 +62,9 @@ type Props = SharedAudienceSegmentSelectorProps &
 
 class SharedAudienceSegmentSelector extends React.Component<Props> {
 
+  @lazyInject(TYPES.ICatalogService)
+  private _catalogService: ICatalogService;
+
   saveSegments = (
     segmentIds: string[],
     segments: AudienceSegmentServiceItemPublicResource[],
@@ -78,14 +83,14 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
       options.keywords = filter.keywords;
     }
 
-    return CatalogService.getAudienceSegmentServices(
+    return this._catalogService.getAudienceSegmentServices(
       organisationId,
       options
     );
   };
 
   fetchSegment = (segmentId: string) => {
-    return CatalogService.getService(segmentId) as Promise<DataResponse<AudienceSegmentServiceItemPublicResource>>;
+    return this._catalogService.getService(segmentId) as Promise<DataResponse<AudienceSegmentServiceItemPublicResource>>;
   };
 
   render() {

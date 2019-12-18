@@ -50,6 +50,7 @@ import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
 import { Path } from '../../../../components/ActionBar';
 import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 export const FORM_ID = 'audienceSegmentForm';
 
@@ -319,7 +320,7 @@ export default compose<Props, AudienceSegmentFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({
+  connect((state: MicsReduxState) => ({
     hasFeature: FeatureSelectors.hasFeature(state),
   })),
 )(EditAudienceSegmentForm);

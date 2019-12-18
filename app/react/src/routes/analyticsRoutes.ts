@@ -10,7 +10,7 @@ export const analyticsDefinition: NavigatorDefinition = {
     layout: 'main',
     contentComponent: OverviewContent,
     actionBarComponent: OverviewActionBar,
-    requiredFeature: 'analytics.overview',
+    requiredFeature: 'analytics-overview',
     requireDatamart: true
   },
 }

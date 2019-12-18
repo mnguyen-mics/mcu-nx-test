@@ -5,8 +5,7 @@ import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 import ButtonStyleless from '../../../../components/ButtonStyleless';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import CatalogService, {
-  GetServiceOptions, GetServiceItemsOptions,
+import { GetServiceOptions, GetServiceItemsOptions, ICatalogService,
 } from '../../../../services/CatalogService';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -28,6 +27,8 @@ import injectThemeColors, {
 import ServiceItem from './ServiceItem';
 import { offerType } from '../domain';
 import { ButtonProps } from 'antd/lib/button';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 const { Content } = Layout;
 
@@ -50,6 +51,10 @@ type Props = ServiceItemListPageProps &
   InjectedNotificationProps;
 
 class ServiceItemListPage extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.ICatalogService)
+  private _catalogService: ICatalogService;
+  
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -67,8 +72,8 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
     if (offerId) {
       const offerPromise = (offerOwnership === "subscribed_offer") ?
-        CatalogService.getSubscribedOffer(organisationId, offerId) :
-        CatalogService.getMyOffer(organisationId, offerId);
+        this._catalogService.getSubscribedOffer(organisationId, offerId) :
+        this._catalogService.getMyOffer(organisationId, offerId);
 
       offerPromise.then(resp => {
         this.setState({
@@ -103,12 +108,12 @@ class ServiceItemListPage extends React.Component<Props, State> {
     }
 
     const serviceItemsPromise = (offerOwnership === "subscribed_offer") ?
-      CatalogService.getSubscribedServiceItems(
+      this._catalogService.getSubscribedServiceItems(
         organisationId,
         offerId,
         fetchOptions,
       ) :
-      CatalogService.getServiceItems(
+      this._catalogService.getServiceItems(
         organisationId,
         fetchServiceItemOptions
       );
@@ -141,12 +146,12 @@ class ServiceItemListPage extends React.Component<Props, State> {
     } = this.props;
 
     const serviceItemConditionsPromise = (offerOwnership === "subscribed_offer") ?
-      CatalogService.getSubscribedServiceItemConditions(
+      this._catalogService.getSubscribedServiceItemConditions(
         organisationId,
         offerId,
         item.id,
       ) :
-      CatalogService.getOfferConditions(
+      this._catalogService.getOfferConditions(
         offerId
       );
 

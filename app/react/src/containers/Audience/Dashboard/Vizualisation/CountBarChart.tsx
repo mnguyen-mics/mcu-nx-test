@@ -159,17 +159,9 @@ class CountBarChart extends React.Component<Props, State> {
               });
           })
       .catch(() => {
-        // To remove
         this.setState({
           error: false,
           loading: false,
-          queryResult: [
-            { xKey: '0', yKey: 2 },
-            { xKey: '1', yKey: 4 },
-            { xKey: '2', yKey: 6 },
-            { xKey: '3', yKey: 3 },
-            { xKey: '4', yKey: 1 },
-          ],
         });
       });
   };

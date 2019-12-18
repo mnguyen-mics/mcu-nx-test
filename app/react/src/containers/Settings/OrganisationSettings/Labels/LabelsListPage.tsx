@@ -5,7 +5,6 @@ import { Row, Button, Modal, Input, Alert, Layout } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import * as labelsActions from '../../../../state/Labels/actions';
 import { Label } from '../../../Labels/Labels';
-import LabelsService from '../../../../services/LabelsService';
 import settingsMessages from '../../messages';
 import messages from './messages';
 import LabelsTable, { Filters } from './LabelsTable';
@@ -13,6 +12,10 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { withRouter, RouteComponentProps } from 'react-router';
+import { lazyInject } from '../../../../config/inversify.config';
+import { ILabelService } from '../../../../services/LabelsService';
+import { TYPES } from '../../../../constants/types';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 interface Options {
@@ -44,6 +47,9 @@ type Props = LabelsListProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class LabelsListPage extends React.Component<Props, LabelsListState> {
+  @lazyInject(TYPES.ILabelService)
+  private _labelService: ILabelService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -79,17 +85,21 @@ class LabelsListPage extends React.Component<Props, LabelsListState> {
       },
       intl,
     } = this.props;
+    const deleteLabel = () => {
+      this._labelService
+        .deleteLabel(label.id)
+        .then(() => {
+          that.props.fetchLabels(organisationId, { limit: 1000 });
+        })
+        .catch((err: any) => {
+          that.setState({ isCreatingLabels: false });
+          that.props.notifyError(err);
+        });
+    };
     Modal.confirm({
       title: intl.formatMessage(messages.archiveModalTitle),
       onOk() {
-        LabelsService.deleteLabel(label.id)
-          .then(() => {
-            that.props.fetchLabels(organisationId, { limit: 1000 });
-          })
-          .catch((err: any) => {
-            that.setState({ isCreatingLabels: false });
-            that.props.notifyError(err);
-          });
+        deleteLabel();
       },
       onCancel() {
         // cancel
@@ -123,8 +133,12 @@ class LabelsListPage extends React.Component<Props, LabelsListState> {
     const { selectedLabelId, inputValue } = this.state;
     const promise =
       selectedLabelId !== ''
-        ? LabelsService.updateLabel(selectedLabelId, inputValue, organisationId)
-        : LabelsService.createLabel(inputValue, organisationId);
+        ? this._labelService.updateLabel(
+            selectedLabelId,
+            inputValue,
+            organisationId,
+          )
+        : this._labelService.createLabel(inputValue, organisationId);
 
     this.setState({ isCreatingLabels: true }, () =>
       promise
@@ -259,7 +273,7 @@ export default compose(
   withRouter,
   injectNotifications,
   connect(
-    (state: any) => ({
+    (state: MicsReduxState) => ({
       labels: state.labels.labelsApi.data,
       isFetching: state.labels.labelsApi.isFetching,
     }),

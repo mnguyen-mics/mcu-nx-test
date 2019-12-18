@@ -15,7 +15,6 @@ import { Path } from '../../../../../components/ActionBar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
-
 import { EventRulesFormData } from '../domain';
 import { Omit } from '../../../../../utils/Types';
 import CatalogAutoMatch from './Sections/CatalogAutoMatch';
@@ -25,6 +24,7 @@ import PropertyToOriginCopy from './Sections/PropertyToOriginCopy';
 import * as SessionSelectors from '../../../../../state/Session/selectors';
 import DatamartService from '../../../../../services/DatamartService';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 const messages = defineMessages({
   saveEventRules: {
@@ -144,5 +144,5 @@ export default compose<Props, EventRulesFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect(state => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
+  connect((state: MicsReduxState) => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
 )(EventRulesForm);

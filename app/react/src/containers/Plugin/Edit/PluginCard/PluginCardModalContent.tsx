@@ -9,7 +9,7 @@ import { McsIcon, ButtonStyleless } from '../../../../components';
 import McsTabs from '../../../../components/McsTabs';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../models/plugin';
-import PluginSectionGenerator from '../../PluginSectionGenerator';
+import PluginSectionGenerator, { PluginExtraField } from '../../PluginSectionGenerator';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import { reduxForm, InjectedFormProps } from 'redux-form';
 import { Form, Spin, Icon } from 'antd';
@@ -17,16 +17,20 @@ import { ValidatorProps } from '../../../../components/Form/withValidators';
 import ColoredButton from '../../../../components/ColoredButton';
 import { ColorPalletteOption, getColorPalettes, rgbToHex, getPerceivedBrightness } from '../../../../utils/ColorHelpers';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
+import FeedChart from '../../../Audience/Segments/Dashboard/Feeds/Charts/FeedChart';
+import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 
 
 const FORM_NAME = 'pluginForm';
 const BRIGHTNESS_THRESHOLD = 160;
 
+export type PluginCardModalTab = 'configuration' | 'stats';
+
 export interface PluginCardModalContentProps<T> {
   plugin: T;
   onClose: () => void
   organisationId: string;
-  save: (pluginValue: any, propertiesValue: PropertyResourceShape[]) => void;
+  save: (pluginValue: any, propertiesValue: PropertyResourceShape[], name?: string, description?: string) => void;
   pluginProperties: PropertyResourceShape[];
   disableFields: boolean;
   pluginLayout?: PluginLayout;
@@ -34,17 +38,23 @@ export interface PluginCardModalContentProps<T> {
   pluginVersionId: string;
   initialValues?: any;
   editionMode: boolean;
+  selectedTab: PluginCardModalTab;
+  nameField?: PluginExtraField;
+  descriptionField?: PluginExtraField;
 }
 
 type Props<T extends LayoutablePlugin> = PluginCardModalContentProps<T> &
-  InjectedThemeColorsProps & InjectedNotificationProps & InjectedFormProps &
+  InjectedThemeColorsProps & 
+  InjectedNotificationProps & 
+  InjectedFormProps &
+  InjectedFeaturesProps &
   ValidatorProps;
 
 interface State {
   backgroundColor: string;
   color: string;
   loading: boolean;
-  showConfiguration: boolean;
+  selectedTab: PluginCardModalTab;
   imageUrl?: string;
 }
 
@@ -61,7 +71,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       loading: true,
       backgroundColor: '',
       color: '',
-      showConfiguration: true
+      selectedTab: props.selectedTab
     };
   }
 
@@ -142,7 +152,9 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       organisationId,
       plugin,
       pluginProperties,
-      disableFields
+      disableFields,
+      nameField,
+      descriptionField
     } = this.props;
 
     return pluginLayout.sections.map((section, index) => {
@@ -156,8 +168,11 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
             pluginLayoutSection={section}
             organisationId={organisationId}
             pluginProperties={pluginProperties}
+            pluginPresetProperties={plugin.plugin_preset ? plugin.plugin_preset.properties : undefined}
             disableFields={!!disableFields}
             pluginVersionId={plugin.current_version_id!}
+            nameField={index === 0 && nameField ? nameField : undefined}
+            descriptionField={index === 0 && descriptionField ? descriptionField: undefined}
             small={true}
           />
           {hrBooleanCondition ? <hr /> : null}
@@ -168,7 +183,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
   };
 
   onSubmit = (formValues: any) => {
-    const { editionMode, save } = this.props;
+    const { editionMode, save, nameField, descriptionField } = this.props;
     if (editionMode === false) {
       formValues.id = formValues.id ? formValues.id : generateFakeId();
     }
@@ -184,12 +199,16 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       .map(item => {
         return {
           ...item,
-          value: formValues.properties[item.technical_name]
+          value: formValues.properties && formValues.properties[item.technical_name]
             ? formValues.properties[item.technical_name].value
             : item.value,
         };
       });
-    save(pluginData, formattedProperties);
+    save(
+      pluginData, 
+      formattedProperties, 
+      formValues.name || (nameField && nameField.value), 
+      formValues.description || (descriptionField && descriptionField.value));
   }
 
   renderForm = (pluginLayout: PluginLayout) => {
@@ -206,24 +225,31 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       >
         {this.generateFormFromPluginLayout(pluginLayout)}
         <div style={{ height: 110, width: '100%' }} />
-        
       </Form>
     )
   }
 
+  renderStats = () => {
+    const {
+      plugin,
+      organisationId
+    } = this.props;
+
+    return <FeedChart organisationId={organisationId} feedId={plugin.id}/>;
+  }
+
   public render() {
 
-    const { onClose, handleSubmit, isLoading, pluginLayout } = this.props;
-    const { backgroundColor, color, loading } = this.state;
+    const { onClose, handleSubmit, isLoading, pluginLayout, editionMode, hasFeature } = this.props;
+    const { backgroundColor, color, loading, selectedTab } = this.state;
 
     if (loading || !pluginLayout || isLoading) 
       return  (<div className="plugin-modal-loading"><Spin size="large"  /></div>);
 
-    const items = [
+    let items = [
       {
         title: 'Configuration',
         key: 'configuration',
-        // display: <div> test beach </div>
         display: <div className="tab">{this.renderForm(pluginLayout!)}</div>
       },
       // {
@@ -233,8 +259,16 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       // }
     ]
 
-    const onActiveKeyChange = (activeKey: string) => {
-      this.setState({ showConfiguration: activeKey === 'configuration' ? true : false })
+    if(hasFeature('audience-feeds_stats') && editionMode) {
+      items = [{
+        title: 'Stats',
+        key: 'stats',
+        display: <div className="tab">{this.renderStats()}</div>
+      }].concat(items);
+    }
+
+    const onActiveKeyChange = (activeKey: PluginCardModalTab) => {
+      this.setState({ selectedTab: activeKey })
     }
 
     return (
@@ -281,9 +315,9 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
             </div>
           </div>
            <div className="tabs">
-            <McsTabs items={items} defaultActiveKey={'configuration'} onChange={onActiveKeyChange} />
+            <McsTabs items={items} defaultActiveKey={selectedTab} onChange={onActiveKeyChange} />
           </div>
-          {this.state.showConfiguration ? <div className="footer">
+          {selectedTab === 'configuration' ? <div className="footer">
             <ButtonStyleless className={" m-r-20"} onClick={onClose}>Close</ButtonStyleless>
             <ColoredButton className="mcs-primary" backgroundColor={backgroundColor} color={color} onClick={handleSubmit(this.onSubmit)}> { isLoading ? (<Icon type="loading" />) : null} Save</ColoredButton>
           </div> : null}
@@ -303,5 +337,6 @@ export default compose<
     form: FORM_NAME,
     enableReinitialize: true,
   }),
-  injectNotifications
+  injectNotifications,
+  injectFeatures
 )(PluginCardModalContent);

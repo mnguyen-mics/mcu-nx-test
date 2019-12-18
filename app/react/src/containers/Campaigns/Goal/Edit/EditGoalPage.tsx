@@ -17,6 +17,7 @@ import { UserWorkspaceResource } from '../../../../models/directory/UserProfileR
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IGoalFormService } from './GoalFormService';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -214,7 +215,7 @@ class EditGoalPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
   hasFeature: FeatureSelectors.hasFeature(state),
 });

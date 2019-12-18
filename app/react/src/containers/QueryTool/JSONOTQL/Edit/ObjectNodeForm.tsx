@@ -28,6 +28,7 @@ import FieldNodeSection, {
   FieldNodeSectionProps,
 } from './Sections/FieldNodeSection';
 import { typesTrigger } from '../domain';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
@@ -238,7 +239,7 @@ class ObjectNodeForm extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 

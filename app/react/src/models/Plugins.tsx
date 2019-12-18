@@ -11,6 +11,7 @@ export interface PluginResource {
 
 export interface LayoutablePlugin extends PluginResource {
   plugin_layout?: PluginLayout;
+  plugin_preset?: PluginPresetResource;
 }
 
 export interface PluginProperty {
@@ -20,6 +21,23 @@ export interface PluginProperty {
   technical_name: string;
   value: any;
   writable: boolean;
+}
+
+export interface PluginPresetResource {
+  id: string;
+  plugin_id: string;
+  plugin_version_id: string;
+  organisation_id: string;
+  plugin_type?: PluginType;
+  name: string;
+  description?: string;
+  properties: PluginPresetProperty[];
+}
+
+export interface PluginPresetProperty {
+  property_type: string;
+  technical_name: string;
+  value: any;
 }
 
 export type PluginType =
@@ -118,8 +136,15 @@ export interface Recommender extends PluginInstance {
   organisation_id: string;
 }
 
-export type Status = 'INITIAL' | 'PAUSED' | 'ACTIVE' | 'PUBLISHED';
-export interface AudienceExternalFeed extends PluginInstance  {
+export enum StatusEnum {
+  'INITIAL',
+  'PAUSED',
+  'ACTIVE',
+  'PUBLISHED',
+}
+export type Status = keyof typeof StatusEnum;
+
+export interface AudienceExternalFeed extends PluginInstance {
   artifact_id: string;
   audience_segment_id: string;
   group_id: string;
@@ -127,6 +152,7 @@ export interface AudienceExternalFeed extends PluginInstance  {
   organisation_id: string;
   status: Status;
   version_id: string;
+  name?: string;
 }
 
 export interface AudienceTagFeed extends PluginInstance {
@@ -137,6 +163,7 @@ export interface AudienceTagFeed extends PluginInstance {
   status: Status;
   organisation_id: string;
   version_id: string;
+  name?: string;
 }
 
 export interface Adlayout {

@@ -22,6 +22,7 @@ import { IAutomationFormService } from './AutomationFormService';
 import DatamartService from '../../../services/DatamartService';
 import { IScenarioService } from '../../../services/ScenarioService';
 import AutomationBuilderContainer from '../Builder/AutomationBuilderContainer';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 
 interface State {
@@ -311,7 +312,7 @@ export default compose<Props, {}>(
   injectIntl,
   injectNotifications,
   connect(
-    state => ({
+    (state: MicsReduxState) => ({
       hasFeature: FeatureSelectors.hasFeature(state),
     }),
     {

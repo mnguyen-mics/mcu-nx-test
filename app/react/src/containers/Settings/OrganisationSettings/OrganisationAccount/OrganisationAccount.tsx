@@ -11,6 +11,7 @@ import LogoInput from './LogoInput';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 export interface OrganisationAccountProps {
@@ -90,7 +91,7 @@ class OrganisationAccount extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   initialValues: state.session.workspace,
 });
 

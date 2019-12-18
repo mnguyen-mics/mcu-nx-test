@@ -8,6 +8,7 @@ import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { FormTitle } from '../../components/Form';
 import { MenuList } from '../../components/FormMenu';
 import ActionBar, { ActionBarProps } from '../../components/ActionBar';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface DatamartSelectorProps {
   onSelectDatamart: (datamart: DatamartResource) => void;
@@ -62,7 +63,7 @@ class DatamartSelector extends React.Component<Props> {
 
 export default compose<Props, DatamartSelectorProps>(
   withRouter,
-  connect((state: any) => ({
+  connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,
   })),
 )(DatamartSelector);

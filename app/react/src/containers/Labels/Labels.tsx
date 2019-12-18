@@ -1,13 +1,17 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-
-import LabelsService from '../../services/LabelsService';
 import LabelsSelector from '../../components/LabelsSelector';
 import messages from './messages';
+import { lazyInject } from '../../config/inversify.config';
+import { TYPES } from '../../constants/types';
+import { ILabelService } from '../../services/LabelsService';
+import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface Label {
   id: string;
   name: string;
+  organisation_id: string;
+  creation_ts: number;
 }
 
 interface LabelsProps {
@@ -25,6 +29,9 @@ interface LabelsState {
 }
 
 class Labels extends React.Component<LabelsProps, LabelsState> {
+  @lazyInject(TYPES.ILabelService)
+  private _labelService: ILabelService;
+
   constructor(props: LabelsProps) {
     super(props);
     this.state = {
@@ -35,22 +42,13 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
   }
 
   componentDidMount() {
-    const {
-      organisationId,
-      labellableId,
-      labellableType,
-    } = this.props;
+    const { organisationId, labellableId, labellableType } = this.props;
 
     this.fetchLabbellableLables(organisationId, labellableId, labellableType);
-
   }
 
   componentWillReceiveProps(nextProps: LabelsProps) {
-    const {
-      organisationId,
-      labellableId,
-      labellableType,
-    } = this.props;
+    const { organisationId, labellableId, labellableType } = this.props;
 
     const {
       organisationId: nextOrganisationId,
@@ -58,43 +56,71 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
       labellableType: nextLabellableType,
     } = nextProps;
 
-    if (labellableId !== nextLabellableId || organisationId !== nextOrganisationId || labellableType !== nextLabellableType) {
-      this.fetchLabbellableLables(nextOrganisationId, nextLabellableId, nextLabellableType);
+    if (
+      labellableId !== nextLabellableId ||
+      organisationId !== nextOrganisationId ||
+      labellableType !== nextLabellableType
+    ) {
+      this.fetchLabbellableLables(
+        nextOrganisationId,
+        nextLabellableId,
+        nextLabellableType,
+      );
     }
   }
 
-  fetchLabbellableLables = (organisationId: string, labellableId: string, labellableType: string) => {
-    LabelsService.getLabels(organisationId, { labelable_id: labellableId, labelable_type: labellableType})
+  fetchLabbellableLables = (
+    organisationId: string,
+    labellableId: string,
+    labellableType: string,
+  ) => {
+    this._labelService
+      .getLabels(organisationId, {
+        labelable_id: labellableId,
+        labelable_type: labellableType,
+      })
       .then((results: any) => results.data)
-      .then((results: Label[]) => (
-        this.setState({ labels: results })
-      ));
-  }
+      .then((results: Label[]) => this.setState({ labels: results }));
+  };
 
   onChange = (newLabels: Label[]) => {
-
     if (newLabels.length > this.state.labels.length) {
-      const diffToAdd = newLabels.map(newLabel => {
-        return this.state.labels.find(label => newLabel.id === label.id) ? null : newLabel;
-      }).filter(item => (item && item.id))[0];
+      const diffToAdd = newLabels
+        .map(newLabel => {
+          return this.state.labels.find(label => newLabel.id === label.id)
+            ? null
+            : newLabel;
+        })
+        .filter(item => item && item.id)[0];
       if (diffToAdd) {
-        LabelsService.pairLabels(diffToAdd.id, this.props.labellableType, this.props.labellableId);
+        this._labelService.pairLabels(
+          diffToAdd.id,
+          this.props.labellableType,
+          this.props.labellableId,
+        );
         this.setState({ labels: [...this.state.labels, diffToAdd] });
       }
     }
 
     if (newLabels.length < this.state.labels.length) {
-      const diffToRemove = this.state.labels.map(label => {
-        return newLabels.find(newLabel => newLabel.id === label.id) ? null : label;
-      }).filter(item => (item && item.id))[0];
+      const diffToRemove = this.state.labels
+        .map(label => {
+          return newLabels.find(newLabel => newLabel.id === label.id)
+            ? null
+            : label;
+        })
+        .filter(item => item && item.id)[0];
 
       if (diffToRemove) {
-        LabelsService.unPairLabels(diffToRemove.id, this.props.labellableType, this.props.labellableId);
+        this._labelService.unPairLabels(
+          diffToRemove.id,
+          this.props.labellableType,
+          this.props.labellableId,
+        );
         this.setState({ labels: newLabels });
       }
     }
-
-  }
+  };
 
   render() {
     const { labels } = this.state;
@@ -111,6 +137,6 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
   }
 }
 
-export default connect(
-  (state: any) => ({ orgLabels: state.labels.labelsApi.data }),
-)(Labels);
+export default connect((state: MicsReduxState) => ({
+  orgLabels: state.labels.labelsApi.data,
+}))(Labels);
