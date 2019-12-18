@@ -2248,5 +2248,301 @@ const myDashboards: DashboardResource[] = [
       }
     ],
     "datamart_id": "1299"
+  },
+  {
+    "id": "1",
+    "name": "Home",
+    "type": "HOME",
+    "datamart_id": "1409",
+    "components": [
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 0,
+          "y": 0
+        },
+        "component": {
+          "id": 1,
+          "component_type": "COUNT",
+          "title": "# of UserPoints",
+          "query_id": "30905",
+        }
+      },
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 3,
+          "y": 0
+        },
+        "component": {
+          "id": 1,
+          "component_type": "COUNT",
+          "title": "# of Page Views (30d)",
+          "query_id": "30906",
+        }
+      },
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 6,
+          "y": 0
+        },
+        "component": {
+          "id": 1,
+          "component_type": "COUNT",
+          "title": "# of Sessions (30d)",
+          "query_id": "30907",
+        }
+      },
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 9,
+          "y": 0
+        },
+        "component": {
+          "id": 1,
+          "component_type": "COUNT",
+          "title": "# of Logged In Users (30d)",
+          "query_id": "30915",
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 6,
+          "x": 0,
+          "y": 1
+        },
+        "component": {
+          "id": 1,
+          "component_type": "DATE_AGGREGATION_CHART",
+          "title": "Active UserPoint Per Day (30d)",
+          "plot_labels": ["Non Identified UserPoints", "Identified UserPoints"],
+          "query_ids": ["30926","30927"]
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 6,
+          "x": 6,
+          "y": 1
+        },
+        "component": {
+          "id": 1,
+          "component_type": "MAP_PIE_CHART",
+          "title": "Declarative Gender Repartition",
+          "query_id": "30930",
+          "show_legend": true
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 4,
+          "x": 0,
+          "y": 4
+        },
+        "component": {
+          "id": 1,
+          "component_type": "MAP_PIE_CHART",
+          "title": "Interests",
+          "query_id": "30932",
+          "show_legend": true
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 4,
+          "x": 4,
+          "y": 4
+        },
+        "component": {
+          "id": 1,
+          "component_type": "DATE_AGGREGATION_CHART",
+          "title": "Age Repartition",
+          "query_ids": ["30942","30941","30940","30939","30938"],
+          "plot_labels": ["18-25", "25-35", "35-45", "45-55", "55+"]
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 4,
+          "x": 8,
+          "y": 4
+        },
+        "component": {
+          "id": 1,
+          "component_type": "MAP_PIE_CHART",
+          "title": "Sections Viewed",
+          "query_id": "30943",
+          "show_legend": true
+        }
+      },
+    ],
+  },
+  {
+    "id": "1",
+    "name": "Insights",
+    "type": "SEGMENT",
+    "datamart_id": "1409",
+    "components": [
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 0,
+          "y": 0
+        },
+        "component": {
+          "id": 1,
+          "component_type": "COUNT",
+          "title": "# of UserPoints",
+          "query_id": "30905",
+        }
+      },
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 3,
+          "y": 0
+        },
+        "component": {
+          "id": 1,
+          "component_type": "COUNT",
+          "title": "# of Page Views (30d)",
+          "query_id": "30906",
+        }
+      },
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 6,
+          "y": 0
+        },
+        "component": {
+          "id": 1,
+          "component_type": "COUNT",
+          "title": "# of Sessions (30d)",
+          "query_id": "30907",
+        }
+      },
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 9,
+          "y": 0
+        },
+        "component": {
+          "id": 1,
+          "component_type": "COUNT",
+          "title": "# of Logged In Users (30d)",
+          "query_id": "30915",
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 6,
+          "x": 0,
+          "y": 1
+        },
+        "component": {
+          "id": 1,
+          "component_type": "DATE_AGGREGATION_CHART",
+          "title": "Active UserPoint Per Day (30d)",
+          "plot_labels": ["Non Identified UserPoints", "Identified UserPoints"],
+          "query_ids": ["30926","30927"]
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 6,
+          "x": 6,
+          "y": 1
+        },
+        "component": {
+          "id": 1,
+          "component_type": "MAP_PIE_CHART",
+          "title": "Declarative Gender Repartition",
+          "query_id": "30930",
+          "show_legend": true
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 4,
+          "x": 0,
+          "y": 4
+        },
+        "component": {
+          "id": 1,
+          "component_type": "MAP_PIE_CHART",
+          "title": "Interests",
+          "query_id": "30932",
+          "show_legend": true
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 4,
+          "x": 4,
+          "y": 4
+        },
+        "component": {
+          "id": 1,
+          "component_type": "DATE_AGGREGATION_CHART",
+          "title": "Age Repartition",
+          "query_ids": ["30942","30941","30940","30939","30938"],
+          "plot_labels": ["18-25", "25-35", "35-45", "45-55", "55+"]
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 4,
+          "x": 8,
+          "y": 4
+        },
+        "component": {
+          "id": 1,
+          "component_type": "MAP_PIE_CHART",
+          "title": "Sections Viewed",
+          "query_id": "30943",
+          "show_legend": true
+        }
+      },
+    ],
   }
 ];
