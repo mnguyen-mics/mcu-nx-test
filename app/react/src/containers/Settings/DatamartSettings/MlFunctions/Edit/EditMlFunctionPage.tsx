@@ -130,28 +130,25 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
     plugin: PluginResource,
     pluginInstance: MlFunctionResource,
   ): PluginInstance => {
-    const { datamartId } = this.state;
+    const datamartId = this.state.datamartId ? this.state.datamartId : pluginInstance.datamart_id
 
-    if (datamartId) {
-      const result: Omit<MlFunctionResource, "id"> = {
-        version_id: pluginInstance.version_id,
-        version_value: pluginInstance.version_value,
-        artifact_id: plugin.artifact_id,
-        group_id: plugin.group_id,
-        organisation_id: organisationId,
-        name: pluginInstance.name,
-        datamart_id: datamartId,
-        field_name: pluginInstance.field_name,
-        field_type_name: pluginInstance.field_type_name,
-        hosting_object_type_name: pluginInstance.hosting_object_type_name,
-        query: pluginInstance.query,
-        expiration_period: "P1D",
-        status: "INITIAL",
-      }
-      return result
-    } else {
-      throw Error("Missing datamart")
+    const result: Omit<MlFunctionResource, "id"> = {
+      version_id: pluginInstance.version_id,
+      version_value: pluginInstance.version_value,
+      artifact_id: plugin.artifact_id,
+      group_id: plugin.group_id,
+      organisation_id: organisationId,
+      name: pluginInstance.name,
+      datamart_id: datamartId,
+      field_name: pluginInstance.field_name,
+      field_type_name: pluginInstance.field_type_name,
+      hosting_object_type_name: pluginInstance.hosting_object_type_name,
+      query: pluginInstance.query,
+      expiration_period: "P1D",
+      status: "INITIAL",
     }
+    return result
+
   }
 
   onDatamartSelect = (datamart: DatamartResource) => {
@@ -183,7 +180,7 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
       return <Loading />;
     }
 
-    return (datamartId && !loading) || mlFunctionId ? (
+    return (datamartId) || mlFunctionId ? (
       <MlFunctionPluginContent
         pluginType={'ML_FUNCTION'}
         listTitle={messages.listTitle}
