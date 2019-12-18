@@ -140,30 +140,6 @@ Features flags
 
 Some components of this application require features to be activated on the end user browser. Some features are public and given to everybody, and some features are overriden on a per user basis.
 
-In order to activate or remove a feature from an end user browser, we need to make them access a navigator link.
+In order to activate or remove a feature from an end user browser, we need to update the configuration done in split.io
 
-This link contains a token that is generated as explained below (to be executed in a Node REPL):
-```
-Buffer.from(JSON.stringify({version: 1, method: 'add', featureName:
-"mysuperfeature"})).toString('base64')
-
-# Returns: 'eyJ2ZXJzaW9uIjoxLCJtZXRob2QiOiJhZGQiLCJmZWF0dXJlTmFtZSI6Im15c3VwZXJmZWF0dXJlIn0='
-
-Buffer.from(JSON.stringify({version: 1, method: 'remove', featureName:
-"mysuperfeature"})).toString('base64')
-
-# Returns: 'eyJ2ZXJzaW9uIjoxLCJtZXRob2QiOiJyZW1vdmUiLCJmZWF0dXJlTmFtZSI6Im15c3VwZXJmZWF0dXJlIn0='
-```
-
-Then, this token should appended to: `/#/v2/o/<USER_ORGANISATION_ID>/ui-feature-flag?token=` Navigator route.
-
-Replace `<USER_ORGANISATION_ID>` by the id of an organisation the user has access to.
-
-Ex:
-```
-https://navigator.mediarithmics.com/#/v2/o/1/ui-feature-flag?token=eyJ2ZXJzaW9uIjoxLCJtZXRob2QiOiJhZGQiLCJmZWF0dXJlTmFtZSI6Im15c3VwZXJmZWF0dXJlIn0=
-# Is adding the `mysuperfeature` to the user clicking on the link
-
-https://navigator.mediarithmics.com/#/v2/o/1/ui-feature-flag?token=eyJ2ZXJzaW9uIjoxLCJtZXRob2QiOiJhZGQiLCJmZWF0dXJlTmFtZSI6Im15c3VwZXJmZWF0dXJlIn0=
-# Is removing the `mysuperfeature` to the user clicking on the link
-```
+Please ask to a Product team member to do so.
