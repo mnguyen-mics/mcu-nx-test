@@ -30,6 +30,7 @@ const titleMessages: {
 
 interface PluginCardSelectorProps<T> {
   onSelect: (item: T) => void;
+  onPresetDelete: (item: T) => void;
   availablePresetLayouts: T[];
   pluginPresetListTitle?: FormattedMessage.MessageDescriptor;
   pluginPresetListSubTitle?: FormattedMessage.MessageDescriptor;
@@ -49,6 +50,7 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
     const cards = layouts
       .map(layoutablePlugin => {
         const onPluginSelect = () => this.props.onSelect(layoutablePlugin);
+        const onPresetDelete = () => this.props.onPresetDelete(layoutablePlugin);
         return (
           !!layoutablePlugin.plugin_layout && (
             <Col
@@ -64,6 +66,7 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
               <PluginCard
                 plugin={layoutablePlugin}
                 onSelect={onPluginSelect}
+                onPresetDelete={onPresetDelete}
                 hoverable={true}
               />
             </Col>
