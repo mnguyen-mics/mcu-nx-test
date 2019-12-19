@@ -168,7 +168,6 @@ class FormatData extends React.Component<FormatDataProps, {}> {
             categories: this.getXAxisValues(data, chart.xKey)
           };
           chart.options.series = this.formatSeriesForChart(chart, data);
-          debugger
           return (
             <GenericStackedBar options={chart.options} />
           )

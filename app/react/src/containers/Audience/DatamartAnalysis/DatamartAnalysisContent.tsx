@@ -92,7 +92,7 @@ const dashboardJsonConfig = [
             }
           },
           legend: {
-            reversed: true
+            enabled: false
           },
           tooltip: {
             enabled: false
