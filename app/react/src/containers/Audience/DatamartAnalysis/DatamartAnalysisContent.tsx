@@ -75,6 +75,44 @@ const dashboardJsonConfig = [
         xKey: 'country',
         yKey: 'code',
         metricName: 'session_count'
+      },
+      {
+        type: 'STACKEDBAR',
+        options: {
+          chart: {
+            height: 300,
+          },
+          title: {
+            text: ''
+          },
+          yAxis: {
+            min: 0,
+            title: {
+              text: ''
+            }
+          },
+          legend: {
+            reversed: true
+          },
+          tooltip: {
+            enabled: false
+          },
+          plotOptions: {
+          },
+          credits: {
+            enabled: false
+          },
+          series: [
+            {
+              type: 'bar',
+              name: 'Other',
+              color: '#a6c1f4',
+              data: [30, 40, 35, 50, 60, 70]
+            }
+          ]
+        },
+        xKey: 'country',
+        metricName: 'session_count'
       }
     ]
   },

@@ -7,8 +7,7 @@ import { CounterProps } from '../../../../components/Counter/Counter';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { ReportView } from '../../../../models/ReportView';import GenericWorldMap from './charts/GenericWorldMap';
 import Highcharts from 'highcharts/highmaps';
-import { ReportView } from '../../../../models/ReportView';
-import { ReportView } from '../../../../models/ReportView';;
+import GenericStackedBar from './charts/GenericStackedBar';
 
 export interface FormatDataProps {
   apiResponse: ReportView;
@@ -96,6 +95,18 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           }
           return acc;
           }, []);
+        case 'STACKEDBAR':
+            return dataset.reduce((acc: any, d) => {
+              if (acc.length === 0) {
+                acc.push({
+                  type: 'bar',
+                  data: [d[chart.metricName]]
+                });
+              } else {
+                acc[0].data.push(d[chart.metricName]);
+              }
+              return acc;
+            }, []);
       default:
         return [];
     }
@@ -148,9 +159,18 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           chart.counterFormatedProps = this.formatSeriesForCounters(chart, data);
           return (<CounterDashboard counters={chart.counterFormatedProps} />)
         case 'WORLDMAP':
-          
           return (
             <GenericWorldMap options={chart.options} dataset={this.formatSeriesForChart(chart, data)} />
+          )
+        case 'STACKEDBAR':
+          if (!chart.xKey) return null
+          chart.options.xAxis = {
+            categories: this.getXAxisValues(data, chart.xKey)
+          };
+          chart.options.series = this.formatSeriesForChart(chart, data);
+          debugger
+          return (
+            <GenericStackedBar options={chart.options} />
           )
         default:
           return null;

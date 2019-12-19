@@ -121,23 +121,28 @@ const apiResponse3 = {
             "total_items": 3,
             "columns_headers": [
                 "code",
+                "country",
                 "session_count",
             ],
             "rows": [
                 [
                     "USA",
+                    "United States",
                     25
                 ],
                 [
                     "FRA",
+                    "France",
                     15
                 ],
                 [
                     "PAK",
+                    "Pakistan",
                     10
                 ],
                 [
                     "RUS",
+                    "Russia",
                     5
                 ],
             ]
