@@ -1,7 +1,7 @@
 import * as React from 'react';
 import CardFlex from '../../Dashboard/Components/CardFlex';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
-import GenericWorldMap from './charts/GenericWorldMap';
+//import GenericWorldMap from './charts/GenericWorldMap';
 
 const optionsForChart = {
   xKey: 'xKey',
@@ -38,7 +38,7 @@ class SessionsByCountry extends React.Component {
   render() {
     return (
       <CardFlex title={'Session by country'}>
-        <GenericWorldMap dataset={[{
+        {/* <GenericWorldMap dataset={[{
           code3: 'USA',
           name: 'United States',
           code: 'US',
@@ -62,7 +62,7 @@ class SessionsByCountry extends React.Component {
           code: 'RU',
           value: 5
         },
-        ]} height={350} legend={true} />
+        ]} height={350} legend={true} /> */}
         <StackedBarPlot dataset={data} options={optionsForChart} height={200} />
       </CardFlex>
     );

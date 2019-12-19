@@ -5,6 +5,8 @@ import _ from 'lodash';
 import { CounterDashboard } from '../../../../components/Counter';
 import { CounterProps } from '../../../../components/Counter/Counter';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
+import { ReportView } from '../../../../models/ReportView';import GenericWorldMap from './charts/GenericWorldMap';
+import Highcharts from 'highcharts/highmaps';
 import { ReportView } from '../../../../models/ReportView';
 import { ReportView } from '../../../../models/ReportView';;
 
@@ -12,8 +14,6 @@ export interface FormatDataProps {
   apiResponse: ReportView;
   charts: Chart[];
 }
-
-
 
 export interface Chart {
   type: string;
@@ -23,55 +23,9 @@ export interface Chart {
   metricName: string;
   icons?: string[];
   counterFormatedProps?: CounterProps[];
+  dataset?: any;
 }
 
-// const normalizedData = [
-//   {
-//     "user_point_count": 10,
-//     "day": "2019-12-02",
-//     "sync_type": "laptop"
-//   },
-//   {
-//     "user_point_count": 15,
-//     "day": "2019-12-03",
-//     "sync_type": "laptop"
-//   },
-//   {
-//     "user_point_count": 20,
-//     "day": "2019-12-04",
-//     "sync_type": "laptop"
-//   },
-//   {
-//     "user_point_count": 54,
-//     "day": "2019-12-02",
-//     "sync_type": "smartphone"
-//   },
-//   {
-//     "user_point_count": 23,
-//     "day": "2019-12-03",
-//     "sync_type": "smartphone"
-//   },
-//   {
-//     "user_point_count": 12,
-//     "day": "2019-12-04",
-//     "sync_type": "smartphone"
-//   },
-//   {
-//     "user_point_count": 15,
-//     "day": "2019-12-02",
-//     "sync_type": "tablet"
-//   },
-//   {
-//     "user_point_count": 12,
-//     "day": "2019-12-03",
-//     "sync_type": "tablet"
-//   },
-//   {
-//     "user_point_count": 8,
-//     "day": "2019-12-04",
-//     "sync_type": "tablet"
-//   }
-// ];
 
 type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
 
@@ -127,6 +81,21 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           }
           return acc;
         }, []);
+      case 'WORLDMAP':
+        return dataset.reduce((acc: any, d) => {
+          const found = acc.find((a: any) => a.code3 === d[chart.yKey]);
+          const value = d[chart.metricName]; // the element in data property
+          if (!found) {
+            acc.push({ 
+              code3: d[chart.yKey],
+              value: d[chart.metricName], 
+            }) // not found, so need to add data property
+          }
+          else {
+            found.value += value // if found, that means data property exists, so just push new element to found.data.
+          }
+          return acc;
+          }, []);
       default:
         return [];
     }
@@ -157,7 +126,6 @@ class FormatData extends React.Component<FormatDataProps, {}> {
   generateComponent = (charts: Chart[], data: any) => {
     return _.map(charts, chart => {
 
-      chart.options.series = this.formatSeriesForChart(chart, data);
       switch (chart.type) {
 
         case 'LINE':
@@ -165,18 +133,25 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           chart.options.xAxis = {
             categories: this.getXAxisValues(data, chart.xKey)
           };
+          chart.options.series = this.formatSeriesForChart(chart, data);
           return (
             <LineChart
               options={chart.options}
             />
           )
         case 'PIE':
+          chart.options.series = this.formatSeriesForChart(chart, data);
           return (
             <PieChart options={chart.options} />
           )
         case 'COUNT':
           chart.counterFormatedProps = this.formatSeriesForCounters(chart, data);
           return (<CounterDashboard counters={chart.counterFormatedProps} />)
+        case 'WORLDMAP':
+          
+          return (
+            <GenericWorldMap options={chart.options} dataset={this.formatSeriesForChart(chart, data)} />
+          )
         default:
           return null;
       }

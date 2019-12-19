@@ -8,10 +8,76 @@ import { Responsive, WidthProvider } from 'react-grid-layout';
 import _ from 'lodash';
 import ApiQueryWrapper from './components/ApiQueryWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
+import world from '../../../components/Charts/world';
+import log from '../../../utils/Logger';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const dashboardJsonConfig = [
+  {
+    title: 'Session by country',
+    query: {
+      type: 'api',
+      playload: 'this the playload'
+    },
+    layout: {
+      "i": "1",
+      "h": 4,
+      "static": false,
+      "w": 6,
+      "x": 0,
+      "y": 0
+    },
+    charts: [
+      {
+        type: 'WORLDMAP',
+        options: {
+          chart: {
+            style: {
+              fontFamily: 'sans-serif',
+              height: 300,
+            },
+          },
+          title: {
+            text: '',
+          },
+          "colors": ["#5c94d1", "#5eabd2", "#95cdcb"],
+          colorAxis: {
+            dataClasses: [
+              {
+                color: 'rgba(161,211,234,1)',
+                to: 5,
+              },
+              {
+                color: 'rgba(93,164,239,1)',
+                from: 10,
+                to: 20,
+              },
+              {
+                color: 'rgba(57,95,189,1)',
+                from: 20,
+                to: 25,
+              }
+            ],
+          },
+          legend: {
+            enabled: false
+          },
+          mapNavigation: {
+            buttonOptions: {
+              verticalAlign: 'bottom',
+            },
+          },
+          credits: {
+            enabled: false,
+          }
+        },
+        xKey: 'country',
+        yKey: 'code',
+        metricName: 'session_count'
+      }
+    ]
+  },
   {
     title: 'Active users',
     query: {
@@ -23,8 +89,8 @@ const dashboardJsonConfig = [
       "h": 4,
       "static": false,
       "w": 6,
-      "x": 6,
-      "y": 0
+      "x": 0,
+      "y": 6
     },
     charts: [
       {
@@ -69,7 +135,7 @@ const dashboardJsonConfig = [
       "h": 4,
       "static": false,
       "w": 6,
-      "x": 0,
+      "x": 6,
       "y": 0
     },
     charts: [
@@ -128,6 +194,10 @@ const dashboardJsonConfig = [
 
 
 export default class DatamartAnalysisContent extends React.Component {
+
+  componentDidCatch() {
+    log.info(world);
+  }
 
   generateDOM() {
     return _.map(dashboardJsonConfig, (comp: any, i: any) => {
