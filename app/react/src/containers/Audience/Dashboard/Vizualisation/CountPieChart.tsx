@@ -18,6 +18,7 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import PiePlot, { DatasetProps, PiePlotOptionsProps } from '../../../../components/Charts/CategoryBased/PiePlot';
+import { getFormattedQuery } from '../domain';
 
 export interface CountPieChartProps {
   title?: string;
@@ -131,6 +132,9 @@ class CountPieChart extends React.Component<Props, State> {
       .getQuery(datamartId, chartQueryId)
       .then(queryResp => {
         return queryResp.data;
+      })
+      .then(q => {
+        return getFormattedQuery(datamartId, this._queryService, q, segment);
       })
       .then(q => {
         return this._queryService

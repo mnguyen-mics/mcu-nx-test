@@ -27,6 +27,12 @@ import {
 import FeedCardList from './Feeds/FeedCardList';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import AudienceSegmentExportsCard from './AudienceSegmentExportsCard';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IDashboardService } from '../../../../services/DashboardServices';
+import { DashboardResource } from '../../../../models/dashboards/dashboards';
+import DashboardWrapper from '../../Dashboard/DashboardWrapper';
+import ContentHeader from '../../../../components/ContentHeader';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 
 interface State {
@@ -35,6 +41,7 @@ interface State {
     reports: AudienceReport;
     isLoading: boolean;
   };
+  charts: DashboardResource[]
 }
 export interface AudienceSegmentDashboardProps {
   segment?: AudienceSegmentShape;
@@ -49,6 +56,10 @@ type Props = AudienceSegmentDashboardProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class AudienceSegmentDashboard extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IDashboardService)
+  private _dashboardService: IDashboardService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -57,6 +68,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         isLoading: true,
         reports: [],
       },
+      charts: []
     };
   }
 
@@ -121,6 +133,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       const datamart = datamarts.find(
         dm => dm.id === segment.datamart_id,
       );
+      this.fetchDashboardChartView(segment.datamart_id);
 
       additionalMetrics =
         datamart && datamart.audience_segment_metrics
@@ -140,6 +153,21 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
     );
   }
+
+  fetchDashboardChartView = (selectedDatamartId: string) => {
+    this._dashboardService.getDashboards(selectedDatamartId, {
+      type: "SEGMENT"
+    })
+    .then(d => {
+      return d.data
+    })
+    .then(d => {
+      this.setState({ charts: d })
+    })
+    .catch(err => {
+      this.props.notifyError(err);
+    });
+  };
 
   fetchAudienceSegmentReport = (
     organisationId: string,
@@ -230,13 +258,15 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
   render() {
     const { segment, datamarts } = this.props;
-
+    const { charts } = this.state
     return (
       <div>
         <AudienceCounters
           datamarts={datamarts}
           datamartId={segment ? segment.datamart_id : undefined}
         />
+        {charts.map(c => <DashboardWrapper key={c.id} layout={c.components} title={c.name} datamartId={c.datamart_id} segment={segment} />)}
+        {charts.length ? <ContentHeader size="medium" title="Technical Informations" /> : null}
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>

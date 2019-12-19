@@ -2,17 +2,14 @@ import * as React from 'react';
 import DashboardContent from './DashboardContent';
 import { Layout, Layouts } from 'react-grid-layout';
 import ContentHeader from '../../../components/ContentHeader';
-import {
-  UserQuerySegment,
-  UserListSegment,
-} from '../../../models/audiencesegment/AudienceSegmentResource';
 import { ComponentLayout } from '../../../models/dashboards/dashboards';
+import { AudienceSegmentShape } from '../../../models/audiencesegment';
 
 interface DashboardWrapperProps {
   key?: any;
   layout: ComponentLayout[];
   title?: string;
-  segment?: UserQuerySegment | UserListSegment;
+  segment?: AudienceSegmentShape;
   datamartId: string;
 }
 
@@ -38,7 +35,7 @@ class DashboardWrapper extends React.Component<Props, State> {
 
     return (
       <div>
-        <ContentHeader title={title} size={`large`} />
+        <ContentHeader title={title} size={segment ? 'medium' : `large`} />
         <DashboardContent
           layout={layout}
           onLayoutChange={this.onLayoutChange}

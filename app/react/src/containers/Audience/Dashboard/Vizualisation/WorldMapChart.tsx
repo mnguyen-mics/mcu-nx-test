@@ -11,7 +11,6 @@ import {
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import { mapData2 } from '../mapData';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import { getWhereClausePromise } from '../domain';
 
 export interface WorldMapChartProps {
   segment?: AudienceSegmentShape;
@@ -50,9 +49,17 @@ export default class WorldMapChart extends React.Component<
 
   componentWillReceiveProps(nextProps: WorldMapChartProps) {
     const { segment, queryId, datamartId } = this.props;
-    const { segment: nextSegment, queryId: nextChartQueryId, datamartId:nextDatamartId } = nextProps;
+    const {
+      segment: nextSegment,
+      queryId: nextChartQueryId,
+      datamartId: nextDatamartId,
+    } = nextProps;
 
-    if (segment !== nextSegment || queryId !== nextChartQueryId || datamartId !== nextDatamartId) {
+    if (
+      segment !== nextSegment ||
+      queryId !== nextChartQueryId ||
+      datamartId !== nextDatamartId
+    ) {
       this.fetchData(nextChartQueryId, nextDatamartId, nextSegment);
     }
   }
@@ -79,39 +86,31 @@ export default class WorldMapChart extends React.Component<
     segment?: AudienceSegmentShape,
   ): Promise<void> => {
     this.setState({ error: false });
-    return getWhereClausePromise(datamartId, this._queryService, segment)
-      .then(clauseResp => {
+    return this._queryService
+      .getQuery(datamartId, chartQueryId)
+
+      .then(queryResp => {
+        return queryResp.data;
+      })
+      .then(q => {
         return this._queryService
-          .getQuery(datamartId, chartQueryId)
-
-          .then(queryResp => {
-            return queryResp.data;
+          .runOTQLQuery(datamartId, q.query_text, {
+            use_cache: true,
           })
-          .then(q => {
-            const query = {
-              query: q.query_text,
-              additional_expression: clauseResp,
-            };
-            return this._queryService
-              .runOTQLQuery(datamartId, JSON.stringify(query), {
-                use_cache: true,
-                content_type: `application/json`,
-              })
 
-              .then(otqlResultResp => {
-                return otqlResultResp.data;
-              })
-              .then(r => {
-                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                  this.setState({
-                    mapData: this.formatData(r.rows),
-                    loading: false,
-                  });
-                  return Promise.resolve();
-                }
-                const countErr = new Error('wrong query type');
-                return Promise.reject(countErr);
+          .then(otqlResultResp => {
+            return otqlResultResp.data;
+          })
+          .then(r => {
+            if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+              this.setState({
+                mapData: this.formatData(r.rows),
+                loading: false,
               });
+              return Promise.resolve();
+            }
+            const countErr = new Error('wrong query type');
+            return Promise.reject(countErr);
           });
       })
       .catch(() => {

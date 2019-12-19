@@ -12,6 +12,7 @@ import CountBarChart from './Vizualisation/CountBarChart';
 import { ComponentLayout, Component } from '../../../models/dashboards/dashboards';
 import Percentage from './Vizualisation/Percentage';
 import CountPieChart from './Vizualisation/CountPieChart';
+import TopInfo from './Vizualisation/TopInfo';
 
 
 const BASE_FRAMEWORK_HEIGHT = 150;
@@ -149,6 +150,15 @@ export default class DashboardContent extends React.Component<
               title={comp.title}
             />
           )
+      case 'TOP_INFO_COMPONENT':
+        return (
+          <TopInfo 
+            datamartId={datamartId}
+            title={comp.title}
+            queryId={comp.query_id}
+            segment={segment}
+          />
+        )
       default:
         return null;
     }

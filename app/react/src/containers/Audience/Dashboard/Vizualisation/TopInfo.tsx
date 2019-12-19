@@ -1,14 +1,17 @@
 import * as React from 'react';
-import { isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
-import { formatMetric } from '../../../../utils/MetricHelper';
+import { isAggregateResult, OTQLBucket } from '../../../../models/datamart/graphdb/OTQLResult';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { getFormattedQuery } from '../domain';
+import { EmptyCharts, LoadingChart } from '../../../../components/EmptyCharts';
+import messages from './messages';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { compose } from 'recompose';
 
-export interface CountProps {
+export interface TopInfoProps {
   queryId: string;
   datamartId: string;
   title: string;
@@ -16,16 +19,18 @@ export interface CountProps {
 }
 
 interface State {
-  queryResult?: number;
+  queryResult?: OTQLBucket[];
   error: boolean;
   loading: boolean;
 }
 
-export default class Count extends React.Component<CountProps, State> {
+type Props = TopInfoProps & InjectedIntlProps;
+
+class TopInfo extends React.Component<Props, State> {
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
-  constructor(props: CountProps) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       error: false,
@@ -38,7 +43,7 @@ export default class Count extends React.Component<CountProps, State> {
     this.fetchData(queryId, datamartId, segment);
   }
 
-  componentWillReceiveProps(nextProps: CountProps) {
+  componentWillReceiveProps(nextProps: Props) {
     const { segment, queryId, datamartId } = this.props;
     const {
       segment: nextSegment,
@@ -81,9 +86,9 @@ export default class Count extends React.Component<CountProps, State> {
             return otqlResultResp.data;
           })
           .then(r => {
-            if (isCountResult(r.rows)) {
+            if (isAggregateResult(r.rows)) {
               this.setState({
-                queryResult: r.rows[0].count,
+                queryResult: r.rows[0].aggregations.buckets[0] && r.rows[0].aggregations.buckets[0].buckets ? r.rows[0].aggregations.buckets[0].buckets : [],
                 loading: false,
               });
               return Promise.resolve();
@@ -100,32 +105,46 @@ export default class Count extends React.Component<CountProps, State> {
       });
   };
 
-  public render() {
+  public renderChart = () => {
+    const { intl } = this.props;
+    const { loading, error, queryResult } = this.state;
+    if (loading) {
+      return <LoadingChart />;
+    }
+    if (error) {
+      return <EmptyCharts 
+        title={intl.formatMessage(messages.error)}
+        icon={'close-big'}
+      />
+    }
+    if (!queryResult || queryResult.length === 0) {
+      return <EmptyCharts 
+        title={intl.formatMessage(messages.noData)}
+        icon={'close-big'}
+      />
+    }
     return (
-      <CardFlex>
-        <div className="dashboard-counter">
-          <div className="count-title">
-            {this.state.loading ? (
-              <i
-                className="mcs-table-cell-loading"
-                style={{ maxWidth: '40%' }}
-              />
-            ) : (
-              this.props.title
-            )}
+      <div>
+        {queryResult.map(qr => {
+          return <div key={qr.key} style={{ padding: "5px 5px", width: "100%" }}>
+            <div style={{ display: "inline" }}>{qr.key}</div>
+            <div style={{ float: "right" }}>{qr.count}</div>
           </div>
-          <div className="count-result">
-            {this.state.loading ? (
-              <i
-                className="mcs-table-cell-loading-large"
-                style={{ maxWidth: '100%' }}
-              />
-            ) : (
-              formatMetric(this.state.queryResult, '0,0')
-            )}
-          </div>
-        </div>
+        })}
+      </div>
+    )
+  }
+
+  public render() {
+   
+    return (
+      <CardFlex title={this.props.title}>
+        {this.renderChart()}
       </CardFlex>
     );
   }
 }
+
+export default compose<Props, TopInfoProps>(
+  injectIntl
+)(TopInfo)

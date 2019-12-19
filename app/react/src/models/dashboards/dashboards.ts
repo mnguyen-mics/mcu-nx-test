@@ -23,7 +23,7 @@ export interface BaseComponent {
 }
 
 export interface ComponentChart extends BaseComponent {
-  component_type: 'MAP_BAR_CHART' | 'MAP_PIE_CHART';
+  component_type: 'MAP_BAR_CHART' | 'MAP_PIE_CHART' | 'TOP_INFO_COMPONENT';
   show_legend: boolean;
   query_id: string;
   labels_enabled?: boolean;
@@ -107,4 +107,5 @@ export type ComponentType =
   | 'MAP_STACKED_BAR_CHART'
   | 'WORLD_MAP_CHART'
   | 'COUNT_BAR_CHART'
-  | 'COUNT_PIE_CHART';
+  | 'COUNT_PIE_CHART'
+  | 'TOP_INFO_COMPONENT';

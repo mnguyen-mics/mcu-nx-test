@@ -19,6 +19,7 @@ import { IQueryService } from '../../../../services/QueryService';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import CardFlex from '../Components/CardFlex';
+import { getFormattedQuery } from '../domain';
 
 export interface DateAggregationChartProps {
   title?: string;
@@ -146,6 +147,9 @@ class DateAggregationChart extends React.Component<Props, State> {
           .getQuery(datamartId, chartQueryId)
           .then(queryResp => {
             return queryResp.data;
+          })
+          .then(q => {
+            return getFormattedQuery(datamartId, this._queryService, q, segment);
           })
           .then(q => {
             return this._queryService
