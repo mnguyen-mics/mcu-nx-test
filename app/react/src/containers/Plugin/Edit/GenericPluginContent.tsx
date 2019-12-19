@@ -420,14 +420,16 @@ class PluginContent<T extends PluginInstance> extends React.Component<
   };
 
   onPresetDelete = (layoutablePlugin: LayoutablePlugin) => {
-    const { notifyError } = this.props;
+    const {
+      notifyError,
+      intl: { formatMessage },
+    } = this.props;
     if (layoutablePlugin && layoutablePlugin.plugin_preset)
       Modal.confirm({
         iconType: 'exclamation-circle',
-        title:
-          "Are you sure you want to archive this feed preset? This will be permanent. The feeds already created with this feed preset won't be deleted.",
-        okText: 'Delete Now',
-        cancelText: 'Cancel',
+        title: formatMessage(messages.presetDeletionModalDescription),
+        okText: formatMessage(messages.presetDeletionModalConfirm),
+        cancelText: formatMessage(messages.presetDeletionModalCancel),
         onOk: () => {
           if (layoutablePlugin && layoutablePlugin.plugin_preset)
             PluginService.deletePluginPreset(
