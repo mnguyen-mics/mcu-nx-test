@@ -5,14 +5,14 @@ import { LayoutablePlugin } from '../../../../models/Plugins';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 import { compose } from 'recompose';
 
-export interface PluginCardProps<T = any> {
+export interface PluginCardProps<T> {
   plugin: T;
   onSelect: () => void;
   onPresetDelete?: () => void;
   hoverable?: boolean;
 }
 
-export type Props<T = any> = PluginCardProps<T> & InjectedWorkspaceProps;
+export type Props<T> = PluginCardProps<T> & InjectedWorkspaceProps;
 
 interface State {}
 
@@ -108,4 +108,4 @@ class PluginCard<T extends LayoutablePlugin> extends React.Component<
   };
 }
 
-export default compose<Props, PluginCardProps>(injectWorkspace)(PluginCard);
+export default compose<Props<any>, PluginCardProps<any>>(injectWorkspace)(PluginCard);
