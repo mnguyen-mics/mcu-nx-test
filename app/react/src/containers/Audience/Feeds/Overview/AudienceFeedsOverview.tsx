@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import AudienceSegmentFeedService from '../../../../services/AudienceSegmentFeedService';
 import { Status, StatusEnum } from '../../../../models/Plugins';
@@ -10,6 +10,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { Loading } from '../../../../components';
+import { EmptyTableView } from '../../../../components/TableView';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
@@ -27,6 +28,15 @@ interface State {
     isLoading: boolean;
   };
 }
+
+const messages: {
+  [key: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  noData: {
+    id: 'audience.feeds.overview.nodata',
+    defaultMessage: 'No feeds found.\nTo add one, please go to a segment page and click on “Add a Feed".',
+  },
+});
 
 class AudienceFeedsOverview extends React.Component<Props, State> {
   feedService: AudienceSegmentFeedService;
@@ -125,7 +135,7 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
 
     return feedsAggregationMetrics.isLoading ? (
       <Loading className="loading-full-screen full-height" />
-    ) : (
+    ) : Object.keys(feedsAggregationMetrics.aggregates).length > 0 ? (
       <div className="feed-overview">
         {Object.keys(feedsAggregationMetrics.aggregates).map(
           pluginVersionId => {
@@ -144,6 +154,11 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
           },
         )}
       </div>
+    ) : (
+      <EmptyTableView
+        iconType={'users'}
+        intlMessage={messages.noData}
+      />
     );
   }
 }

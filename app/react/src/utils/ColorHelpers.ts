@@ -133,7 +133,7 @@ function getAllPalettes(
         }
     }
   } catch (e) {
-    throw new Error(e);
+    return [];
   }
 
   return distinctPalettes;
