@@ -139,6 +139,19 @@ class FeedChart extends React.Component<Props, State> {
       });
   }
 
+  renderDescription() {
+    return (
+      <div className="description">
+        <div>
+          <FormattedMessage {...messagesMap.stats_description1} />
+        </div>
+        <div>
+          <FormattedMessage {...messagesMap.stats_description2} />
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const { colors, intl } = this.props;
     const { dataSource, isLoading } = this.state;
@@ -159,18 +172,23 @@ class FeedChart extends React.Component<Props, State> {
       colors: [colors['mcs-info'], colors['mcs-error']],
     };
 
-    return isLoading ? (
-      <LoadingChart />
-    ) : (
-      <Card
-        className="mcs-card-container compact"
-        title={intl.formatMessage(messagesMap.graph_title)}
-      >
-        <StackedAreaPlot
-          dataset={dataSource as any}
-          options={optionsForChart}
-        />
-      </Card>
+    return (
+      <div className="mcs-feed-chart">
+        {this.renderDescription()}
+        {isLoading ? (
+          <LoadingChart />
+        ) : (
+          <Card
+            className="mcs-card-container compact"
+            title={intl.formatMessage(messagesMap.graph_title)}
+          >
+            <StackedAreaPlot
+              dataset={dataSource as any}
+              options={optionsForChart}
+            />
+          </Card>
+        )}
+      </div>
     );
   }
 }
@@ -194,5 +212,20 @@ const messagesMap: {
   graph_title: {
     id: 'feed.graph_title',
     defaultMessage: 'Last 7 days',
+  },
+  stats_description1: {
+    id: 'audience.feeds.stats.description1',
+    defaultMessage:
+      'The chart below displays the segment loads sent to the external platform, \
+    day by day: whenever a user is entering / leaving the segment, \
+    this feed is keeping in sync the destination segment.',
+  },
+  stats_description2: {
+    id: 'audience.feeds.stats.description2',
+    defaultMessage:
+      'When the feed is created, the platform is streaming all the users that \
+    entered the segment prior to the feed creation to be sure that the full segment is \
+    shared with the external platform. Hence, it is normal to see a spike in the user \
+    additions load at the creation of the feed and afterwards a decrease in the segment loads size.',
   },
 });
