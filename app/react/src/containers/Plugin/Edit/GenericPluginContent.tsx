@@ -526,10 +526,17 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       });
     }
 
-    const actionbarProps = {
-      formId,
-      onClose: onClose,
-    };
+    const actionbarProps =
+      pluginProperties.length || pluginInstanceId
+        ? {
+            formId,
+            message: !disableFields ? messages.save : undefined,
+            onClose: onClose,
+          }
+        : {
+            formId,
+            onClose: onClose
+          };
 
     if (isLoadingList || (isLoadingPlugin && !isCardLayout))
         return (<div style={{ display: 'flex', flex: 1 }}>

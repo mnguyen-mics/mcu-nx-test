@@ -220,11 +220,7 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
         onClose={onClose}
         showGeneralInformation={false}
         showedMessage={showedMessage}
-        disableFields={
-          initialValues &&
-          (initialValues.plugin.status === 'ACTIVE' ||
-            initialValues.plugin.status === 'PUBLISHED')
-        }
+        disableFields={true}
         isCardLayout={true}
       />
     );
