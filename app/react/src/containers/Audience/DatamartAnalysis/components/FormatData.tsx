@@ -8,6 +8,8 @@ import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { ReportView } from '../../../../models/ReportView';import GenericWorldMap from './charts/GenericWorldMap';
 import Highcharts from 'highcharts/highmaps';
 import GenericStackedBar from './charts/GenericStackedBar';
+import { Tabs } from 'antd';
+import CardFlex from '../../Dashboard/Components/CardFlex';
 
 export interface FormatDataProps {
   apiResponse: ReportView;
@@ -170,6 +172,17 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           chart.options.series = this.formatSeriesForChart(chart, data);
           return (
             <GenericStackedBar options={chart.options} />
+          )
+        case 'TABS':
+          return (
+            <CardFlex>
+            <Tabs defaultActiveKey="1">
+                  <Tabs.TabPane tab="Traffic Channel" key="1">
+                    {this.generateComponent(charts, data)}
+                  </Tabs.TabPane>
+            </Tabs>
+          </CardFlex>
+
           )
         default:
           return null;

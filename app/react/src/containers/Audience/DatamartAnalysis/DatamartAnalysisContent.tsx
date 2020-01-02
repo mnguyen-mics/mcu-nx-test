@@ -227,6 +227,64 @@ const dashboardJsonConfig = [
         metricName: 'user_point_count'
       }
     ]
+  },
+  {
+    title: 'Toto',
+    query: {
+      type: 'api',
+      playload: 'this the playload'
+    },
+    layout: {
+      "i": "0",
+      "h": 4,
+      "static": false,
+      "w": 6,
+      "x": 6,
+      "y": 0
+    },
+    charts: [
+      {
+        type: 'TABS',
+        items: [{
+        type: 'STACKEDBAR',
+        options: {
+          chart: {
+            height: 300,
+          },
+          title: {
+            text: ''
+          },
+          yAxis: {
+            min: 0,
+            title: {
+              text: ''
+            }
+          },
+          legend: {
+            enabled: false
+          },
+          tooltip: {
+            enabled: false
+          },
+          plotOptions: {
+          },
+          credits: {
+            enabled: false
+          },
+          series: [
+            {
+              type: 'bar',
+              name: 'Other',
+              color: '#a6c1f4',
+              data: [30, 40, 35, 50, 60, 70]
+            }
+          ]
+        },
+        xKey: 'country',
+        metricName: 'session_count'
+      }]
+      }
+    ]
   }
 ];
 
