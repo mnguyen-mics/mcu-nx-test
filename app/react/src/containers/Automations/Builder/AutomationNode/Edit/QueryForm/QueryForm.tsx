@@ -218,7 +218,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
               className="mcs-content-container mcs-form-container automation-form"
             >
               <OtqlConsole
-                value={this.state.queryText}
+                value={this.state.queryText ? this.state.queryText : '' }
                 datamartId={datamartId}
                 onChange={onChange}
                 showPrintMargin={false}

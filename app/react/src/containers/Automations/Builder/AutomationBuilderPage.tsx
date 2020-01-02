@@ -228,24 +228,25 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       isLoading: true,
     });
 
-    this._automationFormService
-      .saveOrCreateAutomation(
-        organisationId,
-        'v201709',
-        formData,
-        automationFormData,
-      )
-      .then(automation => {
-        hideSaveInProgress();
-        this.setState({ isLoading: false });
-        this.redirect(automation.data.id);
-        message.success(intl.formatMessage(messages.automationSaved));
-      })
-      .catch(err => {
-        this.setState({ isLoading: false });
-        notifyError(err);
-        hideSaveInProgress();
-      });
+    this._automationFormService.validateAutomation(formData.automationTreeData).then(() => 
+      this._automationFormService
+        .saveOrCreateAutomation(organisationId, 'v201709', formData, automationFormData)
+        .then(automation => {
+          hideSaveInProgress();
+          this.setState({ isLoading: false });
+          this.redirect(automation.data.id);
+          message.success(intl.formatMessage(messages.automationSaved));
+        })
+        .catch(err => {
+          this.setState({ isLoading: false });
+          notifyError(err);        
+          hideSaveInProgress();
+        })
+    ).catch(err => {
+      this.setState({ isLoading: false });
+      message.error(intl.formatMessage(err)) 
+      hideSaveInProgress();
+    })
   };
 
   redirect = (automationId?: string) => {
