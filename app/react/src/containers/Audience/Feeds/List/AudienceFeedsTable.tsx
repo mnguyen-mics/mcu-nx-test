@@ -38,6 +38,8 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { McsIcon } from '../../../../components';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import { AudienceExternalFeedTyped, AudienceTagFeedTyped } from '../../Segments/Edit/domain';
+import EditPluginModal from './EditPluginModal';
+import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 
 type Props = InjectedNotificationProps & RouteComponentProps<{ organisationId: string }> & InjectedIntlProps;
 
@@ -54,6 +56,8 @@ interface State {
   };
   externalPlugins: PluginResource[];
   tagPlugins: PluginResource[];
+  modalFeed?: AudienceExternalFeedTyped | AudienceTagFeedTyped;
+  modalTab: PluginCardModalTab;
 }
 
 const messages = defineMessages({
@@ -125,6 +129,14 @@ const messages = defineMessages({
     id: 'audience.feeds.list.column.action.pause',
     defaultMessage: 'Pause',
   },
+  edit: {
+    id: 'audience.feeds.list.column.action.edit',
+    defaultMessage: 'Edit',
+  },
+  stats: {
+    id: 'audience.feeds.list.column.action.stats',
+    defaultMessage: 'Stats',
+  },
   delete: {
     id: 'audience.feeds.list.column.action.delete',
     defaultMessage: 'Delete',
@@ -150,6 +162,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       },
       externalPlugins: [],
       tagPlugins: [],
+      modalTab: 'configuration',
     };
 
     this.externalFeedService = new AudienceSegmentFeedService('', 'EXTERNAL_FEED');
@@ -193,15 +206,16 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       },
     } = nextProps;
 
-    const { list, externalPlugins: plugins } = this.state;
+    const { list, externalPlugins: plugins, modalFeed} = this.state;
 
-    const { list: nextList, externalPlugins: nextPlugins } = nextState;
+    const { list: nextList, externalPlugins: nextPlugins, modalFeed: nextModalFeed } = nextState;
 
     return (
       !compareSearches(search, nextSearch) ||
       organisationId !== nextOrganisationId ||
       (list.isLoading && !nextList.isLoading) ||
-      plugins.length !== nextPlugins.length
+      plugins.length !== nextPlugins.length ||
+      nextModalFeed !== modalFeed
     );
   }
 
@@ -418,6 +432,20 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
   };
 
+  editFeed = (record: RecordType) => {
+    this.setState({
+      modalFeed: record.feed,
+      modalTab: 'configuration',
+    });
+  };
+
+  openFeedStats = (record: RecordType) => {
+    this.setState({
+      modalFeed: record.feed,
+      modalTab: 'stats',
+    });
+  };
+
   deleteFeed = (record: RecordType) => {
 
     const externalFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'EXTERNAL_FEED');
@@ -462,10 +490,12 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     } else {
       actionsDefinitions.push({ callback: this.pauseFeed, intlMessage: messages.pause })
     }
+    actionsDefinitions.push({ intlMessage: messages.edit, callback: this.editFeed })
+    actionsDefinitions.push({ intlMessage: messages.stats, callback: this.openFeedStats })
     actionsDefinitions.push({ intlMessage: messages.delete, callback: this.deleteFeed })
+
     return actionsDefinitions;
   }
-
 
   buildActionColumns = () => {
 
@@ -558,6 +588,12 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     return dataColumns;
   };
 
+  onClose = () => {
+    this.setState({
+      modalFeed : undefined
+    })
+  };
+
   render() {
     const {
       location: { search },
@@ -568,6 +604,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       list: { feeds, isLoading },
       externalPlugins,
       tagPlugins,
+      modalFeed,
+      modalTab
     } = this.state;
 
     const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
@@ -667,6 +705,9 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     return (
       <div className="mcs-table-container">
+        {modalFeed && (
+          <EditPluginModal feed={modalFeed} modalTab={modalTab} onClose={this.onClose} />
+        )}
         <TableViewFilters
           columns={this.buildDataColumns()}
           loading={isLoading}
