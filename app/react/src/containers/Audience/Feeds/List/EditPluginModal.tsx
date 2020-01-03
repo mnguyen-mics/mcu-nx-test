@@ -7,13 +7,13 @@ import {
 } from '../../Segments/Edit/domain';
 import PluginCardModal from '../../../Plugin/Edit/PluginCard/PluginCardModal';
 import PluginService from '../../../../services/PluginService';
-import { LayoutablePlugin } from '../../../../models/Plugins';
 import AudienceSegmentFeedService from '../../../../services/AudienceSegmentFeedService';
 import { PropertyResourceShape } from '../../../../models/plugin';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
+import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 
 export interface EditPluginModalProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -26,9 +26,9 @@ type Props = EditPluginModalProps &
   InjectedNotificationProps;
 
 interface State {
-  layoutablePlugin: LayoutablePlugin;
+  layout?: PluginLayout;
   pluginProperties: PropertyResourceShape[];
-  initialValues?: { plugin: any; properties: any };
+  initialValues?: { plugin: AudienceExternalFeedTyped | AudienceTagFeedTyped; properties: any };
   isLoading: boolean;
 }
 
@@ -39,13 +39,6 @@ class EditPluginModal extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      layoutablePlugin: {
-        id: '',
-        organisation_id: '',
-        group_id: '',
-        artifact_id: '',
-        current_version_id: '',
-      },
       pluginProperties: [],
       isLoading: true,
     };
@@ -86,10 +79,7 @@ class EditPluginModal extends React.Component<Props, State> {
     return PluginService.getLocalizedPluginLayoutFromVersionId(feed.version_id)
       .then(pluginInfo => {
         this.setState({
-          layoutablePlugin: {
-            ...pluginInfo.plugin,
-            plugin_layout: pluginInfo.layout,
-          },
+          layout: pluginInfo.layout,
         });
       })
       .catch(err => {
@@ -154,12 +144,12 @@ class EditPluginModal extends React.Component<Props, State> {
     } = pluginInstance;
 
     return this.feedService
-      .updatePluginInstance(pluginInstance.id!, newPluginInstance)
+      .updatePluginInstance(pluginInstance.id, newPluginInstance)
       .then(() =>
         this.updatePropertiesValue(
           properties,
           feed.organisation_id,
-          pluginInstance.id!,
+          pluginInstance.id,
         ),
       )
       .then(() => {
@@ -194,24 +184,26 @@ class EditPluginModal extends React.Component<Props, State> {
 
   render() {
     const { feed, modalTab, onClose } = this.props;
-    const {
-      isLoading,
-      layoutablePlugin,
-      pluginProperties,
-      initialValues,
-    } = this.state;
+    const { isLoading, layout, pluginProperties, initialValues } = this.state;
 
     return (
       <PluginCardModal
         onClose={onClose}
         organisationId={feed.organisation_id}
         opened={true}
-        plugin={layoutablePlugin}
+        plugin={{
+          id: feed.id,
+          organisation_id: feed.organisation_id,
+          group_id: feed.group_id,
+          artifact_id: feed.artifact_id,
+          current_version_id: feed.version_id,
+          plugin_layout: layout,
+        }}
         save={this.savePluginInstance}
         pluginProperties={pluginProperties}
         disableFields={feed.status === 'ACTIVE' || feed.status === 'PUBLISHED'}
         initialValues={initialValues}
-        pluginLayout={layoutablePlugin.plugin_layout}
+        pluginLayout={layout}
         isLoading={isLoading}
         pluginVersionId={feed.version_id}
         editionMode={true}
