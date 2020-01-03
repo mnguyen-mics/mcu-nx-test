@@ -2,16 +2,16 @@ import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { CounterDashboard } from '../../../../components/Counter/index';
 import { CounterProps } from '../../../../components/Counter/Counter';
-import ReportService, { Filter } from '../../../../services/ReportService';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { EditAudienceSegmentParam } from '../Edit/domain';
 import { compareSearches } from '../../../../utils/LocationSearchHelper';
-import { AudienceReport } from './constants';
-import McsMoment from '../../../../utils/McsMoment';
-import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { McsIconType } from '../../../../components/McsIcon';
 import messages from './messages';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 
 export interface AudienceCountersProps {
   datamarts: DatamartWithMetricResource[];
@@ -20,7 +20,7 @@ export interface AudienceCountersProps {
 
 interface State {
   counter: {
-    report: AudienceReport;
+    report?: AudienceSegmentShape;
     isLoading: boolean;
   };
 }
@@ -29,13 +29,23 @@ type Props = AudienceCountersProps &
   InjectedIntlProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
+type AudienceSegmentShapeKey = 
+        'user_points_count' |
+        'user_accounts_count' |
+        'emails_count' |
+        'desktop_cookie_ids_count' |
+        'mobile_ad_ids_count' |
+        'mobile_cookie_ids_count'
+
 class AudienceCounters extends React.Component<Props, State> {
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       counter: {
         isLoading: true,
-        report: [],
       },
     };
   }
@@ -43,17 +53,12 @@ class AudienceCounters extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: { segmentId, organisationId },
+        params: { segmentId },
       },
     } = this.props;
 
     if (segmentId) {
-      this.fetchCounterView(organisationId, [
-        {
-          name: 'audience_segment_id',
-          value: segmentId,
-        },
-      ]);
+      this.fetchCounterView(segmentId);
     }
   }
 
@@ -68,47 +73,49 @@ class AudienceCounters extends React.Component<Props, State> {
       match: {
         params: {
           segmentId: nextSegmentId,
-          organisationId: nextOrganisationId,
         },
       },
       location: { search: nextSearch },
     } = nextProps;
 
     if (!compareSearches(search, nextSearch) || segmentId !== nextSegmentId) {
-      this.fetchCounterView(nextOrganisationId, [
-        {
-          name: 'audience_segment_id',
-          value: nextSegmentId,
-        },
-      ]);
+      this.fetchCounterView(segmentId);
     }
   }
 
-  fetchCounterView = (organisationId: string, filters: Filter[]) => {
+  fetchCounterView = (segmentId: string) => {
     this.setState({ counter: { ...this.state.counter, isLoading: true } });
-    return ReportService.getAudienceSegmentReport(
-      organisationId,
-      new McsMoment('now'),
-      new McsMoment('now'),
-      ['day'],
-      [
-        'user_points',
-        'user_accounts',
-        'emails',
-        'desktop_cookie_ids',
-        'mobile_ad_ids',
-        'mobile_cookie_ids',
-      ],
-      filters,
-    ).then(res =>
+    return this._audienceSegmentService.getSegment(segmentId).then(res =>
       this.setState({
         counter: {
           isLoading: false,
-          report: normalizeReportView(res.data.report_view),
+          report: res.data
         },
       }),
     );
   };
+
+  adaptKey(key:
+    | 'user_points'
+    | 'user_accounts'
+    | 'emails'
+    | 'desktop_cookie_ids'
+    | 'mobile_ad_ids'
+    | 'mobile_cookie_ids'): AudienceSegmentShapeKey {
+    if (key === 'user_points')
+      return 'user_points_count'
+    if (key === 'user_accounts')
+      return 'user_accounts_count'
+    if (key === 'emails')
+      return 'emails_count'
+    if (key === 'desktop_cookie_ids')
+      return 'desktop_cookie_ids_count'
+    if (key === 'mobile_ad_ids')
+      return 'mobile_ad_ids_count'
+    if (key === 'mobile_cookie_ids')
+      return 'mobile_cookie_ids_count'
+    return 'user_points_count'
+  }
 
   getLoadingValue = (
     key:
@@ -120,10 +127,7 @@ class AudienceCounters extends React.Component<Props, State> {
       | 'mobile_cookie_ids',
   ) => {
     const { counter } = this.state;
-    const value =
-      !counter.isLoading && counter.report && counter.report[0]
-        ? counter.report[0][key]
-        : undefined;
+    const value = !counter.isLoading && counter.report ? counter.report[this.adaptKey(key)] : undefined
     return {
       value,
       loading: counter.isLoading,
