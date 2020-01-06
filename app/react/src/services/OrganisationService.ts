@@ -24,8 +24,27 @@ export interface IOrganisationService {
     organisationId: string,
   ) => Promise<DataResponse<OrganisationResource>>;
   getProcessings: (
-    organisationId: string,
+    communityId: string,
+    filters?: object,
   ) => Promise<DataListResponse<ProcessingResource>>;
+  getProcessing: (
+    processingId: string,
+  ) => Promise<DataResponse<ProcessingResource>>;
+  createProcessing: (
+    communityId: string,
+    processingResource: ProcessingResource,
+  ) => Promise<DataResponse<ProcessingResource>>;
+  updateProcessing: (
+    processingId: string,
+    processingResource: ProcessingResource,
+  ) => Promise<DataResponse<ProcessingResource>>;
+  archiveProcessing: (
+    processingId: string,
+  ) => Promise<DataResponse<ProcessingResource>>;
+  deleteProcessing: (
+    communityId: string,
+    processingId: string,
+  ) => Promise<DataResponse<any>>;
 }
 
 @injectable()
@@ -74,9 +93,55 @@ export default class OrganisationService implements IOrganisationService {
     return ApiService.getRequest(endpoint);
   }
   getProcessings(
-    organisationId: string,
+    communityId: string,
+    filters: object = {},
   ): Promise<DataListResponse<ProcessingResource>> {
-    const endpoint = `processings?community_id=${organisationId}`;
+    const endpoint = 'processings';
+    const options = {
+      community_id: communityId,
+      ...filters,
+    };
+    return ApiService.getRequest(endpoint, options);
+  }
+  getProcessing(
+    processingId: string,
+  ): Promise<DataResponse<ProcessingResource>> {
+    const endpoint = `processings/${processingId}`;
     return ApiService.getRequest(endpoint);
+  }
+  createProcessing(
+    communityId: string,
+    processingResource: ProcessingResource,
+  ): Promise<DataResponse<ProcessingResource>> {
+    const endpoint = `processings`;
+    const resource = {
+      community_id: communityId,
+      ...processingResource,
+    };
+    return ApiService.postRequest(endpoint, resource);
+  }
+  updateProcessing(
+    processingId: string,
+    processingResource: ProcessingResource,
+  ): Promise<DataResponse<ProcessingResource>> {
+    const endpoint = `processings/${processingId}`;
+    return ApiService.putRequest(endpoint, processingResource);
+  }
+  archiveProcessing(
+    processingId: string,
+  ): Promise<DataResponse<ProcessingResource>> {
+    const endpoint = `processings/${processingId}`;
+    const resource = { archived: true };
+    return ApiService.putRequest(endpoint, resource);
+  }
+  deleteProcessing(
+    communityId: string,
+    processingId: string,
+  ): Promise<DataResponse<any>> {
+    const endpoint = `processings/${processingId}`;
+    const options = {
+      community_id: communityId,
+    };
+    return ApiService.deleteRequest(endpoint, options);
   }
 }

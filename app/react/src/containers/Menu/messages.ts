@@ -207,6 +207,10 @@ export default defineMessages({
         id: 'menu.organisation.users',
         defaultMessage: 'Users',
     },
+    processingsSettingsTitle: {
+        id: 'menu.organisation.processings',
+        defaultMessage: 'Processing Activities',
+    },
     labelsSettingsTitle: {
         id: 'menu.organisation.labels',
         defaultMessage: 'Labels',
