@@ -117,40 +117,40 @@ class Monitoring extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       location: { search, pathname },
+      match: {
+        params: {
+          identifierType,
+          identifierId,
+          organisationId,
+        },
+      },
       selectedDatamart,
     } = this.props;
 
     const {
-      match: {
-        params: {
-          identifierType: nextIdentifierType,
-          identifierId: nextIdentifierId,
-          organisationId: nextOrganisationId,
-        },
-      },
-      location: { search: nextSearch, pathname: nextPathname },
-      selectedDatamart: nextSelectedDatamart,
-    } = nextProps;
+      location: { search: previousSearch, pathname: previousPathname },
+      selectedDatamart: previousSelectedDatamart,
+    } = previousProps;
 
     if (
-      search !== nextSearch ||
-      pathname !== nextPathname ||
-      selectedDatamart.id !== nextSelectedDatamart.id
+      search !== previousSearch ||
+      pathname !== previousPathname ||
+      selectedDatamart.id !== previousSelectedDatamart.id
     ) {
-      if (nextIdentifierType && nextIdentifierId) {
+      if (identifierType && identifierId) {
         this.setState({
           isLoading: true,
         });
         this._monitoringService
           .fetchMonitoringData(
-            nextOrganisationId,
-            nextSelectedDatamart,
-            nextIdentifierType,
-            nextIdentifierId,
-            queryString.parse(nextSearch).compartmentId,
+            organisationId,
+            selectedDatamart,
+            identifierType,
+            identifierId,
+            queryString.parse(search).compartmentId,
           )
           .then(monitoringData => {
             this.setState({

@@ -59,17 +59,17 @@ class MonitoringActionbar extends React.Component<Props, State> {
     this.fetchCompartments(selectedDatamart.id);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       selectedDatamart
     } = this.props;
 
     const {
-      selectedDatamart: nextSelectedDatamart
-    } = nextProps;
+      selectedDatamart: previousSelectedDatamart
+    } = previousProps;
 
-    if (selectedDatamart !== nextSelectedDatamart) {
-      this.fetchCompartments(nextSelectedDatamart.id);
+    if (selectedDatamart !== previousSelectedDatamart) {
+      this.fetchCompartments(selectedDatamart.id);
     }
   }
 

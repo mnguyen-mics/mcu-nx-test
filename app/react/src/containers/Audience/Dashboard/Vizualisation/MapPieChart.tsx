@@ -70,20 +70,20 @@ class MapPieChart extends React.Component<Props, State> {
     this.fetchData(queryId, datamartId, segment);
   }
 
-  componentWillReceiveProps(nextProps: MapPieChartProps) {
+  componentDidUpdate(previousProps: MapPieChartProps) {
     const { segment, queryId, datamartId } = this.props;
     const {
-      segment: nextSegment,
-      queryId: nextChartQueryId,
-      datamartId: nextDatamartId,
-    } = nextProps;
+      segment: previousSegment,
+      queryId: previousChartQueryId,
+      datamartId: previousDatamartId,
+    } = previousProps;
 
     if (
-      segment !== nextSegment ||
-      queryId !== nextChartQueryId ||
-      datamartId !== nextDatamartId
+      segment !== previousSegment ||
+      queryId !== previousChartQueryId ||
+      datamartId !== previousDatamartId
     ) {
-      this.fetchData(nextChartQueryId, nextDatamartId, nextSegment);
+      this.fetchData(queryId, datamartId, segment);
     }
   }
 

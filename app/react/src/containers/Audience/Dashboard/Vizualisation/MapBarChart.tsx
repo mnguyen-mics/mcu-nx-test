@@ -73,12 +73,20 @@ class MapBarChart extends React.Component<Props, State> {
     this.fetchData(queryId, datamartId, segment);
   }
 
-  componentWillReceiveProps(nextProps: MapBarChartProps) {
+  componentDidUpdate(previousProps: MapBarChartProps) {
     const { segment, queryId, datamartId } = this.props;
-    const { segment: nextSegment, queryId: nextChartQueryId, datamartId: nextDatamartId } = nextProps;
+    const {
+      segment: previousSegment,
+      queryId: previousChartQueryId,
+      datamartId: previousDatamartId
+    } = previousProps;
 
-    if (segment !== nextSegment || queryId !== nextChartQueryId || datamartId !== nextDatamartId) {
-      this.fetchData(nextChartQueryId, nextDatamartId, nextSegment);
+    if (
+      segment !== previousSegment ||
+      queryId !== previousChartQueryId ||
+      datamartId !== previousDatamartId
+    ) {
+      this.fetchData(queryId, datamartId, segment);
     }
   }
 

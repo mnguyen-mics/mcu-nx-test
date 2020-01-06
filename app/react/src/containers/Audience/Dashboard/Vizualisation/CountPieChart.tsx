@@ -58,20 +58,20 @@ class CountPieChart extends React.Component<Props, State> {
     this.fetchData(queryIds, datamartId, segment);
   }
 
-  componentWillReceiveProps(nextProps: CountPieChartProps) {
+  componentDidUpdate(previousProps: CountPieChartProps) {
     const { segment, queryIds, datamartId } = this.props;
     const {
-      segment: nextSegment,
-      queryIds: nextChartQueryIds,
-      datamartId: nextDatamartId,
-    } = nextProps;
+      segment: previousSegment,
+      queryIds: previousChartQueryIds,
+      datamartId: previousDatamartId
+    } = previousProps;
 
     if (
-      segment !== nextSegment ||
-      queryIds !== nextChartQueryIds ||
-      datamartId !== nextDatamartId
+      segment !== previousSegment ||
+      queryIds !== previousChartQueryIds ||
+      datamartId !== previousDatamartId
     ) {
-      this.fetchData(nextChartQueryIds, nextDatamartId, nextSegment);
+      this.fetchData(queryIds, datamartId, segment);
     }
   }
 
@@ -101,6 +101,7 @@ class CountPieChart extends React.Component<Props, State> {
     datamartId: string,
     segment?: AudienceSegmentShape,
   ): Promise<void> => {
+    this.setState({ error: false, loading: true})
     const promises = chartQueryIds.map((chartQueryId, i) => {
       return this.fetchQuery(chartQueryId, datamartId, i);
     });

@@ -39,22 +39,22 @@ export default class Percentage extends React.Component<PercentageProps, State> 
     this.fetchData(queryId, totalQueryId, datamartId, segment);
   }
 
-  componentWillReceiveProps(nextProps: PercentageProps) {
+  componentDidUpdate(previousProps: PercentageProps) {
     const { segment, queryId, datamartId, totalQueryId } = this.props;
     const {
-      segment: nextSegment,
-      queryId: nextChartQueryId,
-      datamartId: nextDatamartId,
-      totalQueryId: nextTotalQueryId
-    } = nextProps;
+      segment: previousSegment,
+      queryId: previousChartQueryId,
+      datamartId: previousDatamartId,
+      totalQueryId: previousTotalQueryId
+    } = previousProps;
 
     if (
-      segment !== nextSegment ||
-      queryId !== nextChartQueryId ||
-      datamartId !== nextDatamartId ||
-      totalQueryId !== nextTotalQueryId
+      segment !== previousSegment ||
+      queryId !== previousChartQueryId ||
+      datamartId !== previousDatamartId ||
+      totalQueryId !== previousTotalQueryId
     ) {
-      this.fetchData(nextChartQueryId, nextTotalQueryId, nextDatamartId, nextSegment);
+      this.fetchData(queryId, totalQueryId, datamartId, segment);
     }
   }
 

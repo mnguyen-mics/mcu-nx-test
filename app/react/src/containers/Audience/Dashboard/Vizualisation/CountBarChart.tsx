@@ -75,20 +75,20 @@ class CountBarChart extends React.Component<Props, State> {
     this.fetchData(queryIds, datamartId, segment);
   }
 
-  componentWillReceiveProps(nextProps: CountBarChartProps) {
+  componentDidUpdate(previousProps: CountBarChartProps) {
     const { segment, queryIds, datamartId } = this.props;
     const {
-      segment: nextSegment,
-      queryIds: nextChartQueryIds,
-      datamartId: nextDatamartId
-    } = nextProps;
+      segment: previousSegment,
+      queryIds: previousChartQueryIds,
+      datamartId: previousDatamartId
+    } = previousProps;
 
     if (
-      segment !== nextSegment ||
-      queryIds !== nextChartQueryIds ||
-      datamartId !== nextDatamartId
+      segment !== previousSegment ||
+      queryIds !== previousChartQueryIds ||
+      datamartId !== previousDatamartId
     ) {
-      this.fetchData(nextChartQueryIds, nextDatamartId, nextSegment);
+      this.fetchData(queryIds, datamartId, segment);
     }
   }
 

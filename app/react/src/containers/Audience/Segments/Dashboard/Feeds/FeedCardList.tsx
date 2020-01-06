@@ -70,7 +70,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
         params: { segmentId },
@@ -78,12 +78,12 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
     } = this.props;
     const {
       match: {
-        params: { segmentId: nextSegmentId },
+        params: { segmentId: previousSegmentId },
       },
-    } = nextProps;
+    } = previousProps;
 
-    if (segmentId !== nextSegmentId) {
-      this.fetchFeeds(nextSegmentId);
+    if (segmentId !== previousSegmentId) {
+      this.fetchFeeds(segmentId);
     }
   }
 

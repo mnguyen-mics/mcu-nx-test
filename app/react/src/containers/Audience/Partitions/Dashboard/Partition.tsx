@@ -133,23 +133,41 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     this.loadData(partitionId);
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const { history } = this.props;
+  componentDidUpdate(previousProps: JoinedProps) {
+    const { 
+      history,
+      match: {
+        params: {
+          partitionId,
+          organisationId
+        }
+      }
+    } = this.props;
+
+    const {
+      match: {
+        params: {
+          partitionId: previousPartitionId,
+        }
+      }
+    } = previousProps;
+
+    const {
+      audiencePartition
+    } = this.state;
+
     if (
-      this.state.audiencePartition &&
-      this.state.audiencePartition.organisation_id &&
-      this.state.audiencePartition.organisation_id !==
-        nextProps.match.params.organisationId
+      audiencePartition &&
+      audiencePartition.organisation_id &&
+      audiencePartition.organisation_id !== organisationId
     ) {
       history.push(
-        `/v2/o/${nextProps.match.params.organisationId}/audience/partitions`,
+        `/v2/o/${organisationId}/audience/partitions`,
       );
     }
-    if (
-      nextProps.match.params.partitionId !== this.props.match.params.partitionId
-    ) {
-      this.loadData(nextProps.match.params.partitionId);
-    }
+
+    if ( previousPartitionId !== partitionId )
+      this.loadData(partitionId);
   }
 
   loadData = (partitionId: string) => {

@@ -77,12 +77,20 @@ class DateAggregationChart extends React.Component<Props, State> {
     this.fetchData(queryIds, datamartId, segment);
   }
 
-  componentWillReceiveProps(nextProps: DateAggregationChartProps) {
+  componentDidUpdate(previousProps: DateAggregationChartProps) {
     const { segment, queryIds, datamartId } = this.props;
-    const { segment: nextSegment, queryIds: nextChartQueryId, datamartId: nextDatamartId } = nextProps;
+    const {
+      segment: previousSegment,
+      queryIds: previousChartQueryIds,
+      datamartId: previousDatamartId,
+    } = previousProps;
 
-    if (segment !== nextSegment || queryIds !== nextChartQueryId || datamartId !== nextDatamartId) {
-      this.fetchData(nextChartQueryId, datamartId, nextSegment);
+    if (
+      segment !== previousSegment ||
+      queryIds !== previousChartQueryIds ||
+      datamartId !== previousDatamartId
+    ) {
+      this.fetchData(queryIds, datamartId, segment);
     }
   }
 

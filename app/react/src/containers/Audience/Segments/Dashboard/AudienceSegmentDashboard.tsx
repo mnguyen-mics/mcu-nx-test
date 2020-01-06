@@ -88,10 +88,10 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
-        params: { segmentId },
+        params: { segmentId, organisationId },
       },
       location: { search },
       datamarts,
@@ -101,16 +101,15 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     const {
       match: {
         params: {
-          segmentId: nextSegmentId,
-          organisationId: nextOrganisationId,
+          segmentId: previousSegmentId,
         },
       },
-      location: { search: nextSearch },
-      segment: nextSegment,
-    } = nextProps;
+      location: { search: previousSearch },
+      segment: previousSegment,
+    } = previousProps;
 
-    if (!compareSearches(search, nextSearch) || segmentId !== nextSegmentId || segment !== nextSegment) {
-      this.fetchDashboardView(nextSearch, nextOrganisationId, nextSegmentId, datamarts, nextSegment);
+    if (!compareSearches(search, previousSearch) || segmentId !== previousSegmentId || segment !== previousSegment) {
+      this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
     }
   }
 

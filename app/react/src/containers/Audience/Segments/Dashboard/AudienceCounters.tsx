@@ -4,7 +4,6 @@ import { CounterDashboard } from '../../../../components/Counter/index';
 import { CounterProps } from '../../../../components/Counter/Counter';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { EditAudienceSegmentParam } from '../Edit/domain';
-import { compareSearches } from '../../../../utils/LocationSearchHelper';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { McsIconType } from '../../../../components/McsIcon';
 import messages from './messages';
@@ -29,7 +28,7 @@ type Props = AudienceCountersProps &
   InjectedIntlProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
-type AudienceSegmentShapeKey = 
+type AudienceSegmentShapeKey =
         'user_points_count' |
         'user_accounts_count' |
         'emails_count' |
@@ -62,23 +61,21 @@ class AudienceCounters extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
         params: { segmentId },
       },
-      location: { search },
     } = this.props;
     const {
       match: {
         params: {
-          segmentId: nextSegmentId,
+          segmentId: previousSegmentId,
         },
       },
-      location: { search: nextSearch },
-    } = nextProps;
+    } = previousProps;
 
-    if (!compareSearches(search, nextSearch) || segmentId !== nextSegmentId) {
+    if (segmentId !== previousSegmentId) {
       this.fetchCounterView(segmentId);
     }
   }
