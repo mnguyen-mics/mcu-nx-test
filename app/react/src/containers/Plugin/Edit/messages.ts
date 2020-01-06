@@ -77,4 +77,17 @@ export default defineMessages({
     id: 'audience.segment.feed.create.descriptionField.placeholder',
     defaultMessage: 'Description',
   },
+  presetDeletionModalDescription: {
+    id: 'audience.segment.feed.preset.delete.modal.description',
+    defaultMessage:
+      "Are you sure you want to archive this feed preset? This will be permanent. The feeds already created with this feed preset won't be deleted.",
+  },
+  presetDeletionModalConfirm: {
+    id: 'audience.segment.feed.preset.delete.modal.confirm',
+    defaultMessage: 'Delete Now',
+  },
+  presetDeletionModalCancel: {
+    id: 'audience.segment.feed.preset.delete.modal.cancel',
+    defaultMessage: 'Cancel',
+  },
 });

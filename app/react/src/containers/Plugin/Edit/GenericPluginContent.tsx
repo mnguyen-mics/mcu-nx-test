@@ -28,6 +28,7 @@ import PluginCardSelector from './PluginCard/PluginCardSelector';
 import PluginCardModal from './PluginCard/PluginCardModal';
 import { withValidators } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
+import { Modal } from 'antd';
 
 const formId = 'pluginForm';
 
@@ -418,6 +419,38 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     );
   };
 
+  onPresetDelete = (layoutablePlugin: LayoutablePlugin) => {
+    const {
+      notifyError,
+      intl: { formatMessage },
+    } = this.props;
+    if (layoutablePlugin && layoutablePlugin.plugin_preset)
+      Modal.confirm({
+        iconType: 'exclamation-circle',
+        title: formatMessage(messages.presetDeletionModalDescription),
+        okText: formatMessage(messages.presetDeletionModalConfirm),
+        cancelText: formatMessage(messages.presetDeletionModalCancel),
+        onOk: () => {
+          if (layoutablePlugin && layoutablePlugin.plugin_preset)
+            PluginService.deletePluginPreset(
+              layoutablePlugin.plugin_preset.plugin_id,
+              layoutablePlugin.plugin_preset.plugin_version_id,
+              layoutablePlugin.plugin_preset.id,
+              { archived: true },
+            )
+              .then(() => {
+                this.getPluginPresetsList(this.state.availablePlugins);
+              })
+              .catch(err => {
+                notifyError(err);
+              });
+        },
+        onCancel: () => {
+          // cancel
+        },
+      });
+  };
+
   formatInitialPresetValues = (
     properties: PropertyResourceShape[],
     preset: PluginPresetResource,
@@ -548,6 +581,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         >
           <PluginCardSelector
             onSelect={this.onSelectPlugin}
+            onPresetDelete={this.onPresetDelete}
             availablePresetLayouts={this.state.availablePluginPresets}
             pluginPresetListTitle={this.props.pluginPresetListTitle}
             pluginPresetListSubTitle={this.props.pluginPresetListSubTitle}

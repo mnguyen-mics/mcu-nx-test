@@ -24,6 +24,7 @@ export interface PluginProperty {
 }
 
 export interface PluginPresetResource {
+  archived: boolean;
   id: string;
   plugin_id: string;
   plugin_version_id: string;
