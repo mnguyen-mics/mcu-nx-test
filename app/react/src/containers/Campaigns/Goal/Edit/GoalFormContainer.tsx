@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { InjectedFormProps, ConfigProps } from 'redux-form';
 import { GoalFormData, INITIAL_GOAL_FORM_DATA, isGoalResource } from './domain';
 import GoalForm, { GoalFormProps, FORM_ID } from './GoalForm';
-import DatamartService from '../../../../services/DatamartService';
+import { IDatamartService } from '../../../../services/DatamartService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -20,6 +20,8 @@ import {
 import { Loading } from '../../../../components';
 import GoalTriggerTypeSelector from '../Common/GoalTriggerTypeSelector';
 import { GoalTriggerType } from '../../../../models/goal/GoalResource';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 export interface GoalFormContainerProps
   extends Omit<ConfigProps<GoalFormData>, 'form'> {
@@ -43,6 +45,9 @@ interface State {
 }
 
 class GoalFormContainer extends React.Component<Props, State> {
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -58,7 +63,7 @@ class GoalFormContainer extends React.Component<Props, State> {
 
     if (initialValues.goal && isGoalResource(initialValues.goal)) {
       this.setState({ loading: true });
-      DatamartService.getDatamart(initialValues.goal.datamart_id)
+      this._datamartService.getDatamart(initialValues.goal.datamart_id)
         .then(resp => {          
           this.setState({ 
             loading: false, 

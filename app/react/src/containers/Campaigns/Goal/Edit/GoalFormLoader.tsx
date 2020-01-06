@@ -7,7 +7,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { Omit } from '../../../../utils/Types';
-import DatamartService from '../../../../services/DatamartService';
+import { IDatamartService } from '../../../../services/DatamartService';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -29,6 +29,9 @@ class GoalFormLoader extends React.Component<Props, State> {
   @lazyInject(TYPES.IGoalFormService)
   private _goalFormService: IGoalFormService;
 
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
 
@@ -48,7 +51,7 @@ class GoalFormLoader extends React.Component<Props, State> {
     this._goalFormService
       .loadGoalData(goalId)
       .then(goalData => {
-        return DatamartService.getDatamart(goalData.goal.datamart_id!).then(
+        return this._datamartService.getDatamart(goalData.goal.datamart_id!).then(
           datamartRes => {
             this.setState({
               loading: false,

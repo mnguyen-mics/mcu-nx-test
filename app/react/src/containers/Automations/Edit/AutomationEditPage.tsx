@@ -19,7 +19,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { IAutomationFormService } from './AutomationFormService';
-import DatamartService from '../../../services/DatamartService';
+import { IDatamartService } from '../../../services/DatamartService';
 import { IScenarioService } from '../../../services/ScenarioService';
 import AutomationBuilderContainer from '../Builder/AutomationBuilderContainer';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
@@ -57,6 +57,9 @@ class EditAutomationPage extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IScenarioService)
   private _scenarioService: IScenarioService;
+
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
 
   constructor(props: Props) {
     super(props);
@@ -130,7 +133,7 @@ class EditAutomationPage extends React.Component<Props, State> {
 
   fetchDatamart = (datamartId: string) => {
     this.setState({ loading: true });
-    return DatamartService.getDatamart(datamartId)
+    return this._datamartService.getDatamart(datamartId)
       .then(r => this.setState({ datamart: r.data, loading: false }))
       .catch((err) => {  this.props.notifyError(err); this.setState({ loading: false })})
   }
@@ -138,7 +141,7 @@ class EditAutomationPage extends React.Component<Props, State> {
   loadData = (organisationId: string, automationId: string) => {
     this.setState({ loading: true });
     return this._scenarioService.getScenario(automationId)
-      .then((r) => DatamartService.getDatamart(r.data.datamart_id))
+      .then((r) => this._datamartService.getDatamart(r.data.datamart_id))
       .then(r => {
         const datafarmVersion = r.data.storage_model_version;
         if (datafarmVersion === 'v201506') {

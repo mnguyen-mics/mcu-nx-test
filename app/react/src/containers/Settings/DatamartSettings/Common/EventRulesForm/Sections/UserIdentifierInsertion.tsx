@@ -13,9 +13,11 @@ import withNormalizer, {
 } from '../../../../../../components/Form/withNormalizer';
 import { FORM_ID } from '../EventRulesForm'
 import { EventRulesFormData } from '../../domain';
-import DatamartService from '../../../../../../services/DatamartService';
+import { IDatamartService } from '../../../../../../services/DatamartService';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { TYPES } from '../../../../../../constants/types';
+import { lazyInject } from '../../../../../../config/inversify.config';
 
 interface UserIdentifierInsertionProps {
   datamartId: string;
@@ -33,6 +35,9 @@ type Props = UserIdentifierInsertionProps & InjectedIntlProps & ValidatorProps &
 
 class UserIdentifierInsertion extends React.Component<Props, State> {
 
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
     this.state = { compartments: [] }
@@ -40,7 +45,7 @@ class UserIdentifierInsertion extends React.Component<Props, State> {
 
   componentDidMount() {
     const { datamartId } = this.props;
-    DatamartService.getUserAccountCompartments(datamartId).then(res => {
+    this._datamartService.getUserAccountCompartments(datamartId, {}).then(res => {
       this.setState({ compartments: res.data })
     })
   }

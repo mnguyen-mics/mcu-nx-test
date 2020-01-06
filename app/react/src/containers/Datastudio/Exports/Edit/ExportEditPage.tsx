@@ -15,7 +15,7 @@ import {
   QueryResource,
   DatamartResource,
 } from '../../../../models/datamart/DatamartResource';
-import DatamartService from '../../../../services/DatamartService';
+import { IDatamartService } from '../../../../services/DatamartService';
 import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from '../../../Audience/Common/DatamartSelector';
 import { Export } from '../../../../models/exports/exports';
@@ -70,6 +70,9 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
   @lazyInject(TYPES.IExportService)
   private _exportService: IExportService;
 
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -123,7 +126,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
       .then(res => {
         return Promise.all([
           this._queryService.getQuery(res.datamart_id, res.query_id),
-          DatamartService.getDatamart(res.datamart_id),
+          this._datamartService.getDatamart(res.datamart_id),
         ]).then(q => {
           this.setState({
             export: {

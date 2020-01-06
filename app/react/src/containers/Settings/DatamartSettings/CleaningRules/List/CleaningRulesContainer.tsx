@@ -6,11 +6,13 @@ import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import { UserEventCleaningRuleResource } from '../../../../../models/cleaningRules/CleaningRules';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import DatamartService from '../../../../../services/DatamartService';
+import { IDatamartService } from '../../../../../services/DatamartService';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import { Layout, Row } from 'antd';
 import * as moment from 'moment';
 import 'moment-duration-format';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const { Content } = Layout;
 
@@ -31,6 +33,9 @@ type Props = CleaningRulesContainerProps &
   InjectedIntlProps;
 
 class CleaningRulesContainer extends React.Component<Props, CleaningRulesContainerState> {
+
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
 
   constructor(props: Props) {
     super(props);
@@ -74,7 +79,7 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      DatamartService.getCleaningRules(datamartId, options).then(results => {
+      this._datamartService.getCleaningRules(datamartId, options).then(results => {
         this.setState({
           loading: false,
           data: results.data,

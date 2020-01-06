@@ -34,7 +34,7 @@ import {
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
-import DatamartService from '../../../services/DatamartService';
+import { IDatamartService } from '../../../services/DatamartService';
 
 const { Content } = Layout;
 
@@ -92,6 +92,9 @@ interface Filters {
 class AutomationsListTable extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.IScenarioService)
   private _scenarioService: IScenarioService;
+
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
 
   constructor(props: JoinedProps) {
     super(props);
@@ -193,7 +196,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       location,
     } = this.props;
 
-    DatamartService.getDatamart(record.datamart_id).then(resp => {
+    this._datamartService.getDatamart(record.datamart_id).then(resp => {
       if (resp.data.storage_model_version !== 'v201506') {
         history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`, {
           from: `${location.pathname}${location.search}`,
@@ -281,7 +284,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       history,
     } = this.props;
 
-    DatamartService.getDatamart(record.datamart_id).then(resp => {
+    this._datamartService.getDatamart(record.datamart_id).then(resp => {
       if (resp.data.storage_model_version !== 'v201506') {
         history.push(`/v2/o/${organisationId}/automations/${record.id}`);
       } else {

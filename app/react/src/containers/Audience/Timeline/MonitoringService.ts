@@ -20,8 +20,8 @@ import {
   UserAccountIdentifierInfo,
   isUserAccountIdentifier,
 } from '../../../models/timeline/timeline';
-import DatamartService from '../../../services/DatamartService';
 import { IOrganisationService } from '../../../services/OrganisationService';
+import { IDatamartService } from '../../../services/DatamartService';
 
 export interface IMonitoringService {
   fetchProfileData: (
@@ -69,6 +69,9 @@ export interface IMonitoringService {
 
 @injectable()
 export class MonitoringService implements IMonitoringService {
+  @inject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   @inject(TYPES.IUserDataService)
   private _userDataService: IUserDataService;
 
@@ -106,7 +109,7 @@ export class MonitoringService implements IMonitoringService {
         if(!acc[compartmentId]) {
 
           // TO DO: inject DatamartService 
-          const compartment = await DatamartService.getUserAccountCompartment(compartmentId);
+          const compartment = await this._datamartService.getUserAccountCompartment(compartmentId);
 
           acc[compartmentId] = {
             compartmentName: compartment.data.name ? compartment.data.name : compartment.data.token,
@@ -139,7 +142,7 @@ export class MonitoringService implements IMonitoringService {
 
   fetchCompartments(datamart: DatamartResource) {
     // TO DO: inject DatamartService
-    return DatamartService.getUserAccountCompartments(datamart.id).then(
+    return this._datamartService.getUserAccountCompartments(datamart.id, {}).then(
       resp => {
         return resp.data;
       },

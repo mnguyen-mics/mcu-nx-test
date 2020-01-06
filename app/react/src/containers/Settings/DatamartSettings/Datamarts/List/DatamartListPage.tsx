@@ -10,7 +10,7 @@ import { Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS, ARCHIVED_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
-import DatamartService from '../../../../../services/DatamartService';
+import { IDatamartService } from '../../../../../services/DatamartService';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import messages from './messages';
@@ -20,6 +20,8 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { Link } from 'react-router-dom';
 import { ActionsColumnDefinition, ActionsRenderer, ActionDefinition } from '../../../../../components/TableView/TableView';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const { Content } = Layout;
 
@@ -47,6 +49,9 @@ class DatamartsListPage extends React.Component<
   > {
   state = initialState;
 
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   archiveUser = (recommenderId: string) => {
     return Promise.resolve();
   };
@@ -58,7 +63,7 @@ class DatamartsListPage extends React.Component<
         archived: filter.archived,
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      DatamartService.getDatamarts(organisationId, options)
+      this._datamartService.getDatamarts(organisationId, options)
         .then(results => {
           this.setState({
             loading: false,
