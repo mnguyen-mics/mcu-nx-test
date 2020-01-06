@@ -418,8 +418,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       if (!this.state.pluginLayout) {
         return history.push(editFeed());
       } else {
-        this.setState({ opened: true });
-        this.setState({ isLoadingCard: true });
+        this.setState({ opened: true, isLoadingCard: true, modalTab: tab });
         return Promise.all([
           this.getPluginProperties(),
           this.getInitialValues(),
@@ -482,7 +481,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               undefined
             )}
             <div className="title">
-              {feed.name ? feed.name : (cardHeaderTitle ? cardHeaderTitle : feed.artifact_id)}
+              {feed.name
+                ? feed.name
+                : cardHeaderTitle
+                ? cardHeaderTitle
+                : feed.artifact_id}
             </div>
           </div>
           <div className="content">

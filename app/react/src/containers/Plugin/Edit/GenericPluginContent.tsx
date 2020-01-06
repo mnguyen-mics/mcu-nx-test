@@ -124,7 +124,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       this.fetchInitialValues(pluginInstanceId);
       return;
     }
-    this.getPluginsAndPresetList()
+    this.getPluginsAndPresetList();
   }
 
   componentWillReceiveProps(nextProps: JoinedProps<T>) {
@@ -149,7 +149,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       this.fetchInitialValues(nextPluginInstanceId);
     }
   }
- 
+
   getPluginsAndPresetList() {
     const { notifyError } = this.props;
     this.setState(
@@ -178,9 +178,10 @@ class PluginContent<T extends PluginInstance> extends React.Component<
   }
 
   getPluginsList() {
-    return this._pluginService.getPlugins({
-      plugin_type: this.props.pluginType,
-    })
+    return this._pluginService
+      .getPlugins({
+        plugin_type: this.props.pluginType,
+      })
       .then(res => res.data)
       .then((response: PluginResource[]) => {
         return Promise.all(
@@ -189,18 +190,20 @@ class PluginContent<T extends PluginInstance> extends React.Component<
 
             return [
               ...filteredPlugins,
-              this._pluginService.getLocalizedPluginLayout(
-                pResourceWoutLayout.id,
-                pResourceWoutLayout.current_version_id,
-              ).then(resultPluginLayout => {
-                return Promise.resolve({
-                  ...pResourceWoutLayout,
-                  plugin_layout:
-                    resultPluginLayout !== null
-                      ? resultPluginLayout
-                      : undefined,
-                });
-              }),
+              this._pluginService
+                .getLocalizedPluginLayout(
+                  pResourceWoutLayout.id,
+                  pResourceWoutLayout.current_version_id,
+                )
+                .then(resultPluginLayout => {
+                  return Promise.resolve({
+                    ...pResourceWoutLayout,
+                    plugin_layout:
+                      resultPluginLayout !== null
+                        ? resultPluginLayout
+                        : undefined,
+                  });
+                }),
             ];
           }, []),
         );
@@ -214,10 +217,11 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       },
     } = this.props;
 
-    return this._pluginService.getPluginPresets({
-      organisation_id: +organisationId,
-      plugin_type: this.props.pluginType,
-    })
+    return this._pluginService
+      .getPluginPresets({
+        organisation_id: +organisationId,
+        plugin_type: this.props.pluginType,
+      })
       .then(res => res.data)
       .then((response: PluginPresetResource[]) => {
         const pluginPresets: LayoutablePlugin[] = response.reduce(
@@ -299,7 +303,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
   saveOrCreatePluginInstance = (
     pluginInstance: T,
     properties: PropertyResourceShape[],
-    name?: string
+    name?: string,
   ) => {
     const {
       match: {
@@ -346,14 +350,12 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     );
 
     return this.setState({ isLoadingPlugin: true }, () => {
-      const createInstancePromise = pluginInstanceService.createPluginInstance(
-        organisationId,
-        {
+      const createInstancePromise = pluginInstanceService
+        .createPluginInstance(organisationId, {
           ...formattedFormValues,
-          name: name
-        }
-      )
-        .then(res => res.data)
+          name: name,
+        })
+        .then(res => res.data);
       const updatePropertiesPromise = createInstancePromise.then(res => {
         return this.updatePropertiesValue(properties, organisationId, res.id!);
       });
@@ -397,7 +399,8 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         pluginLayout: layoutablePlugin.plugin_layout,
       },
       () => {
-        this._pluginService.getPluginVersions(layoutablePlugin.id)
+        this._pluginService
+          .getPluginVersions(layoutablePlugin.id)
           .then(res => {
             const lastVersion = res.data[res.data.length - 1];
             const promiseVersionProperties = this._pluginService.getPluginVersionProperty(
@@ -406,13 +409,16 @@ class PluginContent<T extends PluginInstance> extends React.Component<
                 ? layoutablePlugin.current_version_id
                 : lastVersion.id,
             );
-            return promiseVersionProperties
+            return promiseVersionProperties;
           })
-          .then((resultVersionProperties) => {
+          .then(resultVersionProperties => {
             this.setState({
               pluginProperties: resultVersionProperties.data,
-              initializedPresetValues : layoutablePlugin.plugin_preset ?
-                this.formatInitialPresetValues(resultVersionProperties.data, layoutablePlugin.plugin_preset)
+              initializedPresetValues: layoutablePlugin.plugin_preset
+                ? this.formatInitialPresetValues(
+                    resultVersionProperties.data,
+                    layoutablePlugin.plugin_preset,
+                  )
                 : undefined,
               isLoadingPlugin: false,
             });
@@ -440,12 +446,13 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         cancelText: formatMessage(messages.presetDeletionModalCancel),
         onOk: () => {
           if (layoutablePlugin && layoutablePlugin.plugin_preset)
-          this._pluginService.deletePluginPreset(
-              layoutablePlugin.plugin_preset.plugin_id,
-              layoutablePlugin.plugin_preset.plugin_version_id,
-              layoutablePlugin.plugin_preset.id,
-              { archived: true },
-            )
+            this._pluginService
+              .deletePluginPreset(
+                layoutablePlugin.plugin_preset.plugin_id,
+                layoutablePlugin.plugin_preset.plugin_version_id,
+                layoutablePlugin.plugin_preset.id,
+                { archived: true },
+              )
               .then(() => {
                 this.getPluginPresetsList(this.state.availablePlugins);
               })
@@ -519,21 +526,17 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       disableFields,
       isCardLayout,
       renderSpecificFields,
-      intl: {
-        formatMessage,
-      },
-      fieldValidators: {
-        isRequired
-      }
+      intl: { formatMessage },
+      fieldValidators: { isRequired },
     } = this.props;
 
-    const { 
-      pluginProperties, 
+    const {
+      pluginProperties,
       isLoadingList,
-      isLoadingPlugin, 
-      plugin, 
-      initialValues, 
-      initializedPresetValues 
+      isLoadingPlugin,
+      plugin,
+      initialValues,
+      initializedPresetValues,
     } = this.state;
 
     const sidebarItems: SideBarItem[] = [];
@@ -566,12 +569,14 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         });
       });
     }
-
-    const actionbarProps =
-      {PluginService
+    const actionbarProps = {
+      formId,
+      message:
+        (pluginProperties.length || pluginInstanceId) && !disableFields
+          ? messages.save
           : undefined,
-        onClose: onClose,
-      };
+      onClose: onClose,
+    };
 
     if (isLoadingList || (isLoadingPlugin && !isCardLayout))
       return (
@@ -602,9 +607,11 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             opened={!!plugin.id}
             plugin={plugin}
             save={this.saveOrCreatePluginInstance}
-            initialValues={initializedPresetValues 
-              ? initializedPresetValues 
-              : this.formatInitialValues(initialValues)}
+            initialValues={
+              initializedPresetValues
+                ? initializedPresetValues
+                : this.formatInitialValues(initialValues)
+            }
             pluginProperties={pluginProperties}
             disableFields={isLoadingPlugin || disableFields ? true : false}
             pluginLayout={this.state.pluginLayout!}
@@ -692,8 +699,5 @@ export default compose<
   withRouter,
   injectIntl,
   withValidators,
-  connect(
-    undefined,
-    { notifyError: actions.notifyError },
-  ),
+  connect(undefined, { notifyError: actions.notifyError }),
 )(PluginContent);

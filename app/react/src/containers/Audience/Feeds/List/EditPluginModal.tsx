@@ -6,7 +6,7 @@ import {
   AudienceTagFeedTyped,
 } from '../../Segments/Edit/domain';
 import PluginCardModal from '../../../Plugin/Edit/PluginCard/PluginCardModal';
-import PluginService from '../../../../services/PluginService';
+import { IPluginService } from '../../../../services/PluginService';
 import AudienceSegmentFeedService from '../../../../services/AudienceSegmentFeedService';
 import { PropertyResourceShape } from '../../../../models/plugin';
 import injectNotifications, {
@@ -17,6 +17,8 @@ import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { injectIntl, defineMessages, InjectedIntlProps } from 'react-intl';
 import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 export interface EditPluginModalProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -34,7 +36,10 @@ type Props = EditPluginModalProps &
 interface State {
   layout?: PluginLayout;
   pluginProperties: PropertyResourceShape[];
-  initialValues?: { plugin: AudienceExternalFeedTyped | AudienceTagFeedTyped; properties: any };
+  initialValues?: {
+    plugin: AudienceExternalFeedTyped | AudienceTagFeedTyped;
+    properties: any;
+  };
   isLoading: boolean;
 }
 
@@ -55,6 +60,9 @@ const messages = defineMessages({
 
 class EditPluginModal extends React.Component<Props, State> {
   private feedService: AudienceSegmentFeedService;
+
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
 
   constructor(props: Props) {
     super(props);
@@ -97,7 +105,8 @@ class EditPluginModal extends React.Component<Props, State> {
 
   getPluginLayout() {
     const { feed, notifyError, onClose } = this.props;
-    return PluginService.getLocalizedPluginLayoutFromVersionId(feed.version_id)
+    return this._pluginService
+      .getLocalizedPluginLayoutFromVersionId(feed.version_id)
       .then(pluginInfo => {
         this.setState({
           layout: pluginInfo.layout,

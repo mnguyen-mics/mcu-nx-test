@@ -1,4 +1,4 @@
-import { Container, interfaces } from 'inversify';
+import { Container } from 'inversify';
 import { IMicsTagService, MicsTagService } from '../services/MicsTagService';
 import PersistedStoreService, {
   IPersistedStoreService,
@@ -268,33 +268,33 @@ container
 container
   .bind<IAudienceSegmentFeedService>(TYPES.IAudienceSegmentFeedService)
   .to(AudienceSegmentFeedService);
-container
-  .bind<interfaces.Factory<IAudienceExternalFeedService>>(
-    TYPES.IAudienceExternalFeedServiceFactory,
-  )
-  .toFactory<IAudienceExternalFeedService>((context: interfaces.Context) => {
-    return (segmentId: string) => {
-      const audienceExternalFeedService = context.container.get<
-        IAudienceExternalFeedService
-      >(TYPES.IAudienceExternalFeedService);
-      audienceExternalFeedService.segmentId = segmentId;
-      return audienceExternalFeedService;
-    };
-  });
-container
-  .bind<interfaces.Factory<IAudienceTagFeedService>>(
-    TYPES.IAudienceTagFeedServiceFactory,
-  )
-  .toFactory<IAudienceTagFeedService>((context: interfaces.Context) => {
-    return (segmentId: string) => {
-      const audienceTagFeedService = context.container.get<
-        IAudienceTagFeedService
-      >(TYPES.IAudienceTagFeedService);
-      audienceTagFeedService.segmentId = segmentId;
-      return audienceTagFeedService;
-    };
-  });
 // TODO: make factory injection work
+// container
+//   .bind<interfaces.Factory<IAudienceExternalFeedService>>(
+//     TYPES.IAudienceExternalFeedServiceFactory,
+//   )
+//   .toFactory<IAudienceExternalFeedService>((context: interfaces.Context) => {
+//     return (segmentId: string) => {
+//       const audienceExternalFeedService = context.container.get<
+//         IAudienceExternalFeedService
+//       >(TYPES.IAudienceExternalFeedService);
+//       audienceExternalFeedService.segmentId = segmentId;
+//       return audienceExternalFeedService;
+//     };
+//   });
+// container
+//   .bind<interfaces.Factory<IAudienceTagFeedService>>(
+//     TYPES.IAudienceTagFeedServiceFactory,
+//   )
+//   .toFactory<IAudienceTagFeedService>((context: interfaces.Context) => {
+//     return (segmentId: string) => {
+//       const audienceTagFeedService = context.container.get<
+//         IAudienceTagFeedService
+//       >(TYPES.IAudienceTagFeedService);
+//       audienceTagFeedService.segmentId = segmentId;
+//       return audienceTagFeedService;
+//     };
+//   });
 // container
 //   .bind<interfaces.Factory<IAudienceSegmentFeedService>>(
 //     TYPES.IAudienceSegmentFeedServiceFactory,

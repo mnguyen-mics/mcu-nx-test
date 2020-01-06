@@ -98,6 +98,20 @@ export interface IPluginService {
     organisationId: string,
     styleSheetId: string,
   ) => Promise<DataListResponse<StylesheetVersionResource>>;
+  getLocalizedPluginLayoutFromVersionId: (
+    pluginVersionId: string,
+  ) => Promise<{ plugin: PluginResource; layout?: PluginLayout }>;
+  createPluginPreset: (
+    pluginId: string,
+    pluginVersionId: string,
+    resource: PostPluginPresetResource,
+  ) => Promise<DataResponse<PluginPresetResource>>;
+  deletePluginPreset: (
+    pluginId: string,
+    pluginVersionId: string,
+    pluginPresetId: string,
+    resource: Partial<PluginPresetResource>,
+  ) => Promise<DataResponse<PluginPresetResource>>;
 }
 
 @injectable()

@@ -11,11 +11,13 @@ import { Card } from '../../../../components/Card';
 import MetricInfo, { IconColor } from '../../../../components/Card/MetricInfo';
 import { FEEDS_SEARCH_SETTINGS } from '../List/constants';
 import { updateSearch } from '../../../../utils/LocationSearchHelper';
-import PluginService from '../../../../services/PluginService';
+import { IPluginService } from '../../../../services/PluginService';
 import { Spin } from 'antd';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
@@ -73,6 +75,9 @@ const tooltipStatusMessages: {
 });
 
 class AudienceFeedsOverviewCard extends React.Component<Props, State> {
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
+
   constructor(props: Props) {
     super(props);
 
@@ -90,11 +95,13 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
 
     this.setState({ isLoading: true });
 
-    PluginService.getLocalizedPluginLayoutFromVersionId(pluginVersionId)
+    this._pluginService
+      .getLocalizedPluginLayoutFromVersionId(pluginVersionId)
       .then(res => {
         const { plugin, layout } = res;
-        PluginService.getPluginVersion(plugin.id, pluginVersionId).then(
-          pluginVersion => {
+        this._pluginService
+          .getPluginVersion(plugin.id, pluginVersionId)
+          .then(pluginVersion => {
             if (layout) {
               this.setState({
                 feedTitle: layout.metadata.display_name,
@@ -111,9 +118,9 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
                 isLoading: false,
               });
             }
-          },
-        );
-      }).catch(err => {
+          });
+      })
+      .catch(err => {
         notifyError(err);
         this.setState({
           isLoading: false,
