@@ -2373,9 +2373,11 @@ const myDashboards: DashboardResource[] = [
         },
         "component": {
           "id": 1,
-          "component_type": "DATE_AGGREGATION_CHART",
+          "component_type": "COUNT_BAR_CHART",
           "title": "Age Repartition",
           "query_ids": ["30942","30941","30940","30939","30938"],
+          "labels_enabled": true,
+          "show_legend": false,
           "plot_labels": ["18-25", "25-35", "35-45", "45-55", "55+"]
         }
       },
@@ -2521,9 +2523,11 @@ const myDashboards: DashboardResource[] = [
         },
         "component": {
           "id": 1,
-          "component_type": "DATE_AGGREGATION_CHART",
+          "component_type": "COUNT_BAR_CHART",
           "title": "Age Repartition",
           "query_ids": ["30942","30941","30940","30939","30938"],
+          "labels_enabled": true,
+          "show_legend": false,
           "plot_labels": ["18-25", "25-35", "35-45", "45-55", "55+"]
         }
       },

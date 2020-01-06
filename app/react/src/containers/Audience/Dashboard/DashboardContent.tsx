@@ -135,8 +135,8 @@ export default class DashboardContent extends React.Component<
             queryIds={comp.query_ids}
             datamartId={datamartId}
             labelsEnabled={true}
-            type={comp.type}
             height={height}
+            plotLabels={comp.plot_labels}
           />
         );
       case 'COUNT_PIE_CHART':

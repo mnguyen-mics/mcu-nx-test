@@ -50,7 +50,7 @@ export interface ComponentCountBar extends BaseComponent {
   show_legend: boolean;
   query_ids: string[];
   labels_enabled?: boolean;
-  type: 'age_det' | 'reader_status' | 'age_prob';
+  plot_labels: string[];
 }
 
 export interface ComponentCount extends BaseComponent {
