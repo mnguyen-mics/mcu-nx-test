@@ -7,6 +7,7 @@ import {
   defineMessages,
 } from 'react-intl';
 import { Row } from 'antd';
+import { AnyJson } from '../models/datamart/UserActivityResource';
 
 const messages = defineMessages({
   expandAll: {
@@ -20,7 +21,7 @@ const messages = defineMessages({
 });
 
 export interface TemplateDefinitions {
-  [varName: string]: (value: any) => any;
+  [varName: string]: (value: AnyJson) => AnyJson | JSX.Element;
 }
 
 export interface RenderingTemplates {
@@ -33,7 +34,7 @@ export interface ExtendedTemplates extends RenderingTemplates {
 }
 
 interface CustomObjectRendererWrapperProps {
-  customObject: any;
+  customObject: AnyJson;
   customRenderingTemplates: RenderingTemplates;
 }
 

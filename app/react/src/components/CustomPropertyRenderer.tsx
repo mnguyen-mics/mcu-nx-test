@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Tooltip, Tag } from 'antd';
+import { AnyJson } from '../models/datamart/UserActivityResource';
 
 interface CustomPropertyRendererProps {
   name?: string;
-  value: any;
+  value: AnyJson | JSX.Element;
   nameNewLineValue?: boolean;
 }
 

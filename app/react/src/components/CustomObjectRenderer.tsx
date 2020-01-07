@@ -12,6 +12,7 @@ import {
   ExtendedTemplates,
   ExpandAllStatus,
 } from './CustomObjectRendererWrapper';
+import { AnyJson } from '../models/datamart/UserActivityResource';
 
 const messages = defineMessages({
   viewMore: {
@@ -25,7 +26,7 @@ const messages = defineMessages({
 });
 
 interface CustomObjectRendererProps {
-  objectToBeRendered: any;
+  objectToBeRendered: AnyJson;
   customRenderingTemplates: ExtendedTemplates;
   leftBorder: boolean;
   expandAllStatus: ExpandAllStatus;
@@ -51,15 +52,18 @@ class CustomObjectRenderer extends React.Component<Props, State> {
   // formatObject transforms an object to an array
   // of key and value tuples. It also eliminates properties
   // of the object with a null value.
-  formatObject = (object: any): Array<[string, any]> => {
-    return Object.entries(object).filter((keyAndValue: [string, any]) => {
-      const value = keyAndValue[1];
-      return value !== null;
-    });
+  formatObject = (object: AnyJson): Array<[string, AnyJson]> => {
+    if (object !== null && typeof object === 'object') {
+      return Object.entries(object).filter((keyAndValue: [string, AnyJson]) => {
+        const value = keyAndValue[1];
+        return value !== null;
+      });
+    }
+    return [];
   };
 
   // Used to apply a custom template to display the value
-  getApplyTemplateOpt = (key: string, value: any) => (
+  getApplyTemplateOpt = (key: string, value: AnyJson) => (
     layer: TemplateDefinitions,
   ): JSX.Element | undefined => {
     // If a template exists for the key, in the layer
@@ -87,7 +91,7 @@ class CustomObjectRenderer extends React.Component<Props, State> {
       outLayer: TemplateDefinitions,
     ) => {
       Object.entries(inLayer).forEach(
-        (entry: [string, (value: any) => any]) => {
+        (entry: [string, (value: AnyJson) => AnyJson | JSX.Element]) => {
           const completeVarName = entry[0];
           const researchedBeginning = key + '.';
           const associatedFunction = entry[1];
@@ -119,7 +123,7 @@ class CustomObjectRenderer extends React.Component<Props, State> {
   // Used to add a left border to the object
   createDisplayedObject = (
     leftBorder: boolean,
-    valueToBeDisplayed: any,
+    valueToBeDisplayed: AnyJson | JSX.Element,
   ): JSX.Element => {
     return leftBorder ? (
       <div className="left-border-object">{valueToBeDisplayed}</div>
@@ -131,7 +135,7 @@ class CustomObjectRenderer extends React.Component<Props, State> {
   // Same as createDisplayedObject, but with a CustomPropertyRenderer as value
   createDisplayedObjectWithProperty = (
     leftBorder: boolean,
-    value: any,
+    value: AnyJson,
   ): JSX.Element => {
     const valueToBeDisplayed = <CustomPropertyRenderer value={value} />;
     return this.createDisplayedObject(leftBorder, valueToBeDisplayed);
@@ -140,8 +144,8 @@ class CustomObjectRenderer extends React.Component<Props, State> {
   // Used to adapt the data to View more, View less, Expand all, Collapse all,
   // if needed
   reduceListAndGetViewMore = (
-    value: any[],
-  ): { listToBeRendered: any[]; viewMoreButton?: JSX.Element } => {
+    value: AnyJson[],
+  ): { listToBeRendered: AnyJson[]; viewMoreButton?: JSX.Element } => {
     const { expandAllStatus, authorizeExpandAll } = this.props;
     const { viewMoreStatus } = this.state;
     const nbMaxItems = 5;
@@ -239,7 +243,7 @@ class CustomObjectRenderer extends React.Component<Props, State> {
 
       const renderedElements: JSX.Element | JSX.Element[] =
         listToBeRendered.length !== 0
-          ? listToBeRendered.map((element: any, index: number) => {
+          ? listToBeRendered.map((element: AnyJson, index: number) => {
               return (
                 <CustomObjectRenderer
                   key={index}
@@ -297,7 +301,7 @@ class CustomObjectRenderer extends React.Component<Props, State> {
     // Map to render each property of the object
     //
     const keysAndValuesToBeDisplayed: JSX.Element[] = transformedProperties.map(
-      (keyAndValue: [string, any]): JSX.Element => {
+      (keyAndValue: [string, AnyJson]): JSX.Element => {
         const key = keyAndValue[0];
         const value = keyAndValue[1];
 
@@ -328,7 +332,10 @@ class CustomObjectRenderer extends React.Component<Props, State> {
           typeof value === 'string' ||
           typeof value === 'number' ||
           (Array.isArray(value) && value.length === 0) || // No need of a new line for []
-          Object.keys(value).length === 0; // No need of a new line for {}
+          (value !== null &&
+            typeof value === 'object' &&
+            Array.isArray(value) === false &&
+            Object.keys(value).length === 0); // No need of a new line for {}
 
         const renderedValue = (
           <CustomObjectRenderer
