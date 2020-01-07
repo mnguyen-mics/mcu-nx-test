@@ -604,13 +604,15 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             isLoading={isLoadingPlugin || isLoadingList || !this.state.pluginLayout}
             pluginVersionId={plugin.id}
             editionMode={false}
-            nameField={plugin.plugin_preset && {
+            nameField={{
               label: formatMessage(messages.feedModalNameFieldLabel),
-              title: formatMessage(messages.feedModalNameFieldTitle),
+              title: plugin.plugin_preset ? 
+                formatMessage(messages.feedPresetModalNameFieldTitle) : 
+                formatMessage(messages.feedModalNameFieldTitle),
               placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
               display: true, 
-              disabled: true, 
-              value: plugin.plugin_preset.name,
+              disabled: !!plugin.plugin_preset, 
+              value: plugin.plugin_preset ? plugin.plugin_preset.name : plugin.name,
               validator: [isRequired]
             }}
             descriptionField={plugin.plugin_preset && {

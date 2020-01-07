@@ -2,6 +2,7 @@ import { PluginLayout } from "./plugin/PluginLayout";
 
 export interface PluginResource {
   id: string;
+  name?: string;
   organisation_id: string;
   plugin_type?: PluginType;
   group_id: string;

@@ -24,6 +24,8 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { PluginCardModalTab } from '../../../../Plugin/Edit/PluginCard/PluginCardModalContent';
+import { withValidators } from '../../../../../components/Form';
+import { ValidatorProps } from '../../../../../components/Form/withValidators';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -58,6 +60,7 @@ type Props = FeedCardProps &
   InjectedNotificationProps &
   InjectedIntlProps &
   InjectedFeaturesProps &
+  ValidatorProps &
   RouteComponentProps<{}>;
 
 const messages = defineMessages({
@@ -101,6 +104,18 @@ const messages = defineMessages({
   userPointsSent: {
     id: 'audienceFeed.card.userPointsSent',
     defaultMessage: 'user points sent',
+  },
+  feedModalNameFieldLabel: {
+    id: 'audience.segment.feed.card.create.nameField.label',
+    defaultMessage: 'Name',
+  },
+  feedModalNameFieldTitle: {
+    id: 'audience.segment.feed.card.create.nameField.title',
+    defaultMessage: 'The name used to identify this feed.',
+  },
+  feedModalNameFieldPlaceholder: {
+    id: 'audience.segment.feed.card.create.nameField.placeholder',
+    defaultMessage: 'Name',
   },
 });
 
@@ -298,8 +313,9 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   saveOrCreatePluginInstance = (
     pluginInstance: AudienceTagFeedTyped | AudienceExternalFeedTyped,
     properties: PropertyResourceShape[],
+    name?: string,
   ) => {
-    const { notifyError, organisationId } = this.props;
+    const { notifyError, organisationId, onFeedUpdate } = this.props;
 
     // if edition update and redirect
     const editPromise = this.feedService.updatePluginInstance;
@@ -312,7 +328,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       ...newPluginInstance
     } = pluginInstance;
 
-    return editPromise(pluginInstance.id!, newPluginInstance)
+    return editPromise(pluginInstance.id!, name ? {...newPluginInstance, name: name} : newPluginInstance)
       .then(() => {
         return this.updatePropertiesValue(
           properties,
@@ -322,6 +338,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       })
       .then(() => {
         this.setState({ isLoadingCard: false, opened: false });
+        onFeedUpdate(name ? {...pluginInstance, name: name} : pluginInstance)
       })
       .catch((err: any) => {
         notifyError(err);
@@ -340,6 +357,12 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       hasFeature,
       history,
       intl,
+      fieldValidators: {
+        isRequired
+      },
+      intl: {
+        formatMessage,
+      },
     } = this.props;
 
     const { isLoading, cardHeaderTitle, cardHeaderThumbnail } = this.state;
@@ -488,6 +511,15 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               pluginVersionId={feed.version_id}
               save={this.saveOrCreatePluginInstance}
               selectedTab={this.state.modalTab}
+              nameField={{
+                label: formatMessage(messages.feedModalNameFieldLabel),
+                title: formatMessage(messages.feedModalNameFieldTitle),
+                placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
+                display: true, 
+                disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED', 
+                value: feed.name,
+                validator: [isRequired]
+              }}
             />
           )}
       </Card>
@@ -500,4 +532,5 @@ export default compose<Props, FeedCardProps>(
   injectIntl,
   injectFeatures,
   injectNotifications,
+  withValidators
 )(FeedCard);
