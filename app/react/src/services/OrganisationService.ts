@@ -39,6 +39,7 @@ export interface IOrganisationService {
     processingResource: ProcessingResource,
   ) => Promise<DataResponse<ProcessingResource>>;
   archiveProcessing: (
+    communityId: string,
     processingId: string,
   ) => Promise<DataResponse<ProcessingResource>>;
   deleteProcessing: (
@@ -128,10 +129,11 @@ export default class OrganisationService implements IOrganisationService {
     return ApiService.putRequest(endpoint, processingResource);
   }
   archiveProcessing(
+    communityId: string,
     processingId: string,
   ): Promise<DataResponse<ProcessingResource>> {
     const endpoint = `processings/${processingId}`;
-    const resource = { archived: true };
+    const resource = { archived: true, community_id: communityId };
     return ApiService.putRequest(endpoint, resource);
   }
   deleteProcessing(

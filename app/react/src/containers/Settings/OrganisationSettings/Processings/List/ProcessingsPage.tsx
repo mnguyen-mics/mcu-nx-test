@@ -20,6 +20,9 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { compose } from 'recompose';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
@@ -28,6 +31,7 @@ interface RouterProps {
 }
 
 type Props = RouteComponentProps<RouterProps> &
+  InjectedNotificationProps &
   InjectedWorkspaceProps &
   InjectedIntlProps;
 
@@ -59,8 +63,7 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
       total: 0,
       isVisibleCommunityModal: false,
       roleAuthorizesActions:
-        role === 'ORGANISATION_ADMIN' ||
-        role === 'COMMUNITY_ADMIN',
+        role !== 'EDITOR' && role !== 'READER',
       isVisibleDeleteModal: false,
       processingIdToBeDeleted: undefined,
     };
@@ -80,6 +83,7 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
   };
 
   fetchProcessings = (organisationId: string, filter: Filters) => {
+    const { notifyError } = this.props;
     const { communityId } = this.state;
 
     this.setState({ loading: true }, () => {
@@ -87,20 +91,37 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
         ? Promise.resolve(communityId)
         : this.fetchCommunityId(organisationId);
 
-      communityIdF.then(comId => {
-        const options = {
-          ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-        };
-        this._organisationService
-          .getProcessings(comId, options)
-          .then((results: DataListResponse<ProcessingResource>) => {
-            this.setState({
-              loading: false,
-              data: results.data,
-              total: results.total || results.count,
+      communityIdF
+        .then(comId => {
+          const options = {
+            ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+          };
+          this._organisationService
+            .getProcessings(comId, options)
+            .then((results: DataListResponse<ProcessingResource>) => {
+              this.setState({
+                loading: false,
+                data: results.data,
+                total: results.total || results.count,
+              });
+            })
+            .catch(err => {
+              this.setState({
+                loading: false,
+                data: [],
+                total: 0,
+              });
+              notifyError(err);
             });
+        })
+        .catch(err => {
+          this.setState({
+            loading: false,
+            data: [],
+            total: 0,
           });
-      });
+          notifyError(err);
+        });
     });
   };
 
@@ -136,14 +157,20 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
         params: { organisationId },
       },
       history,
+      notifyError,
     } = this.props;
 
     if (this.hasRightToPerformActionsOnProcessing()) {
-      this._organisationService.archiveProcessing(processing.id).then(_ => {
-        history.push(
-          `/v2/o/${organisationId}/settings/organisation/processings`,
-        );
-      });
+      this._organisationService
+        .archiveProcessing(processing.community_id, processing.id)
+        .then(() => {
+          history.push(
+            `/v2/o/${organisationId}/settings/organisation/processings`,
+          );
+        })
+        .catch(err => {
+          notifyError(err);
+        });
     }
   };
 
@@ -163,17 +190,22 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
         params: { organisationId },
       },
       history,
+      notifyError,
     } = this.props;
     const { processingIdToBeDeleted } = this.state;
 
     if (processingIdToBeDeleted)
       this._organisationService
         .deleteProcessing(organisationId, processingIdToBeDeleted)
-        .then(_ => {
+        .then(() => {
           this.closeDeleteModal();
           history.push(
             `/v2/o/${organisationId}/settings/organisation/processings`,
           );
+        })
+        .catch(err => {
+          this.closeDeleteModal();
+          notifyError(err);
         });
   };
 
@@ -343,4 +375,9 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
   }
 }
 
-export default compose(withRouter, injectWorkspace, injectIntl)(ProcessingPage);
+export default compose(
+  withRouter,
+  injectWorkspace,
+  injectIntl,
+  injectNotifications,
+)(ProcessingPage);

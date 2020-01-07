@@ -17,6 +17,9 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 interface EditProcessingRouteMatchParams {
   organisationId: string;
@@ -24,6 +27,7 @@ interface EditProcessingRouteMatchParams {
 }
 
 type Props = InjectedIntlProps &
+  InjectedNotificationProps &
   RouteComponentProps<EditProcessingRouteMatchParams>;
 
 interface State {
@@ -50,6 +54,7 @@ class ProcessingEditPage extends React.Component<Props, State> {
       match: {
         params: { processingId },
       },
+      notifyError
     } = this.props;
 
     if (processingId) {
@@ -61,16 +66,18 @@ class ProcessingEditPage extends React.Component<Props, State> {
             processingFormData: processingData,
             showLegalBasisSelector: false,
           });
+        })
+        .catch(err => {
+          this.setState({
+            loading: false,
+            processingFormData: {},
+            showLegalBasisSelector: false,
+          });
+          notifyError(err);
         });
       });
     }
   }
-
-  fetchProcessing = (processingId: string) => {
-    this.setState({ loading: true }, () => {
-      this._organisationService.getProcessing(processingId);
-    });
-  };
 
   onClose = () => {
     const {
@@ -100,6 +107,7 @@ class ProcessingEditPage extends React.Component<Props, State> {
       match: {
         params: { processingId, organisationId },
       },
+      notifyError
     } = this.props;
 
     if (processingId) {
@@ -109,6 +117,10 @@ class ProcessingEditPage extends React.Component<Props, State> {
           .then(_ => {
             this.setState({ loading: false });
             this.onClose();
+          })
+          .catch(err => {
+            this.setState({ loading: false });
+            notifyError(err);
           });
       });
     } else {
@@ -120,6 +132,10 @@ class ProcessingEditPage extends React.Component<Props, State> {
             .then(_ => {
               this.setState({ loading: false });
               this.onClose();
+            })
+            .catch(err => {
+              this.setState({ loading: false });
+              notifyError(err);
             });
         });
       });
@@ -196,4 +212,8 @@ class ProcessingEditPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(withRouter, injectIntl)(ProcessingEditPage);
+export default compose(
+  withRouter,
+  injectIntl,
+  injectNotifications,
+)(ProcessingEditPage);

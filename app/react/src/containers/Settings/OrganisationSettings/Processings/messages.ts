@@ -91,7 +91,7 @@ const messages = defineMessages({
   },
   generalSectionNameTooltip: {
     id: 'settings.organisation.processings.form.sections.general.name.tooltip',
-    defaultMessage: 'Choose a short name to describe your processing. It will appear in lists to select a processing (audience segment creation, display campaign creation etc.), or when you read the user consents of a user.',
+    defaultMessage: 'Choose a short name to describe your processing. It will appear in dropdown lists to select a processing (audience segment creation, display campaign creation etc.), or when you read the user consents of a user.',
   },
   generalSectionPurposeLabel: {
     id: 'settings.organisation.processings.form.sections.general.purpose.label',
