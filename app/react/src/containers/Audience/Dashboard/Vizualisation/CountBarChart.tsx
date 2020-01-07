@@ -1,5 +1,4 @@
 import * as React from 'react';
-import _ from 'lodash';
 import cuid from 'cuid';
 import {
   OTQLCountResult,
@@ -18,6 +17,7 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { getFormattedQuery } from '../domain';
 
 export interface CountBarChartProps {
   title?: string;
@@ -26,12 +26,13 @@ export interface CountBarChartProps {
   datamartId: string;
   height: number;
   labelsEnabled?: boolean;
-  type: string;
+  plotLabels: string[]
 }
 
 interface QueryResult {
   xKey: number | string;
   yKey: number | string;
+  color: string;
 }
 
 interface State {
@@ -91,30 +92,25 @@ class CountBarChart extends React.Component<Props, State> {
     }
   }
 
-  formatData = (otqlResults: OTQLCountResult[]): QueryResult[] => {
-    const { type } = this.props;
-    let xkeys: string[];
-    switch (type) {
-      case 'age_det':
-      case 'age_prob':
-        xkeys = ['0-15 yo', '15-25 yo', '25-35 yo', '35-55 yo', '55+ yo'];
-        break;
-      case 'reader_status':
-        xkeys = ['Is a contributor', 'Is a subscriber', 'Is a free reader'];
-        break;
+  formatDataQuery = (otqlResults: OTQLCountResult[], plotLabelName: string, i: number): QueryResult[] => {
 
-      default:
-        xkeys = [];
-        break;
-    }
+    const { colors } = this.props;
 
-    if (otqlResults.length) {
-      return otqlResults.map((data, i) => ({
-        yKey: data.count,
-        xKey: xkeys[i],
-      }));
-    }
-    return [];
+      if (
+        otqlResults.length &&
+        otqlResults[0].count
+      ) {
+
+        const colorArray = Object.keys(colors);
+        const color = colorArray[i%colorArray.length];
+
+        return [{
+          yKey: otqlResults[0].count,
+          xKey: plotLabelName,
+          color: color,
+        }];
+      }
+      return [];
   };
 
   fetchData = (
@@ -122,49 +118,64 @@ class CountBarChart extends React.Component<Props, State> {
     datamartId: string,
     segment?: AudienceSegmentShape,
   ): Promise<void> => {
-        const promises = chartQueryIds.map(chartQueryId => {
-          return this._queryService.getQuery(datamartId, chartQueryId);
+    const promises = chartQueryIds.map((chartQueryId, i) => {
+      return this.fetchQuery(chartQueryId, datamartId, i);
+    });
+    return Promise.all(promises)
+      .then(queryListResp => {
+        this.setState({
+          loading: false,
+          queryResult: queryListResp.reduce((acc, v, i) => {
+            return acc.concat(v)
+          }, [])
         });
-        return Promise.all(promises)
-          .then(queryListResp => {
-            return queryListResp.map(ql => ql.data);
-          })
-          .then(queryList => {
-            const queryListPromises = queryList.map(q => {
-              return this._queryService.runOTQLQuery(
-                datamartId,
-                q.query_text,
-                {
-                  use_cache: true,
-                },
-              );
-            });
-            return Promise.all(queryListPromises)
-              .then(otqlResultListResp => {
-                return otqlResultListResp.map(
-                  otqlResultResp => otqlResultResp.data,
-                );
-              })
-              .then(result => {
-                const rows = _.flattenDepth(result.map(r => r.rows), 1);
-                if (isCountResult(rows)) {
-                  this.setState({
-                    queryResult: this.formatData(rows),
-                    loading: false,
-                  });
-                  return Promise.resolve();
-                }
-                const mapErr = new Error('wrong query type');
-                return Promise.reject(mapErr);
-              });
-          })
+      })
+     
       .catch(() => {
         this.setState({
-          error: false,
+          error: true,
           loading: false,
         });
       });
   };
+
+  fetchQuery = (
+    chartQueryId: string,
+    datamartId: string,
+    plotLabelIndex: number,
+    segment?: AudienceSegmentShape,
+  ): Promise<QueryResult[]> => {
+    return this._queryService
+      .getQuery(datamartId, chartQueryId)
+      .then(queryResp => {
+        return queryResp.data;
+      })
+      .then(q => {
+        return getFormattedQuery(datamartId, this._queryService, q, segment);
+      })
+      .then(q => {
+        return this._queryService
+          .runOTQLQuery(datamartId, q.query_text, {
+            use_cache: true,
+          })
+          .then(r => r.data)
+          .then(r => {
+            if (isCountResult(r.rows)) {
+              return Promise.resolve(
+                this.formatDataQuery(
+                  r.rows,
+                  this.props.plotLabels[plotLabelIndex]
+                    ? this.props.plotLabels[plotLabelIndex]
+                    : plotLabelIndex.toString(),
+                    plotLabelIndex
+                ),
+              );
+            }
+            throw new Error('wrong query type');
+          });
+      });
+  };
+
 
   generateOptions = () => {
     const options = {
