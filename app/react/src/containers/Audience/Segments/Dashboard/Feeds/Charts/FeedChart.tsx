@@ -4,7 +4,6 @@ import { IFeedsStatsService } from '../../../../../../services/FeedsStatsService
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
-import StackedAreaPlot from '../../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { LoadingChart } from '../../../../../../components/EmptyCharts';
 import {
   defineMessages,
@@ -19,6 +18,7 @@ import injectThemeColors, {
 import McsMoment, { formatMcsDate } from '../../../../../../utils/McsMoment';
 import { McsDateRangeValue } from '../../../../../../components/McsDateRangePicker';
 import { Card } from 'antd';
+import StackedBarPlot from '../../../../../../components/Charts/CategoryBased/StackedBarPlot';
 
 interface FeedChartProps {
   organisationId: string;
@@ -170,6 +170,7 @@ class FeedChart extends React.Component<Props, State> {
         };
       }),
       colors: [colors['mcs-info'], colors['mcs-error']],
+      showLegend: true
     };
 
     return (
@@ -182,7 +183,7 @@ class FeedChart extends React.Component<Props, State> {
             className="mcs-card-container compact"
             title={intl.formatMessage(messagesMap.graph_title)}
           >
-            <StackedAreaPlot
+            <StackedBarPlot
               dataset={dataSource as any}
               options={optionsForChart}
             />
