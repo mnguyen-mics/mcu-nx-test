@@ -76,7 +76,7 @@ export class AudienceTagFeedService
   getFeedsAggregationMetrics = (
     body: FeedAggregationRequest,
   ): Promise<DataResponse<FeedAggregationResponse>> => {
-    const endpoint = `audience_segments.external_feeds/aggregates`
+    const endpoint = `audience_segments.tag_feeds/aggregates`
 
     return ApiService.postRequest(endpoint, body)
   }
