@@ -14,15 +14,21 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
+import { injectIntl, defineMessages, InjectedIntlProps } from 'react-intl';
+import { withValidators } from '../../../../components/Form';
+import { ValidatorProps } from '../../../../components/Form/withValidators';
 
 export interface EditPluginModalProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
   modalTab: PluginCardModalTab;
+  onChange: () => void;
   onClose: () => void;
 }
 
 type Props = EditPluginModalProps &
   RouteComponentProps<{ organisationId: string }> &
+  InjectedIntlProps &
+  ValidatorProps &
   InjectedNotificationProps;
 
 interface State {
@@ -31,6 +37,21 @@ interface State {
   initialValues?: { plugin: AudienceExternalFeedTyped | AudienceTagFeedTyped; properties: any };
   isLoading: boolean;
 }
+
+const messages = defineMessages({
+  feedModalNameFieldLabel: {
+    id: 'audience.segment.feed.list.create.nameField.label',
+    defaultMessage: 'Name',
+  },
+  feedModalNameFieldTitle: {
+    id: 'audience.segment.feed.list.create.nameField.title',
+    defaultMessage: 'The name used to identify this feed.',
+  },
+  feedModalNameFieldPlaceholder: {
+    id: 'audience.segment.feed.list.create.nameField.placeholder',
+    defaultMessage: 'Name',
+  },
+});
 
 class EditPluginModal extends React.Component<Props, State> {
   private feedService: AudienceSegmentFeedService;
@@ -131,8 +152,9 @@ class EditPluginModal extends React.Component<Props, State> {
   savePluginInstance = (
     pluginInstance: AudienceTagFeedTyped | AudienceExternalFeedTyped,
     properties: PropertyResourceShape[],
+    name?: string
   ) => {
-    const { notifyError, feed, onClose } = this.props;
+    const { notifyError, feed, onClose, onChange } = this.props;
 
     this.setState({ isLoading: true });
     const {
@@ -144,7 +166,7 @@ class EditPluginModal extends React.Component<Props, State> {
     } = pluginInstance;
 
     return this.feedService
-      .updatePluginInstance(pluginInstance.id, newPluginInstance)
+      .updatePluginInstance(pluginInstance.id, name ? {...newPluginInstance, name: name} : newPluginInstance)
       .then(() =>
         this.updatePropertiesValue(
           properties,
@@ -153,6 +175,7 @@ class EditPluginModal extends React.Component<Props, State> {
         ),
       )
       .then(() => {
+        onChange();
         onClose();
       })
       .catch((err: any) => {
@@ -183,7 +206,17 @@ class EditPluginModal extends React.Component<Props, State> {
   };
 
   render() {
-    const { feed, modalTab, onClose } = this.props;
+    const { 
+      feed, 
+      modalTab, 
+      onClose,
+      intl: {
+        formatMessage,
+      },
+      fieldValidators: {
+        isRequired,
+      }
+    } = this.props;
     const { isLoading, layout, pluginProperties, initialValues } = this.state;
 
     return (
@@ -208,6 +241,15 @@ class EditPluginModal extends React.Component<Props, State> {
         pluginVersionId={feed.version_id}
         editionMode={true}
         selectedTab={modalTab}
+        nameField={{
+          label: formatMessage(messages.feedModalNameFieldLabel),
+          title: formatMessage(messages.feedModalNameFieldTitle),
+          placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
+          display: true, 
+          disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED', 
+          value: feed.name,
+          validator: [isRequired]
+        }}
       />
     );
   }
@@ -216,4 +258,6 @@ class EditPluginModal extends React.Component<Props, State> {
 export default compose<Props, EditPluginModalProps>(
   withRouter,
   injectNotifications,
+  injectIntl,
+  withValidators
 )(EditPluginModal);

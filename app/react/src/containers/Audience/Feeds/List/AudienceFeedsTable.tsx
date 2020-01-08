@@ -594,6 +594,18 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     })
   };
 
+  onFeedChange = () => {
+    const {
+      location: { search },
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
+    this.fetchFeeds(organisationId, filter);
+  }
+
   render() {
     const {
       location: { search },
@@ -706,7 +718,12 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     return (
       <div className="mcs-table-container">
         {modalFeed && (
-          <EditPluginModal feed={modalFeed} modalTab={modalTab} onClose={this.onClose} />
+          <EditPluginModal 
+            feed={modalFeed} 
+            modalTab={modalTab} 
+            onClose={this.onClose}
+            onChange={this.onFeedChange}
+          />
         )}
         <TableViewFilters
           columns={this.buildDataColumns()}

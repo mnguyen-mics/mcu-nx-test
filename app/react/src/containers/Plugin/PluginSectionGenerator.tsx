@@ -42,6 +42,8 @@ type JoinedProps = PluginSectionGeneratorProps &
 
 interface PluginSectionGeneratorState {
     displayAdvancedFields: boolean;
+    nameFieldValue?: string,
+    descriptionFieldValue?: string,
 }
 
 class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionGeneratorState> {
@@ -51,6 +53,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
 
         this.state = {
             displayAdvancedFields: false,
+            nameFieldValue: props.nameField && props.nameField.value
         };
     }
 
@@ -103,6 +106,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
 
     generateNameAndDescriptionFields() {
         const { nameField, descriptionField } = this.props;
+        const { nameFieldValue, descriptionFieldValue } = this.state;
         const inputs: React.ReactNode[] = [];
 
         if(nameField && nameField.display) {
@@ -119,9 +123,10 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                                 disabled: nameField.disabled,
                                 value: nameField.value
                             } : {
-                                placeholder: nameField.placeholder, 
+                                placeholder: nameField.placeholder,
                                 disabled: nameField.disabled,
-                                defaultValue: nameField.value
+                                value: nameFieldValue,
+                                onChange: (e) => this.setState({ nameFieldValue: e.target.value })
                             }}
                             small={true}
                             helpToolTipProps={{title: nameField.title}}
@@ -148,7 +153,8 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                             } : {
                                 placeholder: descriptionField.placeholder, 
                                 disabled: descriptionField.disabled,
-                                defaultValue: descriptionField.value
+                                value: descriptionFieldValue,
+                                onChange: (e) => this.setState({ descriptionFieldValue: e.target.value })
                             }}
                             small={true}
                             helpToolTipProps={{ title: descriptionField.title }}

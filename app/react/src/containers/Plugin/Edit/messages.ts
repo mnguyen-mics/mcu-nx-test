@@ -59,6 +59,10 @@ export default defineMessages({
   },
   feedModalNameFieldTitle: {
     id: 'audience.segment.feed.create.nameField.title',
+    defaultMessage: 'The name used to identify this feed.',
+  },
+  feedPresetModalNameFieldTitle: {
+    id: 'audience.segment.feed.preset.create.nameField.title',
     defaultMessage: 'The name that will be used to identify this feed preset and the feeds created with it.',
   },
   feedModalNameFieldPlaceholder: {
