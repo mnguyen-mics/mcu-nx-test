@@ -26,7 +26,7 @@ import {
   parseSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import DatamartService from '../../../../services/DatamartService';
+import { IDatamartService } from '../../../../services/DatamartService';
 import { notifyError } from '../../../../state/Notifications/actions';
 import { Index } from '../../../../utils';
 import { ImportFilterParams } from './ImportsContent';
@@ -61,6 +61,9 @@ class ImportsContentContainer extends React.Component<
   @lazyInject(TYPES.IImportService)
   private _importService: IImportService;
 
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -89,7 +92,7 @@ class ImportsContentContainer extends React.Component<
       allow_administrator: true,
     };
     if (!noFilterDatamart) {
-      DatamartService.getDatamarts(organisationId, options)
+      this._datamartService.getDatamarts(organisationId, options)
         .then(res => {
           this.setState({
             datamarts: res.data,
@@ -146,7 +149,7 @@ class ImportsContentContainer extends React.Component<
         keywords: keywords,
       };
       if (!noFilterDatamart) {
-        DatamartService.getDatamarts(nextOrganisationId, options).then(res => {
+        this._datamartService.getDatamarts(nextOrganisationId, options).then(res => {
           this.setState({
             datamarts: res.data,
           });

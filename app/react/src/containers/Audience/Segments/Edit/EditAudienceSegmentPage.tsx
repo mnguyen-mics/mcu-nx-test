@@ -36,7 +36,7 @@ import { EditContentLayout } from '../../../../components/Layout';
 import SegmentTypeSelector from '../../Common/SegmentTypeSelector';
 import { getWorkspace } from '../../../../state/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import DatamartService from '../../../../services/DatamartService';
+import { IDatamartService } from '../../../../services/DatamartService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
@@ -84,6 +84,10 @@ type Props = InjectedIntlProps &
 class EditAudienceSegmentPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentFormService)
   private _audienceSegmentFormService: IAudienceSegmentFormService;
+
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
 
@@ -144,7 +148,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       this._audienceSegmentFormService
         .loadSegmentInitialValue(segmentId)
         .then(initialData => {
-          DatamartService.getDatamart(initialData.audienceSegment.datamart_id!)
+          this._datamartService.getDatamart(initialData.audienceSegment.datamart_id!)
             .then(datamartData => datamartData.data)
             .then(datamartResource => {
               const newState: Partial<State> = {

@@ -31,7 +31,7 @@ import injectThemeColors, {
 } from '../../../Helpers/injectThemeColors';
 import LocalStorage from '../../../../services/LocalStorage';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
-import DatamartService from '../../../../services/DatamartService';
+import { IDatamartService } from '../../../../services/DatamartService';
 import { McsIcon } from '../../../../components';
 import { Filters } from '../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
@@ -137,6 +137,7 @@ const messages = defineMessages({
 });
 
 class AudienceSegmentExportsCard extends React.Component<Props, State> {
+
   fetchLoop = window.setInterval(() => {
     const { executions, filter } = this.state;
     if (
@@ -150,8 +151,12 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     }
   }, 5000);
 
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -179,7 +184,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   }
 
   fetchCompartments = (datamartId: string) => {
-    DatamartService.getUserAccountCompartments(datamartId)
+    this._datamartService.getUserAccountCompartments(datamartId, {})
       .then(res => {
         this.setState({
           compartments: res.data,

@@ -10,6 +10,7 @@ const TYPES = {
   IAudienceTagFeedService: Symbol.for('audienceTagFeedService'),
   IAudienceExternalFeedService: Symbol.for('audienceExternalFeedService'),
   IImportService: Symbol.for('importService'),
+  IDatamartService: Symbol.for('datamartService'),
   IDisplayNetworkService: Symbol.for('displayNetworkService'),
   IDealsListService: Symbol.for('dealsListService'),
   IDealListFormService: Symbol.for('dealListFormService'),

@@ -5,11 +5,13 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import DatamartService from '../../../../../services/DatamartService';
+import { IDatamartService } from '../../../../../services/DatamartService';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import { Layout, Row } from 'antd';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const { Content } = Layout;
 
@@ -30,6 +32,9 @@ type Props = CompartmentsContainerProps &
   InjectedIntlProps & InjectedNotificationProps;
 
 class CompartmentsContainer extends React.Component<Props, CompartmentsContainerState> {
+  
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
 
   constructor(props: Props) {
     super(props);
@@ -73,7 +78,7 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      DatamartService.getUserAccountCompartments(datamartId, options).then(results => {
+      this._datamartService.getUserAccountCompartments(datamartId, options).then(results => {
         this.setState({
           loading: false,
           data: results.data,

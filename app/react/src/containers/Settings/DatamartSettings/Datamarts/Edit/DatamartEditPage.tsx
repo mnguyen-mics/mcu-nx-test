@@ -11,7 +11,7 @@ import {
   INITIAL_DATAMART_FORM_DATA,
   DatamartFormData,
 } from './domain';
-import DatamartService from '../../../../../services/DatamartService';
+import { IDatamartService } from '../../../../../services/DatamartService';
 import messages from './messages';
 import DatamartEditForm from './DatamartEditForm';
 import Loading from '../../../../../components/Loading';
@@ -23,6 +23,8 @@ import { createFieldArrayModel } from '../../../../../utils/FormHelper';
 import { EventRules } from '../../../../../models/settings/settings';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 interface State {
   datamartFormData: DatamartFormData;
@@ -35,6 +37,9 @@ type Props = InjectedIntlProps &
   InjectedDatamartProps;
 
 class DatamartEditPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -70,10 +75,10 @@ class DatamartEditPage extends React.Component<Props, State> {
     const datamartId = this.getDatamartId();
 
     if (datamartId) {
-      const getSites = DatamartService.getDatamart(
+      const getSites = this._datamartService.getDatamart(
         datamartId,
       );
-      const getEventRules = DatamartService.getEventRules(
+      const getEventRules = this._datamartService.getEventRules(
         datamartId,
         organisationId,
       );
@@ -124,7 +129,7 @@ class DatamartEditPage extends React.Component<Props, State> {
       const savedIds: string[] = [];
       const saveCreatePromises = datamartFormData.eventRulesFields.map(erf => {
         if (!erf.model.id) {
-          return DatamartService.createEventRules(dmrt.id, { organisation_id: organisationId, properties: {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id} })
+          return this._datamartService.createEventRules(dmrt.id, { organisation_id: organisationId, properties: {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id} })
         } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);
           const eventRuleBody = {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id};
@@ -135,11 +140,11 @@ class DatamartEditPage extends React.Component<Props, State> {
           ) {
             eventRuleBody.compartment_id = null;
           }
-          return DatamartService.updateEventRules(dmrt.id, organisationId, erf.model.id, eventRuleBody)
+          return this._datamartService.updateEventRules(dmrt.id, organisationId, erf.model.id, eventRuleBody)
         }
         return Promise.resolve();
       });
-      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? DatamartService.deleteEventRules(dmrt.id, organisationId, sid) : Promise.resolve())
+      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? this._datamartService.deleteEventRules(dmrt.id, organisationId, sid) : Promise.resolve())
       return [...saveCreatePromises, ...deletePromises]
     }
 
@@ -151,13 +156,13 @@ class DatamartEditPage extends React.Component<Props, State> {
           ...datamartFormData.datamart,
         };
 
-        return DatamartService.updateDatamart(
+        return this._datamartService.updateDatamart(
             datamartFormData.datamart.id,
           dtmrt,
         ).then((datamart) => Promise.all(generateEventRulesTasks(datamart.data)));
       }
 
-      return DatamartService.createDatamart(
+      return this._datamartService.createDatamart(
         this.props.match.params.organisationId,
         datamartFormData.datamart,
       ).then((datamart) => Promise.all(generateEventRulesTasks(datamart.data)));

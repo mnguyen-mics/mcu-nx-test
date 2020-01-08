@@ -50,7 +50,7 @@ import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
 import ReferenceTableService from '../../../../../../services/ReferenceTableService';
-import DatamartService from '../../../../../../services/DatamartService';
+import { IDatamartService } from '../../../../../../services/DatamartService';
 import { IComparmentService } from '../../../../../../services/CompartmentService';
 import { getCoreReferenceTypeAndModel, FieldProposalLookup } from '../../../domain';
 import { IChannelService } from '../../../../../../services/ChannelService';
@@ -120,6 +120,9 @@ class FieldNodeForm extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IChannelService)
   private _channelService: IChannelService;
+
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
 
   private _computedTreeNodePath: number[];
 
@@ -616,7 +619,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         switch (modelType) {
           case 'COMPARTMENTS':
             fetchListMethod = (keywords: string) => {
-              return DatamartService.getUserAccountCompartments(datamartId).then(res => res.data.map(r => ({ key: r.compartment_id, label: r.name ? r.name : r.token })))
+              return this._datamartService.getUserAccountCompartments(datamartId, {}).then(res => res.data.map(r => ({ key: r.compartment_id, label: r.name ? r.name : r.token })))
             }
             fetchSingleMethod = (id: string) => this._compartmentService.getCompartment(id).then(res => ({ key: res.data.id, label: res.data.name }))
             break;

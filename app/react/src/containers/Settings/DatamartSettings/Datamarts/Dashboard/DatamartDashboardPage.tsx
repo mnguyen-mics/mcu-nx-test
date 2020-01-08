@@ -6,7 +6,7 @@ import injectNotifications from '../../../../Notifications/injectNotifications';
 import DatamartActionBar from './DatamartActionBar';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import DatamartHeader from './DatamartHeader';
-import DatamartService from '../../../../../services/DatamartService';
+import { IDatamartService } from '../../../../../services/DatamartService';
 import { Row, Col } from 'antd';
 import { notifyError } from '../../../../../state/Notifications/actions';
 import McsTabs from '../../../../../components/McsTabs';
@@ -15,6 +15,8 @@ import DatamartObjectViewTab from './DatamartObjectViewTab';
 import DatamartActivity from './DatamartActivity';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import DatamartTableViewTab from './DatamartTableViewTab';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 type Props = RouteComponentProps<{
   organisationId: string;
@@ -28,6 +30,9 @@ interface State {
 }
 
 class DatamartDashboardPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -46,7 +51,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
   }
 
   fetchDatamart = (datamartId: string) => {
-    DatamartService.getDatamart(datamartId)
+    this._datamartService.getDatamart(datamartId)
       .then(res =>
         this.setState({
           datamart: res.data,

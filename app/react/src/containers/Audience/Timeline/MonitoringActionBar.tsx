@@ -11,8 +11,10 @@ import {
   UserAccountCompartmentDatamartSelectionResource,
   DatamartResource,
 } from '../../../models/datamart/DatamartResource';
-import DatamartService from '../../../services/DatamartService';
 import { Loading } from '../../../components';
+import { IDatamartService } from '../../../services/DatamartService';
+import { TYPES } from '../../../constants/types';
+import { lazyInject } from '../../../config/inversify.config';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -37,6 +39,10 @@ interface State {
 }
 
 class MonitoringActionbar extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -72,7 +78,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
       isLoading: true
     });
 
-    DatamartService.getUserAccountCompartments(datamartId)
+    this._datamartService.getUserAccountCompartments(datamartId, {})
       .then(res => {
         this.setState({
           compartments: res.data,

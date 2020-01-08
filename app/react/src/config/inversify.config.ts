@@ -126,6 +126,7 @@ import OrganisationService, {
   IOrganisationService,
 } from '../services/OrganisationService';
 import { IAuthService, AuthService } from '../services/AuthService';
+import { IDatamartService, DatamartService } from '../services/DatamartService';
 
 const container = new Container();
 
@@ -160,6 +161,7 @@ container
 container.bind<IImportService>(TYPES.IImportService).to(ImportService);
 container.bind<IExportService>(TYPES.IExportService).to(ExportService);
 container.bind<IScenarioService>(TYPES.IScenarioService).to(ScenarioService);
+container.bind<IDatamartService>(TYPES.IDatamartService).to(DatamartService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
   .to(DisplayNetworkService);

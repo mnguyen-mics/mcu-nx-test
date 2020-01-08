@@ -22,9 +22,11 @@ import UserIdentifierinsertion from './Sections/UserIdentifierInsertion';
 import UriMatch from './Sections/UriMatch';
 import PropertyToOriginCopy from './Sections/PropertyToOriginCopy';
 import * as SessionSelectors from '../../../../../state/Session/selectors';
-import DatamartService from '../../../../../services/DatamartService';
+import { IDatamartService } from '../../../../../services/DatamartService';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const messages = defineMessages({
   saveEventRules: {
@@ -70,13 +72,16 @@ interface State {
 
 class EventRulesForm extends React.Component<Props, State> {
 
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
     this.state = { compartments: [] };
   }
 
   componentDidMount() {
-    DatamartService.getUserAccountCompartments(this.props.datamartId).then(res => {
+    this._datamartService.getUserAccountCompartments(this.props.datamartId, {}).then(res => {
       this.setState({ compartments: res.data });
     })
   }
