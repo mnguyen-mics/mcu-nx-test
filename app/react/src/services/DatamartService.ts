@@ -11,7 +11,7 @@ import { injectable } from 'inversify';
 export interface IDatamartService {
   getDatamarts: (
     organisationId: string,
-    options: object,
+    options?: object,
   ) => Promise<DataListResponse<DatamartResource>>;
 
   getDatamart: (datamartId: string) => Promise<DataResponse<DatamartResource>>;
@@ -38,31 +38,54 @@ export interface IDatamartService {
 
   updateEventRules:(
     datamartId: string,
-    organisationId: string,
     eventRuleId: string,
     body: Partial<EventRules>,
   ) => Promise<DataResponse<EventRules>>;
 
   deleteEventRules: (
     datamartId: string,
-    organisationId: string,
     eventRuleId: string,
   ) => Promise<DataResponse<EventRules>>;
 
-  getUserAccountCompartments: (
+  getUserAccountCompartmentDatamartSelectionResources: (
     datamartId: string,
-    options: object,
+    options?: object,
   ) => Promise<DataListResponse<UserAccountCompartmentDatamartSelectionResource>>;
+
+  getUserAccountCompartmentDatamartSelectionResource: (
+    datamartId: string,
+    compartmentId: string,
+  ) => Promise<DataResponse<UserAccountCompartmentDatamartSelectionResource>>;
+
+  createUserAccountCompartmentDatamartSelectionResource: (
+    datamartId: string,
+    compartment: Partial<UserAccountCompartmentDatamartSelectionResource>,
+  ) => Promise<DataResponse<UserAccountCompartmentDatamartSelectionResource>>;
+
+  updateUserAccountCompartmentDatamartSelectionResource: (
+    datamartId: string,
+    compartmentId: string,
+    compartment: Partial<UserAccountCompartmentDatamartSelectionResource>,
+  ) => Promise<DataResponse<UserAccountCompartmentDatamartSelectionResource>>;
 
   getUserAccountCompartment: (
     compartmentId: string,
+  ) => Promise<DataResponse<UserAccountCompartmentResource>>;
+
+  createUserAccountCompartment: (
+    compartment: Partial<UserAccountCompartmentResource>,
+  ) => Promise<DataResponse<UserAccountCompartmentResource>>;
+
+  updateUserAccountCompartment: (
+    compartmentId: string,
+    compartment: Partial<UserAccountCompartmentResource>,
   ) => Promise<DataResponse<UserAccountCompartmentResource>>;
 
   getSources: (datamartId: string) => Promise<DataListResponse<DatamartResource>>;
 
   getCleaningRules: (
     datamartId: string,
-    options: object,
+    options?: object,
   ) => Promise<DataListResponse<UserEventCleaningRuleResource>>;
 }
 
@@ -121,7 +144,6 @@ export class DatamartService implements IDatamartService {
 
   updateEventRules(
     datamartId: string,
-    organisationId: string,
     eventRuleId: string,
     body: Partial<EventRules>,
   ): Promise<DataResponse<EventRules>> {
@@ -131,14 +153,13 @@ export class DatamartService implements IDatamartService {
 
   deleteEventRules(
     datamartId: string,
-    organisationId: string,
     eventRuleId: string,
   ): Promise<DataResponse<EventRules>> {
     const endpoint = `datamarts/${datamartId}/event_rules/${eventRuleId}`;
     return ApiService.deleteRequest(endpoint);
   }
 
-  getUserAccountCompartments(
+  getUserAccountCompartmentDatamartSelectionResources(
     datamartId: string,
     options: object = {},
   ): Promise<
@@ -148,11 +169,50 @@ export class DatamartService implements IDatamartService {
     return ApiService.getRequest(endpoint, options);
   }
 
+  getUserAccountCompartmentDatamartSelectionResource(
+    datamartId: string,
+    compartmentId: string,
+  ): Promise<DataResponse<UserAccountCompartmentDatamartSelectionResource>> {
+    const endpoint = `datamarts/${datamartId}/compartments/${compartmentId}`;
+    return ApiService.getRequest(endpoint);
+  }
+
+  createUserAccountCompartmentDatamartSelectionResource(
+    datamartId: string,
+    compartment: Partial<UserAccountCompartmentDatamartSelectionResource>,
+  ): Promise<DataResponse<UserAccountCompartmentDatamartSelectionResource>> {
+    const endpoint = `datamarts/${datamartId}/compartments`;
+    return ApiService.postRequest(endpoint, compartment);
+  }
+
+  updateUserAccountCompartmentDatamartSelectionResource(
+    datamartId: string,
+    compartmentId: string,
+    compartment: Partial<UserAccountCompartmentDatamartSelectionResource>,
+  ): Promise<DataResponse<UserAccountCompartmentDatamartSelectionResource>> {
+    const endpoint = `datamarts/${datamartId}/compartments/${compartmentId}`;
+    return ApiService.putRequest(endpoint, compartment);
+  }
+
   getUserAccountCompartment(
     compartmentId: string,
   ): Promise<DataResponse<UserAccountCompartmentResource>> {
     const endpoint = `user_account_compartments/${compartmentId}`;
     return ApiService.getRequest(endpoint);
+  }
+  createUserAccountCompartment(
+    compartment: Partial<UserAccountCompartmentResource>,
+  ): Promise<DataResponse<UserAccountCompartmentResource>> {
+    const endpoint = 'user_account_compartments';
+    return ApiService.postRequest(endpoint, compartment);
+  }
+
+  updateUserAccountCompartment(
+    compartmentId: string,
+    compartment: Partial<UserAccountCompartmentResource>,
+  ): Promise<DataResponse<UserAccountCompartmentResource>> {
+    const endpoint = `user_account_compartments/${compartmentId}`;
+    return ApiService.putRequest(endpoint, compartment);
   }
 
   getSources(datamartId: string): Promise<DataListResponse<DatamartResource>> {

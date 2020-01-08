@@ -78,7 +78,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
       isLoading: true
     });
 
-    this._datamartService.getUserAccountCompartments(datamartId, {})
+    this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId)
       .then(res => {
         this.setState({
           compartments: res.data,

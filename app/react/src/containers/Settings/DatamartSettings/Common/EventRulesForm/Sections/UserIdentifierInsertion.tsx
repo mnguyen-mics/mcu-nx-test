@@ -45,7 +45,7 @@ class UserIdentifierInsertion extends React.Component<Props, State> {
 
   componentDidMount() {
     const { datamartId } = this.props;
-    this._datamartService.getUserAccountCompartments(datamartId, {}).then(res => {
+    this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId).then(res => {
       this.setState({ compartments: res.data })
     })
   }

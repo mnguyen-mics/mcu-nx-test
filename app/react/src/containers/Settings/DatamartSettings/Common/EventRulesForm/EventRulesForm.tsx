@@ -81,7 +81,7 @@ class EventRulesForm extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this._datamartService.getUserAccountCompartments(this.props.datamartId, {}).then(res => {
+    this._datamartService.getUserAccountCompartmentDatamartSelectionResources(this.props.datamartId).then(res => {
       this.setState({ compartments: res.data });
     })
   }

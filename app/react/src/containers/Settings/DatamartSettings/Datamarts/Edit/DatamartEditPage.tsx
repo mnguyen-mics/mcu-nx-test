@@ -140,11 +140,11 @@ class DatamartEditPage extends React.Component<Props, State> {
           ) {
             eventRuleBody.compartment_id = null;
           }
-          return this._datamartService.updateEventRules(dmrt.id, organisationId, erf.model.id, eventRuleBody)
+          return this._datamartService.updateEventRules(dmrt.id, erf.model.id, eventRuleBody)
         }
         return Promise.resolve();
       });
-      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? this._datamartService.deleteEventRules(dmrt.id, organisationId, sid) : Promise.resolve())
+      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? this._datamartService.deleteEventRules(dmrt.id, sid) : Promise.resolve())
       return [...saveCreatePromises, ...deletePromises]
     }
 

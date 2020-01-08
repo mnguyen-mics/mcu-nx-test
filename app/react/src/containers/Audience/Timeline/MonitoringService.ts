@@ -141,8 +141,7 @@ export class MonitoringService implements IMonitoringService {
   }
 
   fetchCompartments(datamart: DatamartResource) {
-    // TO DO: inject DatamartService
-    return this._datamartService.getUserAccountCompartments(datamart.id, {}).then(
+    return this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamart.id).then(
       resp => {
         return resp.data;
       },
