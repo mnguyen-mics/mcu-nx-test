@@ -62,8 +62,7 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
       data: [],
       total: 0,
       isVisibleCommunityModal: false,
-      roleAuthorizesActions:
-        role !== 'EDITOR' && role !== 'READER',
+      roleAuthorizesActions: role !== 'EDITOR' && role !== 'READER',
       isVisibleDeleteModal: false,
       processingIdToBeDeleted: undefined,
     };
@@ -96,7 +95,7 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
           const options = {
             ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
           };
-          this._organisationService
+          return this._organisationService
             .getProcessings(comId, options)
             .then((results: DataListResponse<ProcessingResource>) => {
               this.setState({
@@ -104,14 +103,7 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
                 data: results.data,
                 total: results.total || results.count,
               });
-            })
-            .catch(err => {
-              this.setState({
-                loading: false,
-                data: [],
-                total: 0,
-              });
-              notifyError(err);
+              return results;
             });
         })
         .catch(err => {
