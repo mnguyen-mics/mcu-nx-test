@@ -23,11 +23,6 @@ type StatusAggregatesByPluginVersion = {
  
 };
 
-type Aggregation = {
-  rowAggregation: FeedAggregationResponseRow;
-  feedType: string
-}
-
 interface State {
   feedsAggregationMetrics: {
     aggregates: StatusAggregatesByPluginVersion;
@@ -114,15 +109,24 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
 
     Promise.all([externalFeedsAggregates, tagFeedsAggregates])
       .then(responses => {
+
+        type Aggregation = {
+          rowAggregation: FeedAggregationResponseRow;
+          feedType: string
+        }
+        
         const tmpAggregates: StatusAggregatesByPluginVersion = {};
+
         const externalTypedFeed: Aggregation[] = responses[0].data.rows.map(ra => {
           const aggregation = { rowAggregation: ra , feedType: 'EXTERNAL_FEED' };
           return aggregation as Aggregation;
         });
+
         const tagTypedFeed: Aggregation[] = responses[1].data.rows.map(ra => {
           const aggregation = { rowAggregation: ra , feedType: 'TAG_FEED' };
           return aggregation as Aggregation;
         });
+        
         externalTypedFeed.concat(tagTypedFeed).map(agg => {
           const pluginVersionId = agg.rowAggregation.primary_dimension_value.value;
           
