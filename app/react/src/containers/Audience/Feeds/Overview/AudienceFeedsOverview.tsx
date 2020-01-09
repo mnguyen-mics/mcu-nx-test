@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
-import AudienceSegmentFeedService from '../../../../services/AudienceSegmentFeedService';
+import AudienceSegmentFeedService, { AudienceFeedType } from '../../../../services/AudienceSegmentFeedService';
 import { Status, StatusEnum } from '../../../../models/Plugins';
 import AudienceFeedsOverviewCard from './AudienceFeedsOverviewCard';
 import { FeedAggregationRequest, FeedAggregationResponseRow } from '../../../../models/audiencesegment';
@@ -112,22 +112,22 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
 
         type Aggregation = {
           rowAggregation: FeedAggregationResponseRow;
-          feedType: string
+          feedType: AudienceFeedType
         }
         
         const tmpAggregates: StatusAggregatesByPluginVersion = {};
 
-        const externalTypedFeed: Aggregation[] = responses[0].data.rows.map(ra => {
-          const aggregation = { rowAggregation: ra , feedType: 'EXTERNAL_FEED' };
-          return aggregation as Aggregation;
+        const externalFeedTypedAggregation: Aggregation[] = responses[0].data.rows.map(ra => {
+          const aggregation : Aggregation = { rowAggregation: ra , feedType: 'EXTERNAL_FEED' };
+          return aggregation;
         });
 
-        const tagTypedFeed: Aggregation[] = responses[1].data.rows.map(ra => {
-          const aggregation = { rowAggregation: ra , feedType: 'TAG_FEED' };
-          return aggregation as Aggregation;
+        const tagFeedTypedFeed: Aggregation[] = responses[1].data.rows.map(ra => {
+          const aggregation : Aggregation = { rowAggregation: ra , feedType: 'TAG_FEED' };
+          return aggregation;
         });
-        
-        externalTypedFeed.concat(tagTypedFeed).map(agg => {
+
+        externalFeedTypedAggregation.concat(tagFeedTypedFeed).map(agg => {
           const pluginVersionId = agg.rowAggregation.primary_dimension_value.value;
           
           const tmpStatusAggregate: AggregatesByStatus = {};
