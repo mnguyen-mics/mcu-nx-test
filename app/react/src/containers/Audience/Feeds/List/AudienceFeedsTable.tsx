@@ -289,6 +289,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     return feedService
       .getFeeds({
         organisation_id: organisationId,
+        order_by: 'AUDIENCE_SEGMENT_NAME',
         ...this.buildApiSearchFilters(filter),
       })
       .then(feedResults => {

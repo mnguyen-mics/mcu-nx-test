@@ -17,6 +17,8 @@ import { PaginatedApiParam } from '../utils/ApiHelper';
 import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
 
 export type AudienceFeedType = 'EXTERNAL_FEED' | 'TAG_FEED';
+export type FeedOrderBy = 'AUDIENCE_SEGMENT_NAME';
+
 type AudienceFeed = AudienceTagFeed | AudienceExternalFeed;
 
 export interface GetFeeds extends PaginatedApiParam {
@@ -27,7 +29,8 @@ export interface GetFeeds extends PaginatedApiParam {
   group_id?: string,
   artifact_id?: string,
   version_id?: string,
-  administrated?: boolean
+  administrated?: boolean,
+  order_by?: FeedOrderBy,
 }
 
 export default class AudienceSegmentFeedService extends PluginInstanceService<
