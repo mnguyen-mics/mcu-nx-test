@@ -287,7 +287,7 @@ const messages: {
   },
   emptyUserChoices: {
     id: 'audience.monitoring.timeline.card.userChoices.empty',
-    defaultMessage: 'This user has no user choices.',
+    defaultMessage: 'This user has no User Choices',
   },
 });
 
