@@ -27,6 +27,7 @@ export type AgggregatesByStatus = { [status in IconColor]?: string };
 type AudienceFeedsOverviewCardProps = {
   aggregatesByStatus: AgggregatesByStatus;
   pluginVersionId: string;
+  feedType:string;
 };
 
 interface State {
@@ -120,7 +121,7 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
       });
   }
 
-  goToFeedsTable = (artifactId: string, status: string) => () => {
+  goToFeedsTable = (artifactId: string, status: string, feedType: string) => () => {
     const {
       match: {
         params: { organisationId },
@@ -132,6 +133,7 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
     const params = {
       artifactId: [artifactId],
       status: [status],
+      feedType: [feedType]
     };
 
     const nextLocation = {
@@ -156,7 +158,7 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
   };
 
   render() {
-    const { aggregatesByStatus, pluginVersionId } = this.props;
+    const { aggregatesByStatus, pluginVersionId, feedType } = this.props;
 
     const {
       artifactId,
@@ -201,7 +203,7 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
                     message={metricStatusMessages[typedStatus]}
                     metricValue={aggregatesByStatus[typedStatus] || '0'}
                     tooltipMessage={tooltipStatusMessages[typedStatus]}
-                    onClick={this.goToFeedsTable(artifactId || '', status)}
+                    onClick={this.goToFeedsTable(artifactId || '', status, feedType)}
                   />
                 );
               })}
