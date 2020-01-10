@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl';
 import displayCampaignMessages from '../containers/Campaigns/Display/messages.ts';
 import emailCampaignMessages from '../containers/Campaigns/Email/messages.ts';
 import segmentMessages from '../containers/Audience/Segments/Dashboard/messages.ts';
+import feedMessages from '../containers/Audience/Feeds/messages.ts';
 import dateMessages from '../common/messages/dateMessages.ts';
 import exportMessages from '../common/messages/exportMessages.ts';
 import log from '../utils/Logger.ts';
@@ -10,6 +11,7 @@ import { messages } from '../containers/Settings/DatamartSettings/ServiceUsageRe
 import McsMoment from '../utils/McsMoment.ts';
 import emailMessages from '../containers/Campaigns/Email/List/messages.ts';
 import goalMessages from '../containers/Campaigns/Goal/Dashboard/messages.ts';
+import { formatUnixTimestamp } from '../utils/DateHelper.ts';
 
 const exportServiceMessages = defineMessages({
   from: {
@@ -686,6 +688,85 @@ const exportAudienceSegmentDashboard = (organisationId, datamartId, segmentData,
   }
 };
 
+/**
+* Export Audience Feeds
+*/
+
+const exportAudienceFeeds = (datasource, filter, workspace, formatMessage) => {
+
+  const titleLine = formatMessage(feedMessages.audienceFeedsExportTitle);
+  const dataSheet = [];
+
+  dataSheet.push([titleLine]);
+  dataSheet.push([]);
+
+  dataSheet.push([formatMessage(feedMessages.date), formatUnixTimestamp(Date.now())]);
+  dataSheet.push([formatMessage(feedMessages.communityId), workspace.community_id]);
+  dataSheet.push([formatMessage(feedMessages.communityName), workspace.organisation_name]);
+  dataSheet.push([formatMessage(feedMessages.organisationId), workspace.organisation_id]);
+  dataSheet.push([formatMessage(feedMessages.organisationName), workspace.organisation_name]);
+  dataSheet.push([]);
+
+  dataSheet.push([formatMessage(feedMessages.filterName), formatMessage(feedMessages.filterValues)]);
+  dataSheet.push([formatMessage(feedMessages.connectorType), formatMessage(feedMessages[filter.feedType])]);
+
+  dataSheet.push([formatMessage(feedMessages.connectorName), filter.artifactIds.length !== 0 ? filter.artifactIds.join(', ') : formatMessage(feedMessages.filterAll)]);
+
+  const statusMessages = filter.status.map(status => formatMessage(feedMessages[status])).join(', ');
+  dataSheet.push([formatMessage(feedMessages.status), statusMessages.length !== 0 ? statusMessages : formatMessage(feedMessages.filterAll)]);
+
+  dataSheet.push([]);
+
+  const headersMap = [
+    { name: 'segment_id', translation: formatMessage(feedMessages.segmentId) },
+    { name: 'segment_name', translation: formatMessage(feedMessages.segmentName) },
+    { name: 'feed_id', translation: formatMessage(feedMessages.feedId) },
+    { name: 'feed_name', translation: formatMessage(feedMessages.feedName) },
+    { name: 'connector_type', translation: formatMessage(feedMessages.connectorType) },
+    { name: 'connector_name', translation: formatMessage(feedMessages.connectorName) },
+    { name: 'status', translation: formatMessage(feedMessages.status) },
+  ];
+
+  const headersLine = headersMap.map(header => header.translation);
+  dataSheet.push(headersLine);
+
+  datasource.forEach(row => {
+    const {
+      feed,
+      audienceSegment,
+    } = row;
+
+    const dataLine = [];
+
+    const audienceSegmmentName = !audienceSegment ? (
+      formatMessage(feedMessages.segmentDeleted)
+    ) : audienceSegment.name ? (
+      audienceSegment.name
+    ) : (
+      formatMessage(feedMessages.segmentNameNotFound)
+    );
+
+    dataLine.push(
+      audienceSegment.id,
+      audienceSegmmentName,
+      feed.id,
+      feed.name || '-',
+      formatMessage(feedMessages[filter.feedType]),
+      feed.artifact_id,
+      formatMessage(feedMessages[feed.status])
+    );
+
+    dataSheet.push(dataLine);
+  });
+
+  const sheets = [{
+    name: titleLine,
+    data: dataSheet,
+  }];
+
+  exportData(sheets, `${workspace.organisation_id}_audience-feeds`, 'xlsx');
+};
+
 const exportServiceUsageReportList = (organisationId, data, filter, formatMessage) => {
   const pageTitle = `Service Usage Report List - ${organisationId}`;
   const emailHeaders = [
@@ -739,6 +820,7 @@ export default {
   exportEmailCampaigns,
   exportEmailCampaignDashboard,
   exportAudienceSegments,
+  exportAudienceFeeds,
   exportDisplayCampaigns,
   exportDisplayCampaignDashboard,
   exportAudienceSegmentDashboard,
