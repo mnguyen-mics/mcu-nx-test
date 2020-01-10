@@ -39,7 +39,6 @@ interface ProcessingPageState {
   communityId?: string;
   loading: boolean;
   isVisibleCommunityModal: boolean;
-  roleAuthorizesActions: boolean;
   isVisibleDeleteModal: boolean;
   processingIdToBeDeleted?: string;
   data: ProcessingResource[];
@@ -53,20 +52,23 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
   constructor(props: Props) {
     super(props);
 
-    const {
-      workspace: { role },
-    } = this.props;
-
     this.state = {
       loading: true,
       data: [],
       total: 0,
       isVisibleCommunityModal: false,
-      roleAuthorizesActions: role !== 'EDITOR' && role !== 'READER',
       isVisibleDeleteModal: false,
       processingIdToBeDeleted: undefined,
     };
   }
+
+  authorizeEditActions = (): boolean => {
+    const {
+      workspace: { role },
+    } = this.props;
+
+    return !(role === 'EDITOR' || role === 'READER');
+  };
 
   fetchCommunityId = (organisationId: string): Promise<string> => {
     const communityId = this._organisationService
@@ -231,10 +233,11 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
 
     const {
       isVisibleCommunityModal,
-      roleAuthorizesActions,
       isVisibleDeleteModal,
       processingIdToBeDeleted,
     } = this.state;
+
+    const authorizeEditActions = this.authorizeEditActions();
 
     const dataColumnsDefinition = [
       {
@@ -279,7 +282,7 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
 
     const actionColumns:
       | Array<ActionsColumnDefinition<ProcessingResource>>
-      | undefined = roleAuthorizesActions
+      | undefined = authorizeEditActions
       ? [
           {
             key: 'action',
@@ -309,7 +312,7 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
       }
     };
 
-    const button = roleAuthorizesActions ? (
+    const button = authorizeEditActions ? (
       <span className="mcs-card-button">
         <Button key="create" type="primary" onClick={createProcessing}>
           <FormattedMessage {...messages.newProcessing} />
