@@ -145,7 +145,11 @@ const messages = defineMessages({
   offerFormTypeSelection: {
     id: 'offerForm.siderMenu.TypeSelection',
     defaultMessage: 'Offer Type',
-  }
+  },
+  processingActivities: {
+    id: 'settings.tab.title.processingsActivities',
+    defaultMessage: 'Processing Activities',
+  },
 });
 
 export default messages;

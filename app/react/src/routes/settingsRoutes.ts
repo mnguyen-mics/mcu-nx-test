@@ -48,6 +48,8 @@ import MlAlgorithmEditPage from '../containers/Settings/DatamartSettings/MlAlgor
 import MlAlgorithmModelsPage from '../containers/Settings/DatamartSettings/MlAlgorithms/MlAlgorithmModels/MlAlgorithmModelsPage';
 import { MlFunctionsContent } from '../containers/Settings/DatamartSettings/MlFunctions/List';
 import CreateEditMlFunction from '../containers/Settings/DatamartSettings/MlFunctions/Edit/EditMlFunctionPage';
+import ProcessingPage from '../containers/Settings/OrganisationSettings/Processings/List/ProcessingsPage';
+import ProcessingEditPage from '../containers/Settings/OrganisationSettings/Processings/Edit/ProcessingEditPage';
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -252,6 +254,26 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: EditUserPage,
     requiredFeature: 'organisationSettings-users',
+  },
+
+  // processings
+  settingsOrganisationProcessingList: {
+    path: '/settings/organisation/processings',
+    layout: 'settings',
+    contentComponent: ProcessingPage,
+    requiredFeature: 'organisationSettings-processings',
+  },
+  settingsOrganisationProcessingEdition: {
+    path: '/settings/organisation/processings/:processingId/edit',
+    layout: 'edit',
+    editComponent: ProcessingEditPage,
+    requiredFeature: 'organisationSettings-processings',
+  },
+  settingsOrganisationProcessingCreation: {
+    path: '/settings/organisation/processings/create',
+    layout: 'edit',
+    editComponent: ProcessingEditPage,
+    requiredFeature: 'organisationSettings-processings',
   },
   /*
   ACCOUNT SETTINGS
