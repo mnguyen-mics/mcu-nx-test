@@ -1,8 +1,8 @@
+import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
 import PluginInstanceService from '../PluginInstanceService';
 import { VisitAnalyzer } from '../../models/Plugins';
 import { PluginLayout } from '../../models/plugin/PluginLayout';
-import { injectable } from 'inversify';
 
 export interface IVisitAnalyzerService
   extends PluginInstanceService<VisitAnalyzer> {

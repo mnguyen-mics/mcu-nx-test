@@ -40,7 +40,7 @@ type JoinedProps = GoalAttributionTableProps &
 
 class GoalAttributionTable extends React.Component<JoinedProps> {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;

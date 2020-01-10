@@ -1,16 +1,29 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
+import {
+  InjectedIntlProps,
+  injectIntl,
+  FormattedMessage,
+  defineMessages,
+} from 'react-intl';
 import { compose } from 'recompose';
-import AudienceSegmentFeedService, { AudienceFeedType } from '../../../../services/AudienceSegmentFeedService';
+import {
+  AudienceFeedType,
+  IAudienceSegmentFeedService,
+} from '../../../../services/AudienceSegmentFeedService';
 import { Status, StatusEnum } from '../../../../models/Plugins';
 import AudienceFeedsOverviewCard from './AudienceFeedsOverviewCard';
-import { FeedAggregationRequest, FeedAggregationResponseRow } from '../../../../models/audiencesegment';
+import {
+  FeedAggregationRequest,
+  FeedAggregationResponseRow,
+} from '../../../../models/audiencesegment';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { Loading } from '../../../../components';
 import { EmptyTableView } from '../../../../components/TableView';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
@@ -19,8 +32,10 @@ type Props = RouteComponentProps<{ organisationId: string }> &
 type AggregatesByStatus = { [status in Status]?: string };
 
 type StatusAggregatesByPluginVersion = {
-  [pluginVersionId: string]: {aggregation: AggregatesByStatus, feedType:string};
- 
+  [pluginVersionId: string]: {
+    aggregation: AggregatesByStatus;
+    feedType: string;
+  };
 };
 
 interface State {
@@ -35,13 +50,27 @@ const messages: {
 } = defineMessages({
   noData: {
     id: 'audience.feeds.overview.nodata',
-    defaultMessage: 'No feeds found.\nTo add one, please go to a segment page and click on “Add a Feed".',
+    defaultMessage:
+      'No feeds found.\nTo add one, please go to a segment page and click on “Add a Feed".',
   },
 });
 
 class AudienceFeedsOverview extends React.Component<Props, State> {
-  externalfeedService: AudienceSegmentFeedService;
-  tagfeedService: AudienceSegmentFeedService;
+  externalfeedService: IAudienceSegmentFeedService;
+  tagfeedService: IAudienceSegmentFeedService;
+
+  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
+  _audienceSegmentFeedServiceFactory: (
+    feedType: AudienceFeedType,
+  ) => (segmentId: string) => IAudienceSegmentFeedService;
+
+  private _audienceExternalFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+
+  private _audienceTagFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
 
   constructor(props: Props) {
     super(props);
@@ -52,8 +81,15 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
       },
     };
 
-    this.externalfeedService = new AudienceSegmentFeedService('', 'EXTERNAL_FEED');
-    this.tagfeedService = new AudienceSegmentFeedService('', 'TAG_FEED');
+    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'EXTERNAL_FEED',
+    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'TAG_FEED',
+    );
+
+    this.externalfeedService = this._audienceExternalFeedServiceFactory('');
+    this.tagfeedService = this._audienceTagFeedServiceFactory('');
   }
 
   componentDidMount() {
@@ -101,42 +137,57 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
       max_results: 100,
     };
 
-    const externalFeedsAggregates = this.externalfeedService
-    .getFeedsAggregationMetrics(body);
+    const externalFeedsAggregates = this.externalfeedService.getFeedsAggregationMetrics(
+      body,
+    );
 
-    const tagFeedsAggregates = this.tagfeedService
-    .getFeedsAggregationMetrics(body);
+    const tagFeedsAggregates = this.tagfeedService.getFeedsAggregationMetrics(
+      body,
+    );
 
     Promise.all([externalFeedsAggregates, tagFeedsAggregates])
       .then(responses => {
-
         type Aggregation = {
           rowAggregation: FeedAggregationResponseRow;
-          feedType: AudienceFeedType
-        }
-        
+          feedType: AudienceFeedType;
+        };
+
         const tmpAggregates: StatusAggregatesByPluginVersion = {};
 
-        const externalFeedTypedAggregation: Aggregation[] = responses[0].data.rows.map(ra => {
-          const aggregation : Aggregation = { rowAggregation: ra , feedType: 'EXTERNAL_FEED' };
-          return aggregation;
-        });
+        const externalFeedTypedAggregation: Aggregation[] = responses[0].data.rows.map(
+          ra => {
+            const aggregation: Aggregation = {
+              rowAggregation: ra,
+              feedType: 'EXTERNAL_FEED',
+            };
+            return aggregation;
+          },
+        );
 
-        const tagFeedTypedFeed: Aggregation[] = responses[1].data.rows.map(ra => {
-          const aggregation : Aggregation = { rowAggregation: ra , feedType: 'TAG_FEED' };
-          return aggregation;
-        });
+        const tagFeedTypedFeed: Aggregation[] = responses[1].data.rows.map(
+          ra => {
+            const aggregation: Aggregation = {
+              rowAggregation: ra,
+              feedType: 'TAG_FEED',
+            };
+            return aggregation;
+          },
+        );
 
         externalFeedTypedAggregation.concat(tagFeedTypedFeed).map(agg => {
-          const pluginVersionId = agg.rowAggregation.primary_dimension_value.value;
-          
+          const pluginVersionId =
+            agg.rowAggregation.primary_dimension_value.value;
+
           const tmpStatusAggregate: AggregatesByStatus = {};
           agg.rowAggregation.cells.map(cell => {
             const dimensionValue = cell.secondary_dimension_value.value;
             if (dimensionValue in StatusEnum)
               tmpStatusAggregate[dimensionValue as Status] = cell.metric_value;
           });
-          tmpAggregates[pluginVersionId] = {aggregation:tmpStatusAggregate, feedType:agg.feedType};
+          tmpAggregates[pluginVersionId] = {
+            aggregation: tmpStatusAggregate,
+            feedType: agg.feedType,
+          };
         });
 
         this.setState({
@@ -181,10 +232,7 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
         )}
       </div>
     ) : (
-      <EmptyTableView
-        iconType={'users'}
-        intlMessage={messages.noData}
-      />
+      <EmptyTableView iconType={'users'} intlMessage={messages.noData} />
     );
   }
 }

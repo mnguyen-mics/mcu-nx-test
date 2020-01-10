@@ -99,7 +99,7 @@ type JoinedProps = AdCardProps &
 
 class AdCard extends React.Component<JoinedProps, AdCardState> {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: JoinedProps) {
     super(props);

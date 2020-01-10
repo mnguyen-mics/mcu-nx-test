@@ -49,7 +49,7 @@ class CreateEmailTemplate extends React.Component<
   CreateEmailTemplateState
 > {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;

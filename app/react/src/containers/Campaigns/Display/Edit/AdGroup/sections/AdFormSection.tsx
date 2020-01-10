@@ -71,7 +71,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
   cancelablePromise: CancelablePromise<DisplayAdResource[]>;
 
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: Props) {
     super(props);

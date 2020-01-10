@@ -30,7 +30,7 @@ type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams> &
 
 class EditDisplayCreativePage extends React.Component<Props, State> {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   @lazyInject(TYPES.IDisplayCreativeFormService)
   private _displayCreativeFormService: IDisplayCreativeFormService;

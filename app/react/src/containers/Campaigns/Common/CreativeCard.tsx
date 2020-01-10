@@ -32,7 +32,7 @@ class CreativeCard<
   >;
 
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: CreativeCardProps<T>) {
     super(props);

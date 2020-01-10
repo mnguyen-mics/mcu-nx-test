@@ -76,7 +76,7 @@ const SUPPORTED_CREATIVES: CreativeType[] = ['DISPLAY_AD', 'EMAIL_TEMPLATE'];
 
 class CreativeCardSelector extends React.Component<Props> {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: Props) {
     super(props);

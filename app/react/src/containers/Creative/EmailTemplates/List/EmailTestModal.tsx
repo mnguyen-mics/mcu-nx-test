@@ -60,7 +60,7 @@ type JoinedProps = EmailTestModalProps &
 
 class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: JoinedProps) {
     super(props);

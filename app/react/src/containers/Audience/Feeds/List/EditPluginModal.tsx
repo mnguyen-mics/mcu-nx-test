@@ -7,7 +7,10 @@ import {
 } from '../../Segments/Edit/domain';
 import PluginCardModal from '../../../Plugin/Edit/PluginCard/PluginCardModal';
 import { IPluginService } from '../../../../services/PluginService';
-import AudienceSegmentFeedService from '../../../../services/AudienceSegmentFeedService';
+import {
+  AudienceFeedType,
+  IAudienceSegmentFeedService,
+} from '../../../../services/AudienceSegmentFeedService';
 import { PropertyResourceShape } from '../../../../models/plugin';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -19,6 +22,7 @@ import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { inject } from 'inversify';
 
 export interface EditPluginModalProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -59,12 +63,25 @@ const messages = defineMessages({
 });
 
 class EditPluginModal extends React.Component<Props, State> {
-  private feedService: AudienceSegmentFeedService;
+  private feedService: IAudienceSegmentFeedService;
+
+  private _audienceExternalFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
 
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
 
-  constructor(props: Props) {
+  constructor(
+    props: Props,
+    @inject(TYPES.IAudienceSegmentFeedServiceFactory)
+    _audienceSegmentFeedServiceFactory: (
+      feedType: AudienceFeedType,
+    ) => (segmentId: string) => IAudienceSegmentFeedService,
+  ) {
     super(props);
 
     this.state = {
@@ -72,16 +89,19 @@ class EditPluginModal extends React.Component<Props, State> {
       isLoading: true,
     };
 
+    this._audienceExternalFeedServiceFactory = _audienceSegmentFeedServiceFactory(
+      'EXTERNAL_FEED',
+    );
+    this._audienceTagFeedServiceFactory = _audienceSegmentFeedServiceFactory(
+      'TAG_FEED',
+    );
+
     this.feedService =
       props.feed.type === 'EXTERNAL_FEED'
-        ? new AudienceSegmentFeedService(
+        ? this._audienceExternalFeedServiceFactory(
             props.feed.audience_segment_id,
-            'EXTERNAL_FEED',
           )
-        : new AudienceSegmentFeedService(
-            props.feed.audience_segment_id,
-            'TAG_FEED',
-          );
+        : this._audienceTagFeedServiceFactory(props.feed.audience_segment_id);
   }
 
   componentDidMount() {

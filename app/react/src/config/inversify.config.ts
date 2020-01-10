@@ -1,4 +1,4 @@
-import { Container } from 'inversify';
+import { Container, interfaces } from 'inversify';
 import { IMicsTagService, MicsTagService } from '../services/MicsTagService';
 import PersistedStoreService, {
   IPersistedStoreService,
@@ -13,8 +13,9 @@ import {
   VisitAnalyzerService,
   IVisitAnalyzerService,
 } from './../services/Library/VisitAnalyzerService';
-import AudienceSegmentFeedService, {
+import {
   IAudienceSegmentFeedService,
+  AudienceFeedType,
 } from './../services/AudienceSegmentFeedService';
 import {
   DisplayCampaignService,
@@ -71,7 +72,8 @@ import {
 } from './../containers/Campaigns/Display/Edit/DisplayCampaignFormService';
 import { IImportService, ImportService } from '../services/ImportService';
 import { TYPES } from '../constants/types';
-import AudienceExternalFeedService, {
+import {
+  AudienceExternalFeedService,
   IAudienceExternalFeedService,
 } from '../services/AudienceExternalFeedService';
 import {
@@ -178,12 +180,20 @@ container.bind<IOverlapInterval>(TYPES.IOverlapInterval).to(OverlapInterval);
 container
   .bind<IDisplayCampaignFormService>(TYPES.IDisplayCampaignFormService)
   .to(DisplayCampaignFormService);
+// container
+//   .bind<IAudienceExternalFeedService>(TYPES.IAudienceExternalFeedService)
+//   .to(AudienceExternalFeedService);
+// container
+//   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
+//   .toConstructor(AudienceTagFeedService);
 container
-  .bind<IAudienceExternalFeedService>(TYPES.IAudienceExternalFeedService)
-  .to(AudienceExternalFeedService);
+  .bind<IAudienceSegmentFeedService>(TYPES.IAudienceExternalFeedService)
+  .to(AudienceExternalFeedService)
+  .whenTargetNamed('EXTERNAL_FEED');
 container
-  .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
-  .toConstructor(AudienceTagFeedService);
+  .bind<IAudienceSegmentFeedService>(TYPES.IAudienceTagFeedService)
+  .to(AudienceTagFeedService)
+  .whenTargetNamed('TAG_FEED');
 container.bind<IImportService>(TYPES.IImportService).to(ImportService);
 container.bind<IExportService>(TYPES.IExportService).to(ExportService);
 container.bind<IScenarioService>(TYPES.IScenarioService).to(ScenarioService);
@@ -247,9 +257,7 @@ container
   .to(OrganisationService);
 container.bind<IAssetFileService>(TYPES.IAssetFileService).to(AssetFileService);
 container.bind<IPluginService>(TYPES.IPluginService).to(PluginService);
-container
-  .bind<ICreativeService<any>>(TYPES.ICreativeService)
-  .to(CreativeService);
+container.bind<ICreativeService>(TYPES.ICreativeService).to(CreativeService);
 container
   .bind<IDisplayCreativeFormService>(TYPES.IDisplayCreativeFormService)
   .to(DisplayCreativeFormService);
@@ -265,50 +273,53 @@ container
 container
   .bind<IEmailRouterService>(TYPES.IEmailRouterService)
   .to(EmailRouterService);
-container
-  .bind<IAudienceSegmentFeedService>(TYPES.IAudienceSegmentFeedService)
-  .to(AudienceSegmentFeedService);
 // TODO: make factory injection work
-// container
-//   .bind<interfaces.Factory<IAudienceExternalFeedService>>(
-//     TYPES.IAudienceExternalFeedServiceFactory,
-//   )
-//   .toFactory<IAudienceExternalFeedService>((context: interfaces.Context) => {
-//     return (segmentId: string) => {
-//       const audienceExternalFeedService = context.container.get<
-//         IAudienceExternalFeedService
-//       >(TYPES.IAudienceExternalFeedService);
-//       audienceExternalFeedService.segmentId = segmentId;
-//       return audienceExternalFeedService;
-//     };
-//   });
-// container
-//   .bind<interfaces.Factory<IAudienceTagFeedService>>(
-//     TYPES.IAudienceTagFeedServiceFactory,
-//   )
-//   .toFactory<IAudienceTagFeedService>((context: interfaces.Context) => {
-//     return (segmentId: string) => {
-//       const audienceTagFeedService = context.container.get<
-//         IAudienceTagFeedService
-//       >(TYPES.IAudienceTagFeedService);
-//       audienceTagFeedService.segmentId = segmentId;
-//       return audienceTagFeedService;
-//     };
-//   });
-// container
-//   .bind<interfaces.Factory<IAudienceSegmentFeedService>>(
-//     TYPES.IAudienceSegmentFeedServiceFactory,
-//   )
-//   .toFactory<IAudienceSegmentFeedService>((context: interfaces.Context) => {
-//     return (segmentId: string, feedType: AudienceFeedType) => {
-//       const audienceSegmentFeedService = context.container.get<
-//         IAudienceSegmentFeedService
-//       >(TYPES.IAudienceSegmentFeedService);
-//       audienceSegmentFeedService.segmentId = segmentId;
-//       audienceSegmentFeedService.feedType = feedType;
-//       return audienceSegmentFeedService;
-//     };
-//   });
+container
+  .bind<interfaces.Factory<IAudienceExternalFeedService>>(
+    TYPES.IAudienceExternalFeedServiceFactory,
+  )
+  .toFactory<IAudienceExternalFeedService>((context: interfaces.Context) => {
+    return (segmentId: string) => {
+      const audienceExternalFeedService = context.container.get<
+        IAudienceExternalFeedService
+      >(TYPES.IAudienceExternalFeedService);
+      audienceExternalFeedService.segmentId = segmentId;
+      return audienceExternalFeedService;
+    };
+  });
+container
+  .bind<interfaces.Factory<IAudienceTagFeedService>>(
+    TYPES.IAudienceTagFeedServiceFactory,
+  )
+  .toFactory<IAudienceTagFeedService>((context: interfaces.Context) => {
+    return (segmentId: string) => {
+      const audienceTagFeedService = context.container.get<
+        IAudienceTagFeedService
+      >(TYPES.IAudienceTagFeedService);
+      audienceTagFeedService.segmentId = segmentId;
+      return audienceTagFeedService;
+    };
+  });
+container
+  .bind<interfaces.Factory<IAudienceSegmentFeedService>>(
+    TYPES.IAudienceSegmentFeedServiceFactory,
+  )
+  .toFactory<IAudienceSegmentFeedService>((context: interfaces.Context) => {
+    return (feedType: AudienceFeedType) => (segmentId: string) => {
+      const audienceSegmentFeedService = context.container.getNamed<
+        IAudienceSegmentFeedService
+      >(
+        feedType === 'EXTERNAL_FEED'
+          ? TYPES.IAudienceExternalFeedService
+          : TYPES.IAudienceTagFeedService,
+        feedType,
+      );
+
+      audienceSegmentFeedService.segmentId = segmentId;
+      audienceSegmentFeedService.feedType = feedType;
+      return audienceSegmentFeedService;
+    };
+  });
 
 export const { lazyInject } = getDecorators(container, false);
 

@@ -1,9 +1,8 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { AudienceTagFeed } from '../models/Plugins';
-import PluginInstanceService from './PluginInstanceService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
-import { GetFeeds } from './AudienceSegmentFeedService';
+import AudienceSegmentFeedService, { GetFeeds } from './AudienceSegmentFeedService';
 import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
 import { injectable } from 'inversify';
 
@@ -59,14 +58,8 @@ export interface IAudienceTagFeedService {
 
 @injectable()
 export class AudienceTagFeedService
-  extends PluginInstanceService<AudienceTagFeed>
+  extends AudienceSegmentFeedService<AudienceTagFeed>
   implements IAudienceTagFeedService {
-  segmentId: string;
-
-  constructor(segmentId: string) {
-    super('audience_tag_feeds');
-    this.segmentId = segmentId;
-  }
 
   getFeeds(options: GetFeeds): Promise<DataListResponse<AudienceTagFeed>> {
     const endpoint = 'audience_segments.tag_feeds';

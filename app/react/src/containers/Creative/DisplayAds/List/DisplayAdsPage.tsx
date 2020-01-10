@@ -57,7 +57,7 @@ type JoinedProps = DisplayAdsPage &
 
 class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: JoinedProps) {
     super(props);

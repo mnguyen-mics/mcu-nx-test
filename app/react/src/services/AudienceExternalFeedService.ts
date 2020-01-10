@@ -1,20 +1,23 @@
 import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { AudienceExternalFeed } from '../models/Plugins';
-import PluginInstanceService from './PluginInstanceService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
-import { GetFeeds } from './AudienceSegmentFeedService';
-import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
+import AudienceSegmentFeedService, {
+  GetFeeds,
+} from './AudienceSegmentFeedService';
+import {
+  FeedAggregationResponse,
+  FeedAggregationRequest,
+} from '../models/audiencesegment/AudienceFeedsAggregation';
 
-export interface IAudienceExternalFeedService
-  extends PluginInstanceService<AudienceExternalFeed> {
+export interface IAudienceExternalFeedService {
   segmentId: string;
 
   getFeeds: (
     options: GetFeeds,
   ) => Promise<DataListResponse<AudienceExternalFeed>>;
-  
+
   getFeedsAggregationMetrics: (
     body: FeedAggregationRequest,
   ) => Promise<DataResponse<FeedAggregationResponse>>;
@@ -66,34 +69,25 @@ export interface IAudienceExternalFeedService
 
 @injectable()
 export class AudienceExternalFeedService
-  extends PluginInstanceService<AudienceExternalFeed>
+  extends AudienceSegmentFeedService<AudienceExternalFeed>
   implements IAudienceExternalFeedService {
-  segmentId: string;
-
-  constructor(segmentId: string) {
-    super('audience_external_feeds');
-    this.segmentId = segmentId;
-  }
-
-  getFeeds = (
-    options: GetFeeds,
-  ): Promise<DataListResponse<AudienceExternalFeed>> => {
+  getFeeds(options: GetFeeds): Promise<DataListResponse<AudienceExternalFeed>> {
     const endpoint = 'audience_segments.external_feeds';
     return ApiService.getRequest(endpoint, options);
-  };
+  }
 
   getFeedsAggregationMetrics = (
     body: FeedAggregationRequest,
   ): Promise<DataResponse<FeedAggregationResponse>> => {
-    const endpoint = `audience_segments.external_feeds/aggregates`
+    const endpoint = `audience_segments.external_feeds/aggregates`;
 
     return ApiService.postRequest(endpoint, body);
-  }
+  };
 
-  getAudienceFeeds = (
+  getAudienceFeeds(
     organisationId: string,
     options: object = {},
-  ): Promise<DataListResponse<AudienceExternalFeed>> => {
+  ): Promise<DataListResponse<AudienceExternalFeed>> {
     const endpoint = 'plugins';
 
     const params = {
@@ -103,16 +97,16 @@ export class AudienceExternalFeedService
     };
 
     return ApiService.getRequest(endpoint, params);
-  };
+  }
 
-  deleteAudienceFeed = (
+  deleteAudienceFeed(
     id: string,
     options: object = {},
-  ): Promise<DataResponse<any>> => {
+  ): Promise<DataResponse<any>> {
     const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}`;
 
     return ApiService.deleteRequest(endpoint, options);
-  };
+  }
 
   // START reimplementation of method
 
@@ -159,7 +153,7 @@ export class AudienceExternalFeedService
     return this._pluginService.handleSaveOfProperties(
       params,
       organisationId,
-      this.entityPath,
+      'audience_external_feeds',
       id,
       endpoint,
     );

@@ -28,7 +28,7 @@ type Props = AuditComponentContainerProps & InjectedNotificationProps;
 
 class AuditComponentContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: Props) {
     super(props);

@@ -33,7 +33,6 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { ICreativeService } from '../../../../services/CreativeService';
-import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
@@ -148,7 +147,7 @@ class BlastTable extends React.Component<Props> {
   private _audienceSegmentService: IAudienceSegmentService;
 
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<EmailTemplateResource>;
+  private _creativeService: ICreativeService;
 
   editBlast = (blast: BlastData) => {
     const {

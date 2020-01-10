@@ -51,7 +51,7 @@ export class DisplayCreativeFormService implements IDisplayCreativeFormService {
   private _pluginService: IPluginService;
 
   @inject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   initializeFormData(
     adRendererId: string,

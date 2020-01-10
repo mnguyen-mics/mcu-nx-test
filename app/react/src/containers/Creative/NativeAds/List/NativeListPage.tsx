@@ -52,7 +52,7 @@ type JoinedProps = InjectedIntlProps &
 
 class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: JoinedProps) {
     super(props);

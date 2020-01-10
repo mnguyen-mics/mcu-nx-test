@@ -33,8 +33,8 @@ export interface CreativesOptions {
   max_results?: number;
 }
 
-export interface ICreativeService<T extends GenericCreativeResource> {
-  getCreatives: (
+export interface ICreativeService {
+  getCreatives: <T extends GenericCreativeResource>(
     organisationId: string,
     options: CreativesOptions,
   ) => Promise<DataListResponse<T>>;
@@ -129,7 +129,7 @@ export interface ICreativeService<T extends GenericCreativeResource> {
 }
 
 @injectable()
-export class CreativeService implements ICreativeService<any> {
+export class CreativeService implements ICreativeService {
   @inject(TYPES.IPluginService)
   private _pluginService: IPluginService;
   getCreatives<T extends GenericCreativeResource>(
@@ -346,38 +346,3 @@ export class CreativeService implements ICreativeService<any> {
   }
 }
 
-// This export is only usued in redux saga when fetching creatives
-// To remove when one will figure out how to use inversify with redux saga
-
-export const creativeService = {
-  getCreatives<T extends GenericCreativeResource>(
-    organisationId: string,
-    options: CreativesOptions = {},
-  ): Promise<DataListResponse<T>> {
-    const endpoint = 'creatives';
-
-    const params = {
-      organisation_id: organisationId,
-      ...options,
-    };
-    return ApiService.getRequest(endpoint, params);
-  },
-  getDisplayAds(
-    organisationId: string,
-    options: CreativesOptions = {},
-  ): Promise<DataListResponse<DisplayAdResource>> {
-    return creativeService.getCreatives(organisationId, {
-      type: 'DISPLAY_AD',
-      ...options,
-    });
-  },
-  getEmailTemplates(
-    organisationId: string,
-    options: CreativesOptions = {},
-  ): Promise<DataListResponse<EmailTemplateResource>> {
-    return creativeService.getCreatives(organisationId, {
-      type: 'EMAIL_TEMPLATE',
-      ...options,
-    });
-  },
-};

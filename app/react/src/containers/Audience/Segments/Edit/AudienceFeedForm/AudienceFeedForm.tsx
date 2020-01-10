@@ -26,9 +26,12 @@ import injectNotifications, {
 import { AudienceFeedFormModel, FeedRouteParams } from './domain';
 import { Path } from '../../../../../components/ActionBar';
 import GenericPluginContent from '../../../../Plugin/Edit/GenericPluginContent';
-import AudienceSegmentFeedService, {
+import {
   IAudienceSegmentFeedService,
+  AudienceFeedType,
 } from '../../../../../services/AudienceSegmentFeedService';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const titleMessages: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -117,7 +120,17 @@ type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
 class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
   feedService: IAudienceSegmentFeedService;
 
-  // TODO: inject audienceSegmentFeedService factory
+  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
+  _audienceSegmentFeedServiceFactory: (
+    feedType: AudienceFeedType,
+  ) => (segmentId: string) => IAudienceSegmentFeedService;
+
+  private _audienceExternalFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
 
   constructor(props: JoinedProps<T>) {
     super(props);
@@ -125,10 +138,18 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
       props.type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
         ? 'EXTERNAL_FEED'
         : 'TAG_FEED';
-    this.feedService = new AudienceSegmentFeedService(
-      props.match.params.segmentId,
-      type,
+
+    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'EXTERNAL_FEED',
     );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'TAG_FEED',
+    );
+
+    this.feedService =
+      type === 'EXTERNAL_FEED'
+        ? this._audienceExternalFeedServiceFactory('EXTERNAL_FEED')
+        : this._audienceTagFeedServiceFactory('TAG_FEED');
   }
 
   onSave = (audienceFeed: any, properties: PluginProperty[]) => {
@@ -246,8 +267,5 @@ export default compose<JoinedProps, CreateAudienceFeedProps>(
   injectIntl,
   injectNotifications,
   withRouter,
-  connect(
-    undefined,
-    { notifyError: actions.notifyError },
-  ),
+  connect(undefined, { notifyError: actions.notifyError }),
 )(CreateAudienceFeed);

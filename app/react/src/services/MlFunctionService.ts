@@ -2,6 +2,7 @@ import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { MlFunctionResource } from '../models/datamart/MlFunction';
 import PluginInstanceService from './PluginInstanceService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
+import { injectable } from 'inversify';
 
 export interface IMlFunctionService
   extends PluginInstanceService<MlFunctionResource> {
@@ -24,6 +25,7 @@ export interface MlFunctionQueryStringParameters {
   keywords?: string;
 }
 
+@injectable()
 export class MlFunctionService extends PluginInstanceService<MlFunctionResource>
   implements IMlFunctionService {
   constructor() {

@@ -52,7 +52,7 @@ type JoinedProps = InjectedIntlProps &
 
 class EmailListPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: JoinedProps) {
     super(props);

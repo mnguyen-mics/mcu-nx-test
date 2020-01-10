@@ -25,8 +25,9 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { PluginCardModalTab } from '../../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import { withValidators } from '../../../../../components/Form';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
-import AudienceSegmentFeedService, {
+import {
   IAudienceSegmentFeedService,
+  AudienceFeedType,
 } from '../../../../../services/AudienceSegmentFeedService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
@@ -125,16 +126,23 @@ const messages = defineMessages({
 
 class FeedCard extends React.Component<Props, FeedCardState> {
   id: string = cuid();
+
+  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
+  _audienceSegmentFeedServiceFactory: (
+    feedType: AudienceFeedType,
+  ) => (segmentId: string) => IAudienceSegmentFeedService;
+
   private feedService: IAudienceSegmentFeedService;
+
+  private _audienceExternalFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
 
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
-
-  // @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
-  // private _audienceSegmentFeedServiceFactory: (
-  //   segmentId: string,
-  //   feedType: AudienceFeedType,
-  // ) => IAudienceSegmentFeedService;
 
   constructor(props: Props) {
     super(props);
@@ -146,11 +154,18 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       pluginProperties: [],
     };
 
+    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'EXTERNAL_FEED',
+    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'TAG_FEED',
+    );
+
     if (this.props.feed) {
-      this.feedService = new AudienceSegmentFeedService(
-        this.props.segmentId,
-        this.props.feed.type,
-      );
+      this.feedService =
+        this.props.feed.type === 'EXTERNAL_FEED'
+          ? this._audienceExternalFeedServiceFactory(this.props.segmentId)
+          : this._audienceTagFeedServiceFactory(this.props.segmentId);
     }
   }
 

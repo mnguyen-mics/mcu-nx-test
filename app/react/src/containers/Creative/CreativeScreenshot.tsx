@@ -24,7 +24,7 @@ class CreativeScreenshot extends React.Component<
   CreativeScreenshotState
 > {
   @lazyInject(TYPES.ICreativeService)
-  private _creativeService: ICreativeService<any>;
+  private _creativeService: ICreativeService;
 
   constructor(props: CreativeScreenshotProps) {
     super(props);
