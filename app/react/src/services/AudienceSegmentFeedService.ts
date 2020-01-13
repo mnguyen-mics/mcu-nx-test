@@ -23,15 +23,15 @@ export type FeedOrderBy = 'AUDIENCE_SEGMENT_NAME';
 type AudienceFeed = AudienceTagFeed | AudienceExternalFeed;
 
 export interface GetFeeds extends PaginatedApiParam {
-  organisation_id?: string,
-  community_id?: string,
-  audience_segment_id?: string,
-  status?: Status,
-  group_id?: string,
-  artifact_id?: string,
-  version_id?: string,
-  administrated?: boolean,
-  order_by?: FeedOrderBy,
+  organisation_id?: string;
+  community_id?: string;
+  audience_segment_id?: string;
+  status?: Status;
+  group_id?: string;
+  artifact_id?: string;
+  version_id?: string;
+  administrated?: boolean;
+  order_by?: FeedOrderBy;
 }
 
 export interface IAudienceSegmentFeedService {
@@ -105,19 +105,11 @@ export interface IAudienceSegmentFeedService {
   ) => Promise<DataResponse<FeedAggregationResponse>>;
 }
 
-// @injectable()
 export default abstract class AudienceSegmentFeedService<T extends AudienceFeed>
   extends PluginInstanceService<AudienceFeed>
   implements IAudienceSegmentFeedService {
   feedType: AudienceFeedType;
   segmentId: string;
-
-  // private _audienceExternalFeedServiceFactory: (
-  //   segmentId: string,
-  // ) => IAudienceSegmentFeedService;
-  // private _audienceTagFeedServiceFactory: (
-  //   segmentId: string,
-  // ) => IAudienceSegmentFeedService;
 
   private service: IAudienceSegmentFeedService;
 
@@ -131,17 +123,6 @@ export default abstract class AudienceSegmentFeedService<T extends AudienceFeed>
     ) => (segmentId: string) => IAudienceSegmentFeedService,
   ) {
     super('audience_feed');
-    // this._audienceExternalFeedServiceFactory = _audienceSegmentFeedServiceFactory(
-    //   'EXTERNAL_FEED',
-    // );
-    // this._audienceTagFeedServiceFactory = _audienceSegmentFeedServiceFactory(
-    //   'TAG_FEED',
-    // );
-
-    // this.service =
-    //   this.feedType === 'EXTERNAL_FEED'
-    //     ? this._audienceExternalFeedServiceFactory(this.segmentId)
-    //     : this._audienceTagFeedServiceFactory(this.segmentId);
   }
 
   getFeeds(options: GetFeeds): Promise<DataListResponse<AudienceFeed>> {

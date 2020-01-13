@@ -148,8 +148,8 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
 
     this.feedService =
       type === 'EXTERNAL_FEED'
-        ? this._audienceExternalFeedServiceFactory('EXTERNAL_FEED')
-        : this._audienceTagFeedServiceFactory('TAG_FEED');
+        ? this._audienceExternalFeedServiceFactory(props.match.params.segmentId)
+        : this._audienceTagFeedServiceFactory(props.match.params.segmentId);
   }
 
   onSave = (audienceFeed: any, properties: PluginProperty[]) => {

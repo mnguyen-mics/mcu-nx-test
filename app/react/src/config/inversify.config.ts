@@ -180,12 +180,6 @@ container.bind<IOverlapInterval>(TYPES.IOverlapInterval).to(OverlapInterval);
 container
   .bind<IDisplayCampaignFormService>(TYPES.IDisplayCampaignFormService)
   .to(DisplayCampaignFormService);
-// container
-//   .bind<IAudienceExternalFeedService>(TYPES.IAudienceExternalFeedService)
-//   .to(AudienceExternalFeedService);
-// container
-//   .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
-//   .toConstructor(AudienceTagFeedService);
 container
   .bind<IAudienceSegmentFeedService>(TYPES.IAudienceExternalFeedService)
   .to(AudienceExternalFeedService)
@@ -273,7 +267,6 @@ container
 container
   .bind<IEmailRouterService>(TYPES.IEmailRouterService)
   .to(EmailRouterService);
-// TODO: make factory injection work
 container
   .bind<interfaces.Factory<IAudienceExternalFeedService>>(
     TYPES.IAudienceExternalFeedServiceFactory,

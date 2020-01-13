@@ -22,7 +22,6 @@ import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { inject } from 'inversify';
 
 export interface EditPluginModalProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -65,6 +64,11 @@ const messages = defineMessages({
 class EditPluginModal extends React.Component<Props, State> {
   private feedService: IAudienceSegmentFeedService;
 
+  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
+  private _audienceSegmentFeedServiceFactory: (
+    feedType: AudienceFeedType,
+  ) => (segmentId: string) => IAudienceSegmentFeedService;
+
   private _audienceExternalFeedServiceFactory: (
     segmentId: string,
   ) => IAudienceSegmentFeedService;
@@ -75,13 +79,7 @@ class EditPluginModal extends React.Component<Props, State> {
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
 
-  constructor(
-    props: Props,
-    @inject(TYPES.IAudienceSegmentFeedServiceFactory)
-    _audienceSegmentFeedServiceFactory: (
-      feedType: AudienceFeedType,
-    ) => (segmentId: string) => IAudienceSegmentFeedService,
-  ) {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -89,10 +87,10 @@ class EditPluginModal extends React.Component<Props, State> {
       isLoading: true,
     };
 
-    this._audienceExternalFeedServiceFactory = _audienceSegmentFeedServiceFactory(
+    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
       'EXTERNAL_FEED',
     );
-    this._audienceTagFeedServiceFactory = _audienceSegmentFeedServiceFactory(
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
       'TAG_FEED',
     );
 
@@ -181,7 +179,7 @@ class EditPluginModal extends React.Component<Props, State> {
   savePluginInstance = (
     pluginInstance: AudienceTagFeedTyped | AudienceExternalFeedTyped,
     properties: PropertyResourceShape[],
-    name?: string
+    name?: string,
   ) => {
     const { notifyError, feed, onClose, onChange } = this.props;
 
@@ -195,7 +193,10 @@ class EditPluginModal extends React.Component<Props, State> {
     } = pluginInstance;
 
     return this.feedService
-      .updatePluginInstance(pluginInstance.id, name ? {...newPluginInstance, name: name} : newPluginInstance)
+      .updatePluginInstance(
+        pluginInstance.id,
+        name ? { ...newPluginInstance, name: name } : newPluginInstance,
+      )
       .then(() =>
         this.updatePropertiesValue(
           properties,
@@ -235,16 +236,12 @@ class EditPluginModal extends React.Component<Props, State> {
   };
 
   render() {
-    const { 
-      feed, 
-      modalTab, 
+    const {
+      feed,
+      modalTab,
       onClose,
-      intl: {
-        formatMessage,
-      },
-      fieldValidators: {
-        isRequired,
-      }
+      intl: { formatMessage },
+      fieldValidators: { isRequired },
     } = this.props;
     const { isLoading, layout, pluginProperties, initialValues } = this.state;
 
@@ -274,10 +271,10 @@ class EditPluginModal extends React.Component<Props, State> {
           label: formatMessage(messages.feedModalNameFieldLabel),
           title: formatMessage(messages.feedModalNameFieldTitle),
           placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
-          display: true, 
-          disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED', 
+          display: true,
+          disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED',
           value: feed.name,
-          validator: [isRequired]
+          validator: [isRequired],
         }}
       />
     );
@@ -288,5 +285,5 @@ export default compose<Props, EditPluginModalProps>(
   withRouter,
   injectNotifications,
   injectIntl,
-  withValidators
+  withValidators,
 )(EditPluginModal);
