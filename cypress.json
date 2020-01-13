@@ -1,8 +1,8 @@
 {
-  "baseUrl": "https://navigator.hopeful-bose.mics-sandbox.com",
+  "baseUrl": "https://navigator.mediarithmics.com",
   "env": {
-    "apiDomain": "api.mediarithmics.local",
-    "navigatorDomain": "navigator.mediarithmics.local"
+    "apiDomain": "api.mediarithmics.com",
+    "navigatorDomain": "navigator.mediarithmics.com"
   },
   "ignoreTestFiles": ["**/integration/examples/**", "!*.spec.js", "timeline*"],
   "watchForFileChanges": false
