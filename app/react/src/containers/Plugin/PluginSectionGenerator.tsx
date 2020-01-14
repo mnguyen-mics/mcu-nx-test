@@ -111,7 +111,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
 
         if(nameField && nameField.display) {
             inputs.push(
-                <div>
+                <div key="nameField">
                     <Row>
                         <FormInputField
                             key="name"
@@ -139,7 +139,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
 
         if(descriptionField && descriptionField.display)
             inputs.push(
-                <div>
+                <div key="descriptionField">
                     <Row>
                         <FormTextAreaField
                             key="description"

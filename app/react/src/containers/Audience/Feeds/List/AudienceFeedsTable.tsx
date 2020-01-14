@@ -22,13 +22,19 @@ import {
   PluginResource,
   Status,
 } from '../../../../models/Plugins';
-import { DataColumnDefinition, ActionsColumnDefinition, ActionsRenderer, ActionDefinition } from '../../../../components/TableView/TableView';
-import AudienceSegmentFeedService, {
+import {
+  DataColumnDefinition,
+  ActionsColumnDefinition,
+  ActionsRenderer,
+  ActionDefinition,
+} from '../../../../components/TableView/TableView';
+import {
   AudienceFeedType,
+  IAudienceSegmentFeedService,
 } from '../../../../services/AudienceSegmentFeedService';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { Icon, Tooltip } from 'antd';
-import PluginService from '../../../../services/PluginService';
+import { IPluginService } from '../../../../services/PluginService';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
@@ -36,17 +42,24 @@ import { TYPES } from '../../../../constants/types';
 import { Link } from 'react-router-dom';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { McsIcon } from '../../../../components';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
-import { AudienceExternalFeedTyped, AudienceTagFeedTyped } from '../../Segments/Edit/domain';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
+import {
+  AudienceExternalFeedTyped,
+  AudienceTagFeedTyped,
+} from '../../Segments/Edit/domain';
 import EditPluginModal from './EditPluginModal';
 import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 
-type Props = InjectedNotificationProps & RouteComponentProps<{ organisationId: string }> & InjectedIntlProps;
+type Props = InjectedNotificationProps &
+  RouteComponentProps<{ organisationId: string }> &
+  InjectedIntlProps;
 
 type RecordType = {
-  feed: AudienceExternalFeedTyped | AudienceTagFeedTyped,
-  audienceSegment?: AudienceSegmentResource
-}
+  feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
+  audienceSegment?: AudienceSegmentResource;
+};
 
 interface State {
   list: {
@@ -141,19 +154,34 @@ const messages = defineMessages({
     id: 'audience.feeds.list.column.action.delete',
     defaultMessage: 'Delete',
   },
-
 });
 
 class AudienceFeedsTable extends React.Component<Props, State> {
+  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
+  _audienceSegmentFeedServiceFactory: (
+    feedType: AudienceFeedType,
+  ) => (segmentId: string) => IAudienceSegmentFeedService;
+
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
-  private externalFeedService: AudienceSegmentFeedService;
-  private tagFeedService: AudienceSegmentFeedService;
+  private _audienceExternalFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
 
   constructor(props: Props) {
     super(props);
-
+    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'EXTERNAL_FEED',
+    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'TAG_FEED',
+    );
     this.state = {
       list: {
         feeds: [],
@@ -164,9 +192,6 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       tagPlugins: [],
       modalTab: 'configuration',
     };
-
-    this.externalFeedService = new AudienceSegmentFeedService('', 'EXTERNAL_FEED');
-    this.tagFeedService = new AudienceSegmentFeedService('', 'TAG_FEED');
   }
 
   componentDidMount() {
@@ -206,9 +231,13 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       },
     } = nextProps;
 
-    const { list, externalPlugins: plugins, modalFeed} = this.state;
+    const { list, externalPlugins: plugins, modalFeed } = this.state;
 
-    const { list: nextList, externalPlugins: nextPlugins, modalFeed: nextModalFeed } = nextState;
+    const {
+      list: nextList,
+      externalPlugins: nextPlugins,
+      modalFeed: nextModalFeed,
+    } = nextState;
 
     return (
       !compareSearches(search, nextSearch) ||
@@ -246,7 +275,9 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
 
-    return filter.feedType && filter.feedType.length > 0 ? filter.feedType[0] : 'EXTERNAL_FEED';
+    return filter.feedType && filter.feedType.length > 0
+      ? filter.feedType[0]
+      : 'EXTERNAL_FEED';
   }
 
   buildApiSearchFilters = (filter: Index<any>) => {
@@ -284,7 +315,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       },
     });
 
-    const feedService = filter.feedType && filter.feedType[0] === 'TAG_FEED' ? this.tagFeedService : this.externalFeedService;
+    const feedService =
+      filter.feedType && filter.feedType[0] === 'TAG_FEED'
+        ? this._audienceTagFeedServiceFactory('')
+        : this._audienceExternalFeedServiceFactory('');
 
     return feedService
       .getFeeds({
@@ -304,11 +338,11 @@ class AudienceFeedsTable extends React.Component<Props, State> {
               .catch(() => ({ data: undefined }));
           }),
         ).then(segmentResults => {
-
           const feeds = feedResults.data.map(feed => {
-            const feedTyped: AudienceTagFeedTyped | AudienceExternalFeedTyped = this.getFeedType() === 'TAG_FEED' ?
-              { ...feed, type: 'TAG_FEED' } :
-              { ...feed, type: 'EXTERNAL_FEED' }
+            const feedTyped: AudienceTagFeedTyped | AudienceExternalFeedTyped =
+              this.getFeedType() === 'TAG_FEED'
+                ? { ...feed, type: 'TAG_FEED' }
+                : { ...feed, type: 'EXTERNAL_FEED' };
             return {
               feed: feedTyped,
               audienceSegment: segmentResults
@@ -316,7 +350,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                 .find(segment => {
                   return !!segment && segment.id === feed.audience_segment_id;
                 }),
-            }
+            };
           });
 
           this.setState({
@@ -340,7 +374,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   };
 
   fetchPlugins() {
-    PluginService.getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED' })
+    this._pluginService
+      .getPlugins({
+        plugin_type: 'AUDIENCE_SEGMENT_EXTERNAL_FEED',
+      })
       .then(res => {
         this.setState({
           externalPlugins: res.data,
@@ -352,7 +389,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         });
       });
 
-    PluginService.getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_TAG_FEED' })
+    this._pluginService
+      .getPlugins({ plugin_type: 'AUDIENCE_SEGMENT_TAG_FEED' })
       .then(res => {
         this.setState({
           tagPlugins: res.data,
@@ -379,13 +417,11 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     history.push(nextLocation);
   };
 
-
   activateFeed = (record: RecordType) => {
-
-    const externalFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'EXTERNAL_FEED');
-    const tagFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'TAG_FEED');
-    const feedService = record.feed.type === 'TAG_FEED' ? tagFeedService : externalFeedService;
-
+    const feedService =
+      record.feed.type === 'TAG_FEED'
+        ? this._audienceTagFeedServiceFactory('')
+        : this._audienceExternalFeedServiceFactory('');
     const {
       notifyError,
       location: { search },
@@ -395,22 +431,21 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const updatedFeed = {
       ...record.feed,
-      status: "ACTIVE" as Status,
+      status: 'ACTIVE' as Status,
     };
     return feedService
       .updateAudienceFeed(record.feed.id, updatedFeed)
-      .then(() => this.fetchFeeds(record.feed.organisation_id,filter))
+      .then(() => this.fetchFeeds(record.feed.organisation_id, filter))
       .catch(err => {
         notifyError(err);
       });
-
   };
 
   pauseFeed = (record: RecordType) => {
-
-    const externalFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'EXTERNAL_FEED');
-    const tagFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'TAG_FEED');
-    const feedService = record.feed.type === 'TAG_FEED' ? tagFeedService : externalFeedService;
+    const feedService =
+      record.feed.type === 'TAG_FEED'
+        ? this._audienceTagFeedServiceFactory('')
+        : this._audienceExternalFeedServiceFactory('');
 
     const {
       notifyError,
@@ -421,16 +456,14 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const updatedFeed = {
       ...record.feed,
-      status: "PAUSED" as Status,
+      status: 'PAUSED' as Status,
     };
     return feedService
       .updateAudienceFeed(record.feed.id, updatedFeed)
-      .then(() => this.fetchFeeds(record.feed.organisation_id,filter)
-      )
+      .then(() => this.fetchFeeds(record.feed.organisation_id, filter))
       .catch(err => {
         notifyError(err);
       });
-
   };
 
   editFeed = (record: RecordType) => {
@@ -448,70 +481,82 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   };
 
   deleteFeed = (record: RecordType) => {
-
-    const externalFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'EXTERNAL_FEED');
-    const tagFeedService = new AudienceSegmentFeedService(record.feed.audience_segment_id, 'TAG_FEED');
-    const feedService = record.feed.type === 'TAG_FEED' ? tagFeedService : externalFeedService;
+    const feedService =
+      record.feed.type === 'TAG_FEED'
+        ? this._audienceTagFeedServiceFactory('')
+        : this._audienceExternalFeedServiceFactory('');
 
     const {
       notifyError,
       location: { search },
     } = this.props;
-   
-    
+
     const {
-      list: {
-        feeds,
-      },
-    } = this.state
-    
+      list: { feeds },
+    } = this.state;
+
     const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
 
-    return feedService.deleteAudienceFeed(record.feed.id)
-    .then(() => {
-      if(feeds.length === 1 && filter.currentPage !== 1){
-        const newFilter = {
-          ...filter,
-          currentPage: filter.currentPage - 1,
-        };
-        this.fetchFeeds(record.feed.organisation_id,newFilter);
-      }else{
-        this.fetchFeeds(record.feed.organisation_id,filter);
-      }
-    }).catch(err => {
+    return feedService
+      .deleteAudienceFeed(record.feed.id)
+      .then(() => {
+        if (feeds.length === 1 && filter.currentPage !== 1) {
+          const newFilter = {
+            ...filter,
+            currentPage: filter.currentPage - 1,
+          };
+          this.fetchFeeds(record.feed.organisation_id, newFilter);
+        } else {
+          this.fetchFeeds(record.feed.organisation_id, filter);
+        }
+      })
+      .catch(err => {
         notifyError(err);
       });
   };
 
-  renderActionColumnDefinition: ActionsRenderer<RecordType> = (record: RecordType) => {
+  renderActionColumnDefinition: ActionsRenderer<RecordType> = (
+    record: RecordType,
+  ) => {
     const actionsDefinitions: Array<ActionDefinition<RecordType>> = [];
 
     if (record.feed.status === 'PAUSED' || record.feed.status === 'INITIAL') {
-      actionsDefinitions.push({ callback: this.activateFeed, intlMessage: messages.activate })
+      actionsDefinitions.push({
+        callback: this.activateFeed,
+        intlMessage: messages.activate,
+      });
     } else {
-      actionsDefinitions.push({ callback: this.pauseFeed, intlMessage: messages.pause })
+      actionsDefinitions.push({
+        callback: this.pauseFeed,
+        intlMessage: messages.pause,
+      });
     }
-    actionsDefinitions.push({ intlMessage: messages.edit, callback: this.editFeed })
-    actionsDefinitions.push({ intlMessage: messages.stats, callback: this.openFeedStats })
-    actionsDefinitions.push({ intlMessage: messages.delete, callback: this.deleteFeed })
+    actionsDefinitions.push({
+      intlMessage: messages.edit,
+      callback: this.editFeed,
+    });
+    actionsDefinitions.push({
+      intlMessage: messages.stats,
+      callback: this.openFeedStats,
+    });
+    actionsDefinitions.push({
+      intlMessage: messages.delete,
+      callback: this.deleteFeed,
+    });
 
     return actionsDefinitions;
-  }
+  };
 
   buildActionColumns = () => {
+    const actionColumns: Array<ActionsColumnDefinition<RecordType>> = [
+      {
+        key: 'action',
+        actions: this.renderActionColumnDefinition,
+      },
+    ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<RecordType>
-
-    > = [
-        {
-          key: 'action',
-          actions: this.renderActionColumnDefinition
-        },
-      ];
-
-    return actionColumns
-  }
+    return actionColumns;
+  };
 
   buildDataColumns = () => {
     const {
@@ -526,25 +571,22 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         intlMessage: messages.segmentName,
         key: 'segmentName',
         isHideable: false,
-        render: (
-          text: string,
-          record: RecordType,
-        ) => (
-            <span>
-              {!record.audienceSegment ? (
-                <FormattedMessage {...messages.segmentDeleted} />
-              ) : record.audienceSegment.name ? (
-                <Link
-                  className="mcs-campaigns-link"
-                  to={`/v2/o/${organisationId}/audience/segments/${record.audienceSegment.id}`}
-                >
-                  {record.audienceSegment.name}
-                </Link>
-              ) : (
-                    <FormattedMessage {...messages.segmentNameNotFound} />
-                  )}
-            </span>
-          ),
+        render: (text: string, record: RecordType) => (
+          <span>
+            {!record.audienceSegment ? (
+              <FormattedMessage {...messages.segmentDeleted} />
+            ) : record.audienceSegment.name ? (
+              <Link
+                className="mcs-campaigns-link"
+                to={`/v2/o/${organisationId}/audience/segments/${record.audienceSegment.id}`}
+              >
+                {record.audienceSegment.name}
+              </Link>
+            ) : (
+              <FormattedMessage {...messages.segmentNameNotFound} />
+            )}
+          </span>
+        ),
       },
       {
         intlMessage: messages.feedName,
@@ -558,10 +600,9 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         intlMessage: messages.artifactId,
         key: 'artifactId',
         isHideable: false,
-        render: (
-          text: string,
-          record: RecordType,
-        ) => <span>{record.feed.artifact_id}</span>,
+        render: (text: string, record: RecordType) => (
+          <span>{record.feed.artifact_id}</span>
+        ),
       },
       {
         intlMessage: messages.status,
@@ -579,7 +620,10 @@ class AudienceFeedsTable extends React.Component<Props, State> {
               placement="top"
               title={intl.formatMessage(messages[record.feed.status])}
             >
-              <McsIcon type="status" className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`} />
+              <McsIcon
+                type="status"
+                className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`}
+              />
             </Tooltip>
           );
         },
@@ -591,8 +635,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
   onClose = () => {
     this.setState({
-      modalFeed : undefined
-    })
+      modalFeed: undefined,
+    });
   };
 
   onFeedChange = () => {
@@ -610,7 +654,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   render() {
     const {
       location: { search },
-      intl
+      intl,
     } = this.props;
 
     const {
@@ -618,7 +662,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       externalPlugins,
       tagPlugins,
       modalFeed,
-      modalTab
+      modalTab,
     } = this.state;
 
     const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
@@ -650,25 +694,26 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const statusItems = feedStatus.map(type => ({ key: type, value: type }));
 
-    const filtersOptions: Array<MultiSelectProps<any>> = [{
-      displayElement: (
-        <div>
-          {intl.formatMessage(messages[feedType])}{' '}
-          <Icon type="down" />
-        </div>
-      ),
-      selectedItems: [feedType],
-      items: ['EXTERNAL_FEED', 'TAG_FEED'],
-      getKey: (type: AudienceFeedType) => type,
-      display: (type: AudienceFeedType) => intl.formatMessage(messages[type]),
-      handleItemClick: (selectedType: AudienceFeedType) =>
-        this.updateLocationSearch({
-          feedType: [selectedType],
-          artifactId: [],
-          status: [],
-          currentPage: 1,
-        }),
-    }];
+    const filtersOptions: Array<MultiSelectProps<any>> = [
+      {
+        displayElement: (
+          <div>
+            {intl.formatMessage(messages[feedType])} <Icon type="down" />
+          </div>
+        ),
+        selectedItems: [feedType],
+        items: ['EXTERNAL_FEED', 'TAG_FEED'],
+        getKey: (type: AudienceFeedType) => type,
+        display: (type: AudienceFeedType) => intl.formatMessage(messages[type]),
+        handleItemClick: (selectedType: AudienceFeedType) =>
+          this.updateLocationSearch({
+            feedType: [selectedType],
+            artifactId: [],
+            status: [],
+            currentPage: 1,
+          }),
+      },
+    ];
 
     const plugins = feedType === 'TAG_FEED' ? tagPlugins : externalPlugins;
 

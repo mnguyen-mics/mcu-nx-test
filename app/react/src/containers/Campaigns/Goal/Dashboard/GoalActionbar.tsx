@@ -29,7 +29,9 @@ import ResourceTimelinePage, {
 } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 import formatGoalProperty from '../../../../messages/campaign/goal/goalMessages';
-import DisplayCampaignService from '../../../../services/DisplayCampaignService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { IDisplayCampaignService } from '../../../../services/DisplayCampaignService';
+import { TYPES } from '../../../../constants/types';
 
 interface ExportActionbarProps {
   goal?: GoalResource;
@@ -141,6 +143,9 @@ class ExportsActionbar extends React.Component<
   JoinedProps,
   ExportActionbarState
 > {
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.handleRunExport = this.handleRunExport.bind(this);
@@ -359,11 +364,11 @@ class ExportsActionbar extends React.Component<
                           id,
                           'CAMPAIGN',
                         ).then(campaignId => {
-                          return DisplayCampaignService.getCampaignName(
-                            campaignId,
-                          ).then(response => {
-                            return response;
-                          });
+                          return this._displayCampaignService
+                            .getCampaignName(campaignId)
+                            .then(response => {
+                              return response;
+                            });
                         });
                       },
                       goToResource: (id: string) => {

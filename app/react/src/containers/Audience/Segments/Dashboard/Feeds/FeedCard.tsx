@@ -14,18 +14,23 @@ import injectNotifications, {
 import { compose } from 'recompose';
 import { Modal, Dropdown, Menu, Tooltip } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import PluginService from '../../../../../services/PluginService';
+import { IPluginService } from '../../../../../services/PluginService';
 import PluginCardModal, {
   PluginCardModalProps,
 } from '../../../../Plugin/Edit/PluginCard/PluginCardModal';
 import { PluginLayout } from '../../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../../models/plugin';
 import { withRouter, RouteComponentProps } from 'react-router';
-import AudienceSegmentFeedService from '../../../../../services/AudienceSegmentFeedService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { PluginCardModalTab } from '../../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import { withValidators } from '../../../../../components/Form';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
+import {
+  IAudienceSegmentFeedService,
+  AudienceFeedType,
+} from '../../../../../services/AudienceSegmentFeedService';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -121,9 +126,23 @@ const messages = defineMessages({
 
 class FeedCard extends React.Component<Props, FeedCardState> {
   id: string = cuid();
-  feedService: AudienceSegmentFeedService;
-  // @lazyInject(TYPES.IAudienceSegmentService)
-  // private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
+  _audienceSegmentFeedServiceFactory: (
+    feedType: AudienceFeedType,
+  ) => (segmentId: string) => IAudienceSegmentFeedService;
+
+  private feedService: IAudienceSegmentFeedService;
+
+  private _audienceExternalFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
 
   constructor(props: Props) {
     super(props);
@@ -135,38 +154,45 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       pluginProperties: [],
     };
 
+    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'EXTERNAL_FEED',
+    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'TAG_FEED',
+    );
+
     if (this.props.feed) {
-      this.feedService = new AudienceSegmentFeedService(
-        this.props.segmentId,
-        this.props.feed.type,
-      );
+      this.feedService =
+        this.props.feed.type === 'EXTERNAL_FEED'
+          ? this._audienceExternalFeedServiceFactory(this.props.segmentId)
+          : this._audienceTagFeedServiceFactory(this.props.segmentId);
     }
   }
 
   componentDidMount() {
     const { feed } = this.props;
 
-    PluginService.findPluginFromVersionId(feed.version_id)
+    this._pluginService
+      .findPluginFromVersionId(feed.version_id)
       .then(res => {
         if (
           res !== null &&
           res.status !== 'error' &&
           res.data.current_version_id
         ) {
-          PluginService.getLocalizedPluginLayout(
-            res.data.id,
-            res.data.current_version_id,
-          ).then(resultPluginLayout => {
-            if (resultPluginLayout !== null) {
-              this.setState({
-                cardHeaderTitle: resultPluginLayout.metadata.display_name,
-                cardHeaderThumbnail:
-                  resultPluginLayout.metadata.small_icon_asset_url,
-                pluginLayout: resultPluginLayout,
-                isLoading: false,
-              });
-            }
-          });
+          this._pluginService
+            .getLocalizedPluginLayout(res.data.id, res.data.current_version_id)
+            .then(resultPluginLayout => {
+              if (resultPluginLayout !== null) {
+                this.setState({
+                  cardHeaderTitle: resultPluginLayout.metadata.display_name,
+                  cardHeaderThumbnail:
+                    resultPluginLayout.metadata.small_icon_asset_url,
+                  pluginLayout: resultPluginLayout,
+                  isLoading: false,
+                });
+              }
+            });
         }
       })
       .catch(() => this.setState({ isLoading: false }));
@@ -260,9 +286,10 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   getPluginProperties = () => {
     const { feed } = this.props;
 
-    return PluginService.findPluginFromVersionId(feed.version_id)
+    return this._pluginService
+      .findPluginFromVersionId(feed.version_id)
       .then(res =>
-        PluginService.getPluginVersionProperty(
+        this._pluginService.getPluginVersionProperty(
           res.data.id,
           res.data.current_version_id!,
         ),
@@ -406,7 +433,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       if (!this.state.pluginLayout) {
         return history.push(editFeed());
       } else {
-        this.setState({ opened: true, modalTab: tab, isLoadingCard: true });
+        this.setState({ opened: true, isLoadingCard: true, modalTab: tab });
         return Promise.all([
           this.getPluginProperties(),
           this.getInitialValues(),
@@ -469,7 +496,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               undefined
             )}
             <div className="title">
-              {feed.name ? feed.name : (cardHeaderTitle ? cardHeaderTitle : feed.artifact_id)}
+              {feed.name
+                ? feed.name
+                : cardHeaderTitle
+                ? cardHeaderTitle
+                : feed.artifact_id}
             </div>
           </div>
           <div className="content">

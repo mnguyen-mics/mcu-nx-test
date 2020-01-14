@@ -25,12 +25,14 @@ import FormLayoutActionbar, {
 import messages from '../../messages';
 import { FormSection } from '../../../../../../components/Form/index';
 import Loading from '../../../../../../components/Loading';
-import DisplayCampaignService from '../../../../../../services/DisplayCampaignService';
 import { CampaignsInfosFieldModel } from '../domain';
 import { Col } from 'antd/lib/grid';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../constants/types';
+import { IDisplayCampaignService } from '../../../../../../services/DisplayCampaignService';
 
 const FORM_ID = 'editCampaignsForm';
 
@@ -80,6 +82,9 @@ class EditCampaignsForm extends React.Component<
   JoinedProps,
   EditCampaignsFormState
 > {
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -104,7 +109,8 @@ class EditCampaignsForm extends React.Component<
     const v2014CampaignNames: string[] = [];
     Promise.all(
       selectedRowKeys.map(campaignId => {
-        return DisplayCampaignService.getCampaignDisplay(campaignId)
+        return this._displayCampaignService
+          .getCampaignDisplay(campaignId)
           .then(apiResp => apiResp.data)
           .then(campaignData => {
             if (campaignData.model_version === 'V2014_06') {

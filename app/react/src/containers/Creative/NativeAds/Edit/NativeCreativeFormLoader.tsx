@@ -6,11 +6,13 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { DisplayCreativeFormProps } from '../../DisplayAds/Edit/DisplayCreativeForm';
 import { DisplayCreativeFormData } from '../../DisplayAds/Edit/domain';
 import { Loading } from '../../../../components/index';
-import DisplayCreativeFormService from '../../DisplayAds/Edit/DisplayCreativeFormService';
+import { IDisplayCreativeFormService } from '../../DisplayAds/Edit/DisplayCreativeFormService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import NativeCreativeForm from './NativeCreativeForm';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 export interface NativeCreativeFormLoaderProps
   extends DisplayCreativeFormProps {
@@ -30,6 +32,9 @@ class NativeCreativeFormLoader extends React.Component<
   JoinedProps,
   DisplayCreativeFormLoaderState
 > {
+  @lazyInject(TYPES.IDisplayCreativeFormService)
+  private _displayCreativeFormService: IDisplayCreativeFormService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -51,7 +56,8 @@ class NativeCreativeFormLoader extends React.Component<
   loadFormData = (organisationId: string, creativeId: string) => {
     this.setState({ isLoading: true });
 
-    DisplayCreativeFormService.loadFormData(creativeId)
+    this._displayCreativeFormService
+      .loadFormData(creativeId)
       .then(creativeFormData => {
         this.setState({
           creativeFormData,

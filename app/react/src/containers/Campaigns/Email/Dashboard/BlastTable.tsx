@@ -32,7 +32,7 @@ import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistor
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
-import CreativeService from '../../../../services/CreativeService';
+import { ICreativeService } from '../../../../services/CreativeService';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
@@ -145,6 +145,9 @@ const BlastTableView = TableView as React.ComponentClass<
 class BlastTable extends React.Component<Props> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.ICreativeService)
+  private _creativeService: ICreativeService;
 
   editBlast = (blast: BlastData) => {
     const {
@@ -265,7 +268,7 @@ class BlastTable extends React.Component<Props> {
                 id,
                 'CREATIVE',
               ).then(emailTemplateId => {
-                return CreativeService.getEmailTemplate(emailTemplateId).then(
+                return this._creativeService.getEmailTemplate(emailTemplateId).then(
                   response => {
                     return response.data.name;
                   },

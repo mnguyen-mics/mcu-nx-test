@@ -6,7 +6,7 @@ import { Modal } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
-import { IDealsListService } from '../../../../services/Library/DealListsService';
+import { IDealListService } from '../../../../services/Library/DealListService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { DealsListResource } from '../../../../models/dealList/dealList';
 import {
@@ -46,8 +46,8 @@ class DealListContent extends React.Component<
 > {
   state = initialState;
 
-  @lazyInject(TYPES.IDealsListService)
-  private _dealsListService: IDealsListService;
+  @lazyInject(TYPES.IDealListService)
+  private _dealsListService: IDealListService;
 
   archiveDealList = (dealListId: string) => {
     const {

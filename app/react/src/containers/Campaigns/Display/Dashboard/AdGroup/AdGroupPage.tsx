@@ -8,7 +8,6 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import AdGroup from './AdGroup';
 import ReportService from '../../../../../services/ReportService';
-import DisplayCampaignService from '../../../../../services/DisplayCampaignService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { makeCancelable } from '../../../../../utils/ApiHelper';
 import log from '../../../../../utils/Logger';
@@ -35,6 +34,9 @@ import {
   AdResource,
 } from '../../../../../models/campaign/display';
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 
 interface AdGroupPageProps {}
 
@@ -49,6 +51,9 @@ type Props = AdGroupPageProps &
 
 class AdGroupPage extends React.Component<Props, AdGroupPageState> {
   cancelablePromises: Array<CancelablePromise<any>> = [];
+
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
 
   constructor(props: Props) {
     super(props);
@@ -147,7 +152,7 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
       filter.to.toMoment().unix() - filter.from.toMoment().unix();
     const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
     const getCampaignAdGroupAndAd = () =>
-      DisplayCampaignService.getCampaignDisplayViewDeep(campaignId, {
+      this._displayCampaignService.getCampaignDisplayViewDeep(campaignId, {
         view: 'deep',
       });
     const getAdGroupPerf = makeCancelable(
@@ -345,7 +350,8 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
     } = this.state;
     const campaignId = items && items[0] ? items[0].id : undefined;
     if (campaignId) {
-      return DisplayCampaignService.updateAdGroup(campaignId, adGroupId, body)
+      return this._displayCampaignService
+        .updateAdGroup(campaignId, adGroupId, body)
         .then(response => {
           this.setState(prevState => {
             const nextState = {
@@ -388,12 +394,13 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
       adGroups.data.items &&
       adGroups.data.items[0].id
     ) {
-      return DisplayCampaignService.updateAd(
-        adId,
-        campaign.data.items[0].id,
-        adGroups.data.items[0].id,
-        body,
-      )
+      return this._displayCampaignService
+        .updateAd(
+          adId,
+          campaign.data.items[0].id,
+          adGroups.data.items[0].id,
+          body,
+        )
         .then(response => {
           this.setState(prevState => {
             const nextState = {

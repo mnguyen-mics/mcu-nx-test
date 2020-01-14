@@ -7,26 +7,39 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { split } from 'lodash';
 import { injectDrawer } from '../../../../../../components/Drawer';
 import { FormSection } from '../../../../../../components/Form';
-
 import messages from '../../messages';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
-import { AdGroupFieldModel, } from '../../domain';
-import { isDisplayCreativeFormData, INITIAL_AD_GROUP_FORM_DATA } from '../../AdGroup/domain';
+import { AdGroupFieldModel } from '../../domain';
+import {
+  isDisplayCreativeFormData,
+  INITIAL_AD_GROUP_FORM_DATA,
+} from '../../AdGroup/domain';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
-import CreativeCardSelector, { CreativeCardSelectorProps } from '../../../../Common/CreativeCardSelector';
-import { DisplayAdResource, DisplayAdCreateRequest } from '../../../../../../models/creative/CreativeResource';
+import CreativeCardSelector, {
+  CreativeCardSelectorProps,
+} from '../../../../Common/CreativeCardSelector';
+import {
+  DisplayAdResource,
+  DisplayAdCreateRequest,
+} from '../../../../../../models/creative/CreativeResource';
 import { isDisplayAdResource } from '../../../../../Creative/DisplayAds/Edit/domain';
 import { Row, Col, Spin } from 'antd';
-import { ButtonStyleless, McsIcon, EmptyRecords } from '../../../../../../components';
+import {
+  ButtonStyleless,
+  McsIcon,
+  EmptyRecords,
+} from '../../../../../../components';
 import { AuditStatusRenderer } from '../../../../../Creative/DisplayAds/Audit';
 import { DisplayAdResourceWithFieldIndex } from '../../AdGroup/sections/AdFormSection';
 import { CancelablePromise } from '../../../../../../services/ApiService';
 import { Index } from '../../../../../../utils';
 import { makeCancelable } from '../../../../../../utils/ApiHelper';
-import CreativeService from '../../../../../../services/CreativeService';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
 import { computeDimensionsByRatio } from '../../../../../../utils/ShapeHelper';
 import CreativeCard from '../../../../Common/CreativeCard';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../constants/types';
+import { ICreativeService } from '../../../../../../services/CreativeService';
 
 export interface AdGroupAdsFormSectionProps extends ReduxFormChangeProps {}
 
@@ -37,13 +50,18 @@ type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface AdGroupAdsFormSectionState {
-    displayCreativeCacheById: Index<DisplayAdResource>;
-    loading: boolean;
-  }
+  displayCreativeCacheById: Index<DisplayAdResource>;
+  loading: boolean;
+}
 
-class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSectionState> {
-
+class AdGroupAdsFormSection extends React.Component<
+  Props,
+  AdGroupAdsFormSectionState
+> {
   cancelablePromise: CancelablePromise<DisplayAdResource[]>;
+
+  @lazyInject(TYPES.ICreativeService)
+  private _creativeService: ICreativeService;
 
   constructor(props: Props) {
     super(props);
@@ -64,14 +82,13 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
         ) {
           creativeIdsToBeLoaded.push(ad.model.creative_id);
         }
-      })
-      
+      });
     });
 
     this.cancelablePromise = makeCancelable(
       Promise.all(
         creativeIdsToBeLoaded.map(id =>
-          CreativeService.getDisplayAd(id).then(res => res.data),
+          this._creativeService.getDisplayAd(id).then(res => res.data),
         ),
       ),
     );
@@ -106,8 +123,7 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
             keptFields.push(field);
           }
         }
-      })
-     
+      });
     });
 
     const existingCreativeIds: string[] = [];
@@ -116,8 +132,7 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
         if (!isDisplayCreativeFormData(ad.model)) {
           existingCreativeIds.push(ad.model.creative_id);
         }
-      })
-      
+      });
     });
     const newFields = creatives
       .filter(creative => !existingCreativeIds.includes(creative.id))
@@ -125,12 +140,14 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
         key: cuid(),
         model: {
           ...INITIAL_AD_GROUP_FORM_DATA,
-          adFields: [{
-            key: cuid(),
-            model: {
-              creative_id: creative.id,
-            }
-          }]
+          adFields: [
+            {
+              key: cuid(),
+              model: {
+                creative_id: creative.id,
+              },
+            },
+          ],
         },
       }));
 
@@ -144,8 +161,8 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
     fields.getAll().forEach(field => {
       field.model.adFields.forEach(creative => {
         if (!isDisplayCreativeFormData(creative.model))
-          creativeIds.push(creative.model.creative_id)
-      })
+          creativeIds.push(creative.model.creative_id);
+      });
     });
 
     const handleSave = (creatives: DisplayAdResource[]) => {
@@ -192,8 +209,7 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
               fieldModel: ad,
             });
           }
-        })
-        
+        });
       });
     }
 
@@ -211,8 +227,6 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
         </Col>
       );
     });
-
-
   };
 
   getCreativeCardFooter = (data: DisplayAdResourceWithFieldIndex) => {
@@ -245,7 +259,6 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
             <div className="dimensions">{data.creativeResource.format}</div>
           </Col>
           <Col className="inline buttons" span={2}>
-
             <ButtonStyleless onClick={removeField}>
               <McsIcon className="button" type="delete" />
             </ButtonStyleless>
@@ -261,12 +274,15 @@ class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSection
   };
 
   render() {
-    const { intl: { formatMessage }, fields } = this.props;
+    const {
+      intl: { formatMessage },
+      fields,
+    } = this.props;
 
     return (
       <div>
         <FormSection
-          button={ {
+          button={{
             message: formatMessage(messages.dropdownAddExisting),
             onClick: this.openCreativeCardSelector,
           }}

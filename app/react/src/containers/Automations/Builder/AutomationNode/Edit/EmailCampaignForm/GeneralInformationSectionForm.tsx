@@ -18,11 +18,11 @@ import formatDisplayCampaignProperty from '../../../../../../messages/campaign/d
 import messages from '../../../../../Campaigns/Display/Edit/messages';
 import { Spin } from 'antd';
 import { EmailRouterResource } from '../../../../../../models/campaign/email';
-import EmailRoutersService from '../../../../../../services/Library/EmailRoutersService';
 import { ConsentResource } from '../../../../../../models/consent';
 import { EmailCampaignAutomationFormData } from '../domain';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IConsentService } from '../../../../../../services/ConsentService';
+import { IEmailRouterService } from '../../../../../../services/Library/EmailRoutersService';
 import { TYPES } from '../../../../../../constants/types';
 
 export const formMessages = defineMessages({
@@ -77,10 +77,11 @@ type Props = GeneralInformationFormSectionProps &
   NormalizerProps;
 
 class GeneralInformationFormSection extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IConsentService)
   private _consentService: IConsentService;
 
+  @lazyInject(TYPES.IEmailRouterService)
+  private _emailRouterService: IEmailRouterService;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -93,27 +94,27 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
   componentDidMount() {
     this.setState({ fetchingRouters: true, fetchingConsents: true });
-    EmailRoutersService.getEmailRouters(this.props.organisationId).then(
-      routersResponse => {
-        this._consentService.getConsents(this.props.organisationId).then(
-          consentResponse => {
+    this._emailRouterService
+      .getEmailRouters(this.props.organisationId)
+      .then(routersResponse => {
+        this._consentService
+          .getConsents(this.props.organisationId)
+          .then(consentResponse => {
             this.setState({
               fetchingRouters: false,
               routers: routersResponse.data,
               fetchingConsents: false,
               consents: consentResponse.data,
             });
-          },
-        );
-      },
-    );
+          });
+      });
   }
 
   render() {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
-      disabled
+      disabled,
     } = this.props;
 
     return (
@@ -124,7 +125,6 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
         />
 
         <div className="automation-node-form">
-
           <FormInputField
             name="campaign.name"
             component={FormInput}
@@ -139,7 +139,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.campaignFormPlaceholderCampaignName,
               ),
-              disabled: !!disabled
+              disabled: !!disabled,
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
@@ -183,7 +183,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               notFoundContent: this.state.fetchingConsents ? (
                 <Spin size="small" />
               ) : null,
-              disabled: !!disabled
+              disabled: !!disabled,
             }}
             options={this.state.consents.map(consent => ({
               value: consent.id,

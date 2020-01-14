@@ -6,8 +6,7 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import VisitAnalyzerService from '../../../../../services/Library/VisitAnalyzerService';
-import PluginService from '../../../../../services/PluginService';
+import { IPluginService } from '../../../../../services/PluginService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
@@ -16,6 +15,9 @@ import {
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
 
 const { Content } = Layout;
 
@@ -62,8 +64,16 @@ class VisitAnalyzerContent extends Component<
 > {
   state = initialState;
 
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
+
+  @lazyInject(TYPES.IVisitAnalyzerService)
+  private _visitAnalyzerService: IVisitAnalyzerService;
+
   archiveVisitAnalyzer = (visitAnalyzerId: string) => {
-    return VisitAnalyzerService.deleteVisitAnalyzerProperty(visitAnalyzerId);
+    return this._visitAnalyzerService.deleteVisitAnalyzerProperty(
+      visitAnalyzerId,
+    );
   };
 
   fetchVisitAnalyzer = (organisationId: string, filter: Filters) => {
@@ -71,32 +81,41 @@ class VisitAnalyzerContent extends Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      VisitAnalyzerService.getVisitAnalyzers(organisationId, options).then(
-        (results: { data: VisitAnalyzer[]; total?: number; count: number }) => {
-          const promises = results.data.map(va => {
-            return new Promise((resolve, reject) => {
-              PluginService.getEngineVersion(va.version_id)
-                .then(visitAnalyzer => {
-                  return PluginService.getEngineProperties(visitAnalyzer.id);
-                })
-                .then(v => resolve(v));
+      this._visitAnalyzerService
+        .getVisitAnalyzers(organisationId, options)
+        .then(
+          (results: {
+            data: VisitAnalyzer[];
+            total?: number;
+            count: number;
+          }) => {
+            const promises = results.data.map(va => {
+              return new Promise((resolve, reject) => {
+                this._pluginService
+                  .getEngineVersion(va.version_id)
+                  .then(visitAnalyzer => {
+                    return this._pluginService.getEngineProperties(
+                      visitAnalyzer.id,
+                    );
+                  })
+                  .then(v => resolve(v));
+              });
             });
-          });
-          Promise.all(promises).then((vaProperties: PluginProperty[]) => {
-            const formattedResults: any = results.data.map((va, i) => {
-              return {
-                ...va,
-                properties: vaProperties[i],
-              };
+            Promise.all(promises).then((vaProperties: PluginProperty[]) => {
+              const formattedResults: any = results.data.map((va, i) => {
+                return {
+                  ...va,
+                  properties: vaProperties[i],
+                };
+              });
+              this.setState({
+                loading: false,
+                data: formattedResults,
+                total: results.total || results.count,
+              });
             });
-            this.setState({
-              loading: false,
-              data: formattedResults,
-              total: results.total || results.count,
-            });
-          });
-        },
-      );
+          },
+        );
     });
   };
 

@@ -6,7 +6,7 @@ import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedSer
 import { compose } from 'recompose';
 import { Path } from '../../../../../components/ActionBar';
 import { EditContentLayout } from '../../../../../components/Layout';
-import PluginService from '../../../../../services/PluginService';
+import { IPluginService } from '../../../../../services/PluginService';
 import {
   PluginResource,
   LayoutablePlugin,
@@ -17,6 +17,8 @@ import PluginCardModal from '../../../../Plugin/Edit/PluginCard/PluginCardModal'
 import { PropertyResourceShape } from '../../../../../models/plugin';
 import { withRouter, RouteComponentProps } from 'react-router';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
 
 type CreateFeedPresetSelectionPageProps = {
   feedType: AudienceFeedType;
@@ -41,6 +43,9 @@ interface State {
 };
 
 class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
+  
   constructor(props: Props) {
     super(props);
 
@@ -56,7 +61,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
 
   getPluginsList() {
     this.setState({ isLoading: true }, () => {
-      PluginService.getPlugins({
+      this._pluginService.getPlugins({
         plugin_type:
           this.props.feedType === 'EXTERNAL_FEED'
             ? 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
@@ -70,11 +75,11 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
             return [
               ...plugins,
               Promise.all([
-                PluginService.getPluginVersionProperty(
+                this._pluginService.getPluginVersionProperty(
                   plugin.id,
                   plugin.current_version_id,
                 ),
-                PluginService.getLocalizedPluginLayout(
+                this._pluginService.getLocalizedPluginLayout(
                   plugin.id,
                   plugin.current_version_id,
                 ),
@@ -150,7 +155,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
       selectedPlugin.plugin_type &&
       name
     )
-      PluginService.createPluginPreset(
+    this._pluginService.createPluginPreset(
         selectedPlugin.id,
         selectedPlugin.current_version_id,
         {

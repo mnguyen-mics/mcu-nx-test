@@ -11,7 +11,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { TYPES } from '../../../../constants/types';
-import { IDealsListService } from '../../../../services/Library/DealListsService';
+import { IDealListService } from '../../../../services/Library/DealListService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IDealListFormService } from './DealListFormService';
 
@@ -52,8 +52,8 @@ type JoinedProps = InjectedIntlProps &
   InjectedNotificationProps;
 
 class DealListPage extends React.Component<JoinedProps, DealListPageState> {
-  @lazyInject(TYPES.IDealsListService)
-  private _dealsListService: IDealsListService;
+  @lazyInject(TYPES.IDealListService)
+  private _dealsListService: IDealListService;
 
   @lazyInject(TYPES.IDealListFormService)
   private _dealListFormService: IDealListFormService;

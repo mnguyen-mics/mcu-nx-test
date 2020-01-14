@@ -1,4 +1,4 @@
-import { PluginLayout } from "./plugin/PluginLayout";
+import { PluginLayout } from './plugin/PluginLayout';
 
 export interface PluginResource {
   id: string;
@@ -43,26 +43,26 @@ export interface PluginPresetProperty {
 }
 
 export type PluginType =
- | 'DISPLAY_CAMPAIGN_EDITOR'
- | 'DISPLAY_CAMPAIGN_USER_SCENARIO'
- | 'EMAIL_CAMPAIGN_EDITOR'
- | 'EMAIL_TEMPLATE_EDITOR'
- | 'EMAIL_TEMPLATE_RENDERER'
- | 'EMAIL_ROUTER'
- | 'DISPLAY_AD_EDITOR'
- | 'DISPLAY_AD_RENDERER'
- | 'RECOMMENDER'
- | 'VIDEO_AD_EDITOR'
- | 'VIDEO_AD_RENDERER'
- | 'STYLE_SHEET'
- | 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
- | 'AUDIENCE_SEGMENT_TAG_FEED'
- | 'BID_OPTIMIZATION_ENGINE'
- | 'ATTRIBUTION_PROCESSOR'
- | 'ACTIVITY_ANALYZER'
- | 'DATA_CONNECTOR'
- | 'SCENARIO_NODE_PROCESSOR'
- | 'ML_FUNCTION';
+  | 'DISPLAY_CAMPAIGN_EDITOR'
+  | 'DISPLAY_CAMPAIGN_USER_SCENARIO'
+  | 'EMAIL_CAMPAIGN_EDITOR'
+  | 'EMAIL_TEMPLATE_EDITOR'
+  | 'EMAIL_TEMPLATE_RENDERER'
+  | 'EMAIL_ROUTER'
+  | 'DISPLAY_AD_EDITOR'
+  | 'DISPLAY_AD_RENDERER'
+  | 'RECOMMENDER'
+  | 'VIDEO_AD_EDITOR'
+  | 'VIDEO_AD_RENDERER'
+  | 'STYLE_SHEET'
+  | 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+  | 'AUDIENCE_SEGMENT_TAG_FEED'
+  | 'BID_OPTIMIZATION_ENGINE'
+  | 'ATTRIBUTION_PROCESSOR'
+  | 'ACTIVITY_ANALYZER'
+  | 'DATA_CONNECTOR'
+  | 'SCENARIO_NODE_PROCESSOR'
+  | 'ML_FUNCTION';
 
 export interface PluginVersionResource {
   id: string;
@@ -188,4 +188,16 @@ export interface StylesheetVersionResource {
   status: string;
   style_sheet_id: string;
   version_id: string;
+}
+
+type AdLayoutStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+
+export interface AdLayoutVersionResource {
+  id: string;
+  version_id: string;
+  creation_date: number;
+  filename: string;
+  template: string;
+  ad_layout_id: string;
+  status: AdLayoutStatus;
 }

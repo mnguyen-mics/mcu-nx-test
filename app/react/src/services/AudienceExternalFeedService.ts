@@ -1,19 +1,23 @@
 import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { AudienceExternalFeed } from '../models/Plugins';
-import PluginInstanceService from './PluginInstanceService';
-import PluginService from './PluginService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
-import { GetFeeds } from './AudienceSegmentFeedService';
-import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
+import AudienceSegmentFeedService, {
+  GetFeeds,
+} from './AudienceSegmentFeedService';
+import {
+  FeedAggregationResponse,
+  FeedAggregationRequest,
+} from '../models/audiencesegment/AudienceFeedsAggregation';
 
 export interface IAudienceExternalFeedService {
+  segmentId: string;
 
   getFeeds: (
-    options: GetFeeds
+    options: GetFeeds,
   ) => Promise<DataListResponse<AudienceExternalFeed>>;
-  
+
   getFeedsAggregationMetrics: (
     body: FeedAggregationRequest,
   ) => Promise<DataResponse<FeedAggregationResponse>>;
@@ -60,24 +64,14 @@ export interface IAudienceExternalFeedService {
     options: object,
   ) => Promise<DataListResponse<any>>;
 
-  getLocalizedPluginLayout(
-    pInstanceId: string,
-  ): Promise<PluginLayout | null>;
+  getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null>;
 }
 
 @injectable()
 export class AudienceExternalFeedService
-  extends PluginInstanceService<AudienceExternalFeed>
+  extends AudienceSegmentFeedService<AudienceExternalFeed>
   implements IAudienceExternalFeedService {
-  segmentId: string;
-  constructor(segmentId: string) {
-    super('audience_external_feeds');
-    this.segmentId = segmentId;
-  }
-
-  getFeeds = (
-    options: GetFeeds
-  ): Promise<DataListResponse<AudienceExternalFeed>> => {
+  getFeeds(options: GetFeeds): Promise<DataListResponse<AudienceExternalFeed>> {
     const endpoint = 'audience_segments.external_feeds';
     return ApiService.getRequest(endpoint, options);
   }
@@ -85,15 +79,15 @@ export class AudienceExternalFeedService
   getFeedsAggregationMetrics = (
     body: FeedAggregationRequest,
   ): Promise<DataResponse<FeedAggregationResponse>> => {
-    const endpoint = `audience_segments.external_feeds/aggregates`
+    const endpoint = `audience_segments.external_feeds/aggregates`;
 
     return ApiService.postRequest(endpoint, body);
-  }
+  };
 
-  getAudienceFeeds = (
+  getAudienceFeeds(
     organisationId: string,
     options: object = {},
-  ): Promise<DataListResponse<AudienceExternalFeed>> => {
+  ): Promise<DataListResponse<AudienceExternalFeed>> {
     const endpoint = 'plugins';
 
     const params = {
@@ -105,10 +99,10 @@ export class AudienceExternalFeedService
     return ApiService.getRequest(endpoint, params);
   }
 
-  deleteAudienceFeed = (
+  deleteAudienceFeed(
     id: string,
     options: object = {},
-  ): Promise<DataResponse<any>> => {
+  ): Promise<DataResponse<any>> {
     const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}`;
 
     return ApiService.deleteRequest(endpoint, options);
@@ -126,18 +120,16 @@ export class AudienceExternalFeedService
       ...options,
     };
     return ApiService.getRequest(endpoint, params);
-  }
+  };
 
   getInstanceProperties = (
     id: string,
     options: object = {},
   ): Promise<DataListResponse<PropertyResourceShape>> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/external_feeds/${id}/properties`;
+    const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options);
-  }
+  };
 
   updatePluginInstance = (
     id: string,
@@ -149,7 +141,7 @@ export class AudienceExternalFeedService
     };
 
     return ApiService.putRequest(endpoint, params);
-  }
+  };
 
   updatePluginInstanceProperty = (
     organisationId: string,
@@ -157,58 +149,52 @@ export class AudienceExternalFeedService
     technicalName: string,
     params: object = {},
   ): Promise<DataResponse<PropertyResourceShape> | void> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/external_feeds/${id}/properties/technical_name=${technicalName}`;
-    return PluginService.handleSaveOfProperties(
+    const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}/properties/technical_name=${technicalName}`;
+    return this._pluginService.handleSaveOfProperties(
       params,
       organisationId,
-      this.entityPath,
+      'audience_external_feeds',
       id,
       endpoint,
     );
-  }
+  };
 
   createPluginInstance = (
     organisationId: string,
     options: object = {},
   ): Promise<DataResponse<AudienceExternalFeed>> => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/external_feeds?organisation_id=${organisationId}`;
+    const endpoint = `audience_segments/${this.segmentId}/external_feeds?organisation_id=${organisationId}`;
 
     const params = {
       ...options,
     };
 
     return ApiService.postRequest(endpoint, params);
-  }
+  };
 
   // STOP
 
   // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
   getAudienceFeedProperties = (id: string, options: object = {}) => {
-    const endpoint = `audience_segments/${
-      this.segmentId
-    }/external_feeds/${id}/properties`;
+    const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}/properties`;
 
     return ApiService.getRequest(endpoint, options).then((res: any) => {
       return { ...res.data, id };
     });
-  }
+  };
 
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.getInstanceById(pInstanceId).then(res => {
       const audienceTagFeed = res.data;
-      return PluginService.findPluginFromVersionId(
-        audienceTagFeed.version_id,
-      ).then(pluginResourceRes => {
-        const pluginResource = pluginResourceRes.data;
-        return PluginService.getLocalizedPluginLayout(
-          pluginResource.id,
-          audienceTagFeed.version_id,
-        );
-      });
+      return this._pluginService
+        .findPluginFromVersionId(audienceTagFeed.version_id)
+        .then(pluginResourceRes => {
+          const pluginResource = pluginResourceRes.data;
+          return this._pluginService.getLocalizedPluginLayout(
+            pluginResource.id,
+            audienceTagFeed.version_id,
+          );
+        });
     });
   }
 }

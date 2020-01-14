@@ -1,13 +1,33 @@
+import { Container, interfaces } from 'inversify';
 import { IMicsTagService, MicsTagService } from '../services/MicsTagService';
 import PersistedStoreService, {
   IPersistedStoreService,
 } from './../services/PersistedStoreService';
-import { IFeedsStatsService } from './../services/FeedsStatsService';
 import {
   IServiceOfferPageService,
   ServiceOfferPageService,
 } from './../containers/Settings/ServicesSettings/ServiceOfferPageService';
 import { ICatalogService, CatalogService } from './../services/CatalogService';
+import { EmailRouterService } from './../services/Library/EmailRoutersService';
+import {
+  VisitAnalyzerService,
+  IVisitAnalyzerService,
+} from './../services/Library/VisitAnalyzerService';
+import {
+  IAudienceSegmentFeedService,
+  AudienceFeedType,
+} from './../services/AudienceSegmentFeedService';
+import {
+  DisplayCampaignService,
+  IDisplayCampaignService,
+} from './../services/DisplayCampaignService';
+import AdGroupFormService, {
+  IAdGroupFormService,
+} from './../containers/Campaigns/Display/Edit/AdGroup/AdGroupFormService';
+import {
+  IDisplayCreativeFormService,
+  DisplayCreativeFormService,
+} from './../containers/Creative/DisplayAds/Edit/DisplayCreativeFormService';
 import {
   NavigatorService,
   INavigatorService,
@@ -39,16 +59,9 @@ import {
   IAudiencePartitionsService,
   AudiencePartitionsService,
 } from './../services/AudiencePartitionsService';
-import {
-  AudienceSegmentService,
+import AudienceSegmentService, {
   IAudienceSegmentService,
-} from './../services/AudienceSegmentService';
-import getDecorators from 'inversify-inject-decorators';
-import { Container } from 'inversify';
-import {
-  IKeywordListService,
-  KeywordListService,
-} from '../services/Library/KeywordListsService';
+} from '../services/AudienceSegmentService';
 import {
   IKeywordListFormService,
   KeywordListFormService,
@@ -60,8 +73,8 @@ import {
 import { IImportService, ImportService } from '../services/ImportService';
 import { TYPES } from '../constants/types';
 import {
-  IAudienceExternalFeedService,
   AudienceExternalFeedService,
+  IAudienceExternalFeedService,
 } from '../services/AudienceExternalFeedService';
 import {
   IAudienceTagFeedService,
@@ -72,9 +85,9 @@ import {
   DisplayNetworkService,
 } from '../services/DisplayNetworkService';
 import {
-  IDealsListService,
-  DealsListService,
-} from '../services/Library/DealListsService';
+  IDealListService,
+  DealListService,
+} from '../services/Library/DealListService';
 import {
   IDealListFormService,
   DealListFormService,
@@ -116,7 +129,6 @@ import {
 import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
 import { ISettingsService, SettingsService } from '../services/SettingsService';
-import { FeedsStatsService } from '../services/FeedsStatsService';
 import {
   IDashboardService,
   DashboardService,
@@ -127,6 +139,22 @@ import OrganisationService, {
 } from '../services/OrganisationService';
 import { IAuthService, AuthService } from '../services/AuthService';
 import { IDatamartService, DatamartService } from '../services/DatamartService';
+import {
+  IFeedsStatsService,
+  FeedsStatsService,
+} from '../services/FeedsStatsService';
+import {
+  IAssetFileService,
+  AssetFileService,
+} from '../services/Library/AssetFileService';
+import { IEmailRouterService } from '../services/Library/EmailRoutersService';
+import { CreativeService, ICreativeService } from '../services/CreativeService';
+import PluginService, { IPluginService } from '../services/PluginService';
+import {
+  IKeywordListService,
+  KeywordListService,
+} from '../services/Library/KeywordListsService';
+import getDecorators from 'inversify-inject-decorators';
 
 const container = new Container();
 
@@ -153,11 +181,13 @@ container
   .bind<IDisplayCampaignFormService>(TYPES.IDisplayCampaignFormService)
   .to(DisplayCampaignFormService);
 container
-  .bind<IAudienceExternalFeedService>(TYPES.IAudienceExternalFeedService)
-  .to(AudienceExternalFeedService);
+  .bind<IAudienceSegmentFeedService>(TYPES.IAudienceExternalFeedService)
+  .to(AudienceExternalFeedService)
+  .whenTargetNamed('EXTERNAL_FEED');
 container
-  .bind<IAudienceTagFeedService>(TYPES.IAudienceTagFeedService)
-  .toConstructor(AudienceTagFeedService);
+  .bind<IAudienceSegmentFeedService>(TYPES.IAudienceTagFeedService)
+  .to(AudienceTagFeedService)
+  .whenTargetNamed('TAG_FEED');
 container.bind<IImportService>(TYPES.IImportService).to(ImportService);
 container.bind<IExportService>(TYPES.IExportService).to(ExportService);
 container.bind<IScenarioService>(TYPES.IScenarioService).to(ScenarioService);
@@ -165,10 +195,7 @@ container.bind<IDatamartService>(TYPES.IDatamartService).to(DatamartService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
   .to(DisplayNetworkService);
-container.bind<IDealsListService>(TYPES.IDealsListService).to(DealsListService);
-container
-  .bind<IDealListFormService>(TYPES.IDealListFormService)
-  .to(DealListFormService);
+container.bind<IDealListService>(TYPES.IDealListService).to(DealListService);
 container
   .bind<IDealListFormService>(TYPES.IDealListFormService)
   .to(DealListFormService);
@@ -222,6 +249,70 @@ container.bind<ILabelService>(TYPES.ILabelService).to(LabelService);
 container
   .bind<IOrganisationService>(TYPES.IOrganisationService)
   .to(OrganisationService);
+container.bind<IAssetFileService>(TYPES.IAssetFileService).to(AssetFileService);
+container.bind<IPluginService>(TYPES.IPluginService).to(PluginService);
+container.bind<ICreativeService>(TYPES.ICreativeService).to(CreativeService);
+container
+  .bind<IDisplayCreativeFormService>(TYPES.IDisplayCreativeFormService)
+  .to(DisplayCreativeFormService);
+container
+  .bind<IAdGroupFormService>(TYPES.IAdGroupFormService)
+  .to(AdGroupFormService);
+container
+  .bind<IDisplayCampaignService>(TYPES.IDisplayCampaignService)
+  .to(DisplayCampaignService);
+container
+  .bind<IVisitAnalyzerService>(TYPES.IVisitAnalyzerService)
+  .to(VisitAnalyzerService);
+container
+  .bind<IEmailRouterService>(TYPES.IEmailRouterService)
+  .to(EmailRouterService);
+container
+  .bind<interfaces.Factory<IAudienceExternalFeedService>>(
+    TYPES.IAudienceExternalFeedServiceFactory,
+  )
+  .toFactory<IAudienceExternalFeedService>((context: interfaces.Context) => {
+    return (segmentId: string) => {
+      const audienceExternalFeedService = context.container.get<
+        IAudienceExternalFeedService
+      >(TYPES.IAudienceExternalFeedService);
+      audienceExternalFeedService.segmentId = segmentId;
+      return audienceExternalFeedService;
+    };
+  });
+container
+  .bind<interfaces.Factory<IAudienceTagFeedService>>(
+    TYPES.IAudienceTagFeedServiceFactory,
+  )
+  .toFactory<IAudienceTagFeedService>((context: interfaces.Context) => {
+    return (segmentId: string) => {
+      const audienceTagFeedService = context.container.get<
+        IAudienceTagFeedService
+      >(TYPES.IAudienceTagFeedService);
+      audienceTagFeedService.segmentId = segmentId;
+      return audienceTagFeedService;
+    };
+  });
+container
+  .bind<interfaces.Factory<IAudienceSegmentFeedService>>(
+    TYPES.IAudienceSegmentFeedServiceFactory,
+  )
+  .toFactory<IAudienceSegmentFeedService>((context: interfaces.Context) => {
+    return (feedType: AudienceFeedType) => (segmentId: string) => {
+      const audienceSegmentFeedService = context.container.getNamed<
+        IAudienceSegmentFeedService
+      >(
+        feedType === 'EXTERNAL_FEED'
+          ? TYPES.IAudienceExternalFeedService
+          : TYPES.IAudienceTagFeedService,
+        feedType,
+      );
+
+      audienceSegmentFeedService.segmentId = segmentId;
+      audienceSegmentFeedService.feedType = feedType;
+      return audienceSegmentFeedService;
+    };
+  });
 
 export const { lazyInject } = getDecorators(container, false);
 

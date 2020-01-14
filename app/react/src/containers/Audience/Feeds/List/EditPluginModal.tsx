@@ -6,8 +6,11 @@ import {
   AudienceTagFeedTyped,
 } from '../../Segments/Edit/domain';
 import PluginCardModal from '../../../Plugin/Edit/PluginCard/PluginCardModal';
-import PluginService from '../../../../services/PluginService';
-import AudienceSegmentFeedService from '../../../../services/AudienceSegmentFeedService';
+import { IPluginService } from '../../../../services/PluginService';
+import {
+  AudienceFeedType,
+  IAudienceSegmentFeedService,
+} from '../../../../services/AudienceSegmentFeedService';
 import { PropertyResourceShape } from '../../../../models/plugin';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -17,6 +20,8 @@ import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { injectIntl, defineMessages, InjectedIntlProps } from 'react-intl';
 import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 export interface EditPluginModalProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -34,7 +39,10 @@ type Props = EditPluginModalProps &
 interface State {
   layout?: PluginLayout;
   pluginProperties: PropertyResourceShape[];
-  initialValues?: { plugin: AudienceExternalFeedTyped | AudienceTagFeedTyped; properties: any };
+  initialValues?: {
+    plugin: AudienceExternalFeedTyped | AudienceTagFeedTyped;
+    properties: any;
+  };
   isLoading: boolean;
 }
 
@@ -54,7 +62,22 @@ const messages = defineMessages({
 });
 
 class EditPluginModal extends React.Component<Props, State> {
-  private feedService: AudienceSegmentFeedService;
+  private feedService: IAudienceSegmentFeedService;
+
+  @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
+  private _audienceSegmentFeedServiceFactory: (
+    feedType: AudienceFeedType,
+  ) => (segmentId: string) => IAudienceSegmentFeedService;
+
+  private _audienceExternalFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (
+    segmentId: string,
+  ) => IAudienceSegmentFeedService;
+
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
 
   constructor(props: Props) {
     super(props);
@@ -64,16 +87,19 @@ class EditPluginModal extends React.Component<Props, State> {
       isLoading: true,
     };
 
+    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'EXTERNAL_FEED',
+    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
+      'TAG_FEED',
+    );
+
     this.feedService =
       props.feed.type === 'EXTERNAL_FEED'
-        ? new AudienceSegmentFeedService(
+        ? this._audienceExternalFeedServiceFactory(
             props.feed.audience_segment_id,
-            'EXTERNAL_FEED',
           )
-        : new AudienceSegmentFeedService(
-            props.feed.audience_segment_id,
-            'TAG_FEED',
-          );
+        : this._audienceTagFeedServiceFactory(props.feed.audience_segment_id);
   }
 
   componentDidMount() {
@@ -97,7 +123,8 @@ class EditPluginModal extends React.Component<Props, State> {
 
   getPluginLayout() {
     const { feed, notifyError, onClose } = this.props;
-    return PluginService.getLocalizedPluginLayoutFromVersionId(feed.version_id)
+    return this._pluginService
+      .getLocalizedPluginLayoutFromVersionId(feed.version_id)
       .then(pluginInfo => {
         this.setState({
           layout: pluginInfo.layout,
@@ -152,7 +179,7 @@ class EditPluginModal extends React.Component<Props, State> {
   savePluginInstance = (
     pluginInstance: AudienceTagFeedTyped | AudienceExternalFeedTyped,
     properties: PropertyResourceShape[],
-    name?: string
+    name?: string,
   ) => {
     const { notifyError, feed, onClose, onChange } = this.props;
 
@@ -166,7 +193,10 @@ class EditPluginModal extends React.Component<Props, State> {
     } = pluginInstance;
 
     return this.feedService
-      .updatePluginInstance(pluginInstance.id, name ? {...newPluginInstance, name: name} : newPluginInstance)
+      .updatePluginInstance(
+        pluginInstance.id,
+        name ? { ...newPluginInstance, name: name } : newPluginInstance,
+      )
       .then(() =>
         this.updatePropertiesValue(
           properties,
@@ -206,16 +236,12 @@ class EditPluginModal extends React.Component<Props, State> {
   };
 
   render() {
-    const { 
-      feed, 
-      modalTab, 
+    const {
+      feed,
+      modalTab,
       onClose,
-      intl: {
-        formatMessage,
-      },
-      fieldValidators: {
-        isRequired,
-      }
+      intl: { formatMessage },
+      fieldValidators: { isRequired },
     } = this.props;
     const { isLoading, layout, pluginProperties, initialValues } = this.state;
 
@@ -245,10 +271,10 @@ class EditPluginModal extends React.Component<Props, State> {
           label: formatMessage(messages.feedModalNameFieldLabel),
           title: formatMessage(messages.feedModalNameFieldTitle),
           placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
-          display: true, 
-          disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED', 
+          display: true,
+          disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED',
           value: feed.name,
-          validator: [isRequired]
+          validator: [isRequired],
         }}
       />
     );
@@ -259,5 +285,5 @@ export default compose<Props, EditPluginModalProps>(
   withRouter,
   injectNotifications,
   injectIntl,
-  withValidators
+  withValidators,
 )(EditPluginModal);
