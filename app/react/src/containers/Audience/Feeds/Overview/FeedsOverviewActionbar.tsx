@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 import injectNotifications, {
@@ -7,6 +7,8 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
 import Actionbar from '../../../../components/ActionBar';
+import { McsIcon } from '../../../../components';
+import { Button } from 'antd';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
@@ -23,6 +25,7 @@ const messages = defineMessages({
 class FeedsOverviewActionBar extends React.Component<Props, {}> {
   render() {
     const {
+      history,
       match: {
         params: { organisationId },
       },
@@ -36,7 +39,23 @@ class FeedsOverviewActionBar extends React.Component<Props, {}> {
       },
     ];
 
-    return <Actionbar paths={breadcrumbPaths} />;
+    const viewDetails = () => {
+      return history.push(`/v2/o/${organisationId}/audience/feeds/list`);
+    };
+
+    return (
+      <Actionbar paths={breadcrumbPaths}>
+
+        <Button onClick={viewDetails}>
+          <McsIcon type="download" />
+          <FormattedMessage
+            id="audiencefeedsOverview.actionbar.view-details"
+            defaultMessage="View Details"
+          />
+        </Button>
+
+      </Actionbar >
+    );
   }
 }
 

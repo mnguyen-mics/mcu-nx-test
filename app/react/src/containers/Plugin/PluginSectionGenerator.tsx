@@ -16,7 +16,7 @@ import { Validator } from 'redux-form';
 
 export interface PluginExtraField {
     label: string,
-    title: string,
+    title: string | React.ReactElement<any>,
     placeholder: string,
     display: boolean,
     disabled: boolean,
