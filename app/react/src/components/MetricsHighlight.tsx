@@ -12,17 +12,12 @@ interface MetricsColumnProps {
 }
 
 class MetricsColumn extends React.Component<MetricsColumnProps> {
-
   static defaultProps = {
     isLoading: false,
   };
 
-  
   render() {
-    const {
-      metrics,
-      isLoading,
-    } = this.props;
+    const { metrics, isLoading } = this.props;
 
     const nbOfVal: number = metrics ? metrics.length : 1;
     const cellSize: number = Math.round(24 / nbOfVal);
@@ -33,13 +28,22 @@ class MetricsColumn extends React.Component<MetricsColumnProps> {
           return (
             <Col key={metric.name} span={cellSize}>
               <div className="title">{metric.name}</div>
-              <div className="metric">{isLoading ? <i className="mcs-table-cell-loading" style={{ width: '130px' }} /> : metric.value}</div>
-            </Col>);
+              <div className="metric">
+                {isLoading ? (
+                  <i
+                    className="mcs-table-cell-loading"
+                    style={{ width: '130px' }}
+                  />
+                ) : (
+                  metric.value
+                )}
+              </div>
+            </Col>
+          );
         })}
       </div>
     );
   }
-
 }
 
 export default MetricsColumn;
