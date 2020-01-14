@@ -65,14 +65,14 @@ class CustomObjectRenderer extends React.Component<Props, State> {
   // Used to apply a custom template to display the value
   getApplyTemplateOpt = (key: string, value: AnyJson) => (
     layer: TemplateDefinitions,
-  ): JSX.Element | undefined => {
+  ): JSX.Element | null => {
     // If a template exists for the key, in the layer
     if (key in layer) {
       // The template is applied to the value
       const returnedValue = layer[key](value);
       return <CustomPropertyRenderer name={key} value={returnedValue} />;
     }
-    return undefined;
+    return null;
   };
 
   // Function used to create extended templates from other extended templates, relatively (using key)
@@ -312,11 +312,11 @@ class CustomObjectRenderer extends React.Component<Props, State> {
         // 1) with an absolute property name;
         // 2) with a relative property name (transformed into an absolute one in a context);
         // 3) with a relative property name.
-        const customJSX: JSX.Element | undefined =
+        const customJSX: JSX.Element | null =
           applyTemplateOpt(absoluteLayer) ||
           applyTemplateOpt(transformedLayer) ||
           applyTemplateOpt(relativeLayer);
-        if (customJSX) {
+        if (customJSX !== null) {
           return customJSX;
         }
 
