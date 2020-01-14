@@ -207,7 +207,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
     save(
       pluginData, 
       formattedProperties, 
-      formValues.name || (nameField && nameField.value), 
+      (formValues.plugin && formValues.plugin.name) || (nameField && nameField.value), 
       formValues.description || (descriptionField && descriptionField.value));
   }
 
