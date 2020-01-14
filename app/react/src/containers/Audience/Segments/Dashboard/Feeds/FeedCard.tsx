@@ -471,7 +471,6 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     return (
       <Card className="hoverable-card actionable-card compact feed-card">
-        <hr />
         <div className="top-menu" id={this.id}>
           <Dropdown
             overlay={menu}
@@ -496,11 +495,17 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               undefined
             )}
             <div className="title">
-              {feed.name
-                ? feed.name
-                : cardHeaderTitle
+              {
+                feed.name &&
+                <div className="feed-name">
+                    {feed.name}
+                </div>
+              }
+              <div className="plugin-name">
+                {cardHeaderTitle
                 ? cardHeaderTitle
                 : feed.artifact_id}
+              </div>
             </div>
           </div>
           <div className="content">

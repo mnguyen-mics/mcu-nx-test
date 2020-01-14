@@ -40,19 +40,21 @@
   }
 
   &.feed-card {
+    position: relative;
+    padding: 20px;
     .top-menu {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 0px;
+      right: 0px;
       .icon {
         margin-right: 0;
       }
     }
     .wrapper {
-      padding: 10px;
       .card-header {
         display: inline-block;
         width: 100%;
+
         .title {
           font-size: 1.2em;
           font-weight: 500;
@@ -60,11 +62,22 @@
           font-stretch: normal;
           line-height: normal;
           letter-spacing: normal;
-          color: @primary-color;
-          line-height: 45px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          line-height: 20px;
+          padding-right: 20px;
+
+          .feed-name {
+            color: @primary-color;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .plugin-name {
+            color: @text-color-secondary;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
         }
         .image-title {
           width: 45px;
