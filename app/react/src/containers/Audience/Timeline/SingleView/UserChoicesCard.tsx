@@ -173,7 +173,7 @@ class UserChoicesCard extends React.Component<Props, State> {
             </button>
           </Row>
         ) : (
-          undefined
+          null
         );
 
       return (
@@ -193,7 +193,7 @@ class UserChoicesCard extends React.Component<Props, State> {
         </Card>
       );
     }
-    return undefined;
+    return null;
   }
 }
 

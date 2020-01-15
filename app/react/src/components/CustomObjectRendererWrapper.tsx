@@ -96,7 +96,7 @@ class CustomObjectRendererWrapper extends React.Component<Props, State> {
         </Row>
       );
     }
-    return undefined;
+    return null;
   };
 
   render() {
