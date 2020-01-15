@@ -7,7 +7,6 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
 import Actionbar from '../../../../components/ActionBar';
-import { McsIcon } from '../../../../components';
 import { Button } from 'antd';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
@@ -47,7 +46,6 @@ class FeedsOverviewActionBar extends React.Component<Props, {}> {
       <Actionbar paths={breadcrumbPaths}>
 
         <Button onClick={viewDetails}>
-          <McsIcon type="download" />
           <FormattedMessage
             id="audiencefeedsOverview.actionbar.view-details"
             defaultMessage="View Details"

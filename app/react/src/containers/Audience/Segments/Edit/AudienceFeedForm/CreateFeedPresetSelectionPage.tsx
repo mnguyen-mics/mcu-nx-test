@@ -286,7 +286,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
                     label: formatMessage(messages.feedModalNameFieldLabel),
                     title: <div>
                         {formatMessage(messages.feedModalNameFieldTitle)}
-                        <b>{formatMessage(messages.feedPresetModalNameFieldTitleWarning)}</b>
+                        <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
                     </div>,
                     placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
                     display: true,
@@ -356,7 +356,7 @@ const messages = defineMessages({
     id: 'audience.segment.feed.createPreset.descriptionField.placeholder',
     defaultMessage: 'Description',
   },
-  feedPresetModalNameFieldTitleWarning: {
+  feedModalNameFieldTitleWarning: {
     id: 'audience.segment.feed.preset.create.nameField.title.warning',
     defaultMessage: "Warning: This name is only used in the platform, it won't be visible on the external system.",
   },

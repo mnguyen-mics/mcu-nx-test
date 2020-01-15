@@ -70,11 +70,6 @@ export default defineMessages({
     defaultMessage: 'The name that will be used to identify this feed preset and the feeds created with it.',
   },
 
-  feedPresetModalNameFieldTitleWarning: {
-    id: 'audience.segment.feed.preset.create.nameField.title.warning',
-    defaultMessage: "Warning: This name is only used in the platform, it won't be visible on the external system.",
-  },
-
   feedModalNameFieldPlaceholder: {
     id: 'audience.segment.feed.create.nameField.placeholder',
     defaultMessage: 'Name',
