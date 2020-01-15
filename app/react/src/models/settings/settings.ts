@@ -88,3 +88,9 @@ export interface Aliases {
     site_id: string;
     name: string
 }
+
+export interface DatamartReplicationResource {
+    id: string;
+    name: string;
+    datamart_id: string;
+}

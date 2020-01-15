@@ -15,8 +15,8 @@ import DatamartEditPage from '../containers/Settings/DatamartSettings/Datamarts/
 import { BidOptimizerContent } from '../containers/Settings/CampaignSettings/BidOptimizer/List';
 import { CreateEditBidOptimizer } from '../containers/Settings/CampaignSettings/BidOptimizer/Edit';
 
-import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List'
-import EditAttributionModelPage from '../containers/Settings/CampaignSettings/AttributionModel/Edit/EditAttributionModelPage'
+import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List';
+import EditAttributionModelPage from '../containers/Settings/CampaignSettings/AttributionModel/Edit/EditAttributionModelPage';
 
 import { EmailRouterContent } from '../containers/Settings/CampaignSettings/EmailRouter/List';
 import { CreateEditEmailRouter } from '../containers/Settings/CampaignSettings/EmailRouter/Edit';
@@ -52,15 +52,13 @@ import ProcessingPage from '../containers/Settings/OrganisationSettings/Processi
 import ProcessingEditPage from '../containers/Settings/OrganisationSettings/Processings/Edit/ProcessingEditPage';
 import CompartmentsListPage from '../containers/Settings/DatamartSettings/Compartments/CompartmentsListPage';
 import CompartmentEditPage from '../containers/Settings/DatamartSettings/Compartments/Edit/CompartmentEditPage';
-
-// import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
-// import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
+import DatamartReplicationEditPage from '../containers/Settings/DatamartSettings/DatamartReplication/Edit/DatamartReplicationEditPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
-  *
-  * DATAMART SETTINGS 
-  */
+   *
+   * DATAMART SETTINGS
+   */
 
   // sites
   settingsDatamartSitesList: {
@@ -103,7 +101,8 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
   settingsDatamartMobileAppEdition: {
-    path: '/settings/datamart/:datamartId/mobile_application/:mobileApplicationId/edit',
+    path:
+      '/settings/datamart/:datamartId/mobile_application/:mobileApplicationId/edit',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
     requiredFeature: 'datamartSettings-mobile_applications',
@@ -117,20 +116,38 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'datamartSettings-compartments',
     requireDatamart: true,
   },
-  settingsDatamartCompartmentsCreation:{
+  settingsDatamartCompartmentsCreation: {
     path: '/settings/datamart/compartments/create',
     layout: 'edit',
     editComponent: CompartmentEditPage,
     requiredFeature: 'datamartSettings-compartments',
     requireDatamart: true,
   },
-  settingsDatamartCompartmentsEdition:{
+  settingsDatamartCompartmentsEdition: {
     path: '/settings/datamart/:datamartId/compartments/:compartmentId/edit',
     layout: 'edit',
     editComponent: CompartmentEditPage,
     requiredFeature: 'datamartSettings-compartments',
     requireDatamart: true,
   },
+
+  // datamart replication
+  settingsDatamartReplicationCreation: {
+    path: '/settings/datamart/datamart_replication/create',
+    layout: 'edit',
+    editComponent: DatamartReplicationEditPage,
+    requiredFeature: 'datamartSettings-datamart_replication',
+    requireDatamart: true,
+  },
+  settingsDatamartReplicationEdition: {
+    path:
+      '/settings/datamart/:datamartId/datamart_replication/:datamartReplicationId/edit',
+    layout: 'edit',
+    editComponent: DatamartReplicationEditPage,
+    requiredFeature: 'datamartSettings-datamart_replication',
+    requireDatamart: true,
+  },
+
   // datamart
   settingsDatamartDatamartList: {
     path: '/settings/datamart/my_datamart',
@@ -191,7 +208,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
 
-  // ml function 
+  // ml function
   settingsDatamartMlFunctionList: {
     path: '/settings/datamart/ml_functions',
     layout: 'settings',
@@ -214,32 +231,30 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
 
-
   settingsDatamartMlAlgorithmList: {
     path: '/settings/datamart/ml_algorithms',
     layout: 'settings',
     contentComponent: MlAlgorithmsPage,
-    requiredFeature: 'datamartSettings-mlAlgorithms'
+    requiredFeature: 'datamartSettings-mlAlgorithms',
   },
   settingsDatamartMlAlgorithmCreation: {
     path: '/settings/datamart/ml_algorithms/create',
     layout: 'edit',
     editComponent: MlAlgorithmEditPage,
-    requiredFeature: 'datamartSettings-mlAlgorithms'
+    requiredFeature: 'datamartSettings-mlAlgorithms',
   },
   settingsDatamartMlAlgorithmEdit: {
     path: '/settings/datamart/ml_algorithms/:mlAlgorithmId/edit',
     layout: 'edit',
     editComponent: MlAlgorithmEditPage,
-    requiredFeature: 'datamartSettings-mlAlgorithms'
+    requiredFeature: 'datamartSettings-mlAlgorithms',
   },
   settingsDatamartMlAlgorithmModelsList: {
     path: '/settings/datamart/ml_algorithms/:mlAlgorithmId/models',
     layout: 'settings',
     contentComponent: MlAlgorithmModelsPage,
-    requiredFeature: 'datamartSettings-mlAlgorithms'
+    requiredFeature: 'datamartSettings-mlAlgorithms',
   },
-
 
   /*
   ORGANISATION SETTINGS
@@ -445,8 +460,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'servicesSettings-subscribed_offers',
   },
   settingsMyOfferServiceItemConditionList: {
-    path:
-      '/settings/services/my_offers/:offerId/service_item_conditions',
+    path: '/settings/services/my_offers/:offerId/service_item_conditions',
     layout: 'settings',
     contentComponent: MyOfferServiceItemListPage,
     requiredFeature: 'servicesSettings-my_offers',

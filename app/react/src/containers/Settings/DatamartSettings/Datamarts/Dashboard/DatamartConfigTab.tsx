@@ -5,6 +5,7 @@ import { MobileApplicationsListPage } from '../../MobileApplications/List';
 import { SitesListPage } from '../../Sites/List';
 import CompartmentsContainer from '../../Compartments/List/CompartmentsContainer';
 import CleaningRulesContainer from '../../CleaningRules/List/CleaningRulesContainer';
+import { DatamartReplicationListPage } from '../../DatamartReplication/List';
 
 export interface IDatamartConfigTabProps {
   datamartId: string;
@@ -87,6 +88,12 @@ export default class DatamartConfigTab extends React.Component<IDatamartConfigTa
             <Col>
               <SitesListPage
                 datamartId={datamartId}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <DatamartReplicationListPage
               />
             </Col>
           </Row>

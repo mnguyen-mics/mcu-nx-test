@@ -15,7 +15,7 @@ export interface DatamartWithMetricResource extends DatamartResource{
 audience_segment_metrics: AudienceSegmentMetricResource[] 
 }
 
-type DatamartType = 'DATAMART' | 'CROSS_DATAMART';
+export type DatamartType = 'DATAMART' | 'CROSS_DATAMART';
 
 export type QueryLanguage = 'SELECTORQL' | 'OTQL' | 'JSON_OTQL';
 
