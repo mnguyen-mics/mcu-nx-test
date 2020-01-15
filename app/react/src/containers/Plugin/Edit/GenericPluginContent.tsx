@@ -352,8 +352,8 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     return this.setState({ isLoadingPlugin: true }, () => {
       const createInstancePromise = pluginInstanceService
         .createPluginInstance(organisationId, {
-          ...formattedFormValues,
           name: name,
+          ...formattedFormValues,
         })
         .then(res => res.data);
       const updatePropertiesPromise = createInstancePromise.then(res => {

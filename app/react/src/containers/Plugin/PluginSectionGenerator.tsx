@@ -42,8 +42,7 @@ type JoinedProps = PluginSectionGeneratorProps &
 
 interface PluginSectionGeneratorState {
     displayAdvancedFields: boolean;
-    nameFieldValue?: string,
-    descriptionFieldValue?: string,
+    descriptionFieldValue?: string;
 }
 
 class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionGeneratorState> {
@@ -53,7 +52,6 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
 
         this.state = {
             displayAdvancedFields: false,
-            nameFieldValue: props.nameField && props.nameField.value
         };
     }
 
@@ -106,7 +104,7 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
 
     generateNameAndDescriptionFields() {
         const { nameField, descriptionField } = this.props;
-        const { nameFieldValue, descriptionFieldValue } = this.state;
+        const { descriptionFieldValue } = this.state;
         const inputs: React.ReactNode[] = [];
 
         if(nameField && nameField.display) {
@@ -114,8 +112,8 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                 <div key="nameField">
                     <Row>
                         <FormInputField
-                            key="name"
-                            name="name"
+                            key='name'
+                            name={`plugin.name`}
                             component={FormInput}
                             formItemProps={{ label: nameField.label, required: true }}
                             inputProps={nameField.disabled ? { 
@@ -125,8 +123,6 @@ class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionG
                             } : {
                                 placeholder: nameField.placeholder,
                                 disabled: nameField.disabled,
-                                value: nameFieldValue,
-                                onChange: (e) => this.setState({ nameFieldValue: e.target.value })
                             }}
                             small={true}
                             helpToolTipProps={{title: nameField.title}}
