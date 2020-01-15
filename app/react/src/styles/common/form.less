@@ -96,11 +96,23 @@
       }
 
       .presentation-item:hover {
-        background-color: #ebeff2;
+        background-color: @hover-color;
       }
 
       .presentation-item:focus {
         outline: none;
+      }
+
+      .presentation-item:disabled {
+        background-color: @btn-disable-bg;
+        border-color: @btn-disable-border;
+        color: @btn-disable-color;
+
+        .content {
+          .subtitle {
+            color: @error-color;
+          }
+        }
       }
     }
 
