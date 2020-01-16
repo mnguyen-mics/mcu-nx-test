@@ -519,6 +519,11 @@ export function generateNodeProperties(
         iconType: 'email',
         color: '#0ba6e1',
       };
+      case 'ADD_TO_SEGMENT':
+    return {
+      iconType: 'user-list',
+      color: '#0ba6e1',
+    };
     case 'QUERY_INPUT':
       return {
         iconAnt: 'flag',

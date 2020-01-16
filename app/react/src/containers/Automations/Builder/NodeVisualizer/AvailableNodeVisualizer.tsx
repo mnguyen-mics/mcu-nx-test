@@ -8,8 +8,11 @@ import { AntIcon } from '../domain';
 import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
+  INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA,
 } from '../AutomationNode/Edit/domain';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
+import { compose } from 'recompose';
 
 const { TreeNode } = Tree;
 
@@ -60,6 +63,16 @@ const displayCampaignNode: ScenarioNodeShape = {
   initialFormData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
 };
 
+const audienceSegmentNode: ScenarioNodeShape = {
+  id: generateFakeId(),
+  name: 'Add to Segment',
+  type: 'ADD_TO_SEGMENT',
+  audience_segment_id: '',
+  scenario_id: '',
+  formData: INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA,
+  initialFormData: INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA,
+};
+
 const conditionNode1: ScenarioNodeShape = {
   id: generateFakeId(),
   name: 'Split',
@@ -96,7 +109,7 @@ const conditionNode3: IfNodeResource = {
   },
 };
 
-type Props = InjectedIntlProps;
+type Props = InjectedFeaturesProps &  InjectedIntlProps;
 
 class AvailableNodeVisualizer extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -110,7 +123,8 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
 
   componentWillMount() {
     this.setState({
-      actionNodes: [emailCampaignNode, displayCampaignNode],
+      actionNodes: this.props.hasFeature('scenario-segment')? 
+      [emailCampaignNode, displayCampaignNode, audienceSegmentNode] : [emailCampaignNode, displayCampaignNode],
       conditionNodes: [conditionNode1, conditionNode2, conditionNode3],
       exitsNodes: [],
     });
@@ -156,4 +170,8 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
   }
 }
 
-export default injectIntl(AvailableNodeVisualizer);
+export default compose<Props, {}>(
+  injectIntl,
+  injectFeatures,
+)(AvailableNodeVisualizer);
+
