@@ -203,6 +203,10 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
         });
   };
 
+  closeCommunityModal = () => {
+    this.setState({ isVisibleCommunityModal: false });
+  };
+
   closeDeleteModal = () => {
     this.setState({ isVisibleDeleteModal: false }, () => {
       this.setState({ processingIdToBeDeleted: undefined });
@@ -352,7 +356,7 @@ class ProcessingPage extends React.Component<Props, ProcessingPageState> {
         <Modal // Community modal
           visible={isVisibleCommunityModal}
           onOk={this.onClickCommunityModal}
-          onCancel={this.closeDeleteModal}
+          onCancel={this.closeCommunityModal}
         >
           {isVisibleCommunityModal &&
             formatMessage(messages.communityModalMessage)}
