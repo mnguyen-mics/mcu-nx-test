@@ -1,7 +1,6 @@
 import ButtonStyleless from './ButtonStyleless';
 import EmptyRecords from './RelatedRecord/EmptyRecords';
 import Form from './Form';
-import List from './List';
 import Loading from './Loading';
 import McsIcon from './McsIcon';
 import TableSelector from './ElementSelector/TableSelector';
@@ -17,7 +16,6 @@ export {
   ButtonStyleless,
   EmptyRecords,
   Form,
-  List,
   Loading,
   LabelsSelector,
   McsIcon,
