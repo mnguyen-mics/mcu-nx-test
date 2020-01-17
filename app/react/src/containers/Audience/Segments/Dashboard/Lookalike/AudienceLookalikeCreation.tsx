@@ -526,7 +526,7 @@ class AudienceLookalikeCreation extends React.Component<
               title={messages.lookalikeTypeSelectorTitle}
               subtitle={messages.lookalikeTypeSelectorsubTitle}
             />
-            <Row style={{ width: '650px', display: 'inline-block' }}>
+            <Row className="mcs-selector_container">
               <Row className="menu">
                 {lookalikeTypes.map(type => {
                   const handleSelect = () => this.onSelectLookalikeType(type);

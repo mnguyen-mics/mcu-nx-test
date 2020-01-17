@@ -49,7 +49,7 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
     const onClickOnPeriodic = () => this.setState({periodic: true})
 
     return (
-      <Row style={{ width: '650px', display: 'inline-block' }}>
+      <Row className="mcs-selector_container">
         <Row className="menu">
           <div className="presentation">
             <MenuPresentational
@@ -109,7 +109,7 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
     const onClickOnPeriodic = (n: number, p: QueryInputEvaluationPeriodUnit) => () => onSelectTemplate('PERIODIC', n , p);
 
     return (
-      <Row style={{ width: '650px', display: 'inline-block' }}>
+      <Row className="mcs-selector_container">
         <Row className="menu">
           <MenuList title={formatMessage(messages.everyHours)} select={onClickOnPeriodic(1, "HOUR")} />
           <MenuList title={formatMessage(messages.every2Hours)} select={onClickOnPeriodic(2, "HOUR")} />

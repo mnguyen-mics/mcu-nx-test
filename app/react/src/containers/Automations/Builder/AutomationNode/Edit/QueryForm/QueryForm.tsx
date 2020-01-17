@@ -103,7 +103,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
                   title={localMessages.title}
                   subtitle={localMessages.subtitle}
                 />
-                <Row style={{ width: '650px', display: 'inline-block' }}>
+                <Row className="mcs-selector_container">
                   <Row className="menu">
                     <div className="presentation">
                       <MenuPresentational

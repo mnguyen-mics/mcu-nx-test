@@ -54,7 +54,7 @@ class OfferTypeSelector extends React.Component<Props> {
                                 subtitle={messages.offerTypePickerSubTitle}
                             />
 
-                            <Row style={{ width: '650px', display: 'inline-block' }}>
+                            <Row className="mcs-selector_container">
                                 <Row className="menu">
                                     <div className="presentation">
                                         <MenuPresentational

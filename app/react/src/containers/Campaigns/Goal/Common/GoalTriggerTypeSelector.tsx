@@ -60,7 +60,7 @@ class GoalTriggerTypeSelector extends React.Component<Props> {
                 title={messages.listTitle}
                 subtitle={messages.listSubtitle}
               />
-              <Row style={{ width: '650px', display: 'inline-block' }}>
+              <Row className="mcs-selector_container">
                 <Row className="menu">
                   <div className="presentation">
                     <MenuPresentational
