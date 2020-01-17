@@ -36,15 +36,13 @@ export interface WaitFormData extends DefaultFormData {
   timeout: number;
 }
 
-export const INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA : AudienceSegmentAutomationFormData ={
+export const INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA: AudienceSegmentAutomationFormData = {
   name: 'Audience Segment',
   audienceSegment: {
     feed_type: 'FILE_IMPORT',
     type: 'USER_LIST',
     subtype: 'STANDARD'
-
   }
-
 }
 
 export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
@@ -91,7 +89,7 @@ export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationF
 
 export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormData = {
   name: 'Send Email',
-  
+
   blastFields: [
     {
       key: generateFakeId(),
@@ -196,7 +194,7 @@ export function isQueryInputNode(
 ): node is QueryInputNodeResource {
   return (
     (node as QueryInputNodeResource).type ===
-      'QUERY_INPUT'
+    'QUERY_INPUT'
   );
 }
 
@@ -205,7 +203,7 @@ export function isWaitNode(
 ): node is WaitNodeResource {
   return (
     (node as WaitNodeResource).type ===
-      'WAIT_NODE'
+    'WAIT_NODE'
   );
 }
 
