@@ -454,7 +454,7 @@ export const storylineResourceData: StorylineResource = {
 
 export const beginNode: ScenarioNodeShape = {
   id: beginNodeId,
-  name: 'Enter automation',
+  name: 'Enter Automation',
   scenario_id: '',
   type: 'QUERY_INPUT',
   query_id: baseQueryId,
@@ -467,7 +467,7 @@ export const generateBeginNode = (type: QueryInputEvaluationMode, evaluationPeri
   if (type === 'PERIODIC' && evaluationPeriod && evaluationPeriodUnit) {
     return {
       id: beginNodeId,
-      name: 'Enter automation',
+      name: 'Enter Automation',
       scenario_id: '',
       type: 'QUERY_INPUT',
       query_id: baseQueryId,
@@ -483,7 +483,7 @@ export const generateBeginNode = (type: QueryInputEvaluationMode, evaluationPeri
 
 export const node4: ScenarioNodeShape = {
   id: endNodeId,
-  name: 'Exit automation',
+  name: 'Exit Automation',
   scenario_id: '',
   type: 'END_NODE',
 };
@@ -519,6 +519,11 @@ export function generateNodeProperties(
         iconType: 'email',
         color: '#0ba6e1',
       };
+      case 'ADD_TO_SEGMENT':
+    return {
+      iconType: 'user-list',
+      color: '#0ba6e1',
+    };
     case 'QUERY_INPUT':
       return {
         iconAnt: 'flag',

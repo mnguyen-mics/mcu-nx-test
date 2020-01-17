@@ -3,6 +3,7 @@ import {
   ABNFormData,
   EmailCampaignAutomationFormData,
   WaitFormData,
+  AudienceSegmentAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
 import { QueryResource } from './../datamart/DatamartResource';
@@ -39,7 +40,7 @@ export interface StorylineResource {
   begin_node_id: string;
 }
 
-export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT_NODE' | 'DROP_NODE' | 'IF_NODE'
+export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'ADD_TO_SEGMENT' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT_NODE' | 'DROP_NODE' | 'IF_NODE'
 
 export interface ScenarioNodeResource {
   id: string;
@@ -63,6 +64,13 @@ export interface EmailCampaignNodeResource extends ScenarioNodeResource {
   campaign_id: string;
   formData: EmailCampaignAutomationFormData;
   initialFormData: EmailCampaignAutomationFormData;
+}
+
+export interface AddToSegmentNodeResource extends ScenarioNodeResource {
+  type: 'ADD_TO_SEGMENT';
+  audience_segment_id: string;
+  formData: AudienceSegmentAutomationFormData;
+  initialFormData: AudienceSegmentAutomationFormData;
 }
 
 export type QueryInputEvaluationPeriodUnit = 'MINUTE' | 'HOUR' | 'DAY' | 'WEEK' | 'MONTH';
@@ -114,6 +122,7 @@ export interface IfNodeResource extends ScenarioNodeResource {
 export type ScenarioNodeShape =
   | DisplayCampaignNodeResource
   | EmailCampaignNodeResource
+  | AddToSegmentNodeResource
   | QueryInputNodeResource
   | ABNNodeResource
   | PluginNodeResource

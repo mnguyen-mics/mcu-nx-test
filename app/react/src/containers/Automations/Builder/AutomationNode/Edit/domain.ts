@@ -21,6 +21,7 @@ import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampa
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 import { DisplayCampaignFormData } from '../../../../Campaigns/Display/Edit/domain';
 import { QueryCreateRequest } from '../../../../../models/datamart/DatamartResource';
+import { AudienceSegmentFormData } from '../../../../Audience/Segments/Edit/domain';
 
 export interface DefaultFormData {
   name: string;
@@ -33,6 +34,15 @@ export interface ABNFormData extends DefaultFormData {
 
 export interface WaitFormData extends DefaultFormData {
   timeout: number;
+}
+
+export const INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA: AudienceSegmentAutomationFormData = {
+  name: 'Audience Segment',
+  audienceSegment: {
+    feed_type: 'FILE_IMPORT',
+    type: 'USER_LIST',
+    subtype: 'STANDARD'
+  }
 }
 
 export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
@@ -79,7 +89,7 @@ export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationF
 
 export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormData = {
   name: 'Send Email',
-  
+
   blastFields: [
     {
       key: generateFakeId(),
@@ -134,6 +144,9 @@ export interface DisplayCampaignAutomationFormData extends DefaultFormData, Disp
 export interface EmailCampaignAutomationFormData extends DefaultFormData, EmailCampaignFormData {
 }
 
+export interface AudienceSegmentAutomationFormData extends DefaultFormData, AudienceSegmentFormData {
+}
+
 export interface QueryAutomationFormData extends Partial<QueryCreateRequest> {
   name: string
 }
@@ -181,7 +194,7 @@ export function isQueryInputNode(
 ): node is QueryInputNodeResource {
   return (
     (node as QueryInputNodeResource).type ===
-      'QUERY_INPUT'
+    'QUERY_INPUT'
   );
 }
 
@@ -190,7 +203,7 @@ export function isWaitNode(
 ): node is WaitNodeResource {
   return (
     (node as WaitNodeResource).type ===
-      'WAIT_NODE'
+    'WAIT_NODE'
   );
 }
 
