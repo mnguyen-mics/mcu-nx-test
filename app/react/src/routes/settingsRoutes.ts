@@ -50,6 +50,9 @@ import { MlFunctionsContent } from '../containers/Settings/DatamartSettings/MlFu
 import CreateEditMlFunction from '../containers/Settings/DatamartSettings/MlFunctions/Edit/EditMlFunctionPage';
 import ProcessingPage from '../containers/Settings/OrganisationSettings/Processings/List/ProcessingsPage';
 import ProcessingEditPage from '../containers/Settings/OrganisationSettings/Processings/Edit/ProcessingEditPage';
+import CompartmentsListPage from '../containers/Settings/DatamartSettings/Compartments/CompartmentsListPage';
+import CompartmentEditPage from '../containers/Settings/DatamartSettings/Compartments/Edit/CompartmentEditPage';
+
 // import ServiceCatalogPage from '../containers/Settings/ServicesSettings/MyServiceCatalog/MyServiceCatalogPage';
 // import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 
@@ -104,6 +107,28 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
     requiredFeature: 'datamartSettings-mobile_applications',
+    requireDatamart: true,
+  },
+  // Compartments
+  settingsDatamartCompartments: {
+    path: '/settings/datamart/compartments',
+    layout: 'settings',
+    contentComponent: CompartmentsListPage,
+    requiredFeature: 'datamartSettings-compartments',
+    requireDatamart: true,
+  },
+  settingsDatamartCompartmentsCreation:{
+    path: '/settings/datamart/compartments/create',
+    layout: 'edit',
+    editComponent: CompartmentEditPage,
+    requiredFeature: 'datamartSettings-compartments',
+    requireDatamart: true,
+  },
+  settingsDatamartCompartmentsEdition:{
+    path: '/settings/datamart/:datamartId/compartments/:compartmentId/edit',
+    layout: 'edit',
+    editComponent: CompartmentEditPage,
+    requiredFeature: 'datamartSettings-compartments',
     requireDatamart: true,
   },
   // datamart

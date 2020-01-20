@@ -619,7 +619,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         switch (modelType) {
           case 'COMPARTMENTS':
             fetchListMethod = (keywords: string) => {
-              return this._datamartService.getUserAccountCompartments(datamartId, {}).then(res => res.data.map(r => ({ key: r.compartment_id, label: r.name ? r.name : r.token })))
+              return this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId).then(res => res.data.map(r => ({ key: r.compartment_id, label: r.name ? r.name : r.token })))
             }
             fetchSingleMethod = (id: string) => this._compartmentService.getCompartment(id).then(res => ({ key: res.data.id, label: res.data.name }))
             break;

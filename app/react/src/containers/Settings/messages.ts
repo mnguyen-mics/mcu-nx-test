@@ -9,6 +9,10 @@ const messages = defineMessages({
     id: 'settings.tab.title.mobile_applications',
     defaultMessage: 'Mobile Applications',
   },
+  compartments: {
+    id: 'settings.tab.title.compartments',
+    defaultMessage: 'Compartments',
+  },
   datamarts: {
     id: 'settings.tab.title.datamarts',
     defaultMessage: 'Datamarts',

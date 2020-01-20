@@ -78,7 +78,7 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._datamartService.getUserAccountCompartments(datamartId, options).then(results => {
+      this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId, options).then(results => {
         this.setState({
           loading: false,
           data: results.data,
@@ -106,7 +106,7 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
 
     const dataColumns = [
       {
-        intlMessage: messages.id,
+        intlMessage: messages.compartment_id,
         key: 'compartment_id',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (<span>{text}</span>),

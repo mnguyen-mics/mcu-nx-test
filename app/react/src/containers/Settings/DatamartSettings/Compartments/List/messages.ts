@@ -1,8 +1,8 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-  id: {
-    id: 'settings.compartments.table.column.id',
+  compartment_id: {
+    id: 'settings.compartments.table.column.compartment_id',
     defaultMessage: 'Compartment ID',
   },
   name: {
@@ -20,5 +20,17 @@ export default defineMessages({
   compartments: {
     id: 'settings.compartments',
     defaultMessage: 'User Account Compartment',
+  },
+  editCompartment: {
+    id: 'settings.compartments.table.column.edit',
+    defaultMessage: 'Edit',
+  },
+  archiveCompartment: {
+    id: 'settings.compartments.table.column.archive',
+    defaultMessage: 'Archive',
+  },
+  deleteCompartment: {
+    id: 'settings.compartments.table.column.delete',
+    defaultMessage: 'Delete',
   },
 });

@@ -184,7 +184,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   }
 
   fetchCompartments = (datamartId: string) => {
-    this._datamartService.getUserAccountCompartments(datamartId, {})
+    this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId)
       .then(res => {
         this.setState({
           compartments: res.data,
