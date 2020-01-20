@@ -3,7 +3,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import {
   InjectedIntlProps,
   injectIntl,
-  defineMessages,
   FormattedMessage,
 } from 'react-intl';
 import { compose } from 'recompose';
@@ -51,6 +50,7 @@ import {
 } from '../../Segments/Edit/domain';
 import EditPluginModal from './EditPluginModal';
 import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
+import messages from '../messages';
 
 type Props = InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -72,89 +72,6 @@ interface State {
   modalFeed?: AudienceExternalFeedTyped | AudienceTagFeedTyped;
   modalTab: PluginCardModalTab;
 }
-
-const messages = defineMessages({
-  name: {
-    id: 'audience.feeds.list.column.name',
-    defaultMessage: 'Name',
-  },
-  segmentName: {
-    id: 'audience.feeds.list.column.segmentName',
-    defaultMessage: 'Segment Name',
-  },
-  feedName: {
-    id: 'audience.feeds.list.column.feedName',
-    defaultMessage: 'Name',
-  },
-  segmentNameNotFound: {
-    id: 'audience.feeds.list.column.segmentNameNotFound',
-    defaultMessage: 'Untitled',
-  },
-  segmentDeleted: {
-    id: 'audience.feeds.list.column.segmentDeleted',
-    defaultMessage: 'Segment deleted',
-  },
-  artifactId: {
-    id: 'audience.feeds.list.column.artifactId',
-    defaultMessage: 'Connector',
-  },
-  status: {
-    id: 'audience.feeds.list.column.status',
-    defaultMessage: 'Status',
-  },
-  EXTERNAL_FEED: {
-    id: 'audience.feeds.list.filter.externalFeed',
-    defaultMessage: 'Server Side',
-  },
-  TAG_FEED: {
-    id: 'audience.feeds.list.filter.tagFeed',
-    defaultMessage: 'Client Side',
-  },
-  filterArtifactId: {
-    id: 'audience.feeds.list.filter.artifactId',
-    defaultMessage: 'Connector',
-  },
-  filterStatus: {
-    id: 'audience.feeds.list.filter.status',
-    defaultMessage: 'Status',
-  },
-  INITIAL: {
-    id: 'audience.feeds.list.status.initial',
-    defaultMessage: 'Initial',
-  },
-  ACTIVE: {
-    id: 'audience.feeds.list.status.active',
-    defaultMessage: 'Active',
-  },
-  PAUSED: {
-    id: 'audience.feeds.list.status.paused',
-    defaultMessage: 'Paused',
-  },
-  PUBLISHED: {
-    id: 'audience.feeds.list.status.published',
-    defaultMessage: 'Published',
-  },
-  activate: {
-    id: 'audience.feeds.list.column.action.activate',
-    defaultMessage: 'Activate',
-  },
-  pause: {
-    id: 'audience.feeds.list.column.action.pause',
-    defaultMessage: 'Pause',
-  },
-  edit: {
-    id: 'audience.feeds.list.column.action.edit',
-    defaultMessage: 'Edit',
-  },
-  stats: {
-    id: 'audience.feeds.list.column.action.stats',
-    defaultMessage: 'Stats',
-  },
-  delete: {
-    id: 'audience.feeds.list.column.action.delete',
-    defaultMessage: 'Delete',
-  },
-});
 
 class AudienceFeedsTable extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentFeedServiceFactory)
@@ -281,30 +198,11 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   }
 
   buildApiSearchFilters = (filter: Index<any>) => {
-    let formattedFilters: Index<any> = {};
-
-    if (filter.currentPage && filter.pageSize) {
-      formattedFilters = {
-        ...formattedFilters,
-        ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-      };
-    }
-
-    if (filter.status && filter.status.length > 0) {
-      formattedFilters = {
-        ...formattedFilters,
-        status: filter.status,
-      };
-    }
-
-    if (filter.artifactId && filter.artifactId.length > 0) {
-      formattedFilters = {
-        ...formattedFilters,
-        artifact_id: filter.artifactId,
-      };
-    }
-
-    return formattedFilters;
+    return {
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      status: filter.status && filter.status.length > 0 ? filter.status : [],
+      artifact_id: filter.artifactId && filter.artifactId.length > 0 ? filter.artifactId : [],
+    };
   };
 
   fetchFeeds = (organisationId: string, filter: Index<any>) => {
