@@ -318,8 +318,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   activateFeed = (record: RecordType) => {
     const feedService =
       record.feed.type === 'TAG_FEED'
-        ? this._audienceTagFeedServiceFactory('')
-        : this._audienceExternalFeedServiceFactory('');
+        ? this._audienceTagFeedServiceFactory(record.audienceSegment ? record.audienceSegment.id : '')
+        : this._audienceExternalFeedServiceFactory(record.audienceSegment ? record.audienceSegment.id : '');
     const {
       notifyError,
       location: { search },
@@ -342,8 +342,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   pauseFeed = (record: RecordType) => {
     const feedService =
       record.feed.type === 'TAG_FEED'
-        ? this._audienceTagFeedServiceFactory('')
-        : this._audienceExternalFeedServiceFactory('');
+        ? this._audienceTagFeedServiceFactory(record.audienceSegment ? record.audienceSegment.id : '')
+        : this._audienceExternalFeedServiceFactory(record.audienceSegment ? record.audienceSegment.id : '');
 
     const {
       notifyError,
@@ -381,8 +381,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   deleteFeed = (record: RecordType) => {
     const feedService =
       record.feed.type === 'TAG_FEED'
-        ? this._audienceTagFeedServiceFactory('')
-        : this._audienceExternalFeedServiceFactory('');
+        ? this._audienceTagFeedServiceFactory(record.audienceSegment ? record.audienceSegment.id : '')
+        : this._audienceExternalFeedServiceFactory(record.audienceSegment ? record.audienceSegment.id : '');
 
     const {
       notifyError,
