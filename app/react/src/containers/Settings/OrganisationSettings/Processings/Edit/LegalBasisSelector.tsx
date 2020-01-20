@@ -94,7 +94,7 @@ class LegalBasisSelector extends React.Component<Props> {
                 title={messages.legalBasisTitle}
                 subtitle={messages.legalBasisSubTitle}
               />
-              <Row style={{ width: '650px', display: 'inline-block' }}>
+              <Row className="mcs-selector_container">
                 <Row className="menu">
                   {legalBasisValues.map(returnMenuList)}
                 </Row>

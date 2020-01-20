@@ -59,7 +59,7 @@ class NativeCreativeRendererSelector extends React.Component<Props> {
                 subtitle={messages.creativesTypePickerSubTitle}
               />
               {
-                <Row style={{ width: '650px', display: 'inline-block' }}>
+                <Row className="mcs-selector_container">
                   <Row className="menu">
                     <MenuList 
                       title={formatMessage(messages.creativeTypeNative)}

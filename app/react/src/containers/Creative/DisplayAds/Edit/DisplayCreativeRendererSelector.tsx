@@ -119,7 +119,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
                 subtitle={messages.creativesTypePickerSubTitle}
               />
 
-              <Row style={{ width: '650px', display: 'inline-block' }}>
+              <Row className="mcs-selector_container">
                 <Row className="menu">
                   <div className="presentation">
                     <MenuPresentational

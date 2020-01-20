@@ -52,7 +52,7 @@ class DatamartSelector extends React.Component<Props> {
                 title={messages.listTitle}
                 subtitle={messages.listSubtitle}
               />
-              <Row style={{ width: '650px', display: 'inline-block' }}>
+              <Row className="mcs-selector_container">
                 <Row className="menu">
                   {workspace(organisationId).datamarts.map(item => {
                     return (

@@ -5,11 +5,14 @@ import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 
 import { FormTitle } from '../../../components/Form';
 import ActionBar, { ActionBarProps } from '../../../components/ActionBar';
 import { MenuPresentational, MenuList } from '../../../components/FormMenu';
-import { QueryInputEvaluationPeriodUnit, QueryInputEvaluationMode } from '../../../models/automations/automations';
+import { QueryInputEvaluationPeriodUnit } from '../../../models/automations/automations';
+import { injectFeatures, InjectedFeaturesProps } from '../../Features';
+import { AutomationSelectedType } from './AutomationBuilderPage';
 
 export interface AutomationTemplateSelectorProps {
-  onSelectTemplate: (type: QueryInputEvaluationMode, n?: number, p?: QueryInputEvaluationPeriodUnit) => void;
+  onSelectTemplate: (type: AutomationSelectedType, n?: number, p?: QueryInputEvaluationPeriodUnit) => void;
   actionbarProps: ActionBarProps;
+  disableReactToEvent: boolean;
 }
 
 
@@ -17,7 +20,9 @@ interface State {
   periodic: boolean
 }
 
-type Props = AutomationTemplateSelectorProps & InjectedIntlProps
+type Props = AutomationTemplateSelectorProps 
+& InjectedIntlProps
+& InjectedFeaturesProps;
 
 class AutomationTemplateSelector extends React.Component<Props, State> {
 
@@ -28,25 +33,42 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
     }
   }
 
-  renderStep1 = () => {
+  renderSelectionAutomationType = () => {
 
     const {
       onSelectTemplate,
       intl: {
         formatMessage
-      }
+      },
+      hasFeature,
+      disableReactToEvent,
     } = this.props;
 
     const onClickOnLive = () => onSelectTemplate('LIVE');
+    const onClickOnReactToEvent = () => onSelectTemplate('REACT_TO_EVENT');
     const onClickOnPeriodic = () => this.setState({periodic: true})
 
     return (
+      <Row className="mcs-selector_container">
         <Row className="menu">
           <div className="presentation">
             <MenuPresentational
-              title={formatMessage(messages.live)}
+              title={
+                hasFeature('automations.wizard-react-to-event')
+                ? formatMessage(messages.reactToAnEvent)
+                : formatMessage(messages.live)
+              }
+              subtitles={
+                hasFeature('automations.wizard-react-to-event') && disableReactToEvent
+                ? [formatMessage(messages.reactToAnEventDisabled)]
+                : undefined
+              }
               type="user-pixel"
-              select={onClickOnLive}
+              select={
+                hasFeature('automations.wizard-react-to-event') 
+                ? onClickOnReactToEvent : 
+                onClickOnLive}
+              disabled={hasFeature('automations.wizard-react-to-event') ? disableReactToEvent : false}
             />
             <div className="separator">
               <FormattedMessage {...messages.or} />
@@ -58,10 +80,24 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
             />
           </div>
         </Row>
+        {hasFeature('automations.wizard-react-to-event') && 
+          <div>
+            <Row className="intermediate-title">
+              <FormattedMessage {...messages.advanced} />
+            </Row>
+            <Row className="menu">
+              <MenuList
+                title={formatMessage(messages.live)}
+                select={onClickOnLive}
+              />
+            </Row>
+          </div>
+        }
+      </Row>
     )
   }
 
-  renderStep2 = () => {
+  renderSelectionPeriod = () => {
 
     const {
       onSelectTemplate,
@@ -73,6 +109,7 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
     const onClickOnPeriodic = (n: number, p: QueryInputEvaluationPeriodUnit) => () => onSelectTemplate('PERIODIC', n , p);
 
     return (
+      <Row className="mcs-selector_container">
         <Row className="menu">
           <MenuList title={formatMessage(messages.everyHours)} select={onClickOnPeriodic(1, "HOUR")} />
           <MenuList title={formatMessage(messages.every2Hours)} select={onClickOnPeriodic(2, "HOUR")} />
@@ -81,6 +118,7 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
           <MenuList title={formatMessage(messages.everyMonths)} select={onClickOnPeriodic(1, "MONTH")} />
           <MenuList title={formatMessage(messages.everyYears)} select={onClickOnPeriodic(12, "MONTH")} />
         </Row>
+      </Row>
     )
   }
 
@@ -98,9 +136,10 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
         <ActionBar {...actionbarProps} />
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
           <FormTitle title={messages.title} subtitle={messages.subTitleStep1} />
-          <Row style={{ width: '650px', display: 'inline-block' }}>
-            {periodic ? this.renderStep2() : this.renderStep1()}
-          </Row>
+            { periodic 
+              ? this.renderSelectionPeriod()
+              : this.renderSelectionAutomationType()
+            }
         </Layout.Content>
       </Layout>
     );
@@ -109,12 +148,17 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
 
 export default compose<Props, AutomationTemplateSelectorProps>(
   injectIntl,
+  injectFeatures,
 )(AutomationTemplateSelector);
 
 const messages = defineMessages({
   title: {
     id: 'automations-template-selector-title',
     defaultMessage: 'Automations Builder',
+  },
+  advanced: {
+    id: 'automations-template-selector-advanced',
+    defaultMessage: 'Advanced',
   },
   subTitleStep1: {
     id: 'automations-template-selector-subtitle-step1',
@@ -131,6 +175,14 @@ const messages = defineMessages({
   live: {
     id: 'automations-template-selector-live',
     defaultMessage: 'Live',
+  },
+  reactToAnEvent: {
+    id: 'automations-template-selector-reactToAnEvent',
+    defaultMessage: 'React to an Event',
+  },
+  reactToAnEventDisabled: {
+    id: 'automations-template-selector-reactToAnEvent-disabled',
+    defaultMessage: 'Invalid configured schema - Please contact your support contact to enable it.',
   },
   periodic: {
     id: 'automations-template-selector-periodic',
@@ -159,5 +211,5 @@ const messages = defineMessages({
   everyYears: {
     id: 'automations-template-selector-periodic-1-year',
     defaultMessage: 'Every year',
-  }
+  },
 });

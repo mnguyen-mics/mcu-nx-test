@@ -45,7 +45,7 @@ class DatamartSelector extends React.Component<Props> {
         <ActionBar {...actionbarProps} />
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
-          <Row style={{ width: '650px', display: 'inline-block' }}>
+          <Row className="mcs-selector_container">
             <Row className="menu">
               {datamarts.map(d => {
                 const handleSelect = () => onSelectDatamart(d);

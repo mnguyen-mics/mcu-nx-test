@@ -92,7 +92,7 @@ class DisplayCampaignSelector extends React.Component<
                 title={messages.displayCampaignTypePickerTitle}
               />
 
-              <Row style={{ width: '650px', display: 'inline-block' }}>
+              <Row className="mcs-selector_container">
                 <Row className="menu">
                   <div className="presentation">
                     <MenuPresentational

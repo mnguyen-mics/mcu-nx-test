@@ -6,6 +6,7 @@ export interface MenuPresentationalProps {
   type: McsIconType;
   subtitles?: string[];
   select: React.FormEventHandler<any>;
+  disabled?: boolean;
 }
 
 const MenuPresentational: React.SFC<MenuPresentationalProps> = ({
@@ -13,9 +14,10 @@ const MenuPresentational: React.SFC<MenuPresentationalProps> = ({
   subtitles,
   select,
   type,
+  disabled
 }) => {
   return (
-    <button className="presentation-item" onClick={select}>
+    <button className="presentation-item" onClick={select} disabled={disabled}>
       <div className="content">
         <McsIcon type={type} />
         <div className="title">{title}</div>

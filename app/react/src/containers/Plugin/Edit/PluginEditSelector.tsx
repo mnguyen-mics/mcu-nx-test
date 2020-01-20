@@ -38,7 +38,7 @@ class PluginEditSelector<T extends LayoutablePlugin> extends React.Component<Plu
                 title={listTitle}
                 subtitle={listSubTitle}
               />
-              <Row style={{ width: '650px', display: 'inline-block' }}>
+              <Row className="mcs-selector_container">
                 <Row className="menu">
                   {this.props.availablePlugins.map(item => {
                     return <MenuList
