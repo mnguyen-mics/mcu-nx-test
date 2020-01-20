@@ -286,6 +286,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
                     label: formatMessage(messages.feedModalNameFieldLabel),
                     title: <div>
                         {formatMessage(messages.feedModalNameFieldTitle)}
+                        <br/>
                         <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
                     </div>,
                     placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),

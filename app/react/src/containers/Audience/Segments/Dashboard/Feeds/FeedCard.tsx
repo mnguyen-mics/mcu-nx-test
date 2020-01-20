@@ -118,6 +118,10 @@ const messages = defineMessages({
     id: 'audience.segment.feed.card.create.nameField.title',
     defaultMessage: 'The name used to identify this feed.',
   },
+  feedModalNameFieldTitleWarning: {
+    id: 'audience.segment.feed.card.create.nameField.title.warning',
+    defaultMessage: "Warning: This name is only used in the platform, it won't be visible on the external system.",
+  },
   feedModalNameFieldPlaceholder: {
     id: 'audience.segment.feed.card.create.nameField.placeholder',
     defaultMessage: 'Name',
@@ -355,7 +359,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       ...newPluginInstance
     } = pluginInstance;
 
-    return editPromise(pluginInstance.id!, name ? {...newPluginInstance, name: name} : newPluginInstance)
+    return editPromise(pluginInstance.id!, name ? { ...newPluginInstance, name: name } : newPluginInstance)
       .then(() => {
         return this.updatePropertiesValue(
           properties,
@@ -365,7 +369,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       })
       .then(() => {
         this.setState({ isLoadingCard: false, opened: false });
-        onFeedUpdate(name ? {...pluginInstance, name: name} : pluginInstance)
+        onFeedUpdate(name ? { ...pluginInstance, name: name } : pluginInstance)
       })
       .catch((err: any) => {
         notifyError(err);
@@ -489,11 +493,11 @@ class FeedCard extends React.Component<Props, FeedCardState> {
                 className="image-title"
                 src={`${
                   (window as any).MCS_CONSTANTS.ASSETS_URL
-                }${cardHeaderThumbnail}`}
+                  }${cardHeaderThumbnail}`}
               />
             ) : (
-              undefined
-            )}
+                undefined
+              )}
             <div className="title">
               {
                 feed.name &&
@@ -549,10 +553,14 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               selectedTab={this.state.modalTab}
               nameField={{
                 label: formatMessage(messages.feedModalNameFieldLabel),
-                title: formatMessage(messages.feedModalNameFieldTitle),
+                title: <div>
+                  {formatMessage(messages.feedModalNameFieldTitle)}
+                  <br />
+                  <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
+                </div>,
                 placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
-                display: true, 
-                disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED', 
+                display: true,
+                disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED',
                 value: feed.name,
                 validator: [isRequired]
               }}

@@ -55,6 +55,11 @@ const messages = defineMessages({
     id: 'audience.segment.feed.list.create.nameField.title',
     defaultMessage: 'The name used to identify this feed.',
   },
+  feedModalNameFieldTitleWarning: {
+    id: 'audience.segment.feed.list.create.nameField.title.warning',
+    defaultMessage: "Warning: This name is only used in the platform, it won't be visible on the external system.",
+  },
+
   feedModalNameFieldPlaceholder: {
     id: 'audience.segment.feed.list.create.nameField.placeholder',
     defaultMessage: 'Name',
@@ -97,8 +102,8 @@ class EditPluginModal extends React.Component<Props, State> {
     this.feedService =
       props.feed.type === 'EXTERNAL_FEED'
         ? this._audienceExternalFeedServiceFactory(
-            props.feed.audience_segment_id,
-          )
+          props.feed.audience_segment_id,
+        )
         : this._audienceTagFeedServiceFactory(props.feed.audience_segment_id);
   }
 
@@ -269,7 +274,11 @@ class EditPluginModal extends React.Component<Props, State> {
         selectedTab={modalTab}
         nameField={{
           label: formatMessage(messages.feedModalNameFieldLabel),
-          title: formatMessage(messages.feedModalNameFieldTitle),
+          title: <div>
+            {formatMessage(messages.feedModalNameFieldTitle)}
+            <br />
+            <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
+          </div>,
           placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
           display: true,
           disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED',

@@ -625,10 +625,12 @@ class PluginContent<T extends PluginInstance> extends React.Component<
               title: plugin.plugin_preset ? 
                 <div>
                   {formatMessage(messages.feedPresetModalNameFieldTitle)}
+                  <br/>
                   <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
                 </div> : 
                   <div>
                     {formatMessage(messages.feedModalNameFieldTitle)}
+                    <br/>
                     <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
                   </div>,
               placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
