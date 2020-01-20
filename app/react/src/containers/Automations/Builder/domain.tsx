@@ -27,6 +27,7 @@ import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
+import { ObjectLikeTypeResource, FieldResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -639,4 +640,30 @@ export function buildStorylineNodeModel(
       buildStorylineNodeModel(n, nodeData, edgeData, node),
     ),
   };
+}
+
+export type WizardValidObjectTypeField = { objectTypeName: string, fieldName: string, objectTypeQueryName?: string };
+export const wizardValidObjectTypes: WizardValidObjectTypeField[] = [
+  { objectTypeName: 'ActivityEvent', fieldName: 'nature' },
+  { objectTypeName: 'ActivityEvent', fieldName: 'name' },
+  { objectTypeName: 'UserEvent', fieldName: 'nature' },
+  { objectTypeName: 'UserEvent', fieldName: 'name' },
+];
+
+export const getWizardValidObjectTypes = (objectTypes: ObjectLikeTypeResource[]): ObjectLikeTypeResource[] => {
+  return objectTypes.filter(objectType =>
+    !!wizardValidObjectTypes.find(
+      validObjectType => validObjectType.objectTypeName === objectType.name,
+    ),
+  );
+}
+
+export const getWizardValidFields = (objectType: ObjectLikeTypeResource, fields: FieldResource[]): FieldResource[] => {
+  return fields.filter(field =>
+    !!wizardValidObjectTypes.find(
+      validObjectType =>
+        validObjectType.objectTypeName === objectType.name &&
+        field.name === validObjectType.fieldName,
+    ),
+  );
 }
