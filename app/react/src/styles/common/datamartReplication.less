@@ -1,0 +1,61 @@
+.replication-card {
+  margin-top: 30px;
+  margin-bottom: 40px;
+  &.hoverable {
+    cursor: pointer;
+    &:hover {
+      transition: 0.5s;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2),
+        0 4px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px 1px rgba(0, 0, 0, 0.12);
+    }
+  }
+  height: 100%;
+  padding: 0;
+
+  .card-header {
+    .image {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      max-height: 58px;
+      max-width: 120px;
+
+      .placeholder {
+        //
+      }
+    }
+  }
+
+  .replication-title {
+    width: 100%;
+    font-style: normal;
+    font-stretch: normal;
+    text-align: center;
+    color: @primary-color;
+    font-size: 14px;
+    font-weight: 500;
+    padding-top: 20px;
+  }
+
+  .select-button {
+    padding-bottom: 20px;
+    padding: 0 5px;
+    width: 100%;
+    position: relative;
+    text-align: center;
+    .button {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      font-size: 14px;
+      font-weight: 500;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      color: @info-color;
+    }
+  }
+}

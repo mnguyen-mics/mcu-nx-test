@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, defineMessages } from 'react-intl';
-import { FormDataFileField, FormDataFile } from './ConnectedFields/FormDataFile';
+import {
+  FormDataFileField,
+  FormDataFile,
+} from './ConnectedFields/FormDataFile';
 import { ValidatorProps } from '../../components/Form/withValidators';
 import { PluginProperty, PluginPresetProperty } from '../../models/Plugins';
 import { injectDrawer } from '../../components/Drawer/index';
@@ -28,13 +31,19 @@ import {
   FormRadioGroup,
   FormCheckboxGroupField,
   FormCheckboxGroup,
-  withValidators
+  withValidators,
 } from '../../components/Form/index';
-import FormSelect, { DefaultSelectField, TagSelectField } from '../../components/Form/';
+import FormSelect, {
+  DefaultSelectField,
+  TagSelectField,
+} from '../../components/Form/';
 import { InputProps } from 'antd/lib/input';
 import { FormItemProps } from 'antd/lib/form';
 import { TooltipProps } from 'antd/lib/tooltip';
-import { StringPropertyResource, PropertyResourceShape } from '../../models/plugin';
+import {
+  StringPropertyResource,
+  PropertyResourceShape,
+} from '../../models/plugin';
 import { Field, Validator } from 'redux-form';
 import FormStyleSheet from './ConnectedFields/FormStyleSheet';
 import FormAdLayout from './ConnectedFields/FormAdLayout';
@@ -125,7 +134,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
         : undefined,
       openNextDrawer: this.props.openNextDrawer,
       closeNextDrawer: this.props.closeNextDrawer,
-      small: this.props.small
+      small: this.props.small,
     };
 
     return (
@@ -143,190 +152,192 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
   };
 
   handleFieldDefinition = (fieldDefinition: PluginProperty) => {
-    const { fieldValidators: { isValidInteger, isValidDouble },
-      organisationId } = this.props;
+    const {
+      fieldValidators: { isValidInteger, isValidDouble },
+      organisationId,
+    } = this.props;
 
-      switch (fieldDefinition.property_type) {
-        case 'STRING':
-          return this.renderFieldBasedOnConfig(
-            FormInput,
-            `${fieldDefinition.technical_name}.value.value`,
-            fieldDefinition,
-          );
-        case 'URL':
-          return this.renderFieldBasedOnConfig(
-            FormInput,
-            `${fieldDefinition.technical_name}.value.url`,
-            fieldDefinition,
-          );
-        case 'ASSET':
-          return this.renderFieldBasedOnConfig(
-            FormUpload,
-            `${fieldDefinition.technical_name}.value`,
-            fieldDefinition,
-            [],
-            [],
-            {
-              disabled: this.props.disabled,
-              buttonText: 'Upload File',
-              accept: '.jpg,.jpeg,.png,.gif,.svg',
-              noUploadModal: this.props.noUploadModal,
-            },
-          );
-        case 'ASSET_FILE':
-          return this.renderFieldBasedOnConfig(
-            FormUpload,
-            `${fieldDefinition.technical_name}.value`,
-            fieldDefinition,
-            [],
-            [],
-            {
-              disabled: this.props.disabled,
-              buttonText: 'Upload File',
-              accept: '.jpg,.jpeg,.png,.gif,.svg',
-              noUploadModal: this.props.noUploadModal,
-            },
-          );
-        case 'ASSET_FOLDER':
-          return this.renderFieldBasedOnConfig(
-            FormUpload,
-            `${fieldDefinition.technical_name}.value`,
-            fieldDefinition,
-            [],
-            [],
-            {
-              disabled: this.props.disabled,
-              buttonText: 'Upload File',
-              accept: '.zip',
-              noUploadModal: this.props.noUploadModal,
-            },
-          );
-        case 'PIXEL_TAG':
-          return this.renderFieldBasedOnConfig(
-            FormInput,
-            `${fieldDefinition.technical_name}.value.value`,
-            fieldDefinition,
-            [],
-            [],
-            { rows: 4 },
-            { textArea: true },
-          );
-        case 'STYLE_SHEET':
-          return this.renderFieldBasedOnConfig(
-            FormStyleSheet,
-            `${fieldDefinition.technical_name}.value`,
-            fieldDefinition,
-            [],
-            [],
-            {},
-            {
-              disabled: this.props.disabled,
-              pluginVersionId: this.props.pluginVersionId,
-              organisationId: organisationId,
-            },
-          );
-        case 'AD_LAYOUT':
-          return this.renderFieldBasedOnConfig(
-            FormAdLayout,
-            `${fieldDefinition.technical_name}.value`,
-            fieldDefinition,
-            [],
-            [],
-            {},
-            {
-              disabled: this.props.disabled,
-              pluginVersionId: this.props.pluginVersionId,
-              organisationId: organisationId,
-            },
-          );
-        case 'BOOLEAN':
-          return this.renderFieldBasedOnConfig(
-            FormBoolean,
-            `${fieldDefinition.technical_name}.value.value`,
-            fieldDefinition,
-          );
-        // CHANGE TO IS VALID SCALA LONG
-        case 'LONG':
-          return this.renderFieldBasedOnConfig(
-            FormInput,
-            `${fieldDefinition.technical_name}.value.value`,
-            fieldDefinition,
-            [isValidDouble],
-          );
-        // CHANGE TO IS VALID SCALA INT
-        case 'INT':
-          return this.renderFieldBasedOnConfig(
-            FormInput,
-            `${fieldDefinition.technical_name}.value.value`,
-            fieldDefinition,
-            [isValidInteger],
-          );
-        // CHANGE TO IS VALID SCALA DOUBLE
-        case 'DOUBLE':
-          return this.renderFieldBasedOnConfig(
-            FormInput,
-            `${fieldDefinition.technical_name}.value.value`,
-            fieldDefinition,
-            [isValidDouble],
-          );
-        case 'DATA_FILE':
-          return this.renderFieldBasedOnConfig(
-            FormDataFile,
-            `${fieldDefinition.technical_name}.value`,
-            fieldDefinition,
-            [],
-            [],
-            {
-              buttonText: 'Upload File',
-              accept: (fieldDefinition.value as AcceptedFilePropertyResource)
-                .acceptedFile
-                ? (fieldDefinition.value as AcceptedFilePropertyResource)
-                    .acceptedFile
-                : '*',
-            },
-          );
-        case 'MODEL_ID':
-          return <div>MODEL_ID</div>;
-        case 'DATAMART_ID':
-          return <div>DATAMART_ID</div>;
-        case 'RECOMMENDER':
-          return <div>RECOMMENDER_ID</div>;
-        case 'NATIVE_DATA':
-          return this.renderFieldBasedOnConfig(
-            FormInput,
-            `${fieldDefinition.technical_name}.value.value`,
-            fieldDefinition,
-            this.getErrorValidatorForNativeFieldProperty(
-              fieldDefinition.value.type,
-            ),
-            this.getWarningValidatorForNativeFieldProperty(
-              fieldDefinition.value.type,
-            ),
-          );
-        case 'NATIVE_TITLE':
-          return this.renderFieldBasedOnConfig(
-            FormInput,
-            `${fieldDefinition.technical_name}.value.value`,
-            fieldDefinition,
-          );
-        case 'NATIVE_IMAGE':
-          return this.renderFieldBasedOnConfig(
-            FormUpload,
-            `${fieldDefinition.technical_name}.value`,
-            fieldDefinition,
-            [],
-            [],
-            {
-              disabled: this.props.disabled,
-              buttonText: 'Upload File',
-              accept: '.jpg,.jpeg,.png,.gif,.svg',
-              noUploadModal: this.props.noUploadModal,
-            },
-          );
-        default:
-          return <div>Please contact your support</div>;
+    switch (fieldDefinition.property_type) {
+      case 'STRING':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+        );
+      case 'URL':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.url`,
+          fieldDefinition,
+        );
+      case 'ASSET':
+        return this.renderFieldBasedOnConfig(
+          FormUpload,
+          `${fieldDefinition.technical_name}.value`,
+          fieldDefinition,
+          [],
+          [],
+          {
+            disabled: this.props.disabled,
+            buttonText: 'Upload File',
+            accept: '.jpg,.jpeg,.png,.gif,.svg',
+            noUploadModal: this.props.noUploadModal,
+          },
+        );
+      case 'ASSET_FILE':
+        return this.renderFieldBasedOnConfig(
+          FormUpload,
+          `${fieldDefinition.technical_name}.value`,
+          fieldDefinition,
+          [],
+          [],
+          {
+            disabled: this.props.disabled,
+            buttonText: 'Upload File',
+            accept: '.jpg,.jpeg,.png,.gif,.svg',
+            noUploadModal: this.props.noUploadModal,
+          },
+        );
+      case 'ASSET_FOLDER':
+        return this.renderFieldBasedOnConfig(
+          FormUpload,
+          `${fieldDefinition.technical_name}.value`,
+          fieldDefinition,
+          [],
+          [],
+          {
+            disabled: this.props.disabled,
+            buttonText: 'Upload File',
+            accept: '.zip',
+            noUploadModal: this.props.noUploadModal,
+          },
+        );
+      case 'PIXEL_TAG':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+          [],
+          [],
+          { rows: 4 },
+          { textArea: true },
+        );
+      case 'STYLE_SHEET':
+        return this.renderFieldBasedOnConfig(
+          FormStyleSheet,
+          `${fieldDefinition.technical_name}.value`,
+          fieldDefinition,
+          [],
+          [],
+          {},
+          {
+            disabled: this.props.disabled,
+            pluginVersionId: this.props.pluginVersionId,
+            organisationId: organisationId,
+          },
+        );
+      case 'AD_LAYOUT':
+        return this.renderFieldBasedOnConfig(
+          FormAdLayout,
+          `${fieldDefinition.technical_name}.value`,
+          fieldDefinition,
+          [],
+          [],
+          {},
+          {
+            disabled: this.props.disabled,
+            pluginVersionId: this.props.pluginVersionId,
+            organisationId: organisationId,
+          },
+        );
+      case 'BOOLEAN':
+        return this.renderFieldBasedOnConfig(
+          FormBoolean,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+        );
+      // CHANGE TO IS VALID SCALA LONG
+      case 'LONG':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+          [isValidDouble],
+        );
+      // CHANGE TO IS VALID SCALA INT
+      case 'INT':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+          [isValidInteger],
+        );
+      // CHANGE TO IS VALID SCALA DOUBLE
+      case 'DOUBLE':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+          [isValidDouble],
+        );
+      case 'DATA_FILE':
+        return this.renderFieldBasedOnConfig(
+          FormDataFile,
+          `${fieldDefinition.technical_name}.value`,
+          fieldDefinition,
+          [],
+          [],
+          {
+            buttonText: 'Upload File',
+            accept: (fieldDefinition.value as AcceptedFilePropertyResource)
+              .acceptedFile
+              ? (fieldDefinition.value as AcceptedFilePropertyResource)
+                  .acceptedFile
+              : '*',
+          },
+        );
+      case 'MODEL_ID':
+        return <div>MODEL_ID</div>;
+      case 'DATAMART_ID':
+        return <div>DATAMART_ID</div>;
+      case 'RECOMMENDER':
+        return <div>RECOMMENDER_ID</div>;
+      case 'NATIVE_DATA':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+          this.getErrorValidatorForNativeFieldProperty(
+            fieldDefinition.value.type,
+          ),
+          this.getWarningValidatorForNativeFieldProperty(
+            fieldDefinition.value.type,
+          ),
+        );
+      case 'NATIVE_TITLE':
+        return this.renderFieldBasedOnConfig(
+          FormInput,
+          `${fieldDefinition.technical_name}.value.value`,
+          fieldDefinition,
+        );
+      case 'NATIVE_IMAGE':
+        return this.renderFieldBasedOnConfig(
+          FormUpload,
+          `${fieldDefinition.technical_name}.value`,
+          fieldDefinition,
+          [],
+          [],
+          {
+            disabled: this.props.disabled,
+            buttonText: 'Upload File',
+            accept: '.jpg,.jpeg,.png,.gif,.svg',
+            noUploadModal: this.props.noUploadModal,
+          },
+        );
+      default:
+        return <div>Please contact your support</div>;
     }
-  }
+  };
 
   generateFieldBasedOnDefinition = (
     fieldDefinition: PluginProperty,
@@ -338,43 +349,62 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
       disabled,
       fieldValidators: { isRequired },
       small,
-      intl
+      intl,
     } = this.props;
 
     if (pluginLayoutFieldDefinition !== undefined) {
-
-      const fieldDisabled = (!!pluginPresetProperty && !!pluginPresetProperty.value.value) || !fieldDefinition.writable || disabled
+      const fieldDisabled =
+        (!!pluginPresetProperty && !!pluginPresetProperty.value.value) ||
+        !fieldDefinition.writable ||
+        disabled;
 
       const pluginFieldProps: {
-        formItemProps: FormItemProps,
-        inputProps: InputProps,
+        formItemProps: FormItemProps;
+        inputProps: InputProps;
         helpToolTipProps?: TooltipProps;
-        small?: boolean
+        small?: boolean;
       } = {
         inputProps: {
-          placeholder: this.technicalNameToName(pluginLayoutFieldDefinition.property_technical_name),
+          placeholder: this.technicalNameToName(
+            pluginLayoutFieldDefinition.property_technical_name,
+          ),
           disabled: fieldDisabled,
         },
         formItemProps: { label: pluginLayoutFieldDefinition.label },
       };
 
       if (pluginLayoutFieldDefinition.tooltip !== null) {
-        pluginFieldProps.helpToolTipProps = { title: pluginLayoutFieldDefinition.tooltip }
+        pluginFieldProps.helpToolTipProps = {
+          title: pluginLayoutFieldDefinition.tooltip,
+        };
       }
 
-      if (pluginLayoutFieldDefinition.required !== null && pluginLayoutFieldDefinition.required === true) {
+      if (
+        pluginLayoutFieldDefinition.required !== null &&
+        pluginLayoutFieldDefinition.required === true
+      ) {
         pluginFieldProps.formItemProps.required = true;
       }
 
       if (small) {
-        pluginFieldProps.small = small
+        pluginFieldProps.small = small;
       }
 
-      const helpToolTipProps = pluginLayoutFieldDefinition.tooltip !== null ? { helpToolTipProps: { title: pluginLayoutFieldDefinition.tooltip } } : undefined;
+      const helpToolTipProps =
+        pluginLayoutFieldDefinition.tooltip !== null
+          ? { helpToolTipProps: { title: pluginLayoutFieldDefinition.tooltip } }
+          : undefined;
 
       switch (pluginLayoutFieldDefinition.field_type) {
         case 'TEXTAREA':
-          const maxLengthProps = pluginLayoutFieldDefinition.max_length !== undefined ? { inputProps: { maxLength: pluginLayoutFieldDefinition.max_length } } : undefined;
+          const maxLengthProps =
+            pluginLayoutFieldDefinition.max_length !== undefined
+              ? {
+                  inputProps: {
+                    maxLength: pluginLayoutFieldDefinition.max_length,
+                  },
+                }
+              : undefined;
           return (
             <FormTextAreaField
               formItemProps={pluginFieldProps.formItemProps}
@@ -382,37 +412,47 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               {...helpToolTipProps}
               component={FormTextArea}
               inputProps={{
-                disabled: fieldDisabled
+                disabled: fieldDisabled,
               }}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
             />
           );
         case 'URL':
-
           return (
             <FormInputField
               {...pluginFieldProps}
               component={FormInput}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.url`}
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
             />
           );
 
         case 'DATA_FILE':
-
           const dataFileProps: any = {
             buttonText: intl.formatMessage(messages.uploadFileDataFile),
             accept: fieldDefinition.value.acceptedFile,
-          }
+          };
 
           return (
             <FormDataFileField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={FormDataFile}
               disabled={fieldDisabled}
               {...dataFileProps}
@@ -421,12 +461,15 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           );
 
         case 'HTML':
-
           return (
             <FormCodeEditField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={FormCodeEdit}
               formItemProps={pluginFieldProps.formItemProps}
               inputProps={{
@@ -438,31 +481,42 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
               small={pluginFieldProps.small}
             />
-          )
+          );
 
         case 'NUMBER':
           return (
             <FormInputField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={FormInput}
               {...pluginFieldProps}
-              inputProps={{ ...pluginFieldProps.inputProps, type: "number" }}
+              inputProps={{ ...pluginFieldProps.inputProps, type: 'number' }}
             />
           );
 
         case 'SELECT':
-
           return (
             <DefaultSelectField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={DefaultSelect}
-              options={pluginLayoutFieldDefinition.enum !== undefined ?
-                pluginLayoutFieldDefinition.enum.map(option => { return { value: option.value, title: option.label } }) :
-                []}
+              options={
+                pluginLayoutFieldDefinition.enum !== undefined
+                  ? pluginLayoutFieldDefinition.enum.map(option => {
+                      return { value: option.value, title: option.label };
+                    })
+                  : []
+              }
               disabled={fieldDisabled}
               formItemProps={pluginFieldProps.formItemProps}
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
@@ -471,16 +525,21 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           );
 
         case 'MULTI_SELECT':
-
           return (
             <TagSelectField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={TagSelect}
               selectProps={{
-                options: pluginLayoutFieldDefinition.enum !== undefined ?
-                  pluginLayoutFieldDefinition.enum : []
+                options:
+                  pluginLayoutFieldDefinition.enum !== undefined
+                    ? pluginLayoutFieldDefinition.enum
+                    : [],
               }}
               disabled={fieldDisabled}
               formItemProps={pluginFieldProps.formItemProps}
@@ -491,12 +550,15 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           );
 
         case 'IMAGE':
-
           return (
             <FormUploadField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={FormUpload}
               buttonText={intl.formatMessage(messages.uploadFileImage)}
               noUploadModal={this.props.noUploadModal}
@@ -508,33 +570,37 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           );
 
         case 'INPUT':
-
           return (
             <FormInputField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={FormInput}
               {...pluginFieldProps}
             />
           );
         case 'INPUT_NUMBER':
-
           return (
             <FormInputField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={FormInput}
               {...pluginFieldProps}
-              inputProps={{ ...pluginFieldProps.inputProps, type: "number" }}
+              inputProps={{ ...pluginFieldProps.inputProps, type: 'number' }}
             />
           );
 
         case 'SWITCH':
-
           return (
-
             <FormFieldWrapper
               help={pluginFieldProps.formItemProps.help}
               helpToolTipProps={pluginFieldProps.helpToolTipProps}
@@ -545,22 +611,25 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               <FormSwitchField
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
                 name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-                validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+                validate={
+                  pluginFieldProps.formItemProps.required === true
+                    ? [isRequired]
+                    : undefined
+                }
                 component={FormSwitch}
                 disabled={fieldDisabled}
                 {...pluginFieldProps}
               />
             </FormFieldWrapper>
-
-
-
           );
 
         case 'RADIO':
-
-          const elements = pluginLayoutFieldDefinition.enum !== undefined ?
-            pluginLayoutFieldDefinition.enum.map(el => { return { id: el.value, value: el.value, title: el.label } }) :
-            [];
+          const elements =
+            pluginLayoutFieldDefinition.enum !== undefined
+              ? pluginLayoutFieldDefinition.enum.map(el => {
+                  return { id: el.value, value: el.value, title: el.label };
+                })
+              : [];
 
           return (
             <FormFieldWrapper
@@ -573,7 +642,11 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               <FormRadioGroupField
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
                 name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-                validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+                validate={
+                  pluginFieldProps.formItemProps.required === true
+                    ? [isRequired]
+                    : undefined
+                }
                 component={FormRadioGroup}
                 elements={elements}
                 disabled={fieldDisabled}
@@ -583,10 +656,10 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           );
 
         case 'CHECKBOX':
-
-          const options = pluginLayoutFieldDefinition.enum !== undefined ?
-            pluginLayoutFieldDefinition.enum :
-            [];
+          const options =
+            pluginLayoutFieldDefinition.enum !== undefined
+              ? pluginLayoutFieldDefinition.enum
+              : [];
 
           return (
             <FormFieldWrapper
@@ -599,7 +672,11 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               <FormCheckboxGroupField
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
                 name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-                validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+                validate={
+                  pluginFieldProps.formItemProps.required === true
+                    ? [isRequired]
+                    : undefined
+                }
                 component={FormCheckboxGroup}
                 options={options}
                 valueAsString={true}
@@ -610,12 +687,15 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           );
 
         case 'DATE':
-
           return (
             <FormDatePickerField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={FormDatePicker}
               datePickerProps={{}}
               isoDate={true}
@@ -625,12 +705,15 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           );
 
         case 'DATE_RANGE':
-
           return (
             <FormDateRangePickerField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
+              validate={
+                pluginFieldProps.formItemProps.required === true
+                  ? [isRequired]
+                  : undefined
+              }
               component={FormDateRangePicker}
               startDatePickerProps={{}}
               endDatePickerProps={{}}
@@ -642,11 +725,10 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
         default:
           return this.handleFieldDefinition(fieldDefinition);
       }
-    }
-    else {
+    } else {
       return this.handleFieldDefinition(fieldDefinition);
-    };
-  }
+    }
+  };
 
   /***** Data Asset Types Validators 
     See https://www.iab.com/wp-content/uploads/2017/04/OpenRTB-Native-Ads-Specification-Draft_1.2_2017-04.pdf
@@ -721,6 +803,4 @@ const messages = defineMessages({
     id: 'fieldDefinition-DataFile-uploadFile',
     defaultMessage: 'Upload File',
   },
-
 });
-

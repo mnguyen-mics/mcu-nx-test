@@ -1,97 +1,74 @@
-// import * as React from 'react';
-// import { compose } from 'recompose';
-// import { InjectedIntlProps, injectIntl } from 'react-intl';
-// import messages from '../messages';
-// import {
-//   FormInput,
-//   FormAlertInput,
-//   FormSection,
-//   FormInputField,
-//   FormAlertInputField,
-// } from '../../../../../../components/Form';
-// import withValidators, {
-//   ValidatorProps,
-// } from '../../../../../../components/Form/withValidators';
-// import withNormalizer, {
-//   NormalizerProps,
-// } from '../../../../../../components/Form/withNormalizer';
+import * as React from 'react';
+import { compose } from 'recompose';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
+import messages from '../../List/messages';
+import {
+  FormInput,
+  FormSection,
+  FormInputField,
+} from '../../../../../../components/Form';
+import withValidators, {
+  ValidatorProps,
+} from '../../../../../../components/Form/withValidators';
+import withNormalizer, {
+  NormalizerProps,
+} from '../../../../../../components/Form/withNormalizer';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { DatamartReplicationRouteMatchParam } from '../domain';
 
-// type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  RouteComponentProps<DatamartReplicationRouteMatchParam> &
+  NormalizerProps;
 
-// interface State {
-//   displayAdvancedSection: boolean;
-// }
+class GeneralFormSection extends React.Component<Props> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { displayAdvancedSection: false };
+  }
 
-// class GeneralFormSection extends React.Component<Props, State> {
-//   constructor(props: Props) {
-//     super(props);
-//     this.state = { displayAdvancedSection: false };
-//   }
+  render() {
+    const {
+      fieldValidators: { isRequired },
+      intl: { formatMessage },
+      match: {
+        params: { datamartReplicationId },
+      },
+    } = this.props;
 
-//   toggleAdvancedSection = () => {
-//     this.setState({
-//       displayAdvancedSection: !this.state.displayAdvancedSection,
-//     });
-//   };
+    return (
+      <div>
+        <FormSection
+          subtitle={messages.sectionGeneralSubTitle}
+          title={messages.sectionGeneralTitle}
+        />
 
-//   render() {
-//     const {
-//       fieldValidators: { isRequired },
-//       intl: { formatMessage },
-//     } = this.props;
+        <FormInputField
+          name="name"
+          component={FormInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.datamartReplicationNameLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(
+              messages.datamartReplicationNamePlaceHolder,
+            ),
+            disabled: !!datamartReplicationId,
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.datamartReplicationNameTooltip),
+          }}
+        />
+      </div>
+    );
+  }
+}
 
-//     return (
-//       <div>
-//         <FormSection
-//           subtitle={messages.sectionGeneralSubTitle}
-//           title={messages.sectionGeneralTitle}
-//         />
-
-//         <FormInputField
-//           name="mobileapplication.name"
-//           component={FormInput}
-//           validate={[isRequired]}
-//           formItemProps={{
-//             label: formatMessage(messages.contentSectionGeneralNameLabel),
-//             required: true,
-//           }}
-//           inputProps={{
-//             placeholder: formatMessage(
-//               messages.contentSectionGeneralNamePlaceholder,
-//             ),
-//           }}
-//           helpToolTipProps={{
-//             title: formatMessage(messages.contentSectionGeneralNameTooltip),
-//           }}
-//         />
-
-//         <FormAlertInputField
-//           name="mobileapplication.token"
-//           component={FormAlertInput}
-//           validate={[isRequired]}
-//           formItemProps={{
-//             label: formatMessage(messages.contentSectionGeneralTokenLabel),
-//             required: true,
-//           }}
-//           inputProps={{
-//             placeholder: formatMessage(
-//               messages.contentSectionGeneralTokenPlaceholder,
-//             ),
-//           }}
-//           helpToolTipProps={{
-//             title: formatMessage(messages.contentSectionGeneralTokenTooltip),
-//           }}
-//           iconType="warning"
-//           type="warning"
-//           message={formatMessage(messages.warningOnTokenEdition)}
-//         />
-//       </div>
-//     );
-//   }
-// }
-
-// export default compose(
-//   injectIntl,
-//   withValidators,
-//   withNormalizer,
-// )(GeneralFormSection);
+export default compose(
+  withRouter,
+  injectIntl,
+  withValidators,
+  withNormalizer,
+)(GeneralFormSection);

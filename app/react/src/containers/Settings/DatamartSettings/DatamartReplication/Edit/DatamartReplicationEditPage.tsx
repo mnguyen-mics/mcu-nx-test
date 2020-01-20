@@ -2,7 +2,6 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
-// import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
 import {
@@ -15,31 +14,29 @@ import Loading from '../../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
-// import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { getWorkspace } from '../../../../../state/Session/selectors';
-// import { lazyInject } from '../../../../../config/inversify.config';
-// import { TYPES } from '../../../../../constants/types';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
-import { Layout } from 'antd';
+import { Layout, message, Row, Col } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
-import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
-import DatamartSelector from '../../../../../containers/Audience/Common/DatamartSelector';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDatamartReplicationService } from '../../../../../services/DatamartReplicationService';
+import DatamartReplicationCard from './DatamartReplicationCard';
+import DatamartReplicationEditForm from './DatamartReplicationEditForm';
+import { ReplicationType } from '../../../../../models/settings/settings';
+import { FormTitle } from '../../../../../components/Form';
 
 interface State {
-  formData: DatamartReplicationFormData;
+  datamartReplicationData: DatamartReplicationFormData;
   isLoading: boolean;
-  selectedDatamartId: string;
+  selectedType?: ReplicationType;
+  replicationTypes: string[];
 }
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<DatamartReplicationRouteMatchParam> &
-  InjectedDatamartProps;
+  RouteComponentProps<DatamartReplicationRouteMatchParam>;
 
 class EditDatamartReplicationPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDatamartReplicationService)
@@ -50,8 +47,8 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
     this.state = {
       isLoading: false,
-      selectedDatamartId: '',
-      formData: INITIAL_DATAMART_REPLICATION_FORM_DATA,
+      datamartReplicationData: INITIAL_DATAMART_REPLICATION_FORM_DATA,
+      replicationTypes: ['GOOGLE_PUBSUB'], // ReplcationTypeRessource ?? with assetUrl?
     };
   }
 
@@ -70,8 +67,9 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         .getDatamartReplication(datamartId, datamartReplicationId)
         .then(response => {
           this.setState({
-            formData: response.data,
+            datamartReplicationData: response.data,
             isLoading: false,
+            selectedType: response.data.type,
           });
         })
         .catch(err => {
@@ -83,80 +81,140 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     }
   }
 
-  onDatamartSelect = (datamart: DatamartResource) => {
-    this.setState({
-      selectedDatamartId: datamart.id,
-    });
-  };
-
-  getDatamartId = () => {
+  save = (datamartReplicationFormData: DatamartReplicationFormData) => {
     const {
+      notifyError,
+      history,
+      intl,
+      location: { state },
       match: {
         params: { datamartReplicationId },
       },
     } = this.props;
-    const { formData, selectedDatamartId } = this.state;
-    let datamartId: string;
-    if (datamartReplicationId) {
-      datamartId = formData.datamart_id
-        ? formData.datamart_id
-        : datamartReplicationId;
-    } else {
-      datamartId = selectedDatamartId;
-    }
-    return datamartId;
-  };
+    const { selectedType } = this.state;
+    this.setState({
+      isLoading: true,
+    });
+    const hideSaveInProgress = message.loading(
+      intl.formatMessage(messages.savingInProgress),
+      0,
+    );
 
-  save = () => {
-    // const {
-    //   match: {
-    //     params: { organisationId },
-    //   },
-    //   notifyError,
-    //   history,
-    //   intl,
-    // } = this.props;
-  };
+    const datamartId =
+      datamartReplicationFormData.datamart_id || (state && state.datamartId);
 
-  onClose = () => {
     const {
-      history,
-      location,
+      credentials_uri,
+      ...formDataWithoutCredentialsUri
+    } = datamartReplicationFormData;
+    if (datamartId) {
+      const newFormData = {
+        ...formDataWithoutCredentialsUri,
+        datamart_id: datamartId,
+        type: selectedType,
+      };
+      const promise = datamartReplicationId
+        ? this._datamartReplicationService.updateDatamartReplication(
+            datamartId,
+            datamartReplicationId,
+            newFormData,
+          )
+        : this._datamartReplicationService.createDatamartReplication(
+            datamartId,
+            newFormData,
+          );
+
+      promise
+        .then(response => {
+          if (
+            datamartReplicationFormData.credentials_uri &&
+            !datamartReplicationId
+          ) {
+            this._datamartReplicationService
+              .uploadDatamartReplicationCredentials(
+                datamartId,
+                response.data.id,
+                datamartReplicationFormData.credentials_uri,
+              )
+              .catch(error => {
+                notifyError(error);
+                this.setState({
+                  isLoading: false,
+                });
+              });
+          }
+        })
+        .then(() => {
+          hideSaveInProgress();
+          history.push(this.getPreviousUrl());
+        })
+        .catch(err => {
+          notifyError(err);
+          hideSaveInProgress();
+          this.setState({
+            isLoading: false,
+          });
+        });
+    } else {
+      hideSaveInProgress();
+      this.setState({
+        isLoading: false,
+      });
+      message.warning(intl.formatMessage(messages.noDatamartId), 5);
+    }
+  };
+
+  getPreviousUrl = () => {
+    const {
       match: {
         params: { organisationId },
       },
+      location: { state },
     } = this.props;
+    return state && !!state.datamartId
+      ? `/v2/o/${organisationId}/settings/datamart/my_datamart/${state.datamartId}`
+      : `/v2/o/${organisationId}/settings/datamart/my_datamart`;
+  };
 
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/my_datamart`;
+  onClose = () => {
+    const { history } = this.props;
+    return history.push(this.getPreviousUrl());
+  };
 
-    return location.state && location.state.from
-      ? history.push(location.state.from)
-      : history.push(defaultRedirectUrl);
+  onSelectType = (type: ReplicationType) => {
+    this.setState({
+      selectedType: type,
+    });
   };
 
   render() {
     const {
       match: {
-        params: { organisationId, datamartReplicationId },
+        params: { datamartReplicationId },
       },
       intl,
     } = this.props;
 
-    const { isLoading, formData } = this.state;
+    const {
+      isLoading,
+      datamartReplicationData,
+      replicationTypes,
+      selectedType,
+    } = this.state;
 
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     }
 
     const replicationName =
-      datamartReplicationId && formData.name
-        ? formData.name
+      datamartReplicationId && datamartReplicationData.name
+        ? datamartReplicationData.name
         : intl.formatMessage(messages.newDatamartReplication);
 
     const breadcrumbPaths = [
       {
         name: messages.datamartReplications,
-        path: `/v2/o/${organisationId}/settings/datamart/datamart_replications`,
+        path: this.getPreviousUrl(),
       },
       {
         name: replicationName,
@@ -169,19 +227,39 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       onClose: this.onClose,
     };
 
-    const datamartId = this.getDatamartId();
-
-    return datamartId ? (
-      <Layout className="edit-layout">
-        <FormLayoutActionbar {...actionBarProps} />
-        <Layout className={'ant-layout-has-sider'}>
-          {'choose where to replicate your data'}
-        </Layout>
-      </Layout>
+    return selectedType ? (
+      <DatamartReplicationEditForm
+        initialValues={datamartReplicationData}
+        onSubmit={this.save}
+        close={this.onClose}
+        breadCrumbPaths={breadcrumbPaths}
+        type={selectedType}
+      />
     ) : (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
-        <DatamartSelector onSelect={this.onDatamartSelect} />
+        <Layout
+          className={
+            'mcs-content-container ant-layout-content mcs-form-container'
+          }
+        >
+          <FormTitle
+            title={messages.datamartReplicationTypeSelectionTitle}
+            subtitle={messages.datamartReplicationTypeSelectionSubtitle}
+          />
+          <Row type={'flex'} gutter={40}>
+            {replicationTypes.map(type => {
+              return (
+                <Col key={type} span={4}>
+                  <DatamartReplicationCard
+                    type={type}
+                    onClick={this.onSelectType}
+                  />
+                </Col>
+              );
+            })}
+          </Row>
+        </Layout>
       </Layout>
     );
   }
@@ -195,7 +273,6 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose(
   withRouter,
   injectIntl,
-  injectDatamart,
   connect(mapStateToProps),
   injectNotifications,
 )(EditDatamartReplicationPage);

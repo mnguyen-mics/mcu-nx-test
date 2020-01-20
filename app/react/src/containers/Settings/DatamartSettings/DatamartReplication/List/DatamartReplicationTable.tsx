@@ -1,27 +1,28 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/styles/hljs';
 import {
   EmptyTableView,
   TableViewFilters,
 } from '../../../../../components/TableView';
 import messages from './messages';
-import {
-  ChannelResource,
-  DatamartReplicationResource,
-} from '../../../../../models/settings/settings';
+import { DatamartReplicationResourceShape } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { DATAMART_REPLICATION_SEARCH_SETTINGS } from './DatamartReplicationListPage';
+import { Modal } from 'antd';
 
 export interface DatamartReplicationTableProps {
   isLoading: boolean;
-  dataSource: DatamartReplicationResource[];
+  dataSource: DatamartReplicationResourceShape[];
   total: number;
   noItem: boolean;
   onFilterChange: (newFilter: Partial<Filter>) => void;
+  onDelete: (resource: DatamartReplicationResourceShape) => void;
 }
 
 type Props = DatamartReplicationTableProps &
@@ -29,6 +30,38 @@ type Props = DatamartReplicationTableProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DatamartReplicationTable extends React.Component<Props> {
+  handleModal = (record: DatamartReplicationResourceShape) => {
+    const { intl } = this.props;
+    Modal.info({
+      title: intl.formatMessage(messages.replicationProperties),
+      okText: 'Ok',
+      width: '650px',
+      content: (
+        <SyntaxHighlighter language="json" style={docco}>
+          {JSON.stringify(record, undefined, 4)}
+        </SyntaxHighlighter>
+      ),
+    });
+  };
+
+  onEditDatamartReplication = (record: DatamartReplicationResourceShape) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
+    history.push({
+      pathname: `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`,
+      state: { from: `${location.pathname}${location.search}` },
+    });
+  };
+
+  onDeleteDatamartReplication = (record: DatamartReplicationResourceShape) => {
+    const { onDelete } = this.props;
+    onDelete(record);
+  };
+
   render() {
     const {
       intl: { formatMessage },
@@ -41,7 +74,6 @@ class DatamartReplicationTable extends React.Component<Props> {
         params: { organisationId },
       },
       location: { search },
-      history,
     } = this.props;
     const filter = parseSearch(search, DATAMART_REPLICATION_SEARCH_SETTINGS);
 
@@ -63,10 +95,17 @@ class DatamartReplicationTable extends React.Component<Props> {
 
     const dataColumns = [
       {
+        title: 'ID',
+        key: 'id',
+        isVisibleByDefault: true,
+        isHideable: true,
+        render: (text: string) => text,
+      },
+      {
         intlMessage: messages.datamartReplicationName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: DatamartReplicationResource) => {
+        render: (text: string, record: DatamartReplicationResourceShape) => {
           return (
             <Link
               to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`}
@@ -77,28 +116,31 @@ class DatamartReplicationTable extends React.Component<Props> {
         },
       },
       {
-        intlMessage: messages.datamartReplicationDatamartId,
-        key: 'datamart_id',
+        intlMessage: messages.datamartReplicationType,
+        key: 'type',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => text,
       },
     ];
 
-    const onEditDatamartReplication = (record: DatamartReplicationResource) => {
-      history.push({
-        pathname: `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`,
-        state: { from: `${location.pathname}${location.search}` },
-      });
-    };
-
-    const actionColumns: Array<ActionsColumnDefinition<ChannelResource>> = [
+    const actionColumns: Array<ActionsColumnDefinition<
+      DatamartReplicationResourceShape
+    >> = [
       {
         key: 'action',
         actions: () => [
           {
             intlMessage: messages.editDatamartReplication,
-            callback: onEditDatamartReplication,
+            callback: this.onEditDatamartReplication,
+          },
+          {
+            intlMessage: messages.deleteDatamartReplication,
+            callback: this.onDeleteDatamartReplication,
+          },
+          {
+            intlMessage: messages.seeReplicationProperties,
+            callback: this.handleModal,
           },
         ],
       },

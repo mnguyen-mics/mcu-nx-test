@@ -1,3 +1,6 @@
+import DataFileService, {
+  IDataFileService,
+} from './../services/DataFileService';
 import { DatamartReplicationService } from './../services/DatamartReplicationService';
 import { Container, interfaces } from 'inversify';
 import { IMicsTagService, MicsTagService } from '../services/MicsTagService';
@@ -272,6 +275,7 @@ container
 container
   .bind<IDatamartReplicationService>(TYPES.IDatamartReplicationService)
   .to(DatamartReplicationService);
+container.bind<IDataFileService>(TYPES.IDataFileService).to(DataFileService);
 container
   .bind<interfaces.Factory<IAudienceExternalFeedService>>(
     TYPES.IAudienceExternalFeedServiceFactory,

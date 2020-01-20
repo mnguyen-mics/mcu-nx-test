@@ -59,7 +59,8 @@ const TYPES = {
   IMicsTagService: Symbol.for('micsTagService'),
   ILabelService: Symbol.for('labelService'),
   IOrganisationService: Symbol.for('organisationService'),
-  IDatamartReplicationService: Symbol.for('datamartReplicationService')
+  IDatamartReplicationService: Symbol.for('datamartReplicationService'),
+  IDataFileService: Symbol.for('dataFileService'),
 };
 
 export { TYPES };

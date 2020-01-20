@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { Button, Row, Layout } from 'antd';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { Button, Row, Layout, Modal } from 'antd';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { Index } from '../../../../../utils';
 import messages from './messages';
@@ -19,7 +19,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import { DatamartReplicationResource } from '../../../../../models/settings/settings';
+import { DatamartReplicationResourceShape } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
@@ -34,7 +34,7 @@ export const DATAMART_REPLICATION_SEARCH_SETTINGS = [
 ];
 
 interface State {
-  datasource: DatamartReplicationResource[];
+  datasource: DatamartReplicationResourceShape[];
   total: number;
   isLoading: boolean;
   noItem: boolean;
@@ -42,6 +42,7 @@ interface State {
 
 type Props = RouteComponentProps<DatamartReplicationRouteMatchParam> &
   InjectedNotificationProps &
+  InjectedIntlProps &
   InjectedDrawerProps;
 
 class DatamartReplicationListPage extends React.Component<Props, State> {
@@ -95,14 +96,8 @@ class DatamartReplicationListPage extends React.Component<Props, State> {
     ) {
       const filter = parseSearch(search, DATAMART_REPLICATION_SEARCH_SETTINGS);
       const calculatedDatamartId = datamartId ? datamartId : filter.datamartId;
-      this.setState({
-        isLoading: true,
-      });
-      this.fetchDatamartReplications(calculatedDatamartId, filter).then(() => {
-        this.setState({
-          isLoading: false,
-        });
-      });
+
+      this.fetchDatamartReplications(calculatedDatamartId, filter);
     }
   }
 
@@ -111,12 +106,15 @@ class DatamartReplicationListPage extends React.Component<Props, State> {
       const {
         history,
         match: {
-          params: { organisationId },
+          params: { datamartId, organisationId },
         },
       } = this.props;
-      history.push(
-        `/v2/o/${organisationId}/settings/datamart/datamart_replication/create`,
-      );
+      history.push({
+        pathname: `/v2/o/${organisationId}/settings/datamart/datamart_replication/create`,
+        state: {
+          datamartId: datamartId,
+        },
+      });
     };
     return (
       <Button
@@ -127,6 +125,39 @@ class DatamartReplicationListPage extends React.Component<Props, State> {
         <FormattedMessage {...messages.newDatamartReplication} />
       </Button>
     );
+  };
+
+  onDeleteDatamartReplication = (
+    resource: DatamartReplicationResourceShape,
+  ) => {
+    const {
+      match: {
+        params: { datamartId },
+      },
+      location: { search },
+      notifyError,
+      intl: { formatMessage },
+    } = this.props;
+
+    const filter = parseSearch(search, DATAMART_REPLICATION_SEARCH_SETTINGS);
+
+    Modal.confirm({
+      icon: 'exclamation-circle',
+      title: formatMessage(messages.deleteDatamartReplicationModalTitle),
+      content: formatMessage(messages.deleteDatamartReplicationModalContent),
+      okText: formatMessage(messages.deleteDatamartReplication),
+      cancelText: formatMessage(messages.deleteDatamartReplicationModalCancel),
+      onOk: () => {
+        this._datamartReplicationService
+          .deleteDatamartReplication(datamartId, resource.id)
+          .then(() => {
+            return this.fetchDatamartReplications(datamartId, filter);
+          })
+          .catch(error => {
+            notifyError(error);
+          });
+      },
+    });
   };
 
   handleFilterChange = (newFilter: Filter) => {
@@ -216,6 +247,7 @@ class DatamartReplicationListPage extends React.Component<Props, State> {
                 isLoading={isLoading}
                 noItem={noItem}
                 onFilterChange={this.handleFilterChange}
+                onDelete={this.onDeleteDatamartReplication}
               />
             </div>
           </Row>
