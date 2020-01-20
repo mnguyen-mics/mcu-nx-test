@@ -61,8 +61,8 @@ class AudienceFeedsActionBar extends React.Component<Props, State> {
 
   buildApiSearchFilters = (filter: Index<any>) => {
     return {
-      status: filter.status && filter.status.length > 0 ? filter.status : [],
-      artifact_id: filter.artifactId && filter.artifactId.length > 0 ? filter.artifactId : [],
+      status: filter.status && filter.status.length > 0 ? filter.status : undefined,
+      artifact_id: filter.artifactId && filter.artifactId.length > 0 ? filter.artifactId : undefined,
     };
   };
 

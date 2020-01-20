@@ -623,8 +623,16 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             nameField={{
               label: formatMessage(messages.feedModalNameFieldLabel),
               title: plugin.plugin_preset ? 
-                formatMessage(messages.feedPresetModalNameFieldTitle) : 
-                formatMessage(messages.feedModalNameFieldTitle),
+                <div>
+                  {formatMessage(messages.feedPresetModalNameFieldTitle)}
+                  <br/>
+                  <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
+                </div> : 
+                  <div>
+                    {formatMessage(messages.feedModalNameFieldTitle)}
+                    <br/>
+                    <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
+                  </div>,
               placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
               display: true, 
               disabled: !!plugin.plugin_preset, 
