@@ -63,9 +63,13 @@ export interface IAutomationFormService {
 }
 
 const messages = defineMessages({
+  undefinedQuery: {
+    id: 'automation.builder.undefinedQuery', 
+    defaultMessage: 'Please define a query for all query nodes.',
+  },
   emptyQuery: {
     id: 'automation.builder.emptyQuery',
-    defaultMessage: 'Please define the queries for all nodes who need it.',
+    defaultMessage: 'One of the query nodes has an empty query. Please define a non-empty query.',
   }
 });
 
@@ -500,6 +504,9 @@ export class AutomationFormService implements IAutomationFormService {
     const node = storylineNode.node
     if (isQueryInputNode(node) || isIfNode(node)) {
       if (! node.formData.query_language) {
+        return Promise.reject(messages.undefinedQuery)
+      }
+      if (! node.formData.query_text || node.formData.query_text === '') {
         return Promise.reject(messages.emptyQuery)
       }
     }
