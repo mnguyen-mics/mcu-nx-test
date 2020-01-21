@@ -454,7 +454,9 @@ class PluginContent<T extends PluginInstance> extends React.Component<
                 { archived: true },
               )
               .then(() => {
-                this.getPluginPresetsList(this.state.availablePlugins);
+                this.getPluginPresetsList(this.state.availablePlugins).then(presets => {
+                  this.setState({ availablePluginPresets: presets });
+                });
               })
               .catch(err => {
                 notifyError(err);
