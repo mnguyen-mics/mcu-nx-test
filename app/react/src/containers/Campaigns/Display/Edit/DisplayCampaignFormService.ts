@@ -159,7 +159,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
       );
     } else {
       createOrUpdatePromise = this._displayCampaignService
-        .createCampaign(organisationId, formData.campaign)
+        .createCampaign({ ...formData.campaign, organisation_id: organisationId })
         .then(res => {
           return datamartId
             ? executeTasksInSequence(

@@ -59,7 +59,6 @@ export interface IDisplayCampaignService {
   getCampaignName: (campaignId: string) => Promise<string>;
 
   createCampaign: (
-    organisationId: string,
     body: Partial<DisplayCampaignResource>,
   ) => Promise<DataResponse<DisplayCampaignResource>>;
 
@@ -388,7 +387,6 @@ export class DisplayCampaignService implements IDisplayCampaignService {
   }
 
   createCampaign(
-    organisationId: string,
     body: Partial<DisplayCampaignResource>,
   ): Promise<DataResponse<DisplayCampaignResource>> {
     const endpoint = `display_campaigns`;
@@ -849,4 +847,3 @@ export class DisplayCampaignService implements IDisplayCampaignService {
     return ApiService.deleteRequest(endpoint, {});
   }
 }
-
