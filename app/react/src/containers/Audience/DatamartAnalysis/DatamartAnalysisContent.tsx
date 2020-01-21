@@ -2,14 +2,14 @@ import * as React from 'react';
 // import SessionsByCountry from './components/SessionsByCountry';
 // import SessionsByDevice from './components/SessionsByDevice';
 // import UsersByTimeOfDay from './components/UsersByTimeOfDay';
-import { Responsive, WidthProvider } from 'react-grid-layout';
-// import ActiveUsers from './components/ActiveUsers';
-// import MultipleData from './components/MultipleData';
+import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
 import _ from 'lodash';
 import ApiQueryWrapper from './components/ApiQueryWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
 import world from '../../../components/Charts/world';
 import log from '../../../utils/Logger';
+import { Chart } from '../../../models/datamartAnalysisDashboard/datamartAnalysisDashboard';
+
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -245,49 +245,104 @@ const dashboardJsonConfig = [
     charts: [
       {
         type: 'TABS',
-        items: [{
-        type: 'STACKEDBAR',
-        options: {
-          chart: {
-            height: 300,
-          },
-          title: {
-            text: ''
-          },
-          yAxis: {
-            min: 0,
+        tabs: [{
+          title: 'toto 1',
+          type: 'STACKEDBAR',
+          options: {
+            chart: {
+              height: 300,
+            },
             title: {
               text: ''
-            }
+            },
+            yAxis: {
+              min: 0,
+              title: {
+                text: ''
+              }
+            },
+            legend: {
+              enabled: false
+            },
+            tooltip: {
+              enabled: false
+            },
+            plotOptions: {
+            },
+            credits: {
+              enabled: false
+            },
+            series: [
+              {
+                type: 'bar',
+                name: 'Other',
+                color: '#a6c1f4',
+                data: [30, 40, 35, 50, 60, 70]
+              }
+            ]
           },
-          legend: {
-            enabled: false
-          },
-          tooltip: {
-            enabled: false
-          },
-          plotOptions: {
-          },
-          credits: {
-            enabled: false
-          },
-          series: [
-            {
-              type: 'bar',
-              name: 'Other',
-              color: '#a6c1f4',
-              data: [30, 40, 35, 50, 60, 70]
-            }
-          ]
+          xKey: 'country',
+          metricName: 'session_count'
         },
-        xKey: 'country',
-        metricName: 'session_count'
-      }]
+        {
+          title: 'toto 2',
+          type: 'WORLDMAP',
+          options: {
+            chart: {
+              style: {
+                fontFamily: 'sans-serif',
+                height: 300,
+              },
+            },
+            title: {
+              text: '',
+            },
+            "colors": ["#5c94d1", "#5eabd2", "#95cdcb"],
+            colorAxis: {
+              dataClasses: [
+                {
+                  color: 'rgba(161,211,234,1)',
+                  to: 5,
+                },
+                {
+                  color: 'rgba(93,164,239,1)',
+                  from: 10,
+                  to: 20,
+                },
+                {
+                  color: 'rgba(57,95,189,1)',
+                  from: 20,
+                  to: 25,
+                }
+              ],
+            },
+            legend: {
+              enabled: false
+            },
+            mapNavigation: {
+              buttonOptions: {
+                verticalAlign: 'bottom',
+              },
+            },
+            credits: {
+              enabled: false,
+            }
+          },
+          xKey: 'country',
+          yKey: 'code',
+          metricName: 'session_count'
+        }]
       }
     ]
   }
 ];
 
+export interface Component {
+  title: string;
+  query: any;
+  layout: Layout;
+  charts: Chart[]
+}
 
 export default class DatamartAnalysisContent extends React.Component {
 
@@ -296,7 +351,7 @@ export default class DatamartAnalysisContent extends React.Component {
   }
 
   generateDOM() {
-    return _.map(dashboardJsonConfig, (comp: any, i: any) => {
+    return _.map(dashboardJsonConfig, (comp: Component, i: number) => {
       if (comp.query.type === "api") {
         return (
           <CardFlex

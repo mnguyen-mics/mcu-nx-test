@@ -1,9 +1,10 @@
 import * as React from 'react';
 import FormatData from './FormatData';
+import { Chart } from '../../../../models/datamartAnalysisDashboard/datamartAnalysisDashboard';
 
 export interface ApiQueryWrapperProps {
     query: string;
-    charts: any;
+    charts: Chart[];
 }
 
 // const apiResponse = {
@@ -35,125 +36,125 @@ export interface ApiQueryWrapperProps {
 // };
 
 
-// const apiResponse2 = {
-//     "status": "ok",
-//     "data": {
-//         "report_view": {
-//             "items_per_page": 100,
-//             "total_items": 3,
-//             "columns_headers": [
-//                 "date",
-//                 "type",
-//                 "active_users_count",
-//             ],
-//             "rows": [
-//                 [
-//                     "15-09-2019",
-//                     "1 days",
-//                     60
-//                 ],
-//                 [
-//                     "22-09-2019",
-//                     "1 days",
-//                     55
-//                 ],
-//                 [
-//                     "29-09-2019",
-//                     "1 days",
-//                     65
-//                 ],
-//                 [
-//                     "06-10-2019",
-//                     "1 days",
-//                     70
-//                 ],
-//                 [
-//                     "15-09-2019",
-//                     "7 days",
-//                     105
-//                 ],
-//                 [
-//                     "22-09-2019",
-//                     "7 days",
-//                     130
-//                 ],
-//                 [
-//                     "29-09-2019",
-//                     "7 days",
-//                     110
-//                 ],
-//                 [
-//                     "06-10-2019",
-//                     "7 days",
-//                     135
-//                 ],
-//                 [
-//                     "15-09-2019",
-//                     "30 days",
-//                     250
-//                 ],
-//                 [
-//                     "22-09-2019",
-//                     "30 days",
-//                     300
-//                 ],
-//                 [
-//                     "29-09-2019",
-//                     "30 days",
-//                     275
-//                 ],
-//                 [
-//                     "06-10-2019",
-//                     "30 days",
-//                     240
-//                 ]
-//             ]
-//         }
-//     }
-// };
-
-
-const apiResponse3 = {
+const apiResponse2 = {
     "status": "ok",
     "data": {
         "report_view": {
             "items_per_page": 100,
             "total_items": 3,
             "columns_headers": [
-                "code",
-                "country",
-                "session_count",
+                "date",
+                "type",
+                "active_users_count",
             ],
             "rows": [
                 [
-                    "USA",
-                    "United States",
-                    25
+                    "15-09-2019",
+                    "1 days",
+                    60
                 ],
                 [
-                    "FRA",
-                    "France",
-                    15
+                    "22-09-2019",
+                    "1 days",
+                    55
                 ],
                 [
-                    "PAK",
-                    "Pakistan",
-                    10
+                    "29-09-2019",
+                    "1 days",
+                    65
                 ],
                 [
-                    "RUS",
-                    "Russia",
-                    5
+                    "06-10-2019",
+                    "1 days",
+                    70
                 ],
+                [
+                    "15-09-2019",
+                    "7 days",
+                    105
+                ],
+                [
+                    "22-09-2019",
+                    "7 days",
+                    130
+                ],
+                [
+                    "29-09-2019",
+                    "7 days",
+                    110
+                ],
+                [
+                    "06-10-2019",
+                    "7 days",
+                    135
+                ],
+                [
+                    "15-09-2019",
+                    "30 days",
+                    250
+                ],
+                [
+                    "22-09-2019",
+                    "30 days",
+                    300
+                ],
+                [
+                    "29-09-2019",
+                    "30 days",
+                    275
+                ],
+                [
+                    "06-10-2019",
+                    "30 days",
+                    240
+                ]
             ]
         }
     }
 };
 
+
+// const apiResponse = {
+//     "status": "ok",
+//     "data": {
+//         "report_view": {
+//             "items_per_page": 100,
+//             "total_items": 3,
+//             "columns_headers": [
+//                 "code",
+//                 "country",
+//                 "session_count",
+//             ],
+//             "rows": [
+//                 [
+//                     "USA",
+//                     "United States",
+//                     25
+//                 ],
+//                 [
+//                     "FRA",
+//                     "France",
+//                     15
+//                 ],
+//                 [
+//                     "PAK",
+//                     "Pakistan",
+//                     10
+//                 ],
+//                 [
+//                     "RUS",
+//                     "Russia",
+//                     5
+//                 ],
+//             ]
+//         }
+//     }
+// };
+
 class ApiQueryWrapper extends React.Component<ApiQueryWrapperProps, {}> {
     render() {
         const { charts } = this.props;
-        return (<FormatData apiResponse={apiResponse3.data.report_view} charts={charts} />)
+        return (<FormatData apiResponse={apiResponse2.data.report_view} charts={charts} />)
     }
 }
 
