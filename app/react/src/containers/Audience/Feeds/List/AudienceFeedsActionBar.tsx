@@ -20,6 +20,7 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import messages from '../messages';
 import { IAudienceTagFeedService } from '../../../../services/AudienceTagFeedService';
 import { IAudienceExternalFeedService } from '../../../../services/AudienceExternalFeedService';
+import { AudienceTagFeed } from '../../../../models/Plugins';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
@@ -75,7 +76,7 @@ class AudienceFeedsActionBar extends React.Component<Props, State> {
       intl: {
         formatMessage
       },
-      workspace
+      workspace,
     } = this.props;
 
     this.setState({ exportRunning : true });
@@ -83,56 +84,71 @@ class AudienceFeedsActionBar extends React.Component<Props, State> {
     const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
     const feedService = filter.feedType && filter.feedType[0] === 'TAG_FEED' ? this.tagFeedService : this.externalFeedService;
 
-    feedService
+    const fetchFeeds = (feeds: AudienceTagFeed[]) : Promise<AudienceTagFeed[]> => {
+      return feedService
       .getFeeds({
+        first_result: feeds.length,
         organisation_id: organisationId,
         order_by: 'AUDIENCE_SEGMENT_NAME',
+        max_results: 500,
         ...this.buildApiSearchFilters(filter),
-      })
-      .then(feedResults => {
-        const audienceSegmentIds = feedResults.data
-        .map(feeds => feeds.audience_segment_id)
-        .filter((v, i, s) => s.indexOf(v) === i);
+      }).then(response => {
+        if(response.data.length === 0)
+          return feeds;
 
-        return Promise.all(
-          audienceSegmentIds.map(id => {
-            return this._audienceSegmentService
-              .getSegment(id)
-              .catch(() => ({ data: undefined }));
-          }),
-        ).then(segmentResults => {
-          const feeds = feedResults.data.map(feed => {
-            return {
-              feed: feed,
-              audienceSegment: segmentResults
-                .map(r => r.data)
-                .find(segment => {
-                  return !!segment && segment.id === feed.audience_segment_id;
-                }),
-            }
-          });
+        const concat = feeds.concat(response.data)
+        if(response.total && concat.length >= response.total)
+          return concat;
 
-          this.setState({ exportRunning: false });
+        return fetchFeeds(concat);
+      });
+    }
 
-          ExportService.exportAudienceFeeds(
-            feeds, 
-            {
-              feedType: filter.feedType && filter.feedType[0] === 'TAG_FEED' ? 'TAG_FEED' : 'EXTERNAL_FEED',
-              artifactIds: filter.artifactId,
-              status: filter.status,
-            },
-            workspace,
-            formatMessage,
-          );
+    fetchFeeds([])
+    .then(feedResults => {
+      const audienceSegmentIds = feedResults
+      .map(feeds => feeds.audience_segment_id)
+      .filter((v, i, s) => s.indexOf(v) === i);
+
+      return Promise.all(
+        audienceSegmentIds.map(id => {
+          return this._audienceSegmentService
+            .getSegment(id)
+            .catch(() => ({ data: undefined }));
+        }),
+      ).then(segmentResults => {
+        const feeds = feedResults.map(feed => {
+          return {
+            feed: feed,
+            audienceSegment: segmentResults
+              .map(r => r.data)
+              .find(segment => {
+                return !!segment && segment.id === feed.audience_segment_id;
+              }),
+          }
         });
-      })
-      .catch(() => {
-        this.setState({ exportRunning: false })
-        message.error(
-          'There was an error generating your export please try again.',
-          5,
+
+        this.setState({ exportRunning: false });
+
+        ExportService.exportAudienceFeeds(
+          feeds, 
+          {
+            feedType: filter.feedType && filter.feedType[0] === 'TAG_FEED' ? 'TAG_FEED' : 'EXTERNAL_FEED',
+            artifactIds: filter.artifactId,
+            status: filter.status,
+          },
+          workspace,
+          formatMessage,
         );
       });
+    })
+    .catch(() => {
+      this.setState({ exportRunning: false })
+      message.error(
+        formatMessage(messages.exportError),
+        5,
+      );
+    });
   }
 
   render() {
@@ -178,3 +194,5 @@ export default compose<Props, {}>(
   injectNotifications,
   injectWorkspace
 )(AudienceFeedsActionBar);
+
+

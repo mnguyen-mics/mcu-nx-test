@@ -100,6 +100,10 @@ export default defineMessages({
   audienceFeedsList: {
     id: 'audiencefeeds.actionbar.list',
     defaultMessage: 'Feeds',
+  },
+  exportError: {
+		id: 'audienceFeeds.actionBar.export.error',
+		defaultMessage: 'There was an error generating your export please try again.',
 	},
 	connectorType: {
 		id: 'audienceFeeds.actionBar.export.connectorType',
