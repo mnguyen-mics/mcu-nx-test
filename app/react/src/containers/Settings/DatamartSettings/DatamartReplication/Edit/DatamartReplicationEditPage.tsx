@@ -48,7 +48,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     this.state = {
       isLoading: false,
       datamartReplicationData: INITIAL_DATAMART_REPLICATION_FORM_DATA,
-      replicationTypes: ['GOOGLE_PUBSUB'], // ReplcationTypeRessource ?? with assetUrl?
+      replicationTypes: ['GOOGLE_PUBSUB'],
     };
   }
 
@@ -187,6 +187,34 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     });
   };
 
+  renderReplicationCards = () => {
+    const array = [];
+    const size = 6;
+
+    const { replicationTypes } = this.state;
+
+    const cards = replicationTypes.map(type => {
+      return (
+        <Col key={type} span={4}>
+          <DatamartReplicationCard type={type} onClick={this.onSelectType} />
+        </Col>
+      );
+    });
+
+    while (cards.length > 0) array.push(cards.splice(0, size));
+
+    return array.map((arr, i) => (
+      <Row
+        key={i}
+        style={{ marginTop: 30, marginBottom: 40 }}
+        type={'flex'}
+        gutter={40}
+      >
+        {arr}
+      </Row>
+    ));
+  };
+
   render() {
     const {
       match: {
@@ -195,12 +223,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const {
-      isLoading,
-      datamartReplicationData,
-      replicationTypes,
-      selectedType,
-    } = this.state;
+    const { isLoading, datamartReplicationData, selectedType } = this.state;
 
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
@@ -247,18 +270,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
             title={messages.datamartReplicationTypeSelectionTitle}
             subtitle={messages.datamartReplicationTypeSelectionSubtitle}
           />
-          <Row type={'flex'} gutter={40}>
-            {replicationTypes.map(type => {
-              return (
-                <Col key={type} span={4}>
-                  <DatamartReplicationCard
-                    type={type}
-                    onClick={this.onSelectType}
-                  />
-                </Col>
-              );
-            })}
-          </Row>
+          {this.renderReplicationCards()}
         </Layout>
       </Layout>
     );

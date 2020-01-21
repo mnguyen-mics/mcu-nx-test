@@ -3,7 +3,7 @@ import { Row, Col } from 'antd';
 import { ImportFilterParams } from '../../../../Datastudio/Imports/List/ImportsContent';
 import ImportsContentContainer from '../../../../Datastudio/Imports/List/ImportsContentContainer';
 
-export interface IDatamartConfigTabProps {
+export interface DatamartConfigTabProps {
   datamartId: string;
 }
 
@@ -12,10 +12,10 @@ interface State {
 }
 
 export default class DatamartConfigTab extends React.Component<
-  IDatamartConfigTabProps,
+  DatamartConfigTabProps,
   State
 > {
-  constructor(props: IDatamartConfigTabProps) {
+  constructor(props: DatamartConfigTabProps) {
     super(props);
     this.state = {
       importFilters: {

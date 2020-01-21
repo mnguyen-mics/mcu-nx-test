@@ -66,13 +66,10 @@ class DatamartReplicationCard extends React.Component<Props> {
     return (
       <div key={type} className="replication-card" onClick={onClickSelect}>
         <Card className="replication-card hoverable" type="flex">
-          <div className="card-header">
+          <div className="image-placeholder">
             {/* get asset Urls */}
             {type === 'url' ? (
-              <img
-                className="image"
-                src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${type}`}
-              />
+              <img src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${type}`} />
             ) : (
               <div className="placeholder" />
             )}
