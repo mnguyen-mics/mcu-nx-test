@@ -1,13 +1,13 @@
 import { CounterProps } from "../../components/Counter/Counter";
 
-type chartTypes = 'PIE' | 'LINE' | 'WORLDMAP' | 'STACKEDBAR' | 'COUNT' | 'TABS';
+type chartTypes = 'PIE' | 'AREA' | 'WORLDMAP' | 'STACKEDBAR' | 'COUNT' | 'TABS';
 
 export type Dataset = { [key: string]: string | number | Date | undefined };
 
 export interface Chart {
   type: chartTypes;
   options: Highcharts.Options;
-  xKey?: string;
+  xKey: string;
   yKey: string | number;
   metricName: string;
   icons?: string[];
@@ -30,10 +30,12 @@ export interface PieSeriesDataOption {
   color?: string;
 }
 
-export interface LineSeriesDataOptions {
+export interface AreaSeriesDataOptions {
   name: string;
-  data: number[];
-  type: 'line';
+  fillColor: any;
+  fillOpacity: any;
+  data: number[][];
+  type: 'area';
   color?: string;
 }
 

@@ -1,17 +1,27 @@
 import * as React from 'react';
-import LineChart from './charts/LineChart';
-import PieChart from './charts/PieChart';
+import LineChart from '../charts/LineChart';
+import PieChart from '../charts/PieChart';
 import _ from 'lodash';
-import { CounterDashboard } from '../../../../components/Counter';
-import { CounterProps } from '../../../../components/Counter/Counter';
-import { normalizeReportView } from '../../../../utils/MetricHelper';
-import GenericWorldMap from './charts/GenericWorldMap';
-import Highcharts from 'highcharts/highmaps';
-import GenericStackedBar from './charts/GenericStackedBar';
+import { CounterDashboard } from '../../../../../components/Counter';
+import { CounterProps } from '../../../../../components/Counter/Counter';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import GenericWorldMap from '../charts/GenericWorldMap';
+import GenericStackedBar from '../charts/GenericStackedBar';
 import { Tabs } from 'antd';
-import { McsIconType } from '../../../../components/McsIcon';
-import { TabItem, BarSeriesDataOptions, MapSeriesDataOptions, Dataset, Chart, LineSeriesDataOptions, PieSeriesDataOption } from '../../../../models/datamartAnalysisDashboard/datamartAnalysisDashboard';
-import { ReportView } from '../../../../models/ReportView';
+import { McsIconType } from '../../../../../components/McsIcon';
+import * as Highcharts from 'highcharts';
+import { 
+  TabItem, 
+  BarSeriesDataOptions, 
+  MapSeriesDataOptions, 
+  Dataset, 
+  Chart, 
+  AreaSeriesDataOptions, 
+  PieSeriesDataOption 
+} from '../../../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
+import { ReportView } from '../../../../../models/ReportView';
+import { AREA_OPACITY } from '../../../../../components/Charts/domain';
+import moment from 'moment';
 
 export interface FormatDataProps {
   apiResponse: ReportView;
@@ -20,7 +30,7 @@ export interface FormatDataProps {
 
 class FormatData extends React.Component<FormatDataProps, {}> {
 
-  formatSeriesForChart = (chart: Chart, dataset: Dataset[]): Highcharts.SeriesOptionsType[] => {
+  formatSeriesForChart = (chart: Chart, dataset: Dataset[]) => {
     switch (chart.type) {
       case 'PIE':
         return [
@@ -34,9 +44,8 @@ class FormatData extends React.Component<FormatDataProps, {}> {
               if (!found) {
                 acc.push({ 
                   name: d[chart.yKey] as string, 
-                  y: value as number, 
+                  y: value as number,
                   color: chart.options.colors ? chart.options.colors[0] : undefined });
-                if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
               }
               else {
                 found.y += value as number;
@@ -45,20 +54,46 @@ class FormatData extends React.Component<FormatDataProps, {}> {
             }, [])
           }
         ];
-      case 'LINE':
-        return dataset.reduce((acc: LineSeriesDataOptions[], d: Dataset) => {
-          const found = acc.find((a: LineSeriesDataOptions) => a.name === d[chart.yKey]);
+      case 'AREA':
+        return dataset.reduce((acc: AreaSeriesDataOptions[], d: Dataset) => {
+          const found = acc.find((a: AreaSeriesDataOptions) => a.name === chart.metricName);
+
           const value = d[chart.metricName]; // the element in data property
+          const xValue = chart.xKey === 'date_yyyymmdd' ? this.formatDateToTs(d[chart.xKey] as string) : d[chart.xKey];
           if (!found) {
             acc.push({ 
-              name: d[chart.yKey] as string, 
-              data: [value] as number[],  
-              type: 'line', 
-              color: chart.options.colors ? chart.options.colors[0] : undefined }); // not found, so need to add data property
-            if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
+              name: chart.metricName as string, 
+              data: [[xValue,value]] as number[][],  
+              fillOpacity: 0.5,
+              fillColor: {
+                linearGradient: {
+                  x1: 0,
+                  y1: 0,
+                  x2: 0,
+                  y2: 1,
+                },
+                stops: [
+                  [
+                    0,
+                    (Highcharts as any)
+                      .Color(chart.options.colors ? chart.options.colors[0] : '#2fa1de')
+                      .setOpacity(AREA_OPACITY)
+                      .get('rgba'),
+                  ],
+                  [
+                    1,
+                    (Highcharts as any)
+                      .Color(chart.options.colors ? chart.options.colors[0] : '#2fa1de')
+                      .setOpacity(0)
+                      .get('rgba'),
+                  ],
+                ],
+              },
+              type: 'area'
+            });
           }
           else {
-            found.data.push(value as number);
+            found.data.push([xValue, value] as number[]);
           }
           return acc;
         }, []);
@@ -78,17 +113,17 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           return acc;
         }, []);
       case 'WORLDMAP':
-        return dataset.reduce((acc: any, d: Dataset) => {
+        return dataset.reduce((acc: MapSeriesDataOptions[], d: Dataset) => {
           const found = acc.find((a: MapSeriesDataOptions) => a.code3 === d[chart.yKey]);
           const value = d[chart.metricName];
           if (!found) {
-            acc.push({ 
-              code3: d[chart.yKey],
-              value: d[chart.metricName], 
-            }) // not found, so need to add data property
+            acc.push({
+              code3: d[chart.yKey] as string,
+              value: d[chart.metricName] as number,
+            })
           }
           else {
-            found.value += value // if found, that means data property exists, so just push new element to found.data.
+            found.value += value as number;
           }
           return acc;
         }, []);
@@ -132,31 +167,31 @@ class FormatData extends React.Component<FormatDataProps, {}> {
     }, []);
   }
 
-  getXAxisValues = (dataset: Dataset[], xKey: string) => {
-    return dataset.map(d => {
-      return d[xKey] as string;
-    })
-  }
-  
+  formatDateToTs = (date: string) => {
+    return moment(date)
+      .seconds(0)
+      .hours(0)
+      .milliseconds(0)
+      .minutes(0)
+      .valueOf();
+  };
+
   generateComponent = (charts: Chart[], data: Dataset[]): React.ReactNode => {
 
   generateComponent = (charts: Chart[], data: any) => {
     return _.map(charts, chart => {
 
       switch (chart.type) {
-        case 'LINE':
+        case 'AREA':
           if (!chart.xKey) return null
-          chart.options.xAxis = {
-            categories: this.getXAxisValues(data, chart.xKey)
-          };
-          chart.options.series = this.formatSeriesForChart(chart, data);
+          chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
           return (
             <LineChart
               options={chart.options}
             />
           )
         case 'PIE':
-          chart.options.series = this.formatSeriesForChart(chart, data);
+          chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
           return (
             <PieChart options={chart.options} />
           )
@@ -165,14 +200,11 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           return (<CounterDashboard counters={chart.counterFormatedProps} />)
         case 'WORLDMAP':
           return (
-            <GenericWorldMap options={chart.options} dataset={this.formatSeriesForChart(chart, data)} />
+            <GenericWorldMap key={i.toString()} options={chart.options} dataset={this.formatSeriesForChart(chart, data) as MapSeriesDataOptions[]} />
           )
         case 'STACKEDBAR':
           if (!chart.xKey) return null
-          chart.options.xAxis = {
-            categories: this.getXAxisValues(data, chart.xKey)
-          };
-          chart.options.series = this.formatSeriesForChart(chart, data);
+          chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesMapOptions[];
           return (
             <GenericStackedBar options={chart.options} />
           )
@@ -198,8 +230,8 @@ class FormatData extends React.Component<FormatDataProps, {}> {
   render() {
     const { charts, apiResponse } = this.props;
     const normalizedData = normalizeReportView<{
-      device_name: string;
-      user_point_count: number;
+      key1: string;
+      key2: number;
     }>(apiResponse);
 
     return (<div>{this.generateComponent(charts, normalizedData)}</div>)

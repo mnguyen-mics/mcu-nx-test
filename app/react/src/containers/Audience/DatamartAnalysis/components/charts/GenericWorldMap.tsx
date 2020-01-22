@@ -3,10 +3,11 @@ import Highcharts from 'highcharts/highmaps';
 import world from '../../../../../components/Charts/world';
 import log from '../../../../../utils/Logger';
 import cuid from 'cuid';
+import { MapSeriesDataOptions } from '../../../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 
 export interface GenericWorldMapProps {
-  options: any;
-  dataset: any;
+  options: Highcharts.Options;
+  dataset: MapSeriesDataOptions[];
 }
 
 class GenericWorldMap extends React.Component<GenericWorldMapProps> {
@@ -27,14 +28,14 @@ class GenericWorldMap extends React.Component<GenericWorldMapProps> {
     this.generateMap(options, dataset);
   }
 
-  generateMap = (options: any, dataset: any) => {
-    Highcharts.createElement(
-      'link',
-      {},
-      undefined,
-      document.getElementsByTagName('head')[0],
-    );
-    
+  generateMap = (options: Highcharts.Options, dataset: MapSeriesDataOptions[]) => {
+    if (dataset[0].code3) {
+      Highcharts.createElement(
+        'link',
+        {},
+        undefined,
+        document.getElementsByTagName('head')[0],
+      );
 
     options.series =[{
       data: dataset,

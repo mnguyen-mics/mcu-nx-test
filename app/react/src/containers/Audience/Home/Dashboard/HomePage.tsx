@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import {
@@ -17,17 +17,18 @@ import { DashboardResource } from '../../../../models/dashboards/dashboards';
 import { withDatamartSelector, WithDatamartSelectorProps } from '../../../Datamart/WithDatamartSelector';
 import { Loading } from '../../../../components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
-// import Error from '../../../../components/Error';
-import DatamartAnalysisWrapper from '../../DatamartAnalysis/DatamartAnalysisWrapper';
+import Error from '../../../../components/Error';
+import DatamartAnalysisWrapper from '../../DatamartAnalysis/DatamartUsersAnalyticsWrapper';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 
 const { Content } = Layout;
 
-// const messages = defineMessages({
-//   comingSoon: {
-//     id: "audience.home.dashboard",
-//     defaultMessage: "Coming Soon..."
-//   }
-// });
+const messages = defineMessages({
+  comingSoon: {
+    id: "audience.home.dashboard",
+    defaultMessage: "Coming Soon..."
+  }
+});
 
 interface HomeProps { }
 
@@ -41,7 +42,8 @@ type JoinedProps = HomeProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; }> &
-  WithDatamartSelectorProps;
+  WithDatamartSelectorProps &
+  InjectedFeaturesProps;
 
 
 
@@ -98,25 +100,24 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       });
   };
 
-
-
   render() {
-    // const { intl } = this.props;
+    const {
+      hasFeature,
+      intl,
+      selectedDatamartId,
+      selectedDatafarm,
+    } = this.props;
+
     const { isLoading, dashboards } = this.state;
 
     if (isLoading) {
       return <Loading />
     }
 
-    if (!isLoading && dashboards.length === 0) {
-      // return <Error message={intl.formatMessage(messages.comingSoon)} />
-      return (<div className="ant-layout">
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
-            <DatamartAnalysisWrapper title={"Segment Dashboard"} />
-          </Content>
-        </div>
-      </div>)
+    const shouldDisplayAnalyticsFeature = hasFeature('audience-dashboards-datamart_users_analytics') && selectedDatafarm !== 'DF_EU_2017_09';
+
+    if (!isLoading && dashboards.length === 0 && !shouldDisplayAnalyticsFeature) {
+      return <Error message={intl.formatMessage(messages.comingSoon)} />
     }
 
     return (
@@ -124,6 +125,9 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         <div className="ant-layout">
           <Content className="mcs-content-container">
             {dashboards.map(d => <DashboardWrapper key={d.id} layout={d.components} title={d.name} datamartId={d.datamart_id} />)}
+            {
+              shouldDisplayAnalyticsFeature && <DatamartAnalysisWrapper title={"Datamart Users analytics"} datamartId={selectedDatamartId} />
+            }
           </Content>
         </div>
       </div>
@@ -137,4 +141,5 @@ export default compose(
   injectIntl,
   injectWorkspace,
   injectNotifications,
+  injectFeatures
 )(Partition);

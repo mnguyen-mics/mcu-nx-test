@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Layout, Layouts } from 'react-grid-layout';
 import ContentHeader from '../../../components/ContentHeader';
-import DatamartAnalysisContent from './DatamartAnalysisContent';
+import DatamartAnalysisContent from './DatamartUsersAnalyticsContent';
 
 interface DatamartAnalysisProps {
   title?: string;
+  datamartId: string;
 }
 
 interface State {
@@ -25,12 +26,11 @@ class DatamartAnalysisWrapper extends React.Component<Props, State> {
   }
 
   render() {
-    const { title } = this.props;
-
+    const { title, datamartId } = this.props;
     return (
       <div>
         <ContentHeader title={title} size={`large`} />
-        <DatamartAnalysisContent />
+        <DatamartAnalysisContent datamartId={datamartId}/>
       </div>
     );
   }
