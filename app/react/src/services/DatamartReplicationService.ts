@@ -11,7 +11,7 @@ export interface DatamartReplicationOptions extends PaginatedApiParam {
 export interface IDatamartReplicationService {
   getDatamartReplications: (
     datamartId: string,
-    options: DatamartReplicationOptions,
+    options?: DatamartReplicationOptions,
   ) => Promise<DataListResponse<DatamartReplicationResourceShape>>;
   getDatamartReplication: (
     datamartId: string,

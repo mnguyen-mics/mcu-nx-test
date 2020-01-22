@@ -31,7 +31,7 @@ export const messages = defineMessages({
   },
   newDatamartReplication: {
     id: 'settings.datamart.datamartReplication.newDatamartButton',
-    defaultMessage: 'New Datamart Replicaton',
+    defaultMessage: 'New Datamart Replication',
   },
   editDatamartReplication: {
     id: 'settings.datamart.datamartReplication.list.editButton',
@@ -48,16 +48,16 @@ export const messages = defineMessages({
   },
   deleteDatamartReplicationModalContent: {
     id: 'settings.datamart.datamartReplication.list.deleteModalContent',
-    defaultMessage: 'By deleting this datamart replication, you will not be able to retieve it. Are you sure ?',
+    defaultMessage: 'By deleting this datamart replication, you will not be able to retrieve it. Are you sure ?',
   },
   deleteDatamartReplicationModalCancel: {
     id: 'settings.datamart.datamartReplication.list.cancelModalButton',
     defaultMessage: 'Cancel',
   },
   emptyDatamartReplication: {
-    id: 'settings.datamart.datamartReplication.emptyLit',
+    id: 'settings.datamart.datamartReplication.emptyList',
     defaultMessage:
-      "There are no datamart replication set up. Click on 'New Datamart Replication' to create one.",
+      "There are no datamart replications set up. Click on 'New Datamart Replication' to create one.",
   },
   sectionGeneralSubTitle: {
     id: 'settings.datamart.datamartReplication.edit.generalSection.subTitle',
@@ -69,24 +69,24 @@ export const messages = defineMessages({
   },
   saveDatamartReplication: {
     id: 'settings.datamart.datamartReplication.edit.saveReplication',
-    defaultMessage: 'Save Datamart Replicaton',
+    defaultMessage: 'Save Datamart Replication',
   },
   datamartReplicationTypeSelectionTitle: {
     id: 'settings.datamart.datamartReplication.edit.typeSelection.title',
-    defaultMessage: 'Datamart Replicaton Type',
+    defaultMessage: 'Datamart Replication Type',
   },
   datamartReplicationTypeSelectionSubtitle: {
     id: 'settings.datamart.datamartReplication.edit.typeSelection.subtitle',
-    defaultMessage: 'Choose your datamat replication type.',
+    defaultMessage: 'Choose your datamart replication type.',
   },
   // Name
   datamartReplicationNamePlaceHolder: {
     id: 'settings.datamart.datamartReplication.edit.name.placeholder',
-    defaultMessage: 'Datamart Replicaton Name',
+    defaultMessage: 'Datamart Replication Name',
   },
   datamartReplicationNameTooltip: {
     id: 'settings.datamart.datamartReplication.edit.name.tootltip',
-    defaultMessage: 'Give your datamart replicaton a name',
+    defaultMessage: 'Give your datamart replication a name',
   },
   datamartReplicationNameLabel: {
     id: 'settings.datamart.datamartReplication.edit.name.label',
@@ -95,11 +95,11 @@ export const messages = defineMessages({
   // crendentials URI
   datamartReplicationCredentialsUriPlaceHolder: {
     id: 'settings.datamart.datamartReplication.edit.credentailsUri.placeholder',
-    defaultMessage: 'Datamart Replicaton Credentials URI',
+    defaultMessage: 'Datamart Replication Credentials URI',
   },
   datamartReplicationCredentialsUriTooltip: {
     id: 'settings.datamart.datamartReplication.edit.credentailsUri.tootltip',
-    defaultMessage: 'Give your datamart replicaton credentials URI',
+    defaultMessage: 'Give your datamart replication credentials URI',
   },
   datamartReplicationCredentialsUriLabel: {
     id: 'settings.datamart.datamartReplication.edit.credentailsUri.label',
@@ -108,11 +108,11 @@ export const messages = defineMessages({
   // Project ID
   datamartReplicationProjectIdPlaceHolder: {
     id: 'settings.datamart.datamartReplication.edit.projectId.placeholder',
-    defaultMessage: 'Datamart Replicaton Project ID',
+    defaultMessage: 'Datamart Replication Project ID',
   },
   datamartReplicationProjectIdTooltip: {
     id: 'settings.datamart.datamartReplication.edit.projectId.tootltip',
-    defaultMessage: 'Give your datamart replicaton a project ID',
+    defaultMessage: 'Give your datamart replication a project ID',
   },
   datamartReplicationProjectIdLabel: {
     id: 'settings.datamart.datamartReplication.edit.projectId.label',
@@ -121,11 +121,11 @@ export const messages = defineMessages({
   // topic ID
   datamartReplicationTopicIdPlaceHolder: {
     id: 'settings.datamart.datamartReplication.edit.topicId.placeholder',
-    defaultMessage: 'Datamart Replicaton Topic ID',
+    defaultMessage: 'Datamart Replication Topic ID',
   },
   datamartReplicationTopicIdTooltip: {
     id: 'settings.datamart.datamartReplication.edit.topicId.tootltip',
-    defaultMessage: 'Give your datamart replicaton a topic ID',
+    defaultMessage: 'Give your datamart replication a topic ID',
   },
   datamartReplicationTopicIdLabel: {
     id: 'settings.datamart.datamartReplication.edit.topic.label',

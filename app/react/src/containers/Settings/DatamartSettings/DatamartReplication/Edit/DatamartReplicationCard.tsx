@@ -17,7 +17,7 @@ const messagesMap: {
   GOOGLE_PUBSUB: {
     id:
       'settings.datamart.datamartReplication.create.replicationType.googlePubSub',
-    defaultMessage: 'Google Pubsub',
+    defaultMessage: 'Google Pub/Sub',
   },
   selectButton: {
     id:
@@ -26,7 +26,7 @@ const messagesMap: {
   },
   selectButtonTooltip: {
     id:
-      'settings.datamart.datamartReplication.create.replicationType.selectButton.tootltip',
+      'settings.datamart.datamartReplication.create.replicationType.selectButton.tooltip',
     defaultMessage: 'Click here to select this replication type.',
   },
 });

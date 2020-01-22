@@ -108,6 +108,7 @@ class DatamartReplicationTable extends React.Component<Props> {
         render: (text: string, record: DatamartReplicationResourceShape) => {
           return (
             <Link
+            className="mcs-datamartSettings_datamartReplicationTableItem"
               to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`}
             >
               {text}
