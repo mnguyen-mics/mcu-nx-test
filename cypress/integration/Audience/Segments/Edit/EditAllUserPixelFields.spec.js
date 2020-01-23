@@ -110,6 +110,10 @@ function createSegment(type, datamart, token) {
 }
 
 function editSegment(type, token) {
+  cy.visit(
+    Cypress.config().baseUrl +
+      `/#/v2/o/504/audience/segments?currentPage=1&pageSize=10`
+  );
   // search the test segment we just created
   cy.get('[placeholder="Search Segments"]')
     .type(token)
