@@ -22,6 +22,7 @@ import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 import { DisplayCampaignFormData } from '../../../../Campaigns/Display/Edit/domain';
 import { QueryCreateRequest } from '../../../../../models/datamart/DatamartResource';
 import { AudienceSegmentFormData } from '../../../../Audience/Segments/Edit/domain';
+import { AudienceSegmentAutomationsFormProps } from './AudienceSegmentForm/AudienceSegmentAutomationForm';
 
 export interface DefaultFormData {
   name: string;
@@ -39,7 +40,8 @@ export interface WaitFormData extends DefaultFormData {
 export const INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA: AudienceSegmentAutomationFormData = {
   name: 'Audience Segment',
   audienceSegment: {
-    feed_type: 'FILE_IMPORT',
+    name: 'autamation semgent',
+    feed_type: 'SCENARIO',
     type: 'USER_LIST',
     subtype: 'STANDARD'
   }
@@ -155,6 +157,7 @@ export type AutomationFormDataType =
   | DefaultFormData
   | ABNFormData
   | DisplayCampaignAutomationFormData
+  | AudienceSegmentAutomationFormData
   | EmailCampaignAutomationFormData
   | QueryAutomationFormData
   | WaitFormData;
@@ -163,7 +166,8 @@ export type AutomationFormPropsType =
   | ABNAutomationFormProps
   | DefaultAutomationFormProps
   | DisplayCampaignAutomationFormProps
-  | EmailCampaignAutomationFormProps;
+  | EmailCampaignAutomationFormProps
+  | AudienceSegmentAutomationsFormProps;
 
 export const FORM_ID = 'automationNodeForm';
 

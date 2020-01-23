@@ -1,0 +1,150 @@
+import { ConfigProps, InjectedFormProps, getFormValues, reduxForm } from "redux-form";
+import { 
+    FORM_ID,
+    AudienceSegmentAutomationFormData } from "../domain";
+import { Path } from '../../../../../../components/ActionBar';
+import { ScenarioNodeShape } from "../../../../../../models/automations/automations";
+import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
+import { RouteComponentProps, withRouter } from "react-router";
+import * as React from 'react';
+import { MicsReduxState } from "../../../../../../utils/ReduxHelper";
+import { Omit, connect } from 'react-redux';
+import { compose } from "recompose";
+import { Layout, Form } from "antd";
+import FormLayoutActionbar, {
+    FormLayoutActionbarProps,
+} from '../../../../../../components/Layout/FormLayoutActionbar';
+import { McsFormSection } from "../../../../../../utils/FormHelper";
+import GeneralInformationFormSection from './GeneralInformationSectionForm';
+
+
+
+const { Content } = Layout;
+
+const localMessages = defineMessages({
+    save: {
+        id: 'automation.builder.node.audienceSegmentForm.save.button',
+        defaultMessage: 'Update',
+    },
+    sectionGeneralTitle: {
+        id: 'automation.builder.node.audienceSegmentForm.general.title',
+        defaultMessage: 'General Informations',
+    },
+    sectionDisplayCampaignTitle: {
+        id: 'automation.builder.node.emailCampaignForm.display.title',
+        defaultMessage: 'Modify the parameters of the display campaign',
+    },
+    sectionSenderInformationTitle: {
+        id: 'automation.builder.node.emailCampaignForm.campaign.sender.information',
+        defaultMessage: 'Sender information',
+    },
+});
+
+
+
+export interface AudienceSegmentAutomationsFormProps
+    extends Omit<ConfigProps<AudienceSegmentAutomationFormData>, 'form'> {
+    close: () => void;
+    breadCrumbPaths: Path[];
+    node: ScenarioNodeShape;
+    disabled?: boolean;
+}
+
+interface MapStateToProps {
+    formValues: AudienceSegmentAutomationFormData;
+}
+
+type Props = InjectedFormProps<
+    AudienceSegmentAutomationFormData,
+    AudienceSegmentAutomationsFormProps
+> &
+    AudienceSegmentAutomationsFormProps &
+    InjectedIntlProps &
+    RouteComponentProps<{ organisationId: string }> &
+    MapStateToProps;
+
+
+class AudienceSegmentAutomationForm extends React.Component<Props> {
+    buildFormSections = () => {
+        const { disabled } = this.props;
+
+        const sections: McsFormSection[] = [];
+
+        const audienceSegmentSection = {
+            id: 'audienceSegment',
+            title: localMessages.sectionGeneralTitle,
+            component: (
+                <GeneralInformationFormSection
+                    initialValues={this.props.initialValues}
+                    organisationId={this.props.match.params.organisationId}
+                    disabled={disabled}
+                />
+            ),
+        };
+
+        sections.push(audienceSegmentSection);
+
+        return sections;
+    };
+
+    render() {
+
+        const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
+        const actionBarProps: FormLayoutActionbarProps = {
+            formId: FORM_ID,
+            paths: breadCrumbPaths,
+            message: localMessages.save,
+            onClose: close,
+            disabled: disabled
+        };
+
+        const sections = this.buildFormSections();
+
+        const renderedSections = sections.map((section, index) => {
+            return (
+                <div key={section.id}>
+                    <div key={section.id} id={section.id}>
+                        {section.component}
+                    </div>
+                    {index !== sections.length - 1 && <hr />}
+                </div>
+            );
+        });
+
+        return (
+            <Layout className="edit-layout">
+                <FormLayoutActionbar {...actionBarProps} />
+                <Layout className={'ant-layout-has-sider'}>
+                    <Form
+                        className="edit-layout ant-layout"
+                        onSubmit={handleSubmit}
+                        layout="vertical"
+                    >
+                        <Content
+                            id={FORM_ID}
+                            className="mcs-content-container mcs-form-container automation-form"
+                        >
+                            {renderedSections}
+                        </Content>
+                    </Form>
+                </Layout>
+            </Layout>
+        )
+    }
+
+}
+
+const mapStateToProps = (state: MicsReduxState) => ({
+    formValues: getFormValues(FORM_ID)(state),
+});
+
+
+export default compose<Props, AudienceSegmentAutomationsFormProps>(
+    injectIntl,
+    withRouter,
+    connect(mapStateToProps),
+    reduxForm({
+        form: FORM_ID,
+        enableReinitialize: true,
+    }),
+)(AudienceSegmentAutomationForm);
