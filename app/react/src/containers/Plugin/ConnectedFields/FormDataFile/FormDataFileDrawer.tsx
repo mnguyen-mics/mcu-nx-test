@@ -5,7 +5,6 @@ import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import { FormTitle } from '../../../../components/Form';
-import DataFileService from '../../../../services/DataFileService';
 import messages from '../../messages';
 import { Content } from './HtmlEditor/ContentArea';
 import { HtmlEditor } from './HtmlEditor';
@@ -34,6 +33,9 @@ import 'brace/mode/elixir';
 import 'brace/mode/typescript';
 import 'brace/mode/css';
 import 'brace/theme/monokai';
+import { lazyInject } from '../../../../config/inversify.config';
+import { IDataFileService } from '../../../../services/DataFileService';
+import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -78,6 +80,9 @@ class FormDataFileDrawer extends React.Component<
   FormDataFileDrawerProps,
   FormDataFileDrawerState
 > {
+  @lazyInject(TYPES.IDataFileService)
+  private _dataFileService: IDataFileService;
+
   constructor(props: FormDataFileDrawerProps) {
     super(props);
     this.state = {
@@ -177,7 +182,7 @@ class FormDataFileDrawer extends React.Component<
       const { fileSelectorValue } = this.state;
 
       if (fileSelectorValue) {
-        DataFileService.getDatafileData(fileSelectorValue)
+        this._dataFileService.getDatafileData(fileSelectorValue)
           .then(res => {
             this.onFileUpdate(res);
             const fileName = this.parseFileName(fileSelectorValue);

@@ -22,8 +22,7 @@ import withValidators, { ValidatorProps } from '../../../../../components/Form/w
 import LocalStorage from '../../../../../services/LocalStorage';
 import log from '../../../../../utils/Logger';
 import NotebookResultPreviewModal from './NotebookResultPreviewModal';
-import DataFileService from '../../../../../services/DataFileService';
-
+import { IDataFileService } from '../../../../../services/DataFileService';
 
 const { Content } = Layout
 
@@ -66,6 +65,9 @@ type JoinedProps = RouteComponentProps<RouterProps> &
 class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModelsListState> {
     @lazyInject(TYPES.IMlAlgorithmModelService)
     private _mlAlgorithmModelService: IMlAlgorithmModelService;
+
+    @lazyInject(TYPES.IDataFileService)
+    private _dataFileService: IDataFileService;
 
     constructor(props: JoinedProps){
         super(props);
@@ -253,7 +255,7 @@ class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModel
 
     previewResult = async (mlAlgorithmModel: MlAlgorithmModelResource) => {
       if (mlAlgorithmModel.html_notebook_result_uri) {
-        DataFileService.getDatafileData(mlAlgorithmModel.html_notebook_result_uri)
+        this._dataFileService.getDatafileData(mlAlgorithmModel.html_notebook_result_uri)
           .then(blob => {
             return new Response(blob).text()
           })

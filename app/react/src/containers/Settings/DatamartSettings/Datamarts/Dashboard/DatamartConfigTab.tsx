@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import { Row, Col } from 'antd';
+import { compose } from 'recompose';
 import { MobileApplicationsListPage } from '../../MobileApplications/List';
 import { SitesListPage } from '../../Sites/List';
+import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import CompartmentsContainer from '../../Compartments/List/CompartmentsContainer';
 import CleaningRulesContainer from '../../CleaningRules/List/CleaningRulesContainer';
+import { DatamartReplicationListPage } from '../../DatamartReplication/List';
+import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 
-export interface IDatamartConfigTabProps {
+export interface DatamartConfigTabProps {
   datamartId: string;
 }
 
@@ -15,9 +18,10 @@ interface State {
   compartmentsFilter: PaginationSearchSettings;
 }
 
-export default class DatamartConfigTab extends React.Component<IDatamartConfigTabProps, State> {
-  
-  constructor(props: IDatamartConfigTabProps) {
+type Props = DatamartConfigTabProps & InjectedFeaturesProps;
+
+class DatamartConfigTab extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       cleaningRulesFilter: {
@@ -27,88 +31,90 @@ export default class DatamartConfigTab extends React.Component<IDatamartConfigTa
       compartmentsFilter: {
         currentPage: 1,
         pageSize: 10,
-      }
-    }
+      },
+    };
   }
 
   onCleaningRulesFilterChange = (newFilter: PaginationSearchSettings) => {
-    const {
-      currentPage,
-      pageSize,
-    } = newFilter;
+    const { currentPage, pageSize } = newFilter;
 
     const cleaningRulesFilter = {
       currentPage: currentPage,
-      pageSize: pageSize
+      pageSize: pageSize,
     };
 
     this.setState({
-      cleaningRulesFilter: cleaningRulesFilter
+      cleaningRulesFilter: cleaningRulesFilter,
     });
   };
 
   onCompartmentsFilterChange = (newFilter: PaginationSearchSettings) => {
-    const {
-      currentPage,
-      pageSize,
-    } = newFilter;
+    const { currentPage, pageSize } = newFilter;
 
     const compartmentsFilter = {
       currentPage: currentPage,
-      pageSize: pageSize
+      pageSize: pageSize,
     };
 
     this.setState({
-      compartmentsFilter: compartmentsFilter
+      compartmentsFilter: compartmentsFilter,
     });
   };
-  
+
+  displayDatamartReplicationList = () => {
+    const { hasFeature } = this.props;
+    return (
+      hasFeature('datamartSettings-datamart_replication') && (
+        <Row>
+          <Col>
+            <DatamartReplicationListPage />
+          </Col>
+        </Row>
+      )
+    );
+  };
+
   public render() {
+    const { datamartId } = this.props;
 
-    const {
-      datamartId
-    } = this.props;
-
-    const {
-      compartmentsFilter,
-      cleaningRulesFilter
-    } = this.state;
+    const { compartmentsFilter, cleaningRulesFilter } = this.state;
 
     return (
       <div>
-         <Row>
-            <Col>
-              <MobileApplicationsListPage
-                datamartId={datamartId}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <SitesListPage
-                datamartId={datamartId}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <CompartmentsContainer 
-                datamartId={datamartId}
-                filter={compartmentsFilter}
-                onFilterChange={this.onCompartmentsFilterChange}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <CleaningRulesContainer
-                datamartId={datamartId}
-                filter={cleaningRulesFilter}
-                onFilterChange={this.onCleaningRulesFilterChange}
-              />
-            </Col>
-          </Row>
+        <Row>
+          <Col>
+            <MobileApplicationsListPage datamartId={datamartId} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <SitesListPage datamartId={datamartId} />
+          </Col>
+        </Row>
+        {this.displayDatamartReplicationList()}
+        <Row>
+          <Col>
+            <CompartmentsContainer
+              datamartId={datamartId}
+              filter={compartmentsFilter}
+              onFilterChange={this.onCompartmentsFilterChange}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <CleaningRulesContainer
+              datamartId={datamartId}
+              filter={cleaningRulesFilter}
+              onFilterChange={this.onCleaningRulesFilterChange}
+            />
+          </Col>
+        </Row>
       </div>
     );
   }
 }
+
+export default compose<Props, DatamartConfigTabProps>(injectFeatures)(
+  DatamartConfigTab,
+);

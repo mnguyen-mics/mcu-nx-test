@@ -9,7 +9,6 @@ import { compose } from 'recompose';
 import FormDataFileDrawer, {
   FormDataFileDrawerProps,
 } from './FormDataFileDrawer';
-import DataFileService from '../../../../services/DataFileService';
 
 import { McsIcon, ButtonStyleless } from '../../../../components';
 import { FormFieldWrapper } from '../../../../components/Form';
@@ -17,6 +16,9 @@ import { FormFieldWrapper } from '../../../../components/Form';
 import messages from '../../messages';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import { lazyInject } from '../../../../config/inversify.config';
+import { IDataFileService } from '../../../../services/DataFileService';
+import { TYPES } from '../../../../constants/types';
 
 
 export type AcceptedFile = 'text/html' | '*';
@@ -44,12 +46,10 @@ export interface FormDataFileState {
 type JoinedProps = FormDataFileProps & WrappedFieldProps & InjectedDrawerProps;
 
 class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
-  static defaultprops = {
-    formItemProps: {},
-    inputProps: {},
-    helpToolTipProps: {},
-    accept: '*',
-  };
+
+  @lazyInject(TYPES.IDataFileService)
+  private _dataFileService: IDataFileService;
+
 
   constructor(props: JoinedProps) {
     super(props);
@@ -77,7 +77,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
   fetchDataFileData = (uri: string) => {
     const { input } = this.props;
 
-    DataFileService.getDatafileData(uri).then(res => {
+    this._dataFileService.getDatafileData(uri).then(res => {
       this.onFileUpdate(res).then((fileContent: string) => {
         const fileName = this.parseFileName(uri);
         const basePath = this.parseFileName(uri, true);

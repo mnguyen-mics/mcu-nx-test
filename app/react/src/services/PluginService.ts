@@ -13,7 +13,7 @@ import {
   PluginVersionResource,
 } from '../models/Plugins';
 import { PropertyResourceShape } from '../models/plugin';
-import DataFileService from './DataFileService';
+import { IDataFileService } from './DataFileService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import log from '../utils/Logger';
 import { Omit } from '../utils/Types';
@@ -118,6 +118,10 @@ export interface IPluginService {
 export class PluginService implements IPluginService {
   @inject(TYPES.IAssetFileService)
   private _assetFileService: IAssetFileService;
+
+  @inject(TYPES.IDataFileService)
+  private _dataFileService: IDataFileService;
+
   getPlugins(
     options: GetPluginOptions = {},
     withArchivedPluginVersion: boolean = false,
@@ -346,7 +350,7 @@ export class PluginService implements IPluginService {
       }); /* global Blob */
       if (params.value.uri) {
         // edit
-        return DataFileService.editDataFile(
+        return this._dataFileService.editDataFile(
           params.value.fileName,
           params.value.uri,
           blob,
@@ -364,7 +368,7 @@ export class PluginService implements IPluginService {
         });
       } else if (params.value.fileName && params.value.fileContent) {
         // create
-        return DataFileService.createDatafile(
+        return this._dataFileService.createDatafile(
           organisationId,
           objectType,
           objectId,

@@ -1,3 +1,7 @@
+import DataFileService, {
+  IDataFileService,
+} from './../services/DataFileService';
+import { DatamartReplicationService } from './../services/DatamartReplicationService';
 import { Container, interfaces } from 'inversify';
 import { IMicsTagService, MicsTagService } from '../services/MicsTagService';
 import PersistedStoreService, {
@@ -155,6 +159,7 @@ import {
   KeywordListService,
 } from '../services/Library/KeywordListsService';
 import getDecorators from 'inversify-inject-decorators';
+import { IDatamartReplicationService } from '../services/DatamartReplicationService';
 
 const container = new Container();
 
@@ -267,6 +272,10 @@ container
 container
   .bind<IEmailRouterService>(TYPES.IEmailRouterService)
   .to(EmailRouterService);
+container
+  .bind<IDatamartReplicationService>(TYPES.IDatamartReplicationService)
+  .to(DatamartReplicationService);
+container.bind<IDataFileService>(TYPES.IDataFileService).to(DataFileService);
 container
   .bind<interfaces.Factory<IAudienceExternalFeedService>>(
     TYPES.IAudienceExternalFeedServiceFactory,

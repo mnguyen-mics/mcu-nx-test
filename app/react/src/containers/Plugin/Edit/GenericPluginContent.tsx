@@ -641,16 +641,20 @@ class PluginContent<T extends PluginInstance> extends React.Component<
               value: plugin.plugin_preset ? plugin.plugin_preset.name : plugin.name,
               validator: [isRequired]
             }}
-            descriptionField={plugin.plugin_preset && {
-              label: formatMessage(messages.feedModalDescriptionFieldLabel),
-              title: formatMessage(messages.feedModalDescriptionFieldTitle),
-              placeholder: formatMessage(messages.feedModalDescriptionFieldPlaceholder),
-              display: true, 
-              disabled: true, 
-              value: plugin.plugin_preset.description,
-              validator: [isRequired]
-            }}
-            selectedTab='configuration'
+            descriptionField={
+              plugin.plugin_preset && {
+                label: formatMessage(messages.feedModalDescriptionFieldLabel),
+                title: formatMessage(messages.feedModalDescriptionFieldTitle),
+                placeholder: formatMessage(
+                  messages.feedModalDescriptionFieldPlaceholder,
+                ),
+                display: true,
+                disabled: true,
+                value: plugin.plugin_preset.description,
+                validator: [isRequired],
+              }
+            }
+            selectedTab="configuration"
           />
         </EditContentLayout>
       );

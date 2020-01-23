@@ -1,10 +1,10 @@
+import { IDataFileService } from './../../../../services/DataFileService';
 import { OverlapData, FormattedOverlapData, Data } from './constants';
 import {
   OverlapFileResource,
   OverlapItemResult,
   AudienceSegmentShape,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import DataFileService from '../../../../services/DataFileService';
 import { injectable, inject } from 'inversify';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
@@ -29,6 +29,9 @@ export class OverlapInterval implements IOverlapInterval {
   interval: number = 0;
   @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @inject(TYPES.IDataFileService)
+  private _dataFileService: IDataFileService;
 
   stopInterval() {
     clearTimeout(this.interval);
@@ -100,7 +103,7 @@ export class OverlapInterval implements IOverlapInterval {
           if (lastJob.external_model_name === 'PUBLIC_AUDIENCE_SEGMENT') {
             if (lastJob.status === 'SUCCEEDED') {
               const datafileUri = lastJob.output_result.result.data_file_uri;
-              return DataFileService.getDatafileData(datafileUri)
+              return this._dataFileService.getDatafileData(datafileUri)
                 .then(datafile => readOverlap(datafile))
                 .then((parsedDataFile: OverlapFileResource) =>
                   this.formatOverlapResponse(parsedDataFile, segmentId),
@@ -221,7 +224,7 @@ function readOverlap(datafile: Blob) {
     const fileReader = new FileReader(); /* global FileReader */
     fileReader.onload = fileLoadedEvent => {
       const textFromFileLoaded = fileReader.result;
-      return resolve(JSON.parse(textFromFileLoaded));
+      return resolve(JSON.parse(textFromFileLoaded as string));
     };
 
     fileReader.readAsText(datafile, 'UTF-8');
