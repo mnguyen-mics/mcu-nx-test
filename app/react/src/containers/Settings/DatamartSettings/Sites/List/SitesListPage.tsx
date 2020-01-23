@@ -8,7 +8,6 @@ import settingsMessages from '../../../messages';
 import messages from './messages';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import SitesTable from './SitesTable';
-import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -20,6 +19,7 @@ import {
   KEYWORD_SEARCH_SETTINGS,
   parseSearch,
   compareSearches,
+  PAGINATION_SEARCH_SETTINGS,
 } from '../../../../../utils/LocationSearchHelper';
 import { Index } from '../../../../../utils';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
@@ -28,7 +28,6 @@ import { connect } from 'react-redux';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { TYPES } from '../../../../../constants/types';
-import queryString from 'query-string';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
@@ -50,7 +49,6 @@ interface MapStateToProps {
 
 type Props = SitesListPageProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedDatamartProps &
   InjectedIntlProps &
   MapStateToProps &
   InjectedNotificationProps;
@@ -61,84 +59,101 @@ class SitesListPage extends React.Component<Props, SiteListState> {
 
   constructor(props: Props) {
     super(props);
+
+    const {
+      location: { search },
+    } = this.props;
+
+    const filter = this.computeFilter(search);
+
     this.state = {
       sites: [],
       totalSites: 0,
       isFetchingSites: true,
       noSiteYet: false,
-      filter: {
-        currentPage: 1,
-        pageSize: 10,
-        keywords: '',
-      },
+      filter: filter,
     };
   }
+
+  computeFilter = (search: string): Filter => {
+    const parsedFilter = parseSearch(search, this.getSearchSetting());
+
+    const filter: Filter = {
+      currentPage: parsedFilter.currentPage ? parsedFilter.currentPage : 1,
+      pageSize: parsedFilter.pageSize ? parsedFilter.pageSize : 10,
+      keywords: parsedFilter.keywords ? parsedFilter.keywords : '',
+      datamartId: parsedFilter.datamartId,
+    };
+
+    return filter;
+  };
 
   componentDidMount() {
     const {
       match: {
         params: { organisationId },
       },
-      location: { search },
-      datamart,
       datamartId,
     } = this.props;
-    const filter = parseSearch(search, this.getSearchSetting());
-    const calculatedDatamartId = datamartId
-      ? datamartId
-      : filter.datamartId
-      ? filter.datamartId
-      : datamart.id;
-    this.setState({
-      isFetchingSites: true,
-    });
-    this.fetchSites(
-      organisationId,
-      calculatedDatamartId,
-      this.state.filter,
-    ).then(() => {
-      this.setState({
-        isFetchingSites: false,
+
+    const { filter } = this.state;
+
+    this.setState({ isFetchingSites: true }, () => {
+      const fetchPromise = datamartId
+        ? this.fetchSites(organisationId, datamartId, filter)
+        : this.fetchOrganisationSites(organisationId);
+
+      fetchPromise.then(() => {
+        this.setState({ isFetchingSites: false });
       });
     });
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
-      location: { search },
       match: {
         params: { organisationId },
       },
-      datamart,
+      location: { search },
+      datamartId,
     } = this.props;
 
     const {
-      location: { search: nextSearch },
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-    } = nextProps;
+      location: { search: previousSearch },
+      datamartId: previousDatamartId,
+    } = previousProps;
 
-    if (
-      nextOrganisationId !== organisationId ||
-      !compareSearches(search, nextSearch)
-    ) {
-      const selectedDatamartId =
-        queryString.parse(nextSearch).datamartId || datamart.id;
+    const filter: Filter = this.computeFilter(search);
 
-      this.setState({
-        isFetchingSites: true,
-      });
-
-      this.fetchSites(
-        organisationId,
-        selectedDatamartId,
-        this.state.filter,
-      ).then(() => {
-        this.setState({
-          isFetchingSites: false,
+    const localFetchSites = (localDatamartId: string) => {
+      this.setState({ isFetchingSites: true, filter: filter }, () => {
+        this.fetchSites(organisationId, localDatamartId, filter).then(() => {
+          this.setState({ isFetchingSites: false });
         });
       });
+    };
+
+    const localFetchOrganisationSites = () => {
+      this.setState({ isFetchingSites: true, filter: filter }, () => {
+        this.fetchOrganisationSites(organisationId).then(() => {
+          this.setState({ isFetchingSites: false });
+        });
+      });
+    };
+
+    if (datamartId !== previousDatamartId && datamartId) {
+      localFetchSites(datamartId);
+    } else if (organisationId !== previousOrganisationId) {
+      localFetchOrganisationSites();
+    } else if (!compareSearches(previousSearch, search)) {
+      if (filter.datamartId) {
+        localFetchSites(filter.datamartId);
+      } else {
+        localFetchOrganisationSites();
+      }
     }
   }
 
@@ -150,21 +165,17 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       location: { pathname, state, search },
       history,
       intl: { formatMessage },
-      datamart,
     } = this.props;
 
-    const {
-      sites,
-      filter
-    } = this.state;
-    
+    const { sites, filter } = this.state;
+
     Modal.confirm({
       iconType: 'exclamation-circle',
       title: formatMessage(messages.deleteSiteModalTitle),
       okText: formatMessage(messages.deleteSiteModalOk),
       cancelText: formatMessage(messages.deleteSiteModalCancel),
       onOk: () => {
-        this._channelService.deleteSite(datamart.id, site.id).then(() => {
+        this._channelService.deleteSite(site.datamart_id, site.id).then(() => {
           if (sites.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -179,7 +190,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
           }
           return this.fetchSites(
             organisationId,
-            datamart.id,
+            site.datamart_id,
             this.state.filter,
           ).then(() => {
             this.setState({
@@ -204,9 +215,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     } = this.props;
 
     history.push({
-      pathname: `/v2/o/${organisationId}/settings/datamart/${
-        site.datamart_id
-      }/sites/${site.id}/edit`,
+      pathname: `/v2/o/${organisationId}/settings/datamart/${site.datamart_id}/sites/${site.id}/edit`,
       state: { from: `${location.pathname}${location.search}` },
     });
   };
@@ -216,17 +225,58 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       match: {
         params: { organisationId },
       },
-      datamart,
-
-      location: { search },
+      datamartId,
     } = this.props;
-    this.setState({ filter: newFilter });
-    const filters = parseSearch(search, this.getSearchSetting());
-    this.fetchSites(
-      organisationId,
-      filters.datamartId ? filters.datamartId : datamart.id,
-      newFilter,
-    );
+    const { filter } = this.state;
+    const computedFilter: Filter = {
+      ...newFilter,
+      datamartId: datamartId ? datamartId : filter.datamartId,
+    };
+    this.setState({ isFetchingSites: true, filter: computedFilter }, () => {
+      if (datamartId) {
+        this.fetchSites(organisationId, datamartId, computedFilter);
+      } else if (filter.datamartId) {
+        this.updateLocationSearch(computedFilter);        
+      } else {
+        this.setState({ isFetchingSites: false, sites: [] });
+      }
+    });
+  };
+
+  fetchOrganisationSites = (organisationId: string) => {
+    const { notifyError } = this.props;
+    const { filter } = this.state;
+
+    return this._channelService
+      .getChannelsByOrganisation(organisationId, 'SITE')
+      .then(res => {
+        if (res.data.length === 0) {
+          this.setState({
+            noSiteYet: true,
+          });
+        } else {
+          const datamartId =
+            filter.datamartId &&
+            res.data.filter(channel => {
+              return channel.datamart_id === filter.datamartId;
+            }).length !== 0
+              ? filter.datamartId
+              : res.data[0].datamart_id;
+
+          const modifiedFilter: Filter = {
+            ...filter,
+            datamartId: datamartId,
+          };
+
+          this.setState({ filter: modifiedFilter }, () => {
+            this.fetchSites(organisationId, datamartId, filter);
+          });
+        }
+      })
+      .catch(err => {
+        this.setState({ isFetchingSites: false });
+        notifyError(err);
+      });
   };
 
   fetchSites = (organisationId: string, datamartId: string, filter: Filter) => {
@@ -235,13 +285,13 @@ class SitesListPage extends React.Component<Props, SiteListState> {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
         channel_type: 'SITE',
       };
-
       if (filter.keywords) {
         return {
           ...options,
           keywords: filter.keywords,
         };
       }
+
       return options;
     };
 
@@ -250,7 +300,6 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       .then(response => {
         this.setState({
           isFetchingSites: false,
-          noSiteYet: response && response.count === 0 && !filter.keywords,
           sites: response.data,
           totalSites: response.total ? response.total : response.count,
         });
@@ -268,9 +317,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     const url =
       datamarts.length > 1
         ? `/v2/o/${organisationId}/settings/datamart/sites/create`
-        : `/v2/o/${organisationId}/settings/datamart/sites/create?selectedDatamartId=${
-            datamarts[0].id
-          }`;
+        : `/v2/o/${organisationId}/settings/datamart/sites/create?selectedDatamartId=${datamarts[0].id}`;
     return (
       <Link key={messages.newSite.id} to={url}>
         <Button key={messages.newSite.id} type="primary">
@@ -281,7 +328,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
   };
 
   getSearchSetting() {
-    return [...KEYWORD_SEARCH_SETTINGS, ...DATAMART_SEARCH_SETTINGS];
+    return [...KEYWORD_SEARCH_SETTINGS, ...DATAMART_SEARCH_SETTINGS, ...PAGINATION_SEARCH_SETTINGS];
   }
 
   updateLocationSearch = (params: Index<any>) => {
@@ -303,8 +350,8 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       match: {
         params: { organisationId },
       },
-      location: { search },
       workspace,
+      datamartId,
     } = this.props;
 
     const {
@@ -326,7 +373,6 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     const filtersOptions: Array<MultiSelectProps<any>> = [];
 
     if (datamartItems.length > 1) {
-      const filterData = parseSearch(search, this.getSearchSetting());
       const datamartFilter = {
         displayElement: (
           <div>
@@ -337,8 +383,8 @@ class SitesListPage extends React.Component<Props, SiteListState> {
             <Icon type="down" />
           </div>
         ),
-        selectedItems: filterData.datamartId
-          ? [datamartItems.find(di => di.key === filterData.datamartId)]
+        selectedItems: filter.datamartId
+          ? [datamartItems.find(di => di.key === filter.datamartId)]
           : [datamartItems[0]],
         items: datamartItems,
         singleSelectOnly: true,
@@ -352,7 +398,9 @@ class SitesListPage extends React.Component<Props, SiteListState> {
           });
         },
       };
-      filtersOptions.push(datamartFilter);
+      if (!datamartId) {
+        filtersOptions.push(datamartFilter);
+      }
     }
 
     return (
@@ -392,7 +440,6 @@ const mapStateToProps = (state: MicsReduxState) => ({
 
 export default compose<Props, SitesListPageProps>(
   withRouter,
-  injectDatamart,
   injectIntl,
   injectNotifications,
   connect(mapStateToProps),
