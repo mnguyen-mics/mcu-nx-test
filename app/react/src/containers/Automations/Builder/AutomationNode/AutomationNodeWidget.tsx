@@ -81,6 +81,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    const { node } = this.props;
+
+    if (isScenarioNodeShape(node.storylineNodeModel.node)
+    && node.storylineNodeModel.node.last_added_node) {
+      this.editNode();
+    }
+  }
 
   setPosition = (node: HTMLDivElement | null) => {
     const bodyPosition = document.body.getBoundingClientRect();
@@ -128,9 +136,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   }
 
   editNode = () => {
-    const { node, lockGlobalInteraction, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId } = this.props;
+    const { node, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId } = this.props;
     this.setState({ focus: false }, () => {
-      lockGlobalInteraction(true);
       if (
         isScenarioNodeShape(node.storylineNodeModel.node)
       ) {
@@ -166,7 +173,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         }
 
         const close = () => {
-          lockGlobalInteraction(false);
           closeNextDrawer()
         }
 
@@ -185,7 +191,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                   initialValue,
                 );
                 closeNextDrawer();
-                lockGlobalInteraction(false);
               },
               initialValues: initialValue,
             },

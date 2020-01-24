@@ -38,7 +38,7 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
       nodeOperations: this.nodeOperations,
       datamartId: this.datamartId,
       lockGlobalInteraction: this.lockGlobalInteraction,
-      viewer: this.viewer
+      viewer: this.viewer,
     });
   }
 
