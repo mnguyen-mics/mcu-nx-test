@@ -380,6 +380,7 @@ container
       return audienceSegmentFeedService;
     };
   });
+  container.bind<IDatamartUsersAnalyticsService>(TYPES.IDatamartUsersAnalyticsService).to(DatamartUsersAnalyticsService);
 
 export const { lazyInject } = getDecorators(container, false);
 

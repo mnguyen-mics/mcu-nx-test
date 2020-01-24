@@ -9,6 +9,7 @@ import { generateYAxisGridLine, generateXAxisGridLine, generateTooltip } from '.
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
+
 export interface Component {
   title: string;
   layout: Layout;

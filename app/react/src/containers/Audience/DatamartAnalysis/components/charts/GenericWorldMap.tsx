@@ -37,21 +37,20 @@ class GenericWorldMap extends React.Component<GenericWorldMapProps> {
         document.getElementsByTagName('head')[0],
       );
 
-    options.series =[{
-      data: dataset,
-      mapData: (Highcharts as any).maps['custom/world'],
-      joinBy: ['iso-a3', 'code3'] as any,
-      type: 'map'
-    }];
-    
-    Highcharts.mapChart(this.cuid, options);
+      options.series = [{
+        data: dataset,
+        mapData: (Highcharts as any).maps['custom/world'],
+        joinBy: ['iso-a3', 'code3'] as any,
+        type: 'map'
+      }];
 
-  };
+      Highcharts.mapChart(this.cuid, options);
+
+    };
+  }
   render() {
     return <div id={this.cuid} />;
   }
-
-
 
 }
 

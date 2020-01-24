@@ -10,14 +10,14 @@ import GenericStackedBar from '../charts/GenericStackedBar';
 import { Tabs } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import * as Highcharts from 'highcharts';
-import { 
-  TabItem, 
-  BarSeriesDataOptions, 
-  MapSeriesDataOptions, 
-  Dataset, 
-  Chart, 
-  AreaSeriesDataOptions, 
-  PieSeriesDataOption 
+import {
+  TabItem,
+  BarSeriesDataOptions,
+  MapSeriesDataOptions,
+  Dataset,
+  Chart,
+  AreaSeriesDataOptions,
+  PieSeriesDataOption
 } from '../../../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { ReportView } from '../../../../../models/ReportView';
 import { AREA_OPACITY } from '../../../../../components/Charts/domain';
@@ -42,10 +42,11 @@ class FormatData extends React.Component<FormatDataProps, {}> {
               const found = acc.find((a: PieSeriesDataOption) => a.name === d[chart.yKey]);
               const value = d[chart.metricName];
               if (!found) {
-                acc.push({ 
-                  name: d[chart.yKey] as string, 
+                acc.push({
+                  name: d[chart.yKey] as string,
                   y: value as number,
-                  color: chart.options.colors ? chart.options.colors[0] : undefined });
+                  color: chart.options.colors ? chart.options.colors[0] : undefined
+                });
               }
               else {
                 found.y += value as number;
@@ -58,12 +59,12 @@ class FormatData extends React.Component<FormatDataProps, {}> {
         return dataset.reduce((acc: AreaSeriesDataOptions[], d: Dataset) => {
           const found = acc.find((a: AreaSeriesDataOptions) => a.name === chart.metricName);
 
-          const value = d[chart.metricName]; // the element in data property
+          const value = d[chart.metricName];
           const xValue = chart.xKey === 'date_yyyymmdd' ? this.formatDateToTs(d[chart.xKey] as string) : d[chart.xKey];
           if (!found) {
-            acc.push({ 
-              name: chart.metricName as string, 
-              data: [[xValue,value]] as number[][],  
+            acc.push({
+              name: chart.metricName as string,
+              data: [[xValue, value]] as number[][],
               fillOpacity: 0.5,
               fillColor: {
                 linearGradient: {
@@ -100,15 +101,22 @@ class FormatData extends React.Component<FormatDataProps, {}> {
       case 'COUNT':
         return dataset.reduce((acc: any, d: any) => {
           const found = acc.find((a: any) => a.title === d[chart.yKey]);
-          //const value = { name: d.name, val: d.value };
-          const value = d[chart.metricName]; // the element in data property
+          const value = d[chart.metricName];
           if (!found) {
-            acc.push({ 'title': d[chart.yKey], 'iconType': chart.icons[0], value, "unit": "%", "iconStyle": { color: chart.options.colors ? chart.options.colors[0] : undefined }, loading: false }) // not found, so need to add data property
+            acc.push({ 
+              title: d[chart.yKey], 
+              iconType: chart.icons && chart.icons.length > 0 ? chart.icons[0] : undefined, 
+              value, unit: "%", 
+              iconStyle: { 
+                color: chart.options.colors ? chart.options.colors[0] : undefined }, 
+                loading: false 
+              });
             if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
-            chart.icons.splice(0, 1);
+            if (chart.icons && chart.icons.length > 0) chart.icons.splice(0, 1);
+ 
           }
           else {
-            found.value += value // if found, that means data property exists, so just push new element to found.data.
+            found.value += value
           }
           return acc;
         }, []);
@@ -149,14 +157,15 @@ class FormatData extends React.Component<FormatDataProps, {}> {
       const found = acc.find((a: CounterProps) => a.title === d[chart.yKey]);
       const value = d[chart.metricName];
       if (!found) {
-        acc.push({ 
-          title: d[chart.yKey], 
-          iconType: chart.icons ? chart.icons[0] as McsIconType : 'data', 
-          value: value as number, 
-          unit: '%', 
-          iconStyle: { 
-            color: chart.options.colors ? chart.options.colors[0] : undefined 
-          } });
+        acc.push({
+          title: d[chart.yKey],
+          iconType: chart.icons ? chart.icons[0] as McsIconType : 'data',
+          value: value as number,
+          unit: '%',
+          iconStyle: {
+            color: chart.options.colors ? chart.options.colors[0] : undefined
+          }
+        });
         if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
         if (chart.icons && chart.icons.length > 0) chart.icons.splice(0, 1);
       }
@@ -177,9 +186,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
   };
 
   generateComponent = (charts: Chart[], data: Dataset[]): React.ReactNode => {
-
-  generateComponent = (charts: Chart[], data: any) => {
-    return _.map(charts, chart => {
+    return _.map(charts, (chart, i) => {
 
       switch (chart.type) {
         case 'AREA':
@@ -187,6 +194,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
           return (
             <LineChart
+              key={i.toString()}
               options={chart.options}
             />
           )
@@ -229,10 +237,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
 
   render() {
     const { charts, apiResponse } = this.props;
-    const normalizedData = normalizeReportView<{
-      key1: string;
-      key2: number;
-    }>(apiResponse);
+    const normalizedData = normalizeReportView(apiResponse);
 
     return (<div>{this.generateComponent(charts, normalizedData)}</div>)
   }
