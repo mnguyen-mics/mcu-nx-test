@@ -124,19 +124,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           size: 'large',
         },
       );
-    } else if (selectedNode.type === "ADD_TO_SEGMENT") {
-      openNextDrawer<EmailCampaignAutomatedDashboardPageProps>(
-        EmailCampaignAutomatedDashboardPage,
-        {
-          additionalProps: {
-            campaignId: selectedNode.name,
-            close: closeNextDrawer,
-          },
-          size: 'large',
-        },
-      );
     }
-
   }
 
   editNode = () => {
