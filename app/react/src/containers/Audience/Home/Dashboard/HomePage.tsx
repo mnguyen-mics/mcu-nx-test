@@ -18,7 +18,7 @@ import { withDatamartSelector, WithDatamartSelectorProps } from '../../../Datama
 import { Loading } from '../../../../components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 import Error from '../../../../components/Error';
-import DatamartAnalysisWrapper from '../../DatamartAnalysis/DatamartUsersAnalyticsWrapper';
+import DatamartAnalysisWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 
 const { Content } = Layout;

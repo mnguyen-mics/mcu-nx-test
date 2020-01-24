@@ -54,7 +54,6 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
   }
 
   componentDidMount() {
-    // In the future this config should be stored and retrieved from an api
     const dashboardJsonConfig = [
       {
         title: 'Session in time',
@@ -112,6 +111,7 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
     ];
 
     this.setState({
+      // In the future this config should be stored and retrieved from an api
       dashboardConfig: dashboardJsonConfig as any
     })
   }

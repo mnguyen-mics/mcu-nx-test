@@ -33,7 +33,7 @@ export interface PieSeriesDataOption {
 export interface AreaSeriesDataOptions {
   name: string;
   fillColor: any;
-  fillOpacity: any;
+  fillOpacity: number;
   data: number[][];
   type: 'area';
   color?: string;
