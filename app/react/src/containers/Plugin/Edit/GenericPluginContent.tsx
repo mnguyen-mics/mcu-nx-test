@@ -181,6 +181,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     return this._pluginService
       .getPlugins({
         plugin_type: this.props.pluginType,
+        max_results: 1000,
       })
       .then(res => res.data)
       .then((response: PluginResource[]) => {
