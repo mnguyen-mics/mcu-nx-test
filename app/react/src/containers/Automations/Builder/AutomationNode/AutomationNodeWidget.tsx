@@ -129,7 +129,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   editNode = () => {
     const { node, lockGlobalInteraction, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId } = this.props;
-
     this.setState({ focus: false }, () => {
       lockGlobalInteraction(true);
       if (

@@ -8,6 +8,7 @@ import {
   EmailCampaignNodeResource,
   WaitNodeResource,
   IfNodeResource,
+  AddToSegmentNodeResource,
 } from '../../../../../models/automations/automations';
 
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
@@ -191,6 +192,12 @@ export function isEmailCampaignNode(
   node: AutomationNodeShape,
 ): node is EmailCampaignNodeResource {
   return node.type === 'EMAIL_CAMPAIGN';
+}
+
+export function isAddToSegmentNode(
+  node: AutomationNodeShape,
+): node is AddToSegmentNodeResource {
+  return node.type === 'ADD_TO_SEGMENT';
 }
 
 export function isQueryInputNode(

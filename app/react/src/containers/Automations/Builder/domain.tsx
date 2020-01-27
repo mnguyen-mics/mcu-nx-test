@@ -11,6 +11,7 @@ import {
   QueryInputEvaluationMode,
   QueryInputEvaluationPeriodUnit,
   EdgeHandler,
+  AddToSegmentNodeResource,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
@@ -20,6 +21,7 @@ import {
   EmailCampaignAutomationFormData,
   WaitFormData,
   isIfNode,
+  AudienceSegmentAutomationFormData,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
@@ -116,7 +118,7 @@ export class AddNodeOperation implements NodeOperation {
           let newOutEdges: StorylineNodeModel[] = [];
 
           if (isAbnNode(this.node)) {
-            const emptyNodes = this.generateNewEmptyOutEdges( 
+            const emptyNodes = this.generateNewEmptyOutEdges(
               child,
               this.node.formData ? this.node.formData.branch_number : 2,
             );
@@ -126,8 +128,8 @@ export class AddNodeOperation implements NodeOperation {
             const emptyNodes = this.generateNewEmptyOutEdges(child, 2)
             newOutEdges = [childNode].concat(emptyNodes)
 
-            const firstEdge =  newOutEdges[0]
-            const secondEdge =  newOutEdges[1]
+            const firstEdge = newOutEdges[0]
+            const secondEdge = newOutEdges[1]
 
             if (firstEdge.in_edge !== undefined) {
               firstEdge.in_edge.handler = 'IF_CONDITION_TRUE'
@@ -191,10 +193,10 @@ export class AddNodeOperation implements NodeOperation {
     }
     return newEmptyOutEdges;
   };
-  
+
 
   getInEdgeHandler(child: StorylineNodeModel): EdgeHandler {
-    if (child.in_edge !== undefined && (child.in_edge.handler === 'IF_CONDITION_TRUE' ||  child.in_edge.handler === 'IF_CONDITION_FALSE')) {
+    if (child.in_edge !== undefined && (child.in_edge.handler === 'IF_CONDITION_TRUE' || child.in_edge.handler === 'IF_CONDITION_FALSE')) {
       return child.in_edge.handler
     } else if (this.node.type === 'DISPLAY_CAMPAIGN') {
       return 'ON_VISIT'
@@ -312,6 +314,17 @@ export class UpdateNodeOperation implements NodeOperation {
           formData: this.formData as EmailCampaignAutomationFormData,
           initialFormData: this
             .initialFormData as EmailCampaignAutomationFormData,
+        };
+        break;
+      case 'ADD_TO_SEGMENT':
+        const typedFormData = this.formData as AudienceSegmentAutomationFormData;
+        nodeBody = {
+          ...storylineNode.node,
+          ...this.node as AddToSegmentNodeResource,
+          name: typedFormData.audienceSegment.name && typedFormData.audienceSegment.name  || 'undefined segment name',
+          formData: typedFormData,
+          initialFormData: this
+            .initialFormData as AudienceSegmentAutomationFormData,
         };
         break;
       case 'ABN_NODE':
@@ -519,11 +532,11 @@ export function generateNodeProperties(
         iconType: 'email',
         color: '#0ba6e1',
       };
-      case 'ADD_TO_SEGMENT':
-    return {
-      iconType: 'user-list',
-      color: '#0ba6e1',
-    };
+    case 'ADD_TO_SEGMENT':
+      return {
+        iconType: 'user-list',
+        color: '#0ba6e1',
+      };
     case 'QUERY_INPUT':
       return {
         iconAnt: 'flag',
