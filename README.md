@@ -143,3 +143,51 @@ Some components of this application require features to be activated on the end 
 In order to activate or remove a feature from an end user browser, we need to update the configuration done in split.io
 
 Please ask to a Product team member to do so.
+
+BEM methodology
+---------------
+
+All new class names should respect BEM (Block Element Modifier) methodology.
+
+Block, element and modifier names should be in camelCase.
+
+All homemade classes should be prefixed by `mcs-` as follow:
+
+```
+mcs-block_element
+```
+
+For element with modifier:
+
+```
+mcs-block_element--modifier
+```
+
+A class name can't have more than two elements. In this case class name should be splitted. The third element become the first element:
+
+```
+mcs-block_element1_element2
+
+mcs-block_element3_element4 
+
+```
+
+In order to improve component isolation and reusability, block name should be the same as component name.
+
+Example:
+
+```
+<ul class="mcs-menu">
+  <li class="mcs-menu_item">
+    <a href="" class="mcs-menu_item_link">link1</a>  
+  </li>
+  <li class="mcs-menu_item">
+    <a href="" class="mcs-menu_item_link">link2</a>  
+  </li>
+  <!-- This link item has a class with a modifier because we want to give it a different color from the other items -->
+  <li class="mcs-menu_item mcs-menu_item--secondary">
+    <a href="" class="mcs-menu_item_link">link3</a>  
+  </li>
+</ul>
+
+```
