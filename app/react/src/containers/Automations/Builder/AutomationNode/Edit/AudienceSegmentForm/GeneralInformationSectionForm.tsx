@@ -30,15 +30,15 @@ export const formMessages = defineMessages({
     id: 'automation.builder.node.audienceSegmentForm.name',
     defaultMessage: 'Automation node name',
   },
-  AudienceSegmentTitle: {
+  audienceSegmentTitle: {
     id: 'automation.builder.node.audienceSegmentForm.placeholder.title',
     defaultMessage: 'This is the audience segment name',
   },
-  AudienceSegmentSubTitle: {
+  audienceSegmentSubTitle: {
     id: 'automation.builder.node.audienceSegmentForm.placeholder.subtitle',
-    defaultMessage: "The audience segment's name will help you identify it on the different screens. Make it as memorable as you want your results to be!",
+    defaultMessage: "The audience segment's name will help you identify it on the different screens. Make it as memorable as you want your results to be !",
   },
-  AudienceSegmentFormPlaceholderSegmentName: {
+  audienceSegmentFormPlaceholderSegmentName: {
     id: 'automation.builder.node.audienceSegmentForm.placeholder.name',
     defaultMessage: 'This is a segment name',
   },
@@ -110,18 +110,18 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             validate={[isRequired]}
             formItemProps={{
               label: formatMessage(
-                formMessages.AudienceSegmentTitle, 
+                formMessages.audienceSegmentTitle, 
               ),
               required: true,
             }}
             inputProps={{
               placeholder: formatMessage(
-                formMessages.AudienceSegmentFormPlaceholderSegmentName,
+                formMessages.audienceSegmentFormPlaceholderSegmentName,
               ),
               disabled: !!disabled,
             }}
             helpToolTipProps={{
-              title: formatMessage(formMessages.AudienceSegmentSubTitle),
+              title: formatMessage(formMessages.audienceSegmentSubTitle),
             }}
             small={true}
           />

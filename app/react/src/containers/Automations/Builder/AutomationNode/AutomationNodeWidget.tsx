@@ -251,7 +251,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     return content
   }
 
-  renderAddToSegmentEdit = (): React.ReactNodeArray => {
+  renderDefautEdit = (): React.ReactNodeArray => {
     const { viewer, node } = this.props;
 
     const content: React.ReactNodeArray = [];
@@ -287,40 +287,12 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   }
 
+  renderAddToSegmentEdit = (): React.ReactNodeArray => {
+    return this.renderDefautEdit();
+  }
+
   renderCampaignEdit = (): React.ReactNodeArray => {
-    const { viewer, node } = this.props;
-
-    const content: React.ReactNodeArray = [];
-    if (!viewer) {
-      content.push((
-        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
-          <FormattedMessage {...messages.edit} />
-        </div>
-      ))
-
-      if (!node.isFirstNode) {
-        content.push((
-          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
-            <FormattedMessage {...messages.remove} />
-          </div>
-        ))
-      }
-    } else {
-      content.push((
-        <div key="stats" onClick={this.viewStats} className="boolean-menu-item">
-          <FormattedMessage {...messages.stats} />
-        </div>
-      ))
-
-      content.push((
-        <div key="view" onClick={this.editNode} className="boolean-menu-item">
-          <FormattedMessage {...messages.view} />
-        </div>
-      ))
-    }
-
-    return content
-
+    return this.renderDefautEdit();
   }
 
   renderQueryEdit = (): React.ReactNodeArray => {
@@ -359,7 +331,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   renderEndNodeEdit = (): React.ReactNodeArray => {
     const content: React.ReactNodeArray = [];
-  
+
     return content;
   }
 

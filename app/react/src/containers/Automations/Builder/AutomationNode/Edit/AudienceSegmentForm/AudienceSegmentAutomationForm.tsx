@@ -21,7 +21,7 @@ import GeneralInformationFormSection from './GeneralInformationSectionForm';
 
 const { Content } = Layout;
 
-const localMessages = defineMessages({
+const messages = defineMessages({
     save: {
         id: 'automation.builder.node.audienceSegmentForm.save.button',
         defaultMessage: 'Update',
@@ -64,7 +64,7 @@ class AudienceSegmentAutomationForm extends React.Component<Props> {
 
         const audienceSegmentSection = {
             id: 'audienceSegment',
-            title: localMessages.sectionGeneralTitle,
+            title: messages.sectionGeneralTitle,
             component: (
                 <GeneralInformationFormSection
                     initialValues={this.props.initialValues}
@@ -85,7 +85,7 @@ class AudienceSegmentAutomationForm extends React.Component<Props> {
         const actionBarProps: FormLayoutActionbarProps = {
             formId: FORM_ID,
             paths: breadCrumbPaths,
-            message: localMessages.save,
+            message: messages.save,
             onClose: close,
             disabled: disabled
         };
