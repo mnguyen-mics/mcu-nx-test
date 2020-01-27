@@ -10,11 +10,14 @@
 //
 //
 import LoginPage from "../integration/LoginPage";
+import 'cypress-file-upload';
+
 // -- This is a parent command --
 Cypress.Commands.add('login', (email = 'dev@mediarithmics.com', password = 'aoc') => {
   const loginPage = new LoginPage();
+  const baseUrl = Cypress.config().baseUrl
   loginPage.visit();
-  cy.url().should('eq', Cypress.config().baseUrl + '/#/login');
+  cy.url().should('eq', baseUrl  + '/#/login');
 
   loginPage.fillEmail(email);
   loginPage.fillPassword(password);
@@ -28,6 +31,23 @@ Cypress.Commands.add('switchOrg', (organisationName) => {
   cy.get('[placeholder="Search Organisation"]').type(organisationName)
   cy.get('.mcs-org-card').should('have.length', 1).click()
   cy.get('.button-styleless').first().trigger('mouseout')
+});
+
+
+// Storing local storage cache between tests
+// https://blog.liplex.de/keep-local-storage-in-cypress/
+let LOCAL_STORAGE_MEMORY = {};
+
+Cypress.Commands.add("saveLocalStorageCache", () => {
+  Object.keys(localStorage).forEach(key => {
+    LOCAL_STORAGE_MEMORY[key] = localStorage[key];
+  });
+});
+
+Cypress.Commands.add("restoreLocalStorageCache", () => {
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
+    localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+  });
 });
 
 //
