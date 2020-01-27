@@ -166,8 +166,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             break;
         }
 
-      
-
         const close = () => {
           lockGlobalInteraction(false);
           closeNextDrawer()

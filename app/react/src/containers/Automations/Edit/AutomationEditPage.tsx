@@ -188,29 +188,40 @@ class EditAutomationPage extends React.Component<Props, State> {
 
     if (datamart) {
       this.setState({ loading: true });
-      const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(organisationId, datamart.storage_model_version, formData, automationFormData)
-      if (datamart.storage_model_version === 'v201506') {
-        saveOrUpdate.then((res) => {
-          this.state.scenarioContainer.saveOrUpdate(res.data);
-        })
-      }
-      saveOrUpdate
-        .then(() => {
+
+      this._automationFormService.validateAutomation(formData.automationTreeData).then(() => {
+        const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(organisationId, datamart.storage_model_version, formData, automationFormData)
+        if (datamart.storage_model_version === 'v201506') {
+          saveOrUpdate.then((res) => {
+            this.state.scenarioContainer.saveOrUpdate(res.data);
+          })
+        }
+        saveOrUpdate
+          .then(() => {
+            this.setState({ loading: false });
+            if (datamart.storage_model_version === 'v201506') {
+              this.props.history.push(
+                `/v2/o/${this.props.match.params.organisationId}/automations`,
+              );
+            } else {
+              this.props.history.push(
+                `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
+              );
+            }
+          
+          })
+        .catch(err => {
           this.setState({ loading: false });
-          if (datamart.storage_model_version === 'v201506') {
-            this.props.history.push(
-              `/v2/o/${this.props.match.params.organisationId}/automations`,
-            );
-          } else {
-            this.props.history.push(
-              `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
-            );
-          }
-         
+          this.props.notifyError(err.data);
         })
-      .catch(err => {
-        this.setState({ loading: false });
-        this.props.notifyError(err.data);
+        
+      })
+      .catch(validationError => {
+        this.setState({ 
+          loading: false,
+          automationFormData: formData
+        });
+        message.error(this.props.intl.formatMessage(validationError))      
       });
     }
   };

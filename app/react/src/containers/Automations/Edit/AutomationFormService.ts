@@ -31,7 +31,6 @@ import {
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
 import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
-
 import EmailCampaignService from '../../../services/EmailCampaignService';
 import EmailCampaignFormService, {
   getBlastTasks,
@@ -39,6 +38,7 @@ import EmailCampaignFormService, {
 } from '../../Campaigns/Email/Edit/EmailCampaignFormService';
 import { isFakeId } from '../../../utils/FakeIdHelper';
 import { IDisplayCampaignFormService } from '../../Campaigns/Display/Edit/DisplayCampaignFormService';
+import { defineMessages } from 'react-intl';
 
 interface CustomEdgeResource {
   source_id: string;
@@ -52,12 +52,26 @@ export interface IAutomationFormService {
     storageModelVersionId: string,
   ) => Promise<AutomationFormData>;
   saveOrCreateAutomation: (
-    organsiationId: string,
+    organisationId: string,
     storageModelVersionId: string,
     formData: AutomationFormData,
     initialFormData: AutomationFormData,
   ) => Promise<DataResponse<AutomationResource>>;
+  validateAutomation:(
+    storylineNode: StorylineNodeModel
+  ) => Promise<void>;
 }
+
+const messages = defineMessages({
+  undefinedQuery: {
+    id: 'automation.builder.undefinedQuery', 
+    defaultMessage: 'Please define a query for all query nodes.',
+  },
+  emptyQuery: {
+    id: 'automation.builder.emptyQuery',
+    defaultMessage: 'One of the query nodes has an empty query. Please define a non-empty query.',
+  }
+});
 
 @injectable()
 export class AutomationFormService implements IAutomationFormService {
@@ -314,7 +328,7 @@ export class AutomationFormService implements IAutomationFormService {
         }
         return Promise.resolve(createdAutomation);
       });
-    }
+    };
   }
 
   saveFirstNode = (
@@ -468,6 +482,36 @@ export class AutomationFormService implements IAutomationFormService {
       return prev.then(() => Promise.resolve());
     }, Promise.resolve());
   };
+
+  
+  validateAutomationRec(
+    storylineNodes: StorylineNodeModel[]
+  ): Promise<void> {
+    return storylineNodes.reduce((prev, storylineNode) => {
+      return prev.then(() => this.validateNode(storylineNode).then(() => this.validateAutomationRec(storylineNode.out_edges)));
+    }, Promise.resolve())
+  }
+
+  validateAutomation(
+    storylineNode: StorylineNodeModel
+  ): Promise<void> {
+    return this.validateNode(storylineNode).then(() => this.validateAutomationRec(storylineNode.out_edges))
+  }
+
+  validateNode(
+    storylineNode: StorylineNodeModel
+  ): Promise<void> {
+    const node = storylineNode.node
+    if (isQueryInputNode(node) || isIfNode(node)) {
+      if (! node.formData.query_language) {
+        return Promise.reject(messages.undefinedQuery)
+      }
+      if (! node.formData.query_text || node.formData.query_text === '') {
+        return Promise.reject(messages.emptyQuery)
+      }
+    }
+    return Promise.resolve();
+  }
 
   saveOrCreateNode = (
     automationId: string,

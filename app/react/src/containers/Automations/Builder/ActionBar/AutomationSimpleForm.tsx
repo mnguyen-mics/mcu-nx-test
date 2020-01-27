@@ -30,7 +30,7 @@ export interface FormProps
 
 type Props = FormProps & InjectedIntlProps & ValidatorProps & NormalizerProps;
 
-class AutomationSimleForm extends React.Component<
+class AutomationSimpleForm extends React.Component<
   Props & InjectedFormProps<AutomationSimpleFormData, Props>
 > {
   constructor(
@@ -103,7 +103,7 @@ export default compose<Props, FormProps>(
   reduxForm({
     form: FORM_ID,
   }),
-)(AutomationSimleForm);
+)(AutomationSimpleForm);
 
 const messages = defineMessages({
   automationNameLabel: {
