@@ -1,11 +1,11 @@
 /// <reference types="Cypress" />
-/// <reference path="../support/index.d.ts" />
+/// <reference path="../../../../support/index.d.ts" />
 
 /*
     Cypress e2e Activities test 
 */
 
-describe('Activities test', function() {
+describe('New activities import and execution', function() {
 
     /*
             Define usefull Values 

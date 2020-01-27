@@ -3,6 +3,9 @@
   "private": true,
   "dependencies": {
     "npm": "^6.13.6"
+    "cuid": "^2.1.8",
+    "cypress-file-upload": "^3.5.3",
+    "npm": "^6.10.3"
   },
   "devDependencies": {
     "cypress": "^3.8.2",

@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
-/// <reference path="../support/index.d.ts" />
+/// <reference path="../../../../support/index.d.ts" />
 
-context("Test - Audience Segment", () => {
+context("Edit Audience Segment name", () => {
   const second = 1000;
   const organisationName = "yellow velvet";
   const segmentName = " " + (Math.random() * 100).toFixed(0);

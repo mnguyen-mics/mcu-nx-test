@@ -9,11 +9,9 @@
 // ***********************************************
 //
 //
-import LoginPage from "../integration/LoginPage";
-import 'cypress-file-upload';
-
+import LoginPage from "../integration/Authentication/Login/LoginPage";
 // -- This is a parent command --
-Cypress.Commands.add('login', (email = 'dev@mediarithmics.com', password = 'aoc') => {
+Cypress.Commands.add('login', (email = 'dev@mediarithmics.com', password = 'F&&DikfGd3$XDXDt7duL#KeVTn&5A#8za&Q5PrtiPC*BHkTbtg') => {
   const loginPage = new LoginPage();
   const baseUrl = Cypress.config().baseUrl
   loginPage.visit();
