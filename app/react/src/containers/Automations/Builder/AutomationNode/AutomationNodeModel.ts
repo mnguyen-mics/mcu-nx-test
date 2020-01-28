@@ -9,6 +9,7 @@ import { AutomationFormPropsType } from './Edit/domain';
 import EmailCampaignAutomationForm from './Edit/EmailCampaignForm/EmailCampaignAutomationForm';
 import QueryAutomationForm from './Edit/QueryForm/QueryForm';
 import WaitForm from './Edit/WaitForm/WaitForm';
+import AudienceSegmentAutomationForm from './Edit/AudienceSegmentForm/AudienceSegmentAutomationForm';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -57,6 +58,9 @@ export default class AutomationNodeModel extends NodeModel {
         break;
       case 'EMAIL_CAMPAIGN':
         this.editFormComponent = EmailCampaignAutomationForm;
+        break;
+      case 'ADD_TO_SEGMENT':
+        this.editFormComponent = AudienceSegmentAutomationForm;
         break;
       case 'ABN_NODE':
         this.editFormComponent = ABNAutomationForm;

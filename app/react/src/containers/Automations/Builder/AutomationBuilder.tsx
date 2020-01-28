@@ -95,7 +95,7 @@ class AutomationBuilder extends React.Component<Props, State> {
         props.viewer,
       ),
     );
-   
+
     this.engine.registerLinkFactory(new AutomationLinkFactory());
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
@@ -289,7 +289,7 @@ class AutomationBuilder extends React.Component<Props, State> {
   };
 
   addLabelForIfNodeLink = (
-    link: AutomationLinkModel, 
+    link: AutomationLinkModel,
     child: StorylineNodeModel
   ) => {
     if (child.in_edge !== undefined) {
@@ -354,26 +354,26 @@ class AutomationBuilder extends React.Component<Props, State> {
             // allowCanvasTranslation={true}
             inverseZoom={true}
           />
-         
-            <div className="button-helpers top">
-              <ButtonStyleless
-                onClick={this.onNodeSelectorClick}
-                className="helper"
-              >
-                <McsIcon
-                  type={'chevron-right'}
-                  style={
-                    viewNodeSelector
-                      ? {}
-                      : {
-                          transform: 'rotate(180deg)',
-                          transition: 'all 0.5ms ease',
-                        }
-                  }
-                />{' '}
-              </ButtonStyleless>
-            </div>
-          
+
+          <div className="button-helpers top">
+            <ButtonStyleless
+              onClick={this.onNodeSelectorClick}
+              className="helper"
+            >
+              <McsIcon
+                type={'chevron-right'}
+                style={
+                  viewNodeSelector
+                    ? {}
+                    : {
+                      transform: 'rotate(180deg)',
+                      transition: 'all 0.5ms ease',
+                    }
+                }
+              />{' '}
+            </ButtonStyleless>
+          </div>
+
         </Col>
         <Col
           span={viewNodeSelector ? 6 : 24}
@@ -387,20 +387,20 @@ class AutomationBuilder extends React.Component<Props, State> {
     if (viewer) {
       content = (
         <div className={`automation-builder`} ref={this.div}>
-        <Col
-          span={24}
-          className={'diagram'}
-        >
-          <DiagramWidget
-            diagramEngine={this.engine}
-            allowCanvasZoom={!this.state.locked}
-            allowCanvasTranslation={!this.state.locked}
-            // allowCanvasZoom={true}
-            // allowCanvasTranslation={true}
-            inverseZoom={true}
-          />
-        </Col>
-      </div>
+          <Col
+            span={24}
+            className={'diagram'}
+          >
+            <DiagramWidget
+              diagramEngine={this.engine}
+              allowCanvasZoom={!this.state.locked}
+              allowCanvasTranslation={!this.state.locked}
+              // allowCanvasZoom={true}
+              // allowCanvasTranslation={true}
+              inverseZoom={true}
+            />
+          </Col>
+        </div>
       )
     }
 
