@@ -1,5 +1,5 @@
 {
-  "baseUrl": "https://navigator.hopeful-bose.mics-sandbox.com",
+  "baseUrl": "https://navigator.mediarithmics.local",
   "env": {
     "apiDomain": "api.mediarithmics.local",
     "navigatorDomain": "navigator.mediarithmics.local"

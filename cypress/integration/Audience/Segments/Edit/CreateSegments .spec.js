@@ -1,11 +1,11 @@
 /// <reference types="Cypress" />
-/// <reference path="../support/index.d.ts" />
+/// <reference path="../../../../support/index.d.ts" />
 
 /*
     Cypress e2e test in Audience Segment form
 */
 
-describe('Cypress e2e test in Audience Segment form', function() {
+describe('Audience Segment form', function() {
 
     /*
             Define usefull Values 

@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
-/// <reference path="../support/index.d.ts" />
+/// <reference path="../../../../support/index.d.ts" />
 
-context('Test - Resource history', () => {
+context('Display Campaign - Resource history', () => {
   const second = 1000;
   const organisationName = 'yellow velvet';
   const campaignName = '#bogoss ' + (Math.random()*100).toFixed(0);
