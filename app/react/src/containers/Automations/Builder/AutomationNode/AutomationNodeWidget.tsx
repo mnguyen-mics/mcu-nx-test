@@ -287,14 +287,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   }
 
-  renderAddToSegmentEdit = (): React.ReactNodeArray => {
-    return this.renderDefautEdit();
-  }
-
-  renderCampaignEdit = (): React.ReactNodeArray => {
-    return this.renderDefautEdit();
-  }
-
   renderQueryEdit = (): React.ReactNodeArray => {
     const { viewer, node } = this.props;
     const content: React.ReactNodeArray = [];
@@ -371,9 +363,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         return this.renderAbnEdit()
       case 'EMAIL_CAMPAIGN':
       case 'DISPLAY_CAMPAIGN':
-        return this.renderCampaignEdit();
+        return this.renderDefautEdit();
       case 'ADD_TO_SEGMENT':
-        return this.renderAddToSegmentEdit();
+        return this.renderDefautEdit();
       case 'QUERY_INPUT':
         return this.renderQueryEdit();
       case 'END_NODE':
