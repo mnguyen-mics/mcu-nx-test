@@ -76,7 +76,7 @@ class Overlap extends React.Component<Props, State> {
       );
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
         params: { segmentId },
@@ -84,15 +84,15 @@ class Overlap extends React.Component<Props, State> {
     } = this.props;
     const {
       match: {
-        params: { segmentId: nextSegmentId },
+        params: { segmentId: previousSegmentId },
       },
-    } = nextProps;
+    } = previousProps;
 
-    if (segmentId !== nextSegmentId) {
+    if (segmentId !== previousSegmentId) {
       this.setState({ isFetchingOverlap: true }, () => {
         this._overlapInterval
-          .fetchOverlapAnalysisLoop(nextSegmentId)
-          .then(() => this._overlapInterval.fetchOverlapAnalysis(nextSegmentId))
+          .fetchOverlapAnalysisLoop(segmentId)
+          .then(() => this._overlapInterval.fetchOverlapAnalysis(segmentId))
           .then(res => this.setState({ data: res, isFetchingOverlap: false }));
       });
     }

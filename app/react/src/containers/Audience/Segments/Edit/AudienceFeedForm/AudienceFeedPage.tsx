@@ -70,7 +70,7 @@ class AudienceFeedPage extends React.Component<
     }
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
+  componentDidUpdate(previousProps: JoinedProps) {
     const {
       match: {
         params: { segmentId, feedId, feedType },
@@ -79,20 +79,21 @@ class AudienceFeedPage extends React.Component<
     const {
       match: {
         params: {
-          segmentId: nextSegmentId,
-          feedId: nextFeedId,
-          feedType: nextFeedType,
+          segmentId: previousSegmentId,
+          feedId: previousFeedId,
+          feedType: previousFeedType,
         },
       },
-    } = nextProps;
+    } = previousProps;
 
     if (
-      segmentId !== nextSegmentId ||
-      feedId !== nextFeedId ||
-      feedType !== nextFeedType
+      segmentId && 
+      segmentId !== previousSegmentId ||
+      feedId !== previousFeedId ||
+      feedType !== previousFeedType
     ) {
-      if (nextFeedId && nextFeedType) {
-        this.fetchAudienceFeed(nextSegmentId, nextFeedType, nextFeedId);
+      if (feedId && feedType) {
+        this.fetchAudienceFeed(segmentId, feedType, feedId);
       }
       this.fetchAudienceSegment(segmentId);
     }

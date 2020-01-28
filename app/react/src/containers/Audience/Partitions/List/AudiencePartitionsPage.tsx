@@ -40,7 +40,6 @@ export interface AudiencePartitionsPageProps {}
 
 interface State {
   audiencePartitions?: DataListResponse<AudiencePartitionResource>;
-  organisationId: string;
   fetchingPartitions: boolean;
   initialFetching: boolean;
   hasAudiencePartitions: boolean;
@@ -63,7 +62,6 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      organisationId: props.match.params.organisationId,
       audiencePartitions: undefined,
       fetchingPartitions: false,
       initialFetching: true,
@@ -92,38 +90,37 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: { params },
-      location: { search },
+      location: { search, pathname },
       history,
     } = this.props;
 
     const {
-      match: { params: nextParams },
-      location: { search: nextSearch, pathname: nextPathname },
-    } = nextProps;
+      match: { params: previousParams },
+      location: { search: previousSearch },
+    } = previousProps;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      params.organisationId !== nextParams.organisationId
+      !compareSearches(search, previousSearch) ||
+      params.organisationId !== previousParams.organisationId
     ) {
-      if (!isSearchValid(nextSearch, PARTITIONS_SEARCH_SETTINGS)) {
+      if (!isSearchValid(search, PARTITIONS_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, PARTITIONS_SEARCH_SETTINGS),
+          pathname: pathname,
+          search: buildDefaultSearch(search, PARTITIONS_SEARCH_SETTINGS),
           state: { reloadDataSource: true },
         });
       } else {
         const filter = parseSearch<PartitionFilterParams>(
-          nextSearch,
+          search,
           PARTITIONS_SEARCH_SETTINGS,
         );
         this.fetchPartitions(
-          nextParams.organisationId,
+          params.organisationId,
           filter,
-          params.organisationId !== nextParams.organisationId ||
-            nextParams.organisationId !== this.state.organisationId,
+          params.organisationId !== previousParams.organisationId
         );
       }
     }
@@ -175,7 +172,6 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
     initialFetch: boolean,
   ) => {
     this.setState({
-      organisationId: organisationId,
       fetchingPartitions: true,
       initialFetching: initialFetch,
     });

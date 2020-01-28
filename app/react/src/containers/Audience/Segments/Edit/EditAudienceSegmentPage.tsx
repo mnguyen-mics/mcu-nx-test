@@ -190,7 +190,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     }
   };
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidMount() {
+    this.initialLoading(this.props);
+  }
+
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
         params: { segmentId },
@@ -198,16 +202,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     } = this.props;
     const {
       match: {
-        params: { segmentId: nextSegmentId },
+        params: { segmentId: previousSegmentId },
       },
-    } = nextProps;
-    if (segmentId === undefined && nextSegmentId) {
-      this.initialLoading(nextProps);
+    } = previousProps;
+    if (segmentId !== previousSegmentId) {
+      this.initialLoading(this.props);
     }
-  }
-
-  componentDidMount() {
-    this.initialLoading(this.props);
   }
 
   onSubmitFail = () => {

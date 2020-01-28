@@ -47,20 +47,20 @@ export default class WorldMapChart extends React.Component<
     this.fetchData(queryId, datamartId, segment);
   }
 
-  componentWillReceiveProps(nextProps: WorldMapChartProps) {
+  componentDidUpdate(previousProps: WorldMapChartProps) {
     const { segment, queryId, datamartId } = this.props;
     const {
-      segment: nextSegment,
-      queryId: nextChartQueryId,
-      datamartId: nextDatamartId,
-    } = nextProps;
+      segment: previousSegment,
+      queryId: previousChartQueryId,
+      datamartId: previousDatamartId
+    } = previousProps;
 
     if (
-      segment !== nextSegment ||
-      queryId !== nextChartQueryId ||
-      datamartId !== nextDatamartId
+      segment !== previousSegment ||
+      queryId !== previousChartQueryId ||
+      datamartId !== previousDatamartId
     ) {
-      this.fetchData(nextChartQueryId, nextDatamartId, nextSegment);
+      this.fetchData(queryId, datamartId, segment);
     }
   }
 
