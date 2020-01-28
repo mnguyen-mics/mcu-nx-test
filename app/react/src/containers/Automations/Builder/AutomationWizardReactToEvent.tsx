@@ -21,8 +21,8 @@ import { ObjectLikeTypeResource, FieldResource } from "../../../models/datamart/
 const FORM_ID = 'wizardReactToEventForm';
 
 export interface AutomationWizardReactToEventProps {
-	actionBarProps: ActionBarProps;
-	datamartId: string;
+  actionBarProps: ActionBarProps;
+  datamartId: string;
   automationFormData?: Partial<AutomationFormData>;
   loading: boolean;
   saveAutomation: (formData: Partial<AutomationFormData>) => void;
@@ -30,8 +30,8 @@ export interface AutomationWizardReactToEventProps {
 
 interface MapStateToProps {
   formValues: {
-		events: string[];
-	};
+    events: string[];
+  };
 }
 
 type Props = AutomationWizardReactToEventProps 
@@ -41,197 +41,197 @@ type Props = AutomationWizardReactToEventProps
 
 class AutomationWizardReactToEvent extends React.Component<Props, {}> {
 
-	getValidObjectType = (): Promise<WizardValidObjectTypeField | undefined> => {
-		const {
-			datamartId,
-		} = this.props;
+  getValidObjectType = (): Promise<WizardValidObjectTypeField | undefined> => {
+    const {
+      datamartId,
+    } = this.props;
 
-		return RuntimeSchemaService.getRuntimeSchemas(datamartId)
-		.then(({ data: schemas }) => {
-			const runtimeSchema = schemas.find(
-				schema => schema.status === 'LIVE',
-			);
+    return RuntimeSchemaService.getRuntimeSchemas(datamartId)
+    .then(({ data: schemas }) => {
+      const runtimeSchema = schemas.find(
+        schema => schema.status === 'LIVE',
+      );
 
-			if (!runtimeSchema) return;
+      if (!runtimeSchema) return;
 
-			return RuntimeSchemaService.getObjectTypes(
-				datamartId,
-				runtimeSchema.id,
-			).then(({ data: objectTypes }) => {
-				return getWizardValidObjectTypes(objectTypes).map(validObjectType => {
-					return RuntimeSchemaService.getFields(
-						datamartId,
-						runtimeSchema.id, 
-						validObjectType.id,
-					).then(({ data: fields }) => {
-						return { objectType: validObjectType, validFields: getWizardValidFields(validObjectType, fields)};
-					});
-				})
-				.reduce((previousPromise, nextPromise) => {
-					return previousPromise.then(previousResult => {
-						return nextPromise.then(nextResult => previousResult.concat(nextResult));
-					});
-				}, Promise.resolve([]) as Promise<Array<{ objectType: ObjectLikeTypeResource, validFields: FieldResource[]}>>)
-				.then(validObjectTypes => {
-					/*
-					Here we need to find a WizardValidObjectTypeField
-					For each WizardValidObjectTypeField we check if we have an objectType with 
-					the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
-					its fields contain at least one with the WizardValidObjectTypeField.fieldName.
-					*/
-					const wizardValidObjectTypesFitlered = wizardValidObjectTypes.find(
+      return RuntimeSchemaService.getObjectTypes(
+        datamartId,
+        runtimeSchema.id,
+      ).then(({ data: objectTypes }) => {
+        return getWizardValidObjectTypes(objectTypes).map(validObjectType => {
+          return RuntimeSchemaService.getFields(
+            datamartId,
+            runtimeSchema.id, 
+            validObjectType.id,
+          ).then(({ data: fields }) => {
+            return { objectType: validObjectType, validFields: getWizardValidFields(validObjectType, fields)};
+          });
+        })
+        .reduce((previousPromise, nextPromise) => {
+          return previousPromise.then(previousResult => {
+            return nextPromise.then(nextResult => previousResult.concat(nextResult));
+          });
+        }, Promise.resolve([]) as Promise<Array<{ objectType: ObjectLikeTypeResource, validFields: FieldResource[]}>>)
+        .then(validObjectTypes => {
+          /*
+          Here we need to find a WizardValidObjectTypeField
+          For each WizardValidObjectTypeField we check if we have an objectType with 
+          the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
+          its fields contain at least one with the WizardValidObjectTypeField.fieldName.
+          */
+          const wizardValidObjectTypesFitlered = wizardValidObjectTypes.find(
             automationWizardValidObjectType =>
-						!!validObjectTypes.find(validObjectType =>
-							validObjectType.objectType.name === automationWizardValidObjectType.objectTypeName &&
-							!!validObjectType.validFields.find(of => of.name === automationWizardValidObjectType.fieldName),
-						),
-					);
-					
-					if(!wizardValidObjectTypesFitlered) return;
+            !!validObjectTypes.find(validObjectType =>
+              validObjectType.objectType.name === automationWizardValidObjectType.objectTypeName &&
+              !!validObjectType.validFields.find(of => of.name === automationWizardValidObjectType.fieldName),
+            ),
+          );
+          
+          if(!wizardValidObjectTypesFitlered) return;
 
-					/*
-					We need to fetch the ObjectType UserPoint as it refers to our valid object type, 
-					thus we can have its usable name to use in a query.
-					For example: ActivityEvent => activity_events
-					*/
-					const userPointObjectType = objectTypes.find(o => o.name === 'UserPoint');
+          /*
+          We need to fetch the ObjectType UserPoint as it refers to our valid object type, 
+          thus we can have its usable name to use in a query.
+          For example: ActivityEvent => activity_events
+          */
+          const userPointObjectType = objectTypes.find(o => o.name === 'UserPoint');
 
-					if(userPointObjectType) {
-						return RuntimeSchemaService.getFields(
-							datamartId,
-							runtimeSchema.id,
-							userPointObjectType.id,
-						).then(upFields => {
-							const field = upFields.data.find(
-								f => f.field_type.match(/\w+/)![0] === wizardValidObjectTypesFitlered.objectTypeName
-							);
+          if(userPointObjectType) {
+            return RuntimeSchemaService.getFields(
+              datamartId,
+              runtimeSchema.id,
+              userPointObjectType.id,
+            ).then(upFields => {
+              const field = upFields.data.find(
+                f => f.field_type.match(/\w+/)![0] === wizardValidObjectTypesFitlered.objectTypeName
+              );
 
-							if(field)
-								return {
-									...wizardValidObjectTypesFitlered,
-									objectTypeQueryName: field ? field.name : undefined
-								};
+              if(field)
+                return {
+                  ...wizardValidObjectTypesFitlered,
+                  objectTypeQueryName: field ? field.name : undefined
+                };
 
-							return;
-						});
-					} else return;
-				});
-			});
-		});
-	}
+              return;
+            });
+          } else return;
+        });
+      });
+    });
+  }
 
-	handleSubmit = (formData: Partial<AutomationFormData>) => {
-		const {
-			saveAutomation,
-			formValues,
-			datamartId,
-			intl: {
-				formatMessage,
-			},
-		} = this.props;
+  handleSubmit = (formData: Partial<AutomationFormData>) => {
+    const {
+      saveAutomation,
+      formValues,
+      datamartId,
+      intl: {
+        formatMessage,
+      },
+    } = this.props;
 
-		this.getValidObjectType()
-		.then(objectType => {
-			if(!objectType || !objectType.objectTypeQueryName) {
-				message.warning(formatMessage(messages.schemaNotSuitableForAction));
-				return;
-			}
+    this.getValidObjectType()
+    .then(objectType => {
+      if(!objectType || !objectType.objectTypeQueryName) {
+        message.warning(formatMessage(messages.schemaNotSuitableForAction));
+        return;
+      }
 
-			const query: QueryDocument = {
-				from: 'UserPoint',
-				operations: [{
-					directives: [],
-					selections: [{ name: 'id' }]
-				}],
-				where: {
-					boolean_operator: 'OR',
-					field: objectType.objectTypeQueryName,
-					type: 'OBJECT',
-					expressions: [{
-						type: 'FIELD',
-						field: objectType.fieldName,
-						comparison: {
-							type: 'STRING',
-							operator: 'EQ',
-							values: formValues.events
-						}
-					}]
-				}
-			};
-	
-			const node: QueryInputNodeResource = {
-				...beginNode as QueryInputNodeResource,
-				formData: {
-					datamart_id: datamartId,
-					query_language: 'JSON_OTQL',
-					query_text: JSON.stringify(query)
-				} 
-			};
-	
-			saveAutomation({
-				...formData,
-				automationTreeData: formData.automationTreeData ? {
-					...formData.automationTreeData,
-					node: node
-				} : undefined
-			});
-		});
-	}
+      const query: QueryDocument = {
+        from: 'UserPoint',
+        operations: [{
+          directives: [],
+          selections: [{ name: 'id' }]
+        }],
+        where: {
+          boolean_operator: 'OR',
+          field: objectType.objectTypeQueryName,
+          type: 'OBJECT',
+          expressions: [{
+            type: 'FIELD',
+            field: objectType.fieldName,
+            comparison: {
+              type: 'STRING',
+              operator: 'EQ',
+              values: formValues.events
+            }
+          }]
+        }
+      };
+  
+      const node: QueryInputNodeResource = {
+        ...beginNode as QueryInputNodeResource,
+        formData: {
+          datamart_id: datamartId,
+          query_language: 'JSON_OTQL',
+          query_text: JSON.stringify(query)
+        } 
+      };
+  
+      saveAutomation({
+        ...formData,
+        automationTreeData: formData.automationTreeData ? {
+          ...formData.automationTreeData,
+          node: node
+        } : undefined
+      });
+    });
+  }
 
-	render() {
-		const {
-			intl: { formatMessage },
-			fieldValidators: {
-				isRequired
-			},
-			automationFormData,
-			datamartId,
-			loading,
-		} = this.props;
+  render() {
+    const {
+      intl: { formatMessage },
+      fieldValidators: {
+        isRequired
+      },
+      automationFormData,
+      datamartId,
+      loading,
+    } = this.props;
 
-		if (loading)
+    if (loading)
       return <Loading className="loading-full-screen" />;
 
-		return (
-			<Layout className="mcs-automationWizard edit-layout">
-				<AutomationActionBar 
-					automationData={{
-						...automationFormData,
-						automation:
-							automationFormData && automationFormData.automation
-								? {
-										...automationFormData.automation,
-										datamart_id: datamartId,
-									}
-								: undefined,
-					}}
-					saveOrUpdate={this.handleSubmit}
-				/>
-				<Layout className={'ant-layout-content'}>
-					<Form 
-						id={FORM_ID}
-						className="edit-layout mcs-content-container mcs-form-container"
-					>
-						<div className="mcs-automationWizard_chooseEventNameContainer">
-							<FormMultiTagField
-								name={'events'}
-								component={FormMultiTag}
-								formItemProps={{
-									label: formatMessage(messages.eventName),
-									required: true,
-								}}
-								helpToolTipProps={{
-									title: formatMessage(messages.eventNameHelp),
-								}}
-								small={false}
-								validate={isRequired}
-							/>
-						</div>
-					</Form>
-				</Layout>
-			</Layout>
-		);
-	}
+    return (
+      <Layout className="mcs-automationWizard edit-layout">
+        <AutomationActionBar 
+          automationData={{
+            ...automationFormData,
+            automation:
+              automationFormData && automationFormData.automation
+                ? {
+                    ...automationFormData.automation,
+                    datamart_id: datamartId,
+                  }
+                : undefined,
+          }}
+          saveOrUpdate={this.handleSubmit}
+        />
+        <Layout className={'ant-layout-content'}>
+          <Form 
+            id={FORM_ID}
+            className="edit-layout mcs-content-container mcs-form-container"
+          >
+            <div className="mcs-automationWizard_chooseEventNameContainer">
+              <FormMultiTagField
+                name={'events'}
+                component={FormMultiTag}
+                formItemProps={{
+                  label: formatMessage(messages.eventName),
+                  required: true,
+                }}
+                helpToolTipProps={{
+                  title: formatMessage(messages.eventNameHelp),
+                }}
+                small={false}
+                validate={isRequired}
+              />
+            </div>
+          </Form>
+        </Layout>
+      </Layout>
+    );
+  }
 }
 
 const mapStateToProps = (state: MicsReduxState) => ({
@@ -239,30 +239,30 @@ const mapStateToProps = (state: MicsReduxState) => ({
 });
 
 export default compose<Props, AutomationWizardReactToEventProps>(
-	injectIntl,
-	withValidators,
-	reduxForm<{}, AutomationWizardReactToEventProps>({
+  injectIntl,
+  withValidators,
+  reduxForm<{}, AutomationWizardReactToEventProps>({
     form: FORM_ID,
     enableReinitialize: true,
-	}),
-	connect(mapStateToProps),
+  }),
+  connect(mapStateToProps),
 )(AutomationWizardReactToEvent);
 
 const messages = defineMessages({
-	save: {
-		id: 'automations.wizardReactToEvent.save',
-		defaultMessage: 'Save scenario'
-	},
+  save: {
+    id: 'automations.wizardReactToEvent.save',
+    defaultMessage: 'Save scenario'
+  },
   eventName: {
     id: 'automations.wizardReactToEvent.eventName',
     defaultMessage: 'Event name equals',
-	},
-	eventNameHelp: {
+  },
+  eventNameHelp: {
     id: 'automations.wizardReactToEvent.eventNameHelp',
     defaultMessage: 'The event names that will trigger the scenario.',
-	},
-	schemaNotSuitableForAction: {
+  },
+  schemaNotSuitableForAction: {
     id: 'automations.wizardReactToEvent.schemaNotSuitableForAction',
     defaultMessage: 'Schema is not suitable for this actions.',
-	}
+  }
 });
