@@ -650,7 +650,7 @@ export const wizardValidObjectTypes: WizardValidObjectTypeField[] = [
   { objectTypeName: 'UserEvent', fieldName: 'name' },
 ];
 
-export const getWizardValidObjectTypes = (objectTypes: ObjectLikeTypeResource[]): ObjectLikeTypeResource[] => {
+export const getValidObjectTypesForWizardReactToEvent = (objectTypes: ObjectLikeTypeResource[]): ObjectLikeTypeResource[] => {
   return objectTypes.filter(objectType =>
     !!wizardValidObjectTypes.find(
       validObjectType => validObjectType.objectTypeName === objectType.name,
@@ -658,7 +658,7 @@ export const getWizardValidObjectTypes = (objectTypes: ObjectLikeTypeResource[])
   );
 }
 
-export const getWizardValidFields = (objectType: ObjectLikeTypeResource, fields: FieldResource[]): FieldResource[] => {
+export const getValidFieldsForWizardReactToEvent = (objectType: ObjectLikeTypeResource, fields: FieldResource[]): FieldResource[] => {
   return fields.filter(field =>
     !!wizardValidObjectTypes.find(
       validObjectType =>

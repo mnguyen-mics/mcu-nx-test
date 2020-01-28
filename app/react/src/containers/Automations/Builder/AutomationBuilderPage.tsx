@@ -35,7 +35,7 @@ import AutomationWizardReactToEvent from './AutomationWizardReactToEvent';
 import { Loading } from '../../../components';
 import ActionBar from '../../../components/ActionBar';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
-import { wizardValidObjectTypes, getWizardValidObjectTypes, getWizardValidFields } from './domain';
+import { wizardValidObjectTypes, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent } from './domain';
 import { ObjectLikeTypeResource, FieldResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 
 export interface AutomationBuilderPageRouteParams {
@@ -165,13 +165,13 @@ class AutomationBuilderPage extends React.Component<Props, State> {
           selectedDatamart.id,
           runtimeSchema.id,
         ).then(({ data: objectTypes }) => {
-          return getWizardValidObjectTypes(objectTypes).map(validObjectType => {
+          return getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
             return RuntimeSchemaService.getFields(
               selectedDatamart.id,
               runtimeSchema.id, 
               validObjectType.id,
             ).then(({ data: fields }) => {
-              return { objectType: validObjectType, validFields: getWizardValidFields(validObjectType, fields)};
+              return { objectType: validObjectType, validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields)};
             });
           })
           .reduce((previousPromise, nextPromise) => {
@@ -180,6 +180,12 @@ class AutomationBuilderPage extends React.Component<Props, State> {
             });
           }, Promise.resolve([]) as Promise<Array<{ objectType: ObjectLikeTypeResource, validFields: FieldResource[]}>>)
           .then(validObjectTypes => {
+            /*
+            Here we need to find a WizardValidObjectTypeField
+            For each WizardValidObjectTypeField we check if we have an objectType with 
+            the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
+            its fields contain at least one with the WizardValidObjectTypeField.fieldName.
+            */
             const validResult = wizardValidObjectTypes.find(
               automationWizardValidObjectType =>
               !!validObjectTypes.find(validObjectType =>

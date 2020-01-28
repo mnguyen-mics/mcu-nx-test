@@ -8,7 +8,7 @@ import { withValidators, FormMultiTagField } from "../../../components/Form";
 import { ValidatorProps } from "../../../components/Form/withValidators";
 import FormMultiTag from "../../../components/Form/FormSelect/FormMultiTag";
 import AutomationActionBar from "./ActionBar/AutomationActionBar";
-import { beginNode, WizardValidObjectTypeField, getWizardValidObjectTypes, getWizardValidFields, wizardValidObjectTypes } from "./domain";
+import { beginNode, WizardValidObjectTypeField, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent, wizardValidObjectTypes } from "./domain";
 import { AutomationFormData } from "../Edit/domain";
 import { MicsReduxState } from "../../../utils/ReduxHelper";
 import { connect } from "react-redux";
@@ -17,6 +17,7 @@ import { QueryInputNodeResource } from "../../../models/automations/automations"
 import RuntimeSchemaService from "../../../services/RuntimeSchemaService";
 import { Loading } from "../../../components";
 import { ObjectLikeTypeResource, FieldResource } from "../../../models/datamart/graphdb/RuntimeSchema";
+import injectNotifications, { InjectedNotificationProps } from "../../Notifications/injectNotifications";
 
 const FORM_ID = 'wizardReactToEventForm';
 
@@ -37,13 +38,15 @@ interface MapStateToProps {
 type Props = AutomationWizardReactToEventProps 
 & InjectedIntlProps 
 & ValidatorProps
-& MapStateToProps;
+& MapStateToProps
+& InjectedNotificationProps;
 
 class AutomationWizardReactToEvent extends React.Component<Props, {}> {
 
   getValidObjectType = (): Promise<WizardValidObjectTypeField | undefined> => {
     const {
       datamartId,
+      notifyError,
     } = this.props;
 
     return RuntimeSchemaService.getRuntimeSchemas(datamartId)
@@ -58,13 +61,13 @@ class AutomationWizardReactToEvent extends React.Component<Props, {}> {
         datamartId,
         runtimeSchema.id,
       ).then(({ data: objectTypes }) => {
-        return getWizardValidObjectTypes(objectTypes).map(validObjectType => {
+        return getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
           return RuntimeSchemaService.getFields(
             datamartId,
             runtimeSchema.id, 
             validObjectType.id,
           ).then(({ data: fields }) => {
-            return { objectType: validObjectType, validFields: getWizardValidFields(validObjectType, fields)};
+            return { objectType: validObjectType, validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields)};
           });
         })
         .reduce((previousPromise, nextPromise) => {
@@ -117,6 +120,10 @@ class AutomationWizardReactToEvent extends React.Component<Props, {}> {
           } else return;
         });
       });
+    })
+    .catch(error => {
+      notifyError(error);
+      return undefined;
     });
   }
 
@@ -241,6 +248,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose<Props, AutomationWizardReactToEventProps>(
   injectIntl,
   withValidators,
+  injectNotifications,
   reduxForm<{}, AutomationWizardReactToEventProps>({
     form: FORM_ID,
     enableReinitialize: true,
