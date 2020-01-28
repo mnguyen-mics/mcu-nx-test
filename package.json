@@ -2,7 +2,9 @@
   "name": "e2e-tests",
   "private": true,
   "dependencies": {
-    "npm": "^6.13.6"
+    "npm": "^6.13.6",
+    "cuid": "^2.1.8",
+    "cypress-file-upload": "^3.5.3"
   },
   "devDependencies": {
     "cypress": "^3.8.2",
@@ -18,3 +20,4 @@
     "cypress:report": "node scripts/report.js"
   }
 }
+
