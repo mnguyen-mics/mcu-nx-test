@@ -16,7 +16,7 @@
     'campaignsSettings-recommenders',
     'automations-list',
     'automations-builder',
-    'automations.wizard-react-to-event',
+    'automations-wizard-react-to-event',
     'creatives-display',
     'creatives-native',
     'creatives-email',

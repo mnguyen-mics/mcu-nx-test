@@ -115,7 +115,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     if (
       queryString.parse(location.search).datamartId !==
       queryString.parse(prevLocation.search).datamartId
-      && hasFeature('automations.wizard-react-to-event')
+      && hasFeature('automations-wizard-react-to-event')
     )
       this.checkReactToEvent();
 
