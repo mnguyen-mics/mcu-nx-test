@@ -54,21 +54,21 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
           <div className="presentation">
             <MenuPresentational
               title={
-                hasFeature('automations.wizard-react-to-event')
+                hasFeature('automations-wizard-react-to-event')
                 ? formatMessage(messages.reactToAnEvent)
                 : formatMessage(messages.live)
               }
               subtitles={
-                hasFeature('automations.wizard-react-to-event') && disableReactToEvent
+                hasFeature('automations-wizard-react-to-event') && disableReactToEvent
                 ? [formatMessage(messages.reactToAnEventDisabled)]
                 : undefined
               }
               type="user-pixel"
               select={
-                hasFeature('automations.wizard-react-to-event') 
+                hasFeature('automations-wizard-react-to-event') 
                 ? onClickOnReactToEvent : 
                 onClickOnLive}
-              disabled={hasFeature('automations.wizard-react-to-event') ? disableReactToEvent : false}
+              disabled={hasFeature('automations-wizard-react-to-event') ? disableReactToEvent : false}
             />
             <div className="separator">
               <FormattedMessage {...messages.or} />
@@ -80,7 +80,7 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
             />
           </div>
         </Row>
-        {hasFeature('automations.wizard-react-to-event') && 
+        {hasFeature('automations-wizard-react-to-event') && 
           <div>
             <Row className="intermediate-title">
               <FormattedMessage {...messages.advanced} />
