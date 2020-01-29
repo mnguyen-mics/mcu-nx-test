@@ -23,7 +23,7 @@ import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
+import { executeTasksInSequence, Task } from '../../../../utils/PromiseHelper';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { Index } from '../../../../utils';

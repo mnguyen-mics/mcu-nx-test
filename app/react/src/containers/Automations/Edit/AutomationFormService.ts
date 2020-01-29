@@ -30,7 +30,7 @@ import {
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
-import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
+import { Task, executeTasksInSequence } from '../../../utils/PromiseHelper';
 import EmailCampaignService from '../../../services/EmailCampaignService';
 import EmailCampaignFormService, {
   getBlastTasks,
@@ -64,7 +64,7 @@ export interface IAutomationFormService {
 
 const messages = defineMessages({
   undefinedQuery: {
-    id: 'automation.builder.undefinedQuery', 
+    id: 'automation.builder.undefinedQuery',
     defaultMessage: 'Please define a query for all query nodes.',
   },
   emptyQuery: {
@@ -483,7 +483,7 @@ export class AutomationFormService implements IAutomationFormService {
     }, Promise.resolve());
   };
 
-  
+
   validateAutomationRec(
     storylineNodes: StorylineNodeModel[]
   ): Promise<void> {

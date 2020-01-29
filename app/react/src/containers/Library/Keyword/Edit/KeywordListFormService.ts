@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
-import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
+import { Task, executeTasksInSequence } from '../../../../utils/PromiseHelper';
 import {
   KeywordListFormData,
   KeywordFieldModel,

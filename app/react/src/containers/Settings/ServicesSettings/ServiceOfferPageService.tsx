@@ -1,10 +1,10 @@
 import { OfferFormData, INITIAL_SERVICE_OFFER_FORM_DATA } from './domain';
 import { ICatalogService } from '../../../services/CatalogService';
+import { createFieldArrayModelWithMeta } from '../../../utils/FormHelper';
 import {
-  createFieldArrayModelWithMeta,
   Task,
   executeTasksInSequence,
-} from '../../../utils/FormHelper';
+} from '../../../utils/PromiseHelper';
 import messages from '../messages';
 import { TYPES } from '../../../constants/types';
 import { injectable, inject } from 'inversify';

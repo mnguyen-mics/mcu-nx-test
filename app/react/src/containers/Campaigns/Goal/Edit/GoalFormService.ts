@@ -1,8 +1,10 @@
 import {
-  Task,
-  executeTasksInSequence,
   createFieldArrayModelWithMeta,
 } from './../../../../utils/FormHelper';
+import {
+  Task,
+  executeTasksInSequence,
+} from './../../../../utils/PromiseHelper';
 import {
   isGoalResource,
   GoalFormData,

@@ -30,9 +30,11 @@ import {
 import { FormSection } from '../../../../../../components/Form';
 import {
   ReduxFormChangeProps,
+} from '../../../../../../utils/FormHelper';
+import {
   Task,
   executeTasksInSequence,
-} from '../../../../../../utils/FormHelper';
+} from '../../../../../../utils/PromiseHelper';
 import {
   isGoalResource,
   INITIAL_GOAL_FORM_DATA,
