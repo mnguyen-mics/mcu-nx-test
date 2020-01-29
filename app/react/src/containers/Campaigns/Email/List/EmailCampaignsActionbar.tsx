@@ -14,72 +14,21 @@ import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import messages from './messages';
 import { Index } from '../../../../utils';
 import { CampaignsOptions } from '../../../../services/DisplayCampaignService';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
-
-const fetchExportData = (organisationId: string, filter: Index<any>) => {
-  const campaignType = 'EMAIL';
-
-  const buildOptionsForGetCampaigns = () => {
-    const options: CampaignsOptions = {
-      archived: filter.statuses.includes('ARCHIVED'),
-      first_result: 0,
-      max_results: 2000,
-    };
-
-    if (filter.keywords) {
-      options.keywords = filter.keywords;
-    }
-
-    return options;
-  };
-
-  const startDate = filter.from;
-  const endDate = filter.to;
-  const dimension = ['campaign_id'];
-
-  const apiResults = Promise.all([
-    EmailCampaignService.getEmailCampaigns(
-      organisationId,
-      campaignType,
-      buildOptionsForGetCampaigns(),
-    ),
-    ReportService.getEmailDeliveryReport(
-      organisationId,
-      startDate,
-      endDate,
-      dimension,
-    ),
-  ]);
-
-  return apiResults.then(results => {
-    const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
-    const performanceReport = normalizeArrayOfObject(
-      normalizeReportView(results[1].data.report_view),
-      'campaign_id',
-    );
-
-    const mergedData = Object.keys(displayCampaigns).map(campaignId => {
-      return {
-        ...displayCampaigns[campaignId],
-        ...performanceReport[campaignId],
-      };
-    });
-
-    return mergedData;
-  });
-};
-
-interface EmailCampaignsActionbarProps {}
+import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 interface State {
   exportIsRunning: boolean;
 }
 
-type Props = EmailCampaignsActionbarProps &
-  InjectedIntlProps &
+type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class EmailCampaignsActionbar extends React.Component<Props, State> {
+  @lazyInject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
+
   constructor(props: Props) {
     super(props);
     this.handleRunExport = this.handleRunExport.bind(this);
@@ -87,6 +36,59 @@ class EmailCampaignsActionbar extends React.Component<Props, State> {
       exportIsRunning: false,
     };
   }
+
+  fetchExportData = (organisationId: string, filter: Index<any>) => {
+    const campaignType = 'EMAIL';
+
+    const buildOptionsForGetCampaigns = () => {
+      const options: CampaignsOptions = {
+        archived: filter.statuses.includes('ARCHIVED'),
+        first_result: 0,
+        max_results: 2000,
+      };
+
+      if (filter.keywords) {
+        options.keywords = filter.keywords;
+      }
+
+      return options;
+    };
+
+    const startDate = filter.from;
+    const endDate = filter.to;
+    const dimension = ['campaign_id'];
+
+    const apiResults = Promise.all([
+      this._emailCampaignService.getEmailCampaigns(
+        organisationId,
+        campaignType,
+        buildOptionsForGetCampaigns(),
+      ),
+      ReportService.getEmailDeliveryReport(
+        organisationId,
+        startDate,
+        endDate,
+        dimension,
+      ),
+    ]);
+
+    return apiResults.then(results => {
+      const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
+      const performanceReport = normalizeArrayOfObject(
+        normalizeReportView(results[1].data.report_view),
+        'campaign_id',
+      );
+
+      const mergedData = Object.keys(displayCampaigns).map(campaignId => {
+        return {
+          ...displayCampaigns[campaignId],
+          ...performanceReport[campaignId],
+        };
+      });
+
+      return mergedData;
+    });
+  };
 
   handleRunExport() {
     const {
@@ -107,7 +109,7 @@ class EmailCampaignsActionbar extends React.Component<Props, State> {
       0,
     );
 
-    fetchExportData(organisationId, filter)
+    this.fetchExportData(organisationId, filter)
       .then(data => {
         ExportService.exportEmailCampaigns(
           organisationId,
@@ -167,7 +169,4 @@ class EmailCampaignsActionbar extends React.Component<Props, State> {
     );
   }
 }
-export default compose(
-  injectIntl,
-  withRouter,
-)(EmailCampaignsActionbar);
+export default compose(injectIntl, withRouter)(EmailCampaignsActionbar);

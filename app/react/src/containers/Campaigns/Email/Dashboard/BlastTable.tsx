@@ -27,12 +27,12 @@ import ResourceTimelinePage, {
 } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatEmailBlastProperty from '../../../../messages/campaign/email/emailBlastMessages';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { ICreativeService } from '../../../../services/CreativeService';
 import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
+import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
@@ -152,6 +152,9 @@ class BlastTable extends React.Component<Props> {
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
 
+  @lazyInject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
+
   editBlast = (blast: BlastData) => {
     const {
       match: {
@@ -225,7 +228,7 @@ class BlastTable extends React.Component<Props> {
               );
             },
             getName: (id: string) => {
-              return EmailCampaignService.getEmailCampaign(id).then(
+              return this._emailCampaignService.getEmailCampaign(id).then(
                 response => {
                   return response.data.name;
                 },
@@ -245,7 +248,7 @@ class BlastTable extends React.Component<Props> {
               );
             },
             getName: (id: string) => {
-              return EmailCampaignService.getEmailCampaign(id).then(
+              return this._emailCampaignService.getEmailCampaign(id).then(
                 response => {
                   return response.data.name;
                 },

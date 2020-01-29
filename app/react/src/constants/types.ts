@@ -71,6 +71,8 @@ const TYPES = {
   IResourceHistoryService: Symbol.for('resourceHistoryService'),
   IReferenceTableService: Symbol.for('referenceTableService'),
   IDatamartUsersAnalyticsService: Symbol.for('datamartUsersAnalyticsService'),
+  IEmailCampaignService: Symbol.for('emailCampaignService'),
+  IEmailCampaignFormService: Symbol.for('emailCampaignFormService'),
 };
 
 export { TYPES };

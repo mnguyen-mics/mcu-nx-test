@@ -125,4 +125,8 @@ export default defineMessages({
     id: 'campaign.display.list.actionbar.exportTitle',
     defaultMessage: 'Display Campaigns Export',
   },
+  fetchReportError: {
+    id: 'campaign.display.error.fetch-report',
+    defaultMessage: 'Cannot load campaign statistics',
+  },
 });

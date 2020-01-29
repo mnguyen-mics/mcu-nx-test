@@ -33,16 +33,13 @@ import {
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
 import { Task, executeTasksInSequence } from '../../../utils/PromiseHelper';
-import EmailCampaignService from '../../../services/EmailCampaignService';
-import EmailCampaignFormService, {
-  getBlastTasks,
-  getRouterTasks,
-} from '../../Campaigns/Email/Edit/EmailCampaignFormService';
+import { IEmailCampaignFormService } from '../../Campaigns/Email/Edit/EmailCampaignFormService';
 import { isFakeId } from '../../../utils/FakeIdHelper';
 import { IDisplayCampaignFormService } from '../../Campaigns/Display/Edit/DisplayCampaignFormService';
 import { defineMessages } from 'react-intl';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
 import moment from 'moment';
+import { IEmailCampaignService } from '../../../services/EmailCampaignService';
 
 interface CustomEdgeResource {
   source_id: string;
@@ -61,9 +58,7 @@ export interface IAutomationFormService {
     formData: AutomationFormData,
     initialFormData: AutomationFormData,
   ) => Promise<DataResponse<AutomationResource>>;
-  validateAutomation:(
-    storylineNode: StorylineNodeModel
-  ) => Promise<void>;
+  validateAutomation: (storylineNode: StorylineNodeModel) => Promise<void>;
 }
 
 const messages = defineMessages({
@@ -73,8 +68,9 @@ const messages = defineMessages({
   },
   emptyQuery: {
     id: 'automation.builder.emptyQuery',
-    defaultMessage: 'One of the query nodes has an empty query. Please define a non-empty query.',
-  }
+    defaultMessage:
+      'One of the query nodes has an empty query. Please define a non-empty query.',
+  },
 });
 
 @injectable()
@@ -93,6 +89,11 @@ export class AutomationFormService implements IAutomationFormService {
 
   @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+  @inject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
+
+  @inject(TYPES.IEmailCampaignFormService)
+  private _emailCampaignFormService: IEmailCampaignFormService;
 
   private ids: string[] = [];
 
@@ -179,21 +180,21 @@ export class AutomationFormService implements IAutomationFormService {
                   });
                 break;
               case 'EMAIL_CAMPAIGN':
-                getPromise = EmailCampaignFormService.loadCampaign(
-                  n.campaign_id,
-                ).then(campaignResp => {
-                  const initialValues = {
-                    name: n.name,
-                    campaign: campaignResp.campaign,
-                    blastFields: campaignResp.blastFields,
-                    routerFields: campaignResp.routerFields,
-                  };
-                  return {
-                    ...n,
-                    formData: initialValues,
-                    initialValuesForm: initialValues,
-                  };
-                });
+                getPromise = this._emailCampaignFormService
+                  .loadCampaign(n.campaign_id)
+                  .then(campaignResp => {
+                    const initialValues = {
+                      name: n.name,
+                      campaign: campaignResp.campaign,
+                      blastFields: campaignResp.blastFields,
+                      routerFields: campaignResp.routerFields,
+                    };
+                    return {
+                      ...n,
+                      formData: initialValues,
+                      initialValuesForm: initialValues,
+                    };
+                  });
                 break;
               case 'ADD_TO_SEGMENT_NODE':
                 getPromise = this._audienceSegmentService
@@ -787,12 +788,12 @@ export class AutomationFormService implements IAutomationFormService {
   ) => {
     let createOrUpdateCampaignPromise;
     if (campaignId) {
-      createOrUpdateCampaignPromise = EmailCampaignService.updateEmailCampaign(
+      createOrUpdateCampaignPromise = this._emailCampaignService.updateEmailCampaign(
         campaignId,
         _.omit(formData.campaign, ['technical_name']),
       );
     } else {
-      createOrUpdateCampaignPromise = EmailCampaignService.createEmailCampaign(
+      createOrUpdateCampaignPromise = this._emailCampaignService.createEmailCampaign(
         organisationId,
         _.omit(formData.campaign, ['technical_name']),
       );
@@ -804,12 +805,12 @@ export class AutomationFormService implements IAutomationFormService {
       const tasks: Task[] = [];
 
       tasks.push(
-        ...getRouterTasks(
+        ...this._emailCampaignFormService.getRouterTasks(
           savedCampaignId,
           formData.routerFields,
           initialFormData.routerFields,
         ),
-        ...getBlastTasks(
+        ...this._emailCampaignFormService.getBlastTasks(
           savedCampaignId,
           formData.blastFields,
           initialFormData.blastFields,
@@ -818,19 +819,23 @@ export class AutomationFormService implements IAutomationFormService {
 
       return executeTasksInSequence(tasks)
         .then(() =>
-          EmailCampaignService.updateEmailCampaign(savedCampaignId, {
+          this._emailCampaignService.updateEmailCampaign(savedCampaignId, {
             id: savedCampaignId,
             status: 'ACTIVE',
           }),
         )
-        .then(() => EmailCampaignService.getBlasts(savedCampaignId))
+        .then(() => this._emailCampaignService.getBlasts(savedCampaignId))
         .then(blastData =>
           Promise.all(
             blastData.data.map(blast =>
-              EmailCampaignService.updateBlast(savedCampaignId, blast.id, {
-                id: blast.id,
-                status: 'SCENARIO_ACTIVATED',
-              }),
+              this._emailCampaignService.updateBlast(
+                savedCampaignId,
+                blast.id,
+                {
+                  id: blast.id,
+                  status: 'SCENARIO_ACTIVATED',
+                },
+              ),
             ),
           ),
         )

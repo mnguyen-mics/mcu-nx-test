@@ -205,21 +205,30 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
           filter.from,
           filter.to,
           ['campaign_id'],
-        ).then(statsResult => {
-          const statsByCampaignlId = normalizeArrayOfObject(
-            normalizeReportView(statsResult.data.report_view),
-            'campaign_id',
-          );
-          this.setState({
-            isLoadingStats: false,
-            dataSource: Object.keys(campaignsById).map(campaignId => {
-              return {
-                ...statsByCampaignlId[campaignId],
-                ...campaignsById[campaignId],
-              };
-            }),
+        )
+          .then(statsResult => {
+            const statsByCampaignlId = normalizeArrayOfObject(
+              normalizeReportView(statsResult.data.report_view),
+              'campaign_id',
+            );
+            this.setState({
+              isLoadingStats: false,
+              dataSource: Object.keys(campaignsById).map(campaignId => {
+                return {
+                  ...statsByCampaignlId[campaignId],
+                  ...campaignsById[campaignId],
+                };
+              }),
+            });
+          })
+          .catch(error => {
+            this.setState({
+              isLoadingStats: false,
+            });
+            this.props.notifyError(error, {
+              intlMessage: messages.fetchReportError,
+            });
           });
-        });
       });
   };
 
@@ -653,9 +662,6 @@ export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectDrawer,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
   injectNotifications,
 )(DisplayCampaignsPage);

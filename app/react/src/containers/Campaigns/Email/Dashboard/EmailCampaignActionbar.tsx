@@ -21,7 +21,6 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import ActionBar from '../../../../components/ActionBar';
 import ReportService from '../../../../services/ReportService';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import log from '../../../../utils/Logger';
 import injectDrawer, {
@@ -36,6 +35,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { IEmailRouterService } from '../../../../services/Library/EmailRoutersService';
 import { TYPES } from '../../../../constants/types';
 import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
+import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
 
 export interface EmailCampaignActionbarProps {
   campaign?: EmailCampaignResource;
@@ -60,6 +60,9 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IResourceHistoryService)
   private _resourceHistoryService: IResourceHistoryService;
+  
+  @lazyInject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
 
   constructor(props: Props) {
     super(props);
@@ -86,7 +89,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     );
 
     Promise.all([
-      EmailCampaignService.getBlasts(campaignId).then(res => res.data),
+      this._emailCampaignService.getBlasts(campaignId).then(res => res.data),
       ReportService.getSingleEmailDeliveryReport(
         organisationId,
         campaignId,
@@ -190,7 +193,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                       );
                     },
                     getName: (id: string) => {
-                      return EmailCampaignService.getBlast(campaignId, id).then(
+                      return this._emailCampaignService.getBlast(campaignId, id).then(
                         response => {
                           return response.data.blast_name || id;
                         },

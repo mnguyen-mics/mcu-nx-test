@@ -28,11 +28,13 @@ import { CampaignStatus } from '../../../../models/campaign/constants';
 import { Index } from '../../../../utils';
 import { messages } from './messages';
 import { CampaignsOptions } from '../../../../services/DisplayCampaignService';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { Modal } from 'antd';
 import { EmailCampaignResourceWithStats } from '../../../../models/campaign/email/EmailCampaignResource';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { Label } from '../../../Labels/Labels';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
 
 const getLatestDeliveryReport = takeLatest(
   ReportService.getEmailDeliveryReport,
@@ -67,6 +69,9 @@ type Props = RouteComponentProps<{
   InjectedNotificationProps;
 
 class EmailCampaignListPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -153,6 +158,10 @@ class EmailCampaignListPage extends React.Component<Props, State> {
 
     const dataSource = this.buildTableDataSource();
 
+    const deleteEmailCampaign = () => {
+      return this._emailCampaignService.deleteEmailCampaign(campaign.id);
+    };
+
     Modal.confirm({
       title: intl.formatMessage(messages.confirmArchiveModalTitle),
       content: intl.formatMessage(messages.confirmArchiveModalContent),
@@ -160,7 +169,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
       okText: intl.formatMessage(messages.confirmArchiveModalOk),
       cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
       onOk() {
-        EmailCampaignService.deleteEmailCampaign(campaign.id).then(() => {
+        deleteEmailCampaign().then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -228,11 +237,8 @@ class EmailCampaignListPage extends React.Component<Props, State> {
           }
         : options;
     };
-    EmailCampaignService.getEmailCampaigns(
-      organisationId,
-      'EMAIL',
-      buildGetCampaignsOptions(),
-    )
+    this._emailCampaignService
+      .getEmailCampaigns(organisationId, 'EMAIL', buildGetCampaignsOptions())
       .then(response => {
         this.setState({
           isFetchingCampaigns: false,

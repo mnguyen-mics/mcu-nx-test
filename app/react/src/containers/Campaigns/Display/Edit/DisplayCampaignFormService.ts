@@ -370,5 +370,3 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
     return tasks;
   }
 }
-
-export default DisplayCampaignFormService;
