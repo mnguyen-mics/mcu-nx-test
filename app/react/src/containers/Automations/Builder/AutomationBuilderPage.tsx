@@ -36,7 +36,7 @@ import { Loading } from '../../../components';
 import ActionBar from '../../../components/ActionBar';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { wizardValidObjectTypes, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent } from './domain';
-import { ObjectLikeTypeResource, FieldResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { reducePromises } from '../../../utils/PromiseHelper';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
@@ -165,20 +165,17 @@ class AutomationBuilderPage extends React.Component<Props, State> {
           selectedDatamart.id,
           runtimeSchema.id,
         ).then(({ data: objectTypes }) => {
-          return getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
-            return RuntimeSchemaService.getFields(
-              selectedDatamart.id,
-              runtimeSchema.id, 
-              validObjectType.id,
-            ).then(({ data: fields }) => {
-              return { objectType: validObjectType, validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields)};
-            });
-          })
-          .reduce((previousPromise, nextPromise) => {
-            return previousPromise.then(previousResult => {
-              return nextPromise.then(nextResult => previousResult.concat(nextResult));
-            });
-          }, Promise.resolve([]) as Promise<Array<{ objectType: ObjectLikeTypeResource, validFields: FieldResource[]}>>)
+          reducePromises(
+            getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
+              return RuntimeSchemaService.getFields(
+                selectedDatamart.id,
+                runtimeSchema.id, 
+                validObjectType.id,
+              ).then(({ data: fields }) => {
+                return { objectType: validObjectType, validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields)};
+              });
+            })
+          )
           .then(validObjectTypes => {
             /*
             Here we need to find a WizardValidObjectTypeField
