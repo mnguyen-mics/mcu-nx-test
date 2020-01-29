@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Row, Col, Spin, Button, Alert, Upload } from 'antd';
-import RuntimeSchemaService from '../../../../../services/RuntimeSchemaService';
 import {
   RuntimeSchemaResource,
   RuntimeSchemaValidationResource,
@@ -16,6 +15,9 @@ import AceEditor from 'react-ace';
 import 'brace/mode/graphqlschema';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { UploadFile } from 'antd/lib/upload/interface';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IRuntimeSchemaService } from '../../../../../services/RuntimeSchemaService';
 
 type Props = IDatamartObjectViewTabProps & InjectedNotificationProps;
 
@@ -89,6 +91,10 @@ const messages = defineMessages({
 });
 
 class DatamartObjectViewTab extends React.Component<Props, State> {
+  
+  @lazyInject(TYPES.IRuntimeSchemaService)
+  private _runtimeSchemaService: IRuntimeSchemaService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -117,7 +123,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
 
   fetchSchemas = (datamartId: string, shouldSelectLive = true) => {
     this.setState({ loadingList: true });
-    return RuntimeSchemaService.getRuntimeSchemas(datamartId)
+    return this._runtimeSchemaService.getRuntimeSchemas(datamartId)
       .then(r => {
         this.setState({ loadingList: false, schemas: r.data });
         const liveSchema = r.data.find(s => s.status === 'LIVE');
@@ -135,10 +141,10 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
 
   fetchSchemaDetail = (datamartId: string, schemaId: string) => {
     this.setState({ loadingSingle: true });
-    return RuntimeSchemaService.getRuntimeSchemaText(datamartId, schemaId)
+    return this._runtimeSchemaService.getRuntimeSchemaText(datamartId, schemaId)
       .then(r => {
         this.setState({ selectedSchemaText: r });
-        return RuntimeSchemaService.getSchemaDecorator(
+        return this._runtimeSchemaService.getSchemaDecorator(
           datamartId,
           schemaId,
         ).then(decorators => {
@@ -162,7 +168,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
 
   createNewSchemaVersion = (schema: RuntimeSchemaResource) => () => {
     this.setState({ loadingList: true, loadingSingle: true });
-    return RuntimeSchemaService.cloneRuntimeSchema(
+    return this._runtimeSchemaService.cloneRuntimeSchema(
       schema.datamart_id,
       schema.id,
     ).then(s => {
@@ -181,7 +187,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     const { selectedSchema } = this.state;
     if (selectedSchema) {
       this.setState({ loadingSingle: true });
-      return RuntimeSchemaService.validateRuntimeSchema(
+      return this._runtimeSchemaService.validateRuntimeSchema(
         selectedSchema.datamart_id,
         selectedSchema.id,
       )
@@ -197,7 +203,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     const { selectedSchema, changedSchemaValue } = this.state;
     if (selectedSchema && changedSchemaValue) {
       this.setState({ loadingSingle: true });
-      return RuntimeSchemaService.updateRuntimeSchema(
+      return this._runtimeSchemaService.updateRuntimeSchema(
         selectedSchema.datamart_id,
         selectedSchema.id,
         changedSchemaValue
@@ -219,7 +225,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
         loadingList: true,
         schemaValidation: undefined,
       });
-      return RuntimeSchemaService.publishRuntimeSchema(
+      return this._runtimeSchemaService.publishRuntimeSchema(
         selectedSchema.datamart_id,
         selectedSchema.id,
       )
@@ -284,8 +290,8 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
 
     const fileContent = await this.onFileUpdate(file);
   
-    return RuntimeSchemaService.createSchemaDecorator(selectedSchema.datamart_id, selectedSchema.id, fileContent as string)
-      .then(() => RuntimeSchemaService.getSchemaDecorator(
+    return this._runtimeSchemaService.createSchemaDecorator(selectedSchema.datamart_id, selectedSchema.id, fileContent as string)
+      .then(() => this._runtimeSchemaService.getSchemaDecorator(
           selectedSchema.datamart_id,
           selectedSchema.id,
         )

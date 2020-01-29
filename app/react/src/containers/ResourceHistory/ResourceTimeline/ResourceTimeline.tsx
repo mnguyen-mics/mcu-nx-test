@@ -5,7 +5,6 @@ import moment from 'moment';
 import { InjectedIntlProps, FormattedMessage, injectIntl } from "react-intl";
 
 import { ResourceType, HistoryEventShape, ResourceLinkHelper } from "../../../models/resourceHistory/ResourceHistory";
-import ResourceHistoryService from "../../../services/ResourceHistoryService";
 import messages from './messages';
 import { McsIcon } from '../../../components';
 import { compose } from 'recompose';
@@ -15,6 +14,9 @@ import { FormatProperty } from './domain';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IResourceHistoryService } from '../../../services/ResourceHistoryService';
 
 export interface Events {
   isLoading: boolean;
@@ -47,6 +49,10 @@ type Props = ResourceTimelineProps &
   InjectedNotificationProps;
 
 class ResourceTimeline extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IResourceHistoryService)
+  private _resourceHistoryService: IResourceHistoryService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -108,7 +114,7 @@ class ResourceTimeline extends React.Component<Props, State> {
         return nextState;
       },
       () =>
-        ResourceHistoryService.getResourceHistory(
+        this._resourceHistoryService.getResourceHistory(
           organisationId,
           params,
         )
@@ -126,7 +132,7 @@ class ResourceTimeline extends React.Component<Props, State> {
                 eventCountOnOldestTime: 0,
               }
             )
-            : ResourceHistoryService.getResourceHistory(
+            : this._resourceHistoryService.getResourceHistory(
                 organisationId,
                 {...params, max_results: params.max_results + 1},
               )

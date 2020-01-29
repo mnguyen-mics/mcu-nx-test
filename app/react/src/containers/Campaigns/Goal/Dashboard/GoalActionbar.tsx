@@ -21,7 +21,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistoryHelper';
 import { injectDrawer } from '../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import ResourceTimelinePage, {
@@ -32,6 +31,7 @@ import formatGoalProperty from '../../../../messages/campaign/goal/goalMessages'
 import { lazyInject } from '../../../../config/inversify.config';
 import { IDisplayCampaignService } from '../../../../services/DisplayCampaignService';
 import { TYPES } from '../../../../constants/types';
+import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
 
 interface ExportActionbarProps {
   goal?: GoalResource;
@@ -145,6 +145,9 @@ class ExportsActionbar extends React.Component<
 > {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
+
+  @lazyInject(TYPES.IResourceHistoryService)
+  private _resourceHistoryService: IResourceHistoryService;
 
   constructor(props: JoinedProps) {
     super(props);
@@ -358,7 +361,7 @@ class ExportsActionbar extends React.Component<
                         );
                       },
                       getName: (id: string) => {
-                        return getLinkedResourceIdInSelection(
+                        return this._resourceHistoryService.getLinkedResourceIdInSelection(
                           organisationId,
                           'GOAL_SELECTION',
                           id,
@@ -372,7 +375,7 @@ class ExportsActionbar extends React.Component<
                         });
                       },
                       goToResource: (id: string) => {
-                        getLinkedResourceIdInSelection(
+                        this._resourceHistoryService.getLinkedResourceIdInSelection(
                           organisationId,
                           'GOAL_SELECTION',
                           id,

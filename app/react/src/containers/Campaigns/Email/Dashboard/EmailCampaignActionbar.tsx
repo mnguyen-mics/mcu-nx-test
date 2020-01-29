@@ -32,10 +32,10 @@ import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
-import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistoryHelper';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IEmailRouterService } from '../../../../services/Library/EmailRoutersService';
 import { TYPES } from '../../../../constants/types';
+import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
 
 export interface EmailCampaignActionbarProps {
   campaign?: EmailCampaignResource;
@@ -57,6 +57,9 @@ type Props = EmailCampaignActionbarProps &
 class EmailCampaignActionbar extends React.Component<Props, State> {
   @lazyInject(TYPES.IEmailRouterService)
   private _emailRoutersService: IEmailRouterService;
+
+  @lazyInject(TYPES.IResourceHistoryService)
+  private _resourceHistoryService: IResourceHistoryService;
 
   constructor(props: Props) {
     super(props);
@@ -209,7 +212,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                       );
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'EMAIL_ROUTER_SELECTION',
                         id,
@@ -223,7 +226,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                       });
                     },
                     goToResource: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'EMAIL_ROUTER_SELECTION',
                         id,

@@ -49,12 +49,12 @@ import { IAudienceSegmentService } from '../../../../../../services/AudienceSegm
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
-import ReferenceTableService from '../../../../../../services/ReferenceTableService';
 import { IDatamartService } from '../../../../../../services/DatamartService';
 import { IComparmentService } from '../../../../../../services/CompartmentService';
 import { getCoreReferenceTypeAndModel, FieldProposalLookup } from '../../../domain';
 import { IChannelService } from '../../../../../../services/ChannelService';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { IReferenceTableService } from '../../../../../../services/ReferenceTableService';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -123,6 +123,9 @@ class FieldNodeForm extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
+
+  @lazyInject(TYPES.IReferenceTableService)
+  private _referenceTableService: IReferenceTableService;
 
   private _computedTreeNodePath: number[];
 
@@ -604,7 +607,7 @@ class FieldNodeForm extends React.Component<Props, State> {
 
     let fetchListMethod = (keywords: string): Promise<Array<{ key: string; label: JSX.Element | string }>> => {
       if (field) {
-        return ReferenceTableService.getReferenceTable(datamartId, runtimeSchemaId, objectType.name, field.field)
+        return this._referenceTableService.getReferenceTable(datamartId, runtimeSchemaId, objectType.name, field.field)
         .then(res => res.data.map(r => ({ key: r.value, label:r.display_value })))
       }
       return Promise.resolve([])

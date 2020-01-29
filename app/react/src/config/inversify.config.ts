@@ -1,3 +1,12 @@
+import { IReferenceTableService, ReferenceTableService } from './../services/ReferenceTableService';
+import {
+  ITableSchemaService,
+  TableSchemaService,
+} from './../services/TableSchemaService';
+import {
+  IBidOptimizerService,
+  BidOptimizerService,
+} from './../services/Library/BidOptimizerService';
 import DataFileService, {
   IDataFileService,
 } from './../services/DataFileService';
@@ -161,6 +170,22 @@ import {
 import getDecorators from 'inversify-inject-decorators';
 import { IDatamartReplicationService } from '../services/DatamartReplicationService';
 import { IAttributionModelService, AttributionModelService } from '../services/AttributionModelService';
+import {
+  ILibraryCatalogService,
+  LibraryCatalogService,
+} from '../services/Library/LibraryCatalogService';
+import {
+  IServiceUsageReportService,
+  ServiceUsageReportService,
+} from '../services/ServiceUsageReportService';
+import {
+  IRuntimeSchemaService,
+  RuntimeSchemaService,
+} from '../services/RuntimeSchemaService';
+import {
+  IResourceHistoryService,
+  ResourceHistoryService,
+} from '../services/ResourceHistoryService';
 
 const container = new Container();
 
@@ -244,6 +269,9 @@ container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
 container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
 container
+  .bind<ILibraryCatalogService>(TYPES.ILibraryCatalogService)
+  .to(LibraryCatalogService);
+container
   .bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService)
   .to(ServiceOfferPageService);
 container
@@ -277,8 +305,26 @@ container
   .bind<IEmailRouterService>(TYPES.IEmailRouterService)
   .to(EmailRouterService);
 container
+  .bind<IBidOptimizerService>(TYPES.IBidOptimizerService)
+  .to(BidOptimizerService);
+container
+  .bind<ITableSchemaService>(TYPES.ITableSchemaService)
+  .to(TableSchemaService);
+container
+  .bind<IServiceUsageReportService>(TYPES.IServiceUsageReportService)
+  .to(ServiceUsageReportService);
+container
+  .bind<IRuntimeSchemaService>(TYPES.IRuntimeSchemaService)
+  .to(RuntimeSchemaService);
+container
   .bind<IDatamartReplicationService>(TYPES.IDatamartReplicationService)
   .to(DatamartReplicationService);
+container
+  .bind<IResourceHistoryService>(TYPES.IResourceHistoryService)
+  .to(ResourceHistoryService);
+  container
+  .bind<IReferenceTableService>(TYPES.IReferenceTableService)
+  .to(ReferenceTableService);
 container.bind<IDataFileService>(TYPES.IDataFileService).to(DataFileService);
 container
   .bind<interfaces.Factory<IAudienceExternalFeedService>>(

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import CatalogService from '../../../services/Library/CatalogService'
 import { CatalogRessource, CategoryRessource, ItemRessource } from '../../../models/catalog/catalog';
 import Card from '../../../components/Card/Card'
 import CatalogItemTable from './CatalogItemTable'
@@ -12,6 +11,9 @@ import { Select, Table, Breadcrumb, Icon } from 'antd';
 import messages from './messages'
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
+import { TYPES } from '../../../constants/types';
+import { lazyInject } from '../../../config/inversify.config';
+import { ILibraryCatalogService } from '../../../services/Library/LibraryCatalogService';
 
 
 const Option = Select.Option;
@@ -47,6 +49,9 @@ class CatalogContent extends React.Component<
   Props,
   CatalogContentState
 > {
+
+  @lazyInject(TYPES.ILibraryCatalogService)
+  private _libraryCatalogService: ILibraryCatalogService;
 
   constructor(props: Props) {
     super(props);
@@ -98,7 +103,7 @@ class CatalogContent extends React.Component<
     const getSelectedCatalogId = (catalogs: CatalogRessource[]) => {
       return this.state.catalogs.selectedId ? this.state.catalogs.selectedId : catalogs && catalogs.length ? catalogs[0].token : null;
     }
-    CatalogService.getCatalogs(datamatId)
+    this._libraryCatalogService.getCatalogs(datamatId)
       .then(res => res.data)
       .then(catalogs => {
         const a = getSelectedCatalogId(catalogs);
@@ -113,15 +118,15 @@ class CatalogContent extends React.Component<
   }
 
   fetchInitialCategories = (datamartId: string, catalogToken: string) => {
-    CatalogService.getCatalogMainCategories(datamartId, catalogToken, { depth: 0, first_result: 0, max_results: 500 })
+    this._libraryCatalogService.getCatalogMainCategories(datamartId, catalogToken, { depth: 0, first_result: 0, max_results: 500 })
       .then(res => res.data)
       .then(res => {
         const promises = res.map(category => {
-          return CatalogService.getCatalogSubCategories(datamartId, catalogToken, category.category_id)
+          return this._libraryCatalogService.getCatalogSubCategories(datamartId, catalogToken, category.category_id)
             .then(r => r.data)
             .then(r => { return {...category, hasSubCategory: r.length > 0 } })
             .then(r => {
-              return CatalogService.getCatalogCategoryItems(datamartId, catalogToken, category.category_id, { first_result: 0, max_results: 500 })
+              return this._libraryCatalogService.getCatalogCategoryItems(datamartId, catalogToken, category.category_id, { first_result: 0, max_results: 500 })
                 .then(i => i.data)
                 .then(i => { return {...r, hasItems: i.length > 0, subItems: i } })
             })
@@ -154,15 +159,15 @@ class CatalogContent extends React.Component<
         loading: true,
       }
     }, () => {
-      CatalogService.getCatalogSubCategories(datamartId, catalogToken, categoryId, { depth: 0, first_result: 0, max_results: 500 })
+      this._libraryCatalogService.getCatalogSubCategories(datamartId, catalogToken, categoryId, { depth: 0, first_result: 0, max_results: 500 })
         .then(res => res.data)
         .then(res => {
           const promises = res.map(category => {
-            return CatalogService.getCatalogSubCategories(datamartId, catalogToken, category.category_id)
+            return this._libraryCatalogService.getCatalogSubCategories(datamartId, catalogToken, category.category_id)
               .then(r => r.data)
               .then(r => { return {...category, hasSubCategory: r.length > 0 } })
               .then(r => {
-                return r.hasSubCategory ? {...r, hasItems: false, subItems: []} : CatalogService.getCatalogCategoryItems(datamartId, catalogToken, category.category_id)
+                return r.hasSubCategory ? {...r, hasItems: false, subItems: []} : this._libraryCatalogService.getCatalogCategoryItems(datamartId, catalogToken, category.category_id)
                   .then(i => i.data)
                   .then(i => { return {...r, hasItems: i.length > 0, subItems: i } }) 
               })

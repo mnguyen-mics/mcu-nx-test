@@ -32,11 +32,9 @@ export interface IPluginInstanceService<T> {
 @injectable()
 abstract class PluginInstanceService<T extends PluginInstance>
   implements IPluginInstanceService<T> {
-  // TODO: make plugin service injection work
+
   @inject(TYPES.IPluginService)
   _pluginService: IPluginService;
-
-  
 
   constructor(public entityPath: string) {}
 

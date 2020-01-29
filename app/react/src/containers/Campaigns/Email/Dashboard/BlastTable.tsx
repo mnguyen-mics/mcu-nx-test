@@ -28,11 +28,11 @@ import ResourceTimelinePage, {
 import formatEmailBlastProperty from '../../../../messages/campaign/email/emailBlastMessages';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 import EmailCampaignService from '../../../../services/EmailCampaignService';
-import { getLinkedResourceIdInSelection } from '../../../../utils/ResourceHistoryHelper';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { ICreativeService } from '../../../../services/CreativeService';
+import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
@@ -145,6 +145,9 @@ const BlastTableView = TableView as React.ComponentClass<
 class BlastTable extends React.Component<Props> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.IResourceHistoryService)
+  private _resourceHistoryService: IResourceHistoryService;
 
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
@@ -262,7 +265,7 @@ class BlastTable extends React.Component<Props> {
               );
             },
             getName: (id: string) => {
-              return getLinkedResourceIdInSelection(
+              return this._resourceHistoryService.getLinkedResourceIdInSelection(
                 organisationId,
                 'EMAIL_TEMPLATE_SELECTION',
                 id,
@@ -276,7 +279,7 @@ class BlastTable extends React.Component<Props> {
               });
             },
             goToResource: (id: string) => {
-              getLinkedResourceIdInSelection(
+              this._resourceHistoryService.getLinkedResourceIdInSelection(
                 organisationId,
                 'EMAIL_TEMPLATE_SELECTION',
                 id,
@@ -298,7 +301,7 @@ class BlastTable extends React.Component<Props> {
               );
             },
             getName: (id: string) => {
-              return getLinkedResourceIdInSelection(
+              return this._resourceHistoryService.getLinkedResourceIdInSelection(
                 organisationId,
                 'AUDIENCE_SEGMENT_EMAIL_SELECTION',
                 id,
@@ -312,7 +315,7 @@ class BlastTable extends React.Component<Props> {
               });
             },
             goToResource: (id: string) => {
-              getLinkedResourceIdInSelection(
+              this._resourceHistoryService.getLinkedResourceIdInSelection(
                 organisationId,
                 'AUDIENCE_SEGMENT_EMAIL_SELECTION',
                 id,

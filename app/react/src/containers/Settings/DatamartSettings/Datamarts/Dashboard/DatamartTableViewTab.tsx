@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Row, Col, Spin, Button, Alert } from 'antd';
-import TableSchemaService from '../../../../../services/TableSchemaService';
 import {
   RuntimeSchemaResource,
   RuntimeSchemaValidationResource,
@@ -15,6 +14,9 @@ import injectNotifications, {
 import AceEditor from 'react-ace';
 import 'brace/mode/hjson';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { ITableSchemaService } from '../../../../../services/TableSchemaService';
 
 type Props = IDatamartTableViewTabProps & InjectedNotificationProps;
 
@@ -67,13 +69,16 @@ const messages = defineMessages({
 });
 
 class DatamartTableViewTab extends React.Component<Props, State> {
+  @lazyInject(TYPES.ITableSchemaService)
+  private _tableSchemaService: ITableSchemaService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       loadingList: true,
       loadingSingle: true,
       schemas: [],
-      uploadingDecorator: false
+      uploadingDecorator: false,
     };
   }
 
@@ -95,7 +100,8 @@ class DatamartTableViewTab extends React.Component<Props, State> {
 
   fetchSchemas = (datamartId: string, shouldSelectLive = true) => {
     this.setState({ loadingList: true });
-    return TableSchemaService.getTableSchemas(datamartId)
+    return this._tableSchemaService
+      .getTableSchemas(datamartId)
       .then(r => {
         this.setState({ loadingList: false, schemas: r.data });
         const liveSchema = r.data.find(s => s.status === 'LIVE');
@@ -113,7 +119,8 @@ class DatamartTableViewTab extends React.Component<Props, State> {
 
   fetchSchemaDetail = (datamartId: string, schemaId: string) => {
     this.setState({ loadingSingle: true });
-    return TableSchemaService.getTableSchemaText(datamartId, schemaId)
+    return this._tableSchemaService
+      .getTableSchemaText(datamartId, schemaId)
       .then(r => {
         this.setState({ selectedSchemaText: r, loadingSingle: false });
       })
@@ -130,29 +137,26 @@ class DatamartTableViewTab extends React.Component<Props, State> {
 
   createNewSchemaVersion = (schema: RuntimeSchemaResource) => () => {
     this.setState({ loadingList: true, loadingSingle: true });
-    return TableSchemaService.cloneTableSchema(
-      schema.datamart_id,
-      schema.id,
-    ).then(s => {
-      return Promise.all([
-        this.fetchSchemaDetail(s.data.datamart_id, s.data.id),
-        this.fetchSchemas(s.data.datamart_id, false),
-      ]);
-    })
-    .catch(err => {
-      this.props.notifyError(err);
-      this.setState({ loadingList: false, loadingSingle: false })
-    });
+    return this._tableSchemaService
+      .cloneTableSchema(schema.datamart_id, schema.id)
+      .then(s => {
+        return Promise.all([
+          this.fetchSchemaDetail(s.data.datamart_id, s.data.id),
+          this.fetchSchemas(s.data.datamart_id, false),
+        ]);
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({ loadingList: false, loadingSingle: false });
+      });
   };
 
   validateSchema = () => {
     const { selectedSchema } = this.state;
     if (selectedSchema) {
       this.setState({ loadingSingle: true });
-      return TableSchemaService.validateTableSchema(
-        selectedSchema.datamart_id,
-        selectedSchema.id,
-      )
+      return this._tableSchemaService
+        .validateTableSchema(selectedSchema.datamart_id, selectedSchema.id)
         .then(r =>
           this.setState({ schemaValidation: r.data, loadingSingle: false }),
         )
@@ -169,10 +173,8 @@ class DatamartTableViewTab extends React.Component<Props, State> {
         loadingList: true,
         schemaValidation: undefined,
       });
-      return TableSchemaService.publishTableSchema(
-        selectedSchema.datamart_id,
-        selectedSchema.id,
-      )
+      return this._tableSchemaService
+        .publishTableSchema(selectedSchema.datamart_id, selectedSchema.id)
         .then(r => this.fetchSchemas(r.data.datamart_id, true))
         .catch(() =>
           this.setState({ loadingSingle: false, loadingList: false }),
@@ -180,8 +182,6 @@ class DatamartTableViewTab extends React.Component<Props, State> {
     }
     return Promise.resolve();
   };
-
-  
 
   onClickOnSelect = (schema: RuntimeSchemaResource) => () =>
     this.selectSchema(schema);
@@ -197,7 +197,6 @@ class DatamartTableViewTab extends React.Component<Props, State> {
     } = this.state;
 
     let additionnalButton;
-
 
     const isInValidationMode = !!schemaValidation;
     const validationError =
@@ -314,7 +313,6 @@ class DatamartTableViewTab extends React.Component<Props, State> {
                   }}
                   value={selectedSchemaText}
                 />
-                
               </div>
             )}
           </Col>

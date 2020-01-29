@@ -34,10 +34,10 @@ import ResourceTimelinePage, {
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
-import { getLinkedResourceIdInSelection } from '../../../../../utils/ResourceHistoryHelper';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
+import { IResourceHistoryService } from '../../../../../services/ResourceHistoryService';
 
 interface DisplayCampaignActionBarProps {
   campaign: DisplayCampaignInfoResource;
@@ -74,6 +74,9 @@ class DisplayCampaignActionbar extends React.Component<
 > {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
+
+  @lazyInject(TYPES.IResourceHistoryService)
+  private _resourceHistoryService: IResourceHistoryService;
 
   constructor(props: JoinedProps) {
     super(props);
@@ -547,7 +550,7 @@ class DisplayCampaignActionbar extends React.Component<
                       );
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'GOAL_SELECTION',
                         id,
@@ -559,7 +562,7 @@ class DisplayCampaignActionbar extends React.Component<
                       });
                     },
                     goToResource: (id: string) => {
-                      getLinkedResourceIdInSelection(
+                      this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'GOAL_SELECTION',
                         id,

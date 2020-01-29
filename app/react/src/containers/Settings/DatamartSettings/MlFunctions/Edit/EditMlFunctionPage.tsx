@@ -12,15 +12,17 @@ import { DatamartSelector } from '../../../../Datamart';
 import messages from './messages';
 import { Omit } from '../../../../../utils/Types';
 import { MlFunctionResource } from '../../../../../models/datamart/MlFunction';
-import { IMlFunctionService, MlFunctionService } from '../../../../../services/MlFunctionService';
+import { IMlFunctionService } from '../../../../../services/MlFunctionService';
 import { SpecificFieldsFunction } from '../../../../Plugin/Edit/PluginEditForm';
 import GeneralInformation from './GeneralInformationSection';
-import RuntimeSchemaService from '../../../../../services/RuntimeSchemaService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { Loading } from '../../../../../components';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { IRuntimeSchemaService } from '../../../../../services/RuntimeSchemaService';
 
 const MlFunctionPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<MlFunctionResource>>
 
@@ -40,7 +42,11 @@ type JoinedProps = RouteComponentProps<MlFunctionRouteParam> &
 
 class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
 
-  private _mlFunctionService: IMlFunctionService = new MlFunctionService();
+  @lazyInject(TYPES.IMlFunctionService)
+  private _mlFunctionService: IMlFunctionService;
+
+  @lazyInject(TYPES.IRuntimeSchemaService)
+  private _runtimeSchemaService: IRuntimeSchemaService;
 
   constructor(props: JoinedProps) {
     super(props);
@@ -74,10 +80,10 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
     datamartId: string,
   ) => {
     this.setState({ loading: true })
-    return RuntimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
+    return this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
       const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
       if (!liveSchema) return [];
-      return RuntimeSchemaService.getObjectTypeInfoResources(
+      return this._runtimeSchemaService.getObjectTypeInfoResources(
         datamartId,
         liveSchema.id,
       )

@@ -1,10 +1,24 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
-import { BidOptimizer } from '../../models/Plugins';
+import { BidOptimizer, PluginProperty } from '../../models/Plugins';
 import PluginInstanceService from '../PluginInstanceService';
 import { PluginLayout } from '../../models/plugin/PluginLayout';
 import { injectable } from 'inversify';
 
-export interface IBidOptimizerService {}
+export interface IBidOptimizerService
+  extends PluginInstanceService<BidOptimizer> {
+  getBidOptimizers: (
+    organisationId: string,
+    options: object,
+  ) => Promise<DataListResponse<BidOptimizer>>;
+  deleteBidOptimizer: (
+    id: string,
+    options?: object,
+  ) => Promise<DataResponse<BidOptimizer>>;
+  getBidOptimizerProperties: (
+    id: string,
+    options?: object,
+  ) => Promise<DataListResponse<PluginProperty>>;
+}
 
 @injectable()
 export class BidOptimizerService extends PluginInstanceService<BidOptimizer>
@@ -36,13 +50,12 @@ export class BidOptimizerService extends PluginInstanceService<BidOptimizer>
     return ApiService.deleteRequest(endpoint, options);
   }
 
-  // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
-  getBidOptimizerProperties(id: string, options: object = {}) {
+  getBidOptimizerProperties(
+    id: string,
+    options: object = {},
+  ): Promise<DataListResponse<PluginProperty>> {
     const endpoint = `bid_optimizers/${id}/properties`;
-
-    return ApiService.getRequest(endpoint, options).then((res: any) => {
-      return { ...res.data, id };
-    });
+    return ApiService.getRequest(endpoint, options);
   }
 
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
@@ -60,5 +73,3 @@ export class BidOptimizerService extends PluginInstanceService<BidOptimizer>
     });
   }
 }
-
-export default new BidOptimizerService();

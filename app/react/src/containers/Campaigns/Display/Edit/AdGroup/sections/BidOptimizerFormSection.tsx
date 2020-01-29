@@ -19,7 +19,6 @@ import {
   PropertyResourceShape,
   StringPropertyResource,
 } from '../../../../../../models/plugin/index';
-import BidOptimizerService from '../../../../../../services/Library/BidOptimizerService';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import {
   DataResponse,
@@ -31,6 +30,9 @@ import {
 } from '../../../../../../utils/ApiHelper';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 import { BidOptimizationObjectiveType } from '../../../../../../models/campaign/constants';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../constants/types';
+import { IBidOptimizerService } from '../../../../../../services/Library/BidOptimizerService';
 
 
 const InputGroup = Input.Group;
@@ -56,6 +58,9 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
   cancelablePromise: CancelablePromise<
     [DataResponse<BidOptimizer>, DataListResponse<PropertyResourceShape>]
   >;
+
+  @lazyInject(TYPES.IBidOptimizerService)
+  private _bidOptimizerService: IBidOptimizerService;
 
   constructor(props: Props) {
     super(props);
@@ -85,8 +90,8 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
   fetchBidOptimizer = (bidOptimizerId: string) => {
     this.cancelablePromise = makeCancelable(
       Promise.all([
-        BidOptimizerService.getInstanceById(bidOptimizerId),
-        BidOptimizerService.getInstanceProperties(bidOptimizerId),
+        this._bidOptimizerService.getInstanceById(bidOptimizerId),
+        this._bidOptimizerService.getInstanceProperties(bidOptimizerId),
       ]),
     );
 

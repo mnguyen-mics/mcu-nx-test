@@ -1,8 +1,21 @@
 import { ReportViewResponse, parseFilter, Filter } from './ReportService';
 import ApiService from './ApiService';
 import McsMoment, { formatMcsDate } from '../utils/McsMoment';
+import { injectable } from 'inversify';
 
-const ServiceUsageReportService = {
+export interface IServiceUsageReportService {
+  getServiceUsageProviders: (
+    organisationId: string,
+    startDate: McsMoment,
+    endDate: McsMoment,
+    dimension: string[],
+    metrics?: string[],
+    filterList?: Filter[],
+  ) => Promise<ReportViewResponse>;
+}
+
+@injectable()
+export class ServiceUsageReportService implements IServiceUsageReportService {
   getServiceUsageProviders(
     organisationId: string,
     startDate: McsMoment,
@@ -12,9 +25,7 @@ const ServiceUsageReportService = {
     filterList?: Filter[],
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/service_usage_provider_report';
-    const DEFAULT_METRICS = [
-      'unit_count',
-    ];
+    const DEFAULT_METRICS = ['unit_count'];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const parsedFilters = parseFilter(filterList);
@@ -32,7 +43,5 @@ const ServiceUsageReportService = {
       };
     }
     return ApiService.getRequest(endpoint, params);
-  },
-};
-
-export default ServiceUsageReportService;
+  }
+}

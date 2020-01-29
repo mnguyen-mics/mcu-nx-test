@@ -189,7 +189,7 @@ class SegmentFormSection extends React.Component<Props, State> {
     const segmentIds = fields
       .getAll()
       .map(segmentSelection => segmentSelection.model.audience_segment_id);
-    const providerTechnicalNames = consents.map(c => c.model.technical_name);
+    const providerTechnicalNames = consents.map(c => c.model ? c.model.technical_name: '-');
 
     return (
       <div>
