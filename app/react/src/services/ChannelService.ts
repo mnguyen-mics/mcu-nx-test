@@ -6,6 +6,7 @@ import {
   ChannelResourceShape,
   SiteResource,
   MobileApplicationResource,
+  ChannelType,
 } from '../models/settings/settings';
 import { injectable } from 'inversify';
 
@@ -14,6 +15,10 @@ export interface IChannelService {
     organisationId: string,
     datamartId: string,
     options?: object,
+  ) => Promise<DataListResponse<ChannelResource>>;
+  getChannelsByOrganisation: (
+    organisationId: string,
+    channelType: ChannelType,
   ) => Promise<DataListResponse<ChannelResource>>;
   getChannel: (
     datamartId: string,
@@ -102,6 +107,18 @@ export class ChannelService implements IChannelService {
 
     return ApiService.getRequest(endpoint, params);
   }
+  getChannelsByOrganisation(
+    organisationId: string,
+    channelType: ChannelType,
+  ): Promise<DataListResponse<ChannelResource>> {
+    const endpoint = `channels`;
+    const params = {
+      organisation_id: organisationId,
+      channel_type: channelType,
+    };
+
+    return ApiService.getRequest(endpoint, params);
+  };
   getChannel(
     datamartId: string,
     channelId: string,
