@@ -6,6 +6,7 @@ import {
   GoalCreateRequest,
   AttributionSelectionResource,
 } from '../models/goal';
+import { injectable } from 'inversify';
 
 export interface GoalsOptions extends PaginatedApiParam {
   keywords?: string[];
@@ -15,7 +16,47 @@ export interface GoalsOptions extends PaginatedApiParam {
   datamart_id?: string;
 }
 
-const GoalService = {
+export interface IGoalService {
+  getGoals: (
+    organisationId: string,
+    options?: GoalsOptions,
+  ) => Promise<DataListResponse<GoalResource>>;
+
+  getGoal: (goaldId: string) => Promise<DataResponse<GoalResource>>;
+
+  updateGoal: (
+    goaldId: string,
+    resource: Partial<GoalResource>,
+  ) => Promise<DataResponse<GoalResource>>;
+  createGoal: (
+    organisationId: string,
+    resource: Partial<GoalCreateRequest>,
+  ) => Promise<DataResponse<GoalResource>>;
+  deleteGoal: (goalId: string) => Promise<DataResponse<GoalResource>>;
+
+  linkAttributionModelToGoal: (
+    goalId: string,
+    resource: Partial<AttributionSelectionCreateRequest>,
+  ) => Promise<DataResponse<AttributionSelectionResource>>;
+
+  updateLinkAttributionModel: (
+    goalId: string,
+    selectionId: string,
+    resource: Partial<AttributionSelectionResource>,
+  ) => Promise<DataResponse<AttributionSelectionResource>>;
+
+  getAttributionModels: (
+    goalId: string,
+  ) => Promise<DataListResponse<AttributionSelectionResource>>;
+
+  deleteAttributionModel: (
+    goalId: string,
+    attributionModelId: string,
+  ) => Promise<DataResponse<AttributionSelectionResource>>;
+}
+
+@injectable()
+export class GoalService implements IGoalService {
   getGoals(
     organisationId: string,
     options: GoalsOptions = {},
@@ -25,17 +66,17 @@ const GoalService = {
       organisation_id: organisationId,
       ...options,
     };
-    if(options.datamart_id) {
-      params.datamart_id = options.datamart_id
+    if (options.datamart_id) {
+      params.datamart_id = options.datamart_id;
     }
     return ApiService.getRequest(endpoint, params);
-  },
+  }
 
   getGoal(goaldId: string): Promise<DataResponse<GoalResource>> {
     const endpoint = `goals/${goaldId}`;
 
     return ApiService.getRequest(endpoint);
-  },
+  }
 
   updateGoal(
     goaldId: string,
@@ -44,7 +85,7 @@ const GoalService = {
     const endpoint = `goals/${goaldId}`;
 
     return ApiService.putRequest(endpoint, resource);
-  },
+  }
 
   createGoal(
     organisationId: string,
@@ -53,15 +94,13 @@ const GoalService = {
     const endpoint = `goals?organisation_id=${organisationId}`;
 
     return ApiService.postRequest(endpoint, resource);
-  },
+  }
 
-  deleteGoal(
-    goalId: string,
-  ): Promise<DataResponse<GoalResource>> {
+  deleteGoal(goalId: string): Promise<DataResponse<GoalResource>> {
     const endpoint = `goals/${goalId}`;
 
     return ApiService.deleteRequest(endpoint);
-  },
+  }
 
   linkAttributionModelToGoal(
     goalId: string,
@@ -70,7 +109,7 @@ const GoalService = {
     const endpoint = `goals/${goalId}/attribution_models`;
 
     return ApiService.postRequest(endpoint, resource);
-  },
+  }
 
   updateLinkAttributionModel(
     goalId: string,
@@ -80,14 +119,14 @@ const GoalService = {
     const endpoint = `goals/${goalId}/attribution_models/${selectionId}`;
 
     return ApiService.putRequest(endpoint, resource);
-  },
+  }
 
   getAttributionModels(
     goalId: string,
   ): Promise<DataListResponse<AttributionSelectionResource>> {
     const endpoint = `goals/${goalId}/attribution_models`;
     return ApiService.getRequest(endpoint);
-  },
+  }
 
   deleteAttributionModel(
     goalId: string,
@@ -95,7 +134,5 @@ const GoalService = {
   ): Promise<any> {
     const endpoint = `goals/${goalId}/attribution_models/${attributionModelId}`;
     return ApiService.deleteRequest(endpoint);
-  },
-};
-
-export default GoalService;
+  }
+}

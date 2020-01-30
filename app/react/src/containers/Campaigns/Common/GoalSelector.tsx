@@ -7,9 +7,11 @@ import TableSelector, {
 } from '../../../components/ElementSelector/TableSelector';
 import { SearchFilter } from '../../../components/ElementSelector';
 import { DataColumnDefinition } from '../../../components/TableView/TableView';
-import GoalService from '../../../services/GoalService';
 import { GoalResource } from '../../../models/goal';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { lazyInject } from '../../../config/inversify.config';
+import { IGoalService } from '../../../services/GoalService';
+import { TYPES } from '../../../constants/types';
 
 const GoalTableSelector: React.ComponentClass<
   TableSelectorProps<GoalResource>
@@ -41,6 +43,10 @@ type Props = GoalSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class GoalSelector extends React.Component<Props> {
+
+  @lazyInject(TYPES.IGoalService)
+  private _goalService: IGoalService;
+
   saveGoals = (goalIds: string[], goals: GoalResource[]) => {
     this.props.save(goals);
   };
@@ -57,7 +63,7 @@ class GoalSelector extends React.Component<Props> {
       options.keywords = filter.keywords;
     }
 
-    return GoalService.getGoals(organisationId, options);
+    return this._goalService.getGoals(organisationId, options);
   };
 
   render() {
@@ -71,7 +77,7 @@ class GoalSelector extends React.Component<Props> {
       },
     ];
 
-    const fetchGoal = (goalId: string) => GoalService.getGoal(goalId);
+    const fetchGoal = (goalId: string) => this._goalService.getGoal(goalId);
 
     return (
       <GoalTableSelector

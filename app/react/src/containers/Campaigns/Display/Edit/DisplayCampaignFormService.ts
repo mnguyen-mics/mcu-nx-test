@@ -25,12 +25,12 @@ import {
 import { IAdGroupFormService } from './AdGroup/AdGroupFormService';
 import { EditCampaignsFormData } from './Campaign/MutiEdit/EditCampaignsForm';
 import operation from '../Edit/Campaign/domain';
-import GoalService from '../../../../services/GoalService';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../constants/types';
 import { IGoalFormService } from '../../Goal/Edit/GoalFormService';
 import { INITIAL_AD_GROUP_FORM_DATA } from './AdGroup/domain';
+import { IGoalService } from '../../../../services/GoalService';
 
 type DisplayCampaignId = string;
 
@@ -74,6 +74,9 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
 
   @inject(TYPES.IAdGroupFormService)
   private _adGroupFormService: IAdGroupFormService;
+
+  @inject(TYPES.IGoalService)
+  private _goalService: IGoalService;
 
   loadCampaign(
     displayCampaignId: string,
@@ -119,7 +122,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
       const tasks: Task[] = [];
       goalSelections.forEach(el => {
         tasks.push(() => {
-          return GoalService.getGoal(el.goal_id)
+          return this._goalService.getGoal(el.goal_id)
             .then(resp => resp.data)
             .then(goalResource => {
               goalFields.push({

@@ -13,7 +13,6 @@ import log from '../../../../utils/Logger';
 import messages from './messages';
 import ReportService from '../../../../services/ReportService';
 import ExportService from '../../../../services/ExportService';
-import GoalService from '../../../../services/GoalService';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { GOAL_SEARCH_SETTINGS } from './constants';
 import { Index } from '../../../../utils';
@@ -32,6 +31,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { IDisplayCampaignService } from '../../../../services/DisplayCampaignService';
 import { TYPES } from '../../../../constants/types';
 import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
+import { IGoalService } from '../../../../services/GoalService';
 
 interface ExportActionbarProps {
   goal?: GoalResource;
@@ -63,82 +63,6 @@ const reportTypeExportOptions = [
   },
 ];
 
-const fetchExportData = (
-  organisationId: string,
-  goalId: string,
-  filter: Index<any>,
-) => {
-  const startDate = filter.from;
-  const endDate = filter.to;
-
-  const conversionPerformancePromise = ReportService.getConversionPerformanceReport(
-    organisationId,
-    startDate,
-    endDate,
-    ['day'],
-    ['value', 'price', 'conversions'],
-    [{ name: 'goal_id', value: goalId }],
-  );
-
-  const attributionPerformancePromises = GoalService.getAttributionModels(
-    goalId,
-  ).then(response => {
-    const promises = lodash.flatMap(
-      response.data,
-      attributionSelectionResource => {
-        return reportTypeExportOptions.map(reportTypeOptions => {
-          return ReportService.getConversionAttributionPerformance(
-            organisationId,
-            startDate,
-            endDate,
-            [],
-            reportTypeOptions.dimensions,
-            [
-              'weighted_conversions',
-              'weighted_value',
-              'interaction_to_conversion_duration',
-            ],
-            [
-              { name: 'goal_id', value: goalId },
-              {
-                name: 'attribution_model_id',
-                value: attributionSelectionResource.id,
-              },
-            ],
-          ).then(result => ({
-            ...result,
-            attribution_model_id:
-              attributionSelectionResource.attribution_model_id,
-            attribution_model_name:
-              attributionSelectionResource.attribution_model_name,
-            report_type: reportTypeOptions.reportType,
-          }));
-        });
-      },
-    );
-
-    return Promise.all(promises);
-  });
-
-  return conversionPerformancePromise.then(conversionPerformanceResult => {
-    return attributionPerformancePromises.then(attributionPerformanceResult => {
-      return {
-        goalData: normalizeReportView(
-          conversionPerformanceResult.data.report_view,
-        ),
-        attributionsData: attributionPerformanceResult.map(attribution => ({
-          attribution_model_id: attribution.attribution_model_id,
-          attribution_model_name: attribution.attribution_model_name,
-          report_type: attribution.report_type,
-          normalized_report_view: normalizeReportView(
-            attribution.data.report_view,
-          ),
-        })),
-      };
-    });
-  });
-};
-
 class ExportsActionbar extends React.Component<
   JoinedProps,
   ExportActionbarState
@@ -149,6 +73,9 @@ class ExportsActionbar extends React.Component<
   @lazyInject(TYPES.IResourceHistoryService)
   private _resourceHistoryService: IResourceHistoryService;
 
+  @lazyInject(TYPES.IGoalService)
+  private _goalService: IGoalService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.handleRunExport = this.handleRunExport.bind(this);
@@ -156,6 +83,84 @@ class ExportsActionbar extends React.Component<
       exportIsRunning: false,
     };
   }
+
+  fetchExportData = (
+    organisationId: string,
+    goalId: string,
+    filter: Index<any>,
+  ) => {
+    const startDate = filter.from;
+    const endDate = filter.to;
+
+    const conversionPerformancePromise = ReportService.getConversionPerformanceReport(
+      organisationId,
+      startDate,
+      endDate,
+      ['day'],
+      ['value', 'price', 'conversions'],
+      [{ name: 'goal_id', value: goalId }],
+    );
+
+    const attributionPerformancePromises = this._goalService
+      .getAttributionModels(goalId)
+      .then(response => {
+        const promises = lodash.flatMap(
+          response.data,
+          attributionSelectionResource => {
+            return reportTypeExportOptions.map(reportTypeOptions => {
+              return ReportService.getConversionAttributionPerformance(
+                organisationId,
+                startDate,
+                endDate,
+                [],
+                reportTypeOptions.dimensions,
+                [
+                  'weighted_conversions',
+                  'weighted_value',
+                  'interaction_to_conversion_duration',
+                ],
+                [
+                  { name: 'goal_id', value: goalId },
+                  {
+                    name: 'attribution_model_id',
+                    value: attributionSelectionResource.id,
+                  },
+                ],
+              ).then(result => ({
+                ...result,
+                attribution_model_id:
+                  attributionSelectionResource.attribution_model_id,
+                attribution_model_name:
+                  attributionSelectionResource.attribution_model_name,
+                report_type: reportTypeOptions.reportType,
+              }));
+            });
+          },
+        );
+
+        return Promise.all(promises);
+      });
+
+    return conversionPerformancePromise.then(conversionPerformanceResult => {
+      return attributionPerformancePromises.then(
+        attributionPerformanceResult => {
+          return {
+            goalData: normalizeReportView(
+              conversionPerformanceResult.data.report_view,
+            ),
+            attributionsData: attributionPerformanceResult.map(attribution => ({
+              attribution_model_id: attribution.attribution_model_id,
+              attribution_model_name: attribution.attribution_model_name,
+              report_type: attribution.report_type,
+              normalized_report_view: normalizeReportView(
+                attribution.data.report_view,
+              ),
+            })),
+          };
+        },
+      );
+    });
+  };
 
   handleRunExport() {
     const {
@@ -179,7 +184,7 @@ class ExportsActionbar extends React.Component<
       0,
     );
 
-    fetchExportData(organisationId, goal.id, filter)
+    this.fetchExportData(organisationId, goal.id, filter)
       .then(exportData => {
         ExportService.exportGoal(
           organisationId,
@@ -222,8 +227,8 @@ class ExportsActionbar extends React.Component<
     if (goal) {
       const promise =
         goal.status === 'ACTIVE'
-          ? GoalService.updateGoal(goal.id, { status: 'PAUSED' })
-          : GoalService.updateGoal(goal.id, { status: 'ACTIVE' });
+          ? this._goalService.updateGoal(goal.id, { status: 'PAUSED' })
+          : this._goalService.updateGoal(goal.id, { status: 'ACTIVE' });
       return promise
         .then(res => {
           return fetchGoal(goal.id);
@@ -313,6 +318,12 @@ class ExportsActionbar extends React.Component<
 
     const handleArchiveGoal = (displayCampaignId: string) => {
       if (goal) {
+        const updateGoal = () => {
+          return this._goalService.updateGoal(goal.id, {
+            ...goal,
+            archived: true,
+          });
+        };
         Modal.confirm({
           title: formatMessage(messages.archiveGoalModalTitle),
           content: formatMessage(messages.archiveGoalModalBody),
@@ -320,7 +331,7 @@ class ExportsActionbar extends React.Component<
           okText: formatMessage(modalMessages.confirm),
           cancelText: formatMessage(modalMessages.cancel),
           onOk() {
-            return GoalService.updateGoal(goal.id, { ...goal, archived: true })
+            return updateGoal()
               .then(() => {
                 const editUrl = `/v2/o/${organisationId}/campaigns/goals`;
                 history.push({
@@ -361,30 +372,34 @@ class ExportsActionbar extends React.Component<
                         );
                       },
                       getName: (id: string) => {
-                        return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                          organisationId,
-                          'GOAL_SELECTION',
-                          id,
-                          'CAMPAIGN',
-                        ).then(campaignId => {
-                          return this._displayCampaignService
-                            .getCampaignName(campaignId)
-                            .then(response => {
-                              return response;
-                            });
-                        });
+                        return this._resourceHistoryService
+                          .getLinkedResourceIdInSelection(
+                            organisationId,
+                            'GOAL_SELECTION',
+                            id,
+                            'CAMPAIGN',
+                          )
+                          .then(campaignId => {
+                            return this._displayCampaignService
+                              .getCampaignName(campaignId)
+                              .then(response => {
+                                return response;
+                              });
+                          });
                       },
                       goToResource: (id: string) => {
-                        this._resourceHistoryService.getLinkedResourceIdInSelection(
-                          organisationId,
-                          'GOAL_SELECTION',
-                          id,
-                          'CAMPAIGN',
-                        ).then(campaignId => {
-                          history.push(
-                            `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
-                          );
-                        });
+                        this._resourceHistoryService
+                          .getLinkedResourceIdInSelection(
+                            organisationId,
+                            'GOAL_SELECTION',
+                            id,
+                            'CAMPAIGN',
+                          )
+                          .then(campaignId => {
+                            history.push(
+                              `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
+                            );
+                          });
                       },
                     },
                   },

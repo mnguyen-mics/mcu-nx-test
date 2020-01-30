@@ -5,7 +5,6 @@ import { Button } from 'antd';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import DisplayCampaign from './DisplayCampaign';
 import ReportService from '../../../../../services/ReportService';
-import GoalService from '../../../../../services/GoalService';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { makeCancelable } from '../../../../../utils/ApiHelper';
@@ -36,6 +35,7 @@ import { UpdateMessage } from './DisplayCampaignAdGroupTable';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
+import { IGoalService } from '../../../../../services/GoalService';
 
 type Props = RouteComponentProps<{
   organisationId: string;
@@ -51,6 +51,9 @@ class DisplayCampaignPage extends React.Component<
 
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
+
+  @lazyInject(TYPES.IGoalService)
+  private _goalService: IGoalService;
 
   constructor(props: Props) {
     super(props);
@@ -296,7 +299,7 @@ class DisplayCampaignPage extends React.Component<
       .then(goals => goals.data)
       .then(goals => {
         const promises = goals.map(goal => {
-          return GoalService.getAttributionModels(goal.goal_id).then(
+          return this._goalService.getAttributionModels(goal.goal_id).then(
             attribution => {
               const goalCampaign: GoalsCampaignRessource = {
                 ...goal,
@@ -313,9 +316,6 @@ class DisplayCampaignPage extends React.Component<
           goals: {
             items: goals,
             isLoading: false,
-            hasFetched: true,
-            hasItems: true,
-            error: false,
             isArchiving: false,
             isUpdating: false,
           },

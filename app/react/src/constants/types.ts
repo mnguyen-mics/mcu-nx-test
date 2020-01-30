@@ -20,6 +20,7 @@ const TYPES = {
   IScenarioService: Symbol.for('scenarioService'),
   IAutomationFormService: Symbol.for('automationFormService'),
   IQueryService: Symbol.for('queryService'),
+  IGoalService: Symbol.for('goalService'),
   IGoalFormService: Symbol.for('goalFormService'),
   IExportService: Symbol.for('exportService'),
   IUserDataService: Symbol.for('userDataService'),
