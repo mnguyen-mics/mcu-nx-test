@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import AttributionModelService from '../../../../../services/AttributionModelService';
+import { IAttributionModelService } from '../../../../../services/AttributionModelService';
 import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
@@ -54,8 +54,11 @@ class AttributionModelContent extends React.Component<
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
 
+  @lazyInject(TYPES.IAttributionModelService)
+  private _attributionModelService: IAttributionModelService;
+
   archiveAttributionModel = (attributionModelId: string) => {
-    return AttributionModelService.deleteAttributionModel(attributionModelId);
+    return this._attributionModelService.deleteAttributionModel(attributionModelId);
   };
 
   fetchAttributionModel = (organisationId: string, filter: Filters) => {
@@ -63,7 +66,7 @@ class AttributionModelContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      AttributionModelService.getAttributionModels(
+      this._attributionModelService.getAttributionModels(
         organisationId,
         options,
       ).then(results => {

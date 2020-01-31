@@ -5,7 +5,7 @@ import PluginInstanceService from './PluginInstanceService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { injectable } from 'inversify';
 
-export interface IAttributionModelService {
+export interface IAttributionModelService extends PluginInstanceService<AttributionModel> {
   getAttributionModels: (
     organisationId: string,
     options: PaginatedApiParam,
@@ -69,5 +69,3 @@ export class AttributionModelService
     });
   }
 }
-
-export default new AttributionModelService();

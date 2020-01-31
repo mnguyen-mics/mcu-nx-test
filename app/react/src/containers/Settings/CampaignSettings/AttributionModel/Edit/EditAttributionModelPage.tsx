@@ -4,9 +4,11 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
 import { AttributionModel, PluginResource, PluginInstance, PluginProperty } from '../../../../../models/Plugins';
-import AttributionModelService from '../../../../../services/AttributionModelService';
 import { Omit } from '../../../../../utils/Types';
 import { DefaultSelect, FormSelectField } from '../../../../../components/Form';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IAttributionModelService } from '../../../../../services/AttributionModelService';
 
 const AttributionModelPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AttributionModel>>
 
@@ -54,6 +56,9 @@ type Props = RouteComponentProps<AttributionModelRouteParam> &
   InjectedIntlProps;
 
 class EditAttributionModelPage extends React.Component<Props> {
+  @lazyInject(TYPES.IAttributionModelService)
+  private _attributionModelService: IAttributionModelService;
+
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/attribution_models`;
@@ -137,7 +142,7 @@ class EditAttributionModelPage extends React.Component<Props> {
         listTitle={messages.listTitle}
         listSubTitle={messages.listSubTitle}
         breadcrumbPaths={breadcrumbPaths}
-        pluginInstanceService={AttributionModelService}
+        pluginInstanceService={this._attributionModelService}
         pluginInstanceId={attributionModelId}
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.saveOrCreatePluginInstance}

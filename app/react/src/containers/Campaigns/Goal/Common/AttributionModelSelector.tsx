@@ -7,11 +7,13 @@ import {
   getPaginatedApiParam,
   PaginatedApiParam,
 } from '../../../../utils/ApiHelper';
-import AttributionModelService from '../../../../services/AttributionModelService';
 import { TableSelectorProps } from '../../../../components/ElementSelector/TableSelector';
 import { TableSelector } from '../../../../components/index';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { AttributionModel } from '../../../../models/Plugins';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IAttributionModelService } from '../../../../services/AttributionModelService';
 
 const AttributionModelTableSelector: React.ComponentClass<
   TableSelectorProps<AttributionModel>
@@ -46,19 +48,22 @@ type Props = AttributionModelSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AttributionModelSelector extends React.Component<Props> {
+  @lazyInject(TYPES.IAttributionModelService)
+  private _attributionModelService: IAttributionModelService;
+
   fetchAttributionModels = (filter: SearchFilter) => {
     const { match: { params: { organisationId } } } = this.props;
     const options: PaginatedApiParam = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
-    return AttributionModelService.getAttributionModels(
+    return this._attributionModelService.getAttributionModels(
       organisationId,
       options,
     );
   };
 
   fetchAttributionModel = (attributionModelId: string) => {
-    return AttributionModelService.getAttributionModel(attributionModelId);
+    return this._attributionModelService.getAttributionModel(attributionModelId);
   };
 
   saveAttributionModels = (
