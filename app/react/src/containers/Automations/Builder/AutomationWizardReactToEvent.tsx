@@ -6,7 +6,6 @@ import { ActionBarProps } from "../../../components/ActionBar";
 import { injectIntl, InjectedIntlProps, defineMessages } from "react-intl";
 import { withValidators, FormMultiTagField } from "../../../components/Form";
 import { ValidatorProps } from "../../../components/Form/withValidators";
-import FormMultiTag from "../../../components/Form/FormSelect/FormMultiTag";
 import AutomationActionBar from "./ActionBar/AutomationActionBar";
 import { beginNode, WizardValidObjectTypeField, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent, wizardValidObjectTypes } from "./domain";
 import { AutomationFormData } from "../Edit/domain";
@@ -18,6 +17,7 @@ import RuntimeSchemaService from "../../../services/RuntimeSchemaService";
 import { Loading } from "../../../components";
 import injectNotifications, { InjectedNotificationProps } from "../../Notifications/injectNotifications";
 import { reducePromises } from "../../../utils/PromiseHelper";
+import FormMultiTag from "../../../components/Form/FormSelect/FormMultiTag";
 
 const FORM_ID = 'wizardReactToEventForm';
 
@@ -186,7 +186,7 @@ class AutomationWizardReactToEvent extends React.Component<Props, {}> {
     const {
       intl: { formatMessage },
       fieldValidators: {
-        isRequired
+        isRequired,
       },
       automationFormData,
       datamartId,
@@ -229,6 +229,10 @@ class AutomationWizardReactToEvent extends React.Component<Props, {}> {
                 }}
                 small={false}
                 validate={isRequired}
+                selectProps={{
+                  options: [],
+                  dropdownStyle: { display: 'none' }
+                }}
               />
             </div>
           </Form>
@@ -254,17 +258,13 @@ export default compose<Props, AutomationWizardReactToEventProps>(
 )(AutomationWizardReactToEvent);
 
 const messages = defineMessages({
-  save: {
-    id: 'automations.wizardReactToEvent.save',
-    defaultMessage: 'Save scenario'
-  },
   eventName: {
     id: 'automations.wizardReactToEvent.eventName',
     defaultMessage: 'Event name equals',
   },
   eventNameHelp: {
     id: 'automations.wizardReactToEvent.eventNameHelp',
-    defaultMessage: 'The event names that will trigger the scenario.',
+    defaultMessage: 'The event names that will trigger the Automation.',
   },
   schemaNotSuitableForAction: {
     id: 'automations.wizardReactToEvent.schemaNotSuitableForAction',

@@ -165,7 +165,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
           selectedDatamart.id,
           runtimeSchema.id,
         ).then(({ data: objectTypes }) => {
-          reducePromises(
+          return reducePromises(
             getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
               return RuntimeSchemaService.getFields(
                 selectedDatamart.id,
