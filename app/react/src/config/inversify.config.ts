@@ -160,6 +160,7 @@ import {
 } from '../services/Library/KeywordListsService';
 import getDecorators from 'inversify-inject-decorators';
 import { IDatamartReplicationService } from '../services/DatamartReplicationService';
+import { IAttributionModelService, AttributionModelService } from '../services/AttributionModelService';
 
 const container = new Container();
 
@@ -181,6 +182,9 @@ container
 container
   .bind<IAudiencePartitionsService>(TYPES.IAudiencePartitionsService)
   .to(AudiencePartitionsService);
+container
+  .bind<IAttributionModelService>(TYPES.IAttributionModelService)
+  .to(AttributionModelService);
 container.bind<IOverlapInterval>(TYPES.IOverlapInterval).to(OverlapInterval);
 container
   .bind<IDisplayCampaignFormService>(TYPES.IDisplayCampaignFormService)

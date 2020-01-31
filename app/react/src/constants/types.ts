@@ -5,6 +5,7 @@ const TYPES = {
   IAudienceFeedFormService: Symbol.for('audienceFeedFormService'),
   IAudienceSegmentFormService: Symbol.for('audienceSegmentFormService'),
   IAudiencePartitionsService: Symbol.for('audiencePartitionsService'),
+  IAttributionModelService: Symbol.for('attributionModelService'),
   IOverlapInterval: Symbol.for('overlapInterval'),
   IDisplayCampaignFormService: Symbol.for('displayCampaignFormService'),
   IAudienceTagFeedService: Symbol.for('audienceTagFeedService'),
