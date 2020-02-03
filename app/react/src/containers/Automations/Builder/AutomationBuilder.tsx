@@ -150,18 +150,21 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.setDiagramModel(model);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     const { automationTreeData } = this.props;
-    const model = new DiagramModel();
-    model.setLocked(this.engine.getDiagramModel().locked);
-    model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
-    model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
-    model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
-    setTimeout(() => {
-      this.startAutomationTree(automationTreeData, model);
-      this.engine.setDiagramModel(model);
-      this.engine.repaintCanvas();
-    }, 10);
+
+    if(this.state.viewNodeSelector === prevState.viewNodeSelector) {
+      const model = new DiagramModel();
+      model.setLocked(this.engine.getDiagramModel().locked);
+      model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
+      model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
+      model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
+      setTimeout(() => {
+        this.startAutomationTree(automationTreeData, model);
+        this.engine.setDiagramModel(model);
+        this.engine.repaintCanvas();
+      }, 10);
+    }
   }
 
   addNode = (

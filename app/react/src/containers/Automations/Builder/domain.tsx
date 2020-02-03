@@ -22,6 +22,7 @@ import {
   WaitFormData,
   isIfNode,
   AudienceSegmentAutomationFormData,
+  isScenarioNodeShape,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
@@ -69,6 +70,34 @@ export interface NodeOperation {
   execute(automationData: StorylineNodeModel): StorylineNodeModel;
 }
 
+const cleanLastAdded = (automationData: StorylineNodeModel): StorylineNodeModel => {
+  const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
+    (child) => {
+      if(child.out_edges.length === 0) {
+        return child;
+      } else {
+        if (isScenarioNodeShape(child.node)) {
+          return cleanLastAdded({
+            ...child,
+            node: {
+              ...child.node,
+              last_added_node: false,
+            }
+          });
+        } else {
+          return cleanLastAdded(child);
+        }
+      }
+    },
+  );
+
+  return {
+    node: automationData.node,
+    in_edge: automationData.in_edge,
+    out_edges: outEdges,
+  };
+}
+
 // ADD NODE
 
 export class AddNodeOperation implements NodeOperation {
@@ -88,7 +117,7 @@ export class AddNodeOperation implements NodeOperation {
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
     const result = this.iterateData(
-      automationData,
+      cleanLastAdded(automationData),
       this.parentNodeId,
       this.childNodeId,
     );
@@ -142,7 +171,10 @@ export class AddNodeOperation implements NodeOperation {
             newOutEdges = [childNode];
           }
           const newNode: StorylineNodeModel = {
-            node: this.node,
+            node: {
+              ...this.node,
+              last_added_node: true,
+            },
             in_edge: {
               id: generateFakeId(),
               source_id: parentNodeId,
@@ -218,7 +250,7 @@ export class DeleteNodeOperation implements NodeOperation {
   }
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
-    return this.iterateData(automationData, this.idNodeToBeDeleted);
+    return cleanLastAdded(this.iterateData(automationData, this.idNodeToBeDeleted));
   }
 
   iterateData(
@@ -290,7 +322,7 @@ export class UpdateNodeOperation implements NodeOperation {
   }
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
-    return this.iterateData(automationData, this.node.id, true);
+    return cleanLastAdded(this.iterateData(automationData, this.node.id, true));
   }
 
   buildUpdatedNode(storylineNode: StorylineNodeModel): StorylineNodeModel {

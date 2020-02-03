@@ -49,6 +49,7 @@ export interface ScenarioNodeResource {
   x?: number;
   y?: number;
   type: ScenarioNodeType;
+  last_added_node?: boolean;
 }
 
 export interface DisplayCampaignNodeResource extends ScenarioNodeResource {
