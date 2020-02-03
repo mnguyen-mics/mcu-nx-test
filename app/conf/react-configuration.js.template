@@ -17,6 +17,7 @@
     'automations-list',
     'automations-builder',
     'automations-wizard-react-to-event',
+    'automations-add-delete-to-from-segment-node',
     'creatives-display',
     'creatives-native',
     'creatives-email',
@@ -46,7 +47,6 @@
     'servicesSettings-subscribed_offers',
     // 'servicesSettings-my_service_catalog',
     // 'servicesSettings-my_offers',
-    'scenario-segment',
     'audience-dashboards-datamart_users_analytics',
   ];
 

@@ -2,7 +2,10 @@ import * as React from 'react';
 import { McsIconType } from '../../../../components/McsIcon';
 import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
-import { ScenarioNodeShape, IfNodeResource } from '../../../../models/automations/automations';
+import {
+  ScenarioNodeShape,
+  IfNodeResource,
+} from '../../../../models/automations/automations';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { AntIcon } from '../domain';
 import {
@@ -83,8 +86,8 @@ const conditionNode1: ScenarioNodeShape = {
   formData: {
     edges_selection: {},
     branch_number: 2,
-    name: ''
-  }
+    name: '',
+  },
 };
 
 const conditionNode2: ScenarioNodeShape = {
@@ -95,7 +98,7 @@ const conditionNode2: ScenarioNodeShape = {
   timeout: 1000,
   formData: {
     timeout: 1000,
-    name: ''
+    name: '',
   },
 };
 
@@ -105,11 +108,10 @@ const conditionNode3: IfNodeResource = {
   type: 'IF_NODE',
   scenario_id: '',
   query_id: '',
-  formData: {
-  },
+  formData: {},
 };
 
-type Props = InjectedFeaturesProps &  InjectedIntlProps;
+type Props = InjectedFeaturesProps & InjectedIntlProps;
 
 class AvailableNodeVisualizer extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -123,8 +125,11 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
 
   componentWillMount() {
     this.setState({
-      actionNodes: this.props.hasFeature('scenario-segment')? 
-      [emailCampaignNode, displayCampaignNode, audienceSegmentNode] : [emailCampaignNode, displayCampaignNode],
+      actionNodes: this.props.hasFeature(
+        'automations-add-delete-to-from-segment-node',
+      )
+        ? [emailCampaignNode, displayCampaignNode, audienceSegmentNode]
+        : [emailCampaignNode, displayCampaignNode],
       conditionNodes: [conditionNode1, conditionNode2, conditionNode3],
       exitsNodes: [],
     });
@@ -136,10 +141,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
         <TreeNode title={nodeType} selectable={false}>
           {nodes.map(node => {
             return (
-              <TreeNode
-                title={<AvailableNode node={node} />}
-                key={node.id}
-              />
+              <TreeNode title={<AvailableNode node={node} />} key={node.id} />
             );
           })}
         </TreeNode>
@@ -174,4 +176,3 @@ export default compose<Props, {}>(
   injectIntl,
   injectFeatures,
 )(AvailableNodeVisualizer);
-
