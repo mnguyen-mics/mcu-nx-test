@@ -65,7 +65,7 @@ const TYPES = {
   IDataFileService: Symbol.for('dataFileService'),
   IBidOptimizerService: Symbol.for('bidOptimizerService'),
   ITableSchemaService: Symbol.for('tableSchemaService'),
-  IServiceUsageReportService: Symbol.for('ServiceUsageReportService'),
+  IServiceUsageReportService: Symbol.for('serviceUsageReportService'),
   IRuntimeSchemaService: Symbol.for('runtimeSchemaService'),
   IResourceHistoryService: Symbol.for('resourceHistoryService'),
   IReferenceTableService: Symbol.for('referenceTableService')

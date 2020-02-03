@@ -31,7 +31,7 @@ export interface IRuntimeSchemaService {
     datamartId: string,
     runtimeSchemaId: string,
     runtimeSchema: string,
-  ) => Promise<DataResponse<{}>>;
+  ) => Promise<DataResponse<RuntimeSchemaResource>>;
 
   cloneRuntimeSchema: (
     datamartId: string,
@@ -191,7 +191,7 @@ export class RuntimeSchemaService implements IRuntimeSchemaService {
     datamartId: string,
     runtimeSchemaId: string,
     runtimeSchema: string,
-  ): Promise<DataResponse<{}>> {
+  ): Promise<DataResponse<RuntimeSchemaResource>> {
     return ApiService.putRequest(
       `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/text`,
       runtimeSchema,
