@@ -38,7 +38,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { Label } from '../../../Labels/Labels';
-import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
+import { executeTasksInSequence, Task } from '../../../../utils/PromiseHelper';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { Index } from '../../../../utils';

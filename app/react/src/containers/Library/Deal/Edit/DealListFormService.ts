@@ -1,5 +1,5 @@
 import { IDealListService } from '../../../../services/Library/DealListService';
-import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
+import { Task, executeTasksInSequence } from '../../../../utils/PromiseHelper';
 import {
   DealListFormData,
   DealFieldModel,

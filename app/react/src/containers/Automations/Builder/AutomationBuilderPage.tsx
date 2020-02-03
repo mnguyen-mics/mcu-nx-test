@@ -35,6 +35,8 @@ import AutomationWizardReactToEvent from './AutomationWizardReactToEvent';
 import { Loading } from '../../../components';
 import ActionBar from '../../../components/ActionBar';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
+import { wizardValidObjectTypes, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent } from './domain';
+import { reducePromises } from '../../../utils/PromiseHelper';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
@@ -162,42 +164,40 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         return RuntimeSchemaService.getObjectTypes(
           selectedDatamart.id,
           runtimeSchema.id,
-        ).then(objectTypesResponse => {
-          const validObjectTypes = [
-            ['ActivityEvent', 'Nature'],
-            ['UserEvent', 'nature'],
-          ];
-
-          return objectTypesResponse.data
-            .map(objectTypeInfo => {
-              const objectType = validObjectTypes.find(
-                object => object[0] === objectTypeInfo.name,
-              );
-
-              if (!objectType) return () => Promise.resolve();
-
-              return () =>
-                RuntimeSchemaService.getFields(
-                  selectedDatamart.id,
-                  runtimeSchema.id,
-                  objectTypeInfo.id,
-                ).then(fieldsResponse => {
-                  if (
-                    fieldsResponse.data.findIndex(
-                      field => field.name === objectType[1],
-                    )
-                  )
-                    this.setState({
-                      disableReactToEvent: false,
-                      isCheckingReactToEventAvailable: false,
-                    });
-                });
-            })
-            .reduce((previousPromise, nextPromise) => {
-              return previousPromise.then(() => {
-                return nextPromise();
+        ).then(({ data: objectTypes }) => {
+          return reducePromises(
+            getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
+              return RuntimeSchemaService.getFields(
+                selectedDatamart.id,
+                runtimeSchema.id, 
+                validObjectType.id,
+              ).then(({ data: fields }) => {
+                return { objectType: validObjectType, validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields)};
               });
-            }, Promise.resolve());
+            })
+          )
+          .then(validObjectTypes => {
+            /*
+            Here we need to find a WizardValidObjectTypeField
+            For each WizardValidObjectTypeField we check if we have an objectType with 
+            the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
+            its fields contain at least one with the WizardValidObjectTypeField.fieldName.
+            */
+            const validResult = wizardValidObjectTypes.find(
+              automationWizardValidObjectType =>
+              !!validObjectTypes.find(validObjectType =>
+                validObjectType.objectType.name === automationWizardValidObjectType.objectTypeName &&
+                !!validObjectType.validFields.find(of => of.name === automationWizardValidObjectType.fieldName),
+              ),
+            );
+
+            if(validResult) {
+              this.setState({
+                disableReactToEvent: false,
+                isCheckingReactToEventAvailable: false,
+              });
+            }
+          });
         });
       })
       .then(() => {
@@ -386,7 +386,21 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       );
     }
 
-    if (type === 'REACT_TO_EVENT') return <AutomationWizardReactToEvent />;
+    if (type === 'REACT_TO_EVENT') 
+      return (
+        <AutomationWizardReactToEvent
+          datamartId={selectedDatamart.id}
+          automationFormData={automationFormData}
+          saveAutomation={this.saveAutomation}
+          loading={isLoading}
+          actionBarProps={{
+            paths: [
+              {
+                name: intl.formatMessage(messages.automationBuilder),
+              },
+            ],
+          }}
+      />);
 
     return (
       <AutomationBuilderContainer

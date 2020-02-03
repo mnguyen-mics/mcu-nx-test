@@ -27,7 +27,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
-import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
+import { executeTasksInSequence, Task } from '../../../../utils/PromiseHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { Index } from '../../../../utils';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';

@@ -32,7 +32,7 @@ import EditAdGroupsForm, {
   EditAdGroupsFormProps,
   EditAdGroupsFormData,
 } from '../../Edit/AdGroup/MultiEdit/EditAdGroupsForm';
-import { Task, executeTasksInSequence } from '../../../../../utils/FormHelper';
+import { Task, executeTasksInSequence } from '../../../../../utils/PromiseHelper';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import injectNotifications, {
   InjectedNotificationProps,

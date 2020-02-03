@@ -43,16 +43,6 @@ export function createFieldArrayModelWithMeta(
   };
 }
 
-export type Task<T = any> = () => Promise<T>;
-
-export function executeTasksInSequence(tasks: Task[]): Promise<any> {
-  return tasks.reduce((previousTask, task) => {
-    return previousTask.then(() => {
-      return task();
-    });
-  }, Promise.resolve());
-}
-
 export const submitOnEnter = (event: React.KeyboardEvent<HTMLElement>, cb: any) => {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();

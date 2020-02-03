@@ -27,9 +27,11 @@ import {
 import {
   createFieldArrayModelWithMeta,
   createFieldArrayModel,
+} from '../../../../../utils/FormHelper';
+import {
   Task,
   executeTasksInSequence,
-} from '../../../../../utils/FormHelper';
+} from '../../../../../utils/PromiseHelper';
 import { EditAdGroupsFormData } from './MultiEdit/EditAdGroupsForm';
 import operation from '../../Edit/AdGroup/domain';
 import { injectable, inject } from 'inversify';

@@ -3,9 +3,11 @@ import EmailCampaignService from '../../../../services/EmailCampaignService';
 import {
   createFieldArrayModel,
   createFieldArrayModelWithMeta,
+} from './../../../../utils/FormHelper';
+import {
   Task,
   executeTasksInSequence,
-} from '../../../../utils/FormHelper';
+} from './../../../../utils/PromiseHelper';
 
 import {
   EmailTemplateSelectionResource,

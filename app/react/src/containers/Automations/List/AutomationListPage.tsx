@@ -21,7 +21,7 @@ import {
   IScenarioService,
 } from '../../../services/ScenarioService';
 import { parseSearch } from '../../../utils/LocationSearchHelper';
-import { Task, executeTasksInSequence } from '../../../utils/FormHelper';
+import { Task, executeTasksInSequence } from '../../../utils/PromiseHelper';
 import AutomationListTable from './AutomationListTable';
 import AutomationActionBar from './AutomationActionBar';
 import { lazyInject } from '../../../config/inversify.config';

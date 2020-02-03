@@ -9,7 +9,7 @@ import {
   PlacementDescriptorListFieldModel,
 } from './domain';
 import PlacementListService from '../../../../services/Library/PlacementListsService';
-import { Task, executeTasksInSequence } from '../../../../utils/FormHelper';
+import { Task, executeTasksInSequence } from '../../../../utils/PromiseHelper';
 
 const PlacementListFormService = {
   savePlacementList(

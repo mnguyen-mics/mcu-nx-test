@@ -23,7 +23,7 @@ import { NATIVE_SEARCH_SETTINGS } from './constants';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { executeTasksInSequence, Task } from '../../../../utils/FormHelper';
+import { executeTasksInSequence, Task } from '../../../../utils/PromiseHelper';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';

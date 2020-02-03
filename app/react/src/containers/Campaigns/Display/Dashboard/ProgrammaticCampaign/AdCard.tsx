@@ -30,7 +30,7 @@ import Slide from '../../../../../components/Transition/Slide';
 import { McsIcon } from '../../../../../components/index';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import { executeTasksInSequence, Task } from '../../../../../utils/FormHelper';
+import { executeTasksInSequence, Task } from '../../../../../utils/PromiseHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';

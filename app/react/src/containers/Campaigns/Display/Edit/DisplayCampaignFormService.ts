@@ -9,9 +9,11 @@ import { extractDataList, extractData } from '../../../../services/ApiService';
 import {
   createFieldArrayModelWithMeta,
   createFieldArrayModel,
+} from '../../../../utils/FormHelper';
+import {
   Task,
   executeTasksInSequence,
-} from '../../../../utils/FormHelper';
+} from '../../../../utils/PromiseHelper';
 import {
   DisplayCampaignFormData,
   GoalFieldModel,
