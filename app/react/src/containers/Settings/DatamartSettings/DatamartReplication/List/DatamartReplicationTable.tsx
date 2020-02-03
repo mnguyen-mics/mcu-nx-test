@@ -109,7 +109,7 @@ class DatamartReplicationTable extends React.Component<Props> {
           return (
             <Link
             className="mcs-datamartSettings_datamartReplicationTableItem"
-              to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`}
+              to={`/v2/o/${organisationId}/settings/datamart/my_datamart/${record.datamart_id}/datamart_replication/${record.id}`}
             >
               {text}
             </Link>

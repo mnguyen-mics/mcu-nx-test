@@ -33,6 +33,7 @@ import { McsIcon } from '../../../../components';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import LocalStorage from '../../../../services/LocalStorage';
+import { getExecutionInfo } from '../../../../utils/JobHelpers';
 
 const { Content } = Layout;
 
@@ -213,33 +214,6 @@ class Imports extends React.Component<JoinedProps, State> {
     history.push(nextLocation);
   };
 
-  getExecutionInfo = (execution: ImportExecution) => {
-    const { colors } = this.props;
-    const tasks = execution.num_tasks ? parseInt(execution.num_tasks, 10) : 0;
-    const completedTasks = execution.completed_tasks
-      ? parseInt(execution.completed_tasks, 10)
-      : 0;
-
-    const setColor = (status: string) => {
-      switch (status) {
-        case 'RUNNING':
-        case 'PENDING':
-          return colors['mcs-primary'];
-        case 'SUCCESS':
-          return colors['mcs-success'];
-        case 'SUCCEEDED':
-          return colors['mcs-success'];
-        case 'FAILED':
-          return colors['mcs-error'];
-        default:
-          return colors['mcs-primary'];
-      }
-    };
-    return {
-      percent: tasks ? completedTasks / tasks : 0,
-      color: setColor(execution.status),
-    };
-  };
 
   renderStatuColumn = (record: ImportExecution) => {
     switch (record.status) {
@@ -325,6 +299,7 @@ class Imports extends React.Component<JoinedProps, State> {
   buildColumnDefinition = () => {
     const {
       intl: { formatMessage },
+      colors
     } = this.props;
 
     const dataColumns = [
@@ -350,7 +325,7 @@ class Imports extends React.Component<JoinedProps, State> {
           // currently we can't pass color
           // https://github.com/ant-design/ant-design/blob/master/components/progress/progress.tsx
           <div>
-            <Progress showInfo={false} percent={this.getExecutionInfo(record).percent * 100} />
+            <Progress showInfo={false} percent={getExecutionInfo(record, colors).percent * 100} />
           </div>
         ),
       },
