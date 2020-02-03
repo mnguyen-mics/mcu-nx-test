@@ -41,7 +41,7 @@ export interface WaitFormData extends DefaultFormData {
 export const INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA: AudienceSegmentAutomationFormData = {
   name: 'Audience Segment',
   audienceSegment: {
-    name: 'autamation semgent',
+    name: 'Segment name',
     feed_type: 'SCENARIO',
     type: 'USER_LIST',
     subtype: 'STANDARD'

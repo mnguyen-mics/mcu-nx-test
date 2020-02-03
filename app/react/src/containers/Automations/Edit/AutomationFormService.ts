@@ -27,6 +27,7 @@ import {
   ABNFormData,
   WaitFormData,
   isIfNode,
+  isAddToSegmentNode,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
@@ -571,6 +572,19 @@ export class AutomationFormService implements IAutomationFormService {
       };
       resourceId =
         node.query_id && !isFakeId(node.query_id) ? node.query_id : undefined;
+    } else if (isAddToSegmentNode(node)) {
+      scenarioNodeResource = {
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
+        name: node.name,
+        scenario_id: automationId,
+        x: node.x,
+        y: node.y,
+        type: 'ADD_TO_SEGMENT',
+        user_list_segment_id: node.audience_segment_id,
+        user_segment_expiration_period: node.user_segment_expiration_period,
+      };
+      resourceId =
+        node.id && !isFakeId(node.id) ? node.id : undefined;
     } else if (isIfNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,

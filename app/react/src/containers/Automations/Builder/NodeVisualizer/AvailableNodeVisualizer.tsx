@@ -68,6 +68,7 @@ const audienceSegmentNode: ScenarioNodeShape = {
   name: 'Add to Segment',
   type: 'ADD_TO_SEGMENT',
   audience_segment_id: '',
+  user_segment_expiration_period: '0',
   scenario_id: '',
   formData: INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA,
   initialFormData: INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA,

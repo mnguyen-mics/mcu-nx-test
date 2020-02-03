@@ -70,6 +70,7 @@ export interface EmailCampaignNodeResource extends ScenarioNodeResource {
 export interface AddToSegmentNodeResource extends ScenarioNodeResource {
   type: 'ADD_TO_SEGMENT';
   audience_segment_id: string;
+  user_segment_expiration_period: string;
   formData: AudienceSegmentAutomationFormData;
   initialFormData: AudienceSegmentAutomationFormData;
 }
