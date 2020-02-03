@@ -6,7 +6,6 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Button, Modal, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import BidOptimizerService from '../../../../../services/Library/BidOptimizerService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
@@ -16,6 +15,9 @@ import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { BidOptimizer, PluginProperty } from '../../../../../models/Plugins';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IBidOptimizerService } from '../../../../../services/Library/BidOptimizerService';
 
 const { Content } = Layout;
 
@@ -45,8 +47,11 @@ class BidOptimizerContent extends React.Component<
 > {
   state = initialState;
 
+  @lazyInject(TYPES.IBidOptimizerService)
+  private _bidOptimizerService: IBidOptimizerService;
+
   archiveBidOptimizer = (boId: string) => {
-    return BidOptimizerService.deleteBidOptimizer(boId);
+    return this._bidOptimizerService.deleteBidOptimizer(boId);
   };
 
   fetchBidOptimizer = (organisationId: string, filter: Filters) => {
@@ -54,21 +59,26 @@ class BidOptimizerContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      BidOptimizerService.getBidOptimizers(organisationId, options).then(
-        results => {
+      this._bidOptimizerService
+        .getBidOptimizers(organisationId, options)
+        .then(results => {
           const promises = results.data.map(bo => {
-            return BidOptimizerService.getBidOptimizerProperties(bo.id);
+            return this._bidOptimizerService
+              .getBidOptimizerProperties(bo.id)
+              .then(res => {
+                return { ...res.data, id: bo.id };
+              });
           });
           Promise.all(promises).then(boProperties => {
             const formattedResults: BidOptimizerInterface[] = [];
-            boProperties.forEach(boProperty => {
+            boProperties.forEach((boProperty: any) => {
               const foundBo = results.data.find(bo => bo.id === boProperty.id);
 
               if (foundBo) {
                 formattedResults.push({
                   ...foundBo,
                   properties: Object.keys(boProperty).map(
-                    (value: any) => boProperty[value],
+                    value => boProperty[value],
                   ),
                 });
               }
@@ -80,8 +90,7 @@ class BidOptimizerContent extends React.Component<
               total: results.total || results.count,
             });
           });
-        },
-      );
+        });
     });
   };
 
@@ -149,9 +158,9 @@ class BidOptimizerContent extends React.Component<
       history,
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<BidOptimizerInterface>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
+      BidOptimizerInterface
+    >> = [
       {
         key: 'action',
         actions: () => [
@@ -169,9 +178,7 @@ class BidOptimizerContent extends React.Component<
         render: (text: string, record: BidOptimizerInterface) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/campaigns/bid_optimizer/${
-              record.id
-            }/edit`}
+            to={`/v2/o/${organisationId}/settings/campaigns/bid_optimizer/${record.id}/edit`}
           >
             {text}
           </Link>
@@ -262,7 +269,4 @@ class BidOptimizerContent extends React.Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(BidOptimizerContent);
+export default compose(withRouter, injectIntl)(BidOptimizerContent);

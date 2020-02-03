@@ -15,7 +15,7 @@ import messages from './messages';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { MlFunctionResource } from '../../../../../models/datamart/MlFunction';
-import { IMlFunctionService, MlFunctionService } from '../../../../../services/MlFunctionService';
+import { IMlFunctionService } from '../../../../../services/MlFunctionService';
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
@@ -68,7 +68,8 @@ class MlFunctionsContent extends Component<
   Props,
   MlFunctionsContentState
 > {
-  private _mlFunctionService: IMlFunctionService = new MlFunctionService();
+  @lazyInject(TYPES.IMlFunctionService)
+  private _mlFunctionService: IMlFunctionService;
 
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;

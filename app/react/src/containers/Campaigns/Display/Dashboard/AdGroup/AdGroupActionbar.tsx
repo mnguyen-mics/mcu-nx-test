@@ -27,11 +27,11 @@ import { IAudienceSegmentService } from '../../../../../services/AudienceSegment
 import { IKeywordListService } from '../../../../../services/Library/KeywordListsService';
 import { IDealListService } from '../../../../../services/Library/DealListService';
 import { AdexInventoryServiceItemPublicResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
-import { getLinkedResourceIdInSelection } from '../../../../../utils/ResourceHistoryHelper';
 import { IGeonameService } from '../../../../../services/GeonameService';
 import { ICatalogService } from '../../../../../services/CatalogService';
 import { ICreativeService } from '../../../../../services/CreativeService';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
+import { IResourceHistoryService } from '../../../../../services/ResourceHistoryService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -73,6 +73,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
   @lazyInject(TYPES.ICatalogService)
   private _catalogService: ICatalogService;
+
+  @lazyInject(TYPES.IResourceHistoryService)
+  private _resourceHistoryService: IResourceHistoryService;
 
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
@@ -217,7 +220,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'AUDIENCE_SEGMENT_SELECTION',
                         id,
@@ -231,7 +234,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       });
                     },
                     goToResource: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'AUDIENCE_SEGMENT_SELECTION',
                         id,
@@ -253,7 +256,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'KEYWORDS_LIST_SELECTION',
                         id,
@@ -267,7 +270,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       });
                     },
                     goToResource: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'KEYWORDS_LIST_SELECTION',
                         id,
@@ -289,7 +292,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'DISPLAY_NETWORK_SELECTION',
                         id,
@@ -316,7 +319,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'AD',
                         id,
@@ -330,7 +333,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       });
                     },
                     goToResource: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'AD',
                         id,
@@ -376,7 +379,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'DEAL_LIST_SELECTION',
                         id,
@@ -390,7 +393,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       });
                     },
                     goToResource: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'DEAL_LIST_SELECTION',
                         id,
@@ -412,7 +415,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'AD_EXCHANGE_SELECTION',
                         id,
@@ -446,7 +449,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       return 'Location';
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'GEO_TARGETING_SELECTION',
                         id,
@@ -473,7 +476,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'PLACEMENT_LIST_SELECTION',
                         id,
@@ -487,7 +490,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       });
                     },
                     goToResource: (id: string) => {
-                      return getLinkedResourceIdInSelection(
+                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
                         organisationId,
                         'PLACEMENT_LIST_SELECTION',
                         id,

@@ -20,11 +20,11 @@ import { DataResponse } from '../../../services/ApiService';
 import SchemaVizualizer from '../JSONOTQL/SchemaVisualizer/SchemaVizualizer';
 import { computeFinalSchemaItem } from '../JSONOTQL/domain';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
-import RuntimeSchemaService from '../../../services/RuntimeSchemaService';
 import { Loading } from '../../../components';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
+import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 
 const { Content, Sider } = Layout;
 
@@ -54,6 +54,9 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
+
+  @lazyInject(TYPES.IRuntimeSchemaService)
+  private _runtimeSchemaService: IRuntimeSchemaService;
 
   constructor(props: Props) {
     super(props);
@@ -85,11 +88,11 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
     datamartId: string,
   ): Promise<ObjectLikeTypeInfoResource[]> => {
     this.setState({ schemaLoading: true });
-    return RuntimeSchemaService.getRuntimeSchemas(datamartId).then(
+    return this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(
       schemaRes => {
         const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
         if (!liveSchema) return [];
-        return RuntimeSchemaService.getObjectTypeInfoResources(
+        return this._runtimeSchemaService.getObjectTypeInfoResources(
           datamartId,
           liveSchema.id,
         ).then(r => {

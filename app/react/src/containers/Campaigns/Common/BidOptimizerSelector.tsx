@@ -10,11 +10,13 @@ import { DataColumnDefinition } from '../../../components/TableView/TableView';
 import { StringPropertyResource } from '../../../models/plugin';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { BidOptimizer } from '../../../models/Plugins';
-import BidOptimizerService from '../../../services/Library/BidOptimizerService';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IBidOptimizerService } from '../../../services/Library/BidOptimizerService';
 
-const BidOptimizerTableSelector: React.ComponentClass<
-  TableSelectorProps<BidOptimizer>
-> = TableSelector;
+const BidOptimizerTableSelector: React.ComponentClass<TableSelectorProps<
+  BidOptimizer
+>> = TableSelector;
 
 const messages = defineMessages({
   bidOptimizerSelectorTitle: {
@@ -56,6 +58,9 @@ type Props = BidOptimizerSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class BidOptimizerSelector extends React.Component<Props, State> {
+  @lazyInject(TYPES.IBidOptimizerService)
+  private _bidOptimizerService: IBidOptimizerService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -85,8 +90,9 @@ class BidOptimizerSelector extends React.Component<Props, State> {
       options.name = filter.keywords;
     }
 
-    return BidOptimizerService.getBidOptimizers(organisationId, options).then(
-      res => {
+    return this._bidOptimizerService
+      .getBidOptimizers(organisationId, options)
+      .then(res => {
         // fetch properties to update state
         this.setState(() => ({
           metadataByBidOptmizerId: res.data.reduce(
@@ -101,36 +107,35 @@ class BidOptimizerSelector extends React.Component<Props, State> {
         }));
         Promise.all(
           res.data.map(bidOptimzer => {
-            return BidOptimizerService.getInstanceProperties(
-              bidOptimzer.id,
-            ).then(propsRes => {
-              const nameProp = propsRes.data.find(
-                prop => prop.technical_name === 'name',
-              );
-              const providerProp = propsRes.data.find(
-                prop => prop.technical_name === 'provider',
-              );
-              if (nameProp && providerProp) {
-                this.setState(prevState => ({
-                  metadataByBidOptmizerId: {
-                    ...prevState.metadataByBidOptmizerId,
-                    [bidOptimzer.id]: {
-                      type: (nameProp as StringPropertyResource).value.value,
-                      provider: (providerProp as StringPropertyResource).value
-                        .value,
-                      fetching: false,
+            return this._bidOptimizerService
+              .getInstanceProperties(bidOptimzer.id)
+              .then(propsRes => {
+                const nameProp = propsRes.data.find(
+                  prop => prop.technical_name === 'name',
+                );
+                const providerProp = propsRes.data.find(
+                  prop => prop.technical_name === 'provider',
+                );
+                if (nameProp && providerProp) {
+                  this.setState(prevState => ({
+                    metadataByBidOptmizerId: {
+                      ...prevState.metadataByBidOptmizerId,
+                      [bidOptimzer.id]: {
+                        type: (nameProp as StringPropertyResource).value.value,
+                        provider: (providerProp as StringPropertyResource).value
+                          .value,
+                        fetching: false,
+                      },
                     },
-                  },
-                }));
-              }
-            });
+                  }));
+                }
+              });
           }),
         );
 
         // return original list for TableSelector
         return res;
-      },
-    );
+      });
   };
 
   render() {
@@ -176,7 +181,7 @@ class BidOptimizerSelector extends React.Component<Props, State> {
     ];
 
     const fetchBidOptimizer = (id: string) =>
-      BidOptimizerService.getInstanceById(id);
+      this._bidOptimizerService.getInstanceById(id);
 
     return (
       <BidOptimizerTableSelector

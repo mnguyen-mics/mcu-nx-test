@@ -18,9 +18,11 @@ import {
   KEYWORD_SEARCH_SETTINGS,
 } from '../../../../../utils/LocationSearchHelper';
 import ServiceUsageReportTable from './ServiceUsageReportTable';
-import ServiceUsageReportService from '../../../../../services/ServiceUsageReportService';
 import { McsIcon } from '../../../../../components';
 import ExportService from '../../../../../services/ExportService';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IServiceUsageReportService } from '../../../../../services/ServiceUsageReportService';
 
 const messages = defineMessages({
   serviceUsageReportTitle: {
@@ -51,6 +53,8 @@ type Props = ServiceUsageReportListPageProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class ServiceUsageReportListPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IServiceUsageReportService)
+  private _serviceUsageReportService: IServiceUsageReportService;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -70,7 +74,6 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
       this.setState(
         {
           dataSource: resp.data.report_view.rows.map(row => {
-
             return {
               provider_organisation_id: row[0],
               provider_name: row[1],
@@ -82,7 +85,6 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
               service_element_name: row[9],
               usage: row[10],
             };
-
           }),
         },
         () => {
@@ -116,7 +118,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
       'service_element_name',
       'segment_name',
     ];
-    return ServiceUsageReportService.getServiceUsageProviders(
+    return this._serviceUsageReportService.getServiceUsageProviders(
       organisationId,
       filter.from,
       filter.to,
@@ -180,7 +182,10 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
           style={{ float: 'right', bottom: '10px' }}
         >
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="settings.datamart.serviceUsageReport.list.export" defaultMessage="Export" />
+          <FormattedMessage
+            id="settings.datamart.serviceUsageReport.list.export"
+            defaultMessage="Export"
+          />
         </Button>
 
         <hr className="mcs-separator" />

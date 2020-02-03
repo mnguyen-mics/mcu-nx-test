@@ -2,7 +2,6 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps, Omit } from 'react-router';
-import BidOptimizerService from '../../../../../services/Library/BidOptimizerService';
 import {
   PluginProperty,
   BidOptimizer,
@@ -12,6 +11,9 @@ import {
 
 import messages from './messages';
 import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IBidOptimizerService } from '../../../../../services/Library/BidOptimizerService';
 
 const BidOptimizerPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<BidOptimizer>>
 
@@ -26,6 +28,9 @@ type JoinedProps = RouteComponentProps<BidOptimizerRouteParam> &
 class CreateEditBidOptimizer extends React.Component<
   JoinedProps
   > {
+
+    @lazyInject(TYPES.IBidOptimizerService)
+  private _bidOptimizerService: IBidOptimizerService;
 
   redirect = () => {
     const { history, match: { params: { organisationId } } } = this.props;
@@ -88,7 +93,7 @@ class CreateEditBidOptimizer extends React.Component<
         listTitle={messages.listTitle}
         listSubTitle={messages.listSubTitle}
         breadcrumbPaths={breadcrumbPaths}
-        pluginInstanceService={BidOptimizerService}
+        pluginInstanceService={this._bidOptimizerService}
         pluginInstanceId={bidOptimizerId}
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}

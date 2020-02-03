@@ -30,13 +30,13 @@ import {
   QueryInputEvaluationPeriodUnit,
 } from '../../../models/automations/automations';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
-import RuntimeSchemaService from '../../../services/RuntimeSchemaService';
 import AutomationWizardReactToEvent from './AutomationWizardReactToEvent';
 import { Loading } from '../../../components';
 import ActionBar from '../../../components/ActionBar';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { wizardValidObjectTypes, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent } from './domain';
 import { reducePromises } from '../../../utils/PromiseHelper';
+import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
@@ -68,6 +68,10 @@ type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
 class AutomationBuilderPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAutomationFormService)
   private _automationFormService: IAutomationFormService;
+
+  @lazyInject(TYPES.IRuntimeSchemaService)
+  private _runtimeSchemaService: IRuntimeSchemaService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -153,7 +157,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
     if (!selectedDatamart) return;
 
-    RuntimeSchemaService.getRuntimeSchemas(selectedDatamart.id)
+    this._runtimeSchemaService.getRuntimeSchemas(selectedDatamart.id)
       .then(schemasResponse => {
         const runtimeSchema = schemasResponse.data.find(
           schema => schema.status === 'LIVE',
@@ -161,13 +165,13 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
         if (!runtimeSchema) return;
 
-        return RuntimeSchemaService.getObjectTypes(
+        return this._runtimeSchemaService.getObjectTypes(
           selectedDatamart.id,
           runtimeSchema.id,
         ).then(({ data: objectTypes }) => {
           return reducePromises(
             getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
-              return RuntimeSchemaService.getFields(
+              return this._runtimeSchemaService.getFields(
                 selectedDatamart.id,
                 runtimeSchema.id, 
                 validObjectType.id,

@@ -38,6 +38,7 @@ const TYPES = {
   ISettingsService: Symbol.for('settingsService'),
   IDashboardService: Symbol.for('dashboardService'),
   ICatalogService: Symbol.for('catalogService'),
+  ILibraryCatalogService: Symbol.for('libraryCatalogService'),
   IServiceOfferPageService: Symbol.for('serviceOfferPageService'),
   IFeedsStatsService: Symbol.for('feedsStatsService'),
   IAssetFileService: Symbol.for('assetFileService'),
@@ -62,6 +63,12 @@ const TYPES = {
   IOrganisationService: Symbol.for('organisationService'),
   IDatamartReplicationService: Symbol.for('datamartReplicationService'),
   IDataFileService: Symbol.for('dataFileService'),
+  IBidOptimizerService: Symbol.for('bidOptimizerService'),
+  ITableSchemaService: Symbol.for('tableSchemaService'),
+  IServiceUsageReportService: Symbol.for('serviceUsageReportService'),
+  IRuntimeSchemaService: Symbol.for('runtimeSchemaService'),
+  IResourceHistoryService: Symbol.for('resourceHistoryService'),
+  IReferenceTableService: Symbol.for('referenceTableService')
 };
 
 export { TYPES };
