@@ -60,7 +60,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           const found = acc.find((a: AreaSeriesDataOptions) => a.name === chart.metricName);
 
           const value = d[chart.metricName];
-          const xValue = chart.xKey === 'date_yyyymmdd' ? this.formatDateToTs(d[chart.xKey] as string) : d[chart.xKey];
+          const xValue = chart.xKey === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.xKey] as string) : d[chart.xKey];
           if (!found) {
             acc.push({
               name: chart.metricName as string,
@@ -185,7 +185,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
       .valueOf();
   };
 
-  generateComponent = (charts: Chart[], data: Dataset[]): React.ReactNode => {
+  generateCharElements = (charts: Chart[], data: Dataset[]): React.ReactNode => {
     return _.map(charts, (chart, i) => {
 
       switch (chart.type) {
@@ -223,7 +223,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
                 _.map(chart.tabs, (tab: TabItem, e: number) => {
                   return (
                     <Tabs.TabPane tab={tab.title} key={e.toString()}>
-                      {this.generateComponent([tab], data)}
+                      {this.generateCharElements([tab], data)}
                     </Tabs.TabPane>
                   )
                 })
@@ -239,7 +239,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
     const { charts, apiResponse } = this.props;
     const normalizedData = normalizeReportView(apiResponse);
 
-    return (<div>{this.generateComponent(charts, normalizedData)}</div>)
+    return (<div>{this.generateCharElements(charts, normalizedData)}</div>)
   }
 }
 

@@ -16,11 +16,7 @@ export interface PieChartProps {
 
 type Props = PieChartProps & InjectedIntlProps;
 
-class PieChart extends React.Component<Props, {}> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
-  }
+class PieChart extends React.Component<Props> {
 
   render() {
     const {
@@ -28,17 +24,10 @@ class PieChart extends React.Component<Props, {}> {
     } = this.props;
 
     return (
-      <div
-        style={{
-          overflow: 'hidden'
-        }}
-      >
         <HighchartsReact
           highcharts={Highcharts}
           options={options}
-          style={{ width: '100%' }}
         />
-      </div>
     );
   }
 }

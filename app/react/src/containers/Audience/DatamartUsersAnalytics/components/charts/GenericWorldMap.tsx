@@ -1,7 +1,5 @@
 import React from 'react';
 import Highcharts from 'highcharts/highmaps';
-import world from '../../../../../components/Charts/world';
-import log from '../../../../../utils/Logger';
 import cuid from 'cuid';
 import { MapSeriesDataOptions } from '../../../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 
@@ -17,10 +15,6 @@ class GenericWorldMap extends React.Component<GenericWorldMapProps> {
   constructor(props: GenericWorldMapProps) {
     super(props);
     this.cuid = cuid();
-  }
-
-  componentDidCatch() {
-    log.info(world);
   }
 
   componentDidMount() {

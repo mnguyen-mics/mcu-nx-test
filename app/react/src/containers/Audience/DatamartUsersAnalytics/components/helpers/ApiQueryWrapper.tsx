@@ -6,6 +6,11 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { ReportView } from '../../../../../models/ReportView';
 import { LoadingChart } from '../../../../../components/EmptyCharts';
+import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import { compose } from 'recompose';
+
+
+type Props = ApiQueryWrapperProps & InjectedNotificationProps;
 
 export interface ApiQueryWrapperProps {
     charts: Chart[];
@@ -17,17 +22,21 @@ interface State {
     reportViewApiResponse?: ReportView
 }
 
-class ApiQueryWrapper extends React.Component<ApiQueryWrapperProps, State> {
+class ApiQueryWrapper extends React.Component<Props, State> {
     @lazyInject(TYPES.IDatamartUsersAnalyticsService)
     private _datamartUsersAnalyticsService: IDatamartUsersAnalyticsService;
 
-    constructor(props: ApiQueryWrapperProps) {
+    constructor(props: Props) {
         super(props);
-
         this.state = {
             loading: true,
             reportViewApiResponse: undefined
         };
+    }
+
+    componentDidMount() {
+        const { datamartId } = this.props;
+        this.fetchAnalytics(datamartId)
     }
 
     fetchAnalytics = (datamartId: string) => {
@@ -37,12 +46,10 @@ class ApiQueryWrapper extends React.Component<ApiQueryWrapperProps, State> {
                     loading: false,
                     reportViewApiResponse: res.data.report_view
                 });
+            })
+            .catch(e => {
+                this.props.notifyError(e);
             });
-    }
-
-    componentDidMount() {
-        const { datamartId } = this.props;
-        this.fetchAnalytics(datamartId)
     }
 
     render() {
@@ -50,8 +57,11 @@ class ApiQueryWrapper extends React.Component<ApiQueryWrapperProps, State> {
         const { loading, reportViewApiResponse } = this.state;
 
         if (loading) return <LoadingChart />
-        return (<div>{reportViewApiResponse && <FormatData apiResponse={reportViewApiResponse} charts={charts} />}</div>)
+        return (<div className={'mcs-datamartUsersAnalytics_component_charts'}>{reportViewApiResponse && <FormatData apiResponse={reportViewApiResponse} charts={charts} />}</div>)
     }
 }
 
-export default ApiQueryWrapper;
+
+export default compose<Props, ApiQueryWrapperProps>(
+    injectNotifications
+  )(ApiQueryWrapper);

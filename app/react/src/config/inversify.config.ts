@@ -193,6 +193,7 @@ import {
   ResourceHistoryService,
 } from '../services/ResourceHistoryService';
 import { GoalService, IGoalService } from '../services/GoalService';
+import { IDatamartUsersAnalyticsService, DatamartUsersAnalyticsService } from '../services/DatamartUsersAnalyticsService';
 
 const container = new Container();
 

@@ -4,7 +4,6 @@ import { ReportViewResponse } from './ReportService';
 import { ReportRequestBody } from '../models/ReportRequestBody';
 import { buildDatamartUsersAnalyticsRequestBody } from '../utils/DatamartUsersAnalyticsReportHelper';
 
-/// /datamarts/{datamart_id}/user_activities_analytics
 export interface IDatamartUsersAnalyticsService {
   getAnalytics: (
     datamartId: string,

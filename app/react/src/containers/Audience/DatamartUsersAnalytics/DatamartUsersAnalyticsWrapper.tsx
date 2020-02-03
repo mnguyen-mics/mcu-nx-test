@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Layout, Layouts } from 'react-grid-layout';
+import { Layout } from 'react-grid-layout';
 import ContentHeader from '../../../components/ContentHeader';
-import DatamartAnalysisContent from './DatamartUsersAnalyticsContent';
+import DatamartAnalysisContent, { DashboardConfig } from './DatamartUsersAnalyticsContent';
 
 interface DatamartAnalysisProps {
   title?: string;
   datamartId: string;
+  config: DashboardConfig[];
 }
 
 interface State {
@@ -21,16 +22,16 @@ class DatamartAnalysisWrapper extends React.Component<Props, State> {
     this.onLayoutChange = this.onLayoutChange.bind(this);
   }
 
-  onLayoutChange(layout: Layout[], allLayouts: Layouts) {
+  onLayoutChange(layout: Layout[]) {
     this.setState({ layout: layout });
   }
 
   render() {
-    const { title, datamartId } = this.props;
+    const { title, datamartId, config } = this.props;
     return (
       <div>
         <ContentHeader title={title} size={`large`} />
-        <DatamartAnalysisContent datamartId={datamartId}/>
+        <DatamartAnalysisContent datamartId={datamartId} config={config} />
       </div>
     );
   }

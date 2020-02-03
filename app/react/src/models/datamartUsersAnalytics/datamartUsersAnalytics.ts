@@ -1,11 +1,11 @@
 import { CounterProps } from "../../components/Counter/Counter";
 
-type chartTypes = 'PIE' | 'AREA' | 'WORLDMAP' | 'STACKEDBAR' | 'COUNT' | 'TABS';
+type ChartType = 'PIE' | 'AREA' | 'WORLDMAP' | 'STACKEDBAR' | 'COUNT' | 'TABS';
 
 export type Dataset = { [key: string]: string | number | Date | undefined };
 
 export interface Chart {
-  type: chartTypes;
+  type: ChartType;
   options: Highcharts.Options;
   xKey: string;
   yKey: string | number;

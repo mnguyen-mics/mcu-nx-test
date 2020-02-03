@@ -22,13 +22,11 @@ class LineChart extends React.Component<Props, {}> {
     
     const { options } = this.props;
 
-    return (<div>
+    return (
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
-        style={{ width: '100%' }}
-      />
-    </div>)
+      />)
   }
 }
 
