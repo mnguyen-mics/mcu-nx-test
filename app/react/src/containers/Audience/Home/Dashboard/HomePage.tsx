@@ -32,16 +32,13 @@ const messages = defineMessages({
   }
 });
 
-interface HomeProps { }
-
 interface HomeState {
   dashboards: DashboardResource[];
   isLoading: boolean;
   datamartAnalyticsConfig: DashboardConfig[];
 }
 
-type JoinedProps = HomeProps &
-  InjectedWorkspaceProps &
+type JoinedProps = InjectedWorkspaceProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; }> &

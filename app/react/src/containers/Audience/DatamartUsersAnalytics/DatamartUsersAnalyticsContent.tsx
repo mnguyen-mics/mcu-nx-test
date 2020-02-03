@@ -1,5 +1,4 @@
 import * as React from 'react';
-// import UsersByTimeOfDay from './components/UsersByTimeOfDay';
 import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
 import ApiQueryWrapper from './components/helpers/ApiQueryWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
