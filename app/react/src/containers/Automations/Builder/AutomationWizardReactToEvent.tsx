@@ -13,11 +13,13 @@ import { MicsReduxState } from "../../../utils/ReduxHelper";
 import { connect } from "react-redux";
 import { QueryDocument } from "../../../models/datamart/graphdb/QueryDocument";
 import { QueryInputNodeResource } from "../../../models/automations/automations";
-import RuntimeSchemaService from "../../../services/RuntimeSchemaService";
 import { Loading } from "../../../components";
 import injectNotifications, { InjectedNotificationProps } from "../../Notifications/injectNotifications";
 import { reducePromises } from "../../../utils/PromiseHelper";
 import FormMultiTag from "../../../components/Form/FormSelect/FormMultiTag";
+import { IRuntimeSchemaService } from "../../../services/RuntimeSchemaService";
+import { TYPES } from "../../../constants/types";
+import { lazyInject } from "../../../config/inversify.config";
 
 const FORM_ID = 'wizardReactToEventForm';
 
@@ -43,13 +45,16 @@ type Props = AutomationWizardReactToEventProps
 
 class AutomationWizardReactToEvent extends React.Component<Props, {}> {
 
+  @lazyInject(TYPES.IRuntimeSchemaService)
+  private _runtimeSchemaService: IRuntimeSchemaService;
+
   getValidObjectType = (): Promise<WizardValidObjectTypeField | undefined> => {
     const {
       datamartId,
       notifyError,
     } = this.props;
 
-    return RuntimeSchemaService.getRuntimeSchemas(datamartId)
+    return this._runtimeSchemaService.getRuntimeSchemas(datamartId)
     .then(({ data: schemas }) => {
       const runtimeSchema = schemas.find(
         schema => schema.status === 'LIVE',
@@ -57,13 +62,13 @@ class AutomationWizardReactToEvent extends React.Component<Props, {}> {
 
       if (!runtimeSchema) return;
 
-      return RuntimeSchemaService.getObjectTypes(
+      return this._runtimeSchemaService.getObjectTypes(
         datamartId,
         runtimeSchema.id,
       ).then(({ data: objectTypes }) => {
         return reducePromises(
           getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
-            return RuntimeSchemaService.getFields(
+            return this._runtimeSchemaService.getFields(
               datamartId,
               runtimeSchema.id, 
               validObjectType.id,
@@ -97,7 +102,7 @@ class AutomationWizardReactToEvent extends React.Component<Props, {}> {
           const userPointObjectType = objectTypes.find(o => o.name === 'UserPoint');
 
           if(userPointObjectType) {
-            return RuntimeSchemaService.getFields(
+            return this._runtimeSchemaService.getFields(
               datamartId,
               runtimeSchema.id,
               userPointObjectType.id,
