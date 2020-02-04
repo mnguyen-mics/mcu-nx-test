@@ -117,7 +117,7 @@ class PiePlot extends React.Component<Props, {}> {
       <div
         style={{
           overflow: 'hidden',
-          height: isHalf ? BASE_CHART_HEIGHT / 2 : BASE_CHART_HEIGHT,
+          height: height || (isHalf ? BASE_CHART_HEIGHT / 2 : BASE_CHART_HEIGHT),
         }}
       >
         <HighchartsReact

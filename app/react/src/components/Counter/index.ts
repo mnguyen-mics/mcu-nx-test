@@ -3,5 +3,5 @@ import Counter from './Counter';
 
 export {
   CounterDashboard,
-  Counter,
+  Counter
 }

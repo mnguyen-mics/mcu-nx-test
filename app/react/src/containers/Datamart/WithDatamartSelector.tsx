@@ -13,6 +13,7 @@ import { MicsReduxState } from '../../utils/ReduxHelper';
 export interface WithDatamartSelectorProps
   extends RouteComponentProps<{ organisationId: string }> {
   selectedDatamartId: string;
+  selectedDatafarm: string;
   connectedUser: UserProfileResource;
 }
 
@@ -20,6 +21,7 @@ type Props<T> = T & WithDatamartSelectorProps;
 
 interface IState {
   datamartId?: string;
+  datafarm?: string;
 }
 
 const messages = defineMessages({
@@ -48,6 +50,9 @@ export function withDatamartSelector<T>(
           foundDatamarts && foundDatamarts.length === 1
             ? foundDatamarts[0].id
             : undefined,
+        datafarm: foundDatamarts && foundDatamarts.length === 1
+          ? foundDatamarts[0].datafarm
+          : undefined,
       };
     }
 
@@ -98,7 +103,10 @@ export function withDatamartSelector<T>(
     onSelectDatamart = (
       d: DatamartResource
     ) => {
-      this.setState({ datamartId: d.id })
+      this.setState({ 
+        datamartId: d.id,
+        datafarm: d.datafarm
+      })
     }
 
     render() {
@@ -110,7 +118,8 @@ export function withDatamartSelector<T>(
       } = this.props;
 
       const {
-        datamartId
+        datamartId,
+        datafarm
       } = this.state;
 
       if (!datamartId) {
@@ -142,6 +151,7 @@ export function withDatamartSelector<T>(
 
       const wrappedComponentProps: Partial<WithDatamartSelectorProps> = {
         selectedDatamartId: datamartId,
+        selectedDatafarm: datafarm,
         connectedUser: connectedUser,
       }
 

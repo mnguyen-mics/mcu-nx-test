@@ -69,7 +69,8 @@ const TYPES = {
   IServiceUsageReportService: Symbol.for('serviceUsageReportService'),
   IRuntimeSchemaService: Symbol.for('runtimeSchemaService'),
   IResourceHistoryService: Symbol.for('resourceHistoryService'),
-  IReferenceTableService: Symbol.for('referenceTableService')
+  IReferenceTableService: Symbol.for('referenceTableService'),
+  IDatamartUsersAnalyticsService: Symbol.for('datamartUsersAnalyticsService'),
 };
 
 export { TYPES };
