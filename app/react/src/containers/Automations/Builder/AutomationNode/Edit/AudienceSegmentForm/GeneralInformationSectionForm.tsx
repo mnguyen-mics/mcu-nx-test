@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AudienceSegmentAutomationFormData } from "../domain";
+import { AddToSegmentAutomationFormData } from "../domain";
 import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
 import { ValidatorProps } from "../../../../../../components/Form/withValidators";
 import { TYPES } from '../../../../../../constants/types';
@@ -18,7 +18,6 @@ import {
   FormAddonSelectField,
   AddonSelect
 } from '../../../../../../components/Form';
-import { Row } from 'antd';
 
 interface State {
   fetchingAudienceSegments: boolean;
@@ -26,7 +25,7 @@ interface State {
 }
 
 interface GeneralInformationFormSectionProps {
-  initialValues: Partial<AudienceSegmentAutomationFormData>;
+  initialValues: Partial<AddToSegmentAutomationFormData>;
   organisationId: string;
   disabled?: boolean;
 }
@@ -79,7 +78,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
         />
         <div className="automation-node-form">
           <FormInputField
-            name="audienceSegment.name"
+            name="name"
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -100,47 +99,40 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             small={true}
           />
           <FormInputField
-            name="audienceSegment.ttl.value"
+            name="ttl.value"
             component={FormInput}
-            validate={[isValidInteger]}
+            validate={[isRequired, isValidInteger]}
             formItemProps={{
               label: formatMessage(
                 messages.audienceSegmentTTLTitle,
               ),
+              required: true,
             }}
             inputProps={{
+              disabled: disabled,
+              placeholder: formatMessage(messages.audienceSegmentTTLPlaceholder),
               addonAfter: (
-                <div>
-                  <Row>
-                    <FormAddonSelectField
-                      name="audienceSegment.ttl.unit"
-                      component={AddonSelect}
-                      options={[
-                        {
-                          value: 'days',
-                          title: formatMessage(
-                            messages.audienceSegmentTTLUnitDays,
-                          ),
-                        },
-                        {
-                          value: 'months',
-                          title: formatMessage(
-                            messages.audienceSegmentTTLUnitMonths,
-                          ),
-                        },
-                        {
-                          value: 'years',
-                          title: formatMessage(
-                            messages.audienceSegmentTTLUnitYears,
-                          ),
-                        },
-                      ]}
-                    />
-                  </Row>
-                </div>
-              ),
-              placeholder: formatMessage(
-                messages.audienceSegmentTTLPlaceholder,
+                <FormAddonSelectField
+                  name="ttl.unit"
+                  component={AddonSelect}
+                  disabled={disabled}
+                  options={[
+                    {
+                      value: 'days',
+                      key: 'days',
+                      title: formatMessage(
+                        messages.audienceSegmentTTLUnitDays,
+                      ),
+                    },
+                    {
+                      value: 'months',
+                      key: 'months',
+                      title: formatMessage(
+                        messages.audienceSegmentTTLUnitMonths,
+                      ),
+                    },
+                  ]}
+                />
               ),
               style: { width: '100%' },
             }}
@@ -186,11 +178,11 @@ export const messages = defineMessages({
   },
   audienceSegmentNamePlaceholder: {
     id: 'automation.builder.node.audienceSegmentForm.name.placeholder',
-    defaultMessage: 'This is a segment name',
+    defaultMessage: 'Segment Name',
   },
   audienceSegmentTTLTitle: {
     id: 'automation.builder.node.audienceSegmentForm.ttl.title',
-    defaultMessage: 'TTL',
+    defaultMessage: 'Time to live in segment',
   },
   audienceSegmentTTLSubtitle: {
     id: 'automation.builder.node.audienceSegmentForm.ttl.subtitle',
@@ -198,18 +190,18 @@ export const messages = defineMessages({
   },
   audienceSegmentTTLPlaceholder: {
     id: 'automation.builder.node.audienceSegmentForm.ttl.placeholder',
-    defaultMessage: "Time to live in segment",
+    defaultMessage: "Time to live",
   },
   audienceSegmentTTLUnitDays: {
     id: 'automation.builder.node.audienceSegmentForm.ttl.unit.days',
     defaultMessage: "Days",
   },
+  audienceSegmentTTLUnitWeeks: {
+    id: 'automation.builder.node.audienceSegmentForm.ttl.unit.weeks',
+    defaultMessage: "Weeks",
+  },
   audienceSegmentTTLUnitMonths: {
     id: 'automation.builder.node.audienceSegmentForm.ttl.unit.months',
     defaultMessage: "Months",
-  },
-  audienceSegmentTTLUnitYears: {
-    id: 'automation.builder.node.audienceSegmentForm.ttl.unit.years',
-    defaultMessage: "Years",
   },
 });

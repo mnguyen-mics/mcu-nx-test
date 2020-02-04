@@ -59,7 +59,7 @@ export default class AutomationNodeModel extends NodeModel {
       case 'EMAIL_CAMPAIGN':
         this.editFormComponent = EmailCampaignAutomationForm;
         break;
-      case 'ADD_TO_SEGMENT':
+      case 'ADD_TO_SEGMENT_NODE':
         this.editFormComponent = AudienceSegmentAutomationForm;
         break;
       case 'ABN_NODE':

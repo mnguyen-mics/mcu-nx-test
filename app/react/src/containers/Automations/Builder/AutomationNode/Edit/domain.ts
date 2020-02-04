@@ -22,8 +22,7 @@ import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampa
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 import { DisplayCampaignFormData } from '../../../../Campaigns/Display/Edit/domain';
 import { QueryCreateRequest } from '../../../../../models/datamart/DatamartResource';
-import { AudienceSegmentFormData } from '../../../../Audience/Segments/Edit/domain';
-import { AudienceSegmentAutomationsFormProps } from './AudienceSegmentForm/AudienceSegmentAutomationForm';
+import { AddToSegmentAutomationFormProps } from './AudienceSegmentForm/AudienceSegmentAutomationForm';
 
 export interface DefaultFormData {
   name: string;
@@ -38,13 +37,11 @@ export interface WaitFormData extends DefaultFormData {
   timeout: number;
 }
 
-export const INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA: AudienceSegmentAutomationFormData = {
-  name: 'Audience Segment',
-  audienceSegment: {
-    name: 'Segment name',
-    feed_type: 'SCENARIO',
-    type: 'USER_LIST',
-    subtype: 'STANDARD'
+export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormData = {
+  name: '',
+  ttl: {
+    value: '',
+    unit: 'days',
   }
 }
 
@@ -147,18 +144,21 @@ export interface DisplayCampaignAutomationFormData extends DefaultFormData, Disp
 export interface EmailCampaignAutomationFormData extends DefaultFormData, EmailCampaignFormData {
 }
 
-export interface AudienceSegmentAutomationFormData extends DefaultFormData, AudienceSegmentFormData {
+export interface AddToSegmentAutomationFormData extends DefaultFormData {
+  ttl: {
+    value: '',
+    unit: 'days' | 'months',
+  }
 }
 
-export interface QueryAutomationFormData extends Partial<QueryCreateRequest> {
-  name: string
+export interface QueryAutomationFormData extends DefaultFormData, Partial<QueryCreateRequest> {
 }
 
 export type AutomationFormDataType =
   | DefaultFormData
   | ABNFormData
   | DisplayCampaignAutomationFormData
-  | AudienceSegmentAutomationFormData
+  | AddToSegmentAutomationFormData
   | EmailCampaignAutomationFormData
   | QueryAutomationFormData
   | WaitFormData;
@@ -168,7 +168,7 @@ export type AutomationFormPropsType =
   | DefaultAutomationFormProps
   | DisplayCampaignAutomationFormProps
   | EmailCampaignAutomationFormProps
-  | AudienceSegmentAutomationsFormProps;
+  | AddToSegmentAutomationFormProps;
 
 export const FORM_ID = 'automationNodeForm';
 
@@ -197,7 +197,7 @@ export function isEmailCampaignNode(
 export function isAddToSegmentNode(
   node: AutomationNodeShape,
 ): node is AddToSegmentNodeResource {
-  return node.type === 'ADD_TO_SEGMENT';
+  return node.type === 'ADD_TO_SEGMENT_NODE';
 }
 
 export function isQueryInputNode(

@@ -1,7 +1,7 @@
 import { ConfigProps, InjectedFormProps, getFormValues, reduxForm } from "redux-form";
 import { 
     FORM_ID,
-    AudienceSegmentAutomationFormData } from "../domain";
+    AddToSegmentAutomationFormData } from "../domain";
 import { Path } from '../../../../../../components/ActionBar';
 import { ScenarioNodeShape } from "../../../../../../models/automations/automations";
 import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
@@ -34,8 +34,8 @@ const messages = defineMessages({
 
 
 
-export interface AudienceSegmentAutomationsFormProps
-    extends Omit<ConfigProps<AudienceSegmentAutomationFormData>, 'form'> {
+export interface AddToSegmentAutomationFormProps
+    extends Omit<ConfigProps<AddToSegmentAutomationFormData>, 'form'> {
     close: () => void;
     breadCrumbPaths: Path[];
     node: ScenarioNodeShape;
@@ -43,14 +43,14 @@ export interface AudienceSegmentAutomationsFormProps
 }
 
 interface MapStateToProps {
-    formValues: AudienceSegmentAutomationFormData;
+    formValues: AddToSegmentAutomationFormData;
 }
 
 type Props = InjectedFormProps<
-    AudienceSegmentAutomationFormData,
-    AudienceSegmentAutomationsFormProps
+    AddToSegmentAutomationFormData,
+    AddToSegmentAutomationFormProps
 > &
-    AudienceSegmentAutomationsFormProps &
+    AddToSegmentAutomationFormProps &
     InjectedIntlProps &
     RouteComponentProps<{ organisationId: string }> &
     MapStateToProps;
@@ -131,7 +131,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
 });
 
 
-export default compose<Props, AudienceSegmentAutomationsFormProps>(
+export default compose<Props, AddToSegmentAutomationFormProps>(
     injectIntl,
     withRouter,
     connect(mapStateToProps),

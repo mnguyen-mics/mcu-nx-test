@@ -3,7 +3,7 @@ import {
   ABNFormData,
   EmailCampaignAutomationFormData,
   WaitFormData,
-  AudienceSegmentAutomationFormData,
+  AddToSegmentAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
 import { QueryResource } from './../datamart/DatamartResource';
@@ -40,7 +40,7 @@ export interface StorylineResource {
   begin_node_id: string;
 }
 
-export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'ADD_TO_SEGMENT' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT_NODE' | 'DROP_NODE' | 'IF_NODE'
+export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'ADD_TO_SEGMENT_NODE' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT_NODE' | 'DROP_NODE' | 'IF_NODE'
 
 export interface ScenarioNodeResource {
   id: string;
@@ -68,11 +68,11 @@ export interface EmailCampaignNodeResource extends ScenarioNodeResource {
 }
 
 export interface AddToSegmentNodeResource extends ScenarioNodeResource {
-  type: 'ADD_TO_SEGMENT';
-  audience_segment_id: string;
+  type: 'ADD_TO_SEGMENT_NODE';
+  user_list_segment_id: string;
   user_segment_expiration_period: string;
-  formData: AudienceSegmentAutomationFormData;
-  initialFormData: AudienceSegmentAutomationFormData;
+  formData: AddToSegmentAutomationFormData;
+  initialFormData: AddToSegmentAutomationFormData;
 }
 
 export type QueryInputEvaluationPeriodUnit = 'MINUTE' | 'HOUR' | 'DAY' | 'WEEK' | 'MONTH';

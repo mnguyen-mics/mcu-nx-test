@@ -8,7 +8,7 @@ import { AntIcon } from '../domain';
 import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
-  INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA,
+  INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
 } from '../AutomationNode/Edit/domain';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
@@ -66,12 +66,12 @@ const displayCampaignNode: ScenarioNodeShape = {
 const audienceSegmentNode: ScenarioNodeShape = {
   id: generateFakeId(),
   name: 'Add to Segment',
-  type: 'ADD_TO_SEGMENT',
-  audience_segment_id: '',
+  type: 'ADD_TO_SEGMENT_NODE',
+  user_list_segment_id: '',
   user_segment_expiration_period: '0',
   scenario_id: '',
-  formData: INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA,
-  initialFormData: INITIAL_AUDIENCE_SEGMENT_NODE_FORM_DATA,
+  formData: INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
+  initialFormData: INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
 };
 
 const conditionNode1: ScenarioNodeShape = {
