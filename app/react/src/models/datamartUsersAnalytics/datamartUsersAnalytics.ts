@@ -32,7 +32,7 @@ export interface PieSeriesDataOption {
 
 export interface AreaSeriesDataOptions {
   name: string;
-  fillColor: any;
+  fillColor: Highcharts.ColorString | Highcharts.GradientColorObject | Highcharts.PatternObject;
   fillOpacity: number;
   data: number[][];
   type: 'area';

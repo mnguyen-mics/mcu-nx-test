@@ -18,7 +18,7 @@ import { withDatamartSelector, WithDatamartSelectorProps } from '../../../Datama
 import { Loading } from '../../../../components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 import Error from '../../../../components/Error';
-import DatamartAnalysisWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { generateXAxisGridLine, generateYAxisGridLine, generateTooltip } from '../../../../components/Charts/domain';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
@@ -26,6 +26,10 @@ import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnaly
 const { Content } = Layout;
 
 const messages = defineMessages({
+  datamartUsersAnalyticsTitle: {
+    id: "audience.home.datamartAnalysisTitle",
+    defaultMessage: "Datamart Users analytics"
+  },
   comingSoon: {
     id: "audience.home.dashboard",
     defaultMessage: "Coming Soon..."
@@ -187,7 +191,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
           <Content className="mcs-content-container">
             {dashboards.map(d => <DashboardWrapper key={d.id} layout={d.components} title={d.name} datamartId={d.datamart_id} />)}
             {
-              shouldDisplayAnalyticsFeature && <DatamartAnalysisWrapper title={"Datamart Users analytics"} datamartId={selectedDatamartId} config={datamartAnalyticsConfig}/>
+              shouldDisplayAnalyticsFeature && <DatamartUsersAnalyticsWrapper title={intl.formatMessage(messages.datamartUsersAnalyticsTitle)} datamartId={selectedDatamartId} config={datamartAnalyticsConfig}/>
             }
           </Content>
         </div>

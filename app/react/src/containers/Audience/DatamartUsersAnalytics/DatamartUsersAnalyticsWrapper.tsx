@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout } from 'react-grid-layout';
 import ContentHeader from '../../../components/ContentHeader';
-import DatamartAnalysisContent, { DashboardConfig } from './DatamartUsersAnalyticsContent';
+import DatamartUsersAnalyticsContent, { DashboardConfig } from './DatamartUsersAnalyticsContent';
 
 interface DatamartAnalysisProps {
   title?: string;
@@ -15,7 +15,7 @@ interface State {
 
 type Props = DatamartAnalysisProps;
 
-class DatamartAnalysisWrapper extends React.Component<Props, State> {
+class DatamartUsersAnalyticsWrapper extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { layout: [] };
@@ -31,10 +31,10 @@ class DatamartAnalysisWrapper extends React.Component<Props, State> {
     return (
       <div>
         <ContentHeader title={title} size={`large`} />
-        <DatamartAnalysisContent datamartId={datamartId} config={config} />
+        <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} />
       </div>
     );
   }
 }
 
-export default DatamartAnalysisWrapper;
+export default DatamartUsersAnalyticsWrapper;
