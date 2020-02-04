@@ -13,10 +13,10 @@ import {
   isAttributionSelectionResource,
 } from './domain';
 import { GoalResource } from '../../../../models/goal';
-import GoalService from '../../../../services/GoalService';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
+import { IGoalService } from '../../../../services/GoalService';
 
 export interface IGoalFormService {
   loadGoalData: (goalId: string) => Promise<GoalFormData>;
@@ -31,10 +31,14 @@ export interface IGoalFormService {
 export class GoalFormService implements IGoalFormService {
   @inject(TYPES.IQueryService)
   private _queryService: IQueryService;
+
+  @inject(TYPES.IGoalService)
+  private _goalService: IGoalService;
+
   loadGoalData(goalId: string): Promise<GoalFormData> {
     return Promise.all([
-      GoalService.getGoal(goalId),
-      GoalService.getAttributionModels(goalId),
+      this._goalService.getGoal(goalId),
+      this._goalService.getAttributionModels(goalId),
     ]).then(([goalRes, attribModelRes]) => {
       const goalFormData: GoalFormData = {
         ...INITIAL_GOAL_FORM_DATA,
@@ -119,12 +123,12 @@ export class GoalFormService implements IGoalFormService {
 
     return goalDataToUpload.then(goalData => {
       if (goalFormData.goal && isGoalResource(goalFormData.goal)) {
-        createOrUpdateGoalPromise = GoalService.updateGoal(
+        createOrUpdateGoalPromise = this._goalService.updateGoal(
           goalFormData.goal.id,
           goalData,
         );
       } else {
-        createOrUpdateGoalPromise = GoalService.createGoal(
+        createOrUpdateGoalPromise = this._goalService.createGoal(
           organisationId,
           goalData,
         );
@@ -134,8 +138,7 @@ export class GoalFormService implements IGoalFormService {
         const goalResourceId = resp.data.id;
         const tasks: Task[] = [];
         tasks.push(
-          ...getAttributionModelTasks(
-            organisationId,
+          ...this.getAttributionModelTasks(
             goalResourceId,
             goalFormData.attributionModels,
             initialGoalFormData.attributionModels,
@@ -146,66 +149,65 @@ export class GoalFormService implements IGoalFormService {
       });
     });
   }
-}
 
-function getAttributionModelTasks(
-  organisationId: string,
-  goalId: string,
-  attributionModelFields: AttributionModelListFieldModel[],
-  initialAttributionModelFields: AttributionModelListFieldModel[] = [],
-): Task[] {
-  const initialIds: string[] = [];
-  initialAttributionModelFields.forEach(field => {
-    if (isAttributionSelectionResource(field.model)) {
-      initialIds.push(field.model.id);
-    }
-  });
-  const currentIds: string[] = [];
-  attributionModelFields.forEach(field => {
-    if (isAttributionSelectionResource(field.model)) {
-      currentIds.push(field.model.id);
-    }
-  });
+  getAttributionModelTasks(
+    goalId: string,
+    attributionModelFields: AttributionModelListFieldModel[],
+    initialAttributionModelFields: AttributionModelListFieldModel[] = [],
+  ): Task[] {
+    const initialIds: string[] = [];
+    initialAttributionModelFields.forEach(field => {
+      if (isAttributionSelectionResource(field.model)) {
+        initialIds.push(field.model.id);
+      }
+    });
+    const currentIds: string[] = [];
+    attributionModelFields.forEach(field => {
+      if (isAttributionSelectionResource(field.model)) {
+        currentIds.push(field.model.id);
+      }
+    });
 
-  const tasks: Task[] = [];
-  attributionModelFields.forEach(field => {
-    if (!isAttributionSelectionResource(field.model)) {
-      const attribSelCreateRequest = field.model;
-      if (attribSelCreateRequest.attribution_type === 'DIRECT') {
-        tasks.push(() =>
-          GoalService.linkAttributionModelToGoal(goalId, {
-            attribution_type: 'DIRECT',
-            default: field.meta.default,
-          }),
-        );
+    const tasks: Task[] = [];
+    attributionModelFields.forEach(field => {
+      if (!isAttributionSelectionResource(field.model)) {
+        const attribSelCreateRequest = field.model;
+        if (attribSelCreateRequest.attribution_type === 'DIRECT') {
+          tasks.push(() =>
+            this._goalService.linkAttributionModelToGoal(goalId, {
+              attribution_type: 'DIRECT',
+              default: field.meta.default,
+            }),
+          );
+        } else {
+          tasks.push(() =>
+            this._goalService.linkAttributionModelToGoal(goalId, {
+              attribution_model_id: attribSelCreateRequest.attribution_model_id,
+              attribution_type: 'WITH_PROCESSOR',
+              default: field.meta.default,
+            }),
+          );
+        }
       } else {
+        const attributionSelectionRes = field.model;
         tasks.push(() =>
-          GoalService.linkAttributionModelToGoal(goalId, {
-            attribution_model_id: attribSelCreateRequest.attribution_model_id,
-            attribution_type: 'WITH_PROCESSOR',
-            default: field.meta.default,
-          }),
+          this._goalService.updateLinkAttributionModel(
+            goalId,
+            attributionSelectionRes.id,
+            {
+              ...attributionSelectionRes,
+              default: field.meta.default,
+            },
+          ),
         );
       }
-    } else {
-      const attributionSelectionRes = field.model;
-      tasks.push(() =>
-        GoalService.updateLinkAttributionModel(
-          goalId,
-          attributionSelectionRes.id,
-          {
-            ...attributionSelectionRes,
-            default: field.meta.default,
-          },
-        ),
-      );
-    }
-  });
-
-  initialIds
-    .filter(id => !currentIds.includes(id))
-    .forEach(id => {
-      tasks.push(() => GoalService.deleteAttributionModel(goalId, id));
     });
-  return tasks;
+
+    initialIds
+      .filter(id => !currentIds.includes(id))
+      .forEach(id => {
+        tasks.push(() => this._goalService.deleteAttributionModel(goalId, id));
+      });
+    return tasks;
+  }
 }

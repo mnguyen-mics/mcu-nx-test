@@ -9,7 +9,6 @@ import {
   GoalResource,
   AttributionSelectionResource,
 } from '../../../../models/goal';
-import GoalService from '../../../../services/GoalService';
 import GoalActionbar from './GoalActionbar';
 import {
   DATE_SEARCH_SETTINGS,
@@ -27,6 +26,9 @@ import McsTabs from '../../../../components/McsTabs';
 import McsMoment from '../../../../utils/McsMoment';
 import GoalStackedAreaChart from './GoalChart';
 import GoalAttribution from './GoalAttribution';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IGoalService } from '../../../../services/GoalService';
 
 const { Content } = Layout;
 
@@ -62,6 +64,10 @@ type JoinedProps = GoalDashboardProps &
   InjectedIntlProps;
 
 class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
+
+  @lazyInject(TYPES.IGoalService)
+  private _goalService: IGoalService;
+  
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -129,11 +135,11 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
   }
 
   fetchGoal = (goalId: string) => {
-    return GoalService.getGoal(goalId)
+    return this._goalService.getGoal(goalId)
       .then(res => res.data)
       .then(res => {
         this.setState({ goalObject: { isLoading: false, item: res } });
-        return GoalService.getAttributionModels(res.id);
+        return this._goalService.getAttributionModels(res.id);
       })
       .then(res => res.data)
       .then(res =>

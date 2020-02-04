@@ -10,17 +10,16 @@ import {
 import { compose } from 'recompose';
 import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
-
 import ExportService from '../../../../services/ExportService';
-import GoalService, { GoalsOptions } from '../../../../services/GoalService';
 import ReportService from '../../../../services/ReportService';
-
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
-
 import { GOAL_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { Index } from '../../../../utils';
+import { TYPES } from '../../../../constants/types';
+import { lazyInject } from '../../../../config/inversify.config';
+import { IGoalService, GoalsOptions } from '../../../../services/GoalService';
 
 const messages = defineMessages({
   exportInProgress: {
@@ -40,57 +39,10 @@ interface State {
   exportIsRunning: boolean;
 }
 
-const fetchExportData = (organisationId: string, filter: Index<any>) => {
-  const buildOptionsForGetGoals = () => {
-    let options: GoalsOptions = {};
-    if (filter.statuses) {
-      options = {
-        archived: filter.statuses.includes('ARCHIVED'),
-        first_result: 0,
-        max_results: 2000,
-      };
-    }
-
-    if (filter.keywords) {
-      options.keywords = filter.keywords;
-    }
-
-    return options;
-  };
-
-  const startDate = filter.from;
-  const endDate = filter.to;
-  const dimension = ['goal_id'];
-
-  const apiResults = Promise.all([
-    GoalService.getGoals(organisationId, buildOptionsForGetGoals()),
-    ReportService.getConversionPerformanceReport(
-      organisationId,
-      startDate,
-      endDate,
-      dimension,
-    ),
-  ]);
-
-  return apiResults.then(results => {
-    const goals = normalizeArrayOfObject(results[0].data, 'id');
-    const performanceReport = normalizeArrayOfObject(
-      normalizeReportView(results[1].data.report_view),
-      'goal_id',
-    );
-
-    const mergedData = Object.keys(goals).map(goalId => {
-      return {
-        ...goals[goalId],
-        ...performanceReport[goalId],
-      };
-    });
-
-    return mergedData;
-  });
-};
-
 class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
+  @lazyInject(TYPES.IGoalService)
+  private _goalService: IGoalService;
+
   constructor(props: GoalsActionbarProps) {
     super(props);
     this.handleRunExport = this.handleRunExport.bind(this);
@@ -98,6 +50,56 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
       exportIsRunning: false,
     };
   }
+
+  fetchExportData = (organisationId: string, filter: Index<any>) => {
+    const buildOptionsForGetGoals = () => {
+      let options: GoalsOptions = {};
+      if (filter.statuses) {
+        options = {
+          archived: filter.statuses.includes('ARCHIVED'),
+          first_result: 0,
+          max_results: 2000,
+        };
+      }
+
+      if (filter.keywords) {
+        options.keywords = filter.keywords;
+      }
+
+      return options;
+    };
+
+    const startDate = filter.from;
+    const endDate = filter.to;
+    const dimension = ['goal_id'];
+
+    const apiResults = Promise.all([
+      this._goalService.getGoals(organisationId, buildOptionsForGetGoals()),
+      ReportService.getConversionPerformanceReport(
+        organisationId,
+        startDate,
+        endDate,
+        dimension,
+      ),
+    ]);
+
+    return apiResults.then(results => {
+      const goals = normalizeArrayOfObject(results[0].data, 'id');
+      const performanceReport = normalizeArrayOfObject(
+        normalizeReportView(results[1].data.report_view),
+        'goal_id',
+      );
+
+      const mergedData = Object.keys(goals).map(goalId => {
+        return {
+          ...goals[goalId],
+          ...performanceReport[goalId],
+        };
+      });
+
+      return mergedData;
+    });
+  };
 
   handleRunExport() {
     const {
@@ -118,7 +120,7 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
       0,
     );
 
-    fetchExportData(organisationId, filter)
+    this.fetchExportData(organisationId, filter)
       .then(data => {
         ExportService.exportGoals(
           organisationId,
@@ -180,7 +182,4 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(GoalsActionbar);
+export default compose(withRouter, injectIntl)(GoalsActionbar);

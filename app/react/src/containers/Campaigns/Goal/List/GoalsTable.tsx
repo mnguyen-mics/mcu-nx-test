@@ -26,7 +26,7 @@ import {
   normalizeReportView,
 } from '../../../../utils/MetricHelper';
 import { getWorkspace } from '../../../../state/Session/selectors';
-import GoalService, { GoalsOptions } from '../../../../services/GoalService';
+import { GoalsOptions, IGoalService } from '../../../../services/GoalService';
 import { Label } from '../../../Labels/Labels';
 import { McsRange } from '../../../../utils/McsMoment';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
@@ -46,6 +46,8 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import ReportService from '../../../../services/ReportService';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 export interface ParamFilters
   extends PaginationSearchSettings,
@@ -75,6 +77,9 @@ type Props = MapStateToProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class GoalsTable extends React.Component<Props, State> {
+  @lazyInject(TYPES.IGoalService)
+  private _goalService: IGoalService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -168,7 +173,7 @@ class GoalsTable extends React.Component<Props, State> {
     if (filter.datamartId) {
       options.datamart_id = filter.datamartId;
     }
-    GoalService.getGoals(organisationId, options).then(result => {
+    this._goalService.getGoals(organisationId, options).then(result => {
       const goalsById = normalizeArrayOfObject(result.data, 'id');
       this.setState({
         dataSource: Object.keys(goalsById).map(goalId => {
@@ -223,6 +228,10 @@ class GoalsTable extends React.Component<Props, State> {
       this.loadGoalsDataSource(organisationId, filter);
     };
 
+    const updateGoal = () => {
+      return this._goalService.updateGoal(goal.id, { ...goal, archived: true });
+    };
+
     Modal.confirm({
       title: intl.formatMessage(messages.archiveGoalModalTitle),
       content: intl.formatMessage(messages.archiveGoalModalBody),
@@ -230,7 +239,7 @@ class GoalsTable extends React.Component<Props, State> {
       okText: intl.formatMessage(messages.archiveGoalModalOk),
       cancelText: intl.formatMessage(messages.archiveGoalModalCancel),
       onOk() {
-        return GoalService.updateGoal(goal.id, { ...goal, archived: true })
+        return updateGoal()
           .then(() => {
             if (
               Object.keys(dataSource).length === 1 &&

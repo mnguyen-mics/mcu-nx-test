@@ -48,10 +48,10 @@ import GoalFormLoader, {
 } from '../../../../Goal/Edit/GoalFormLoader';
 import { IGoalFormService } from '../../../../Goal/Edit/GoalFormService';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
-import GoalService from '../../../../../../services/GoalService';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
 import { generateFakeId } from '../../../../../../utils/FakeIdHelper';
+import { IGoalService } from '../../../../../../services/GoalService';
 
 export interface GoalFormSectionProps extends ReduxFormChangeProps {
   small?: boolean;
@@ -72,8 +72,12 @@ interface State {
 }
 
 class GoalFormSection extends React.Component<Props, State> {
+  
   @lazyInject(TYPES.IGoalFormService)
   private _goalFormService: IGoalFormService;
+
+  @lazyInject(TYPES.IGoalService)
+  private _goalService: IGoalService;
 
   constructor(props: Props) {
     super(props);
@@ -137,7 +141,7 @@ class GoalFormSection extends React.Component<Props, State> {
           goal_selection_type: 'CONVERSION',
           default: true,
         };
-        return GoalService.getGoal(model.goal_id)
+        return this._goalService.getGoal(model.goal_id)
           .then(resp => resp.data)
           .then(goalResource => {
             const triggerMode = goalResource.new_query_id ? 'QUERY' : 'PIXEL';
@@ -257,7 +261,7 @@ class GoalFormSection extends React.Component<Props, State> {
     const tasks: Task[] = [];
     fields.getAll().forEach(_field => {
       tasks.push(() => {
-        return GoalService.getGoal(goalId)
+        return this._goalService.getGoal(goalId)
           .then(resp => resp.data)
           .then(goalResource => {
             if (field && _field.key === field.key) {

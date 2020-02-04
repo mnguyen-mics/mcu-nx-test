@@ -24,7 +24,6 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { ReportView } from '../../../../../models/ReportView';
-import GoalService from '../../../../../services/GoalService';
 import { GoalsCampaignRessource } from './domain';
 import { Index } from '../../../../../utils';
 import { injectDrawer } from '../../../../../components/Drawer';
@@ -38,6 +37,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 import { IResourceHistoryService } from '../../../../../services/ResourceHistoryService';
+import { IGoalService } from '../../../../../services/GoalService';
 
 interface DisplayCampaignActionBarProps {
   campaign: DisplayCampaignInfoResource;
@@ -78,6 +78,9 @@ class DisplayCampaignActionbar extends React.Component<
   @lazyInject(TYPES.IResourceHistoryService)
   private _resourceHistoryService: IResourceHistoryService;
 
+  @lazyInject(TYPES.IGoalService)
+  private _goalService: IGoalService;
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = { exportIsRunning: false };
@@ -106,8 +109,10 @@ class DisplayCampaignActionbar extends React.Component<
     this.fetchAllExportData(organisationId, campaignId, filter)
       .then(exportData => {
         // We don't want to display empty cells in the export
-        exportData.mediaData.map( media => {
-          media.display_network_name = media.display_network_name || formatMessage(messages.displayNetworkNameUncategorized)
+        exportData.mediaData.map(media => {
+          media.display_network_name =
+            media.display_network_name ||
+            formatMessage(messages.displayNetworkNameUncategorized);
           media.cpa = media.cpa || 0;
           media.cpc = media.cpc || 0;
           media.cpm = media.cpm || 0;
@@ -311,15 +316,15 @@ class DisplayCampaignActionbar extends React.Component<
         .getGoals(campaignId)
         .then(res => {
           const promises = res.data.map(goal => {
-            return GoalService.getAttributionModels(goal.goal_id).then(
-              attribution => {
+            return this._goalService
+              .getAttributionModels(goal.goal_id)
+              .then(attribution => {
                 const goalCampaign: GoalsCampaignRessource = {
                   ...goal,
                   attribution: attribution.data,
                 };
                 return goalCampaign;
-              },
-            );
+              });
           });
           return Promise.all(promises);
         })
@@ -345,9 +350,9 @@ class DisplayCampaignActionbar extends React.Component<
                   .then(report => ({ ...attribution, perf: report }));
                 goalAttributionPerformance.push(myPromise);
               });
-              return Promise.all(goalAttributionPerformance).then(
-                attribution => ({ ...goal, attribution }),
-              );
+              return Promise.all(
+                goalAttributionPerformance,
+              ).then(attribution => ({ ...goal, attribution }));
             }),
           );
         });
@@ -550,28 +555,34 @@ class DisplayCampaignActionbar extends React.Component<
                       );
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'GOAL_SELECTION',
-                        id,
-                        'GOAL',
-                      ).then(goalId => {
-                        return GoalService.getGoal(goalId).then(response => {
-                          return response.data.name;
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'GOAL_SELECTION',
+                          id,
+                          'GOAL',
+                        )
+                        .then(goalId => {
+                          return this._goalService
+                            .getGoal(goalId)
+                            .then(response => {
+                              return response.data.name;
+                            });
                         });
-                      });
                     },
                     goToResource: (id: string) => {
-                      this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'GOAL_SELECTION',
-                        id,
-                        'GOAL',
-                      ).then(goalId => {
-                        history.push(
-                          `/v2/o/${organisationId}/campaigns/goals/${goalId}`,
-                        );
-                      });
+                      this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'GOAL_SELECTION',
+                          id,
+                          'GOAL',
+                        )
+                        .then(goalId => {
+                          history.push(
+                            `/v2/o/${organisationId}/campaigns/goals/${goalId}`,
+                          );
+                        });
                     },
                   },
                 },

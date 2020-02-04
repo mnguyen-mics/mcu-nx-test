@@ -1,4 +1,7 @@
-import { IReferenceTableService, ReferenceTableService } from './../services/ReferenceTableService';
+import {
+  IReferenceTableService,
+  ReferenceTableService,
+} from './../services/ReferenceTableService';
 import {
   ITableSchemaService,
   TableSchemaService,
@@ -169,7 +172,10 @@ import {
 } from '../services/Library/KeywordListsService';
 import getDecorators from 'inversify-inject-decorators';
 import { IDatamartReplicationService } from '../services/DatamartReplicationService';
-import { IAttributionModelService, AttributionModelService } from '../services/AttributionModelService';
+import {
+  IAttributionModelService,
+  AttributionModelService,
+} from '../services/AttributionModelService';
 import {
   ILibraryCatalogService,
   LibraryCatalogService,
@@ -186,6 +192,7 @@ import {
   IResourceHistoryService,
   ResourceHistoryService,
 } from '../services/ResourceHistoryService';
+import { GoalService, IGoalService } from '../services/GoalService';
 
 const container = new Container();
 
@@ -241,6 +248,7 @@ container
   .to(AutomationFormService);
 container.bind<IQueryService>(TYPES.IQueryService).to(QueryService);
 container.bind<IGoalFormService>(TYPES.IGoalFormService).to(GoalFormService);
+container.bind<IGoalService>(TYPES.IGoalService).to(GoalService);
 container.bind<IUserDataService>(TYPES.IUserDataService).to(UserDataService);
 container.bind<IUsersService>(TYPES.IUsersService).to(UsersService);
 container
@@ -322,7 +330,7 @@ container
 container
   .bind<IResourceHistoryService>(TYPES.IResourceHistoryService)
   .to(ResourceHistoryService);
-  container
+container
   .bind<IReferenceTableService>(TYPES.IReferenceTableService)
   .to(ReferenceTableService);
 container.bind<IDataFileService>(TYPES.IDataFileService).to(DataFileService);
