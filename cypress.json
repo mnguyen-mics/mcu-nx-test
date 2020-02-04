@@ -4,6 +4,6 @@
     "apiDomain": "api.mediarithmics.local",
     "navigatorDomain": "navigator.mediarithmics.local"
   },
-  "ignoreTestFiles": ["**/integration/examples/**", "**/cypress_api/**", "!*.spec.js", "timeline*", "*CreateSements*", "*EditAllUserPixelFields*", "*DatamartReplication*"],
+  "ignoreTestFiles": ["**/integration/examples/**", "**/cypress_api/**", "!*.spec.js", "timeline*", "**/CreateSegments*", "**/EditAllUserPixelFields*", "**/DatamartReplication*"],
   "watchForFileChanges": false
 }
