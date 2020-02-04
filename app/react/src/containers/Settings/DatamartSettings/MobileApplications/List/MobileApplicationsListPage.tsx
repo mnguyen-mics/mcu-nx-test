@@ -256,7 +256,9 @@ class MobileApplicationsListPage extends React.Component<
     const { notifyError } = this.props;
     const { filter } = this.state;
     return this._channelService
-      .getChannelsByOrganisation(organisationId, 'MOBILE_APPLICATION')
+      .getChannelsByOrganisation(organisationId, {
+        channel_type: 'MOBILE_APPLICATION',
+      })
       .then(res => {
         if (res.data.length === 0) {
           this.setState({
@@ -334,7 +336,11 @@ class MobileApplicationsListPage extends React.Component<
   };
 
   getSearchSetting() {
-    return [...KEYWORD_SEARCH_SETTINGS, ...DATAMART_SEARCH_SETTINGS, ...PAGINATION_SEARCH_SETTINGS];
+    return [
+      ...KEYWORD_SEARCH_SETTINGS,
+      ...DATAMART_SEARCH_SETTINGS,
+      ...PAGINATION_SEARCH_SETTINGS,
+    ];
   }
 
   updateLocationSearch = (params: Index<any>) => {

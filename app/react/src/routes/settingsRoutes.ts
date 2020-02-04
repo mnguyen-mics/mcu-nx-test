@@ -54,6 +54,7 @@ import CompartmentsListPage from '../containers/Settings/DatamartSettings/Compar
 import CompartmentEditPage from '../containers/Settings/DatamartSettings/Compartments/Edit/CompartmentEditPage';
 import DatamartReplicationEditPage from '../containers/Settings/DatamartSettings/DatamartReplication/Edit/DatamartReplicationEditPage';
 import DatamartReplicationDashboard from '../containers/Settings/DatamartSettings/DatamartReplication/Dashboard/DatamartReplicationDashboard';
+import ChannelsListPage from '../containers/Settings/DatamartSettings/Channels/List/ChannelsListPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -107,6 +108,14 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
     requiredFeature: 'datamartSettings-mobile_applications',
+    requireDatamart: true,
+  },
+  // Channels
+  settingsDatamartChannelsList: {
+    path: '/settings/datamart/channels',
+    layout: 'settings',
+    contentComponent: ChannelsListPage,
+    requiredFeature: 'datamartSettings-channels',
     requireDatamart: true,
   },
   // Compartments

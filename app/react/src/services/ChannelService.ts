@@ -6,7 +6,6 @@ import {
   ChannelResourceShape,
   SiteResource,
   MobileApplicationResource,
-  ChannelType,
 } from '../models/settings/settings';
 import { injectable } from 'inversify';
 
@@ -18,8 +17,8 @@ export interface IChannelService {
   ) => Promise<DataListResponse<ChannelResource>>;
   getChannelsByOrganisation: (
     organisationId: string,
-    channelType: ChannelType,
-  ) => Promise<DataListResponse<ChannelResource>>;
+    options?: object,
+  ) => Promise<DataListResponse<ChannelResourceShape>>;
   getChannel: (
     datamartId: string,
     channelId: string,
@@ -35,8 +34,12 @@ export interface IChannelService {
   ) => Promise<DataResponse<SiteResource>>;
   updateMobileApplication: (
     datamartId: string,
-    mobileApplicationsId: string,
+    mobileApplicationId: string,
     body: Partial<MobileApplicationResource>,
+  ) => Promise<DataResponse<MobileApplicationResource>>;
+  deleteMobileApplication: (
+    datamartId: string,
+    mobileApplicationId: string,
   ) => Promise<DataResponse<MobileApplicationResource>>;
   createChannel: (
     organisationId: string,
@@ -109,16 +112,16 @@ export class ChannelService implements IChannelService {
   }
   getChannelsByOrganisation(
     organisationId: string,
-    channelType: ChannelType,
-  ): Promise<DataListResponse<ChannelResource>> {
+    options: object = {},
+  ): Promise<DataListResponse<ChannelResourceShape>> {
     const endpoint = `channels`;
     const params = {
       organisation_id: organisationId,
-      channel_type: channelType,
+      ...options,
     };
 
     return ApiService.getRequest(endpoint, params);
-  };
+  }
   getChannel(
     datamartId: string,
     channelId: string,
@@ -143,11 +146,18 @@ export class ChannelService implements IChannelService {
   }
   updateMobileApplication(
     datamartId: string,
-    mobileApplicationsId: string,
+    mobileApplicationId: string,
     body: Partial<MobileApplicationResource>,
   ): Promise<DataResponse<MobileApplicationResource>> {
-    const endpoint = `datamarts/${datamartId}/mobile_applications/${mobileApplicationsId}`;
+    const endpoint = `datamarts/${datamartId}/mobile_applications/${mobileApplicationId}`;
     return ApiService.putRequest(endpoint, body);
+  }
+  deleteMobileApplication(
+    datamartId: string,
+    mobileApplicationId: string,
+  ): Promise<DataResponse<MobileApplicationResource>> {
+    const endpoint = `datamarts/${datamartId}/mobile_applications/${mobileApplicationId}`;
+    return ApiService.deleteRequest(endpoint);
   }
   createChannel(
     organisationId: string,
