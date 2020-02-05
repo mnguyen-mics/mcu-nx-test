@@ -20,7 +20,6 @@ export function isPubSubReplication(
 ): replication is PubSubReplicationResource {
   return (
     !!replication.project_id &&
-    !!replication.credentials_uri &&
     !!replication.topic_id
   );
 }

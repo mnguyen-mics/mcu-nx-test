@@ -108,8 +108,10 @@ class DatamartReplicationTable extends React.Component<Props> {
         render: (text: string, record: DatamartReplicationResourceShape) => {
           return (
             <Link
-            className="mcs-datamartSettings_datamartReplicationTableItem"
-              to={`/v2/o/${organisationId}/settings/datamart/my_datamart/${record.datamart_id}/datamart_replication/${record.id}`}
+              className="mcs-datamartSettings_datamartReplicationTableItem"
+              // TO DO: when route to retrieve executions is live change this path to :
+              // `/v2/o/${organisationId}/settings/datamart/my_datamart/${record.datamart_id}/datamart_replication/${record.id}`
+              to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`}
             >
               {text}
             </Link>

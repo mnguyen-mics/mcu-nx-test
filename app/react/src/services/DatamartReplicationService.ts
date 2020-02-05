@@ -3,7 +3,11 @@ import {
   DatamartReplicationJobExecutionResource,
 } from './../models/settings/settings';
 import { PaginatedApiParam } from './../utils/ApiHelper';
-import ApiService, { DataListResponse, DataResponse, StatusCode } from './ApiService';
+import ApiService, {
+  DataListResponse,
+  DataResponse,
+  StatusCode,
+} from './ApiService';
 import { injectable } from 'inversify';
 
 export interface DatamartReplicationOptions extends PaginatedApiParam {
@@ -101,6 +105,7 @@ export class DatamartReplicationService implements IDatamartReplicationService {
   getJobExecutions(
     datamartReplicationId: string,
   ): Promise<DataListResponse<DatamartReplicationJobExecutionResource>> {
+    // TO DO: remove mocked data when route to retrieve executions is done
     // const endpoint = ``
     // return ApiService.getRequest(endpoint);
     const executions: DatamartReplicationJobExecutionResource[] = [

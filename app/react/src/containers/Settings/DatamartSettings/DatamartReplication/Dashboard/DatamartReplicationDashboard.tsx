@@ -266,6 +266,23 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
       total: totalJobExecutions,
     };
 
+    const subtitle = () => {
+      return (
+        datamartReplication &&
+        isPubSubReplication(datamartReplication) && (
+          <div className="subtitle">
+            <b>{formatMessage(messages.datamartReplicationType)}: </b> Google
+            Pub/Sub
+            <br />
+            <b>{formatMessage(messages.datamartReplicationProjectIdLabel)}: </b>
+            {datamartReplication.project_id} <br />
+            <b>{formatMessage(messages.datamartReplicationTopicIdLabel)}: </b>
+            {datamartReplication.topic_id} <br />
+          </div>
+        )
+      );
+    };
+
     return (
       <div className="ant-layout">
         <DatamartReplicationActionBar
@@ -273,15 +290,10 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
           deleteReplication={this.deleteDatamartReplication}
         />
         <div className="ant-layout">
-          <Content className="mcs-content-container">
+          <Content className="mcs-content-container mcs-replication-dashboard">
             <ContentHeader
               title={(datamartReplication && datamartReplication.name) || ''}
-              subTitle={
-                (datamartReplication &&
-                  isPubSubReplication(datamartReplication) &&
-                  `${datamartReplication.project_id}/${datamartReplication.topic_id}`) ||
-                ''
-              }
+              subTitle={subtitle()}
               loading={!(datamartReplication && datamartReplication.name)}
             />
             <Card title={formatMessage(messages.jobExecutions)}>
