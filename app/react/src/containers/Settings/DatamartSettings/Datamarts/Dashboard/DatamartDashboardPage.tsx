@@ -7,7 +7,7 @@ import DatamartActionBar from './DatamartActionBar';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import DatamartHeader from './DatamartHeader';
 import { IDatamartService } from '../../../../../services/DatamartService';
-import { Row, Col } from 'antd';
+import { Row, Col, Layout } from 'antd';
 import { notifyError } from '../../../../../state/Notifications/actions';
 import McsTabs from '../../../../../components/McsTabs';
 import DatamartConfigTab from './DatamartConfigTab';
@@ -17,6 +17,10 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import DatamartTableViewTab from './DatamartTableViewTab';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
+import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
+const { Content } = Layout;
 
 type Props = RouteComponentProps<{
   organisationId: string;
@@ -27,6 +31,7 @@ type Props = RouteComponentProps<{
 interface State {
   datamart?: DatamartResource;
   isLoading: boolean;
+  datamartAnalyticsConfig: DashboardConfig[];
 }
 
 class DatamartDashboardPage extends React.Component<Props, State> {
@@ -37,6 +42,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
+      datamartAnalyticsConfig: sessionInTimeJsonConfig as any
     };
   }
 
@@ -96,6 +102,16 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       items.push({
         title: 'Table View Configuration',
         display: <DatamartTableViewTab datamartId={datamartId} />,
+      },)
+    }
+
+    if (hasFeature("audience-dashboards-datamart_users_analytics") && datamart && datamart.datafarm === 'DF_EU_2017_09') {
+      items.push({
+        title: 'Statistics',
+        display: 
+          <Content className="mcs-content-container">
+          <DatamartUsersAnalyticsWrapper datamartId={datamart.id} config={sessionInTimeJsonConfig as any}/>
+          </Content>,
       },)
     }
 
