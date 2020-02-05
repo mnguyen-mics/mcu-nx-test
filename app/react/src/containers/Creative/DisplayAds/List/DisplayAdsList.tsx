@@ -35,7 +35,7 @@ type JoinedProps = DisplayAdsListProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps;
 
-class CreativeDisplayTable extends React.Component<JoinedProps> {
+class DisplayAdsList extends React.Component<JoinedProps> {
 
   constructor(props: JoinedProps) {
     super(props);
@@ -57,6 +57,19 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
     };
 
     history.push(nextLocation);
+  }
+
+  editCreativeDisplay = (creative: DisplayAdResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
+
+    history.push(
+      `/v2/o/${organisationId}/creatives/display/edit/${creative.id}`,
+    );
   }
 
   render() {
@@ -179,22 +192,9 @@ class CreativeDisplayTable extends React.Component<JoinedProps> {
       <EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />
     );
   }
-
-  editCreativeDisplay(creative: DisplayAdResource) {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      history,
-    } = this.props;
-
-    history.push(
-      `/v2/o/${organisationId}/creatives/display/edit/${creative.id}`,
-    );
-  }
 }
 
 export default compose<JoinedProps, DisplayAdsListProps>(
   withRouter,
   injectIntl,
-)(CreativeDisplayTable);
+)(DisplayAdsList);
