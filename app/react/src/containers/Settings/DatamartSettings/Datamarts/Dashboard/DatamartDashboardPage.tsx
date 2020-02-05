@@ -26,7 +26,8 @@ type Props = RouteComponentProps<{
   organisationId: string;
   datamartId: string;
 }> &
-  InjectedIntlProps & InjectedFeaturesProps;
+  InjectedIntlProps &
+  InjectedFeaturesProps;
 
 interface State {
   datamart?: DatamartResource;
@@ -42,7 +43,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
-      datamartAnalyticsConfig: sessionInTimeJsonConfig as any
+      datamartAnalyticsConfig: sessionInTimeJsonConfig as any,
     };
   }
 
@@ -57,7 +58,8 @@ class DatamartDashboardPage extends React.Component<Props, State> {
   }
 
   fetchDatamart = (datamartId: string) => {
-    this._datamartService.getDatamart(datamartId)
+    this._datamartService
+      .getDatamart(datamartId)
       .then(res =>
         this.setState({
           datamart: res.data,
@@ -75,7 +77,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       match: {
         params: { datamartId },
       },
-      hasFeature
+      hasFeature,
     } = this.props;
 
     const { datamart, isLoading } = this.state;
@@ -89,30 +91,46 @@ class DatamartDashboardPage extends React.Component<Props, State> {
         title: 'Datamart Activity',
         display: <DatamartActivity datamartId={datamartId} />,
       },
-    ]
+    ];
 
-    if (hasFeature("datamart-object_tree_schema") && datamart && datamart.storage_model_version !== "v201506") {
+    if (
+      hasFeature('datamart-object_tree_schema') &&
+      datamart &&
+      datamart.storage_model_version !== 'v201506'
+    ) {
       items.push({
         title: 'Object View Configuration',
         display: <DatamartObjectViewTab datamartId={datamartId} />,
-      },)
+      });
     }
 
-    if (hasFeature("datamart-table_view_schema") && datamart && datamart.storage_model_version !== "v201506") {
+    if (
+      hasFeature('datamart-table_view_schema') &&
+      datamart &&
+      datamart.storage_model_version !== 'v201506'
+    ) {
       items.push({
         title: 'Table View Configuration',
         display: <DatamartTableViewTab datamartId={datamartId} />,
-      },)
+      });
     }
 
-    if (hasFeature("audience-dashboards-datamart_users_analytics") && datamart && datamart.datafarm === 'DF_EU_2017_09') {
+    if (
+      hasFeature('audience-dashboards-datamart_users_analytics') &&
+      datamart &&
+      datamart.datafarm === 'DF_EU_2017_09'
+    ) {
       items.push({
         title: 'Statistics',
-        display: 
+        display: (
           <Content className="mcs-content-container">
-          <DatamartUsersAnalyticsWrapper datamartId={datamart.id} config={sessionInTimeJsonConfig as any}/>
-          </Content>,
-      },)
+            <DatamartUsersAnalyticsWrapper
+              datamartId={datamart.id}
+              config={sessionInTimeJsonConfig as any}
+            />
+          </Content>
+        ),
+      });
     }
 
     return (
@@ -126,10 +144,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
               </Col>
             </Row>
             <Row>
-              <McsTabs
-                items={items}
-                tabBarStyle={{ margin: '0 40px' }}
-              />
+              <McsTabs items={items} tabBarStyle={{ margin: '0 40px' }} />
             </Row>
           </div>
         </div>
