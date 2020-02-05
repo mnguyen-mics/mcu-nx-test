@@ -9,6 +9,7 @@ import { LoadingChart, EmptyCharts } from '../../../../../components/EmptyCharts
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
 
 const messages = defineMessages({
   noData: {
@@ -20,7 +21,7 @@ const messages = defineMessages({
 type Props = ApiQueryWrapperProps & InjectedNotificationProps & InjectedIntlProps;
 
 export interface ApiQueryWrapperProps {
-  charts: Chart[];
+  chart: Chart;
   datamartId: string;
 }
 
@@ -42,12 +43,12 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { datamartId } = this.props;
-    this.fetchAnalytics(datamartId)
+    const { datamartId, chart } = this.props;
+    this.fetchAnalytics(datamartId, chart.metricName, chart.xKey)
   }
 
-  fetchAnalytics = (datamartId: string) => {
-    return this._datamartUsersAnalyticsService.getAnalytics(datamartId)
+  fetchAnalytics = (datamartId: string, metric: DatamartUsersAnalyticsMetric, dimension?: DatamartUsersAnalyticsDimension) => {
+    return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, dimension)
       .then(res => {
         this.setState({
           loading: false,
@@ -56,18 +57,21 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       })
       .catch(e => {
         this.props.notifyError(e);
+        this.setState({
+          loading: false
+        });
       });
   }
 
   render() {
-    const { charts, intl } = this.props;
+    const { chart, intl } = this.props;
     const { loading, reportViewApiResponse } = this.state;
 
     if (loading) return <LoadingChart />
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
         {reportViewApiResponse && reportViewApiResponse.total_items > 0 ?
-          <FormatData apiResponse={reportViewApiResponse} charts={charts} /> : <EmptyCharts title={intl.formatMessage(messages.noData)} />}
+          <FormatData apiResponse={reportViewApiResponse} chart={chart} /> : <EmptyCharts title={intl.formatMessage(messages.noData)} />}
       </div>
     )
   }
