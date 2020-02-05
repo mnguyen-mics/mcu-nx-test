@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import injectNotifications from '../../../../Notifications/injectNotifications';
 import DatamartActionBar from './DatamartActionBar';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import DatamartHeader from './DatamartHeader';
 import { IDatamartService } from '../../../../../services/DatamartService';
-import { Row, Col } from 'antd';
+import { Row, Col, Layout } from 'antd';
 import { notifyError } from '../../../../../state/Notifications/actions';
 import McsTabs from '../../../../../components/McsTabs';
 import DatamartConfigTab from './DatamartConfigTab';
@@ -17,16 +17,46 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import DatamartTableViewTab from './DatamartTableViewTab';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
+import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
+
+const { Content } = Layout;
+
+const messages = defineMessages({
+  datamartConfiguration: {
+    id: 'settings.datamart.configuration',
+    defaultMessage: 'Datamart Configuration',
+  },
+  datamartActivity: {
+    id: 'settings.datamart.activity',
+    defaultMessage: 'Datamart Activity',
+  },
+  tableViewConfiguration: {
+    id: 'settings.datamart.tableview.configuration',
+    defaultMessage: 'Table View Configuration',
+  },
+  objectViewConfiguration: {
+    id: 'settings.datamart.objectview.configuration',
+    defaultMessage: 'Object View Configuration',
+  },
+  statistics: {
+    id: 'settings.datamart.statistics',
+    defaultMessage: 'Statistics',
+  },
+});
 
 type Props = RouteComponentProps<{
   organisationId: string;
   datamartId: string;
 }> &
-  InjectedIntlProps & InjectedFeaturesProps;
+  InjectedIntlProps &
+  InjectedFeaturesProps;
 
 interface State {
   datamart?: DatamartResource;
   isLoading: boolean;
+  datamartAnalyticsConfig: DashboardConfig[];
 }
 
 class DatamartDashboardPage extends React.Component<Props, State> {
@@ -37,6 +67,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
+      datamartAnalyticsConfig: sessionInTimeJsonConfig as any,
     };
   }
 
@@ -51,7 +82,8 @@ class DatamartDashboardPage extends React.Component<Props, State> {
   }
 
   fetchDatamart = (datamartId: string) => {
-    this._datamartService.getDatamart(datamartId)
+    this._datamartService
+      .getDatamart(datamartId)
       .then(res =>
         this.setState({
           datamart: res.data,
@@ -66,37 +98,64 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
   render() {
     const {
+      intl,
       match: {
         params: { datamartId },
       },
-      hasFeature
+      hasFeature,
     } = this.props;
 
     const { datamart, isLoading } = this.state;
 
     const items = [
       {
-        title: 'Datamart Configuration',
+        title: intl.formatMessage(messages.datamartConfiguration),
         display: <DatamartConfigTab datamartId={datamartId} />,
       },
       {
-        title: 'Datamart Activity',
+        title: intl.formatMessage(messages.datamartActivity),
         display: <DatamartActivity datamartId={datamartId} />,
       },
-    ]
+    ];
 
-    if (hasFeature("datamart-object_tree_schema") && datamart && datamart.storage_model_version !== "v201506") {
+    if (
+      hasFeature('datamart-object_tree_schema') &&
+      datamart &&
+      datamart.storage_model_version !== 'v201506'
+    ) {
       items.push({
-        title: 'Object View Configuration',
+        title: intl.formatMessage(messages.objectViewConfiguration),
         display: <DatamartObjectViewTab datamartId={datamartId} />,
-      },)
+      });
     }
 
-    if (hasFeature("datamart-table_view_schema") && datamart && datamart.storage_model_version !== "v201506") {
+    if (
+      hasFeature('datamart-table_view_schema') &&
+      datamart &&
+      datamart.storage_model_version !== 'v201506'
+    ) {
       items.push({
-        title: 'Table View Configuration',
+        title: intl.formatMessage(messages.tableViewConfiguration),
         display: <DatamartTableViewTab datamartId={datamartId} />,
-      },)
+      });
+    }
+
+    if (
+      hasFeature('audience-dashboards-datamart_users_analytics') &&
+      datamart &&
+      datamart.datafarm === 'DF_EU_2017_09'
+    ) {
+      items.push({
+        title: intl.formatMessage(messages.statistics),
+        display: (
+          <Content className="mcs-content-container">
+            <DatamartUsersAnalyticsWrapper
+              datamartId={datamart.id}
+              config={sessionInTimeJsonConfig as any}
+            />
+          </Content>
+        ),
+      });
     }
 
     return (
@@ -110,10 +169,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
               </Col>
             </Row>
             <Row>
-              <McsTabs
-                items={items}
-                tabBarStyle={{ margin: '0 40px' }}
-              />
+              <McsTabs items={items} tabBarStyle={{ margin: '0 40px' }} />
             </Row>
           </div>
         </div>
