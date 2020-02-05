@@ -29,7 +29,7 @@ const messages = defineMessages({
   },
 });
 
-interface EmailActionBarProps {
+interface EmailTemplatesActionBarProps {
   rowSelection: {
     selectedRowKeys: string[];
     onChange: (selectedRowKeys: string[]) => void;
@@ -43,11 +43,11 @@ interface EmailActionBarProps {
     isArchiving: boolean;
   };
 }
-type JoinedProps = EmailActionBarProps &
+type JoinedProps = EmailTemplatesActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps;
 
-class EmailActionBar extends React.Component<JoinedProps> {
+class EmailTemplatesActionBar extends React.Component<JoinedProps> {
   render() {
     const {
       match: {
@@ -119,7 +119,7 @@ class EmailActionBar extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, EmailActionBarProps>(
+export default compose<JoinedProps, EmailTemplatesActionBarProps>(
   withRouter,
   injectIntl,
-)(EmailActionBar);
+)(EmailTemplatesActionBar);

@@ -22,7 +22,7 @@ import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
-interface CreativeEmailsTableProps {
+interface EmailTemplatesTableProps {
   rowSelection: ExtendedTableRowSelection;
   isLoadingEmailTemplates: boolean;
   dataSource: EmailTemplateResource[];
@@ -37,11 +37,11 @@ interface State {
   selectedtemplateId: string;
 }
 
-type JoinedProps = CreativeEmailsTableProps &
+type JoinedProps = EmailTemplatesTableProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps;
 
-class CreativeEmailsTable extends React.Component<JoinedProps, State> {
+class EmailTemplatesTable extends React.Component<JoinedProps, State> {
 
   constructor(props: JoinedProps) {
     super(props);
@@ -78,7 +78,7 @@ class CreativeEmailsTable extends React.Component<JoinedProps, State> {
     this.setState({ modalVisible: false, selectedtemplateId: '' });
   };
 
-  editCreativeEmails(campaign: EmailTemplateResource) {
+  editEmailTemplate = (campaign: EmailTemplateResource) => {
     const {
       match: {
         params: { organisationId },
@@ -178,7 +178,7 @@ class CreativeEmailsTable extends React.Component<JoinedProps, State> {
           },
           {
             intlMessage: messagesMap.edit,
-            callback: this.editCreativeEmails,
+            callback: this.editEmailTemplate,
           },
           {
             intlMessage: messagesMap.archive,
@@ -222,7 +222,7 @@ class CreativeEmailsTable extends React.Component<JoinedProps, State> {
   }
 }
 
-export default compose<JoinedProps, CreativeEmailsTableProps>(
+export default compose<JoinedProps, EmailTemplatesTableProps>(
   withRouter,
   injectIntl,
-)(CreativeEmailsTable);
+)(EmailTemplatesTable);

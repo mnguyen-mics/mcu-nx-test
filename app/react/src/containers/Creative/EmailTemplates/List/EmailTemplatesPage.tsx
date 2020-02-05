@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Layout, message, Modal } from 'antd';
 import { compose } from 'recompose';
-import EmailActionBar from './EmailActionBar';
-import EmailList from './EmailList';
+import EmailTemplatesActionBar from './EmailTemplatesActionBar';
+import EmailTemplatesTable from './EmailTemplatesTable';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -50,7 +50,7 @@ type JoinedProps = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class EmailListPage extends React.Component<JoinedProps, State> {
+class EmailTemplatesPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
 
@@ -392,13 +392,13 @@ class EmailListPage extends React.Component<JoinedProps, State> {
 
     return (
       <div className="ant-layout">
-        <EmailActionBar
+        <EmailTemplatesActionBar
           rowSelection={rowSelection}
           multiEditProps={multiEditProps}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <EmailList
+            <EmailTemplatesTable
               rowSelection={rowSelection}
               dataSource={dataSource}
               archiveEmailTemplate={this.archiveCreativeEmail}
@@ -418,4 +418,4 @@ export default compose<JoinedProps, {}>(
   injectIntl,
   injectDrawer,
   injectNotifications,
-)(EmailListPage);
+)(EmailTemplatesPage);
