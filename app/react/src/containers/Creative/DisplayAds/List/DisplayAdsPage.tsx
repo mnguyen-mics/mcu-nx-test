@@ -37,7 +37,7 @@ import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
-interface DisplayAdsPageState {
+interface State {
   selectedRowKeys: string[];
   allRowsAreSelected: boolean;
   isArchiveModalVisible: boolean;
@@ -49,13 +49,12 @@ interface DisplayAdsPageState {
   hasDisplayAds: boolean;
 }
 
-type JoinedProps = DisplayAdsPage &
-  InjectedIntlProps &
+type JoinedProps = InjectedIntlProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
+class DisplayAdsPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
 

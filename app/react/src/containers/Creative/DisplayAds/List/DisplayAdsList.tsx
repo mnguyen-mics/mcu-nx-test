@@ -59,7 +59,7 @@ class DisplayAdsList extends React.Component<JoinedProps> {
     history.push(nextLocation);
   }
 
-  editCreativeDisplay = (creative: DisplayAdResource) => {
+  editDisplayCreative = (creative: DisplayAdResource) => {
     const {
       match: {
         params: { organisationId },
@@ -166,7 +166,7 @@ class DisplayAdsList extends React.Component<JoinedProps> {
         actions: () => [
           {
             intlMessage: messages.edit,
-            callback: this.editCreativeDisplay,
+            callback: this.editDisplayCreative,
           },
           {
             intlMessage: messages.archive,

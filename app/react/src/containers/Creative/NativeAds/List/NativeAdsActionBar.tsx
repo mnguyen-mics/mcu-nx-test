@@ -35,7 +35,7 @@ const messages = defineMessages({
   },
 });
 
-interface NativeActionBarProps {
+interface NativeAdsActionBarProps {
   rowSelection: {
     selectedRowKeys: string[];
     onChange: (selectedRowKeys: string[]) => void;
@@ -49,11 +49,11 @@ interface NativeActionBarProps {
     isArchiving: boolean;
   };
 }
-type JoinedProps = NativeActionBarProps &
+type JoinedProps = NativeAdsActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps;
 
-class NativeActionBar extends React.Component<JoinedProps> {
+class NativeAdsActionBar extends React.Component<JoinedProps> {
   render() {
     const {
       match: {
@@ -128,7 +128,7 @@ class NativeActionBar extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, NativeActionBarProps>(
+export default compose<JoinedProps, NativeAdsActionBarProps>(
   withRouter,
   injectIntl,
-)(NativeActionBar);
+)(NativeAdsActionBar);

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Layout, message, Modal } from 'antd';
 import { compose } from 'recompose';
-import NativeActionBar from './NativeActionBar';
-import NativeList from './NativeList';
+import NativeAdsActionBar from './NativeAdsActionBar';
+import NativeAdsTable from './NativeAdsTable';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -34,7 +34,7 @@ import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
-interface NativeListPageState {
+interface State {
   selectedRowKeys: string[];
   isArchiveModalVisible: boolean;
   allRowsAreSelected: boolean;
@@ -50,7 +50,7 @@ type JoinedProps = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
+class NativeAdsPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
 
@@ -382,13 +382,13 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
     };
     return (
       <div className="ant-layout">
-        <NativeActionBar
+        <NativeAdsActionBar
           rowSelection={rowSelection}
           multiEditProps={multiEditProps}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <NativeList
+            <NativeAdsTable
               rowSelection={rowSelection}
               dataSource={dataSource}
               archiveNativeAd={this.archiveNativeAd}
@@ -408,4 +408,4 @@ export default compose<JoinedProps, {}>(
   injectIntl,
   injectDrawer,
   injectNotifications,
-)(NativeListPage);
+)(NativeAdsPage);

@@ -22,7 +22,7 @@ import {
 } from '../../../../components/TableView/TableView';
 import messagesMap from '../../DisplayAds/List/message';
 
-interface NativeCreativesTableProps {
+interface NativeAdsTableProps {
   rowSelection: ExtendedTableRowSelection;
   hasNativeAds: boolean;
   isLoadingNativeAds: boolean;
@@ -31,25 +31,25 @@ interface NativeCreativesTableProps {
   archiveNativeAd: (ad: DisplayAdResource) => void;
 }
 
-interface NativeCreativesTableState {
+interface State {
   modalVisible: boolean;
   inputValue: string[];
   selectedNativeId: string;
 }
 
-type JoinedProps = NativeCreativesTableProps &
+type JoinedProps = NativeAdsTableProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps;
 
-class NativeCreativesTable extends React.Component<
+class NativeAdsTable extends React.Component<
   JoinedProps,
-  NativeCreativesTableState
+  State
 > {
   constructor(props: JoinedProps) {
     super(props);
   }
 
-  editNativeCreatives(native: DisplayAdResource) {
+  editNativeCreatives = (native: DisplayAdResource) => {
     const {
       match: {
         params: { organisationId },
@@ -208,7 +208,7 @@ class NativeCreativesTable extends React.Component<
   }
 }
 
-export default compose<JoinedProps, NativeCreativesTableProps>(
+export default compose<JoinedProps, NativeAdsTableProps>(
   withRouter,
   injectIntl,
-)(NativeCreativesTable);
+)(NativeAdsTable);
