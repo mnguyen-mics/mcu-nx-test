@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayAdsActionBar from './DisplayAdsActionBar';
-import DisplayAdsList from './DisplayAdsList';
+import DisplayAdsTable from './DisplayAdsTable';
 import { injectDrawer } from '../../../../components/Drawer';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
@@ -469,7 +469,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <DisplayAdsList
+            <DisplayAdsTable
               rowSelection={rowSelection}
               isUpdatingAuditStatus={isUpdatingAuditStatus}
               dataSource={dataSource}

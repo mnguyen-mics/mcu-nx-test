@@ -6,7 +6,7 @@ import NativeAdsPage from '../containers/Creative/NativeAds/List/NativeAdsPage';
 
 import { CreateEmailTemplate } from '../containers/Creative/EmailTemplates/Edit';
 
-import { EmailListPage } from '../containers/Creative/EmailTemplates/List';
+import { EmailTemplatesPage } from '../containers/Creative/EmailTemplates/List';
 
 import EditNativeCreativePage from '../containers/Creative/NativeAds/Edit/EditNativeCreativePage';
 
@@ -38,7 +38,7 @@ export const creativesDefinition: NavigatorDefinition = {
   creativeEmailList: {
     path: '/creatives/email',
     layout: 'main',
-    contentComponent: EmailListPage,
+    contentComponent: EmailTemplatesPage,
     requiredFeature: 'creatives-email',
   },
   creativeNativeList: {

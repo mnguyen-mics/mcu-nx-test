@@ -21,7 +21,7 @@ import {
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
 
-interface DisplayAdsListProps {
+interface DisplayAdsTableProps {
   rowSelection: ExtendedTableRowSelection;
   isUpdatingAuditStatus: boolean;
   dataSource: DisplayAdResource[];
@@ -31,11 +31,11 @@ interface DisplayAdsListProps {
   totalDisplayAds: number;
 }
 
-type JoinedProps = DisplayAdsListProps &
+type JoinedProps = DisplayAdsTableProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps;
 
-class DisplayAdsList extends React.Component<JoinedProps> {
+class DisplayAdsTable extends React.Component<JoinedProps> {
 
   constructor(props: JoinedProps) {
     super(props);
@@ -194,7 +194,7 @@ class DisplayAdsList extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, DisplayAdsListProps>(
+export default compose<JoinedProps, DisplayAdsTableProps>(
   withRouter,
   injectIntl,
-)(DisplayAdsList);
+)(DisplayAdsTable);
