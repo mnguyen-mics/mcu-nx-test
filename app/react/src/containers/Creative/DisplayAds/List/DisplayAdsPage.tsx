@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayAdsActionBar from './DisplayAdsActionBar';
-import DisplayAdsList from './DisplayAdsList';
+import DisplayAdsTable from './DisplayAdsTable';
 import { injectDrawer } from '../../../../components/Drawer';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
@@ -37,7 +37,7 @@ import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
-interface DisplayAdsPageState {
+interface State {
   selectedRowKeys: string[];
   allRowsAreSelected: boolean;
   isArchiveModalVisible: boolean;
@@ -49,13 +49,12 @@ interface DisplayAdsPageState {
   hasDisplayAds: boolean;
 }
 
-type JoinedProps = DisplayAdsPage &
-  InjectedIntlProps &
+type JoinedProps = InjectedIntlProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
+class DisplayAdsPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
 
@@ -470,7 +469,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, DisplayAdsPageState> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <DisplayAdsList
+            <DisplayAdsTable
               rowSelection={rowSelection}
               isUpdatingAuditStatus={isUpdatingAuditStatus}
               dataSource={dataSource}

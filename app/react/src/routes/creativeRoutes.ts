@@ -2,11 +2,11 @@ import { EditDisplayCreativePage } from '../containers/Creative/DisplayAds/Edit'
 
 import DisplayAdsPage from '../containers/Creative/DisplayAds/List/DisplayAdsPage';
 
-import NativeListPage from '../containers/Creative/NativeAds/List/NativeListPage';
+import NativeAdsPage from '../containers/Creative/NativeAds/List/NativeAdsPage';
 
 import { CreateEmailTemplate } from '../containers/Creative/EmailTemplates/Edit';
 
-import { EmailListPage } from '../containers/Creative/EmailTemplates/List';
+import { EmailTemplatesPage } from '../containers/Creative/EmailTemplates/List';
 
 import EditNativeCreativePage from '../containers/Creative/NativeAds/Edit/EditNativeCreativePage';
 
@@ -38,13 +38,13 @@ export const creativesDefinition: NavigatorDefinition = {
   creativeEmailList: {
     path: '/creatives/email',
     layout: 'main',
-    contentComponent: EmailListPage,
+    contentComponent: EmailTemplatesPage,
     requiredFeature: 'creatives-email',
   },
   creativeNativeList: {
     path: '/creatives/native',
     layout: 'main',
-    contentComponent: NativeListPage,
+    contentComponent: NativeAdsPage,
     requiredFeature: 'creatives-native',
   },
   creativeNativeCreation: {

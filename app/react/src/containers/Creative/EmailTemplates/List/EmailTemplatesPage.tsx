@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Layout, message, Modal } from 'antd';
 import { compose } from 'recompose';
-import NativeActionBar from './NativeActionBar';
-import NativeList from './NativeList';
+import EmailTemplatesActionBar from './EmailTemplatesActionBar';
+import EmailTemplatesTable from './EmailTemplatesTable';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -19,30 +19,30 @@ import {
   buildDefaultSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import { NATIVE_SEARCH_SETTINGS } from './constants';
+import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { executeTasksInSequence, Task } from '../../../../utils/PromiseHelper';
-import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
+import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { Index } from '../../../../utils';
-import messagesMap from '../../DisplayAds/List/message';
+import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import messages from '../../DisplayAds/List/message';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
-interface NativeListPageState {
+interface State {
   selectedRowKeys: string[];
   isArchiveModalVisible: boolean;
   allRowsAreSelected: boolean;
   isArchiving: boolean;
-  hasNatives: boolean;
-  isLoadingNatives: boolean;
-  dataSource: DisplayAdResource[];
-  totalNativeCreatives: number;
+  isLoadingEmailTemplates: boolean;
+  dataSource: EmailTemplateResource[];
+  totalEmailTemplates: number;
+  hasEmailTemplates: boolean;
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -50,7 +50,7 @@ type JoinedProps = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
+class EmailTemplatesPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
 
@@ -61,10 +61,10 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       isArchiveModalVisible: false,
       allRowsAreSelected: false,
       isArchiving: false,
-      hasNatives: true,
-      isLoadingNatives: false,
+      isLoadingEmailTemplates: false,
       dataSource: [],
-      totalNativeCreatives: 0,
+      totalEmailTemplates: 0,
+      hasEmailTemplates: true,
     };
   }
 
@@ -77,15 +77,15 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       },
     } = this.props;
 
-    if (!isSearchValid(search, NATIVE_SEARCH_SETTINGS)) {
+    if (!isSearchValid(search, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, NATIVE_SEARCH_SETTINGS),
+        search: buildDefaultSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS),
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
-      this.fetchNativeAds(organisationId, filter, true);
+      const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+      this.fetchCreativeEmails(organisationId, filter, true);
     }
   }
 
@@ -111,31 +111,37 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       !compareSearches(search, nextSearch) ||
       organisationId !== nextOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, NATIVE_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, NATIVE_SEARCH_SETTINGS),
+          search: buildDefaultSearch(
+            nextSearch,
+            CREATIVE_EMAIL_SEARCH_SETTINGS,
+          ),
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, NATIVE_SEARCH_SETTINGS);
-        this.fetchNativeAds(nextOrganisationId, filter, checkEmptyDataSource);
+        const filter = parseSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS);
+        this.fetchCreativeEmails(
+          nextOrganisationId,
+          filter,
+          checkEmptyDataSource,
+        );
       }
     }
   }
 
-  fetchNativeAds = (
+  fetchCreativeEmails = (
     organisationId: string,
     filter: Index<any>,
     init: boolean = false,
   ) => {
     this.setState({
-      isLoadingNatives: true,
+      isLoadingEmailTemplates: true,
     });
     let options: CreativesOptions = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       archived: filter.archived,
-      subtype: ['NATIVE'],
     };
 
     if (filter.keywords) {
@@ -145,19 +151,19 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       };
     }
     this._creativeService
-      .getDisplayAds(organisationId, options)
+      .getEmailTemplates(organisationId, options)
       .then(result => {
         const data = result.data;
-        const displayAdsById = normalizeArrayOfObject(data, 'id');
+        const emailTemplatesById = normalizeArrayOfObject(data, 'id');
         this.setState({
-          dataSource: Object.keys(displayAdsById).map(id => {
+          dataSource: Object.keys(emailTemplatesById).map(id => {
             return {
-              ...displayAdsById[id],
+              ...emailTemplatesById[id],
             };
           }),
-          isLoadingNatives: false,
-          hasNatives: init ? result.count !== 0 : true,
-          totalNativeCreatives: result.total || 0,
+          isLoadingEmailTemplates: false,
+          hasEmailTemplates: init ? result.count !== 0 : true,
+          totalEmailTemplates: result.total || 0,
         });
       });
   };
@@ -178,7 +184,7 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
     });
   };
 
-  archiveNativeCreatives = () => {
+  archiveEmails = () => {
     this.showModal();
   };
 
@@ -194,7 +200,7 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
     });
   };
 
-  getAllNativeCreativeIds = () => {
+  getAllEmailTemplatesIds = () => {
     const {
       match: {
         params: { organisationId },
@@ -202,24 +208,86 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       notifyError,
     } = this.props;
 
-    const { totalNativeCreatives } = this.state;
+    const { totalEmailTemplates } = this.state;
+
     const options: CreativesOptions = {
-      type: 'DISPLAY_AD',
-      subtype: ['NATIVE'],
+      type: 'EMAIL_TEMPLATE',
       archived: false,
-      max_results: totalNativeCreatives, // mandatory
+      max_results: totalEmailTemplates, // mandatory
     };
     return this._creativeService
-      .getDisplayAds(organisationId, options)
+      .getEmailTemplates(organisationId, options)
       .then(apiResp =>
-        apiResp.data.map(nativeCreativesResource => nativeCreativesResource.id),
+        apiResp.data.map(emailTemplateResource => emailTemplateResource.id),
       )
       .catch(err => {
         notifyError(err);
       });
   };
 
-  archiveNativeAd = (native: DisplayAdResource) => {
+  redirectAndNotify = () => {
+    const {
+      location: { search, pathname, state },
+      history,
+      intl,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+
+    const { dataSource } = this.state;
+
+    if (dataSource.length === 1 && filter.currentPage !== 1) {
+      const newFilter = {
+        ...filter,
+        currentPage: 1,
+      };
+      this.fetchCreativeEmails(organisationId, filter, true);
+      history.push({
+        pathname: pathname,
+        search: updateSearch(search, newFilter),
+        state: state,
+      });
+    } else {
+      this.fetchCreativeEmails(organisationId, filter, true);
+    }
+
+    this.setState({
+      isArchiveModalVisible: false,
+      selectedRowKeys: [],
+    });
+    message.success(intl.formatMessage(messages.archiveEmailSuccess));
+  };
+
+  makeArchiveAction = (emailTemplateIds: string[]) => {
+    this.setState({
+      isArchiving: true,
+    });
+    const tasks: Task[] = [];
+    emailTemplateIds.forEach(emailTemplateId => {
+      tasks.push(() => {
+        return this._creativeService
+          .getEmailTemplate(emailTemplateId)
+          .then(apiResp => apiResp.data)
+          .then(emailTemplateData => {
+            return this._creativeService.updateEmailTemplate(emailTemplateId, {
+              ...emailTemplateData,
+              archived: true,
+            });
+          });
+      });
+    });
+    executeTasksInSequence(tasks).then(() => {
+      this.redirectAndNotify();
+      this.setState({
+        isArchiving: false,
+      });
+    });
+  };
+
+  archiveCreativeEmail = (email: EmailTemplateResource) => {
     const {
       match: {
         params: { organisationId },
@@ -229,35 +297,36 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       intl,
     } = this.props;
 
-    const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
-
     const { dataSource } = this.state;
 
+    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+
     const fetchDataSource = () => {
-      this.fetchNativeAds(organisationId, filter);
+      this.fetchCreativeEmails(organisationId, filter, true);
     };
 
-    const updateDisplayCreative = () => {
-      return this._creativeService.updateDisplayCreative(native.id, {
-        ...native,
+    const updateEmailTemplate = () => {
+      return this._creativeService.updateEmailTemplate(email.id, {
+        ...email,
         archived: true,
       });
     };
 
     Modal.confirm({
-      title: intl.formatMessage(messagesMap.creativeModalConfirmArchivedTitle),
-      content: intl.formatMessage(messagesMap.creativeModalNoArchiveMessage),
+      title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
+      content: intl.formatMessage(messages.creativeModalConfirmArchivedContent),
       iconType: 'exclamation-circle',
-      okText: intl.formatMessage(messagesMap.creativeModalConfirmArchivedOk),
-      cancelText: intl.formatMessage(messagesMap.cancelText),
+      okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
+      cancelText: intl.formatMessage(messages.cancelText),
       onOk() {
-        updateDisplayCreative().then(() => {
+        updateEmailTemplate().then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
               currentPage: filter.currentPage - 1,
             };
             fetchDataSource();
+
             history.replace({
               pathname: pathname,
               search: updateSearch(search, newFilter),
@@ -273,71 +342,11 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
     });
   };
 
-  redirectAndNotify = () => {
-    const {
-      location: { search, pathname, state },
-      history,
-      intl,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-
-    const { dataSource } = this.state;
-    const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
-    if (dataSource.length === 1 && filter.currentPage !== 1) {
-      const newFilter = {
-        ...filter,
-        currentPage: 1,
-      };
-      this.fetchNativeAds(organisationId, filter, true);
-      history.push({
-        pathname: pathname,
-        search: updateSearch(search, newFilter),
-        state: state,
-      });
-    } else {
-      this.fetchNativeAds(organisationId, filter, true);
-    }
-
-    this.setState({
-      isArchiveModalVisible: false,
-      selectedRowKeys: [],
-    });
-    message.success(intl.formatMessage(messagesMap.archiveNativeSuccess));
-  };
-
-  makeArchiveAction = (nativeIds: string[]) => {
-    this.setState({
-      isArchiving: true,
-    });
-    const tasks: Task[] = [];
-    nativeIds.forEach(nativeId => {
-      tasks.push(() => {
-        return this._creativeService
-          .getDisplayAd(nativeId)
-          .then(apiResp => apiResp.data)
-          .then(nativeData => {
-            return this._creativeService.updateDisplayCreative(nativeId, {
-              ...nativeData,
-              archived: true,
-            });
-          });
-      });
-    });
-    executeTasksInSequence(tasks).then(() => {
-      this.redirectAndNotify();
-      this.setState({
-        isArchiving: false,
-      });
-    });
-  };
-
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
     if (allRowsAreSelected) {
-      return this.getAllNativeCreativeIds().then(
+      return this.getAllEmailTemplatesIds().then(
         (allTemplatesIds: string[]) => {
           this.makeArchiveAction(allTemplatesIds);
         },
@@ -358,9 +367,9 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
       selectedRowKeys,
       allRowsAreSelected,
       dataSource,
-      hasNatives,
-      isLoadingNatives,
-      totalNativeCreatives,
+      totalEmailTemplates,
+      hasEmailTemplates,
+      isLoadingEmailTemplates,
     } = this.state;
 
     const rowSelection = {
@@ -374,27 +383,28 @@ class NativeListPage extends React.Component<JoinedProps, NativeListPageState> {
     };
 
     const multiEditProps = {
-      archiveNatives: this.archiveNativeCreatives,
+      archiveEmails: this.archiveEmails,
       isArchiveModalVisible: this.state.isArchiveModalVisible,
       handleOk: this.handleOk,
       handleCancel: this.handleCancel,
       isArchiving: this.state.isArchiving,
     };
+
     return (
       <div className="ant-layout">
-        <NativeActionBar
+        <EmailTemplatesActionBar
           rowSelection={rowSelection}
           multiEditProps={multiEditProps}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <NativeList
+            <EmailTemplatesTable
               rowSelection={rowSelection}
               dataSource={dataSource}
-              archiveNativeAd={this.archiveNativeAd}
-              hasNativeAds={hasNatives}
-              isLoadingNativeAds={isLoadingNatives}
-              totalNativeAds={totalNativeCreatives}
+              archiveEmailTemplate={this.archiveCreativeEmail}
+              hasEmailTemplates={hasEmailTemplates}
+              isLoadingEmailTemplates={isLoadingEmailTemplates}
+              totalEmailTemplates={totalEmailTemplates}
             />
           </Content>
         </div>
@@ -408,4 +418,4 @@ export default compose<JoinedProps, {}>(
   injectIntl,
   injectDrawer,
   injectNotifications,
-)(NativeListPage);
+)(EmailTemplatesPage);

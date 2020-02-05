@@ -1,9 +1,9 @@
-import EmailActionBar from './EmailActionBar.tsx';
-import EmailList from './EmailList.tsx';
-import EmailListPage from './EmailListPage.tsx';
+import EmailTemplatesActionBar from './EmailTemplatesActionBar';
+import EmailTemplatesTable from './EmailTemplatesTable';
+import EmailTemplatesPage from './EmailTemplatesPage';
 
 export {
-  EmailActionBar,
-  EmailList,
-  EmailListPage,
+  EmailTemplatesActionBar,
+  EmailTemplatesTable,
+  EmailTemplatesPage,
 };

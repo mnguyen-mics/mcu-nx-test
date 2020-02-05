@@ -1,5 +1,5 @@
 import DisplayAdsActionBar from './DisplayAdsActionBar';
-import DisplayAdsList from './DisplayAdsList';
+import DisplayAdsList from './DisplayAdsTable';
 
 export {
   DisplayAdsActionBar,

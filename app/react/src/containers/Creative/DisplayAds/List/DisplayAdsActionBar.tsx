@@ -16,7 +16,7 @@ import { CampaignRouteParams } from '../../../../models/campaign/CampaignResourc
 import Slide from '../../../../components/Transition/Slide';
 import { CreativeAuditAction } from '../../../../models/creative/CreativeResource';
 
-interface ListCreativesDisplayProps {
+interface DisplayAdsActionBarProps {
   selectedRowKeys?: string[];
   multiEditProps: {
     archiveCreatives: () => void;
@@ -56,11 +56,11 @@ const messagesMap = defineMessages({
   },
 });
 
-type JoinedProps = ListCreativesDisplayProps &
+type JoinedProps = DisplayAdsActionBarProps &
   InjectedIntlProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class ListCreativesDisplay extends React.Component<JoinedProps> {
+class DisplayAdsActionBar extends React.Component<JoinedProps> {
   render() {
     const {
       selectedRowKeys,
@@ -171,7 +171,7 @@ class ListCreativesDisplay extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, ListCreativesDisplayProps>(
+export default compose<JoinedProps, DisplayAdsActionBarProps>(
   withRouter,
   injectIntl,
-)(ListCreativesDisplay);
+)(DisplayAdsActionBar);

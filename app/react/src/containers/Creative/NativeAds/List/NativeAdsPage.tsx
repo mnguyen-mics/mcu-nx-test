@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Layout, message, Modal } from 'antd';
 import { compose } from 'recompose';
-import EmailActionBar from './EmailActionBar';
-import EmailList from './EmailList';
+import NativeAdsActionBar from './NativeAdsActionBar';
+import NativeAdsTable from './NativeAdsTable';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -19,16 +19,16 @@ import {
   buildDefaultSearch,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
+import { NATIVE_SEARCH_SETTINGS } from './constants';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { executeTasksInSequence, Task } from '../../../../utils/PromiseHelper';
-import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
+import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { Index } from '../../../../utils';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
-import messages from '../../DisplayAds/List/message';
+import { Index } from '../../../../utils';
+import messagesMap from '../../DisplayAds/List/message';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 
@@ -39,10 +39,10 @@ interface State {
   isArchiveModalVisible: boolean;
   allRowsAreSelected: boolean;
   isArchiving: boolean;
-  isLoadingEmailTemplates: boolean;
-  dataSource: EmailTemplateResource[];
-  totalEmailTemplates: number;
-  hasEmailTemplates: boolean;
+  hasNatives: boolean;
+  isLoadingNatives: boolean;
+  dataSource: DisplayAdResource[];
+  totalNativeCreatives: number;
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -50,7 +50,7 @@ type JoinedProps = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams>;
 
-class EmailListPage extends React.Component<JoinedProps, State> {
+class NativeAdsPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
 
@@ -61,10 +61,10 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       isArchiveModalVisible: false,
       allRowsAreSelected: false,
       isArchiving: false,
-      isLoadingEmailTemplates: false,
+      hasNatives: true,
+      isLoadingNatives: false,
       dataSource: [],
-      totalEmailTemplates: 0,
-      hasEmailTemplates: true,
+      totalNativeCreatives: 0,
     };
   }
 
@@ -77,15 +77,15 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       },
     } = this.props;
 
-    if (!isSearchValid(search, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
+    if (!isSearchValid(search, NATIVE_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS),
+        search: buildDefaultSearch(search, NATIVE_SEARCH_SETTINGS),
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
-      this.fetchCreativeEmails(organisationId, filter, true);
+      const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
+      this.fetchNativeAds(organisationId, filter, true);
     }
   }
 
@@ -111,37 +111,31 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       !compareSearches(search, nextSearch) ||
       organisationId !== nextOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, NATIVE_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(
-            nextSearch,
-            CREATIVE_EMAIL_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(nextSearch, NATIVE_SEARCH_SETTINGS),
           state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS);
-        this.fetchCreativeEmails(
-          nextOrganisationId,
-          filter,
-          checkEmptyDataSource,
-        );
+        const filter = parseSearch(nextSearch, NATIVE_SEARCH_SETTINGS);
+        this.fetchNativeAds(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
   }
 
-  fetchCreativeEmails = (
+  fetchNativeAds = (
     organisationId: string,
     filter: Index<any>,
     init: boolean = false,
   ) => {
     this.setState({
-      isLoadingEmailTemplates: true,
+      isLoadingNatives: true,
     });
     let options: CreativesOptions = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       archived: filter.archived,
+      subtype: ['NATIVE'],
     };
 
     if (filter.keywords) {
@@ -151,19 +145,19 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       };
     }
     this._creativeService
-      .getEmailTemplates(organisationId, options)
+      .getDisplayAds(organisationId, options)
       .then(result => {
         const data = result.data;
-        const emailTemplatesById = normalizeArrayOfObject(data, 'id');
+        const displayAdsById = normalizeArrayOfObject(data, 'id');
         this.setState({
-          dataSource: Object.keys(emailTemplatesById).map(id => {
+          dataSource: Object.keys(displayAdsById).map(id => {
             return {
-              ...emailTemplatesById[id],
+              ...displayAdsById[id],
             };
           }),
-          isLoadingEmailTemplates: false,
-          hasEmailTemplates: init ? result.count !== 0 : true,
-          totalEmailTemplates: result.total || 0,
+          isLoadingNatives: false,
+          hasNatives: init ? result.count !== 0 : true,
+          totalNativeCreatives: result.total || 0,
         });
       });
   };
@@ -184,7 +178,7 @@ class EmailListPage extends React.Component<JoinedProps, State> {
     });
   };
 
-  archiveEmails = () => {
+  archiveNativeCreatives = () => {
     this.showModal();
   };
 
@@ -200,7 +194,7 @@ class EmailListPage extends React.Component<JoinedProps, State> {
     });
   };
 
-  getAllEmailTemplatesIds = () => {
+  getAllNativeCreativeIds = () => {
     const {
       match: {
         params: { organisationId },
@@ -208,86 +202,24 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       notifyError,
     } = this.props;
 
-    const { totalEmailTemplates } = this.state;
-
+    const { totalNativeCreatives } = this.state;
     const options: CreativesOptions = {
-      type: 'EMAIL_TEMPLATE',
+      type: 'DISPLAY_AD',
+      subtype: ['NATIVE'],
       archived: false,
-      max_results: totalEmailTemplates, // mandatory
+      max_results: totalNativeCreatives, // mandatory
     };
     return this._creativeService
-      .getEmailTemplates(organisationId, options)
+      .getDisplayAds(organisationId, options)
       .then(apiResp =>
-        apiResp.data.map(emailTemplateResource => emailTemplateResource.id),
+        apiResp.data.map(nativeCreativesResource => nativeCreativesResource.id),
       )
       .catch(err => {
         notifyError(err);
       });
   };
 
-  redirectAndNotify = () => {
-    const {
-      location: { search, pathname, state },
-      history,
-      intl,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-
-    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
-
-    const { dataSource } = this.state;
-
-    if (dataSource.length === 1 && filter.currentPage !== 1) {
-      const newFilter = {
-        ...filter,
-        currentPage: 1,
-      };
-      this.fetchCreativeEmails(organisationId, filter, true);
-      history.push({
-        pathname: pathname,
-        search: updateSearch(search, newFilter),
-        state: state,
-      });
-    } else {
-      this.fetchCreativeEmails(organisationId, filter, true);
-    }
-
-    this.setState({
-      isArchiveModalVisible: false,
-      selectedRowKeys: [],
-    });
-    message.success(intl.formatMessage(messages.archiveEmailSuccess));
-  };
-
-  makeArchiveAction = (emailTemplateIds: string[]) => {
-    this.setState({
-      isArchiving: true,
-    });
-    const tasks: Task[] = [];
-    emailTemplateIds.forEach(emailTemplateId => {
-      tasks.push(() => {
-        return this._creativeService
-          .getEmailTemplate(emailTemplateId)
-          .then(apiResp => apiResp.data)
-          .then(emailTemplateData => {
-            return this._creativeService.updateEmailTemplate(emailTemplateId, {
-              ...emailTemplateData,
-              archived: true,
-            });
-          });
-      });
-    });
-    executeTasksInSequence(tasks).then(() => {
-      this.redirectAndNotify();
-      this.setState({
-        isArchiving: false,
-      });
-    });
-  };
-
-  archiveCreativeEmail = (email: EmailTemplateResource) => {
+  archiveNativeAd = (native: DisplayAdResource) => {
     const {
       match: {
         params: { organisationId },
@@ -297,36 +229,35 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       intl,
     } = this.props;
 
-    const { dataSource } = this.state;
+    const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
 
-    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+    const { dataSource } = this.state;
 
     const fetchDataSource = () => {
-      this.fetchCreativeEmails(organisationId, filter, true);
+      this.fetchNativeAds(organisationId, filter);
     };
 
-    const updateEmailTemplate = () => {
-      return this._creativeService.updateEmailTemplate(email.id, {
-        ...email,
+    const updateDisplayCreative = () => {
+      return this._creativeService.updateDisplayCreative(native.id, {
+        ...native,
         archived: true,
       });
     };
 
     Modal.confirm({
-      title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
-      content: intl.formatMessage(messages.creativeModalConfirmArchivedContent),
+      title: intl.formatMessage(messagesMap.creativeModalConfirmArchivedTitle),
+      content: intl.formatMessage(messagesMap.creativeModalNoArchiveMessage),
       iconType: 'exclamation-circle',
-      okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
-      cancelText: intl.formatMessage(messages.cancelText),
+      okText: intl.formatMessage(messagesMap.creativeModalConfirmArchivedOk),
+      cancelText: intl.formatMessage(messagesMap.cancelText),
       onOk() {
-        updateEmailTemplate().then(() => {
+        updateDisplayCreative().then(() => {
           if (dataSource.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
               currentPage: filter.currentPage - 1,
             };
             fetchDataSource();
-
             history.replace({
               pathname: pathname,
               search: updateSearch(search, newFilter),
@@ -342,11 +273,71 @@ class EmailListPage extends React.Component<JoinedProps, State> {
     });
   };
 
+  redirectAndNotify = () => {
+    const {
+      location: { search, pathname, state },
+      history,
+      intl,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const { dataSource } = this.state;
+    const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
+    if (dataSource.length === 1 && filter.currentPage !== 1) {
+      const newFilter = {
+        ...filter,
+        currentPage: 1,
+      };
+      this.fetchNativeAds(organisationId, filter, true);
+      history.push({
+        pathname: pathname,
+        search: updateSearch(search, newFilter),
+        state: state,
+      });
+    } else {
+      this.fetchNativeAds(organisationId, filter, true);
+    }
+
+    this.setState({
+      isArchiveModalVisible: false,
+      selectedRowKeys: [],
+    });
+    message.success(intl.formatMessage(messagesMap.archiveNativeSuccess));
+  };
+
+  makeArchiveAction = (nativeIds: string[]) => {
+    this.setState({
+      isArchiving: true,
+    });
+    const tasks: Task[] = [];
+    nativeIds.forEach(nativeId => {
+      tasks.push(() => {
+        return this._creativeService
+          .getDisplayAd(nativeId)
+          .then(apiResp => apiResp.data)
+          .then(nativeData => {
+            return this._creativeService.updateDisplayCreative(nativeId, {
+              ...nativeData,
+              archived: true,
+            });
+          });
+      });
+    });
+    executeTasksInSequence(tasks).then(() => {
+      this.redirectAndNotify();
+      this.setState({
+        isArchiving: false,
+      });
+    });
+  };
+
   handleOk = () => {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
     if (allRowsAreSelected) {
-      return this.getAllEmailTemplatesIds().then(
+      return this.getAllNativeCreativeIds().then(
         (allTemplatesIds: string[]) => {
           this.makeArchiveAction(allTemplatesIds);
         },
@@ -367,9 +358,9 @@ class EmailListPage extends React.Component<JoinedProps, State> {
       selectedRowKeys,
       allRowsAreSelected,
       dataSource,
-      totalEmailTemplates,
-      hasEmailTemplates,
-      isLoadingEmailTemplates,
+      hasNatives,
+      isLoadingNatives,
+      totalNativeCreatives,
     } = this.state;
 
     const rowSelection = {
@@ -383,28 +374,27 @@ class EmailListPage extends React.Component<JoinedProps, State> {
     };
 
     const multiEditProps = {
-      archiveEmails: this.archiveEmails,
+      archiveNatives: this.archiveNativeCreatives,
       isArchiveModalVisible: this.state.isArchiveModalVisible,
       handleOk: this.handleOk,
       handleCancel: this.handleCancel,
       isArchiving: this.state.isArchiving,
     };
-
     return (
       <div className="ant-layout">
-        <EmailActionBar
+        <NativeAdsActionBar
           rowSelection={rowSelection}
           multiEditProps={multiEditProps}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <EmailList
+            <NativeAdsTable
               rowSelection={rowSelection}
               dataSource={dataSource}
-              archiveEmailTemplate={this.archiveCreativeEmail}
-              hasEmailTemplates={hasEmailTemplates}
-              isLoadingEmailTemplates={isLoadingEmailTemplates}
-              totalEmailTemplates={totalEmailTemplates}
+              archiveNativeAd={this.archiveNativeAd}
+              hasNativeAds={hasNatives}
+              isLoadingNativeAds={isLoadingNatives}
+              totalNativeAds={totalNativeCreatives}
             />
           </Content>
         </div>
@@ -418,4 +408,4 @@ export default compose<JoinedProps, {}>(
   injectIntl,
   injectDrawer,
   injectNotifications,
-)(EmailListPage);
+)(NativeAdsPage);

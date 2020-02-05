@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
@@ -7,61 +7,49 @@ import {
   TableViewFilters,
   EmptyTableView,
 } from '../../../../components/TableView/index';
-import { NATIVE_SEARCH_SETTINGS } from './constants';
+import EmailTestModal from './EmailTestModal';
+import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
   parseSearch,
 } from '../../../../utils/LocationSearchHelper';
+import messagesMap from '../../DisplayAds/List/message';
 import CreativeScreenshot from '../../CreativeScreenshot';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { Filters } from '../../../../components/ItemList';
-import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
+import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
-import messagesMap from '../../DisplayAds/List/message';
-
-interface NativeCreativesTableProps {
+interface EmailTemplatesTableProps {
   rowSelection: ExtendedTableRowSelection;
-  hasNativeAds: boolean;
-  isLoadingNativeAds: boolean;
-  dataSource: DisplayAdResource[];
-  totalNativeAds: number;
-  archiveNativeAd: (ad: DisplayAdResource) => void;
+  isLoadingEmailTemplates: boolean;
+  dataSource: EmailTemplateResource[];
+  totalEmailTemplates: number;
+  hasEmailTemplates: boolean;
+  archiveEmailTemplate: (emailTemplate: EmailTemplateResource) => void;
 }
 
-interface NativeCreativesTableState {
+interface State {
   modalVisible: boolean;
   inputValue: string[];
-  selectedNativeId: string;
+  selectedtemplateId: string;
 }
 
-type JoinedProps = NativeCreativesTableProps &
+type JoinedProps = EmailTemplatesTableProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps;
 
-class NativeCreativesTable extends React.Component<
-  JoinedProps,
-  NativeCreativesTableState
-> {
+class EmailTemplatesTable extends React.Component<JoinedProps, State> {
+
   constructor(props: JoinedProps) {
     super(props);
-  }
-
-  editNativeCreatives(native: DisplayAdResource) {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      history,
-      location,
-    } = this.props;
-
-    history.push({
-      pathname: `/v2/o/${organisationId}/creatives/native/edit/${native.id}`,
-      state: { from: `${location.pathname}` },
-    });
+    this.state = {
+      modalVisible: false,
+      selectedtemplateId: '',
+      inputValue: [],
+    };
   }
 
   updateLocationSearch(params: Filters) {
@@ -72,38 +60,56 @@ class NativeCreativesTable extends React.Component<
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, NATIVE_SEARCH_SETTINGS),
+      search: updateSearch(
+        currentSearch,
+        params,
+        CREATIVE_EMAIL_SEARCH_SETTINGS,
+      ),
     };
 
     history.push(nextLocation);
   }
 
-  viewTestModal = (template: DisplayAdResource) => {
-    this.setState({ modalVisible: true, selectedNativeId: template.id });
+  viewTestModal = (template: EmailTemplateResource) => {
+    this.setState({ modalVisible: true, selectedtemplateId: template.id });
   };
 
   handleCancel = () => {
-    this.setState({ modalVisible: false, selectedNativeId: '' });
+    this.setState({ modalVisible: false, selectedtemplateId: '' });
   };
+
+  editEmailTemplate = (campaign: EmailTemplateResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      history,
+    } = this.props;
+
+    history.push(`/v2/o/${organisationId}/creatives/email/${campaign.id}/edit`);
+  }
 
   render() {
     const {
+      match: {
+        params: { organisationId },
+      },
       location: { search },
+      isLoadingEmailTemplates,
+      dataSource,
+      totalEmailTemplates,
+      hasEmailTemplates,
+      archiveEmailTemplate,
       rowSelection,
       intl,
-      totalNativeAds,
-      archiveNativeAd,
-      hasNativeAds,
-      dataSource,
-      isLoadingNativeAds,
     } = this.props;
 
-    const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
+    const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
 
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: totalNativeAds,
+      total: totalEmailTemplates,
       onChange: (page: number) => {
         this.updateLocationSearch({
           currentPage: page,
@@ -129,26 +135,22 @@ class NativeCreativesTable extends React.Component<
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
-        render: (
-          text: string,
-          record: any, // check type
-        ) => <CreativeScreenshot item={record} />,
+        render: (text: string, record: EmailTemplateResource) => (
+          <CreativeScreenshot item={record} />
+        ),
       },
       {
         intlMessage: messagesMap.name,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: any) => {
-          const editLink = () => {
-            this.editNativeCreatives(record);
-          };
-
-          return (
-            <a className="mcs-campaigns-link" onClick={editLink}>
-              {text}
-            </a>
-          );
-        },
+        render: (text: string, record: any) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/creatives/email/${record.id}/edit`}
+          >
+            {text}
+          </Link>
+        ),
       },
       {
         intlMessage: messagesMap.auditStatus,
@@ -164,24 +166,30 @@ class NativeCreativesTable extends React.Component<
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<DisplayAdResource>> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<EmailTemplateResource>
+    > = [
       {
         key: 'action',
         actions: () => [
           {
+            intlMessage: messagesMap.sendTest,
+            callback: this.viewTestModal,
+          },
+          {
             intlMessage: messagesMap.edit,
-            callback: this.editNativeCreatives,
+            callback: this.editEmailTemplate,
           },
           {
             intlMessage: messagesMap.archive,
-            callback: archiveNativeAd,
+            callback: archiveEmailTemplate,
           },
         ],
       },
     ];
 
     const searchOptions = {
-      placeholder: intl.formatMessage(messagesMap.searchPlaceholder),
+      placeholder: intl.formatMessage(messagesMap.searchPlaceholderEmail),
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
@@ -190,25 +198,31 @@ class NativeCreativesTable extends React.Component<
       defaultValue: filter.keywords,
     };
 
-    return hasNativeAds ? (
+    return hasEmailTemplates ? (
       <div className="mcs-table-container">
+        <EmailTestModal
+          organisationId={this.props.match.params.organisationId}
+          isModalVisible={this.state.modalVisible}
+          selectedtemplateId={this.state.selectedtemplateId}
+          handleCancel={this.handleCancel}
+        />
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}
-          loading={isLoadingNativeAds}
+          loading={isLoadingEmailTemplates}
           pagination={pagination}
           rowSelection={rowSelection}
           searchOptions={searchOptions}
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" text="EMPTY_NATIVE_CREATIVES" />
+      <EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />
     );
   }
 }
 
-export default compose<JoinedProps, NativeCreativesTableProps>(
+export default compose<JoinedProps, EmailTemplatesTableProps>(
   withRouter,
   injectIntl,
-)(NativeCreativesTable);
+)(EmailTemplatesTable);
