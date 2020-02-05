@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import injectNotifications from '../../../../Notifications/injectNotifications';
 import DatamartActionBar from './DatamartActionBar';
@@ -20,7 +20,31 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
 import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
+
 const { Content } = Layout;
+
+const messages = defineMessages({
+  datamartConfiguration: {
+    id: 'settings.datamart.configuration',
+    defaultMessage: 'Datamart Configuration',
+  },
+  datamartActivity: {
+    id: 'settings.datamart.activity',
+    defaultMessage: 'Datamart Activity',
+  },
+  tableViewConfiguration: {
+    id: 'settings.datamart.tableview.configuration',
+    defaultMessage: 'Table View Configuration',
+  },
+  objectViewConfiguration: {
+    id: 'settings.datamart.objectview.configuration',
+    defaultMessage: 'Object View Configuration',
+  },
+  statistics: {
+    id: 'settings.datamart.statistics',
+    defaultMessage: 'Statistics',
+  },
+});
 
 type Props = RouteComponentProps<{
   organisationId: string;
@@ -74,6 +98,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
   render() {
     const {
+      intl,
       match: {
         params: { datamartId },
       },
@@ -84,11 +109,11 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     const items = [
       {
-        title: 'Datamart Configuration',
+        title: intl.formatMessage(messages.datamartConfiguration),
         display: <DatamartConfigTab datamartId={datamartId} />,
       },
       {
-        title: 'Datamart Activity',
+        title: intl.formatMessage(messages.datamartActivity),
         display: <DatamartActivity datamartId={datamartId} />,
       },
     ];
@@ -99,7 +124,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       datamart.storage_model_version !== 'v201506'
     ) {
       items.push({
-        title: 'Object View Configuration',
+        title: intl.formatMessage(messages.objectViewConfiguration),
         display: <DatamartObjectViewTab datamartId={datamartId} />,
       });
     }
@@ -110,7 +135,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       datamart.storage_model_version !== 'v201506'
     ) {
       items.push({
-        title: 'Table View Configuration',
+        title: intl.formatMessage(messages.tableViewConfiguration),
         display: <DatamartTableViewTab datamartId={datamartId} />,
       });
     }
@@ -121,7 +146,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       datamart.datafarm === 'DF_EU_2017_09'
     ) {
       items.push({
-        title: 'Statistics',
+        title: intl.formatMessage(messages.statistics),
         display: (
           <Content className="mcs-content-container">
             <DatamartUsersAnalyticsWrapper
