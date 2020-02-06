@@ -61,7 +61,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
 
     const dashboardJsonConfig = [
       {
-        title: 'Session in time',
+        title: 'Session in time (Last 7 days)',
         layout: {
           "i": "1",
           "h": 3,
@@ -108,14 +108,13 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                 ...generateTooltip()
               }
             },
-
             xKey: 'date_yyyy_mm_dd',
             metricName: 'sessions'
           }
         ]
       },
       {
-        title: 'Session engagement',
+        title: 'Session engagement (Last 7 days)',
         layout: {
           "i": "1",
           "h": 3,
@@ -129,6 +128,70 @@ class Partition extends React.Component<JoinedProps, HomeState> {
             type: 'SINGLESTAT',
             xKey: 'date_yyyy_mm_dd',
             metricName: 'avg_session_duration'
+          }
+        ]
+      },
+      {
+        title: 'Channel engagement (Last 7 days)',
+        layout: {
+          "i": "1",
+          "h": 3,
+          "static": false,
+          "w": 6,
+          "x": 0,
+          "y": 6
+        },
+        charts: [
+          {
+            type: 'PIE',
+            options: {
+              title: '',
+              innerRadius: true,
+              isHalf: false,
+              colors: ["#fd7c12", "#00a1df", "#862f2f", "#f85861", "#00ab67", "#003056", "#fc3f48"],
+              plotOptions: {
+                pie: {
+                  dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                      color: 'rgba(0, 0, 0, 0.65)',
+                    },
+                  }
+                },
+              },
+              text: {
+                text: '',
+                value: '',
+              },
+              showTooltip: true,
+              tooltip: {
+                shared: true,
+                ...generateTooltip()
+              },
+              height: 300,
+              showLabels: true,
+              credits: {
+                enabled: false,
+              },
+            },
+            xKey: 'device_form_factor',
+            metricName: 'sessions',
+            // dimensionFilterClauses: {
+            //   "operator": "OR",
+            //   "filters": [
+            //     {
+            //       "dimension_name": "type",
+            //       "not": false,
+            //       "operator": "IN_LIST",
+            //       "expressions": [
+            //         "SITE_VISIT",
+            //         "APP_VISIT"
+            //       ],
+            //       "case_sensitive": false
+            //     }
+            //   ]
+            // },
           }
         ]
       }

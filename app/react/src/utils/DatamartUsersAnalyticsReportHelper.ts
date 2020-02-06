@@ -3,6 +3,7 @@ import {
   DateRange,
   Dimension,
   Metric,
+  DimensionFilterClause,
 } from '../models/ReportRequestBody';
 import McsMoment from './McsMoment';
 
@@ -12,7 +13,8 @@ export type DatamartUsersAnalyticsMetric = 'sessions' | 'avg_session_duration';
 export function buildDatamartUsersAnalyticsRequestBody(
   datamartId: string,
   metric: DatamartUsersAnalyticsMetric,
-  dimension?: DatamartUsersAnalyticsDimension
+  dimension?: DatamartUsersAnalyticsDimension,
+  dimensionFilterClauses?: DimensionFilterClause
 ): ReportRequestBody {
   const date7daysAgo: string = new McsMoment('now-7d').toMoment().format();
   let dimensionsList: DatamartUsersAnalyticsDimension[] = [];
@@ -20,13 +22,14 @@ export function buildDatamartUsersAnalyticsRequestBody(
     dimensionsList.push(dimension);
   }
   const metricsList: DatamartUsersAnalyticsMetric[] = [metric];
-  return buildReport(date7daysAgo, dimensionsList, metricsList);
+  return buildReport(date7daysAgo, dimensionsList, metricsList, dimensionFilterClauses);
 }
 
 function buildReport(
   startDate: string,
   dimensionsList: DatamartUsersAnalyticsDimension[],
-  metricsList: DatamartUsersAnalyticsMetric[]
+  metricsList: DatamartUsersAnalyticsMetric[],
+  dimensionFilterClauses?: DimensionFilterClause
 ): ReportRequestBody {
 
   // DATE RANGE
@@ -52,6 +55,7 @@ function buildReport(
   const report: ReportRequestBody = {
     date_ranges: dateRanges,
     dimensions: dimensions,
+    dimension_filter_clauses: dimensionFilterClauses,
     metrics: metrics,
   };
   return report;

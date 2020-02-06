@@ -18,8 +18,8 @@ export interface DashboardConfig {
   title: string;
   layout: Layout;
   charts: Chart[];
-
 }
+
 interface DatamartUsersAnalyticsContentProps {
   datamartId: string;
   config: DashboardConfig[];

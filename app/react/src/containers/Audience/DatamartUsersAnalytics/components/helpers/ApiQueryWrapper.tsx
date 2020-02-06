@@ -10,6 +10,7 @@ import injectNotifications, { InjectedNotificationProps } from '../../../../Noti
 import { compose } from 'recompose';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
+import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
 
 const messages = defineMessages({
   noData: {
@@ -44,11 +45,16 @@ class ApiQueryWrapper extends React.Component<Props, State> {
 
   componentDidMount() {
     const { datamartId, chart } = this.props;
-    this.fetchAnalytics(datamartId, chart.metricName, chart.xKey)
+    this.fetchAnalytics(datamartId, chart.metricName, chart.xKey, chart.dimensionFilterClauses);
   }
 
-  fetchAnalytics = (datamartId: string, metric: DatamartUsersAnalyticsMetric, dimension?: DatamartUsersAnalyticsDimension) => {
-    return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, dimension)
+  fetchAnalytics = (
+      datamartId: string, 
+      metric: DatamartUsersAnalyticsMetric, 
+      dimension?: DatamartUsersAnalyticsDimension, 
+      dimensionFilterClauses?: DimensionFilterClause
+    ) => {
+    return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, dimension, dimensionFilterClauses)
       .then(res => {
         this.setState({
           loading: false,

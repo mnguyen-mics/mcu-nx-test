@@ -33,19 +33,49 @@ class FormatData extends React.Component<FormatDataProps, {}> {
   formatSeriesForChart = (chart: Chart, dataset: Dataset[]) => {
     switch (chart.type) {
       case 'PIE':
+
+        let dataset2 = [
+          {
+            "device_form_factor": "PERSONAL_COMPUTER",
+            "sessions": 42
+          },
+          {
+            "device_form_factor": "SMART_TV",
+            "sessions": 38
+          },
+          {
+            "device_form_factor": "GAME_CONSOLE",
+            "sessions": 50
+          },
+          {
+            "device_form_factor": "SMARTPHONE",
+            "sessions": 49
+          },
+          {
+            "device_form_factor": "TABLET",
+            "sessions": 47
+          },
+          {
+            "device_form_factor": "WEARABLE_COMPUTER",
+            "sessions": 42
+          },
+          {
+            "device_form_factor": "Other",
+            "sessions": 46
+          },
+        ] 
         return [
           {
             type: 'pie',
             name: '',
             innerSize: '65%',
-            data: dataset.reduce((acc: PieSeriesDataOption[], d: Dataset) => {
-              const found = acc.find((a: PieSeriesDataOption) => a.name === d[chart.yKey]);
+            data: dataset2.reduce((acc: PieSeriesDataOption[], d: Dataset) => {
+              const found = acc.find((a: PieSeriesDataOption) => a.name === d[chart.xKey]);
               const value = d[chart.metricName];
               if (!found) {
                 acc.push({
-                  name: d[chart.yKey] as string,
+                  name: d[chart.xKey] as string,
                   y: value as number,
-                  color: chart.options.colors ? chart.options.colors[0] : undefined
                 });
               }
               else {

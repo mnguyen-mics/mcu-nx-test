@@ -1,5 +1,6 @@
 import { CounterProps } from "../../components/Counter/Counter";
 import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from "../../utils/DatamartUsersAnalyticsReportHelper";
+import { DimensionFilterClause } from "../ReportRequestBody";
 
 type ChartType = 'PIE' | 'AREA' | 'WORLDMAP' | 'STACKEDBAR' | 'COUNT' | 'TABS' | 'SINGLESTAT';
 
@@ -11,6 +12,7 @@ export interface Chart {
   xKey: DatamartUsersAnalyticsDimension;
   yKey: string | number;
   metricName: DatamartUsersAnalyticsMetric;
+  dimensionFilterClauses?: DimensionFilterClause;
   icons?: string[];
   counterFormatedProps?: CounterProps[];
   dataset?: 
