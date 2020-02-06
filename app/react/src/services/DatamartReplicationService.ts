@@ -1,6 +1,13 @@
-import { DatamartReplicationResourceShape } from './../models/settings/settings';
+import {
+  DatamartReplicationResourceShape,
+  DatamartReplicationJobExecutionResource,
+} from './../models/settings/settings';
 import { PaginatedApiParam } from './../utils/ApiHelper';
-import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import ApiService, {
+  DataListResponse,
+  DataResponse,
+  StatusCode,
+} from './ApiService';
 import { injectable } from 'inversify';
 
 export interface DatamartReplicationOptions extends PaginatedApiParam {
@@ -35,6 +42,9 @@ export interface IDatamartReplicationService {
     datamartReplicationId: string,
     credentials: any,
   ) => Promise<any>;
+  getJobExecutions: (
+    datamartReplicationId: string,
+  ) => Promise<DataListResponse<DatamartReplicationJobExecutionResource>>;
 }
 
 @injectable()
@@ -91,5 +101,87 @@ export class DatamartReplicationService implements IDatamartReplicationService {
 
       return ApiService.postRequest(endpoint, formData);
     }
+  }
+  getJobExecutions(
+    datamartReplicationId: string,
+  ): Promise<DataListResponse<DatamartReplicationJobExecutionResource>> {
+    // TO DO: remove mocked data when route to retrieve executions is done
+    // const endpoint = ``
+    // return ApiService.getRequest(endpoint);
+    const executions: DatamartReplicationJobExecutionResource[] = [
+      {
+        id: '1',
+        status: 'PENDING',
+        creation_date: 1563358014075,
+        start_date: 1563358014075,
+        duration: 20386,
+        organisation_id: '504',
+        user_id: '1330',
+        num_tasks: 100,
+        completed_tasks: 75,
+        erroneous_tasks: 0,
+        external_model_name: 'PUBLIC_DATAMART',
+      },
+      {
+        id: '2',
+        status: 'SUCCEEDED',
+        creation_date: 1563358014075,
+        start_date: 1563358014075,
+        duration: 35386,
+        organisation_id: '504',
+        user_id: '1330',
+        num_tasks: 100,
+        completed_tasks: 100,
+        erroneous_tasks: 0,
+        external_model_name: 'PUBLIC_DATAMART',
+      },
+      {
+        id: '3',
+        status: 'FAILED',
+        creation_date: 1563358014075,
+        start_date: 1563358014075,
+        duration: 18386,
+        organisation_id: '504',
+        user_id: '1330',
+        num_tasks: 100,
+        completed_tasks: 75,
+        erroneous_tasks: 1,
+        external_model_name: 'PUBLIC_DATAMART',
+        result: {
+          total_failure: 1,
+        },
+      },
+      {
+        id: '4',
+        status: 'PENDING',
+        creation_date: 1563358014075,
+        start_date: 1563358014075,
+        duration: 5386,
+        organisation_id: '504',
+        user_id: '1330',
+        num_tasks: 100,
+        completed_tasks: 25,
+        erroneous_tasks: 0,
+        external_model_name: 'PUBLIC_DATAMART',
+      },
+      {
+        id: '5',
+        status: 'SUCCESS',
+        creation_date: 1563358014075,
+        start_date: 1563358014075,
+        duration: 22386,
+        organisation_id: '504',
+        user_id: '1330',
+        num_tasks: 100,
+        completed_tasks: 100,
+        erroneous_tasks: 0,
+        external_model_name: 'PUBLIC_DATAMART',
+      },
+    ];
+    return Promise.resolve({
+      status: 'ok' as StatusCode,
+      data: executions,
+      count: 5,
+    });
   }
 }

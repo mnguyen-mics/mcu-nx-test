@@ -38,7 +38,7 @@ export interface IImportService {
     datamartId: string,
     importId: string,
     options: object,
-  ) => Promise<DataListResponse<any>>;
+  ) => Promise<DataListResponse<ImportExecution>>;
   cancelImportExecution: (
     datamartId: string,
     importId: string,
@@ -99,7 +99,7 @@ export class ImportService implements IImportService {
     datamartId: string,
     importId: string,
     options: object = {},
-  ): Promise<DataListResponse<any>> {
+  ): Promise<DataListResponse<ImportExecution>> {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}/executions`;
     return ApiService.getRequest(endpoint, options);
   }

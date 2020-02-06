@@ -1,4 +1,7 @@
-import { DatamartReplicationResourceShape } from './../../../../../models/settings/settings';
+import {
+  DatamartReplicationResourceShape,
+  PubSubReplicationResource,
+} from './../../../../../models/settings/settings';
 
 export type DatamartReplicationFormData = Partial<
   DatamartReplicationResourceShape
@@ -10,4 +13,13 @@ export interface DatamartReplicationRouteMatchParam {
   organisationId: string;
   datamartId: string;
   datamartReplicationId: string;
+}
+
+export function isPubSubReplication(
+  replication: DatamartReplicationResourceShape,
+): replication is PubSubReplicationResource {
+  return (
+    !!replication.project_id &&
+    !!replication.topic_id
+  );
 }

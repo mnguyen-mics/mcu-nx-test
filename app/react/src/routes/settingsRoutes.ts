@@ -53,6 +53,7 @@ import ProcessingEditPage from '../containers/Settings/OrganisationSettings/Proc
 import CompartmentsListPage from '../containers/Settings/DatamartSettings/Compartments/CompartmentsListPage';
 import CompartmentEditPage from '../containers/Settings/DatamartSettings/Compartments/Edit/CompartmentEditPage';
 import DatamartReplicationEditPage from '../containers/Settings/DatamartSettings/DatamartReplication/Edit/DatamartReplicationEditPage';
+import DatamartReplicationDashboard from '../containers/Settings/DatamartSettings/DatamartReplication/Dashboard/DatamartReplicationDashboard';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -145,6 +146,14 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: DatamartReplicationEditPage,
     requiredFeature: 'datamartSettings-datamart_replication',
+    requireDatamart: true,
+  },
+  settingsDatamartReplicationDashboard: {
+    path:
+      '/settings/datamart/my_datamart/:datamartId/datamart_replication/:datamartReplicationId',
+    layout: 'settings',
+    contentComponent: DatamartReplicationDashboard,
+    requiredFeature: 'datamartSettings-datamarts',
     requireDatamart: true,
   },
 

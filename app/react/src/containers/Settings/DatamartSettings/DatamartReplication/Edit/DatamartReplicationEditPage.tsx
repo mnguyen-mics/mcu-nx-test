@@ -167,12 +167,14 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
   getPreviousUrl = () => {
     const {
       match: {
-        params: { organisationId },
+        params: { organisationId, datamartId },
       },
       location: { state },
     } = this.props;
     return state && !!state.datamartId
       ? `/v2/o/${organisationId}/settings/datamart/my_datamart/${state.datamartId}`
+      : datamartId
+      ? `/v2/o/${organisationId}/settings/datamart/my_datamart/${datamartId}`
       : `/v2/o/${organisationId}/settings/datamart/my_datamart`;
   };
 

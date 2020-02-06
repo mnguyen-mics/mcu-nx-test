@@ -41,14 +41,16 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.list.deleteButton',
     defaultMessage: 'Delete',
   },
-  
+
   deleteDatamartReplicationModalTitle: {
     id: 'settings.datamart.datamartReplication.list.deleteModalTitle',
-    defaultMessage: 'Are you sure you want to delete this datamart replication ?',
+    defaultMessage:
+      'Are you sure you want to delete this datamart replication ?',
   },
   deleteDatamartReplicationModalContent: {
     id: 'settings.datamart.datamartReplication.list.deleteModalContent',
-    defaultMessage: 'By deleting this datamart replication, you will not be able to retrieve it. Are you sure ?',
+    defaultMessage:
+      'By deleting this datamart replication, you will not be able to retrieve it. Are you sure ?',
   },
   deleteDatamartReplicationModalCancel: {
     id: 'settings.datamart.datamartReplication.list.cancelModalButton',
@@ -154,6 +156,68 @@ export const messages = defineMessages({
   replicationProperties: {
     id: 'settings.datamart.datamartReplication.list.modalPropertiesTitle',
     defaultMessage: 'All replication properties',
+  },
+  archiveReplicationModalTitle: {
+    id: 'settings.datamart.datamartReplication.dashboard.archiveModalTitle',
+    defaultMessage:
+      'Are you sure you want to delete this datamart replication ?',
+  },
+  archiveReplicationModalContent: {
+    id: 'settings.datamart.datamartReplication.dashboard.archiveModalContent',
+    defaultMessage:
+      "By deleting this datamart replication you won't be able to retrieve it. Are you sure ?",
+  },
+  archiveReplicationModalOk: {
+    id: 'settings.datamart.datamartReplication.dashboard.archiveModalOk',
+    defaultMessage: 'Delete',
+  },
+  archiveReplicationModalCancel: {
+    id: 'settings.datamart.datamartReplication.dashboard.archiveModalCancel',
+    defaultMessage: 'Cancel',
+  },
+  newExecution: {
+    id: 'settings.datamart.datamartReplication.dashboard.newExecutionButton',
+    defaultMessage: 'New execution',
+  },
+  jobExecutions: {
+    id: 'settings.datamart.datamartReplication.dashboard.jobExecutionsTitle',
+    defaultMessage: 'Jobs Executions',
+  },
+  executionId: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionId',
+    defaultMessage: 'Id',
+  },
+  executionStatus: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionStatus',
+    defaultMessage: 'Status',
+  },
+  executionProgress: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionProgress',
+    defaultMessage: 'Progress',
+  },
+  executionStartDate: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionStartDate',
+    defaultMessage: 'Start Date',
+  },
+  executionCreationDate: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionCreationDate',
+    defaultMessage: 'Creation Date',
+  },
+  executionEndDate: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionEndDate',
+    defaultMessage: 'End Date',
+  },
+  executionNotStarted: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionNotStarted',
+    defaultMessage: 'Not started',
+  },
+  executionNotCreated: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionNotCreated',
+    defaultMessage: 'Not created',
+  },
+  executionNotEnded: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionNotEnded',
+    defaultMessage: 'Not ended',
   },
 });
 

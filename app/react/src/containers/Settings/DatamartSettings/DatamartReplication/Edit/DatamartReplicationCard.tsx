@@ -67,9 +67,13 @@ class DatamartReplicationCard extends React.Component<Props> {
       <div key={type} className="replication-card" onClick={onClickSelect}>
         <Card className="replication-card hoverable" type="flex">
           <div className="image-placeholder">
-            {/* get asset Urls */}
-            {type === 'url' ? (
-              <img src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${type}`} />
+            {/* TO DO: <img src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${replication.assetUrl}`} /> */}
+            {type === 'GOOGLE_PUBSUB' ? (
+              <img
+                alt="logo-google-pubsub"
+                className="replication-logo"
+                src={`https://assets.mediarithmics.com/1/public/assets/1580747629223-sdjBhPFh/google-pubsub-logo.svg`}
+              />
             ) : (
               <div className="placeholder" />
             )}

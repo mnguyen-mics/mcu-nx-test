@@ -1,3 +1,5 @@
+import { BaseExecutionResource } from '../Job';
+
 export interface ChannelResource {
   creation_ts: number;
   datamart_id: string;
@@ -119,3 +121,14 @@ export interface PubSubReplicationResource extends DatamartReplicationResource {
   project_id: string;
   topic_id: string;
 }
+
+// Waiting for backend
+interface DatamartReplicationJobExecutionParameters {}
+interface DatamartReplicationJobExecutionResult {
+  total_failure?: number
+}
+
+export type DatamartReplicationJobExecutionResource = BaseExecutionResource<
+  DatamartReplicationJobExecutionParameters,
+  DatamartReplicationJobExecutionResult
+>;
