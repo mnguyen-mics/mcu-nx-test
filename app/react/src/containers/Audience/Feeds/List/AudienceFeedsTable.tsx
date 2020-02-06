@@ -478,7 +478,13 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                 className="mcs-campaigns-link"
                 to={`/v2/o/${organisationId}/audience/segments/${record.audienceSegment.id}`}
               >
-                {record.audienceSegment.name}
+                {
+                  record.audienceSegment.name.length > 40
+                  ? <Tooltip title={record.audienceSegment.name}>
+                      {record.audienceSegment.name.substring(0, 40)}...
+                    </Tooltip>
+                  : record.audienceSegment.name
+                }
               </Link>
             ) : (
               <FormattedMessage {...messages.segmentNameNotFound} />
@@ -491,7 +497,17 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         key: 'feedName',
         isHideable: false,
         render: (text: string, record: RecordType) => (
-          <span> {record.feed.name ? record.feed.name : '-'} </span>
+          <span> 
+            {
+              record.feed.name
+              ? (
+                record.feed.name.length > 40
+                ? <Tooltip title={record.feed.name}>{record.feed.name.substring(0, 40)}...</Tooltip>
+                : record.feed.name
+              )
+              : '-'
+            } 
+          </span>
         ),
       },
       {
