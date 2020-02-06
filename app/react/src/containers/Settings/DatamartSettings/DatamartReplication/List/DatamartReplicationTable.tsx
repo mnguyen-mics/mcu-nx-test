@@ -27,7 +27,7 @@ export interface DatamartReplicationTableProps {
 
 type Props = DatamartReplicationTableProps &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<{ organisationId: string; datamartId: string }>;
 
 class DatamartReplicationTable extends React.Component<Props> {
   handleModal = (record: DatamartReplicationResourceShape) => {
@@ -71,7 +71,7 @@ class DatamartReplicationTable extends React.Component<Props> {
       isLoading,
       dataSource,
       match: {
-        params: { organisationId },
+        params: { organisationId, datamartId },
       },
       location: { search },
     } = this.props;
@@ -111,7 +111,12 @@ class DatamartReplicationTable extends React.Component<Props> {
               className="mcs-datamartSettings_datamartReplicationTableItem"
               // TO DO: when route to retrieve executions is live change this path to :
               // `/v2/o/${organisationId}/settings/datamart/my_datamart/${record.datamart_id}/datamart_replication/${record.id}`
-              to={`/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`}
+              to={{
+                pathname: `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`,
+                state: {
+                  datamartId: datamartId,
+                },
+              }}
             >
               {text}
             </Link>
