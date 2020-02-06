@@ -20,4 +20,3 @@
     "cypress:report": "node scripts/report.js"
   }
 }
-

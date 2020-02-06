@@ -12,6 +12,13 @@ describe("User Pixel Segment edition on all fields", function() {
 
   before(() => {
     cy.viewport(1920, 1080);
+  });
+
+  beforeEach(() => {
+    Cypress.Cookies.preserveOnce(
+      "access_token",
+      "access_token_expiration_date"
+    );
     // Login
     cy.login();
     cy.url({ timeout: 10 * second }).should(
@@ -28,18 +35,11 @@ describe("User Pixel Segment edition on all fields", function() {
     cy.contains("Segments").click();
   });
 
-  beforeEach(() => {
-    Cypress.Cookies.preserveOnce(
-      "access_token",
-      "access_token_expiration_date"
-    );
-  });
-
-  it("User Pixel", function() {
+  it("Should create an User Pixel", function() {
     createSegment("User Pixel", datamartName, token);
   });
 
-  it("User Pixel", function() {
+  it("Should edit an User Pixel", function() {
     editSegment("User Pixel", token);
   });
 });
@@ -118,7 +118,7 @@ function editSegment(type, token) {
   cy.get('[placeholder="Search Segments"]')
     .type(token)
     .type("{enter}");
-  cy.wait(3000);
+  cy.wait(1000);
   // get the first segment in list
   cy.get(".mcs-campaigns-link")
     .first()
@@ -128,22 +128,17 @@ function editSegment(type, token) {
     .click({ force: true });
 
   // Edit its name
-  cy.get('[id="audienceSegment.name"]').type("Cypress Test (edited)");
+  cy.get('[id="audienceSegment.name"]').type(" -edited");
   //Fill the descritpion
-  cy.get('[id="audienceSegment.short_description"]').type(
-    "This segment was created to test the creation of segment (edited).",
-    {
-      force: true
-    }
-  );
+  cy.get('[id="audienceSegment.short_description"]').type(" -edited", {
+    force: true
+  });
 
   //click on advanced
   cy.get('[class="button-styleless optional-section-title"]').click();
 
   //Fill the technical name
-  cy.get('[id="audienceSegment.technical_name"]').type(
-    "technical name test " + type + " (edited)"
-  );
+  cy.get('[id="audienceSegment.technical_name"]').type(" -edited");
 
   //Fill the default life time
   cy.get('[id="audienceSegment.defaultLiftime"]').type("2");
@@ -158,13 +153,7 @@ function editSegment(type, token) {
 
   //Save the new segment
   cy.contains("Save").click();
-  //Get back on the main page
-  cy.contains("Audience").click();
-
-  cy.contains("Segments")
-    .first()
-    .click();
+  cy.wait(2000);
 
   cy.url().should("include", "audience/segments");
-  cy.wait(250);
 }

@@ -4,6 +4,5 @@
     "apiDomain": "api.mediarithmics.local",
     "navigatorDomain": "navigator.mediarithmics.local"
   },
-  "ignoreTestFiles": ["**/integration/Examples/**", "!*.spec.js", "timeline*", "CreateSegments*", "EditAllUserPixelFields*", "DatamartReplication*"],
   "watchForFileChanges": false
 }

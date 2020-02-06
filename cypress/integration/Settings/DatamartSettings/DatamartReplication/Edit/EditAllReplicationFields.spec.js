@@ -1,4 +1,5 @@
 import cuid from "cuid";
+
 /// <reference types="Cypress" />
 /// <reference path="../../../../support/index.d.ts" />
 
@@ -51,9 +52,6 @@ function createDatamartReplication(type, token) {
   //Select the replication type
   cy.contains(type).click({ force: true });
 
-  //Select Segment Types
-  cy.contains(type).click();
-
   //Fill the name of the replication
   cy.get('[id="name"]').type("Cypress Test " + token, {
     force: true
@@ -68,17 +66,20 @@ function createDatamartReplication(type, token) {
     }
   };
 
-  const fileName = "credentialsTestFile.txt";
+  const fileName = "03-credentialsTestFile.txt";
 
-  cy.fixture(`../${fileName}`, "binary")
+  cy.fixture(fileName, "binary")
     .then(Cypress.Blob.binaryStringToBlob)
     .then(fileContent =>
-      cy.contains("Upload a file").upload({
-        fileContent,
-        fileName,
-        mimeType: getMimeType(fileName),
-        encoding: "utf8"
-      })
+      cy.get('[type="file"]').upload(
+        {
+          fileContent,
+          fileName,
+          mimeType: "text/plain",
+          encoding: "utf8"
+        },
+        { force: true }
+      )
     );
 
   cy.contains("Update").click();
