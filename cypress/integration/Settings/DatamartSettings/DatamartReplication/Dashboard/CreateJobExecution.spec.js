@@ -31,12 +31,21 @@ describe("Job executions", function() {
     cy.contains(datamartName).click();
   });
 
+  // waiting for backend
+
   // it("Should create a new job execution", function() {});
 
   // it("Table should contains one execution", function() {});
 
   it("Dashboard should displays executions", function() {
-    // waiting for PR to be merged
-    cy.url().should("include", "settings/datamart/my_datamart");
+    // This is a test with 5 mocked execution data
+    // To modify when dashboard view is enabled
+    cy.visit(
+      Cypress.config().baseUrl +
+        "/#/v2/o/504/settings/datamart/my_datamart/1162/datamart_replication/26"
+    );
+    cy.get(".ant-table-tbody")
+      .children()
+      .should("have.length", 5);
   });
 });
