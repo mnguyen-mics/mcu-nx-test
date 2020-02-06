@@ -4,6 +4,7 @@ import {
   EmailCampaignAutomationFormData,
   WaitFormData,
   AddToSegmentAutomationFormData,
+  DeleteFromSegmentAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
 import { QueryResource } from './../datamart/DatamartResource';
@@ -40,7 +41,18 @@ export interface StorylineResource {
   begin_node_id: string;
 }
 
-export type ScenarioNodeType = 'DISPLAY_CAMPAIGN' | 'EMAIL_CAMPAIGN' | 'ADD_TO_SEGMENT_NODE' | 'QUERY_INPUT' | 'ABN_NODE' | 'PLUGIN_NODE' | 'END_NODE' | 'WAIT_NODE' | 'DROP_NODE' | 'IF_NODE'
+export type ScenarioNodeType =
+  | 'DISPLAY_CAMPAIGN'
+  | 'EMAIL_CAMPAIGN'
+  | 'ADD_TO_SEGMENT_NODE'
+  | 'DELETE_FROM_SEGMENT_NODE'
+  | 'QUERY_INPUT'
+  | 'ABN_NODE'
+  | 'PLUGIN_NODE'
+  | 'END_NODE'
+  | 'WAIT_NODE'
+  | 'DROP_NODE'
+  | 'IF_NODE';
 
 export interface ScenarioNodeResource {
   id: string;
@@ -73,6 +85,13 @@ export interface AddToSegmentNodeResource extends ScenarioNodeResource {
   user_segment_expiration_period: string;
   formData: AddToSegmentAutomationFormData;
   initialFormData: AddToSegmentAutomationFormData;
+}
+
+export interface DeleteFromSegmentNodeResource extends ScenarioNodeResource {
+  type: 'DELETE_FROM_SEGMENT_NODE';
+  user_list_segment_id: string;
+  formData: DeleteFromSegmentAutomationFormData;
+  initialFormData: DeleteFromSegmentAutomationFormData;
 }
 
 export type QueryInputEvaluationPeriodUnit = 'MINUTE' | 'HOUR' | 'DAY' | 'WEEK' | 'MONTH';
@@ -125,6 +144,7 @@ export type ScenarioNodeShape =
   | DisplayCampaignNodeResource
   | EmailCampaignNodeResource
   | AddToSegmentNodeResource
+  | DeleteFromSegmentNodeResource
   | QueryInputNodeResource
   | ABNNodeResource
   | PluginNodeResource

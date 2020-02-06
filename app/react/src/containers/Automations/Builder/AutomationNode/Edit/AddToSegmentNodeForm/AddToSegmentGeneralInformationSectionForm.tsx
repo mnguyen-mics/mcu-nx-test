@@ -35,7 +35,7 @@ type Props = GeneralInformationFormSectionProps &
   ValidatorProps &
   NormalizerProps;
 
-class GeneralInformationFormSection extends React.Component<Props, State> {
+class AddToSegmentGeneralInformationFormSection extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IAudienceSegmentService)
   private audienceSegmentService: IAudienceSegmentService;
@@ -153,55 +153,55 @@ export default compose<Props, GeneralInformationFormSectionProps>(
   injectIntl,
   withValidators,
   withNormalizer,
-)(GeneralInformationFormSection);
+)(AddToSegmentGeneralInformationFormSection);
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id: 'automation.builder.node.audienceSegmentForm.generalInfoSection.title',
+    id: 'automation.builder.node.addToSegmentForm.generalInfoSection.title',
     defaultMessage: 'General information',
   },
   sectionGeneralSubtitle: {
-    id: 'automation.builder.node.audienceSegmentForm.general.subtitle',
+    id: 'automation.builder.node.addToSegmentForm.general.subtitle',
     defaultMessage: 'Modify the general information of your audience segment',
   },
   automationNodeName: {
-    id: 'automation.builder.node.audienceSegmentForm.name',
+    id: 'automation.builder.node.addToSegmentForm.name',
     defaultMessage: 'Automation node name',
   },
   audienceSegmentNameTitle: {
-    id: 'automation.builder.node.audienceSegmentForm.name.title',
+    id: 'automation.builder.node.addToSegmentForm.name.title',
     defaultMessage: 'This is the audience segment name',
   },
   audienceSegmentNameSubtitle: {
-    id: 'automation.builder.node.audienceSegmentForm.name.subtitle',
+    id: 'automation.builder.node.addToSegmentForm.name.subtitle',
     defaultMessage: "The audience segment's name will help you identify it on the different screens. Make it as memorable as you want your results to be !",
   },
   audienceSegmentNamePlaceholder: {
-    id: 'automation.builder.node.audienceSegmentForm.name.placeholder',
+    id: 'automation.builder.node.addToSegmentForm.name.placeholder',
     defaultMessage: 'Segment Name',
   },
   audienceSegmentTTLTitle: {
-    id: 'automation.builder.node.audienceSegmentForm.ttl.title',
+    id: 'automation.builder.node.addToSegmentForm.ttl.title',
     defaultMessage: 'Time to live in segment',
   },
   audienceSegmentTTLSubtitle: {
-    id: 'automation.builder.node.audienceSegmentForm.ttl.subtitle',
+    id: 'automation.builder.node.addToSegmentForm.ttl.subtitle',
     defaultMessage: "Time during which the user will belong to the segment (0 means forever).",
   },
   audienceSegmentTTLPlaceholder: {
-    id: 'automation.builder.node.audienceSegmentForm.ttl.placeholder',
+    id: 'automation.builder.node.addToSegmentForm.ttl.placeholder',
     defaultMessage: "Time to live",
   },
   audienceSegmentTTLUnitDays: {
-    id: 'automation.builder.node.audienceSegmentForm.ttl.unit.days',
+    id: 'automation.builder.node.addToSegmentForm.ttl.unit.days',
     defaultMessage: "Days",
   },
   audienceSegmentTTLUnitWeeks: {
-    id: 'automation.builder.node.audienceSegmentForm.ttl.unit.weeks',
+    id: 'automation.builder.node.addToSegmentForm.ttl.unit.weeks',
     defaultMessage: "Weeks",
   },
   audienceSegmentTTLUnitMonths: {
-    id: 'automation.builder.node.audienceSegmentForm.ttl.unit.months',
+    id: 'automation.builder.node.addToSegmentForm.ttl.unit.months',
     defaultMessage: "Months",
   },
 });

@@ -1,0 +1,137 @@
+import {
+  ConfigProps,
+  InjectedFormProps,
+  getFormValues,
+  reduxForm,
+} from 'redux-form';
+import { FORM_ID, DeleteFromSegmentAutomationFormData } from '../domain';
+import { Path } from '../../../../../../components/ActionBar';
+import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { RouteComponentProps, withRouter } from 'react-router';
+import * as React from 'react';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { Omit, connect } from 'react-redux';
+import { compose } from 'recompose';
+import { Layout, Form } from 'antd';
+import FormLayoutActionbar, {
+  FormLayoutActionbarProps,
+} from '../../../../../../components/Layout/FormLayoutActionbar';
+import { McsFormSection } from '../../../../../../utils/FormHelper';
+import DeleteFromSegmentGeneralSectionForm from './DeleteFromSegmentGeneralSectionForm';
+
+const { Content } = Layout;
+
+const messages = defineMessages({
+  save: {
+    id: 'automation.builder.node.deleteFromSegmentForm.save.button',
+    defaultMessage: 'Update',
+  },
+  sectionGeneralTitle: {
+    id: 'automation.builder.node.deleteFromSegmentForm.general.title',
+    defaultMessage: 'General Informations',
+  },
+});
+
+export interface DeleteFromSegmentAutomationFormProps
+  extends Omit<ConfigProps<DeleteFromSegmentAutomationFormData>, 'form'> {
+  close: () => void;
+  breadCrumbPaths: Path[];
+  node: ScenarioNodeShape;
+  disabled?: boolean;
+}
+
+interface MapStateToProps {
+  formValues: DeleteFromSegmentAutomationFormData;
+}
+
+type Props = InjectedFormProps<
+  DeleteFromSegmentAutomationFormData,
+  DeleteFromSegmentAutomationFormProps
+> &
+  DeleteFromSegmentAutomationFormProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }> &
+  MapStateToProps;
+
+class DeleteFromSegmentAutomationForm extends React.Component<Props> {
+  buildFormSections = () => {
+    const { disabled } = this.props;
+
+    const sections: McsFormSection[] = [];
+
+    const deleteFromSection = {
+      id: 'deleteFromSection',
+      title: messages.sectionGeneralTitle,
+      component: (
+        <DeleteFromSegmentGeneralSectionForm
+          initialValues={this.props.initialValues}
+          organisationId={this.props.match.params.organisationId}
+          disabled={disabled}
+        />
+      ),
+    };
+
+    sections.push(deleteFromSection);
+
+    return sections;
+  };
+
+  render() {
+    const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
+    const actionBarProps: FormLayoutActionbarProps = {
+      formId: FORM_ID,
+      paths: breadCrumbPaths,
+      message: messages.save,
+      onClose: close,
+      disabled: disabled,
+    };
+
+    const sections = this.buildFormSections();
+
+    const renderedSections = sections.map((section, index) => {
+      return (
+        <div key={section.id}>
+          <div key={section.id} id={section.id}>
+            {section.component}
+          </div>
+          {index !== sections.length - 1 && <hr />}
+        </div>
+      );
+    });
+
+    return (
+      <Layout className="edit-layout">
+        <FormLayoutActionbar {...actionBarProps} />
+        <Layout className={'ant-layout-has-sider'}>
+          <Form
+            className="edit-layout ant-layout"
+            onSubmit={handleSubmit}
+            layout="vertical"
+          >
+            <Content
+              id={FORM_ID}
+              className="mcs-content-container mcs-form-container automation-form"
+            >
+              {renderedSections}
+            </Content>
+          </Form>
+        </Layout>
+      </Layout>
+    );
+  }
+}
+
+const mapStateToProps = (state: MicsReduxState) => ({
+  formValues: getFormValues(FORM_ID)(state),
+});
+
+export default compose<Props, DeleteFromSegmentAutomationFormProps>(
+  injectIntl,
+  withRouter,
+  connect(mapStateToProps),
+  reduxForm({
+    form: FORM_ID,
+    enableReinitialize: true,
+  }),
+)(DeleteFromSegmentAutomationForm);

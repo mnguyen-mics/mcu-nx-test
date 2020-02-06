@@ -177,6 +177,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             } as any;
             size = "large"
             break;
+          case 'DELETE_FROM_SEGMENT_NODE':
           case 'ADD_TO_SEGMENT_NODE':
             initialValue = {
               ...scenarioNodeShape.formData,
@@ -440,6 +441,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'DISPLAY_CAMPAIGN':
         return this.renderDefautEdit();
       case 'ADD_TO_SEGMENT_NODE':
+      case 'DELETE_FROM_SEGMENT_NODE':
         return this.renderAddToSegmentEdit();
       case 'QUERY_INPUT':
         return this.renderQueryEdit();
@@ -488,6 +490,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         nodeName = node.storylineNodeModel.node.formData && node.storylineNodeModel.node.formData.campaign && node.storylineNodeModel.node.formData.campaign.name ? node.storylineNodeModel.node.formData.campaign.name : nodeName;
         break;
       case 'ADD_TO_SEGMENT_NODE':
+      case 'DELETE_FROM_SEGMENT_NODE':
         nodeName = node.storylineNodeModel.node.formData && node.storylineNodeModel.node.formData.name ? node.storylineNodeModel.node.formData.name : nodeName;
         break;
       case 'ABN_NODE':

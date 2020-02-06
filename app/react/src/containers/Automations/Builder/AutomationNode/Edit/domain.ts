@@ -22,7 +22,8 @@ import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampa
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 import { DisplayCampaignFormData } from '../../../../Campaigns/Display/Edit/domain';
 import { QueryCreateRequest } from '../../../../../models/datamart/DatamartResource';
-import { AddToSegmentAutomationFormProps } from './AudienceSegmentForm/AudienceSegmentAutomationForm';
+import { AddToSegmentAutomationFormProps } from './AddToSegmentNodeForm/AddToSegmentSegmentAutomationForm';
+import { DeleteFromSegmentAutomationFormProps } from './DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
 
 export interface DefaultFormData {
   name: string;
@@ -43,6 +44,10 @@ export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormDa
     value: '',
     unit: 'days',
   }
+}
+
+export const INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA: DeleteFromSegmentAutomationFormData = {
+  name: '',
 }
 
 export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
@@ -151,6 +156,9 @@ export interface AddToSegmentAutomationFormData extends DefaultFormData {
   }
 }
 
+export interface DeleteFromSegmentAutomationFormData extends DefaultFormData {
+}
+
 export interface QueryAutomationFormData extends DefaultFormData, Partial<QueryCreateRequest> {
 }
 
@@ -168,7 +176,8 @@ export type AutomationFormPropsType =
   | DefaultAutomationFormProps
   | DisplayCampaignAutomationFormProps
   | EmailCampaignAutomationFormProps
-  | AddToSegmentAutomationFormProps;
+  | AddToSegmentAutomationFormProps
+  | DeleteFromSegmentAutomationFormProps;
 
 export const FORM_ID = 'automationNodeForm';
 

@@ -15,7 +15,7 @@ import FormLayoutActionbar, {
     FormLayoutActionbarProps,
 } from '../../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from "../../../../../../utils/FormHelper";
-import GeneralInformationFormSection from './GeneralInformationSectionForm';
+import GeneralInformationFormSection from './AddToSegmentGeneralInformationSectionForm';
 
 
 
@@ -23,11 +23,11 @@ const { Content } = Layout;
 
 const messages = defineMessages({
     save: {
-        id: 'automation.builder.node.audienceSegmentForm.save.button',
+        id: 'automation.builder.node.addToSegmentForm.save.button',
         defaultMessage: 'Update',
     },
     sectionGeneralTitle: {
-        id: 'automation.builder.node.audienceSegmentForm.general.title',
+        id: 'automation.builder.node.addToSegmentForm.general.title',
         defaultMessage: 'General Informations',
     },
 });
@@ -56,7 +56,7 @@ type Props = InjectedFormProps<
     MapStateToProps;
 
 
-class AudienceSegmentAutomationForm extends React.Component<Props> {
+class AddToSegmentAutomationForm extends React.Component<Props> {
     buildFormSections = () => {
         const { disabled } = this.props;
 
@@ -139,4 +139,4 @@ export default compose<Props, AddToSegmentAutomationFormProps>(
         form: FORM_ID,
         enableReinitialize: true,
     }),
-)(AudienceSegmentAutomationForm);
+)(AddToSegmentAutomationForm);

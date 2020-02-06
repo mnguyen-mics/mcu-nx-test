@@ -570,6 +570,11 @@ export function generateNodeProperties(
         iconType: 'user-list',
         color: '#0ba6e1',
       };
+    case 'DELETE_FROM_SEGMENT_NODE':
+      return {
+        iconType: 'user-list',
+        color: '#fc3f48',
+      };
     case 'QUERY_INPUT':
       return {
         iconAnt: 'flag',
