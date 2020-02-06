@@ -196,24 +196,29 @@ export class AutomationFormService implements IAutomationFormService {
                 });
                 break;
               case 'ADD_TO_SEGMENT_NODE':
-                getPromise = this._audienceSegmentService.getSegment(
-                  n.user_list_segment_id,
-                ).then(({ data: segment }) => {
-                  // We type it any as Duration have a field _months that we can't access otherwise
-                  const duration: any = moment.duration(n.user_segment_expiration_period);
-                  const initialValues: AddToSegmentAutomationFormData = {
-                    name: segment.name,
-                    ttl: {
-                      value: duration._months > 0 ? duration._months : duration.asDays(),
-                      unit: duration._months > 0 ? 'months' : 'days',
-                    }
-                  };
-                  return {
-                    ...n,
-                    formData: initialValues,
-                    initialValuesForm: initialValues,
-                  };
-                });
+                getPromise = this._audienceSegmentService
+                  .getSegment(n.user_list_segment_id)
+                  .then(({ data: segment }) => {
+                    // We type it any as Duration have a field _months that we can't access otherwise
+                    const duration: any = moment.duration(
+                      n.user_segment_expiration_period,
+                    );
+                    const initialValues: AddToSegmentAutomationFormData = {
+                      name: segment.name,
+                      ttl: {
+                        value:
+                          duration._months > 0
+                            ? duration._months
+                            : duration.asDays(),
+                        unit: duration._months > 0 ? 'months' : 'days',
+                      },
+                    };
+                    return {
+                      ...n,
+                      formData: initialValues,
+                      initialValuesForm: initialValues,
+                    };
+                  });
                 break;
               case 'ABN_NODE':
                 const abnFormData: ABNFormData = {
@@ -252,7 +257,7 @@ export class AutomationFormService implements IAutomationFormService {
                   .getQuery(datamartId, n.query_id)
                   .then(q => ({
                     ...n,
-                    name: "If",
+                    name: 'If',
                     formData: {
                       ...q.data,
                     },
@@ -329,32 +334,29 @@ export class AutomationFormService implements IAutomationFormService {
               );
             })
             .then(() => {
-              return this.ids.reduce(
-                (acc, id) => {
-                  const formattedId = id.substr(2);
-                  if (id.startsWith('e-')) {
-                    return acc.then(() =>
-                      this._scenarioService.deleteScenarioEdge(
-                        createdAutomation.data.id,
-                        formattedId,
-                      ),
-                    );
-                  }
+              return this.ids.reduce((acc, id) => {
+                const formattedId = id.substr(2);
+                if (id.startsWith('e-')) {
                   return acc.then(() =>
-                    this._scenarioService.deleteScenarioNode(
+                    this._scenarioService.deleteScenarioEdge(
                       createdAutomation.data.id,
                       formattedId,
                     ),
                   );
-                },
-                Promise.resolve() as Promise<any>,
-              );
+                }
+                return acc.then(() =>
+                  this._scenarioService.deleteScenarioNode(
+                    createdAutomation.data.id,
+                    formattedId,
+                  ),
+                );
+              }, Promise.resolve() as Promise<any>);
             })
             .then(() => createdAutomation);
         }
         return Promise.resolve(createdAutomation);
       });
-    };
+    }
   }
 
   saveFirstNode = (
@@ -393,18 +395,18 @@ export class AutomationFormService implements IAutomationFormService {
     storylineNodes: StorylineNodeModel[],
     parentNodeId: string,
   ): Promise<any> => {
-    return storylineNodes.reduce((prev, storylineNode) => {
-      const node = storylineNode.node;
-      if (isScenarioNodeShape(node)) {
-        if (isDisplayCampaignNode(node)) {
-          const saveOrCreateCampaignPromise = this.saveSubDisplayCampaign(
-            organisationId,
-            node.formData,
-            node.initialFormData,
-            node.campaign_id,
-          );
-          return prev.then(() =>
-            saveOrCreateCampaignPromise.then(campaignIds => {
+    const tasks = storylineNodes.map(
+      (storylineNode): Task => () => {
+        const node = storylineNode.node;
+        if (isScenarioNodeShape(node)) {
+          if (isDisplayCampaignNode(node)) {
+            const saveOrCreateCampaignPromise = this.saveSubDisplayCampaign(
+              organisationId,
+              node.formData,
+              node.initialFormData,
+              node.campaign_id,
+            );
+            return saveOrCreateCampaignPromise.then(campaignIds => {
               return this.saveOrCreateNode(
                 automationId,
                 storylineNode,
@@ -424,17 +426,15 @@ export class AutomationFormService implements IAutomationFormService {
                   );
                 });
               });
-            }),
-          );
-        } else if (isEmailCampaignNode(node)) {
-          const saveOrCreateCampaignPromise = this.saveSubEmailCampaign(
-            organisationId,
-            node.formData,
-            node.initialFormData,
-            node.campaign_id,
-          );
-          return prev.then(() =>
-            saveOrCreateCampaignPromise.then(campaignId => {
+            });
+          } else if (isEmailCampaignNode(node)) {
+            const saveOrCreateCampaignPromise = this.saveSubEmailCampaign(
+              organisationId,
+              node.formData,
+              node.initialFormData,
+              node.campaign_id,
+            );
+            return saveOrCreateCampaignPromise.then(campaignId => {
               return this.saveOrCreateNode(automationId, storylineNode, {
                 campaign_id: campaignId,
               }).then(res => {
@@ -452,24 +452,22 @@ export class AutomationFormService implements IAutomationFormService {
                   );
                 });
               });
-            }),
-          );
-        } else if (isAddToSegmentNode(node)) {
-          const saveOrCreateCampaignPromise = node.user_list_segment_id 
-          ? Promise.resolve(node.user_list_segment_id) 
-          : this.saveAudienceSegment(
-            organisationId,
-            datamartId,
-            node.formData.name,
-          );
-          return prev.then(() =>
-            saveOrCreateCampaignPromise.then(audienceSegmentId => {
+            });
+          } else if (isAddToSegmentNode(node)) {
+            const saveOrCreateCampaignPromise = node.user_list_segment_id
+              ? Promise.resolve(node.user_list_segment_id)
+              : this.saveAudienceSegment(
+                  organisationId,
+                  datamartId,
+                  node.formData.name,
+                );
+            return saveOrCreateCampaignPromise.then(audienceSegmentId => {
               return this.saveOrCreateNode(
-                automationId, 
-                storylineNode, 
-                undefined, 
-                undefined, 
-                audienceSegmentId
+                automationId,
+                storylineNode,
+                undefined,
+                undefined,
+                audienceSegmentId,
               ).then(res => {
                 return this.saveOrCreateEdges(automationId, {
                   source_id: parentNodeId,
@@ -485,18 +483,16 @@ export class AutomationFormService implements IAutomationFormService {
                   );
                 });
               });
-            }),
-          );
-        } else if (isQueryInputNode(node) || isIfNode(node)) {
-          const saveOrCreateQueryPromise = node.query_id
-            ? this._queryService.updateQuery(
-                datamartId,
-                node.query_id,
-                node.formData,
-              )
-            : this._queryService.createQuery(datamartId, node.formData);
-          return prev.then(() =>
-            saveOrCreateQueryPromise.then(queryRes => {
+            });
+          } else if (isQueryInputNode(node) || isIfNode(node)) {
+            const saveOrCreateQueryPromise = node.query_id
+              ? this._queryService.updateQuery(
+                  datamartId,
+                  node.query_id,
+                  node.formData,
+                )
+              : this._queryService.createQuery(datamartId, node.formData);
+            return saveOrCreateQueryPromise.then(queryRes => {
               return this.saveOrCreateNode(
                 automationId,
                 storylineNode,
@@ -517,57 +513,58 @@ export class AutomationFormService implements IAutomationFormService {
                   );
                 });
               });
-            }),
-          );
-        } else if (isAbnNode(node) || isEndNode(node) || isWaitNode(node)) {
-          return prev.then(() =>
-            this.saveOrCreateNode(automationId, storylineNode).then(res => {
-              return this.saveOrCreateEdges(automationId, {
-                source_id: parentNodeId,
-                target_id: res.data.id,
-                edgeResource: storylineNode.in_edge,
-              }).then(() => {
-                return this.iterate(
-                  organisationId,
-                  datamartId,
-                  automationId,
-                  storylineNode.out_edges,
-                  res.data.id,
-                );
-              });
-            }),
-          );
+            });
+          } else if (isAbnNode(node) || isEndNode(node) || isWaitNode(node)) {
+            return this.saveOrCreateNode(automationId, storylineNode).then(
+              res => {
+                return this.saveOrCreateEdges(automationId, {
+                  source_id: parentNodeId,
+                  target_id: res.data.id,
+                  edgeResource: storylineNode.in_edge,
+                }).then(() => {
+                  return this.iterate(
+                    organisationId,
+                    datamartId,
+                    automationId,
+                    storylineNode.out_edges,
+                    res.data.id,
+                  );
+                });
+              },
+            );
+          }
         }
-      }
-      return prev.then(() => Promise.resolve());
-    }, Promise.resolve());
+        return Promise.resolve();
+      },
+    );
+
+    return executeTasksInSequence(tasks);
   };
 
-
-  validateAutomationRec(
-    storylineNodes: StorylineNodeModel[]
-  ): Promise<void> {
+  validateAutomationRec(storylineNodes: StorylineNodeModel[]): Promise<void> {
     return storylineNodes.reduce((prev, storylineNode) => {
-      return prev.then(() => this.validateNode(storylineNode).then(() => this.validateAutomationRec(storylineNode.out_edges)));
-    }, Promise.resolve())
+      return prev.then(() =>
+        this.validateNode(storylineNode).then(() =>
+          this.validateAutomationRec(storylineNode.out_edges),
+        ),
+      );
+    }, Promise.resolve());
   }
 
-  validateAutomation(
-    storylineNode: StorylineNodeModel
-  ): Promise<void> {
-    return this.validateNode(storylineNode).then(() => this.validateAutomationRec(storylineNode.out_edges))
+  validateAutomation(storylineNode: StorylineNodeModel): Promise<void> {
+    return this.validateNode(storylineNode).then(() =>
+      this.validateAutomationRec(storylineNode.out_edges),
+    );
   }
 
-  validateNode(
-    storylineNode: StorylineNodeModel
-  ): Promise<void> {
-    const node = storylineNode.node
-    if (isQueryInputNode(node) || isIfNode(node)) {
-      if (! node.formData.query_language) {
-        return Promise.reject(messages.undefinedQuery)
+  validateNode(storylineNode: StorylineNodeModel): Promise<void> {
+    const node = storylineNode.node;
+    if (isQueryInputNode(node) || isIfNode(node)) {
+      if (!node.formData.query_language) {
+        return Promise.reject(messages.undefinedQuery);
       }
-      if (! node.formData.query_text || node.formData.query_text === '') {
-        return Promise.reject(messages.emptyQuery)
+      if (!node.formData.query_text || node.formData.query_text === '') {
+        return Promise.reject(messages.emptyQuery);
       }
     }
     return Promise.resolve();
@@ -641,10 +638,11 @@ export class AutomationFormService implements IAutomationFormService {
         y: node.y,
         type: node.type,
         user_list_segment_id: audienceSegmentId,
-        user_segment_expiration_period: moment.duration(+node.formData.ttl.value, node.formData.ttl.unit).toISOString(),
+        user_segment_expiration_period: moment
+          .duration(+node.formData.ttl.value, node.formData.ttl.unit)
+          .toISOString(),
       };
-      resourceId =
-        node.id && !isFakeId(node.id) ? node.id : undefined;
+      resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
     } else if (isIfNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
@@ -746,8 +744,8 @@ export class AutomationFormService implements IAutomationFormService {
     initialFormData: DisplayCampaignAutomationFormData = INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
     campaignId?: string,
   ): Promise<{ ad_group_id?: string; campaign_id: string }> => {
-    formData.campaign.technical_name = undefined
-    initialFormData.campaign.technical_name = undefined
+    formData.campaign.technical_name = undefined;
+    initialFormData.campaign.technical_name = undefined;
 
     return this._displayCampaignFormService
       .saveCampaign(
@@ -763,17 +761,23 @@ export class AutomationFormService implements IAutomationFormService {
       );
   };
 
-  saveAudienceSegment = (organisationId: string, datamartId: string, name: string): Promise<string> => {
-    return this._audienceSegmentService.createAudienceSegment(organisationId, {
-      type: 'USER_LIST',
-      feed_type: 'SCENARIO',
-      datamart_id: datamartId,
-      name: name,
-      persisted: false,
-    }).then(({ data: segment }) => {
-      return segment.id;
-    });
-  }
+  saveAudienceSegment = (
+    organisationId: string,
+    datamartId: string,
+    name: string,
+  ): Promise<string> => {
+    return this._audienceSegmentService
+      .createAudienceSegment(organisationId, {
+        type: 'USER_LIST',
+        feed_type: 'SCENARIO',
+        datamart_id: datamartId,
+        name: name,
+        persisted: false,
+      })
+      .then(({ data: segment }) => {
+        return segment.id;
+      });
+  };
 
   saveSubEmailCampaign = (
     organisationId: string,
