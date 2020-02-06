@@ -102,6 +102,8 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
             this.props.notifyError(error);
             this.setState({
               isLoadingJobExecutions: false,
+              jobExecutions: [],
+              totalJobExecutions: 0,
             });
           }),
     );
@@ -113,10 +115,11 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
         params: { datamartId },
       },
     } = this.props;
-    this._datamartReplicationService.deleteDatamartReplication(
-      datamartId,
-      replicationId,
-    );
+    this._datamartReplicationService
+      .deleteDatamartReplication(datamartId, replicationId)
+      .catch(error => {
+        this.props.notifyError(error);
+      });
   };
 
   renderStatuColumn = (record: DatamartReplicationJobExecutionResource) => {
@@ -127,20 +130,20 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
           <div>
             {record.status}{' '}
             {record.result &&
-            record.result.total_failure &&
-            record.result.total_failure > 0 ? (
-              <span>
-                - with errors{' '}
-                <Tooltip
-                  placement="top"
-                  title={record.error && record.error.message}
-                >
-                  <McsIcon type="question" />
-                </Tooltip>
-              </span>
-            ) : (
-              undefined
-            )}
+              record.result.total_failure &&
+              record.result.total_failure > 0 && (
+                <span>
+                  - with errors{' '}
+                  {record.error && record.error.message && (
+                    <Tooltip
+                      placement="top"
+                      title={record.error && record.error.message}
+                    >
+                      <McsIcon type="question" />
+                    </Tooltip>
+                  )}
+                </span>
+              )}
           </div>
         );
       default:
@@ -190,16 +193,16 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: messages.startDate,
+        intlMessage: messages.executionStartDate,
         key: 'start_date',
         isHideable: false,
         render: (text: string) =>
           text
             ? moment(text).format('DD/MM/YYYY HH:mm:ss')
-            : formatMessage(messages.notStarted),
+            : formatMessage(messages.executionNotStarted),
       },
       {
-        intlMessage: messages.endDate,
+        intlMessage: messages.executionEndDate,
         key: 'end_date',
         isHideable: false,
         render: (
@@ -210,16 +213,16 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
             ? moment(record.start_date + record.duration).format(
                 'DD/MM/YYYY HH:mm:ss',
               )
-            : formatMessage(messages.notEnded),
+            : formatMessage(messages.executionNotEnded),
       },
       {
-        intlMessage: messages.creationDate,
+        intlMessage: messages.executionCreationDate,
         key: 'creation_date',
         isHideable: false,
         render: (text: string) =>
           text
             ? moment(text).format('DD/MM/YYYY HH:mm:ss')
-            : formatMessage(messages.notCreated),
+            : formatMessage(messages.executionNotCreated),
       },
     ];
   };
@@ -301,7 +304,6 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
               <TableView
                 dataSource={jobExecutions}
                 columns={this.buildColumnDefinition()}
-                // actionsColumnsDefinition={[]}
                 pagination={pagination}
                 loading={isLoadingJobExecutions}
               />

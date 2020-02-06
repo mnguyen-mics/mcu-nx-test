@@ -70,6 +70,8 @@ class DatamartReplicationCard extends React.Component<Props> {
             {/* TO DO: <img src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${replication.assetUrl}`} /> */}
             {type === 'GOOGLE_PUBSUB' ? (
               <img
+                alt="logo-google-pubsub"
+                className="replication-logo"
                 src={`https://assets.mediarithmics.com/1/public/assets/1580747629223-sdjBhPFh/google-pubsub-logo.svg`}
               />
             ) : (

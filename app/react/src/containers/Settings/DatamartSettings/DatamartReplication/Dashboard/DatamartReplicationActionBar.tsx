@@ -45,7 +45,6 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
         onOk() {
           return deleteReplication(replicationId);
         },
-        // onCancel() {},
       });
     };
 

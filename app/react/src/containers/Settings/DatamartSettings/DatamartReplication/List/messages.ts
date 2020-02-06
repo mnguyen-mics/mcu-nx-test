@@ -195,27 +195,27 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.dashboard.executionProgress',
     defaultMessage: 'Progress',
   },
-  startDate: {
+  executionStartDate: {
     id: 'settings.datamart.datamartReplication.dashboard.executionStartDate',
     defaultMessage: 'Start Date',
   },
-  creationDate: {
+  executionCreationDate: {
     id: 'settings.datamart.datamartReplication.dashboard.executionCreationDate',
     defaultMessage: 'Creation Date',
   },
-  endDate: {
+  executionEndDate: {
     id: 'settings.datamart.datamartReplication.dashboard.executionEndDate',
     defaultMessage: 'End Date',
   },
-  notStarted: {
+  executionNotStarted: {
     id: 'settings.datamart.datamartReplication.dashboard.executionNotStarted',
     defaultMessage: 'Not started',
   },
-  notCreated: {
+  executionNotCreated: {
     id: 'settings.datamart.datamartReplication.dashboard.executionNotCreated',
     defaultMessage: 'Not created',
   },
-  notEnded: {
+  executionNotEnded: {
     id: 'settings.datamart.datamartReplication.dashboard.executionNotEnded',
     defaultMessage: 'Not ended',
   },
