@@ -12,7 +12,7 @@ type DatamartUsersAnalyticsMetric = 'sessions';
 export function buildDatamartUsersAnalyticsRequestBody(
   datamartId: string,
 ): ReportRequestBody {
-  const date7daysAgo: string = new McsMoment('now-7d').toMoment().format();
+  const date7daysAgo: string = new McsMoment('now-7d').toMoment().startOf('day').format();
   const dimensionsList: DatamartUsersAnalyticsDimension[] = ['date_yyyy_mm_dd'];
   const metricsList: DatamartUsersAnalyticsMetric[] = ['sessions'];
   return buildReport(date7daysAgo, dimensionsList, metricsList, datamartId);
@@ -26,7 +26,7 @@ function buildReport(
 ): ReportRequestBody {
 
   // DATE RANGE
-  const dateNow: string = new McsMoment('now').toMoment().subtract(1, 'day').format();
+  const dateNow: string = new McsMoment('now-1d').toMoment().endOf('day').format();
 
   const dateRange: DateRange = {
     start_date: startDate,
