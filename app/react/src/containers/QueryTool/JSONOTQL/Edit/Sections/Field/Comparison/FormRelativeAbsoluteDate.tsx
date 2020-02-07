@@ -75,9 +75,9 @@ export default class FormRelativeAbsoluteDate extends React.Component<
         this.props.input.onChange(['now-1d'])
       } else {
         if (!this.props.unixTimstamp) {
-          this.props.input.onChange([moment().toISOString()])
+          this.props.input.onChange([moment().startOf('day').toISOString()])
         } else {
-          this.props.input.onChange([moment().valueOf()])
+          this.props.input.onChange([moment().startOf('day').valueOf()])
         }
       }
     }
@@ -132,22 +132,21 @@ export default class FormRelativeAbsoluteDate extends React.Component<
     let value;
 
     if (this.state.datePickerType === 'ABSOLUTE') {
-      value = this.props.input.value.length ? moment(this.props.input.value[0]) : moment();
+      value = this.props.input.value.length ? moment(this.props.input.value[0]) : moment().startOf('day');
     } else {
       value = this.getNumericRelativeValue(this.props.input.value[0]);
     }
 
     const onDatePickerChange = (date: moment.Moment, dateString: string) => {
-      return this.props.unixTimstamp ? this.props.input.onChange([date.valueOf()]) : this.props.input.onChange([date]);
+      return this.props.unixTimstamp ? this.props.input.onChange([date.startOf('day').valueOf()]) : this.props.input.onChange([date.startOf('day')]);
     };
 
     const onRadioChange = (e: RadioChangeEvent) => {
       this.setState({ datePickerType: e.target.value })
-      const newValue = e.target.value === 'ABSOLUTE' ?  this.props.unixTimstamp ? moment().valueOf() : moment().toISOString() : 'now'
+      const newValue = e.target.value === 'ABSOLUTE' ?  this.props.unixTimstamp ? moment().startOf('day').valueOf() : moment().startOf('day').toISOString() : 'now'
       this.props.input.onChange([newValue]);
     }
     const onPeriodChange = (val: DateRelativePeriodType) => { this.setState({ relativePeriod: val }, () => this.generateRelativeValue(this.getNumericRelativeValue(this.props.input.value[0])))}
-
     return (
       <FormFieldWrapper
         help={this.props.meta.touched && (this.props.meta.warning || this.props.meta.error)}
@@ -168,7 +167,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
             value={moment(value)}
             onChange={onDatePickerChange}
             style={{ width: "100%" }}
-            defaultValue={moment().seconds(0).milliseconds(0).minutes(0).hours(0)}
+            defaultValue={moment().startOf('day')}
             {...this.props.datePickerProps}
           /> : <div>
              <InputGroup compact={true} >
