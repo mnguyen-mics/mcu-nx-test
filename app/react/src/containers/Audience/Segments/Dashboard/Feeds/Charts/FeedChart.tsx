@@ -19,6 +19,7 @@ import McsMoment, { formatMcsDate } from '../../../../../../utils/McsMoment';
 import { McsDateRangeValue } from '../../../../../../components/McsDateRangePicker';
 import { Card } from 'antd';
 import StackedBarPlot from '../../../../../../components/Charts/CategoryBased/StackedBarPlot';
+import moment from 'moment';
 
 interface FeedChartProps {
   organisationId: string;
@@ -50,7 +51,7 @@ class FeedChart extends React.Component<Props, State> {
       dataSource: [],
       isLoading: true,
       dateRange: {
-        from: new McsMoment('now-7d'),
+        from: new McsMoment('now-6d'),
         to: new McsMoment('now'),
       },
     };
@@ -77,6 +78,13 @@ class FeedChart extends React.Component<Props, State> {
     });
 
     const formatedInclusiveDateRange = formatMcsDate(dateRange, true);
+
+    const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
+    const allDates = [formatedNonInclusiveDateRange.from];
+
+    while(allDates[allDates.length - 1] !== moment(formatedNonInclusiveDateRange.to).add(-1, 'days').format('YYYY-MM-DD')) {
+      allDates.push(moment(allDates[allDates.length - 1]).add(1, 'days').format('YYYY-MM-DD'));
+    }
 
     const reportBody = buildFeedStatsByFeedRequestBody(feedId, {
       start_date: formatedInclusiveDateRange.from,
@@ -107,25 +115,17 @@ class FeedChart extends React.Component<Props, State> {
           };
         });
 
-        if (!feedReports.find(fr => fr.day === formatedInclusiveDateRange.from))
-          feedReports = [
-            {
-              day: formatedInclusiveDateRange.from,
+        allDates.map(date => {
+          if(!feedReports.find(report => report.day === date)) {
+            feedReports.push({
+              day: date,
               upserted_user_points: 0,
               deleted_user_points: 0,
-            },
-          ].concat(feedReports);
+            });
+          }
+        });
 
-        const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
-
-        if (
-          !feedReports.find(fr => fr.day === formatedNonInclusiveDateRange.to)
-        )
-          feedReports.push({
-            day: formatedNonInclusiveDateRange.to,
-            upserted_user_points: 0,
-            deleted_user_points: 0,
-          });
+        feedReports = feedReports.sort((report1, report2) => report1.day.localeCompare(report2.day));
 
         return this.setState({
           dataSource: feedReports,
