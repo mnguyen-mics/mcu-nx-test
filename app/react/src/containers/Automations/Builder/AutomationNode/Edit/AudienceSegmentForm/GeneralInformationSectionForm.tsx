@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AudienceSegmentAutomationFormData } from "../domain";
+import { AddToSegmentAutomationFormData } from "../domain";
 import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
 import { ValidatorProps } from "../../../../../../components/Form/withValidators";
 import { TYPES } from '../../../../../../constants/types';
@@ -14,37 +14,10 @@ import {
   withValidators,
   FormSection,
   FormInput,
-  FormInputField
+  FormInputField,
+  FormAddonSelectField,
+  AddonSelect
 } from '../../../../../../components/Form';
-
-export const formMessages = defineMessages({
-  sectionGeneralTitle: {
-    id: 'automation.builder.node.audienceSegmentForm.generalInfoSection.title',
-    defaultMessage: 'General information',
-  },
-  sectionGeneralSubtitle: {
-    id: 'automation.builder.node.audienceSegmentForm.general.subtitle',
-    defaultMessage: 'Modify the general information of your audience segment',
-  },
-  automationNodeName: {
-    id: 'automation.builder.node.audienceSegmentForm.name',
-    defaultMessage: 'Automation node name',
-  },
-  audienceSegmentTitle: {
-    id: 'automation.builder.node.audienceSegmentForm.placeholder.title',
-    defaultMessage: 'This is the audience segment name',
-  },
-  audienceSegmentSubTitle: {
-    id: 'automation.builder.node.audienceSegmentForm.placeholder.subtitle',
-    defaultMessage: "The audience segment's name will help you identify it on the different screens. Make it as memorable as you want your results to be !",
-  },
-  audienceSegmentFormPlaceholderSegmentName: {
-    id: 'automation.builder.node.audienceSegmentForm.placeholder.name',
-    defaultMessage: 'This is a segment name',
-  },
- 
-});
-
 
 interface State {
   fetchingAudienceSegments: boolean;
@@ -52,7 +25,7 @@ interface State {
 }
 
 interface GeneralInformationFormSectionProps {
-  initialValues: Partial<AudienceSegmentAutomationFormData>;
+  initialValues: Partial<AddToSegmentAutomationFormData>;
   organisationId: string;
   disabled?: boolean;
 }
@@ -91,7 +64,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
   render() {
     const {
-        fieldValidators: { isRequired },
+        fieldValidators: { isRequired, isValidInteger },
         intl: { formatMessage },
         disabled,
       } = this.props;
@@ -100,34 +73,77 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
       <div>
         <FormSection
-          subtitle={formMessages.sectionGeneralSubtitle}
-          title={formMessages.sectionGeneralTitle}
+          subtitle={messages.sectionGeneralSubtitle}
+          title={messages.sectionGeneralTitle}
         />
         <div className="automation-node-form">
           <FormInputField
-            name="audienceSegment.name"
+            name="name"
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
               label: formatMessage(
-                formMessages.audienceSegmentTitle, 
+                messages.audienceSegmentNameTitle, 
               ),
               required: true,
             }}
             inputProps={{
               placeholder: formatMessage(
-                formMessages.audienceSegmentFormPlaceholderSegmentName,
+                messages.audienceSegmentNamePlaceholder,
               ),
               disabled: !!disabled,
             }}
             helpToolTipProps={{
-              title: formatMessage(formMessages.audienceSegmentSubTitle),
+              title: formatMessage(messages.audienceSegmentNameSubtitle),
             }}
             small={true}
           />
-
+          <FormInputField
+            name="ttl.value"
+            component={FormInput}
+            validate={[isRequired, isValidInteger]}
+            formItemProps={{
+              label: formatMessage(
+                messages.audienceSegmentTTLTitle,
+              ),
+              required: true,
+            }}
+            inputProps={{
+              disabled: disabled,
+              placeholder: formatMessage(messages.audienceSegmentTTLPlaceholder),
+              addonAfter: (
+                <FormAddonSelectField
+                  name="ttl.unit"
+                  component={AddonSelect}
+                  disabled={disabled}
+                  options={[
+                    {
+                      value: 'days',
+                      key: 'days',
+                      title: formatMessage(
+                        messages.audienceSegmentTTLUnitDays,
+                      ),
+                    },
+                    {
+                      value: 'months',
+                      key: 'months',
+                      title: formatMessage(
+                        messages.audienceSegmentTTLUnitMonths,
+                      ),
+                    },
+                  ]}
+                />
+              ),
+              style: { width: '100%' },
+            }}
+            helpToolTipProps={{
+              title: formatMessage(
+                messages.audienceSegmentTTLSubtitle,
+              ),
+            }}
+            small={true}
+          />
         </div>
-
       </div>
     )
   }
@@ -139,3 +155,53 @@ export default compose<Props, GeneralInformationFormSectionProps>(
   withNormalizer,
 )(GeneralInformationFormSection);
 
+export const messages = defineMessages({
+  sectionGeneralTitle: {
+    id: 'automation.builder.node.audienceSegmentForm.generalInfoSection.title',
+    defaultMessage: 'General information',
+  },
+  sectionGeneralSubtitle: {
+    id: 'automation.builder.node.audienceSegmentForm.general.subtitle',
+    defaultMessage: 'Modify the general information of your audience segment',
+  },
+  automationNodeName: {
+    id: 'automation.builder.node.audienceSegmentForm.name',
+    defaultMessage: 'Automation node name',
+  },
+  audienceSegmentNameTitle: {
+    id: 'automation.builder.node.audienceSegmentForm.name.title',
+    defaultMessage: 'This is the audience segment name',
+  },
+  audienceSegmentNameSubtitle: {
+    id: 'automation.builder.node.audienceSegmentForm.name.subtitle',
+    defaultMessage: "The audience segment's name will help you identify it on the different screens. Make it as memorable as you want your results to be !",
+  },
+  audienceSegmentNamePlaceholder: {
+    id: 'automation.builder.node.audienceSegmentForm.name.placeholder',
+    defaultMessage: 'Segment Name',
+  },
+  audienceSegmentTTLTitle: {
+    id: 'automation.builder.node.audienceSegmentForm.ttl.title',
+    defaultMessage: 'Time to live in segment',
+  },
+  audienceSegmentTTLSubtitle: {
+    id: 'automation.builder.node.audienceSegmentForm.ttl.subtitle',
+    defaultMessage: "Time during which the user will belong to the segment (0 means forever).",
+  },
+  audienceSegmentTTLPlaceholder: {
+    id: 'automation.builder.node.audienceSegmentForm.ttl.placeholder',
+    defaultMessage: "Time to live",
+  },
+  audienceSegmentTTLUnitDays: {
+    id: 'automation.builder.node.audienceSegmentForm.ttl.unit.days',
+    defaultMessage: "Days",
+  },
+  audienceSegmentTTLUnitWeeks: {
+    id: 'automation.builder.node.audienceSegmentForm.ttl.unit.weeks',
+    defaultMessage: "Weeks",
+  },
+  audienceSegmentTTLUnitMonths: {
+    id: 'automation.builder.node.audienceSegmentForm.ttl.unit.months',
+    defaultMessage: "Months",
+  },
+});

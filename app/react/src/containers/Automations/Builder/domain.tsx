@@ -21,7 +21,7 @@ import {
   EmailCampaignAutomationFormData,
   WaitFormData,
   isIfNode,
-  AudienceSegmentAutomationFormData,
+  AddToSegmentAutomationFormData,
   isScenarioNodeShape,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
@@ -349,15 +349,15 @@ export class UpdateNodeOperation implements NodeOperation {
             .initialFormData as EmailCampaignAutomationFormData,
         };
         break;
-      case 'ADD_TO_SEGMENT':
-        const typedFormData = this.formData as AudienceSegmentAutomationFormData;
+      case 'ADD_TO_SEGMENT_NODE':
+        const typedFormData = this.formData as AddToSegmentAutomationFormData;
         nodeBody = {
           ...storylineNode.node,
           ...this.node as AddToSegmentNodeResource,
-          name: typedFormData.audienceSegment.name && typedFormData.audienceSegment.name  || 'undefined segment name',
+          name: typedFormData.name && typedFormData.name  || 'undefined segment name',
           formData: typedFormData,
           initialFormData: this
-            .initialFormData as AudienceSegmentAutomationFormData,
+            .initialFormData as AddToSegmentAutomationFormData,
         };
         break;
       case 'ABN_NODE':
@@ -565,7 +565,7 @@ export function generateNodeProperties(
         iconType: 'email',
         color: '#0ba6e1',
       };
-    case 'ADD_TO_SEGMENT':
+    case 'ADD_TO_SEGMENT_NODE':
       return {
         iconType: 'user-list',
         color: '#0ba6e1',
