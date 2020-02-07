@@ -242,11 +242,15 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       ),
     });
     if (
-      !(segmentCreation && (type === 'USER_PIXEL' || type === 'USER_LIST')) ||
+      (!(segmentCreation && (type === 'USER_PIXEL' || type === 'USER_LIST')) ||
       (type === 'USER_LIST' &&
         initialValues &&
         initialValues.audienceSegment &&
-        (initialValues.audienceSegment as UserListSegment).feed_type === 'TAG')
+        (initialValues.audienceSegment as UserListSegment).feed_type === 'TAG')) &&
+      !(type === 'USER_LIST' &&
+        initialValues &&
+        initialValues.audienceSegment &&
+        (initialValues.audienceSegment as UserListSegment).feed_type === 'SCENARIO')
     ) {
       sections.push({
         id: 'properties',
