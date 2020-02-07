@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-
-import EmailCampaignService from '../../../../services/EmailCampaignService';
 import { getDefaultDatamart } from '../../../../state/Session/selectors';
 import { EditEmailBlastRouteMatchParam } from './domain';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { lazyInject } from '../../../../config/inversify.config';
+import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
+import { TYPES } from '../../../../constants/types';
 
 interface SegmentReachProps {
   segmentIds: string[];
@@ -28,6 +29,10 @@ type Props = SegmentReachProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 
 class SegmentReach extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
+
   constructor(props: Props) {
     super(props);
     this.state = { count: 0 };
@@ -46,7 +51,7 @@ class SegmentReach extends React.Component<Props, State> {
     const datamartId = defaultDatamart(organisationId).id;
 
     if (segmentIds && segmentIds.length > 0) {
-      EmailCampaignService.computeSegmentReach(
+      this._emailCampaignService.computeSegmentReach(
         datamartId,
         segmentIds,
         providerTechnicalNames,

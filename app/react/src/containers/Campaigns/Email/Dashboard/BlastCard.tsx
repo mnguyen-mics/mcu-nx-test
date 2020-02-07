@@ -16,7 +16,6 @@ import {
   EmailBlastResource,
   EmailBlastStatus,
 } from '../../../../models/campaign/email';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -25,6 +24,9 @@ import ReportService from '../../../../services/ReportService';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
 
 export interface BlastCardProps {
   reportView?: ReportViewResource;
@@ -42,6 +44,10 @@ interface State {
 }
 
 class BlastCard extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
+  
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -53,7 +59,7 @@ class BlastCard extends React.Component<Props, State> {
   componentDidMount() {
     this.refreshData();
   }
-
+  
   refreshData = () => {
     const {
       location: { search },
@@ -78,7 +84,7 @@ class BlastCard extends React.Component<Props, State> {
           'sub_campaign_id',
         );
       }),
-      EmailCampaignService.getBlasts(campaignId).then(res => res.data),
+      this._emailCampaignService.getBlasts(campaignId).then(res => res.data),
     ])
       .then(([deliveryReport, blastsData]) => {
         this.setState({
@@ -103,7 +109,7 @@ class BlastCard extends React.Component<Props, State> {
       },
     } = this.props;
     this.setState({ isLoading: true });
-    EmailCampaignService.updateBlast(campaignId, id, { status: nextStatus })
+    this._emailCampaignService.updateBlast(campaignId, id, { status: nextStatus })
       .then(res => {
         this.props.notifySuccess({
           intlMessage: messages.blastStatusUpdateSuccessMessage,

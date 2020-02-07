@@ -19,8 +19,6 @@ import {
   compareSearches,
   updateSearch,
 } from '../../../../../../utils/LocationSearchHelper';
-
-import EmailCampaignService from '../../../../../../services/EmailCampaignService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
@@ -34,6 +32,9 @@ import log from '../../../../../../utils/Logger';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
 import { McsIcon } from '../../../../../../components';
 import ActionBar from '../../../../../../components/ActionBar';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { IEmailCampaignService } from '../../../../../../services/EmailCampaignService';
+import { TYPES } from '../../../../../../constants/types';
 
 export interface EmailCampaignAutomatedDashboardPageProps {
   campaignId: string;
@@ -86,6 +87,10 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
   Props,
   State
 > {
+
+  @lazyInject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -156,7 +161,7 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
   loadCampaign = (campaignId: string) => {
     if (!this.state.campaign || this.state.campaign.id !== campaignId) {
       this.setState({ isLoadingCampaign: true });
-      EmailCampaignService.getEmailCampaign(campaignId)
+      this._emailCampaignService.getEmailCampaign(campaignId)
         .then(res => {
           this.setState({
             isLoadingCampaign: false,

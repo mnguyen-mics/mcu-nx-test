@@ -10,13 +10,15 @@ import {
   INITIAL_EMAIL_BLAST_FORM_DATA,
 } from '../domain';
 import messages from '../messages';
-import EmailCampaignFormService from '../EmailCampaignFormService';
 import { EmailCampaignResource } from '../../../../../models/campaign/email';
-import EmailCampaignService from '../../../../../services/EmailCampaignService';
 import { Loading } from '../../../../../components';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { TYPES } from '../../../../../constants/types';
+import { IEmailCampaignService } from '../../../../../services/EmailCampaignService';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { IEmailCampaignFormService } from '../EmailCampaignFormService';
 
 interface State {
   campaign?: EmailCampaignResource;
@@ -29,6 +31,13 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 
 class EditBlastPage extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
+
+  @lazyInject(TYPES.IEmailCampaignFormService)
+  private _emailCampaignFormService: IEmailCampaignFormService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -41,9 +50,9 @@ class EditBlastPage extends React.Component<Props, State> {
     const { match: { params: { campaignId, blastId } } } = this.props;
 
     Promise.all([
-      EmailCampaignService.getEmailCampaign(campaignId),
+      this._emailCampaignService.getEmailCampaign(campaignId),
       blastId
-        ? EmailCampaignFormService.loadBlast(campaignId, blastId)
+        ? this._emailCampaignFormService.loadBlast(campaignId, blastId)
         : Promise.resolve(INITIAL_EMAIL_BLAST_FORM_DATA),
     ])
       .then(([campaignApiRes, blastFormData]) => {
@@ -97,7 +106,7 @@ class EditBlastPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    return EmailCampaignFormService.saveBlast(
+    return this._emailCampaignFormService.saveBlast(
       campaignId,
       blastFormData,
       initialBlastFormData,

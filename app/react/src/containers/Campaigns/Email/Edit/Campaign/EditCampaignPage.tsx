@@ -10,11 +10,13 @@ import {
   INITIAL_EMAIL_CAMPAIGN_FORM_DATA,
 } from '../domain';
 import messages from '../messages';
-import EmailCampaignFormService from '../EmailCampaignFormService';
 import { Loading } from '../../../../../components';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IEmailCampaignFormService } from '../EmailCampaignFormService';
 
 interface State {
   campaignFormData: EmailCampaignFormData;
@@ -26,6 +28,10 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditEmailCampaignRouteMatchParam>;
 
 class EditCampaignPage extends React.Component<Props, State> {
+
+  @lazyInject(TYPES.IEmailCampaignFormService)
+  private _emailCampaignFormService: IEmailCampaignFormService;
+  
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -38,7 +44,7 @@ class EditCampaignPage extends React.Component<Props, State> {
     const { match: { params: { campaignId } } } = this.props;
 
     if (campaignId) {
-      EmailCampaignFormService.loadCampaign(campaignId)
+      this._emailCampaignFormService.loadCampaign(campaignId)
         .then(formData => {
           this.setState({
             loading: false,
@@ -94,7 +100,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    return EmailCampaignFormService.saveCampaign(
+    return this._emailCampaignFormService.saveCampaign(
       organisationId,
       campaignFormData,
       initialCampaignFormData,

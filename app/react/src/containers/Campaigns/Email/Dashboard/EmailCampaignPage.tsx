@@ -19,7 +19,7 @@ import {
   compareSearches,
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
-import EmailCampaignService from '../../../../services/EmailCampaignService';
+import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -34,6 +34,8 @@ import ReportService from '../../../../services/ReportService';
 import log from '../../../../utils/Logger';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { CampaignStatus } from '../../../../models/campaign/constants';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -77,6 +79,9 @@ interface State {
 }
 
 class EmailCampaign extends React.Component<Props, State> {
+  @lazyInject(TYPES.IEmailCampaignService)
+  private _emailCampaignService: IEmailCampaignService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -90,7 +95,9 @@ class EmailCampaign extends React.Component<Props, State> {
     const {
       history,
       location: { search, pathname },
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
     } = this.props;
     if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
       history.replace({
@@ -98,7 +105,10 @@ class EmailCampaign extends React.Component<Props, State> {
         search: buildDefaultSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch<EmailDashboardSearchSettings>(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
+      const filter = parseSearch<EmailDashboardSearchSettings>(
+        search,
+        EMAIL_DASHBOARD_SEARCH_SETTINGS,
+      );
       this.loadCampaign(campaignId);
       this.refreshStats(organisationId, campaignId, filter);
     }
@@ -107,7 +117,9 @@ class EmailCampaign extends React.Component<Props, State> {
   componentWillReceiveProps(nextProps: Props) {
     const {
       location: { search },
-      match: { params: { campaignId } },
+      match: {
+        params: { campaignId },
+      },
       history,
     } = this.props;
 
@@ -130,7 +142,10 @@ class EmailCampaign extends React.Component<Props, State> {
           ),
         });
       } else {
-        const filter = parseSearch<EmailDashboardSearchSettings>(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS);
+        const filter = parseSearch<EmailDashboardSearchSettings>(
+          nextSearch,
+          EMAIL_DASHBOARD_SEARCH_SETTINGS,
+        );
         this.loadCampaign(nextCampaignId);
         this.refreshStats(nextOrganisationId, nextCampaignId, filter);
       }
@@ -140,7 +155,8 @@ class EmailCampaign extends React.Component<Props, State> {
   loadCampaign = (campaignId: string) => {
     if (!this.state.campaign || this.state.campaign.id !== campaignId) {
       this.setState({ isLoadingCampaign: true });
-      EmailCampaignService.getEmailCampaign(campaignId)
+      this._emailCampaignService
+        .getEmailCampaign(campaignId)
         .then(res => {
           this.setState({
             isLoadingCampaign: false,
@@ -165,6 +181,7 @@ class EmailCampaign extends React.Component<Props, State> {
     this.setState({
       isLoadingCampaignStatReport: true,
     });
+
     ReportService.getSingleEmailDeliveryReport(
       organisationId,
       campaignId,
@@ -207,7 +224,9 @@ class EmailCampaign extends React.Component<Props, State> {
 
   updateCampaignStatus = (status: CampaignStatus) => {
     const {
-      match: { params: { campaignId } },
+      match: {
+        params: { campaignId },
+      },
       intl,
       notifySuccess,
       notifyError,
@@ -215,9 +234,10 @@ class EmailCampaign extends React.Component<Props, State> {
     this.setState({
       isLoadingCampaign: true,
     });
-    EmailCampaignService.updateEmailCampaign(campaignId, {
-      status,
-    })
+    this._emailCampaignService
+      .updateEmailCampaign(campaignId, {
+        status,
+      })
       .then(res => {
         this.setState({
           isLoadingCampaign: false,
@@ -233,12 +253,14 @@ class EmailCampaign extends React.Component<Props, State> {
           message: intl.formatMessage(messageMap.notifError),
           description: intl.formatMessage(messageMap.statusUpdateFailure),
         }),
-    );
+      );
   };
 
   render() {
     const {
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
       location: { search },
       intl,
     } = this.props;
@@ -309,6 +331,8 @@ class EmailCampaign extends React.Component<Props, State> {
   }
 }
 
-export default compose(withRouter, injectIntl, injectNotifications)(
-  EmailCampaign,
-);
+export default compose(
+  withRouter,
+  injectIntl,
+  injectNotifications,
+)(EmailCampaign);

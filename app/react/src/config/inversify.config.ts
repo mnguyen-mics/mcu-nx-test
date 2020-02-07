@@ -194,9 +194,22 @@ import {
 } from '../services/ResourceHistoryService';
 import { GoalService, IGoalService } from '../services/GoalService';
 import { IDatamartUsersAnalyticsService, DatamartUsersAnalyticsService } from '../services/DatamartUsersAnalyticsService';
+import EmailCampaignService, {
+  IEmailCampaignService,
+} from '../services/EmailCampaignService';
+import {
+  IEmailCampaignFormService,
+  EmailCampaignFormService,
+} from '../containers/Campaigns/Email/Edit/EmailCampaignFormService';
 
 const container = new Container();
 
+container
+  .bind<IEmailCampaignService>(TYPES.IEmailCampaignService)
+  .to(EmailCampaignService);
+container
+  .bind<IEmailCampaignFormService>(TYPES.IEmailCampaignFormService)
+  .to(EmailCampaignFormService);
 container
   .bind<IKeywordListService>(TYPES.IKeywordListService)
   .to(KeywordListService);
