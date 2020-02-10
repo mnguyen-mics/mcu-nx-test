@@ -12,6 +12,7 @@ import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
+  INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA,
 } from '../AutomationNode/Edit/domain';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
@@ -66,7 +67,7 @@ const displayCampaignNode: ScenarioNodeShape = {
   initialFormData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
 };
 
-const audienceSegmentNode: ScenarioNodeShape = {
+const addToSegmentNode: ScenarioNodeShape = {
   id: generateFakeId(),
   name: 'Add to Segment',
   type: 'ADD_TO_SEGMENT_NODE',
@@ -75,6 +76,16 @@ const audienceSegmentNode: ScenarioNodeShape = {
   scenario_id: '',
   formData: INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
   initialFormData: INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
+};
+
+const deleteFromSegmentNode: ScenarioNodeShape = {
+  id: generateFakeId(),
+  name: 'Delete from Segment',
+  type: 'DELETE_FROM_SEGMENT_NODE',
+  user_list_segment_id: '',
+  scenario_id: '',
+  formData: INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA,
+  initialFormData: INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA,
 };
 
 const conditionNode1: ScenarioNodeShape = {
@@ -129,7 +140,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
       actionNodes: this.props.hasFeature(
         'automations-add-delete-to-from-segment-node',
       )
-        ? [emailCampaignNode, displayCampaignNode, audienceSegmentNode]
+        ? [emailCampaignNode, displayCampaignNode, addToSegmentNode, deleteFromSegmentNode]
         : [emailCampaignNode, displayCampaignNode],
       conditionNodes: [conditionNode1, conditionNode2, conditionNode3],
       exitsNodes: [],

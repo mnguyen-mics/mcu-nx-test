@@ -79,7 +79,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           title={messages.sectionGeneralTitle}
         />
 
-        <div className="automation-node-form">
+        <div>
           <FormInputField
             name="name"
             component={FormInput}

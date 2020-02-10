@@ -69,23 +69,20 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           title={messages.sectionGeneralTitle}
         />
 
-        <div className="automation-node-form">
-          <FormInputField
-            name="timeout"
-            component={FormInput}
-            validate={[isRequired, isValidInteger]}
-            formItemProps={{
-              label: formatMessage(messages.waitNodeTimeout),
-              required: true,
-            }}
-            inputProps={{
-              type: 'number',
-              disabled: !!disabled
-            }}
-            small={true}
-          />
-
-        </div>
+        <FormInputField
+          name="timeout"
+          component={FormInput}
+          validate={[isRequired, isValidInteger]}
+          formItemProps={{
+            label: formatMessage(messages.waitNodeTimeout),
+            required: true,
+          }}
+          inputProps={{
+            type: 'number',
+            disabled: !!disabled
+          }}
+          small={true}
+        />
       </div>
     );
   }

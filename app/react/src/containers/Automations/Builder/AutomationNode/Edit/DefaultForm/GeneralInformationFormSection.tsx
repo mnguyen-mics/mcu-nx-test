@@ -73,23 +73,20 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           title={messages.sectionGeneralTitle}
         />
 
-        <div className="automation-node-form">
-          <FormInputField
-            name="name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.automationNodeName),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(messages.automationNodeName),
-              disabled: !!disabled
-            }}
-            small={true}
-          />
-
-        </div>
+        <FormInputField
+          name="name"
+          component={FormInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.automationNodeName),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(messages.automationNodeName),
+            disabled: !!disabled
+          }}
+          small={true}
+        />
       </div>
     );
   }
