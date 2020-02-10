@@ -57,8 +57,6 @@ class ChannelsTable extends React.Component<Props> {
       match: {
         params: { organisationId },
       },
-      location,
-      history,
       filtersOptions,
       workspace,
     } = this.props;
@@ -88,10 +86,7 @@ class ChannelsTable extends React.Component<Props> {
         isHideable: false,
         render: (text: string, record: ChannelResourceShape) => {
           const handleEditChannel = () => {
-            history.push({
-              pathname: `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/${record.type.toLowerCase}/${record.id}/edit`,
-              state: { from: `${location.pathname}${location.search}` },
-            });
+            onEditChannel(record);
           };
 
           return (
