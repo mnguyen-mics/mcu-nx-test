@@ -8,7 +8,6 @@ import { FORM_ID, DeleteFromSegmentAutomationFormData } from '../domain';
 import { Path } from '../../../../../../components/ActionBar';
 import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
 import * as React from 'react';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { Omit, connect } from 'react-redux';
@@ -51,7 +50,6 @@ type Props = InjectedFormProps<
 > &
   DeleteFromSegmentAutomationFormProps &
   InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }> &
   MapStateToProps;
 
 class DeleteFromSegmentAutomationForm extends React.Component<Props> {
@@ -60,19 +58,18 @@ class DeleteFromSegmentAutomationForm extends React.Component<Props> {
 
     const sections: McsFormSection[] = [];
 
-    const deleteFromSection = {
-      id: 'deleteFromSection',
+    const deleteFromSegmentSection = {
+      id: 'deleteFromSegmentSectionId',
       title: messages.sectionGeneralTitle,
       component: (
         <DeleteFromSegmentGeneralSectionForm
           initialValues={this.props.initialValues}
-          organisationId={this.props.match.params.organisationId}
           disabled={disabled}
         />
       ),
     };
 
-    sections.push(deleteFromSection);
+    sections.push(deleteFromSegmentSection);
 
     return sections;
   };
@@ -128,7 +125,6 @@ const mapStateToProps = (state: MicsReduxState) => ({
 
 export default compose<Props, DeleteFromSegmentAutomationFormProps>(
   injectIntl,
-  withRouter,
   connect(mapStateToProps),
   reduxForm({
     form: FORM_ID,

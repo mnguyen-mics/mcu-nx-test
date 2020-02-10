@@ -9,6 +9,7 @@ import {
   WaitNodeResource,
   IfNodeResource,
   AddToSegmentNodeResource,
+  DeleteFromSegmentNodeResource,
 } from '../../../../../models/automations/automations';
 
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
@@ -47,7 +48,8 @@ export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormDa
 }
 
 export const INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA: DeleteFromSegmentAutomationFormData = {
-  name: '',
+  name: 'Delete from Segment',
+  segmentId: undefined,
 }
 
 export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
@@ -157,6 +159,7 @@ export interface AddToSegmentAutomationFormData extends DefaultFormData {
 }
 
 export interface DeleteFromSegmentAutomationFormData extends DefaultFormData {
+  segmentId?: string
 }
 
 export interface QueryAutomationFormData extends DefaultFormData, Partial<QueryCreateRequest> {
@@ -207,6 +210,12 @@ export function isAddToSegmentNode(
   node: AutomationNodeShape,
 ): node is AddToSegmentNodeResource {
   return node.type === 'ADD_TO_SEGMENT_NODE';
+}
+
+export function isDeleteSegmentNode(
+  node: AutomationNodeShape,
+): node is DeleteFromSegmentNodeResource {
+  return node.type === 'DELETE_FROM_SEGMENT_NODE';
 }
 
 export function isQueryInputNode(

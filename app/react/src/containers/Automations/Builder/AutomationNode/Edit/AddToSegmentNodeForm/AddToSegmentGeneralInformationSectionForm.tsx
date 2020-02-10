@@ -76,7 +76,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props, S
           subtitle={messages.sectionGeneralSubtitle}
           title={messages.sectionGeneralTitle}
         />
-        <div className="automation-node-form">
+        <div>
           <FormInputField
             name="name"
             component={FormInput}

@@ -62,8 +62,8 @@ class AddToSegmentAutomationForm extends React.Component<Props> {
 
         const sections: McsFormSection[] = [];
 
-        const audienceSegmentSection = {
-            id: 'audienceSegment',
+        const addToSegmentSection = {
+            id: 'addToSegmentSectionId',
             title: messages.sectionGeneralTitle,
             component: (
                 <GeneralInformationFormSection
@@ -74,7 +74,7 @@ class AddToSegmentAutomationForm extends React.Component<Props> {
             ),
         };
 
-        sections.push(audienceSegmentSection);
+        sections.push(addToSegmentSection);
 
         return sections;
     };

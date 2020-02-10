@@ -75,15 +75,28 @@ class FormSearchObject extends React.Component<
       this.fetchData("")
     }
   }
-  
 
-
-  fetchInitialData = (values: string[]) => {
-    const { fetchSingleMethod } = this.props;
+  fetchInitialData = (values?: string | string[]) => {
+    const { fetchSingleMethod, selectProps } = this.props;
     this.setState({ initialFetch: true })
-    return Promise.all(values.map(i => fetchSingleMethod(i))).then(res => {
-      this.setState({ value: res, initialFetch: false })
-    })
+
+    if(selectProps && selectProps.mode === "default") {
+      const singleValue = values as string;
+
+      if(!singleValue) {
+        this.setState({ initialFetch: false });
+        return;
+      }
+
+      fetchSingleMethod(singleValue).then(res => {
+        this.setState({ value: [res], initialFetch: false })
+      });
+    } else {
+      const multipleValues = values as string[];
+      Promise.all(multipleValues.map(i => fetchSingleMethod(i))).then(res => {
+        this.setState({ value: res, initialFetch: false })
+      });
+    }
   }
 
   fetchData = (value: string) => {
@@ -102,10 +115,21 @@ class FormSearchObject extends React.Component<
     })
   }
 
-  handleChange = (value: LabeledValue[]) => {
-    const { input } = this.props;
-    this.setState({ value, currentValue: undefined })
-    input.onChange(value.map(i => i.key))
+  handleChange = (value: LabeledValue | LabeledValue[]) => {
+    const { 
+      input,
+      selectProps
+    } = this.props;
+
+    if(selectProps && selectProps.mode === "default") {
+      const singleValue = value as LabeledValue;
+      this.setState({ value: [singleValue], currentValue: undefined });
+      input.onChange(singleValue.key);
+    } else {
+      const multipleValues = value as LabeledValue[];
+      this.setState({ value: multipleValues, currentValue: undefined });
+      input.onChange(multipleValues.map(i => i.key));
+    }
   }
 
   onSearch = (val: string) => {

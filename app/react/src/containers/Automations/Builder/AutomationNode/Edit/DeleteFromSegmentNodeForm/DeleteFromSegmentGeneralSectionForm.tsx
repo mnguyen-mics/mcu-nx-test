@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { AddToSegmentAutomationFormData } from "../domain";
+import { DeleteFromSegmentAutomationFormData } from "../domain";
 import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
 import { ValidatorProps } from "../../../../../../components/Form/withValidators";
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
-import { AudienceSegmentShape } from '../../../../../../models/audiencesegment';
 import { compose } from 'recompose';
 import withNormalizer, {
   NormalizerProps,
@@ -13,92 +12,96 @@ import withNormalizer, {
 import {
   withValidators,
   FormSection,
-  FormInput,
-  FormInputField,
 } from '../../../../../../components/Form';
+import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
+import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
+import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
+import { RouteComponentProps, withRouter } from 'react-router';
 
-interface State {
-  fetchingAudienceSegments: boolean;
-  userListSegment: AudienceSegmentShape[]
-}
+interface State {}
 
 interface DeleteFromSegmentGeneralSectionFormProps {
-  initialValues: Partial<AddToSegmentAutomationFormData>;
-  organisationId: string;
+  initialValues: Partial<DeleteFromSegmentAutomationFormData>;
   disabled?: boolean;
 }
 
 type Props = DeleteFromSegmentGeneralSectionFormProps &
   InjectedIntlProps &
   ValidatorProps &
+  RouteComponentProps<{ organisationId: string }> &
   NormalizerProps;
 
-class DeleteFromSegmentGeneralSectionForm extends React.Component<Props, State> {
-
+class DeleteFromSegmentGeneralSectionForm extends React.Component<
+  Props,
+  State
+> {
   @lazyInject(TYPES.IAudienceSegmentService)
-  private audienceSegmentService: IAudienceSegmentService;
+  private _audienceSegmentService: IAudienceSegmentService;
 
   constructor(props: Props) {
     super(props);
-    this.state = {
-      fetchingAudienceSegments: false,
-      userListSegment: []
-    };
   }
 
-  componentDidMount() {
-    this.setState({ fetchingAudienceSegments: true, });
-    this.audienceSegmentService
-      .getSegments(this.props.organisationId, {
-        type: "USER_LIST",
-      })
-      .then(userListSegmentsResponse => {
-        this.setState({
-          fetchingAudienceSegments: false,
-          userListSegment: userListSegmentsResponse.data
-        });
-      });
-  }
+  fetchListMethod = (keywords: string) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    return this._audienceSegmentService
+      .getSegments(organisationId, { keywords, type: 'USER_LIST' })
+      .then(({ data: segments }) =>
+        segments.map(r => ({
+          key: r.id,
+          label: <SegmentNameDisplay audienceSegmentResource={r} />,
+        })),
+      );
+  };
+
+  fetchSingleMethod = (id: string) => {
+    return this._audienceSegmentService.getSegment(id).then(({ data: segment }) => ({
+      key: segment.id,
+      label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+    }));
+  };
 
   render() {
     const {
-        fieldValidators: { isRequired },
-        intl: { formatMessage },
-        disabled,
-      } = this.props;
+      fieldValidators: { isRequired },
+      intl: { formatMessage },
+      disabled,
+    } = this.props;
 
     return (
-
       <div>
         <FormSection
           subtitle={messages.sectionGeneralSubtitle}
           title={messages.sectionGeneralTitle}
         />
-        <div className="automation-node-form">
-          <FormInputField
-            name="name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(
-                messages.audienceSegmentNameTitle, 
-              ),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(
-                messages.audienceSegmentNamePlaceholder,
-              ),
-              disabled: !!disabled,
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.audienceSegmentNameSubtitle),
-            }}
-            small={true}
-          />
-        </div>
+        <FormSearchObjectField
+          name="segmentId"
+          component={FormSearchObject}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.audienceSegmentNameTitle),
+            required: true,
+          }}
+          fetchListMethod={this.fetchListMethod}
+          fetchSingleMethod={this.fetchSingleMethod}
+          helpToolTipProps={{
+            title: formatMessage(messages.audienceSegmentNameSubtitle),
+          }}
+          selectProps={{
+            disabled: !!disabled,
+            mode: "default",
+            showSearch: true,
+          }}
+          type="Audience"
+          small={true}
+        />
       </div>
-    )
+    );
   }
 }
 
@@ -106,6 +109,7 @@ export default compose<Props, DeleteFromSegmentGeneralSectionFormProps>(
   injectIntl,
   withValidators,
   withNormalizer,
+  withRouter,
 )(DeleteFromSegmentGeneralSectionForm);
 
 export const messages = defineMessages({
@@ -123,11 +127,11 @@ export const messages = defineMessages({
   },
   audienceSegmentNameTitle: {
     id: 'automation.builder.node.deleteFromSegmentForm.name.title',
-    defaultMessage: 'This is the audience segment name',
+    defaultMessage: 'Select the segment to delete the users from',
   },
   audienceSegmentNameSubtitle: {
     id: 'automation.builder.node.deleteFromSegmentForm.name.subtitle',
-    defaultMessage: "The audience segment's name will help you identify it on the different screens. Make it as memorable as you want your results to be !",
+    defaultMessage: "Delete users if they exist in this segment otherwise do nothing and continue the automation.",
   },
   audienceSegmentNamePlaceholder: {
     id: 'automation.builder.node.deleteFromSegmentForm.name.placeholder',

@@ -12,6 +12,7 @@ import {
   QueryInputEvaluationPeriodUnit,
   EdgeHandler,
   AddToSegmentNodeResource,
+  DeleteFromSegmentNodeResource,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
@@ -23,6 +24,7 @@ import {
   isIfNode,
   AddToSegmentAutomationFormData,
   isScenarioNodeShape,
+  DeleteFromSegmentAutomationFormData,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
@@ -350,12 +352,23 @@ export class UpdateNodeOperation implements NodeOperation {
         };
         break;
       case 'ADD_TO_SEGMENT_NODE':
-        const typedFormData = this.formData as AddToSegmentAutomationFormData;
+        const addToSegmentFormData = this.formData as AddToSegmentAutomationFormData;
         nodeBody = {
           ...storylineNode.node,
           ...this.node as AddToSegmentNodeResource,
-          name: typedFormData.name && typedFormData.name  || 'undefined segment name',
-          formData: typedFormData,
+          name: addToSegmentFormData.name && addToSegmentFormData.name  || 'undefined segment name',
+          formData: addToSegmentFormData,
+          initialFormData: this
+            .initialFormData as AddToSegmentAutomationFormData,
+        };
+        break;
+      case 'DELETE_FROM_SEGMENT_NODE':
+        const deleteFromSegmentFormData = this.formData as DeleteFromSegmentAutomationFormData;
+        nodeBody = {
+          ...storylineNode.node,
+          ...this.node as DeleteFromSegmentNodeResource,
+          name: deleteFromSegmentFormData.name && deleteFromSegmentFormData.name  || 'undefined segment name',
+          formData: deleteFromSegmentFormData,
           initialFormData: this
             .initialFormData as AddToSegmentAutomationFormData,
         };
