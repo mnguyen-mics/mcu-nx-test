@@ -4,10 +4,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Loading } from '../../../../../components';
 import { Layout } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
-import {
-  LegalBasis,
-  ProcessingResource,
-} from '../../../../../models/timeline/timeline';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import messages from '../messages';
 import { ProcessingFormData } from '../domain';
@@ -20,6 +16,7 @@ import { IOrganisationService } from '../../../../../services/OrganisationServic
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { LegalBasis, ProcessingResource } from '../../../../../models/consent/UserConsentResource';
 
 interface EditProcessingRouteMatchParams {
   organisationId: string;

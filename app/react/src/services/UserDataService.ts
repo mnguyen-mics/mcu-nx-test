@@ -1,9 +1,9 @@
+import { UserConsentResource } from './../models/consent/UserConsentResource';
 import {
   UserSegmentResource,
   UserProfileResource,
   Activity,
   UserIdentifierInfo,
-  UserConsentResource,
 } from './../models/timeline/timeline';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { Identifier } from '../containers/Audience/Timeline/Monitoring';

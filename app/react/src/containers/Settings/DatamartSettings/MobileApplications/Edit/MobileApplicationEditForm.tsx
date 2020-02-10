@@ -32,9 +32,16 @@ import VisitAnalyzerSection, {
 import EventRulesSection, {
   EventRulesSectionProps,
 } from '../../Common/EventRulesSection';
+import ProcessingActivitiesFormSection, { ProcessingActivitiesFormSectionProps } from '../../Common/ProcessingActivitiesFormSection';
+import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
+>;
+
+const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ProcessingActivitiesFormSectionProps
 >;
 
 const VisitAnalyzerFieldArray = FieldArray as new () => GenericFieldArray<
@@ -47,6 +54,7 @@ export interface MobileApplicationEditFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   datamartId: string;
+  initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
 }
 
 type Props = InjectedFormProps<
@@ -66,7 +74,13 @@ const EventRulesFieldArray = FieldArray as new () => GenericFieldArray<
 
 class MobileApplicationEditForm extends React.Component<Props> {
   render() {
-    const { handleSubmit, breadCrumbPaths, close, change } = this.props;
+    const {
+      handleSubmit,
+      breadCrumbPaths,
+      close,
+      change,
+      initialProcessingSelectionsForWarning,
+    } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
@@ -85,6 +99,23 @@ class MobileApplicationEditForm extends React.Component<Props> {
       id: 'general',
       title: messages.sectionGeneralTitle,
       component: <GeneralFormSection />,
+    });
+
+    const propsForProcessingActivities = {
+      ...genericFieldArrayProps,
+      initialProcessingSelectionsForWarning: initialProcessingSelectionsForWarning,
+    };
+
+    sections.push({
+      id: 'processingActivities',
+      title: messages.sectionProcessingActivitiesTitle,
+      component: (
+        <ProcessingActivitiesFieldArray
+          name="processingActivities"
+          component={ProcessingActivitiesFormSection}
+          {...propsForProcessingActivities}
+        />
+      ),
     });
 
     sections.push({

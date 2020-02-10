@@ -1,4 +1,4 @@
-import { ProcessingResource } from './../models/timeline/timeline';
+import { ProcessingResource } from './../models/consent/UserConsentResource';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import {
   Cookie,

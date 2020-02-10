@@ -1,5 +1,6 @@
+import { ProcessingResource, UserConsentResource } from './../../../models/consent/UserConsentResource';
 import { Identifier } from './Monitoring';
-import { isUserPointIdentifier, UserProfileGlobal, UserConsentResource, ProcessingResource } from './../../../models/timeline/timeline';
+import { isUserPointIdentifier, UserProfileGlobal } from './../../../models/timeline/timeline';
 import { groupBy, Dictionary } from 'lodash';
 import { IUserDataService } from './../../../services/UserDataService';
 import {

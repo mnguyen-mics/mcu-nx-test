@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout, message } from 'antd';
+import { Layout, message, Modal } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import * as FeatureSelectors from '../../../../../state/Features/selectors';
@@ -36,6 +36,8 @@ import { IChannelService } from '../../../../../services/ChannelService';
 import { TYPES } from '../../../../../constants/types';
 import queryString from 'query-string';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { IOrganisationService } from '../../../../../services/OrganisationService';
+import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
 
 interface State {
   siteData: SiteFormData;
@@ -54,9 +56,11 @@ type Props = InjectedIntlProps &
   InjectedDatamartProps;
 
 class SiteEditPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IChannelService)
   private _channelService: IChannelService;
+
+  @lazyInject(TYPES.IOrganisationService)
+  private _organisationService: IOrganisationService;
 
   constructor(props: Props) {
     super(props);
@@ -64,7 +68,9 @@ class SiteEditPage extends React.Component<Props, State> {
     this.state = {
       loading: true, // default true to avoid render x2 on mounting
       siteData: INITIAL_SITE_FORM_DATA,
-      selectedDatamartId: queryString.parse(props.location.search).selectedDatamartId || props.match.params.datamartId,
+      selectedDatamartId:
+        queryString.parse(props.location.search).selectedDatamartId ||
+        props.match.params.datamartId,
     };
   }
 
@@ -96,11 +102,42 @@ class SiteEditPage extends React.Component<Props, State> {
         siteId,
         organisationId,
       );
+      const getProcessingSelections = this._channelService
+        .getProcessingSelectionsByChannel(siteId)
+        .then(res => {
+          const processingSelectionResources = res.data;
 
-      Promise.all([getSites, getEventRules, getAliases])
+          return Promise.all(
+            processingSelectionResources.map(processingSelectionResource => {
+              return this._organisationService
+                .getProcessing(processingSelectionResource.processing_id)
+                .then(resProcessing => {
+                  const processingResource = resProcessing.data;
+                  return {
+                    processingSelectionResource: processingSelectionResource,
+                    processingResource: processingResource,
+                  };
+                });
+            }),
+          );
+        });
+
+      Promise.all([
+        getSites,
+        getEventRules,
+        getAliases,
+        getProcessingSelections,
+      ])
         .then(res => {
           const formData = {
             site: res[0].data,
+            initialProcessingSelectionResources: res[3].map(
+              processingAndSelection =>
+                processingAndSelection.processingSelectionResource,
+            ),
+            processingActivities: res[3].map(processingAndSelection =>
+              createFieldArrayModel(processingAndSelection.processingResource),
+            ),
             visitAnalyzerFields: res[0].data.visit_analyzer_model_id
               ? [
                   createFieldArrayModel({
@@ -144,7 +181,7 @@ class SiteEditPage extends React.Component<Props, State> {
     } = this.props;
 
     const { siteData, selectedDatamartId } = this.state;
-    
+
     let datamartId: string;
     if (siteId) {
       datamartId = siteData.site.datamart_id
@@ -154,7 +191,56 @@ class SiteEditPage extends React.Component<Props, State> {
       datamartId = selectedDatamartId;
     }
     return datamartId;
-  }
+  };
+
+  shouldWarnProcessings = (siteFormData: SiteFormData): boolean => {
+    const initialProcessingSelectionResources =
+      siteFormData.initialProcessingSelectionResources;
+    const processingActivities = siteFormData.processingActivities;
+
+    const initialProcessingIds = initialProcessingSelectionResources.map(
+      processingSelection => processingSelection.processing_id,
+    );
+    const processingActivityIds = processingActivities.map(
+      processingResource => processingResource.model.id,
+    );
+
+    return (
+      siteFormData.site.id !== undefined &&
+      !(
+        initialProcessingIds.length === processingActivityIds.length &&
+        initialProcessingIds.every(pId => processingActivityIds.includes(pId))
+      )
+    );
+  };
+
+  checkProcessingsAndSave = (siteFormData: SiteFormData) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
+    const warn = this.shouldWarnProcessings(siteFormData);
+
+    const saveFunction = () => {
+      this.save(siteFormData);
+    };
+
+    if (warn) {
+      Modal.confirm({
+        content: formatMessage(messages.processingsWarningModalContent),
+        okText: formatMessage(messages.processingsWarningModalOk),
+        cancelText: formatMessage(messages.processingsWarningModalCancel),
+        onOk() {
+          return saveFunction();
+        },
+        onCancel() {
+          //
+        },
+      });
+    } else {
+      saveFunction();
+    }
+  };
 
   save = (siteFormData: SiteFormData) => {
     const {
@@ -165,7 +251,7 @@ class SiteEditPage extends React.Component<Props, State> {
       history,
       intl,
     } = this.props;
-    
+
     const datamartId = this.getDatamartId();
 
     const hideSaveInProgress = message.loading(
@@ -206,10 +292,14 @@ class SiteEditPage extends React.Component<Props, State> {
           });
         } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);
-          const eventRuleBody = { ...erf.model, datamart_id: datamartId, site_id: site.id };
+          const eventRuleBody = {
+            ...erf.model,
+            datamart_id: datamartId,
+            site_id: site.id,
+          };
           if (
-            eventRuleBody.type === 'USER_IDENTIFIER_INSERTION' && 
-            eventRuleBody.identifier_creation === 'USER_ACCOUNT' && 
+            eventRuleBody.type === 'USER_IDENTIFIER_INSERTION' &&
+            eventRuleBody.identifier_creation === 'USER_ACCOUNT' &&
             !eventRuleBody.compartment_id
           ) {
             eventRuleBody.compartment_id = null;
@@ -224,16 +314,15 @@ class SiteEditPage extends React.Component<Props, State> {
         }
         return Promise.resolve();
       });
-      const deletePromises = startIds.map(
-        sid =>
-          sid && !savedIds.includes(sid)
-            ? this._channelService.deleteEventRules(
-                datamartId,
-                site.id,
-                organisationId,
-                sid,
-              )
-            : Promise.resolve(),
+      const deletePromises = startIds.map(sid =>
+        sid && !savedIds.includes(sid)
+          ? this._channelService.deleteEventRules(
+              datamartId,
+              site.id,
+              organisationId,
+              sid,
+            )
+          : Promise.resolve(),
       );
       return [...saveCreatePromises, ...deletePromises];
     };
@@ -266,24 +355,87 @@ class SiteEditPage extends React.Component<Props, State> {
         }
         return Promise.resolve();
       });
-      const deletePromises = startId.map(
-        sid =>
-          sid && !savedIds.includes(sid)
-            ? this._channelService.deleteAliases(
-                datamartId,
-                site.id,
-                organisationId,
-                sid,
-              )
-            : Promise.resolve(),
+      const deletePromises = startId.map(sid =>
+        sid && !savedIds.includes(sid)
+          ? this._channelService.deleteAliases(
+              datamartId,
+              site.id,
+              organisationId,
+              sid,
+            )
+          : Promise.resolve(),
       );
       return [...saveCreatePromises, ...deletePromises];
+    };
+
+    const generateProcessingSelectionsTasks = (
+      site: ChannelResource,
+    ): Array<Promise<any>> => {
+      const initialProcessingSelectionResources =
+        siteFormData.initialProcessingSelectionResources;
+      const processingActivities = siteFormData.processingActivities;
+
+      const initialProcessingIds = initialProcessingSelectionResources.map(
+        processingSelection => processingSelection.processing_id,
+      );
+      const processingActivityIds = processingActivities.map(
+        processingResource => processingResource.model.id,
+      );
+
+      const processingIdsToBeAdded = processingActivityIds.filter(
+        pId => !initialProcessingIds.includes(pId),
+      );
+      const processingIdsToBeDeleted = initialProcessingIds.filter(
+        pId => !processingActivityIds.includes(pId),
+      );
+
+      const savePromises = processingIdsToBeAdded.map(pId => {
+        const processingActivityFieldModel = processingActivities.find(
+          processingActivity => processingActivity.model.id === pId,
+        );
+
+        if (processingActivityFieldModel) {
+          const processingResource = processingActivityFieldModel.model;
+          const processingSelectionResource: Partial<ProcessingSelectionResource> = {
+            processing_id: processingResource.id,
+            processing_name: processingResource.name,
+          };
+          return this._channelService.createProcessingSelectionForChannel(
+            site.id,
+            processingSelectionResource,
+          );
+        } else {
+          return Promise.resolve({});
+        }
+      });
+
+      const deletePromises = processingIdsToBeDeleted.map(pId => {
+        const processingSelectionResource = initialProcessingSelectionResources.find(
+          pSelectionResource => pSelectionResource.processing_id === pId,
+        );
+
+        if (processingSelectionResource) {
+          const processingSelectionId = processingSelectionResource.id;
+          return this._channelService.deleteChannelProcessingSelection(
+            site.id,
+            processingSelectionId,
+          );
+        } else {
+          return Promise.resolve({});
+        }
+      });
+
+      return [...savePromises, ...deletePromises];
     };
 
     const generateAllPromises = (
       site: ChannelResource,
     ): Array<Promise<any>> => {
-      return [...generateEventRulesTasks(site), ...generateAliasesTasks(site)];
+      return [
+        ...generateEventRulesTasks(site),
+        ...generateAliasesTasks(site),
+        ...generateProcessingSelectionsTasks(site),
+      ];
     };
 
     const generateSavingPromise = (): Promise<any> => {
@@ -295,24 +447,20 @@ class SiteEditPage extends React.Component<Props, State> {
           ),
         };
 
-        return this._channelService.updateSite(
-          datamartId,
-          siteFormData.site.id,
-          mbApp,
-        ).then(site => Promise.all(generateAllPromises(site.data)));
+        return this._channelService
+          .updateSite(datamartId, siteFormData.site.id, mbApp)
+          .then(site => Promise.all(generateAllPromises(site.data)));
       }
 
-      return this._channelService.createChannel(
-        this.props.match.params.organisationId,
-        datamartId,
-        {
+      return this._channelService
+        .createChannel(this.props.match.params.organisationId, datamartId, {
           ...siteFormData.site,
           visit_analyzer_model_id: getVisitAnalyzerId(
             siteFormData.visitAnalyzerFields,
           ),
           type: 'SITE',
-        },
-      ).then(site => Promise.all(generateAllPromises(site.data)));
+        })
+        .then(site => Promise.all(generateAllPromises(site.data)));
     };
 
     generateSavingPromise()
@@ -338,7 +486,7 @@ class SiteEditPage extends React.Component<Props, State> {
         params: { organisationId },
       },
     } = this.props;
-    
+
     const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/sites`;
 
     return location.state && location.state.from
@@ -391,14 +539,21 @@ class SiteEditPage extends React.Component<Props, State> {
 
     const datamartId = this.getDatamartId();
 
+    const initialProcessingSelectionsForWarning = siteData.site.id
+      ? siteData.initialProcessingSelectionResources
+      : undefined;
+
     return datamartId ? (
       <SiteEditForm
         initialValues={siteData}
-        onSubmit={this.save}
+        onSubmit={this.checkProcessingsAndSave}
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
         datamartId={datamartId}
+        initialProcessingSelectionsForWarning={
+          initialProcessingSelectionsForWarning
+        }
       />
     ) : (
       <Layout className="edit-layout">

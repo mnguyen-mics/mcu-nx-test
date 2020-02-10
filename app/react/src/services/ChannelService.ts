@@ -1,3 +1,4 @@
+import { ProcessingSelectionResource } from './../models/consent/UserConsentResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   EventRules,
@@ -89,6 +90,21 @@ export interface IChannelService {
     organisationId: string,
     eventRuleId: string,
   ) => Promise<DataResponse<Aliases>>;
+  getProcessingSelectionsByChannel: (
+    channelId: string,
+  ) => Promise<DataListResponse<ProcessingSelectionResource>>;
+  createProcessingSelectionForChannel: (
+    channelId: string,
+    body: Partial<ProcessingSelectionResource>,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
+  getChannelProcessingSelection: (
+    channelId: string,
+    processingSelectionId: string,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
+  deleteChannelProcessingSelection: (
+    channelId: string,
+    processingSelectionId: string,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
 }
 
 @injectable()
@@ -118,7 +134,7 @@ export class ChannelService implements IChannelService {
     };
 
     return ApiService.getRequest(endpoint, params);
-  };
+  }
   getChannel(
     datamartId: string,
     channelId: string,
@@ -235,6 +251,33 @@ export class ChannelService implements IChannelService {
     eventRuleId: string,
   ): Promise<DataResponse<Aliases>> {
     const endpoint = `datamarts/${datamartId}/sites/${siteId}/aliases/${eventRuleId}`;
+    return ApiService.deleteRequest(endpoint);
+  }
+  getProcessingSelectionsByChannel(
+    channelId: string,
+  ): Promise<DataListResponse<ProcessingSelectionResource>> {
+    const endpoint = `channels/${channelId}/processing_selections`;
+    return ApiService.getRequest(endpoint);
+  }
+  createProcessingSelectionForChannel(
+    channelId: string,
+    body: Partial<ProcessingSelectionResource>,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    const endpoint = `channels/${channelId}/processing_selections`;
+    return ApiService.postRequest(endpoint, body);
+  }
+  getChannelProcessingSelection(
+    channelId: string,
+    processingSelectionId: string,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    const endpoint = `channels/${channelId}/processing_selections/${processingSelectionId}`;
+    return ApiService.getRequest(endpoint);
+  }
+  deleteChannelProcessingSelection(
+    channelId: string,
+    processingSelectionId: string,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    const endpoint = `channels/${channelId}/processing_selections/${processingSelectionId}`;
     return ApiService.deleteRequest(endpoint);
   }
 }

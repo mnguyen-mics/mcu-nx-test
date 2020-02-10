@@ -35,6 +35,10 @@ import EventRulesSection, {
 } from '../../Common/EventRulesSection';
 
 import DomainsField, { DomainFieldProps } from './Sections/DomainsField';
+import ProcessingActivitiesFormSection, {
+  ProcessingActivitiesFormSectionProps,
+} from '../../Common/ProcessingActivitiesFormSection';
+import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
 
 const FormDomainFields = FieldArray as new () => GenericFieldArray<
   DomainFieldProps
@@ -42,6 +46,11 @@ const FormDomainFields = FieldArray as new () => GenericFieldArray<
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
+>;
+
+const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ProcessingActivitiesFormSectionProps
 >;
 
 const VisitAnalyzerFieldArray = FieldArray as new () => GenericFieldArray<
@@ -59,6 +68,7 @@ export interface SiteEditFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   datamartId: string;
+  initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
 }
 
 interface MapStateToProps {
@@ -75,7 +85,13 @@ export const FORM_ID = 'siteForm';
 
 class SiteEditForm extends React.Component<Props> {
   render() {
-    const { handleSubmit, breadCrumbPaths, close, change } = this.props;
+    const {
+      handleSubmit,
+      breadCrumbPaths,
+      close,
+      change,
+      initialProcessingSelectionsForWarning,
+    } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
@@ -94,6 +110,23 @@ class SiteEditForm extends React.Component<Props> {
       id: 'general',
       title: messages.sectionGeneralTitle,
       component: <GeneralFormSection />,
+    });
+
+    const propsForProcessingActivities = {
+      ...genericFieldArrayProps,
+      initialProcessingSelectionsForWarning: initialProcessingSelectionsForWarning,
+    };
+
+    sections.push({
+      id: 'processingActivities',
+      title: messages.sectionProcessingActivitiesTitle,
+      component: (
+        <ProcessingActivitiesFieldArray
+          name="processingActivities"
+          component={ProcessingActivitiesFormSection}
+          {...propsForProcessingActivities}
+        />
+      ),
     });
 
     sections.push({
