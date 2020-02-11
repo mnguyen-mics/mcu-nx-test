@@ -6,7 +6,7 @@ const messages = defineMessages({
     defaultMessage: 'New Site',
   },
   newMobileApplication: {
-    id: 'settings.datamart.channels.new.mobile_application',
+    id: 'settings.datamart.channels.new.mobileApplication',
     defaultMessage: 'New Mobile Application',
   },
   datamartFilter: {

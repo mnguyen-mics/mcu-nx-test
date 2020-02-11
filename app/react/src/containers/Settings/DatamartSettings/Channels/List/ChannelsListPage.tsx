@@ -208,6 +208,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       location,
       history,
       intl: { formatMessage },
+      notifyError,
     } = this.props;
 
     Modal.confirm({
@@ -224,14 +225,16 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
                 channel.id,
               );
 
-        deletePromise.then(
-          (dataResponseChannel: DataResponse<ChannelResourceShape>) => {
+        deletePromise
+          .then((dataResponseChannel: DataResponse<ChannelResourceShape>) => {
             history.push({
               pathname: `/v2/o/${organisationId}/settings/datamart/channels`,
               state: { from: `${location.pathname}${location.search}` },
             });
-          },
-        );
+          })
+          .catch(err => {
+            notifyError(err);
+          });
       },
       onCancel: () => {
         // cancel,
