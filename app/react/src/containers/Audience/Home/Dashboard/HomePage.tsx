@@ -61,6 +61,23 @@ class Partition extends React.Component<JoinedProps, HomeState> {
 
     const dashboardJsonConfig = [
       {
+        layout: {
+          "i": "0",
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 0,
+          "y": 0
+        },
+        charts: [
+          {
+            type: 'SINGLESTAT',
+            xKey: 'date_yyyy_mm_dd',
+            metricName: 'avg_session_duration'
+          }
+        ]
+      },
+      {
         title: 'Session in time (Last 7 days)',
         layout: {
           "i": "1",
@@ -68,7 +85,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
           "static": false,
           "w": 6,
           "x": 0,
-          "y": 6
+          "y": 1
         },
         charts: [
           {
@@ -114,32 +131,79 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         ]
       },
       {
-        title: 'Session engagement (Last 7 days)',
+        title: 'Channel engagement (Last 7 days)',
         layout: {
-          "i": "1",
+          "i": "2",
           "h": 3,
-          "static": false,
+          "static": true,
           "w": 6,
           "x": 6,
-          "y": 6
+          "y": 1,
+
         },
         charts: [
           {
-            type: 'SINGLESTAT',
-            xKey: 'date_yyyy_mm_dd',
-            metricName: 'avg_session_duration'
+            type: 'PIE',
+            options: {
+              title: '',
+              innerRadius: true,
+              isHalf: false,
+              colors: ["#fd7c12", "#00a1df", "#862f2f", "#f85861", "#00ab67", "#003056", "#fc3f48"],
+              plotOptions: {
+                pie: {
+                  dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                      color: 'rgba(0, 0, 0, 0.65)',
+                    },
+                  }
+                },
+              },
+              text: {
+                text: '',
+                value: '',
+              },
+              showTooltip: true,
+              tooltip: {
+                shared: true,
+                ...generateTooltip()
+              },
+              height: 300,
+              showLabels: true,
+              credits: {
+                enabled: false,
+              },
+            },
+            xKey: 'device_form_factor',
+            metricName: 'sessions',
+            // dimensionFilterClauses: {
+            //   "operator": "OR",
+            //   "filters": [
+            //     {
+            //       "dimension_name": "type",
+            //       "not": false,
+            //       "operator": "IN_LIST",
+            //       "expressions": [
+            //         "SITE_VISIT",
+            //         "APP_VISIT"
+            //       ],
+            //       "case_sensitive": false
+            //     }
+            //   ]
+            // },
           }
         ]
       },
       {
-        title: 'Channel engagement (Last 7 days)',
+        title: 'Session by brower family (Last 7 days)',
         layout: {
-          "i": "1",
+          "i": "2",
           "h": 3,
           "static": false,
           "w": 6,
           "x": 0,
-          "y": 6
+          "y": 7
         },
         charts: [
           {

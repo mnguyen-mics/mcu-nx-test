@@ -258,7 +258,16 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           </Tabs>)
       case 'SINGLESTAT':
         const formatedTime = moment.duration(3845, "second").format("h [hrs] m [min] s [sec]");
-        return (<Statistic className={'datamartUsersAnalytics_charts_singleStat'} title="Average session duration" value={formatedTime} />)
+        return (
+          <div className="dashboard-counter">
+            <div className="count-title">
+              {"Average session duration"}
+            </div>
+            <div className="count-result">
+                <Statistic className={'datamartUsersAnalytics_charts_singleStat'} value={formatedTime} />
+            </div>
+          </div>
+        )
       default:
         return null;
     }

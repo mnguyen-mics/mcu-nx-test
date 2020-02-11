@@ -51,6 +51,7 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
     const { datamartId, config } = this.props;
 
     const layouts = config.map((cl, i) => ({ ...cl.layout, i: i.toString() }));
+    debugger
     return (
       <ResponsiveGridLayout className="layout"
         layouts={{ lg: layouts }}
