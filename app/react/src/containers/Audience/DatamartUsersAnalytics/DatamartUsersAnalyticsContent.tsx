@@ -51,9 +51,9 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
     const { datamartId, config } = this.props;
 
     const layouts = config.map((cl, i) => ({ ...cl.layout, i: i.toString() }));
-    debugger
+    
     return (
-      <ResponsiveGridLayout className="layout"
+      <ResponsiveGridLayout className="layout mcs-datamartUsersAnalytics_components"
         layouts={{ lg: layouts }}
         cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
         isDraggable={false}

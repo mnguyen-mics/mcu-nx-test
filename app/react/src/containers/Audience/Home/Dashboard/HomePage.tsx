@@ -24,14 +24,14 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import { sessionInTimeJsonConfig } from '../../DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
+import { homeDashboardConfig, channelEngagementConfig } from '../../DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
 
 const messages = defineMessages({
-  datamartUsersAnalyticsTitle: {
-    id: 'audience.home.datamartAnalysisTitle',
-    defaultMessage: 'Datamart Users analytics',
+  channelEngagementsAnalyticsTitle: {
+    id: 'audience.home.channelEngagementsAnalyticsTitle',
+    defaultMessage: 'Channel Engagement',
   },
   comingSoon: {
     id: 'audience.home.dashboard',
@@ -42,7 +42,8 @@ const messages = defineMessages({
 interface HomeState {
   dashboards: DashboardResource[];
   isLoading: boolean;
-  datamartAnalyticsConfig: DashboardConfig[];
+  homeDashboardConfig: DashboardConfig[];
+  channelEngagementConfig: DashboardConfig[];
 }
 
 type JoinedProps = InjectedWorkspaceProps &
@@ -59,212 +60,11 @@ class Partition extends React.Component<JoinedProps, HomeState> {
   constructor(props: JoinedProps) {
     super(props);
 
-    const dashboardJsonConfig = [
-      {
-        layout: {
-          "i": "0",
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 0,
-          "y": 0
-        },
-        charts: [
-          {
-            type: 'SINGLESTAT',
-            xKey: 'date_yyyy_mm_dd',
-            metricName: 'avg_session_duration'
-          }
-        ]
-      },
-      {
-        title: 'Session in time (Last 7 days)',
-        layout: {
-          "i": "1",
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 0,
-          "y": 1
-        },
-        charts: [
-          {
-            type: 'AREA',
-            options: {
-              title: undefined,
-              height: 300,
-              colors: ['#2fa1de'],
-              credits: {
-                enabled: false
-              },
-              chart: {
-                reflow: true
-              },
-              xAxis: {
-                ...generateXAxisGridLine(),
-                type: 'datetime',
-                dateTimeLabelFormats: {
-                  day: '%d %b %Y'    // ex- 01 Jan 2016
-                },
-                title: {
-                  text: null
-                }
-              },
-              time: { timezoneOffset: -60, useUTC: true },
-              yAxis: {
-                ...generateYAxisGridLine(),
-                title: {
-                  text: null
-                }
-              },
-              legend: {
-                enabled: false
-              },
-              tooltip: {
-                shared: true,
-                ...generateTooltip()
-              }
-            },
-            xKey: 'date_yyyy_mm_dd',
-            metricName: 'sessions'
-          }
-        ]
-      },
-      {
-        title: 'Channel engagement (Last 7 days)',
-        layout: {
-          "i": "2",
-          "h": 3,
-          "static": true,
-          "w": 6,
-          "x": 6,
-          "y": 1,
-
-        },
-        charts: [
-          {
-            type: 'PIE',
-            options: {
-              title: '',
-              innerRadius: true,
-              isHalf: false,
-              colors: ["#fd7c12", "#00a1df", "#862f2f", "#f85861", "#00ab67", "#003056", "#fc3f48"],
-              plotOptions: {
-                pie: {
-                  dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                    style: {
-                      color: 'rgba(0, 0, 0, 0.65)',
-                    },
-                  }
-                },
-              },
-              text: {
-                text: '',
-                value: '',
-              },
-              showTooltip: true,
-              tooltip: {
-                shared: true,
-                ...generateTooltip()
-              },
-              height: 300,
-              showLabels: true,
-              credits: {
-                enabled: false,
-              },
-            },
-            xKey: 'device_form_factor',
-            metricName: 'sessions',
-            // dimensionFilterClauses: {
-            //   "operator": "OR",
-            //   "filters": [
-            //     {
-            //       "dimension_name": "type",
-            //       "not": false,
-            //       "operator": "IN_LIST",
-            //       "expressions": [
-            //         "SITE_VISIT",
-            //         "APP_VISIT"
-            //       ],
-            //       "case_sensitive": false
-            //     }
-            //   ]
-            // },
-          }
-        ]
-      },
-      {
-        title: 'Session by brower family (Last 7 days)',
-        layout: {
-          "i": "2",
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 0,
-          "y": 7
-        },
-        charts: [
-          {
-            type: 'PIE',
-            options: {
-              title: '',
-              innerRadius: true,
-              isHalf: false,
-              colors: ["#fd7c12", "#00a1df", "#862f2f", "#f85861", "#00ab67", "#003056", "#fc3f48"],
-              plotOptions: {
-                pie: {
-                  dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                    style: {
-                      color: 'rgba(0, 0, 0, 0.65)',
-                    },
-                  }
-                },
-              },
-              text: {
-                text: '',
-                value: '',
-              },
-              showTooltip: true,
-              tooltip: {
-                shared: true,
-                ...generateTooltip()
-              },
-              height: 300,
-              showLabels: true,
-              credits: {
-                enabled: false,
-              },
-            },
-            xKey: 'device_form_factor',
-            metricName: 'sessions',
-            // dimensionFilterClauses: {
-            //   "operator": "OR",
-            //   "filters": [
-            //     {
-            //       "dimension_name": "type",
-            //       "not": false,
-            //       "operator": "IN_LIST",
-            //       "expressions": [
-            //         "SITE_VISIT",
-            //         "APP_VISIT"
-            //       ],
-            //       "case_sensitive": false
-            //     }
-            //   ]
-            // },
-          }
-        ]
-      }
-    ];
-
     this.state = {
       dashboards: [],
       isLoading: true,
-      datamartAnalyticsConfig: sessionInTimeJsonConfig as any,
+      homeDashboardConfig: homeDashboardConfig as any,
+      channelEngagementConfig: channelEngagementConfig as any,
     };
   }
 
@@ -311,7 +111,12 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       selectedDatafarm,
     } = this.props;
 
-    const { isLoading, dashboards, datamartAnalyticsConfig } = this.state;
+    const { 
+      isLoading, 
+      dashboards, 
+      homeDashboardConfig, 
+      channelEngagementConfig 
+    } = this.state;
 
     if (isLoading) {
       return <Loading />;
@@ -342,11 +147,17 @@ class Partition extends React.Component<JoinedProps, HomeState> {
               />
             ))}
             {shouldDisplayAnalyticsFeature && (
-              <DatamartUsersAnalyticsWrapper
-                title={intl.formatMessage(messages.datamartUsersAnalyticsTitle)}
-                datamartId={selectedDatamartId}
-                config={datamartAnalyticsConfig}
-              />
+              <div>
+                <DatamartUsersAnalyticsWrapper
+                  datamartId={selectedDatamartId}
+                  config={homeDashboardConfig}
+                />
+                <DatamartUsersAnalyticsWrapper
+                  title={intl.formatMessage(messages.channelEngagementsAnalyticsTitle)}
+                  datamartId={selectedDatamartId}
+                  config={channelEngagementConfig}
+                />
+              </div>
             )}
           </Content>
         </div>

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Layout } from 'react-grid-layout';
-import ContentHeader from '../../../components/ContentHeader';
 import DatamartUsersAnalyticsContent, { DashboardConfig } from './DatamartUsersAnalyticsContent';
 
 interface DatamartAnalysisProps {
@@ -30,7 +29,11 @@ class DatamartUsersAnalyticsWrapper extends React.Component<Props, State> {
     const { title, datamartId, config } = this.props;
     return (
       <div>
-        <ContentHeader title={title} size={`large`} />
+        {
+          title && <div>
+            <div className={'mcs-datamartUsersAnalytics_title'}>{title}</div>
+            <div className={'mcs-datamartUsersAnalytics_subTitle'}>Discover how your segment user interacts with your channels</div>
+          </div>}
         <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} />
       </div>
     );
