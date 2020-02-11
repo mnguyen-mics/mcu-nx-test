@@ -48,6 +48,7 @@
     // 'servicesSettings-my_offers',
     'scenario-segment',
     'audience-dashboards-datamart_users_analytics',
+    'datamart-user_choices'
   ];
 
  const gravityFeatures = [

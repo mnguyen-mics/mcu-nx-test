@@ -156,7 +156,7 @@ class UserChoicesCard extends React.Component<Props, State> {
       hasFeature,
     } = this.props;
 
-    if (hasFeature('audience-monitoring-user_choices')) {
+    if (hasFeature('datamart-user_choices')) {
       const filteredData = this.buildData(dataSource);
 
       const handleViewJsonModal = this.createHandleJSONViewModal(filteredData);

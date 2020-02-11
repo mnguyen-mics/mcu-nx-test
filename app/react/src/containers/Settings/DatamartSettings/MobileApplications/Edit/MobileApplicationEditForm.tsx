@@ -32,8 +32,11 @@ import VisitAnalyzerSection, {
 import EventRulesSection, {
   EventRulesSectionProps,
 } from '../../Common/EventRulesSection';
-import ProcessingActivitiesFormSection, { ProcessingActivitiesFormSectionProps } from '../../Common/ProcessingActivitiesFormSection';
+import ProcessingActivitiesFormSection, {
+  ProcessingActivitiesFormSectionProps,
+} from '../../Common/ProcessingActivitiesFormSection';
 import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
+import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
@@ -63,6 +66,7 @@ type Props = InjectedFormProps<
 > &
   MobileApplicationEditFormProps &
   InjectedIntlProps &
+  InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }>;
 
 export const FORM_ID = 'mobileApplicationForm';
@@ -79,6 +83,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
       breadCrumbPaths,
       close,
       change,
+      hasFeature,
       initialProcessingSelectionsForWarning,
     } = this.props;
 
@@ -106,17 +111,19 @@ class MobileApplicationEditForm extends React.Component<Props> {
       initialProcessingSelectionsForWarning: initialProcessingSelectionsForWarning,
     };
 
-    sections.push({
-      id: 'processingActivities',
-      title: messages.sectionProcessingActivitiesTitle,
-      component: (
-        <ProcessingActivitiesFieldArray
-          name="processingActivities"
-          component={ProcessingActivitiesFormSection}
-          {...propsForProcessingActivities}
-        />
-      ),
-    });
+    if (hasFeature('datamart-user_choices')) {
+      sections.push({
+        id: 'processingActivities',
+        title: messages.sectionProcessingActivitiesTitle,
+        component: (
+          <ProcessingActivitiesFieldArray
+            name="processingActivities"
+            component={ProcessingActivitiesFormSection}
+            {...propsForProcessingActivities}
+          />
+        ),
+      });
+    }
 
     sections.push({
       id: 'eventRules',
@@ -185,6 +192,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
 
 export default compose<Props, MobileApplicationEditFormProps>(
   injectIntl,
+  injectFeatures,
   withRouter,
   reduxForm({
     form: FORM_ID,

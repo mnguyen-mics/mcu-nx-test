@@ -301,19 +301,19 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/organisation/processings',
     layout: 'settings',
     contentComponent: ProcessingPage,
-    requiredFeature: 'organisationSettings-processings',
+    requiredFeature: 'datamart-user_choices',
   },
   settingsOrganisationProcessingEdition: {
     path: '/settings/organisation/processings/:processingId/edit',
     layout: 'edit',
     editComponent: ProcessingEditPage,
-    requiredFeature: 'organisationSettings-processings',
+    requiredFeature: 'datamart-user_choices',
   },
   settingsOrganisationProcessingCreation: {
     path: '/settings/organisation/processings/create',
     layout: 'edit',
     editComponent: ProcessingEditPage,
-    requiredFeature: 'organisationSettings-processings',
+    requiredFeature: 'datamart-user_choices',
   },
   /*
   ACCOUNT SETTINGS
