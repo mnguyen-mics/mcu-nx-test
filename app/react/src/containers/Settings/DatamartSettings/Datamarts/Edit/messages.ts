@@ -31,7 +31,7 @@ export default defineMessages({
     },
     contentSectionGeneralTokenTooltip: {
         id: 'settings.datamart.form.general.token.tooltip',
-        defaultMessage: 'Give your Datamart a unique token to identify it. This token can be comprised with charaters as well as numbers',
+        defaultMessage: 'Give your Datamart a unique token to identify it. This token can be comprised of characters as well as numbers',
     },
     saveDatamart: {
         id: 'settings.datamart.form.saveMobileApp',

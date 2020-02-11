@@ -79,7 +79,7 @@ export default defineMessages({
   contentSectionGeneralTokenTooltip: {
     id: 'settings.site.form.general.token.tooltip',
     defaultMessage:
-      'Give your Site a unique token to identify your app. This token can be comprised with charaters as well as numbers',
+      'Give your Site a unique token to identify your app. This token can be comprised of characters as well as numbers',
   },
   contentSectionGeneralDomainLabel: {
     id: 'settings.site.form.general.domain.label',

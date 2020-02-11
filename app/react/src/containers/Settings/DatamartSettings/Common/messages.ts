@@ -31,7 +31,7 @@ export default defineMessages({
     defaultMessage: 'Select Processing Activities',
   },
   processingActivitiesSelectorSearchPlaceholder: {
-    id: 'settings.datamart.processings.selector.search',
+    id: 'settings.datamart.processings.selector.search.placeholder',
     defaultMessage: 'Search Processing Activities',
   },
   warningProcessingActivities: {

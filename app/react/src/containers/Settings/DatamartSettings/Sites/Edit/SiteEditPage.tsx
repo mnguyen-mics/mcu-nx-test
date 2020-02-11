@@ -81,6 +81,7 @@ class SiteEditPage extends React.Component<Props, State> {
       },
       location,
       datamart,
+      notifyError,
     } = this.props;
 
     const siteIdFromLocState = location.state && location.state.siteId;
@@ -161,7 +162,10 @@ class SiteEditPage extends React.Component<Props, State> {
               ? formData.site.datamart_id
               : datamart.id,
           }),
-        );
+        )
+        .catch(err => {
+          notifyError(err);
+        });
     } else {
       this.setState({ loading: false });
     }

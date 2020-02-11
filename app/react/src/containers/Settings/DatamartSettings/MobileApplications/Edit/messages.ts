@@ -48,7 +48,7 @@ export default defineMessages({
   contentSectionGeneralTokenTooltip: {
     id: 'settings.mobileapp.form.general.token.tooltip',
     defaultMessage:
-      'Give your Mobile Application a unique token to identify your app. This token can be comprised with charaters as well as numbers',
+      'Give your Mobile Application a unique token to identify your app. This token can be comprised of characters as well as numbers',
   },
 
   errorFormMessage: {

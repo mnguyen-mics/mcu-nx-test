@@ -83,6 +83,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
       },
       location,
       datamart,
+      notifyError,
     } = this.props;
 
     const mobileApplicationIdFromLocState =
@@ -158,7 +159,10 @@ class EditMobileAppPage extends React.Component<Props, State> {
               ? formData.mobileapplication.datamart_id
               : datamart.id,
           }),
-        );
+        )
+        .catch(err => {
+          notifyError(err);
+        });
     } else {
       this.setState({ loading: false });
     }

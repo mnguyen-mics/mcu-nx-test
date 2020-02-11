@@ -12,9 +12,15 @@ import { IOrganisationService } from '../../../../services/OrganisationService';
 import { SearchFilter } from '../../../../components/ElementSelector';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { OrganisationResource } from '../../../../models/organisation/organisation';
-import { DataResponse } from '../../../../services/ApiService';
+import {
+  DataResponse,
+  DataListResponse,
+} from '../../../../services/ApiService';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { ProcessingResource } from '../../../../models/consent/UserConsentResource';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const ProcessingActivitiesTableSelector: React.ComponentClass<TableSelectorProps<
   ProcessingResource
@@ -28,6 +34,7 @@ export interface ProcessingActivitiesSelectorProps {
 
 type Props = ProcessingActivitiesSelectorProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {
@@ -52,7 +59,8 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
     save(processingActivities);
   };
 
-  fetchCommunityId = (organisationId: string): Promise<string> => {
+  fetchCommunityId = (organisationId: string): Promise<string | null> => {
+    const { notifyError } = this.props;
     const communityId = this._organisationService
       .getOrganisation(organisationId)
       .then((res: DataResponse<OrganisationResource>) => {
@@ -61,15 +69,31 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
           communityId: comId,
         });
         return comId;
+      })
+      .catch(err => {
+        notifyError(err);
+        return null;
       });
     return communityId;
   };
 
-  fetchProcessingActivities = (filter: SearchFilter) => {
+  returnEmptyDataListResponse = (): DataListResponse<ProcessingResource> => {
+    const emptyDataListResponse: DataListResponse<ProcessingResource> = {
+      data: [],
+      count: 0,
+      status: 'error',
+    };
+    return emptyDataListResponse;
+  };
+
+  fetchProcessingActivities = (
+    filter: SearchFilter,
+  ): Promise<DataListResponse<ProcessingResource>> => {
     const {
       match: {
         params: { organisationId },
       },
+      notifyError,
     } = this.props;
 
     const { communityId } = this.state;
@@ -82,12 +106,20 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
       options.name = filter.keywords;
     }
 
-    const communityF: Promise<string> = communityId
+    const communityF: Promise<string | null> = communityId
       ? Promise.resolve(communityId)
       : this.fetchCommunityId(organisationId);
 
     return communityF.then(comId => {
-      return this._organisationService.getProcessings(comId, options);
+      if (comId !== null) {
+        return this._organisationService
+          .getProcessings(comId, options)
+          .catch(err => {
+            notifyError(err);
+            return this.returnEmptyDataListResponse();
+          });
+      }
+      return this.returnEmptyDataListResponse();
     });
   };
 
@@ -138,4 +170,5 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
 export default compose<Props, ProcessingActivitiesSelectorProps>(
   withRouter,
   injectIntl,
+  injectNotifications,
 )(ProcessingActivitiesSelector);
