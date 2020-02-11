@@ -44,6 +44,7 @@ interface State {
   rawSchema?: ObjectLikeTypeInfoResource[];
   precision: QueryPrecisionMode;
   useCache: boolean;
+  noLiveSchemaFound: boolean;
 }
 
 type Props = OTQLConsoleContainerProps &
@@ -71,7 +72,8 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       schemaVizOpen: true,
       schemaLoading: true,
       precision: 'FULL_PRECISION',
-      useCache: false
+      useCache: false,
+      noLiveSchemaFound: false,
     };
   }
 
@@ -90,21 +92,30 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   fetchObjectTypes = (
     datamartId: string,
-  ): Promise<ObjectLikeTypeInfoResource[]> => {
-    this.setState({ schemaLoading: true });
+  ) => {
+    this.setState({ schemaLoading: true, noLiveSchemaFound: false, error: null });
     return this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(
       schemaRes => {
         const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-        if (!liveSchema) return [];
+        if (!liveSchema) { 
+          this.setState({
+            noLiveSchemaFound: true,
+          });
+          return [];
+        }
         return this._runtimeSchemaService.getObjectTypeInfoResources(
           datamartId,
           liveSchema.id,
-        ).then(r => {
-          this.setState({ rawSchema: r, schemaLoading: false });
-          return r;
-        });
-      },
-    );
+        );
+      }
+    ).then(r => {
+      this.setState({ rawSchema: r, schemaLoading: false });
+      return r;
+    }).catch(err => {
+      this.setState({
+        error: err, schemaLoading: false
+      })
+    })
   };
 
   runQuery = (otqlQuery: string) => {
@@ -150,7 +161,8 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       rawSchema,
       query,
       precision,
-      useCache
+      useCache,
+      noLiveSchemaFound,
     } = this.state;
 
     if (schemaLoading) {
@@ -178,6 +190,16 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         onClose={this.dismissError}
       />
     );
+
+    const noLiveSchemaErrorMsg = noLiveSchemaFound && (
+      <Alert
+        message="Error"
+        style={{ marginBottom: 40 }}
+        description={intl.formatMessage(messages.noLiveSchemaFound)}
+        type="error"
+        showIcon={true}
+      />
+    )
 
     const queryResultRenderer: React.ReactNode = (runningQuery ||
       queryAborted ||
@@ -219,6 +241,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                 }
               />
               {errorMsg}
+              {noLiveSchemaErrorMsg}
               <OTQLInputEditor
                 onRunQuery={this.runQuery}
                 onAbortQuery={this.abortQuery}
@@ -237,7 +260,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
             <div className="schema-visualizer">
               <SchemaVizualizer
                 schema={
-                  rawSchema
+                  rawSchema && rawSchema.length > 0
                     ? computeFinalSchemaItem(rawSchema, startType, false, false)
                     : undefined
                 }
@@ -259,11 +282,15 @@ export default compose<Props, OTQLConsoleContainerProps>(
 
 const messages = defineMessages({
   queryToolBreadcrumbLabel: {
-    id: 'query-tool-action-bar-breadcrumb-label-query-tool',
+    id: 'query-tool.action-bar.breadcrumb.label.query-tool',
     defaultMessage: 'Query Tool',
   },
   queryErrorDefaultMsg: {
-    id: 'query-tool-error-default-message',
+    id: 'query-tool.error.default-message',
     defaultMessage: 'An error occured',
   },
+  noLiveSchemaFound: {
+    id: 'query-tool.error.no-live-schena',
+    defaultMessage: "This datamart can't be queried as there is no LIVE schema associated to it",
+  }
 });
