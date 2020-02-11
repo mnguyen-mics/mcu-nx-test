@@ -4,6 +4,7 @@ import DatamartUsersAnalyticsContent, { DashboardConfig } from './DatamartUsersA
 
 interface DatamartAnalysisProps {
   title?: string;
+  subTitle?: string;
   datamartId: string;
   config: DashboardConfig[];
 }
@@ -26,13 +27,13 @@ class DatamartUsersAnalyticsWrapper extends React.Component<Props, State> {
   }
 
   render() {
-    const { title, datamartId, config } = this.props;
+    const { title, subTitle, datamartId, config } = this.props;
     return (
       <div>
         {
           title && <div>
             <div className={'mcs-datamartUsersAnalytics_title'}>{title}</div>
-            <div className={'mcs-datamartUsersAnalytics_subTitle'}>Discover how your segment user interacts with your channels</div>
+        <div className={'mcs-datamartUsersAnalytics_subTitle'}>{subTitle}</div>
           </div>}
         <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} />
       </div>

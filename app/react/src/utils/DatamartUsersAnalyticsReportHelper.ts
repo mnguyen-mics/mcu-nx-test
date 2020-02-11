@@ -16,8 +16,8 @@ export function buildDatamartUsersAnalyticsRequestBody(
   dimension?: DatamartUsersAnalyticsDimension,
   dimensionFilterClauses?: DimensionFilterClause
 ): ReportRequestBody {
-  const date7daysAgo: string = new McsMoment('now-7d').toMoment().format();
-  let dimensionsList: DatamartUsersAnalyticsDimension[] = [];
+  const date7daysAgo: string = new McsMoment('now-7d').toMoment().utc(false).startOf('day').format().replace('Z', '');
+  const dimensionsList: DatamartUsersAnalyticsDimension[] = [];
   if (dimension) {
     dimensionsList.push(dimension);
   }
@@ -33,7 +33,7 @@ function buildReport(
 ): ReportRequestBody {
 
   // DATE RANGE
-  const dateNow: string = new McsMoment('now-1d').toMoment().endOf('day').format();
+  const dateNow: string = new McsMoment('now-1d').toMoment().utc(false).endOf('day').format().replace('Z', '');
 
   const dateRange: DateRange = {
     start_date: startDate,

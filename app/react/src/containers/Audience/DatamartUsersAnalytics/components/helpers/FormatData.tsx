@@ -33,37 +33,6 @@ class FormatData extends React.Component<FormatDataProps, {}> {
   formatSeriesForChart = (chart: Chart, dataset: Dataset[]) => {
     switch (chart.type) {
       case 'PIE':
-
-        // let dataset2 = [
-        //   {
-        //     "device_form_factor": "PERSONAL_COMPUTER",
-        //     "sessions": 42
-        //   },
-        //   {
-        //     "device_form_factor": "SMART_TV",
-        //     "sessions": 38
-        //   },
-        //   {
-        //     "device_form_factor": "GAME_CONSOLE",
-        //     "sessions": 50
-        //   },
-        //   {
-        //     "device_form_factor": "SMARTPHONE",
-        //     "sessions": 49
-        //   },
-        //   {
-        //     "device_form_factor": "TABLET",
-        //     "sessions": 47
-        //   },
-        //   {
-        //     "device_form_factor": "WEARABLE_COMPUTER",
-        //     "sessions": 42
-        //   },
-        //   {
-        //     "device_form_factor": "Other",
-        //     "sessions": 46
-        //   },
-        // ] 
         return [
           {
             type: 'pie',
@@ -261,7 +230,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
         return (
           <div className="dashboard-counter">
             <div className="count-title">
-              {"Average session duration (Last 7 days)"}
+              {chart.options.title}
             </div>
             <div className="count-result">
                 <Statistic className={'datamartUsersAnalytics_charts_singleStat'} value={formatedTime} />

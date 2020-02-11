@@ -31,15 +31,15 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
   }
 
   generateDOM(dashboardConfig: DashboardConfig[], datamartId: string) {
-    return dashboardConfig.map((comp: Component, i: number) => {
+    return dashboardConfig.map((comp: Component, i) => {
       return (
         <CardFlex
           title={comp.title}
           key={i.toString()}
           className={comp.layout.static ? 'static' : ''}
         >
-          {comp.charts.map((chart: Chart, i: number) => {
-            return <ApiQueryWrapper chart={chart} datamartId={datamartId} />
+          {comp.charts.map((chart: Chart, index) => {
+            return <ApiQueryWrapper key={index.toString()} chart={chart} datamartId={datamartId} />
           })}
 
         </CardFlex>
@@ -51,7 +51,7 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
     const { datamartId, config } = this.props;
 
     const layouts = config.map((cl, i) => ({ ...cl.layout, i: i.toString() }));
-    
+
     return (
       <ResponsiveGridLayout className="layout mcs-datamartUsersAnalytics_components"
         layouts={{ lg: layouts }}

@@ -24,7 +24,7 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import { homeDashboardConfig, channelEngagementConfig } from '../../DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
+import { averageSessionDurationConfig, channelEngagementConfig } from '../../DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
 
@@ -32,6 +32,10 @@ const messages = defineMessages({
   channelEngagementsAnalyticsTitle: {
     id: 'audience.home.channelEngagementsAnalyticsTitle',
     defaultMessage: 'Channel Engagement',
+  },
+  channelEngagementsAnalyticsSubtile: {
+    id: 'audience.home.channelEngagementsAnalyticsSubtile',
+    defaultMessage: 'Discover how your segment user interacts with your channels',
   },
   comingSoon: {
     id: 'audience.home.dashboard',
@@ -42,8 +46,14 @@ const messages = defineMessages({
 interface HomeState {
   dashboards: DashboardResource[];
   isLoading: boolean;
-  homeDashboardConfig: DashboardConfig[];
-  channelEngagementConfig: DashboardConfig[];
+  datamartAnalyticsDashboardConfig: HomeDashboardConfig[];
+}
+
+interface HomeDashboardConfig {
+  title?: string;
+  subTitle?: string;
+  datamartId: string;
+  config: DashboardConfig[]
 }
 
 type JoinedProps = InjectedWorkspaceProps &
@@ -63,13 +73,26 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     this.state = {
       dashboards: [],
       isLoading: true,
-      homeDashboardConfig: homeDashboardConfig as any,
-      channelEngagementConfig: channelEngagementConfig as any,
+      datamartAnalyticsDashboardConfig: []
     };
   }
 
   componentDidMount() {
-    const { selectedDatamartId } = this.props;
+    const { selectedDatamartId, intl } = this.props;
+    this.setState({
+      datamartAnalyticsDashboardConfig: [
+        {
+          datamartId: selectedDatamartId,
+          config: averageSessionDurationConfig as any
+        },
+        {
+          title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
+          subTitle: intl.formatMessage(messages.channelEngagementsAnalyticsSubtile),
+          datamartId: selectedDatamartId,
+          config: channelEngagementConfig as any
+        }
+      ]
+    });
     this.loadData(selectedDatamartId);
   }
 
@@ -107,15 +130,13 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     const {
       hasFeature,
       intl,
-      selectedDatamartId,
       selectedDatafarm,
     } = this.props;
 
-    const { 
-      isLoading, 
-      dashboards, 
-      homeDashboardConfig, 
-      channelEngagementConfig 
+    const {
+      isLoading,
+      dashboards,
+      datamartAnalyticsDashboardConfig
     } = this.state;
 
     if (isLoading) {
@@ -147,17 +168,17 @@ class Partition extends React.Component<JoinedProps, HomeState> {
               />
             ))}
             {shouldDisplayAnalyticsFeature && (
-              <div>
-                <DatamartUsersAnalyticsWrapper
-                  datamartId={selectedDatamartId}
-                  config={homeDashboardConfig}
-                />
-                <DatamartUsersAnalyticsWrapper
-                  title={intl.formatMessage(messages.channelEngagementsAnalyticsTitle)}
-                  datamartId={selectedDatamartId}
-                  config={channelEngagementConfig}
-                />
-              </div>
+              datamartAnalyticsDashboardConfig.map((conf, i) => {
+                return (
+                  <DatamartUsersAnalyticsWrapper
+                    key={i.toString()}
+                    title={conf.title}
+                    subTitle={conf.subTitle}
+                    datamartId={conf.datamartId}
+                    config={conf.config}
+                  />
+                )
+              })
             )}
           </Content>
         </div>

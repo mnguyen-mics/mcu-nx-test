@@ -61,19 +61,22 @@ export const sessionInTimeJsonConfig = [
   },
 ];
 
-export const homeDashboardConfig = [
+export const averageSessionDurationConfig = [
   {
     layout: {
-      "i": "0",
-      "h": 1,
-      "static": false,
-      "w": 3,
-      "x": 0,
-      "y": 0
+      'i': '0',
+      'h': 1,
+      'static': false,
+      'w': 3,
+      'x': 0,
+      'y': 0
     },
     charts: [
       {
         type: 'SINGLESTAT',
+        options: {
+          title: 'Average session duration (Last 7 days)'
+        },
         metricName: 'avg_session_duration'
       }
     ]
@@ -85,12 +88,12 @@ export const channelEngagementConfig = [
   {
     title: 'Session in time (Last 7 days)',
     layout: {
-      "i": "1",
-      "h": 3,
-      "static": false,
-      "w": 6,
-      "x": 0,
-      "y": 0
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 0,
+      'y': 0
     },
     charts: [
       {
@@ -138,12 +141,12 @@ export const channelEngagementConfig = [
   {
     title: 'Session by device (Last 7 days)',
     layout: {
-      "i": "2",
-      "h": 3,
-      "static": false,
-      "w": 6,
-      "x": 6,
-      "y": 0,
+      'i': '2',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 6,
+      'y': 0,
 
     },
     charts: [
@@ -153,7 +156,7 @@ export const channelEngagementConfig = [
           title: '',
           innerRadius: true,
           isHalf: false,
-          colors: ["#fd7c12", "#00a1df", "#862f2f", "#f85861", "#00ab67", "#003056", "#fc3f48"],
+          colors: ['#fd7c12', '#00a1df', '#862f2f', '#f85861', '#00ab67', '#003056', '#fc3f48'],
           plotOptions: {
             pie: {
               dataLabels: {
@@ -182,33 +185,33 @@ export const channelEngagementConfig = [
         },
         xKey: 'device_form_factor',
         metricName: 'sessions',
-        // dimensionFilterClauses: {
-        //   "operator": "OR",
-        //   "filters": [
-        //     {
-        //       "dimension_name": "type",
-        //       "not": false,
-        //       "operator": "IN_LIST",
-        //       "expressions": [
-        //         "SITE_VISIT",
-        //         "APP_VISIT"
-        //       ],
-        //       "case_sensitive": false
-        //     }
-        //   ]
-        // },
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
       }
     ]
   },
   {
     title: 'Session by brower family (Last 7 days)',
     layout: {
-      "i": "2",
-      "h": 3,
-      "static": false,
-      "w": 6,
-      "x": 0,
-      "y": 3
+      'i': '2',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 0,
+      'y': 3
     },
     charts: [
       {
@@ -217,7 +220,7 @@ export const channelEngagementConfig = [
           title: '',
           innerRadius: true,
           isHalf: false,
-          colors: ["#fd7c12", "#00a1df", "#862f2f", "#f85861", "#00ab67", "#003056", "#fc3f48"],
+          colors: ['#fd7c12', '#00a1df', '#862f2f', '#f85861', '#00ab67', '#003056', '#fc3f48'],
           plotOptions: {
             pie: {
               dataLabels: {
@@ -244,35 +247,35 @@ export const channelEngagementConfig = [
             enabled: false,
           },
         },
-        xKey:  'device_form_factor', // 'device_browser_family',
+        xKey:  'device_browser_family',
         metricName: 'sessions',
-        // dimensionFilterClauses: {
-        //   "operator": "OR",
-        //   "filters": [
-        //     {
-        //       "dimension_name": "type",
-        //       "not": false,
-        //       "operator": "IN_LIST",
-        //       "expressions": [
-        //         "SITE_VISIT",
-        //         "APP_VISIT"
-        //       ],
-        //       "case_sensitive": false
-        //     }
-        //   ]
-        // },
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
       }
     ]
   },
   {
     title: 'Session by os family (Last 7 days)',
     layout: {
-      "i": "2",
-      "h": 3,
-      "static": false,
-      "w": 6,
-      "x": 6,
-      "y": 3
+      'i': '2',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 6,
+      'y': 3
     },
     charts: [
       {
@@ -281,7 +284,7 @@ export const channelEngagementConfig = [
           title: '',
           innerRadius: true,
           isHalf: false,
-          colors: ["#fd7c12", "#00a1df", "#862f2f", "#f85861", "#00ab67", "#003056", "#fc3f48"],
+          colors: ['#fd7c12', '#00a1df', '#862f2f', '#f85861', '#00ab67', '#003056', '#fc3f48'],
           plotOptions: {
             pie: {
               dataLabels: {
@@ -308,23 +311,23 @@ export const channelEngagementConfig = [
             enabled: false,
           },
         },
-        xKey:  'device_os_family', // 'device_browser_family',
+        xKey:  'device_os_family',
         metricName: 'sessions',
-        // dimensionFilterClauses: {
-        //   "operator": "OR",
-        //   "filters": [
-        //     {
-        //       "dimension_name": "type",
-        //       "not": false,
-        //       "operator": "IN_LIST",
-        //       "expressions": [
-        //         "SITE_VISIT",
-        //         "APP_VISIT"
-        //       ],
-        //       "case_sensitive": false
-        //     }
-        //   ]
-        // },
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
       }
     ]
   }
