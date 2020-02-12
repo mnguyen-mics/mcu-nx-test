@@ -29,6 +29,8 @@ import {
   isIfNode,
   isAddToSegmentNode,
   AddToSegmentAutomationFormData,
+  DeleteFromSegmentAutomationFormData,
+  isDeleteFromSegmentNode,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
@@ -220,6 +222,21 @@ export class AutomationFormService implements IAutomationFormService {
                       initialValuesForm: initialValues,
                     };
                   });
+                break;
+              case 'DELETE_FROM_SEGMENT_NODE':
+                getPromise = this._audienceSegmentService
+                .getSegment(n.user_list_segment_id)
+                .then(({ data: segment }) => {
+                  const initialValues: DeleteFromSegmentAutomationFormData = {
+                    name: segment.name,
+                    segmentId: n.user_list_segment_id
+                  };
+                  return {
+                    ...n,
+                    formData: initialValues,
+                    initialValuesForm: initialValues,
+                  }
+                });
                 break;
               case 'ABN_NODE':
                 const abnFormData: ABNFormData = {
@@ -455,14 +472,14 @@ export class AutomationFormService implements IAutomationFormService {
               });
             });
           } else if (isAddToSegmentNode(node)) {
-            const saveOrCreateCampaignPromise = node.user_list_segment_id
+            const saveOrCreateSegmentPromise = node.user_list_segment_id
               ? Promise.resolve(node.user_list_segment_id)
               : this.saveAudienceSegment(
                   organisationId,
                   datamartId,
                   node.formData.name,
                 );
-            return saveOrCreateCampaignPromise.then(audienceSegmentId => {
+            return saveOrCreateSegmentPromise.then(audienceSegmentId => {
               return this.saveOrCreateNode(
                 automationId,
                 storylineNode,
@@ -483,6 +500,28 @@ export class AutomationFormService implements IAutomationFormService {
                     res.data.id,
                   );
                 });
+              });
+            });
+          } else if (isDeleteFromSegmentNode(node)) {
+            return this.saveOrCreateNode(
+              automationId,
+              storylineNode,
+              undefined,
+              undefined,
+              node.formData.segmentId,
+            ).then(res => {
+              return this.saveOrCreateEdges(automationId, {
+                source_id: parentNodeId,
+                target_id: res.data.id,
+                edgeResource: storylineNode.in_edge,
+              }).then(() => {
+                return this.iterate(
+                  organisationId,
+                  datamartId,
+                  automationId,
+                  storylineNode.out_edges,
+                  res.data.id,
+                );
               });
             });
           } else if (isQueryInputNode(node) || isIfNode(node)) {
@@ -642,6 +681,17 @@ export class AutomationFormService implements IAutomationFormService {
         user_segment_expiration_period: moment
           .duration(+node.formData.ttl.value, node.formData.ttl.unit)
           .toISOString(),
+      };
+      resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
+    } else if (isDeleteFromSegmentNode(node)) {
+      scenarioNodeResource = {
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
+        name: node.name,
+        scenario_id: automationId,
+        x: node.x,
+        y: node.y,
+        type: node.type,
+        user_list_segment_id: audienceSegmentId,
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
     } else if (isIfNode(node)) {
