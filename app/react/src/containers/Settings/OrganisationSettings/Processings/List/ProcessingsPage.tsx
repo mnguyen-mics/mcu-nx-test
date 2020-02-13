@@ -7,7 +7,6 @@ import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import settingsMessages from '../../../messages';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import { ProcessingResource } from '../../../../../models/timeline/timeline';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { TYPES } from '../../../../../constants/types';
 import {
@@ -23,6 +22,7 @@ import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { ProcessingResource } from '../../../../../models/consent/UserConsentResource';
 
 const { Content } = Layout;
 

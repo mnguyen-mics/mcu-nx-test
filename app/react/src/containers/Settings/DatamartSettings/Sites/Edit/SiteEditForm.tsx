@@ -35,6 +35,11 @@ import EventRulesSection, {
 } from '../../Common/EventRulesSection';
 
 import DomainsField, { DomainFieldProps } from './Sections/DomainsField';
+import ProcessingActivitiesFormSection, {
+  ProcessingActivitiesFormSectionProps,
+} from '../../Common/ProcessingActivitiesFormSection';
+import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
+import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 const FormDomainFields = FieldArray as new () => GenericFieldArray<
   DomainFieldProps
@@ -42,6 +47,11 @@ const FormDomainFields = FieldArray as new () => GenericFieldArray<
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
+>;
+
+const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ProcessingActivitiesFormSectionProps
 >;
 
 const VisitAnalyzerFieldArray = FieldArray as new () => GenericFieldArray<
@@ -59,6 +69,7 @@ export interface SiteEditFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   datamartId: string;
+  initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
 }
 
 interface MapStateToProps {
@@ -69,13 +80,21 @@ type Props = InjectedFormProps<SiteFormData, SiteEditFormProps> &
   SiteEditFormProps &
   MapStateToProps &
   InjectedIntlProps &
+  InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }>;
 
 export const FORM_ID = 'siteForm';
 
 class SiteEditForm extends React.Component<Props> {
   render() {
-    const { handleSubmit, breadCrumbPaths, close, change } = this.props;
+    const {
+      handleSubmit,
+      breadCrumbPaths,
+      close,
+      change,
+      hasFeature,
+      initialProcessingSelectionsForWarning,
+    } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
@@ -95,6 +114,25 @@ class SiteEditForm extends React.Component<Props> {
       title: messages.sectionGeneralTitle,
       component: <GeneralFormSection />,
     });
+
+    const propsForProcessingActivities = {
+      ...genericFieldArrayProps,
+      initialProcessingSelectionsForWarning: initialProcessingSelectionsForWarning,
+    };
+
+    if (hasFeature('datamart-user_choices')) {
+      sections.push({
+        id: 'processingActivities',
+        title: messages.sectionProcessingActivitiesTitle,
+        component: (
+          <ProcessingActivitiesFieldArray
+            name="processingActivities"
+            component={ProcessingActivitiesFormSection}
+            {...propsForProcessingActivities}
+          />
+        ),
+      });
+    }
 
     sections.push({
       id: 'aliases',
@@ -175,6 +213,7 @@ class SiteEditForm extends React.Component<Props> {
 
 export default compose<Props, SiteEditFormProps>(
   injectIntl,
+  injectFeatures,
   withRouter,
   reduxForm({
     form: FORM_ID,

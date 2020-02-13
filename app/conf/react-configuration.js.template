@@ -49,6 +49,7 @@
     // 'servicesSettings-my_service_catalog',
     // 'servicesSettings-my_offers',
     'audience-dashboards-datamart_users_analytics',
+    'datamart-user_choices'
   ];
 
  const gravityFeatures = [

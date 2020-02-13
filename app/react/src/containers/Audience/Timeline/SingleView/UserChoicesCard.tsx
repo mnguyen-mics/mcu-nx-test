@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import {
-  UserChoices,
-  ProcessingResource,
-  UserConsentResource,
-} from '../../../../models/timeline/timeline';
 import { Card } from '../../../../components/Card';
 import { Row, Col, Tooltip, Modal, Tag } from 'antd';
 import messages from '../messages';
@@ -21,6 +16,7 @@ import CustomObjectRendererWrapper, {
   RenderingTemplates,
   TemplateDefinitions,
 } from '../../../../components/CustomObjectRendererWrapper';
+import { UserChoices, ProcessingResource, UserConsentResource } from '../../../../models/consent/UserConsentResource';
 
 interface UserChoicesCardProps {
   dataSource: UserChoices;
@@ -160,7 +156,7 @@ class UserChoicesCard extends React.Component<Props, State> {
       hasFeature,
     } = this.props;
 
-    if (hasFeature('audience-monitoring-user_choices')) {
+    if (hasFeature('datamart-user_choices')) {
       const filteredData = this.buildData(dataSource);
 
       const handleViewJsonModal = this.createHandleJSONViewModal(filteredData);

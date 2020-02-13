@@ -1,7 +1,10 @@
 import {
+  ProcessingResource,
+} from './../../../../models/consent/UserConsentResource';
+import {
   PaginationSearchSettings,
   KeywordSearchSettings,
-  DatamartSearchSettings
+  DatamartSearchSettings,
 } from './../../../../utils/LocationSearchHelper';
 import { FieldArrayModel } from '../../../../utils/FormHelper';
 import { EventRules } from '../../../../models/settings/settings';
@@ -25,3 +28,5 @@ export interface EventRulesFormData {
 export const INITIAL_EVENT_RULES_FORM_DATA: EventRulesFormData = {
   model: {},
 };
+
+export type ProcessingActivityFieldModel = FieldArrayModel<ProcessingResource>;

@@ -1,7 +1,10 @@
+import { ProcessingSelectionResource } from './../../../../../models/consent/UserConsentResource';
+import { ProcessingActivityFieldModel } from './../../Common/domain';
+import { SiteResource, Aliases } from '../../../../../models/settings/settings';
 import {
-  SiteResource, Aliases,
-} from '../../../../../models/settings/settings';
-import { VisitAnalyzerFieldModel, EventRuleFieldModel } from '../../Common/domain';
+  VisitAnalyzerFieldModel,
+  EventRuleFieldModel,
+} from '../../Common/domain';
 import { FieldArrayModel } from '../../../../../utils/FormHelper';
 
 export interface SiteFormData {
@@ -9,10 +12,11 @@ export interface SiteFormData {
   visitAnalyzerFields: VisitAnalyzerFieldModel[];
   eventRulesFields: EventRuleFieldModel[];
   aliases: AliasesFieldModel[];
+  initialProcessingSelectionResources: ProcessingSelectionResource[];
+  processingActivities: ProcessingActivityFieldModel[];
 }
 
-export type AliasesFieldModel = FieldArrayModel<Aliases>
-
+export type AliasesFieldModel = FieldArrayModel<Aliases>;
 
 export const INITIAL_SITE_FORM_DATA: SiteFormData = {
   site: {
@@ -20,7 +24,9 @@ export const INITIAL_SITE_FORM_DATA: SiteFormData = {
   },
   visitAnalyzerFields: [],
   eventRulesFields: [],
-  aliases: []
+  aliases: [],
+  initialProcessingSelectionResources: [],
+  processingActivities: [],
 };
 
 export interface EditSiteRouteMatchParam {

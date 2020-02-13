@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { LegalBasis } from '../../../../../models/timeline/timeline';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
@@ -11,6 +10,7 @@ import { FormTitle } from '../../../../../components/Form';
 import messages from '../messages';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { MenuList } from '../../../../../components/FormMenu';
+import { LegalBasis } from '../../../../../models/consent/UserConsentResource';
 
 const { Content } = Layout;
 

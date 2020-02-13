@@ -32,9 +32,19 @@ import VisitAnalyzerSection, {
 import EventRulesSection, {
   EventRulesSectionProps,
 } from '../../Common/EventRulesSection';
+import ProcessingActivitiesFormSection, {
+  ProcessingActivitiesFormSectionProps,
+} from '../../Common/ProcessingActivitiesFormSection';
+import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
+import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
+>;
+
+const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ProcessingActivitiesFormSectionProps
 >;
 
 const VisitAnalyzerFieldArray = FieldArray as new () => GenericFieldArray<
@@ -47,6 +57,7 @@ export interface MobileApplicationEditFormProps
   close: () => void;
   breadCrumbPaths: Path[];
   datamartId: string;
+  initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
 }
 
 type Props = InjectedFormProps<
@@ -55,6 +66,7 @@ type Props = InjectedFormProps<
 > &
   MobileApplicationEditFormProps &
   InjectedIntlProps &
+  InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }>;
 
 export const FORM_ID = 'mobileApplicationForm';
@@ -66,7 +78,14 @@ const EventRulesFieldArray = FieldArray as new () => GenericFieldArray<
 
 class MobileApplicationEditForm extends React.Component<Props> {
   render() {
-    const { handleSubmit, breadCrumbPaths, close, change } = this.props;
+    const {
+      handleSubmit,
+      breadCrumbPaths,
+      close,
+      change,
+      hasFeature,
+      initialProcessingSelectionsForWarning,
+    } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
@@ -86,6 +105,25 @@ class MobileApplicationEditForm extends React.Component<Props> {
       title: messages.sectionGeneralTitle,
       component: <GeneralFormSection />,
     });
+
+    const propsForProcessingActivities = {
+      ...genericFieldArrayProps,
+      initialProcessingSelectionsForWarning: initialProcessingSelectionsForWarning,
+    };
+
+    if (hasFeature('datamart-user_choices')) {
+      sections.push({
+        id: 'processingActivities',
+        title: messages.sectionProcessingActivitiesTitle,
+        component: (
+          <ProcessingActivitiesFieldArray
+            name="processingActivities"
+            component={ProcessingActivitiesFormSection}
+            {...propsForProcessingActivities}
+          />
+        ),
+      });
+    }
 
     sections.push({
       id: 'eventRules',
@@ -154,6 +192,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
 
 export default compose<Props, MobileApplicationEditFormProps>(
   injectIntl,
+  injectFeatures,
   withRouter,
   reduxForm({
     form: FORM_ID,
