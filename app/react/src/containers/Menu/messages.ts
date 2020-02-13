@@ -184,6 +184,10 @@ export default defineMessages({
     id: 'menu.datamart.mobile_application',
     defaultMessage: 'Mobile Applications',
   },
+  channelsSettingsTitle: {
+    id: 'menu.datamart.channels',
+    defaultMessage: 'Channels',
+  },
   compartmentsSettingsTitle: {
     id: 'menu.datamart.compartments',
     defaultMessage: 'Compartments',

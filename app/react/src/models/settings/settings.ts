@@ -13,11 +13,8 @@ export interface ChannelResource {
 export type ChannelResourceShape = MobileApplicationResource | SiteResource;
 
 export type ChannelType =
-  | 'EMAIL'
   | 'MOBILE_APPLICATION'
-  | 'SITE'
-  | 'STORE'
-  | 'USER_DATA_STREAM_CHANNEL';
+  | 'SITE';
 
 export interface MobileApplicationResource extends ChannelResource {
   type: 'MOBILE_APPLICATION';

@@ -236,7 +236,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
       if (datamartId) {
         this.fetchSites(organisationId, datamartId, computedFilter);
       } else if (filter.datamartId) {
-        this.updateLocationSearch(computedFilter);        
+        this.updateLocationSearch(computedFilter);
       } else {
         this.setState({ isFetchingSites: false, sites: [] });
       }
@@ -248,7 +248,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     const { filter } = this.state;
 
     return this._channelService
-      .getChannelsByOrganisation(organisationId, 'SITE')
+      .getChannelsByOrganisation(organisationId, { channel_type: 'SITE' })
       .then(res => {
         if (res.data.length === 0) {
           this.setState({
@@ -328,7 +328,11 @@ class SitesListPage extends React.Component<Props, SiteListState> {
   };
 
   getSearchSetting() {
-    return [...KEYWORD_SEARCH_SETTINGS, ...DATAMART_SEARCH_SETTINGS, ...PAGINATION_SEARCH_SETTINGS];
+    return [
+      ...KEYWORD_SEARCH_SETTINGS,
+      ...DATAMART_SEARCH_SETTINGS,
+      ...PAGINATION_SEARCH_SETTINGS,
+    ];
   }
 
   updateLocationSearch = (params: Index<any>) => {
