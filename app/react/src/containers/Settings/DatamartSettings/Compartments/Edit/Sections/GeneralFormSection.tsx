@@ -51,7 +51,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           title={messages.sectionGeneralTitle}
         />
         <FormInputField
-          name="name"
+          name="compartment.name"
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -66,7 +66,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
         />
         <FormAlertInputField
-          name="token"
+          name="compartment.token"
           component={FormAlertInput}
           validate={[isRequired]}
           formItemProps={{
@@ -110,7 +110,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 title: formatMessage(messages.sectionGeneralDefaultTooltip),
               }}
             >
-              <FormSwitchField name="default" component={FormSwitch} />
+              <FormSwitchField name="compartment.default" component={FormSwitch} />
             </FormFieldWrapper>
           </div>
         </div>

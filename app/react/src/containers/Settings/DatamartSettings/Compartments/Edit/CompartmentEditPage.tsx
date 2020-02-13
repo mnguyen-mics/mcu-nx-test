@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Layout } from 'antd';
+import { Layout, message, Modal } from 'antd';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import queryString from 'query-string';
@@ -17,13 +17,20 @@ import DatamartSelector from '../../../../Audience/Common/DatamartSelector';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import messages from './messages';
 import CompartmentEditForm, { FORM_ID } from './CompartmentEditForm';
-import { CompartmentFormData, EditCompartmentRouteMatchParam } from './domain';
+import {
+  CompartmentFormData,
+  EditCompartmentRouteMatchParam,
+  INITIAL_COMPARTMENT_FORM_DATA,
+} from './domain';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { InjectedDatamartProps, injectDatamart } from '../../../../Datamart';
 import { Loading } from '../../../../../components';
 import { DataResponse } from '../../../../../services/ApiService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
+import { IOrganisationService } from '../../../../../services/OrganisationService';
+import { createFieldArrayModel } from '../../../../../utils/FormHelper';
+import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
 
 interface State {
   compartmentFormData: CompartmentFormData;
@@ -37,16 +44,18 @@ type Props = InjectedIntlProps &
   InjectedDatamartProps;
 
 class CompartmentEditPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
+
+  @lazyInject(TYPES.IOrganisationService)
+  private _organisationService: IOrganisationService;
 
   constructor(props: Props) {
     super(props);
 
     this.state = {
       loading: true,
-      compartmentFormData: {},
+      compartmentFormData: INITIAL_COMPARTMENT_FORM_DATA,
       selectedDatamartId:
         queryString.parse(props.location.search).selectedDatamartId ||
         props.match.params.datamartId,
@@ -56,14 +65,9 @@ class CompartmentEditPage extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: {
-          compartmentId: compartmentIdFromURLParam,
-          datamartId,
-          organisationId,
-        },
+        params: { compartmentId: compartmentIdFromURLParam, datamartId },
       },
       location,
-      history,
       notifyError,
     } = this.props;
 
@@ -74,22 +78,58 @@ class CompartmentEditPage extends React.Component<Props, State> {
       compartmentIdFromURLParam || compartmentIdFromLocState;
 
     if (compartmentId) {
-      this._datamartService.getUserAccountCompartmentDatamartSelectionResource(
+      const getCompartment = this._datamartService.getUserAccountCompartmentDatamartSelectionResource(
         datamartId,
         compartmentId,
-      )
+      );
+
+      const getProcessingSelections = this._datamartService
+        .getProcessingSelectionsByCompartment(datamartId, compartmentId)
         .then(res => {
-          const compartment = res.data;
+          const processingSelectionResources = res.data;
+
+          return Promise.all(
+            processingSelectionResources.map(processingSelectionResource => {
+              return this._organisationService
+                .getProcessing(processingSelectionResource.processing_id)
+                .then(resProcessing => {
+                  const processingResource = resProcessing.data;
+                  return {
+                    processingSelectionResource: processingSelectionResource,
+                    processingResource: processingResource,
+                  };
+                });
+            }),
+          );
+        });
+
+      Promise.all([getCompartment, getProcessingSelections])
+        .then(res => {
+          const formData: CompartmentFormData = {
+            compartment: res[0].data,
+            initialProcessingSelectionResources: res[1].map(
+              processingAndSelection =>
+                processingAndSelection.processingSelectionResource,
+            ),
+            processingActivities: res[1].map(processingAndSelection =>
+              createFieldArrayModel(processingAndSelection.processingResource),
+            ),
+          };
+
+          return formData;
+        })
+        .then((formData: CompartmentFormData) => {
           this.setState({
-            compartmentFormData: compartment,
             loading: false,
-            selectedDatamartId: compartment.datamart_id,
+            compartmentFormData: formData,
+            selectedDatamartId: formData.compartment.datamart_id
+              ? formData.compartment.datamart_id
+              : datamartId,
           });
         })
         .catch(err => {
-          const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/compartments`;
           notifyError(err);
-          history.push(defaultRedirectUrl);
+          this.onClose();
         });
     } else {
       this.setState({
@@ -98,96 +138,215 @@ class CompartmentEditPage extends React.Component<Props, State> {
     }
   }
 
-  save = (
-    compartmentFormData: Partial<
-      UserAccountCompartmentDatamartSelectionResource
-    >,
-  ) => {
+  shouldWarnProcessings = (
+    compartmentFormData: CompartmentFormData,
+  ): boolean => {
+    const initialProcessingSelectionResources =
+      compartmentFormData.initialProcessingSelectionResources;
+    const processingActivities = compartmentFormData.processingActivities;
+
+    const initialProcessingIds = initialProcessingSelectionResources.map(
+      processingSelection => processingSelection.processing_id,
+    );
+    const processingActivityIds = processingActivities.map(
+      processingResource => processingResource.model.id,
+    );
+
+    return (
+      compartmentFormData.compartment.id !== undefined &&
+      !(
+        initialProcessingIds.length === processingActivityIds.length &&
+        initialProcessingIds.every(pId => processingActivityIds.includes(pId))
+      )
+    );
+  };
+
+  checkProcessingsAndSave = (compartmentFormData: CompartmentFormData) => {
     const {
-      history,
-      notifyError,
+      intl: { formatMessage },
+    } = this.props;
+
+    const warn = this.shouldWarnProcessings(compartmentFormData);
+
+    const saveFunction = () => {
+      this.save(compartmentFormData);
+    };
+
+    if (warn) {
+      Modal.confirm({
+        content: formatMessage(messages.processingsWarningModalContent),
+        okText: formatMessage(messages.processingsWarningModalOk),
+        cancelText: formatMessage(messages.processingsWarningModalCancel),
+        onOk() {
+          return saveFunction();
+        },
+        onCancel() {
+          //
+        },
+      });
+    } else {
+      saveFunction();
+    }
+  };
+
+  save = (compartmentFormData: CompartmentFormData) => {
+    const {
       match: {
         params: { organisationId },
       },
+      notifyError,
+      intl,
     } = this.props;
 
-    const redirectUrl = `/v2/o/${organisationId}/settings/datamart/compartments`;
+    const hideSaveInProgress = message.loading(
+      intl.formatMessage(messages.savingInProgress),
+      0,
+    );
 
-    const returnedPromise: Promise<DataResponse<
-      UserAccountCompartmentDatamartSelectionResource
-    >> = compartmentFormData.id
-      ? this.updateCompartment(
-          compartmentFormData.datamart_id!,
-          compartmentFormData.compartment_id!,
-          compartmentFormData,
-        )
-      : this.createCompartment(organisationId, compartmentFormData);
+    const generateProcessingSelectionsTasks = (
+      compartmentResource: UserAccountCompartmentDatamartSelectionResource,
+    ): Array<Promise<any>> => {
+      const initialProcessingSelectionResources =
+        compartmentFormData.initialProcessingSelectionResources;
+      const processingActivities = compartmentFormData.processingActivities;
 
-    returnedPromise
+      const initialProcessingIds = initialProcessingSelectionResources.map(
+        processingSelection => processingSelection.processing_id,
+      );
+      const processingActivityIds = processingActivities.map(
+        processingResource => processingResource.model.id,
+      );
+
+      const processingIdsToBeAdded = processingActivityIds.filter(
+        pId => !initialProcessingIds.includes(pId),
+      );
+      const processingIdsToBeDeleted = initialProcessingIds.filter(
+        pId => !processingActivityIds.includes(pId),
+      );
+
+      const savePromises = processingIdsToBeAdded.map(pId => {
+        const processingActivityFieldModel = processingActivities.find(
+          processingActivity => processingActivity.model.id === pId,
+        );
+
+        if (processingActivityFieldModel) {
+          const processingResource = processingActivityFieldModel.model;
+          const processingSelectionResource: Partial<ProcessingSelectionResource> = {
+            processing_id: processingResource.id,
+            processing_name: processingResource.name,
+          };
+          return this._datamartService.createProcessingSelectionForCompartment(
+            compartmentResource.datamart_id,
+            compartmentResource.id,
+            processingSelectionResource,
+          );
+        } else {
+          return Promise.resolve({});
+        }
+      });
+
+      const deletePromises = processingIdsToBeDeleted.map(pId => {
+        const processingSelectionResource = initialProcessingSelectionResources.find(
+          pSelectionResource => pSelectionResource.processing_id === pId,
+        );
+
+        if (processingSelectionResource) {
+          const processingSelectionId = processingSelectionResource.id;
+          return this._datamartService.deleteCompartmentProcessingSelection(
+            compartmentResource.datamart_id,
+            compartmentResource.id,
+            processingSelectionId,
+          );
+        } else {
+          return Promise.resolve({});
+        }
+      });
+
+      return [...savePromises, ...deletePromises];
+    };
+
+    const generateAllPromises = (
+      compartmentResource: UserAccountCompartmentDatamartSelectionResource,
+    ): Array<Promise<any>> => {
+      return [...generateProcessingSelectionsTasks(compartmentResource)];
+    };
+
+    const generateSavingPromise = (): Promise<any> => {
+      const compartmentPromise = compartmentFormData.compartment.id
+        ? this.updateCompartment(compartmentFormData)
+        : this.createCompartment(organisationId, compartmentFormData);
+
+      return compartmentPromise.then(compartment =>
+        Promise.all(generateAllPromises(compartment.data)),
+      );
+    };
+
+    generateSavingPromise()
       .then(() => {
-        history.push(redirectUrl);
+        hideSaveInProgress();
+        this.onClose();
       })
       .catch(err => {
+        hideSaveInProgress();
         notifyError(err);
-        history.push(redirectUrl);
+        this.setState({
+          loading: false,
+        });
+        this.onClose();
       });
   };
 
   updateCompartment = (
-    datamartId: string,
-    compartmentId: string,
-    compartmentFormData: Partial<
-      UserAccountCompartmentDatamartSelectionResource
-    >,
+    compartmentFormData: CompartmentFormData,
   ): Promise<DataResponse<UserAccountCompartmentDatamartSelectionResource>> => {
     const updatedUserAccountCompartment: Partial<UserAccountCompartmentResource> = {
-      token: compartmentFormData.token,
-      name: compartmentFormData.name,
+      token: compartmentFormData.compartment.token,
+      name: compartmentFormData.compartment.name,
     };
 
-    return this._datamartService.updateUserAccountCompartment(
-      compartmentId,
-      updatedUserAccountCompartment,
-    ).then(_ => {
-      const updatedCompartmentDatamartSelection: Partial<UserAccountCompartmentDatamartSelectionResource> = {
-        default: compartmentFormData.default,
-      };
+    return this._datamartService
+      .updateUserAccountCompartment(
+        compartmentFormData.compartment.compartment_id!,
+        updatedUserAccountCompartment,
+      )
+      .then(_ => {
+        const updatedCompartmentDatamartSelection: Partial<UserAccountCompartmentDatamartSelectionResource> = {
+          default: compartmentFormData.compartment.default,
+        };
 
-      return this._datamartService.updateUserAccountCompartmentDatamartSelectionResource(
-        datamartId,
-        compartmentFormData.id!,
-        updatedCompartmentDatamartSelection,
-      );
-    });
+        return this._datamartService.updateUserAccountCompartmentDatamartSelectionResource(
+          compartmentFormData.compartment.datamart_id!,
+          compartmentFormData.compartment.id!,
+          updatedCompartmentDatamartSelection,
+        );
+      });
   };
 
   createCompartment = (
     organisationId: string,
-    compartmentFormData: Partial<
-      UserAccountCompartmentDatamartSelectionResource
-    >,
+    compartmentFormData: CompartmentFormData,
   ): Promise<DataResponse<UserAccountCompartmentDatamartSelectionResource>> => {
     const partialUserAccountCompartment: Partial<UserAccountCompartmentResource> = {
       organisation_id: organisationId,
-      token: compartmentFormData.token,
-      name: compartmentFormData.name,
+      token: compartmentFormData.compartment.token,
+      name: compartmentFormData.compartment.name,
     };
 
-    return this._datamartService.createUserAccountCompartment(
-      partialUserAccountCompartment,
-    ).then(res => {
-      const returnedUserAccountCompartment = res.data;
+    return this._datamartService
+      .createUserAccountCompartment(partialUserAccountCompartment)
+      .then(res => {
+        const returnedUserAccountCompartment = res.data;
 
-      const partialCompartmentDatamartSelection: Partial<UserAccountCompartmentDatamartSelectionResource> = {
-        datamart_id: compartmentFormData.datamart_id,
-        compartment_id: returnedUserAccountCompartment.id,
-        default: compartmentFormData.default,
-      };
-      return this._datamartService.createUserAccountCompartmentDatamartSelectionResource(
-        compartmentFormData.datamart_id!,
-        partialCompartmentDatamartSelection,
-      );
-    });
+        const partialCompartmentDatamartSelection: Partial<UserAccountCompartmentDatamartSelectionResource> = {
+          datamart_id: compartmentFormData.compartment.datamart_id,
+          compartment_id: returnedUserAccountCompartment.id,
+          default: compartmentFormData.compartment.default,
+        };
+        return this._datamartService.createUserAccountCompartmentDatamartSelectionResource(
+          compartmentFormData.compartment.datamart_id!,
+          partialCompartmentDatamartSelection,
+        );
+      });
   };
 
   onClose = () => {
@@ -210,7 +369,10 @@ class CompartmentEditPage extends React.Component<Props, State> {
     this.setState({
       selectedDatamartId: datamart.id,
       compartmentFormData: {
-        datamart_id: datamart.id,
+        ...INITIAL_COMPARTMENT_FORM_DATA,
+        compartment: {
+          datamart_id: datamart.id,
+        },
       },
     });
   };
@@ -234,19 +396,13 @@ class CompartmentEditPage extends React.Component<Props, State> {
       match: {
         params: { compartmentId },
       },
-      datamart,
     } = this.props;
 
     const { compartmentFormData, selectedDatamartId } = this.state;
 
-    let datamartId: string | undefined;
-    if (compartmentId) {
-      datamartId = compartmentFormData.datamart_id
-        ? compartmentFormData.datamart_id
-        : datamart.id;
-    } else {
-      datamartId = selectedDatamartId;
-    }
+    const datamartId: string | undefined = compartmentId
+      ? compartmentFormData.compartment.datamart_id
+      : selectedDatamartId;
     return datamartId;
   };
 
@@ -278,14 +434,22 @@ class CompartmentEditPage extends React.Component<Props, State> {
 
     const datamartId = this.getDatamartId();
 
+    const initialProcessingSelectionsForWarning = compartmentFormData
+      .compartment.id
+      ? compartmentFormData.initialProcessingSelectionResources
+      : undefined;
+
     return datamartId ? (
       <CompartmentEditForm
         initialValues={compartmentFormData}
-        onSubmit={this.save}
+        onSubmit={this.checkProcessingsAndSave}
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
         datamartId={datamartId}
         goToDatamartSelector={this.goToDatamartSelector}
+        initialProcessingSelectionsForWarning={
+          initialProcessingSelectionsForWarning
+        }
       />
     ) : (
       <Layout className="edit-layout">
