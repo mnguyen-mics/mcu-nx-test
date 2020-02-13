@@ -82,7 +82,7 @@ class FeedChart extends React.Component<Props, State> {
     const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
     const allDates = [formatedNonInclusiveDateRange.from];
 
-    while(allDates[allDates.length - 1] !== moment(formatedNonInclusiveDateRange.to).add(-1, 'days').format('YYYY-MM-DD')) {
+    while(allDates[allDates.length - 1] !== moment(formatedNonInclusiveDateRange.to).format('YYYY-MM-DD')) {
       allDates.push(moment(allDates[allDates.length - 1]).add(1, 'days').format('YYYY-MM-DD'));
     }
 
