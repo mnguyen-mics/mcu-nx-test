@@ -4,7 +4,6 @@ import HighchartsReact from 'highcharts-react-official';
 import cuid from 'cuid';
 
 export interface LineChartProps {
-  key: string;
   options:  Highcharts.Options;
 }
 

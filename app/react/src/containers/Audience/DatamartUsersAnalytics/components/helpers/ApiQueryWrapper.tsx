@@ -1,5 +1,5 @@
 import * as React from 'react';
-import FormatData from './FormatData';
+import FormatDataToChart from './FormatDataToChart';
 import { Chart } from '../../../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { IDatamartUsersAnalyticsService } from '../../../../../services/DatamartUsersAnalyticsService';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -9,6 +9,8 @@ import { LoadingChart, EmptyCharts } from '../../../../../components/EmptyCharts
 import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
+import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
 
 const messages = defineMessages({
   noData: {
@@ -20,7 +22,7 @@ const messages = defineMessages({
 type Props = ApiQueryWrapperProps & InjectedNotificationProps & InjectedIntlProps;
 
 export interface ApiQueryWrapperProps {
-  charts: Chart[];
+  chart: Chart;
   datamartId: string;
 }
 
@@ -42,12 +44,20 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { datamartId } = this.props;
-    this.fetchAnalytics(datamartId)
+    const { datamartId, chart } = this.props;
+    this.fetchAnalytics(datamartId, chart.metricName, chart.xKey, chart.dimensionFilterClauses);
   }
 
-  fetchAnalytics = (datamartId: string) => {
-    return this._datamartUsersAnalyticsService.getAnalytics(datamartId)
+  fetchAnalytics = (
+      datamartId: string,
+      metric: DatamartUsersAnalyticsMetric,
+      dimension?: DatamartUsersAnalyticsDimension, 
+      dimensionFilterClauses?: DimensionFilterClause
+    ) => {
+    this.setState({
+      loading: true
+    });
+    return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, dimension, dimensionFilterClauses)
       .then(res => {
         this.setState({
           loading: false,
@@ -56,18 +66,21 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       })
       .catch(e => {
         this.props.notifyError(e);
+        this.setState({
+          loading: false
+        });
       });
   }
 
   render() {
-    const { charts, intl } = this.props;
+    const { chart, intl } = this.props;
     const { loading, reportViewApiResponse } = this.state;
 
     if (loading) return <LoadingChart />
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
         {reportViewApiResponse && reportViewApiResponse.total_items > 0 ?
-          <FormatData apiResponse={reportViewApiResponse} charts={charts} /> : <EmptyCharts title={intl.formatMessage(messages.noData)} />}
+          <FormatDataToChart apiResponse={reportViewApiResponse} chart={chart} /> : <EmptyCharts title={intl.formatMessage(messages.noData)} />}
       </div>
     )
   }

@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, InjectedIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import {
@@ -24,14 +24,18 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import { sessionInTimeJsonConfig } from '../../DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
+import { averageSessionDurationConfig, channelEngagementConfig } from '../../DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
 
 const messages = defineMessages({
-  datamartUsersAnalyticsTitle: {
-    id: 'audience.home.datamartAnalysisTitle',
-    defaultMessage: 'Datamart Users analytics',
+  homeTitle: {
+    id: 'audience.home.homeTitle',
+    defaultMessage: 'Home',
+  },
+  channelEngagementsAnalyticsTitle: {
+    id: 'audience.home.channelEngagementsAnalyticsTitle',
+    defaultMessage: 'Channel Engagement',
   },
   comingSoon: {
     id: 'audience.home.dashboard',
@@ -42,7 +46,14 @@ const messages = defineMessages({
 interface HomeState {
   dashboards: DashboardResource[];
   isLoading: boolean;
-  datamartAnalyticsConfig: DashboardConfig[];
+  datamartAnalyticsDashboardConfig: HomeDashboardConfig[];
+}
+
+interface HomeDashboardConfig {
+  title?: string;
+  subTitle?: string;
+  datamartId: string;
+  config: DashboardConfig[]
 }
 
 type JoinedProps = InjectedWorkspaceProps &
@@ -58,27 +69,49 @@ class Partition extends React.Component<JoinedProps, HomeState> {
 
   constructor(props: JoinedProps) {
     super(props);
+
     this.state = {
       dashboards: [],
       isLoading: true,
-      datamartAnalyticsConfig: sessionInTimeJsonConfig as any,
+      datamartAnalyticsDashboardConfig: []
     };
   }
 
   componentDidMount() {
-    const { selectedDatamartId } = this.props;
+    const { selectedDatamartId, intl } = this.props;
+    this.setState({
+      datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(selectedDatamartId, intl)
+    });
     this.loadData(selectedDatamartId);
   }
 
   componentDidUpdate(prevProps: JoinedProps) {
-    const { selectedDatamartId } = this.props;
+    const { selectedDatamartId, intl } = this.props;
 
     const { selectedDatamartId: prevSelectedDatamart } = prevProps;
 
     if (selectedDatamartId !== prevSelectedDatamart) {
       this.loadData(selectedDatamartId);
+      this.setState({
+        datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(selectedDatamartId, intl)
+      });
     }
   }
+
+  getDatamartAnaylicsDashboardConfig = (datamartId: string, intl: InjectedIntl) => {
+    return [
+      {
+        title: intl.formatMessage(messages.homeTitle),
+        datamartId: datamartId,
+        config: averageSessionDurationConfig as any
+      },
+      {
+        title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
+        datamartId: datamartId,
+        config: channelEngagementConfig as any
+      }
+    ];
+  };
 
   loadData = (selectedDatamartId: string) => {
     this.setState({ isLoading: true });
@@ -104,11 +137,14 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     const {
       hasFeature,
       intl,
-      selectedDatamartId,
       selectedDatafarm,
     } = this.props;
 
-    const { isLoading, dashboards, datamartAnalyticsConfig } = this.state;
+    const {
+      isLoading,
+      dashboards,
+      datamartAnalyticsDashboardConfig
+    } = this.state;
 
     if (isLoading) {
       return <Loading />;
@@ -139,11 +175,17 @@ class Partition extends React.Component<JoinedProps, HomeState> {
               />
             ))}
             {shouldDisplayAnalyticsFeature && (
-              <DatamartUsersAnalyticsWrapper
-                title={intl.formatMessage(messages.datamartUsersAnalyticsTitle)}
-                datamartId={selectedDatamartId}
-                config={datamartAnalyticsConfig}
-              />
+              datamartAnalyticsDashboardConfig.map((conf, i) => {
+                return (
+                  <DatamartUsersAnalyticsWrapper
+                    key={i.toString()}
+                    title={conf.title}
+                    subTitle={conf.subTitle}
+                    datamartId={conf.datamartId}
+                    config={conf.config}
+                  />
+                )
+              })
             )}
           </Content>
         </div>

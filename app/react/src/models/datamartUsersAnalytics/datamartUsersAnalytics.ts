@@ -1,15 +1,18 @@
 import { CounterProps } from "../../components/Counter/Counter";
+import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from "../../utils/DatamartUsersAnalyticsReportHelper";
+import { DimensionFilterClause } from "../ReportRequestBody";
 
-type ChartType = 'PIE' | 'AREA' | 'WORLDMAP' | 'STACKEDBAR' | 'COUNT' | 'TABS';
+type ChartType = 'PIE' | 'AREA' | 'WORLD_MAP' | 'STACKED_BAR' | 'COUNT' | 'TABS' | 'SINGLE_STAT';
 
 export type Dataset = { [key: string]: string | number | Date | undefined };
 
 export interface Chart {
   type: ChartType;
   options: Highcharts.Options;
-  xKey: string;
+  xKey: DatamartUsersAnalyticsDimension;
   yKey: string | number;
-  metricName: string;
+  metricName: DatamartUsersAnalyticsMetric;
+  dimensionFilterClauses?: DimensionFilterClause;
   icons?: string[];
   counterFormatedProps?: CounterProps[];
   dataset?: 

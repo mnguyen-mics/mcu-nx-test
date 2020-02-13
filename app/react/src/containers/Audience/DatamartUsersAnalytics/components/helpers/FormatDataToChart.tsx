@@ -7,7 +7,7 @@ import { CounterProps } from '../../../../../components/Counter/Counter';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import GenericWorldMap from '../charts/GenericWorldMap';
 import GenericStackedBar from '../charts/GenericStackedBar';
-import { Tabs } from 'antd';
+import { Tabs, Statistic } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import * as Highcharts from 'highcharts';
 import {
@@ -16,8 +16,7 @@ import {
   MapSeriesDataOptions,
   Dataset,
   Chart,
-  AreaSeriesDataOptions,
-  PieSeriesDataOption
+  AreaSeriesDataOptions
 } from '../../../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { ReportView } from '../../../../../models/ReportView';
 import { AREA_OPACITY } from '../../../../../components/Charts/domain';
@@ -25,10 +24,10 @@ import moment from 'moment';
 
 export interface FormatDataProps {
   apiResponse: ReportView;
-  charts: Chart[];
+  chart: Chart;
 }
 
-class FormatData extends React.Component<FormatDataProps, {}> {
+class FormatDataToChart extends React.Component<FormatDataProps, {}> {
 
   formatSeriesForChart = (chart: Chart, dataset: Dataset[]) => {
     switch (chart.type) {
@@ -38,21 +37,12 @@ class FormatData extends React.Component<FormatDataProps, {}> {
             type: 'pie',
             name: '',
             innerSize: '65%',
-            data: dataset.reduce((acc: PieSeriesDataOption[], d: Dataset) => {
-              const found = acc.find((a: PieSeriesDataOption) => a.name === d[chart.yKey]);
-              const value = d[chart.metricName];
-              if (!found) {
-                acc.push({
-                  name: d[chart.yKey] as string,
-                  y: value as number,
-                  color: chart.options.colors ? chart.options.colors[0] : undefined
-                });
+            data: dataset.map((data: Dataset) => {
+              return {
+                name: data[chart.xKey] || 'null',
+                y: data[chart.metricName],
               }
-              else {
-                found.y += value as number;
-              }
-              return acc;
-            }, [])
+            })
           }
         ];
       case 'AREA':
@@ -103,24 +93,25 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           const found = acc.find((a: any) => a.title === d[chart.yKey]);
           const value = d[chart.metricName];
           if (!found) {
-            acc.push({ 
-              title: d[chart.yKey], 
-              iconType: chart.icons && chart.icons.length > 0 ? chart.icons[0] : undefined, 
-              value, unit: "%", 
-              iconStyle: { 
-                color: chart.options.colors ? chart.options.colors[0] : undefined }, 
-                loading: false 
-              });
+            acc.push({
+              title: d[chart.yKey],
+              iconType: chart.icons && chart.icons.length > 0 ? chart.icons[0] : undefined,
+              value, unit: "%",
+              iconStyle: {
+                color: chart.options.colors ? chart.options.colors[0] : undefined
+              },
+              loading: false
+            });
             if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
             if (chart.icons && chart.icons.length > 0) chart.icons.splice(0, 1);
- 
+
           }
           else {
             found.value += value
           }
           return acc;
         }, []);
-      case 'WORLDMAP':
+      case 'WORLD_MAP':
         return dataset.reduce((acc: MapSeriesDataOptions[], d: Dataset) => {
           const found = acc.find((a: MapSeriesDataOptions) => a.code3 === d[chart.yKey]);
           const value = d[chart.metricName];
@@ -135,7 +126,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           }
           return acc;
         }, []);
-      case 'STACKEDBAR':
+      case 'STACKED_BAR':
         return dataset.reduce((acc: BarSeriesDataOptions[], d: Dataset) => {
           if (acc.length === 0) {
             acc.push({
@@ -185,62 +176,69 @@ class FormatData extends React.Component<FormatDataProps, {}> {
       .valueOf();
   };
 
-  generateCharElements = (charts: Chart[], data: Dataset[]): React.ReactNode => {
-    return _.map(charts, (chart, i) => {
-
-      switch (chart.type) {
-        case 'AREA':
-          if (!chart.xKey) return null
-          chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
-          return (
-            <LineChart
-              key={i.toString()}
-              options={chart.options}
-            />
-          )
-        case 'PIE':
-          chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
-          return (
-            <PieChart options={chart.options} />
-          )
-        case 'COUNT':
-          chart.counterFormatedProps = this.formatSeriesForCounters(chart, data);
-          return (<CounterDashboard counters={chart.counterFormatedProps} />)
-        case 'WORLDMAP':
-          return (
-            <GenericWorldMap key={i.toString()} options={chart.options} dataset={this.formatSeriesForChart(chart, data) as MapSeriesDataOptions[]} />
-          )
-        case 'STACKEDBAR':
-          if (!chart.xKey) return null
-          chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesMapOptions[];
-          return (
-            <GenericStackedBar options={chart.options} />
-          )
-        case 'TABS':
-          return (
-            <Tabs key={0}>
-              {
-                _.map(chart.tabs, (tab: TabItem, e: number) => {
-                  return (
-                    <Tabs.TabPane tab={tab.title} key={e.toString()}>
-                      {this.generateCharElements([tab], data)}
-                    </Tabs.TabPane>
-                  )
-                })
-              }
-            </Tabs>)
-        default:
-          return null;
-      }
-    });
+  generateCharElements = (chart: Chart, data: Dataset[]): React.ReactNode => {
+    switch (chart.type) {
+      case 'AREA':
+        if (!chart.xKey) return null
+        chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
+        return (
+          <LineChart options={chart.options}
+          />
+        )
+      case 'PIE':
+        chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
+        return (
+          <PieChart options={chart.options} />
+        )
+      case 'COUNT':
+        chart.counterFormatedProps = this.formatSeriesForCounters(chart, data);
+        return (<CounterDashboard counters={chart.counterFormatedProps} />)
+      case 'WORLD_MAP':
+        return (
+          <GenericWorldMap options={chart.options} dataset={this.formatSeriesForChart(chart, data) as MapSeriesDataOptions[]} />
+        )
+      case 'STACKED_BAR':
+        if (!chart.xKey) return null
+        chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesMapOptions[];
+        return (
+          <GenericStackedBar options={chart.options} />
+        )
+      case 'TABS':
+        return (
+          <Tabs key={0}>
+            {
+              _.map(chart.tabs, (tab: TabItem, e: number) => {
+                return (
+                  <Tabs.TabPane tab={tab.title} key={e.toString()}>
+                    {this.generateCharElements(tab, data)}
+                  </Tabs.TabPane>
+                )
+              })
+            }
+          </Tabs>)
+      case 'SINGLE_STAT':
+        const formatedTime = moment.duration(data[0][chart.metricName] as number, "second").format("h[hr] m[min] s[s]");
+        return (
+          <div className="dashboard-counter">
+            <div className="count-title">
+              {chart.options.title}
+            </div>
+            <div className="count-result">
+                <Statistic className={'datamartUsersAnalytics_charts_singleStat'} value={formatedTime} />
+            </div>
+          </div>
+        )
+      default:
+        return null;
+    }
   };
 
   render() {
-    const { charts, apiResponse } = this.props;
+    const { chart, apiResponse } = this.props;
     const normalizedData = normalizeReportView(apiResponse);
 
-    return (<div>{this.generateCharElements(charts, normalizedData)}</div>)
+    return (<div>{this.generateCharElements(chart, normalizedData)}</div>)
   }
 }
 
-export default FormatData;
+export default FormatDataToChart;

@@ -18,8 +18,8 @@ export interface DashboardConfig {
   title: string;
   layout: Layout;
   charts: Chart[];
-
 }
+
 interface DatamartUsersAnalyticsContentProps {
   datamartId: string;
   config: DashboardConfig[];
@@ -31,14 +31,17 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
   }
 
   generateDOM(dashboardConfig: DashboardConfig[], datamartId: string) {
-    return dashboardConfig.map((comp: Component, i: number) => {
+    return dashboardConfig.map((comp: Component, i) => {
       return (
         <CardFlex
           title={comp.title}
           key={i.toString()}
-          className={comp.layout.static ? 'static' : ''}
+          className={comp.layout.static ? 'static mcs-datamartUsersAnalytics_card' : 'mcs-datamartUsersAnalytics_card'}
         >
-          <ApiQueryWrapper charts={comp.charts} datamartId={datamartId} />
+          {comp.charts.map((chart: Chart, index) => {
+            return <ApiQueryWrapper key={index.toString()} chart={chart} datamartId={datamartId} />
+          })}
+
         </CardFlex>
       );
     });
@@ -48,8 +51,9 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
     const { datamartId, config } = this.props;
 
     const layouts = config.map((cl, i) => ({ ...cl.layout, i: i.toString() }));
+
     return (
-      <ResponsiveGridLayout className="layout"
+      <ResponsiveGridLayout className="layout mcs-datamartUsersAnalytics_components"
         layouts={{ lg: layouts }}
         cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
         isDraggable={false}
