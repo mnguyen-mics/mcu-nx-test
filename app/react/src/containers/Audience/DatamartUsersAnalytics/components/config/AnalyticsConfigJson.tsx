@@ -141,7 +141,7 @@ export const channelEngagementConfig = [
     ]
   },
   {
-    title: 'Session by device (Last 7 days)',
+    title: 'Sessions by Form Factor (Last 7 days)',
     layout: {
       'i': '2',
       'h': 3,
@@ -206,7 +206,7 @@ export const channelEngagementConfig = [
     ]
   },
   {
-    title: 'Session by brower family (Last 7 days)',
+    title: 'Sessions by Browser Family (Last 7 days)',
     layout: {
       'i': '2',
       'h': 3,
@@ -270,7 +270,7 @@ export const channelEngagementConfig = [
     ]
   },
   {
-    title: 'Session by os family (Last 7 days)',
+    title: 'Sessions by OS (Last 7 days)',
     layout: {
       'i': '2',
       'h': 3,

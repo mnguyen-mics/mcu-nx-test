@@ -101,7 +101,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
   getDatamartAnaylicsDashboardConfig = (datamartId: string, intl: InjectedIntl) => {
     return [
       {
-        title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
+        title: intl.formatMessage(messages.homeTitle),
         datamartId: datamartId,
         config: averageSessionDurationConfig as any
       },
