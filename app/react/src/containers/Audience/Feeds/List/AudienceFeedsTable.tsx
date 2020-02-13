@@ -51,9 +51,11 @@ import {
 import EditPluginModal from './EditPluginModal';
 import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import messages from '../messages';
+import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 
 type Props = InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
+  InjectedFeaturesProps &
   InjectedIntlProps;
 
 type RecordType = {
@@ -416,6 +418,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   renderActionColumnDefinition: ActionsRenderer<RecordType> = (
     record: RecordType,
   ) => {
+    const { hasFeature } = this.props;
     const actionsDefinitions: Array<ActionDefinition<RecordType>> = [];
 
     if (record.feed.status === 'PAUSED' || record.feed.status === 'INITIAL') {
@@ -433,10 +436,14 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       intlMessage: messages.edit,
       callback: this.editFeed,
     });
-    actionsDefinitions.push({
-      intlMessage: messages.stats,
-      callback: this.openFeedStats,
-    });
+
+    if(hasFeature('audience-feeds_stats')) {
+      actionsDefinitions.push({
+        intlMessage: messages.stats,
+        callback: this.openFeedStats,
+      });
+    }
+
     actionsDefinitions.push({
       intlMessage: messages.delete,
       callback: this.deleteFeed,
@@ -702,4 +709,5 @@ export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectNotifications,
+  injectFeatures,
 )(AudienceFeedsTable);
