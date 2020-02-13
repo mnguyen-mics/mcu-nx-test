@@ -31,3 +31,4 @@ declare module 'react-simple-maps';
 declare module 'file-saver';
 
 declare module 'react-dimensions';
+declare module 'chroma-js';

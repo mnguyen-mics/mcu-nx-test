@@ -16,8 +16,7 @@ import {
   MapSeriesDataOptions,
   Dataset,
   Chart,
-  AreaSeriesDataOptions,
-  PieSeriesDataOption
+  AreaSeriesDataOptions
 } from '../../../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { ReportView } from '../../../../../models/ReportView';
 import { AREA_OPACITY } from '../../../../../components/Charts/domain';
@@ -28,7 +27,7 @@ export interface FormatDataProps {
   chart: Chart;
 }
 
-class FormatData extends React.Component<FormatDataProps, {}> {
+class FormatDataToChart extends React.Component<FormatDataProps, {}> {
 
   formatSeriesForChart = (chart: Chart, dataset: Dataset[]) => {
     switch (chart.type) {
@@ -38,20 +37,12 @@ class FormatData extends React.Component<FormatDataProps, {}> {
             type: 'pie',
             name: '',
             innerSize: '65%',
-            data: dataset.reduce((acc: PieSeriesDataOption[], d: Dataset) => {
-              const found = acc.find((a: PieSeriesDataOption) => a.name === d[chart.xKey]);
-              const value = d[chart.metricName];
-              if (!found) {
-                acc.push({
-                  name: d[chart.xKey] as string,
-                  y: value as number,
-                });
+            data: dataset.map((data: Dataset) => {
+              return {
+                name: data[chart.xKey] || 'null',
+                y: data[chart.metricName],
               }
-              else {
-                found.y += value as number;
-              }
-              return acc;
-            }, [])
+            })
           }
         ];
       case 'AREA':
@@ -120,7 +111,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           }
           return acc;
         }, []);
-      case 'WORLDMAP':
+      case 'WORLD_MAP':
         return dataset.reduce((acc: MapSeriesDataOptions[], d: Dataset) => {
           const found = acc.find((a: MapSeriesDataOptions) => a.code3 === d[chart.yKey]);
           const value = d[chart.metricName];
@@ -135,7 +126,7 @@ class FormatData extends React.Component<FormatDataProps, {}> {
           }
           return acc;
         }, []);
-      case 'STACKEDBAR':
+      case 'STACKED_BAR':
         return dataset.reduce((acc: BarSeriesDataOptions[], d: Dataset) => {
           if (acc.length === 0) {
             acc.push({
@@ -202,11 +193,11 @@ class FormatData extends React.Component<FormatDataProps, {}> {
       case 'COUNT':
         chart.counterFormatedProps = this.formatSeriesForCounters(chart, data);
         return (<CounterDashboard counters={chart.counterFormatedProps} />)
-      case 'WORLDMAP':
+      case 'WORLD_MAP':
         return (
           <GenericWorldMap options={chart.options} dataset={this.formatSeriesForChart(chart, data) as MapSeriesDataOptions[]} />
         )
-      case 'STACKEDBAR':
+      case 'STACKED_BAR':
         if (!chart.xKey) return null
         chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesMapOptions[];
         return (
@@ -225,8 +216,8 @@ class FormatData extends React.Component<FormatDataProps, {}> {
               })
             }
           </Tabs>)
-      case 'SINGLESTAT':
-        const formatedTime = moment.duration(data[0][chart.metricName] as number, "second").format("h [hrs] m [min] s [sec]");
+      case 'SINGLE_STAT':
+        const formatedTime = moment.duration(data[0][chart.metricName] as number, "second").format("h[hr] m[min] s[s]");
         return (
           <div className="dashboard-counter">
             <div className="count-title">
@@ -250,4 +241,4 @@ class FormatData extends React.Component<FormatDataProps, {}> {
   }
 }
 
-export default FormatData;
+export default FormatDataToChart;

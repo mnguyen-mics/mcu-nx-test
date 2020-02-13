@@ -36,7 +36,7 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
         <CardFlex
           title={comp.title}
           key={i.toString()}
-          className={comp.layout.static ? 'static' : ''}
+          className={comp.layout.static ? 'static mcs-datamartUsersAnalytics_card' : 'mcs-datamartUsersAnalytics_card'}
         >
           {comp.charts.map((chart: Chart, index) => {
             return <ApiQueryWrapper key={index.toString()} chart={chart} datamartId={datamartId} />

@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, InjectedIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import {
@@ -29,13 +29,13 @@ import { averageSessionDurationConfig, channelEngagementConfig } from '../../Dat
 const { Content } = Layout;
 
 const messages = defineMessages({
+  homeTitle: {
+    id: 'audience.home.homeTitle',
+    defaultMessage: 'Home',
+  },
   channelEngagementsAnalyticsTitle: {
     id: 'audience.home.channelEngagementsAnalyticsTitle',
     defaultMessage: 'Channel Engagement',
-  },
-  channelEngagementsAnalyticsSubtile: {
-    id: 'audience.home.channelEngagementsAnalyticsSubtile',
-    defaultMessage: 'Discover how your segment user interacts with your channels',
   },
   comingSoon: {
     id: 'audience.home.dashboard',
@@ -80,31 +80,38 @@ class Partition extends React.Component<JoinedProps, HomeState> {
   componentDidMount() {
     const { selectedDatamartId, intl } = this.props;
     this.setState({
-      datamartAnalyticsDashboardConfig: [
-        {
-          datamartId: selectedDatamartId,
-          config: averageSessionDurationConfig as any
-        },
-        {
-          title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
-          subTitle: intl.formatMessage(messages.channelEngagementsAnalyticsSubtile),
-          datamartId: selectedDatamartId,
-          config: channelEngagementConfig as any
-        }
-      ]
+      datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(selectedDatamartId, intl)
     });
     this.loadData(selectedDatamartId);
   }
 
   componentDidUpdate(prevProps: JoinedProps) {
-    const { selectedDatamartId } = this.props;
+    const { selectedDatamartId, intl } = this.props;
 
     const { selectedDatamartId: prevSelectedDatamart } = prevProps;
 
     if (selectedDatamartId !== prevSelectedDatamart) {
       this.loadData(selectedDatamartId);
+      this.setState({
+        datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(selectedDatamartId, intl)
+      });
     }
   }
+
+  getDatamartAnaylicsDashboardConfig = (datamartId: string, intl: InjectedIntl) => {
+    return [
+      {
+        title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
+        datamartId: datamartId,
+        config: averageSessionDurationConfig as any
+      },
+      {
+        title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
+        datamartId: datamartId,
+        config: channelEngagementConfig as any
+      }
+    ];
+  };
 
   loadData = (selectedDatamartId: string) => {
     this.setState({ isLoading: true });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import FormatData from './FormatData';
+import FormatDataToChart from './FormatDataToChart';
 import { Chart } from '../../../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { IDatamartUsersAnalyticsService } from '../../../../../services/DatamartUsersAnalyticsService';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -49,11 +49,14 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   }
 
   fetchAnalytics = (
-      datamartId: string, 
-      metric: DatamartUsersAnalyticsMetric, 
+      datamartId: string,
+      metric: DatamartUsersAnalyticsMetric,
       dimension?: DatamartUsersAnalyticsDimension, 
       dimensionFilterClauses?: DimensionFilterClause
     ) => {
+    this.setState({
+      loading: true
+    });
     return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, dimension, dimensionFilterClauses)
       .then(res => {
         this.setState({
@@ -77,7 +80,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
         {reportViewApiResponse && reportViewApiResponse.total_items > 0 ?
-          <FormatData apiResponse={reportViewApiResponse} chart={chart} /> : <EmptyCharts title={intl.formatMessage(messages.noData)} />}
+          <FormatDataToChart apiResponse={reportViewApiResponse} chart={chart} /> : <EmptyCharts title={intl.formatMessage(messages.noData)} />}
       </div>
     )
   }

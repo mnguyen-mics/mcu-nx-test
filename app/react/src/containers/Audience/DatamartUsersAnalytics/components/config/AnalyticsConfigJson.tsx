@@ -3,6 +3,7 @@ import {
   generateYAxisGridLine,
   generateTooltip,
 } from '../../../../../components/Charts/domain';
+import chroma from 'chroma-js';
 
 export const sessionInTimeJsonConfig = [
   {
@@ -63,6 +64,7 @@ export const sessionInTimeJsonConfig = [
 
 export const averageSessionDurationConfig = [
   {
+    title: 'Average session duration (Last 7 days)',
     layout: {
       'i': '0',
       'h': 1,
@@ -73,9 +75,9 @@ export const averageSessionDurationConfig = [
     },
     charts: [
       {
-        type: 'SINGLESTAT',
+        type: 'SINGLE_STAT',
         options: {
-          title: 'Average session duration (Last 7 days)'
+          title: undefined
         },
         metricName: 'avg_session_duration'
       }
@@ -144,8 +146,8 @@ export const channelEngagementConfig = [
       'i': '2',
       'h': 3,
       'static': false,
-      'w': 6,
-      'x': 6,
+      'w': 4,
+      'x': 0,
       'y': 0,
 
     },
@@ -156,7 +158,7 @@ export const channelEngagementConfig = [
           title: '',
           innerRadius: true,
           isHalf: false,
-          colors: ['#fd7c12', '#00a1df', '#862f2f', '#f85861', '#00ab67', '#003056', '#fc3f48'],
+          colors: chroma.scale(['#003056', '#00a1df']).mode('lch').colors(7),
           plotOptions: {
             pie: {
               dataLabels: {
@@ -209,8 +211,8 @@ export const channelEngagementConfig = [
       'i': '2',
       'h': 3,
       'static': false,
-      'w': 6,
-      'x': 0,
+      'w': 4,
+      'x': 4,
       'y': 3
     },
     charts: [
@@ -220,7 +222,7 @@ export const channelEngagementConfig = [
           title: '',
           innerRadius: true,
           isHalf: false,
-          colors: ['#fd7c12', '#00a1df', '#862f2f', '#f85861', '#00ab67', '#003056', '#fc3f48'],
+          colors: chroma.scale(['#003056', '#00a1df']).mode('lch').colors(7),
           plotOptions: {
             pie: {
               dataLabels: {
@@ -272,9 +274,9 @@ export const channelEngagementConfig = [
     layout: {
       'i': '2',
       'h': 3,
-      'static': false,
-      'w': 6,
-      'x': 6,
+      'static': true,
+      'w': 4,
+      'x': 8,
       'y': 3
     },
     charts: [
@@ -284,7 +286,7 @@ export const channelEngagementConfig = [
           title: '',
           innerRadius: true,
           isHalf: false,
-          colors: ['#fd7c12', '#00a1df', '#862f2f', '#f85861', '#00ab67', '#003056', '#fc3f48'],
+          colors: chroma.scale(['#003056', '#00a1df']).mode('lch').colors(7),
           plotOptions: {
             pie: {
               dataLabels: {

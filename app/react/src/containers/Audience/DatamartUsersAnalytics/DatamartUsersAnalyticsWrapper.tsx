@@ -29,7 +29,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<Props, State> {
   render() {
     const { title, subTitle, datamartId, config } = this.props;
     return (
-      <div>
+      <div className={'mcs-datamartUsersAnalytics'}>
         {
           title && <div>
             <div className={'mcs-datamartUsersAnalytics_title'}>{title}</div>
