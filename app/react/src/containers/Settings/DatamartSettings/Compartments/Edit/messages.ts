@@ -41,6 +41,10 @@ export default defineMessages({
     id: 'settings.compartments.form.general.token.tooltip',
     defaultMessage: 'Give your Compartment a Token',
   },
+  sectionProcessingActivitiesTitle: {
+    id: 'settings.compartments.form.processingActivities.title',
+    defaultMessage: 'Processing Activities',
+  },
   warningOnTokenEdition: {
     id: 'settings.compartments.form.general.token.warning',
     defaultMessage: 'Danger Zone: Editing this token may cause any web site data collection tag to fail if not updated properly. Please make sure you have updated all your tags before saving.',
@@ -61,5 +65,22 @@ export default defineMessages({
   sectionDatamartTitle: {
     id: 'settings.compartments.form.datamart.title',
     defaultMessage: 'Datamart',
+  },
+  savingInProgress: {
+    id: 'settings.compartments.form.savingInProgress',
+    defaultMessage: 'Saving your Compartment',
+  },
+  processingsWarningModalContent: {
+    id: 'settings.compartments.processings.warning.content',
+    defaultMessage:
+      'You are about to change the Processing Activities on behalf of which you are capturing personal data on this compartment. mediarithmics platform will now automatically drop new User Profiles if the User Choices do not allow their capture. Do you want to continue?',
+  },
+  processingsWarningModalOk: {
+    id: 'settings.compartments.processings.warning.ok',
+    defaultMessage: 'OK',
+  },
+  processingsWarningModalCancel: {
+    id: 'settings.compartments.processings.warning.cancel',
+    defaultMessage: 'Cancel',
   },
 });

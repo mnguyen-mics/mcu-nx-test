@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { CompartmentFormData } from './domain';
-import { InjectedFormProps, ConfigProps, reduxForm, Form } from 'redux-form';
+import {
+  InjectedFormProps,
+  ConfigProps,
+  reduxForm,
+  Form,
+  FieldArray,
+  GenericFieldArray,
+  Field,
+} from 'redux-form';
 import { Omit } from '../../../../../utils/Types';
 import { Path } from '../../../../../components/ActionBar';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
@@ -20,11 +28,21 @@ import { McsFormSection } from '../../../../../utils/FormHelper';
 import messages from './messages';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import GeneralFormSection from './Sections/GeneralFormSection';
+import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
+import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
+import ProcessingActivitiesFormSection, {
+  ProcessingActivitiesFormSectionProps,
+} from '../../Common/ProcessingActivitiesFormSection';
 
 export const FORM_ID = 'compartmentForm';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
+>;
+
+const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ProcessingActivitiesFormSectionProps
 >;
 
 export interface CompartmentEditFormProps
@@ -33,14 +51,13 @@ export interface CompartmentEditFormProps
   breadCrumbPaths: Path[];
   datamartId: string;
   goToDatamartSelector: () => void;
+  initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
 }
 
-type Props = InjectedFormProps<
-  CompartmentFormData,
-  CompartmentEditFormProps
-> &
+type Props = InjectedFormProps<CompartmentFormData, CompartmentEditFormProps> &
   CompartmentEditFormProps &
   InjectedIntlProps &
+  InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class CompartmentEditForm extends React.Component<Props> {
@@ -49,8 +66,16 @@ class CompartmentEditForm extends React.Component<Props> {
       handleSubmit,
       breadCrumbPaths,
       close,
+      change,
+      hasFeature,
       goToDatamartSelector,
+      initialProcessingSelectionsForWarning,
     } = this.props;
+
+    const genericFieldArrayProps = {
+      formChange: change,
+      rerenderOnEveryChange: true,
+    };
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -66,6 +91,23 @@ class CompartmentEditForm extends React.Component<Props> {
       title: messages.sectionGeneralTitle,
       component: <GeneralFormSection />,
     });
+
+    if (hasFeature('datamart-user_choices')) {
+      sections.push({
+        id: 'processingActivities',
+        title: messages.sectionProcessingActivitiesTitle,
+        component: (
+          <ProcessingActivitiesFieldArray
+            name="processingActivities"
+            component={ProcessingActivitiesFormSection}
+            initialProcessingSelectionsForWarning={
+              initialProcessingSelectionsForWarning
+            }
+            {...genericFieldArrayProps}
+          />
+        ),
+      });
+    }
 
     const datamartSideBarItem: SideBarItem = {
       sectionId: 'datamart',
@@ -121,6 +163,7 @@ class CompartmentEditForm extends React.Component<Props> {
 
 export default compose<Props, CompartmentEditFormProps>(
   injectIntl,
+  injectFeatures,
   withRouter,
   reduxForm({
     form: FORM_ID,

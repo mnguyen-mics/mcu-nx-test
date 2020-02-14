@@ -1,3 +1,4 @@
+import { ProcessingSelectionResource } from './../models/consent/UserConsentResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   DatamartResource,
@@ -36,7 +37,7 @@ export interface IDatamartService {
     body: { organisation_id: string; properties: Partial<EventRules> },
   ) => Promise<DataResponse<EventRules>>;
 
-  updateEventRules:(
+  updateEventRules: (
     datamartId: string,
     eventRuleId: string,
     body: Partial<EventRules>,
@@ -50,7 +51,9 @@ export interface IDatamartService {
   getUserAccountCompartmentDatamartSelectionResources: (
     datamartId: string,
     options?: object,
-  ) => Promise<DataListResponse<UserAccountCompartmentDatamartSelectionResource>>;
+  ) => Promise<
+    DataListResponse<UserAccountCompartmentDatamartSelectionResource>
+  >;
 
   getUserAccountCompartmentDatamartSelectionResource: (
     datamartId: string,
@@ -81,12 +84,37 @@ export interface IDatamartService {
     compartment: Partial<UserAccountCompartmentResource>,
   ) => Promise<DataResponse<UserAccountCompartmentResource>>;
 
-  getSources: (datamartId: string) => Promise<DataListResponse<DatamartResource>>;
+  getSources: (
+    datamartId: string,
+  ) => Promise<DataListResponse<DatamartResource>>;
 
   getCleaningRules: (
     datamartId: string,
     options?: object,
   ) => Promise<DataListResponse<UserEventCleaningRuleResource>>;
+
+  getProcessingSelectionsByCompartment: (
+    datamartId: string,
+    compartmentId: string,
+  ) => Promise<DataListResponse<ProcessingSelectionResource>>;
+
+  createProcessingSelectionForCompartment: (
+    datamartId: string,
+    compartmentId: string,
+    body: Partial<ProcessingSelectionResource>,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
+
+  getCompartmentProcessingSelection: (
+    datamartId: string,
+    compartmentId: string,
+    processingSelectionId: string,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
+
+  deleteCompartmentProcessingSelection: (
+    datamartId: string,
+    compartmentId: string,
+    processingSelectionId: string,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
 }
 
 @injectable()
@@ -232,5 +260,40 @@ export class DatamartService implements IDatamartService {
     };
 
     return ApiService.getRequest(endpoint, calculatedOptions);
+  }
+
+  getProcessingSelectionsByCompartment(
+    datamartId: string,
+    compartmentId: string,
+  ): Promise<DataListResponse<ProcessingSelectionResource>> {
+    const endpoint = `datamarts/${datamartId}/compartments/${compartmentId}/processing_selections`;
+    return ApiService.getRequest(endpoint);
+  }
+
+  createProcessingSelectionForCompartment(
+    datamartId: string,
+    compartmentId: string,
+    body: Partial<ProcessingSelectionResource>,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    const endpoint = `datamarts/${datamartId}/compartments/${compartmentId}/processing_selections`;
+    return ApiService.postRequest(endpoint, body);
+  }
+
+  getCompartmentProcessingSelection(
+    datamartId: string,
+    compartmentId: string,
+    processingSelectionId: string,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    const endpoint = `datamarts/${datamartId}/compartments/${compartmentId}/processing_selections/${processingSelectionId}`;
+    return ApiService.getRequest(endpoint);
+  }
+
+  deleteCompartmentProcessingSelection(
+    datamartId: string,
+    compartmentId: string,
+    processingSelectionId: string,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    const endpoint = `datamarts/${datamartId}/compartments/${compartmentId}/processing_selections/${processingSelectionId}`;
+    return ApiService.deleteRequest(endpoint);
   }
 }
