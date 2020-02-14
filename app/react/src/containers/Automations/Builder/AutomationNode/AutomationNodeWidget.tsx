@@ -22,12 +22,16 @@ import {
   AutomationFormPropsType,
   isQueryInputNode,
   isAddToSegmentNode,
+  isDeleteFromSegmentNode,
 } from './Edit/domain';
 
 import { ScenarioNodeType, ScenarioNodeShape } from '../../../../models/automations/automations'
 import DisplayCampaignAutomatedDashboardPage, { DisplayCampaignAutomatedDashboardPageProps } from './Dashboard/DisplayCampaign/DisplayCampaignAutomatedDashboardPage';
 import EmailCampaignAutomatedDashboardPage, { EmailCampaignAutomatedDashboardPageProps } from './Dashboard/EmailCampaign/EmailCampaignAutomatedDashboardPage';
 import { withRouter, RouterProps, RouteComponentProps } from 'react-router';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 
 
 interface AutomationNodeProps {
@@ -42,6 +46,7 @@ interface AutomationNodeProps {
 interface State {
   focus: boolean;
   hover: boolean;
+  nodeName?: string;
 }
 
 const messages = defineMessages({
@@ -82,12 +87,16 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   left: number = 0;
   id: string = cuid();
 
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
+
   constructor(props: Props) {
     super(props);
 
     this.state = {
       focus: false,
       hover: false,
+      nodeName: undefined,
     };
   }
 
@@ -98,6 +107,32 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     && node.storylineNodeModel.node.last_added_node) {
       this.editNode();
     }
+
+    this.fetchNodeName();
+  }
+
+  fetchNodeName() {
+    const {
+      node
+    } = this.props;
+
+    const nodeShape = node.storylineNodeModel.node;
+    switch (nodeShape.type) {
+      case 'DELETE_FROM_SEGMENT_NODE':
+        if(nodeShape.formData.segmentId) {
+          this._audienceSegmentService
+          .getSegment(nodeShape.formData.segmentId)
+          .then(({ data: segment }) => {
+            this.setState({ nodeName: segment.name });
+          })
+          .catch(() => {
+            this.setState({ nodeName: undefined });
+          })
+        }
+        break; 
+      default:
+        break;
+    }   
   }
 
   setPosition = (node: HTMLDivElement | null) => {
@@ -190,6 +225,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         let disableEdition = false;
         switch (scenarioNodeShape.type) {
           case 'ADD_TO_SEGMENT_NODE':
+          case 'DELETE_FROM_SEGMENT_NODE':
             disableEdition = !!scenarioNodeShape.user_list_segment_id;
             break;
           default:
@@ -281,7 +317,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     return content
   }
 
-  renderAddToSegmentEdit = (): React.ReactNodeArray => {
+  renderAddToSegmentOrDeleteFromSegmentEdit = (): React.ReactNodeArray => {
     const { 
       viewer,
       node,
@@ -293,7 +329,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     const content: React.ReactNodeArray = [];
     const gotToSegment = () => {
-      if(isAddToSegmentNode(node.storylineNodeModel.node)) 
+      if(isAddToSegmentNode(node.storylineNodeModel.node) || isDeleteFromSegmentNode(node.storylineNodeModel.node)) 
         history.push(`/v2/o/${organisationId}/audience/segments/${node.storylineNodeModel.node.user_list_segment_id}`)
     }
 
@@ -443,7 +479,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         return this.renderDefautEdit();
       case 'ADD_TO_SEGMENT_NODE':
       case 'DELETE_FROM_SEGMENT_NODE':
-        return this.renderAddToSegmentEdit();
+        return this.renderAddToSegmentOrDeleteFromSegmentEdit();
       case 'QUERY_INPUT':
         return this.renderQueryEdit();
       case 'END_NODE':
@@ -470,6 +506,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   render() {
     const { node } = this.props;
+    const { nodeName } = this.state;
 
     const backgroundColor = node.getColor();
     const color = '#ffffff';
@@ -483,22 +520,24 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
 
-    let nodeName = node.title;
+    let nodeNameToDisplayed = node.title;
 
     switch (node.storylineNodeModel.node.type) {
       case 'DISPLAY_CAMPAIGN':
       case 'EMAIL_CAMPAIGN':
-        nodeName = node.storylineNodeModel.node.formData && node.storylineNodeModel.node.formData.campaign && node.storylineNodeModel.node.formData.campaign.name ? node.storylineNodeModel.node.formData.campaign.name : nodeName;
+        nodeNameToDisplayed = node.storylineNodeModel.node.formData && node.storylineNodeModel.node.formData.campaign && node.storylineNodeModel.node.formData.campaign.name ? node.storylineNodeModel.node.formData.campaign.name : nodeNameToDisplayed;
         break;
       case 'ADD_TO_SEGMENT_NODE':
       case 'DELETE_FROM_SEGMENT_NODE':
-        nodeName = node.storylineNodeModel.node.formData && node.storylineNodeModel.node.formData.name ? node.storylineNodeModel.node.formData.name : nodeName;
+        nodeNameToDisplayed = node.storylineNodeModel.node.formData && node.storylineNodeModel.node.formData.name ? node.storylineNodeModel.node.formData.name : nodeNameToDisplayed;
         break;
       case 'ABN_NODE':
         // node name not saved on ABN NODE"
-        nodeName = 'Split';
+        nodeNameToDisplayed = 'Split';
         break;
     }
+
+    nodeNameToDisplayed = nodeName || nodeNameToDisplayed;
 
     const nodeType = node.storylineNodeModel.node.type;
 
@@ -538,8 +577,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         </div>
 
         <div className="node-content">
-          <Tooltip title={nodeName.length > NODE_NAME_MAX_SIZE ? nodeName : undefined} placement="bottom" >
-            {`${nodeName.substring(0, NODE_NAME_MAX_SIZE) + (nodeName.length > NODE_NAME_MAX_SIZE ? '...' : '')}`}
+          <Tooltip title={nodeNameToDisplayed.length > NODE_NAME_MAX_SIZE ? nodeNameToDisplayed : undefined} placement="bottom" >
+            {`${nodeNameToDisplayed.substring(0, NODE_NAME_MAX_SIZE) + (nodeNameToDisplayed.length > NODE_NAME_MAX_SIZE ? '...' : '')}`}
           </Tooltip>
         </div>
         <div className="node-subtitle">{this.renderSubTitle(node.storylineNodeModel.node)}</div>

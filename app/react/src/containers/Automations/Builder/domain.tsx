@@ -370,7 +370,7 @@ export class UpdateNodeOperation implements NodeOperation {
           name: deleteFromSegmentFormData.name && deleteFromSegmentFormData.name  || 'undefined segment name',
           formData: deleteFromSegmentFormData,
           initialFormData: this
-            .initialFormData as AddToSegmentAutomationFormData,
+            .initialFormData as DeleteFromSegmentAutomationFormData,
         };
         break;
       case 'ABN_NODE':

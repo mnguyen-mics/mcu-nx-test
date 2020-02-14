@@ -170,6 +170,7 @@ export type AutomationFormDataType =
   | ABNFormData
   | DisplayCampaignAutomationFormData
   | AddToSegmentAutomationFormData
+  | DeleteFromSegmentAutomationFormData
   | EmailCampaignAutomationFormData
   | QueryAutomationFormData
   | WaitFormData;
@@ -212,7 +213,7 @@ export function isAddToSegmentNode(
   return node.type === 'ADD_TO_SEGMENT_NODE';
 }
 
-export function isDeleteSegmentNode(
+export function isDeleteFromSegmentNode(
   node: AutomationNodeShape,
 ): node is DeleteFromSegmentNodeResource {
   return node.type === 'DELETE_FROM_SEGMENT_NODE';
