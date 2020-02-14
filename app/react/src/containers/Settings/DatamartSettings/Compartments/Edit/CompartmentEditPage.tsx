@@ -265,23 +265,14 @@ class CompartmentEditPage extends React.Component<Props, State> {
       return [...savePromises, ...deletePromises];
     };
 
-    const generateAllPromises = (
-      compartmentResource: UserAccountCompartmentDatamartSelectionResource,
-    ): Array<Promise<any>> => {
-      return [...generateProcessingSelectionsTasks(compartmentResource)];
-    };
+    const createOrUpdateCompartment = compartmentFormData.compartment.id
+      ? this.updateCompartment(compartmentFormData)
+      : this.createCompartment(organisationId, compartmentFormData);
 
-    const generateSavingPromise = (): Promise<any> => {
-      const compartmentPromise = compartmentFormData.compartment.id
-        ? this.updateCompartment(compartmentFormData)
-        : this.createCompartment(organisationId, compartmentFormData);
-
-      return compartmentPromise.then(compartment =>
-        Promise.all(generateAllPromises(compartment.data)),
-      );
-    };
-
-    generateSavingPromise()
+    return createOrUpdateCompartment
+      .then(compartment =>
+        Promise.all(generateProcessingSelectionsTasks(compartment.data)),
+      )
       .then(() => {
         hideSaveInProgress();
         this.onClose();
