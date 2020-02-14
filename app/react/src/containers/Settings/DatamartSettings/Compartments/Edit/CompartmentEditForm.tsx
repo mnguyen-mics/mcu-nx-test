@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { CompartmentFormData } from './domain';
-import { InjectedFormProps, ConfigProps, reduxForm, Form, FieldArray, GenericFieldArray, Field } from 'redux-form';
+import {
+  InjectedFormProps,
+  ConfigProps,
+  reduxForm,
+  Form,
+  FieldArray,
+  GenericFieldArray,
+  Field,
+} from 'redux-form';
 import { Omit } from '../../../../../utils/Types';
 import { Path } from '../../../../../components/ActionBar';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
@@ -22,7 +30,9 @@ import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormL
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
-import ProcessingActivitiesFormSection, { ProcessingActivitiesFormSectionProps } from '../../Common/ProcessingActivitiesFormSection';
+import ProcessingActivitiesFormSection, {
+  ProcessingActivitiesFormSectionProps,
+} from '../../Common/ProcessingActivitiesFormSection';
 
 export const FORM_ID = 'compartmentForm';
 
@@ -44,10 +54,7 @@ export interface CompartmentEditFormProps
   initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
 }
 
-type Props = InjectedFormProps<
-  CompartmentFormData,
-  CompartmentEditFormProps
-> &
+type Props = InjectedFormProps<CompartmentFormData, CompartmentEditFormProps> &
   CompartmentEditFormProps &
   InjectedIntlProps &
   InjectedFeaturesProps &
@@ -68,7 +75,7 @@ class CompartmentEditForm extends React.Component<Props> {
     const genericFieldArrayProps = {
       formChange: change,
       rerenderOnEveryChange: true,
-    }
+    };
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -85,25 +92,22 @@ class CompartmentEditForm extends React.Component<Props> {
       component: <GeneralFormSection />,
     });
 
-    const propsForProcessingActivities = {
-      ...genericFieldArrayProps,
-      initialProcessingSelectionsForWarning: initialProcessingSelectionsForWarning
-    };
-
     if (hasFeature('datamart-user_choices')) {
       sections.push({
         id: 'processingActivities',
         title: messages.sectionProcessingActivitiesTitle,
         component: (
           <ProcessingActivitiesFieldArray
-          name="processingActivities"
-          component={ProcessingActivitiesFormSection}
-          {...propsForProcessingActivities}
+            name="processingActivities"
+            component={ProcessingActivitiesFormSection}
+            initialProcessingSelectionsForWarning={
+              initialProcessingSelectionsForWarning
+            }
+            {...genericFieldArrayProps}
           />
-        )
-      })
+        ),
+      });
     }
-
 
     const datamartSideBarItem: SideBarItem = {
       sectionId: 'datamart',

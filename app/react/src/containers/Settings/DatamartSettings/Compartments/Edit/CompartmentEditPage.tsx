@@ -128,6 +128,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
           });
         })
         .catch(err => {
+          this.setState({ loading: false });
           notifyError(err);
           this.onClose();
         });
@@ -275,6 +276,9 @@ class CompartmentEditPage extends React.Component<Props, State> {
       )
       .then(() => {
         hideSaveInProgress();
+        this.setState({
+          loading: false,
+        });
         this.onClose();
       })
       .catch(err => {
