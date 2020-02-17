@@ -244,39 +244,21 @@ class SitesListPage extends React.Component<Props, SiteListState> {
   };
 
   fetchOrganisationSites = (organisationId: string) => {
-    const { notifyError } = this.props;
+    const { workspace } = this.props;
     const { filter } = this.state;
 
-    return this._channelService
-      .getChannelsByOrganisation(organisationId, { channel_type: 'SITE' })
-      .then(res => {
-        if (res.data.length === 0) {
-          this.setState({
-            noSiteYet: true,
-          });
-        } else {
-          const datamartId =
-            filter.datamartId &&
-            res.data.filter(channel => {
-              return channel.datamart_id === filter.datamartId;
-            }).length !== 0
-              ? filter.datamartId
-              : res.data[0].datamart_id;
+    const datamart = workspace(organisationId).datamarts.length > 0 && workspace(organisationId).datamarts[0];
 
-          const modifiedFilter: Filter = {
-            ...filter,
-            datamartId: datamartId,
-          };
+    if(!datamart)
+      return Promise.resolve();
 
-          this.setState({ filter: modifiedFilter }, () => {
-            this.fetchSites(organisationId, datamartId, filter);
-          });
-        }
-      })
-      .catch(err => {
-        this.setState({ isFetchingSites: false });
-        notifyError(err);
-      });
+    const modifiedFilter: Filter = {
+      ...filter,
+      datamartId: datamart.id,
+    };
+
+    this.setState({ filter: modifiedFilter });
+    return this.fetchSites(organisationId, datamart.id, filter);
   };
 
   fetchSites = (organisationId: string, datamartId: string, filter: Filter) => {
