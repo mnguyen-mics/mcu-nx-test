@@ -169,7 +169,6 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
         <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
 
           <Sider
-            style={collapsed ? {} : { overflow: 'auto' }}
             collapsible={true}
             collapsed={collapsed}
             trigger={this.renderTrigger()}

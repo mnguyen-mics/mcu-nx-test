@@ -197,7 +197,6 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
             <NavigatorSettingsMainMenu />
             <Layout>
               <Sider
-                style={collapsed ? {} : { overflow: 'auto' }}
                 collapsible={true}
                 collapsed={false}
                 trigger={this.renderSettingsTrigger()}
