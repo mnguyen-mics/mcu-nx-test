@@ -2,7 +2,7 @@ import {
   generateXAxisGridLine,
   generateYAxisGridLine,
   generateTooltip,
-} from '../../../../../components/Charts/domain';
+} from '../../../../components/Charts/domain';
 import chroma from 'chroma-js';
 
 export const sessionInTimeJsonConfig = [
@@ -64,7 +64,6 @@ export const sessionInTimeJsonConfig = [
 
 export const averageSessionDurationConfig = [
   {
-    title: 'Average session duration (Last 7 days)',
     layout: {
       'i': '0',
       'h': 1,
@@ -77,7 +76,7 @@ export const averageSessionDurationConfig = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: undefined
+          title: 'Average session duration (Last 7 days)',
         },
         metricName: 'avg_session_duration'
       }

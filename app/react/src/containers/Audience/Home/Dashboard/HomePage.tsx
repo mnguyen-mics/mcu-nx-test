@@ -24,7 +24,7 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import { averageSessionDurationConfig, channelEngagementConfig } from '../../DatamartUsersAnalytics/components/config/AnalyticsConfigJson';
+import { averageSessionDurationConfig, channelEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
 
