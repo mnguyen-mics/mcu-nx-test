@@ -11,6 +11,7 @@ import { compose } from 'recompose';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
 import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
+import { MetricCounterLoader } from '../MetricCounterLoader';
 
 const messages = defineMessages({
   noData: {
@@ -76,7 +77,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     const { chart, intl } = this.props;
     const { loading, reportViewApiResponse } = this.state;
 
-    if (loading) return <LoadingChart />
+    if (loading) return chart.type !== 'SINGLE_STAT' ? <LoadingChart /> : <MetricCounterLoader />
+
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
         {reportViewApiResponse && reportViewApiResponse.total_items > 0 ?

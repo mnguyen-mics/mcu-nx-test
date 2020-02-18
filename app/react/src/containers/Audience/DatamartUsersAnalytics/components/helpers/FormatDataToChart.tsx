@@ -219,11 +219,11 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
       case 'SINGLE_STAT':
         const formatedTime = moment.duration(data[0][chart.metricName] as number, "second").format("h[hr] m[min] s[s]");
         return (
-          <div className="dashboard-counter">
-            <div className="count-title">
+          <div className="mcs-metricCounter">
+            <div className="mcs-metricCounter_title">
               {chart.options.title}
             </div>
-            <div className="count-result">
+            <div className="mcs-metricCounter_result">
                 <Statistic className={'datamartUsersAnalytics_charts_singleStat'} value={formatedTime} />
             </div>
           </div>
