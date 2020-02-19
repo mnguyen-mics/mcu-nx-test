@@ -261,8 +261,15 @@ export class AutomationFormService implements IAutomationFormService {
                         value:
                           duration._months > 0
                             ? duration._months
-                            : duration.asDays(),
-                        unit: duration._months > 0 ? 'months' : 'days',
+                            : duration._days > 0
+                              ? duration._days
+                              : duration.asHours(),
+                        unit:
+                          duration._months > 0
+                            ? 'months'
+                            : duration._days > 0
+                              ? 'days'
+                              : 'hours',
                       },
                     };
                     return {

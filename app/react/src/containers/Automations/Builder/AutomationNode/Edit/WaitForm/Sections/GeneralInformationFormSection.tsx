@@ -31,12 +31,24 @@ export const messages = defineMessages({
   },
   durationSubtitle: {
     id: 'automation.builder.node.waitNodeForm.duration.subtitle',
-    defaultMessage: 'Time to wait before moving to the next node in the scenario.'
+    defaultMessage: 'Time to wait before moving to the next node.'
   },
   durationPlaceholder: {
     id: 'automation.builder.node.waitNodeForm.duration.placeholder',
     defaultMessage: 'Enter the duration'
-  }
+  },
+  durationUnitHours: {
+    id: 'automation.builder.node.waitNodeForm.duration.unit.hours',
+    defaultMessage: "Hours",
+  },
+  durationUnitDays: {
+    id: 'automation.builder.node.waitNodeForm.duration.unit.days',
+    defaultMessage: "Days",
+  },
+  durationUnitMonths: {
+    id: 'automation.builder.node.waitNodeForm.duration.unit.months',
+    defaultMessage: "Months",
+  },
 });
 
 interface GeneralInformationFormSectionProps {
@@ -99,17 +111,17 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                   {
                     key: 'hours',
                     value: 'hours',
-                    title: 'Hours'
+                    title: formatMessage(messages.durationUnitHours)
                   },
                   {
                     key: 'days',
                     value: 'days',
-                    title: 'Days'
+                    title: formatMessage(messages.durationUnitDays)
                   },
                   {
                     key: 'months',
                     value: 'months',
-                    title: 'Months'
+                    title: formatMessage(messages.durationUnitMonths)
                   },
                 ]}
               />

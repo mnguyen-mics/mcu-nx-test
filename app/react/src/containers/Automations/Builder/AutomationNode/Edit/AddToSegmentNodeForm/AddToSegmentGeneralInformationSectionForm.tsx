@@ -196,10 +196,6 @@ export const messages = defineMessages({
     id: 'automation.builder.node.addToSegmentForm.ttl.unit.days',
     defaultMessage: "Days",
   },
-  audienceSegmentTTLUnitWeeks: {
-    id: 'automation.builder.node.addToSegmentForm.ttl.unit.weeks',
-    defaultMessage: "Weeks",
-  },
   audienceSegmentTTLUnitMonths: {
     id: 'automation.builder.node.addToSegmentForm.ttl.unit.months',
     defaultMessage: "Months",
