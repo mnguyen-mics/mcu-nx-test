@@ -107,9 +107,12 @@ const conditionNode2: ScenarioNodeShape = {
   name: 'Wait',
   type: 'WAIT_NODE',
   scenario_id: '',
-  timeout: 1000,
+  delay_period: 'PT1H',
   formData: {
-    timeout: 1000,
+    wait_duration: {
+      unit: 'hours',
+      value: '1'
+    },
     name: '',
   },
 };

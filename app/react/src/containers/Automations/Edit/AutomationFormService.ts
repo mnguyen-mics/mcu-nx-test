@@ -250,14 +250,27 @@ export class AutomationFormService implements IAutomationFormService {
                 }));
                 break;
               case 'WAIT_NODE':
-                const waitFormData: WaitFormData = {
-                  timeout: n.timeout,
-                  name: 'Wait',
-                };
-                getPromise = Promise.resolve().then(() => ({
-                  ...n,
-                  formData: waitFormData,
-                }));
+                getPromise = Promise.resolve().then(() => {
+                    // We type it any as Duration have a field _months that we can't access otherwise
+                    const duration: any = moment.duration(
+                      n.delay_period,
+                    );
+                    const initialValues: WaitFormData = {
+                      name: 'Wait',
+                      wait_duration: {
+                        value:
+                          duration._months > 0
+                            ? duration._months
+                            : duration.asDays(),
+                        unit: duration._months > 0 ? 'months' : 'days',
+                      },
+                    };
+                    return {
+                      ...n,
+                      formData: initialValues,
+                      initialValuesForm: initialValues,
+                    };
+                });
                 break;
               case 'QUERY_INPUT':
                 getPromise = this._queryService
@@ -732,9 +745,9 @@ export class AutomationFormService implements IAutomationFormService {
         scenario_id: automationId,
         x: node.x,
         y: node.y,
-        timeout: node.formData
-          ? node.formData.timeout
-          : 24 * 1000 * 60 * 60 * 2, // 2 days
+        delay_period: moment
+          .duration(+node.formData.wait_duration.value, node.formData.wait_duration.unit)
+          .toISOString(),
         type: 'WAIT_NODE',
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;

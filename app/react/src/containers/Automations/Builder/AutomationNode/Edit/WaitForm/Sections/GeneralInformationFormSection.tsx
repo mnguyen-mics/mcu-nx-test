@@ -5,6 +5,8 @@ import {
   FormInput,
   FormSection,
   FormInputField,
+  FormAddonSelectField,
+  AddonSelect,
 } from '../../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
@@ -16,17 +18,25 @@ import { DefaultFormData } from '../../domain';
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id: 'automation.builder.node.edition.form.general.title',
+    id: 'automation.builder.node.waitNodeForm.general.title',
     defaultMessage: 'General Informations',
   },
   sectionGeneralSubtitle: {
-    id: 'automation.builder.node.edition.form.general.subtitle',
+    id: 'automation.builder.node.waitNodeForm.general.subtitle',
     defaultMessage: 'Modify the general information of the node',
   },
-  waitNodeTimeout: {
-    id: 'automation.builder.node.form.wait.timeout',
-    defaultMessage: 'Timeout in milliseconds (ms)',
+  durationTitle: {
+    id: 'automation.builder.node.waitNodeForm.duration.title',
+    defaultMessage: "Duration"
   },
+  durationSubtitle: {
+    id: 'automation.builder.node.waitNodeForm.duration.subtitle',
+    defaultMessage: 'Time to wait before moving to the next node in the scenario.'
+  },
+  durationPlaceholder: {
+    id: 'automation.builder.node.waitNodeForm.duration.placeholder',
+    defaultMessage: 'Enter the duration'
+  }
 });
 
 interface GeneralInformationFormSectionProps {
@@ -57,7 +67,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
   render() {
     const {
-      fieldValidators: { isRequired, isValidInteger },
+      fieldValidators: { isRequired, isValidInteger, isNotZero },
       intl: { formatMessage },
       disabled
     } = this.props;
@@ -70,16 +80,44 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
         />
 
         <FormInputField
-          name="timeout"
+          name="wait_duration.value"
           component={FormInput}
-          validate={[isRequired, isValidInteger]}
+          validate={[isRequired, isValidInteger, isNotZero]}
           formItemProps={{
-            label: formatMessage(messages.waitNodeTimeout),
+            label: formatMessage(messages.durationTitle),
             required: true,
           }}
           inputProps={{
-            type: 'number',
-            disabled: !!disabled
+            disabled: !!disabled,
+            placeholder: formatMessage(messages.durationPlaceholder),
+            addonAfter: (
+              <FormAddonSelectField
+                name="wait_duration.unit"
+                component={AddonSelect}
+                disabled={disabled}
+                options={[
+                  {
+                    key: 'hours',
+                    value: 'hours',
+                    title: 'Hours'
+                  },
+                  {
+                    key: 'days',
+                    value: 'days',
+                    title: 'Days'
+                  },
+                  {
+                    key: 'months',
+                    value: 'months',
+                    title: 'Months'
+                  },
+                ]}
+              />
+            ),
+            style: { width: '100%' },
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.durationSubtitle),
           }}
           small={true}
         />

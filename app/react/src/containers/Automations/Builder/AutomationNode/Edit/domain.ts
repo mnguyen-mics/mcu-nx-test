@@ -36,7 +36,10 @@ export interface ABNFormData extends DefaultFormData {
 }
 
 export interface WaitFormData extends DefaultFormData {
-  timeout: number;
+  wait_duration: {
+    value: string,
+    unit: 'days' | 'months' | 'hours',
+  }
 }
 
 export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormData = {
@@ -142,7 +145,10 @@ export const INITIAL_QUERY_DATA: (datamartId: string) => QueryAutomationFormData
 
 export const INITIAL_WAIT_DATA: WaitFormData = {
   name: 'Wait',
-  timeout: 1000 * 60 * 60 * 24 * 2 // 2 days
+  wait_duration: {
+    unit: 'days',
+    value: '2'
+  }
 }
 
 export interface DisplayCampaignAutomationFormData extends DefaultFormData, DisplayCampaignFormData {
@@ -153,7 +159,7 @@ export interface EmailCampaignAutomationFormData extends DefaultFormData, EmailC
 
 export interface AddToSegmentAutomationFormData extends DefaultFormData {
   ttl: {
-    value: '',
+    value: string,
     unit: 'days' | 'months',
   }
 }
