@@ -22,7 +22,12 @@ class AutomationLinkWidget extends React.Component<Props> {
   generateLabel() {
     return this.props.link.labels.map(label => {
       return (
-        <foreignObject key={label.type} className="link-label" width='100%' height='100%'>
+        <foreignObject 
+          key={label.type} 
+          className="link-label" 
+          width='100%' 
+          height='100%' 
+          style={{overflow: 'visible'}}>
           <div ref={lab => (this.refLabel = lab)}>{label.type}</div>
         </foreignObject>	
       );
