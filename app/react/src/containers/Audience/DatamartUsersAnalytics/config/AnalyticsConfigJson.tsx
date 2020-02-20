@@ -9,12 +9,12 @@ export const sessionInTimeJsonConfig = [
   {
     title: 'Session in time',
     layout: {
-      i: '1',
-      h: 3,
-      static: false,
-      w: 6,
-      x: 0,
-      y: 6,
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 0,
+      'y': 0
     },
     charts: [
       {
@@ -22,40 +22,41 @@ export const sessionInTimeJsonConfig = [
         options: {
           title: undefined,
           height: 300,
-          colors: ['#2fa1de'],
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
-            enabled: false,
+            enabled: false
           },
           chart: {
-            reflow: true,
+            reflow: true
           },
           xAxis: {
             ...generateXAxisGridLine(),
             type: 'datetime',
             dateTimeLabelFormats: {
-              day: '%d %b %Y', // ex- 01 Jan 2016
+              day: '%d %b %Y'    // ex- 01 Jan 2016
             },
             title: {
-              text: null,
-            },
+              text: null
+            }
           },
           time: { timezoneOffset: -60, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
-              text: null,
-            },
+              text: null
+            }
           },
           legend: {
-            enabled: false,
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
           },
           tooltip: {
             shared: true,
-            ...generateTooltip(),
-          },
+            ...generateTooltip()
+          }
         },
-
-        dimensions: ['date_yyyy_mm_dd'],
+        dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
         metricName: 'sessions',
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -72,8 +73,8 @@ export const sessionInTimeJsonConfig = [
             }
           ]
         },
-      },
-    ],
+      }
+    ]
   },
 ];
 
@@ -157,14 +158,16 @@ export const channelEngagementConfig = [
             }
           },
           legend: {
-            enabled: false
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
           },
           tooltip: {
             shared: true,
             ...generateTooltip()
           }
         },
-        dimensions: ['date_yyyy_mm_dd'],
+        dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
         metricName: 'sessions',
         dimensionFilterClauses: {
           'operator': 'OR',

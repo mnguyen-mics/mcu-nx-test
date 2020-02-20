@@ -38,6 +38,7 @@ export interface AreaSeriesDataOptions {
   fillColor: Highcharts.ColorString | Highcharts.GradientColorObject | Highcharts.PatternObject;
   fillOpacity: number;
   data: number[][];
+  visible?: boolean;
   type: 'area';
   color?: string;
 }

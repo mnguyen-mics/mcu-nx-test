@@ -47,13 +47,14 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         ];
       case 'AREA':
         return dataset.reduce((acc: AreaSeriesDataOptions[], d: Dataset) => {
-          const found = acc.find((a: AreaSeriesDataOptions) => a.name === chart.metricName);
+          const found = acc.find((a: AreaSeriesDataOptions) => a.name === d[chart.dimensions[0]]);
 
           const value = d[chart.metricName];
-          const xValue = chart.dimensions[0] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[0]] as string) : d[chart.dimensions[0]];
+          const xValue = chart.dimensions[2] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[2]] as string) : d[chart.dimensions[2]];
           if (!found) {
             acc.push({
-              name: chart.metricName as string,
+              visible: acc.length < 4,
+              name: d[chart.dimensions[0]] as string,
               data: [[xValue, value]] as number[][],
               fillOpacity: 0.5,
               fillColor: {
