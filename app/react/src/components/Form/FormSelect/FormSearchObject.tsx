@@ -139,9 +139,9 @@ class FormSearchObject extends React.Component<
   onInputKeyDown = () => {
     const { input } = this.props;
     const { value, currentValue } = this.state;
-    const formattedValue: LabeledValue[] = [];
+    let formattedValue: LabeledValue[] = [];
     if (value) {
-      formattedValue.concat(value)
+      formattedValue = formattedValue.concat(value)
     }
     const finalValue = [...formattedValue.map(i => i.key)];
     if (currentValue) {
