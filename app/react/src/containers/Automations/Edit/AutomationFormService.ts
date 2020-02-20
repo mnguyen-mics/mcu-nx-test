@@ -770,6 +770,8 @@ export class AutomationFormService implements IAutomationFormService {
           .then(() =>
             this._scenarioService.createScenarioEdge(automationId, {
               ..._.omit(customEdgeData.edgeResource, ['id']),
+              source_id: customEdgeData.source_id,
+              target_id: customEdgeData.target_id,
             }),
           )
           .then(() => {
