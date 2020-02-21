@@ -90,6 +90,7 @@ class ImportsContentContainer extends React.Component<
 
     const options = {
       allow_administrator: true,
+      archived: false,
     };
     if (!noFilterDatamart) {
       this._datamartService.getDatamarts(organisationId, options)
@@ -142,6 +143,7 @@ class ImportsContentContainer extends React.Component<
     ) {
       const options = {
         allow_administrator: true,
+        archived: false,
       };
 
       const newFilter = {
