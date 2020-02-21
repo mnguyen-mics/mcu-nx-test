@@ -67,7 +67,7 @@ type Props = RouteComponentProps<RouterProps> &
 class MlFunctionsContent extends Component<
   Props,
   MlFunctionsContentState
-> {
+  > {
   @lazyInject(TYPES.IMlFunctionService)
   private _mlFunctionService: IMlFunctionService;
 
@@ -88,7 +88,7 @@ class MlFunctionsContent extends Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._mlFunctionService.listMlFunctions(options).then(
+      this._mlFunctionService.listMlFunctions(organisationId, options).then(
         (results) => {
           const promises = results.data.map(sp => {
             return new Promise((resolve, reject) => {
@@ -173,7 +173,7 @@ class MlFunctionsContent extends Component<
 
     history.push(
       `/v2/o/${organisationId}/settings/datamart/ml_functions/${
-        mlFunction.id
+      mlFunction.id
       }/edit`,
     );
   };
@@ -189,14 +189,14 @@ class MlFunctionsContent extends Component<
     const actionsColumnsDefinition: Array<
       ActionsColumnDefinition<MlFunction>
     > = [
-      {
-        key: 'action',
-        actions: () => [
-          { intlMessage: messages.edit, callback: this.onClickEdit },
-          { intlMessage: messages.archive, callback: this.onClickArchive },
-        ],
-      },
-    ];
+        {
+          key: 'action',
+          actions: () => [
+            { intlMessage: messages.edit, callback: this.onClickEdit },
+            { intlMessage: messages.archive, callback: this.onClickArchive },
+          ],
+        },
+      ];
 
     const dataColumnsDefinition = [
       {
@@ -218,7 +218,7 @@ class MlFunctionsContent extends Component<
             className="mcs-campaigns-link"
             to={`/v2/o/${organisationId}/settings/datamart/ml_functions/${
               record.id
-            }/edit`}
+              }/edit`}
           >
             {text}
           </Link>
