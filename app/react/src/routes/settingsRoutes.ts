@@ -53,7 +53,6 @@ import ProcessingEditPage from '../containers/Settings/OrganisationSettings/Proc
 import CompartmentsListPage from '../containers/Settings/DatamartSettings/Compartments/CompartmentsListPage';
 import CompartmentEditPage from '../containers/Settings/DatamartSettings/Compartments/Edit/CompartmentEditPage';
 import DatamartReplicationEditPage from '../containers/Settings/DatamartSettings/DatamartReplication/Edit/DatamartReplicationEditPage';
-import DatamartReplicationDashboard from '../containers/Settings/DatamartSettings/DatamartReplication/Dashboard/DatamartReplicationDashboard';
 import ChannelsListPage from '../containers/Settings/DatamartSettings/Channels/List/ChannelsListPage';
 
 export const settingsDefinition: NavigatorDefinition = {
@@ -157,46 +156,38 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'datamartSettings-datamart_replication',
     requireDatamart: true,
   },
-  settingsDatamartReplicationDashboard: {
-    path:
-      '/settings/datamart/my_datamart/:datamartId/datamart_replication/:datamartReplicationId',
-    layout: 'settings',
-    contentComponent: DatamartReplicationDashboard,
-    requiredFeature: 'datamartSettings-datamarts',
-    requireDatamart: true,
-  },
 
   // datamart
   settingsDatamartDatamartList: {
-    path: '/settings/datamart/my_datamart',
+    path: '/settings/datamart/datamarts',
     layout: 'settings',
     contentComponent: DatamartsListPage,
     requiredFeature: 'datamartSettings-datamarts',
     requireDatamart: true,
   },
   settingsDatamartDatamartView: {
-    path: '/settings/datamart/my_datamart/:datamartId',
+    path: '/settings/datamart/datamarts/:datamartId',
     layout: 'settings',
     contentComponent: DatamartViewPage,
     requiredFeature: 'datamartSettings-datamarts',
     requireDatamart: true,
   },
   settingsDatamartDatamartEdition: {
-    path: '/settings/datamart/my_datamart/:datamartId/edit',
+    path: '/settings/datamart/datamarts/:datamartId/edit',
     layout: 'edit',
     editComponent: DatamartEditPage,
     requiredFeature: 'datamartSettings-datamarts',
     requireDatamart: true,
   },
   settingsDatamartServiceUsageReport: {
-    path: '/settings/datamart/my_datamart/:datamartId/service_usage_report',
+    path: '/settings/datamart/datamarts/:datamartId/service_usage_report',
     layout: 'settings',
     contentComponent: ServiceUsageReportListPage,
     requiredFeature: 'datamartSettings-service_usage_report',
     requireDatamart: true,
   },
   settingsDatamartSources: {
-    path: '/settings/datamart/my_datamart/:datamartId/sources',
+    path: '/settings/datamart/datamarts/:datamartId/sources',
     layout: 'settings',
     contentComponent: SourcesListPage,
     requiredFeature: 'datamartSettings-datamarts',

@@ -6,7 +6,6 @@ import { SitesListPage } from '../../Sites/List';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import CompartmentsContainer from '../../Compartments/List/CompartmentsContainer';
 import CleaningRulesContainer from '../../CleaningRules/List/CleaningRulesContainer';
-import { DatamartReplicationListPage } from '../../DatamartReplication/List';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 
 export interface DatamartConfigTabProps {
@@ -61,19 +60,6 @@ class DatamartConfigTab extends React.Component<Props, State> {
     });
   };
 
-  displayDatamartReplicationList = () => {
-    const { hasFeature } = this.props;
-    return (
-      hasFeature('datamartSettings-datamart_replication') && (
-        <Row>
-          <Col>
-            <DatamartReplicationListPage />
-          </Col>
-        </Row>
-      )
-    );
-  };
-
   public render() {
     const { datamartId } = this.props;
 
@@ -91,7 +77,6 @@ class DatamartConfigTab extends React.Component<Props, State> {
             <SitesListPage datamartId={datamartId} />
           </Col>
         </Row>
-        {this.displayDatamartReplicationList()}
         <Row>
           <Col>
             <CompartmentsContainer

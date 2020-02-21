@@ -12,9 +12,7 @@ export interface ChannelResource {
 
 export type ChannelResourceShape = MobileApplicationResource | SiteResource;
 
-export type ChannelType =
-  | 'MOBILE_APPLICATION'
-  | 'SITE';
+export type ChannelType = 'MOBILE_APPLICATION' | 'SITE';
 
 export interface MobileApplicationResource extends ChannelResource {
   type: 'MOBILE_APPLICATION';
@@ -104,6 +102,8 @@ export interface Aliases {
 
 export type ReplicationType = 'GOOGLE_PUBSUB';
 
+export type ReplicationStatus = 'PAUSED' | 'ACTIVE' | 'ERROR';
+
 export type DatamartReplicationResourceShape = PubSubReplicationResource;
 
 export interface DatamartReplicationResource {
@@ -111,6 +111,7 @@ export interface DatamartReplicationResource {
   name: string;
   datamart_id: string;
   type: ReplicationType;
+  status: ReplicationStatus;
 }
 
 export interface PubSubReplicationResource extends DatamartReplicationResource {
@@ -122,7 +123,7 @@ export interface PubSubReplicationResource extends DatamartReplicationResource {
 // Waiting for backend
 interface DatamartReplicationJobExecutionParameters {}
 interface DatamartReplicationJobExecutionResult {
-  total_failure?: number
+  total_failure?: number;
 }
 
 export type DatamartReplicationJobExecutionResource = BaseExecutionResource<

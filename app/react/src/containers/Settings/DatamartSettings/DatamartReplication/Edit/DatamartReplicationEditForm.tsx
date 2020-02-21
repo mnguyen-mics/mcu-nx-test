@@ -20,6 +20,7 @@ import { Omit } from '../../../../../utils/Types';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import CustomFormSection from './Sections/CustomFormSection';
+import ActivationFormSection from './Sections/ActivationFormSection';
 
 const Content = Layout.Content;
 
@@ -74,6 +75,12 @@ class DatamartReplicationEditForm extends React.Component<Props> {
         component: <CustomFormSection />,
       });
     }
+
+    sections.push({
+      id: 'activation',
+      title: messages.sectionActivationTitle,
+      component: <ActivationFormSection formChange={this.props.change} />,
+    });
 
     const sideBarProps: SidebarWrapperProps = {
       items: sections.map(s => ({ sectionId: s.id, title: s.title })),

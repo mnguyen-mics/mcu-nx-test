@@ -24,14 +24,20 @@ import { TYPES } from '../../../../../constants/types';
 import { IDatamartReplicationService } from '../../../../../services/DatamartReplicationService';
 import DatamartReplicationCard from './DatamartReplicationCard';
 import DatamartReplicationEditForm from './DatamartReplicationEditForm';
-import { ReplicationType } from '../../../../../models/settings/settings';
+import {
+  ReplicationType,
+  ReplicationStatus,
+} from '../../../../../models/settings/settings';
 import { FormTitle } from '../../../../../components/Form';
+import DatamartSelector from '../../../../Audience/Common/DatamartSelector';
+import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 
 interface State {
   datamartReplicationData: DatamartReplicationFormData;
   isLoading: boolean;
   selectedType?: ReplicationType;
   replicationTypes: string[];
+  datamartId?: string;
 }
 
 type Props = InjectedIntlProps &
@@ -58,6 +64,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         params: { datamartId, datamartReplicationId },
       },
       notifyError,
+      location: { state },
     } = this.props;
     if (datamartReplicationId) {
       this.setState({
@@ -70,6 +77,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
             datamartReplicationData: response.data,
             isLoading: false,
             selectedType: response.data.type,
+            datamartId: response.data.datamart_id,
           });
         })
         .catch(err => {
@@ -78,6 +86,10 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
             isLoading: false,
           });
         });
+    } else if (state && state.datamartId) {
+      this.setState({
+        datamartId: state.datamartId,
+      });
     }
   }
 
@@ -108,10 +120,14 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       ...formDataWithoutCredentialsUri
     } = datamartReplicationFormData;
     if (datamartId) {
+      const replicationStatus = datamartReplicationFormData.status
+        ? 'ACTIVE'
+        : 'PAUSED';
       const newFormData = {
         ...formDataWithoutCredentialsUri,
         datamart_id: datamartId,
         type: selectedType,
+        status: replicationStatus as ReplicationStatus,
       };
       const promise = datamartReplicationId
         ? this._datamartReplicationService.updateDatamartReplication(
@@ -155,12 +171,6 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
             isLoading: false,
           });
         });
-    } else {
-      hideSaveInProgress();
-      this.setState({
-        isLoading: false,
-      });
-      message.warning(intl.formatMessage(messages.noDatamartId), 5);
     }
   };
 
@@ -172,10 +182,10 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       location: { state },
     } = this.props;
     return state && !!state.datamartId
-      ? `/v2/o/${organisationId}/settings/datamart/my_datamart/${state.datamartId}`
+      ? `/v2/o/${organisationId}/settings/datamart/datamarts/${state.datamartId}`
       : datamartId
-      ? `/v2/o/${organisationId}/settings/datamart/my_datamart/${datamartId}`
-      : `/v2/o/${organisationId}/settings/datamart/my_datamart`;
+      ? `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`
+      : `/v2/o/${organisationId}/settings/datamart/datamarts`;
   };
 
   onClose = () => {
@@ -217,6 +227,12 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     ));
   };
 
+  onDatamartSelect = (datamart: DatamartResource) => {
+    this.setState({
+      datamartId: datamart.id,
+    });
+  };
+
   render() {
     const {
       match: {
@@ -225,7 +241,12 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const { isLoading, datamartReplicationData, selectedType } = this.state;
+    const {
+      isLoading,
+      datamartReplicationData,
+      selectedType,
+      datamartId,
+    } = this.state;
 
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
@@ -252,7 +273,9 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       onClose: this.onClose,
     };
 
-    return selectedType ? (
+    return !datamartId ? (
+      <DatamartSelector onSelect={this.onDatamartSelect} />
+    ) : selectedType ? (
       <DatamartReplicationEditForm
         initialValues={datamartReplicationData}
         onSubmit={this.save}
