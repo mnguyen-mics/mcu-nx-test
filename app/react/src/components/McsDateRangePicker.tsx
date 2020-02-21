@@ -15,6 +15,7 @@ export interface McsDateRangePickerProps {
   values: McsDateRangeValue;
   onChange: (values: McsDateRangeValue) => void;
   format?: string;
+  disabled?: boolean;
 }
 
 interface McsDateRangePickerState {
@@ -42,13 +43,13 @@ const ranges: Range[] = [
   },
   {
     name: 'LAST_7_DAYS',
-    from: 'now-7d',
-    to: 'now',
+    from: 'now-8d',
+    to: 'now-1d',
   },
   {
     name: 'LAST_30_DAYS',
-    from: 'now-30d',
-    to: 'now',
+    from: 'now-31d',
+    to: 'now-1d',
   },
 ];
 
@@ -152,7 +153,7 @@ class McsDateRangePicker extends React.Component<
   };
 
   renderRangesDropdown() {
-    const { intl } = this.props;
+    const { intl, disabled } = this.props;
 
     const menu = (
       <Menu onClick={this.handleDropdownMenuClick}>
@@ -173,7 +174,7 @@ class McsDateRangePicker extends React.Component<
     );
 
     return (
-      <Dropdown overlay={menu} trigger={['click']}>
+      <Dropdown overlay={menu} trigger={['click']} disabled={disabled}>
         <Button>
           <Icon type="calendar" />
           {this.getSelectedPresettedRange()}

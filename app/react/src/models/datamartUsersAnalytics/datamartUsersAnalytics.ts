@@ -9,7 +9,7 @@ export type Dataset = { [key: string]: string | number | Date | undefined };
 export interface Chart {
   type: ChartType;
   options: Highcharts.Options;
-  xKey: DatamartUsersAnalyticsDimension;
+  dimensions: DatamartUsersAnalyticsDimension[];
   yKey: string | number;
   metricName: DatamartUsersAnalyticsMetric;
   dimensionFilterClauses?: DimensionFilterClause;

@@ -13,31 +13,29 @@ export type DatamartUsersAnalyticsMetric = 'sessions' | 'avg_session_duration';
 export function buildDatamartUsersAnalyticsRequestBody(
   datamartId: string,
   metric: DatamartUsersAnalyticsMetric,
-  dimension?: DatamartUsersAnalyticsDimension,
+  from: McsMoment,
+  to: McsMoment,
+  dimensions?: DatamartUsersAnalyticsDimension[],
   dimensionFilterClauses?: DimensionFilterClause
 ): ReportRequestBody {
-  const date7daysAgo: string = new McsMoment('now-7d').toMoment().utc(false).startOf('day').format().replace('Z', '');
-  const dimensionsList: DatamartUsersAnalyticsDimension[] = [];
-  if (dimension) {
-    dimensionsList.push(dimension);
-  }
+  const startDate: string = new McsMoment(from.value).toMoment().utc(false).startOf('day').format().replace('Z', '');
+  const endDate: string = new McsMoment(to.value).toMoment().utc(false).endOf('day').format().replace('Z', '');
+  const dimensionsList: DatamartUsersAnalyticsDimension[] = dimensions || [];
   const metricsList: DatamartUsersAnalyticsMetric[] = [metric];
-  return buildReport(date7daysAgo, dimensionsList, metricsList, dimensionFilterClauses);
+  return buildReport(startDate, endDate, dimensionsList, metricsList, dimensionFilterClauses);
 }
 
 function buildReport(
   startDate: string,
+  endDate: string,
   dimensionsList: DatamartUsersAnalyticsDimension[],
   metricsList: DatamartUsersAnalyticsMetric[],
   dimensionFilterClauses?: DimensionFilterClause
 ): ReportRequestBody {
 
-  // DATE RANGE
-  const dateNow: string = new McsMoment('now-1d').toMoment().utc(false).endOf('day').format().replace('Z', '');
-
   const dateRange: DateRange = {
     start_date: startDate,
-    end_date: dateNow,
+    end_date: endDate,
   };
 
   const dateRanges: DateRange[] = [dateRange];

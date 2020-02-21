@@ -12,6 +12,8 @@ import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
 import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
 import { MetricCounterLoader } from '../MetricCounterLoader';
+import McsMoment from '../../../../../utils/McsMoment';
+import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 
 const messages = defineMessages({
   noData: {
@@ -25,6 +27,8 @@ type Props = ApiQueryWrapperProps & InjectedNotificationProps & InjectedIntlProp
 export interface ApiQueryWrapperProps {
   chart: Chart;
   datamartId: string;
+  dateRange: McsDateRangeValue;
+  onChange: (isLoading: boolean) => void;
 }
 
 interface State {
@@ -43,33 +47,73 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       reportViewApiResponse: undefined
     };
   }
-
   componentDidMount() {
-    const { datamartId, chart } = this.props;
-    this.fetchAnalytics(datamartId, chart.metricName, chart.xKey, chart.dimensionFilterClauses);
+    const { 
+      datamartId, 
+      chart,
+      onChange
+    } = this.props;
+      this.fetchAnalytics(
+        onChange,
+        datamartId, 
+        chart.metricName, 
+        new McsMoment('now-8d'), 
+        new McsMoment('now-1d'), 
+        chart.dimensions, 
+        chart.dimensionFilterClauses
+      );
   }
 
+  componentDidUpdate(prevProps: ApiQueryWrapperProps) {
+    const { 
+      datamartId, 
+      chart, 
+      dateRange,
+      onChange
+    } = this.props;
+    if (
+      (prevProps.dateRange.from.value && prevProps.dateRange.to.value) && 
+      (prevProps.dateRange.from.value !== dateRange.from.value || prevProps.dateRange.to.value !== dateRange.to.value)) {
+      this.fetchAnalytics(
+        onChange,
+        datamartId, 
+        chart.metricName, 
+        dateRange.from, 
+        dateRange.to, 
+        chart.dimensions, 
+        chart.dimensionFilterClauses,
+      );
+    }
+  }
+  
   fetchAnalytics = (
-      datamartId: string,
-      metric: DatamartUsersAnalyticsMetric,
-      dimension?: DatamartUsersAnalyticsDimension, 
-      dimensionFilterClauses?: DimensionFilterClause
-    ) => {
+    onChange: (isLoading: boolean) => void,
+    datamartId: string,
+    metric: DatamartUsersAnalyticsMetric,
+    from: McsMoment,
+    to: McsMoment,
+    dimensions?: DatamartUsersAnalyticsDimension[],
+    dimensionFilterClauses?: DimensionFilterClause,
+
+  ) => {
     this.setState({
       loading: true
     });
-    return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, dimension, dimensionFilterClauses)
+    onChange(true);
+    return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, from, to, dimensions, dimensionFilterClauses)
       .then(res => {
         this.setState({
           loading: false,
           reportViewApiResponse: res.data.report_view
         });
+        onChange(false);
       })
       .catch(e => {
         this.props.notifyError(e);
         this.setState({
           loading: false
         });
+        onChange(false);
       });
   }
 
@@ -88,7 +132,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, ApiQueryWrapperProps>(
+export default compose<ApiQueryWrapperProps, ApiQueryWrapperProps>(
   injectNotifications,
   injectIntl
 )(ApiQueryWrapper);
