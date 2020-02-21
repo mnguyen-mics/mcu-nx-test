@@ -7,6 +7,7 @@ import { injectable } from 'inversify';
 export interface IMlFunctionService
   extends PluginInstanceService<MlFunctionResource> {
   listMlFunctions: (
+    organisationId: string,
     options?: MlFunctionQueryStringParameters,
   ) => Promise<DataListResponse<MlFunctionResource>>;
   getMlFunctions: (
@@ -33,10 +34,15 @@ export class MlFunctionService extends PluginInstanceService<MlFunctionResource>
   }
 
   listMlFunctions(
+    organisationId: string,
     options?: MlFunctionQueryStringParameters,
   ): Promise<DataListResponse<MlFunctionResource>> {
     const endpoint = `ml_functions`;
-    return ApiService.getRequest(endpoint);
+    const params = {
+      organisation_id: organisationId,
+      ...options,
+    };
+    return ApiService.getRequest(endpoint, params);
   }
   getMlFunctions(
     mlFunctionId: string,
