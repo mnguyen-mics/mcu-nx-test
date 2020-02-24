@@ -259,17 +259,13 @@ export class AutomationFormService implements IAutomationFormService {
                       name: 'Wait',
                       wait_duration: {
                         value:
-                          duration._months > 0
-                            ? duration._months
-                            : duration._days > 0
-                              ? duration._days
-                              : duration.asHours(),
+                          duration._days > 0
+                            ? duration._days
+                            : duration.asHours(),
                         unit:
-                          duration._months > 0
-                            ? 'months'
-                            : duration._days > 0
-                              ? 'days'
-                              : 'hours',
+                          duration._days > 0
+                            ? 'days'
+                            : 'hours',
                       },
                     };
                     return {

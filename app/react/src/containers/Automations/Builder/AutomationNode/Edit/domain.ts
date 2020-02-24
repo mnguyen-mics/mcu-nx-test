@@ -38,7 +38,7 @@ export interface ABNFormData extends DefaultFormData {
 export interface WaitFormData extends DefaultFormData {
   wait_duration: {
     value: string,
-    unit: 'days' | 'months' | 'hours',
+    unit: 'days' | 'hours',
   }
 }
 

@@ -45,10 +45,6 @@ export const messages = defineMessages({
     id: 'automation.builder.node.waitNodeForm.duration.unit.days',
     defaultMessage: "Days",
   },
-  durationUnitMonths: {
-    id: 'automation.builder.node.waitNodeForm.duration.unit.months',
-    defaultMessage: "Months",
-  },
 });
 
 interface GeneralInformationFormSectionProps {
@@ -117,11 +113,6 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                     key: 'days',
                     value: 'days',
                     title: formatMessage(messages.durationUnitDays)
-                  },
-                  {
-                    key: 'months',
-                    value: 'months',
-                    title: formatMessage(messages.durationUnitMonths)
                   },
                 ]}
               />
