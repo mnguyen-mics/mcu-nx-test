@@ -1,3 +1,6 @@
+import { IOrganisationService } from './../../../../services/OrganisationService';
+import { ProcessingSelectionResource } from './../../../../models/consent/UserConsentResource';
+import { DataListResponse } from './../../../../services/ApiService';
 import { IAudienceSegmentService } from './../../../../services/AudienceSegmentService';
 import moment from 'moment';
 import { AudienceSegmentFormData } from './domain';
@@ -13,6 +16,7 @@ import { DataResponse } from '../../../../services/ApiService';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
+import { createFieldArrayModel } from '../../../../utils/FormHelper';
 
 export interface IAudienceSegmentFormService {
   loadSegmentInitialValue: (
@@ -25,6 +29,22 @@ export interface IAudienceSegmentFormService {
     queryLanguage?: QueryLanguage,
     queryContainer?: any,
   ) => Promise<DataResponse<AudienceSegmentShape> | void>;
+
+  getProcessingSelectionsByAudienceSegment: (
+    segmentId: string,
+  ) => Promise<DataListResponse<ProcessingSelectionResource>>;
+  createProcessingSelectionForAudienceSegment: (
+    segmentId: string,
+    body: Partial<ProcessingSelectionResource>,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
+  getAudienceSegmentProcessingSelection: (
+    segmentId: string,
+    processingSelectionId: string,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
+  deleteAudienceSegmentProcessingSelection: (
+    segmentId: string,
+    processingSelectionId: string,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
 }
 
 @injectable()
@@ -33,25 +53,63 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
   private _audienceSegmentService: IAudienceSegmentService;
   @inject(TYPES.IQueryService)
   private _queryService: IQueryService;
+  @inject(TYPES.IOrganisationService)
+  private _organisationService: IOrganisationService;
   loadSegmentInitialValue(segmentId: string): Promise<AudienceSegmentFormData> {
-    return this._audienceSegmentService.getSegment(segmentId).then(res => {
+    const getSegment = this._audienceSegmentService.getSegment(segmentId);
+    const getProcessingSelections = this._audienceSegmentService
+      .getProcessingSelectionsByAudienceSegment(segmentId)
+      .then(res => {
+        const processingSelectionResources = res.data;
+
+        return Promise.all(
+          processingSelectionResources.map(processingSelectionResource => {
+            return this._organisationService
+              .getProcessing(processingSelectionResource.processing_id)
+              .then(resProcessing => {
+                const processingResource = resProcessing.data;
+                return {
+                  processingSelectionResource: processingSelectionResource,
+                  processingResource: processingResource,
+                };
+              });
+          }),
+        );
+      });
+
+    return Promise.all([getSegment, getProcessingSelections]).then(res => {
+      const resSegment = res[0];
+      const resProcessingSelections = res[1];
+      const initialProcessingSelectionResources = resProcessingSelections.map(
+        processingAndSelection =>
+          processingAndSelection.processingSelectionResource,
+      );
+      const processingActivities = resProcessingSelections.map(processingAndSelection =>
+        createFieldArrayModel(processingAndSelection.processingResource),
+      );
+
       if (
-        (res.data.type === 'USER_QUERY' || res.data.type === 'USER_LIST') &&
-        res.data.query_id
+        (resSegment.data.type === 'USER_QUERY' ||
+        resSegment.data.type === 'USER_LIST') &&
+        resSegment.data.query_id
       ) {
         return this._queryService
-          .getQuery(res.data.datamart_id, res.data.query_id)
+          .getQuery(resSegment.data.datamart_id, resSegment.data.query_id)
           .then(r => r.data)
           .then(r => {
             const formattedResponse: AudienceSegmentFormData = {
-              audienceSegment: res.data,
+              audienceSegment: resSegment.data,
               query: r,
+              initialProcessingSelectionResources: initialProcessingSelectionResources,
+              processingActivities: processingActivities,
             };
             return formattedResponse;
           });
       }
       const response: AudienceSegmentFormData = {
-        audienceSegment: res.data,
+        audienceSegment: resSegment.data,
+        initialProcessingSelectionResources: initialProcessingSelectionResources,
+        processingActivities: processingActivities,
       };
       return response;
     });
@@ -204,4 +262,39 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
 
     return technicalName;
   };
+
+  getProcessingSelectionsByAudienceSegment(
+    segmentId: string,
+  ): Promise<DataListResponse<ProcessingSelectionResource>> {
+    return this._audienceSegmentService.getProcessingSelectionsByAudienceSegment(
+      segmentId,
+    );
+  }
+  createProcessingSelectionForAudienceSegment(
+    segmentId: string,
+    body: Partial<ProcessingSelectionResource>,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    return this._audienceSegmentService.createProcessingSelectionForAudienceSegment(
+      segmentId,
+      body,
+    );
+  }
+  getAudienceSegmentProcessingSelection(
+    segmentId: string,
+    processingSelectionId: string,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    return this._audienceSegmentService.getAudienceSegmentProcessingSelection(
+      segmentId,
+      processingSelectionId,
+    );
+  }
+  deleteAudienceSegmentProcessingSelection(
+    segmentId: string,
+    processingSelectionId: string,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    return this._audienceSegmentService.deleteAudienceSegmentProcessingSelection(
+      segmentId,
+      processingSelectionId,
+    );
+  }
 }
