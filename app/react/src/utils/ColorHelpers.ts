@@ -148,6 +148,14 @@ function getDominantPalettes(
   const occurrences = combinations[1];
   const dominantPalettes = [];
 
+  // Handle the case were the palette detection don't return anything
+  if(allPalettes.length === 0) {
+    for(let i = 0; i < distinctCount; i++) {
+      dominantPalettes.push([10,50,84,255]);
+    }
+    return dominantPalettes;
+  }
+
   while (distinctCount) {
     let dominant = 0,
       dominantKey = 0;
