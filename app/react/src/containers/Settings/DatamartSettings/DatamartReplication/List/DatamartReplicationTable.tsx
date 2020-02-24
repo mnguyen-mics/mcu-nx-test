@@ -216,7 +216,7 @@ class DatamartReplicationTable extends React.Component<Props> {
     return noItem ? (
       <EmptyTableView
         iconType="settings"
-        intlMessage={messages.emptyDatamartReplication}
+        intlMessage={messages.emptyDatamartReplicationList}
         className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (

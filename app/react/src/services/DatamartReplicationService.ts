@@ -45,7 +45,6 @@ export interface IDatamartReplicationService {
   getJobExecutions: (
     datamartId: string,
   ) => Promise<DataListResponse<DatamartReplicationJobExecutionResource>>;
-  //
 }
 
 @injectable()
@@ -125,7 +124,7 @@ export class DatamartReplicationService implements IDatamartReplicationService {
       },
       {
         id: '2',
-        status: 'RUNNING',
+        status: 'FAILED',
         creation_date: 1581960211000,
         start_date: 1563358014075,
         duration: 35386,

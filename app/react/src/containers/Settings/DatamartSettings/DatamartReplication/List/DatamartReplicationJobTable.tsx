@@ -199,7 +199,7 @@ class DatamartReplicationJobTable extends React.Component<Props> {
     return noItem ? (
       <EmptyTableView
         iconType="settings"
-        intlMessage={messages.emptyDatamartReplication}
+        intlMessage={messages.emptyInitialSynchronizationList}
         className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (

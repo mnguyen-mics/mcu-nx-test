@@ -168,12 +168,14 @@ class DatamartReplicationTab extends React.Component<Props, State> {
         this._datamartReplicationService
           .getJobExecutions(datamartId)
           .then(resp => {
-            this.setState({
-              jobExecutions: resp.data,
-              isLoadingJobExecutions: false,
-              totalJobExecutions: resp.total || resp.count,
-              noJobExecution: resp && resp.total === 0 && !filter.keywords,
-            });
+            // TO DO: remove comments when  route to retrieve executions is done
+            // The response here is made of mocked data
+            // this.setState({
+            //   jobExecutions: resp.data,
+            //   isLoadingJobExecutions: false,
+            //   totalJobExecutions: resp.total || resp.count,
+            //   noJobExecution: resp && resp.total === 0 && !filter.keywords,
+            // });
           })
           .catch(error => {
             this.props.notifyError(error);

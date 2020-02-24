@@ -59,10 +59,15 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.list.cancelModalButton',
     defaultMessage: 'Cancel',
   },
-  emptyDatamartReplication: {
+  emptyDatamartReplicationList: {
     id: 'settings.datamart.datamartReplication.emptyList',
     defaultMessage:
-      "There are no Datamart Replications set up. Click on 'New Datamart Replication' to create one.",
+      "There is no Datamart Replication set up. Click on 'New Datamart Replication' to create one.",
+  },
+  emptyInitialSynchronizationList: {
+    id: 'settings.datamart.datamartReplication.dashboard.emptyExecutionList',
+    defaultMessage:
+      "There is no Initial Synchronization set up. Click on 'New Execution' to launch one.",
   },
   emptyJobExecution: {
     id: 'settings.datamart.datamartReplicationJob.emptyList',
