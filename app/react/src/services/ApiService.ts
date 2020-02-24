@@ -124,8 +124,7 @@ function request(
       // redirect to login page when 401 except for expired password
       // because we want to catch the error on Login/sagas.js
       response.status === 401 &&
-      response.url !==
-        'https://api.mediarithmics.local/v1/authentication/refresh_tokens'
+      response.url !== `${API_URL}authentication/refresh_tokens`    
     ) {
       const event = new Event('unauthorizedEvent');
       document.dispatchEvent(event);
