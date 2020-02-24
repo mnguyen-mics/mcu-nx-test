@@ -43,7 +43,7 @@ export interface IDatamartReplicationService {
     credentials: any,
   ) => Promise<any>;
   getJobExecutions: (
-    datamartReplicationId: string,
+    datamartId: string,
   ) => Promise<DataListResponse<DatamartReplicationJobExecutionResource>>;
 }
 
@@ -103,7 +103,7 @@ export class DatamartReplicationService implements IDatamartReplicationService {
     }
   }
   getJobExecutions(
-    datamartReplicationId: string,
+    datamartId: string,
   ): Promise<DataListResponse<DatamartReplicationJobExecutionResource>> {
     // TO DO: remove mocked data when route to retrieve executions is done
     // const endpoint = ``
@@ -124,8 +124,8 @@ export class DatamartReplicationService implements IDatamartReplicationService {
       },
       {
         id: '2',
-        status: 'SUCCEEDED',
-        creation_date: 1563358014075,
+        status: 'FAILED',
+        creation_date: 1581960211000,
         start_date: 1563358014075,
         duration: 35386,
         organisation_id: '504',

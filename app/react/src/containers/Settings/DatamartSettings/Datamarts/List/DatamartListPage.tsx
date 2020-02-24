@@ -87,7 +87,7 @@ class DatamartsListPage extends React.Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/my_datamart/${
+      `/v2/o/${organisationId}/settings/datamart/datamarts/${
       datamart.id
       }/edit`,
     );
@@ -102,7 +102,7 @@ class DatamartsListPage extends React.Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/my_datamart/${
+      `/v2/o/${organisationId}/settings/datamart/datamarts/${
       datamart.id
       }/service_usage_report`,
     );
@@ -117,7 +117,7 @@ class DatamartsListPage extends React.Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/my_datamart/${
+      `/v2/o/${organisationId}/settings/datamart/datamarts/${
       datamart.id
       }/sources`,
     );
@@ -160,7 +160,7 @@ class DatamartsListPage extends React.Component<
         key: 'name',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (value: string, record: DatamartResource) => <Link to={`/v2/o/${organisationId}/settings/datamart/my_datamart/${record.id}`}>{value}</Link>
+        render: (value: string, record: DatamartResource) => <Link to={`/v2/o/${organisationId}/settings/datamart/datamarts/${record.id}`}>{value}</Link>
       },
       {
         intlMessage: messages.datamartToken,

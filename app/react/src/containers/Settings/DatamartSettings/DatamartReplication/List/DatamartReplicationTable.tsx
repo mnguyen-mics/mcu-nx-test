@@ -13,8 +13,9 @@ import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
-import { DATAMART_REPLICATION_SEARCH_SETTINGS } from './DatamartReplicationListPage';
-import { Modal } from 'antd';
+import { DATAMART_REPLICATION_SEARCH_SETTINGS } from './DatamartReplicationListContainer';
+import { Modal, Switch, Tooltip } from 'antd';
+import { McsIcon } from '../../../../../components';
 
 export interface DatamartReplicationTableProps {
   isLoading: boolean;
@@ -22,7 +23,12 @@ export interface DatamartReplicationTableProps {
   total: number;
   noItem: boolean;
   onFilterChange: (newFilter: Partial<Filter>) => void;
-  onDelete: (resource: DatamartReplicationResourceShape) => void;
+  deleteReplication: (resource: DatamartReplicationResourceShape) => void;
+  updateReplication: (
+    resource: DatamartReplicationResourceShape,
+    status: boolean,
+  ) => void;
+  lastExecutionIsRunning: boolean;
 }
 
 type Props = DatamartReplicationTableProps &
@@ -57,9 +63,19 @@ class DatamartReplicationTable extends React.Component<Props> {
     });
   };
 
-  onDeleteDatamartReplication = (record: DatamartReplicationResourceShape) => {
-    const { onDelete } = this.props;
-    onDelete(record);
+  onDeleteDatamartReplication = (
+    replication: DatamartReplicationResourceShape,
+  ) => {
+    const { deleteReplication } = this.props;
+    deleteReplication(replication);
+  };
+
+  updateReplicationStatus = (
+    replication: DatamartReplicationResourceShape,
+    status: boolean,
+  ) => {
+    const { updateReplication } = this.props;
+    updateReplication(replication, status);
   };
 
   render() {
@@ -74,6 +90,7 @@ class DatamartReplicationTable extends React.Component<Props> {
         params: { organisationId, datamartId },
       },
       location: { search },
+      lastExecutionIsRunning,
     } = this.props;
     const filter = parseSearch(search, DATAMART_REPLICATION_SEARCH_SETTINGS);
 
@@ -102,6 +119,41 @@ class DatamartReplicationTable extends React.Component<Props> {
         render: (text: string) => text,
       },
       {
+        intlMessage: messages.datamartReplicationStatus,
+        key: 'status',
+        isHideable: false,
+        render: (text: string, record: DatamartReplicationResourceShape) => {
+          const onChange = (checked: boolean) => {
+            return (
+              text !== 'ERROR' && this.updateReplicationStatus(record, checked)
+            );
+          };
+          return (
+            <Tooltip
+              placement="top"
+              title={
+                lastExecutionIsRunning
+                  ? formatMessage(messages.jobIsRunning)
+                  : record.status
+              }
+            >
+              <Switch
+                className="mcs-table-switch"
+                checked={lastExecutionIsRunning ? true : text === 'ACTIVE'}
+                disabled={text === 'ERROR' || lastExecutionIsRunning}
+                onChange={onChange}
+                checkedChildren={
+                  <McsIcon style={{ verticalAlign: 'middle' }} type="play" />
+                }
+                unCheckedChildren={
+                  <McsIcon style={{ verticalAlign: 'middle' }} type="pause" />
+                }
+              />
+            </Tooltip>
+          );
+        },
+      },
+      {
         intlMessage: messages.datamartReplicationName,
         key: 'name',
         isHideable: false,
@@ -109,8 +161,6 @@ class DatamartReplicationTable extends React.Component<Props> {
           return (
             <Link
               className="mcs-datamartSettings_datamartReplicationTableItem"
-              // TO DO: when route to retrieve executions is live change this path to :
-              // `/v2/o/${organisationId}/settings/datamart/my_datamart/${record.datamart_id}/datamart_replication/${record.id}`
               to={{
                 pathname: `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`,
                 state: {
@@ -166,7 +216,7 @@ class DatamartReplicationTable extends React.Component<Props> {
     return noItem ? (
       <EmptyTableView
         iconType="settings"
-        intlMessage={messages.emptyDatamartReplication}
+        intlMessage={messages.emptyDatamartReplicationList}
         className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (

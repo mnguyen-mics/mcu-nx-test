@@ -20,6 +20,8 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
+import replicationMessages from '../../DatamartReplication/List/messages';
+import DatamartReplicationTab from './DatamartReplicationTab';
 
 const { Content } = Layout;
 
@@ -81,6 +83,22 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     this.fetchDatamart(datamartId);
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const {
+      match: {
+        params: { datamartId },
+      },
+    } = this.props;
+    const {
+      match: {
+        params: { datamartId: prevDatamartId },
+      },
+    } = prevProps;
+    if (datamartId !== prevDatamartId) {
+      this.fetchDatamart(datamartId);
+    }
+  }
+
   fetchDatamart = (datamartId: string) => {
     this._datamartService
       .getDatamart(datamartId)
@@ -117,6 +135,13 @@ class DatamartDashboardPage extends React.Component<Props, State> {
         display: <DatamartActivity datamartId={datamartId} />,
       },
     ];
+
+    if (hasFeature('datamartSettings-datamart_replication')) {
+      items.push({
+        title: intl.formatMessage(replicationMessages.datamartReplications),
+        display: <DatamartReplicationTab />,
+      });
+    }
 
     if (
       hasFeature('datamart-object_tree_schema') &&

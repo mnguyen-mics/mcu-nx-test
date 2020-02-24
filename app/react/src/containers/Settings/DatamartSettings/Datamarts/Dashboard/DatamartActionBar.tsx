@@ -27,7 +27,7 @@ class DatamartActionBar extends React.Component<Props> {
       }
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/settings/datamart/my_datamart/${datamartId}/edit`;
+    const editUrl = `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}/edit`;
 
     history.push({
       pathname: editUrl,
@@ -48,7 +48,7 @@ class DatamartActionBar extends React.Component<Props> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.datamart),
-        path: `/v2/o/${organisationId}/settings/datamart/my_datamart`,
+        path: `/v2/o/${organisationId}/settings/datamart/datamarts`,
       },
     ];
 

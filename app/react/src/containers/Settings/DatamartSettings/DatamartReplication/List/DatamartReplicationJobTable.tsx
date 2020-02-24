@@ -6,19 +6,13 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
-import { Layout, Tooltip, Progress } from 'antd';
-import { messages } from '../List/messages';
-import DatamartReplicationActionBar from './DatamartReplicationActionBar';
-import ContentHeader from '../../../../../components/ContentHeader';
-import { lazyInject } from '../../../../../config/inversify.config';
-import { TYPES } from '../../../../../constants/types';
-import { IDatamartReplicationService } from '../../../../../services/DatamartReplicationService';
+import { Tooltip, Progress } from 'antd';
+import { messages } from './messages';
+import { DatamartReplicationJobExecutionResource } from '../../../../../models/settings/settings';
 import {
-  DatamartReplicationResourceShape,
-  DatamartReplicationJobExecutionResource,
-} from '../../../../../models/settings/settings';
-import { isPubSubReplication } from '../Edit/domain';
-import { TableView } from '../../../../../components/TableView';
+  TableViewFilters,
+  EmptyTableView,
+} from '../../../../../components/TableView';
 import { McsIcon } from '../../../../../components';
 import { getExecutionInfo } from '../../../../../utils/JobHelpers';
 import injectThemeColors, {
@@ -30,30 +24,26 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { Filters } from '../../../../../components/ItemList';
-import { Card } from '../../../../../components/Card';
+import { Index } from '../../../../../utils';
 
-const { Content } = Layout;
+interface DatamartReplicationJobTableProps {
+  dataSource: DatamartReplicationJobExecutionResource[];
+  isLoading: boolean;
+  total: number;
+  noItem: boolean;
+  onFilterChange: (newFilter: Index<string | number>) => void;
+}
 
-type Props = InjectedIntlProps &
+type Props = DatamartReplicationJobTableProps &
+  InjectedIntlProps &
   InjectedThemeColorsProps &
   InjectedNotificationProps &
   RouteComponentProps<{
     organisationId: string;
     datamartId: string;
-    datamartReplicationId: string;
   }>;
 
-interface State {
-  datamartReplication?: DatamartReplicationResourceShape;
-  jobExecutions: DatamartReplicationJobExecutionResource[];
-  isLoadingJobExecutions: boolean;
-  totalJobExecutions: number;
-}
-
-class DatamartReplicationDashboard extends React.Component<Props, State> {
-  @lazyInject(TYPES.IDatamartReplicationService)
-  private _datamartReplicationService: IDatamartReplicationService;
-
+class DatamartReplicationJobTable extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -62,65 +52,6 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
       totalJobExecutions: 0,
     };
   }
-
-  componentDidMount() {
-    this.fetchDatamartReplicationAndExecutions();
-  }
-
-  fetchDatamartReplicationAndExecutions = () => {
-    const {
-      match: {
-        params: { datamartId, datamartReplicationId },
-      },
-    } = this.props;
-
-    this._datamartReplicationService
-      .getDatamartReplication(datamartId, datamartReplicationId)
-      .then(resp => {
-        this.setState({
-          datamartReplication: resp.data,
-        });
-      })
-      .catch(error => {
-        this.props.notifyError(error);
-      });
-    this.setState(
-      {
-        isLoadingJobExecutions: true,
-      },
-      () =>
-        this._datamartReplicationService
-          .getJobExecutions(datamartReplicationId)
-          .then(resp => {
-            this.setState({
-              jobExecutions: resp.data,
-              isLoadingJobExecutions: false,
-              totalJobExecutions: resp.total || resp.count,
-            });
-          })
-          .catch(error => {
-            this.props.notifyError(error);
-            this.setState({
-              isLoadingJobExecutions: false,
-              jobExecutions: [],
-              totalJobExecutions: 0,
-            });
-          }),
-    );
-  };
-
-  deleteDatamartReplication = (replicationId: string) => {
-    const {
-      match: {
-        params: { datamartId },
-      },
-    } = this.props;
-    this._datamartReplicationService
-      .deleteDatamartReplication(datamartId, replicationId)
-      .catch(error => {
-        this.props.notifyError(error);
-      });
-  };
 
   renderStatuColumn = (record: DatamartReplicationJobExecutionResource) => {
     switch (record.status) {
@@ -243,15 +174,11 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
 
   render() {
     const {
-      datamartReplication,
-      jobExecutions,
-      isLoadingJobExecutions,
-      totalJobExecutions,
-    } = this.state;
-
-    const {
-      intl: { formatMessage },
       location: { search },
+      total,
+      isLoading,
+      dataSource,
+      noItem,
     } = this.props;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
@@ -266,58 +193,29 @@ class DatamartReplicationDashboard extends React.Component<Props, State> {
         this.updateLocationSearch({
           pageSize: size,
         }),
-      total: totalJobExecutions,
+      total: total,
     };
 
-    const subtitle = () => {
-      return (
-        datamartReplication &&
-        isPubSubReplication(datamartReplication) && (
-          <div className="subtitle">
-            <b>{formatMessage(messages.datamartReplicationType)}: </b> Google
-            Pub/Sub
-            <br />
-            <b>{formatMessage(messages.datamartReplicationProjectIdLabel)}: </b>
-            {datamartReplication.project_id} <br />
-            <b>{formatMessage(messages.datamartReplicationTopicIdLabel)}: </b>
-            {datamartReplication.topic_id} <br />
-          </div>
-        )
-      );
-    };
-
-    return (
-      <div className="ant-layout">
-        <DatamartReplicationActionBar
-          item={datamartReplication}
-          deleteReplication={this.deleteDatamartReplication}
-        />
-        <div className="ant-layout">
-          <Content className="mcs-content-container mcs-replication-dashboard">
-            <ContentHeader
-              title={(datamartReplication && datamartReplication.name) || ''}
-              subTitle={subtitle()}
-              loading={!(datamartReplication && datamartReplication.name)}
-            />
-            <Card title={formatMessage(messages.jobExecutions)}>
-              <hr />
-              <TableView
-                dataSource={jobExecutions}
-                columns={this.buildColumnDefinition()}
-                pagination={pagination}
-                loading={isLoadingJobExecutions}
-              />
-            </Card>
-          </Content>
-        </div>
-      </div>
+    return noItem ? (
+      <EmptyTableView
+        iconType="settings"
+        intlMessage={messages.emptyInitialSynchronizationList}
+        className="mcs-table-view-empty mcs-empty-card"
+      />
+    ) : (
+      <TableViewFilters
+        dataSource={dataSource}
+        columns={this.buildColumnDefinition()}
+        pagination={pagination}
+        loading={isLoading}
+      />
     );
   }
 }
 
-export default compose(
+export default compose<Props, DatamartReplicationJobTableProps>(
   withRouter,
   injectIntl,
   injectThemeColors,
   injectNotifications,
-)(DatamartReplicationDashboard);
+)(DatamartReplicationJobTable);

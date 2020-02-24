@@ -196,7 +196,7 @@ class SourcesListPage extends React.Component<Props, State> {
               separator={<McsIcon type="chevron-right" />}
             >
               <Breadcrumb.Item>
-                <Link to={`/v2/o/${organisationId}/settings/datamart/my_datamart`}><FormattedMessage {...messages.datamarts} /></Link>
+                <Link to={`/v2/o/${organisationId}/settings/datamart/datamarts`}><FormattedMessage {...messages.datamarts} /></Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
                 {datamart ? datamart.name ? datamart.name : '...' : <i className="mcs-table-cell-loading" />}

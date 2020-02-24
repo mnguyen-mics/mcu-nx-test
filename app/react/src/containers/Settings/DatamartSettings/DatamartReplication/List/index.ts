@@ -1,4 +1,4 @@
-import DatamartReplicationListPage from './DatamartReplicationListPage';
+import DatamartReplicationListPage from './DatamartReplicationListContainer';
 import DatamartReplicationTable from './DatamartReplicationTable';
 
 export { DatamartReplicationListPage, DatamartReplicationTable };

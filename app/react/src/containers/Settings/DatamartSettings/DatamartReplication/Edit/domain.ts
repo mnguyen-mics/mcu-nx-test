@@ -7,7 +7,9 @@ export type DatamartReplicationFormData = Partial<
   DatamartReplicationResourceShape
 >;
 
-export const INITIAL_DATAMART_REPLICATION_FORM_DATA: DatamartReplicationFormData = {};
+export const INITIAL_DATAMART_REPLICATION_FORM_DATA: DatamartReplicationFormData = {
+  status: 'PAUSED',
+};
 
 export interface DatamartReplicationRouteMatchParam {
   organisationId: string;
@@ -18,8 +20,5 @@ export interface DatamartReplicationRouteMatchParam {
 export function isPubSubReplication(
   replication: DatamartReplicationResourceShape,
 ): replication is PubSubReplicationResource {
-  return (
-    !!replication.project_id &&
-    !!replication.topic_id
-  );
+  return !!replication.project_id && !!replication.topic_id;
 }

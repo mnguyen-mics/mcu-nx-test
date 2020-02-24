@@ -41,33 +41,55 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.list.deleteButton',
     defaultMessage: 'Delete',
   },
-
+  datamartReplicationStatus: {
+    id: 'settings.datamart.datamartReplication.list.column.status',
+    defaultMessage: 'Status',
+  },
   deleteDatamartReplicationModalTitle: {
     id: 'settings.datamart.datamartReplication.list.deleteModalTitle',
     defaultMessage:
-      'Are you sure you want to delete this datamart replication ?',
+      'Are you sure you want to delete this Datamart Replication ?',
   },
   deleteDatamartReplicationModalContent: {
     id: 'settings.datamart.datamartReplication.list.deleteModalContent',
     defaultMessage:
-      'By deleting this datamart replication, you will not be able to retrieve it. Are you sure ?',
+      'By deleting this Datamart Replication, you will not be able to retrieve it. Are you sure ?',
   },
   deleteDatamartReplicationModalCancel: {
     id: 'settings.datamart.datamartReplication.list.cancelModalButton',
     defaultMessage: 'Cancel',
   },
-  emptyDatamartReplication: {
+  emptyDatamartReplicationList: {
     id: 'settings.datamart.datamartReplication.emptyList',
     defaultMessage:
-      "There are no datamart replications set up. Click on 'New Datamart Replication' to create one.",
+      "There is no Datamart Replication set up. Click on 'New Datamart Replication' to create one.",
+  },
+  emptyInitialSynchronizationList: {
+    id: 'settings.datamart.datamartReplication.dashboard.emptyExecutionList',
+    defaultMessage:
+      "There is no Initial Synchronization set up. Click on 'New Execution' to launch one.",
+  },
+  emptyJobExecution: {
+    id: 'settings.datamart.datamartReplicationJob.emptyList',
+    defaultMessage:
+      "There are no Datamart Replication Jobs. Click on 'New Execution' to run one.",
   },
   sectionGeneralSubTitle: {
     id: 'settings.datamart.datamartReplication.edit.generalSection.subTitle',
-    defaultMessage: 'Give your datamart replication a name',
+    defaultMessage: 'Give your Datamart Replication a name',
   },
   sectionGeneralTitle: {
     id: 'settings.datamart.datamartReplication.edit.generalSection.title',
     defaultMessage: 'General Information',
+  },
+  sectionActivationSubTitle: {
+    id: 'settings.datamart.datamartReplication.edit.activationSection.subTitle',
+    defaultMessage:
+      'Choose to activate your Datamart Replication after creation',
+  },
+  sectionActivationTitle: {
+    id: 'settings.datamart.datamartReplication.edit.activationSection.title',
+    defaultMessage: 'Activation',
   },
   saveDatamartReplication: {
     id: 'settings.datamart.datamartReplication.edit.saveReplication',
@@ -79,7 +101,7 @@ export const messages = defineMessages({
   },
   datamartReplicationTypeSelectionSubtitle: {
     id: 'settings.datamart.datamartReplication.edit.typeSelection.subtitle',
-    defaultMessage: 'Choose your datamart replication type.',
+    defaultMessage: 'Choose your Datamart Replication type.',
   },
   // Name
   datamartReplicationNamePlaceHolder: {
@@ -88,7 +110,7 @@ export const messages = defineMessages({
   },
   datamartReplicationNameTooltip: {
     id: 'settings.datamart.datamartReplication.edit.name.tootltip',
-    defaultMessage: 'Give your datamart replication a name',
+    defaultMessage: 'Give your Datamart Replication a name',
   },
   datamartReplicationNameLabel: {
     id: 'settings.datamart.datamartReplication.edit.name.label',
@@ -101,7 +123,7 @@ export const messages = defineMessages({
   },
   datamartReplicationCredentialsUriTooltip: {
     id: 'settings.datamart.datamartReplication.edit.credentailsUri.tootltip',
-    defaultMessage: 'Give your datamart replication credentials URI',
+    defaultMessage: 'Give your Datamart Replication credentials URI',
   },
   datamartReplicationCredentialsUriLabel: {
     id: 'settings.datamart.datamartReplication.edit.credentailsUri.label',
@@ -114,7 +136,7 @@ export const messages = defineMessages({
   },
   datamartReplicationProjectIdTooltip: {
     id: 'settings.datamart.datamartReplication.edit.projectId.tootltip',
-    defaultMessage: 'Give your datamart replication a project ID',
+    defaultMessage: 'Give your Datamart Replication a project ID',
   },
   datamartReplicationProjectIdLabel: {
     id: 'settings.datamart.datamartReplication.edit.projectId.label',
@@ -127,7 +149,7 @@ export const messages = defineMessages({
   },
   datamartReplicationTopicIdTooltip: {
     id: 'settings.datamart.datamartReplication.edit.topicId.tootltip',
-    defaultMessage: 'Give your datamart replication a topic ID',
+    defaultMessage: 'Give your Datamart Replication a topic ID',
   },
   datamartReplicationTopicIdLabel: {
     id: 'settings.datamart.datamartReplication.edit.topic.label',
@@ -137,13 +159,9 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.edit.savingInProgess',
     defaultMessage: 'Saving in progress',
   },
-  noDatamartId: {
-    id: 'settings.datamart.datamartReplication.save.error.noDatamartId',
-    defaultMessage: 'No datamartId specified',
-  },
   sectionCustomSubtitle: {
     id: 'settings.datamart.datamartReplication.edit.customSection.subTitle',
-    defaultMessage: 'Give your datamart replication specific properties',
+    defaultMessage: 'Give your Datamart Replication specific properties',
   },
   sectionCustomTitle: {
     id: 'settings.datamart.datamartReplication.edit.customSection.title',
@@ -160,18 +178,18 @@ export const messages = defineMessages({
   archiveReplicationModalTitle: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalTitle',
     defaultMessage:
-      'Are you sure you want to delete this datamart replication ?',
+      'Are you sure you want to delete this Datamart Replication ?',
   },
   archiveReplicationModalContent: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalContent',
     defaultMessage:
-      "By deleting this datamart replication you won't be able to retrieve it. Are you sure ?",
+      "By deleting this Datamart Replication you won't be able to retrieve it. Are you sure ?",
   },
   archiveReplicationModalOk: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalOk',
     defaultMessage: 'Delete',
   },
-  archiveReplicationModalCancel: {
+  cancelAction: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalCancel',
     defaultMessage: 'Cancel',
   },
@@ -179,9 +197,13 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.dashboard.newExecutionButton',
     defaultMessage: 'New execution',
   },
-  jobExecutions: {
+  initialSynchronization: {
     id: 'settings.datamart.datamartReplication.dashboard.jobExecutionsTitle',
-    defaultMessage: 'Jobs Executions',
+    defaultMessage: 'Initial Synchronization',
+  },
+  jobIsRunning: {
+    id: 'settings.datamart.datamartReplication.dashboard.jobIsRunning',
+    defaultMessage: 'Job is running',
   },
   executionId: {
     id: 'settings.datamart.datamartReplication.dashboard.executionId',
@@ -218,6 +240,33 @@ export const messages = defineMessages({
   executionNotEnded: {
     id: 'settings.datamart.datamartReplication.dashboard.executionNotEnded',
     defaultMessage: 'Not ended',
+  },
+  noExecutionModalTitle: {
+    id:
+      'settings.datamart.datamartReplication.dashboard.executionModal.title.no',
+    defaultMessage:
+      "You don't have any ACTIVE Replication (Replication with status 'ACTIVE')",
+  },
+  noExecutionModalContent: {
+    id:
+      'settings.datamart.datamartReplication.dashboard.executionModal.content.no',
+    defaultMessage: "You can't execute an Initial Synchronization.",
+  },
+  executionModalTitle: {
+    id: 'settings.datamart.datamartReplication.dashboard.executionModal.title',
+    defaultMessage:
+      'You are about to execute an Initial Synchronization. This operation will replicate every current data from your datamart to your external solution for the following Replication(s):',
+  },
+  executionModalContent: {
+    id:
+      'settings.datamart.datamartReplication.dashboard.executionModal.content',
+    defaultMessage:
+      'When Initial Synchronization is running, you can’t change status of any of your replications until synchronization is completed. You can execute an Initial Synchronization once a week. Would you like to execute an Initial Synchronization now ?',
+  },
+  noExecutionPossible: {
+    id: 'settings.datamart.datamartReplication.dashboard.noExecutionPossible',
+    defaultMessage:
+      "You can't execute Initial Synchronization more than once a week.",
   },
 });
 
