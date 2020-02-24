@@ -48,7 +48,12 @@ class ActivationFormSection extends React.Component<Props, State> {
   };
 
   render() {
-    const { formValues } = this.props;
+    const {
+      formValues,
+      match: {
+        params: { datamartReplicationId },
+      },
+    } = this.props;
     return (
       <div>
         <FormSection
@@ -58,6 +63,7 @@ class ActivationFormSection extends React.Component<Props, State> {
         <Checkbox
           checked={formValues.status === 'ACTIVE'}
           onChange={this.onChange}
+          disabled={!!datamartReplicationId}
         >
           <FormattedMessage
             id="settings.datamart.datamartReplication.edit.activationLabel"
