@@ -157,7 +157,7 @@ export default compose<Props, GeneralInformationFormSectionProps>(
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id: 'automation.builder.node.addToSegmentForm.generalInfoSection.title',
+    id: 'automation.builder.node.addToSegmentForm.general.title',
     defaultMessage: 'General information',
   },
   sectionGeneralSubtitle: {
@@ -195,10 +195,6 @@ export const messages = defineMessages({
   audienceSegmentTTLUnitDays: {
     id: 'automation.builder.node.addToSegmentForm.ttl.unit.days',
     defaultMessage: "Days",
-  },
-  audienceSegmentTTLUnitWeeks: {
-    id: 'automation.builder.node.addToSegmentForm.ttl.unit.weeks',
-    defaultMessage: "Weeks",
   },
   audienceSegmentTTLUnitMonths: {
     id: 'automation.builder.node.addToSegmentForm.ttl.unit.months',

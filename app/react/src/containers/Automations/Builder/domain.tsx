@@ -396,7 +396,6 @@ export class UpdateNodeOperation implements NodeOperation {
         nodeBody = {
           ...storylineNode.node,
           ...this.node as WaitNodeResource,
-          timeout: (this.formData as WaitFormData).timeout,
           name: this.formData.name,
           formData: this.formData as WaitFormData,
         };

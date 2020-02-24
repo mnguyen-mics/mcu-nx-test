@@ -130,8 +130,8 @@ export interface EndNodeResource extends ScenarioNodeResource {
 
 export interface WaitNodeResource extends ScenarioNodeResource {
   type: 'WAIT_NODE';
-  timeout: number;
-  formData?: WaitFormData;
+  delay_period: string;
+  formData: WaitFormData;
 }
 
 export interface IfNodeResource extends ScenarioNodeResource {

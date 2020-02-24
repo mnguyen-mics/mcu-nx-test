@@ -104,6 +104,7 @@ class WaitAutomationForm extends React.Component<Props> {
           <Form
             className="edit-layout ant-layout"
             onSubmit={handleSubmit}
+            layout="vertical"
           >
             <Content
               id={FORM_ID}
