@@ -13,13 +13,8 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
-import { withRouter, RouteComponentProps } from 'react-router';
-import { DatamartReplicationRouteMatchParam } from '../domain';
 
-type Props = InjectedIntlProps &
-  ValidatorProps &
-  RouteComponentProps<DatamartReplicationRouteMatchParam> &
-  NormalizerProps;
+type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
 class GeneralFormSection extends React.Component<Props> {
   constructor(props: Props) {
@@ -31,9 +26,6 @@ class GeneralFormSection extends React.Component<Props> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
-      match: {
-        params: { datamartReplicationId },
-      },
     } = this.props;
 
     return (
@@ -55,7 +47,6 @@ class GeneralFormSection extends React.Component<Props> {
             placeholder: formatMessage(
               messages.datamartReplicationNamePlaceHolder,
             ),
-            disabled: !!datamartReplicationId,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.datamartReplicationNameTooltip),
@@ -67,7 +58,6 @@ class GeneralFormSection extends React.Component<Props> {
 }
 
 export default compose(
-  withRouter,
   injectIntl,
   withValidators,
   withNormalizer,

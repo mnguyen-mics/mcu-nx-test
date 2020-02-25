@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Path } from '../../../../../components/ActionBar';
 import FormLayoutActionbar, {
@@ -12,10 +11,7 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../../components/Layout/ScrollspySider';
 import messages from '../List/messages';
-import {
-  DatamartReplicationFormData,
-  DatamartReplicationRouteMatchParam,
-} from './domain';
+import { DatamartReplicationFormData } from './domain';
 import { Omit } from '../../../../../utils/Types';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { McsFormSection } from '../../../../../utils/FormHelper';
@@ -35,29 +31,19 @@ type Props = InjectedFormProps<
   DatamartReplicationEditFormProps
 > &
   DatamartReplicationEditFormProps &
-  InjectedIntlProps &
-  RouteComponentProps<DatamartReplicationRouteMatchParam>;
+  InjectedIntlProps;
 
 export const FORM_ID = 'datamartReplicationForm';
 
 class DatamartReplicationEditForm extends React.Component<Props> {
   render() {
-    const {
-      handleSubmit,
-      breadCrumbPaths,
-      close,
-      type,
-      match: {
-        params: { datamartReplicationId },
-      },
-    } = this.props;
+    const { handleSubmit, breadCrumbPaths, close, type } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
       message: messages.saveDatamartReplication,
       onClose: close,
-      disabled: !!datamartReplicationId,
     };
 
     const sections: McsFormSection[] = [];
@@ -117,7 +103,6 @@ class DatamartReplicationEditForm extends React.Component<Props> {
 
 export default compose<Props, DatamartReplicationEditFormProps>(
   injectIntl,
-  withRouter,
   reduxForm({
     form: FORM_ID,
     enableReinitialize: true,
