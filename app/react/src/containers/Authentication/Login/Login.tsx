@@ -29,7 +29,7 @@ const messages = defineMessages({
   },
   expiredPassword: {
     id: 'authentication.login.expired.password',
-    defaultMessage: 'Your password has expired. Please create a new one.',
+    defaultMessage: 'Your password has expired. Please create a new one by clicking on Forgot password.',
   },
   forgotPassword: {
     id: 'authentication.login.forgot.password',
