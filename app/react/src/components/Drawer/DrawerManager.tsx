@@ -112,6 +112,14 @@ class DrawerManager extends React.Component<
     }
   };
 
+
+  generateDrawer(drawersWithOverlay: React.ReactNode[]) {
+    return drawersWithOverlay.map((drawer: JSX.Element, i: number) => {
+     return  React.cloneElement(drawer, { key:  i })
+    });
+  }
+
+
   render() {
     const { drawableContents } = this.props;
     const { drawerMaxWidth, viewportWidth } = this.state;
@@ -167,14 +175,14 @@ class DrawerManager extends React.Component<
       },
     );
 
-    drawersWithOverlay.push(<div className="drawer-overlay" />);
+    drawersWithOverlay.push(<div className="drawer-overlay"  />);
     drawersWithOverlay.push(
       <div className="drawer" style={drawerStyles.ready} />,
     );
 
     return (
       <div onKeyDown={this.handleOnKeyDown} className="drawer-container">
-        {drawersWithOverlay.map(drawer => drawer)}
+        {this.generateDrawer(drawersWithOverlay)}
       </div>
     );
   }
