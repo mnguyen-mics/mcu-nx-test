@@ -3,6 +3,7 @@ import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
 import ApiQueryWrapper from './components/helpers/ApiQueryWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
 import { Chart } from '../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
+import { McsDateRangeValue } from '../../../components/McsDateRangePicker';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -23,6 +24,8 @@ export interface DashboardConfig {
 interface DatamartUsersAnalyticsContentProps {
   datamartId: string;
   config: DashboardConfig[];
+  dateRange: McsDateRangeValue;
+  onChange: (isLoading: boolean) => void;
 }
 
 class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyticsContentProps> {
@@ -30,7 +33,7 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
     super(props);
   }
 
-  generateDOM(dashboardConfig: DashboardConfig[], datamartId: string) {
+  generateDOM(dashboardConfig: DashboardConfig[], datamartId: string, dateRange: McsDateRangeValue, onChange: (isLoading: boolean) => void) {
     return dashboardConfig.map((comp: Component, i) => {
       return (
         <CardFlex
@@ -39,16 +42,15 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
           className={comp.layout.static ? 'static mcs-datamartUsersAnalytics_card' : 'mcs-datamartUsersAnalytics_card'}
         >
           {comp.charts.map((chart: Chart, index) => {
-            return <ApiQueryWrapper key={index.toString()} chart={chart} datamartId={datamartId} />
+            return <ApiQueryWrapper key={index.toString()} chart={chart} datamartId={datamartId} dateRange={dateRange} onChange={onChange}/>
           })}
-
         </CardFlex>
       );
     });
   }
 
   render() {
-    const { datamartId, config } = this.props;
+    const { datamartId, config, dateRange, onChange } = this.props;
 
     const layouts = config.map((cl, i) => ({ ...cl.layout, i: i.toString() }));
 
@@ -60,7 +62,7 @@ class DatamartUsersAnalyticsContent extends React.Component<DatamartUsersAnalyti
         isResizable={false}
         measureBeforeMount={false}>
         {
-          this.generateDOM(config, datamartId)
+          this.generateDOM(config, datamartId, dateRange, onChange)
         }
       </ResponsiveGridLayout>
     );

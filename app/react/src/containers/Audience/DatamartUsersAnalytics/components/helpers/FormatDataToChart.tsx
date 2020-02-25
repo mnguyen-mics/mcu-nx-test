@@ -39,7 +39,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
             innerSize: '65%',
             data: dataset.map((data: Dataset) => {
               return {
-                name: data[chart.xKey] || 'null',
+                name: data[chart.dimensions[0]] || 'null',
                 y: data[chart.metricName],
               }
             })
@@ -50,7 +50,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
           const found = acc.find((a: AreaSeriesDataOptions) => a.name === chart.metricName);
 
           const value = d[chart.metricName];
-          const xValue = chart.xKey === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.xKey] as string) : d[chart.xKey];
+          const xValue = chart.dimensions[0] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[0]] as string) : d[chart.dimensions[0]];
           if (!found) {
             acc.push({
               name: chart.metricName as string,
@@ -179,7 +179,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
   generateCharElements = (chart: Chart, data: Dataset[]): React.ReactNode => {
     switch (chart.type) {
       case 'AREA':
-        if (!chart.xKey) return null
+        if (!chart.dimensions) return null
         chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
         return (
           <LineChart options={chart.options}
@@ -198,7 +198,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
           <GenericWorldMap options={chart.options} dataset={this.formatSeriesForChart(chart, data) as MapSeriesDataOptions[]} />
         )
       case 'STACKED_BAR':
-        if (!chart.xKey) return null
+        if (!chart.dimensions) return null
         chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesMapOptions[];
         return (
           <GenericStackedBar options={chart.options} />

@@ -55,8 +55,23 @@ export const sessionInTimeJsonConfig = [
           },
         },
 
-        xKey: 'date_yyyy_mm_dd',
+        dimensions: ['date_yyyy_mm_dd'],
         metricName: 'sessions',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
       },
     ],
   },
@@ -76,9 +91,24 @@ export const averageSessionDurationConfig = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: 'Average session duration (Last 7 days)',
+          title: 'Average session duration',
         },
-        metricName: 'avg_session_duration'
+        metricName: 'avg_session_duration',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
       }
     ]
   },
@@ -87,7 +117,7 @@ export const averageSessionDurationConfig = [
 
 export const channelEngagementConfig = [
   {
-    title: 'Session in time (Last 7 days)',
+    title: 'Session in time',
     layout: {
       'i': '1',
       'h': 3,
@@ -102,7 +132,7 @@ export const channelEngagementConfig = [
         options: {
           title: undefined,
           height: 300,
-          colors: ['#2fa1de'],
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
           },
@@ -134,13 +164,28 @@ export const channelEngagementConfig = [
             ...generateTooltip()
           }
         },
-        xKey: 'date_yyyy_mm_dd',
-        metricName: 'sessions'
+        dimensions: ['date_yyyy_mm_dd'],
+        metricName: 'sessions',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
       }
     ]
   },
   {
-    title: 'Sessions by Form Factor (Last 7 days)',
+    title: 'Sessions by Form Factor',
     layout: {
       'i': '2',
       'h': 3,
@@ -184,7 +229,7 @@ export const channelEngagementConfig = [
             enabled: false,
           },
         },
-        xKey: 'device_form_factor',
+        dimensions: ['device_form_factor'],
         metricName: 'sessions',
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -205,7 +250,7 @@ export const channelEngagementConfig = [
     ]
   },
   {
-    title: 'Sessions by Browser Family (Last 7 days)',
+    title: 'Sessions by Browser Family',
     layout: {
       'i': '2',
       'h': 3,
@@ -248,7 +293,7 @@ export const channelEngagementConfig = [
             enabled: false,
           },
         },
-        xKey:  'device_browser_family',
+        dimensions: ['device_browser_family'],
         metricName: 'sessions',
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -269,7 +314,7 @@ export const channelEngagementConfig = [
     ]
   },
   {
-    title: 'Sessions by OS (Last 7 days)',
+    title: 'Sessions by OS',
     layout: {
       'i': '2',
       'h': 3,
@@ -312,7 +357,7 @@ export const channelEngagementConfig = [
             enabled: false,
           },
         },
-        xKey:  'device_os_family',
+        dimensions: ['device_os_family'],
         metricName: 'sessions',
         dimensionFilterClauses: {
           'operator': 'OR',

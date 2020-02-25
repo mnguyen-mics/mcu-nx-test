@@ -53,7 +53,8 @@ interface HomeDashboardConfig {
   title?: string;
   subTitle?: string;
   datamartId: string;
-  config: DashboardConfig[]
+  config: DashboardConfig[];
+  showFilter?: boolean;
 }
 
 type JoinedProps = InjectedWorkspaceProps &
@@ -103,7 +104,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       {
         title: intl.formatMessage(messages.homeTitle),
         datamartId: datamartId,
-        config: averageSessionDurationConfig as any
+        config: averageSessionDurationConfig as any,
+        showFilter: true
       },
       {
         title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
@@ -183,6 +185,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                     subTitle={conf.subTitle}
                     datamartId={conf.datamartId}
                     config={conf.config}
+                    showFilter={conf.showFilter}
                   />
                 )
               })
