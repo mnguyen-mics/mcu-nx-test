@@ -137,7 +137,6 @@ const messages = defineMessages({
 });
 
 class AudienceSegmentExportsCard extends React.Component<Props, State> {
-
   fetchLoop = window.setInterval(() => {
     const { executions, filter } = this.state;
     if (
@@ -184,7 +183,11 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   }
 
   fetchCompartments = (datamartId: string) => {
-    this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId)
+    this._datamartService
+      .getUserAccountCompartmentDatamartSelectionResources(datamartId, {
+        // with_source_datamarts: true --> For enabling CROSS_DATAMART exports
+        with_source_datamarts: true,
+      })
       .then(res => {
         this.setState({
           compartments: res.data,
@@ -376,9 +379,9 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     const onReturnClick = () => this.handleModal(false);
     const onSubmitClick = (e: any) => this.submitModal();
 
-    const dataColumns: Array<
-      DataColumnDefinition<AudienceSegmentExportJobExecutionResource>
-    > = [
+    const dataColumns: Array<DataColumnDefinition<
+      AudienceSegmentExportJobExecutionResource
+    >> = [
       {
         intlMessage: messages.submissionDate,
         key: 'submissionDate',
@@ -476,7 +479,9 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         key: 'action',
         render: (text, record) => {
           return (
-            record.status === 'SUCCEEDED' && record.result && record.result.export_file_uri && (
+            record.status === 'SUCCEEDED' &&
+            record.result &&
+            record.result.export_file_uri && (
               <Button type="primary" onClick={this.downloadFile(record)}>
                 <McsIcon type="download" />{' '}
                 {this.props.intl.formatMessage(messages.download)}
