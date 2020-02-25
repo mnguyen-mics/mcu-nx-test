@@ -26,7 +26,6 @@ import DatamartReplicationCard from './DatamartReplicationCard';
 import DatamartReplicationEditForm from './DatamartReplicationEditForm';
 import {
   ReplicationType,
-  ReplicationStatus,
 } from '../../../../../models/settings/settings';
 import { FormTitle } from '../../../../../components/Form';
 import DatamartSelector from '../../../../Audience/Common/DatamartSelector';
@@ -120,14 +119,10 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       ...formDataWithoutCredentialsUri
     } = datamartReplicationFormData;
     if (datamartId) {
-      const replicationStatus = datamartReplicationFormData.status
-        ? 'ACTIVE'
-        : 'PAUSED';
       const newFormData = {
         ...formDataWithoutCredentialsUri,
         datamart_id: datamartId,
         type: selectedType,
-        status: replicationStatus as ReplicationStatus,
       };
       const promise = datamartReplicationId
         ? this._datamartReplicationService.updateDatamartReplication(
@@ -142,10 +137,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
       promise
         .then(response => {
-          if (
-            datamartReplicationFormData.credentials_uri &&
-            !datamartReplicationId
-          ) {
+          if (datamartReplicationFormData.credentials_uri) {
             this._datamartReplicationService
               .uploadDatamartReplicationCredentials(
                 datamartId,
