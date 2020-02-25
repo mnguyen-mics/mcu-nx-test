@@ -277,9 +277,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         onOk() {
           return saveFunction();
         },
-        onCancel() {
-          //
-        },
       });
     } else {
       saveFunction();
@@ -421,7 +418,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         )
         .then(response => {
           if (!!response) {
-            Promise.all([...generateProcessingSelectionsTasks(response.data.id)]);
+            Promise.all([
+              ...generateProcessingSelectionsTasks(response.data.id),
+            ]);
           }
           return response;
         })
