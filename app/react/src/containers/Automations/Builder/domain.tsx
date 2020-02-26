@@ -94,7 +94,9 @@ const cleanLastAdded = (automationData: StorylineNodeModel): StorylineNodeModel 
   );
 
   return {
-    node: automationData.node,
+    node: isScenarioNodeShape(automationData.node)
+      ? {...automationData.node, last_added_node: false}
+      : automationData.node,
     in_edge: automationData.in_edge,
     out_edges: outEdges,
   };
@@ -520,6 +522,7 @@ export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
     query_id: baseQueryId,
     evaluation_mode: 'LIVE',
     creation_mode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT' : 'QUERY',
+    last_added_node: true,
     formData: {
     },
   }
@@ -537,6 +540,7 @@ export const generateBeginNode = (type: AutomationSelectedType, evaluationPeriod
       evaluation_period: evaluationPeriod,
       evaluation_period_unit: evaluationPeriodUnit,
       creation_mode: 'QUERY',
+      last_added_node: true,
       formData: {
       },
     }
