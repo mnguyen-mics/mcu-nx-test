@@ -3,15 +3,15 @@ import { defineMessages } from 'react-intl';
 export const messages = defineMessages({
   datamartReplication: {
     id: 'settings.datamart.datamartReplication.title',
-    defaultMessage: 'Datamart Replication',
+    defaultMessage: 'Replication',
   },
   datamartReplications: {
     id: 'settings.datamart.datamartReplication.list.title',
-    defaultMessage: 'Datamart Replications',
+    defaultMessage: 'Replications',
   },
   searchPlaceholder: {
     id: 'settings.datamart.datamartReplication.search.placeholder',
-    defaultMessage: 'Search Datamart Replications',
+    defaultMessage: 'Search Replications',
   },
   datamartReplicationName: {
     id: 'settings.datamart.datamartReplication.list.column.name',
@@ -25,13 +25,9 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.list.column.properties',
     defaultMessage: 'Properties',
   },
-  datamartReplicationXXX: {
-    id: 'settings.datamart.datamartReplication.list.column.XXX',
-    defaultMessage: 'XXX',
-  },
   newDatamartReplication: {
     id: 'settings.datamart.datamartReplication.newDatamartButton',
-    defaultMessage: 'New Datamart Replication',
+    defaultMessage: 'New Replication',
   },
   editDatamartReplication: {
     id: 'settings.datamart.datamartReplication.list.editButton',
@@ -48,12 +44,12 @@ export const messages = defineMessages({
   deleteDatamartReplicationModalTitle: {
     id: 'settings.datamart.datamartReplication.list.deleteModalTitle',
     defaultMessage:
-      'Are you sure you want to delete this Datamart Replication ?',
+      'Are you sure you want to delete this Replication ?',
   },
   deleteDatamartReplicationModalContent: {
     id: 'settings.datamart.datamartReplication.list.deleteModalContent',
     defaultMessage:
-      'By deleting this Datamart Replication, you will not be able to retrieve it. Are you sure ?',
+      'By deleting this Replication, you will not be able to retrieve it. Are you sure ?',
   },
   deleteDatamartReplicationModalCancel: {
     id: 'settings.datamart.datamartReplication.list.cancelModalButton',
@@ -62,7 +58,7 @@ export const messages = defineMessages({
   emptyDatamartReplicationList: {
     id: 'settings.datamart.datamartReplication.emptyList',
     defaultMessage:
-      "There is no Datamart Replication set up. Click on 'New Datamart Replication' to create one.",
+      "There is no Replication set up. Click on 'New Datamart Replication' to create one.",
   },
   emptyInitialSynchronizationList: {
     id: 'settings.datamart.datamartReplication.dashboard.emptyExecutionList',
@@ -72,11 +68,11 @@ export const messages = defineMessages({
   emptyJobExecution: {
     id: 'settings.datamart.datamartReplicationJob.emptyList',
     defaultMessage:
-      "There are no Datamart Replication Jobs. Click on 'New Execution' to run one.",
+      "There are no Replication Jobs. Click on 'New Execution' to run one.",
   },
   sectionGeneralSubTitle: {
     id: 'settings.datamart.datamartReplication.edit.generalSection.subTitle',
-    defaultMessage: 'Give your Datamart Replication a name',
+    defaultMessage: 'Give your Replication a name',
   },
   sectionGeneralTitle: {
     id: 'settings.datamart.datamartReplication.edit.generalSection.title',
@@ -85,7 +81,7 @@ export const messages = defineMessages({
   sectionActivationSubTitle: {
     id: 'settings.datamart.datamartReplication.edit.activationSection.subTitle',
     defaultMessage:
-      'Choose to activate your Datamart Replication after creation',
+      'Choose to activate your Replication after creation',
   },
   sectionActivationTitle: {
     id: 'settings.datamart.datamartReplication.edit.activationSection.title',
@@ -93,24 +89,24 @@ export const messages = defineMessages({
   },
   saveDatamartReplication: {
     id: 'settings.datamart.datamartReplication.edit.saveReplication',
-    defaultMessage: 'Save Datamart Replication',
+    defaultMessage: 'Save Replication',
   },
   datamartReplicationTypeSelectionTitle: {
     id: 'settings.datamart.datamartReplication.edit.typeSelection.title',
-    defaultMessage: 'Datamart Replication Type',
+    defaultMessage: 'Replication Type',
   },
   datamartReplicationTypeSelectionSubtitle: {
     id: 'settings.datamart.datamartReplication.edit.typeSelection.subtitle',
-    defaultMessage: 'Choose your Datamart Replication type.',
+    defaultMessage: 'Choose your Replication type.',
   },
   // Name
   datamartReplicationNamePlaceHolder: {
     id: 'settings.datamart.datamartReplication.edit.name.placeholder',
-    defaultMessage: 'Datamart Replication Name',
+    defaultMessage: 'Replication Name',
   },
   datamartReplicationNameTooltip: {
     id: 'settings.datamart.datamartReplication.edit.name.tootltip',
-    defaultMessage: 'Give your Datamart Replication a name',
+    defaultMessage: 'Give your Replication a name',
   },
   datamartReplicationNameLabel: {
     id: 'settings.datamart.datamartReplication.edit.name.label',
@@ -119,11 +115,11 @@ export const messages = defineMessages({
   // crendentials URI
   datamartReplicationCredentialsUriPlaceHolder: {
     id: 'settings.datamart.datamartReplication.edit.credentailsUri.placeholder',
-    defaultMessage: 'Datamart Replication Credentials URI',
+    defaultMessage: 'Replication Credentials URI',
   },
   datamartReplicationCredentialsUriTooltip: {
     id: 'settings.datamart.datamartReplication.edit.credentailsUri.tootltip',
-    defaultMessage: 'Give your Datamart Replication credentials URI',
+    defaultMessage: 'Give your Replication credentials URI',
   },
   datamartReplicationCredentialsUriLabel: {
     id: 'settings.datamart.datamartReplication.edit.credentailsUri.label',
@@ -132,11 +128,11 @@ export const messages = defineMessages({
   // Project ID
   datamartReplicationProjectIdPlaceHolder: {
     id: 'settings.datamart.datamartReplication.edit.projectId.placeholder',
-    defaultMessage: 'Datamart Replication Project ID',
+    defaultMessage: 'Replication Project ID',
   },
   datamartReplicationProjectIdTooltip: {
     id: 'settings.datamart.datamartReplication.edit.projectId.tootltip',
-    defaultMessage: 'Give your Datamart Replication a project ID',
+    defaultMessage: 'Give your Replication a project ID',
   },
   datamartReplicationProjectIdLabel: {
     id: 'settings.datamart.datamartReplication.edit.projectId.label',
@@ -145,11 +141,11 @@ export const messages = defineMessages({
   // topic ID
   datamartReplicationTopicIdPlaceHolder: {
     id: 'settings.datamart.datamartReplication.edit.topicId.placeholder',
-    defaultMessage: 'Datamart Replication Topic ID',
+    defaultMessage: 'Replication Topic ID',
   },
   datamartReplicationTopicIdTooltip: {
     id: 'settings.datamart.datamartReplication.edit.topicId.tootltip',
-    defaultMessage: 'Give your Datamart Replication a topic ID',
+    defaultMessage: 'Give your Replication a topic ID',
   },
   datamartReplicationTopicIdLabel: {
     id: 'settings.datamart.datamartReplication.edit.topic.label',
@@ -161,7 +157,7 @@ export const messages = defineMessages({
   },
   sectionCustomSubtitle: {
     id: 'settings.datamart.datamartReplication.edit.customSection.subTitle',
-    defaultMessage: 'Give your Datamart Replication specific properties',
+    defaultMessage: 'Give your Replication specific properties',
   },
   sectionCustomTitle: {
     id: 'settings.datamart.datamartReplication.edit.customSection.title',
@@ -178,12 +174,12 @@ export const messages = defineMessages({
   archiveReplicationModalTitle: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalTitle',
     defaultMessage:
-      'Are you sure you want to delete this Datamart Replication ?',
+      'Are you sure you want to delete this Replication ?',
   },
   archiveReplicationModalContent: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalContent',
     defaultMessage:
-      "By deleting this Datamart Replication you won't be able to retrieve it. Are you sure ?",
+      "By deleting this Replication you won't be able to retrieve it. Are you sure ?",
   },
   archiveReplicationModalOk: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalOk',

@@ -24,9 +24,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IDatamartReplicationService } from '../../../../../services/DatamartReplicationService';
 import DatamartReplicationCard from './DatamartReplicationCard';
 import DatamartReplicationEditForm from './DatamartReplicationEditForm';
-import {
-  ReplicationType,
-} from '../../../../../models/settings/settings';
+import { ReplicationType } from '../../../../../models/settings/settings';
 import { FormTitle } from '../../../../../components/Form';
 import DatamartSelector from '../../../../Audience/Common/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
@@ -182,7 +180,12 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
   onClose = () => {
     const { history } = this.props;
-    return history.push(this.getPreviousUrl());
+    return history.push({
+      pathname: this.getPreviousUrl(),
+      state: {
+        activeTab: 'Replications',
+      },
+    });
   };
 
   onSelectType = (type: ReplicationType) => {
@@ -253,6 +256,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       {
         name: messages.datamartReplications,
         path: this.getPreviousUrl(),
+        state: { activeTab: 'Replications' },
       },
       {
         name: replicationName,
