@@ -20,6 +20,7 @@ export interface AutomationBuilderContainerProps {
   automationFormData?: Partial<AutomationFormData>;
   saveOrUpdate: (formData: Partial<AutomationFormData>) => void;
   loading: boolean;
+  creation_mode: 'REACT_TO_EVENT' | 'QUERY';
   edition?: boolean;
 }
 
@@ -80,6 +81,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       automationFormData,
       saveOrUpdate,
       loading,
+      creation_mode
     } = this.props;
     const { automationTreeData } = this.state;
 
@@ -113,6 +115,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
               scenarioId={storylineNodeData[0].scenario_id}
               updateAutomationData={this.handleUpdateAutomationData}
               viewer={false}
+              creation_mode={creation_mode}
             />
           </Layout.Content>
         </Layout>

@@ -8,7 +8,6 @@ import {
   ABNNodeResource,
   QueryInputNodeResource,
   WaitNodeResource,
-  QueryInputEvaluationMode,
   QueryInputEvaluationPeriodUnit,
   EdgeHandler,
   AddToSegmentNodeResource,
@@ -31,6 +30,7 @@ import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { ObjectLikeTypeResource, FieldResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { AutomationSelectedType } from './AutomationBuilderPage';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -511,18 +511,21 @@ export const storylineResourceData: StorylineResource = {
   begin_node_id: beginNodeId,
 };
 
-export const beginNode: ScenarioNodeShape = {
-  id: beginNodeId,
-  name: 'Enter Automation',
-  scenario_id: '',
-  type: 'QUERY_INPUT',
-  query_id: baseQueryId,
-  evaluation_mode: 'LIVE',
-  formData: {
-  },
+export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
+  return {
+    id: beginNodeId,
+    name: 'Enter Automation',
+    scenario_id: '',
+    type: 'QUERY_INPUT',
+    query_id: baseQueryId,
+    evaluation_mode: 'LIVE',
+    creation_mode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT' : 'QUERY',
+    formData: {
+    },
+  }
 };
 
-export const generateBeginNode = (type: QueryInputEvaluationMode, evaluationPeriod?: number, evaluationPeriodUnit?: QueryInputEvaluationPeriodUnit): ScenarioNodeShape => {
+export const generateBeginNode = (type: AutomationSelectedType, evaluationPeriod?: number, evaluationPeriodUnit?: QueryInputEvaluationPeriodUnit): ScenarioNodeShape => {
   if (type === 'PERIODIC' && evaluationPeriod && evaluationPeriodUnit) {
     return {
       id: beginNodeId,
@@ -533,11 +536,12 @@ export const generateBeginNode = (type: QueryInputEvaluationMode, evaluationPeri
       evaluation_mode: 'PERIODIC',
       evaluation_period: evaluationPeriod,
       evaluation_period_unit: evaluationPeriodUnit,
+      creation_mode: 'QUERY',
       formData: {
       },
     }
   }
-  return beginNode
+  return beginNode(type);
 }
 
 export const node4: ScenarioNodeShape = {
@@ -547,7 +551,7 @@ export const node4: ScenarioNodeShape = {
   type: 'END_NODE',
 };
 
-export const storylineNodeData: ScenarioNodeShape[] = [beginNode, node4];
+export const storylineNodeData: ScenarioNodeShape[] = [beginNode(), node4];
 
 export const edge12: ScenarioEdgeResource = {
   id: baseEdgeId,

@@ -1,4 +1,4 @@
-import AutomationEditPage from '../containers/Automations/Edit/AutomationEditPage';
+import AutomationEditPage from '../containers/Automations/Edit/EditAutomationPage';
 import {
   NavigatorRoute,
   NavigatorDefinition,

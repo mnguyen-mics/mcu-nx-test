@@ -105,6 +105,7 @@ export interface QueryInputNodeResource extends ScenarioNodeResource {
   evaluation_mode?: QueryInputEvaluationMode;
   evaluation_period?: number;
   evaluation_period_unit?: QueryInputEvaluationPeriodUnit;
+  creation_mode: 'QUERY' | 'REACT_TO_EVENT';
 }
 
 export interface ABNNodeResource extends ScenarioNodeResource {

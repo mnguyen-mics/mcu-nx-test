@@ -11,6 +11,7 @@ import QueryAutomationForm from './Edit/QueryForm/QueryForm';
 import WaitForm from './Edit/WaitForm/WaitForm';
 import AddToSegmentAutomationForm from './Edit/AddToSegmentNodeForm/AddToSegmentSegmentAutomationForm';
 import DeleteFromSegmentAutomationForm from './Edit/DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
+import AutomationWizardReactToEvent from '../ReactToEventAutomationForm';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -25,6 +26,7 @@ export default class AutomationNodeModel extends NodeModel {
   icon?: McsIconType;
   iconAnt?: AntIcon;
   isFirstNode?: boolean;
+  creationMode?: 'REACT_TO_EVENT' | 'QUERY';
 
   constructor(
     datamartId?: string,
@@ -35,6 +37,7 @@ export default class AutomationNodeModel extends NodeModel {
     iconAnt?: AntIcon,
     treeNodePath?: number[],
     isFirstNode?: boolean,
+    creationMode?: 'REACT_TO_EVENT' | 'QUERY',
   ) {
     super('automation-node');
 
@@ -52,6 +55,7 @@ export default class AutomationNodeModel extends NodeModel {
     this.storylineNodeModel = storylineNodeModel;
     this.iconAnt = iconAnt;
     this.isFirstNode = isFirstNode;
+    this.creationMode = creationMode;
 
     switch (this.storylineNodeModel.node.type) {
       case 'DISPLAY_CAMPAIGN':
@@ -70,7 +74,9 @@ export default class AutomationNodeModel extends NodeModel {
         this.editFormComponent = ABNAutomationForm;
         break;
       case 'QUERY_INPUT':
-        this.editFormComponent = QueryAutomationForm;
+        this.creationMode === 'REACT_TO_EVENT'
+          ? this.editFormComponent = AutomationWizardReactToEvent
+          : this.editFormComponent = QueryAutomationForm;
         break;
       case 'WAIT_NODE':
         this.editFormComponent = WaitForm;
