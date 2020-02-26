@@ -4,7 +4,8 @@ import PluginInstanceService from '../PluginInstanceService';
 import { PluginLayout } from '../../models/plugin/PluginLayout';
 import { injectable } from 'inversify';
 
-export interface IRecommenderService {
+export interface IRecommenderService
+  extends PluginInstanceService<Recommender> {
   getRecommenders: (
     organisationId: string,
     options: object,
@@ -13,10 +14,7 @@ export interface IRecommenderService {
     id: string,
     options: object,
   ) => Promise<DataListResponse<PluginProperty>>;
-  deleteRecommender: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<Recommender>>;
+  deleteRecommender: (id: string) => Promise<DataResponse<Recommender>>;
   getRecommender: (
     id: string,
     options: object,
@@ -70,16 +68,9 @@ export class RecommenderService extends PluginInstanceService<Recommender>
     return ApiService.getRequest(endpoint, options);
   }
 
-  deleteRecommender(
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<Recommender>> {
+  deleteRecommender(id: string): Promise<DataResponse<Recommender>> {
     const endpoint = `recommenders/${id}`;
-
-    const params = {
-      ...options,
-    };
-    return ApiService.deleteRequest(endpoint, params);
+    return ApiService.deleteRequest(endpoint);
   }
 
   getRecommender(
@@ -151,5 +142,3 @@ export class RecommenderService extends PluginInstanceService<Recommender>
     });
   }
 }
-
-export default new RecommenderService();

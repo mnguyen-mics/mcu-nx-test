@@ -6,7 +6,6 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import RecommenderService from '../../../../../services/Library/RecommenderService';
 import { IPluginService } from '../../../../../services/PluginService';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -23,6 +22,7 @@ import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
+import { IRecommenderService } from '../../../../../services/Library/RecommenderService';
 
 const { Content } = Layout;
 
@@ -55,8 +55,11 @@ class RecommenderContent extends React.Component<
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
 
+  @lazyInject(TYPES.IRecommenderService)
+  private _recommenderService: IRecommenderService;
+
   archiveRecommender = (recommenderId: string) => {
-    return RecommenderService.deleteRecommender(recommenderId);
+    return this._recommenderService.deleteRecommender(recommenderId);
   };
 
   fetchRecommender = (organisationId: string, filter: Filters) => {
@@ -64,35 +67,37 @@ class RecommenderContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      RecommenderService.getRecommenders(organisationId, options).then(
-        (results: { data: Recommender[]; total?: number; count: number }) => {
-          const promises = results.data.map(va => {
-            return new Promise((resolve, reject) => {
-              this._pluginService
-                .getEngineVersion(va.version_id)
-                .then((recommender: PluginVersionResource) => {
-                  return this._pluginService.getEngineProperties(
-                    recommender.id,
-                  );
-                })
-                .then((v: PluginProperty[]) => resolve(v));
+      this._recommenderService
+        .getRecommenders(organisationId, options)
+        .then(
+          (results: { data: Recommender[]; total?: number; count: number }) => {
+            const promises = results.data.map(va => {
+              return new Promise((resolve, reject) => {
+                this._pluginService
+                  .getEngineVersion(va.version_id)
+                  .then((recommender: PluginVersionResource) => {
+                    return this._pluginService.getEngineProperties(
+                      recommender.id,
+                    );
+                  })
+                  .then((v: PluginProperty[]) => resolve(v));
+              });
             });
-          });
-          Promise.all(promises).then((vaProperties: PluginProperty[]) => {
-            const formattedResults: any = results.data.map((va, i) => {
-              return {
-                ...va,
-                properties: vaProperties[i],
-              };
+            Promise.all(promises).then((vaProperties: PluginProperty[]) => {
+              const formattedResults: any = results.data.map((va, i) => {
+                return {
+                  ...va,
+                  properties: vaProperties[i],
+                };
+              });
+              this.setState({
+                loading: false,
+                data: formattedResults,
+                total: results.total || results.count,
+              });
             });
-            this.setState({
-              loading: false,
-              data: formattedResults,
-              total: results.total || results.count,
-            });
-          });
-        },
-      );
+          },
+        );
     });
   };
 
@@ -148,9 +153,7 @@ class RecommenderContent extends React.Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/campaigns/recommenders/${
-        visitAnalyzer.id
-      }/edit`,
+      `/v2/o/${organisationId}/settings/campaigns/recommenders/${visitAnalyzer.id}/edit`,
     );
   };
 
@@ -162,9 +165,9 @@ class RecommenderContent extends React.Component<
       history,
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<RecommenderInterface>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
+      RecommenderInterface
+    >> = [
       {
         key: 'action',
         actions: () => [
@@ -182,9 +185,7 @@ class RecommenderContent extends React.Component<
         render: (text: string, record: RecommenderInterface) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/campaigns/recommenders/${
-              record.id
-            }/edit`}
+            to={`/v2/o/${organisationId}/settings/campaigns/recommenders/${record.id}/edit`}
           >
             {text}
           </Link>
@@ -275,7 +276,4 @@ class RecommenderContent extends React.Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(RecommenderContent);
+export default compose(withRouter, injectIntl)(RecommenderContent);

@@ -80,11 +80,15 @@ class CreateEditVisitAnalyzer extends React.Component<JoinedProps> {
     const {
       intl: { formatMessage },
       match: {
-        params: { visitAnalyzerId },
+        params: { visitAnalyzerId, organisationId },
       },
     } = this.props;
 
     const breadcrumbPaths = (visitAnalyzer?: VisitAnalyzer) => [
+      {
+        name: formatMessage(messages.listTitle),
+        path: `/v2/o/${organisationId}/settings/datamart/visit_analyzers`,
+      },
       {
         name: visitAnalyzer
           ? formatMessage(messages.visitAnalyzerEditBreadcrumb, {
@@ -110,7 +114,4 @@ class CreateEditVisitAnalyzer extends React.Component<JoinedProps> {
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(CreateEditVisitAnalyzer);
+export default compose(withRouter, injectIntl)(CreateEditVisitAnalyzer);

@@ -50,6 +50,7 @@ const TYPES = {
   IDisplayCampaignService: Symbol.for('displayCampaignService'),
   IEmailRouterService: Symbol.for('emailRouterService'),
   IVisitAnalyzerService: Symbol.for('visitAnalyzerService'),
+  IRecommenderService: Symbol.for('recommenderService'),
   IAudienceExternalFeedServiceFactory: Symbol.for(
     'audienceExternalFeedServiceFactory',
   ),

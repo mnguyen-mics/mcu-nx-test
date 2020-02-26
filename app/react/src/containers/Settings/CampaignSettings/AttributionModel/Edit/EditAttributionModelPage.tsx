@@ -101,13 +101,19 @@ class EditAttributionModelPage extends React.Component<Props> {
   render() {
     const {
       intl: { formatMessage },
-      match: { params: { attributionModelId } },
+      match: { params: { attributionModelId, organisationId } },
     } = this.props;
 
     const breadcrumbPaths = (attributionModel?: AttributionModel) => [
-      { name: attributionModel ? 
+      {
+        name: formatMessage(messages.listTitle),
+        path: `/v2/o/${organisationId}/settings/campaigns/attribution_models`
+      },
+      {
+        name: attributionModel ? 
         formatMessage(messages.attributionModelEditBreadcrumb, { name: attributionModel.name }) 
-        : formatMessage(messages.attributionModelNewBreadcrumb) },
+        : formatMessage(messages.attributionModelNewBreadcrumb)
+      },
     ];    
 
 

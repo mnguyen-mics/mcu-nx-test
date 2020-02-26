@@ -78,11 +78,15 @@ class CreateEditEmailRouter extends React.Component<JoinedProps> {
     const {
       intl: { formatMessage },
       match: {
-        params: { emailRouterId },
+        params: { emailRouterId, organisationId },
       },
     } = this.props;
 
     const breadcrumbPaths = (emailRouter?: EmailRouter) => [
+      {
+        name: formatMessage(messages.listTitle),
+        path: `/v2/o/${organisationId}/settings/campaigns/email_routers`
+      },
       {
         name: emailRouter
           ? formatMessage(messages.emailRouterEditBreadcrumb, {
