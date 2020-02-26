@@ -4,7 +4,7 @@ import { Form, Layout, message } from "antd";
 import { change, reduxForm, getFormValues } from "redux-form";
 import { Path } from "../../../components/ActionBar";
 import { injectIntl, InjectedIntlProps, defineMessages } from "react-intl";
-import { withValidators, FormMultiTagField } from "../../../components/Form";
+import { withValidators } from "../../../components/Form";
 import { ValidatorProps } from "../../../components/Form/withValidators";
 import { WizardValidObjectTypeField, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent, wizardValidObjectTypes } from "./domain";
 import { MicsReduxState } from "../../../utils/ReduxHelper";
@@ -14,12 +14,16 @@ import { QueryInputNodeResource } from "../../../models/automations/automations"
 import { Loading } from "../../../components";
 import injectNotifications, { InjectedNotificationProps } from "../../Notifications/injectNotifications";
 import { reducePromises } from "../../../utils/PromiseHelper";
-import FormMultiTag from "../../../components/Form/FormSelect/FormMultiTag";
 import { IRuntimeSchemaService } from "../../../services/RuntimeSchemaService";
 import { TYPES } from "../../../constants/types";
 import { lazyInject } from "../../../config/inversify.config";
 import FormLayoutActionbar, { FormLayoutActionbarProps } from "../../../components/Layout/FormLayoutActionbar";
 import { QueryLanguage } from "../../../models/datamart/DatamartResource";
+import { FormSearchObjectField } from "../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm";
+import FormSearchObject from "../../../components/Form/FormSelect/FormSearchObject";
+import { IQueryService } from "../../../services/QueryService";
+import { isAggregateResult } from "../../../models/datamart/graphdb/OTQLResult";
+import { LabeledValue } from "antd/lib/select";
 
 const FORM_ID = 'reactToEventForm';
 
@@ -53,6 +57,9 @@ type Props = ReactToEventAutomationFormProps
 
 class ReactToEventAutomationForm extends React.Component<Props, State> {
 
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+  
   @lazyInject(TYPES.IRuntimeSchemaService)
   private _runtimeSchemaService: IRuntimeSchemaService;
 
@@ -211,6 +218,44 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       this.props.dispatch(change(FORM_ID, 'query_text', JSON.stringify(query)))
   }
 
+  getEventsNames = (validObjectType: WizardValidObjectTypeField): Promise<LabeledValue[]> => {
+    const { formValues: { datamart_id } } = this.props;
+
+    if (!validObjectType || !validObjectType.objectTypeQueryName)
+      return Promise.resolve([]);
+
+    const query: QueryDocument = {
+      from: 'UserPoint',
+      operations: [{
+        selections: [{
+          name: validObjectType.objectTypeQueryName,
+          selections: [{
+            name: validObjectType.fieldName,
+            directives: [{name: 'map'}]
+          }] }]
+      }],
+    };
+
+    return this._queryService.runJSONOTQLQuery(
+      datamart_id,
+      query,
+      { use_cache: true }
+    ).then(d => {
+      if (isAggregateResult(d.data.rows)) {
+        return d.data.rows[0]
+      } else {
+        throw new Error('err')
+      }
+    })
+    .then(d => {
+      return d.aggregations.buckets[0]
+    })
+    .then(d => {
+      return d.buckets.map(e => e.key).map(event => {return {key: event, label: event}})
+    })
+    .catch(() => { return [] })
+  }
+
   render() {
     const {
       intl: { formatMessage },
@@ -223,7 +268,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     } = this.props;
 
     const {
-      isLoading
+      isLoading,
+      validObjectType
     } = this.state;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -234,6 +280,9 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       disabled: !disabled && isLoading,
       
     };
+
+    const fetchListMethod = (k: string) => {return this.getEventsNames(validObjectType!)}
+    const fetchSingleMethod = (event: string) => {return Promise.resolve({key: event, label: event})}
 
     return (
       <Layout className="mcs-reactToEventAutomation edit-layout">
@@ -247,10 +296,12 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
             layout={'vertical'}
           >
             <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
-              <FormMultiTagField
+              <FormSearchObjectField
                 name={'events'}
-                component={FormMultiTag}
+                component={FormSearchObject}
                 onChange={this.onEventsChange}
+                fetchListMethod={fetchListMethod}
+                fetchSingleMethod={fetchSingleMethod}
                 formItemProps={{
                   label: formatMessage(messages.eventName),
                   required: true,
@@ -262,9 +313,9 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                 small={true}
                 validate={isRequired}
                 selectProps={{
-                  options: [],
-                  dropdownStyle: { display: 'none' },
+                  mode: 'tags',
                 }}
+                loadOnlyOnce={true}
               />
             </div>
           </Form>
