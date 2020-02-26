@@ -1,3 +1,4 @@
+import { RecommenderService } from './../services/Library/RecommenderService';
 import {
   IReferenceTableService,
   ReferenceTableService,
@@ -201,6 +202,7 @@ import {
   IEmailCampaignFormService,
   EmailCampaignFormService,
 } from '../containers/Campaigns/Email/Edit/EmailCampaignFormService';
+import { IRecommenderService } from '../services/Library/RecommenderService';
 
 const container = new Container();
 
@@ -323,6 +325,9 @@ container
 container
   .bind<IVisitAnalyzerService>(TYPES.IVisitAnalyzerService)
   .to(VisitAnalyzerService);
+  container
+  .bind<IRecommenderService>(TYPES.IRecommenderService)
+  .to(RecommenderService);
 container
   .bind<IEmailRouterService>(TYPES.IEmailRouterService)
   .to(EmailRouterService);

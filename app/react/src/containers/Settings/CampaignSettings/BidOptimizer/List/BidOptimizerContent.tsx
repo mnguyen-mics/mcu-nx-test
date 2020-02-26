@@ -18,14 +18,11 @@ import { ActionsColumnDefinition } from '../../../../../components/TableView/Tab
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IBidOptimizerService } from '../../../../../services/Library/BidOptimizerService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
-
-const initialState = {
-  loading: false,
-  data: [],
-  total: 0,
-};
 
 interface BidOptimizerInterface extends BidOptimizer {
   properties?: PluginProperty[];
@@ -41,24 +38,46 @@ interface RouterProps {
   organisationId: string;
 }
 
+type Props = RouteComponentProps<RouterProps> &
+  InjectedIntlProps &
+  InjectedNotificationProps;
+
 class BidOptimizerContent extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  Props,
   BidOptimizerContentState
 > {
-  state = initialState;
-
   @lazyInject(TYPES.IBidOptimizerService)
   private _bidOptimizerService: IBidOptimizerService;
 
-  archiveBidOptimizer = (boId: string) => {
-    return this._bidOptimizerService.deleteBidOptimizer(boId);
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      loading: false,
+      data: [],
+      total: 0,
+    };
+  }
+
+  archiveBidOptimizer = (bidOptimizerId: string) => {
+    const { notifyError } = this.props;
+    return this._bidOptimizerService
+      .deleteBidOptimizer(bidOptimizerId)
+      .catch(error => {
+        notifyError(error);
+      });
   };
 
-  fetchBidOptimizer = (organisationId: string, filter: Filters) => {
+  fetchBidOptimizersAndProperties = (
+    organisationId: string,
+    filter: Filters,
+  ) => {
+    const { notifyError } = this.props;
+
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
+
       this._bidOptimizerService
         .getBidOptimizers(organisationId, options)
         .then(results => {
@@ -69,27 +88,36 @@ class BidOptimizerContent extends React.Component<
                 return { ...res.data, id: bo.id };
               });
           });
-          Promise.all(promises).then(boProperties => {
-            const formattedResults: BidOptimizerInterface[] = [];
-            boProperties.forEach((boProperty: any) => {
-              const foundBo = results.data.find(bo => bo.id === boProperty.id);
+          Promise.all(promises)
+            .then(boProperties => {
+              const formattedResults: BidOptimizerInterface[] = [];
+              boProperties.forEach((boProperty: any) => {
+                const foundBo = results.data.find(
+                  bo => bo.id === boProperty.id,
+                );
 
-              if (foundBo) {
-                formattedResults.push({
-                  ...foundBo,
-                  properties: Object.keys(boProperty).map(
-                    value => boProperty[value],
-                  ),
-                });
-              }
-            });
+                if (foundBo) {
+                  formattedResults.push({
+                    ...foundBo,
+                    properties: Object.keys(boProperty).map(
+                      value => boProperty[value],
+                    ),
+                  });
+                }
+              });
 
-            this.setState({
-              loading: false,
-              data: formattedResults,
-              total: results.total || results.count,
+              this.setState({
+                loading: false,
+                data: formattedResults,
+                total: results.total || results.count,
+              });
+            })
+            .catch(error => {
+              notifyError(error);
+              this.setState({
+                loading: false,
+              });
             });
-          });
         });
     });
   };
@@ -128,7 +156,7 @@ class BidOptimizerContent extends React.Component<
             });
             return Promise.resolve();
           }
-          return this.fetchBidOptimizer(organisationId, filter);
+          return this.fetchBidOptimizersAndProperties(organisationId, filter);
         });
       },
       onCancel: () => {
@@ -253,7 +281,7 @@ class BidOptimizerContent extends React.Component<
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <ItemList
-            fetchList={this.fetchBidOptimizer}
+            fetchList={this.fetchBidOptimizersAndProperties}
             dataSource={this.state.data}
             loading={this.state.loading}
             total={this.state.total}
@@ -269,4 +297,8 @@ class BidOptimizerContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(BidOptimizerContent);
+export default compose(
+  withRouter,
+  injectIntl,
+  injectNotifications,
+)(BidOptimizerContent);
