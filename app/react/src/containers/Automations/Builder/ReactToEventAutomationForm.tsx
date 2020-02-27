@@ -73,7 +73,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       const expressions: FieldNode | undefined = where ? where.expressions[0] as FieldNode : undefined;
       events = (expressions && expressions.comparison) ? expressions.comparison.values : [];
 
-      if (this.props.dispatch) this.props.dispatch(change(FORM_ID, 'events', events))
+      if (this.props.dispatch)
+        this.props.dispatch(change(FORM_ID, 'events', events))
     }
 
     this.state = {
@@ -240,18 +241,18 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       datamart_id,
       query,
       { use_cache: true }
-    ).then(d => {
-      if (isAggregateResult(d.data.rows)) {
-        return d.data.rows[0]
+    ).then(oTQLDataResponse => {
+      if (isAggregateResult(oTQLDataResponse.data.rows)) {
+        return oTQLDataResponse.data.rows[0]
       } else {
         throw new Error('err')
       }
     })
-    .then(d => {
-      return d.aggregations.buckets[0]
+    .then(oTQLAggregationResult => {
+      return oTQLAggregationResult.aggregations.buckets[0]
     })
-    .then(d => {
-      return d.buckets.map(e => e.key).map(event => {return {key: event, label: event}})
+    .then(oTQLBuckets => {
+      return oTQLBuckets.buckets.map(({ key }) => ({key: key, label: key}))
     })
     .catch(() => { return [] })
   }
@@ -278,7 +279,6 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       message: messages.save,
       onClose: close,
       disabled: !disabled && isLoading,
-      
     };
 
     const fetchListMethod = (k: string) => {return this.getEventsNames(validObjectType!)}
@@ -305,7 +305,6 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                 formItemProps={{
                   label: formatMessage(messages.eventName),
                   required: true,
-                  
                 }}
                 helpToolTipProps={{
                   title: formatMessage(messages.eventNameHelp),
