@@ -2,11 +2,16 @@
   "name": "e2e-tests",
   "private": true,
   "dependencies": {
-    "npm": "^6.13.6",
     "cuid": "^2.1.8",
-    "cypress-file-upload": "^3.5.3"
+    "cypress-file-upload": "^3.5.3",
+    "npm": "^6.13.6",
+    "ts-loader": "^6.2.1",
+    "tslint": "^6.0.0",
+    "typescript": "^3.8.2",
+    "webpack": "^4.41.6"
   },
   "devDependencies": {
+    "@cypress/webpack-preprocessor": "^4.1.2",
     "cypress": "^3.8.2",
     "cypress-file-upload": "^3.5.3",
     "mocha": "5.2.0",
@@ -16,7 +21,14 @@
   },
   "scripts": {
     "cypress": "cypress open",
-    "cypress:run": "cypress run",
-    "cypress:report": "node scripts/report.js"
+    "cypress:report": "node scripts/report.js",
+    "build": "node_modules/.bin/webpack --output-filename out.js --entry ./cypress/integration/*.ts",
+    "cypress:open": "node_modules/.bin/cypress open",
+    "precypress:run": "npm run lint",
+    "cypress:run": "node_modules/.bin/cypress run",
+    "lint": "node_modules/.bin/tslint --project ./tsconfig.json",
+    "postlint": "npm run tsc",
+    "test:ci": "node_modules/.bin/cypress run",
+    "tsc": "node_modules/.bin/tsc --pretty --noEmit"
   }
 }
