@@ -7,7 +7,7 @@ import {
 } from '../models/ReportRequestBody';
 import McsMoment from './McsMoment';
 
-export type DatamartUsersAnalyticsDimension = 'date_yyyy_mm_dd';
+export type DatamartUsersAnalyticsDimension = 'date_yyyy_mm_dd' | 'channel_id' | 'channel_name';
 export type DatamartUsersAnalyticsMetric = 'sessions' | 'avg_session_duration';
 
 export function buildDatamartUsersAnalyticsRequestBody(
