@@ -51,7 +51,8 @@ export interface AutomationBuilderBaseProps {
   datamartId: string;
   scenarioId: string;
   automationTreeData?: StorylineNodeModel;
-  viewer: boolean
+  viewer: boolean;
+  creation_mode: 'REACT_TO_EVENT' | 'QUERY';
 }
 
 export interface AutomationBuilderVisualizerProps extends AutomationBuilderBaseProps {
@@ -317,7 +318,8 @@ class AutomationBuilder extends React.Component<Props, State> {
         generateNodeProperties(automationData.node).iconType,
         generateNodeProperties(automationData.node).iconAnt,
         undefined,
-        true
+        true,
+        this.props.creation_mode
       );
       rootNode.root = true;
       rootNode.x = ROOT_NODE_POSITION.x;

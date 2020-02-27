@@ -278,6 +278,7 @@ class EditAutomationPage extends React.Component<Props, State> {
             saveOrUpdate={this.save}
             loading={this.state.loading}
             edition={true}
+            creation_mode={'QUERY'} // This will change when we have 'ui_creation_mode' persisted in the db.
           />
           
         )

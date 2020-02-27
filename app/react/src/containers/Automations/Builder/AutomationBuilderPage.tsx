@@ -30,7 +30,6 @@ import {
   QueryInputEvaluationPeriodUnit,
 } from '../../../models/automations/automations';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
-import AutomationWizardReactToEvent from './AutomationWizardReactToEvent';
 import { Loading } from '../../../components';
 import ActionBar from '../../../components/ActionBar';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
@@ -273,12 +272,8 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     n?: number,
     p?: QueryInputEvaluationPeriodUnit,
   ) => {
-    if (type === 'REACT_TO_EVENT') {
-      this.setState({ type });
-    } else {
-      const newInitialValues = generateInitialAutomationData(type, n, p);
-      this.setState({ type, automationFormData: newInitialValues });
-    }
+    const newInitialValues = generateInitialAutomationData(type, n, p);
+    this.setState({ type, automationFormData: newInitialValues });
   };
 
   getSelectedDatamart = (): DatamartResource | undefined => {
@@ -390,28 +385,13 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       );
     }
 
-    if (type === 'REACT_TO_EVENT') 
-      return (
-        <AutomationWizardReactToEvent
-          datamartId={selectedDatamart.id}
-          automationFormData={automationFormData}
-          saveAutomation={this.saveAutomation}
-          loading={isLoading}
-          actionBarProps={{
-            paths: [
-              {
-                name: intl.formatMessage(messages.automationBuilder),
-              },
-            ],
-          }}
-      />);
-
     return (
       <AutomationBuilderContainer
         datamartId={selectedDatamart.id}
         automationFormData={automationFormData}
         saveOrUpdate={this.saveAutomation}
         loading={isLoading}
+        creation_mode={type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT' : 'QUERY'}
       />
     );
   }

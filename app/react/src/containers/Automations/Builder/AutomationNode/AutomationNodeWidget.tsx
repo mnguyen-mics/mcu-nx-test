@@ -208,9 +208,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             initialValue = {
               ...scenarioNodeShape.formData,
               datamart_id: scenarioNodeShape.formData.datamart_id ? scenarioNodeShape.formData.datamart_id : datamartId,
-              name: scenarioNodeShape.name
+              name: scenarioNodeShape.name,
+              events: [],
             } as any;
-            size = "large"
+            size = scenarioNodeShape.type === 'QUERY_INPUT'
+              ? scenarioNodeShape.creation_mode === 'REACT_TO_EVENT'
+                ? 'small'
+                : 'large'
+              : 'large'
             break;
           case 'DELETE_FROM_SEGMENT_NODE':
           case 'ADD_TO_SEGMENT_NODE':
