@@ -149,6 +149,9 @@ class DatamartReplicationTable extends React.Component<Props> {
                   <McsIcon style={{ verticalAlign: 'middle' }} type="pause" />
                 }
               />
+              {text === 'ERROR' && (
+                <McsIcon className={'font-error status-error'} type={'close'} />
+              )}
             </Tooltip>
           );
         },

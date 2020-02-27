@@ -15,29 +15,31 @@ interface McTabsProps extends TabsProps {
 }
 
 class McsTabs extends React.Component<McTabsProps> {
-
   buildMenuItems() {
     const { items } = this.props;
 
     return items.map((item, index) => (
-      <Tabs.TabPane tab={item.title} key={item.key || item.title} forceRender={item.forceRender ? item.forceRender : false}>
+      <Tabs.TabPane
+        tab={item.title}
+        key={item.key || item.title}
+        forceRender={item.forceRender ? item.forceRender : false}
+      >
         {item.display}
       </Tabs.TabPane>
     ));
   }
 
   render() {
-    const { items, ...rest  } = this.props;
+    const { items, activeKey, ...rest } = this.props;
     const menuItems = this.buildMenuItems();
 
     return (
-      <div >
-        <Tabs defaultActiveKey={items[0].title} {...rest}>
+      <div>
+        <Tabs defaultActiveKey={activeKey || items[0].title} {...rest}>
           {menuItems}
         </Tabs>
       </div>
     );
-
   }
 }
 

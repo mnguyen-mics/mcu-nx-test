@@ -20,7 +20,6 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import replicationMessages from '../../DatamartReplication/List/messages';
 import DatamartReplicationTab from './DatamartReplicationTab';
 
 const { Content } = Layout;
@@ -28,11 +27,15 @@ const { Content } = Layout;
 const messages = defineMessages({
   datamartConfiguration: {
     id: 'settings.datamart.configuration',
-    defaultMessage: 'Datamart Configuration',
+    defaultMessage: 'Configuration',
   },
   datamartActivity: {
     id: 'settings.datamart.activity',
-    defaultMessage: 'Datamart Activity',
+    defaultMessage: 'Activity',
+  },
+  datamartReplications: {
+    id: 'settings.datamart.replications',
+    defaultMessage: 'Replications',
   },
   tableViewConfiguration: {
     id: 'settings.datamart.tableview.configuration',
@@ -121,6 +124,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
         params: { datamartId },
       },
       hasFeature,
+      location: { state },
     } = this.props;
 
     const { datamart, isLoading } = this.state;
@@ -138,7 +142,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     if (hasFeature('datamartSettings-datamart_replication')) {
       items.push({
-        title: intl.formatMessage(replicationMessages.datamartReplications),
+        title: intl.formatMessage(messages.datamartReplications),
         display: <DatamartReplicationTab />,
       });
     }
@@ -194,7 +198,13 @@ class DatamartDashboardPage extends React.Component<Props, State> {
               </Col>
             </Row>
             <Row>
-              <McsTabs items={items} tabBarStyle={{ margin: '0 40px' }} />
+              <McsTabs
+                items={items}
+                tabBarStyle={{ margin: '0 40px' }}
+                activeKey={
+                  state && state.activeTab ? state.activeTab : items[0].title
+                }
+              />
             </Row>
           </div>
         </div>
