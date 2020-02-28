@@ -5,6 +5,9 @@ import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
 
 interface SegmentNameDisplayProps {
   audienceSegmentId?: string;
@@ -19,16 +22,18 @@ interface State {
 
 const localMessages = defineMessages({
   CLICKERS: {
-    id: 'segment-name-display.CLICKERS',
+    id: 'components.segmentNameDisplay.CLICKERS',
     defaultMessage: 'Clickers',
   },
   EXPOSED: {
-    id: 'segment-name-display.EXPOSED',
+    id: 'components.segmentNameDisplay.EXPOSED',
     defaultMessage: 'Exposed',
   },
 });
 
-type Props = SegmentNameDisplayProps & InjectedIntlProps;
+type Props = SegmentNameDisplayProps &
+  InjectedNotificationProps &
+  InjectedIntlProps;
 
 /**
  * This component can either be passed:
@@ -53,24 +58,27 @@ class SegmentNameDisplay extends React.Component<Props, State> {
   }
 
   fetchAudienceSegmentResource = (segmentId: string) => {
-    return this._audienceSegmentService.getSegment(segmentId).then(r => {
-      if (this.props.onLoad) this.props.onLoad(r.data);
-      return r;
+    return this._audienceSegmentService.getSegment(segmentId).then(response => {
+      if (this.props.onLoad) this.props.onLoad(response.data);
+      return response.data;
     });
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     const { audienceSegmentId } = this.props;
 
     if (audienceSegmentId) {
-      const audienceSegmentRes = await this.fetchAudienceSegmentResource(
-        audienceSegmentId,
-      );
-      this.setState({ audienceSegmentResource: audienceSegmentRes.data });
+      this.fetchAudienceSegmentResource(audienceSegmentId)
+        .then(audienceSegment => {
+          this.setState({ audienceSegmentResource: audienceSegment });
+        })
+        .catch(err => {
+          this.props.notifyError(err);
+        });
     }
   }
 
-  async componentDidUpdate(previousPros: Props) {
+  componentDidUpdate(previousPros: Props) {
     const {
       audienceSegmentId,
       audienceSegmentResource: audienceSegmentResourceFromProps,
@@ -100,11 +108,13 @@ class SegmentNameDisplay extends React.Component<Props, State> {
         (previousPros.audienceSegmentId &&
           audienceSegmentId !== previousPros.audienceSegmentId))
     ) {
-      const audienceSegmentRes = await this.fetchAudienceSegmentResource(
-        audienceSegmentId,
-      );
-
-      this.setState({ audienceSegmentResource: audienceSegmentRes.data });
+      this.fetchAudienceSegmentResource(audienceSegmentId)
+        .then(audienceSegment => {
+          this.setState({ audienceSegmentResource: audienceSegment });
+        })
+        .catch(err => {
+          this.props.notifyError(err);
+        });
     }
   }
 
@@ -126,13 +136,13 @@ class SegmentNameDisplay extends React.Component<Props, State> {
     let audienceSegmentName = audienceSegmentResource.name;
     if (audienceSegmentResource.type === 'USER_ACTIVATION') {
       if (audienceSegmentResource.clickers) {
-        audienceSegmentName = `${
-          this.ellipsizeSegmentName(audienceSegmentResource.name)
-        } - ${intl.formatMessage(localMessages.CLICKERS)}`;
+        audienceSegmentName = `${this.ellipsizeSegmentName(
+          audienceSegmentResource.name,
+        )} - ${intl.formatMessage(localMessages.CLICKERS)}`;
       } else if (audienceSegmentResource.exposed) {
-        audienceSegmentName = `${
-          this.ellipsizeSegmentName(audienceSegmentResource.name)
-        } - ${intl.formatMessage(localMessages.EXPOSED)}`;
+        audienceSegmentName = `${this.ellipsizeSegmentName(
+          audienceSegmentResource.name,
+        )} - ${intl.formatMessage(localMessages.EXPOSED)}`;
       }
     }
     return (
@@ -143,6 +153,7 @@ class SegmentNameDisplay extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, SegmentNameDisplayProps>(injectIntl)(
-  SegmentNameDisplay,
-);
+export default compose<Props, SegmentNameDisplayProps>(
+  injectIntl,
+  injectNotifications,
+)(SegmentNameDisplay);

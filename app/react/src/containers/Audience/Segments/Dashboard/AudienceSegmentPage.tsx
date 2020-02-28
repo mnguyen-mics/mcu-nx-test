@@ -29,7 +29,6 @@ interface MapStateToProps {
   };
 }
 
-
 const mapStateToProps = (state: MicsReduxState) => ({
   workspaces: SessionHelper.getWorkspaces(state),
 });
@@ -38,8 +37,8 @@ type Props = RouteComponentProps<{
   organisationId: string;
   segmentId: string;
 }> &
-  InjectedIntlProps & 
-  MapStateToProps; 
+  InjectedIntlProps &
+  MapStateToProps;
 
 interface State {
   segment?: AudienceSegmentShape;
@@ -57,7 +56,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     this.state = {
       segment: undefined,
       isLoading: true,
-      datamarts: []
+      datamarts: [],
     };
   }
 
@@ -68,13 +67,13 @@ class AudienceSegmentPage extends React.Component<Props, State> {
       match: {
         params: { segmentId, organisationId },
       },
-      workspaces
+      workspaces,
     } = this.props;
 
-    const workspace = workspaces[organisationId]
-        this.setState({
-          datamarts: workspace ? workspace.datamarts : [],
-        });
+    const workspace = workspaces[organisationId];
+    this.setState({
+      datamarts: workspace ? workspace.datamarts : [],
+    });
 
     if (!isSearchValid(search, SEGMENT_QUERY_SETTINGS)) {
       history.replace({
@@ -82,25 +81,27 @@ class AudienceSegmentPage extends React.Component<Props, State> {
         search: buildDefaultSearch(search, SEGMENT_QUERY_SETTINGS),
       });
     } else {
-      this.fetchAudienceSegment(segmentId)
+      this.fetchAudienceSegment(segmentId);
     }
   }
 
   refreshAudienceSegment = (segmentId: string) => {
     return new Promise((resolve, reject) => {
-      this.interval = setInterval(async () => {
-        const segment = await this._audienceSegmentService
+      this.interval = setInterval(() => {
+        this._audienceSegmentService
           .getSegment(segmentId)
-          .then(res => res.data);
-        if (
-          segment.type === 'USER_LOOKALIKE' &&
-          (segment.status === 'CALIBRATED' ||
-            segment.status === 'CALIBRATION_ERROR')
-        ) {
-          clearInterval(this.interval);
-          this.setState({ segment: segment });
-          return resolve(segment);
-        }
+          .then(res => res.data)
+          .then(segment => {
+            if (
+              segment.type === 'USER_LOOKALIKE' &&
+              (segment.status === 'CALIBRATED' ||
+                segment.status === 'CALIBRATION_ERROR')
+            ) {
+              clearInterval(this.interval);
+              this.setState({ segment: segment });
+              return resolve(segment);
+            }
+          });
       }, 2000);
     });
   };
@@ -172,7 +173,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
 
   render() {
     const { isLoading, segment } = this.state;
-    const { datamarts } = this.state
+    const { datamarts } = this.state;
     return (
       <div className="ant-layout">
         <AudienceSegmentActionbar
@@ -183,7 +184,11 @@ class AudienceSegmentPage extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <AudienceSegment isLoading={isLoading} segment={segment} datamarts={datamarts}/>
+            <AudienceSegment
+              isLoading={isLoading}
+              segment={segment}
+              datamarts={datamarts}
+            />
           </Content>
         </div>
       </div>
@@ -194,8 +199,5 @@ class AudienceSegmentPage extends React.Component<Props, State> {
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(AudienceSegmentPage);

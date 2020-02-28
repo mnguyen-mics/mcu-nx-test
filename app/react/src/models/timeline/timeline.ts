@@ -196,8 +196,10 @@ export interface UserProfilePerCompartmentAndUserAccountId {
   };
 }
 
+export type UserProfileGlobalType = 'legacy' | 'pionus';
+
 export interface UserProfileGlobal {
-  type?: 'legacy' | 'pionus';
+  type?: UserProfileGlobalType;
   profile: UserProfilePerCompartmentAndUserAccountId | UserProfileResource;
 }
 

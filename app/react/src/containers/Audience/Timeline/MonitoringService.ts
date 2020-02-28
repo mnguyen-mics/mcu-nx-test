@@ -1,6 +1,13 @@
-import { ProcessingResource, UserConsentResource } from './../../../models/consent/UserConsentResource';
+import {
+  ProcessingResource,
+  UserConsentResource,
+} from './../../../models/consent/UserConsentResource';
 import { Identifier } from './Monitoring';
-import { isUserPointIdentifier, UserProfileGlobal } from './../../../models/timeline/timeline';
+import {
+  isUserPointIdentifier,
+  UserProfileGlobal,
+  UserProfileGlobalType,
+} from './../../../models/timeline/timeline';
 import { groupBy, Dictionary } from 'lodash';
 import { IUserDataService } from './../../../services/UserDataService';
 import {
@@ -79,56 +86,81 @@ export class MonitoringService implements IMonitoringService {
   @inject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
 
-  async fetchProfileData(datamart: DatamartResource, userIdentifier: Identifier): Promise<UserProfileGlobal> {
+  fetchProfileData(
+    datamart: DatamartResource,
+    userIdentifier: Identifier,
+  ): Promise<UserProfileGlobal> {
+    const emptyResponse: UserProfileGlobal = { type: undefined, profile: {} };
 
-    const emptyResponse: UserProfileGlobal = { type: undefined, profile: {}}
+    return this._userDataService
+      .getProfiles(datamart.id, userIdentifier)
+      .then(profilesResponse => {
+        if (!profilesResponse) return emptyResponse;
 
-    try {
-      const profilesResponse = await this._userDataService.getProfiles(datamart.id, userIdentifier);
-
-      if (!profilesResponse) return emptyResponse;
-
-      if (profilesResponse.data.length === 1 && profilesResponse.data[0].compartment_id === undefined) {
-        return { type: 'legacy', profile: profilesResponse.data[0]}
-      }
-
-      // Default accumulator value
-      const seedAcc: Promise<UserProfilePerCompartmentAndUserAccountId> = Promise.resolve({});
-
-      // Async reducing
-      const userProfilePerCompartmentAndUserAccountId = await profilesResponse.data.reduce(async (accP: Promise<UserProfilePerCompartmentAndUserAccountId>, curr: UserProfileResource) => {
-
-        const acc = await accP;
-
-        const compartmentId = curr.compartment_id ? curr.compartment_id : 'default';
-        const userAccountId = curr.user_account_id ? curr.user_account_id : 'anonymous';
-        const newProfile = {
-          userAccountId: userAccountId,
-          profile: curr
-        };
-
-        if(!acc[compartmentId]) {
-
-          // TO DO: inject DatamartService 
-          const compartment = await this._datamartService.getUserAccountCompartment(compartmentId);
-
-          acc[compartmentId] = {
-            compartmentName: compartment.data.name ? compartment.data.name : compartment.data.token,
-            profiles: [newProfile]
-          }
-        } else {
-          acc[compartmentId].profiles = acc[compartmentId].profiles.concat(newProfile);
+        if (
+          profilesResponse.data.length === 1 &&
+          profilesResponse.data[0].compartment_id === undefined
+        ) {
+          return {
+            type: 'legacy' as UserProfileGlobalType,
+            profile: profilesResponse.data[0],
+          };
         }
 
-        return acc;
-      }, seedAcc);
+        // Default accumulator value
+        const seedAcc: Promise<UserProfilePerCompartmentAndUserAccountId> = Promise.resolve(
+          {},
+        );
 
-      return {type: 'pionus', profile: userProfilePerCompartmentAndUserAccountId};
+        // Async reducing
+        const userProfilePerCompartmentAndUserAccountId = profilesResponse.data.reduce(
+          (
+            accP: UserProfilePerCompartmentAndUserAccountId,
+            curr: UserProfileResource,
+          ) => {
+            const acc = accP;
 
-    } catch (e) {
-      return emptyResponse;
-    }
+            const compartmentId = curr.compartment_id
+              ? curr.compartment_id
+              : 'default';
+            const userAccountId = curr.user_account_id
+              ? curr.user_account_id
+              : 'anonymous';
+            const newProfile = {
+              userAccountId: userAccountId,
+              profile: curr,
+            };
 
+            if (!acc[compartmentId]) {
+              this._datamartService
+                .getUserAccountCompartment(compartmentId)
+                .then(compartment => {
+                  acc[compartmentId] = {
+                    compartmentName: compartment.data.name
+                      ? compartment.data.name
+                      : compartment.data.token,
+                    profiles: [newProfile],
+                  };
+                });
+            } else {
+              acc[compartmentId].profiles = acc[compartmentId].profiles.concat(
+                newProfile,
+              );
+            }
+
+            return acc;
+          },
+          seedAcc,
+        );
+
+        return {
+          type: 'pionus' as UserProfileGlobalType,
+          profile: userProfilePerCompartmentAndUserAccountId,
+        };
+      })
+      .catch(() => {
+        return emptyResponse;
+      });
   }
 
   fetchSegmentsData(datamart: DatamartResource, userIdentifier: Identifier) {
@@ -136,24 +168,26 @@ export class MonitoringService implements IMonitoringService {
       .getSegments(datamart.id, userIdentifier)
       .then(res => {
         return res.data;
-      }).catch(e => {
+      })
+      .catch(e => {
         return [];
       });
   }
 
   fetchCompartments(datamart: DatamartResource) {
-    return this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamart.id).then(
-      resp => {
+    return this._datamartService
+      .getUserAccountCompartmentDatamartSelectionResources(datamart.id)
+      .then(resp => {
         return resp.data;
-      },
-    ).catch(e => {
-      return [];
-    });
+      })
+      .catch(e => {
+        return [];
+      });
   }
 
   getLastSeen(datamart: DatamartResource, userIdentifier: Identifier) {
     return this._userDataService
-      .getActivities(datamart.id, userIdentifier, {live: true})
+      .getActivities(datamart.id, userIdentifier, { live: true })
       .then(res => {
         const timestamps = res.data.map(item => {
           return item.$ts;
@@ -164,7 +198,8 @@ export class MonitoringService implements IMonitoringService {
         }
 
         return lastSeen;
-      }).catch(e => {
+      })
+      .catch(e => {
         return 0;
       });
   }
@@ -227,34 +262,36 @@ export class MonitoringService implements IMonitoringService {
   }
 
   fetchProcessings(datamart: DatamartResource) {
-    return this._organisationService.getOrganisation(datamart.organisation_id).then(
-      res => {
+    return this._organisationService
+      .getOrganisation(datamart.organisation_id)
+      .then(res => {
         const communityId = res.data.community_id;
-        return this._organisationService.getProcessings(communityId).then(
-          response => {
+        return this._organisationService
+          .getProcessings(communityId)
+          .then(response => {
             return response.data;
-          },
-        );
-      },
-    ).catch(e => {
-      return [];
-    });
+          });
+      })
+      .catch(e => {
+        return [];
+      });
   }
 
   fetchConsents(datamart: DatamartResource, userIdentifier: Identifier) {
     return this._userDataService
-    .getConsents(
-      datamart.id,
-      userIdentifier
-    )
-    .then(response => {
-      return response.data;
-    }).catch(e => {
-      return [];
-    });
+      .getConsents(datamart.id, userIdentifier)
+      .then(response => {
+        return response.data;
+      })
+      .catch(e => {
+        return [];
+      });
   }
 
-  fetchMonitoringDataByIdentifier(userIdentifier: Identifier, datamart: DatamartResource) {
+  fetchMonitoringDataByIdentifier(
+    userIdentifier: Identifier,
+    datamart: DatamartResource,
+  ) {
     return Promise.all([
       this.fetchCompartments(datamart),
       this.getLastSeen(datamart, userIdentifier),
@@ -262,7 +299,7 @@ export class MonitoringService implements IMonitoringService {
       this.fetchProfileData(datamart, userIdentifier),
       this.fetchProcessings(datamart),
       this.fetchConsents(datamart, userIdentifier),
-    ])
+    ]);
   }
 
   fetchMonitoringData(
@@ -279,12 +316,12 @@ export class MonitoringService implements IMonitoringService {
       userAccountCompartments: [],
       lastSeen: 0,
       userSegmentList: [],
-      userChoices: {userConsents: [], processings: []},
-      userProfile: {type: undefined, profile: {}},
+      userChoices: { userConsents: [], processings: [] },
+      userProfile: { type: undefined, profile: {} },
       userPointList: [],
-      userIdentifier: {type: '', id : ''},
+      userIdentifier: { type: '', id: '' },
       isUserFound: false,
-    }
+    };
     return this._userDataService
       .getIdentifiers(
         organisationId,
@@ -294,20 +331,31 @@ export class MonitoringService implements IMonitoringService {
         compartmentId,
       )
       .then(response => {
-        const userPointIdentifierInfo = response.data.find(isUserPointIdentifier)
-        const userAgentIdentifierInfo = response.data.find(isUserAgentIdentifier)
-        const userIdentifier = userPointIdentifierInfo ? {
-          type: 'user_point_id',
-          id: userPointIdentifierInfo && userPointIdentifierInfo.user_point_id
-        } : {
-          type: 'user_agent_id',
-          id: userAgentIdentifierInfo ?
-            userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id :
-            ''
-        }
-          
+        const userPointIdentifierInfo = response.data.find(
+          isUserPointIdentifier,
+        );
+        const userAgentIdentifierInfo = response.data.find(
+          isUserAgentIdentifier,
+        );
+        const userIdentifier = userPointIdentifierInfo
+          ? {
+              type: 'user_point_id',
+              id:
+                userPointIdentifierInfo &&
+                userPointIdentifierInfo.user_point_id,
+            }
+          : {
+              type: 'user_agent_id',
+              id: userAgentIdentifierInfo
+                ? userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id
+                : '',
+            };
+
         if (userIdentifier.id) {
-          return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart).then(res => {
+          return this.fetchMonitoringDataByIdentifier(
+            userIdentifier,
+            datamart,
+          ).then(res => {
             return {
               userAgentList: response.data.filter(isUserAgentIdentifier),
               userEmailList: response.data.filter(isUserEmailIdentifier),
@@ -318,7 +366,7 @@ export class MonitoringService implements IMonitoringService {
               userAccountCompartments: res[0],
               lastSeen: res[1],
               userSegmentList: res[2],
-              userChoices: {userConsents: res[5], processings: res[4]},
+              userChoices: { userConsents: res[5], processings: res[4] },
               userProfile: res[3],
               userPointList: [],
               userIdentifier: userIdentifier,
@@ -327,12 +375,16 @@ export class MonitoringService implements IMonitoringService {
           });
         }
         return Promise.resolve(emptyData);
-      }).catch(() => {
+      })
+      .catch(() => {
         const userIdentifier = {
           id: identifierId,
-          type: identifierType
-        }
-        return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart).then(res => {
+          type: identifierType,
+        };
+        return this.fetchMonitoringDataByIdentifier(
+          userIdentifier,
+          datamart,
+        ).then(res => {
           if (res[1]) {
             return {
               userAgentList: [],
@@ -341,13 +393,15 @@ export class MonitoringService implements IMonitoringService {
               userAccountCompartments: res[0],
               lastSeen: res[1],
               userSegmentList: res[2],
-              userChoices: {userConsents: res[5], processings: res[4]},
+              userChoices: { userConsents: res[5], processings: res[4] },
               userProfile: res[3],
               userPointList: [],
               userIdentifier: userIdentifier,
               isUserFound: true,
             };
-          } else { return emptyData }
+          } else {
+            return emptyData;
+          }
         });
       });
   }
