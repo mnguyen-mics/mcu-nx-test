@@ -7,15 +7,16 @@ import {
   INITIAL_PLACEMENT_LIST_FORM_DATA,
   PlacementListFormData,
 } from './domain';
-import PlacementListService from '../../../../services/Library/PlacementListsService';
 import PlacementListForm from './PlacementListForm';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { notifyError } from '../../../../state/Notifications/actions';
 import { Loading } from '../../../../components/index';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
-import PlacementListFormService from './PlacementListFormService';
-
+import { lazyInject } from '../../../../config/inversify.config';
+import { IPlacementListService } from '../../../../services/Library/PlacementListService';
+import { TYPES } from '../../../../constants/types';
+import { IPlacementListFormService } from './PlacementListFormService';
 
 const messages = defineMessages({
   newPlacementList: {
@@ -49,10 +50,10 @@ const messages = defineMessages({
 });
 
 // Can't use Number.MAX_SAFE_INTEGER as it is greater than the Max value of an Int in Scala
-const MAX_RESULTS = 1000000 
+const MAX_RESULTS = 1000000;
 
 interface PlacementListPageProps {
-  placementListFormData: PlacementListFormData
+  placementListFormData: PlacementListFormData;
 }
 
 interface PlacementListPageState {
@@ -66,6 +67,12 @@ type Props = InjectedDrawerProps &
   InjectedIntlProps;
 
 class PlacementListPage extends React.Component<Props, PlacementListPageState> {
+  @lazyInject(TYPES.IPlacementListService)
+  private _placementListService: IPlacementListService;
+
+  @lazyInject(TYPES.IPlacementListFormService)
+  private _placementListFormService: IPlacementListFormService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -84,10 +91,15 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
       this.setState({
         loading: true,
       });
-      PlacementListService.getPlacementList(placementListId)
+      this._placementListService
+        .getPlacementList(placementListId)
         .then(placementListData => placementListData.data)
         .then(placementList => {
-          PlacementListService.getPlacementDescriptors(placementListId, { first_result: 0, max_results: MAX_RESULTS})
+          this._placementListService
+            .getPlacementDescriptors(placementListId, {
+              first_result: 0,
+              max_results: MAX_RESULTS,
+            })
             .then(
               placementDescriptorListData => placementDescriptorListData.data,
             )
@@ -146,11 +158,12 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
       0,
     );
 
-    PlacementListFormService.savePlacementList(
-      organisationId,
-      formData,
-      initialPlacementListData,
-      placementListId,
+    this._placementListFormService
+      .savePlacementList(
+        organisationId,
+        formData,
+        initialPlacementListData,
+        placementListId,
       )
       .then(() => {
         redirectAndNotify(true);
@@ -159,7 +172,7 @@ class PlacementListPage extends React.Component<Props, PlacementListPageState> {
         redirectAndNotify();
         notifyError(err);
       });
-  }
+  };
 
   render() {
     const {

@@ -18,7 +18,6 @@ import ResourceTimelinePage, {
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
-import PlacementListsService from '../../../../../services/Library/PlacementListsService';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -32,6 +31,7 @@ import { ICatalogService } from '../../../../../services/CatalogService';
 import { ICreativeService } from '../../../../../services/CreativeService';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 import { IResourceHistoryService } from '../../../../../services/ResourceHistoryService';
+import { IPlacementListService } from '../../../../../services/Library/PlacementListService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -76,6 +76,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
   @lazyInject(TYPES.IResourceHistoryService)
   private _resourceHistoryService: IResourceHistoryService;
+
+  @lazyInject(TYPES.IPlacementListService)
+  private _placementListService: IPlacementListService;
 
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
@@ -220,30 +223,34 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'AUDIENCE_SEGMENT_SELECTION',
-                        id,
-                        'AUDIENCE_SEGMENT',
-                      ).then(audienceSegmentId => {
-                        return this._audienceSegmentService
-                          .getSegment(audienceSegmentId)
-                          .then(response => {
-                            return response.data.name;
-                          });
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'AUDIENCE_SEGMENT_SELECTION',
+                          id,
+                          'AUDIENCE_SEGMENT',
+                        )
+                        .then(audienceSegmentId => {
+                          return this._audienceSegmentService
+                            .getSegment(audienceSegmentId)
+                            .then(response => {
+                              return response.data.name;
+                            });
+                        });
                     },
                     goToResource: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'AUDIENCE_SEGMENT_SELECTION',
-                        id,
-                        'AUDIENCE_SEGMENT',
-                      ).then(audienceSegmentId => {
-                        history.push(
-                          `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
-                        );
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'AUDIENCE_SEGMENT_SELECTION',
+                          id,
+                          'AUDIENCE_SEGMENT',
+                        )
+                        .then(audienceSegmentId => {
+                          history.push(
+                            `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
+                          );
+                        });
                     },
                   },
                   KEYWORDS_LIST_SELECTION: {
@@ -256,30 +263,34 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'KEYWORDS_LIST_SELECTION',
-                        id,
-                        'KEYWORDS_LIST',
-                      ).then(keywordsListId => {
-                        return this._keywordsListService
-                          .getKeywordList(keywordsListId)
-                          .then(response => {
-                            return response.data.name;
-                          });
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'KEYWORDS_LIST_SELECTION',
+                          id,
+                          'KEYWORDS_LIST',
+                        )
+                        .then(keywordsListId => {
+                          return this._keywordsListService
+                            .getKeywordList(keywordsListId)
+                            .then(response => {
+                              return response.data.name;
+                            });
+                        });
                     },
                     goToResource: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'KEYWORDS_LIST_SELECTION',
-                        id,
-                        'KEYWORDS_LIST',
-                      ).then(keywordsListId => {
-                        history.push(
-                          `/v2/o/${organisationId}/library/keywordslist/${keywordsListId}/edit`,
-                        );
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'KEYWORDS_LIST_SELECTION',
+                          id,
+                          'KEYWORDS_LIST',
+                        )
+                        .then(keywordsListId => {
+                          history.push(
+                            `/v2/o/${organisationId}/library/keywordslist/${keywordsListId}/edit`,
+                          );
+                        });
                     },
                   },
                   DISPLAY_NETWORK_SELECTION: {
@@ -292,18 +303,20 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'DISPLAY_NETWORK_SELECTION',
-                        id,
-                        'DISPLAY_NETWORK',
-                      ).then(displayNetworkId => {
-                        return this._displayNetworkService
-                          .getDisplayNetwork(displayNetworkId, organisationId)
-                          .then(displayNetworkResponse => {
-                            return displayNetworkResponse.data.name;
-                          });
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'DISPLAY_NETWORK_SELECTION',
+                          id,
+                          'DISPLAY_NETWORK',
+                        )
+                        .then(displayNetworkId => {
+                          return this._displayNetworkService
+                            .getDisplayNetwork(displayNetworkId, organisationId)
+                            .then(displayNetworkResponse => {
+                              return displayNetworkResponse.data.name;
+                            });
+                        });
                     },
                     goToResource: (id: string) => {
                       return;
@@ -319,54 +332,56 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'AD',
-                        id,
-                        'CREATIVE',
-                      ).then(adId => {
-                        return this._creativeService
-                          .getCreative(adId)
-                          .then(creativeResponse => {
-                            return creativeResponse.data.name;
-                          });
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'AD',
+                          id,
+                          'CREATIVE',
+                        )
+                        .then(adId => {
+                          return this._creativeService
+                            .getCreative(adId)
+                            .then(creativeResponse => {
+                              return creativeResponse.data.name;
+                            });
+                        });
                     },
                     goToResource: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'AD',
-                        id,
-                        'CREATIVE',
-                      ).then(adId => {
-                        return this._creativeService
-                          .getCreative(adId)
-                          .then(creativeResponse => {
-                            if (
-                              creativeIsDisplayAdResource(creativeResponse.data)
-                            ) {
-                              if (creativeResponse.data.subtype === 'NATIVE') {
-                                return history.push(
-                                  `/v2/o/${organisationId}/creatives/native/edit/${
-                                    creativeResponse.data.id
-                                  }`,
-                                );
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'AD',
+                          id,
+                          'CREATIVE',
+                        )
+                        .then(adId => {
+                          return this._creativeService
+                            .getCreative(adId)
+                            .then(creativeResponse => {
+                              if (
+                                creativeIsDisplayAdResource(
+                                  creativeResponse.data,
+                                )
+                              ) {
+                                if (
+                                  creativeResponse.data.subtype === 'NATIVE'
+                                ) {
+                                  return history.push(
+                                    `/v2/o/${organisationId}/creatives/native/edit/${creativeResponse.data.id}`,
+                                  );
+                                } else {
+                                  return history.push(
+                                    `/v2/o/${organisationId}/creatives/display/edit/${creativeResponse.data.id}`,
+                                  );
+                                }
                               } else {
                                 return history.push(
-                                  `/v2/o/${organisationId}/creatives/display/edit/${
-                                    creativeResponse.data.id
-                                  }`,
+                                  `/v2/o/${organisationId}/creatives/email/edit/${creativeResponse.data.id}`,
                                 );
                               }
-                            } else {
-                              return history.push(
-                                `/v2/o/${organisationId}/creatives/email/edit/${
-                                  creativeResponse.data.id
-                                }`,
-                              );
-                            }
-                          });
-                      });
+                            });
+                        });
                     },
                   },
                   DEAL_LIST_SELECTION: {
@@ -379,30 +394,34 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'DEAL_LIST_SELECTION',
-                        id,
-                        'DEAL_LIST',
-                      ).then(dealListId => {
-                        return this._dealsListService
-                          .getDealList(organisationId, dealListId)
-                          .then(res => {
-                            return res.data.name;
-                          });
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'DEAL_LIST_SELECTION',
+                          id,
+                          'DEAL_LIST',
+                        )
+                        .then(dealListId => {
+                          return this._dealsListService
+                            .getDealList(organisationId, dealListId)
+                            .then(res => {
+                              return res.data.name;
+                            });
+                        });
                     },
                     goToResource: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'DEAL_LIST_SELECTION',
-                        id,
-                        'DEAL_LIST',
-                      ).then(dealListId => {
-                        history.push(
-                          `/v2/o/${organisationId}/library/deallist/${dealListId}/edit`,
-                        );
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'DEAL_LIST_SELECTION',
+                          id,
+                          'DEAL_LIST',
+                        )
+                        .then(dealListId => {
+                          history.push(
+                            `/v2/o/${organisationId}/library/deallist/${dealListId}/edit`,
+                          );
+                        });
                     },
                   },
                   AD_EXCHANGE_SELECTION: {
@@ -415,29 +434,35 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'AD_EXCHANGE_SELECTION',
-                        id,
-                        'AD_EXCHANGE',
-                      ).then(adExchangeId => {
-                        return this._catalogService.getServices(organisationId, {
-                          serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS'],
-                        }).then(res => {
-                          const inventoryAccessExchanges = res.data.filter(
-                            r => r.type === 'inventory_access_ad_exchange',
-                          ) as AdexInventoryServiceItemPublicResource[];
-                          const adexExchange = inventoryAccessExchanges.find(
-                            r => r.ad_exchange_id === adExchangeId,
-                          );
-                          if (adexExchange !== undefined) {
-                            return adexExchange.name;
-                          } else
-                            return intl.formatMessage(
-                              resourceHistoryMessages.deleted,
-                            );
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'AD_EXCHANGE_SELECTION',
+                          id,
+                          'AD_EXCHANGE',
+                        )
+                        .then(adExchangeId => {
+                          return this._catalogService
+                            .getServices(organisationId, {
+                              serviceType: [
+                                'DISPLAY_CAMPAIGN.INVENTORY_ACCESS',
+                              ],
+                            })
+                            .then(res => {
+                              const inventoryAccessExchanges = res.data.filter(
+                                r => r.type === 'inventory_access_ad_exchange',
+                              ) as AdexInventoryServiceItemPublicResource[];
+                              const adexExchange = inventoryAccessExchanges.find(
+                                r => r.ad_exchange_id === adExchangeId,
+                              );
+                              if (adexExchange !== undefined) {
+                                return adexExchange.name;
+                              } else
+                                return intl.formatMessage(
+                                  resourceHistoryMessages.deleted,
+                                );
+                            });
                         });
-                      });
                     },
                     goToResource: (id: string) => {
                       return;
@@ -449,18 +474,20 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       return 'Location';
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'GEO_TARGETING_SELECTION',
-                        id,
-                        'GEONAME',
-                      ).then(geonameId => {
-                        return this._geonameService
-                          .getGeoname(geonameId)
-                          .then(res => {
-                            return res.data.name;
-                          });
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'GEO_TARGETING_SELECTION',
+                          id,
+                          'GEONAME',
+                        )
+                        .then(geonameId => {
+                          return this._geonameService
+                            .getGeoname(geonameId)
+                            .then(res => {
+                              return res.data.name;
+                            });
+                        });
                     },
                     goToResource: (id: string) => {
                       return;
@@ -476,30 +503,34 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                       );
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'PLACEMENT_LIST_SELECTION',
-                        id,
-                        'PLACEMENT_LIST',
-                      ).then(placementListId => {
-                        return PlacementListsService.getPlacementList(
-                          placementListId,
-                        ).then(placementListResponse => {
-                          return placementListResponse.data.name;
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'PLACEMENT_LIST_SELECTION',
+                          id,
+                          'PLACEMENT_LIST',
+                        )
+                        .then(placementListId => {
+                          return this._placementListService
+                            .getPlacementList(placementListId)
+                            .then(placementListResponse => {
+                              return placementListResponse.data.name;
+                            });
                         });
-                      });
                     },
                     goToResource: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'PLACEMENT_LIST_SELECTION',
-                        id,
-                        'PLACEMENT_LIST',
-                      ).then(placementListId => {
-                        history.push(
-                          `/v2/o/${organisationId}/library/placementlist/${placementListId}/edit`,
-                        );
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'PLACEMENT_LIST_SELECTION',
+                          id,
+                          'PLACEMENT_LIST',
+                        )
+                        .then(placementListId => {
+                          history.push(
+                            `/v2/o/${organisationId}/library/placementlist/${placementListId}/edit`,
+                          );
+                        });
                     },
                   },
                 },

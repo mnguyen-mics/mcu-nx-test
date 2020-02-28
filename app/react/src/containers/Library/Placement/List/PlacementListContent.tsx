@@ -6,7 +6,6 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Modal } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
-import PlacementListsService from '../../../../services/Library/PlacementListsService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
@@ -16,12 +15,9 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { PlacementListResource } from '../../../../models/placement/PlacementListResource';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
-
-const initialState = {
-  loading: false,
-  data: [],
-  total: 0,
-};
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IPlacementListService } from '../../../../services/Library/PlacementListService';
 
 interface PlacementListContentState {
   loading: boolean;
@@ -33,14 +29,26 @@ interface RouterProps {
   organisationId: string;
 }
 
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps;
+
 class PlacementListContent extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  Props,
   PlacementListContentState
 > {
-  state = initialState;
+  @lazyInject(TYPES.IPlacementListService)
+  private _placementListService: IPlacementListService;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      loading: false,
+      data: [],
+      total: 0,
+    };
+  }
 
   archivePlacementList = (placementId: string) => {
-    return PlacementListsService.deletePlacementList(placementId);
+    return this._placementListService.deletePlacementList(placementId);
   };
 
   fetchPlacementList = (organisationId: string, filter: Filters) => {
@@ -48,15 +56,15 @@ class PlacementListContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      PlacementListsService.getPlacementLists(organisationId, options).then(
-        results => {
+      this._placementListService
+        .getPlacementLists(organisationId, options)
+        .then(results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
-        },
-      );
+        });
     });
   };
 
@@ -110,9 +118,9 @@ class PlacementListContent extends React.Component<
   };
 
   render() {
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<PlacementListResource>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
+      PlacementListResource
+    >> = [
       {
         key: 'action',
         actions: () => [
@@ -161,7 +169,4 @@ class PlacementListContent extends React.Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(PlacementListContent);
+export default compose(withRouter, injectIntl)(PlacementListContent);
