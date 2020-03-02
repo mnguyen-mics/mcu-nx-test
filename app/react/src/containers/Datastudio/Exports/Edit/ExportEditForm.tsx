@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout } from 'antd';
+import { Layout, Alert } from 'antd';
 import { compose } from 'recompose';
 import {
   Form,
@@ -10,7 +10,6 @@ import {
   GenericField,
 } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
-import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 
 import FormLayoutActionbar, {
@@ -25,7 +24,6 @@ import GeneralFormSection from './Sections/GeneralFormSection';
 import OTQLInputEditor, {
   OTQLInputEditorProps,
 } from '../../../Audience/Segments/Edit/Sections/query/OTQL';
-import SelectorQL from '../../../Audience/Segments/Edit/Sections/query/SelectorQL';
 import { Omit } from '../../../../utils/Types';
 import { ExportFormData } from './domain';
 import { injectDatamart } from '../../../Datamart';
@@ -60,6 +58,11 @@ const messages = defineMessages({
     id: 'exports.form.edit.title',
     defaultMessage: 'Edit {name}',
   },
+  noMoreSupported: {
+    id: 'exports.form.legacyComponent.noMoreSupported',
+    defaultMessage:
+      'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
+  },
 });
 
 interface ExportEditFormProps
@@ -70,17 +73,15 @@ interface ExportEditFormProps
   datamart?: DatamartResource;
 }
 
-const FormOTQL: FieldCtor<
+const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<
   OTQLInputEditorProps
-> = Field as new () => GenericField<OTQLInputEditorProps>;
+>;
 
 type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   ExportEditFormProps &
-  RouteComponentProps<{ organisationId: string; exportId: string }> &
   InjectedIntlProps;
 
 class ExportEditForm extends React.Component<Props> {
-
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
     return (
       <div>
@@ -94,24 +95,15 @@ class ExportEditForm extends React.Component<Props> {
   };
 
   buildQueryComponent = () => {
-    const {
-      datamart,
-      match: {
-        params: { organisationId },
-      },
-      intl,
-    } = this.props;
+    const { datamart, intl } = this.props;
 
     if (datamart!.storage_model_version === 'v201506') {
-      return this.props.initialValues.query
-        ? this.generateUserQueryTemplate(
-            <SelectorQL
-              datamartId={datamart!.id}
-              organisationId={organisationId}
-              queryContainer={this.props.initialValues.query}
-            />,
-          )
-        : null;
+      return this.props.initialValues.query ? (
+        <Alert
+          message={intl.formatMessage(messages.noMoreSupported)}
+          type="warning"
+        />
+      ) : null;
     } else {
       return this.generateUserQueryTemplate(
         <FormOTQL
@@ -196,7 +188,6 @@ class ExportEditForm extends React.Component<Props> {
 }
 
 export default compose<Props, ExportEditFormProps>(
-  withRouter,
   injectIntl,
   injectDatamart,
   reduxForm<ExportFormData, ExportEditFormProps>({

@@ -7,9 +7,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { DatamartSelector } from '../../Datamart';
-import SelectorQLBuilderContainer from '../../QueryTool/SelectorQL/SelectorQLBuilderContainer';
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
-import { QueryContainer } from '../../QueryTool/SelectorQL/AngularQueryToolWidget';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
@@ -20,6 +18,7 @@ import { IQueryService } from '../../../services/QueryService';
 import { IExportService } from '../../../services/Library/ExportService';
 import QueryToolSelector from '../../QueryTool/QueryToolSelector';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { Alert } from 'antd';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -35,8 +34,13 @@ type Props = RouteComponentProps<QueryToolPageRouteParams> &
 
 const messages = defineMessages({
   queryBuilder: {
-    id: 'query-builder-page-actionbar-title',
+    id: 'datastudio.queryTool.edit.actionbar.title',
     defaultMessage: 'Query Tool',
+  },
+  noMoreSupported: {
+    id: 'datastudio.queryTool.edit.legacyComponent.noMoreSupported',
+    defaultMessage:
+      'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
   },
 });
 
@@ -83,72 +87,6 @@ class QueryToolPage extends React.Component<Props> {
     };
 
     const selectedDatamart = this.getSelectedDatamart();
-
-    const selectorQLActionbar = (
-      query: QueryContainer | null,
-      datamartId: string,
-    ) => {
-      const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
-        if (!query)
-          return Promise.reject(
-            new Error("angular query container isn't loaded correctly"),
-          );
-        return query.saveOrUpdate().then(queryResource => {
-          const { name, technical_name, persisted } = segmentFormData;
-          const userQuerySegment: Partial<UserQuerySegment> = {
-            datamart_id: datamartId,
-            type: 'USER_QUERY',
-            name,
-            technical_name,
-            persisted,
-            default_ttl: calculateDefaultTtl(segmentFormData),
-            query_id: queryResource.id,
-          };
-          return this._audienceSegmentService
-            .saveSegment(match.params.organisationId, userQuerySegment)
-            .then(res => {
-              history.push(
-                `/v2/o/${match.params.organisationId}/audience/segments/${
-                  res.data.id
-                }`,
-              );
-            });
-        });
-      };
-      const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
-        if (!query)
-          return Promise.reject(
-            new Error("angular query container isn't loaded correctly"),
-          );
-        return query.saveOrUpdate().then(queryResource => {
-          return this._exportService
-            .createExport(match.params.organisationId, {
-              name: exportFormData.name,
-              output_format: exportFormData.outputFormat,
-              query_id: queryResource.id,
-              type: 'QUERY',
-            })
-            .then(res => {
-              history.push(
-                `/v2/o/${match.params.organisationId}/datastudio/exports/${
-                  res.data.id
-                }`,
-              );
-            });
-        });
-      };
-      return (
-        <SaveQueryAsActionBar
-          saveAsUserQuery={saveAsUserQuery}
-          saveAsExort={saveAsExport}
-          breadcrumb={[
-            {
-              name: intl.formatMessage(messages.queryBuilder),
-            },
-          ]}
-        />
-      );
-    };
 
     const OTQLActionbar = (query: string, datamartId: string) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
@@ -242,11 +180,10 @@ class QueryToolPage extends React.Component<Props> {
           )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201506' && (
-            <SelectorQLBuilderContainer
-              datamartId={selectedDatamart.id}
-              renderActionBar={selectorQLActionbar}
-              title={intl.formatMessage(messages.queryBuilder)}
-            />
+            <Alert
+            message={intl.formatMessage(messages.noMoreSupported)}
+            type="warning"
+          />
           )}
       </div>
     );

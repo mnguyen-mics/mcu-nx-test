@@ -1,6 +1,4 @@
-import {
-  createFieldArrayModelWithMeta,
-} from './../../../../utils/FormHelper';
+import { createFieldArrayModelWithMeta } from './../../../../utils/FormHelper';
 import {
   Task,
   executeTasksInSequence,
@@ -61,21 +59,6 @@ export class GoalFormService implements IGoalFormService {
           .then(res => {
             goalFormData.query = res;
             goalFormData.queryLanguage = res.query_language;
-
-            if (res.query_language === 'SELECTORQL') {
-              const QueryContainer = (window as any).angular
-                .element(document.body)
-                .injector()
-                .get('core/datamart/queries/QueryContainer');
-
-              return new QueryContainer(goalRes.data.datamart_id, res.id)
-                .load()
-                .then((queryContainer: any) => {
-                  goalFormData.queryContainer = queryContainer;
-                  return goalFormData;
-                });
-            }
-
             return goalFormData;
           });
       }
@@ -94,31 +77,19 @@ export class GoalFormService implements IGoalFormService {
     // save query if needed
     let goalDataToUpload = Promise.resolve(goalFormData.goal);
     if (goalFormData.triggerType === 'QUERY' && goalFormData.query) {
-      if (goalFormData.queryLanguage === 'SELECTORQL') {
-        goalDataToUpload = goalFormData.queryContainer
-          .saveOrUpdate()
-          .then((queryContainerUpdate: any) => {
-            const queryId = queryContainerUpdate.id as string;
-            return {
-              ...goalFormData.goal,
-              new_query_id: queryId,
-            };
-          });
-      } else {
-        const query = {
-          ...goalFormData.query,
-          datamart_id: goalFormData.goal.datamart_id,
-          query_language: goalFormData.queryLanguage,
-        };
-        goalDataToUpload = this._queryService
-          .createQuery(goalFormData.goal.datamart_id!, query)
-          .then(resp => {
-            return {
-              ...goalFormData.goal,
-              new_query_id: resp.data.id,
-            };
-          });
-      }
+      const query = {
+        ...goalFormData.query,
+        datamart_id: goalFormData.goal.datamart_id,
+        query_language: goalFormData.queryLanguage,
+      };
+      goalDataToUpload = this._queryService
+        .createQuery(goalFormData.goal.datamart_id!, query)
+        .then(resp => {
+          return {
+            ...goalFormData.goal,
+            new_query_id: resp.data.id,
+          };
+        });
     }
 
     return goalDataToUpload.then(goalData => {

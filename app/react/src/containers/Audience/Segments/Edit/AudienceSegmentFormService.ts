@@ -222,27 +222,22 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
     const datamartId = audienceSegmentFormData.audienceSegment
       .datamart_id as string;
 
-    if (queryLanguage === 'SELECTORQL') {
-      return queryContainer.saveOrUpdate() as Promise<QueryResource>;
-    } else {
-      if (audienceSegmentFormData.query && audienceSegmentFormData.query.id) {
-        return this._queryService
-          .updateQuery(
-            datamartId,
-            audienceSegmentFormData.query.id,
-            audienceSegmentFormData.query,
-          )
-          .then(query => query.data);
-      }
+    if (audienceSegmentFormData.query && audienceSegmentFormData.query.id) {
       return this._queryService
-        .createQuery(datamartId, {
-          query_language: queryLanguage,
-          query_text: (audienceSegmentFormData.query as QueryResource)
-            .query_text,
-          datamart_id: datamartId,
-        })
+        .updateQuery(
+          datamartId,
+          audienceSegmentFormData.query.id,
+          audienceSegmentFormData.query,
+        )
         .then(query => query.data);
     }
+    return this._queryService
+      .createQuery(datamartId, {
+        query_language: queryLanguage,
+        query_text: (audienceSegmentFormData.query as QueryResource).query_text,
+        datamart_id: datamartId,
+      })
+      .then(query => query.data);
   };
 
   fillTechnicalNameForUserPixel = (formData: AudienceSegmentFormData) => {

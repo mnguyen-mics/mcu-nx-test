@@ -160,14 +160,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               };
               if (initialData.query) {
                 newState.queryLanguage = initialData.query.query_language;
-                if (initialData.query.query_language === 'SELECTORQL') {
-                  const defQuery = new QueryContainer(
-                    initialData.audienceSegment.datamart_id,
-                    initialData.query.id,
-                  );
-                  defQuery.load();
-                  newState.queryContainer = defQuery;
-                }
               }
               this.setState(newState as State);
             });
@@ -470,10 +462,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     this.setState({
       selectedDatamart: datamart,
       queryContainer: defQuery,
-      queryLanguage:
-        datamart.storage_model_version === 'v201506'
-          ? 'SELECTORQL'
-          : ('OTQL' as QueryLanguage),
+      queryLanguage: 'OTQL',
       displayDatamartSelector: false,
     });
   };
@@ -482,11 +471,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     segmentType: AudienceSegmentType,
     queryLang: QueryLanguage = 'OTQL',
   ) => {
-    const queryLanguage: QueryLanguage =
-      this.state.selectedDatamart &&
-      this.state.selectedDatamart.storage_model_version === 'v201506'
-        ? 'SELECTORQL'
-        : queryLang;
+    const queryLanguage: QueryLanguage = queryLang;
     if (segmentType === 'USER_PIXEL') {
       this.setState({
         audienceSegmentFormData: {
