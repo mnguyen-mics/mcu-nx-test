@@ -130,7 +130,7 @@ class DatamartsListPage extends React.Component<
     const renderActionColumnDefinition: ActionsRenderer<DatamartResource> = (record: DatamartResource) => {
       const actionsDefinitions: Array<ActionDefinition<DatamartResource>>  = [];
       actionsDefinitions.push({ intlMessage: messages.editDatamart, callback: this.onClickEdit})
-      if (record.id === '1048') {
+      if (record.id === '1186') {
         actionsDefinitions.push({callback: this.onClickSUR, intlMessage: messages.serviceUsageReport }) 
       }
       if (record.type === 'CROSS_DATAMART') {
