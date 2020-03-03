@@ -103,7 +103,7 @@ We use [nvm](https://github.com/creationix/nvm) to set the nodejs version.
 
 #### setup endpoints
 
-create `app/conf/app-configuration.js` using `app/conf/app-configuration.js.template`.
+create `app/conf/react-configuration.js` using `app/conf/react-configuration.js.template`.
 
 
 Getting started
@@ -113,7 +113,6 @@ Getting started
 * Make sure all prerequisites are fulfilled
 * Follow the first 3 steps of the [Adding and using the library in client project](https://github.com/MEDIARITHMICS/ux-components/tree/master/mcs-react-components#adding-and-using-the-library-in-client-project) section
 * `npm install`
-* `bower install`
 * `npm start` (set by default environment variables to local)
 * If you want to set environment variables to a specific environment, you can use `npm run start:local` or `npm run start:prod`
 * If you want to change the environment without relaunching `npm start`, you can simply run `npm run local` or `npm run prod` in a new terminal tab.
