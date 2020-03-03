@@ -605,6 +605,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       runtimeSchemaId,
       formValues,
       expressionIndex,
+      fieldValidators,
       match: {
         params: {
           organisationId
@@ -683,6 +684,9 @@ class FieldNodeForm extends React.Component<Props, State> {
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
+        validate={[
+          fieldValidators.isRequired,
+        ]}
         selectProps={{
           ...selectProps,
         }}
