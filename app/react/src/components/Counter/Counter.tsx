@@ -33,7 +33,7 @@ export default class Counter extends React.Component<CounterProps> {
           {loading ? (
             <Spin />
           ) : (value !== undefined && value !== null) ? (
-            <span>
+            <React.Fragment>
               <FormattedNumber value={value} />{unit || ''}
               {trend ? <Statistic
                 title=""
@@ -43,7 +43,7 @@ export default class Counter extends React.Component<CounterProps> {
                 prefix={<Icon type={`arrow-${trend.type}`} />}
                 suffix="%"
               /> : null}
-            </span>
+            </React.Fragment>
           ) : (
                 '--'
               )}
