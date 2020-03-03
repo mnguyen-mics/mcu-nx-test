@@ -11,8 +11,4 @@ declare global {
   }
 }
 
-render(<App />, document.getElementById('mcs-react-app'), () => {
-  window.require([window.mainRev], () => {
-    //
-  });
-});
+render(<App />, document.getElementById('mcs-react-app'));

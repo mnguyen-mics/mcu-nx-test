@@ -1,7 +1,0 @@
-{
-  "name": "core/creatives/plugins/email-template",
-  "dependencies": [
-    "restangular",
-    "core/creatives/plugins/email-template/default-editor"
-  ]
-}

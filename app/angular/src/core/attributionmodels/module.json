@@ -1,6 +1,0 @@
-{"name": "core/attributionmodels",
-  "dependencies": [
-    "restangular",
-    "core/plugin"
-  ]
-}

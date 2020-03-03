@@ -37,7 +37,6 @@ export interface AutomationEditFormProps
   extends Omit<ConfigProps<AutomationFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  scenarioContainer: any;
   datamart?: DatamartResource;
 }
 

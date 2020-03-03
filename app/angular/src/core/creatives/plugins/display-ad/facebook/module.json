@@ -1,6 +1,0 @@
-{
-  "name": "core/creatives/plugins/display-ad/facebook",
-  "dependencies": [
-    "restangular"
-  ]
-}

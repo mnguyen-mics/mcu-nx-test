@@ -1,3 +1,0 @@
-{"name": "core/login", "dependencies": [
-  "core/common", "restangular"
-]}

@@ -3,12 +3,9 @@ node_modules/
 dist/
 .tmp/
 .sass-cache/
-app/angular/bower_components/
 .idea/
 .vscode/
 .editorconfig
-app/angular/**/index.js
-app/angular/**/module.js
 generated/
 *.zip
 npm-debug.log*

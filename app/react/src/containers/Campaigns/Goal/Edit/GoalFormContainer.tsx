@@ -82,11 +82,6 @@ class GoalFormContainer extends React.Component<Props, State> {
 
   onDatamartSelect = (datamart: DatamartResource) => {
     const { initialValues } = this.props;
-    const QueryContainer = (window as any).angular
-      .element(document.body)
-      .injector()
-      .get('core/datamart/queries/QueryContainer');
-    const defQuery = new QueryContainer(datamart.id);
     this.setState({
       selectedDatamart: datamart,
       initialValues: {
@@ -95,8 +90,7 @@ class GoalFormContainer extends React.Component<Props, State> {
           ...INITIAL_GOAL_FORM_DATA.goal,
           datamart_id: datamart.id,
         },
-        attributionModels: initialValues.attributionModels,        
-        queryContainer: defQuery,
+        attributionModels: initialValues.attributionModels,
       },
     });
   };

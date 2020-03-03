@@ -7,9 +7,6 @@ If you need to learn more about how the Navigator loads its plugins checkout the
 Project structure
 -------------
 
-### app/angular/src
-The application is coded with React but small parts using Angular still remain (Navigator V1 was made with Angular) and that is what `angular/src` is about.
-
 ### app/conf
 This is where you can configure your React app (available features, global constants, etc ...). You will have to create a Git ignored `app/conf/app-configuration.js` file to modify these constants. (see below)
 

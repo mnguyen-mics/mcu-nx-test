@@ -81,7 +81,6 @@ export interface AudienceSegmentFormProps
   datamart?: DatamartResource;
   feedType?: FeedType;
   segmentCreation: boolean;
-  queryContainer: any;
   queryLanguage?: QueryLanguage;
   segmentType?: AudienceSegmentType;
   goToSegmentTypeSelection?: () => void;
