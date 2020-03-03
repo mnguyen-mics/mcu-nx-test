@@ -58,7 +58,6 @@
       }
 
       .presentation-item {
-        
         background-color: #ffffff;
         border: @border-width-base @border-style-base @border-color-base;
         border-radius: @border-radius-sm @border-radius-sm;
@@ -135,7 +134,7 @@
         padding: 0 20px 0 0;
         flex: 0;
       }
-      .image-title{
+      .image-title {
         margin: 0 10px 0 0;
         width: 37px;
         height: 37px;
@@ -155,8 +154,6 @@
           font-size: 1em;
           letter-spacing: 0.4px;
           color: @text-color-secondary;
-         
-
         }
       }
       .content.alone {
@@ -210,12 +207,12 @@
   }
 
   .form-input-group {
-    border-radius: 4px; 
+    border-radius: 4px;
     transition: 500ms background-color;
     background-color: darken(@layout-content-background, 3%);
     padding: 25px 20px;
-    box-sizing:border-box;
-	  position:relative;
+    box-sizing: border-box;
+    position: relative;
     &:hover {
       background-color: darken(@layout-content-background, 5%);
       .action-buttons {
@@ -252,9 +249,9 @@
       width: 75px;
     }
     .item {
-      transition: all 0.6s cubic-bezier(.25,.8,.25,1);
+      transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
       &:hover {
-        box-shadow: 0 3px 6px rgba(0,0,0,0.23);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.23);
         background-color: @layout-content-background;
 
         .tgl-operator {
@@ -343,6 +340,10 @@
 
   .section-header {
     margin-bottom: 3em;
+    .section-header-buttons {
+      display: flex;
+      justify-content: flex-end;
+    }
   }
 
   .title-container {
@@ -424,7 +425,7 @@
 
 .automation-form {
   .ant-form-item-label label:after {
-    content: none
+    content: none;
   }
 }
 
@@ -507,7 +508,7 @@
       }
     }
   }
-  .small-select-right{
+  .small-select-right {
     .ant-select-selection {
       border-radius: 0px !important;
       border-left: none;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import moment from 'moment';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import {
@@ -42,6 +42,7 @@ import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { ProcessingSelectionResource } from '../../../../models/consent/UserConsentResource';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -148,7 +149,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       this._audienceSegmentFormService
         .loadSegmentInitialValue(segmentId)
         .then(initialData => {
-          this._datamartService.getDatamart(initialData.audienceSegment.datamart_id!)
+          this._datamartService
+            .getDatamart(initialData.audienceSegment.datamart_id!)
             .then(datamartData => datamartData.data)
             .then(datamartResource => {
               const newState: Partial<State> = {
@@ -230,6 +232,57 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       : history.push(defaultRedirectUrl);
   };
 
+  shouldWarnProcessings = (
+    audienceSegmentFormData: AudienceSegmentFormData,
+  ): boolean => {
+    const initialProcessingSelectionResources =
+      audienceSegmentFormData.initialProcessingSelectionResources;
+    const processingActivities = audienceSegmentFormData.processingActivities;
+
+    const initialProcessingIds = initialProcessingSelectionResources.map(
+      processingSelection => processingSelection.processing_id,
+    );
+    const processingActivityIds = processingActivities.map(
+      processingResource => processingResource.model.id,
+    );
+
+    return (
+      audienceSegmentFormData.audienceSegment.id !== undefined &&
+      !(
+        initialProcessingSelectionResources.length ===
+          processingActivityIds.length &&
+        initialProcessingIds.every(pId => processingActivityIds.includes(pId))
+      )
+    );
+  };
+
+  checkProcessingsAndSave = (
+    audienceSegmentFormData: AudienceSegmentFormData,
+  ) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
+    const warn = this.shouldWarnProcessings(audienceSegmentFormData);
+
+    const saveFunction = () => {
+      this.save(audienceSegmentFormData);
+    };
+
+    if (warn) {
+      Modal.confirm({
+        content: formatMessage(messages.processingsWarningModalContent),
+        okText: formatMessage(messages.processingsWarningModalOk),
+        cancelText: formatMessage(messages.processingsWarningModalCancel),
+        onOk() {
+          return saveFunction();
+        },
+      });
+    } else {
+      saveFunction();
+    }
+  };
+
   save = (audienceSegmentFormData: AudienceSegmentFormData) => {
     const {
       match: {
@@ -268,7 +321,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         !audienceSegmentFormData.query)
     ) {
       message.error(intl.formatMessage(messagesMap.noQueryText));
-    } else if (audienceSegmentFormData.audienceSegment.type === 'USER_ACTIVATION') {
+    } else if (
+      audienceSegmentFormData.audienceSegment.type === 'USER_ACTIVATION'
+    ) {
       message.error(intl.formatMessage(messagesMap.editionNotAllowed));
     } else {
       this.setState({ loading: true });
@@ -293,6 +348,67 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         0,
       );
 
+      const generateProcessingSelectionsTasks = (
+        segmentId: string,
+      ): Array<Promise<any>> => {
+        const initialProcessingSelectionResources =
+          audienceSegmentFormData.initialProcessingSelectionResources;
+        const processingActivities =
+          audienceSegmentFormData.processingActivities;
+
+        const initialProcessingIds = initialProcessingSelectionResources.map(
+          processingSelection => processingSelection.processing_id,
+        );
+        const processingAcitivityIds = processingActivities.map(
+          processingResource => processingResource.model.id,
+        );
+
+        const processingIdsToBeAdded = processingAcitivityIds.filter(
+          pId => !initialProcessingIds.includes(pId),
+        );
+        const processingsIdsToBeDeleted = initialProcessingIds.filter(
+          pId => !processingAcitivityIds.includes(pId),
+        );
+
+        const savePromises = processingIdsToBeAdded.map(pId => {
+          const processingActivityFieldModel = processingActivities.find(
+            processingActivity => processingActivity.model.id === pId,
+          );
+
+          if (processingActivityFieldModel) {
+            const processingResource = processingActivityFieldModel.model;
+            const processingSelectionResource: Partial<ProcessingSelectionResource> = {
+              processing_id: processingResource.id,
+              processing_name: processingResource.name,
+            };
+            return this._audienceSegmentFormService.createProcessingSelectionForAudienceSegment(
+              segmentId,
+              processingSelectionResource,
+            );
+          } else {
+            return Promise.resolve({});
+          }
+        });
+
+        const deletePromises = processingsIdsToBeDeleted.map(pId => {
+          const processingSelectionResource = initialProcessingSelectionResources.find(
+            pSelectionResource => pSelectionResource.processing_id === pId,
+          );
+
+          if (processingSelectionResource) {
+            const processingSelectionId = processingSelectionResource.id;
+            return this._audienceSegmentFormService.deleteAudienceSegmentProcessingSelection(
+              segmentId,
+              processingSelectionId,
+            );
+          } else {
+            return Promise.resolve();
+          }
+        });
+
+        return [...savePromises, ...deletePromises];
+      };
+
       this._audienceSegmentFormService
         .saveOrCreateAudienceSegment(
           organisationId,
@@ -300,6 +416,14 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           queryLanguage,
           queryContainer,
         )
+        .then(response => {
+          if (!!response) {
+            Promise.all([
+              ...generateProcessingSelectionsTasks(response.data.id),
+            ]);
+          }
+          return response;
+        })
         .then(response => {
           hideSaveInProgress();
           if (!!response) {
@@ -420,9 +544,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   getSegmentTypesToDisplay = () => {
     const { selectedDatamart } = this.state;
-    const {
-      hasFeature
-    } = this.props;
+    const { hasFeature } = this.props;
     const segmentTypesToDisplay: Array<{
       title: string;
       value: AudienceSegmentType;
@@ -491,6 +613,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         this.setState({
           audienceSegmentFormData: {
             audienceSegment: {},
+            initialProcessingSelectionResources: [],
+            processingActivities: [],
           },
         });
       };
@@ -504,6 +628,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     if (loading) {
       return <Loading className="loading-full-screen" />;
     }
+
+    const initialProcessingSelectionsForWarning = audienceSegmentFormData
+      .audienceSegment.id
+      ? audienceSegmentFormData.initialProcessingSelectionResources
+      : undefined;
 
     let selectedSegmentType: AudienceSegmentType | undefined;
     if (audienceSegmentFormData.audienceSegment) {
@@ -525,7 +654,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       <EditAudienceSegmentForm
         initialValues={this.state.audienceSegmentFormData}
         close={this.onClose}
-        onSubmit={this.save}
+        onSubmit={this.checkProcessingsAndSave}
         breadCrumbPaths={breadcrumbPaths}
         audienceSegmentFormData={this.state.audienceSegmentFormData}
         datamart={selectedDatamart}
@@ -534,6 +663,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         queryLanguage={getQueryLanguageToDisplay}
         segmentType={selectedSegmentType}
         goToSegmentTypeSelection={resetFormData}
+        initialProcessingSelectionsForWarning={
+          initialProcessingSelectionsForWarning
+        }
       />
     ) : (
       <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>

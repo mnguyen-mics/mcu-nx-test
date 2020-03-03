@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Row, Menu } from 'antd';
+import { Button, Row, Menu, Col } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import FormTitle, { FormTitleProps } from './FormTitle';
 import { ClickParam } from 'antd/lib/menu';
@@ -18,7 +18,7 @@ interface FormSectionProps extends FormTitleProps {
   button?: {
     message: string;
     onClick: () => void;
-    disabled?: boolean
+    disabled?: boolean;
   };
   dropdownItems?: DropdownButtonItemProps[];
 }
@@ -38,8 +38,7 @@ class FormSection extends React.Component<FormSectionProps> {
     const handleClick = (param: ClickParam) => {
       const currentItem =
         dropdownItems && dropdownItems.find(item => item.id === param.key);
-        currentItem!.onClick();
-     
+      currentItem!.onClick();
     };
 
     const overlay = (
@@ -60,6 +59,21 @@ class FormSection extends React.Component<FormSectionProps> {
 
   render() {
     const { title, subtitle, button, dropdownItems } = this.props;
+    const titleColSpan =
+      24 - 3 * ((!!button ? 1 : 0) + (!!dropdownItems ? 1 : 0));
+
+    const hasRestCol = !!button || !!dropdownItems;
+    const restCol = hasRestCol && (
+      <Col span={24 - titleColSpan} className="section-header-buttons">
+        {button && (
+          <Button onClick={button.onClick} disabled={button.disabled}>
+            {button.message}
+          </Button>
+        )}
+
+        {dropdownItems && this.renderDropdownButton()}
+      </Col>
+    );
 
     return (
       <Row
@@ -68,11 +82,11 @@ class FormSection extends React.Component<FormSectionProps> {
         justify="space-between"
         className="section-header"
       >
-        <FormTitle title={title} subtitle={subtitle} />
+        <Col span={titleColSpan}>
+          <FormTitle title={title} subtitle={subtitle} />
+        </Col>
 
-        {button && <Button onClick={button.onClick} disabled={button.disabled}>{button.message}</Button>}
-
-        {dropdownItems && this.renderDropdownButton()}
+        {restCol}
       </Row>
     );
   }

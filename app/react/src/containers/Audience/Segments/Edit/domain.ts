@@ -1,3 +1,5 @@
+import { ProcessingActivityFieldModel } from './../../../Settings/DatamartSettings/Common/domain';
+import { ProcessingSelectionResource } from './../../../../models/consent/UserConsentResource';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { AudienceSegmentShape } from "../../../../models/audiencesegment/";
 import { FieldArrayModel } from "../../../../utils/FormHelper";
@@ -35,6 +37,8 @@ export type AudienceTagFeedsFieldModel = FieldArrayModel<AudienceTagFeedResource
 
 export interface AudienceSegmentFormData {
   audienceSegment: Partial<AudienceSegmentShape>;
+  initialProcessingSelectionResources: ProcessingSelectionResource[];
+  processingActivities: ProcessingActivityFieldModel[];
   defaultLiftime?: number;
   defaultLiftimeUnit?: DefaultLiftimeUnit;
   query?: QueryResource;
@@ -45,6 +49,8 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   audienceSegment: {
     persisted: true
   },
+  initialProcessingSelectionResources: [],
+  processingActivities: [],
   defaultLiftimeUnit: 'days',
   userListFiles: [],
 };

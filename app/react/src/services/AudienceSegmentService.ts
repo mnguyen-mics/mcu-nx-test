@@ -1,3 +1,4 @@
+import { ProcessingSelectionResource } from './../models/consent/UserConsentResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import ReportService from './ReportService';
 import {
@@ -234,6 +235,21 @@ export interface IAudienceSegmentService {
   recalibrateAudienceLookAlike: (
     segmentId: string,
   ) => Promise<DataResponse<void>>;
+  getProcessingSelectionsByAudienceSegment: (
+    segmentId: string,
+  ) => Promise<DataListResponse<ProcessingSelectionResource>>;
+  createProcessingSelectionForAudienceSegment: (
+    segmentId: string,
+    body: Partial<ProcessingSelectionResource>,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
+  getAudienceSegmentProcessingSelection: (
+    segmentId: string,
+    processingSelectionId: string,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
+  deleteAudienceSegmentProcessingSelection: (
+    segmentId: string,
+    processingSelectionId: string,
+  ) => Promise<DataResponse<ProcessingSelectionResource>>;
 }
 
 @injectable()
@@ -579,4 +595,32 @@ export default class AudienceSegmentService implements IAudienceSegmentService {
     const endpoint = `audience_segment_lookalikes/${segmentId}/calibrate`;
     return ApiService.postRequest(endpoint, {});
   };
+
+  getProcessingSelectionsByAudienceSegment(
+    segmentId: string,
+  ): Promise<DataListResponse<ProcessingSelectionResource>> {
+    const endpoint = `audience_segments/${segmentId}/processing_selections`;
+    return ApiService.getRequest(endpoint);
+  }
+  createProcessingSelectionForAudienceSegment(
+    segmentId: string,
+    body: Partial<ProcessingSelectionResource>,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    const endpoint = `audience_segments/${segmentId}/processing_selections`;
+    return ApiService.postRequest(endpoint, body);
+  }
+  getAudienceSegmentProcessingSelection(
+    segmentId: string,
+    processingSelectionId: string,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    const endpoint = `audience_segments/${segmentId}/processing_selections/${processingSelectionId}`;
+    return ApiService.getRequest(endpoint);
+  }
+  deleteAudienceSegmentProcessingSelection(
+    segmentId: string,
+    processingSelectionId: string,
+  ): Promise<DataResponse<ProcessingSelectionResource>> {
+    const endpoint = `audience_segments/${segmentId}/processing_selections/${processingSelectionId}`;
+    return ApiService.deleteRequest(endpoint);
+  }
 }

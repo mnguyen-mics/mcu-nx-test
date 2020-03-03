@@ -278,4 +278,22 @@ export default defineMessages({
     id: 'audience.segment.actionbar.preset.create',
     defaultMessage: 'Create a new Preset',
   },
+  // Processings
+  processingsWarningModalContent: {
+    id: 'audience.segment.processings.warning.content',
+    defaultMessage:
+      'You are about to change the Processing Activities on behalf of which you are capturing personal data on this audience segment. mediarithmics platform will now automatically drop new User Events if the User Choices do not allow their capture. Do you want to continue?',
+  },
+  processingsWarningModalOk: {
+    id: 'audience.segment.processings.warning.ok',
+    defaultMessage: 'OK',
+  },
+  processingsWarningModalCancel: {
+    id: 'audience.segment.processings.warning.cancel',
+    defaultMessage: 'Cancel',
+  },
+  sectionProcessingActivitiesTitle: {
+    id: 'audience.segment.form.processingActivities.title',
+    defaultMessage: 'Processing Activities',
+  },
 });

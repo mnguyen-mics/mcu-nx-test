@@ -6,9 +6,11 @@ import {
   InjectedFormProps,
   Field,
   GenericField,
+  FieldArray,
+  GenericFieldArray,
 } from 'redux-form';
 import { connect } from 'react-redux';
-import { InjectedIntlProps } from 'react-intl';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout, Alert } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
@@ -51,6 +53,11 @@ import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
 import { Path } from '../../../../components/ActionBar';
 import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { ProcessingSelectionResource } from '../../../../models/consent/UserConsentResource';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
+import ProcessingActivitiesFormSection, {
+  ProcessingActivitiesFormSectionProps,
+} from '../../../Settings/DatamartSettings/Common/ProcessingActivitiesFormSection';
 
 export const FORM_ID = 'audienceSegmentForm';
 
@@ -58,12 +65,17 @@ const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }
 >;
 
-const FormOTQL: FieldCtor<
+const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<
   OTQLInputEditorProps
-> = Field as new () => GenericField<OTQLInputEditorProps>;
-const FormJSONQL: FieldCtor<
+>;
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field as new () => GenericField<
   JSONQLInputEditorProps
-> = Field as new () => GenericField<JSONQLInputEditorProps>;
+>;
+
+const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ProcessingActivitiesFormSectionProps
+>;
 
 export interface AudienceSegmentFormProps
   extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
@@ -78,11 +90,13 @@ export interface AudienceSegmentFormProps
   queryLanguage?: QueryLanguage;
   segmentType?: AudienceSegmentType;
   goToSegmentTypeSelection?: () => void;
+  initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
   AudienceSegmentFormProps &
   InjectedIntlProps &
+  InjectedFeaturesProps &
   ValidatorProps &
   NormalizerProps &
   RouteComponentProps<EditAudienceSegmentParam>;
@@ -214,6 +228,9 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       datamart,
       initialValues,
       goToSegmentTypeSelection,
+      change,
+      hasFeature,
+      initialProcessingSelectionsForWarning,
     } = this.props;
 
     const type = segmentType
@@ -241,16 +258,43 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         />
       ),
     });
+
+    if (hasFeature('datamart-user_choices') && type === 'USER_QUERY') {
+      const genericFieldArrayProps = {
+        formChange: change,
+        rerenderOnEveryChange: true,
+      };
+
+      sections.push({
+        id: 'processingActivities',
+        title: messages.sectionProcessingActivitiesTitle,
+        component: (
+          <ProcessingActivitiesFieldArray
+            name="processingActivities"
+            component={ProcessingActivitiesFormSection}
+            initialProcessingSelectionsForWarning={
+              initialProcessingSelectionsForWarning
+            }
+            {...genericFieldArrayProps}
+          />
+        ),
+      });
+    }
+
     if (
       (!(segmentCreation && (type === 'USER_PIXEL' || type === 'USER_LIST')) ||
-      (type === 'USER_LIST' &&
+        (type === 'USER_LIST' &&
+          initialValues &&
+          initialValues.audienceSegment &&
+          (initialValues.audienceSegment as UserListSegment).feed_type ===
+            'TAG')) &&
+      !(
+        type === 'USER_LIST' &&
         initialValues &&
         initialValues.audienceSegment &&
-        (initialValues.audienceSegment as UserListSegment).feed_type === 'TAG')) &&
-      !(type === 'USER_LIST' &&
-        initialValues &&
-        initialValues.audienceSegment &&
-        (initialValues.audienceSegment as UserListSegment).feed_type === 'SCENARIO')
+        (initialValues.audienceSegment as UserListSegment).feed_type ===
+          'SCENARIO'
+      )
     ) {
       sections.push({
         id: 'properties',
@@ -317,6 +361,8 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 }
 
 export default compose<Props, AudienceSegmentFormProps>(
+  injectIntl,
+  injectFeatures,
   withRouter,
   withValidators,
   withNormalizer,
