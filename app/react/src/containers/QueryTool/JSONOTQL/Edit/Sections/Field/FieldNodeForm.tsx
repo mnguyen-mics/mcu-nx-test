@@ -430,7 +430,7 @@ class FieldNodeForm extends React.Component<Props, State> {
   }
 
   generateStringComparisonField() {
-    const { intl, name } = this.props;
+    const { intl, name, fieldValidators } = this.props;
 
     return (
       <FormMultiTagField
@@ -440,6 +440,9 @@ class FieldNodeForm extends React.Component<Props, State> {
           label: intl.formatMessage(messages.fieldConditionValuesStringLabel),
           required: true,
         }}
+        validate={[
+          fieldValidators.isRequired,
+        ]}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
@@ -449,7 +452,7 @@ class FieldNodeForm extends React.Component<Props, State> {
   }
 
   generateTagSelectComparisonField(options: Array<{ label: string, value: string }>) {
-    const { intl, name, idToAttachDropDowns } = this.props;
+    const { intl, name, idToAttachDropDowns, fieldValidators } = this.props;
 
     let popUpProps = {};
 
@@ -472,6 +475,9 @@ class FieldNodeForm extends React.Component<Props, State> {
           options,
           ...popUpProps,
         }}
+        validate={[
+          fieldValidators.isRequired,
+        ]}
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
@@ -541,6 +547,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       objectType,
       datamartId,
       idToAttachDropDowns,
+      fieldValidators,
     } = this.props;
 
     const fetchListMethod = (keywords: string) =>
@@ -570,6 +577,9 @@ class FieldNodeForm extends React.Component<Props, State> {
           label: intl.formatMessage(messages.fieldConditionValuesStringLabel),
           required: true,
         }}
+        validate={[
+          fieldValidators.isRequired,
+        ]}
         fetchListMethod={fetchListMethod}
         fetchSingleMethod={fetchSingleMethod}
         helpToolTipProps={{
@@ -595,6 +605,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       runtimeSchemaId,
       formValues,
       expressionIndex,
+      fieldValidators,
       match: {
         params: {
           organisationId
@@ -673,6 +684,9 @@ class FieldNodeForm extends React.Component<Props, State> {
         helpToolTipProps={{
           title: intl.formatMessage(messages.fieldConditionMultiValuesTooltip),
         }}
+        validate={[
+          fieldValidators.isRequired,
+        ]}
         selectProps={{
           ...selectProps,
         }}
