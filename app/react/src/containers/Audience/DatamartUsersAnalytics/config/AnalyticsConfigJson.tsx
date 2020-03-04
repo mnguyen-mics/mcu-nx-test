@@ -379,8 +379,75 @@ export const channelEngagementConfig = [
         },
       }
     ]
+  },
+  {
+    title: 'Active Users By Channel',
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 0,
+      'y': 6
+    },
+    charts: [
+      {
+        type: 'AREA',
+        options: {
+          title: undefined,
+          height: 300,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'datetime',
+            dateTimeLabelFormats: {
+              day: '%d %b %Y'    // ex- 01 Jan 2016
+            },
+            title: {
+              text: null
+            }
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
+        metricName: 'users',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
   }
 ];
-
-
-
