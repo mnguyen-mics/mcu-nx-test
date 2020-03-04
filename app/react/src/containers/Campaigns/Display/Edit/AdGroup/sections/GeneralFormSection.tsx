@@ -20,7 +20,7 @@ import {
 } from '../../../../../../components/Form';
 import { ButtonStyleless, McsIcon } from '../../../../../../components';
 import FormDateRangePicker from '../../../../../../components/Form/FormDateRangePicker';
-import formatAdGroupProperty from '../../../../../../messages/campaign/display/adgroupMessages';
+import { formatAdGroupProperty } from '../../../../Display/messages';
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
@@ -78,7 +78,9 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
-              label: formatMessage(formatAdGroupProperty('total_budget').message),
+              label: formatMessage(
+                formatAdGroupProperty('total_budget').message,
+              ),
             }}
             inputProps={{
               suffix: <span>€</span>,
@@ -96,7 +98,9 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
-              label: formatMessage(formatAdGroupProperty('max_budget_per_period').message),
+              label: formatMessage(
+                formatAdGroupProperty('max_budget_per_period').message,
+              ),
             }}
             inputProps={{
               suffix: <span>€</span>,
@@ -107,15 +111,24 @@ class GeneralFormSection extends React.Component<Props, State> {
                   options={[
                     {
                       value: 'DAY',
-                      children: formatAdGroupProperty('max_budget_period', 'DAY').formattedValue,
+                      children: formatAdGroupProperty(
+                        'max_budget_period',
+                        'DAY',
+                      ).formattedValue,
                     },
                     {
                       value: 'WEEK',
-                      children: formatAdGroupProperty('max_budget_period', 'WEEK').formattedValue,
+                      children: formatAdGroupProperty(
+                        'max_budget_period',
+                        'WEEK',
+                      ).formattedValue,
                     },
                     {
                       value: 'MONTH',
-                      children: formatAdGroupProperty('max_budget_period', 'MONTH').formattedValue,
+                      children: formatAdGroupProperty(
+                        'max_budget_period',
+                        'MONTH',
+                      ).formattedValue,
                     },
                   ]}
                 />
@@ -138,9 +151,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             unixTimestamp={true}
             allowPastDate={false}
             formItemProps={{
-              label: formatMessage(
-                formatAdGroupProperty('duration').message,
-              ),
+              label: formatMessage(formatAdGroupProperty('duration').message),
             }}
             startDatePickerProps={{
               placeholder: formatMessage(
@@ -165,7 +176,9 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
-              label: formatMessage(formatAdGroupProperty('max_bid_price').message),
+              label: formatMessage(
+                formatAdGroupProperty('max_bid_price').message,
+              ),
             }}
             inputProps={{
               suffix: <span>€</span>,
@@ -202,7 +215,9 @@ class GeneralFormSection extends React.Component<Props, State> {
               name="adGroup.technical_name"
               component={FormAlertInput}
               formItemProps={{
-                label: formatMessage(formatAdGroupProperty('technical_name').message),
+                label: formatMessage(
+                  formatAdGroupProperty('technical_name').message,
+                ),
               }}
               inputProps={{
                 placeholder: formatMessage(
@@ -223,7 +238,9 @@ class GeneralFormSection extends React.Component<Props, State> {
               normalize={normalizeInteger}
               validate={[isValidInteger]}
               formItemProps={{
-                label: formatMessage(formatAdGroupProperty('total_impression_capping').message),
+                label: formatMessage(
+                  formatAdGroupProperty('total_impression_capping').message,
+                ),
               }}
               inputProps={{
                 placeholder: formatMessage(
@@ -241,7 +258,9 @@ class GeneralFormSection extends React.Component<Props, State> {
               normalize={normalizeInteger}
               validate={[isValidInteger]}
               formItemProps={{
-                label: formatMessage(formatAdGroupProperty('per_day_impression_capping').message),
+                label: formatMessage(
+                  formatAdGroupProperty('per_day_impression_capping').message,
+                ),
               }}
               inputProps={{
                 placeholder: formatMessage(

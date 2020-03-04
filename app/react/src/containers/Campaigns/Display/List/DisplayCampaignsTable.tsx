@@ -20,7 +20,7 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
-import messages from '../messages';
+import { messages } from '../messages';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { RouteComponentProps } from 'react-router';
 import {
@@ -85,9 +85,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
     if (campaign.model_version === 'V2014_06') {
       message.info(intl.formatMessage(messages.editionNotAllowed));
     } else {
-      const editUrl = `/v2/o/${organisationId}/campaigns/display/${
-        campaign.id
-      }/edit`;
+      const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaign.id}/edit`;
 
       history.push({
         pathname: editUrl,
@@ -302,9 +300,9 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       // },
     ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<DisplayCampaignResource>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<
+      DisplayCampaignResource
+    >> = [
       {
         key: 'action',
         actions: () => [

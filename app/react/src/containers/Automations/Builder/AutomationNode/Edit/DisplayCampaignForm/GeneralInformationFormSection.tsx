@@ -14,9 +14,11 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
-import formatDisplayCampaignProperty from '../../../../../../messages/campaign/display/displayCampaignMessages';
+import {
+  formatDisplayCampaignProperty,
+  formatAdGroupProperty,
+} from '../../../../../Campaigns/Display/messages';
 import messages from '../../../../../Campaigns/Display/Edit/messages';
-import formatAdGroupProperty from '../../../../../../messages/campaign/display/adgroupMessages';
 import { DisplayCampaignAutomationFormData } from '../domain';
 
 export const formMessages = defineMessages({
@@ -69,7 +71,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
       fieldNormalizer: { normalizeInteger },
       fieldValidators: { isRequired, isNotZero, isValidFloat, isValidInteger },
       intl: { formatMessage },
-      disabled
+      disabled,
     } = this.props;
 
     return (
@@ -94,7 +96,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.campaignFormPlaceholderCampaignName,
               ),
-              disabled: disabled
+              disabled: disabled,
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
@@ -117,7 +119,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.contentSectionGeneralAdvancedPartRow3Placeholder,
               ),
-              disabled: disabled
+              disabled: disabled,
             }}
             helpToolTipProps={{
               title: formatMessage(
@@ -142,7 +144,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.contentSectionGeneralAdvancedPartRow2Placeholder,
               ),
-              disabled: disabled
+              disabled: disabled,
             }}
             helpToolTipProps={{
               title: formatMessage(
@@ -167,7 +169,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.contentSectionGeneralAdvancedPartRow4Placeholder,
               ),
-              disabled: disabled
+              disabled: disabled,
             }}
             helpToolTipProps={{
               title: formatMessage(
@@ -221,7 +223,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
                     },
                   ]}
                   selectProps={{
-                    disabled: disabled
+                    disabled: disabled,
                   }}
                   disabled={disabled}
                 />
@@ -254,7 +256,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(
                 messages.contentSectionGeneralRow5Placeholder,
               ),
-              disabled: disabled
+              disabled: disabled,
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow5Tooltip),

@@ -3,14 +3,14 @@ import {
   HistoryKeys,
   formatToFormattingFunction,
   ValueFormat,
-} from '../resourcehistory/utils';
+} from '../../containers/ResourceHistory/utils';
 import {
   GenericCreativeResource,
   CreativeSubtype,
 } from '../../models/creative/CreativeResource';
 
 const creativeSubtypeMessages: {
-  [key in CreativeSubtype]: FormattedMessage.MessageDescriptor
+  [key in CreativeSubtype]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   BANNER: {
     id: 'creative.fields.subtype.banner',
@@ -37,7 +37,7 @@ const creativeSubtypeMessages: {
 const creativePropertiesMessageMap: {
   [propertyName in
     | keyof GenericCreativeResource
-    | HistoryKeys]: FormattedMessage.MessageDescriptor
+    | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   organisation_id: {
     id: 'creative.fields.organisationId',
@@ -122,7 +122,7 @@ const creativePropertiesFormatMap: {
   [propertyName in keyof GenericCreativeResource | HistoryKeys]: {
     format: ValueFormat;
     messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
-  }
+  };
 } = {
   organisation_id: { format: 'STRING' },
   name: { format: 'STRING' },

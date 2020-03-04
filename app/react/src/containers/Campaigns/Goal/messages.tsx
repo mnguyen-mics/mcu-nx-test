@@ -1,10 +1,14 @@
 import * as React from 'react';
-import { defineMessages, FormattedMessage } from "react-intl";
-import { HistoryKeys, formatToFormattingFunction, ValueFormat } from '../../resourcehistory/utils';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  HistoryKeys,
+  formatToFormattingFunction,
+  ValueFormat,
+} from '../../../containers/ResourceHistory/utils';
 import { GoalResource, GoalStatus } from '../../../models/goal/GoalResource';
 
 const goalStatusMessages: {
-  [key in GoalStatus]: FormattedMessage.MessageDescriptor
+  [key in GoalStatus]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   PAUSED: {
     id: 'goal.fields.status.paused',
@@ -17,7 +21,9 @@ const goalStatusMessages: {
 });
 
 const goalPropertiesMessageMap: {
-  [propertyName in keyof GoalResource | HistoryKeys]: FormattedMessage.MessageDescriptor
+  [propertyName in
+    | keyof GoalResource
+    | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'goal.fields.id',
@@ -76,9 +82,9 @@ const goalPropertiesMessageMap: {
 
 const goalPropertiesFormatMap: {
   [propertyName in keyof GoalResource | HistoryKeys]: {
-    format: ValueFormat,
-    messageMap?: {[key: string]: FormattedMessage.MessageDescriptor}
-  }
+    format: ValueFormat;
+    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+  };
 } = {
   id: { format: 'STRING' },
   name: { format: 'STRING' },
@@ -100,18 +106,24 @@ const goalPropertiesFormatMap: {
   */
   history_title: { format: 'STRING' },
   history_resource_type: { format: 'STRING' },
-}
+};
 
-function formatGoalProperty(property: keyof GoalResource | HistoryKeys, value?: string): {
-  message: FormattedMessage.MessageDescriptor,
-  formattedValue?: React.ReactNode,
-  } {
+export const formatGoalProperty = (
+  property: keyof GoalResource | HistoryKeys,
+  value?: string,
+): {
+  message: FormattedMessage.MessageDescriptor;
+  formattedValue?: React.ReactNode;
+} => {
   return {
     message: goalPropertiesMessageMap[property],
-    formattedValue: (value && goalPropertiesFormatMap[property])
-    ? formatToFormattingFunction(value, goalPropertiesFormatMap[property].format, goalPropertiesFormatMap[property].messageMap)
-    : undefined,
-  }
-}
-  
-export default formatGoalProperty;
+    formattedValue:
+      value && goalPropertiesFormatMap[property]
+        ? formatToFormattingFunction(
+            value,
+            goalPropertiesFormatMap[property].format,
+            goalPropertiesFormatMap[property].messageMap,
+          )
+        : undefined,
+  };
+};

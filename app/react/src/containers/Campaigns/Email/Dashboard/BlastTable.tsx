@@ -25,7 +25,7 @@ import injectDrawer, {
 import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
-import formatEmailBlastProperty from '../../../../messages/campaign/email/emailBlastMessages';
+import { formatEmailBlastProperty } from '../../Email/messages';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -35,7 +35,7 @@ import { IResourceHistoryService } from '../../../../services/ResourceHistorySer
 import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
 
 const blastStatusMessageMap: {
-  [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor
+  [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   SCENARIO_ACTIVATED: {
     id: 'email.campaigns.dashboard.blastList.scenarioActivation',
@@ -164,9 +164,7 @@ class BlastTable extends React.Component<Props> {
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${
-        blast.id
-      }/edit`,
+      `/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${blast.id}/edit`,
     );
   };
 
@@ -228,11 +226,11 @@ class BlastTable extends React.Component<Props> {
               );
             },
             getName: (id: string) => {
-              return this._emailCampaignService.getEmailCampaign(id).then(
-                response => {
+              return this._emailCampaignService
+                .getEmailCampaign(id)
+                .then(response => {
                   return response.data.name;
-                },
-              );
+                });
             },
             goToResource: (id: string) => {
               history.push(`/v2/o/${organisationId}/campaigns/email/${id}`);
@@ -248,11 +246,11 @@ class BlastTable extends React.Component<Props> {
               );
             },
             getName: (id: string) => {
-              return this._emailCampaignService.getEmailCampaign(id).then(
-                response => {
+              return this._emailCampaignService
+                .getEmailCampaign(id)
+                .then(response => {
                   return response.data.name;
-                },
-              );
+                });
             },
             goToResource: (id: string) => {
               history.push(`/v2/o/${organisationId}/campaigns/email/${id}`);
@@ -268,30 +266,34 @@ class BlastTable extends React.Component<Props> {
               );
             },
             getName: (id: string) => {
-              return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                organisationId,
-                'EMAIL_TEMPLATE_SELECTION',
-                id,
-                'CREATIVE',
-              ).then(emailTemplateId => {
-                return this._creativeService.getEmailTemplate(emailTemplateId).then(
-                  response => {
-                    return response.data.name;
-                  },
-                );
-              });
+              return this._resourceHistoryService
+                .getLinkedResourceIdInSelection(
+                  organisationId,
+                  'EMAIL_TEMPLATE_SELECTION',
+                  id,
+                  'CREATIVE',
+                )
+                .then(emailTemplateId => {
+                  return this._creativeService
+                    .getEmailTemplate(emailTemplateId)
+                    .then(response => {
+                      return response.data.name;
+                    });
+                });
             },
             goToResource: (id: string) => {
-              this._resourceHistoryService.getLinkedResourceIdInSelection(
-                organisationId,
-                'EMAIL_TEMPLATE_SELECTION',
-                id,
-                'CREATIVE',
-              ).then(emailTemplateId => {
-                history.push(
-                  `/v2/o/${organisationId}/creatives/email/${emailTemplateId}/edit`,
-                );
-              });
+              this._resourceHistoryService
+                .getLinkedResourceIdInSelection(
+                  organisationId,
+                  'EMAIL_TEMPLATE_SELECTION',
+                  id,
+                  'CREATIVE',
+                )
+                .then(emailTemplateId => {
+                  history.push(
+                    `/v2/o/${organisationId}/creatives/email/${emailTemplateId}/edit`,
+                  );
+                });
             },
           },
           AUDIENCE_SEGMENT_EMAIL_SELECTION: {
@@ -304,30 +306,34 @@ class BlastTable extends React.Component<Props> {
               );
             },
             getName: (id: string) => {
-              return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                organisationId,
-                'AUDIENCE_SEGMENT_EMAIL_SELECTION',
-                id,
-                'AUDIENCE_SEGMENT',
-              ).then(audienceSegmentId => {
-                return this._audienceSegmentService
-                  .getSegment(audienceSegmentId)
-                  .then(response => {
-                    return response.data.name;
-                  });
-              });
+              return this._resourceHistoryService
+                .getLinkedResourceIdInSelection(
+                  organisationId,
+                  'AUDIENCE_SEGMENT_EMAIL_SELECTION',
+                  id,
+                  'AUDIENCE_SEGMENT',
+                )
+                .then(audienceSegmentId => {
+                  return this._audienceSegmentService
+                    .getSegment(audienceSegmentId)
+                    .then(response => {
+                      return response.data.name;
+                    });
+                });
             },
             goToResource: (id: string) => {
-              this._resourceHistoryService.getLinkedResourceIdInSelection(
-                organisationId,
-                'AUDIENCE_SEGMENT_EMAIL_SELECTION',
-                id,
-                'AUDIENCE_SEGMENT',
-              ).then(audienceSegmentId => {
-                history.push(
-                  `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
-                );
-              });
+              this._resourceHistoryService
+                .getLinkedResourceIdInSelection(
+                  organisationId,
+                  'AUDIENCE_SEGMENT_EMAIL_SELECTION',
+                  id,
+                  'AUDIENCE_SEGMENT',
+                )
+                .then(audienceSegmentId => {
+                  history.push(
+                    `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
+                  );
+                });
             },
           },
         },
@@ -372,9 +378,7 @@ class BlastTable extends React.Component<Props> {
         render: (text, record) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${
-              record.id
-            }/edit`}
+            to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${record.id}/edit`}
           >
             {record.blast_name}
           </Link>

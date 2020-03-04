@@ -26,7 +26,7 @@ import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
-import formatGoalProperty from '../../../../messages/campaign/goal/goalMessages';
+import { formatGoalProperty } from '../../Goal/messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IDisplayCampaignService } from '../../../../services/DisplayCampaignService';
 import { TYPES } from '../../../../constants/types';
