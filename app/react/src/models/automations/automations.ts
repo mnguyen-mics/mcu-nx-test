@@ -98,6 +98,8 @@ export type QueryInputEvaluationPeriodUnit = 'MINUTE' | 'HOUR' | 'DAY' | 'WEEK' 
 
 export type QueryInputEvaluationMode = 'LIVE' | 'PERIODIC';
 
+export type QueryInputUiCreationMode = 'EVENT' | 'QUERY';
+
 export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
   formData: Partial<QueryResource>;
@@ -105,7 +107,7 @@ export interface QueryInputNodeResource extends ScenarioNodeResource {
   evaluation_mode?: QueryInputEvaluationMode;
   evaluation_period?: number;
   evaluation_period_unit?: QueryInputEvaluationPeriodUnit;
-  creation_mode: 'QUERY' | 'REACT_TO_EVENT';
+  ui_creation_mode: QueryInputUiCreationMode;
 }
 
 export interface ABNNodeResource extends ScenarioNodeResource {

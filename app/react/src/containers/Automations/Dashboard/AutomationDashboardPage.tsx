@@ -188,9 +188,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
               automationTreeData={automationFormData.automationTreeData}
               scenarioId={automationFormData.automation.id!}
               viewer={true}
-               // The creation_mode is 'QUERY', since for now, on exsiting automations we can't know if it's been created with 'React to Event'
-               // so we keep the previous behaviour here.
-              creation_mode={'QUERY'}
+              creation_mode={automationFormData.automationTreeData && automationFormData.automationTreeData.node.type === 'QUERY_INPUT' ? automationFormData.automationTreeData.node.ui_creation_mode : 'QUERY'}
             />
           </Layout.Content>
         </Layout>

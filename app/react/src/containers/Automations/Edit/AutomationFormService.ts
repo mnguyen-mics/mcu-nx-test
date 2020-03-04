@@ -682,6 +682,7 @@ export class AutomationFormService implements IAutomationFormService {
         evaluation_mode: node.evaluation_mode,
         evaluation_period: node.evaluation_period,
         evaluation_period_unit: node.evaluation_period_unit,
+        ui_creation_mode: node.ui_creation_mode
       };
       resourceId =
         node.query_id && !isFakeId(node.query_id) ? node.query_id : undefined;
