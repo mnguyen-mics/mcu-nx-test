@@ -1,3 +1,11 @@
+import {
+  IPlacementListFormService,
+  PlacementListFormService,
+} from './../containers/Library/Placement/Edit/PlacementListFormService';
+import {
+  IPlacementListService,
+  PlacementListService,
+} from '../services/Library/PlacementListService';
 import { RecommenderService } from './../services/Library/RecommenderService';
 import {
   IReferenceTableService,
@@ -194,7 +202,10 @@ import {
   ResourceHistoryService,
 } from '../services/ResourceHistoryService';
 import { GoalService, IGoalService } from '../services/GoalService';
-import { IDatamartUsersAnalyticsService, DatamartUsersAnalyticsService } from '../services/DatamartUsersAnalyticsService';
+import {
+  IDatamartUsersAnalyticsService,
+  DatamartUsersAnalyticsService,
+} from '../services/DatamartUsersAnalyticsService';
 import EmailCampaignService, {
   IEmailCampaignService,
 } from '../services/EmailCampaignService';
@@ -291,6 +302,12 @@ container.bind<IConsentService>(TYPES.IConsentService).to(ConsentService);
 container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
+container
+  .bind<IPlacementListService>(TYPES.IPlacementListService)
+  .to(PlacementListService);
+container
+  .bind<IPlacementListFormService>(TYPES.IPlacementListFormService)
+  .to(PlacementListFormService);
 container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
 container
   .bind<ILibraryCatalogService>(TYPES.ILibraryCatalogService)
@@ -325,7 +342,7 @@ container
 container
   .bind<IVisitAnalyzerService>(TYPES.IVisitAnalyzerService)
   .to(VisitAnalyzerService);
-  container
+container
   .bind<IRecommenderService>(TYPES.IRecommenderService)
   .to(RecommenderService);
 container
@@ -399,7 +416,9 @@ container
       return audienceSegmentFeedService;
     };
   });
-  container.bind<IDatamartUsersAnalyticsService>(TYPES.IDatamartUsersAnalyticsService).to(DatamartUsersAnalyticsService);
+container
+  .bind<IDatamartUsersAnalyticsService>(TYPES.IDatamartUsersAnalyticsService)
+  .to(DatamartUsersAnalyticsService);
 
 export const { lazyInject } = getDecorators(container, false);
 

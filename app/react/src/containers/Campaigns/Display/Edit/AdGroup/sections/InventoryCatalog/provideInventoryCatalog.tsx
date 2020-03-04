@@ -7,7 +7,6 @@ import { EditAdGroupRouteMatchParam } from '../../domain';
 import injectDatamart, {
   InjectedDatamartProps,
 } from '../../../../../../Datamart/injectDatamart';
-import PlacementListsService from '../../../../../../../services/Library/PlacementListsService';
 import { PlacementListResource } from '../../../../../../../models/placement/PlacementListResource';
 import { IDealListService } from '../../../../../../../services/Library/DealListService';
 import { DealsListResource } from '../../../../../../../models/dealList/dealList';
@@ -16,6 +15,7 @@ import { TYPES } from '../../../../../../../constants/types';
 import { lazyInject } from '../../../../../../../config/inversify.config';
 import { KeywordListResource } from '../../../../../../../models/keywordList/keywordList';
 import { ICatalogService } from '../../../../../../../services/CatalogService';
+import { IPlacementListService } from '../../../../../../../services/Library/PlacementListService';
 
 export interface DataLoadingContainer<T> {
   data: T;
@@ -36,7 +36,8 @@ interface ProvidedProps {
 }
 
 type Props = InjectedDatamartProps &
-  RouteComponentProps<EditAdGroupRouteMatchParam> & ProvidedProps;
+  RouteComponentProps<EditAdGroupRouteMatchParam> &
+  ProvidedProps;
 
 const provideInventoryCatalog = (
   Component: React.ComponentClass<InjectedInventoryCatalogProps>,
@@ -50,6 +51,9 @@ const provideInventoryCatalog = (
 
     @lazyInject(TYPES.ICatalogService)
     private _catalogService: ICatalogService;
+
+    @lazyInject(TYPES.IPlacementListService)
+    private _placementListService: IPlacementListService;
 
     public constructor(props: Props) {
       super(props);
@@ -96,9 +100,10 @@ const provideInventoryCatalog = (
         },
       }));
 
-      this._catalogService.getCategoryTree(organisationId, {
-        serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS'],
-      })
+      this._catalogService
+        .getCategoryTree(organisationId, {
+          serviceType: ['DISPLAY_CAMPAIGN.INVENTORY_ACCESS'],
+        })
         .then(categoryTree => {
           const fetchServices = (
             category: ServiceCategoryTree,
@@ -120,7 +125,7 @@ const provideInventoryCatalog = (
                 };
               },
             );
-          }
+          };
 
           return Promise.all(
             categoryTree.map(category => {
@@ -187,9 +192,10 @@ const provideInventoryCatalog = (
         },
       }));
 
-      PlacementListsService.getPlacementLists(organisationId, {
-        max_results: 500,
-      })
+      this._placementListService
+        .getPlacementLists(organisationId, {
+          max_results: 500,
+        })
         .then(res => res.data)
         .then(placementList => {
           this.setState(prevState => ({

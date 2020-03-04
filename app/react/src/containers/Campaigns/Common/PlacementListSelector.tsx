@@ -9,11 +9,13 @@ import { SearchFilter } from '../../../components/ElementSelector';
 import { DataColumnDefinition } from '../../../components/TableView/TableView';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { PlacementListResource } from '../../../models/placement/PlacementListResource';
-import PlacementListsService from '../../../services/Library/PlacementListsService';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IPlacementListService } from '../../../services/Library/PlacementListService';
 
-const PlacementListTableSelector: React.ComponentClass<
-  TableSelectorProps<PlacementListResource>
-> = TableSelector;
+const PlacementListTableSelector: React.ComponentClass<TableSelectorProps<
+  PlacementListResource
+>> = TableSelector;
 
 const messages = defineMessages({
   placementListSelectorTitle: {
@@ -41,6 +43,9 @@ type Props = PlacementListSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class PlacementListSelector extends React.Component<Props> {
+  @lazyInject(TYPES.IPlacementListService)
+  private _placementListService: IPlacementListService;
+
   savePlacementLists = (
     placementIds: string[],
     placements: PlacementListResource[],
@@ -49,7 +54,11 @@ class PlacementListSelector extends React.Component<Props> {
   };
 
   fetchPlacementLists = (filter: SearchFilter) => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const options: any = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
@@ -59,7 +68,10 @@ class PlacementListSelector extends React.Component<Props> {
       options.name = filter.keywords;
     }
 
-    return PlacementListsService.getPlacementLists(organisationId, options);
+    return this._placementListService.getPlacementLists(
+      organisationId,
+      options,
+    );
   };
 
   render() {
@@ -78,7 +90,7 @@ class PlacementListSelector extends React.Component<Props> {
     ];
 
     const fetchPlacementList = (id: string) =>
-      PlacementListsService.getPlacementList(id);
+      this._placementListService.getPlacementList(id);
 
     return (
       <PlacementListTableSelector

@@ -74,6 +74,8 @@ const TYPES = {
   IDatamartUsersAnalyticsService: Symbol.for('datamartUsersAnalyticsService'),
   IEmailCampaignService: Symbol.for('emailCampaignService'),
   IEmailCampaignFormService: Symbol.for('emailCampaignFormService'),
+  IPlacementListService: Symbol.for('placementListService'),
+  IPlacementListFormService: Symbol.for('placementListFormService'),
 };
 
 export { TYPES };
