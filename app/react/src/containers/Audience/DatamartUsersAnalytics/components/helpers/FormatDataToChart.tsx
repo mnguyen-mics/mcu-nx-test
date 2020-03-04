@@ -7,6 +7,7 @@ import { CounterProps } from '../../../../../components/Counter/Counter';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import GenericWorldMap from '../charts/GenericWorldMap';
 import GenericStackedBar from '../charts/GenericStackedBar';
+import GenericColumn from '../charts/GenericColumn';
 import { Tabs, Statistic } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import * as Highcharts from 'highcharts';
@@ -16,7 +17,8 @@ import {
   MapSeriesDataOptions,
   Dataset,
   Chart,
-  AreaSeriesDataOptions
+  AreaSeriesDataOptions,
+  ColumnSeriesDataOptions
 } from '../../../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { ReportView } from '../../../../../models/ReportView';
 import { AREA_OPACITY } from '../../../../../components/Charts/domain';
@@ -28,6 +30,12 @@ export interface FormatDataProps {
 }
 
 class FormatDataToChart extends React.Component<FormatDataProps, {}> {
+
+  getXAxisValues = (dataset: Dataset[], xKey: string) => {
+    return dataset.map(d => {
+      return d[xKey] as string;
+    })
+  }
 
   formatSeriesForChart = (chart: Chart, dataset: Dataset[]) => {
     switch (chart.type) {
@@ -139,10 +147,26 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
           }
           return acc;
         }, []);
+      case 'COLUMN':
+        return dataset.reduce((acc: ColumnSeriesDataOptions[], d: Dataset) => {
+          if (acc.length === 0) {
+            acc.push({
+              type: 'column',
+              data: [d[chart.metricName]] as number[],
+              showInLegend: false,
+              name: chart.metricName
+            });
+          } else {
+            acc[0].data.push(d[chart.metricName] as number);
+          }
+          return acc;
+        }, []);
       default:
         return [];
     }
   }
+
+  
 
   formatSeriesForCounters = (chart: Chart, dataset: Dataset[]): CounterProps[] => {
     return dataset.reduce((acc: CounterProps[], d: Dataset) => {
@@ -203,6 +227,16 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesMapOptions[];
         return (
           <GenericStackedBar options={chart.options} />
+        )
+      case 'COLUMN':
+        if (!chart.dimensions) return null
+        chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesMapOptions[];
+        chart.options.xAxis = {
+          categories: this.getXAxisValues(data, chart.dimensions[0])
+        }
+
+        return (
+          <GenericColumn options={chart.options} />
         )
       case 'TABS':
         return (

@@ -2,7 +2,7 @@ import { CounterProps } from "../../components/Counter/Counter";
 import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from "../../utils/DatamartUsersAnalyticsReportHelper";
 import { DimensionFilterClause } from "../ReportRequestBody";
 
-type ChartType = 'PIE' | 'AREA' | 'WORLD_MAP' | 'STACKED_BAR' | 'COUNT' | 'TABS' | 'SINGLE_STAT';
+type ChartType = 'PIE' | 'AREA' | 'WORLD_MAP' | 'STACKED_BAR' | 'COUNT' | 'TABS' | 'SINGLE_STAT' | 'COLUMN';
 
 export type Dataset = { [key: string]: string | number | Date | undefined };
 
@@ -19,8 +19,9 @@ export interface Chart {
   Highcharts.SeriesPieDataOptions[] | 
   Highcharts.SeriesLineDataOptions[] | 
   Highcharts.SeriesMapDataOptions[] | 
-  Highcharts.SeriesBarDataOptions[];
-  tabs: TabItem[]
+  Highcharts.SeriesBarDataOptions[] |
+  Highcharts.SeriesColumnDataOptions[] ;
+  tabs: TabItem[];
 }
 
 export interface TabItem extends Chart {
@@ -51,4 +52,11 @@ export interface BarSeriesDataOptions {
 export interface MapSeriesDataOptions {
   code3: string;
   value: number;
+}
+
+export interface ColumnSeriesDataOptions {
+  data: number[];
+  type: 'column';
+  showInLegend: false;
+  name: string;
 }
