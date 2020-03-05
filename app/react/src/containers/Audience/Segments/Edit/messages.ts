@@ -296,4 +296,9 @@ export default defineMessages({
     id: 'audience.segment.form.processingActivities.title',
     defaultMessage: 'Processing Activities',
   },
+  // Legacy components
+  noMoreSupported: {
+    id: 'audience.segment.edit.legacyComponent.noMoreSupported',
+    defaultMessage: 'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
+  }
 });

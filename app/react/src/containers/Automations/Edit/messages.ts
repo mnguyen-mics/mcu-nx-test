@@ -77,5 +77,10 @@ export default defineMessages({
   dontExist: {
     id: 'automation.edit.dontexist',
     defaultMessage: 'The automation you are trying to load doesn\'t seem to exist or you don\'t have the right to view it'
-  }
+  },
+  noMoreSupported: {
+    id: 'automation.edit.section.legacyComponent.noMoreSupported',
+    defaultMessage:
+      'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
+  },
 });

@@ -1,9 +1,17 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
-import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  injectIntl,
+  InjectedIntlProps,
+} from 'react-intl';
 import { FormTitle } from '../../../../components/Form';
 import { MenuList, MenuPresentational } from '../../../../components/FormMenu';
-import { QueryLanguage, DatamartResource } from '../../../../models/datamart/DatamartResource';
+import {
+  QueryLanguage,
+  DatamartResource,
+} from '../../../../models/datamart/DatamartResource';
 import { GoalTriggerType } from '../../../../models/goal/GoalResource';
 
 const { Content } = Layout;
@@ -40,7 +48,10 @@ const messages = defineMessages({
 });
 
 interface GoalTriggerTypeSelectorProps {
-  onSelect: (triggerType: GoalTriggerType, queryLanguage?: QueryLanguage) => void;
+  onSelect: (
+    triggerType: GoalTriggerType,
+    queryLanguage?: QueryLanguage,
+  ) => void;
   datamart: DatamartResource;
 }
 
@@ -50,7 +61,10 @@ class GoalTriggerTypeSelector extends React.Component<Props> {
   render() {
     const { onSelect, datamart, intl } = this.props;
 
-    const handleOnSelect = (triggerType: GoalTriggerType, queryLanguage?: QueryLanguage) => () => onSelect(triggerType, queryLanguage)
+    const handleOnSelect = (
+      triggerType: GoalTriggerType,
+      queryLanguage?: QueryLanguage,
+    ) => () => onSelect(triggerType, queryLanguage);
     return (
       <Layout>
         <div className="edit-layout ant-layout">
@@ -66,13 +80,7 @@ class GoalTriggerTypeSelector extends React.Component<Props> {
                     <MenuPresentational
                       title={intl.formatMessage(messages.triggerQuery)}
                       type="user-query"
-                      select={
-                        handleOnSelect(
-                          'QUERY', 
-                          datamart.storage_model_version === 'v201506' ? 
-                            'SELECTORQL' : 'JSON_OTQL'
-                        )
-                      }
+                      select={handleOnSelect('QUERY', 'JSON_OTQL')}
                     />
                     <div className="separator">
                       <FormattedMessage {...messages.segmentTypeOr} />

@@ -55,7 +55,6 @@ interface ExportEditPageState {
   export: ExportFormData;
   loading: boolean;
   selectedDatamart?: DatamartResource;
-  queryContainer?: any;
   shouldDisplayDatamartSelection: boolean;
 }
 
@@ -131,10 +130,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
           this.setState({
             export: {
               export: res,
-              query:
-                q[1].data.storage_model_version === 'v201506'
-                  ? this.generateV1Query(q[1].data.id, q[0].data.id)
-                  : q[0].data,
+              query: q[0].data,
             },
             selectedDatamart: q[1].data,
             shouldDisplayDatamartSelection: false,
@@ -142,18 +138,6 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
           });
         });
       });
-  };
-
-  generateV1Query = (datamartId: string, queryId?: string) => {
-    const QueryContainer = (window as any).angular
-      .element(document.body)
-      .injector()
-      .get('core/datamart/queries/QueryContainer');
-    const MyQueryContainer = queryId
-      ? new QueryContainer(datamartId, queryId)
-      : new QueryContainer(datamartId);
-    if (queryId) MyQueryContainer.load();
-    return MyQueryContainer;
   };
 
   close = () => {
@@ -208,9 +192,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
     const generatesSaveMethod = (): Promise<DataResponse<Export>> => {
       if (exportId) {
         const generateQuerySaveMethod = () => {
-          return selectedDatamart!.storage_model_version === 'v201506'
-            ? this.state.export.query.saveOrUpdate()
-            : this._queryService
+          return this._queryService
                 .updateQuery(
                   selectedDatamart!.id,
                   this.state.export.query.id,
@@ -224,9 +206,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
         });
       } else {
         const generateQuerySaveMethod = () => {
-          return selectedDatamart!.storage_model_version === 'v201506'
-            ? this.state.export.query.saveOrUpdate()
-            : this._queryService
+          return this._queryService
                 .createQuery(selectedDatamart!.id, {
                   ...formData.query,
                   datamart_id: selectedDatamart!.id,
@@ -259,13 +239,9 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
       export: {
         export: {
           ...this.state.export.export,
-          output_format:
-            datamart.storage_model_version === 'v201506' ? 'CSV' : 'JSON',
+          output_format: 'JSON',
         },
-        query:
-          datamart.storage_model_version === 'v201506'
-            ? this.generateV1Query(datamart.id)
-            : null,
+        query: null,
       },
       shouldDisplayDatamartSelection: false,
     });

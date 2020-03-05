@@ -13,17 +13,14 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import JSONQLBuilderContainer from '../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
-import { QueryContainer } from '../../QueryTool/SelectorQL/AngularQueryToolWidget';
-import SelectorQLBuilderContainer from '../../QueryTool/SelectorQL/SelectorQLBuilderContainer';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import SaveQueryAsActionBar from '../../QueryTool/SaveAs/SaveQueryAsActionBar';
-import { NewExportSimpleFormData } from '../../QueryTool/SaveAs/NewExportSimpleForm';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 import { IQueryService } from '../../../services/QueryService';
-import { IExportService } from '../../../services/Library/ExportService';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { Alert } from 'antd';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -40,8 +37,13 @@ type Props = RouteComponentProps<QueryBuilderPageRouteParams> &
 
 const messages = defineMessages({
   segmentBuilder: {
-    id: 'segment-builder-page-actionbar-title',
+    id: 'audience.segmentBuilder.actionbar.title',
     defaultMessage: 'Segment Builder',
+  },
+  noMoreSupported: {
+    id: 'audience.segmentBuilder.legacyComponent.noMoreSupported',
+    defaultMessage:
+      'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
   },
 });
 
@@ -51,9 +53,6 @@ class SegmentBuilderPage extends React.Component<Props> {
 
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
-
-  @lazyInject(TYPES.IExportService)
-  private _exportService: IExportService;
 
   render() {
     const { intl, connectedUser, location, history, match } = this.props;
@@ -110,93 +109,27 @@ class SegmentBuilderPage extends React.Component<Props> {
           })
           .then(res => {
             history.push(
-              `/v2/o/${match.params.organisationId}/audience/segments/${
-                res.data.id
-              }`,
+              `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
             );
           });
       };
 
       const convert2Otql = () => {
-        return this._queryService.createQuery(datamartId, {
-          query_language: 'JSON_OTQL',
-          query_text: JSON.stringify(query),
-        }).then(d => d.data)
-          .then(d => {
-            return this._queryService.convertJsonOtql2Otql(datamartId, d)
+        return this._queryService
+          .createQuery(datamartId, {
+            query_language: 'JSON_OTQL',
+            query_text: JSON.stringify(query),
           })
-      }
+          .then(d => d.data)
+          .then(d => {
+            return this._queryService.convertJsonOtql2Otql(datamartId, d);
+          });
+      };
 
       return (
         <SaveQueryAsActionBar
           saveAsUserQuery={saveAsUserQuery}
           convertToOtql={convert2Otql}
-          breadcrumb={[
-            {
-              name: intl.formatMessage(messages.segmentBuilder),
-            },
-          ]}
-        />
-      );
-    };
-
-    const selectorQLActionbar = (
-      query: QueryContainer | null,
-      datamartId: string,
-    ) => {
-      const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
-        if (!query)
-          return Promise.reject(
-            new Error("angular query container isn't loaded correctly"),
-          );
-        return query.saveOrUpdate().then(queryResource => {
-          const { name, technical_name, persisted } = segmentFormData;
-          const userQuerySegment: Partial<UserQuerySegment> = {
-            datamart_id: datamartId,
-            type: 'USER_QUERY',
-            name,
-            technical_name,
-            persisted,
-            default_ttl: calculateDefaultTtl(segmentFormData),
-            query_id: queryResource.id,
-          };
-          return this._audienceSegmentService
-            .saveSegment(match.params.organisationId, userQuerySegment)
-            .then(res => {
-              history.push(
-                `/v2/o/${match.params.organisationId}/audience/segments/${
-                  res.data.id
-                }`,
-              );
-            });
-        });
-      };
-      const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
-        if (!query)
-          return Promise.reject(
-            new Error("angular query container isn't loaded correctly"),
-          );
-        return query.saveOrUpdate().then(queryResource => {
-          return this._exportService
-            .createExport(match.params.organisationId, {
-              name: exportFormData.name,
-              output_format: exportFormData.outputFormat,
-              query_id: queryResource.id,
-              type: 'QUERY',
-            })
-            .then(res => {
-              history.push(
-                `/v2/o/${match.params.organisationId}/datastudio/exports/${
-                  res.data.id
-                }`,
-              );
-            });
-        });
-      };
-      return (
-        <SaveQueryAsActionBar
-          saveAsUserQuery={saveAsUserQuery}
-          saveAsExort={saveAsExport}
           breadcrumb={[
             {
               name: intl.formatMessage(messages.segmentBuilder),
@@ -231,10 +164,9 @@ class SegmentBuilderPage extends React.Component<Props> {
           )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201506' && (
-            <SelectorQLBuilderContainer
-              datamartId={selectedDatamart.id}
-              renderActionBar={selectorQLActionbar}
-              title={intl.formatMessage(messages.segmentBuilder)}
+            <Alert
+              message={intl.formatMessage(messages.noMoreSupported)}
+              type="warning"
             />
           )}
       </div>

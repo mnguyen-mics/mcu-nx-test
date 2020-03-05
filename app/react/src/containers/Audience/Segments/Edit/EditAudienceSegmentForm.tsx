@@ -11,11 +11,9 @@ import {
 } from 'redux-form';
 import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout, Alert } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { compose } from 'recompose';
-
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
@@ -30,18 +28,15 @@ import messages from './messages';
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../components/Form/withNormalizer';
-import { AudienceSegmentFormData, EditAudienceSegmentParam } from './domain';
+import { AudienceSegmentFormData } from './domain';
 import {
   FeedType,
   AudienceSegmentType,
   UserListSegment,
 } from '../../../../models/audiencesegment/';
 import * as FeatureSelectors from '../../../../state/Features/selectors';
-
 import GeneralFormSection from './Sections/GeneralFormSection';
-import SelectorQL from './Sections/query/SelectorQL';
 import { UserListSection } from './Sections/list';
-
 import { McsFormSection } from '../../../../utils/FormHelper';
 import {
   QueryLanguage,
@@ -98,8 +93,7 @@ type Props = InjectedFormProps<AudienceSegmentFormProps> &
   InjectedIntlProps &
   InjectedFeaturesProps &
   ValidatorProps &
-  NormalizerProps &
-  RouteComponentProps<EditAudienceSegmentParam>;
+  NormalizerProps;
 
 class EditAudienceSegmentForm extends React.Component<Props> {
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
@@ -118,9 +112,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     const {
       datamart,
       queryLanguage,
-      match: {
-        params: { organisationId },
-      },
       intl,
       initialValues,
       segmentType,
@@ -177,42 +168,41 @@ class EditAudienceSegmentForm extends React.Component<Props> {
           />
         );
       case 'USER_QUERY':
-        return queryLanguage === 'OTQL'
-          ? this.generateUserQueryTemplate(
-              <FormOTQL
-                name={'query.query_text'}
-                component={OTQLInputEditor}
-                formItemProps={{
-                  label: intl.formatMessage(
-                    messages.audienceSegmentSectionQueryTitle,
-                  ),
-                }}
-                helpToolTipProps={{
-                  title: intl.formatMessage(
-                    messages.audienceSegmentCreationUserQueryFieldHelper,
-                  ),
-                }}
-                datamartId={datamartId!}
-              />,
-            )
-          : queryLanguage === 'JSON_OTQL'
-          ? this.generateUserQueryTemplate(
-              <FormJSONQL
-                name={'query.query_text'}
-                component={JSONQL}
-                inputProps={{
-                  datamartId: datamartId!,
-                  context: 'GOALS',
-                }}
-              />,
-            )
-          : this.generateUserQueryTemplate(
-              <SelectorQL
-                datamartId={datamartId!}
-                organisationId={organisationId}
-                queryContainer={this.props.queryContainer}
-              />,
-            );
+        return queryLanguage === 'OTQL' ? (
+          this.generateUserQueryTemplate(
+            <FormOTQL
+              name={'query.query_text'}
+              component={OTQLInputEditor}
+              formItemProps={{
+                label: intl.formatMessage(
+                  messages.audienceSegmentSectionQueryTitle,
+                ),
+              }}
+              helpToolTipProps={{
+                title: intl.formatMessage(
+                  messages.audienceSegmentCreationUserQueryFieldHelper,
+                ),
+              }}
+              datamartId={datamartId!}
+            />,
+          )
+        ) : queryLanguage === 'JSON_OTQL' ? (
+          this.generateUserQueryTemplate(
+            <FormJSONQL
+              name={'query.query_text'}
+              component={JSONQL}
+              inputProps={{
+                datamartId: datamartId!,
+                context: 'GOALS',
+              }}
+            />,
+          )
+        ) : (
+          <Alert
+            message={intl.formatMessage(messages.noMoreSupported)}
+            type="warning"
+          />
+        );
       default:
         return <div>Not Supported</div>;
     }
@@ -363,7 +353,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 export default compose<Props, AudienceSegmentFormProps>(
   injectIntl,
   injectFeatures,
-  withRouter,
   withValidators,
   withNormalizer,
   reduxForm<AudienceSegmentFormProps>({

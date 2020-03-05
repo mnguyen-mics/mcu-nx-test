@@ -8,7 +8,7 @@ import {
 } from 'redux-form';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { Layout } from 'antd';
+import { Layout, Alert } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -27,7 +27,6 @@ import { McsFormSection } from '../../../utils/FormHelper';
 
 import * as SessionSelectors from '../../../state/Session/selectors';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
-import AngularWidget from './sections/AutomationFormSection';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const Content = Layout.Content as React.ComponentClass<
@@ -62,7 +61,7 @@ class AutomationEditForm extends React.Component<Props> {
   }
 
   render() {
-    const { handleSubmit, breadCrumbPaths, close, datamart } = this.props;
+    const { handleSubmit, breadCrumbPaths, close, datamart, intl } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -83,10 +82,9 @@ class AutomationEditForm extends React.Component<Props> {
       title: messages.sectionTitle1,
       component:
         datamart && datamart.storage_model_version === 'v201506' ? (
-          <AngularWidget
-            scenarioContainer={this.props.scenarioContainer}
-            organisationId={this.props.match.params.organisationId}
-            datamartId={datamart.id}
+          <Alert
+            message={intl.formatMessage(messages.noMoreSupported)}
+            type="warning"
           />
         ) : (
           undefined

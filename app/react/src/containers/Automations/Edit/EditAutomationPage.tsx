@@ -191,24 +191,12 @@ class EditAutomationPage extends React.Component<Props, State> {
 
       this._automationFormService.validateAutomation(formData.automationTreeData).then(() => {
         const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(organisationId, datamart.storage_model_version, formData, automationFormData)
-        if (datamart.storage_model_version === 'v201506') {
-          saveOrUpdate.then((res) => {
-            this.state.scenarioContainer.saveOrUpdate(res.data);
-          })
-        }
         saveOrUpdate
           .then(() => {
             this.setState({ loading: false });
-            if (datamart.storage_model_version === 'v201506') {
-              this.props.history.push(
-                `/v2/o/${this.props.match.params.organisationId}/automations`,
-              );
-            } else {
-              this.props.history.push(
-                `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
-              );
-            }
-          
+            this.props.history.push(
+              `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
+            );
           })
         .catch(err => {
           this.setState({ loading: false });
