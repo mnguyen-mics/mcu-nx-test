@@ -154,7 +154,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
 
     const shouldDisplayAnalyticsFeature =
       hasFeature('audience-dashboards-datamart_users_analytics') &&
-      selectedDatafarm === 'DF_EU_2017_09';
+      (selectedDatafarm === 'DF_EU_2017_09' || selectedDatafarm === 'DF_EU_DEV');
 
     if (
       !isLoading &&
