@@ -1,6 +1,7 @@
 import { PlacementList } from '../../models/placementList/PlacementList';
 import { PlacementDescriptorResource } from '../../models/placement/PlacementDescriptorResource';
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
+import { injectable } from 'inversify';
 
 export interface IPlacementListService {
   getPlacementLists: (
@@ -42,6 +43,7 @@ export interface IPlacementListService {
   deletePlacementList: (placementListId: string) => Promise<DataResponse<any>>;
 }
 
+@injectable()
 export class PlacementListService implements IPlacementListService {
   getPlacementLists(
     organisationId: string,
