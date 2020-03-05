@@ -191,7 +191,7 @@ export const messages = defineMessages({
   },
   newExecution: {
     id: 'settings.datamart.datamartReplication.dashboard.newExecutionButton',
-    defaultMessage: 'New execution',
+    defaultMessage: 'New Execution',
   },
   initialSynchronization: {
     id: 'settings.datamart.datamartReplication.dashboard.jobExecutionsTitle',

@@ -196,7 +196,7 @@ class DatamartReplicationJobTable extends React.Component<Props> {
       total: total,
     };
 
-    return noItem ? (
+    return noItem && !isLoading ? (
       <EmptyTableView
         iconType="settings"
         intlMessage={messages.emptyInitialSynchronizationList}
