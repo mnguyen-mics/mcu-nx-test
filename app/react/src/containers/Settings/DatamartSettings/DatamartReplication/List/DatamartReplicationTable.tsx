@@ -216,7 +216,7 @@ class DatamartReplicationTable extends React.Component<Props> {
       defaultValue: filter.keywords,
     };
 
-    return noItem ? (
+    return noItem && !isLoading ? (
       <EmptyTableView
         iconType="settings"
         intlMessage={messages.emptyDatamartReplicationList}
