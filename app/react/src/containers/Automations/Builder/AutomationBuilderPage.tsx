@@ -391,7 +391,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         automationFormData={automationFormData}
         saveOrUpdate={this.saveAutomation}
         loading={isLoading}
-        creation_mode={type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT' : 'QUERY'}
+        creation_mode={type === 'REACT_TO_EVENT' ? 'EVENT' : 'QUERY'}
       />
     );
   }

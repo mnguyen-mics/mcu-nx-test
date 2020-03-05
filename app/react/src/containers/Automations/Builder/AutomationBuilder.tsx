@@ -18,6 +18,7 @@ import {
   StorylineNodeResource,
   EdgeHandler,
   ScenarioNodeShape,
+  QueryInputUiCreationMode,
 } from '../../../models/automations/automations';
 import {
   StorylineNodeModel,
@@ -52,7 +53,7 @@ export interface AutomationBuilderBaseProps {
   scenarioId: string;
   automationTreeData?: StorylineNodeModel;
   viewer: boolean;
-  creation_mode: 'REACT_TO_EVENT' | 'QUERY';
+  creation_mode: QueryInputUiCreationMode;
 }
 
 export interface AutomationBuilderVisualizerProps extends AutomationBuilderBaseProps {

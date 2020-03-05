@@ -278,7 +278,11 @@ class EditAutomationPage extends React.Component<Props, State> {
             saveOrUpdate={this.save}
             loading={this.state.loading}
             edition={true}
-            creation_mode={'QUERY'} // This will change when we have 'ui_creation_mode' persisted in the db.
+            creation_mode={
+              this.state.automationFormData.automationTreeData.node.type === 'QUERY_INPUT'
+                ? this.state.automationFormData.automationTreeData.node.ui_creation_mode
+                : 'QUERY'
+            }
           />
           
         )

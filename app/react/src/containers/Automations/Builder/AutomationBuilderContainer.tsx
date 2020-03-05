@@ -14,13 +14,14 @@ import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
 import { Loading } from '../../../components';
+import { QueryInputUiCreationMode } from '../../../models/automations/automations';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
   automationFormData?: Partial<AutomationFormData>;
   saveOrUpdate: (formData: Partial<AutomationFormData>) => void;
   loading: boolean;
-  creation_mode: 'REACT_TO_EVENT' | 'QUERY';
+  creation_mode: QueryInputUiCreationMode;
   edition?: boolean;
 }
 

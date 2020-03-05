@@ -520,7 +520,7 @@ export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
     type: 'QUERY_INPUT',
     query_id: baseQueryId,
     evaluation_mode: 'LIVE',
-    creation_mode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT' : 'QUERY',
+    ui_creation_mode: type === 'REACT_TO_EVENT' ? 'EVENT' : 'QUERY',
     last_added_node: true,
     formData: {
     },
@@ -538,7 +538,7 @@ export const generateBeginNode = (type: AutomationSelectedType, evaluationPeriod
       evaluation_mode: 'PERIODIC',
       evaluation_period: evaluationPeriod,
       evaluation_period_unit: evaluationPeriodUnit,
-      creation_mode: 'QUERY',
+      ui_creation_mode: 'QUERY',
       last_added_node: true,
       formData: {
       },
