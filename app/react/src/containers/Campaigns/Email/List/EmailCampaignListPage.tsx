@@ -106,36 +106,36 @@ class EmailCampaignListPage extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
         params: { organisationId },
       },
-      location: { search },
+      location: { pathname, search },
       history,
     } = this.props;
 
     const {
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
 
-      location: { pathname: nextPathname, search: nextSearch },
-    } = nextProps;
+      location: { search: previousSearch },
+    } = previousProps;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
+      !compareSearches(search, previousSearch) ||
+      organisationId !== previousOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, EMAIL_SEARCH_SETTINGS)) {
+      if (!isSearchValid(search, EMAIL_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, EMAIL_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
+          pathname: pathname,
+          search: buildDefaultSearch(search, EMAIL_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, EMAIL_SEARCH_SETTINGS);
-        this.fetchCampaignAndStats(nextOrganisationId, filter);
+        const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
+        this.fetchCampaignAndStats(organisationId, filter);
       }
     }
   }

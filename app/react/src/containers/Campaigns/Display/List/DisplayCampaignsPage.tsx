@@ -117,9 +117,9 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
-      location: { search },
+      location: { pathname, search },
       match: {
         params: { organisationId },
       },
@@ -127,28 +127,28 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch },
+      location: { search: previousSearch },
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-    } = nextProps;
+    } = previousProps;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
+      !compareSearches(search, previousSearch) ||
+      organisationId !== previousOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, DISPLAY_SEARCH_SETTINGS)) {
+      if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, DISPLAY_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
+          pathname: pathname,
+          search: buildDefaultSearch(search, DISPLAY_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
         const filter = parseSearch<FilterParams>(
-          nextSearch,
+          search,
           DISPLAY_SEARCH_SETTINGS,
         );
-        this.loadDisplayCampaignsDataSource(nextOrganisationId, filter);
+        this.loadDisplayCampaignsDataSource(organisationId, filter);
       }
     }
   }

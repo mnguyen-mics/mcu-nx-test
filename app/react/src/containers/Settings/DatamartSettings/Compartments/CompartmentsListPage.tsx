@@ -90,30 +90,30 @@ class CompartmentsListPage extends React.Component<
     this.fetchCompartments(calculatedDatamartId, stateFilter);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       location: { search },
       match: {
         params: { organisationId },
       },
-      datamart,
     } = this.props;
 
     const {
-      location: { search: nextSearch },
+      location: { search: previousSearch },
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-    } = nextProps;
+      datamart: previousDatamart
+    } = previousProps;
 
     const { filter } = this.state;
 
     if (
-      nextOrganisationId !== organisationId ||
-      !compareSearches(search, nextSearch)
+      organisationId !== previousOrganisationId ||
+      !compareSearches(search, previousSearch)
     ) {
       const selectedDatamartId =
-        queryString.parse(nextSearch).datamartId || datamart.id;
+        queryString.parse(search).datamartId || previousDatamart.id;
 
       this.setState(
         {

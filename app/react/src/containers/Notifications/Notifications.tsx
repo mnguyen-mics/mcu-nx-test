@@ -73,24 +73,24 @@ interface MapStateToProps {
 type Props = NotificationsProps & MapStateToProps & InjectedIntlProps;
 
 class Notifications extends React.Component<Props> {
-  componentWillReceiveProps(nextProps: Props) {
-    const { notifications: currentNotifications } = this.props;
-    const { notifications: nextNotifications } = nextProps;
+  componentDidUpdate(previousProps: Props) {
+    const { notifications } = this.props;
+    const { notifications: previousNotifications } = previousProps;
 
-    if (nextNotifications.length > 0) {
-      const nextNotificationIds = nextNotifications.map(notif => notif.uid);
-      const currentNotificationIds = currentNotifications.map(
+    if (notifications.length > 0) {
+      const nextNotificationIds = notifications.map(notif => notif.uid);
+      const previousNotificationIds = previousNotifications.map(
         notif => notif.uid,
       );
 
-      const notifIdsToClose = currentNotificationIds.filter(id => {
+      const notifIdsToClose = previousNotificationIds.filter(id => {
         return nextNotificationIds.indexOf(id) < 0;
       });
 
       notifIdsToClose.forEach(id => antNotification.close(id));
 
-      const newNotifications = nextNotifications.filter(notif => {
-        return currentNotificationIds.indexOf(notif.uid) < 0;
+      const newNotifications = notifications.filter(notif => {
+        return previousNotificationIds.indexOf(notif.uid) < 0;
       });
 
       newNotifications.forEach(notif => {

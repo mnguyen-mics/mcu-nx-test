@@ -95,15 +95,15 @@ class EditAdGroupsForm extends React.Component<
     }
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
+  componentDidUpdate(previousProps: JoinedProps) {
     const { selectedRowKeys, intl } = this.props;
-    const { selectedRowKeys: nextSelectedRowKeys } = nextProps;
+    const { selectedRowKeys: previousSelectedRowKeys } = previousProps;
     if (
       selectedRowKeys &&
-      nextSelectedRowKeys &&
-      selectedRowKeys !== nextSelectedRowKeys
+      previousSelectedRowKeys &&
+      selectedRowKeys !== previousSelectedRowKeys
     ) {
-      this.fetchData(nextSelectedRowKeys);
+      this.fetchData(selectedRowKeys);
     } else {
       this.setState({
         adGroupNames: [intl.formatMessage(messageMap.allAdGroupsNames)],

@@ -129,9 +129,9 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
+  componentDidUpdate(previousProps: JoinedProps) {
     const {
-      location: { search },
+      location: { pathname, search },
       match: {
         params: { organisationId },
       },
@@ -139,28 +139,28 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch },
+      location: { search: previousSearch },
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-    } = nextProps;
+    } = previousProps;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
+      !compareSearches(search, previousSearch) ||
+      organisationId !== previousOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, SCENARIOS_SEARCH_SETTINGS)) {
+      if (!isSearchValid(search, SCENARIOS_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, SCENARIOS_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
+          pathname: pathname,
+          search: buildDefaultSearch(search, SCENARIOS_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
         const filter = parseSearch<FilterParams>(
-          nextSearch,
+          search,
           SCENARIOS_SEARCH_SETTINGS,
         );
-        this.fetchAutomationList(nextOrganisationId, filter);
+        this.fetchAutomationList(organisationId, filter);
       }
     }
   }

@@ -33,17 +33,17 @@ export default class CompartmentNameDisplay extends React.Component<CompartmentN
     this.fetchUserAccountCompartment(userAccountCompartmentId)
   }
 
-  componentWillReceiveProps(nextProps: CompartmentNameDisplayProps) {
+  componentDidUpdate(previousProps: CompartmentNameDisplayProps) {
     const {
       userAccountCompartmentId
     } = this.props;
 
     const {
-      userAccountCompartmentId: nextUserAccountCompartment
-    } = nextProps;
+      userAccountCompartmentId: previousUserAccountCompartmentId
+    } = previousProps;
 
-    if (nextUserAccountCompartment !== userAccountCompartmentId) {
-      this.fetchUserAccountCompartment(nextUserAccountCompartment)
+    if (previousUserAccountCompartmentId !== userAccountCompartmentId) {
+      this.fetchUserAccountCompartment(userAccountCompartmentId)
     }
   }
 

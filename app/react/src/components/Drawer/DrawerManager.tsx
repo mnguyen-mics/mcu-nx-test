@@ -39,19 +39,12 @@ class DrawerManager extends React.Component<
     window.addEventListener('resize', this.updateDimensions.bind(this));
   }
 
-  componentWillReceiveProps(nextProps: DrawerManagerProps) {
-    const prevContents = this.props.drawableContents;
-    const nextContents = nextProps.drawableContents;
+  componentDidUpdate(previousProps: DrawerManagerProps) {
+    const prevContents = previousProps.drawableContents;
+    const contents = this.props.drawableContents;
 
-    if (prevContents.length !== nextContents.length) {
-      this.updateDimensions(nextContents);
-    }
-  }
-
-  componentDidUpdate() {
-    // TODO focus blur issue with GoalForm
-    if (this.drawerDiv) {
-      this.drawerDiv.focus();
+    if (prevContents.length !== contents.length) {
+      this.updateDimensions(contents);
     }
   }
 
@@ -92,18 +85,24 @@ class DrawerManager extends React.Component<
     }
   };
 
-  updateDimensions = (nextDrawableContents: DrawableContent[]) => {
-    const drawableContents = nextDrawableContents.length
-      ? nextDrawableContents
-      : this.props.drawableContents;
+  updateDimensions = (drawableContents: DrawableContent[]) => {
     const foregroundContentSize = this.getForegroundContentSize(
       drawableContents,
     );
 
-    this.setState({
-      drawerMaxWidth: this.getDimensions(foregroundContentSize),
-      viewportWidth: window.innerWidth,
-    });
+    const drawerMaxWidth = this.getDimensions(foregroundContentSize);
+
+    if (this.state.drawerMaxWidth !== drawerMaxWidth || this.state.viewportWidth !== window.innerWidth) {
+      this.setState({
+        drawerMaxWidth: this.getDimensions(foregroundContentSize),
+        viewportWidth: window.innerWidth,
+      });
+    }
+
+    // TODO focus blur issue with GoalForm
+    if (this.drawerDiv) {
+      this.drawerDiv.focus();
+    }
   };
 
   handleClickOnBackground = () => {

@@ -149,26 +149,26 @@ class Select extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(previousProps) {
     // save parsed treeData, for performance (treeData may be very big)
-    this.renderedTreeData = this.renderTreeData(nextProps);
+    this.renderedTreeData = this.renderTreeData(this.props);
     // Detecting whether the object of `onChange`'s argument  is old ref.
     // Better to do a deep equal later.
     this._cacheTreeNodesStates = this._cacheTreeNodesStates !== 'no' &&
                                  this._savedValue &&
-                                 nextProps.value === this._savedValue;
-    if (this.props.treeData !== nextProps.treeData ||
-      this.props.children !== nextProps.children) {
+                                 this.props.value === this._savedValue;
+    if (previousProps.treeData !== this.props.treeData ||
+      previousProps.children !== this.props.children) {
       // refresh this._treeNodesStates cache
       this._treeNodesStates = getTreeNodesStates(
-        this.renderedTreeData || nextProps.children,
+        this.renderedTreeData || this.props.children,
         this.state.value.map(item => item.value)
       );
     }
-    if ('value' in nextProps) {
-      let value = toArray(nextProps.value);
-      value = this.addLabelToValue(nextProps, value);
-      value = this.getValue(nextProps, value);
+    if ('value' in this.props) {
+      let value = toArray(this.props.value);
+      value = this.addLabelToValue(this.props, value);
+      value = this.getValue(this.props, value);
       this.setState({
         value,
       });
@@ -178,14 +178,14 @@ class Select extends Component {
       //   });
       // }
     }
-    if (nextProps.inputValue !== this.props.inputValue) {
+    if (this.props.inputValue !== previousProps.inputValue) {
       this.setState({
-        inputValue: nextProps.inputValue,
+        inputValue: this.props.inputValue,
       });
     }
-    if ('open' in nextProps) {
+    if ('open' in this.props) {
       this.setState({
-        open: nextProps.open,
+        open: this.props.open,
       });
     }
   }

@@ -35,7 +35,7 @@ class Logo extends React.Component<Props> {
     this.props.getLogoRequest({ organisationId });
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
         params: { organisationId },
@@ -44,11 +44,11 @@ class Logo extends React.Component<Props> {
 
     const {
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-    } = nextProps;
-    if (organisationId !== nextOrganisationId) {
-      this.props.getLogoRequest({ organisationId: nextOrganisationId });
+    } = previousProps;
+    if (organisationId !== previousOrganisationId) {
+      this.props.getLogoRequest({ organisationId: organisationId });
     }
 
   }

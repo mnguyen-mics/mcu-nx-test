@@ -280,10 +280,10 @@ class JSONQLBuilder extends React.Component<Props, State> {
     this.engine.setDiagramModel(model);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    const { query } = this.props;
-    const { query: nextQuery, objectTypes } = nextProps;
-    if (query !== nextQuery) {
+  componentDidUpdate(previousProps: Props) {
+    const { query, objectTypes } = this.props;
+    const { query: previousQuery } = previousProps;
+    if (query !== previousQuery) {
       const model = new DiagramModel();
       model.setLocked(this.engine.getDiagramModel().locked);
       model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
@@ -295,7 +295,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
       rootNode.x = ROOT_NODE_POSITION.x;
       rootNode.y = ROOT_NODE_POSITION.y;
 
-      this.buildModelTree(nextQuery, rootNode, objectTypes, model);
+      this.buildModelTree(query, rootNode, objectTypes, model);
 
       this.engine.setDiagramModel(model);
     }
