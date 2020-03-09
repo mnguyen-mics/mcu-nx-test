@@ -15,5 +15,9 @@ declare namespace Cypress {
      * cy.switchOrg('yellow velvet')
      */
     switchOrg(organisationName: string): Chainable<any>;
+
+    saveLocalStorageCache(): void;
+
+    restoreLocalStorageCache(): void;
   }
 }

@@ -4,6 +4,7 @@
   "dependencies": {
     "cuid": "^2.1.8",
     "cypress-file-upload": "^3.5.3",
+    "faker": "^4.1.0",
     "npm": "^6.13.6",
     "ts-loader": "^6.2.1",
     "tslint": "^6.0.0",
@@ -12,6 +13,7 @@
   },
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^4.1.2",
+    "@types/faker": "^4.1.10",
     "cypress": "^3.8.2",
     "cypress-file-upload": "^3.5.3",
     "mocha": "5.2.0",
