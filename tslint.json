@@ -8,9 +8,7 @@
     "import-blacklist": [true, "rxjs"],
     "interface-over-type-literal": false,
     "member-access": false,
-    "member-ordering": [true, {
-      "order": "fields-first"
-    }],
+    "member-ordering": false,
     "newline-before-return": false,
     "no-any": false,
     "no-empty-interface": false,

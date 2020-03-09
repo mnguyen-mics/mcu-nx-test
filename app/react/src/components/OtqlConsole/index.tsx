@@ -1,13 +1,13 @@
+import 'brace/ext/language_tools';
+import 'brace/ext/searchbox';
 import * as React from 'react';
 import AceEditor, { AceEditorProps, Annotation } from 'react-ace';
-import 'brace/ext/searchbox';
-import CustomOtqlMode from './theme/CustomOtqlMode';
-
-import './theme/style/otql.theme.js';
-import 'brace/ext/language_tools';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { IQueryService } from '../../services/QueryService';
+import CustomOtqlMode from './theme/CustomOtqlMode';
+import './theme/style/otql.theme.js';
+
 
 export interface OtqlConsoleProps extends AceEditorProps {
   datamartId: string;

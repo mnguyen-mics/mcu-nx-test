@@ -19,7 +19,7 @@ import {
   ServiceItemShape,
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { compose } from 'recompose';
-import OrgLogo from '../../../Logo/OrgLogo';
+import OrgLogoContainer from '../../../Logo/OrgLogoContainer';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { uniq, map } from 'lodash';
 import { CancelablePromise, makeCancelable } from '../../../../utils/ApiHelper';
@@ -93,7 +93,7 @@ const dataColumns: Array<DataColumnDefinition<CombinedServiceItemData>> = [
     isHideable: false,
     render: (text: string) => (
       <span className={'mcs-offerCatalogTable_providerLogo'}>
-        <OrgLogo organisationId={text} />
+        <OrgLogoContainer organisationId={text} />
       </span>
     ),
   },

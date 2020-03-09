@@ -38,6 +38,7 @@ class AddonSelect extends React.Component<
 
     return (
       <Select
+        id={input.name}
         onBlur={input.onBlur as () => any}
         onChange={input.onChange as () => any}
         onFocus={input.onFocus as () => any}

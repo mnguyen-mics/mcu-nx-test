@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import log from '../../utils/Logger';
 import _ from 'lodash';
 import pathToRegexp from 'path-to-regexp';
+import pAll from 'p-all';
 
 import * as SessionHelper from '../../state/Session/selectors';
 import OrgLogo from '../Logo/OrgLogo';
@@ -14,6 +15,9 @@ import { ButtonStyleless } from '../../components/index';
 import Search from 'antd/lib/input/Search';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
+import { lazyInject } from '../../config/inversify.config';
+import { TYPES } from '../../constants/types';
+import { IOrganisationService } from '../../services/OrganisationService';
 
 const { Meta } = Card;
 
@@ -27,6 +31,9 @@ export interface OrgSelectorProps {
 
 interface OrgSelectorState {
   search: string;
+  orgLogoMap: {
+    [orgId: string]: { isLoading: boolean; logoUrl?: string };
+  };
 }
 
 type InnerProps = InjectedIntlProps &
@@ -34,13 +41,107 @@ type InnerProps = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
+  @lazyInject(TYPES.IOrganisationService)
+  private _organisationService: IOrganisationService;
+  private fetchLogosDebounced: (
+    orgLogoToFetch: UserWorkspaceResource[],
+  ) => void;
 
   constructor(props: InnerProps) {
     super(props);
     this.state = {
       search: '',
+      orgLogoMap: this.getCachedOrgLogoMap(),
     };
+    this.fetchLogosDebounced = _.debounce(this.fetchLogos, 500);
   }
+
+  componentDidMount() {
+    if (this.showOrgs()) {
+      this.fetchNotInCacheOrgLogoMap();
+    }
+  }
+
+  showOrgs = () =>
+    this.props.workspaces.length < 49 || this.state.search !== '';
+
+  getCachedOrgLogoMap = () => {
+    return this.props.workspaces
+      .filter(wp => {
+        const logoIsInCache = this._organisationService.getLogoCache(
+          wp.organisation_id,
+        );
+        return !!logoIsInCache;
+      })
+      .reduce(
+        (acc, curr) => ({
+          ...acc,
+          [curr.organisation_id]: {
+            logoUrl: URL.createObjectURL(
+              this._organisationService.getLogoCache(curr.organisation_id),
+            ),
+          },
+        }),
+        {},
+      );
+  };
+
+  fetchNotInCacheOrgLogoMap = () => {
+    const notInCacheLogos = this.getFilteredWorkspaces().filter(wp => {
+      const logoIsInCache = this._organisationService.getLogoCache(
+        wp.organisation_id,
+      );
+      return !logoIsInCache;
+    });
+
+    this.setState(
+      prev => ({
+        orgLogoMap: {
+          ...prev.orgLogoMap,
+          ...notInCacheLogos.reduce(
+            (acc, curr) => ({
+              ...acc,
+              [curr.organisation_id]: { isLoading: true },
+            }),
+            {},
+          ),
+        },
+      }),
+      () => {
+        this.fetchLogosDebounced(notInCacheLogos)
+      },
+    );
+  };
+
+  getFilteredWorkspaces = () => {
+    const { workspaces } = this.props;
+    if (this.state.search === '') {
+      return workspaces;
+    }
+    return workspaces.filter(wp =>
+      wp.organisation_name
+        .toLocaleLowerCase()
+        .includes(this.state.search.toLowerCase()),
+    );
+  };
+
+  fetchLogos = (orgLogoToFetch: UserWorkspaceResource[]) => {
+    const promises = orgLogoToFetch.map(r => {
+      return () =>
+        this._organisationService.getLogo(r.organisation_id).then(blobLogo => {
+          this.setState(prev => ({
+            orgLogoMap: {
+              ...prev.orgLogoMap,
+              [r.organisation_id]: {
+                isLoading: false,
+                logoUrl: URL.createObjectURL(blobLogo),
+              },
+            },
+          }));
+        });
+    });
+    pAll(promises, { concurrency: 4 });
+  };
 
   changeWorkspace = ({ key }: { key: string }) => {
     const {
@@ -64,7 +165,11 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
   };
 
   onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ search: e.target.value });
+    const searchText = e.target.value.trim();
+    this.setState(
+      () => ({ search: searchText }),
+      () => this.fetchNotInCacheOrgLogoMap(),
+    );
   };
 
   onCardClick = (key: string) => {
@@ -72,21 +177,9 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
   };
 
   render() {
-    const { workspaces } = this.props;
+    const showOrgs = this.showOrgs();
 
-    const showOrgs = workspaces.length > 49 ? false : true;
-
-    const filteredWorkspaces =
-      workspaces &&
-      workspaces.filter(item => {
-        if (this.state.search !== '') {
-          return _.includes(
-            item.organisation_name.toUpperCase(),
-            this.state.search.toUpperCase(),
-          );
-        }
-        return true;
-      });
+    const filteredWorkspaces = this.getFilteredWorkspaces();
 
     let rowSize = 1;
 
@@ -110,7 +203,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
           </Col>
         </Row>
         <Row gutter={20} style={{ marginRight: 20, marginLeft: 20 }}>
-          {showOrgs || this.state.search !== '' ? (
+          {showOrgs ? (
             filteredWorkspaces && filteredWorkspaces.length ? (
               filteredWorkspaces.map(item => (
                 <Col span={24 / rowSize} key={item.organisation_id}>
@@ -122,7 +215,21 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
                       hoverable={true}
                       className="mcs-org-card"
                       cover={
-                        <OrgLogo organisationId={item.organisation_id} />
+                        <OrgLogo
+                          organisationId={item.organisation_id}
+                          isLoading={
+                            this.state.orgLogoMap[item.organisation_id]
+                              ? this.state.orgLogoMap[item.organisation_id]
+                                  .isLoading
+                              : false
+                          }
+                          logoUrl={
+                            this.state.orgLogoMap[item.organisation_id]
+                              ? this.state.orgLogoMap[item.organisation_id]
+                                  .logoUrl
+                              : null
+                          }
+                        />
                       }
                       style={{ height: '100%' }}
                     >

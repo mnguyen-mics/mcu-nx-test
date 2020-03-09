@@ -29,6 +29,7 @@
     "moment": "^2.22.2",
     "moment-duration-format": "^2.2.2",
     "numeral": "^2.0.6",
+    "p-all": "^2.1.0",
     "papaparse": "^4.6.2",
     "path-to-regexp": "^2.4.0",
     "plottable": "^3.8.3",

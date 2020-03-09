@@ -326,7 +326,7 @@ container
 container.bind<ILabelService>(TYPES.ILabelService).to(LabelService);
 container
   .bind<IOrganisationService>(TYPES.IOrganisationService)
-  .to(OrganisationService);
+  .to(OrganisationService).inSingletonScope();
 container.bind<IAssetFileService>(TYPES.IAssetFileService).to(AssetFileService);
 container.bind<IPluginService>(TYPES.IPluginService).to(PluginService);
 container.bind<ICreativeService>(TYPES.ICreativeService).to(CreativeService);
