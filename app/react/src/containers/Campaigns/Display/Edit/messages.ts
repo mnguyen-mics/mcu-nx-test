@@ -728,7 +728,7 @@ export default defineMessages({
 
   contentSectionAdEmptyTitle: {
     id: 'adGroupEditor.section.ad.emptyTitle',
-    defaultMessage: 'Click on the pen to add an ad to your ad group',
+    defaultMessage: 'Click on the button to add an ad to your ad group',
   },
 
   updateDisplayCreative: {
