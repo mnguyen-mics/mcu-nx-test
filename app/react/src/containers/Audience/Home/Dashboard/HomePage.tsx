@@ -24,7 +24,7 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import { averageSessionDurationConfig, channelEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
 
@@ -41,6 +41,10 @@ const messages = defineMessages({
     id: 'audience.home.dashboard',
     defaultMessage: 'Coming Soon...',
   },
+  acquisitionEngagementTitle: {
+    id: 'audience.home.acquisitionEngagementTitle',
+    defaultMessage: 'Acquisition Engagement'
+  } 
 });
 
 interface HomeState {
@@ -111,7 +115,13 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
         datamartId: datamartId,
         config: channelEngagementConfig as any
+      },
+      {
+        title: intl.formatMessage(messages.acquisitionEngagementTitle),
+        datamartId: datamartId,
+        config: acquisitionEngagementConfig as any
       }
+        
     ];
   };
 
