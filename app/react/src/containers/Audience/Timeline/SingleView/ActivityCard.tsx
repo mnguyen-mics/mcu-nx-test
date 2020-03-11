@@ -122,11 +122,6 @@ class ActivityCard extends React.Component<Props, State> {
     this.getChannelInformation(activity);
   }
 
-  componentWillReceiveProps() {
-    const { activity } = this.props;
-    this.getChannelInformation(activity);
-  }
-
   componentDidUpdate(prevProps: Props) {
     const {
       match: {

@@ -94,9 +94,9 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
+  componentDidUpdate(previousProps: JoinedProps) {
     const {
-      location: { search },
+      location: { pathname, search, state },
       match: {
         params: { organisationId },
       },
@@ -104,33 +104,33 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch, state },
+      location: { search: previousSearch },
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-    } = nextProps;
+    } = previousProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
+      !compareSearches(search, previousSearch) ||
+      organisationId !== previousOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
+      if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
+          pathname: pathname,
           search: buildDefaultSearch(
-            nextSearch,
+            search,
             CREATIVE_DISPLAY_SEARCH_SETTINGS,
           ),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
         const filter = parseSearch(
-          nextSearch,
+          search,
           CREATIVE_DISPLAY_SEARCH_SETTINGS,
         );
-        this.fetchDisplayAds(nextOrganisationId, filter, checkEmptyDataSource);
+        this.fetchDisplayAds(organisationId, filter, checkEmptyDataSource);
       }
     }
   }

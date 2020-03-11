@@ -48,11 +48,11 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
     this.initMenu(pathname, organisationId)
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate() {
     const {
       match: { params: { organisationId } },
       location: { pathname },
-    } = nextProps;
+    } = this.props;
 
     this.initMenu(pathname, organisationId)
   }
@@ -65,7 +65,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
           return matchPath(pathname, { path: `${basePath}${val.path}`, exact: false, strict: false }) ? true : acc;
         }, false)
       );
-    if (currentOpenMenu) {
+    if (currentOpenMenu && currentOpenMenu.iconType !== this.state.current) {
       this.setState({ current: currentOpenMenu.iconType });
     }
   }

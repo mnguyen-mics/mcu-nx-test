@@ -113,35 +113,35 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     }
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
+  componentDidUpdate(previousProps: JoinedProps) {
     const {
       history,
-      location: { search },
+      location: { pathname, search },
       match: {
-        params: { organisationId },
+        params: { organisationId, exportId },
       },
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch },
+      location: { search: previousSearch },
       match: {
-        params: { organisationId: nextOrganisationId, exportId: nextExportId },
+        params: { organisationId: previousOrganisationId },
       },
-    } = nextProps;
+    } = previousProps;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
+      !compareSearches(search, previousSearch) ||
+      organisationId !== previousOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, PAGINATION_SEARCH_SETTINGS)) {
+      if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, PAGINATION_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
+          pathname: pathname,
+          search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, PAGINATION_SEARCH_SETTINGS);
-        this.fetchExportExecution(nextExportId, filter);
+        const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
+        this.fetchExportExecution(exportId, filter);
       }
     }
   }

@@ -74,11 +74,12 @@ class ItemList<T> extends React.Component<Props<T>> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props<T>) {
+  componentDidUpdate(previousProps: Props<T>) {
     const {
       fetchList,
       history,
       location: {
+        pathname,
         search,
       },
       match: {
@@ -86,31 +87,30 @@ class ItemList<T> extends React.Component<Props<T>> {
           organisationId,
         },
       },
+      pageSettings,
     } = this.props;
 
     const {
       location: {
-        pathname: nextPathname,
-        search: nextSearch,
+        search: previousSearch,
       },
       match: {
         params: {
-          organisationId: nextOrganisationId,
+          organisationId: previousOrganisationId,
         },
       },
-      pageSettings,
-    } = nextProps;
+    } = previousProps;
 
-    if (!compareSearches(search, nextSearch) || organisationId !== nextOrganisationId) {
-      if (!isSearchValid(nextSearch, pageSettings)) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
+      if (!isSearchValid(search, pageSettings)) {
         history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, pageSettings),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
+          pathname: pathname,
+          search: buildDefaultSearch(search, pageSettings),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
-        const filters = parseSearch(nextSearch, pageSettings);
-        fetchList(nextOrganisationId, filters, false);
+        const filters = parseSearch(search, pageSettings);
+        fetchList(organisationId, filters, false);
       }
     }
   }

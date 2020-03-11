@@ -85,12 +85,12 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
     this.loadData(datamartId, queryId);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const { datamartId, queryId } = this.props;
-    const { datamartId: nextDatamartId, queryId: nextQueryId } = nextProps;
+    const { datamartId: previousDatamartId, queryId: previousQueryId } = previousProps;
 
-    if (nextDatamartId !== datamartId || queryId !== nextQueryId) {
-      this.loadData(nextDatamartId, nextQueryId);
+    if (datamartId !== previousDatamartId || queryId !== previousQueryId) {
+      this.loadData(datamartId, queryId);
     }
   }
 

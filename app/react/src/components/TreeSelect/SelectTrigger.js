@@ -58,17 +58,14 @@ class SelectTrigger extends Component {
     this.setDropdownWidth();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.inputValue && nextProps.inputValue !== this.props.inputValue) {
+  componentDidUpdate(previousProps) {
+    if (this.props.inputValue && this.props.inputValue !== previousProps.inputValue) {
       // set autoExpandParent to true
       this.setState({
         _expandedKeys: [],
         fireOnExpand: false,
       });
     }
-  }
-
-  componentDidUpdate() {
     this.setDropdownWidth();
   }
 

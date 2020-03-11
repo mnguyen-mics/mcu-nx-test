@@ -76,13 +76,13 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     };
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate() {
     const {
       inventoryCategoryTree,
       keywordList,
       dealList,
       placementList,
-    } = nextProps;
+    } = this.props;
 
     this.buildIncludedDataSet(
       placementList,

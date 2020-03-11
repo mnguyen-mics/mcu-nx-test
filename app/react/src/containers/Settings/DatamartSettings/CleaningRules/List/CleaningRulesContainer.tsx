@@ -55,22 +55,22 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
     this.fetchCleaningRules(datamartId, filter);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       datamartId,
       filter,
     } = this.props;
 
     const {
-      datamartId: nextDatamartId,
-      filter: nextFilter,
-    } = nextProps;
+      datamartId: previousDatamartId,
+      filter: previousFilter,
+    } = previousProps;
 
     if (
-      (filter !== nextFilter) ||
-      (datamartId !== nextDatamartId)
+      (filter !== previousFilter) ||
+      (datamartId !== previousDatamartId)
     ) {
-      this.fetchCleaningRules(nextDatamartId, nextFilter);
+      this.fetchCleaningRules(datamartId, filter);
     }
   }
 

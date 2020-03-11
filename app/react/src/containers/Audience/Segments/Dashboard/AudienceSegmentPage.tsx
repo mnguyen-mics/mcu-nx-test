@@ -29,7 +29,6 @@ interface MapStateToProps {
   };
 }
 
-
 const mapStateToProps = (state: MicsReduxState) => ({
   workspaces: SessionHelper.getWorkspaces(state),
 });
@@ -38,8 +37,8 @@ type Props = RouteComponentProps<{
   organisationId: string;
   segmentId: string;
 }> &
-  InjectedIntlProps & 
-  MapStateToProps; 
+  InjectedIntlProps &
+  MapStateToProps;
 
 interface State {
   segment?: AudienceSegmentShape;
@@ -57,7 +56,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     this.state = {
       segment: undefined,
       isLoading: true,
-      datamarts: []
+      datamarts: [],
     };
   }
 
@@ -68,13 +67,13 @@ class AudienceSegmentPage extends React.Component<Props, State> {
       match: {
         params: { segmentId, organisationId },
       },
-      workspaces
+      workspaces,
     } = this.props;
 
-    const workspace = workspaces[organisationId]
-        this.setState({
-          datamarts: workspace ? workspace.datamarts : [],
-        });
+    const workspace = workspaces[organisationId];
+    this.setState({
+      datamarts: workspace ? workspace.datamarts : [],
+    });
 
     if (!isSearchValid(search, SEGMENT_QUERY_SETTINGS)) {
       history.replace({
@@ -82,7 +81,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
         search: buildDefaultSearch(search, SEGMENT_QUERY_SETTINGS),
       });
     } else {
-      this.fetchAudienceSegment(segmentId)
+      this.fetchAudienceSegment(segmentId);
     }
   }
 
@@ -130,9 +129,9 @@ class AudienceSegmentPage extends React.Component<Props, State> {
       .then(res => this.setState({ isLoading: false, segment: res.data }));
   };
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
-      location: { search },
+      location: { pathname, search },
       match: {
         params: { segmentId, organisationId },
       },
@@ -140,28 +139,28 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch },
+      location: { search: previousSearch },
       match: {
         params: {
-          segmentId: nextSegmentId,
-          organisationId: nextOrganisationId,
+          segmentId: previousSegmentId,
+          organisationId: previousOrganisationId,
         },
       },
-    } = nextProps;
+    } = previousProps;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      segmentId !== nextSegmentId ||
-      organisationId !== nextOrganisationId ||
+      !compareSearches(search, previousSearch) ||
+      segmentId !== previousSegmentId ||
+      organisationId !== previousOrganisationId ||
       (this.state.segment && this.state.segment.type === 'USER_LOOKALIKE')
     ) {
-      if (organisationId !== nextOrganisationId) {
-        history.push(`/v2/o/${nextOrganisationId}/audience/segments`);
+      if (organisationId !== previousOrganisationId) {
+        history.push(`/v2/o/${organisationId}/audience/segments`);
       }
-      if (!isSearchValid(nextSearch, SEGMENT_QUERY_SETTINGS)) {
+      if (!isSearchValid(search, SEGMENT_QUERY_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, SEGMENT_QUERY_SETTINGS),
+          pathname: pathname,
+          search: buildDefaultSearch(search, SEGMENT_QUERY_SETTINGS),
         });
       } else {
         this.setState({ isLoading: true });
@@ -172,7 +171,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
 
   render() {
     const { isLoading, segment } = this.state;
-    const { datamarts } = this.state
+    const { datamarts } = this.state;
     return (
       <div className="ant-layout">
         <AudienceSegmentActionbar
@@ -183,7 +182,11 @@ class AudienceSegmentPage extends React.Component<Props, State> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <AudienceSegment isLoading={isLoading} segment={segment} datamarts={datamarts}/>
+            <AudienceSegment
+              isLoading={isLoading}
+              segment={segment}
+              datamarts={datamarts}
+            />
           </Content>
         </div>
       </div>
@@ -194,8 +197,5 @@ class AudienceSegmentPage extends React.Component<Props, State> {
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(AudienceSegmentPage);

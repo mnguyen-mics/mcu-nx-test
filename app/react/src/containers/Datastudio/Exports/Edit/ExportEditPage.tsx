@@ -98,7 +98,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
         params: { exportId },
@@ -106,15 +106,15 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
     } = this.props;
     const {
       match: {
-        params: { exportId: nextExportId },
+        params: { exportId: previousExportId },
       },
-    } = nextProps;
+    } = previousProps;
 
-    if (exportId !== nextExportId) {
+    if (exportId !== previousExportId) {
       this.setState({
         loading: true,
       });
-      this.loadInitialValues(nextExportId);
+      this.loadInitialValues(exportId);
     }
   }
 

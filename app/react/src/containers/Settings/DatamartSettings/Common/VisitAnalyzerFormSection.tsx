@@ -86,8 +86,8 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
       );
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    const visitAnalyzerField = nextProps.fields.getAll()[0];
+  componentDidUpdate() {
+    const visitAnalyzerField = this.props.fields.getAll()[0];
     if (visitAnalyzerField)
       this.fetchActivityAnalyzer(
         visitAnalyzerField.model.visit_analyzer_model_id,

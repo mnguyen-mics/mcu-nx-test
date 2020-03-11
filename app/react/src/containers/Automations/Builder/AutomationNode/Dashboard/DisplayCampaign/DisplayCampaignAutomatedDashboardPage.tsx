@@ -104,37 +104,37 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
-      location: { search },
+      location: { pathname, search },
+      match : {
+        params: { organisationId },
+      },
       campaignId,
       history,
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch },
-      match: {
-        params: { organisationId: nextOrganisationId },
-      },
-      campaignId: nextCampaignId,
-    } = nextProps;
+      location: { search: previousSearch },
+      campaignId: previousCampaignId,
+    } = previousProps;
 
-    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
-      if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
+    if (!compareSearches(search, previousSearch) || campaignId !== previousCampaignId) {
+      if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
+          pathname: pathname,
           search: buildDefaultSearch(
-            nextSearch,
+            search,
             DISPLAY_DASHBOARD_SEARCH_SETTINGS,
           ),
         });
       } else {
         const filter = parseSearch<DateSearchSettings>(
-          nextSearch,
+          search,
           DISPLAY_DASHBOARD_SEARCH_SETTINGS,
         );
 
-        this.fetchAllData(nextOrganisationId, nextCampaignId, filter);
+        this.fetchAllData(organisationId, campaignId, filter);
       }
     }
   }
