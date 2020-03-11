@@ -141,14 +141,15 @@ class FeedChart extends React.Component<Props, State> {
 
   renderDescription() {
     return (
-      <div className="description">
-        <div>
-          <FormattedMessage {...messagesMap.stats_description1} />
+        <div className="description">
+          <img className="beta-logo" src="/react/src/assets/images/beta-icon.png" />
+          <div>
+            <FormattedMessage {...messagesMap.stats_description1} />
+          </div>
+          <div>
+            <FormattedMessage {...messagesMap.stats_description2} />
+          </div>
         </div>
-        <div>
-          <FormattedMessage {...messagesMap.stats_description2} />
-        </div>
-      </div>
     );
   }
 

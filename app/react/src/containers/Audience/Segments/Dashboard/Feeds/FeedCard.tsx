@@ -96,7 +96,7 @@ const messages = defineMessages({
   },
   stats: {
     id: 'audienceFeed.card.actions.stats',
-    defaultMessage: 'Stats',
+    defaultMessage: 'Stats (BETA)',
   },
   view: {
     id: 'audienceFeed.card.actions.view',

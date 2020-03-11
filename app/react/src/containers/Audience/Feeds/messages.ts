@@ -83,7 +83,7 @@ export default defineMessages({
   },
   stats: {
     id: 'audience.feeds.list.column.action.stats',
-    defaultMessage: 'Stats',
+    defaultMessage: 'Stats (BETA)',
   },
   delete: {
     id: 'audience.feeds.list.column.action.delete',

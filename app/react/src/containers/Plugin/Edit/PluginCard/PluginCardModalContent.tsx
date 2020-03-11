@@ -262,7 +262,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
     if (hasFeature('audience-feeds_stats') && editionMode) {
       items = [
         {
-          title: 'Stats',
+          title: 'Stats (BETA)',
           key: 'stats',
           display: (
             <div className="tab">
