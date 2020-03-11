@@ -518,6 +518,70 @@ export const channelEngagementConfig = [
 
 export const acquisitionEngagementConfig = [
   {
+    title: 'Sessions by Source',
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 6,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'COLUMN',
+        options: {
+          title: undefined,
+          height: 300,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'column'
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['origin_source'],
+        metricName: 'sessions',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+  {
     title: 'Average Session duration by origin source',
     layout: {
       'i': '1',
