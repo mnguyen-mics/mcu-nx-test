@@ -44,7 +44,7 @@ const messages = defineMessages({
   acquisitionEngagementTitle: {
     id: 'audience.home.acquisitionEngagementTitle',
     defaultMessage: 'Acquisition Engagement'
-  } 
+  }
 });
 
 interface HomeState {
@@ -121,7 +121,6 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         datamartId: datamartId,
         config: acquisitionEngagementConfig as any
       }
-        
     ];
   };
 

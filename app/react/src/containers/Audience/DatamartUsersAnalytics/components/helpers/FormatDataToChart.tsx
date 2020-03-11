@@ -58,7 +58,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
           const found = acc.find((a: AreaSeriesDataOptions) => a.name === d[chart.dimensions[0]]);
 
           const value = d[chart.metricName];
-          const xValue = chart.dimensions[2] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[2]] as string) : d[chart.dimensions[2]];
+          const xValue = chart.dimensions[chart.dimensions.length - 1] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[chart.dimensions.length - 1]] as string) : d[chart.dimensions[chart.dimensions.length - 1]];
           if (!found) {
             acc.push({
               visible: acc.length < 4,
