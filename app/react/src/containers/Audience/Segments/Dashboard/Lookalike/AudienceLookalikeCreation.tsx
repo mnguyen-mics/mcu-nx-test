@@ -181,7 +181,7 @@ class AudienceLookalikeCreation extends React.Component<
                 query_language: 'OTQL',
                 query_text: `SELECT @count{} FROM UserPoint WHERE segments { id = "${
                   formValues.source_segment_id
-                }" } OR segment_scores { values { score >=  ${-similarity}} } `,
+                }" } OR segment_scores { scores { score >=  ${-similarity}} } `,
               })
               .then(resp => {
                 return resp.data;
@@ -223,7 +223,7 @@ class AudienceLookalikeCreation extends React.Component<
     const { datamartId } = this.props;
 
     const q =
-      'SELECT { segment_scores { values { score @min } } } FROM UserPoint';
+      'SELECT { segment_scores { scores { score @min } } } FROM UserPoint';
 
     return this._queryService
       .runOTQLQuery(datamartId, q, {
@@ -244,7 +244,7 @@ class AudienceLookalikeCreation extends React.Component<
     const { datamartId } = this.props;
 
     const q =
-      'SELECT { segment_scores { values { score @max } } } FROM UserPoint';
+      'SELECT { segment_scores { scores { score @max } } } FROM UserPoint';
 
     return this._queryService
       .runOTQLQuery(datamartId, q, {
@@ -274,7 +274,7 @@ class AudienceLookalikeCreation extends React.Component<
 
     const q2 = `SELECT @count{} FROM UserPoint WHERE segments { id = "${
       formValues.source_segment_id
-    }" } OR segment_scores { values { score >=  ${-value}} } `;
+    }" } OR segment_scores { scores { score >=  ${-value}} } `;
 
     this._queryService
       .runOTQLQuery(datamartId, q1, {
