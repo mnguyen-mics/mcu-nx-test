@@ -96,6 +96,7 @@ class CompartmentsListPage extends React.Component<
       match: {
         params: { organisationId },
       },
+      datamart,
     } = this.props;
 
     const {
@@ -103,7 +104,6 @@ class CompartmentsListPage extends React.Component<
       match: {
         params: { organisationId: previousOrganisationId },
       },
-      datamart: previousDatamart
     } = previousProps;
 
     const { filter } = this.state;
@@ -113,7 +113,7 @@ class CompartmentsListPage extends React.Component<
       !compareSearches(search, previousSearch)
     ) {
       const selectedDatamartId =
-        queryString.parse(search).datamartId || previousDatamart.id;
+        queryString.parse(search).datamartId || datamart.id;
 
       this.setState(
         {
