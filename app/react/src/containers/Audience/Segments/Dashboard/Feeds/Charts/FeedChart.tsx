@@ -146,7 +146,6 @@ class FeedChart extends React.Component<Props, State> {
           <div>
             <FormattedMessage {...messagesMap.stats_description1} />
           </div>
-          <br/>
           <div>
             <FormattedMessage {...messagesMap.stats_description2} />
           </div>
