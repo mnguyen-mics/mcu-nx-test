@@ -7,6 +7,7 @@ import {
   DimensionFilter,
 } from '../models/ReportRequestBody';
 import McsMoment, { formatMcsDate } from './McsMoment';
+import { AudienceExternalFeedTyped, AudienceTagFeedTyped } from '../containers/Audience/Segments/Edit/domain';
 
 type FeedsStatsDimension =
   | 'ORGANISATION_ID'
@@ -27,6 +28,13 @@ type FeedsStatsMetric =
   | 'UNIQ_USER_IDENTIFIERS_COUNT'
   | 'UNIQ_TAG_KEYS'
   | 'UNIQ_TAG_VALUES';
+
+export type FeedStatsUnit = "user_points" | "identifiers";
+
+export interface FeedStatsCounts {
+  exportedUserPointsCount?: number;
+  exportedUserIdentifiersCount?: number;
+}
 
 export interface FeedStatsDimensionFilter extends DimensionFilter {
   dimension_name: FeedsStatsDimension;
@@ -71,9 +79,10 @@ export function buildFeedCardStatsRequestBody(
 export function buildFeedStatsByFeedRequestBody(
   feedId: string,
   dateRange: DateRange,
+  metrics?: FeedsStatsMetric[]
 ): ReportRequestBody {
   const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', 'DAY', 'SYNC_TYPE'];
-  const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_POINTS_COUNT'];
+  const metricsList: FeedsStatsMetric[] = metrics ? metrics : ['UNIQ_USER_POINTS_COUNT'];
 
   // DIMENSION FILTERS
   const dimensionFilter: FeedStatsDimensionFilter = {
@@ -119,4 +128,26 @@ function buildReport(
     metrics: metrics,
   };
   return report;
+}
+
+export function getFeedStatsUnit(feed: AudienceExternalFeedTyped | AudienceTagFeedTyped, counts: FeedStatsCounts): FeedStatsUnit {
+
+  // For Google and AppNexus external feeds, we display the count of identifiers
+  if (feed.group_id === "com.mediarithmics.audience.externalfeed"
+    && (feed.artifact_id === "google-ddp-connector"
+      || feed.artifact_id === "appnexus-audience-segment-feed-direct"
+      || feed.artifact_id === "appnexus-audience-segment-feed")) {
+    return "identifiers";
+  }
+
+  // For TAG_FEED, we display the count of identifiers
+  else if (feed.type === "TAG_FEED") {
+    return "identifiers";
+  }
+
+  // Otherwise, we display the count of User Points
+  else {
+    return "user_points";
+  }
+
 }

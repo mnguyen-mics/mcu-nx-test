@@ -259,8 +259,8 @@ class PluginCardModalContent<
   renderStats = () => {
     const { plugin, organisationId } = this.props;
 
-    return <FeedChart organisationId={organisationId} feedId={plugin.id} />;
-  };
+    return <FeedChart organisationId={organisationId} feedId={plugin.id} feed={plugin}/>;
+  }
 
   public render() {
     const {

@@ -31,6 +31,7 @@ import {
 } from '../../../../../services/AudienceSegmentFeedService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
+import { FeedStatsUnit, getFeedStatsUnit, FeedStatsCounts } from '../../../../../utils/FeedsStatsReportHelper';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -46,13 +47,7 @@ export interface FeedCardProps {
   exportedUserIdentifiersCount?: number;
 }
 
-type FeedStatsDisplayStatus = "loading" | "ready";
-type FeedStatsUnit = "user_points" | "identifiers" | "none";
-
-interface FeedStatsCounts {
-  exportedUserPointsCount?: number;
-  exportedUserIdentifiersCount?: number;
-}
+type FeedStatsDisplayStatus = "loading" | "ready" | "ready-with-0-data";
 
 interface FeedCardState {
   isLoading: boolean;
@@ -398,44 +393,18 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     // If the count is null, the stat request is not complete yet
     if (counts.exportedUserIdentifiersCount == null && counts.exportedUserPointsCount == null) return "loading";
-    else return "ready";
-
-  }
-
-  getFeedStatsUnit(feed: AudienceExternalFeedTyped | AudienceTagFeedTyped, counts: FeedStatsCounts): FeedStatsUnit {
-
     // If both counts are 0, we'll display a message to tell that nothing was sent
-    if (counts.exportedUserIdentifiersCount === 0 && counts.exportedUserPointsCount === 0) {
-      return "none"
-    }
-
-    // For Google and AppNexus external feeds, we display the count of identifiers
-    if (feed.group_id === "com.mediarithmics.audience.externalfeed"
-      && (feed.artifact_id === "google-ddp-connector"
-        || feed.artifact_id === "appnexus-audience-segment-feed-direct"
-        || feed.artifact_id === "appnexus-audience-segment-feed")) {
-      return "identifiers";
-    }
-
-    // For TAG_FEED, we display the count of identifiers
-    else if (feed.type === "TAG_FEED") {
-      return "identifiers";
-    }
-
-    // Otherwise, we display the count of User Points
-    else {
-      return "user_points";
-    }
-
+    else if(counts.exportedUserIdentifiersCount === 0 && counts.exportedUserPointsCount === 0) return "ready-with-0-data";
+    else return "ready";
   }
 
   getFeedStatsDisplayMsg(intl: InjectedIntl, status: FeedStatsDisplayStatus, unit: FeedStatsUnit, counts: FeedStatsCounts): string {
     if (status === "loading") {
       return "Loading stats..."
-    } else {
-      if (unit === "none") {
-        return intl.formatMessage(messages.nothingSent)
-      } else if (unit === "user_points") {
+    } else if(status === "ready-with-0-data") {
+      return intl.formatMessage(messages.nothingSent)
+    } else if (status === "ready") {
+      if (unit === "user_points") {
         return `${counts.exportedUserPointsCount ? counts.exportedUserPointsCount.toLocaleString() : '-'} ${intl.formatMessage(messages.userPointsSent)}`
       } else if (unit === "identifiers") {
         return `${counts.exportedUserIdentifiersCount ? counts.exportedUserIdentifiersCount.toLocaleString() : '-'} ${intl.formatMessage(messages.identifiersSent)}`;
@@ -443,6 +412,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       } else {
         return "error";
       }
+    } else {
+      return "error";
     }
   }
 
@@ -546,7 +517,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     const counts: FeedStatsCounts = {exportedUserPointsCount, exportedUserIdentifiersCount};
     const feedStatsStatus = this.getFeedStatsDisplayStatus(counts);
-    const feedStatsUnit = this.getFeedStatsUnit(feed, counts);
+    const feedStatsUnit = getFeedStatsUnit(feed, counts);
     const feedStatsDisplayMsg = this.getFeedStatsDisplayMsg(intl, feedStatsStatus, feedStatsUnit, counts);
 
     return (

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { buildFeedStatsByFeedRequestBody } from '../../../../../../utils/FeedsStatsReportHelper';
+import { buildFeedStatsByFeedRequestBody, FeedStatsCounts, getFeedStatsUnit, FeedStatsUnit } from '../../../../../../utils/FeedsStatsReportHelper';
 import { IFeedsStatsService } from '../../../../../../services/FeedsStatsService';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
@@ -20,18 +20,22 @@ import { McsDateRangeValue } from '../../../../../../components/McsDateRangePick
 import { Card } from 'antd';
 import StackedBarPlot from '../../../../../../components/Charts/CategoryBased/StackedBarPlot';
 import moment from 'moment';
+import { LayoutablePlugin } from '../../../../../../models/Plugins';
+import { AudienceTagFeedTyped, AudienceExternalFeedTyped } from '../../../Edit/domain';
 
-interface FeedChartProps {
+interface FeedChartProps<T> {
   organisationId: string;
   feedId: string;
+  feed: T;
 }
 
-type Props = FeedChartProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props<T extends LayoutablePlugin> = FeedChartProps<T> & InjectedThemeColorsProps & InjectedIntlProps;
 
 interface FeedReport {
   day: string;
-  upserted_user_points: number;
-  deleted_user_points: number;
+  upserted: number;
+  deleted: number;
+  unit: FeedStatsUnit;
 }
 
 interface State {
@@ -40,11 +44,11 @@ interface State {
   isLoading: boolean;
 }
 
-class FeedChart extends React.Component<Props, State> {
+class FeedChart<T extends LayoutablePlugin> extends React.Component<Props<T>, State> {
   @lazyInject(TYPES.IFeedsStatsService)
   private _feedsStatsService: IFeedsStatsService;
 
-  constructor(props: Props) {
+  constructor(props: Props<T>) {
     super(props);
 
     this.state = {
@@ -61,7 +65,7 @@ class FeedChart extends React.Component<Props, State> {
     this.fetchStats();
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props<T>, prevState: State) {
     const { dateRange } = this.state;
 
     const { dateRange: prevDateRange } = prevState;
@@ -69,8 +73,28 @@ class FeedChart extends React.Component<Props, State> {
     if (dateRange !== prevDateRange) this.fetchStats();
   }
 
+  getTypedFeed(feed: T) {
+
+    // This is a hack, because this component inserted in PluginCardModalContent that is generic
+    // We have no way of telling on which plugin type (Feed, Activity analyzer, etc.) we're operating
+    // The right of doing it involve updating PluginCardModalContent and its caller to allow passing
+    // a render function that would be located in the top level component -> here the logic is too "deep" considering the
+    // abstraction that we made "above" in the component tree
+    const feedType = (feed as any).type;
+
+    if (feedType === "TAG_FEED") {
+      return (feed as any as AudienceTagFeedTyped)
+    }
+    else if (feedType === "EXTERNAL_FEED") {
+      return (feed as any as AudienceExternalFeedTyped)
+    }
+
+    throw new Error(`Unknown feed type: ${JSON.stringify(feed)}`);
+
+  }
+
   fetchStats() {
-    const { organisationId, feedId } = this.props;
+    const { organisationId, feedId, feed } = this.props;
     const { dateRange } = this.state;
 
     this.setState({
@@ -82,14 +106,15 @@ class FeedChart extends React.Component<Props, State> {
     const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
     const allDates = [formatedNonInclusiveDateRange.from];
 
-    while(allDates[allDates.length - 1] !== moment(formatedNonInclusiveDateRange.to).format('YYYY-MM-DD')) {
+    while (allDates[allDates.length - 1] !== moment(formatedNonInclusiveDateRange.to).format('YYYY-MM-DD')) {
       allDates.push(moment(allDates[allDates.length - 1]).add(1, 'days').format('YYYY-MM-DD'));
     }
 
     const reportBody = buildFeedStatsByFeedRequestBody(feedId, {
       start_date: formatedInclusiveDateRange.from,
       end_date: formatedInclusiveDateRange.to,
-    });
+    },
+    ["UNIQ_USER_POINTS_COUNT", "UNIQ_USER_IDENTIFIERS_COUNT"]);
 
     return this._feedsStatsService
       .getStats(organisationId, reportBody)
@@ -98,29 +123,58 @@ class FeedChart extends React.Component<Props, State> {
           day: string;
           sync_type: string;
           uniq_user_points_count: number;
+          uniq_user_identifiers_count: number;
         }>(res.data.report_view);
+
+        const totalCounts: FeedStatsCounts = normalized.reduce((acc: FeedStatsCounts, rv) =>{
+          const upCount = acc.exportedUserPointsCount ? acc.exportedUserPointsCount : 0;
+          const idCount = acc.exportedUserIdentifiersCount ? acc.exportedUserIdentifiersCount : 0;
+          return {
+            exportedUserPointsCount: upCount + rv.uniq_user_points_count,
+            exportedUserIdentifiersCount: idCount + rv.uniq_user_identifiers_count
+          };
+        }, {exportedUserPointsCount: 0, exportedUserIdentifiersCount: 0});
+
+        const typedFeed = this.getTypedFeed(feed);
+        const feedUnit = getFeedStatsUnit(typedFeed, totalCounts);
 
         const upserts = normalized.filter(rv => rv.sync_type === 'UPSERT');
         const deletes = normalized.filter(rv => rv.sync_type === 'DELETE');
 
-        let feedReports = upserts.map(upsertReport => {
+        let feedReports = upserts.map((upsertReport): FeedReport => {
           const deleteReport = deletes.find(r => r.day === upsertReport.day);
 
-          return {
-            day: upsertReport.day,
-            upserted_user_points: upsertReport.uniq_user_points_count,
-            deleted_user_points: deleteReport
-              ? deleteReport.uniq_user_points_count
-              : 0,
-          };
+          if(feedUnit === "user_points") {
+            return {
+              day: upsertReport.day,
+              upserted: upsertReport.uniq_user_points_count,
+              deleted: deleteReport
+                ? deleteReport.uniq_user_points_count
+                : 0,
+              unit: feedUnit
+            };
+          } else if(feedUnit === "identifiers") {
+            return {
+              day: upsertReport.day,
+              upserted: upsertReport.uniq_user_identifiers_count,
+              deleted: deleteReport
+                ? deleteReport.uniq_user_identifiers_count
+                : 0,
+              unit: feedUnit
+            };
+          } else {
+            throw new Error(`Unsupported unit: ${feedUnit}`);
+          }
+          
         });
 
         allDates.map(date => {
-          if(!feedReports.find(report => report.day === date)) {
+          if (!feedReports.find(report => report.day === date)) {
             feedReports.push({
               day: date,
-              upserted_user_points: 0,
-              deleted_user_points: 0,
+              upserted: 0,
+              deleted: 0,
+              unit: feedUnit
             });
           }
         });
@@ -159,16 +213,43 @@ class FeedChart extends React.Component<Props, State> {
 
     const metrics =
       dataSource && dataSource[0]
-        ? Object.keys(dataSource[0]).filter(el => el !== 'day')
+        ? Object.keys(dataSource[0]).filter(el => el !== 'day' && el !== 'unit')
         : [];
 
     const optionsForChart = {
       xKey: 'day',
       yKeys: metrics.map(metric => {
-        return {
-          key: metric,
-          message: messagesMap[metric],
-        };
+        if(dataSource[0].unit === "user_points") {
+          if(metric === "upserted") {
+            return {
+              key: metric,
+              message: messagesMap.upserted_user_points,
+            };
+          } else if(metric === "deleted") {
+            return {
+              key: metric,
+              message: messagesMap.deleted_user_points,
+            };
+          } else {
+            throw new Error(`Unsupported metric: ${metric}`)
+          }
+        } else if(dataSource[0].unit === "identifiers") {
+          if(metric === "upserted") {
+            return {
+              key: metric,
+              message: messagesMap.upserted_identifiers,
+            };
+          } else if(metric === "deleted") {
+            return {
+              key: metric,
+              message: messagesMap.deleted_identifiers,
+            };
+          } else {
+            throw new Error(`Unsupported metric: ${metric}`)
+          }
+        } else {
+          throw new Error(`Unsupported unit: ${dataSource[0].unit}`)
+        }
       }),
       colors: [colors['mcs-info'], colors['mcs-error']],
       showLegend: true
@@ -180,22 +261,22 @@ class FeedChart extends React.Component<Props, State> {
         {isLoading ? (
           <LoadingChart />
         ) : (
-          <Card
-            className="mcs-card-container compact"
-            title={intl.formatMessage(messagesMap.graph_title)}
-          >
-            <StackedBarPlot
-              dataset={dataSource as any}
-              options={optionsForChart}
-            />
-          </Card>
-        )}
+            <Card
+              className="mcs-card-container compact"
+              title={intl.formatMessage(messagesMap.graph_title)}
+            >
+              <StackedBarPlot
+                dataset={dataSource as any}
+                options={optionsForChart}
+              />
+            </Card>
+          )}
       </div>
     );
   }
 }
 
-export default compose<Props, FeedChartProps>(
+export default compose<Props<LayoutablePlugin>, FeedChartProps<LayoutablePlugin>>(
   injectThemeColors,
   injectIntl,
 )(FeedChart);
@@ -210,6 +291,14 @@ const messagesMap: {
   deleted_user_points: {
     id: 'feed.deleted_user_points',
     defaultMessage: 'Deleted User Points',
+  },
+  upserted_identifiers: {
+    id: 'feed.upserted_identifiers',
+    defaultMessage: 'Upserted Identifiers',
+  },
+  deleted_identifiers: {
+    id: 'feed.deleted_identifiers',
+    defaultMessage: 'Deleted Identifiers',
   },
   graph_title: {
     id: 'feed.graph_title',
