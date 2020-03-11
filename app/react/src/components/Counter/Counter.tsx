@@ -27,7 +27,7 @@ export default class Counter extends React.Component<CounterProps> {
 
     return (
       <div className="counter" >
-        <McsIcon type={iconType} style={iconStyle ? iconStyle : {}} />
+        <McsIcon type={iconType} styleIcon={iconStyle ? iconStyle : {}} />
         <div className="counter_title">{title}</div>
         <div className="number">
           {loading ? (
