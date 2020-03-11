@@ -82,6 +82,8 @@ export function withDatamartSelector<T>(
       );
       if (foundDatamarts && foundDatamarts.length === 1) {
         this.setState({ datamartId: foundDatamarts[0].id })
+      } else {
+        this.setState({ datamartId: undefined, datafarm: undefined })
       }
     }
 
