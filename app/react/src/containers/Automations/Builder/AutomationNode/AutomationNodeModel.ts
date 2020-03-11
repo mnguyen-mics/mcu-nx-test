@@ -11,7 +11,7 @@ import QueryAutomationForm from './Edit/QueryForm/QueryForm';
 import WaitForm from './Edit/WaitForm/WaitForm';
 import AddToSegmentAutomationForm from './Edit/AddToSegmentNodeForm/AddToSegmentSegmentAutomationForm';
 import DeleteFromSegmentAutomationForm from './Edit/DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
-import ReactToEventAutomationForm from '../ReactToEventAutomationForm';
+import ReactToEventAutomationForm from './Edit/ReactToEventAutomationForm/ReactToEventAutomationForm';
 import { QueryInputUiCreationMode } from '../../../../models/automations/automations';
 
 export default class AutomationNodeModel extends NodeModel {
