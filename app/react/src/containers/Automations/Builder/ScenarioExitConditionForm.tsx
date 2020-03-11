@@ -2,32 +2,30 @@ import React from "react";
 import { compose } from "recompose";
 import { Form, Layout, message } from "antd";
 import { change, reduxForm, getFormValues } from "redux-form";
-import { Path } from "../../../../../../components/ActionBar";
 import { injectIntl, InjectedIntlProps, defineMessages } from "react-intl";
-import { withValidators } from "../../../../../../components/Form";
-import { ValidatorProps } from "../../../../../../components/Form/withValidators";
-import { WizardValidObjectTypeField, getValidObjectType, getEventsNames } from "../../../domain";
-import { MicsReduxState } from "../../../../../../utils/ReduxHelper";
+import { withValidators } from "../../../components/Form";
+import { ValidatorProps } from "../../../components/Form/withValidators";
+import { WizardValidObjectTypeField, getValidObjectType, getEventsNames } from "./domain";
+import { MicsReduxState } from "../../../utils/ReduxHelper";
 import { connect, DispatchProp } from "react-redux";
-import { QueryDocument, ObjectNode, FieldNode } from "../../../../../../models/datamart/graphdb/QueryDocument";
-import { QueryInputNodeResource } from "../../../../../../models/automations/automations";
-import { Loading } from "../../../../../../components";
-import injectNotifications, { InjectedNotificationProps } from "../../../../../Notifications/injectNotifications";
-import { IRuntimeSchemaService } from "../../../../../../services/RuntimeSchemaService";
-import { TYPES } from "../../../../../../constants/types";
-import { lazyInject } from "../../../../../../config/inversify.config";
-import FormLayoutActionbar, { FormLayoutActionbarProps } from "../../../../../../components/Layout/FormLayoutActionbar";
-import { QueryLanguage } from "../../../../../../models/datamart/DatamartResource";
-import { FormSearchObjectField } from "../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm";
-import FormSearchObject from "../../../../../../components/Form/FormSelect/FormSearchObject";
-import { IQueryService } from "../../../../../../services/QueryService";
+import { QueryDocument, ObjectNode, FieldNode } from "../../../models/datamart/graphdb/QueryDocument";
+import { ScenarioExitConditionFormResource } from "../../../models/automations/automations";
+import { Loading } from "../../../components";
+import injectNotifications, { InjectedNotificationProps } from "../../Notifications/injectNotifications";
+import { IRuntimeSchemaService } from "../../../services/RuntimeSchemaService";
+import { TYPES } from "../../../constants/types";
+import { lazyInject } from "../../../config/inversify.config";
+import FormLayoutActionbar, { FormLayoutActionbarProps } from "../../../components/Layout/FormLayoutActionbar";
+import { QueryLanguage } from "../../../models/datamart/DatamartResource";
+import { FormSearchObjectField } from "../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm";
+import FormSearchObject from "../../../components/Form/FormSelect/FormSearchObject";
+import { IQueryService } from "../../../services/QueryService";
 
-const FORM_ID = 'reactToEventForm';
+const FORM_ID = 'scenarioExitConditionForm';
 
-export interface ReactToEventAutomationFormProps {
-  node: QueryInputNodeResource;
+export interface ScenarioExitConditionAutomationFormProps {
+  exitCondition: ScenarioExitConditionFormResource;
   close: () => void;
-  breadCrumbPaths: Path[];
   disabled: boolean;
 }
 
@@ -45,14 +43,14 @@ type State = {
   validObjectType?: WizardValidObjectTypeField;
 }
 
-type Props = ReactToEventAutomationFormProps 
+type Props = ScenarioExitConditionAutomationFormProps 
 & InjectedIntlProps 
 & ValidatorProps
 & DispatchProp<any>
 & MapStateToProps
 & InjectedNotificationProps;
 
-class ReactToEventAutomationForm extends React.Component<Props, State> {
+class ScenarioExitConditionAutomationForm extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
@@ -64,10 +62,10 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     super(props);
 
     let events: string[] = [];
-    if (props.node.formData.query_text) {
-      const query = JSON.parse(props.node.formData.query_text) as QueryDocument;
-      const where: ObjectNode | undefined = query.where ? query.where as ObjectNode : undefined;
-      const expressions: FieldNode | undefined = where ? where.expressions[0] as FieldNode : undefined;
+    if (props.exitCondition.formData.query_text) {
+      const query = JSON.parse(props.exitCondition.formData.query_text) as QueryDocument;
+      const where: ObjectNode | undefined = query.where ? query.where as ObjectNode : undefined;
+      const expressions: FieldNode | undefined = where ? where.expressions[0] as FieldNode : undefined;
       events = (expressions && expressions.comparison) ? expressions.comparison.values : [];
 
       if (this.props.dispatch)
@@ -85,15 +83,15 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       dispatch,
       intl: {
         formatMessage,
-      },
-	  notifyError,
-	  formValues: { datamart_id }
+			},
+			formValues: { datamart_id },
+			notifyError,
     } = this.props;
 
     if (dispatch)
       dispatch(change(FORM_ID, 'query_language', 'JSON_OTQL'))
 
-    getValidObjectType(datamart_id, this._runtimeSchemaService)
+		getValidObjectType(datamart_id, this._runtimeSchemaService)
       .then(validObjectType => {
         if (!validObjectType || !validObjectType.objectTypeQueryName) {
           message.warning(formatMessage(messages.schemaNotSuitableForAction));
@@ -110,7 +108,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
   onEventsChange = (event?: any, newValue?: any, previousValue?: any) => {
     const { validObjectType } = this.state;
 
-    if (!validObjectType || !validObjectType.objectTypeQueryName)
+    if (!validObjectType || !validObjectType.objectTypeQueryName)
       return;
 
     const query: QueryDocument = {
@@ -146,9 +144,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
         isRequired,
       },
       close,
-      disabled,
-      breadCrumbPaths,
-      formValues: { datamart_id }
+			disabled,
+			formValues: { datamart_id }
     } = this.props;
 
     const {
@@ -158,7 +155,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      paths: [{ name: messages.title }],
       message: messages.save,
       onClose: close,
       disabled: !disabled && isLoading,
@@ -212,32 +209,36 @@ const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(FORM_ID)(state),
 });
 
-export default compose<Props, ReactToEventAutomationFormProps>(
+export default compose<Props, ScenarioExitConditionAutomationFormProps>(
   injectIntl,
   withValidators,
   injectNotifications,
-  reduxForm<{}, ReactToEventAutomationFormProps>({
+  reduxForm<{}, ScenarioExitConditionAutomationFormProps>({
     form: FORM_ID,
     enableReinitialize: true,
   }),
   connect(mapStateToProps),
-)(ReactToEventAutomationForm);
+)(ScenarioExitConditionAutomationForm);
 
 const messages = defineMessages({
+	title: {
+		id: 'automation.builder.node.scenarioExitConditionForm.title',
+    defaultMessage: 'Exit condition',
+	},
   save: {
-    id: 'automation.builder.node.reactToEventForm.save.button',
+    id: 'automation.builder.node.scenarioExitConditionForm.save.button',
     defaultMessage: 'Update',
   },
   eventName: {
-    id: 'automation.builder.node.reactToEventForm.eventName',
+    id: 'automation.builder.node.scenarioExitConditionForm.eventName',
     defaultMessage: 'Event names',
   },
   eventNameHelp: {
-    id: 'automation.builder.node.reactToEventForm.eventNameHelp',
-    defaultMessage: 'The event names that will trigger the Automation. When receiving one of these events, the user will enter the automation.',
+    id: 'automation.builder.node.scenarioExitConditionForm.eventNameHelp',
+    defaultMessage: 'The event names that will trigger the exit of the Automation. When receiving one of these events, the user will be remove from the current Automation.',
   },
   schemaNotSuitableForAction: {
-    id: 'automation.builder.node.reactToEventForm.schemaNotSuitableForAction',
+    id: 'automation.builder.node.scenarioExitConditionForm.schemaNotSuitableForAction',
     defaultMessage: 'Schema is not suitable for this actions.',
   }
 });

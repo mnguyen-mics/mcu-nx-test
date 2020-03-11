@@ -19,6 +19,8 @@ import {
   EdgeHandler,
   ScenarioNodeShape,
   QueryInputUiCreationMode,
+	ScenarioExitConditionFormResource,
+	ScenarioExitConditionFormData,
 } from '../../../models/automations/automations';
 import {
   StorylineNodeModel,
@@ -38,6 +40,9 @@ import { AutomationFormDataType } from './AutomationNode/Edit/domain';
 import { defineMessages, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { InjectedFeaturesProps } from '../../Features';
+import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
+import ScenarioExitConditionForm from './ScenarioExitConditionForm';
+import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 
 
 export const messages = defineMessages({
@@ -48,6 +53,10 @@ export const messages = defineMessages({
   ifNodeTruePathLabel: {
     id: 'automation.builder.ifNode.label.true',
     defaultMessage: 'If Condition True',
+	},
+	eventGlobalExitCondition: {
+    id: 'automation.builder.exitCondition.event',
+    defaultMessage: 'Exit on Event'
   },
   addGlobalExitCondition: {
     id: 'automation.builder.exitCondition.new',
@@ -71,6 +80,7 @@ export interface AutomationBuilderBaseProps {
   datamartId: string;
   scenarioId: string;
   automationTreeData?: StorylineNodeModel;
+  exitCondition?: ScenarioExitConditionFormResource;
   viewer: boolean;
   creation_mode: QueryInputUiCreationMode;
 }
@@ -83,6 +93,7 @@ export interface AutomationBuilderEditorProps extends AutomationBuilderBaseProps
   viewer: false;
   updateAutomationData: (
     automationData: StorylineNodeModel,
+    exitConditionFormResource?: ScenarioExitConditionFormResource,
   ) => StorylineNodeModel;
 }
 
@@ -98,6 +109,7 @@ interface State {
 }
 
 type Props = AutomationBuilderProps
+& InjectedDrawerProps
 & InjectedFeaturesProps
 & InjectedIntlProps;
 
@@ -170,7 +182,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     const model = new DiagramModel();
     model.setLocked(true);
     this.startAutomationTree(automationTreeData, model);
-    this.engine.setDiagramModel(model);
+		this.engine.setDiagramModel(model);
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -245,7 +257,17 @@ class AutomationBuilder extends React.Component<Props, State> {
         ),
       );
     }
-  };
+	};
+	
+	updateExitCondition = (exitConditionFormData: ScenarioExitConditionFormData): void => {
+		const props = this.props;
+		if (isAutomationBuilderEditorProp(props) && props.automationTreeData && props.exitCondition) {
+			props.updateAutomationData(props.automationTreeData, {
+				...props.exitCondition,
+				formData: exitConditionFormData,
+			});
+		}
+	}
 
   buildAutomationNode(nodeModel: StorylineNodeResource): AutomationNodeModel {
     const storylineNode = new AutomationNodeModel(
@@ -379,25 +401,45 @@ class AutomationBuilder extends React.Component<Props, State> {
   };
 
   onGlobalExitConditionSelect = () => {
-    // PLACEHOLDER, This will be implemented in a future story
-    return;
+		const { openNextDrawer, closeNextDrawer, exitCondition, datamartId } = this.props;
+		
+    if(exitCondition) {
+			openNextDrawer<{}>(
+				ScenarioExitConditionForm,
+				{
+					additionalProps: {
+						exitCondition: exitCondition,
+						disabled: false,
+						initialValues: {
+              ...exitCondition.formData,
+							datamart_id: datamartId,
+              events: [],
+						},
+						close: () => {
+							closeNextDrawer();
+						},
+						onSubmit: (formData: ScenarioExitConditionFormData) => {
+							this.updateExitCondition(formData);
+							closeNextDrawer();
+						},
+					},
+					size: 'small'
+				}
+			)
+		}
   }
-  
+
   onGlobalExitConditionDelete = () => {
-    // PLACEHOLDER, This will be implemented in a future story
-    return;
+    this.updateExitCondition(INITIAL_AUTOMATION_DATA.exitCondition.initialFormData);
   };
-  
+
   render() {
     const { viewNodeSelector } = this.state;
-    const { hasFeature, viewer, intl: { formatMessage } } = this.props;
+    const { hasFeature, viewer, intl: { formatMessage }, exitCondition } = this.props;
 
     let content = (
       <div className={`automation-builder`} ref={this.div}>
-        <Col
-          span={viewNodeSelector ? 18 : 24}
-          className={'diagram'}
-        >
+        <Col span={viewNodeSelector ? 18 : 24} className={'diagram'}>
           <DiagramWidget
             diagramEngine={this.engine}
             allowCanvasZoom={!this.state.locked}
@@ -418,9 +460,9 @@ class AutomationBuilder extends React.Component<Props, State> {
                   viewNodeSelector
                     ? {}
                     : {
-                      transform: 'rotate(180deg)',
-                      transition: 'all 0.5s ease', // 0.5ms really noticeable ??
-                    }
+                        transform: 'rotate(180deg)',
+                        transition: 'all 0.5s ease', // 0.5ms really noticeable ??
+                      }
                 }
               />{' '}
             </ButtonStyleless>
@@ -433,18 +475,28 @@ class AutomationBuilder extends React.Component<Props, State> {
                   className={'edit'}
                   onClick={this.onGlobalExitConditionSelect}
                 >
-                  <FormattedMessage {...messages.addGlobalExitCondition} />
+                  {exitCondition && exitCondition.formData.query_text ? (
+                    <FormattedMessage {...messages.eventGlobalExitCondition} />
+                  ) : (
+                    <FormattedMessage {...messages.addGlobalExitCondition} />
+                  )}
                 </div>
                 <Popconfirm
                   title={formatMessage(messages.deleteGlobalExitConditionTitle)}
                   onConfirm={this.onGlobalExitConditionDelete}
-                  placement={"topRight"}
-                  okText={formatMessage(messages.deleteGlobalExitConditionConfirm)}
-                  cancelText={formatMessage(messages.deleteGlobalExitConditionCancel)}
+                  placement={'topRight'}
+                  okText={formatMessage(
+                    messages.deleteGlobalExitConditionConfirm,
+                  )}
+                  cancelText={formatMessage(
+                    messages.deleteGlobalExitConditionCancel,
+                  )}
                 >
-                  <div className={'delete'}>
-                    <McsIcon type={'close'}/>
-                  </div>
+                  {exitCondition && exitCondition.formData.query_text && (
+                    <div className={'delete'}>
+                      <McsIcon type={'close'} />
+                    </div>
+                  )}
                 </Popconfirm>
               </div>
             </div>
@@ -457,7 +509,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           <AvailableNodeVisualizer />
         </Col>
       </div>
-    )
+    );
 
     if (viewer) {
       content = (

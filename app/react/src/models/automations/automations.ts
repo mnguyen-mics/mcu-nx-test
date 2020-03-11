@@ -7,7 +7,7 @@ import {
   DeleteFromSegmentAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
-import { QueryResource } from './../datamart/DatamartResource';
+import { QueryResource, QueryCreateRequest } from './../datamart/DatamartResource';
 import { AutomationSimpleFormData } from './../../containers/Automations/Builder/ActionBar/AutomationSimpleForm';
 export interface AutomationResource {
   id: string;
@@ -169,4 +169,18 @@ export interface StorylineNodeResource {
   node: ScenarioNodeShape;
   in_edge?: ScenarioEdgeResource;
   out_edges: StorylineNodeResource[];
+}
+
+export interface ScenarioExitConditionResource {
+	id: string;
+	scenario_id: string;
+	type: 'EVENT';
+	query_id: string;
+}
+
+export interface ScenarioExitConditionFormData extends Partial<QueryCreateRequest> {}
+
+export interface ScenarioExitConditionFormResource extends ScenarioExitConditionResource {
+	formData: ScenarioExitConditionFormData;
+	initialFormData: ScenarioExitConditionFormData;
 }

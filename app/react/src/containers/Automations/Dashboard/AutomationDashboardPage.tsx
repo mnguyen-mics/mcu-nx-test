@@ -8,7 +8,6 @@ import injectNotifications, {
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
-
 import { IAutomationFormService } from '../Edit/AutomationFormService';
 import { Loading, McsIcon } from '../../../components';
 import { Layout, Button } from 'antd';
@@ -17,6 +16,8 @@ import ActionBar, { Path } from '../../../components/ActionBar';
 import { IScenarioService } from '../../../services/ScenarioService';
 import { AutomationStatus } from '../../../models/automations/automations';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
+import { injectDrawer } from '../../../components/Drawer';
+import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 
 export interface AutomationDashboardrams {
   organisationId: string;
@@ -32,6 +33,7 @@ interface State {
 type Props = RouteComponentProps<AutomationDashboardrams> &
   InjectedNotificationProps &
   InjectedIntlProps &
+  InjectedDrawerProps &
   InjectedFeaturesProps;
 
 
@@ -145,7 +147,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
   }
 
   render() {
-    const { match: { params: { organisationId } }, hasFeature, intl } = this.props;
+    const { match: { params: { organisationId } }, hasFeature, intl, openNextDrawer, closeNextDrawer } = this.props;
     const { automationFormData, isLoading, updating, } = this.state;
 
     if (isLoading) {
@@ -188,11 +190,14 @@ class AutomationDashboardPage extends React.Component<Props, State> {
             <AutomationBuilder
               datamartId={automationFormData.automation.datamart_id!}
               automationTreeData={automationFormData.automationTreeData}
+              exitCondition={automationFormData.exitCondition}
               scenarioId={automationFormData.automation.id!}
               viewer={true}
               creation_mode={automationFormData.automationTreeData && automationFormData.automationTreeData.node.type === 'QUERY_INPUT' ? automationFormData.automationTreeData.node.ui_creation_mode : 'QUERY'}
               hasFeature={hasFeature}
               intl={intl}
+              openNextDrawer={openNextDrawer}
+              closeNextDrawer={closeNextDrawer}
             />
           </Layout.Content>
         </Layout>
@@ -203,7 +208,8 @@ class AutomationDashboardPage extends React.Component<Props, State> {
 
 export default compose(
   injectIntl,
-  withRouter,
+	withRouter,
+	injectDrawer,
   injectNotifications,
   injectFeatures
 )(AutomationDashboardPage);

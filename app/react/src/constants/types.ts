@@ -18,6 +18,7 @@ const TYPES = {
   IDealListFormService: Symbol.for('dealListFormService'),
   ICompartmentService: Symbol.for('compartmentService'),
   IScenarioService: Symbol.for('scenarioService'),
+  IScenarioExitConditionService: Symbol.for('scenarioExitConditionService'),
   IAutomationFormService: Symbol.for('automationFormService'),
   IQueryService: Symbol.for('queryService'),
   IGoalService: Symbol.for('goalService'),
