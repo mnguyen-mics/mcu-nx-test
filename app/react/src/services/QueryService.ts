@@ -79,7 +79,7 @@ export interface IQueryService {
   ) => Promise<DataResponse<QueryResource>>;
   getWhereClause: (
     datamartId: string,
-    queryId: string
+    queryId: string,
   ) => Promise<DataResponse<string>>;
 }
 

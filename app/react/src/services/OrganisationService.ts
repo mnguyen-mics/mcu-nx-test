@@ -15,6 +15,7 @@ export interface IOrganisationService {
 
   getCookies: () => Promise<DataResponse<Cookie>>;
   getStandardLogo: () => Promise<Blob>;
+  getLogoCache: (organisationId: string) => Blob | null;
   getLogo: (organisationId: string) => Promise<Blob>;
   putLogo: (organisationId: string, formData: FormData) => Promise<any>;
   getBillingAccounts: (
@@ -70,13 +71,30 @@ export default class OrganisationService implements IOrganisationService {
 
     return ApiService.getRequest(endpoint, undefined, headers, options);
   }
-  getLogo(organisationId: string): Promise<Blob> {
+
+  logoCache: { [orgId: string]: Blob } = {};
+  private doGetLogo = (organisationId: string) => {
     const endpoint = `organisations/${organisationId}/logo`;
-
     const headers = { Accept: 'image/png' };
-
-    return ApiService.getRequest(endpoint, undefined, headers);
+    return ApiService.getRequest<Blob>(endpoint, undefined, headers)
+      .catch(() => this.getStandardLogo())
+      .then(blobLogo => {
+        this.logoCache[organisationId] = blobLogo;
+        return blobLogo;
+      });
   }
+
+  getLogoCache = (organisationId: string) => {
+    return this.logoCache[organisationId];
+  }
+
+  getLogo = (organisationId: string) => {
+    const cachedValue = this.logoCache[organisationId];
+    return cachedValue
+      ? Promise.resolve(cachedValue)
+      : this.doGetLogo(organisationId);
+  }
+
   putLogo(organisationId: string, formData: FormData): Promise<any> {
     const endpoint = `organisations/${organisationId}/logo`;
     return ApiService.putRequest(endpoint, formData);
