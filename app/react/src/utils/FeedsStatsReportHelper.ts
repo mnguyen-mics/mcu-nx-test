@@ -36,7 +36,7 @@ export function buildFeedCardStatsRequestBody(
   segmentId: string,
 ): ReportRequestBody {
   const dimensionsList: FeedsStatsDimension[] = ['FEED_ID'];
-  const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_POINTS_COUNT'];
+  const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_POINTS_COUNT', 'UNIQ_USER_IDENTIFIERS_COUNT'];
 
   // DIMENSION FILTERS
   const dimensionFilter: FeedStatsDimensionFilter = {

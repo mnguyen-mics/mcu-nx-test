@@ -13,7 +13,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
 import { Modal, Dropdown, Menu, Tooltip } from 'antd';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, InjectedIntl } from 'react-intl';
 import { IPluginService } from '../../../../../services/PluginService';
 import PluginCardModal, {
   PluginCardModalProps,
@@ -43,6 +43,15 @@ export interface FeedCardProps {
   segmentId: string;
   organisationId: string;
   exportedUserPointsCount?: number;
+  exportedUserIdentifiersCount?: number;
+}
+
+type FeedStatsDisplayStatus = "loading" | "ready";
+type FeedStatsUnit = "user_points" | "identifiers" | "none";
+
+interface FeedStatsCounts {
+  exportedUserPointsCount?: number;
+  exportedUserIdentifiersCount?: number;
 }
 
 interface FeedCardState {
@@ -106,9 +115,17 @@ const messages = defineMessages({
     id: 'audienceFeed.card.actions.delete',
     defaultMessage: 'Delete',
   },
+  nothingSent: {
+    id: 'audienceFeed.card.nothingSent',
+    defaultMessage: 'Nothing was sent',
+  },
   userPointsSent: {
     id: 'audienceFeed.card.userPointsSent',
     defaultMessage: 'user points sent',
+  },
+  identifiersSent: {
+    id: 'audienceFeed.card.identifiersSent',
+    defaultMessage: 'identifiers (cookies, mobile IDs) sent',
   },
   feedModalNameFieldLabel: {
     id: 'audience.segment.feed.card.create.nameField.label',
@@ -377,6 +394,58 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       });
   };
 
+  getFeedStatsDisplayStatus(counts: FeedStatsCounts): FeedStatsDisplayStatus {
+
+    // If the count is null, the stat request is not complete yet
+    if (counts.exportedUserIdentifiersCount == null && counts.exportedUserPointsCount == null) return "loading";
+    else return "ready";
+
+  }
+
+  getFeedStatsUnit(feed: AudienceExternalFeedTyped | AudienceTagFeedTyped, counts: FeedStatsCounts): FeedStatsUnit {
+
+    // If both counts are 0, we'll display a message to tell that nothing was sent
+    if (counts.exportedUserIdentifiersCount === 0 && counts.exportedUserPointsCount === 0) {
+      return "none"
+    }
+
+    // For Google and AppNexus external feeds, we display the count of identifiers
+    if (feed.group_id === "com.mediarithmics.audience.externalfeed"
+      && (feed.artifact_id === "google-ddp-connector"
+        || feed.artifact_id === "appnexus-audience-segment-feed-direct"
+        || feed.artifact_id === "appnexus-audience-segment-feed")) {
+      return "identifiers";
+    }
+
+    // For TAG_FEED, we display the count of identifiers
+    else if (feed.type === "TAG_FEED") {
+      return "identifiers";
+    }
+
+    // Otherwise, we display the count of User Points
+    else {
+      return "user_points";
+    }
+
+  }
+
+  getFeedStatsDisplayMsg(intl: InjectedIntl, status: FeedStatsDisplayStatus, unit: FeedStatsUnit, counts: FeedStatsCounts): string {
+    if (status === "loading") {
+      return "Loading stats..."
+    } else {
+      if (unit === "none") {
+        return intl.formatMessage(messages.nothingSent)
+      } else if (unit === "user_points") {
+        return `${counts.exportedUserPointsCount ? counts.exportedUserPointsCount.toLocaleString() : '-'} ${intl.formatMessage(messages.userPointsSent)}`
+      } else if (unit === "identifiers") {
+        return `${counts.exportedUserIdentifiersCount ? counts.exportedUserIdentifiersCount.toLocaleString() : '-'} ${intl.formatMessage(messages.identifiersSent)}`;
+        // Should not happen
+      } else {
+        return "error";
+      }
+    }
+  }
+
   render() {
     const {
       feed,
@@ -384,6 +453,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       segmentId,
       organisationId,
       exportedUserPointsCount,
+      exportedUserIdentifiersCount,
       notifyError,
       hasFeature,
       history,
@@ -473,6 +543,12 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const popupContainer = () => document.getElementById(this.id)!;
     const onClose = () => this.setState({ opened: false });
 
+
+    const counts: FeedStatsCounts = {exportedUserPointsCount, exportedUserIdentifiersCount};
+    const feedStatsStatus = this.getFeedStatsDisplayStatus(counts);
+    const feedStatsUnit = this.getFeedStatsUnit(feed, counts);
+    const feedStatsDisplayMsg = this.getFeedStatsDisplayMsg(intl, feedStatsStatus, feedStatsUnit, counts);
+
     return (
       <Card className="hoverable-card actionable-card compact feed-card">
         <div className="top-menu" id={this.id}>
@@ -519,10 +595,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             </div>
             {hasFeature('audience-feeds_stats') && (
               <div className="content-right">
-                {exportedUserPointsCount == null
-                  ? '-'
-                  : exportedUserPointsCount}{' '}
-                {intl.formatMessage(messages.userPointsSent)}{' '}
+                {feedStatsDisplayMsg}{' '}
                 <Tooltip placement="topRight" title="In the last 7 days">
                   {' '}
                   <McsIcon style={{ marginRight: '0px' }} type="info" />
