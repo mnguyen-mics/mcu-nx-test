@@ -16,6 +16,7 @@ import AutomationBuilder from '../Builder/AutomationBuilder';
 import ActionBar, { Path } from '../../../components/ActionBar';
 import { IScenarioService } from '../../../services/ScenarioService';
 import { AutomationStatus } from '../../../models/automations/automations';
+import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 
 export interface AutomationDashboardrams {
   organisationId: string;
@@ -30,7 +31,8 @@ interface State {
 
 type Props = RouteComponentProps<AutomationDashboardrams> &
   InjectedNotificationProps &
-  InjectedIntlProps;
+  InjectedIntlProps &
+  InjectedFeaturesProps;
 
 
 class AutomationDashboardPage extends React.Component<Props, State> {
@@ -143,7 +145,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
   }
 
   render() {
-    const { match: { params: { organisationId } } } = this.props;
+    const { match: { params: { organisationId } }, hasFeature, intl } = this.props;
     const { automationFormData, isLoading, updating, } = this.state;
 
     if (isLoading) {
@@ -189,6 +191,8 @@ class AutomationDashboardPage extends React.Component<Props, State> {
               scenarioId={automationFormData.automation.id!}
               viewer={true}
               creation_mode={automationFormData.automationTreeData && automationFormData.automationTreeData.node.type === 'QUERY_INPUT' ? automationFormData.automationTreeData.node.ui_creation_mode : 'QUERY'}
+              hasFeature={hasFeature}
+              intl={intl}
             />
           </Layout.Content>
         </Layout>
@@ -201,4 +205,5 @@ export default compose(
   injectIntl,
   withRouter,
   injectNotifications,
+  injectFeatures
 )(AutomationDashboardPage);
