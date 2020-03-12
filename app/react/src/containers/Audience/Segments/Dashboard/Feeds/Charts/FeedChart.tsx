@@ -87,9 +87,9 @@ class FeedChart<T extends LayoutablePlugin> extends React.Component<Props<T>, St
     }
     else if (feedType === "EXTERNAL_FEED") {
       return (feed as any as AudienceExternalFeedTyped)
+    } else {
+      throw new Error(`Unknown feed type: ${JSON.stringify(feed)}`);
     }
-
-    throw new Error(`Unknown feed type: ${JSON.stringify(feed)}`);
 
   }
 

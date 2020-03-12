@@ -258,6 +258,7 @@ class EditPluginModal extends React.Component<Props, State> {
         plugin={{
           id: feed.id,
           organisation_id: feed.organisation_id,
+          type: feed.type,
           group_id: feed.group_id,
           artifact_id: feed.artifact_id,
           current_version_id: feed.version_id,
