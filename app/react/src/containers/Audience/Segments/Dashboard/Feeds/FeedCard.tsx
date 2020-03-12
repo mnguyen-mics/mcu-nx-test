@@ -517,7 +517,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     const counts: FeedStatsCounts = {exportedUserPointsCount, exportedUserIdentifiersCount};
     const feedStatsStatus = this.getFeedStatsDisplayStatus(counts);
-    const feedStatsUnit = getFeedStatsUnit(feed, counts);
+    const feedStatsUnit = getFeedStatsUnit(feed);
     const feedStatsDisplayMsg = this.getFeedStatsDisplayMsg(intl, feedStatsStatus, feedStatsUnit, counts);
 
     return (

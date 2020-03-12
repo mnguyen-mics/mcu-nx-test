@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { buildFeedStatsByFeedRequestBody, FeedStatsCounts, getFeedStatsUnit, FeedStatsUnit } from '../../../../../../utils/FeedsStatsReportHelper';
+import { buildFeedStatsByFeedRequestBody, getFeedStatsUnit, FeedStatsUnit } from '../../../../../../utils/FeedsStatsReportHelper';
 import { IFeedsStatsService } from '../../../../../../services/FeedsStatsService';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
@@ -126,17 +126,8 @@ class FeedChart<T extends LayoutablePlugin> extends React.Component<Props<T>, St
           uniq_user_identifiers_count: number;
         }>(res.data.report_view);
 
-        const totalCounts: FeedStatsCounts = normalized.reduce((acc: FeedStatsCounts, rv) =>{
-          const upCount = acc.exportedUserPointsCount ? acc.exportedUserPointsCount : 0;
-          const idCount = acc.exportedUserIdentifiersCount ? acc.exportedUserIdentifiersCount : 0;
-          return {
-            exportedUserPointsCount: upCount + rv.uniq_user_points_count,
-            exportedUserIdentifiersCount: idCount + rv.uniq_user_identifiers_count
-          };
-        }, {exportedUserPointsCount: 0, exportedUserIdentifiersCount: 0});
-
         const typedFeed = this.getTypedFeed(feed);
-        const feedUnit = getFeedStatsUnit(typedFeed, totalCounts);
+        const feedUnit = getFeedStatsUnit(typedFeed);
 
         const upserts = normalized.filter(rv => rv.sync_type === 'UPSERT');
         const deletes = normalized.filter(rv => rv.sync_type === 'DELETE');

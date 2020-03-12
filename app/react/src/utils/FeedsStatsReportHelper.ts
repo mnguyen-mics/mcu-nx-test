@@ -130,7 +130,7 @@ function buildReport(
   return report;
 }
 
-export function getFeedStatsUnit(feed: AudienceExternalFeedTyped | AudienceTagFeedTyped, counts: FeedStatsCounts): FeedStatsUnit {
+export function getFeedStatsUnit(feed: AudienceExternalFeedTyped | AudienceTagFeedTyped): FeedStatsUnit {
 
   // For Google and AppNexus external feeds, we display the count of identifiers
   if (feed.group_id === "com.mediarithmics.audience.externalfeed"
