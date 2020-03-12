@@ -515,3 +515,339 @@ export const channelEngagementConfig = [
     ]
   }
 ];
+
+export const acquisitionEngagementConfig = [
+  {
+    title: 'Sessions by Source in Time',
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 0,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'AREA',
+        options: {
+          title: undefined,
+          height: 300,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'datetime',
+            dateTimeLabelFormats: {
+              day: '%d %b %Y'    // ex- 01 Jan 2016
+            },
+            title: {
+              text: null
+            }
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['origin_source', 'date_yyyy_mm_dd'],
+        metricName: 'sessions',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+  {
+    title: 'Sessions by Source',
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 6,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'COLUMN',
+        options: {
+          title: undefined,
+          height: 300,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'column'
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['origin_source'],
+        metricName: 'sessions',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+  {
+    title: 'Sessions By Origin in Time',
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 0,
+      'y': 3
+    },
+    charts: [
+      {
+        type: 'AREA',
+        options: {
+          title: undefined,
+          height: 300,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'datetime',
+            dateTimeLabelFormats: {
+              day: '%d %b %Y'    // ex- 01 Jan 2016
+            },
+            title: {
+              text: null
+            }
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['origin_channel', 'date_yyyy_mm_dd'],
+        metricName: 'sessions',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+  {
+    title: 'Sessions by Origin',
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 6,
+      'x': 6,
+      'y': 3
+    },
+    charts: [
+      {
+        type: 'COLUMN',
+        options: {
+          title: undefined,
+          height: 300,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'column'
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['origin_channel'],
+        metricName: 'sessions',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+  {
+    title: 'Average Session duration by origin source',
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 12,
+      'x': 0,
+      'y': 6
+    },
+    charts: [
+      {
+        type: 'COLUMN',
+        options: {
+          title: undefined,
+          height: 300,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'column'
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['origin_source'],
+        metricName: 'avg_session_duration',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+];
+

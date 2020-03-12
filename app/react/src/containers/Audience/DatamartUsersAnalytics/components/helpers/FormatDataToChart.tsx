@@ -56,9 +56,8 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
       case 'AREA':
         return dataset.reduce((acc: AreaSeriesDataOptions[], d: Dataset) => {
           const found = acc.find((a: AreaSeriesDataOptions) => a.name === d[chart.dimensions[0]]);
-
           const value = d[chart.metricName];
-          const xValue = chart.dimensions[2] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[2]] as string) : d[chart.dimensions[2]];
+          const xValue = chart.dimensions[chart.dimensions.length - 1] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[chart.dimensions.length - 1]] as string) : d[chart.dimensions[chart.dimensions.length - 1]];
           if (!found) {
             acc.push({
               visible: acc.length < 4,
@@ -204,7 +203,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
   generateCharElements = (chart: Chart, data: Dataset[]): React.ReactNode => {
     switch (chart.type) {
       case 'AREA':
-        if (!chart.dimensions) return null
+        if (!chart.dimensions || chart.dimensions.length === 0) return null
         chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
         return (
           <LineChart options={chart.options}
