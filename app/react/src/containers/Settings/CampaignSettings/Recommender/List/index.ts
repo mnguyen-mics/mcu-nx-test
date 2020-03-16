@@ -1,4 +1,4 @@
-import RecommenderContent from './RecommenderContent';
+import RecommenderContent from './RecommendersList';
 
 export {
   RecommenderContent,

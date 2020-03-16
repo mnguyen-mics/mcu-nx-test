@@ -37,7 +37,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-class EmailRouterContent extends React.Component<
+class EmailRoutersList extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   EmailRouterContentState
 > {
@@ -217,4 +217,4 @@ class EmailRouterContent extends React.Component<
 export default compose(
   withRouter,
   injectIntl,
-)(EmailRouterContent);
+)(EmailRoutersList);

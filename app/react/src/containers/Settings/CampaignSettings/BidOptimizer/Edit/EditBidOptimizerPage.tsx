@@ -25,7 +25,7 @@ interface BidOptimizerRouteParam {
 type JoinedProps = RouteComponentProps<BidOptimizerRouteParam> &
   InjectedIntlProps;
 
-class CreateEditBidOptimizer extends React.Component<
+class EditBidOptimizerPage extends React.Component<
   JoinedProps
   > {
 
@@ -106,4 +106,4 @@ class CreateEditBidOptimizer extends React.Component<
 export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
-)(CreateEditBidOptimizer);
+)(EditBidOptimizerPage);

@@ -1,4 +1,4 @@
-import ProfileSettingsPage from './ProfileSettingsPage';
+import ProfileSettingsPage from './ProfileSettingsEditPage';
 
 export {
   ProfileSettingsPage,

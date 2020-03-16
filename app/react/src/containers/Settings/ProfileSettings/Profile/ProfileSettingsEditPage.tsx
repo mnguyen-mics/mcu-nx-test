@@ -11,7 +11,7 @@ import {
 } from 'react-intl';
 import * as SessionActions from '../../../../redux/Session/actions';
 
-import { FormInput } from '../../../../components/Form/';
+import { FormInput } from '../../../../components/Form';
 import { withRouter, RouteComponentProps } from 'react-router';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -23,7 +23,7 @@ import { TYPES } from '../../../../constants/types';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
-export interface ProfileSettingsPageProps {
+export interface ProfileSettingsEditPageProps {
   refreshConnectedUser: () => void;
 }
 
@@ -48,13 +48,13 @@ interface UserProfileProps {
   email: string;
 }
 
-type Props = ProfileSettingsPageProps &
+type Props = ProfileSettingsEditPageProps &
   InjectedFormProps<UserProfileProps> &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps;
 
-class ProfileSettingsPage extends React.Component<
+class ProfileSettingsEditPage extends React.Component<
   Props,
   ProfileSettingsPageState
 > {
@@ -252,4 +252,4 @@ export default compose(
   reduxForm({
     form: 'userAccountEdit',
   }),
-)(ProfileSettingsPage);
+)(ProfileSettingsEditPage);

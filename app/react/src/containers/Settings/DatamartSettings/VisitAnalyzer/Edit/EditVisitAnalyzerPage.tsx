@@ -2,36 +2,37 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {
-  PluginProperty,
-  EmailRouter,
-  PluginResource,
-  PluginInstance,
-} from '../../../../../models/Plugins';
-import messages from './messages';
 import GenericPluginContent, {
   PluginContentOuterProps,
 } from '../../../../Plugin/Edit/GenericPluginContent';
+import {
+  PluginProperty,
+  VisitAnalyzer,
+  PluginResource,
+  PluginInstance,
+} from '../../../../../models/Plugins';
+
+import messages from './messages';
 import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
 import { TYPES } from '../../../../../constants/types';
-import PluginInstanceService from '../../../../../services/PluginInstanceService';
 
-const EmailRouterPluginContent = GenericPluginContent as React.ComponentClass<
-  PluginContentOuterProps<EmailRouter>
+const VisitAnalyzerPluginContent = GenericPluginContent as React.ComponentClass<
+  PluginContentOuterProps<VisitAnalyzer>
 >;
 
-interface EmailRouterRouteParam {
+interface VisitAnalyzerRouteParam {
   organisationId: string;
-  emailRouterId?: string;
+  visitAnalyzerId?: string;
 }
 
-type JoinedProps = RouteComponentProps<EmailRouterRouteParam> &
+type JoinedProps = RouteComponentProps<VisitAnalyzerRouteParam> &
   InjectedIntlProps;
 
-class CreateEditEmailRouter extends React.Component<JoinedProps> {
-  @lazyInject(TYPES.IEmailRouterService)
-  private _emailRouterService: PluginInstanceService<EmailRouter>;
+class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
+  @lazyInject(TYPES.IVisitAnalyzerService)
+  private _visitAnalyzerService: IVisitAnalyzerService;
 
   redirect = () => {
     const {
@@ -40,12 +41,12 @@ class CreateEditEmailRouter extends React.Component<JoinedProps> {
         params: { organisationId },
       },
     } = this.props;
-    const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/email_routers`;
+    const attributionModelUrl = `/v2/o/${organisationId}/settings/datamart/visit_analyzers`;
     history.push(attributionModelUrl);
   };
 
   onSaveOrCreatePluginInstance = (
-    plugin: EmailRouter,
+    plugin: VisitAnalyzer,
     properties: PluginProperty[],
   ) => {
     const {
@@ -54,18 +55,19 @@ class CreateEditEmailRouter extends React.Component<JoinedProps> {
       },
       history,
     } = this.props;
-    history.push(`/v2/o/${organisationId}/settings/campaigns/email_routers`);
+    history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers`);
   };
 
   createPluginInstance = (
     organisationId: string,
     plugin: PluginResource,
-    pluginInstance: EmailRouter,
+    pluginInstance: VisitAnalyzer,
   ): PluginInstance => {
-    const result: Omit<EmailRouter, 'id'> = {
+    const result: Omit<VisitAnalyzer, 'id'> = {
       // ...pluginInstance,
       version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
+      visit_analyzer_plugin_id: plugin.id,
       artifact_id: plugin.artifact_id,
       group_id: plugin.group_id,
       organisation_id: organisationId,
@@ -78,32 +80,32 @@ class CreateEditEmailRouter extends React.Component<JoinedProps> {
     const {
       intl: { formatMessage },
       match: {
-        params: { emailRouterId, organisationId },
+        params: { visitAnalyzerId, organisationId },
       },
     } = this.props;
 
-    const breadcrumbPaths = (emailRouter?: EmailRouter) => [
+    const breadcrumbPaths = (visitAnalyzer?: VisitAnalyzer) => [
       {
         name: formatMessage(messages.listTitle),
-        path: `/v2/o/${organisationId}/settings/campaigns/email_routers`
+        path: `/v2/o/${organisationId}/settings/datamart/visit_analyzers`,
       },
       {
-        name: emailRouter
-          ? formatMessage(messages.emailRouterEditBreadcrumb, {
-              name: emailRouter.name,
+        name: visitAnalyzer
+          ? formatMessage(messages.visitAnalyzerEditBreadcrumb, {
+              name: visitAnalyzer.name,
             })
-          : formatMessage(messages.emailRouterNewBreadcrumb),
+          : formatMessage(messages.visitAnalyzerBreadcrumb),
       },
     ];
 
     return (
-      <EmailRouterPluginContent
-        pluginType={'EMAIL_ROUTER'}
+      <VisitAnalyzerPluginContent
+        pluginType={'ACTIVITY_ANALYZER'}
         listTitle={messages.listTitle}
         listSubTitle={messages.listSubTitle}
         breadcrumbPaths={breadcrumbPaths}
-        pluginInstanceService={this._emailRouterService}
-        pluginInstanceId={emailRouterId}
+        pluginInstanceService={this._visitAnalyzerService}
+        pluginInstanceId={visitAnalyzerId}
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}
@@ -112,7 +114,4 @@ class CreateEditEmailRouter extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, {}>(
-  injectIntl,
-  withRouter,
-)(CreateEditEmailRouter);
+export default compose(withRouter, injectIntl)(EditVisitAnalyzerPage);

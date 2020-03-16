@@ -45,7 +45,7 @@ interface ProcessingPageState {
   total: number;
 }
 
-class ProcessingPage extends React.Component<Props, ProcessingPageState> {
+class ProcessingsList extends React.Component<Props, ProcessingPageState> {
   @lazyInject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
 
@@ -379,4 +379,4 @@ export default compose(
   injectWorkspace,
   injectIntl,
   injectNotifications,
-)(ProcessingPage);
+)(ProcessingsList);

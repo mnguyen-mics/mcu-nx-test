@@ -32,7 +32,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-class UserList extends React.Component<
+class UserListsList extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   UserListState
 > {
@@ -168,4 +168,4 @@ class UserList extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(UserList);
+export default compose(withRouter, injectIntl)(UserListsList);

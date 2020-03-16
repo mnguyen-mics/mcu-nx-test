@@ -1,4 +1,4 @@
-import EmailRouterContent from './EmailRouterContent';
+import EmailRouterContent from './EmailRoutersList';
 
 export {
   EmailRouterContent,

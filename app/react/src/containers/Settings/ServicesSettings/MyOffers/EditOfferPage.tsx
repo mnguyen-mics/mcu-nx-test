@@ -31,7 +31,7 @@ type Props = RouteComponentProps<{ organisationId: string; offerId?: string }> &
   InjectedNotificationProps &
   InjectedIntlProps;
 
-class CreateOfferPage extends React.Component<Props, State> {
+class EditOfferPage extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IServiceOfferPageService)
   private _serviceOfferPageService: IServiceOfferPageService;
@@ -190,4 +190,4 @@ export default compose<Props, CreateOfferPageProps>(
   injectIntl,
   withRouter,
   injectNotifications,
-)(CreateOfferPage);
+)(EditOfferPage);

@@ -1,9 +1,8 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { IAttributionModelService } from '../../../../../services/AttributionModelService';
 import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
@@ -14,14 +13,11 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import {
-  AttributionModel,
-  PluginProperty,
-} from '../../../../../models/Plugins';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
+import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
 
 const { Content } = Layout;
 
@@ -31,13 +27,30 @@ const initialState = {
   total: 0,
 };
 
-interface AttributionModelInterface extends AttributionModel {
+interface PluginProperty {
+  deletable: boolean;
+  origin: string;
+  property_type: string;
+  technical_name: string;
+  value: any;
+  writable: boolean;
+}
+
+interface VisitAnalyzer {
+  id: string;
+  artifact_id: string;
+  name: string;
+  group_id: string;
+  version_id: string;
+  version_value: string;
+  visit_analyzer_plugin_id: string;
+  organisation_id: string;
   properties?: PluginProperty[];
 }
 
-interface AttributionModelContentState {
+interface VisitAnalyzerContentState {
   loading: boolean;
-  data: AttributionModel[];
+  data: VisitAnalyzer[];
   total: number;
 }
 
@@ -45,57 +58,70 @@ interface RouterProps {
   organisationId: string;
 }
 
-class AttributionModelContent extends React.Component<
+class VisitAnalyzersList extends Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
-  AttributionModelContentState
+  VisitAnalyzerContentState
 > {
   state = initialState;
 
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
 
-  @lazyInject(TYPES.IAttributionModelService)
-  private _attributionModelService: IAttributionModelService;
+  @lazyInject(TYPES.IVisitAnalyzerService)
+  private _visitAnalyzerService: IVisitAnalyzerService;
 
-  archiveAttributionModel = (attributionModelId: string) => {
-    return this._attributionModelService.deleteAttributionModel(attributionModelId);
+  archiveVisitAnalyzer = (visitAnalyzerId: string) => {
+    return this._visitAnalyzerService.deleteVisitAnalyzerProperty(
+      visitAnalyzerId,
+    );
   };
 
-  fetchAttributionModel = (organisationId: string, filter: Filters) => {
+  fetchVisitAnalyzer = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._attributionModelService.getAttributionModels(
-        organisationId,
-        options,
-      ).then(results => {
-        const promises = results.data.map(am => {
-          return this._pluginService.getEngineProperties(
-            am.attribution_processor_id,
-          );
-        });
-        Promise.all(promises).then(amProperties => {
-          const formattedResults = results.data.map((am, i) => {
-            return {
-              ...am,
-              properties: amProperties[i],
-            };
-          });
-
-          this.setState({
-            loading: false,
-            data: formattedResults,
-            total: results.total || results.count,
-          });
-        });
-      });
+      this._visitAnalyzerService
+        .getVisitAnalyzers(organisationId, options)
+        .then(
+          (results: {
+            data: VisitAnalyzer[];
+            total?: number;
+            count: number;
+          }) => {
+            const promises = results.data.map(va => {
+              return new Promise((resolve, reject) => {
+                this._pluginService
+                  .getEngineVersion(va.version_id)
+                  .then(visitAnalyzer => {
+                    return this._pluginService.getEngineProperties(
+                      visitAnalyzer.id,
+                    );
+                  })
+                  .then(v => resolve(v));
+              });
+            });
+            Promise.all(promises).then((vaProperties: PluginProperty[]) => {
+              const formattedResults: any = results.data.map((va, i) => {
+                return {
+                  ...va,
+                  properties: vaProperties[i],
+                };
+              });
+              this.setState({
+                loading: false,
+                data: formattedResults,
+                total: results.total || results.count,
+              });
+            });
+          },
+        );
     });
   };
 
-  onClickArchive = (placement: AttributionModelInterface) => {
+  onClickArchive = (visitAnalyzer: VisitAnalyzer) => {
     const {
-      location: { pathname, state, search },
+      location: { search, state, pathname },
       history,
       match: {
         params: { organisationId },
@@ -109,12 +135,12 @@ class AttributionModelContent extends React.Component<
 
     Modal.confirm({
       iconType: 'exclamation-circle',
-      title: formatMessage(messages.attributionModelArchiveTitle),
-      content: formatMessage(messages.attributionModelArchiveTitle),
-      okText: formatMessage(messages.attributionModelArchiveOk),
-      cancelText: formatMessage(messages.attributionModelArchiveCancel),
+      title: formatMessage(messages.visitAnalyzerArchiveTitle),
+      content: formatMessage(messages.visitAnalyzerArchiveMessage),
+      okText: formatMessage(messages.visitAnalyzerArchiveOk),
+      cancelText: formatMessage(messages.visitAnalyzerArchiveCancel),
       onOk: () => {
-        this.archiveAttributionModel(placement.id).then(() => {
+        this.archiveVisitAnalyzer(visitAnalyzer.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -127,7 +153,7 @@ class AttributionModelContent extends React.Component<
             });
             return Promise.resolve();
           }
-          return this.fetchAttributionModel(organisationId, filter);
+          return this.fetchVisitAnalyzer(organisationId, filter);
         });
       },
       onCancel: () => {
@@ -136,16 +162,17 @@ class AttributionModelContent extends React.Component<
     });
   };
 
-  onClickEdit = (attribution: AttributionModelInterface) => {
+  onClickEdit = (visitAnalyzer: VisitAnalyzer) => {
     const {
       history,
       match: {
         params: { organisationId },
       },
     } = this.props;
+
     history.push(
-      `/v2/o/${organisationId}/settings/campaigns/attribution_models/${
-        attribution.id
+      `/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
+        visitAnalyzer.id
       }/edit`,
     );
   };
@@ -159,7 +186,7 @@ class AttributionModelContent extends React.Component<
     } = this.props;
 
     const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<AttributionModelInterface>
+      ActionsColumnDefinition<VisitAnalyzer>
     > = [
       {
         key: 'action',
@@ -175,10 +202,10 @@ class AttributionModelContent extends React.Component<
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: AttributionModelInterface) => (
+        render: (text: string, record: VisitAnalyzer) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/campaigns/attribution_models/${
+            to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
               record.id
             }/edit`}
           >
@@ -187,10 +214,10 @@ class AttributionModelContent extends React.Component<
         ),
       },
       {
-        intlMessage: messages.engine,
-        key: 'id',
+        intlMessage: messages.processor,
+        key: 'version_id',
         isHideable: false,
-        render: (text: string, record: AttributionModelInterface) => {
+        render: (text: string, record: VisitAnalyzer) => {
           const property =
             record &&
             record.properties &&
@@ -203,10 +230,10 @@ class AttributionModelContent extends React.Component<
         },
       },
       {
-        intlMessage: messages.miner,
-        key: '',
+        intlMessage: messages.provider,
+        key: 'id',
         isHideable: false,
-        render: (text: string, record: AttributionModelInterface) => {
+        render: (text: string, record: VisitAnalyzer) => {
           const property =
             record &&
             record.properties &&
@@ -230,12 +257,12 @@ class AttributionModelContent extends React.Component<
 
     const onClick = () =>
       history.push(
-        `/v2/o/${organisationId}/settings/campaigns/attribution_models/create`,
+        `/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`,
       );
 
     const buttons = [
       <Button key="create" type="primary" onClick={onClick}>
-        <FormattedMessage {...messages.newAttributionModel} />
+        <FormattedMessage {...messages.newVisitAnalyzer} />
       </Button>,
     ];
 
@@ -243,7 +270,7 @@ class AttributionModelContent extends React.Component<
       <div>
         <div className="mcs-card-header mcs-card-title">
           <span className="mcs-card-title">
-            <FormattedMessage {...messages.attributionmodel} />
+            <FormattedMessage {...messages.visitAnalyzer} />
           </span>
           <span className="mcs-card-button">{buttons}</span>
         </div>
@@ -255,7 +282,7 @@ class AttributionModelContent extends React.Component<
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <ItemList
-            fetchList={this.fetchAttributionModel}
+            fetchList={this.fetchVisitAnalyzer}
             dataSource={this.state.data}
             loading={this.state.loading}
             total={this.state.total}
@@ -274,4 +301,4 @@ class AttributionModelContent extends React.Component<
 export default compose(
   withRouter,
   injectIntl,
-)(AttributionModelContent);
+)(VisitAnalyzersList);

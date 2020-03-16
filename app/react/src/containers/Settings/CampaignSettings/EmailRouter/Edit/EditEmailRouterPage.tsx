@@ -4,11 +4,10 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import {
   PluginProperty,
-  Recommender,
+  EmailRouter,
   PluginResource,
   PluginInstance,
 } from '../../../../../models/Plugins';
-
 import messages from './messages';
 import GenericPluginContent, {
   PluginContentOuterProps,
@@ -16,22 +15,23 @@ import GenericPluginContent, {
 import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { IRecommenderService } from '../../../../../services/Library/RecommenderService';
+import PluginInstanceService from '../../../../../services/PluginInstanceService';
 
-const RecommenderPluginContent = GenericPluginContent as React.ComponentClass<
-  PluginContentOuterProps<Recommender>
+const EmailRouterPluginContent = GenericPluginContent as React.ComponentClass<
+  PluginContentOuterProps<EmailRouter>
 >;
-interface RecommenderRouteParam {
+
+interface EmailRouterRouteParam {
   organisationId: string;
-  recommenderId?: string;
+  emailRouterId?: string;
 }
 
-type JoinedProps = RouteComponentProps<RecommenderRouteParam> &
+type JoinedProps = RouteComponentProps<EmailRouterRouteParam> &
   InjectedIntlProps;
 
-class CreateEditRecommender extends React.Component<JoinedProps> {
-  @lazyInject(TYPES.IRecommenderService)
-  private _recommenderService: IRecommenderService;
+class EditEmailRouterPage extends React.Component<JoinedProps> {
+  @lazyInject(TYPES.IEmailRouterService)
+  private _emailRouterService: PluginInstanceService<EmailRouter>;
 
   redirect = () => {
     const {
@@ -40,12 +40,12 @@ class CreateEditRecommender extends React.Component<JoinedProps> {
         params: { organisationId },
       },
     } = this.props;
-    const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/recommenders`;
+    const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/email_routers`;
     history.push(attributionModelUrl);
   };
 
   onSaveOrCreatePluginInstance = (
-    plugin: Recommender,
+    plugin: EmailRouter,
     properties: PluginProperty[],
   ) => {
     const {
@@ -54,22 +54,21 @@ class CreateEditRecommender extends React.Component<JoinedProps> {
       },
       history,
     } = this.props;
-    history.push(`/v2/o/${organisationId}/settings/campaigns/recommenders`);
+    history.push(`/v2/o/${organisationId}/settings/campaigns/email_routers`);
   };
 
   createPluginInstance = (
     organisationId: string,
     plugin: PluginResource,
-    pluginInstance: Recommender,
+    pluginInstance: EmailRouter,
   ): PluginInstance => {
-    const result: Omit<Recommender, 'id'> = {
+    const result: Omit<EmailRouter, 'id'> = {
       // ...pluginInstance,
       version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
       artifact_id: plugin.artifact_id,
       group_id: plugin.group_id,
       organisation_id: organisationId,
-      recommenders_plugin_id: plugin.id,
       name: pluginInstance.name,
     };
     return result;
@@ -79,32 +78,32 @@ class CreateEditRecommender extends React.Component<JoinedProps> {
     const {
       intl: { formatMessage },
       match: {
-        params: { recommenderId, organisationId },
+        params: { emailRouterId, organisationId },
       },
     } = this.props;
 
-    const breadcrumbPaths = (recommender?: Recommender) => [
+    const breadcrumbPaths = (emailRouter?: EmailRouter) => [
       {
         name: formatMessage(messages.listTitle),
-        path: `/v2/o/${organisationId}/settings/campaigns/recommenders`,
+        path: `/v2/o/${organisationId}/settings/campaigns/email_routers`
       },
       {
-        name: recommender
-          ? formatMessage(messages.recommenderEditBreadcrumb, {
-              name: recommender.name,
+        name: emailRouter
+          ? formatMessage(messages.emailRouterEditBreadcrumb, {
+              name: emailRouter.name,
             })
-          : formatMessage(messages.recommenderNewBreadcrumb),
+          : formatMessage(messages.emailRouterNewBreadcrumb),
       },
     ];
 
     return (
-      <RecommenderPluginContent
-        pluginType={'RECOMMENDER'}
+      <EmailRouterPluginContent
+        pluginType={'EMAIL_ROUTER'}
         listTitle={messages.listTitle}
         listSubTitle={messages.listSubTitle}
         breadcrumbPaths={breadcrumbPaths}
-        pluginInstanceService={this._recommenderService}
-        pluginInstanceId={recommenderId}
+        pluginInstanceService={this._emailRouterService}
+        pluginInstanceId={emailRouterId}
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}
@@ -116,4 +115,4 @@ class CreateEditRecommender extends React.Component<JoinedProps> {
 export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
-)(CreateEditRecommender);
+)(EditEmailRouterPage);

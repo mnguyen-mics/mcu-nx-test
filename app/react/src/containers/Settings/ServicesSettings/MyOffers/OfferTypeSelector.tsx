@@ -8,7 +8,7 @@ import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayo
 import messages from '../../messages';
 import { FormTitle } from '../../../../components/Form';
 import { MenuPresentational } from '../../../../components/FormMenu';
-import { OfferType } from './CreateOfferPage';
+import { OfferType } from './EditOfferPage';
 import { Path } from '../../../../components/ActionBar';
 
 const { Content } = Layout;

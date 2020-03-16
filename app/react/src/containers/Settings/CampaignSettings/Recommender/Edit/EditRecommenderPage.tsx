@@ -2,37 +2,36 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import GenericPluginContent, {
-  PluginContentOuterProps,
-} from '../../../../Plugin/Edit/GenericPluginContent';
 import {
   PluginProperty,
-  VisitAnalyzer,
+  Recommender,
   PluginResource,
   PluginInstance,
 } from '../../../../../models/Plugins';
 
 import messages from './messages';
+import GenericPluginContent, {
+  PluginContentOuterProps,
+} from '../../../../Plugin/Edit/GenericPluginContent';
 import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
 import { TYPES } from '../../../../../constants/types';
+import { IRecommenderService } from '../../../../../services/Library/RecommenderService';
 
-const VisitAnalyzerPluginContent = GenericPluginContent as React.ComponentClass<
-  PluginContentOuterProps<VisitAnalyzer>
+const RecommenderPluginContent = GenericPluginContent as React.ComponentClass<
+  PluginContentOuterProps<Recommender>
 >;
-
-interface VisitAnalyzerRouteParam {
+interface RecommenderRouteParam {
   organisationId: string;
-  visitAnalyzerId?: string;
+  recommenderId?: string;
 }
 
-type JoinedProps = RouteComponentProps<VisitAnalyzerRouteParam> &
+type JoinedProps = RouteComponentProps<RecommenderRouteParam> &
   InjectedIntlProps;
 
-class CreateEditVisitAnalyzer extends React.Component<JoinedProps> {
-  @lazyInject(TYPES.IVisitAnalyzerService)
-  private _visitAnalyzerService: IVisitAnalyzerService;
+class EditRecommenderPage extends React.Component<JoinedProps> {
+  @lazyInject(TYPES.IRecommenderService)
+  private _recommenderService: IRecommenderService;
 
   redirect = () => {
     const {
@@ -41,12 +40,12 @@ class CreateEditVisitAnalyzer extends React.Component<JoinedProps> {
         params: { organisationId },
       },
     } = this.props;
-    const attributionModelUrl = `/v2/o/${organisationId}/settings/datamart/visit_analyzers`;
+    const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/recommenders`;
     history.push(attributionModelUrl);
   };
 
   onSaveOrCreatePluginInstance = (
-    plugin: VisitAnalyzer,
+    plugin: Recommender,
     properties: PluginProperty[],
   ) => {
     const {
@@ -55,22 +54,22 @@ class CreateEditVisitAnalyzer extends React.Component<JoinedProps> {
       },
       history,
     } = this.props;
-    history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers`);
+    history.push(`/v2/o/${organisationId}/settings/campaigns/recommenders`);
   };
 
   createPluginInstance = (
     organisationId: string,
     plugin: PluginResource,
-    pluginInstance: VisitAnalyzer,
+    pluginInstance: Recommender,
   ): PluginInstance => {
-    const result: Omit<VisitAnalyzer, 'id'> = {
+    const result: Omit<Recommender, 'id'> = {
       // ...pluginInstance,
       version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
-      visit_analyzer_plugin_id: plugin.id,
       artifact_id: plugin.artifact_id,
       group_id: plugin.group_id,
       organisation_id: organisationId,
+      recommenders_plugin_id: plugin.id,
       name: pluginInstance.name,
     };
     return result;
@@ -80,32 +79,32 @@ class CreateEditVisitAnalyzer extends React.Component<JoinedProps> {
     const {
       intl: { formatMessage },
       match: {
-        params: { visitAnalyzerId, organisationId },
+        params: { recommenderId, organisationId },
       },
     } = this.props;
 
-    const breadcrumbPaths = (visitAnalyzer?: VisitAnalyzer) => [
+    const breadcrumbPaths = (recommender?: Recommender) => [
       {
         name: formatMessage(messages.listTitle),
-        path: `/v2/o/${organisationId}/settings/datamart/visit_analyzers`,
+        path: `/v2/o/${organisationId}/settings/campaigns/recommenders`,
       },
       {
-        name: visitAnalyzer
-          ? formatMessage(messages.visitAnalyzerEditBreadcrumb, {
-              name: visitAnalyzer.name,
+        name: recommender
+          ? formatMessage(messages.recommenderEditBreadcrumb, {
+              name: recommender.name,
             })
-          : formatMessage(messages.visitAnalyzerBreadcrumb),
+          : formatMessage(messages.recommenderNewBreadcrumb),
       },
     ];
 
     return (
-      <VisitAnalyzerPluginContent
-        pluginType={'ACTIVITY_ANALYZER'}
+      <RecommenderPluginContent
+        pluginType={'RECOMMENDER'}
         listTitle={messages.listTitle}
         listSubTitle={messages.listSubTitle}
         breadcrumbPaths={breadcrumbPaths}
-        pluginInstanceService={this._visitAnalyzerService}
-        pluginInstanceId={visitAnalyzerId}
+        pluginInstanceService={this._recommenderService}
+        pluginInstanceId={recommenderId}
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}
@@ -114,4 +113,7 @@ class CreateEditVisitAnalyzer extends React.Component<JoinedProps> {
   }
 }
 
-export default compose(withRouter, injectIntl)(CreateEditVisitAnalyzer);
+export default compose<JoinedProps, {}>(
+  injectIntl,
+  withRouter,
+)(EditRecommenderPage);

@@ -3,34 +3,41 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Button, Modal, Layout } from 'antd';
+import { IAttributionModelService } from '../../../../../services/AttributionModelService';
+import { Modal, Button, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
+import { IPluginService } from '../../../../../services/PluginService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import { BidOptimizer, PluginProperty } from '../../../../../models/Plugins';
+import {
+  AttributionModel,
+  PluginProperty,
+} from '../../../../../models/Plugins';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { IBidOptimizerService } from '../../../../../services/Library/BidOptimizerService';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
-interface BidOptimizerInterface extends BidOptimizer {
+const initialState = {
+  loading: false,
+  data: [],
+  total: 0,
+};
+
+interface AttributionModelInterface extends AttributionModel {
   properties?: PluginProperty[];
 }
 
-interface BidOptimizerContentState {
+interface AttributionModelContentState {
   loading: boolean;
-  data: BidOptimizer[];
+  data: AttributionModel[];
   total: number;
 }
 
@@ -38,91 +45,55 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
-  InjectedNotificationProps;
-
-class BidOptimizerContent extends React.Component<
-  Props,
-  BidOptimizerContentState
+class AttributionModelsList extends React.Component<
+  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  AttributionModelContentState
 > {
-  @lazyInject(TYPES.IBidOptimizerService)
-  private _bidOptimizerService: IBidOptimizerService;
+  state = initialState;
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      loading: false,
-      data: [],
-      total: 0,
-    };
-  }
+  @lazyInject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
 
-  archiveBidOptimizer = (bidOptimizerId: string) => {
-    const { notifyError } = this.props;
-    return this._bidOptimizerService
-      .deleteBidOptimizer(bidOptimizerId)
-      .catch(error => {
-        notifyError(error);
-      });
+  @lazyInject(TYPES.IAttributionModelService)
+  private _attributionModelService: IAttributionModelService;
+
+  archiveAttributionModel = (attributionModelId: string) => {
+    return this._attributionModelService.deleteAttributionModel(attributionModelId);
   };
 
-  fetchBidOptimizersAndProperties = (
-    organisationId: string,
-    filter: Filters,
-  ) => {
-    const { notifyError } = this.props;
-
+  fetchAttributionModel = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-
-      this._bidOptimizerService
-        .getBidOptimizers(organisationId, options)
-        .then(results => {
-          const promises = results.data.map(bo => {
-            return this._bidOptimizerService
-              .getBidOptimizerProperties(bo.id)
-              .then(res => {
-                return { ...res.data, id: bo.id };
-              });
-          });
-          Promise.all(promises)
-            .then(boProperties => {
-              const formattedResults: BidOptimizerInterface[] = [];
-              boProperties.forEach((boProperty: any) => {
-                const foundBo = results.data.find(
-                  bo => bo.id === boProperty.id,
-                );
-
-                if (foundBo) {
-                  formattedResults.push({
-                    ...foundBo,
-                    properties: Object.keys(boProperty).map(
-                      value => boProperty[value],
-                    ),
-                  });
-                }
-              });
-
-              this.setState({
-                loading: false,
-                data: formattedResults,
-                total: results.total || results.count,
-              });
-            })
-            .catch(error => {
-              notifyError(error);
-              this.setState({
-                loading: false,
-              });
-            });
+      this._attributionModelService.getAttributionModels(
+        organisationId,
+        options,
+      ).then(results => {
+        const promises = results.data.map(am => {
+          return this._pluginService.getEngineProperties(
+            am.attribution_processor_id,
+          );
         });
+        Promise.all(promises).then(amProperties => {
+          const formattedResults = results.data.map((am, i) => {
+            return {
+              ...am,
+              properties: amProperties[i],
+            };
+          });
+
+          this.setState({
+            loading: false,
+            data: formattedResults,
+            total: results.total || results.count,
+          });
+        });
+      });
     });
   };
 
-  onClickArchive = (placement: BidOptimizerInterface) => {
+  onClickArchive = (placement: AttributionModelInterface) => {
     const {
       location: { pathname, state, search },
       history,
@@ -138,12 +109,12 @@ class BidOptimizerContent extends React.Component<
 
     Modal.confirm({
       iconType: 'exclamation-circle',
-      title: formatMessage(messages.bidOptimizerArchiveTitle),
-      content: formatMessage(messages.bidOptimizerArchiveMessage),
-      okText: formatMessage(messages.bidOptimizerArchiveOk),
-      cancelText: formatMessage(messages.bidOptimizerArchiveCancel),
+      title: formatMessage(messages.attributionModelArchiveTitle),
+      content: formatMessage(messages.attributionModelArchiveTitle),
+      okText: formatMessage(messages.attributionModelArchiveOk),
+      cancelText: formatMessage(messages.attributionModelArchiveCancel),
       onOk: () => {
-        this.archiveBidOptimizer(placement.id).then(() => {
+        this.archiveAttributionModel(placement.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -156,7 +127,7 @@ class BidOptimizerContent extends React.Component<
             });
             return Promise.resolve();
           }
-          return this.fetchBidOptimizersAndProperties(organisationId, filter);
+          return this.fetchAttributionModel(organisationId, filter);
         });
       },
       onCancel: () => {
@@ -165,16 +136,17 @@ class BidOptimizerContent extends React.Component<
     });
   };
 
-  onClickEdit = (bo: BidOptimizerInterface) => {
+  onClickEdit = (attribution: AttributionModelInterface) => {
     const {
       history,
       match: {
         params: { organisationId },
       },
     } = this.props;
-
     history.push(
-      `/v2/o/${organisationId}/settings/campaigns/bid_optimizer/${bo.id}/edit`,
+      `/v2/o/${organisationId}/settings/campaigns/attribution_models/${
+        attribution.id
+      }/edit`,
     );
   };
 
@@ -186,9 +158,9 @@ class BidOptimizerContent extends React.Component<
       history,
     } = this.props;
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
-      BidOptimizerInterface
-    >> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<AttributionModelInterface>
+    > = [
       {
         key: 'action',
         actions: () => [
@@ -203,10 +175,12 @@ class BidOptimizerContent extends React.Component<
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: BidOptimizerInterface) => (
+        render: (text: string, record: AttributionModelInterface) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/campaigns/bid_optimizer/${record.id}/edit`}
+            to={`/v2/o/${organisationId}/settings/campaigns/attribution_models/${
+              record.id
+            }/edit`}
           >
             {text}
           </Link>
@@ -216,7 +190,7 @@ class BidOptimizerContent extends React.Component<
         intlMessage: messages.engine,
         key: 'id',
         isHideable: false,
-        render: (text: string, record: BidOptimizerInterface) => {
+        render: (text: string, record: AttributionModelInterface) => {
           const property =
             record &&
             record.properties &&
@@ -230,9 +204,9 @@ class BidOptimizerContent extends React.Component<
       },
       {
         intlMessage: messages.miner,
-        key: 'engine_group_id',
+        key: '',
         isHideable: false,
-        render: (text: string, record: BidOptimizerInterface) => {
+        render: (text: string, record: AttributionModelInterface) => {
           const property =
             record &&
             record.properties &&
@@ -256,12 +230,12 @@ class BidOptimizerContent extends React.Component<
 
     const onClick = () =>
       history.push(
-        `/v2/o/${organisationId}/settings/campaigns/bid_optimizer/create`,
+        `/v2/o/${organisationId}/settings/campaigns/attribution_models/create`,
       );
 
     const buttons = [
       <Button key="create" type="primary" onClick={onClick}>
-        <FormattedMessage {...messages.newBidOptimizer} />
+        <FormattedMessage {...messages.newAttributionModel} />
       </Button>,
     ];
 
@@ -269,7 +243,7 @@ class BidOptimizerContent extends React.Component<
       <div>
         <div className="mcs-card-header mcs-card-title">
           <span className="mcs-card-title">
-            <FormattedMessage {...messages.bidoptimizer} />
+            <FormattedMessage {...messages.attributionmodel} />
           </span>
           <span className="mcs-card-button">{buttons}</span>
         </div>
@@ -281,7 +255,7 @@ class BidOptimizerContent extends React.Component<
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <ItemList
-            fetchList={this.fetchBidOptimizersAndProperties}
+            fetchList={this.fetchAttributionModel}
             dataSource={this.state.data}
             loading={this.state.loading}
             total={this.state.total}
@@ -300,5 +274,4 @@ class BidOptimizerContent extends React.Component<
 export default compose(
   withRouter,
   injectIntl,
-  injectNotifications,
-)(BidOptimizerContent);
+)(AttributionModelsList);

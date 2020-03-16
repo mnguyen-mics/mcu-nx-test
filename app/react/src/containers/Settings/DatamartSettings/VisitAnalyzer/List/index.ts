@@ -1,4 +1,4 @@
-import VisitAnalyzerContent from './VisitAnalyzerContent';
+import VisitAnalyzerContent from './VisitAnalyzersList';
 
 export {
   VisitAnalyzerContent,

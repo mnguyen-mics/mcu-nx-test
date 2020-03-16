@@ -1,4 +1,4 @@
-import CreateEditRecommender from './CreateEditRecommender';
+import CreateEditRecommender from './EditRecommenderPage';
 
 export {
     CreateEditRecommender,

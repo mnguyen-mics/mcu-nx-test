@@ -46,7 +46,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-class RecommenderContent extends React.Component<
+class RecommendersList extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   RecommenderContentState
 > {
@@ -276,4 +276,4 @@ class RecommenderContent extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(RecommenderContent);
+export default compose(withRouter, injectIntl)(RecommendersList);

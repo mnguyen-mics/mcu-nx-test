@@ -1,56 +1,36 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Modal, Button, Layout } from 'antd';
+import { Button, Modal, Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import { IPluginService } from '../../../../../services/PluginService';
 import {
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
+import { BidOptimizer, PluginProperty } from '../../../../../models/Plugins';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
+import { IBidOptimizerService } from '../../../../../services/Library/BidOptimizerService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
-const initialState = {
-  loading: false,
-  data: [],
-  total: 0,
-};
-
-interface PluginProperty {
-  deletable: boolean;
-  origin: string;
-  property_type: string;
-  technical_name: string;
-  value: any;
-  writable: boolean;
-}
-
-interface VisitAnalyzer {
-  id: string;
-  artifact_id: string;
-  name: string;
-  group_id: string;
-  version_id: string;
-  version_value: string;
-  visit_analyzer_plugin_id: string;
-  organisation_id: string;
+interface BidOptimizerInterface extends BidOptimizer {
   properties?: PluginProperty[];
 }
 
-interface VisitAnalyzerContentState {
+interface BidOptimizerContentState {
   loading: boolean;
-  data: VisitAnalyzer[];
+  data: BidOptimizer[];
   total: number;
 }
 
@@ -58,70 +38,93 @@ interface RouterProps {
   organisationId: string;
 }
 
-class VisitAnalyzerContent extends Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps,
-  VisitAnalyzerContentState
+type Props = RouteComponentProps<RouterProps> &
+  InjectedIntlProps &
+  InjectedNotificationProps;
+
+class BidOptimizersList extends React.Component<
+  Props,
+  BidOptimizerContentState
 > {
-  state = initialState;
+  @lazyInject(TYPES.IBidOptimizerService)
+  private _bidOptimizerService: IBidOptimizerService;
 
-  @lazyInject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      loading: false,
+      data: [],
+      total: 0,
+    };
+  }
 
-  @lazyInject(TYPES.IVisitAnalyzerService)
-  private _visitAnalyzerService: IVisitAnalyzerService;
-
-  archiveVisitAnalyzer = (visitAnalyzerId: string) => {
-    return this._visitAnalyzerService.deleteVisitAnalyzerProperty(
-      visitAnalyzerId,
-    );
+  archiveBidOptimizer = (bidOptimizerId: string) => {
+    const { notifyError } = this.props;
+    return this._bidOptimizerService
+      .deleteBidOptimizer(bidOptimizerId)
+      .catch(error => {
+        notifyError(error);
+      });
   };
 
-  fetchVisitAnalyzer = (organisationId: string, filter: Filters) => {
+  fetchBidOptimizersAndProperties = (
+    organisationId: string,
+    filter: Filters,
+  ) => {
+    const { notifyError } = this.props;
+
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._visitAnalyzerService
-        .getVisitAnalyzers(organisationId, options)
-        .then(
-          (results: {
-            data: VisitAnalyzer[];
-            total?: number;
-            count: number;
-          }) => {
-            const promises = results.data.map(va => {
-              return new Promise((resolve, reject) => {
-                this._pluginService
-                  .getEngineVersion(va.version_id)
-                  .then(visitAnalyzer => {
-                    return this._pluginService.getEngineProperties(
-                      visitAnalyzer.id,
-                    );
-                  })
-                  .then(v => resolve(v));
+
+      this._bidOptimizerService
+        .getBidOptimizers(organisationId, options)
+        .then(results => {
+          const promises = results.data.map(bo => {
+            return this._bidOptimizerService
+              .getBidOptimizerProperties(bo.id)
+              .then(res => {
+                return { ...res.data, id: bo.id };
               });
-            });
-            Promise.all(promises).then((vaProperties: PluginProperty[]) => {
-              const formattedResults: any = results.data.map((va, i) => {
-                return {
-                  ...va,
-                  properties: vaProperties[i],
-                };
+          });
+          Promise.all(promises)
+            .then(boProperties => {
+              const formattedResults: BidOptimizerInterface[] = [];
+              boProperties.forEach((boProperty: any) => {
+                const foundBo = results.data.find(
+                  bo => bo.id === boProperty.id,
+                );
+
+                if (foundBo) {
+                  formattedResults.push({
+                    ...foundBo,
+                    properties: Object.keys(boProperty).map(
+                      value => boProperty[value],
+                    ),
+                  });
+                }
               });
+
               this.setState({
                 loading: false,
                 data: formattedResults,
                 total: results.total || results.count,
               });
+            })
+            .catch(error => {
+              notifyError(error);
+              this.setState({
+                loading: false,
+              });
             });
-          },
-        );
+        });
     });
   };
 
-  onClickArchive = (visitAnalyzer: VisitAnalyzer) => {
+  onClickArchive = (placement: BidOptimizerInterface) => {
     const {
-      location: { search, state, pathname },
+      location: { pathname, state, search },
       history,
       match: {
         params: { organisationId },
@@ -135,12 +138,12 @@ class VisitAnalyzerContent extends Component<
 
     Modal.confirm({
       iconType: 'exclamation-circle',
-      title: formatMessage(messages.visitAnalyzerArchiveTitle),
-      content: formatMessage(messages.visitAnalyzerArchiveMessage),
-      okText: formatMessage(messages.visitAnalyzerArchiveOk),
-      cancelText: formatMessage(messages.visitAnalyzerArchiveCancel),
+      title: formatMessage(messages.bidOptimizerArchiveTitle),
+      content: formatMessage(messages.bidOptimizerArchiveMessage),
+      okText: formatMessage(messages.bidOptimizerArchiveOk),
+      cancelText: formatMessage(messages.bidOptimizerArchiveCancel),
       onOk: () => {
-        this.archiveVisitAnalyzer(visitAnalyzer.id).then(() => {
+        this.archiveBidOptimizer(placement.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -153,7 +156,7 @@ class VisitAnalyzerContent extends Component<
             });
             return Promise.resolve();
           }
-          return this.fetchVisitAnalyzer(organisationId, filter);
+          return this.fetchBidOptimizersAndProperties(organisationId, filter);
         });
       },
       onCancel: () => {
@@ -162,7 +165,7 @@ class VisitAnalyzerContent extends Component<
     });
   };
 
-  onClickEdit = (visitAnalyzer: VisitAnalyzer) => {
+  onClickEdit = (bo: BidOptimizerInterface) => {
     const {
       history,
       match: {
@@ -171,9 +174,7 @@ class VisitAnalyzerContent extends Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
-        visitAnalyzer.id
-      }/edit`,
+      `/v2/o/${organisationId}/settings/campaigns/bid_optimizer/${bo.id}/edit`,
     );
   };
 
@@ -185,9 +186,9 @@ class VisitAnalyzerContent extends Component<
       history,
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<VisitAnalyzer>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
+      BidOptimizerInterface
+    >> = [
       {
         key: 'action',
         actions: () => [
@@ -202,22 +203,20 @@ class VisitAnalyzerContent extends Component<
         intlMessage: messages.name,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: VisitAnalyzer) => (
+        render: (text: string, record: BidOptimizerInterface) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
-              record.id
-            }/edit`}
+            to={`/v2/o/${organisationId}/settings/campaigns/bid_optimizer/${record.id}/edit`}
           >
             {text}
           </Link>
         ),
       },
       {
-        intlMessage: messages.processor,
-        key: 'version_id',
+        intlMessage: messages.engine,
+        key: 'id',
         isHideable: false,
-        render: (text: string, record: VisitAnalyzer) => {
+        render: (text: string, record: BidOptimizerInterface) => {
           const property =
             record &&
             record.properties &&
@@ -230,10 +229,10 @@ class VisitAnalyzerContent extends Component<
         },
       },
       {
-        intlMessage: messages.provider,
-        key: 'id',
+        intlMessage: messages.miner,
+        key: 'engine_group_id',
         isHideable: false,
-        render: (text: string, record: VisitAnalyzer) => {
+        render: (text: string, record: BidOptimizerInterface) => {
           const property =
             record &&
             record.properties &&
@@ -257,12 +256,12 @@ class VisitAnalyzerContent extends Component<
 
     const onClick = () =>
       history.push(
-        `/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`,
+        `/v2/o/${organisationId}/settings/campaigns/bid_optimizer/create`,
       );
 
     const buttons = [
       <Button key="create" type="primary" onClick={onClick}>
-        <FormattedMessage {...messages.newVisitAnalyzer} />
+        <FormattedMessage {...messages.newBidOptimizer} />
       </Button>,
     ];
 
@@ -270,7 +269,7 @@ class VisitAnalyzerContent extends Component<
       <div>
         <div className="mcs-card-header mcs-card-title">
           <span className="mcs-card-title">
-            <FormattedMessage {...messages.visitAnalyzer} />
+            <FormattedMessage {...messages.bidoptimizer} />
           </span>
           <span className="mcs-card-button">{buttons}</span>
         </div>
@@ -282,7 +281,7 @@ class VisitAnalyzerContent extends Component<
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <ItemList
-            fetchList={this.fetchVisitAnalyzer}
+            fetchList={this.fetchBidOptimizersAndProperties}
             dataSource={this.state.data}
             loading={this.state.loading}
             total={this.state.total}
@@ -301,4 +300,5 @@ class VisitAnalyzerContent extends Component<
 export default compose(
   withRouter,
   injectIntl,
-)(VisitAnalyzerContent);
+  injectNotifications,
+)(BidOptimizersList);
