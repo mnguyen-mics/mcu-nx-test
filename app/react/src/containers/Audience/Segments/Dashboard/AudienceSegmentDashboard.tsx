@@ -204,8 +204,9 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   buildItems = () => {
-    const { intl, segment } = this.props;
+    const { intl, segment, datamarts } = this.props;
     const { dashboard } = this.state;
+    
     const items = [
       {
         title: intl.formatMessage(messages.overview),
@@ -213,6 +214,8 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           <Overview
             isFetching={dashboard.isLoading}
             dataSource={dashboard.reports}
+            datamarts={datamarts}
+            datamartId={segment ? segment.datamart_id : undefined}
           />
         ),
       },

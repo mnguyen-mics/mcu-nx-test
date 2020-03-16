@@ -26,11 +26,14 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
+import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
 
 
 interface OverviewProps {
   isFetching: boolean;
   dataSource: AudienceReport;
+  datamarts?: DatamartWithMetricResource[];
+  datamartId?: string;
 }
 
 type Props = OverviewProps &
@@ -78,7 +81,7 @@ class Overview extends React.Component<Props> {
   }
 
   renderStackedAreaCharts() {
-    const { dataSource, isFetching, colors } = this.props;
+    const { dataSource, isFetching, colors, datamarts, datamartId } = this.props;
     const metrics =
       dataSource && dataSource[0]
         ? Object.keys(dataSource[0]).filter(
@@ -88,12 +91,15 @@ class Overview extends React.Component<Props> {
               el !== 'user_point_deletions',
           )
         : [];
+
+    const datamart = datamarts && datamarts.find(dm => dm.id === datamartId);
+
     const optionsForChart = {
       xKey: 'day',
       yKeys: metrics.map(metric => {
         return {
           key: metric,
-          message: messagesMap[metric],
+          message: this.getMetricsDisplayName(metric, datamart) || messagesMap[metric]
         };
       }),
       colors: [
@@ -112,6 +118,11 @@ class Overview extends React.Component<Props> {
     ) : (
       <LoadingChart />
     );
+  }
+
+  getMetricsDisplayName = (metric: string, datamart?: DatamartWithMetricResource) => {
+    const metricName = datamart && datamart.audience_segment_metrics.find(el => el.technical_name === metric); 
+    return metricName ? metricName.display_name : undefined;
   }
 
   getColor = (metric: string) => {
