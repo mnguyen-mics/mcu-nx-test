@@ -145,7 +145,7 @@ class SegmentBuilderPage extends React.Component<Props> {
       <div style={style}>
         {!selectedDatamart && (
           <DatamartSelector
-            onSelectDatamart={handleOnSelectDatamart}
+            onSelect={handleOnSelectDatamart}
             actionbarProps={{
               paths: [
                 {
@@ -153,6 +153,7 @@ class SegmentBuilderPage extends React.Component<Props> {
                 },
               ],
             }}
+            isMainlayout={true}
           />
         )}
         {selectedDatamart &&

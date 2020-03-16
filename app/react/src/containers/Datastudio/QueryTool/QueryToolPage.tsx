@@ -132,9 +132,7 @@ class QueryToolPage extends React.Component<Props> {
               })
               .then(res => {
                 history.push(
-                  `/v2/o/${match.params.organisationId}/datastudio/exports/${
-                    res.data.id
-                  }`,
+                  `/v2/o/${match.params.organisationId}/datastudio/exports/${res.data.id}`,
                 );
               });
           });
@@ -157,7 +155,7 @@ class QueryToolPage extends React.Component<Props> {
       <div style={{ height: '100%', display: 'flex' }}>
         {!selectedDatamart && (
           <DatamartSelector
-            onSelectDatamart={handleOnSelectDatamart}
+            onSelect={handleOnSelectDatamart}
             actionbarProps={{
               paths: [
                 {
@@ -165,11 +163,12 @@ class QueryToolPage extends React.Component<Props> {
                 },
               ],
             }}
+            isMainlayout={true}
           />
         )}
         {selectedDatamart &&
           selectedDatamart.storage_model_version === 'v201709' && (
-            <QueryToolSelector 
+            <QueryToolSelector
               renderActionBar={OTQLActionbar}
               datamartId={selectedDatamart.id}
             />

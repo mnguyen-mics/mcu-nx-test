@@ -16,8 +16,7 @@ import {
   DatamartResource,
 } from '../../../../models/datamart/DatamartResource';
 import { IDatamartService } from '../../../../services/DatamartService';
-import { EditContentLayout } from '../../../../components/Layout';
-import DatamartSelector from '../../../Audience/Common/DatamartSelector';
+import DatamartSelector from '../../../Datamart/DatamartSelector';
 import { Export } from '../../../../models/exports/exports';
 import { DataResponse } from '../../../../services/ApiService';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -298,13 +297,14 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
         datamart={selectedDatamart}
       />
     ) : (
-      <EditContentLayout
-        paths={breadcrumbPaths}
-        formId="EXPORT"
-        onClose={this.close}
-      >
-        <DatamartSelector onSelect={this.onDatamartSelect} />
-      </EditContentLayout>
+      <DatamartSelector
+        onSelect={this.onDatamartSelect}
+        actionbarProps={{
+          paths: breadcrumbPaths,
+          formId: 'EXPORT',
+          onClose: this.close,
+        }}
+      />
     );
   }
 }

@@ -55,9 +55,7 @@ class TimelinePage extends React.Component<JoinedProps> {
     if (!identifierId && !identifierType) {
       if (cookies.mics_vid) {
         history.push(
-          `/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${
-            cookies.mics_vid
-          }`,
+          `/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${cookies.mics_vid}`,
         );
       } else {
         history.push(`/v2/o/${organisationId}/audience/timeline`);
@@ -117,13 +115,11 @@ class TimelinePage extends React.Component<JoinedProps> {
 
     return selectedDatamart ? (
       <ErrorBoundary>
-        <Monitoring 
-        selectedDatamart={selectedDatamart}
-        />
+        <Monitoring selectedDatamart={selectedDatamart} />
       </ErrorBoundary>
     ) : (
       <DatamartSelector
-        onSelectDatamart={this.onDatamartSelect}
+        onSelect={this.onDatamartSelect}
         actionbarProps={{
           paths: [
             {
@@ -131,6 +127,7 @@ class TimelinePage extends React.Component<JoinedProps> {
             },
           ],
         }}
+        isMainlayout={true}
       />
     );
   }
@@ -145,8 +142,5 @@ export default compose(
   injectIntl,
   withRouter,
   injectNotifications,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(TimelinePage);

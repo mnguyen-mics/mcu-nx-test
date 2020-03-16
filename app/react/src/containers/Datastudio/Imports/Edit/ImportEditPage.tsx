@@ -9,8 +9,7 @@ import { injectDrawer } from '../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { Loading } from '../../../../components/index';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import { EditContentLayout } from '../../../../components/Layout';
-import DatamartSelector from '../../../Audience/Common/DatamartSelector';
+import DatamartSelector from '../../../Datamart/DatamartSelector';
 import { Import } from '../../../../models/imports/imports';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IImportService } from '../../../../services/ImportService';
@@ -174,7 +173,11 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
         });
     }
 
-    const redirectAndNotify = (id?: string, selectedDatamartId?: string, customErrorMessage?: string) => {
+    const redirectAndNotify = (
+      id?: string,
+      selectedDatamartId?: string,
+      customErrorMessage?: string,
+    ) => {
       if (id) {
         hideSaveInProgress();
         message.success(intl.formatMessage(messages.updateSuccess));
@@ -187,7 +190,11 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
           loading: false,
         });
         if (customErrorMessage) {
-          message.error(`${intl.formatMessage(messages.updateError)}: ${customErrorMessage}`);
+          message.error(
+            `${intl.formatMessage(
+              messages.updateError,
+            )}: ${customErrorMessage}`,
+          );
         } else {
           message.error(intl.formatMessage(messages.updateError));
         }
@@ -216,10 +223,10 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
 
     const importName = importId
       ? formatMessage(messages.editImports, {
-        name: this.state.importData.name
-          ? this.state.importData.name
-          : formatMessage(messages.imports),
-      })
+          name: this.state.importData.name
+            ? this.state.importData.name
+            : formatMessage(messages.imports),
+        })
       : formatMessage(messages.newImports);
     const breadcrumbPaths = [
       {
@@ -254,14 +261,15 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
         breadCrumbPaths={breadcrumbPaths}
       />
     ) : (
-        <EditContentLayout
-          paths={breadcrumbPaths}
-          formId="IMPORT"
-          onClose={this.close}
-        >
-          <DatamartSelector onSelect={this.onDatamartSelect} />
-        </EditContentLayout>
-      );
+      <DatamartSelector
+        onSelect={this.onDatamartSelect}
+        actionbarProps={{
+          paths: breadcrumbPaths,
+          formId: 'IMPORT',
+          onClose: this.close,
+        }}
+      />
+    );
   }
 }
 

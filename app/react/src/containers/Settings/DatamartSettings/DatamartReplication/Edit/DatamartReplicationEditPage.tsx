@@ -26,7 +26,7 @@ import DatamartReplicationCard from './DatamartReplicationCard';
 import DatamartReplicationEditForm from './DatamartReplicationEditForm';
 import { ReplicationType } from '../../../../../models/settings/settings';
 import { FormTitle } from '../../../../../components/Form';
-import DatamartSelector from '../../../../Audience/Common/DatamartSelector';
+import DatamartSelector from '../../../../Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 
 interface State {
@@ -270,7 +270,18 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     };
 
     return !datamartId ? (
-      <DatamartSelector onSelect={this.onDatamartSelect} />
+      <DatamartSelector
+        onSelect={this.onDatamartSelect}
+        isMainlayout={true}
+        actionbarProps={{
+          paths: [
+            {
+              name: messages.datamartReplications,
+              path: this.getPreviousUrl(),
+            },
+          ],
+        }}
+      />
     ) : selectedType ? (
       <DatamartReplicationEditForm
         initialValues={datamartReplicationData}
