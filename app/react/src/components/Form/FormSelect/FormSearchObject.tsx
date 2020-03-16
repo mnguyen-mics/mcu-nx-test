@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Select, Spin } from 'antd';
-import _ from 'lodash';
+import {debounce} from 'lodash';
 // TS Interface
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipProps } from 'antd/lib/tooltip';
@@ -38,11 +38,14 @@ class FormSearchObject extends React.Component<
   Props,
   FormSearchObjectState
   > {
+
   static defaultprops = {
     formItemProps: {},
     inputProps: {},
     helpToolTipProps: {},
   };
+
+  private debounce = debounce;
 
   constructor(props: Props) {
     super(props)
@@ -139,7 +142,7 @@ class FormSearchObject extends React.Component<
 
   onSearch = (val: string) => {
     this.setState({ currentValue: val });
-    _.debounce(this.filterData, 300, { leading: false, trailing: true })()
+    this.debounce(this.filterData, 300, { leading: false, trailing: true })()
   }
 
   filterData = () => {
