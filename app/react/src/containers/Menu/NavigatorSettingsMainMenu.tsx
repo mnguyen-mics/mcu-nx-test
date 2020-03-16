@@ -8,8 +8,8 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
   hasDatamarts,
-} from '../../state/Session/selectors';
-import { getOrgFeatures } from '../../state/Features/selectors';
+} from '../../redux/Session/selectors';
+import { getOrgFeatures } from '../../redux/Features/selectors';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition } from '../../routes/domain';
 import { MicsReduxState } from '../../utils/ReduxHelper';

@@ -5,14 +5,14 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
-import * as FeatureSelectors from '../../../../state/Features/selectors';
+import * as FeatureSelectors from '../../../../redux/Features/selectors';
 import { GoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
 import GoalFormContainer from './GoalFormContainer';
 import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { getWorkspace } from '../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';

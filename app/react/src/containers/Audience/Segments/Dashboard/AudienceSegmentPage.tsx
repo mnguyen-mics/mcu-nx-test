@@ -17,7 +17,7 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import * as SessionHelper from '../../../../state/Session/selectors';
+import * as SessionHelper from '../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 

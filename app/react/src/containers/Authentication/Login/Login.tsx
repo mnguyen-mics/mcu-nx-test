@@ -11,9 +11,8 @@ import {
 } from 'react-intl';
 import { Form, Input, Button, Alert, Switch, Divider } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-
 import log from '../../../utils/Logger';
-import { logIn } from '../../../state/Login/actions';
+import { logIn } from '../../../redux/Login/actions';
 import { Credentials } from '../../../services/AuthService';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../../utils/ReduxHelper';

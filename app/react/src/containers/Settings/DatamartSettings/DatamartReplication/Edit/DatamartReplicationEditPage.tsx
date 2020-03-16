@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import * as FeatureSelectors from '../../../../../state/Features/selectors';
+import * as FeatureSelectors from '../../../../../redux/Features/selectors';
 import {
   DatamartReplicationRouteMatchParam,
   DatamartReplicationFormData,
@@ -14,7 +14,7 @@ import Loading from '../../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { Layout, message, Row, Col } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';

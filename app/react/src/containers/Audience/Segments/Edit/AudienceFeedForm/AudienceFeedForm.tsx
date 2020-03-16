@@ -9,7 +9,7 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import * as actions from '../../../../../state/Notifications/actions';
+import * as actions from '../../../../../redux/Notifications/actions';
 import {
   PluginProperty,
   PluginType,

@@ -34,7 +34,7 @@ import {
   AudienceSegmentType,
   UserListSegment,
 } from '../../../../models/audiencesegment/';
-import * as FeatureSelectors from '../../../../state/Features/selectors';
+import * as FeatureSelectors from '../../../../redux/Features/selectors';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { UserListSection } from './Sections/list';
 import { McsFormSection } from '../../../../utils/FormHelper';

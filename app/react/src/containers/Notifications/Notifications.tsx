@@ -8,7 +8,7 @@ import {
   InjectedIntlProps,
   FormattedMessage,
 } from 'react-intl';
-import * as notificationsActions from '../../state/Notifications/actions';
+import * as notificationsActions from '../../redux/Notifications/actions';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
 import { ArgsProps } from 'antd/lib/notification';
 import { MicsReduxState } from '../../utils/ReduxHelper';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { /*message,*/ Layout } from 'antd';
 import { connect } from 'react-redux';
-import * as SessionHelper from '../../../state/Session/selectors';
+import * as SessionHelper from '../../../redux/Session/selectors';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';

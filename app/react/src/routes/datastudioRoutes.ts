@@ -1,16 +1,16 @@
-import QueryToolPage from '../containers/Datastudio/QueryTool/QueryToolPage';
-import { CreateReportPage } from '../containers/Datastudio/Report/Edit';
-import Exports from '../containers/Datastudio/Exports/Dashboard/Exports';
-import Imports from '../containers/Datastudio/Imports/Dashboard/Imports';
-import ExportsList from '../containers/Datastudio/Exports/List';
-import ImportsList from '../containers/Datastudio/Imports/List';
+import QueryToolPage from '../containers/QueryTool/QueryToolPage';
+import { CreateReportPage } from '../containers/Report/Edit';
+import Exports from '../containers/Exports/Dashboard/Exports';
+import Imports from '../containers/Imports/Dashboard/Imports';
+import ExportsList from '../containers/Exports/List';
+import ImportsList from '../containers/Imports/List';
 import {
   NavigatorRoute,
   NavigatorDefinition,
   generateRoutesFromDefinition,
 } from './domain';
-import ExportEditPage from '../containers/Datastudio/Exports/Edit/ExportEditPage';
-import ImportEditPage from '../containers/Datastudio/Imports/Edit/ImportEditPage';
+import ExportEditPage from '../containers/Exports/Edit/ExportEditPage';
+import ImportEditPage from '../containers/Imports/Edit/ImportEditPage';
 
 export const datastudioDefinition: NavigatorDefinition = {
   datastudioQueryTool: {

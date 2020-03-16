@@ -8,7 +8,7 @@ import { Row, Col } from 'antd/lib/grid';
 
 import { NavigatorHeader } from '../../Header';
 import { NavigatorSettingsMainMenu, NavigatorSettingsSideMenu, NavigatorMenu,  } from '../../Menu';
-import * as MenuActions from '../../../state/Menu/actions';
+import * as MenuActions from '../../../redux/Menu/actions';
 import { ButtonStyleless } from '../../../components';
 import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';

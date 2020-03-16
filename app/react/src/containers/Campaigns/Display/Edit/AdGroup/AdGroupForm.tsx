@@ -42,7 +42,7 @@ import BidOptimizerFormSection, {
 import InventoryCatalogFormSection, {
   InventoryCatalogFormSectionProps,
 } from './sections/InventoryCatalog/InventoryCatalogFormSection';
-import * as SessionSelectors from '../../../../../state/Session/selectors';
+import * as SessionSelectors from '../../../../../redux/Session/selectors';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
 import DeviceFormSection from './sections/DeviceFormSection';

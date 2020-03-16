@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message, Modal } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import * as FeatureSelectors from '../../../../../state/Features/selectors';
+import * as FeatureSelectors from '../../../../../redux/Features/selectors';
 import {
   MobileApplicationFormData,
   EditMobileAppRouteMatchParam,
@@ -28,7 +28,7 @@ import { VisitAnalyzerFieldModel } from '../../Common/domain';
 import DatamartSelector from '../../../../../containers/Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';

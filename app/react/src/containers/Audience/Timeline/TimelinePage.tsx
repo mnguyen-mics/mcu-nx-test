@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { getWorkspace } from '../../../state/Session/selectors';
+import { getWorkspace } from '../../../redux/Session/selectors';
 import Monitoring from './Monitoring';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import injectNotifications, {

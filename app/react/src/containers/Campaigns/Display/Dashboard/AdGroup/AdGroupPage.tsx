@@ -19,7 +19,7 @@ import {
   compareSearches,
   DateSearchSettings,
 } from '../../../../../utils/LocationSearchHelper';
-import * as NotificationActions from '../../../../../state/Notifications/actions';
+import * as NotificationActions from '../../../../../redux/Notifications/actions';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Row, Button, Modal, Input, Alert, Layout } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
-import * as labelsActions from '../../../../state/Labels/actions';
+import * as labelsActions from '../../../../redux/Labels/actions';
 import { Label } from '../../../Labels/Labels';
 import settingsMessages from '../../messages';
 import messages from './messages';

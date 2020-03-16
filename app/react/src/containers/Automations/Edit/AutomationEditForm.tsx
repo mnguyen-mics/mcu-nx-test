@@ -25,7 +25,7 @@ import { Omit } from '../../../utils/Types';
 import GeneralFormSection from './sections/GeneralFormSection';
 import { McsFormSection } from '../../../utils/FormHelper';
 
-import * as SessionSelectors from '../../../state/Session/selectors';
+import * as SessionSelectors from '../../../redux/Session/selectors';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 

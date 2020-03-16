@@ -10,7 +10,7 @@ import {
 import PlacementListForm from './PlacementListForm';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import { notifyError } from '../../../../state/Notifications/actions';
+import { notifyError } from '../../../../redux/Notifications/actions';
 import { Loading } from '../../../../components/index';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
 import { lazyInject } from '../../../../config/inversify.config';

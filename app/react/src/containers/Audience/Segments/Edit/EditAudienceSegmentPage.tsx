@@ -34,7 +34,7 @@ import { Loading } from '../../../../components';
 import DatamartSelector from './../../../Datamart/DatamartSelector';
 import { EditContentLayout } from '../../../../components/Layout';
 import SegmentTypeSelector from '../../Common/SegmentTypeSelector';
-import { getWorkspace } from '../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { IDatamartService } from '../../../../services/DatamartService';
 import { lazyInject } from '../../../../config/inversify.config';

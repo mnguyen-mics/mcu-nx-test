@@ -25,7 +25,7 @@ import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDraw
 import { ChannelResource } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';

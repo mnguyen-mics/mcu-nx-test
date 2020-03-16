@@ -6,7 +6,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import {

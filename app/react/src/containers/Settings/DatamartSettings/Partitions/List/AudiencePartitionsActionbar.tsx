@@ -13,7 +13,7 @@ import { Dropdown } from '../../../../../components/PopupContainers/index';
 
 import Actionbar from '../../../../../components/ActionBar';
 import McsIcon from '../../../../../components/McsIcon';
-import { getDefaultDatamart } from '../../../../../state/Session/selectors';
+import { getDefaultDatamart } from '../../../../../redux/Session/selectors';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 

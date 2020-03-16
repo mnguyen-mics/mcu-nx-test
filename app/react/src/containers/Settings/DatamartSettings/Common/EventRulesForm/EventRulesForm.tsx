@@ -21,7 +21,7 @@ import CatalogAutoMatch from './Sections/CatalogAutoMatch';
 import UserIdentifierinsertion from './Sections/UserIdentifierInsertion'; 
 import UriMatch from './Sections/UriMatch';
 import PropertyToOriginCopy from './Sections/PropertyToOriginCopy';
-import * as SessionSelectors from '../../../../../state/Session/selectors';
+import * as SessionSelectors from '../../../../../redux/Session/selectors';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';

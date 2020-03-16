@@ -25,7 +25,7 @@ import {
   formatMetric,
   normalizeReportView,
 } from '../../../../utils/MetricHelper';
-import { getWorkspace } from '../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../redux/Session/selectors';
 import { GoalsOptions, IGoalService } from '../../../../services/GoalService';
 import { Label } from '../../../Labels/Labels';
 import { McsRange } from '../../../../utils/McsMoment';

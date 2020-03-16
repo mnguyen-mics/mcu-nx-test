@@ -5,7 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { message, Modal } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import * as FeatureSelectors from '../../../../../state/Features/selectors';
+import * as FeatureSelectors from '../../../../../redux/Features/selectors';
 import {
   EditSiteRouteMatchParam,
   INITIAL_SITE_FORM_DATA,
@@ -26,7 +26,7 @@ import {
 import { VisitAnalyzerFieldModel } from '../../Common/domain';
 import DatamartSelector from '../../../../../containers/Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { lazyInject } from '../../../../../config/inversify.config';

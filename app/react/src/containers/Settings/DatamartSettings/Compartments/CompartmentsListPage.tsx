@@ -10,7 +10,7 @@ import { Filter } from '../Common/domain';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
-import { getWorkspace } from '../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import {
   parseSearch,

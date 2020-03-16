@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as FeatureSelectors from '../state/Features/selectors';
+import * as FeatureSelectors from '../redux/Features/selectors';
 import { MicsReduxState } from '../utils/ReduxHelper';
 
 interface FeatureSwitchProps {

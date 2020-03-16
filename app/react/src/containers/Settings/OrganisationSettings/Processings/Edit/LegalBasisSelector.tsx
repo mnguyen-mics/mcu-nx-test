@@ -3,7 +3,7 @@ import { UserWorkspaceResource } from '../../../../../models/directory/UserProfi
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';

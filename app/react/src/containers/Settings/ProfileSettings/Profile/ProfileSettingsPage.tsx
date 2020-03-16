@@ -9,7 +9,7 @@ import {
   defineMessages,
   InjectedIntlProps,
 } from 'react-intl';
-import * as SessionActions from '../../../../state/Session/actions';
+import * as SessionActions from '../../../../redux/Session/actions';
 
 import { FormInput } from '../../../../components/Form/';
 import { withRouter, RouteComponentProps } from 'react-router';

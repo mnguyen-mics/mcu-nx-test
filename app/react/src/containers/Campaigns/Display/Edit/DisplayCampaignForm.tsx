@@ -30,7 +30,7 @@ import GoalFormSection, { GoalFormSectionProps } from './Sections/Programmatic/G
 import AdGroupFormSection, {
   AdGroupFormSectionProps,
 } from './Sections/Programmatic/AdGroupFormSection';
-import * as SessionSelectors from '../../../../state/Session/selectors';
+import * as SessionSelectors from '../../../../redux/Session/selectors';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const Content = Layout.Content as React.ComponentClass<
