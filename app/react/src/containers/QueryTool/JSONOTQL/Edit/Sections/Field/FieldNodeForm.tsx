@@ -624,6 +624,7 @@ class FieldNodeForm extends React.Component<Props, State> {
     let fetchSingleMethod = (id: string) => Promise.resolve({ key: id, label: id })
     let selectProps = {};
     let loadOnlyOnce = false;
+    let shouldFilterData = false;
 
     if (type && type === "CORE_OBJECT") {
       if (modelType) {
@@ -651,10 +652,11 @@ class FieldNodeForm extends React.Component<Props, State> {
     } else if (type && type === "COMPUTED") {
       fetchListMethod = (keywords: string) => this.fetchPredicates(this._computedTreeNodePath, field ? field.field : "").then(r => r.map( e => ({ key: e, label: e })));
       selectProps = {
-        ...selectProps, 
-        mode: 'tags'
+        ...selectProps,
+        mode: 'tags',
       }
-      loadOnlyOnce = true
+      shouldFilterData = true;
+      loadOnlyOnce = true;
     }
     
 
@@ -690,6 +692,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         type={field && field.field}
         small={true}
         loadOnlyOnce={loadOnlyOnce}
+        shouldFilterData={shouldFilterData}
       />
     );
   }
