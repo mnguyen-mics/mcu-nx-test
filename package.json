@@ -14,12 +14,12 @@
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^4.1.2",
     "@types/faker": "^4.1.10",
-    "cypress": "^3.8.2",
+    "cypress": "^4.2.0",
     "cypress-file-upload": "^3.5.3",
-    "mocha": "5.2.0",
-    "mochawesome": "^3.1.2",
-    "mochawesome-merge": "^1.0.7",
-    "mochawesome-report-generator": "^3.1.5"
+    "mocha": "^7.1.0",
+    "mochawesome": "^5.0.0",
+    "mochawesome-merge": "^4.0.3",
+    "mochawesome-report-generator": "^4.1.0"
   },
   "scripts": {
     "cypress": "cypress open",
