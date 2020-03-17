@@ -63,7 +63,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       match: {
         params: { nativeId },
@@ -71,12 +71,12 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     } = this.props;
     const {
       match: {
-        params: { nativeId: previousNativeId },
+        params: { nativeId: nextNativeId },
       },
-    } = previousProps;
-    if (nativeId && nativeId !== previousNativeId) {
+    } = nextProps;
+    if (nextNativeId && nativeId !== nextNativeId) {
       this._creativeService
-        .getCreative(nativeId)
+        .getCreative(nextNativeId)
         .then(resp => resp.data)
         .then(nativeData => {
           this.setState({

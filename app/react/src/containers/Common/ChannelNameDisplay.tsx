@@ -34,13 +34,13 @@ export default class ChannelNameDisplay extends React.Component<
     this.fetchChannel(datamartId, channelId);
   }
 
-  componentDidUpdate(previousProps: ChannelNameDisplayProps) {
+  componentWillReceiveProps(nextProps: ChannelNameDisplayProps) {
     const { channelId, datamartId } = this.props;
 
-    const { channelId: previousChannelId, datamartId: previousDatamartId } = previousProps;
+    const { channelId: nextChannelId, datamartId: nextDatamartId } = nextProps;
 
-    if (channelId !== previousChannelId || datamartId !== previousDatamartId) {
-      this.fetchChannel(datamartId, channelId);
+    if (channelId !== nextChannelId || datamartId !== nextDatamartId) {
+      this.fetchChannel(nextDatamartId, nextChannelId);
     }
   }
 

@@ -222,7 +222,7 @@ class OverviewContent extends React.Component<
     this.fetchAllData(organisationId, defaultDatamartId, filter);
   }
 
-  componentDidUpdate() {
+  componentWillReceiveProps(nextProps: OverviewContentAllProps) {
     const {
       history,
       match: { params: { organisationId } },

@@ -170,23 +170,26 @@ class FieldNodeForm extends React.Component<Props, State> {
     
   }
 
-  componentDidUpdate(previousProps: Props) {
-    const { formValues, expressionIndex, formChange, name } = this.props;
+  componentWillReceiveProps(nextProps: Props) {
+    const { formValues, expressionIndex } = this.props;
 
     const {
-      formValues: previousFormValues,
-      expressionIndex: previousExpressionIndex,
-    } = previousProps;
-    const previousField = this.getField(previousFormValues, previousExpressionIndex);
-    const previousFieldName = previousField ? previousField.field : undefined;
-
+      formValues: nextFormValues,
+      expressionIndex: nextExpressionIndex,
+      formChange,
+      name,
+    } = nextProps;
     const field = this.getField(formValues, expressionIndex);
     const fieldName = field ? field.field : undefined;
     const directive = field ? this.getFieldDirective(field.field) : undefined;
 
-    if (previousFieldName !== fieldName && fieldName !== undefined) {
 
-      const fieldType = this.getSelectedFieldType(fieldName);
+    const nextField = this.getField(nextFormValues, nextExpressionIndex);
+    const nextFieldName = nextField ? nextField.field : undefined;
+
+    if (fieldName !== nextFieldName && nextFieldName !== undefined) {
+
+      const fieldType = this.getSelectedFieldType(nextFieldName);
       const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
 
       

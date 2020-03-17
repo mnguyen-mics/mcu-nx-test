@@ -89,9 +89,9 @@ class NativeAdsPage extends React.Component<JoinedProps, State> {
     }
   }
 
-  componentDidUpdate(previousProps: JoinedProps) {
+  componentWillReceiveProps(nextProps: JoinedProps) {
     const {
-      location: { pathname, search, state },
+      location: { search },
       match: {
         params: { organisationId },
       },
@@ -99,27 +99,27 @@ class NativeAdsPage extends React.Component<JoinedProps, State> {
     } = this.props;
 
     const {
-      location: { search: previousSearch },
+      location: { pathname: nextPathname, search: nextSearch, state },
       match: {
-        params: { organisationId: previousOrganisationId },
+        params: { organisationId: nextOrganisationId },
       },
-    } = previousProps;
+    } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
     if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
     ) {
-      if (!isSearchValid(search, NATIVE_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, NATIVE_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, NATIVE_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== organisationId },
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, NATIVE_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(search, NATIVE_SEARCH_SETTINGS);
-        this.fetchNativeAds(organisationId, filter, checkEmptyDataSource);
+        const filter = parseSearch(nextSearch, NATIVE_SEARCH_SETTINGS);
+        this.fetchNativeAds(nextOrganisationId, filter, checkEmptyDataSource);
       }
     }
   }

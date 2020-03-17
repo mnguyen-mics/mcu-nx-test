@@ -106,33 +106,33 @@ class GoalStackedAreaChart extends React.Component<
     this.fetchStats(organisationId, goalId, filter.from, filter.to);
   }
 
-  componentDidUpdate(previousProps: JoinedProps) {
+  componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       match: { params: { organisationId, goalId } },
       history,
-      location: { pathname, search },
+      location: { search },
     } = this.props;
 
     const {
       match: {
-        params: { organisationId: previousOrganisationId, goalId: previousGoalId },
+        params: { organisationId: nextOrganisationId, goalId: nextGoalId },
       },
-      location: { search: previousSearch },
-    } = previousProps;
+      location: { pathname: nextPathname, search: nextSearch },
+    } = nextProps;
     if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId ||
-      goalId !== previousGoalId
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId ||
+      goalId !== nextGoalId
     ) {
-      if (!isSearchValid(search, DATE_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, DATE_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== organisationId },
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, DATE_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
-        this.fetchStats(organisationId, goalId, filter.from, filter.to);
+        const filter = parseSearch(nextSearch, DATE_SEARCH_SETTINGS);
+        this.fetchStats(nextOrganisationId, nextGoalId, filter.from, filter.to);
       }
     }
   }

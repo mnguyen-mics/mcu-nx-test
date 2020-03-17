@@ -89,9 +89,9 @@ class EmailTemplatesPage extends React.Component<JoinedProps, State> {
     }
   }
 
-  componentDidUpdate(previousProps: JoinedProps) {
+  componentWillReceiveProps(nextProps: JoinedProps) {
     const {
-      location: { pathname, search, state },
+      location: { search },
       match: {
         params: { organisationId },
       },
@@ -99,31 +99,31 @@ class EmailTemplatesPage extends React.Component<JoinedProps, State> {
     } = this.props;
 
     const {
-      location: { search: previousSearch },
+      location: { pathname: nextPathname, search: nextSearch, state },
       match: {
-        params: { organisationId: previousOrganisationId },
+        params: { organisationId: nextOrganisationId },
       },
-    } = previousProps;
+    } = nextProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
     if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
     ) {
-      if (!isSearchValid(search, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
+          pathname: nextPathname,
           search: buildDefaultSearch(
-            search,
+            nextSearch,
             CREATIVE_EMAIL_SEARCH_SETTINGS,
           ),
-          state: { reloadDataSource: organisationId !== previousOrganisationId },
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
+        const filter = parseSearch(nextSearch, CREATIVE_EMAIL_SEARCH_SETTINGS);
         this.fetchCreativeEmails(
-          organisationId,
+          nextOrganisationId,
           filter,
           checkEmptyDataSource,
         );

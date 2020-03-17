@@ -154,46 +154,46 @@ class GoalAttribution extends React.Component<
     }
   }
 
-  componentDidUpdate(previousProps: JoinedProps) {
+  componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       match: { params: { organisationId, goalId } },
       history,
-      location: { pathname, search },
+      location: { search },
       attributionModelId,
     } = this.props;
 
     const {
       match: {
-        params: { organisationId: previousOrganisationId, goalId: previousGoalId },
+        params: { organisationId: nextOrganisationId, goalId: nextGoalId },
       },
-      location: { search: previousSearch },
-      attributionModelId: previousAttributionModelId,
-    } = previousProps;
+      location: { pathname: nextPathname, search: nextSearch },
+      attributionModelId: nextAttributionModelId,
+    } = nextProps;
 
     if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId ||
-      goalId !== previousGoalId ||
-      attributionModelId !== previousAttributionModelId
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId ||
+      goalId !== nextGoalId ||
+      attributionModelId !== nextAttributionModelId
     ) {
-      if (!isSearchValid(search, DATE_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, DATE_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== previousOrganisationId },
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, DATE_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch<Filters>(search, DATE_SEARCH_SETTINGS);
+        const filter = parseSearch<Filters>(nextSearch, DATE_SEARCH_SETTINGS);
         this.fetchOverall(
-          organisationId,
-          goalId,
-          attributionModelId,
+          nextOrganisationId,
+          nextGoalId,
+          nextAttributionModelId,
           filter,
         );
         this.fetchDetailled(
-          organisationId,
-          goalId,
-          attributionModelId,
+          nextOrganisationId,
+          nextGoalId,
+          nextAttributionModelId,
           filter,
           this.state.detailled.data.viewType,
         );

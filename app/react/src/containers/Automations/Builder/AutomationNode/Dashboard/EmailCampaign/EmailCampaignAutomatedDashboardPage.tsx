@@ -124,36 +124,36 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
     }
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
-      location: { pathname, search },
-      match: {
-        params: { organisationId },
-      },
+      location: { search },
       campaignId,
       history,
     } = this.props;
 
     const {
-      location: { search: previousSearch },
-      campaignId: previousCampaignId,
-    } = previousProps;
-    if (!compareSearches(search, previousSearch) || campaignId !== previousCampaignId) {
-      if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
+      location: { pathname: nextPathname, search: nextSearch },
+      match: {
+        params: { organisationId: nextOrganisationId },
+      },
+      campaignId: nextCampaignId,
+    } = nextProps;
+    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
+      if (!isSearchValid(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
+          pathname: nextPathname,
           search: buildDefaultSearch(
-            search,
+            nextSearch,
             EMAIL_DASHBOARD_SEARCH_SETTINGS,
           ),
         });
       } else {
         const filter = parseSearch<EmailDashboardSearchSettings>(
-          search,
+          nextSearch,
           EMAIL_DASHBOARD_SEARCH_SETTINGS,
         );
-        this.loadCampaign(campaignId);
-        this.refreshStats(organisationId, campaignId, filter);
+        this.loadCampaign(nextCampaignId);
+        this.refreshStats(nextOrganisationId, nextCampaignId, filter);
       }
     }
   }

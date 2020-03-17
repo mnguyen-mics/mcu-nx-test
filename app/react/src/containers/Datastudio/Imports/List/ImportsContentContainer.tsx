@@ -111,7 +111,7 @@ class ImportsContentContainer extends React.Component<
     this.fetchImport(datamartId, filter);
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       filter,
       datamartId,
@@ -119,27 +119,27 @@ class ImportsContentContainer extends React.Component<
         params: { organisationId },
       },
       location: { search },
+      noFilterDatamart,
     } = this.props;
 
     const {
-      filter: previousFilter,
-      datamartId: previousDatamartId,
+      filter: nextFilter,
+      datamartId: nextDatamartId,
       match: {
-        params: { organisationId: previousOrganisationId },
+        params: { organisationId: nextOrganisationId },
       },
-      location: { search: previousSearch },
-      noFilterDatamart
-    } = previousProps;
+      location: { search: nextSearch },
+    } = nextProps;
 
-    const keywords = queryString.parse(search).keywords;
+    const keywords = queryString.parse(nextSearch).keywords;
 
     if (
-      filter.currentPage !== previousFilter.currentPage ||
-      filter.pageSize !== previousFilter.pageSize ||
-      filter.keywords !== previousFilter.keywords ||
-      datamartId !== previousDatamartId ||
-      organisationId !== previousOrganisationId ||
-      !compareSearches(search, previousSearch)
+      filter.currentPage !== nextFilter.currentPage ||
+      filter.pageSize !== nextFilter.pageSize ||
+      filter.keywords !== nextFilter.keywords ||
+      datamartId !== nextDatamartId ||
+      organisationId !== nextOrganisationId ||
+      !compareSearches(search, nextSearch)
     ) {
       const options = {
         allow_administrator: true,
@@ -147,18 +147,18 @@ class ImportsContentContainer extends React.Component<
       };
 
       const newFilter = {
-        ...filter,
+        ...nextFilter,
         keywords: keywords,
       };
       if (!noFilterDatamart) {
-        this._datamartService.getDatamarts(organisationId, options).then(res => {
+        this._datamartService.getDatamarts(nextOrganisationId, options).then(res => {
           this.setState({
             datamarts: res.data,
           });
         });
       }
 
-      this.fetchImport(datamartId, newFilter);
+      this.fetchImport(nextDatamartId, newFilter);
     }
   }
 

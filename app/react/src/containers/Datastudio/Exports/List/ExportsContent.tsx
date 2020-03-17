@@ -77,9 +77,9 @@ class ExportContent extends React.Component<Props, ExportContentState> {
 
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
-      location: { pathname, search },
+      location: { search },
       match: {
         params: { organisationId },
       },
@@ -87,26 +87,26 @@ class ExportContent extends React.Component<Props, ExportContentState> {
     } = this.props;
 
     const {
-      location: { search: previousSearch },
+      location: { pathname: nextPathname, search: nextSearch },
       match: {
-        params: { organisationId: previousOrganisationId },
+        params: { organisationId: nextOrganisationId },
       },
-    } = previousProps;
+    } = nextProps;
 
     if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
     ) {
-      if (!isSearchValid(search, EXPORT_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, EXPORT_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
+          pathname: nextPathname,
           search: buildDefaultSearch(
-            search,
+            nextSearch,
             EXPORT_SEARCH_SETTINGS,
           ),
         });
       } else {
-        const filter = parseSearch<ExportFilterParams>(search, EXPORT_SEARCH_SETTINGS);
+        const filter = parseSearch<ExportFilterParams>(nextSearch, EXPORT_SEARCH_SETTINGS);
         this.fetchExport(organisationId, filter);
       }
     }

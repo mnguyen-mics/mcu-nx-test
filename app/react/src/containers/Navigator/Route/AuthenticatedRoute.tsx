@@ -1,7 +1,12 @@
+
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { Route, Redirect, match } from 'react-router-dom';
+import {
+  Route,
+  Redirect,
+  match,
+} from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import Error from '../../../components/Error';
@@ -11,9 +16,7 @@ import { getWorkspace } from '../../../state/Session/actions';
 import { fetchAllLabels } from '../../../state/Labels/actions';
 import * as SessionHelper from '../../../state/Session/selectors';
 import errorMessages from '../../Navigator/messages';
-import injectFeatures, {
-  InjectedFeaturesProps,
-} from '../../Features/injectFeatures';
+import injectFeatures, { InjectedFeaturesProps } from '../../Features/injectFeatures';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
@@ -27,10 +30,10 @@ export interface AuthenticatedRouteProps {
   path: string;
 }
 
-type RouteParams = { organisationId: string };
+type RouteParams = { organisationId: string }
 
 interface MissingRouterProps {
-  computedMatch: match<RouteParams>;
+  computedMatch: match<RouteParams>
 }
 
 export interface MapStateToProps {
@@ -42,19 +45,16 @@ export interface MapStateToProps {
   hasDatamarts: (organisationId: string) => boolean;
 }
 
-type Props = AuthenticatedRouteProps &
-  InjectedIntlProps &
-  MapStateToProps &
-  MissingRouterProps &
-  InjectedFeaturesProps;
+type Props = AuthenticatedRouteProps & InjectedIntlProps & MapStateToProps & MissingRouterProps & InjectedFeaturesProps;
 
 type SubComponentProps = any;
 
 class AuthenticatedRoute extends React.Component<Props> {
+
   static defaultProps = {
     requiredFeatures: undefined,
-    requireDatamart: false,
-  };
+    requireDatamart: false
+  }
 
   @lazyInject(TYPES.IAuthService)
   private _authService: IAuthService;
@@ -75,27 +75,28 @@ class AuthenticatedRoute extends React.Component<Props> {
     getLabels(organisationId);
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
+
     const {
       computedMatch: {
         params: { organisationId },
       },
-      getWorkspaceRequest,
     } = this.props;
 
     const {
       computedMatch: {
-        params: { organisationId: previousOrganisationId },
+        params: { organisationId: nextOrganisationId },
       },
-    } = previousProps;
+      getWorkspaceRequest
+    } = nextProps;
 
     // TO BE REMOVED WHEN HOME PAGE IS AVAILABLE
     // if (nextOrganisationId !== organisationId) {
     //   window.location.href = `/v2/o/${nextOrganisationId}/campaigns/display`; // eslint-disable-line
     //   window.location.reload(true); // eslint-disable-line
     // }
-    if (previousOrganisationId !== organisationId) {
-      getWorkspaceRequest(organisationId);
+    if (nextOrganisationId !== organisationId) {
+      getWorkspaceRequest(nextOrganisationId);
     }
   }
 
@@ -111,21 +112,17 @@ class AuthenticatedRoute extends React.Component<Props> {
     } = this.props;
 
     if (requiredFeatures && typeof requiredFeatures === 'string') {
-      return (
-        hasFeature(requiredFeatures) &&
-        !(!hasDatamarts(organisationId) && requireDatamart)
-      );
+      return hasFeature(requiredFeatures) && !(!hasDatamarts(organisationId) && requireDatamart);
     } else if (requiredFeatures && Array.isArray(requiredFeatures)) {
       return requiredFeatures.reduce((acc, val) => {
-        return (
-          hasFeature(val) && !(!hasDatamarts(organisationId) && requireDatamart)
-        );
+        return hasFeature(val) && !(!hasDatamarts(organisationId) && requireDatamart);
       }, false);
     } else if (!requiredFeatures) {
       return true && !(!hasDatamarts(organisationId) && requireDatamart);
     }
     return false;
-  };
+
+  }
 
   render() {
     const {
@@ -139,16 +136,17 @@ class AuthenticatedRoute extends React.Component<Props> {
       errorRender,
     } = this.props;
 
-    const authenticated =
-      this._authService.isAuthenticated() && connectedUserLoaded; // if access token is present
+    const authenticated = this._authService.isAuthenticated() && connectedUserLoaded; // if access token is present
     const renderRoute = (props: SubComponentProps) => {
       if (authenticated) {
+
         if (accessGrantedToOrganisation(organisationId)) {
           log.trace(`Access granted to ${props.match.url}`);
           if (this.checkIfHasFeatures()) {
             return render(props);
           }
           return errorRender(props);
+
         }
 
         return <Error message={formatMessage(errorMessages.notFound)} />;
@@ -156,22 +154,24 @@ class AuthenticatedRoute extends React.Component<Props> {
         window.location.reload(); // Shouldn't happen since it can only occur if the access token is expired manually and the page is refreshed just after.
       }
       log.error(`Access denied to ${props.match.url}, redirect to login`);
-      return (
-        <Redirect
-          to={{ pathname: '/login', state: { from: props.location } }}
-        />
-      );
-    };
+      return (<Redirect to={{ pathname: '/login', state: { from: props.location } }} />);
+    }
 
-    return <Route {...this.props} render={renderRoute} />;
+    return (
+      <Route
+        {...this.props}
+        render={renderRoute}
+      />
+    );
   }
 }
+
 
 const mapStateToProps = (state: MicsReduxState) => ({
   accessGrantedToOrganisation: SessionHelper.hasAccessToOrganisation(state),
   hasWorkspaceLoaded: SessionHelper.hasWorkspace(state),
   connectedUserLoaded: state.session.connectedUserLoaded,
-  hasDatamarts: SessionHelper.hasDatamarts(state),
+  hasDatamarts: SessionHelper.hasDatamarts(state)
 });
 
 const mapDispatchToProps = {
@@ -182,5 +182,8 @@ const mapDispatchToProps = {
 export default compose<Props, AuthenticatedRouteProps>(
   injectIntl,
   injectFeatures,
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(AuthenticatedRoute);
