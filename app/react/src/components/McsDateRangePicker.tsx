@@ -16,10 +16,12 @@ export interface McsDateRangePickerProps {
   onChange: (values: McsDateRangeValue) => void;
   format?: string;
   disabled?: boolean;
+  excludeToday?: boolean;
 }
 
 interface McsDateRangePickerState {
   showRangePicker?: boolean;
+  ranges: Range[];
 }
 
 interface Range {
@@ -29,29 +31,6 @@ interface Range {
 }
 
 const { RangePicker } = DatePicker;
-
-const ranges: Range[] = [
-  {
-    name: 'TODAY',
-    from: 'now',
-    to: 'now',
-  },
-  {
-    name: 'YESTERDAY',
-    from: 'now-1d',
-    to: 'now-1d',
-  },
-  {
-    name: 'LAST_7_DAYS',
-    from: 'now-8d',
-    to: 'now-1d',
-  },
-  {
-    name: 'LAST_30_DAYS',
-    from: 'now-31d',
-    to: 'now-1d',
-  },
-];
 
 const messages = defineMessages({
   TODAY: {
@@ -90,9 +69,43 @@ class McsDateRangePicker extends React.Component<
     format: 'YYYY-MM-DD',
   };
 
-  state = {
-    showRangePicker: false,
-  };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      showRangePicker: false,
+      ranges: []
+    };
+  }
+
+  componentDidMount() {
+    const { excludeToday } = this.props;
+    const ranges: Range[] = [
+      {
+        name: 'TODAY',
+        from: 'now',
+        to: 'now',
+      },
+      {
+        name: 'YESTERDAY',
+        from: 'now-1d',
+        to: 'now-1d',
+      },
+      {
+        name: 'LAST_7_DAYS',
+        from: excludeToday ? 'now-8d' : 'now-7d',
+        to: excludeToday ? 'now-1d' : 'now'
+      },
+      {
+        name: 'LAST_30_DAYS',
+        from: excludeToday ? 'now-31d' : 'now-30d',
+        to: excludeToday ? 'now-1d' : 'now',
+      },
+    ];
+
+    this.setState({
+      ranges
+    });
+  }
 
   disableFutureDates(current: moment.Moment) {
     return current && current.valueOf() > Date.now();
@@ -100,6 +113,7 @@ class McsDateRangePicker extends React.Component<
 
   getSelectedPresettedRange() {
     const { values, format, intl } = this.props;
+    const { ranges } = this.state;
 
     const selectedRange = ranges.find(range => {
       return range.from === values.from.raw() && range.to === values.to.raw();
@@ -125,6 +139,7 @@ class McsDateRangePicker extends React.Component<
   };
 
   handleDropdownMenuClick = (param: ClickParam) => {
+    const { ranges } = this.state;
     const { onChange } = this.props;
 
     if (param.key === 'CUSTOM') {
@@ -154,6 +169,7 @@ class McsDateRangePicker extends React.Component<
 
   renderRangesDropdown() {
     const { intl, disabled } = this.props;
+    const { ranges } = this.state;
 
     const menu = (
       <Menu onClick={this.handleDropdownMenuClick}>
