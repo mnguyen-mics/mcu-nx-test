@@ -15,7 +15,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
 import { Loading } from '../../../components';
 import { QueryInputUiCreationMode } from '../../../models/automations/automations';
-import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
@@ -29,8 +28,7 @@ export interface AutomationBuilderContainerProps {
 type Props = AutomationBuilderContainerProps &
   InjectedNotificationProps &
   RouteComponentProps<AutomationBuilderPageRouteParams> &
-  InjectedIntlProps &
-  InjectedFeaturesProps;
+  InjectedIntlProps;
 
 interface State {
   automationTreeData: StorylineNodeModel;
@@ -84,9 +82,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       automationFormData,
       saveOrUpdate,
       loading,
-      creation_mode,
-      hasFeature,
-      intl
+      creation_mode
     } = this.props;
     const { automationTreeData } = this.state;
 
@@ -121,8 +117,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
               updateAutomationData={this.handleUpdateAutomationData}
               viewer={false}
               creation_mode={creation_mode}
-              hasFeature={hasFeature}
-              intl={intl}
             />
           </Layout.Content>
         </Layout>
@@ -134,7 +128,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
 export default compose<Props, AutomationBuilderContainerProps>(
   injectIntl,
   injectNotifications,
-  injectFeatures,
   withRouter,
   connect(state => ({
     getWorkspace: SessionHelper.getWorkspace,
