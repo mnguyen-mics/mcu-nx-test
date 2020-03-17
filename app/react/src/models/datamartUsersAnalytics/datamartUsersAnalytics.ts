@@ -22,6 +22,7 @@ export interface Chart {
   Highcharts.SeriesBarDataOptions[] |
   Highcharts.SeriesColumnDataOptions[] ;
   tabs: TabItem[];
+  unit?: 'time' | '%';
 }
 
 export interface TabItem extends Chart {

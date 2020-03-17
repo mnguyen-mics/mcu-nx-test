@@ -81,6 +81,7 @@ export const generateLegend = (): Partial<Highcharts.LegendOptions> => {
 
 export const generateTooltip = (
   showTooltip: boolean = true,
+  useTimeFormatter: boolean = false
 ): Partial<Highcharts.TooltipOptions> => {
   return showTooltip
     ? {
@@ -94,6 +95,10 @@ export const generateTooltip = (
         hideDelay: 0,
         headerFormat: `<span style="font-size: 12px; font-weight: bold; margin-bottom: 13px;">{point.key}</span><br/><br/>`,
         pointFormat: `<span style="color:{point.color}; font-size: 20px; margin-right: 20px;">\u25CF</span> {series.name}: <b>{point.y}</b><br/>`,
+        pointFormatter: useTimeFormatter ? function callback() {
+          // tslint:disable-next-line
+          return `<span style="color:${this.color}; font-size: 20px; margin-right: 20px;">\u25CF</span> ${this.series.name}: <b>${moment.duration(this.y as number, "second").format("h[hr] m[min] s[s]")}</b><br/>`;
+        } : undefined
       }
     : { enabled: false };
 };
