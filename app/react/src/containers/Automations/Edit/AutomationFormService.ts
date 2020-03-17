@@ -147,8 +147,8 @@ export class AutomationFormService implements IAutomationFormService {
     } else {
       return automationPromise.then(({ data: automation }) => {
         return {
-					automation: automation,
-					exitCondition: INITIAL_AUTOMATION_DATA.exitCondition,
+          automation: automation,
+          exitCondition: INITIAL_AUTOMATION_DATA.exitCondition,
           automationTreeData: INITIAL_AUTOMATION_DATA.automationTreeData,
         };
       });
@@ -347,6 +347,53 @@ export class AutomationFormService implements IAutomationFormService {
   addNodeId = (id: string) => this.ids.push(`n-${id}`);
   addEdgeId = (id: string) => this.ids.push(`e-${id}`);
 
+  saveOrCreateExitCondition(
+		automationId: string,
+		datamartId: string,
+    exitConditionFormResource: ScenarioExitConditionFormResource,
+	): Promise<void> {
+		const initialQueryText = exitConditionFormResource.initialFormData.query_text;
+		const queryText = exitConditionFormResource.formData.query_text;
+
+		const createQueryAndExitCondition = () => {
+      return this._queryService
+        .createQuery(datamartId, exitConditionFormResource.formData)
+        .then(({ data: query }) => {
+          this._scenarioExitConditionService.createScenarioExitConditions(
+            automationId,
+            {
+              type: 'EVENT',
+              query_id: query.id,
+            },
+          );
+        });
+    };
+
+		if(initialQueryText && !queryText) {
+			return this._scenarioExitConditionService.deleteScenarioExitConditions(
+        automationId,
+        exitConditionFormResource.id,
+      );
+		} else if(queryText) {
+			if(initialQueryText && initialQueryText !== queryText) {
+				return this._scenarioExitConditionService
+          .deleteScenarioExitConditions(
+            automationId,
+            exitConditionFormResource.id,
+          )
+          .then(() => {
+						return createQueryAndExitCondition();
+					});
+			} else if(!initialQueryText) {
+				return createQueryAndExitCondition();
+			}
+
+			return Promise.resolve();
+		}
+
+		return Promise.resolve();
+	}
+
   saveOrCreateAutomation(
     organisationId: string,
     storageModelVersion: string,
@@ -382,46 +429,57 @@ export class AutomationFormService implements IAutomationFormService {
     if (storageModelVersion === 'v201506') {
       return saveOrCreatePromise();
     } else {
-      return saveOrCreatePromise().then(createdAutomation => {
-        const savedAutomationId = createdAutomation.data.id;
-        const datamartId = formData.automation.datamart_id;
+			return saveOrCreatePromise()
+        .then(createdAutomation => {
+					if(formData.automation.datamart_id) {
+						return this.saveOrCreateExitCondition(
+							createdAutomation.data.id, 
+							formData.automation.datamart_id,
+							formData.exitCondition
+						).then(() => createdAutomation);
+					}
+					return createdAutomation;
+				})
+        .then(createdAutomation => {
+          const savedAutomationId = createdAutomation.data.id;
+          const datamartId = formData.automation.datamart_id;
 
-        const treeData = formData.automationTreeData;
+          const treeData = formData.automationTreeData;
 
-        if (datamartId) {
-          return this.saveFirstNode(datamartId, savedAutomationId, treeData)
-            .then(firstNodeId => {
-              return this.iterate(
-                organisationId,
-                datamartId,
-                savedAutomationId,
-                treeData.out_edges,
-                firstNodeId,
-              );
-            })
-            .then(() => {
-              return this.ids.reduce((acc, id) => {
-                const formattedId = id.substr(2);
-                if (id.startsWith('e-')) {
+          if (datamartId) {
+            return this.saveFirstNode(datamartId, savedAutomationId, treeData)
+              .then(firstNodeId => {
+                return this.iterate(
+                  organisationId,
+                  datamartId,
+                  savedAutomationId,
+                  treeData.out_edges,
+                  firstNodeId,
+                );
+              })
+              .then(() => {
+                return this.ids.reduce((acc, id) => {
+                  const formattedId = id.substr(2);
+                  if (id.startsWith('e-')) {
+                    return acc.then(() =>
+                      this._scenarioService.deleteScenarioEdge(
+                        createdAutomation.data.id,
+                        formattedId,
+                      ),
+                    );
+                  }
                   return acc.then(() =>
-                    this._scenarioService.deleteScenarioEdge(
+                    this._scenarioService.deleteScenarioNode(
                       createdAutomation.data.id,
                       formattedId,
                     ),
                   );
-                }
-                return acc.then(() =>
-                  this._scenarioService.deleteScenarioNode(
-                    createdAutomation.data.id,
-                    formattedId,
-                  ),
-                );
-              }, Promise.resolve() as Promise<any>);
-            })
-            .then(() => createdAutomation);
-        }
-        return Promise.resolve(createdAutomation);
-      });
+                }, Promise.resolve() as Promise<any>);
+              })
+              .then(() => createdAutomation);
+          }
+          return Promise.resolve(createdAutomation);
+        });
     }
   }
 

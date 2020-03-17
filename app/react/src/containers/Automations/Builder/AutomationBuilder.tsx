@@ -30,8 +30,8 @@ import {
   TreeNodeOperations,
   UpdateNodeOperation,
   generateNodeProperties,
-	cleanLastAdded,
-	findLastAddedNode, 
+  cleanLastAdded,
+  findLastAddedNode,
 } from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
@@ -187,7 +187,7 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const { automationTreeData } = this.props;
-		const { automationTreeData: prevAutomationTreeData } = prevProps;	
+		const { automationTreeData: prevAutomationTreeData } = prevProps;
 
 		let cleanedAutomationTreeData = automationTreeData;
 		if(automationTreeData) {
@@ -201,7 +201,7 @@ class AutomationBuilder extends React.Component<Props, State> {
 			) {
 				cleanedAutomationTreeData = cleanLastAdded(automationTreeData);
 			}
-		} 
+		}
 
     if(this.state.viewNodeSelector === prevState.viewNodeSelector) {
       const model = new DiagramModel();

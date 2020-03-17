@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { ScenarioExitConditionResource } from '../models/automations/automations';
+import { ScenarioExitConditionResource, ScenarioExitConditionCreateResource } from '../models/automations/automations';
 
 export interface IScenarioExitConditionService {
   getScenarioExitConditions: (
@@ -14,7 +14,7 @@ export interface IScenarioExitConditionService {
 
   createScenarioExitConditions: (
     scenarioId: string,
-    exitCondition: ScenarioExitConditionResource,
+    exitCondition: ScenarioExitConditionCreateResource,
   ) => Promise<DataResponse<ScenarioExitConditionResource>>;
 
   deleteScenarioExitConditions: (
@@ -43,7 +43,7 @@ export class ScenarioExitConditionService
 
   createScenarioExitConditions(
     scenarioId: string,
-    exitCondition: ScenarioExitConditionResource,
+    exitCondition: ScenarioExitConditionCreateResource,
   ): Promise<DataResponse<ScenarioExitConditionResource>> {
     const endpoint = `scenarios/${scenarioId}/exit_conditions`;
     return ApiService.postRequest(endpoint, exitCondition);

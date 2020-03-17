@@ -171,11 +171,14 @@ export interface StorylineNodeResource {
   out_edges: StorylineNodeResource[];
 }
 
-export interface ScenarioExitConditionResource {
-	id: string;
-	scenario_id: string;
+export interface ScenarioExitConditionCreateResource {
 	type: 'EVENT';
 	query_id: string;
+}
+
+export interface ScenarioExitConditionResource extends ScenarioExitConditionCreateResource {
+	id: string;
+	scenario_id: string;
 }
 
 export interface ScenarioExitConditionFormData extends Partial<QueryCreateRequest> {}
