@@ -127,7 +127,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     this.getPluginsAndPresetList();
   }
 
-  componentDidUpdate(previousProps: JoinedProps<T>) {
+  componentWillReceiveProps(nextProps: JoinedProps<T>) {
     const {
       match: {
         params: { organisationId },
@@ -136,17 +136,17 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     } = this.props;
     const {
       match: {
-        params: { organisationId: previousOrganisationId },
+        params: { organisationId: nextOrganisationId },
       },
-      pluginInstanceId: previousPluginInstanceId,
-    } = previousProps;
+      pluginInstanceId: nextPluginInstanceId,
+    } = nextProps;
 
     if (
-      (organisationId !== previousOrganisationId ||
-        pluginInstanceId !== previousPluginInstanceId) &&
-      pluginInstanceId
+      (organisationId !== nextOrganisationId ||
+        pluginInstanceId !== nextPluginInstanceId) &&
+      nextPluginInstanceId
     ) {
-      this.fetchInitialValues(pluginInstanceId);
+      this.fetchInitialValues(nextPluginInstanceId);
     }
   }
 

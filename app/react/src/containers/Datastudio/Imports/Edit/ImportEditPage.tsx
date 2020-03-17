@@ -86,7 +86,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
     });
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       match: {
         params: { datamartId, importId },
@@ -94,15 +94,15 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
     } = this.props;
     const {
       match: {
-        params: { importId: previousImportId, datamartId: previousDatamartId },
+        params: { importId: nextImportId, datamartId: nextDatamartId },
       },
-    } = previousProps;
+    } = nextProps;
 
-    if (importId !== previousImportId || datamartId !== previousDatamartId) {
+    if (importId !== nextImportId || datamartId !== nextDatamartId) {
       this.setState({
         loading: true,
       });
-      this.loadInitialValues(datamartId, importId);
+      this.loadInitialValues(nextDatamartId, nextImportId);
     }
   }
 

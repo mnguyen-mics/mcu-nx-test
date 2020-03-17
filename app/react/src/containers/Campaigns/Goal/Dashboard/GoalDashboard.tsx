@@ -102,34 +102,34 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
     }
   }
 
-  componentDidUpdate(previousProps: JoinedProps) {
+  componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       history,
-      location: { pathname, search },
+      location: { search },
       match: {
-        params: { organisationId, goalId },
+        params: { organisationId },
       },
     } = this.props;
 
     const {
-      location: { search: previousSearch },
+      location: { pathname: nextPathname, search: nextSearch },
       match: {
-        params: { organisationId: previousOrganisationId },
+        params: { organisationId: nextOrganisationId, goalId: nextGoalId },
       },
-    } = previousProps;
+    } = nextProps;
 
     if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
     ) {
-      if (!isSearchValid(search, DATE_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, DATE_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== previousOrganisationId },
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, DATE_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        this.fetchGoal(goalId);
+        this.fetchGoal(nextGoalId);
       }
     }
   }

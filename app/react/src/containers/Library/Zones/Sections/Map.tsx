@@ -65,10 +65,9 @@ class MapboxGl extends React.Component<JoinedProps, State> {
     }
   }
 
-  componentDidUpdate(previousProps: MapProps) {
-    const { initialZones } = this.props;
-    if (initialZones !== previousProps.initialZones && initialZones) {
-      this.buildLayerFromGeoJSON(initialZones)
+  componentWillReceiveProps(nextProps: MapProps) {
+    if (this.props.initialZones !== nextProps.initialZones && nextProps.initialZones) {
+      this.buildLayerFromGeoJSON(nextProps.initialZones)
     }
   }
 

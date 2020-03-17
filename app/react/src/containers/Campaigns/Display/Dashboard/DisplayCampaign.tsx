@@ -44,7 +44,7 @@ class DisplayCampaign extends React.Component<Props, State> {
     this.fetchAllData(campaignId);
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       match: {
         params: { campaignId },
@@ -52,12 +52,12 @@ class DisplayCampaign extends React.Component<Props, State> {
     } = this.props;
     const {
       match: {
-        params: { campaignId: previousCampaignId },
+        params: { campaignId: nextCampaignId },
       },
-    } = previousProps;
+    } = nextProps;
 
-    if (campaignId !== previousCampaignId) {
-      this.fetchAllData(campaignId);
+    if (campaignId !== nextCampaignId) {
+      this.fetchAllData(nextCampaignId);
     }
   }
 

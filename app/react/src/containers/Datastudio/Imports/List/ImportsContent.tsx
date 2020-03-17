@@ -96,9 +96,9 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     }
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
-      location: { pathname, search, state },
+      location: { search },
       match: {
         params: { organisationId },
       },
@@ -107,32 +107,34 @@ class ImportContent extends React.Component<Props, ImportContentState> {
 
     const {
       location: {
-        search: previousSearch,
+        pathname: nextPathname,
+        search: nextSearch,
+        state: nextState,
       },
       match: {
-        params: { organisationId: previousOrganisationId },
+        params: { organisationId: nextOrganisationId },
       },
-    } = previousProps;
+    } = nextProps;
 
     if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId ||
-      (state && state.reloadDataSource === true)
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId ||
+      (nextState && nextState.reloadDataSource === true)
     ) {
       if (
-        !isSearchValid(search, this.getSearchSetting(organisationId))
+        !isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))
       ) {
         history.replace({
-          pathname: pathname,
+          pathname: nextPathname,
           search: buildDefaultSearch(
-            search,
-            this.getSearchSetting(organisationId),
+            nextSearch,
+            this.getSearchSetting(nextOrganisationId),
           ),
-          state: { reloadDataSource: organisationId !== previousOrganisationId },
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
         const { currentPage, pageSize, datamartId, keywords } = parseSearch(
-          search,
+          nextSearch,
           this.getSearchSetting(organisationId),
         );
         const selectedDatamartId = datamartId

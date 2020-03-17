@@ -85,40 +85,41 @@ class DisplayCampaignPage extends React.Component<
     }
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
-      location: { pathname, search },
+      location: { search },
       match: {
-        params: { campaignId, organisationId },
+        params: { campaignId },
       },
       history,
     } = this.props;
 
     const {
-      location: { search: previousSearch },
+      location: { pathname: nextPathname, search: nextSearch },
       match: {
         params: {
-          campaignId: previousCampaignId
+          campaignId: nextCampaignId,
+          organisationId: nextOrganisationId,
         },
       },
-    } = previousProps;
+    } = nextProps;
 
-    if (!compareSearches(search, previousSearch) || campaignId !== previousCampaignId) {
-      if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
+    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
+      if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
+          pathname: nextPathname,
           search: buildDefaultSearch(
-            search,
+            nextSearch,
             DISPLAY_DASHBOARD_SEARCH_SETTINGS,
           ),
         });
       } else {
         const filter = parseSearch<DateSearchSettings>(
-          search,
+          nextSearch,
           DISPLAY_DASHBOARD_SEARCH_SETTINGS,
         );
 
-        this.fetchAllData(organisationId, campaignId, filter);
+        this.fetchAllData(nextOrganisationId, nextCampaignId, filter);
       }
     }
   }

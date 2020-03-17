@@ -51,22 +51,22 @@ class AdServing extends React.Component<Props> {
     }
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
-      location: { pathname, search },
+      location: { search },
       history,
     } = this.props;
 
     const {
-      location: { search: previousSearch },
-    } = previousProps;
+      location: { pathname: nextPathname, search: nextSearch },
+    } = nextProps;
 
-    if (!compareSearches(search, previousSearch)) {
-      if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
+    if (!compareSearches(search, nextSearch)) {
+      if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
+          pathname: nextPathname,
           search: buildDefaultSearch(
-            search,
+            nextSearch,
             DISPLAY_DASHBOARD_SEARCH_SETTINGS,
           ),
         });
