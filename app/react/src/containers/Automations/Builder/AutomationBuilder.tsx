@@ -28,6 +28,8 @@ import {
   TreeNodeOperations,
   UpdateNodeOperation,
   generateNodeProperties,
+	cleanLastAdded,
+	findLastAddedNode, 
 } from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
@@ -173,6 +175,21 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const { automationTreeData } = this.props;
+		const { automationTreeData: prevAutomationTreeData } = prevProps;	
+
+		let cleanedAutomationTreeData = automationTreeData;
+		if(automationTreeData) {
+			const prevNodeWithLastAdded = automationTreeData ? findLastAddedNode(automationTreeData) : undefined;
+			const nodeWithLastAdded = prevAutomationTreeData ? findLastAddedNode(prevAutomationTreeData) : undefined;
+
+			if (
+				prevNodeWithLastAdded &&
+				nodeWithLastAdded &&
+				prevNodeWithLastAdded.node.id === nodeWithLastAdded.node.id
+			) {
+				cleanedAutomationTreeData = cleanLastAdded(automationTreeData);
+			}
+		} 
 
     if(this.state.viewNodeSelector === prevState.viewNodeSelector) {
       const model = new DiagramModel();
@@ -181,7 +198,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
       model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
       setTimeout(() => {
-        this.startAutomationTree(automationTreeData, model);
+        this.startAutomationTree(cleanedAutomationTreeData, model);
         this.engine.setDiagramModel(model);
         this.engine.repaintCanvas();
       }, 10);
