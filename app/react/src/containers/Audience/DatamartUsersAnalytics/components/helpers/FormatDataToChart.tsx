@@ -256,6 +256,9 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         if (chart.unit === 'time') {
           statValue = moment.duration(data[0][chart.metricName] as number, "second").format("h[hr] m[min] s[s]");
         } 
+        else if (chart.unit === '%') {
+          statValue = (data[0][chart.metricName] as number * 100).toFixed(2);
+        }
         else {
           statValue = data[0][chart.metricName] as number;
         }
