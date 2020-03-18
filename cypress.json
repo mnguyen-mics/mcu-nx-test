@@ -1,8 +1,0 @@
-{
-  "baseUrl": "https://navigator.mediarithmics.local",
-  "env": {
-    "apiDomain": "api.mediarithmics.local",
-    "navigatorDomain": "navigator.mediarithmics.local"
-  },
-  "watchForFileChanges": false
-}

@@ -22,13 +22,14 @@
     "mochawesome-report-generator": "^4.1.0"
   },
   "scripts": {
-    "cypress": "cypress open",
-    "cypress:report": "node scripts/report.js",
+    "cypress": "node_modules/.bin/cypress open",
     "build": "node_modules/.bin/webpack --output-filename out.js --entry ./cypress/integration/*.ts",
-    "cypress:open": "node_modules/.bin/cypress open",
-    "precypress:run": "npm run lint",
-    "cypress:run": "node_modules/.bin/cypress run",
+    "cy:run": "node_modules/.bin/cypress run",
+    "cy:run:chrome": "node_modules/.bin/cypress run --browser chrome",
+    "cy:run:firefox": "node_modules/.bin/cypress run --browser firefox",
+    "cy:report": "node ./scripts/report.js",
     "lint": "node_modules/.bin/tslint --project ./tsconfig.json",
+    "precypress:run": "npm run lint",
     "postlint": "npm run tsc",
     "test:ci": "node_modules/.bin/cypress run",
     "tsc": "node_modules/.bin/tsc --pretty --noEmit"

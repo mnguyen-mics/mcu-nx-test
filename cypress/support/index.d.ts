@@ -16,8 +16,20 @@ declare namespace Cypress {
      */
     switchOrg(organisationName: string): Chainable<any>;
 
+    /**
+     * Save local storage between two tests in a single test suite.
+     * Use this in afterEach method !
+     * @example
+     * cy.saveLocalStorageCache()
+     */
     saveLocalStorageCache(): void;
 
+    /**
+     * Restore local storage between two tests in a single test suite.
+     * Use this in beforeEach method !
+     * @example
+     * cy.restoreLocalStorageCache()
+     */
     restoreLocalStorageCache(): void;
 
     fillExpertQuerySegmentForm(segmentName: string): void;
