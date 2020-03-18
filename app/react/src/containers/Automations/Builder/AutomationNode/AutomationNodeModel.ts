@@ -11,7 +11,7 @@ import QueryAutomationForm from './Edit/QueryForm/QueryForm';
 import WaitForm from './Edit/WaitForm/WaitForm';
 import AddToSegmentAutomationForm from './Edit/AddToSegmentNodeForm/AddToSegmentSegmentAutomationForm';
 import DeleteFromSegmentAutomationForm from './Edit/DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
-import ReactToEventAutomationForm from '../ReactToEventAutomationForm';
+import ReactToEventAutomationForm from './Edit/ReactToEventAutomationForm/ReactToEventAutomationForm';
 import { QueryInputUiCreationMode } from '../../../../models/automations/automations';
 
 export default class AutomationNodeModel extends NodeModel {
@@ -47,7 +47,7 @@ export default class AutomationNodeModel extends NodeModel {
 
     this.icon = iconType;
 
-    if (datamartId === undefined || title === undefined || color === undefined || storylineNodeModel === undefined) {
+    if (datamartId === undefined || title === undefined || color === undefined || storylineNodeModel === undefined) {
       throw new Error('missing parameters') 
     }
     this.datamartId = datamartId;

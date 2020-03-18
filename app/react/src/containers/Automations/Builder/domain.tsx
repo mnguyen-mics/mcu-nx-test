@@ -72,8 +72,36 @@ export interface NodeOperation {
   execute(automationData: StorylineNodeModel): StorylineNodeModel;
 }
 
-const cleanLastAdded = (automationData: StorylineNodeModel): StorylineNodeModel => {
-  const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
+
+export const findLastAddedNode = (automationData: StorylineNodeModel): StorylineNodeModel | undefined => {
+	if(automationData.out_edges.length > 0) {
+		const findNode = (nodeModel: StorylineNodeModel): StorylineNodeModel | undefined => {
+			if(nodeModel.out_edges.length === 0) {
+				return undefined;
+			} else {
+				if (isScenarioNodeShape(nodeModel.node)) {
+					if(nodeModel.node.last_added_node)
+						return nodeModel;
+				}
+				return nodeModel.out_edges.reduce((previous, current) => {
+          if (
+            previous &&
+            isScenarioNodeShape(previous.node) &&
+            previous.node.last_added_node
+          )
+            return previous;
+          return findNode(current);
+        }, undefined as StorylineNodeModel | undefined);
+			}
+		};
+
+		return findNode(automationData);
+	}
+
+	return isScenarioNodeShape(automationData.node) && automationData.node.last_added_node ? automationData : undefined;
+}
+
+export const cleanLastAdded = (automationData: StorylineNodeModel): StorylineNodeModel => {   const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
     (child) => {
       if(child.out_edges.length === 0) {
         return child;

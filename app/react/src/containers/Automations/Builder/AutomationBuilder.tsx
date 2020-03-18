@@ -6,7 +6,7 @@ import {
   LabelModel,
 } from 'storm-react-diagrams';
 import { ROOT_NODE_POSITION } from '../../QueryTool/JSONOTQL/domain';
-import { Col } from 'antd';
+import { Col, Popconfirm } from 'antd';
 import { McsIcon, ButtonStyleless } from '../../../components';
 import SimplePortFactory from '../../QueryTool/JSONOTQL/Diagram/Port/SimplePortFactory';
 import AutomationNodeFactory from './AutomationNode/AutomationNodeFactory';
@@ -28,13 +28,16 @@ import {
   TreeNodeOperations,
   UpdateNodeOperation,
   generateNodeProperties,
+	cleanLastAdded,
+	findLastAddedNode, 
 } from './domain';
 import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 import { AutomationFormDataType } from './AutomationNode/Edit/domain';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
+import { InjectedFeaturesProps } from '../../Features';
 
 
 export const messages = defineMessages({
@@ -45,6 +48,22 @@ export const messages = defineMessages({
   ifNodeTruePathLabel: {
     id: 'automation.builder.ifNode.label.true',
     defaultMessage: 'If Condition True',
+  },
+  addGlobalExitCondition: {
+    id: 'automation.builder.exitCondition.new',
+    defaultMessage: 'Add Exit condition'
+  },
+  deleteGlobalExitConditionTitle: {
+    id: 'automation.builder.exitCondition.delete.info',
+    defaultMessage: 'Are you sure you want to delete the exit condition ?'
+  },
+  deleteGlobalExitConditionConfirm: {
+    id: 'automation.builder.exitCondition.delete.confirm',
+    defaultMessage: 'Yes'
+  },
+  deleteGlobalExitConditionCancel: {
+    id: 'automation.builder.exitCondition.delete.cancel',
+    defaultMessage: 'No'
   },
 });
 
@@ -78,7 +97,9 @@ interface State {
   viewNodeSelector: boolean;
 }
 
-type Props = AutomationBuilderProps;
+type Props = AutomationBuilderProps
+& InjectedFeaturesProps
+& InjectedIntlProps;
 
 class AutomationBuilder extends React.Component<Props, State> {
   engine = new DiagramEngine();
@@ -154,6 +175,21 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const { automationTreeData } = this.props;
+		const { automationTreeData: prevAutomationTreeData } = prevProps;	
+
+		let cleanedAutomationTreeData = automationTreeData;
+		if(automationTreeData) {
+			const prevNodeWithLastAdded = automationTreeData ? findLastAddedNode(automationTreeData) : undefined;
+			const nodeWithLastAdded = prevAutomationTreeData ? findLastAddedNode(prevAutomationTreeData) : undefined;
+
+			if (
+				prevNodeWithLastAdded &&
+				nodeWithLastAdded &&
+				prevNodeWithLastAdded.node.id === nodeWithLastAdded.node.id
+			) {
+				cleanedAutomationTreeData = cleanLastAdded(automationTreeData);
+			}
+		} 
 
     if(this.state.viewNodeSelector === prevState.viewNodeSelector) {
       const model = new DiagramModel();
@@ -162,7 +198,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       model.setOffsetX(this.engine.getDiagramModel().getOffsetX());
       model.setOffsetY(this.engine.getDiagramModel().getOffsetY());
       setTimeout(() => {
-        this.startAutomationTree(automationTreeData, model);
+        this.startAutomationTree(cleanedAutomationTreeData, model);
         this.engine.setDiagramModel(model);
         this.engine.repaintCanvas();
       }, 10);
@@ -342,9 +378,19 @@ class AutomationBuilder extends React.Component<Props, State> {
     });
   };
 
+  onGlobalExitConditionSelect = () => {
+    // PLACEHOLDER, This will be implemented in a future story
+    return;
+  }
+  
+  onGlobalExitConditionDelete = () => {
+    // PLACEHOLDER, This will be implemented in a future story
+    return;
+  };
+  
   render() {
     const { viewNodeSelector } = this.state;
-    const { viewer } = this.props;
+    const { hasFeature, viewer, intl: { formatMessage } } = this.props;
 
     let content = (
       <div className={`automation-builder`} ref={this.div}>
@@ -364,7 +410,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           <div className="button-helpers top">
             <ButtonStyleless
               onClick={this.onNodeSelectorClick}
-              className="helper"
+              className="helper nodes-drawer"
             >
               <McsIcon
                 type={'chevron-right'}
@@ -373,13 +419,36 @@ class AutomationBuilder extends React.Component<Props, State> {
                     ? {}
                     : {
                       transform: 'rotate(180deg)',
-                      transition: 'all 0.5ms ease',
+                      transition: 'all 0.5s ease', // 0.5ms really noticeable ??
                     }
                 }
               />{' '}
             </ButtonStyleless>
           </div>
 
+          {hasFeature('automations-global-exit-condition') && (
+            <div className="button-helpers bottom">
+              <div className="helper exit-condition">
+                <div
+                  className={'edit'}
+                  onClick={this.onGlobalExitConditionSelect}
+                >
+                  <FormattedMessage {...messages.addGlobalExitCondition} />
+                </div>
+                <Popconfirm
+                  title={formatMessage(messages.deleteGlobalExitConditionTitle)}
+                  onConfirm={this.onGlobalExitConditionDelete}
+                  placement={"topRight"}
+                  okText={formatMessage(messages.deleteGlobalExitConditionConfirm)}
+                  cancelText={formatMessage(messages.deleteGlobalExitConditionCancel)}
+                >
+                  <div className={'delete'}>
+                    <McsIcon type={'close'}/>
+                  </div>
+                </Popconfirm>
+              </div>
+            </div>
+          )}
         </Col>
         <Col
           span={viewNodeSelector ? 6 : 24}
