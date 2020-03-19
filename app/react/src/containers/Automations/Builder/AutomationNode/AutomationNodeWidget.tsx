@@ -209,7 +209,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               ...scenarioNodeShape.formData,
               datamart_id: scenarioNodeShape.formData.datamart_id ? scenarioNodeShape.formData.datamart_id : datamartId,
               name: scenarioNodeShape.name,
-              events: [],
+							events: [],
+							fieldNodeForm: [],
             } as any;
             size = scenarioNodeShape.type === 'QUERY_INPUT'
               ? scenarioNodeShape.ui_creation_mode === 'EVENT'

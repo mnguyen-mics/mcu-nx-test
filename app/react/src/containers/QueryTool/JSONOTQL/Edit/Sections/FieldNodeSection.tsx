@@ -23,7 +23,8 @@ export interface FieldNodeSectionProps {
   formChange: (fieldName: string, fieldValue: any) => void;
   objectType: ObjectLikeTypeInfoResource;
   datamartId: string;
-  runtimeSchemaId: string;
+	runtimeSchemaId: string;
+	formName?: string;
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -41,7 +42,8 @@ class FieldNodeSection extends React.Component<JoinedProps> {
       booleanOperator,
       objectType,
       datamartId,
-      runtimeSchemaId
+			runtimeSchemaId,
+			formName
     } = this.props;
 
     const handleOnClick = () =>
@@ -66,7 +68,8 @@ class FieldNodeSection extends React.Component<JoinedProps> {
               availableFields={availableFields}
               objectType={objectType}
               datamartId={datamartId}
-              runtimeSchemaId={runtimeSchemaId}
+							runtimeSchemaId={runtimeSchemaId}
+							formName={formName}
             />
           </div>
         </div>
