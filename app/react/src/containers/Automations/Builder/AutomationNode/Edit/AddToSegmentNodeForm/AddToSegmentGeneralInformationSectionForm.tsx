@@ -101,12 +101,11 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props, S
           <FormInputField
             name="ttl.value"
             component={FormInput}
-            validate={[isRequired, isValidInteger]}
+            validate={[isValidInteger]}
             formItemProps={{
               label: formatMessage(
                 messages.audienceSegmentTTLTitle,
               ),
-              required: true,
             }}
             inputProps={{
               disabled: disabled,
@@ -186,7 +185,7 @@ export const messages = defineMessages({
   },
   audienceSegmentTTLSubtitle: {
     id: 'automation.builder.node.addToSegmentForm.ttl.subtitle',
-    defaultMessage: "Time during which the user will belong to the segment (0 means forever).",
+    defaultMessage: "Time during which the user will belong to the segment (0 means forever). If not filled the default lifetime of the associated segment will be used.",
   },
   audienceSegmentTTLPlaceholder: {
     id: 'automation.builder.node.addToSegmentForm.ttl.placeholder',

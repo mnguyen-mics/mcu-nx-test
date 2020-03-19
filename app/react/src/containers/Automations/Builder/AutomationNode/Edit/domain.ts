@@ -45,7 +45,7 @@ export interface WaitFormData extends DefaultFormData {
 export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormData = {
   name: '',
   ttl: {
-    value: '',
+    value: undefined,
     unit: 'days',
   }
 }
@@ -159,7 +159,7 @@ export interface EmailCampaignAutomationFormData extends DefaultFormData, EmailC
 
 export interface AddToSegmentAutomationFormData extends DefaultFormData {
   ttl: {
-    value: string,
+    value?: string,
     unit: 'days' | 'months',
   }
 }

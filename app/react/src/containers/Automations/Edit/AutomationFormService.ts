@@ -209,10 +209,11 @@ export class AutomationFormService implements IAutomationFormService {
                     const initialValues: AddToSegmentAutomationFormData = {
                       name: segment.name,
                       ttl: {
-                        value:
-                          duration._months > 0
+                        value: n.user_segment_expiration_period
+                          ? duration._months > 0
                             ? duration._months
-                            : duration.asDays(),
+                            : duration.asDays()
+                          : undefined,
                         unit: duration._months > 0 ? 'months' : 'days',
                       },
                     };
@@ -695,9 +696,9 @@ export class AutomationFormService implements IAutomationFormService {
         y: node.y,
         type: node.type,
         user_list_segment_id: audienceSegmentId,
-        user_segment_expiration_period: moment
+        user_segment_expiration_period: node.formData.ttl.value ? moment
           .duration(+node.formData.ttl.value, node.formData.ttl.unit)
-          .toISOString(),
+          .toISOString() : undefined,
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
     } else if (isDeleteFromSegmentNode(node)) {
