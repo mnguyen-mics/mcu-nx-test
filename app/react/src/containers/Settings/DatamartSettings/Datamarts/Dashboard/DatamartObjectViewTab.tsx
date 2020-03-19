@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Row, Col, Spin, Button, Alert, Upload } from 'antd';
 import {
   RuntimeSchemaResource,
-  RuntimeSchemaValidationResource,
   SchemaDecoratorResource,
+  RuntimeSchemaValidationInfoResource,
 } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import moment from 'moment';
 import { Loading, McsIcon } from '../../../../../components';
@@ -31,7 +31,7 @@ interface State {
   schemas: RuntimeSchemaResource[];
   selectedSchemaText?: string;
   selectedSchema?: RuntimeSchemaResource;
-  schemaValidation?: RuntimeSchemaValidationResource;
+  schemaValidation?: RuntimeSchemaValidationInfoResource;
   schemaDecorator?: SchemaDecoratorResource[];
   uploadingDecorator: boolean;
   changedSchemaValue?: string;
@@ -342,7 +342,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     const validationError =
       schemaValidation &&
       (schemaValidation.schema_errors.length ||
-        schemaValidation.tree_indices.find(
+        schemaValidation.tree_index_operations.find(
           ti => ti.init_strategy !== 'FORCE_NO_BUILD',
         ));
 
