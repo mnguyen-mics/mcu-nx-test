@@ -251,14 +251,28 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
             }
           </Tabs>)
       case 'SINGLE_STAT':
-        const formatedTime = moment.duration(data[0][chart.metricName] as number, "second").format("h[hr] m[min] s[s]");
+        let statValue;
+
+        if (chart.unit === 'time') {
+          statValue = moment.duration(data[0][chart.metricName] as number, "second").format("h[hr] m[min] s[s]");
+        } 
+        else if (chart.unit === '%') {
+          statValue = (data[0][chart.metricName] as number * 100).toFixed(2);
+        }
+        else {
+          statValue = data[0][chart.metricName] as number;
+        }
+        
         return (
           <div className="mcs-metricCounter">
             <div className="mcs-metricCounter_title">
               {chart.options.title}
             </div>
             <div className="mcs-metricCounter_result">
-                <Statistic className={'datamartUsersAnalytics_charts_singleStat'} value={formatedTime} />
+                <Statistic className={'datamartUsersAnalytics_charts_singleStat'} 
+                           value={statValue} 
+                           precision={2} 
+                           suffix={chart.unit === '%' ? chart.unit : undefined}/>
             </div>
           </div>
         )

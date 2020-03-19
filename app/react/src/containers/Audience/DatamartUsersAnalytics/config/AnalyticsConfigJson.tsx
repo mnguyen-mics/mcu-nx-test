@@ -92,9 +92,79 @@ export const averageSessionDurationConfig = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: 'Average session duration',
+          title: 'Average session duration'
         },
+        unit: 'time',
         metricName: 'avg_session_duration',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+  {
+    layout: {
+      'i': '0',
+      'h': 1,
+      'static': false,
+      'w': 3,
+      'x': 3,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'SINGLE_STAT',
+        options: {
+          title: 'Average Events per Session',
+        },
+        metricName: 'avg_number_of_user_events',
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+  {
+    layout: {
+      'i': '0',
+      'h': 1,
+      'static': false,
+      'w': 3,
+      'x': 6,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'SINGLE_STAT',
+        options: {
+          title: 'Average Conversion Rate',
+        },
+        unit: '%',
+        metricName: 'conversion_rate',
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -826,7 +896,7 @@ export const acquisitionEngagementConfig = [
           },
           tooltip: {
             shared: true,
-            ...generateTooltip()
+            ...generateTooltip(true, true)
           }
         },
         dimensions: ['origin_source'],
