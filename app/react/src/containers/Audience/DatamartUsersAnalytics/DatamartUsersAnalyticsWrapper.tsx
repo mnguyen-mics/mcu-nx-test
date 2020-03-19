@@ -11,6 +11,7 @@ import {
   DATE_SEARCH_SETTINGS
 } from '../../../utils/LocationSearchHelper';
 import McsMoment from '../../../utils/McsMoment';
+import SegmentFilter from './components/segmentFilter';
 
 interface DatamartAnalysisProps {
   title?: string;
@@ -112,7 +113,8 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
           </Col>
         </Row>
         { showFilter && <Row>
-          <Col className="text-right">
+          <SegmentFilter />
+          <Col className="text-right" offset={6}>
               {this.renderDatePicker()}
           </Col>
         </Row>}
