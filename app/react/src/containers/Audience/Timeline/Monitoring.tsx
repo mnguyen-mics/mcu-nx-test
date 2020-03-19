@@ -69,12 +69,12 @@ class Monitoring extends React.Component<Props, State> {
         userAccountCompartments: [],
         userPointList: [],
         userSegmentList: [],
-        userChoices: {userConsents: [], processings: []},
-        userProfile: {type: undefined, profile: {}},
+        userChoices: { userConsents: [], processings: [] },
+        userProfile: { type: undefined, profile: {} },
         lastSeen: 0,
         userIdentifier: {
           type: '',
-          id: ''
+          id: '',
         },
         isUserFound: false,
       },
@@ -109,10 +109,11 @@ class Monitoring extends React.Component<Props, State> {
             isLoading: false,
           });
         })
-        .catch(() => {
+        .catch(error => {
           this.setState({
             isLoading: false,
           });
+          this.props.notifyError(error);
         });
     }
   }
@@ -121,11 +122,7 @@ class Monitoring extends React.Component<Props, State> {
     const {
       location: { search, pathname },
       match: {
-        params: {
-          identifierType,
-          identifierId,
-          organisationId,
-        },
+        params: { identifierType, identifierId, organisationId },
       },
       selectedDatamart,
     } = this.props;
@@ -158,7 +155,7 @@ class Monitoring extends React.Component<Props, State> {
               isLoading: false,
             });
           })
-          .catch(() => {
+          .catch(error => {
             this.setState({
               monitoringData: {
                 userAgentList: [],
@@ -167,17 +164,18 @@ class Monitoring extends React.Component<Props, State> {
                 userAccountCompartments: [],
                 userPointList: [],
                 userSegmentList: [],
-                userChoices: {userConsents: [], processings: []},
-                userProfile: {type: undefined, profile: {}},
+                userChoices: { userConsents: [], processings: [] },
+                userProfile: { type: undefined, profile: {} },
                 lastSeen: 0,
                 userIdentifier: {
                   type: '',
-                  id: ''
+                  id: '',
                 },
                 isUserFound: false,
               },
               isLoading: false,
             });
+            this.props.notifyError(error);
           });
       }
     }
@@ -284,7 +282,7 @@ class Monitoring extends React.Component<Props, State> {
                     />
                     <UserChoicesCard
                       dataSource={monitoringData.userChoices}
-                      isLoading={isLoading}                   
+                      isLoading={isLoading}
                     />
                   </Col>
                 </Row>
@@ -309,8 +307,5 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose<Props, MonitoringProps>(
   withRouter,
   injectNotifications,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(Monitoring);

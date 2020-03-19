@@ -91,7 +91,6 @@ const messages = defineMessages({
 });
 
 class DatamartObjectViewTab extends React.Component<Props, State> {
-  
   @lazyInject(TYPES.IRuntimeSchemaService)
   private _runtimeSchemaService: IRuntimeSchemaService;
 
@@ -101,7 +100,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       loadingList: true,
       loadingSingle: true,
       schemas: [],
-      uploadingDecorator: false
+      uploadingDecorator: false,
     };
   }
 
@@ -123,78 +122,75 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
 
   fetchSchemas = (datamartId: string, shouldSelectLive = true) => {
     this.setState({ loadingList: true });
-    return this._runtimeSchemaService.getRuntimeSchemas(datamartId)
+    return this._runtimeSchemaService
+      .getRuntimeSchemas(datamartId)
       .then(r => {
         this.setState({ loadingList: false, schemas: r.data });
         const liveSchema = r.data.find(s => s.status === 'LIVE');
         if (shouldSelectLive && liveSchema) {
-          this.setState({  selectedSchema: liveSchema  });
+          this.setState({ selectedSchema: liveSchema });
           return this.fetchSchemaDetail(datamartId, liveSchema.id);
         }
         return this.fetchSchemaDetail(datamartId, r.data[0].id);
       })
       .catch(err => {
-        this.setState({  loadingList: false });
+        this.setState({ loadingList: false });
         this.props.notifyError(err);
       });
   };
 
   fetchSchemaDetail = (datamartId: string, schemaId: string) => {
     this.setState({ loadingSingle: true });
-    return this._runtimeSchemaService.getRuntimeSchemaText(datamartId, schemaId)
+    return this._runtimeSchemaService
+      .getRuntimeSchemaText(datamartId, schemaId)
       .then(r => {
         this.setState({ selectedSchemaText: r });
-        return this._runtimeSchemaService.getSchemaDecorator(
-          datamartId,
-          schemaId,
-        ).then(decorators => {
-          this.setState({
-            
-            loadingSingle: false,
-            schemaDecorator: decorators.data,
+        return this._runtimeSchemaService
+          .getSchemaDecorator(datamartId, schemaId)
+          .then(decorators => {
+            this.setState({
+              loadingSingle: false,
+              schemaDecorator: decorators.data,
+            });
           });
-        });
       })
       .catch(err => {
-        this.setState({  loadingSingle: false });
+        this.setState({ loadingSingle: false });
         this.props.notifyError(err);
       });
   };
 
   selectSchema = (schema: RuntimeSchemaResource) => {
-    this.setState({  selectedSchema: schema });
+    this.setState({ selectedSchema: schema });
     return this.fetchSchemaDetail(schema.datamart_id, schema.id);
   };
 
   createNewSchemaVersion = (schema: RuntimeSchemaResource) => () => {
     this.setState({ loadingList: true, loadingSingle: true });
-    return this._runtimeSchemaService.cloneRuntimeSchema(
-      schema.datamart_id,
-      schema.id,
-    ).then(s => {
-      return Promise.all([
-        this.fetchSchemaDetail(s.data.datamart_id, s.data.id),
-        this.fetchSchemas(s.data.datamart_id, false),
-      ]);
-    })
-    .catch(err => {
-      this.props.notifyError(err);
-      this.setState({  loadingList: false, loadingSingle: false })
-    });
+    return this._runtimeSchemaService
+      .cloneRuntimeSchema(schema.datamart_id, schema.id)
+      .then(s => {
+        return Promise.all([
+          this.fetchSchemaDetail(s.data.datamart_id, s.data.id),
+          this.fetchSchemas(s.data.datamart_id, false),
+        ]);
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({ loadingList: false, loadingSingle: false });
+      });
   };
 
   validateSchema = () => {
     const { selectedSchema } = this.state;
     if (selectedSchema) {
       this.setState({ loadingSingle: true });
-      return this._runtimeSchemaService.validateRuntimeSchema(
-        selectedSchema.datamart_id,
-        selectedSchema.id,
-      )
+      return this._runtimeSchemaService
+        .validateRuntimeSchema(selectedSchema.datamart_id, selectedSchema.id)
         .then(r =>
-          this.setState({  schemaValidation: r.data, loadingSingle: false }),
+          this.setState({ schemaValidation: r.data, loadingSingle: false }),
         )
-        .catch(() => this.setState({  loadingSingle: false }));
+        .catch(() => this.setState({ loadingSingle: false }));
     }
     return Promise.resolve();
   };
@@ -203,15 +199,23 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     const { selectedSchema, changedSchemaValue } = this.state;
     if (selectedSchema && changedSchemaValue) {
       this.setState({ loadingSingle: true });
-      return this._runtimeSchemaService.updateRuntimeSchema(
-        selectedSchema.datamart_id,
-        selectedSchema.id,
-        changedSchemaValue
-      )
-        .then(r =>
-          this.setState({  selectedSchemaText: changedSchemaValue, changedSchemaValue: undefined, loadingSingle: false }),
+      return this._runtimeSchemaService
+        .updateRuntimeSchema(
+          selectedSchema.datamart_id,
+          selectedSchema.id,
+          changedSchemaValue,
         )
-        .catch((err) => {this.props.notifyError(err); this.setState({ loadingSingle: false })});
+        .then(r =>
+          this.setState({
+            selectedSchemaText: changedSchemaValue,
+            changedSchemaValue: undefined,
+            loadingSingle: false,
+          }),
+        )
+        .catch(err => {
+          this.props.notifyError(err);
+          this.setState({ loadingSingle: false });
+        });
     }
     return Promise.resolve();
   };
@@ -220,18 +224,15 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     const { selectedSchema, schemaValidation } = this.state;
     if (selectedSchema && schemaValidation) {
       this.setState({
-        
         loadingSingle: true,
         loadingList: true,
         schemaValidation: undefined,
       });
-      return this._runtimeSchemaService.publishRuntimeSchema(
-        selectedSchema.datamart_id,
-        selectedSchema.id,
-      )
+      return this._runtimeSchemaService
+        .publishRuntimeSchema(selectedSchema.datamart_id, selectedSchema.id)
         .then(r => this.fetchSchemas(r.data.datamart_id, true))
         .catch(() =>
-          this.setState({  loadingSingle: false, loadingList: false }),
+          this.setState({ loadingSingle: false, loadingList: false }),
         );
     }
     return Promise.resolve();
@@ -280,34 +281,47 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     });
   };
 
-  uploadDecorator = async (file: UploadFile) => {
+  uploadDecorator = (file: UploadFile) => {
     const { datamartId } = this.props;
     const { selectedSchema } = this.state;
-    if (!selectedSchema || !datamartId) {
-      return Promise.resolve()
+    if (!selectedSchema || !datamartId) {
+      return Promise.resolve();
     }
-    this.setState({ uploadingDecorator: true })
+    this.setState({ uploadingDecorator: true });
 
-    const fileContent = await this.onFileUpdate(file);
-  
-    return this._runtimeSchemaService.createSchemaDecorator(selectedSchema.datamart_id, selectedSchema.id, fileContent as string)
-      .then(() => this._runtimeSchemaService.getSchemaDecorator(
-          selectedSchema.datamart_id,
-          selectedSchema.id,
-        )
-      )
-      .then((decorators) => {
-        this.setState({  uploadingDecorator: false, schemaDecorator: decorators.data })
+    return this.onFileUpdate(file)
+      .then(fileContent => {
+        return this._runtimeSchemaService
+          .createSchemaDecorator(
+            selectedSchema.datamart_id,
+            selectedSchema.id,
+            fileContent as string,
+          )
+          .then(() =>
+            this._runtimeSchemaService.getSchemaDecorator(
+              selectedSchema.datamart_id,
+              selectedSchema.id,
+            ),
+          )
+          .then(decorators => {
+            this.setState({
+              uploadingDecorator: false,
+              schemaDecorator: decorators.data,
+            });
+          })
+          .catch(err => {
+            this.props.notifyError(err);
+            this.setState({ uploadingDecorator: false });
+          });
       })
-      .catch(err => {
-        this.props.notifyError(err);
-        this.setState({  uploadingDecorator: false })
-      })
-  }
+      .catch(e => {
+        this.props.notifyError(e);
+      });
+  };
 
   onSchemaChange = (value: string) => {
-    this.setState({  changedSchemaValue: value })
-  }
+    this.setState({ changedSchemaValue: value });
+  };
 
   onClickOnSelect = (schema: RuntimeSchemaResource) => () =>
     this.selectSchema(schema);
@@ -320,7 +334,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       selectedSchema,
       selectedSchemaText,
       schemaValidation,
-      changedSchemaValue
+      changedSchemaValue,
     } = this.state;
 
     let additionnalButton;
@@ -332,11 +346,10 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       accept: '.csv',
       showUploadList: false,
       beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
-        this.uploadDecorator(file)
+        this.uploadDecorator(file);
         return false;
       },
     };
-    
 
     const isInValidationMode = !!schemaValidation;
     const validationError =
@@ -347,14 +360,16 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
         ));
 
     if (
-        changedSchemaValue && selectedSchema &&
-      selectedSchema.status === 'DRAFT') {
-        additionnalButton = (
-          <Button size="small" type="primary" onClick={this.saveSchema}>
-            <FormattedMessage {...messages.saveButton} />
-          </Button>
-        );
-      }
+      changedSchemaValue &&
+      selectedSchema &&
+      selectedSchema.status === 'DRAFT'
+    ) {
+      additionnalButton = (
+        <Button size="small" type="primary" onClick={this.saveSchema}>
+          <FormattedMessage {...messages.saveButton} />
+        </Button>
+      );
+    }
 
     if (
       !changedSchemaValue &&
@@ -463,7 +478,9 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                     showGutter: true,
                   }}
                   onChange={this.onSchemaChange}
-                  value={changedSchemaValue ? changedSchemaValue : selectedSchemaText}
+                  value={
+                    changedSchemaValue ? changedSchemaValue : selectedSchemaText
+                  }
                 />
                 <Row className="decorators">
                   <Col span={12} className="text">

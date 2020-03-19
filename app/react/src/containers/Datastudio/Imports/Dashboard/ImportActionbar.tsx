@@ -109,7 +109,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     });
   };
 
-  handleOnImportButton = async () => {
+  handleOnImportButton = () => {
     const {
       match: {
         params: { organisationId, datamartId, importId },
@@ -123,36 +123,42 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       const formData = new FormData();
 
       for (const file of importFile) {
-        const fileContent = await this.onFileUpdate(file);
-        const formattedFile = new Blob([fileContent as any], {
-          type:
-            importObject.mime_type === 'TEXT_CSV'
-              ? 'text/csv'
-              : 'application/x-ndjson',
-        });
-        formData.append('file', formattedFile, file.name);
-        if (importObject.mime_type === 'TEXT_CSV') {
-          formData.append('type', 'text/csv');
-        }
-        if (importObject.mime_type === 'APPLICATION_X_NDJSON') {
-          formData.append('type', 'application/x-ndjson');
-        }
-
-        this._importService
-          .createImportExecution(datamartId, importId, formData)
-          .then(item => {
-            this.setState({
-              isLoading: false,
-              isModalOpen: false,
-              importFile: [],
+        this.onFileUpdate(file)
+          .then(fileContent => {
+            const formattedFile = new Blob([fileContent as any], {
+              type:
+                importObject.mime_type === 'TEXT_CSV'
+                  ? 'text/csv'
+                  : 'application/x-ndjson',
             });
-            history.push(
-              `/v2/o/${organisationId}/datastudio/datamart/${datamartId}/imports/${importId}`,
-            );
+
+            formData.append('file', formattedFile, file.name);
+            if (importObject.mime_type === 'TEXT_CSV') {
+              formData.append('type', 'text/csv');
+            }
+            if (importObject.mime_type === 'APPLICATION_X_NDJSON') {
+              formData.append('type', 'application/x-ndjson');
+            }
+
+            this._importService
+              .createImportExecution(datamartId, importId, formData)
+              .then(item => {
+                this.setState({
+                  isLoading: false,
+                  isModalOpen: false,
+                  importFile: [],
+                });
+                history.push(
+                  `/v2/o/${organisationId}/datastudio/datamart/${datamartId}/imports/${importId}`,
+                );
+              })
+              .catch(err => {
+                this.setState({ isLoading: false, importFile: [] });
+                this.props.notifyError(err);
+              });
           })
-          .catch(err => {
-            this.setState({ isLoading: false, importFile: [] });
-            this.props.notifyError(err);
+          .catch(e => {
+            this.props.notifyError(e);
           });
       }
     }

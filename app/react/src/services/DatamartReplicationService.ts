@@ -85,11 +85,11 @@ export class DatamartReplicationService implements IDatamartReplicationService {
     const endpoint = `datamarts/${datamartId}/replications/${datamartReplicationId}`;
     return ApiService.deleteRequest(endpoint);
   }
-  async uploadDatamartReplicationCredentials(
+  uploadDatamartReplicationCredentials(
     datamartId: string,
     datamartReplicationId: string,
     credentials: any = {},
-  ): Promise<any> {
+  ): Promise<FormData | void> {
     const endpoint = `datamarts/${datamartId}/replications/${datamartReplicationId}/credentials`;
     if (credentials.fileName && credentials.fileContent) {
       const formData = new FormData();
@@ -101,6 +101,7 @@ export class DatamartReplicationService implements IDatamartReplicationService {
 
       return ApiService.postRequest(endpoint, formData);
     }
+    return Promise.reject();
   }
   getJobExecutions(
     datamartId: string,
