@@ -12,10 +12,6 @@ import {
   ReferenceTableService,
 } from './../services/ReferenceTableService';
 import {
-  ITableSchemaService,
-  TableSchemaService,
-} from './../services/TableSchemaService';
-import {
   IBidOptimizerService,
   BidOptimizerService,
 } from './../services/Library/BidOptimizerService';
@@ -351,9 +347,6 @@ container
 container
   .bind<IBidOptimizerService>(TYPES.IBidOptimizerService)
   .to(BidOptimizerService);
-container
-  .bind<ITableSchemaService>(TYPES.ITableSchemaService)
-  .to(TableSchemaService);
 container
   .bind<IServiceUsageReportService>(TYPES.IServiceUsageReportService)
   .to(ServiceUsageReportService);

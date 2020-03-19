@@ -58,30 +58,7 @@ export interface RuntimeSchemaPublicationErrorRecord {
   error_message?: string
 }
 
-
-export interface RuntimeSchemaValidationResource {
-  datamart_id: string,
-  schema_id: string,
-  tree_indices: TreeIndexSelection[],
-  schema_errors: string[]
-}
-
-export interface TreeIndexSelection {
-  index_selection_id: string,
-  index_name: "USER_INDEX",
-  init_strategy: TreeIndexInitStrategy,
-  driver_version_major_number: string,
-  driver_version_minor_number: string,
-  current_index_id: string,
-  current_index_size: "SMALL",
-  new_index: false,
-  new_index_size: "SMALL",
-  init_job?: null,
-  error_code?: null,
-  error_message?: null
-}
-
-export type TreeIndexInitStrategy= "AUTOMATIC" |
+export type TreeIndexInitStrategy = "AUTOMATIC" |
 "FORCE_BUILD_FROM_CURSOR" |
 "FORCE_BUILD_FROM_INDEX" |
 "FORCE_NO_BUILD" |

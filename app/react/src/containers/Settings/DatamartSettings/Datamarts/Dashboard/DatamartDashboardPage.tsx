@@ -14,7 +14,6 @@ import DatamartConfigTab from './DatamartConfigTab';
 import DatamartObjectViewTab from './DatamartObjectViewTab';
 import DatamartActivity from './DatamartActivity';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
-import DatamartTableViewTab from './DatamartTableViewTab';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
@@ -155,17 +154,6 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       items.push({
         title: intl.formatMessage(messages.objectViewConfiguration),
         display: <DatamartObjectViewTab datamartId={datamartId} />,
-      });
-    }
-
-    if (
-      hasFeature('datamart-table_view_schema') &&
-      datamart &&
-      datamart.storage_model_version !== 'v201506'
-    ) {
-      items.push({
-        title: intl.formatMessage(messages.tableViewConfiguration),
-        display: <DatamartTableViewTab datamartId={datamartId} />,
       });
     }
 
