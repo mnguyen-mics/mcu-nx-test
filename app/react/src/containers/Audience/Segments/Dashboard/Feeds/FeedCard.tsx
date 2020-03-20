@@ -595,6 +595,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               pluginVersionId={feed.version_id}
               save={this.saveOrCreatePluginInstance}
               selectedTab={this.state.modalTab}
+              feedStatsUnit={feedStatsUnit}
               nameField={{
                 label: formatMessage(messages.feedModalNameFieldLabel),
                 title: <div>

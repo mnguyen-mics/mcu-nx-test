@@ -28,6 +28,7 @@ import {
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import FeedChart from '../../../Audience/Segments/Dashboard/Feeds/Charts/FeedChart';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
+import { FeedStatsUnit } from '../../../../utils/FeedsStatsReportHelper';
 
 const FORM_NAME = 'pluginForm';
 const BRIGHTNESS_THRESHOLD = 160;
@@ -54,6 +55,7 @@ export interface PluginCardModalContentProps<T> {
   selectedTab: PluginCardModalTab;
   nameField?: PluginExtraField;
   descriptionField?: PluginExtraField;
+  feedStatsUnit?: FeedStatsUnit;
 }
 
 type Props<T extends LayoutablePlugin> = PluginCardModalContentProps<T> &
@@ -257,9 +259,9 @@ class PluginCardModalContent<
   };
 
   renderStats = () => {
-    const { plugin, organisationId } = this.props;
+    const { plugin, organisationId, feedStatsUnit } = this.props;
 
-    return <FeedChart organisationId={organisationId} feedId={plugin.id} feed={plugin}/>;
+    return <FeedChart organisationId={organisationId} feedId={plugin.id} feedStatsUnit={feedStatsUnit}/>;
   }
 
   public render() {
