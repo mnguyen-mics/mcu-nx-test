@@ -57,7 +57,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       this.fetchAnalytics(
         onChange,
         datamartId, 
-        chart.metricName, 
+        chart.metricNames, 
         new McsMoment('now-8d'), 
         new McsMoment('now-1d'), 
         chart.dimensions, 
@@ -78,7 +78,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       this.fetchAnalytics(
         onChange,
         datamartId, 
-        chart.metricName, 
+        chart.metricNames, 
         dateRange.from, 
         dateRange.to, 
         chart.dimensions, 
@@ -90,7 +90,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   fetchAnalytics = (
     onChange: (isLoading: boolean) => void,
     datamartId: string,
-    metric: DatamartUsersAnalyticsMetric,
+    metric: DatamartUsersAnalyticsMetric[],
     from: McsMoment,
     to: McsMoment,
     dimensions?: DatamartUsersAnalyticsDimension[],

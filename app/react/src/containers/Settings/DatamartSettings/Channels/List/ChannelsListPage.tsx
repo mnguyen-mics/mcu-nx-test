@@ -12,6 +12,8 @@ import { connect } from 'react-redux';
 import {
   ChannelType,
   ChannelResourceShape,
+  ChannelAnalyticsResource,
+  ChannelResourceShapeWithAnalytics,
 } from '../../../../../models/settings/settings';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import {
@@ -37,6 +39,15 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { DataResponse } from '../../../../../services/ApiService';
+import { IDatamartUsersAnalyticsService } from '../../../../../services/DatamartUsersAnalyticsService';
+import { uniq, flatten } from 'lodash';
+import McsMoment from '../../../../../utils/McsMoment';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import {
+  DatamartUsersAnalyticsMetric,
+  DatamartUsersAnalyticsDimension,
+} from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
+import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
 
 const { Content } = Layout;
 
@@ -65,6 +76,9 @@ type Props = ChannelsListPageProps &
 class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
   @lazyInject(TYPES.IChannelService)
   private _channelService: IChannelService;
+
+  @lazyInject(TYPES.IDatamartUsersAnalyticsService)
+  private _datamartUsersAnalyticsService: IDatamartUsersAnalyticsService;
 
   constructor(props: Props) {
     super(props);
@@ -163,6 +177,12 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
         channel_type: fixedFilterOpt ? fixedFilterOpt.channelType : filterType,
       };
+      if (filter.keywords) {
+        return {
+          ...options,
+          keywords: filter.keywords,
+        };
+      }
       return options;
     };
 
@@ -170,11 +190,74 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       this._channelService
         .getChannelsByOrganisation(organisationId, buildGetChannelsOptions())
         .then(response => {
+
           this.setState({
             channels: response.data,
             totalChannels: response.total ? response.total : response.count,
-            isFetchingChannels: false,
           });
+
+          const datamartIds = uniq(
+            response.data.map(channel => channel.datamart_id),
+          );
+          const metrics: DatamartUsersAnalyticsMetric[] = ['sessions', 'users'];
+          const from = new McsMoment('now-8d');
+          const to = new McsMoment('now-1d');
+          const dimensions: DatamartUsersAnalyticsDimension[] = ['channel_id'];
+          const dimensionFilterClauses: DimensionFilterClause = {
+            operator: 'OR',
+            filters: [
+              {
+                dimension_name: 'type',
+                not: false,
+                operator: 'IN_LIST',
+                expressions: ['SITE_VISIT', 'APP_VISIT'],
+                case_sensitive: false,
+              },
+            ],
+          };
+
+          Promise.all(
+            datamartIds.map(datamartId => {
+              return this._datamartUsersAnalyticsService.getAnalytics(
+                datamartId,
+                metrics,
+                from,
+                to,
+                dimensions,
+                dimensionFilterClauses,
+              );
+            }),
+          )
+            .then(table => {
+              const analyticsByChannel = flatten(
+                table.map(t =>
+                  normalizeReportView<ChannelAnalyticsResource>(
+                    t.data.report_view,
+                  ),
+                ),
+              );
+              const channelsWithAnalytics: ChannelResourceShapeWithAnalytics[] = response.data.map(
+                channelRes => {
+                  const analytics = analyticsByChannel.find(
+                    analyticsItem =>
+                      analyticsItem.channel_id !== undefined &&
+                      analyticsItem.channel_id.toString() === channelRes.id,
+                  );
+                  if (analytics) {
+                    return { ...channelRes, ...analytics };
+                  } else return channelRes;
+                },
+              );
+              this.setState({
+                channels: channelsWithAnalytics,
+                totalChannels: response.total ? response.total : response.count,
+                isFetchingChannels: false,
+              });
+            })
+            .catch(err => {
+              this.setState({isFetchingChannels: false });
+              notifyError(err);
+            });
         })
         .catch(err => {
           this.setState({ isFetchingChannels: false });
@@ -183,7 +266,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     });
   };
 
-  handleEditChannel = (channel: ChannelResourceShape) => {
+  handleEditChannel = (channel: ChannelResourceShapeWithAnalytics) => {
     const {
       match: {
         params: { organisationId },

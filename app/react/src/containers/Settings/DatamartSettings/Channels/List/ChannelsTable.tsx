@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChannelResourceShape } from '../../../../../models/settings/settings';
+import { ChannelResourceShape, ChannelResourceShapeWithAnalytics } from '../../../../../models/settings/settings';
 import { ChannelFilter } from './domain';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
@@ -21,10 +21,11 @@ import { UserWorkspaceResource } from '../../../../../models/directory/UserProfi
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../../../state/Session/selectors';
 import { connect } from 'react-redux';
+import { SearchProps } from 'antd/lib/input';
 
 export interface ChannelsTableProps {
   isFetchingChannels: boolean;
-  dataSource: ChannelResourceShape[];
+  dataSource: ChannelResourceShapeWithAnalytics[];
   totalChannels: number;
   noChannelYet: boolean;
   onFilterChange: (partialFilter: Partial<ChannelFilter>) => void;
@@ -54,6 +55,7 @@ class ChannelsTable extends React.Component<Props> {
       onDeleteChannel,
       onEditChannel,
       filter,
+      intl: { formatMessage },
       match: {
         params: { organisationId },
       },
@@ -79,12 +81,12 @@ class ChannelsTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns: Array<DataColumnDefinition<ChannelResourceShape>> = [
+    const dataColumns: Array<DataColumnDefinition<ChannelResourceShapeWithAnalytics>> = [
       {
         intlMessage: messages.channelName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: ChannelResourceShape) => {
+        render: (text: string, record: ChannelResourceShapeWithAnalytics) => {
           const handleEditChannel = () => {
             onEditChannel(record);
           };
@@ -109,6 +111,18 @@ class ChannelsTable extends React.Component<Props> {
         isHideable: true,
       },
       {
+        intlMessage: messages.lastSevenDaysSessions,
+        key: 'sessions',
+        isVisibleByDefault: true,
+        isHideable: true,
+      },
+      {
+        intlMessage: messages.lastSevenDaysUsers,
+        key: 'users',
+        isVisibleByDefault: true,
+        isHideable: true,
+      },
+      {
         intlMessage: messages.channelDatamartName,
         key: 'datamart_name',
         isVisibleByDefault: true,
@@ -127,6 +141,15 @@ class ChannelsTable extends React.Component<Props> {
         render: (ts: string) => moment(ts).format('DD/MM/YYYY'),
       },
     ];
+
+    const searchOptions: SearchProps = {
+      placeholder: formatMessage(messages.searchPlaceholder),
+      onSearch: (value: string) =>
+        onFilterChange({
+          keywords: value,
+        }),
+      defaultValue: filter.keywords,
+    };
 
     const actionColumns: Array<ActionsColumnDefinition<
       ChannelResourceShape
@@ -158,6 +181,7 @@ class ChannelsTable extends React.Component<Props> {
         actionsColumnsDefinition={actionColumns}
         dataSource={dataSource}
         loading={isFetchingChannels}
+        searchOptions={searchOptions}
         pagination={pagination}
         filtersOptions={filtersOptions}
       />

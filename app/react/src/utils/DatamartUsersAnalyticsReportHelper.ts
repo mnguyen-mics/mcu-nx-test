@@ -8,11 +8,11 @@ import {
 import McsMoment from './McsMoment';
 
 export type DatamartUsersAnalyticsDimension = 'date_yyyy_mm_dd' | 'channel_id' | 'channel_name';
-export type DatamartUsersAnalyticsMetric = 'sessions' | 'avg_session_duration';
+export type DatamartUsersAnalyticsMetric = 'users'| 'sessions' | 'avg_session_duration' | 'avg_number_of_user_events';
 
 export function buildDatamartUsersAnalyticsRequestBody(
   datamartId: string,
-  metric: DatamartUsersAnalyticsMetric,
+  metrics: DatamartUsersAnalyticsMetric[],
   from: McsMoment,
   to: McsMoment,
   dimensions?: DatamartUsersAnalyticsDimension[],
@@ -21,8 +21,7 @@ export function buildDatamartUsersAnalyticsRequestBody(
   const startDate: string = new McsMoment(from.value).toMoment().utc(false).startOf('day').format().replace('Z', '');
   const endDate: string = new McsMoment(to.value).toMoment().utc(false).endOf('day').format().replace('Z', '');
   const dimensionsList: DatamartUsersAnalyticsDimension[] = dimensions || [];
-  const metricsList: DatamartUsersAnalyticsMetric[] = [metric];
-  return buildReport(startDate, endDate, dimensionsList, metricsList, dimensionFilterClauses);
+  return buildReport(startDate, endDate, dimensionsList, metrics, dimensionFilterClauses);
 }
 
 function buildReport(
