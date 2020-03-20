@@ -57,7 +57,7 @@ export const sessionInTimeJsonConfig = [
           }
         },
         dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -95,7 +95,7 @@ export const averageSessionDurationConfig = [
           title: 'Average session duration'
         },
         unit: 'time',
-        metricName: 'avg_session_duration',
+        metricNames: ['avg_session_duration'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -129,7 +129,7 @@ export const averageSessionDurationConfig = [
         options: {
           title: 'Average Events per Session',
         },
-        metricName: 'avg_number_of_user_events',
+        metricNames: ['avg_number_of_user_events'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -164,7 +164,7 @@ export const averageSessionDurationConfig = [
           title: 'Average Conversion Rate',
         },
         unit: '%',
-        metricName: 'conversion_rate',
+        metricNames: ['conversion_rate'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -238,7 +238,7 @@ export const channelEngagementConfig = [
           }
         },
         dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -302,7 +302,7 @@ export const channelEngagementConfig = [
           }
         },
         dimensions: ['channel_name', 'channel_id'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -367,7 +367,7 @@ export const channelEngagementConfig = [
           },
         },
         dimensions: ['device_form_factor'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -431,7 +431,7 @@ export const channelEngagementConfig = [
           },
         },
         dimensions: ['device_browser_family'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -495,7 +495,7 @@ export const channelEngagementConfig = [
           },
         },
         dimensions: ['device_os_family'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -565,7 +565,7 @@ export const channelEngagementConfig = [
           }
         },
         dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
-        metricName: 'users',
+        metricNames: ['users'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -638,7 +638,7 @@ export const acquisitionEngagementConfig = [
           }
         },
         dimensions: ['origin_source', 'date_yyyy_mm_dd'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -702,7 +702,7 @@ export const acquisitionEngagementConfig = [
           }
         },
         dimensions: ['origin_source'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -772,7 +772,7 @@ export const acquisitionEngagementConfig = [
           }
         },
         dimensions: ['origin_channel', 'date_yyyy_mm_dd'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -836,7 +836,7 @@ export const acquisitionEngagementConfig = [
           }
         },
         dimensions: ['origin_channel'],
-        metricName: 'sessions',
+        metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -900,7 +900,7 @@ export const acquisitionEngagementConfig = [
           }
         },
         dimensions: ['origin_source'],
-        metricName: 'avg_session_duration',
+        metricNames: ['avg_session_duration'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
