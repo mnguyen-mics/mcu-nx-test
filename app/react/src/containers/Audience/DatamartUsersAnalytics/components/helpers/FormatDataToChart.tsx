@@ -48,7 +48,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
             data: dataset.map((data: Dataset) => {
               return {
                 name: data[chart.dimensions[0]] || 'null',
-                y: data[chart.metricName],
+                y: data[chart.metricNames[0]],
               }
             })
           }
@@ -56,7 +56,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
       case 'AREA':
         return dataset.reduce((acc: AreaSeriesDataOptions[], d: Dataset) => {
           const found = acc.find((a: AreaSeriesDataOptions) => a.name === d[chart.dimensions[0]]);
-          const value = d[chart.metricName];
+          const value = d[chart.metricNames[0]];
           const xValue = chart.dimensions[chart.dimensions.length - 1] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[chart.dimensions.length - 1]] as string) : d[chart.dimensions[chart.dimensions.length - 1]];
           if (!found) {
             acc.push({
@@ -99,7 +99,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
       case 'COUNT':
         return dataset.reduce((acc: any, d: any) => {
           const found = acc.find((a: any) => a.title === d[chart.yKey]);
-          const value = d[chart.metricName];
+          const value = d[chart.metricNames[0]];
           if (!found) {
             acc.push({
               title: d[chart.yKey],
@@ -122,11 +122,11 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
       case 'WORLD_MAP':
         return dataset.reduce((acc: MapSeriesDataOptions[], d: Dataset) => {
           const found = acc.find((a: MapSeriesDataOptions) => a.code3 === d[chart.yKey]);
-          const value = d[chart.metricName];
+          const value = d[chart.metricNames[0]];
           if (!found) {
             acc.push({
               code3: d[chart.yKey] as string,
-              value: d[chart.metricName] as number,
+              value: d[chart.metricNames[0]] as number,
             })
           }
           else {
@@ -139,10 +139,10 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
           if (acc.length === 0) {
             acc.push({
               type: 'bar',
-              data: [d[chart.metricName]] as number[]
+              data: [d[chart.metricNames[0]]] as number[]
             });
           } else {
-            acc[0].data.push(d[chart.metricName] as number);
+            acc[0].data.push(d[chart.metricNames[0]] as number);
           }
           return acc;
         }, []);
@@ -151,12 +151,12 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
           if (acc.length === 0) {
             acc.push({
               type: 'column',
-              data: [d[chart.metricName]] as number[],
+              data: [d[chart.metricNames[0]]] as number[],
               showInLegend: false,
-              name: chart.metricName
+              name: chart.metricNames[0]
             });
           } else {
-            acc[0].data.push(d[chart.metricName] as number);
+            acc[0].data.push(d[chart.metricNames[0]] as number);
           }
           return acc;
         }, []);
@@ -170,7 +170,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
   formatSeriesForCounters = (chart: Chart, dataset: Dataset[]): CounterProps[] => {
     return dataset.reduce((acc: CounterProps[], d: Dataset) => {
       const found = acc.find((a: CounterProps) => a.title === d[chart.yKey]);
-      const value = d[chart.metricName];
+      const value = d[chart.metricNames[0]];
       if (!found) {
         acc.push({
           title: d[chart.yKey],
@@ -254,13 +254,13 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         let statValue;
 
         if (chart.unit === 'time') {
-          statValue = moment.duration(data[0][chart.metricName] as number, "second").format("h[hr] m[min] s[s]");
+          statValue = moment.duration(data[0][chart.metricNames[0]] as number, "second").format("h[hr] m[min] s[s]");
         } 
         else if (chart.unit === '%') {
-          statValue = (data[0][chart.metricName] as number * 100).toFixed(2);
+          statValue = (data[0][chart.metricNames[0]] as number * 100).toFixed(2);
         }
         else {
-          statValue = data[0][chart.metricName] as number;
+          statValue = data[0][chart.metricNames[0]] as number;
         }
         
         return (

@@ -12,7 +12,7 @@ import McsMoment from '../utils/McsMoment';
 export interface IDatamartUsersAnalyticsService {
   getAnalytics: (
     datamartId: string,
-    metric: DatamartUsersAnalyticsMetric,
+    metrics: DatamartUsersAnalyticsMetric[],
     from: McsMoment,
     to: McsMoment,
     dimensions?: DatamartUsersAnalyticsDimension[],
@@ -24,13 +24,13 @@ export interface IDatamartUsersAnalyticsService {
 export class DatamartUsersAnalyticsService implements IDatamartUsersAnalyticsService {
   getAnalytics(
     datamartId: string,
-    metric: DatamartUsersAnalyticsMetric,
+    metrics: DatamartUsersAnalyticsMetric[],
     from: McsMoment,
     to: McsMoment,
     dimensions?: DatamartUsersAnalyticsDimension[],
     dimensionFilterClauses?: DimensionFilterClause
   ): Promise<ReportViewResponse> {
-    const report: ReportRequestBody = buildDatamartUsersAnalyticsRequestBody(datamartId, metric, from, to, dimensions, dimensionFilterClauses);
+    const report: ReportRequestBody = buildDatamartUsersAnalyticsRequestBody(datamartId, metrics, from, to, dimensions, dimensionFilterClauses);
     const endpoint = `datamarts/${datamartId}/user_activities_analytics`;
     return ApiService.postRequest(endpoint, report);
   }
