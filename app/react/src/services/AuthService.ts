@@ -48,7 +48,7 @@ export interface IAuthService {
 
   setRefreshToken: (refreshToken: string) => void;
 
-  setRememberMe: ({ rememberMe }: { rememberMe: boolean }) => void;
+  setRememberMe: (rememberMe: boolean) => void;
 
   setRefreshTokenExpirationDate: (expireIn: number) => void;
 
@@ -58,9 +58,7 @@ export interface IAuthService {
     credentialsOrRefreshToken: CredentialsOrRefreshToken,
   ) => Promise<DataResponse<AccessTokenResource>>;
 
-  createRefreshToken: (
-    credentials: Credentials,
-  ) => Promise<string>;
+  createRefreshToken: (credentials: Credentials) => Promise<string>;
 
   getConnectedUser: () => Promise<UserProfileResource>;
 
@@ -152,7 +150,13 @@ export class AuthService implements IAuthService {
     });
   };
 
-  setRememberMe = ({ rememberMe }: { rememberMe: boolean }) => {
+  setLoginStatus = (loginStatus: boolean) => {
+    LocalStorage.setItem({
+      login: String(loginStatus),
+    });
+  };
+
+  setRememberMe = (rememberMe: boolean) => {
     LocalStorage.setItem({
       [REMEMBER_ME]: String(rememberMe),
     });
@@ -171,7 +175,6 @@ export class AuthService implements IAuthService {
     LocalStorage.removeItem(ACCESS_TOKEN_EXPIRATION_DATE);
     LocalStorage.removeItem(REFRESH_TOKEN);
     LocalStorage.removeItem(REFRESH_TOKEN_EXPIRATION_DATE);
-    LocalStorage.removeItem(REMEMBER_ME);
   };
 
   createAccessToken = (
