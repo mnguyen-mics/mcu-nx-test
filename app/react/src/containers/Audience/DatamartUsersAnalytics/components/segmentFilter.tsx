@@ -3,15 +3,18 @@ import { Button } from 'antd';
 import SegmentByNameSelector from './SegmentByNameSelector';
 import chroma from 'chroma-js';
 
+interface SegmentFilterProps {
+  onChange: (values: string[]) => void;
+}
 interface SegmentFilterState {
   segmentSearchDisplayed: boolean;
   appliedSegmentFilters: any;
-  colors: string[]
+  colors: string[];
 }
 
 
-class SegmentFilter extends React.Component<{}, SegmentFilterState> {
-  constructor(props: {}) {
+class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterState> {
+  constructor(props: SegmentFilterProps) {
     super(props);
     this.state = {
       segmentSearchDisplayed: false,
@@ -19,7 +22,7 @@ class SegmentFilter extends React.Component<{}, SegmentFilterState> {
       colors: chroma.scale(['#00a1df', '#000']).mode('lch').colors(3),
     };
     this.showSegmentSearch = this.showSegmentSearch.bind(this);
-    this.onchange = this.onchange.bind(this);
+    this.onSegmentByNameSelectorChange = this.onSegmentByNameSelectorChange.bind(this);
     this.removeFilter = this.removeFilter.bind(this);
   }
 
@@ -29,24 +32,37 @@ class SegmentFilter extends React.Component<{}, SegmentFilterState> {
     })
   }
 
-  onchange(newValues: any) {
-    const { colors } = this.state;
-    this.setState(state => {
-      const appliedSegmentFilters = state.appliedSegmentFilters
-        .concat({
-          color: colors[state.appliedSegmentFilters.length],
-          ...newValues
-        });
-      return {
-        appliedSegmentFilters,
-        segmentSearchDisplayed: false
-      };
-    });
+  onSegmentByNameSelectorChange(newValues: any) {
+    const { colors, appliedSegmentFilters } = this.state;
+    const { onChange } = this.props;
+
+
+    const exist = appliedSegmentFilters.find((item: any) => item.key === newValues.key)
+    if (!exist) {
+      this.setState(state => {
+        const appliedSegmentFilters = state.appliedSegmentFilters
+          .concat({
+            color: colors[state.appliedSegmentFilters.length],
+            ...newValues
+          });
+  
+          const segmentIds = appliedSegmentFilters.slice().map((item: any) => item.key)
+          onChange(segmentIds);
+        return {
+          appliedSegmentFilters,
+          segmentSearchDisplayed: false
+        };
+      });
+    }
+
   }
 
   removeFilter(label: any) {
+    const { onChange } = this.props;
     this.setState(state => {
-      const appliedSegmentFilters = state.appliedSegmentFilters.filter((item: any) => item.label !== label)
+      const appliedSegmentFilters = state.appliedSegmentFilters.filter((item: any) => item.label !== label);
+      const segmentIds = appliedSegmentFilters.slice().map((item: any) => item.key)
+      onChange(segmentIds);
       return {
         appliedSegmentFilters
       };
@@ -66,11 +82,11 @@ class SegmentFilter extends React.Component<{}, SegmentFilterState> {
             <span className="oval" style={{ border: `5px solid ${item.color}` }}></span><span className="name">{item.label}</span>
           </Button>)}
 
-        {appliedSegmentFilters.length < 3 && (!segmentSearchDisplayed ?
+        {appliedSegmentFilters.length < 2 && (!segmentSearchDisplayed ?
           <Button type="dashed" ghost className="segmentFilter" icon="plus" onClick={this.showSegmentSearch}>
             <span className="placeholder">Select a segment to compare with</span>
           </Button>
-          : <SegmentByNameSelector onchange={this.onchange} />)}
+          : <SegmentByNameSelector onchange={this.onSegmentByNameSelectorChange} />)}
       </div>
     )
   }

@@ -50,22 +50,20 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
   handleChange = (value: string) => {
     const { onchange } = this.props;
     this.setState({
-      value,
-      data: [],
-      fetching: false,
+      value
     });
     onchange(value)
   };
 
   render() {
     const { data, fetching, value } = this.state;
+
     return (<Select
       showSearch
       labelInValue
       value={value}
       style={{ width: "230px" }}
       placeholder="Search segment by name"
-      filterOption={false}
       onSearch={this.fetchListMethod}
       onChange={this.handleChange}
       notFoundContent={fetching ? <Spin size="small" className="text-center" />: null}

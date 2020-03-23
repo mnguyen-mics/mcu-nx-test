@@ -146,6 +146,27 @@ export interface FiltersSearchSettings extends KeywordSearchSettings {
   statuses: string[];
 }
 
+
+export const SEGMENTS_FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
+  {
+    paramName: 'segments',
+    defaultValue: [],
+    deserialize: (query: Index<string>) => {
+      if (query.segments) {
+        return query.segments.split(',');
+      }
+      return [];
+    },
+    serialize: (value: string[]) => value.join(','),
+    isValid: (query: Index<string>) =>
+      !query.segments || query.segments.split(',').length > 0,
+  }
+];
+
+export interface SegmentsFiltersSearchSettings extends KeywordSearchSettings {
+  segments: string[];
+}
+
 export const DATE_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'from',
@@ -279,6 +300,7 @@ export const updateSearch = (
     }
     return newAcc;
   }, {});
+
   return queryString.stringify({
     ...query,
     ...serializedParams,

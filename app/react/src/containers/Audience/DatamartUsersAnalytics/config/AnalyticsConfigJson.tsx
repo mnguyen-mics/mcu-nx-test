@@ -260,7 +260,7 @@ export const channelEngagementConfig = [
   {
     title: 'Sessions by Channel',
     layout: {
-      'i': '1',
+      'i': '2',
       'h': 3,
       'static': false,
       'w': 6,
@@ -324,12 +324,12 @@ export const channelEngagementConfig = [
   {
     title: 'Sessions by Form Factor',
     layout: {
-      'i': '2',
+      'i': '3',
       'h': 3,
       'static': false,
       'w': 4,
       'x': 0,
-      'y': 0,
+      'y': 3,
 
     },
     charts: [
@@ -389,7 +389,7 @@ export const channelEngagementConfig = [
   {
     title: 'Sessions by Browser Family',
     layout: {
-      'i': '2',
+      'i': '4',
       'h': 3,
       'static': false,
       'w': 4,
@@ -453,9 +453,9 @@ export const channelEngagementConfig = [
   {
     title: 'Sessions by OS',
     layout: {
-      'i': '2',
+      'i': '5',
       'h': 3,
-      'static': true,
+      'static': false,
       'w': 4,
       'x': 8,
       'y': 3
@@ -517,7 +517,7 @@ export const channelEngagementConfig = [
   {
     title: 'Active Users By Channel',
     layout: {
-      'i': '1',
+      'i': '6',
       'h': 3,
       'static': false,
       'w': 6,

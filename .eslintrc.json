@@ -13,9 +13,9 @@
         "comma-dangle": "off",
         "max-len": "off",
         "padded-blocks": "off",
-        "no-unused-vars": [
-            "warn"
-        ],
+        // "no-unused-vars": [
+        //     "warn"
+        // ],
         "arrow-parens": "off",
         "no-nested-ternary": "off",
         "no-unneeded-ternary": "off",
