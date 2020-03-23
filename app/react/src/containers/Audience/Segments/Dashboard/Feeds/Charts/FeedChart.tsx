@@ -114,7 +114,7 @@ class FeedChart extends React.Component<Props, State> {
         let feedReports = upserts.map((upsertReport): FeedReport => {
           const deleteReport = deletes.find(r => r.day === upsertReport.day);
 
-          if (feedStatsUnit === "user_points") {
+          if (feedStatsUnit === "USER_POINTS") {
             return {
               day: upsertReport.day,
               upserted: upsertReport.uniq_user_points_count,
@@ -123,7 +123,7 @@ class FeedChart extends React.Component<Props, State> {
                 : 0,
               unit: feedStatsUnit
             };
-          } else if (feedStatsUnit === "identifiers") {
+          } else if (feedStatsUnit === "USER_IDENTIFIERS") {
             return {
               day: upsertReport.day,
               upserted: upsertReport.uniq_user_identifiers_count,
@@ -189,7 +189,7 @@ class FeedChart extends React.Component<Props, State> {
     const optionsForChart = {
       xKey: 'day',
       yKeys: metrics.map(metric => {
-        if(dataSource[0].unit === "user_points") {
+        if(dataSource[0].unit === "USER_POINTS") {
           if(metric === "upserted") {
             return {
               key: metric,
@@ -203,7 +203,7 @@ class FeedChart extends React.Component<Props, State> {
           } else {
             throw new Error(`Unsupported metric: ${metric}`)
           }
-        } else if(dataSource[0].unit === "identifiers") {
+        } else if(dataSource[0].unit === "USER_IDENTIFIERS") {
           if(metric === "upserted") {
             return {
               key: metric,

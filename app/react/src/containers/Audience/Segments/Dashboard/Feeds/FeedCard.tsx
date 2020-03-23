@@ -47,7 +47,7 @@ export interface FeedCardProps {
   exportedUserIdentifiersCount?: number;
 }
 
-type FeedStatsDisplayStatus = "loading" | "ready" | "ready-with-0-data";
+type FeedStatsDisplayStatus = "LOADING" | "READY" | "READY-NO-DATA";
 
 interface FeedCardState {
   isLoading: boolean;
@@ -102,6 +102,10 @@ const messages = defineMessages({
     id: 'audienceFeed.card.actions.stats',
     defaultMessage: 'Stats (BETA)',
   },
+  inTheLast7Days: {
+    id: 'audienceFeed.card.inTheLast7Days',
+    defaultMessage: 'In the last 7 days... (BETA)',
+  },
   view: {
     id: 'audienceFeed.card.actions.view',
     defaultMessage: 'View',
@@ -109,6 +113,10 @@ const messages = defineMessages({
   delete: {
     id: 'audienceFeed.card.actions.delete',
     defaultMessage: 'Delete',
+  },
+  loadingStats: {
+    id: 'audienceFeed.card.loadingStats',
+    defaultMessage: 'Loading stats...',
   },
   nothingSent: {
     id: 'audienceFeed.card.nothingSent',
@@ -392,28 +400,31 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   getFeedStatsDisplayStatus(counts: FeedStatsCounts): FeedStatsDisplayStatus {
 
     // If the count is null, the stat request is not complete yet
-    if (counts.exportedUserIdentifiersCount == null && counts.exportedUserPointsCount == null) return "loading";
+    if (counts.exportedUserIdentifiersCount == null && counts.exportedUserPointsCount == null) return "LOADING";
     // If both counts are 0, we'll display a message to tell that nothing was sent
-    else if(counts.exportedUserIdentifiersCount === 0 && counts.exportedUserPointsCount === 0) return "ready-with-0-data";
-    else return "ready";
+    else if (counts.exportedUserIdentifiersCount === 0 && counts.exportedUserPointsCount === 0) return "READY-NO-DATA";
+    else return "READY";
   }
 
   getFeedStatsDisplayMsg(intl: InjectedIntl, status: FeedStatsDisplayStatus, unit: FeedStatsUnit, counts: FeedStatsCounts): string {
-    if (status === "loading") {
-      return "Loading stats..."
-    } else if(status === "ready-with-0-data") {
-      return intl.formatMessage(messages.nothingSent)
-    } else if (status === "ready") {
-      if (unit === "user_points") {
-        return `${counts.exportedUserPointsCount ? counts.exportedUserPointsCount.toLocaleString() : '-'} ${intl.formatMessage(messages.userPointsSent)}`
-      } else if (unit === "identifiers") {
-        return `${counts.exportedUserIdentifiersCount ? counts.exportedUserIdentifiersCount.toLocaleString() : '-'} ${intl.formatMessage(messages.identifiersSent)}`;
-        // Should not happen
-      } else {
+
+    switch (status) {
+      case "LOADING":
+        return intl.formatMessage(messages.loadingStats);
+      case "READY-NO-DATA":
+        return intl.formatMessage(messages.nothingSent);
+      case "READY":
+        switch (unit) {
+          case "USER_POINTS":
+            return `${counts.exportedUserPointsCount ? counts.exportedUserPointsCount.toLocaleString() : '-'} ${intl.formatMessage(messages.userPointsSent)}`;
+          case "USER_IDENTIFIERS":
+            return `${counts.exportedUserIdentifiersCount ? counts.exportedUserIdentifiersCount.toLocaleString() : '-'} ${intl.formatMessage(messages.identifiersSent)}`;
+          // Should not happen
+          default:
+            return "error";
+        }
+      default:
         return "error";
-      }
-    } else {
-      return "error";
     }
   }
 
@@ -515,7 +526,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const onClose = () => this.setState({ opened: false });
 
 
-    const counts: FeedStatsCounts = {exportedUserPointsCount, exportedUserIdentifiersCount};
+    const counts: FeedStatsCounts = { exportedUserPointsCount, exportedUserIdentifiersCount };
     const feedStatsStatus = this.getFeedStatsDisplayStatus(counts);
     const feedStatsUnit = getFeedStatsUnit(feed);
     const feedStatsDisplayMsg = this.getFeedStatsDisplayMsg(intl, feedStatsStatus, feedStatsUnit, counts);
@@ -549,13 +560,13 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               {
                 feed.name &&
                 <div className="feed-name">
-                    {feed.name}
+                  {feed.name}
                 </div>
               }
               <div className="plugin-name">
                 {cardHeaderTitle
-                ? cardHeaderTitle
-                : feed.artifact_id}
+                  ? cardHeaderTitle
+                  : feed.artifact_id}
               </div>
             </div>
           </div>
@@ -567,7 +578,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             {hasFeature('audience-feeds_stats') && (
               <div className="content-right">
                 {feedStatsDisplayMsg}{' '}
-                <Tooltip placement="topRight" title="In the last 7 days">
+                <Tooltip placement="topRight" title={intl.formatMessage(messages.inTheLast7Days)}>
                   {' '}
                   <McsIcon style={{ marginRight: '0px' }} type="info" />
                 </Tooltip>

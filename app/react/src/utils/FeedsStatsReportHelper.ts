@@ -29,7 +29,7 @@ type FeedsStatsMetric =
   | 'UNIQ_TAG_KEYS'
   | 'UNIQ_TAG_VALUES';
 
-export type FeedStatsUnit = "user_points" | "identifiers";
+export type FeedStatsUnit = "USER_POINTS" | "USER_IDENTIFIERS";
 
 export interface FeedStatsCounts {
   exportedUserPointsCount?: number;
@@ -137,17 +137,17 @@ export function getFeedStatsUnit(feed: AudienceExternalFeedTyped | AudienceTagFe
     && (feed.artifact_id === "google-ddp-connector"
       || feed.artifact_id === "appnexus-audience-segment-feed-direct"
       || feed.artifact_id === "appnexus-audience-segment-feed")) {
-    return "identifiers";
+    return "USER_IDENTIFIERS";
   }
 
   // For TAG_FEED, we display the count of identifiers
   else if (feed.type === "TAG_FEED") {
-    return "identifiers";
+    return "USER_IDENTIFIERS";
   }
 
   // Otherwise, we display the count of User Points
   else {
-    return "user_points";
+    return "USER_POINTS";
   }
 
 }
