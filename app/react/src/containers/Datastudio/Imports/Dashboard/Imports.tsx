@@ -368,6 +368,7 @@ class Imports extends React.Component<JoinedProps, State> {
   render() {
     const {
       location: { search },
+      intl: { formatMessage },
     } = this.props;
 
     const { importExecutions, importObject } = this.state;
@@ -422,7 +423,7 @@ class Imports extends React.Component<JoinedProps, State> {
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <ImportHeader object={importObject.item} />
-            <Card title={'Import Execution'}>
+            <Card title={formatMessage(messages.importExecutionsTitle)}>
               <hr />
               <TableView
                 dataSource={importExecutions.items}

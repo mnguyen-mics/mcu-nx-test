@@ -29,6 +29,10 @@ export default defineMessages({
     id: 'imports.dashboard.actionbar.archive',
     defaultMessage: 'Archive',
   },
+  importExecutionsTitle: {
+    id: 'imports.dashboard.table.title',
+    defaultMessage: 'Import Executions',
+  },
   newExecution: {
     id: 'imports.dashboard.actionbar.newExecution',
     defaultMessage: 'New Execution',

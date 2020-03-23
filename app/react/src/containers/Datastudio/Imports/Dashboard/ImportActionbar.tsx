@@ -268,8 +268,8 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
 
     const handleArchiveGoal = (displayCampaignId?: string) => {
       Modal.confirm({
-        title: formatMessage(modalMessages.archiveCampaignConfirm),
-        content: formatMessage(modalMessages.archiveCampaignMessage),
+        title: formatMessage(modalMessages.archiveImportConfirm),
+        content: formatMessage(modalMessages.archiveImportMessage),
         iconType: 'exclamation-circle',
         okText: formatMessage(modalMessages.confirm),
         cancelText: formatMessage(modalMessages.cancel),

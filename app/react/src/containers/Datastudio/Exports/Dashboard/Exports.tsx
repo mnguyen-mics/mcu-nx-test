@@ -263,6 +263,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       match: {
         params: { organisationId },
       },
+      intl: { formatMessage },
       history,
     } = this.props;
 
@@ -319,7 +320,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
                 this.state.exportObject.item && this.state.exportObject.item
               }
             />
-            <Card title={'Export Execution'}>
+            <Card title={formatMessage(messages.exportExecutionsTitle)}>
               <hr />
               <TableView
                 dataSource={this.state.exportExecutions.items}
