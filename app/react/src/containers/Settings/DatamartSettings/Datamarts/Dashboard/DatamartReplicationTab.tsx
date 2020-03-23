@@ -168,13 +168,11 @@ class DatamartReplicationTab extends React.Component<Props, State> {
         this._datamartReplicationService
           .getJobExecutions(datamartId)
           .then(resp => {
-            // TO DO: remove comments when  route to retrieve executions is done
-            // The response here is made of mocked data
             this.setState({
-              // jobExecutions: resp.data,
+              jobExecutions: resp.data,
               isLoadingJobExecutions: false,
-              // totalJobExecutions: resp.total || resp.count,
-              // noJobExecution: resp && resp.total === 0 && !filter.keywords,
+              totalJobExecutions: resp.total || resp.count,
+              noJobExecution: resp && resp.total === 0 && !filter.keywords,
             });
           })
           .catch(error => {
@@ -283,6 +281,10 @@ class DatamartReplicationTab extends React.Component<Props, State> {
     return !!runningExecution;
   };
 
+  createJobExecution = (datamartId: string) => {
+    return this._datamartReplicationService.createJobExecution(datamartId)
+  }
+
   public render() {
     const {
       replications,
@@ -321,6 +323,7 @@ class DatamartReplicationTab extends React.Component<Props, State> {
               onFilterChange={this.handleJobExecutionsFilterChange}
               replications={replications}
               fetchReplicationsAndJobs={this.fetchReplicationsAndJobs}
+              createJobExecution={this.createJobExecution}
             />
           </Col>
         </Row>

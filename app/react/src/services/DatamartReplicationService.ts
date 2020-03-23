@@ -5,8 +5,7 @@ import {
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, {
   DataListResponse,
-  DataResponse,
-  StatusCode,
+  DataResponse
 } from './ApiService';
 import { injectable } from 'inversify';
 
@@ -42,6 +41,10 @@ export interface IDatamartReplicationService {
     datamartReplicationId: string,
     credentials: any,
   ) => Promise<any>;
+  createJobExecution: (
+    datamartId: string,
+    option?: object,
+  ) => Promise<DataResponse<DatamartReplicationJobExecutionResource>>;
   getJobExecutions: (
     datamartId: string,
   ) => Promise<DataListResponse<DatamartReplicationJobExecutionResource>>;
@@ -103,86 +106,20 @@ export class DatamartReplicationService implements IDatamartReplicationService {
     }
     return Promise.reject();
   }
+  createJobExecution(
+    datamartId: string,
+    option: object = {},
+  ): Promise<DataResponse<DatamartReplicationJobExecutionResource>> {
+    const endpoint = `datamarts/${datamartId}/replication_job_executions`;
+    const options = {
+      ...option,
+    };
+    return ApiService.postRequest(endpoint, options);
+  }
   getJobExecutions(
     datamartId: string,
   ): Promise<DataListResponse<DatamartReplicationJobExecutionResource>> {
-    // TO DO: remove mocked data when route to retrieve executions is done
-    // const endpoint = ``
-    // return ApiService.getRequest(endpoint);
-    const executions: DatamartReplicationJobExecutionResource[] = [
-      {
-        id: '1',
-        status: 'PENDING',
-        creation_date: 1563358014075,
-        start_date: 1563358014075,
-        duration: 20386,
-        organisation_id: '504',
-        user_id: '1330',
-        num_tasks: 100,
-        completed_tasks: 75,
-        erroneous_tasks: 0,
-        external_model_name: 'PUBLIC_DATAMART',
-      },
-      {
-        id: '2',
-        status: 'FAILED',
-        creation_date: 1581960211000,
-        start_date: 1563358014075,
-        duration: 35386,
-        organisation_id: '504',
-        user_id: '1330',
-        num_tasks: 100,
-        completed_tasks: 100,
-        erroneous_tasks: 0,
-        external_model_name: 'PUBLIC_DATAMART',
-      },
-      {
-        id: '3',
-        status: 'FAILED',
-        creation_date: 1563358014075,
-        start_date: 1563358014075,
-        duration: 18386,
-        organisation_id: '504',
-        user_id: '1330',
-        num_tasks: 100,
-        completed_tasks: 75,
-        erroneous_tasks: 1,
-        external_model_name: 'PUBLIC_DATAMART',
-        result: {
-          total_failure: 1,
-        },
-      },
-      {
-        id: '4',
-        status: 'PENDING',
-        creation_date: 1563358014075,
-        start_date: 1563358014075,
-        duration: 5386,
-        organisation_id: '504',
-        user_id: '1330',
-        num_tasks: 100,
-        completed_tasks: 25,
-        erroneous_tasks: 0,
-        external_model_name: 'PUBLIC_DATAMART',
-      },
-      {
-        id: '5',
-        status: 'SUCCESS',
-        creation_date: 1563358014075,
-        start_date: 1563358014075,
-        duration: 22386,
-        organisation_id: '504',
-        user_id: '1330',
-        num_tasks: 100,
-        completed_tasks: 100,
-        erroneous_tasks: 0,
-        external_model_name: 'PUBLIC_DATAMART',
-      },
-    ];
-    return Promise.resolve({
-      status: 'ok' as StatusCode,
-      data: executions,
-      count: 5,
-    });
+    const endpoint = `datamarts/${datamartId}/replication_job_executions`;
+    return ApiService.getRequest(endpoint);
   }
 }

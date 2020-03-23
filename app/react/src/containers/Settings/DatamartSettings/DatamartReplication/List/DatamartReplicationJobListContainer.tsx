@@ -21,6 +21,7 @@ import {
   DatamartReplicationResourceShape,
 } from '../../../../../models/settings/settings';
 import { DatamartReplicationRouteMatchParam } from '../Edit/domain';
+import { DataResponse } from '../../../../../services/ApiService';
 
 const { Content } = Layout;
 
@@ -37,6 +38,7 @@ interface DatamartReplicationJobListContainerProps {
   onFilterChange: (newFilter: Index<string | number>) => void;
   replications: DatamartReplicationResourceShape[];
   fetchReplicationsAndJobs: (datamartId: string, filter: Index<any>) => void;
+  createJobExecution: (datamartId: string) => Promise<DataResponse<DatamartReplicationJobExecutionResource>>;
 }
 
 type Props = DatamartReplicationJobListContainerProps &
@@ -81,9 +83,7 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
           DATAMART_REPLICATION_SEARCH_SETTINGS,
         );
         const replicationExecution = () => {
-          // waiting for backend route
-          // this.props.newExecution();
-          return Promise.resolve();
+          return this.props.createJobExecution(datamartId)
         };
         Modal.confirm({
           icon: 'exclamation-circle',
