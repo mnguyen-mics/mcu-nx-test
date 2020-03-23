@@ -70,6 +70,18 @@ const messages = defineMessages({
     defaultMessage:
       "There are no channels of the selected type set up. Click on 'New Channel' to create one.",
   },
+  searchPlaceholder: {
+    id: 'settings.datamart.channels.placeholder',
+    defaultMessage: 'Search Channels',
+  },
+  lastSevenDaysSessions: {
+    id: 'settings.datamart.channels.last.seven.days.sessions',
+    defaultMessage: 'Sessions in the last 7 days',
+  },
+  lastSevenDaysUsers: {
+    id: 'settings.datamart.channels.last.seven.days.unique.users',
+    defaultMessage: 'Unique users in the last 7 days',
+  },
 });
 
 export default messages;

@@ -54,22 +54,22 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
     this.fetchCompartments(datamartId, filter);
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       datamartId,
       filter,
     } = this.props;
 
     const {
-      datamartId: previousDatamartId,
-      filter: previousFilter,
-    } = previousProps;
+      datamartId: nextDatamartId,
+      filter: nextFilter,
+    } = nextProps;
 
     if (
-      (filter !== previousFilter) ||
-      (datamartId !== previousDatamartId)
+      (filter !== nextFilter) ||
+      (datamartId !== nextDatamartId)
     ) {
-      this.fetchCompartments(datamartId, filter);
+      this.fetchCompartments(nextDatamartId, nextFilter);
     }
   }
 

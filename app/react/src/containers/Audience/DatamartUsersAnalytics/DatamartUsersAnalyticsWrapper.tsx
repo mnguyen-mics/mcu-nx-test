@@ -83,7 +83,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
         to: newValues.to,
       });
 
-    return <McsDateRangePicker values={values} onChange={onChange} disabled={isLoading} />;
+    return <McsDateRangePicker values={values} onChange={onChange} disabled={isLoading} excludeToday={true} />;
   }
 
   getLoadingState = (isLoading: boolean) => this.setState({isLoading})

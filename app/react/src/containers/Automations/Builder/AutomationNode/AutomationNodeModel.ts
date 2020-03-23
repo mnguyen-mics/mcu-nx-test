@@ -47,7 +47,7 @@ export default class AutomationNodeModel extends NodeModel {
 
     this.icon = iconType;
 
-    if (datamartId === undefined || title === undefined || color === undefined || storylineNodeModel === undefined) {
+    if (datamartId === undefined || title === undefined || color === undefined || storylineNodeModel === undefined) {
       throw new Error('missing parameters') 
     }
     this.datamartId = datamartId;

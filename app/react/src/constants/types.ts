@@ -66,7 +66,6 @@ const TYPES = {
   IDatamartReplicationService: Symbol.for('datamartReplicationService'),
   IDataFileService: Symbol.for('dataFileService'),
   IBidOptimizerService: Symbol.for('bidOptimizerService'),
-  ITableSchemaService: Symbol.for('tableSchemaService'),
   IServiceUsageReportService: Symbol.for('serviceUsageReportService'),
   IRuntimeSchemaService: Symbol.for('runtimeSchemaService'),
   IResourceHistoryService: Symbol.for('resourceHistoryService'),

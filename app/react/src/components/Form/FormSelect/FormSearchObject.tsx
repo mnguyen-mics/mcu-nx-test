@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Select, Spin } from 'antd';
-
+import {debounce} from 'lodash';
 // TS Interface
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipProps } from 'antd/lib/tooltip';
@@ -16,6 +16,7 @@ export interface FormSearchObjectProps {
   selectProps?: SelectProps;
   helpToolTipProps?: TooltipProps;
   loadOnlyOnce?: boolean;
+  shouldFilterData?: boolean;
   fetchListMethod: (keyword: string) => Promise<LabeledValue[]>;
   fetchSingleMethod: (id: string) => Promise<LabeledValue>;
   type?: string;
@@ -28,6 +29,7 @@ interface FormSearchObjectState {
   fetching: boolean;
   initialFetch?: boolean;
   currentValue?: string;
+  filteredData: LabeledValue[];
 }
 
 type Props = FormSearchObjectProps & WrappedFieldProps;
@@ -36,16 +38,20 @@ class FormSearchObject extends React.Component<
   Props,
   FormSearchObjectState
   > {
+
   static defaultprops = {
     formItemProps: {},
     inputProps: {},
     helpToolTipProps: {},
   };
 
+  private debounce = debounce;
+
   constructor(props: Props) {
     super(props)
     this.state = {
       data: [],
+      filteredData: [],
       fetching: false
     }
   }
@@ -111,6 +117,8 @@ class FormSearchObject extends React.Component<
       this.setState({
         data: res,
         fetching: false
+      }, () => {
+        this.filterData()
       })
     })
   }
@@ -123,17 +131,43 @@ class FormSearchObject extends React.Component<
 
     if(selectProps && selectProps.mode === "default") {
       const singleValue = value as LabeledValue;
-      this.setState({ value: [singleValue], currentValue: undefined });
+      this.setState({ value: [singleValue], currentValue: undefined }, () => { this.filterData() });
       input.onChange(singleValue.key);
     } else {
       const multipleValues = value as LabeledValue[];
-      this.setState({ value: multipleValues, currentValue: undefined });
+      this.setState({ value: multipleValues, currentValue: undefined }, () => { this.filterData() });
       input.onChange(multipleValues.map(i => i.key));
     }
   }
 
   onSearch = (val: string) => {
     this.setState({ currentValue: val });
+    this.debounce(this.filterData, 300, { leading: false, trailing: true })()
+  }
+
+  filterData = () => {
+    const {
+      currentValue
+    } = this.state;
+    const {
+      shouldFilterData
+    } = this.props;
+    if (shouldFilterData) {
+      const getLatestTypedValue = (): string => {
+        if (currentValue) {
+          return currentValue
+        }
+        return ""
+      }
+      const typedValue = getLatestTypedValue();
+      const opts = this.state.data.filter(v => {
+        return v.key.toLocaleLowerCase().startsWith(typedValue)
+      }).slice(0,100);
+      this.setState({ filteredData: opts });
+    } else {
+      this.setState({ filteredData: this.state.data })
+    }
+   
   }
 
   onInputKeyDown = () => {
@@ -160,6 +194,11 @@ class FormSearchObject extends React.Component<
       loadOnlyOnce
     } = this.props;
 
+    const {
+      // currentValue,
+      filteredData
+    } = this.state;
+
     let validateStatus = 'success' as
       | 'success'
       | 'warning'
@@ -168,7 +207,7 @@ class FormSearchObject extends React.Component<
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
-    const options = this.state.data.map(d => <Option key={d.key} value={d.key}>{d.label}</Option>);
+    const options = filteredData.map(d => <Option key={d.key} value={d.key}>{d.label}</Option>);
 
     return (
       <FormFieldWrapper

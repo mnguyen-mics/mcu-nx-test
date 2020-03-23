@@ -11,7 +11,11 @@ import { IMlAlgorithmService } from '../../../../../services/MlAlgorithmService'
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import messages from '../messages';
-import { PAGINATION_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+  updateSearch,
+} from '../../../../../utils/LocationSearchHelper';
 import moment from 'moment';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
@@ -26,26 +30,25 @@ import { FormFieldWrapper } from '../../../../../components/Form';
 
 const { Content } = Layout;
 
-
 const initialMlAlgorithmForkModalData = {
   modalLoading: false,
   isModalOpen: false,
   mlAlgorithmVariables: [],
-  newMlAlgorithmVariables: {}
-}
+  newMlAlgorithmVariables: {},
+};
 
 const initialState = {
   loading: false,
   data: [],
   total: 0,
-  mlAlgorithmForkModalData: initialMlAlgorithmForkModalData
+  mlAlgorithmForkModalData: initialMlAlgorithmForkModalData,
 };
 
 interface MlAlgorithmForkModalData {
   mlAlgorithm?: MlAlgorithmResource;
   mlAlgorithmVariables: MlAlgorithmVariableResource[];
   mlAlgorithmModel?: MlAlgorithmModelResource;
-  newMlAlgorithmVariables: { [key: string]: string }
+  newMlAlgorithmVariables: { [key: string]: string };
   modalLoading: boolean;
   isModalOpen: boolean;
 }
@@ -66,7 +69,10 @@ type JoinedProps = RouteComponentProps<RouterProps> &
   InjectedThemeColorsProps &
   InjectedNotificationProps;
 
-class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState> {
+class MlAlgorithmList extends React.Component<
+  JoinedProps,
+  MlAlgorithmListState
+> {
   @lazyInject(TYPES.IMlAlgorithmService)
   private _mlAlgorithmService: IMlAlgorithmService;
 
@@ -87,7 +93,8 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._mlAlgorithmService.getMlAlgorithms(organisationId, options)
+      this._mlAlgorithmService
+        .getMlAlgorithms(organisationId, options)
         .then(results => {
           this.setState({
             loading: false,
@@ -97,9 +104,9 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         })
         .catch(err => {
           message.error(intl.formatMessage(messages.loadingError));
-        })
+        });
     });
-  }
+  };
 
   handleEditMlAlgorithm = (mlAlgorithm: MlAlgorithmResource) => {
     const {
@@ -107,13 +114,13 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         params: { organisationId },
       },
       location,
-      history
-    } = this.props
+      history,
+    } = this.props;
     history.push({
       pathname: `/v2/o/${organisationId}/settings/datamart/ml_algorithms/${mlAlgorithm.id}/edit`,
-      state: { from: `${location.pathname}${location.search}` }
+      state: { from: `${location.pathname}${location.search}` },
     });
-  }
+  };
 
   handleArchiveMlAlgorithm = (mlAlgorithm: MlAlgorithmResource) => {
     const {
@@ -121,8 +128,8 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         params: { organisationId },
       },
       location: { search },
-      intl
-    } = this.props
+      intl,
+    } = this.props;
 
     mlAlgorithm.archived = true;
 
@@ -131,60 +138,77 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       .then(res => res.data)
       .then(mlAlgorithmArchived => {
         const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-        this.fetchMlAlgorithms(organisationId, filter)
+        this.fetchMlAlgorithms(organisationId, filter);
         message.success(intl.formatMessage(messages.updateSuccess));
       })
       .catch(err => {
         message.error(intl.formatMessage(messages.updateError));
-      })
+      });
+  };
 
-  }
-
-
-  forkMlAlgorithm = async (mlAlgorithm: MlAlgorithmResource) => {
+  forkMlAlgorithm = (mlAlgorithm: MlAlgorithmResource) => {
     this.setState({
-      mlAlgorithmForkModalData: { ...this.state.mlAlgorithmForkModalData, mlAlgorithm, modalLoading: true, isModalOpen: true }
+      mlAlgorithmForkModalData: {
+        ...this.state.mlAlgorithmForkModalData,
+        mlAlgorithm,
+        modalLoading: true,
+        isModalOpen: true,
+      },
     });
 
-    try {
-      const { match: { params: { organisationId } } } = this.props
-      const [models, variables] = await Promise.all([
-        this._mlAlgorithmModelService.getMlAlgorithmModels(organisationId, mlAlgorithm.id, { status: 'LIVE' }),
-        this._mlAlgorithmVariableService.getMlAlgorithmVariables(organisationId, mlAlgorithm.id)
-      ]);
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+    Promise.all([
+      this._mlAlgorithmModelService.getMlAlgorithmModels(
+        organisationId,
+        mlAlgorithm.id,
+        { status: 'LIVE' },
+      ),
+      this._mlAlgorithmVariableService.getMlAlgorithmVariables(
+        organisationId,
+        mlAlgorithm.id,
+      ),
+    ])
+      .then(res => {
+        const models = res[0];
+        const variables = res[1];
+        if (models.total === 1) {
+          this.setState({
+            mlAlgorithmForkModalData: {
+              ...this.state.mlAlgorithmForkModalData,
+              mlAlgorithmModel: models.data[0],
+            },
+          });
+        }
 
-      if (models.total === 1) {
         this.setState({
           mlAlgorithmForkModalData: {
             ...this.state.mlAlgorithmForkModalData,
-            mlAlgorithmModel: models.data[0],
+            modalLoading: false,
+            mlAlgorithmVariables: variables.data,
+            newMlAlgorithmVariables: variables.data.reduce<{
+              [key: string]: string;
+            }>((m, variable) => {
+              m[variable.key] = variable.value;
+              return m;
+            }, {}),
           },
         });
-      }
-
-      this.setState({
-        mlAlgorithmForkModalData: {
-          ...this.state.mlAlgorithmForkModalData,
-          modalLoading: false,
-          mlAlgorithmVariables: variables.data,
-          newMlAlgorithmVariables: variables.data.reduce<{ [key: string]: string }>((m, variable) => {
-            m[variable.key] = variable.value;
-            return m;
-          }, {})
-        }
+      })
+      .catch(error => {
+        this.props.notifyError(error);
+        this.setState({
+          mlAlgorithmForkModalData: {
+            ...this.state.mlAlgorithmForkModalData,
+            modalLoading: false,
+            isModalOpen: false,
+          },
+        });
       });
-    } catch (error) {
-      this.props.notifyError(error);
-      this.setState({
-        mlAlgorithmForkModalData: {
-          ...this.state.mlAlgorithmForkModalData,
-          modalLoading: false,
-          isModalOpen: false
-        }
-      });
-    }
-
-  }
+  };
 
   updateLocationSearch = (params: Filters) => {
     const {
@@ -219,9 +243,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         render: (text: string, record: MlAlgorithmResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${record.organisation_id}/settings/datamart/ml_algorithms/${
-              record.id
-              }/models`}
+            to={`/v2/o/${record.organisation_id}/settings/datamart/ml_algorithms/${record.id}/models`}
           >
             {record.name}
           </Link>
@@ -234,9 +256,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         render: (text: string, record: MlAlgorithmResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${record.organisation_id}/settings/datamart/ml_algorithms/${
-              record.id
-              }/models`}
+            to={`/v2/o/${record.organisation_id}/settings/datamart/ml_algorithms/${record.id}/models`}
           >
             {text}
           </Link>
@@ -256,9 +276,10 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         key: 'archived',
         isHideable: false,
         render: (text: string, record: MlAlgorithmResource) =>
-          record.archived ? formatMessage(messages.isArchived) : formatMessage(messages.notArchived)
-      }
-
+          record.archived
+            ? formatMessage(messages.isArchived)
+            : formatMessage(messages.notArchived),
+      },
     ];
 
     return {
@@ -267,10 +288,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
   };
 
   renderModal = () => {
-    const {
-      intl,
-      history
-    } = this.props;
+    const { intl, history } = this.props;
 
     const redirectAndNotify = (id?: string) => {
       if (id) {
@@ -284,66 +302,104 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           mlAlgorithmForkModalData: {
             ...this.state.mlAlgorithmForkModalData,
             isModalOpen: false,
-            modalLoading: false
-          }
+            modalLoading: false,
+          },
         });
         message.error(intl.formatMessage(messages.forkError));
       }
     };
 
-    const { mlAlgorithmForkModalData: { isModalOpen, mlAlgorithmVariables, modalLoading } } = this.state;
+    const {
+      mlAlgorithmForkModalData: {
+        isModalOpen,
+        mlAlgorithmVariables,
+        modalLoading,
+      },
+    } = this.state;
 
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const variableFormSection = mlAlgorithmVariables.map((variable, index) => {
-
       const onChange = (e: any) => {
-        const v = this.state.mlAlgorithmForkModalData.newMlAlgorithmVariables
-        v[variable.key] = e.target.value
-        this.setState({ mlAlgorithmForkModalData: { ...this.state.mlAlgorithmForkModalData, newMlAlgorithmVariables: v } })
-      }
-      return (<FormFieldWrapper key={index} label={variable.key} small={true}>
-        <Input key={index} defaultValue={variable.value} onChange={onChange} placeholder={variable.key} />
-      </FormFieldWrapper>)
-    })
+        const v = this.state.mlAlgorithmForkModalData.newMlAlgorithmVariables;
+        v[variable.key] = e.target.value;
+        this.setState({
+          mlAlgorithmForkModalData: {
+            ...this.state.mlAlgorithmForkModalData,
+            newMlAlgorithmVariables: v,
+          },
+        });
+      };
+      return (
+        <FormFieldWrapper key={index} label={variable.key} small={true}>
+          <Input
+            key={index}
+            defaultValue={variable.value}
+            onChange={onChange}
+            placeholder={variable.key}
+          />
+        </FormFieldWrapper>
+      );
+    });
 
     const onCancel = () => {
       this.setState({
-        mlAlgorithmForkModalData: initialMlAlgorithmForkModalData
-      })
-    }
+        mlAlgorithmForkModalData: initialMlAlgorithmForkModalData,
+      });
+    };
 
-    const onOk = async () => {
-      const { mlAlgorithmForkModalData: { newMlAlgorithmVariables, mlAlgorithm, mlAlgorithmModel } } = this.state
+    const onOk = () => {
+      const {
+        mlAlgorithmForkModalData: {
+          newMlAlgorithmVariables,
+          mlAlgorithm,
+          mlAlgorithmModel,
+        },
+      } = this.state;
 
-      this._mlAlgorithmService.createMlAlgorithm({
-        archived: false,
-        name: (mlAlgorithm as MlAlgorithmResource).name + ' (Copy)',
-        description: (mlAlgorithm as MlAlgorithmResource).description,
-        organisation_id: organisationId
-      })
+      this._mlAlgorithmService
+        .createMlAlgorithm({
+          archived: false,
+          name: (mlAlgorithm as MlAlgorithmResource).name + ' (Copy)',
+          description: (mlAlgorithm as MlAlgorithmResource).description,
+          organisation_id: organisationId,
+        })
         .then(res => res.data)
         .then(createdMlAlgorithm => {
-          Promise.all(Object.entries(newMlAlgorithmVariables).map(([key, value], idx) => {
-            this._mlAlgorithmVariableService.createMlAlgorithmVariable(createdMlAlgorithm.id, {
-              key,
-              value
-            })
-          }))
-          return createdMlAlgorithm.id
+          Promise.all(
+            Object.entries(newMlAlgorithmVariables).map(([key, value], idx) => {
+              this._mlAlgorithmVariableService.createMlAlgorithmVariable(
+                createdMlAlgorithm.id,
+                {
+                  key,
+                  value,
+                },
+              );
+            }),
+          );
+          return createdMlAlgorithm.id;
         })
         .then(createdMlAlgorithmId => {
-          return this._mlAlgorithmModelService.createMlAlgorithmModel(createdMlAlgorithmId, {
-            id: undefined,
-            ...mlAlgorithmModel
-          });
+          return this._mlAlgorithmModelService.createMlAlgorithmModel(
+            createdMlAlgorithmId,
+            {
+              id: undefined,
+              ...mlAlgorithmModel,
+            },
+          );
         })
-        .then((createMlAlgorithmModel) => {
-          this.setState({ mlAlgorithmForkModalData: initialMlAlgorithmForkModalData });
+        .then(createMlAlgorithmModel => {
+          this.setState({
+            mlAlgorithmForkModalData: initialMlAlgorithmForkModalData,
+          });
           redirectAndNotify(createMlAlgorithmModel.data.id);
         })
-        .catch(err => redirectAndNotify())
-    }
+        .catch(err => redirectAndNotify());
+    };
 
     return (
       <Modal
@@ -356,22 +412,18 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
         <Spin spinning={modalLoading}>
           <div>{intl.formatMessage(messages.forkMlAlgorithmModalSubtitle)}</div>
           <br />
-          <Form layout={"vertical"}>
-            {variableFormSection}
-          </Form>
+          <Form layout={'vertical'}>{variableFormSection}</Form>
         </Spin>
-
       </Modal>
-    )
-  }
-
+    );
+  };
 
   render() {
     const {
       match: {
         params: { organisationId },
       },
-      history
+      history,
     } = this.props;
 
     const emptyTable: {
@@ -382,14 +434,27 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       intlMessage: messages.empty,
     };
 
-
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<MlAlgorithmResource>> = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
+      MlAlgorithmResource
+    >> = [
       {
         key: 'action',
         actions: (mlAlgorithm: MlAlgorithmResource) => [
-          { intlMessage: messages.editMlAlgorithmRaw, callback: this.handleEditMlAlgorithm, disabled: mlAlgorithm.archived },
-          { intlMessage: messages.archive, callback: this.handleArchiveMlAlgorithm, disabled: mlAlgorithm.archived },
-          { intlMessage: messages.fork, callback: this.forkMlAlgorithm, disabled: mlAlgorithm.archived }
+          {
+            intlMessage: messages.editMlAlgorithmRaw,
+            callback: this.handleEditMlAlgorithm,
+            disabled: mlAlgorithm.archived,
+          },
+          {
+            intlMessage: messages.archive,
+            callback: this.handleArchiveMlAlgorithm,
+            disabled: mlAlgorithm.archived,
+          },
+          {
+            intlMessage: messages.fork,
+            callback: this.forkMlAlgorithm,
+            disabled: mlAlgorithm.archived,
+          },
         ],
       },
     ];
@@ -398,7 +463,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       history.push(
         `/v2/o/${organisationId}/settings/datamart/ml_algorithms/create`,
       );
-    }
+    };
 
     const buttons = [
       <Button key="create" type="primary" onClick={onClick}>
@@ -438,6 +503,5 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
     );
   }
 }
-
 
 export default compose(withRouter, injectIntl)(MlAlgorithmList);

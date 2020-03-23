@@ -43,7 +43,7 @@ class TotalConsumption extends React.Component<TotalConsumptionProps, TotalConsu
     this.fetchAll(organisationId, id, objectType, from, to);
   }
 
-  componentDidUpdate(previousProps: TotalConsumptionProps) {
+  componentWillReceiveProps(nextProps: TotalConsumptionProps) {
     const {
       id,
       organisationId,
@@ -53,18 +53,18 @@ class TotalConsumption extends React.Component<TotalConsumptionProps, TotalConsu
     } = this.props;
 
     const {
-      id: previousId,
-      organisationId: previousOrganisationId,
-      objectType: previousObjectType,
-      from: previousFrom,
-      to: previousTo,
-    } = previousProps;
+      id: nextId,
+      organisationId: nextOrganisationId,
+      objectType: nextObjectType,
+      from: nextFrom,
+      to: nextTo,
+    } = nextProps;
 
-    if (id !== previousId ||
-      organisationId !== previousOrganisationId ||
-      objectType !== previousObjectType ||
-      !from.toMoment().isSame(previousFrom.toMoment()) ||
-      !to.toMoment().isSame(previousTo.toMoment())
+    if (id !== nextId ||
+      organisationId !== nextOrganisationId ||
+      objectType !== nextObjectType ||
+      !from.toMoment().isSame(nextFrom.toMoment()) ||
+      !to.toMoment().isSame(nextTo.toMoment())
     ) {
       this.fetchAll(organisationId, id, objectType, from, to);
     }

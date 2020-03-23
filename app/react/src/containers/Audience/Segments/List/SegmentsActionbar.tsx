@@ -100,7 +100,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
     }
   };
 
-  fetchExportData = async (
+  fetchExportData = (
     organisationId: string,
     datamartId: string,
     filter: Index<any>,
@@ -123,21 +123,22 @@ class SegmentsActionbar extends React.Component<Props, State> {
       return options;
     };
 
+    return this._audienceSegmentService
+      .getSegments(organisationId, buildOptions())
+      .then(response => {
+        const result = response.data;
 
-    return this._audienceSegmentService.getSegments(organisationId, buildOptions()).then(response => {
-      const result = response.data
-
-      return result.map(res => {
-        const name =
-          res.type === 'USER_ACTIVATION'
-            ? this.formatUserActivationSegmentName(res)
-            : res.name;
-        return { ...res, name };
+        return result.map(res => {
+          const name =
+            res.type === 'USER_ACTIVATION'
+              ? this.formatUserActivationSegmentName(res)
+              : res.name;
+          return { ...res, name };
+        });
+      })
+      .catch(e => {
+        this.props.notifyError(e);
       });
-
-    }).catch(e => {
-      this.props.notifyError(e);
-    });
   };
 
   handleRunExport = () => {
@@ -169,7 +170,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
           datamartId,
           data,
           filter,
-          formatMessage
+          formatMessage,
         );
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();

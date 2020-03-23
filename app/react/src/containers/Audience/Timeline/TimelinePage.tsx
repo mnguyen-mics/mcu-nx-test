@@ -65,7 +65,7 @@ class TimelinePage extends React.Component<JoinedProps> {
     }
   }
 
-  componentDidUpdate() {
+  componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       history,
       cookies,
@@ -73,7 +73,7 @@ class TimelinePage extends React.Component<JoinedProps> {
         params: { organisationId, identifierId, identifierType },
       },
       location,
-    } = this.props;
+    } = nextProps;
     const datamarId = queryString.parse(location.search).datamarId;
     if (!identifierId && !identifierType && cookies.mics_vid) {
       const url = `/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${

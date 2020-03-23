@@ -8,7 +8,8 @@ import {
   DirectiveArgumentResource,
   ObjectLikeTypeInfoResource,
   SchemaDecoratorResource,
-  RuntimeSchemaValidationResource,
+  RuntimeSchemaValidationInfoResource,
+  RuntimeSchemaPublicationInfoResource
 } from '../models/datamart/graphdb/RuntimeSchema';
 import { injectable } from 'inversify';
 
@@ -41,12 +42,12 @@ export interface IRuntimeSchemaService {
   validateRuntimeSchema: (
     datamartId: string,
     runtimeSchemaId: string,
-  ) => Promise<DataResponse<RuntimeSchemaValidationResource>>;
+  ) => Promise<DataResponse<RuntimeSchemaValidationInfoResource>>;
 
   publishRuntimeSchema: (
     datamartId: string,
     runtimeSchemaId: string,
-  ) => Promise<DataResponse<RuntimeSchemaValidationResource>>;
+  ) => Promise<DataResponse<RuntimeSchemaPublicationInfoResource>>;
 
   getObjectTypes: (
     datamartId: string,
@@ -213,7 +214,7 @@ export class RuntimeSchemaService implements IRuntimeSchemaService {
   validateRuntimeSchema(
     datamartId: string,
     runtimeSchemaId: string,
-  ): Promise<DataResponse<RuntimeSchemaValidationResource>> {
+  ): Promise<DataResponse<RuntimeSchemaValidationInfoResource>> {
     return ApiService.postRequest(
       `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/validation`,
       {},
@@ -223,7 +224,7 @@ export class RuntimeSchemaService implements IRuntimeSchemaService {
   publishRuntimeSchema(
     datamartId: string,
     runtimeSchemaId: string,
-  ): Promise<DataResponse<RuntimeSchemaValidationResource>> {
+  ): Promise<DataResponse<RuntimeSchemaPublicationInfoResource>> {
     return ApiService.postRequest(
       `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/publication`,
       {},

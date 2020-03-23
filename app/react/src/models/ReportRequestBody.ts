@@ -61,7 +61,8 @@ export type DimensionFilterOperator =
   | 'EXACT'
   | 'NUMERIC_EQUAL'
   | 'NUMERIC_GREATER_THAN'
-  | 'NUMERIC_LESS_THAN';
+  | 'NUMERIC_LESS_THAN'
+  | 'IN_LIST';
 
 export type MetricFilterOperator = 'EQUAL' | 'GREATER_THAN' | 'LESS_THAN';
 

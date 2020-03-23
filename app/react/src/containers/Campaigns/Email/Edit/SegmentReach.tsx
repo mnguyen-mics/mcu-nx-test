@@ -67,8 +67,8 @@ class SegmentReach extends React.Component<Props, State> {
     this.computeSegmentReach(this.props);
   }
 
-  componentDidUpdate() {
-    this.computeSegmentReach(this.props);
+  componentWillReceiveProps(nextProps: Props) {
+    this.computeSegmentReach(nextProps);
   }
 
   render() {

@@ -81,10 +81,10 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     };
   }
 
-  componentDidUpdate() {
+  componentWillReceiveProps(nextProps: Props) {
     const loadedCreativeIds = Object.keys(this.state.displayCreativeCacheById);
     const creativeIdsToBeLoaded: string[] = [];
-    this.props.fields.getAll().forEach((field, index) => {
+    nextProps.fields.getAll().forEach((field, index) => {
       if (
         !isDisplayCreativeFormData(field.model) &&
         !loadedCreativeIds.includes(field.model.creative_id)

@@ -1,31 +1,68 @@
 import { HashFunction } from './RuntimeSchema';
 
-export interface RuntimeSchemaValidationResource {
+export interface RuntimeSchemaValidationInfoResource {
   datamart_id: string,
   schema_id: string,
-  tree_indices: TreeIndexSelection[],
-  schema_errors: string[]
+  tree_index_operations: TreeIndexValidationInfoResource[],
+  schema_errors: RuntimeSchemaValidationErrorRecord[]
 }
 
-export interface TreeIndexSelection {
+export interface TreeIndexValidationInfoResource {
+  datamart_id: string,
   index_selection_id: string,
-  index_name: "USER_INDEX",
+  index_name: string,
   init_strategy: TreeIndexInitStrategy,
   driver_version_major_number: string,
   driver_version_minor_number: string,
-  current_index_id: string,
-  current_index_size: "SMALL",
-  new_index: false,
-  new_index_size: "SMALL",
-  init_job?: null,
-  error_code?: null,
-  error_message?: null
+  current_index_id?: string,
+  current_index_size?: TreeIndexSize,
+  new_index?: boolean,
+  new_index_size?: TreeIndexSize,
+  init_job?: TreeIndexJobType,
+  error_code?: TreeIndexValidationError,
+  error_message?: string,
 }
 
-export type TreeIndexInitStrategy= "AUTOMATIC" |
+export interface RuntimeSchemaValidationErrorRecord {
+  error_code: RuntimeSchemaValidationError,
+  error_message?: string,
+}
+
+export type TreeIndexSize = 'SMALL' | 'MEDIUM' | 'LARGE'
+
+export type TreeIndexJobType = 'CURSOR_BASED_FULL_BUILD' | 'INDEX_BASED_FULL_BUILD' | 'IN_PLACE_REFRESH'
+
+export type TreeIndexValidationError = 'INDEX_JOB_STILL_RUNNING'
+
+export type RuntimeSchemaValidationError = 'COMPILATION_ERROR'
+
+export interface RuntimeSchemaPublicationInfoResource {
+  datamart_id: string,
+  schema_id: string,
+  tree_indices: TreeIndexPublicationInfoResource[]
+}
+
+export interface TreeIndexPublicationInfoResource {
+  index_name: string,
+  new_index: boolean,
+  index_id: string,
+  index_size: TreeIndexSize,
+  init_strategy: TreeIndexInitStrategy,
+  driver_version_major_number: string,
+  driver_version_minor_number: string,
+  init_job?: TreeIndexJobType
+}
+
+export interface RuntimeSchemaPublicationErrorRecord {
+  error_code: RuntimeSchemaValidationError,
+  error_message?: string
+}
+
+export type TreeIndexInitStrategy = "AUTOMATIC" |
 "FORCE_BUILD_FROM_CURSOR" |
 "FORCE_BUILD_FROM_INDEX" |
-"FORCE_NO_BUILD"
+"FORCE_NO_BUILD" |
+"MANUAL"
 
 export interface RuntimeSchemaResource {
   id: string;

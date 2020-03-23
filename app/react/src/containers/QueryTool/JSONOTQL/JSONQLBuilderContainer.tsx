@@ -85,12 +85,12 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
     this.loadData(datamartId, queryId);
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const { datamartId, queryId } = this.props;
-    const { datamartId: previousDatamartId, queryId: previousQueryId } = previousProps;
+    const { datamartId: nextDatamartId, queryId: nextQueryId } = nextProps;
 
-    if (datamartId !== previousDatamartId || queryId !== previousQueryId) {
-      this.loadData(datamartId, queryId);
+    if (nextDatamartId !== datamartId || queryId !== nextQueryId) {
+      this.loadData(nextDatamartId, nextQueryId);
     }
   }
 
@@ -251,13 +251,25 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       return [{ name: newSchema.name,selections: computedSelectQuery(remainingPaths, newSchema) }]
     }
 
-    return this._queryService.runJSONOTQLQuery(
+    const computedOtqlSelectQuery = (path: number[], schema?: SchemaItem): string => {
+      if (!schema) {
+        throw new Error('please provide a schema');
+      }
+      if (path.length === 1) {
+        const [currentP] = path;
+        return `{ ${schema.fields[currentP].name} @map(limit:10000) }`
+      }
+      const [currentPath, ...remainingPaths] = path;
+      const newSchema = schema.fields[currentPath] as SchemaItem;
+      return `{ ${newSchema.name} ${computedOtqlSelectQuery(remainingPaths, newSchema)} }`
+    }
+
+
+    const otqlQuery = `SELECT ${computedOtqlSelectQuery(computedSchemaPathFromQueryPath, computedSchema)} FROM UserPoint`;
+
+    return this._queryService.runOTQLQuery(
       datamartId,
-      {
-        operations: [{ selections: computedSelectQuery(computedSchemaPathFromQueryPath, computedSchema)}],
-        from: 'UserPoint',
-        where: undefined
-      },
+      otqlQuery,
       { use_cache: true }
     ).then(d => {
       if (isAggregateResult(d.data.rows)) {

@@ -10,7 +10,15 @@ export interface ChannelResource {
   visit_analyzer_model_id: string | null;
 }
 
+export interface ChannelAnalyticsResource {
+  channel_id?: number;
+  sessions?: number;
+  user?: number;
+}
+
 export type ChannelResourceShape = MobileApplicationResource | SiteResource;
+
+export type ChannelResourceShapeWithAnalytics = ChannelResourceShape & ChannelAnalyticsResource;
 
 export type ChannelType = 'MOBILE_APPLICATION' | 'SITE';
 

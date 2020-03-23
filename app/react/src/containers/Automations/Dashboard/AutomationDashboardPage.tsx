@@ -119,12 +119,12 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       id: automationId
     }
 
-    this.setState({ updating: true })
+    this.setState({ updating: true })
     return this._scenarioService.updateScenario(automationId, payload)
       .then(r => this.setState({
         automationFormData: { 
           ...this.state.automationFormData, 
-          automation: r.data 
+          automation: r.data 
         }, 
         updating: false  
       }));

@@ -87,19 +87,21 @@ class AudienceSegmentPage extends React.Component<Props, State> {
 
   refreshAudienceSegment = (segmentId: string) => {
     return new Promise((resolve, reject) => {
-      this.interval = setInterval(async () => {
-        const segment = await this._audienceSegmentService
+      this.interval = setInterval(() => {
+        this._audienceSegmentService
           .getSegment(segmentId)
-          .then(res => res.data);
-        if (
-          segment.type === 'USER_LOOKALIKE' &&
-          (segment.status === 'CALIBRATED' ||
-            segment.status === 'CALIBRATION_ERROR')
-        ) {
-          clearInterval(this.interval);
-          this.setState({ segment: segment });
-          return resolve(segment);
-        }
+          .then(res => res.data)
+          .then(segment => {
+            if (
+              segment.type === 'USER_LOOKALIKE' &&
+              (segment.status === 'CALIBRATED' ||
+                segment.status === 'CALIBRATION_ERROR')
+            ) {
+              clearInterval(this.interval);
+              this.setState({ segment: segment });
+              return resolve(segment);
+            }
+          });
       }, 2000);
     });
   };
@@ -129,9 +131,9 @@ class AudienceSegmentPage extends React.Component<Props, State> {
       .then(res => this.setState({ isLoading: false, segment: res.data }));
   };
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
-      location: { pathname, search },
+      location: { search },
       match: {
         params: { segmentId, organisationId },
       },
@@ -139,28 +141,28 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     } = this.props;
 
     const {
-      location: { search: previousSearch },
+      location: { pathname: nextPathname, search: nextSearch },
       match: {
         params: {
-          segmentId: previousSegmentId,
-          organisationId: previousOrganisationId,
+          segmentId: nextSegmentId,
+          organisationId: nextOrganisationId,
         },
       },
-    } = previousProps;
+    } = nextProps;
 
     if (
-      !compareSearches(search, previousSearch) ||
-      segmentId !== previousSegmentId ||
-      organisationId !== previousOrganisationId ||
+      !compareSearches(search, nextSearch) ||
+      segmentId !== nextSegmentId ||
+      organisationId !== nextOrganisationId ||
       (this.state.segment && this.state.segment.type === 'USER_LOOKALIKE')
     ) {
-      if (organisationId !== previousOrganisationId) {
-        history.push(`/v2/o/${organisationId}/audience/segments`);
+      if (organisationId !== nextOrganisationId) {
+        history.push(`/v2/o/${nextOrganisationId}/audience/segments`);
       }
-      if (!isSearchValid(search, SEGMENT_QUERY_SETTINGS)) {
+      if (!isSearchValid(nextSearch, SEGMENT_QUERY_SETTINGS)) {
         history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, SEGMENT_QUERY_SETTINGS),
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, SEGMENT_QUERY_SETTINGS),
         });
       } else {
         this.setState({ isLoading: true });

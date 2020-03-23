@@ -7,11 +7,12 @@ import moment from 'moment';
 import ImportHeader from './ImportHeader';
 import Card from '../../../../components/Card/Card';
 import { Filters } from '../../../../components/ItemList';
-import { ImportExecution, Import } from '../../../../models/imports/imports';
+import {
+  ImportExecution,
+  Import
+} from '../../../../models/imports/imports';
 import ImportActionbar from './ImportActionbar';
-import TableView, {
-  ActionsColumnDefinition,
-} from '../../../../components/TableView/TableView';
+import TableView, { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import log from '../../../../utils/Logger';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -30,9 +31,7 @@ import injectThemeColors, {
 } from '../../../Helpers/injectThemeColors';
 import { McsIcon } from '../../../../components';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../Notifications/injectNotifications';
+import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import LocalStorage from '../../../../services/LocalStorage';
 import { getExecutionInfo } from '../../../../utils/JobHelpers';
 
@@ -89,6 +88,7 @@ class Imports extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.IImportService)
   private _importService: IImportService;
 
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -126,35 +126,39 @@ class Imports extends React.Component<JoinedProps, State> {
     }
   }
 
-  componentDidUpdate(previousProps: JoinedProps) {
+  componentWillReceiveProps(nextProps: JoinedProps) {
     const {
       history,
-      location: { pathname, search },
+      location: { search },
       match: {
-        params: { organisationId, datamartId, importId },
+        params: { organisationId },
       },
     } = this.props;
 
     const {
-      location: { search: previousSearch },
+      location: { pathname: nextPathname, search: nextSearch },
       match: {
-        params: { organisationId: previousOrganisationId },
+        params: {
+          organisationId: nextOrganisationId,
+          datamartId: nextDatamartId,
+          importId: nextImportId,
+        },
       },
-    } = previousProps;
+    } = nextProps;
 
     if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
+      !compareSearches(search, nextSearch) ||
+      organisationId !== nextOrganisationId
     ) {
-      if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
+      if (!isSearchValid(nextSearch, PAGINATION_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== previousOrganisationId },
+          pathname: nextPathname,
+          search: buildDefaultSearch(nextSearch, PAGINATION_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== nextOrganisationId },
         });
       } else {
-        const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-        this.fetchImportAndExecutions(datamartId, importId, filter);
+        const filter = parseSearch(nextSearch, PAGINATION_SEARCH_SETTINGS);
+        this.fetchImportAndExecutions(nextDatamartId, nextImportId, filter);
       }
     }
   }
@@ -210,6 +214,7 @@ class Imports extends React.Component<JoinedProps, State> {
     history.push(nextLocation);
   };
 
+
   renderStatuColumn = (record: ImportExecution) => {
     switch (record.status) {
       case 'SUCCEEDED':
@@ -217,7 +222,7 @@ class Imports extends React.Component<JoinedProps, State> {
         return (
           <div>
             {record.status}{' '}
-            {record.result && record.result.total_failure > 0 ? (
+            { record.result && record.result.total_failure > 0 ? (
               <span>
                 - with errors{' '}
                 <Tooltip
@@ -237,64 +242,64 @@ class Imports extends React.Component<JoinedProps, State> {
     }
   };
 
+
   onClickCancel = (execution: ImportExecution) => {
     const datamartId = this.props.match.params.datamartId;
     const importId = this.props.match.params.importId;
     const executions = this.state.importExecutions.items;
-    return this._importService
-      .cancelImportExecution(datamartId, importId, execution.id)
+    return this._importService.cancelImportExecution(datamartId, importId, execution.id)
       .then(res => res.data)
       .then(res => {
         this.setState({
           importObject: this.state.importObject,
-          importExecutions: {
-            items: executions.map(e => (e.id === res.id ? res : e)),
+          importExecutions: { 
+            items: executions.map(e => e.id === res.id ? res : e),
             isLoading: false,
-            total: this.state.importExecutions.total,
-          },
+            total: this.state.importExecutions.total
+          }
         });
       })
       .catch(err => {
         log.error(err);
-      });
-  };
+      })
+  }
 
   download = (uri: string) => {
     try {
       (window as any).open(
         `${
           (window as any).MCS_CONSTANTS.API_URL
-        }/v1/data_file/data?uri=${encodeURIComponent(
-          uri,
-        )}&access_token=${encodeURIComponent(
+        }/v1/data_file/data?uri=${encodeURIComponent(uri)}&access_token=${encodeURIComponent(
           LocalStorage.getItem('access_token')!,
-        )}`,
+        )}`
       );
-    } catch (err) {
+    } catch(err) {
       log.error(err);
     }
-  };
+    
+  }
 
   onDownloadErrors = (execution: ImportExecution) => {
     if (execution.result && execution.result.error_file_uri) {
-      this.download(execution.result.error_file_uri);
+      this.download(execution.result.error_file_uri)
     } else {
+
       return;
     }
-  };
+  }
 
   onDownloadInputs = (execution: ImportExecution) => {
     if (execution.result) {
-      this.download(execution.result.input_file_uri);
+      this.download(execution.result.input_file_uri)
     } else {
       return;
     }
-  };
+  }
 
   buildColumnDefinition = () => {
     const {
       intl: { formatMessage },
-      colors,
+      colors
     } = this.props;
 
     const dataColumns = [
@@ -320,10 +325,7 @@ class Imports extends React.Component<JoinedProps, State> {
           // currently we can't pass color
           // https://github.com/ant-design/ant-design/blob/master/components/progress/progress.tsx
           <div>
-            <Progress
-              showInfo={false}
-              percent={getExecutionInfo(record, colors).percent * 100}
-            />
+            <Progress showInfo={false} percent={getExecutionInfo(record, colors).percent * 100} />
           </div>
         ),
       },
@@ -355,7 +357,7 @@ class Imports extends React.Component<JoinedProps, State> {
           text
             ? moment(text).format('DD/MM/YYYY HH:mm:ss')
             : formatMessage(messages.notCreated),
-      },
+      }
     ];
 
     return {
@@ -366,6 +368,7 @@ class Imports extends React.Component<JoinedProps, State> {
   render() {
     const {
       location: { search },
+      intl: { formatMessage },
     } = this.props;
 
     const { importExecutions, importObject } = this.state;
@@ -393,31 +396,13 @@ class Imports extends React.Component<JoinedProps, State> {
       );
     };
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
-      ImportExecution
-    >> = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<ImportExecution>> = [
       {
         key: 'action',
         actions: (execution: ImportExecution) => [
-          {
-            intlMessage: messages.uploadCancel,
-            callback: this.onClickCancel,
-            disabled: execution.status !== 'PENDING',
-          },
-          {
-            intlMessage: messages.downloadErrorFile,
-            callback: this.onDownloadErrors,
-            disabled: !(
-              execution.result &&
-              execution.result.total_failure > 0 &&
-              execution.result.error_file_uri
-            ),
-          },
-          {
-            intlMessage: messages.downloadInputFile,
-            callback: this.onDownloadInputs,
-            disabled: !(execution.result && execution.result.input_file_uri),
-          },
+          { intlMessage: messages.uploadCancel, callback: this.onClickCancel, disabled: execution.status !== "PENDING" },
+          { intlMessage: messages.downloadErrorFile, callback: this.onDownloadErrors, disabled: !(execution.result && execution.result.total_failure > 0 && execution.result.error_file_uri) },
+          { intlMessage: messages.downloadInputFile, callback: this.onDownloadInputs, disabled: !(execution.result && execution.result.input_file_uri) },
         ],
       },
     ];
@@ -438,7 +423,7 @@ class Imports extends React.Component<JoinedProps, State> {
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <ImportHeader object={importObject.item} />
-            <Card title={'Import Execution'}>
+            <Card title={formatMessage(messages.importExecutionsTitle)}>
               <hr />
               <TableView
                 dataSource={importExecutions.items}

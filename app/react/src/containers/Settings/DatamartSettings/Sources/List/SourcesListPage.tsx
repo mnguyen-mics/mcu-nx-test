@@ -85,7 +85,7 @@ class SourcesListPage extends React.Component<Props, State> {
     this.fetchDatamart(datamartId)
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       match: {
         params: {
@@ -98,19 +98,19 @@ class SourcesListPage extends React.Component<Props, State> {
     const {
       match: {
         params: {
-          datamartId: previousDatamartId
+          datamartId: nextDatamartid
         }
       },
-      location: { search: previousSearch }
-    } = previousProps;
+      location: { search: nextSearch }
+    } = nextProps;
 
     
-    const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
+    const nextFilter = parseSearch(nextSearch, PAGINATION_SEARCH_SETTINGS);
 
-    if (datamartId !== previousDatamartId || compareSearches(search, previousSearch)) {
-      this.fetchList(datamartId, filter)
-      if (datamartId !== previousDatamartId) {
-        this.fetchDatamart(datamartId)
+    if (datamartId !== nextDatamartid || compareSearches(search, nextSearch)) {
+      this.fetchList(nextDatamartid, nextFilter)
+      if (datamartId !== nextDatamartid) {
+        this.fetchDatamart(nextDatamartid)
       }
     }
   }

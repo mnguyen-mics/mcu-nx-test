@@ -14,6 +14,7 @@ import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
 import { MetricCounterLoader } from '../MetricCounterLoader';
 import McsMoment from '../../../../../utils/McsMoment';
 import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
+import { EmptyRecords } from '../../../../../components';
 
 const messages = defineMessages({
   noData: {
@@ -56,7 +57,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       this.fetchAnalytics(
         onChange,
         datamartId, 
-        chart.metricName, 
+        chart.metricNames, 
         new McsMoment('now-8d'), 
         new McsMoment('now-1d'), 
         chart.dimensions, 
@@ -77,7 +78,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       this.fetchAnalytics(
         onChange,
         datamartId, 
-        chart.metricName, 
+        chart.metricNames, 
         dateRange.from, 
         dateRange.to, 
         chart.dimensions, 
@@ -89,7 +90,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   fetchAnalytics = (
     onChange: (isLoading: boolean) => void,
     datamartId: string,
-    metric: DatamartUsersAnalyticsMetric,
+    metric: DatamartUsersAnalyticsMetric[],
     from: McsMoment,
     to: McsMoment,
     dimensions?: DatamartUsersAnalyticsDimension[],
@@ -117,6 +118,10 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       });
   }
 
+  getEmptyDataComponent(chartType: string, message: string) {
+    return chartType !== 'SINGLE_STAT' ? <EmptyCharts title={message} /> : <EmptyRecords message={message} />;
+  }
+
   render() {
     const { chart, intl } = this.props;
     const { loading, reportViewApiResponse } = this.state;
@@ -126,7 +131,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
         {reportViewApiResponse && reportViewApiResponse.total_items > 0 ?
-          <FormatDataToChart apiResponse={reportViewApiResponse} chart={chart} /> : <EmptyCharts title={intl.formatMessage(messages.noData)} />}
+          <FormatDataToChart apiResponse={reportViewApiResponse} chart={chart} /> : this.getEmptyDataComponent(chart.type, intl.formatMessage(messages.noData))}
       </div>
     )
   }

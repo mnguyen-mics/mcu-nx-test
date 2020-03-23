@@ -69,7 +69,7 @@ class PluginSelectModal extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentWillReceiveProps(nextProps: Props) {
     const {
       options: { pluginVersionId, organisationId },
       type,
@@ -77,17 +77,17 @@ class PluginSelectModal extends React.Component<Props, State> {
 
     const {
       options: {
-        pluginVersionId: previousPluginVersionId,
-        organisationId: previousOrganisationId,
+        pluginVersionId: nextPluginVersionId,
+        organisationId: nextOrganisationId,
       },
-    } = previousProps;
+    } = nextProps;
 
     if (
-      pluginVersionId !== previousPluginVersionId ||
-      organisationId !== previousOrganisationId
+      pluginVersionId !== nextPluginVersionId ||
+      organisationId !== nextOrganisationId
     ) {
       if (type === 'formAdLayout') {
-        this.getAdLayouts(organisationId, pluginVersionId);
+        this.getAdLayouts(nextOrganisationId, nextPluginVersionId);
       } else if (type === 'stylesheet') {
         this.getStylesheets(organisationId);
       }

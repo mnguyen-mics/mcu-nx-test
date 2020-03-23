@@ -69,8 +69,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     let events: string[] = [];
     if (props.node.formData.query_text) {
       const query = JSON.parse(props.node.formData.query_text) as QueryDocument;
-      const where: ObjectNode | undefined = query.where ? query.where as ObjectNode : undefined;
-      const expressions: FieldNode | undefined = where ? where.expressions[0] as FieldNode : undefined;
+      const where: ObjectNode | undefined = query.where ? query.where as ObjectNode : undefined;
+      const expressions: FieldNode | undefined = where ? where.expressions[0] as FieldNode : undefined;
       events = (expressions && expressions.comparison) ? expressions.comparison.values : [];
 
       if (this.props.dispatch)
@@ -190,7 +190,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
   onEventsChange = (event?: any, newValue?: any, previousValue?: any) => {
     const { validObjectType } = this.state;
 
-    if (!validObjectType || !validObjectType.objectTypeQueryName)
+    if (!validObjectType || !validObjectType.objectTypeQueryName)
       return;
 
     const query: QueryDocument = {
@@ -222,7 +222,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
   getEventsNames = (validObjectType: WizardValidObjectTypeField): Promise<LabeledValue[]> => {
     const { formValues: { datamart_id } } = this.props;
 
-    if (!validObjectType || !validObjectType.objectTypeQueryName)
+    if (!validObjectType || !validObjectType.objectTypeQueryName)
       return Promise.resolve([]);
 
     const query: QueryDocument = {

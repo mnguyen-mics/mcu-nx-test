@@ -11,7 +11,7 @@ export interface Chart {
   options: Highcharts.Options;
   dimensions: DatamartUsersAnalyticsDimension[];
   yKey: string | number;
-  metricName: DatamartUsersAnalyticsMetric;
+  metricNames: DatamartUsersAnalyticsMetric[];
   dimensionFilterClauses?: DimensionFilterClause;
   icons?: string[];
   counterFormatedProps?: CounterProps[];
@@ -22,6 +22,7 @@ export interface Chart {
   Highcharts.SeriesBarDataOptions[] |
   Highcharts.SeriesColumnDataOptions[] ;
   tabs: TabItem[];
+  unit?: 'time' | '%';
 }
 
 export interface TabItem extends Chart {

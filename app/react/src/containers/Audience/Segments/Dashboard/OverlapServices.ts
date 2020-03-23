@@ -39,35 +39,37 @@ export class OverlapInterval implements IOverlapInterval {
 
   fetchOverlapAnalysisLoop(segmentId: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.interval = window.setInterval(async () => {
-        const job = await this._audienceSegmentService
+      this.interval = window.setInterval(() => {
+        this._audienceSegmentService
           .retrieveOverlap(segmentId, {
             first_result: 0,
             max_results: 1,
           })
-          .then(r => r.data);
-        if (job.length) {
-          const lastJob = job[0];
-          if (lastJob.external_model_name === 'PUBLIC_AUDIENCE_SEGMENT') {
-            if (
-              !(
-                lastJob.status === 'PENDING' ||
-                lastJob.status === 'RUNNING' ||
-                lastJob.status === 'SCHEDULED' ||
-                lastJob.status === 'WAITING_DEPENDENT_JOB'
-              )
-            ) {
+          .then(r => r.data)
+          .then(job => {
+            if (job.length) {
+              const lastJob = job[0];
+              if (lastJob.external_model_name === 'PUBLIC_AUDIENCE_SEGMENT') {
+                if (
+                  !(
+                    lastJob.status === 'PENDING' ||
+                    lastJob.status === 'RUNNING' ||
+                    lastJob.status === 'SCHEDULED' ||
+                    lastJob.status === 'WAITING_DEPENDENT_JOB'
+                  )
+                ) {
+                  this.stopInterval();
+                  resolve();
+                }
+              } else {
+                this.stopInterval();
+                resolve();
+              }
+            } else {
               this.stopInterval();
               resolve();
             }
-          } else {
-            this.stopInterval();
-            resolve();
-          }
-        } else {
-          this.stopInterval();
-          resolve();
-        }
+          });
       }, 2000);
     });
   }
@@ -103,7 +105,8 @@ export class OverlapInterval implements IOverlapInterval {
           if (lastJob.external_model_name === 'PUBLIC_AUDIENCE_SEGMENT') {
             if (lastJob.status === 'SUCCEEDED') {
               const datafileUri = lastJob.output_result.result.data_file_uri;
-              return this._dataFileService.getDatafileData(datafileUri)
+              return this._dataFileService
+                .getDatafileData(datafileUri)
                 .then(datafile => readOverlap(datafile))
                 .then((parsedDataFile: OverlapFileResource) =>
                   this.formatOverlapResponse(parsedDataFile, segmentId),
@@ -204,7 +207,7 @@ export class OverlapInterval implements IOverlapInterval {
               segment_source_size: segmentSourceSize,
               segment_intersect_with: {
                 id: to.segment_intersect_with.toString(),
-                name: isInOverlap.name,
+                name: formatSegmentName(isInOverlap),
                 segment_size: segmentSize,
               },
             });
@@ -218,6 +221,18 @@ export class OverlapInterval implements IOverlapInterval {
       .catch(() => null);
   }
 }
+
+const formatSegmentName = (segment: AudienceSegmentShape) => {
+  let segmentName = segment.name;
+  if (segment.type === 'USER_ACTIVATION') {
+    if (segment.clickers) {
+      segmentName = `${segmentName} - Clickers`;
+    } else if (segment.exposed) {
+      segmentName = `${segmentName} - Exposed`;
+    }
+  }
+  return segmentName;
+};
 
 function readOverlap(datafile: Blob) {
   return new Promise(resolve => {

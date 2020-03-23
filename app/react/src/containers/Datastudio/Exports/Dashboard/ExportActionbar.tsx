@@ -41,8 +41,8 @@ class ExportsActionbar extends React.Component<
     this.state = { exportIsRunning: this.props.isExportExecutionRunning };
   }
 
-  componentDidUpdate() {
-    const { isExportExecutionRunning } = this.props;
+  componentWillReceiveProps(nextProps: JoinedProps) {
+    const { isExportExecutionRunning } = nextProps;
 
     this.setState({ exportIsRunning: isExportExecutionRunning });
   }

@@ -7,7 +7,7 @@ export function formatDocumentTypeText(docType: string): string {
     case 'USER_SEGMENT':
       return 'User Segment';
     case'USER_IDENTIFIERS_ASSOCIATION_DECLARATIONS':
-      return 'User Identififiers Association'; 
+      return 'User Identifiers Association'; 
     case 'USER_IDENTIFIERS_DISSOCIATION_DECLARATIONS':
       return 'User Identifiers Dissociation';
     case 'USER_IDENTIFIERS_DELETION':

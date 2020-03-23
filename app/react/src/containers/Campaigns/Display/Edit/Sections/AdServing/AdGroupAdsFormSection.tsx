@@ -71,10 +71,10 @@ class AdGroupAdsFormSection extends React.Component<
     };
   }
 
-  componentDidUpdate() {
+  componentWillReceiveProps(nextProps: Props) {
     const loadedCreativeIds = Object.keys(this.state.displayCreativeCacheById);
     const creativeIdsToBeLoaded: string[] = [];
-    this.props.fields.getAll().forEach((field, index) => {
+    nextProps.fields.getAll().forEach((field, index) => {
       field.model.adFields.forEach(ad => {
         if (
           !isDisplayCreativeFormData(ad.model) &&
