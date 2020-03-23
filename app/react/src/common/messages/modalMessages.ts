@@ -19,13 +19,21 @@ export default defineMessages({
     id: 'campaign.archive.modal.message',
     defaultMessage: 'By archiving this Campaign all its activities will be suspended. You\'ll be able to recover it from the archived campaign filter.'
   },
+  archiveImportConfirm: {
+    id: 'import.archive.modal.confirm',
+    defaultMessage: 'Are you sure you want to archive this Import?'
+  },
+  archiveImportMessage: {
+    id: 'import.archive.modal.message',
+    defaultMessage: 'By archiving this Import all its executions and associated files will be unavailable.'
+  },
   archiveExportConfirm: {
     id: 'export.list.archive.modal.title',
     defaultMessage: 'Are you sure you want to archive this Export?'
   },
   archiveExportMessage: {
     id: 'export.list.archive.modal.message',
-    defaultMessage: 'By archiving this Export all its execution and associated files will be unavailable.'
+    defaultMessage: 'By archiving this Export all its executions and associated files will be unavailable.'
   },
   noActionTitle: {
     id: 'modal.noupolad.title',
