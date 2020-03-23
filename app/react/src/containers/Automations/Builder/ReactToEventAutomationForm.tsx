@@ -1,7 +1,7 @@
 import React from "react";
 import { compose } from "recompose";
 import { Form, Layout, message } from "antd";
-import { change, reduxForm, getFormValues, FieldArray, GenericFieldArray, Field } from "redux-form";
+import { change, reduxForm, getFormValues, FieldArray, GenericFieldArray, Field, InjectedFormProps } from "redux-form";
 import { Path } from "../../../components/ActionBar";
 import { injectIntl, InjectedIntlProps, defineMessages } from "react-intl";
 import { withValidators } from "../../../components/Form";
@@ -9,7 +9,7 @@ import { ValidatorProps } from "../../../components/Form/withValidators";
 import { WizardValidObjectTypeField, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent, wizardValidObjectTypes } from "./domain";
 import { MicsReduxState } from "../../../utils/ReduxHelper";
 import { connect, DispatchProp } from "react-redux";
-import { QueryDocument, ObjectNode, FieldNode } from "../../../models/datamart/graphdb/QueryDocument";
+import { QueryDocument, ObjectNode, FieldNode, isObjectNode, isFieldNode, ObjectTreeExpressionNodeShape } from "../../../models/datamart/graphdb/QueryDocument";
 import { QueryInputNodeResource } from "../../../models/automations/automations";
 import { Loading } from "../../../components";
 import injectNotifications, { InjectedNotificationProps } from "../../Notifications/injectNotifications";
@@ -44,17 +44,18 @@ export interface ReactToEventAutomationFormProps {
 	initialValues: QueryAutomationFormData;
 }
 
+interface ReactToEventAutomationFormData {
+	datamart_id: string;
+	query_language: QueryLanguage;
+	query_text: string;
+	fieldNodeForm: FieldNodeFormData[];
+}
+
 interface MapStateToProps {
-  formValues: {
-    datamart_id: string;
-    query_language: QueryLanguage;
-		query_text: string;
-		fieldNodeForm: FieldNodeFormData[] | FieldNodeFormData;
-  };
+  formValues: ReactToEventAutomationFormData;
 }
 
 type State = {
-  queryText: string;
   isLoading: boolean;
 	validObjectType?: WizardValidObjectTypeField;
 	objectType?: ObjectLikeTypeInfoResource;
@@ -63,6 +64,7 @@ type State = {
 }
 
 type Props = ReactToEventAutomationFormProps 
+& InjectedFormProps<ReactToEventAutomationFormData, ReactToEventAutomationFormProps>
 & InjectedIntlProps 
 & ValidatorProps
 & DispatchProp<any>
@@ -70,272 +72,391 @@ type Props = ReactToEventAutomationFormProps
 & InjectedNotificationProps;
 
 class ReactToEventAutomationForm extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
-  
+
   @lazyInject(TYPES.IRuntimeSchemaService)
   private _runtimeSchemaService: IRuntimeSchemaService;
 
   constructor(props: Props) {
-    super(props);
-
-    let events: string[] = [];
-    if (props.node.formData.query_text) {
-      const query = JSON.parse(props.node.formData.query_text) as QueryDocument;
-      const where: ObjectNode | undefined = query.where ? query.where as ObjectNode : undefined;
-      const expressions: FieldNode | undefined = where ? where.expressions[0] as FieldNode : undefined;
-      events = (expressions && expressions.comparison) ? expressions.comparison.values : [];
-
-      if (this.props.dispatch) {
-				this.props.dispatch(change(FORM_ID, 'events', events))
-				this.props.dispatch(change(FORM_ID, 'fieldNodeForm', []))
-			}
-    }
+		super(props);
+		
+		const {
+			node: {
+				formData: {
+					query_text,
+				}
+			},
+			dispatch,
+    } = this.props;
+		
+		if(query_text && dispatch) {
+			dispatch(change(FORM_ID, 'query_text', query_text));
+		} else {
+			const query: QueryDocument = {
+				from: 'UserPoint',
+				operations: [
+					{
+						directives: [],
+						selections: [{ name: 'id' }],
+					},
+				],
+				where: {
+					type: 'OBJECT',
+					expressions: [],
+					field: '',
+					boolean_operator: 'OR',
+				}
+			};
+			if(dispatch) dispatch(change(FORM_ID, 'query_text', JSON.stringify(query)));
+		}
 
     this.state = {
-      queryText: '',
-			isLoading: true,
-			objectTypes: [],
+      isLoading: true,
+      objectTypes: [],
     };
   }
 
   componentDidMount() {
     const {
       dispatch,
-      intl: {
-        formatMessage,
-      }
+			intl: { formatMessage },
+			node: {
+				formData: {
+					query_text,
+				}
+			}
     } = this.props;
 
-    if (dispatch)
-      dispatch(change(FORM_ID, 'query_language', 'JSON_OTQL'))
+    if (dispatch) dispatch(change(FORM_ID, 'query_language', 'JSON_OTQL'));
 
     this.getValidObjectType().then(validObjectType => {
-      if(!validObjectType || !validObjectType.objectTypeQueryName) {
+      if (!validObjectType || !validObjectType.objectTypeQueryName) {
         message.warning(formatMessage(messages.schemaNotSuitableForAction));
         return;
-      }
+			}
+
+			if (query_text) {
+				const query = JSON.parse(query_text);					
+				let events: string[] = []
+				let fieldNodeForm = [];
+				
+				if(query.where && isObjectNode(query.where) && query.where.expressions) {
+					const expressionEventNames = query.where.expressions.filter((expression: FieldNode)  => {
+						if(isFieldNode(expression))
+							return expression.field === validObjectType.fieldName;
+						return true;
+					});
+
+					if(expressionEventNames.length > 0)
+						events = expressionEventNames[0].comparison.values
+
+					fieldNodeForm = query.where.expressions.filter((expression: FieldNode)  => {
+						if(isFieldNode(expression))
+							return expression.field !== validObjectType.fieldName;
+						return true;
+					});
+				}
+	
+				if (dispatch) {
+					dispatch(change(FORM_ID, 'events', events));
+					dispatch(change(FORM_ID, 'fieldNodeForm', fieldNodeForm));
+				}
+			}
+			
       this.setState({
         validObjectType,
         isLoading: false,
-      })
+      });
     });
-  }
-
-  getValidObjectType = (): Promise<WizardValidObjectTypeField | undefined> => {
-    const {
-      notifyError,
-			node,
-			initialValues,
+	}
+	
+	componentDidUpdate(prevProps: Props, prevState: State) {
+		const {
+      formValues: { fieldNodeForm, query_text },
+      dispatch,
 		} = this.props;
 		
-		const datamartId = node.formData.datamart_id
+		const {
+			validObjectType
+		} = this.state;
+
+		if(validObjectType) {
+			const query = JSON.parse(query_text);
+
+			const extractEventNames: ObjectTreeExpressionNodeShape[] = query.where.expressions.filter(
+        (expression: ObjectTreeExpressionNodeShape) => {
+          if (isFieldNode(expression))
+            return expression.field === validObjectType.fieldName;
+          return true;
+        },
+      );
+
+			query.where.expressions = extractEventNames;
+
+			fieldNodeForm.map(fieldFormData => {
+				if(fieldFormData.comparison && fieldFormData.comparison.values)
+					query.where.expressions.push({
+						type: 'FIELD',
+						field: fieldFormData.field,
+						comparison: fieldFormData.comparison
+					});
+			});
+
+			const newQueryText = JSON.stringify(query);
+			if(query_text !== newQueryText && dispatch)
+				dispatch(change(FORM_ID, 'query_text', newQueryText));
+		}
+	}
+
+  getValidObjectType = (): Promise<WizardValidObjectTypeField | undefined> => {
+    const { notifyError, node, initialValues } = this.props;
+
+    const datamartId = node.formData.datamart_id
       ? node.formData.datamart_id
       : initialValues.datamart_id!;
 
-    return this._runtimeSchemaService.getRuntimeSchemas(datamartId)
-    .then(({ data: schemas }) => {
-      const runtimeSchema = schemas.find(
-        schema => schema.status === 'LIVE',
-      );
+    return this._runtimeSchemaService
+      .getRuntimeSchemas(datamartId)
+      .then(({ data: schemas }) => {
+        const runtimeSchema = schemas.find(schema => schema.status === 'LIVE');
 
-			if (!runtimeSchema) return;
-			
-			this.setState({ runtimeSchemaId: runtimeSchema.id });
+        if (!runtimeSchema) return;
 
-      return this._runtimeSchemaService.getObjectTypesDeep(
-        datamartId,
-        runtimeSchema.id,
-      ).then(({ data: objectTypes }) => {
-        return reducePromises(
-          getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
-            return this._runtimeSchemaService.getFields(
-              datamartId,
-              runtimeSchema.id, 
-              validObjectType.id,
-            ).then(({ data: fields }) => {
-              return { objectType: validObjectType, validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields)};
-            });
-          })
-        )
-        .then(validObjectTypes => {
-          /*
+        this.setState({ runtimeSchemaId: runtimeSchema.id });
+
+        return this._runtimeSchemaService
+          .getObjectTypesDeep(datamartId, runtimeSchema.id)
+          .then(({ data: objectTypes }) => {
+            return reducePromises(
+              getValidObjectTypesForWizardReactToEvent(objectTypes).map(
+                validObjectType => {
+                  return this._runtimeSchemaService
+                    .getFields(datamartId, runtimeSchema.id, validObjectType.id)
+                    .then(({ data: fields }) => {
+                      return {
+                        objectType: validObjectType,
+                        validFields: getValidFieldsForWizardReactToEvent(
+                          validObjectType,
+                          fields,
+                        ),
+                      };
+                    });
+                },
+              ),
+            ).then(validObjectTypes => {
+              /*
           Here we need to find a WizardValidObjectTypeField
           For each WizardValidObjectTypeField we check if we have an objectType with 
           the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
           its fields contain at least one with the WizardValidObjectTypeField.fieldName.
           */
-          const wizardValidObjectTypesFitlered = wizardValidObjectTypes.find(
-            automationWizardValidObjectType =>
-            !!validObjectTypes.find(validObjectType =>
-              validObjectType.objectType.name === automationWizardValidObjectType.objectTypeName &&
-              !!validObjectType.validFields.find(of => of.name === automationWizardValidObjectType.fieldName),
-            ),
-          );
-          
-          if(!wizardValidObjectTypesFitlered) return;
+              const wizardValidObjectTypesFitlered = wizardValidObjectTypes.find(
+                automationWizardValidObjectType =>
+                  !!validObjectTypes.find(
+                    validObjectType =>
+                      validObjectType.objectType.name ===
+                        automationWizardValidObjectType.objectTypeName &&
+                      !!validObjectType.validFields.find(
+                        of =>
+                          of.name === automationWizardValidObjectType.fieldName,
+                      ),
+                  ),
+              );
 
-          /*
+              if (!wizardValidObjectTypesFitlered) return;
+
+              /*
           We need to fetch the ObjectType UserPoint as it refers to our valid object type, 
           thus we can have its usable name to use in a query.
           For example: ActivityEvent => activity_events
           */
-          const userPointObjectType = objectTypes.find(o => o.name === 'UserPoint');
-
-          if(userPointObjectType) {
-            return this._runtimeSchemaService.getFields(
-              datamartId,
-              runtimeSchema.id,
-              userPointObjectType.id,
-            ).then(upFields => {
-              const field = upFields.data.find(
-                f => f.field_type.match(/\w+/)![0] === wizardValidObjectTypesFitlered.objectTypeName
+              const userPointObjectType = objectTypes.find(
+                o => o.name === 'UserPoint',
               );
 
-              if(field) {
-								this.setState({ objectType: userPointObjectType, objectTypes });
-                return {
-                  ...wizardValidObjectTypesFitlered,
-                  objectTypeQueryName: field ? field.name : undefined
-								};
-							}
+              if (userPointObjectType) {
+                return this._runtimeSchemaService
+                  .getFields(
+                    datamartId,
+                    runtimeSchema.id,
+                    userPointObjectType.id,
+                  )
+                  .then(upFields => {
+                    const field = upFields.data.find(
+                      f =>
+                        f.field_type.match(/\w+/)![0] ===
+                        wizardValidObjectTypesFitlered.objectTypeName,
+                    );
 
-              return;
+                    if (field) {
+                      this.setState({
+                        objectType: userPointObjectType,
+                        objectTypes,
+                      });
+                      return {
+                        ...wizardValidObjectTypesFitlered,
+                        objectTypeQueryName: field ? field.name : undefined,
+                      };
+                    }
+
+                    return;
+                  });
+              } else return;
             });
-          } else return;
-        });
+          });
+      })
+      .catch(error => {
+        notifyError(error);
+        return undefined;
       });
-    })
-    .catch(error => {
-      notifyError(error);
-      return undefined;
-    });
-  }
+  };
 
   onEventsChange = (event?: any, newValue?: any, previousValue?: any) => {
+		const { formValues: { query_text } } = this.props;
     const { validObjectType } = this.state;
 
-    if (!validObjectType || !validObjectType.objectTypeQueryName)
-      return;
+    if (!validObjectType || !validObjectType.objectTypeQueryName) return;
 
-    const query: QueryDocument = {
-      from: 'UserPoint',
-      operations: [{
-        directives: [],
-        selections: [{ name: 'id' }]
-      }],
-      where: {
-        boolean_operator: 'OR',
-        field: validObjectType.objectTypeQueryName,
-        type: 'OBJECT',
-        expressions: [{
-          type: 'FIELD',
-          field: validObjectType.fieldName,
-          comparison: {
-            type: 'STRING',
-            operator: 'EQ',
-            values: newValue
-          }
-        }]
-      }
-    };
+		const query = JSON.parse(query_text);
+		let where: ObjectNode = query.where;
 
-    if (this.props.dispatch)
-      this.props.dispatch(change(FORM_ID, 'query_text', JSON.stringify(query)))
-  }
+		if(where && isObjectNode(where)) {
+			const extractExpressions = where.expressions.filter(expression => {
+				if(isFieldNode(expression))
+					return expression.field !== validObjectType.fieldName;
+				return true;
+			}) as ObjectTreeExpressionNodeShape[];
 
-  getEventsNames = (validObjectType: WizardValidObjectTypeField): Promise<LabeledValue[]> => {
-		const { node, initialValues } = this.props;
-		
-		const datamartId = node.formData.datamart_id
+			where = {
+				boolean_operator: 'OR',
+				field: validObjectType.objectTypeQueryName,
+				type: 'OBJECT',
+				expressions: [
+					{
+						type: 'FIELD',
+						field: validObjectType.fieldName,
+						comparison: {
+							type: 'STRING',
+							operator: 'EQ',
+							values: newValue,
+						},
+					},
+				] as FieldNode[],
+			};
+
+			where.expressions = extractExpressions;
+			where.expressions.push({
+				type: 'FIELD',
+				field: validObjectType.fieldName,
+				comparison: {
+					type: 'STRING',
+					operator: 'EQ',
+					values: newValue
+				}
+			});
+
+			query.where = where;
+
+			if (this.props.dispatch)
+				this.props.dispatch(change(FORM_ID, 'query_text', JSON.stringify(query)));
+		}
+  };
+
+  getEventsNames = (
+    validObjectType: WizardValidObjectTypeField,
+  ): Promise<LabeledValue[]> => {
+    const { node, initialValues } = this.props;
+
+    const datamartId = node.formData.datamart_id
       ? node.formData.datamart_id
       : initialValues.datamart_id!;
 
-    if (!validObjectType || !validObjectType.objectTypeQueryName)
+    if (!validObjectType || !validObjectType.objectTypeQueryName)
       return Promise.resolve([]);
 
     const query: QueryDocument = {
       from: 'UserPoint',
-      operations: [{
-        selections: [{
-          name: validObjectType.objectTypeQueryName,
-          selections: [{
-            name: validObjectType.fieldName,
-            directives: [{name: 'map'}]
-          }] }]
-      }],
+      operations: [
+        {
+          selections: [
+            {
+              name: validObjectType.objectTypeQueryName,
+              selections: [
+                {
+                  name: validObjectType.fieldName,
+                  directives: [{ name: 'map' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     };
 
-    return this._queryService.runJSONOTQLQuery(
-      datamartId,
-      query,
-      { use_cache: true }
-    ).then(oTQLDataResponse => {
-      if (isAggregateResult(oTQLDataResponse.data.rows)) {
-        return oTQLDataResponse.data.rows[0]
-      } else {
-        throw new Error('err')
-      }
-    })
-    .then(oTQLAggregationResult => {
-      return oTQLAggregationResult.aggregations.buckets[0]
-    })
-    .then(oTQLBuckets => {
-      return oTQLBuckets.buckets.map(({ key }) => ({key: key, label: key}))
-    })
-    .catch(() => { return [] })
-	}
-	
-	getSelectedObjectType = () => {
-		const { objectTypes, validObjectType } = this.state;
+    return this._queryService
+      .runJSONOTQLQuery(datamartId, query, { use_cache: true })
+      .then(oTQLDataResponse => {
+        if (isAggregateResult(oTQLDataResponse.data.rows)) {
+          return oTQLDataResponse.data.rows[0];
+        } else {
+          throw new Error('err');
+        }
+      })
+      .then(oTQLAggregationResult => {
+        return oTQLAggregationResult.aggregations.buckets[0];
+      })
+      .then(oTQLBuckets => {
+        return oTQLBuckets.buckets.map(({ key }) => ({ key: key, label: key }));
+      })
+      .catch(() => {
+        return [];
+      });
+  };
 
-		if(!validObjectType) return;
-
-    return objectTypes.find(objectType => {
-			return objectType.name === validObjectType.objectTypeName;
-		});
-	}
-
-	getQueryableFields = () => {
+  getSelectedObjectType = () => {
     const { objectTypes, validObjectType } = this.state;
 
-		const selecetedObjectType = this.getSelectedObjectType();
+    if (!validObjectType) return;
 
-		if(!selecetedObjectType || !validObjectType) return;
+    return objectTypes.find(objectType => {
+      return objectType.name === validObjectType.objectTypeName;
+    });
+  };
 
-    return selecetedObjectType
-      .fields.filter(
+  getQueryableFields = () => {
+    const { objectTypes, validObjectType } = this.state;
+
+    const selecetedObjectType = this.getSelectedObjectType();
+
+    if (!selecetedObjectType || !validObjectType) return;
+
+    return selecetedObjectType.fields
+      .filter(
         f =>
           !objectTypes.find(ot => {
             const match = f.field_type.match(/\w+/);
             return !!(match && match[0] === ot.name);
           }) && f.directives.find(dir => dir.name === 'TreeIndex'),
-    	).filter(
-				f => f.name !== validObjectType.fieldName
-			);
+      )
+      .filter(f => f.name !== validObjectType.fieldName);
   };
 
   render() {
     const {
       intl: { formatMessage },
-      fieldValidators: {
-        isRequired,
-      },
+      fieldValidators: { isRequired },
       close,
       disabled,
-			breadCrumbPaths,
-			node,
+      breadCrumbPaths,
+      node,
 			initialValues,
+			change: injectedFormPropsChange,
     } = this.props;
 
-    const {
-      isLoading,
-			validObjectType,
-			runtimeSchemaId,
-		} = this.state;
-		
-		const datamartId = node.formData.datamart_id
+    const { isLoading, validObjectType, runtimeSchemaId } = this.state;
+
+    const datamartId = node.formData.datamart_id
       ? node.formData.datamart_id
       : initialValues.datamart_id!;
 
@@ -347,57 +468,63 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       disabled: !disabled && isLoading,
     };
 
-    const fetchListMethod = (k: string) => {return this.getEventsNames(validObjectType!)}
-    const fetchSingleMethod = (event: string) => {return Promise.resolve({key: event, label: event})}
+    const fetchListMethod = (k: string) => {
+      return this.getEventsNames(validObjectType!);
+    };
+    const fetchSingleMethod = (event: string) => {
+      return Promise.resolve({ key: event, label: event });
+		};
 
     return (
       <Layout className="mcs-reactToEventAutomation edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-content'}>
-          {isLoading
-            ? <Loading className="loading-full-screen" />
-            : <Form 
-            id={FORM_ID}
-            className="edit-layout mcs-content-container mcs-form-container"
-            layout={'vertical'}
-          >
-            <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
-              <FormSearchObjectField
-                name={'events'}
-                component={FormSearchObject}
-                onChange={this.onEventsChange}
-                fetchListMethod={fetchListMethod}
-                fetchSingleMethod={fetchSingleMethod}
-                formItemProps={{
-                  label: formatMessage(messages.eventName),
-                  required: true,
-                }}
-                helpToolTipProps={{
-                  title: formatMessage(messages.eventNameHelp),
-                }}
-                small={true}
-                validate={isRequired}
-                selectProps={{
-                  mode: 'tags',
-                }}
-                loadOnlyOnce={true}
-              />
-            </div>
-						<hr/>
-						{runtimeSchemaId && <FieldNodeListFieldArray
-							name="fieldNodeForm"
-							component={FieldNodeSection}
-							objectType={this.getSelectedObjectType()}
-							availableFields={this.getQueryableFields()}
-							booleanOperator={'OR'}
-							onBooleanOperatorChange={(booleanOperator) => {console.log(booleanOperator)}}
-							formChange={(fiedlName: string, fieldValue) => { console.log(fiedlName, fieldValue) }}
-							datamartId={datamartId}
-							runtimeSchemaId={runtimeSchemaId}
-							formName={FORM_ID}
-						/>}
-          </Form>
-          }
+          {isLoading ? (
+            <Loading className="loading-full-screen" />
+          ) : (
+            <Form
+              id={FORM_ID}
+              className="mcs-reactToEventAutomation_form edit-layout mcs-content-container mcs-form-container"
+              layout={'vertical'}
+            >
+              <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
+                <FormSearchObjectField
+                  name={'events'}
+                  component={FormSearchObject}
+                  onChange={this.onEventsChange}
+                  fetchListMethod={fetchListMethod}
+                  fetchSingleMethod={fetchSingleMethod}
+                  formItemProps={{
+                    label: formatMessage(messages.eventName),
+                    required: true,
+                  }}
+                  helpToolTipProps={{
+                    title: formatMessage(messages.eventNameHelp),
+                  }}
+                  small={true}
+                  validate={isRequired}
+                  selectProps={{
+                    mode: 'tags',
+                  }}
+                  loadOnlyOnce={true}
+                />
+              </div>
+              <hr />
+              {runtimeSchemaId && (
+                <FieldNodeListFieldArray
+                  name="fieldNodeForm"
+                  component={FieldNodeSection}
+                  objectType={this.getSelectedObjectType()}
+									availableFields={this.getQueryableFields()}
+									formChange={injectedFormPropsChange}
+                  booleanOperator={'OR'}
+                  datamartId={datamartId}
+                  runtimeSchemaId={runtimeSchemaId}
+									formName={FORM_ID}
+                />
+              )}
+            </Form>
+          )}
         </Layout>
       </Layout>
     );
