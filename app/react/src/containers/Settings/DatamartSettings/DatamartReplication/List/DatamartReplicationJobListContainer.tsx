@@ -21,7 +21,6 @@ import {
   DatamartReplicationResourceShape,
 } from '../../../../../models/settings/settings';
 import { DatamartReplicationRouteMatchParam } from '../Edit/domain';
-import { DataResponse } from '../../../../../services/ApiService';
 
 const { Content } = Layout;
 
@@ -38,7 +37,7 @@ interface DatamartReplicationJobListContainerProps {
   onFilterChange: (newFilter: Index<string | number>) => void;
   replications: DatamartReplicationResourceShape[];
   fetchReplicationsAndJobs: (datamartId: string, filter: Index<any>) => void;
-  createJobExecution: (datamartId: string) => Promise<DataResponse<DatamartReplicationJobExecutionResource>>;
+  createJobExecution: (datamartId: string) => Promise<void | DatamartReplicationJobExecutionResource>;
 }
 
 type Props = DatamartReplicationJobListContainerProps &

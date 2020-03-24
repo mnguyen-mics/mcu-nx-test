@@ -282,7 +282,16 @@ class DatamartReplicationTab extends React.Component<Props, State> {
   };
 
   createJobExecution = (datamartId: string) => {
-    return this._datamartReplicationService.createJobExecution(datamartId)
+    const {
+      notifyError,
+    } = this.props;
+
+    return this._datamartReplicationService
+    .createJobExecution(datamartId)
+    .then(result => result.data)
+    .catch(error => {
+      notifyError(error);
+    });
   }
 
   public render() {
