@@ -22,7 +22,6 @@ const Dragger = Upload.Dragger;
 
 interface ImportActionbarProps {
   importObject?: Import;
-  archiveObject?: any;
   isImportExecutionRunning: boolean;
   onNewExecution: () => void;
 }
@@ -164,6 +163,10 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     }
   };
 
+  deleteImport = (datamartId: string, importId: string) => {
+    return this._importService.deleteImport(datamartId, importId);
+  };
+
   renderModal = () => {
     const {
       intl: { formatMessage },
@@ -262,39 +265,62 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
   buildMenu = () => {
     const {
       importObject,
-      archiveObject,
       intl: { formatMessage },
+      match: {
+        params: { organisationId },
+      },
+      history,
     } = this.props;
 
-    const handleArchiveGoal = (displayCampaignId?: string) => {
+    const handleDeleteImport = (datamartId: string, importId: string) => {
       Modal.confirm({
-        title: formatMessage(modalMessages.archiveImportConfirm),
-        content: formatMessage(modalMessages.archiveImportMessage),
+        title: formatMessage(modalMessages.deleteImportConfirm),
+        content: formatMessage(modalMessages.deleteImportMessage),
         iconType: 'exclamation-circle',
         okText: formatMessage(modalMessages.confirm),
         cancelText: formatMessage(modalMessages.cancel),
-        onOk() {
-          return archiveObject(displayCampaignId);
+        onOk: () => {
+          this.setState(
+            {
+              isLoading: true,
+            },
+            () => {
+              this.deleteImport(datamartId, importId)
+                .then(res => {
+                  this.setState({ isLoading: false });
+                  history.push(`/v2/o/${organisationId}/datastudio/imports`);
+                })
+                .catch(err => {
+                  this.setState({ isLoading: false });
+                  this.props.notifyError(err);
+                });
+            },
+          );
         },
         // onCancel() {},
       });
     };
 
     const onClick = (event: any) => {
-      switch (event.key) {
-        case 'ARCHIVED':
-          return handleArchiveGoal(importObject && importObject.id);
-        default:
-          return () => {
-            log.error('onclick error');
-          };
+      if (importObject) {
+        switch (event.key) {
+          case 'ARCHIVED':
+            return handleDeleteImport(
+              importObject.datamart_id,
+              importObject.id,
+            );
+          default:
+            return () => {
+              log.error('onclick error');
+            };
+        }
       }
     };
 
     return (
       <Menu onClick={onClick}>
         <Menu.Item key="ARCHIVED">
-          <FormattedMessage {...messages.archive} />
+          <FormattedMessage {...messages.delete} />
         </Menu.Item>
       </Menu>
     );

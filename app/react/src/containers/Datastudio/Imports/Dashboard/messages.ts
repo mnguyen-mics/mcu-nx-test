@@ -25,9 +25,9 @@ export default defineMessages({
     id: 'imports.table.column.progress',
     defaultMessage: 'Progress',
   },
-  archive: {
-    id: 'imports.dashboard.actionbar.archive',
-    defaultMessage: 'Archive',
+  delete: {
+    id: 'imports.dashboard.actionbar.delete',
+    defaultMessage: 'Delete',
   },
   importExecutionsTitle: {
     id: 'imports.dashboard.table.title',

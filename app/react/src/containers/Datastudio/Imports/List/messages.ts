@@ -9,20 +9,20 @@ export default defineMessages({
     id: 'imports.actionbar.button.new',
     defaultMessage: 'New Import',
   },
-  importsArchiveTitle: {
-    id: 'imports.modal.archive.title',
-    defaultMessage: 'Are you sure you want to archive this Import?',
+  importsDeleteTitle: {
+    id: 'imports.modal.delete.title',
+    defaultMessage: 'Are you sure you want to delete this Import?',
   },
-  importsArchiveMessage: {
-    id: 'imports.modal.archive.message',
-    defaultMessage: 'By archiving this Import it will stop campaigns using it. Are you sure?',
+  importsDeleteMessage: {
+    id: 'imports.modal.delete.message',
+    defaultMessage: 'By deleting this Import, all its executions and associated files will be unavailable.',
   },
-  importsArchiveOk: {
-    id: 'imports.modal.archive.ok',
-    defaultMessage: 'Archive Now',
+  importsDeleteOk: {
+    id: 'imports.modal.delete.ok',
+    defaultMessage: 'Delete Now',
   },
-  importsArchiveCancel: {
-    id: 'imports.modal.archive.cancel',
+  importsDeleteCancel: {
+    id: 'imports.modal.delete.cancel',
     defaultMessage: 'Cancel',
   },
   searchTitle: {
@@ -73,9 +73,9 @@ export default defineMessages({
     id: 'imports.table.actionColumn.edit',
     defaultMessage: 'Edit',
   },
-  archive: {
-    id: 'imports.table.actionColumn.archive',
-    defaultMessage: 'Archive',
+  delete: {
+    id: 'imports.table.actionColumn.delete',
+    defaultMessage: 'Delete',
   }
 })
 ;

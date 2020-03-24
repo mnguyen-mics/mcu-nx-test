@@ -19,13 +19,13 @@ export default defineMessages({
     id: 'campaign.archive.modal.message',
     defaultMessage: 'By archiving this Campaign all its activities will be suspended. You\'ll be able to recover it from the archived campaign filter.'
   },
-  archiveImportConfirm: {
-    id: 'import.archive.modal.confirm',
-    defaultMessage: 'Are you sure you want to archive this Import?'
+  deleteImportConfirm: {
+    id: 'import.delete.modal.confirm',
+    defaultMessage: 'Are you sure you want to delete this Import?'
   },
-  archiveImportMessage: {
-    id: 'import.archive.modal.message',
-    defaultMessage: 'By archiving this Import all its executions and associated files will be unavailable.'
+  deleteImportMessage: {
+    id: 'import.delete.modal.message',
+    defaultMessage: 'By deleting this Import, all its executions and associated files will be unavailable.'
   },
   archiveExportConfirm: {
     id: 'export.list.archive.modal.title',

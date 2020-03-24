@@ -162,7 +162,7 @@ class ImportsContentContainer extends React.Component<
     }
   }
 
-  archiveImport = (datamartId: string, importId: string) => {
+  deleteImport = (datamartId: string, importId: string) => {
     return this._importService.deleteImport(datamartId, importId);
   };
 
@@ -184,7 +184,7 @@ class ImportsContentContainer extends React.Component<
     });
   };
 
-  onClickArchive = (imp: Import) => {
+  onClickDelete = (imp: Import) => {
     const {
       location: { search, pathname, state },
       history,
@@ -197,12 +197,12 @@ class ImportsContentContainer extends React.Component<
 
     Modal.confirm({
       iconType: 'exclamation-circle',
-      title: formatMessage(messages.importsArchiveTitle),
-      content: formatMessage(messages.importsArchiveMessage),
-      okText: formatMessage(messages.importsArchiveOk),
-      cancelText: formatMessage(messages.importsArchiveCancel),
+      title: formatMessage(messages.importsDeleteTitle),
+      content: formatMessage(messages.importsDeleteMessage),
+      okText: formatMessage(messages.importsDeleteOk),
+      cancelText: formatMessage(messages.importsDeleteCancel),
       onOk: () => {
-        this.archiveImport(imp.datamart_id, imp.id).then(() => {
+        this.deleteImport(imp.datamart_id, imp.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
             const newFilter = {
               ...filter,
@@ -279,7 +279,7 @@ class ImportsContentContainer extends React.Component<
         key: 'action',
         actions: () => [
           { intlMessage: messages.edit, callback: this.onClickEdit },
-          { intlMessage: messages.archive, callback: this.onClickArchive },
+          { intlMessage: messages.delete, callback: this.onClickDelete },
         ],
       },
     ];
