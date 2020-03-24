@@ -304,7 +304,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     const onClick = (event: any) => {
       if (importObject) {
         switch (event.key) {
-          case 'ARCHIVED':
+          case 'DELETE':
             return handleDeleteImport(
               importObject.datamart_id,
               importObject.id,
@@ -319,7 +319,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="ARCHIVED">
+        <Menu.Item key="DELETE">
           <FormattedMessage {...messages.delete} />
         </Menu.Item>
       </Menu>
