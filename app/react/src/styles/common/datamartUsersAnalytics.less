@@ -59,26 +59,23 @@
 .mcs-datamartUsersAnalytics .ant-btn.segmentFilter {
   width: 230px;
   height: 41px;
+  padding: 4.25px;
   border-radius: 20.5px;
-  border: dashed 1px #cecece;
+  border: dashed 1px @border-color-split;
   font-family: "LLCircularWeb-Medium";
   font-size: 10px;
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
   letter-spacing: 0.31px;
-  color: #373737;
-  padding: 4.25px;
+  color: @grey-color;
 
   .anticon {
-    font-size: 28px;
-    margin-left: 4px;
-    color: #cecece;
-    font-weight: 500;
-    font-family: "LLCircularWeb-Book";
     position: relative;
     top: 2px;
+    margin-left: 4px;
+    font-size: 28px;
+    color: @border-color-split;
+    font-weight: 500;
+    font-family: "LLCircularWeb-Book";
+
   }
 
   .placeholder {
@@ -90,19 +87,15 @@
 }
 
 .mcs-datamartUsersAnalytics .ant-btn.appliedSegmentName {
+  margin-right: 8px;
+  float: left;
+  padding: 5px;
   height: 43px;
   border-radius: 20.5px;
   border-style: solid;
   border: 1px;
   font-family: "LLCircularWeb-Medium";
   font-size: 10px;
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  padding: 5px;
-  margin-right: 8px;
-  float: left;
 
   .name {
     position: relative;
@@ -113,12 +106,26 @@
 }
 
 .oval {
-  border-radius: 100%;
   display: inline-block;
   position: relative;
   top: 1px;
-  width: 28px;
-  height: 28px;
+  border-radius: 100%;
   border-style: solid;
   border: 5px;
+  width: 28px;
+  height: 28px;
+
+}
+
+.mcs-datamartUsersAnalytics_segmentFilter {
+  float: left;
+
+  &._is_disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+}
+
+.mcs-segmentByNameSelector {
+  width: 230px;
 }

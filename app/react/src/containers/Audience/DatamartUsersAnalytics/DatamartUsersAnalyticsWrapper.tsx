@@ -106,6 +106,8 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       showFilter,
       location: { search } } = this.props;
 
+    const { isLoading } = this.state;
+
     const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING) as McsDateRangeValue;
 
     return (
@@ -121,7 +123,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
           </Col>
         </Row>
         { showFilter && <Row>
-          <SegmentFilter onChange={this.onSegmentFilterChange} />
+          <SegmentFilter className={ isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'} onChange={this.onSegmentFilterChange} />
           <Col className="text-right" offset={6}>
               {this.renderDatePicker()}
           </Col>

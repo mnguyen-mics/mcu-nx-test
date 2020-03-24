@@ -16,7 +16,8 @@ export interface IDatamartUsersAnalyticsService {
     from: McsMoment,
     to: McsMoment,
     dimensions?: DatamartUsersAnalyticsDimension[],
-    dimensionFilterClauses?: DimensionFilterClause
+    dimensionFilterClauses?: DimensionFilterClause,
+    segmentId?: string
   ) => Promise<ReportViewResponse>;
 }
 
@@ -28,9 +29,10 @@ export class DatamartUsersAnalyticsService implements IDatamartUsersAnalyticsSer
     from: McsMoment,
     to: McsMoment,
     dimensions?: DatamartUsersAnalyticsDimension[],
-    dimensionFilterClauses?: DimensionFilterClause
+    dimensionFilterClauses?: DimensionFilterClause,
+    segmentId?: string
   ): Promise<ReportViewResponse> {
-    const report: ReportRequestBody = buildDatamartUsersAnalyticsRequestBody(datamartId, metrics, from, to, dimensions, dimensionFilterClauses);
+    const report: ReportRequestBody = buildDatamartUsersAnalyticsRequestBody(datamartId, metrics, from, to, dimensions, dimensionFilterClauses, segmentId);
     const endpoint = `datamarts/${datamartId}/user_activities_analytics`;
     return ApiService.postRequest(endpoint, report);
   }

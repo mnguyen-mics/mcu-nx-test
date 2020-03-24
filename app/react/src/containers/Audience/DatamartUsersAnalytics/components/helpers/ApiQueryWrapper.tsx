@@ -29,6 +29,7 @@ export interface ApiQueryWrapperProps {
   chart: Chart;
   datamartId: string;
   dateRange: McsDateRangeValue;
+  segmentId?: string;
   onChange: (isLoading: boolean) => void;
 }
 
@@ -52,7 +53,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     const { 
       datamartId, 
       chart,
-      onChange
+      onChange,
+      segmentId
     } = this.props;
       this.fetchAnalytics(
         onChange,
@@ -61,7 +63,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         new McsMoment('now-8d'), 
         new McsMoment('now-1d'), 
         chart.dimensions, 
-        chart.dimensionFilterClauses
+        chart.dimensionFilterClauses,
+        segmentId
       );
   }
 
@@ -70,7 +73,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       datamartId, 
       chart, 
       dateRange,
-      onChange
+      onChange,
+      segmentId
     } = this.props;
     if (
       (prevProps.dateRange.from.value && prevProps.dateRange.to.value) && 
@@ -83,6 +87,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         dateRange.to, 
         chart.dimensions, 
         chart.dimensionFilterClauses,
+        segmentId
       );
     }
   }
@@ -95,13 +100,14 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     to: McsMoment,
     dimensions?: DatamartUsersAnalyticsDimension[],
     dimensionFilterClauses?: DimensionFilterClause,
+    segmentId?: string
 
   ) => {
     this.setState({
       loading: true
     });
     onChange(true);
-    return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, from, to, dimensions, dimensionFilterClauses)
+    return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, from, to, dimensions, dimensionFilterClauses, segmentId)
       .then(res => {
         this.setState({
           loading: false,

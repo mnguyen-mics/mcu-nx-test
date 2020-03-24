@@ -6,15 +6,16 @@ import { TYPES } from '../../../../constants/types';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 import debounce from 'lodash/debounce';
 import { McsIcon } from '../../../../components';
+import { LabeledValue } from 'antd/lib/select';
 
 interface SegmentByNameSelectorState {
-  data: any;
+  segmentsList: LabeledValue[];
   value: any;
   fetching: boolean;
 }
 
 interface SegmentByNameSelectorProps {
-  onchange: (value: any) => void
+  onchange: (value: LabeledValue) => void
 }
 
 class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, SegmentByNameSelectorState> {
@@ -25,7 +26,7 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
   constructor(props: SegmentByNameSelectorProps) {
     super(props);
     this.state = {
-      data: [],
+      segmentsList: [],
       value: [],
       fetching: false,
     };
@@ -37,17 +38,17 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
   }
 
   fetchListMethod(keywords: string) {
-    this.setState({ data: [], fetching: true });
+    this.setState({ segmentsList: [], fetching: true });
     return this._audienceSegmentService.getSegments("1185", { keywords: keywords, datamart_id: "1139" })
       .then(res => {
         this.setState({
-          data: res.data.map(r => ({ key: r.id, label: <SegmentNameDisplay audienceSegmentResource={r} /> })),
+          segmentsList: res.data.map(r => ({ key: r.id, label: <SegmentNameDisplay audienceSegmentResource={r} /> })),
           fetching: false
         })
       });
   }
 
-  handleChange = (value: string) => {
+  handleChange = (value: LabeledValue) => {
     const { onchange } = this.props;
     this.setState({
       value
@@ -56,20 +57,20 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
   };
 
   render() {
-    const { data, fetching, value } = this.state;
+    const { segmentsList, fetching, value } = this.state;
 
     return (<Select
-      showSearch
-      labelInValue
+      showSearch={true}
+      labelInValue={true}
       value={value}
-      style={{ width: "230px" }}
+      className="mcs-segmentByNameSelector"
       placeholder="Search segment by name"
       onSearch={this.fetchListMethod}
       onChange={this.handleChange}
       notFoundContent={fetching ? <Spin size="small" className="text-center" />: null}
       suffixIcon={<McsIcon type="magnifier" />}
     >
-      {data.map((item: any, index: number) => <Select.Option value={item.key} key={index.toString()}>{item.label}</Select.Option>)}
+      {segmentsList.map((item: LabeledValue, index: number) => <Select.Option value={item.key} key={index.toString()}>{item.label}</Select.Option>)}
     </Select>);
   }
 }
