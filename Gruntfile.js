@@ -353,14 +353,6 @@ module.exports = function (grunt) {
       }
     },
 
-    shell: {
-      iab_placeholder: {
-        command: function () {
-          return "<%= yeoman.app %>/images/generate_iab_placeholders.sh <%= yeoman.app %>/images/flash/Adobe-swf_icon.png";
-        }
-      }
-    },
-
     // Replace Google CDN references
     cdnify: {
       dist: {
@@ -582,7 +574,6 @@ module.exports = function (grunt) {
       'setEnvVariablesConfig',
       'clean:server',
       'jshint:all',
-      'shell:iab_placeholder',
       'genRequireJsFiles:config',
       'concurrent:server',
       'connect:livereload',
@@ -612,7 +603,6 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'jshint:all',
-    'shell:iab_placeholder',
     'useminPrepare',
     'genRequireJsFiles:config',
     'requirejs',
