@@ -31,6 +31,11 @@ import { IQueryService } from '../../../services/QueryService';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { ObjectLikeTypeResource, FieldResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { AutomationSelectedType } from './AutomationBuilderPage';
+import { LabeledValue } from 'antd/lib/select';
+import { isAggregateResult } from '../../../models/datamart/graphdb/OTQLResult';
+import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
+import { reducePromises } from '../../../utils/PromiseHelper';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -752,3 +757,135 @@ export const getValidFieldsForWizardReactToEvent = (objectType: ObjectLikeTypeRe
     ),
   );
 }
+
+export const getEventsNames = (
+  datamartId: string,
+  validObjectType: WizardValidObjectTypeField,
+  queryService: IQueryService,
+): Promise<LabeledValue[]> => {
+  if (!validObjectType || !validObjectType.objectTypeQueryName)
+    return Promise.resolve([]);
+
+  const query: QueryDocument = {
+    from: 'UserPoint',
+    operations: [
+      {
+        selections: [
+          {
+            name: validObjectType.objectTypeQueryName,
+            selections: [
+              {
+                name: validObjectType.fieldName,
+                directives: [{ name: 'map' }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  return queryService
+    .runJSONOTQLQuery(datamartId, query, { use_cache: true })
+    .then(oTQLDataResponse => {
+      if (isAggregateResult(oTQLDataResponse.data.rows)) {
+        return oTQLDataResponse.data.rows[0];
+      } else {
+        throw new Error('err');
+      }
+    })
+    .then(oTQLAggregationResult => {
+      return oTQLAggregationResult.aggregations.buckets[0];
+    })
+    .then(oTQLBuckets => {
+      return oTQLBuckets.buckets.map(({ key }) => ({ key: key, label: key }));
+    })
+    .catch(() => {
+      return [];
+    });
+};
+
+export const getValidObjectType = (
+  datamartId: string,
+  runtimeSchemaService: IRuntimeSchemaService,
+): Promise<WizardValidObjectTypeField | undefined> => {
+  return runtimeSchemaService
+    .getRuntimeSchemas(datamartId)
+    .then(({ data: schemas }) => {
+      const runtimeSchema = schemas.find(schema => schema.status === 'LIVE');
+
+      if (!runtimeSchema) return;
+
+      return runtimeSchemaService
+        .getObjectTypes(datamartId, runtimeSchema.id)
+        .then(({ data: objectTypes }) => {
+          return reducePromises(
+            getValidObjectTypesForWizardReactToEvent(objectTypes).map(
+              validObjectType => {
+                return runtimeSchemaService
+                  .getFields(datamartId, runtimeSchema.id, validObjectType.id)
+                  .then(({ data: fields }) => {
+                    return {
+                      objectType: validObjectType,
+                      validFields: getValidFieldsForWizardReactToEvent(
+                        validObjectType,
+                        fields,
+                      ),
+                    };
+                  });
+              },
+            ),
+          ).then(validObjectTypes => {
+            /*
+				Here we need to find a WizardValidObjectTypeField
+				For each WizardValidObjectTypeField we check if we have an objectType with 
+				the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
+				its fields contain at least one with the WizardValidObjectTypeField.fieldName.
+				*/
+            const wizardValidObjectTypesFitlered = wizardValidObjectTypes.find(
+              automationWizardValidObjectType =>
+                !!validObjectTypes.find(
+                  validObjectType =>
+                    validObjectType.objectType.name ===
+                      automationWizardValidObjectType.objectTypeName &&
+                    !!validObjectType.validFields.find(
+                      of =>
+                        of.name === automationWizardValidObjectType.fieldName,
+                    ),
+                ),
+            );
+
+            if (!wizardValidObjectTypesFitlered) return;
+
+            /*
+				We need to fetch the ObjectType UserPoint as it refers to our valid object type, 
+				thus we can have its usable name to use in a query.
+				For example: ActivityEvent => activity_events
+				*/
+            const userPointObjectType = objectTypes.find(
+              o => o.name === 'UserPoint',
+            );
+
+            if (userPointObjectType) {
+              return runtimeSchemaService
+                .getFields(datamartId, runtimeSchema.id, userPointObjectType.id)
+                .then(upFields => {
+                  const field = upFields.data.find(
+                    f =>
+                      f.field_type.match(/\w+/)![0] ===
+                      wizardValidObjectTypesFitlered.objectTypeName,
+                  );
+
+                  if (field)
+                    return {
+                      ...wizardValidObjectTypesFitlered,
+                      objectTypeQueryName: field ? field.name : undefined,
+                    };
+
+                  return;
+                });
+            } else return;
+          });
+        });
+    });
+};

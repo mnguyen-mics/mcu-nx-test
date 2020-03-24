@@ -77,6 +77,10 @@ class AutomationActionBar extends React.Component<Props, State> {
         : {
             ...formValues,
           },
+      exitCondition:
+        automationData && automationData.exitCondition
+          ? automationData.exitCondition
+          : INITIAL_AUTOMATION_DATA.exitCondition,
       automationTreeData:
         automationData && automationData.automationTreeData
           ? automationData.automationTreeData

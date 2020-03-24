@@ -8,14 +8,15 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import AutomationBuilder from './AutomationBuilder';
 import { StorylineNodeModel, storylineNodeData } from './domain';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
 import AutomationActionBar from './ActionBar/AutomationActionBar';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
 import { Loading } from '../../../components';
-import { QueryInputUiCreationMode } from '../../../models/automations/automations';
-import { injectFeatures, InjectedFeaturesProps } from '../../Features';
+import {
+  QueryInputUiCreationMode,
+  ScenarioExitConditionFormResource,
+} from '../../../models/automations/automations';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
@@ -28,12 +29,11 @@ export interface AutomationBuilderContainerProps {
 
 type Props = AutomationBuilderContainerProps &
   InjectedNotificationProps &
-  RouteComponentProps<AutomationBuilderPageRouteParams> &
-  InjectedIntlProps &
-  InjectedFeaturesProps;
+  RouteComponentProps<AutomationBuilderPageRouteParams>;
 
 interface State {
   automationTreeData: StorylineNodeModel;
+  exitConditionFormResource: ScenarioExitConditionFormResource;
 }
 
 class AutomationBuilderContainer extends React.Component<Props, State> {
@@ -45,6 +45,10 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
         props.automationFormData && props.automationFormData.automationTreeData
           ? props.automationFormData.automationTreeData
           : INITIAL_AUTOMATION_DATA.automationTreeData,
+      exitConditionFormResource:
+        props.automationFormData && props.automationFormData.exitCondition
+          ? props.automationFormData.exitCondition
+          : INITIAL_AUTOMATION_DATA.exitCondition,
     };
   }
 
@@ -69,14 +73,20 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
 
   handleUpdateAutomationData = (
     newAutomationData: StorylineNodeModel,
+    exitConditionData?: ScenarioExitConditionFormResource,
   ): StorylineNodeModel => {
-
-    this.setState({
-      automationTreeData: newAutomationData,
-    });
+    if (exitConditionData) {
+      this.setState({
+        automationTreeData: newAutomationData,
+        exitConditionFormResource: exitConditionData,
+      });
+    } else {
+      this.setState({
+        automationTreeData: newAutomationData,
+      });
+    }
     return newAutomationData;
   };
-
 
   render() {
     const {
@@ -85,10 +95,8 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       saveOrUpdate,
       loading,
       creation_mode,
-      hasFeature,
-      intl
     } = this.props;
-    const { automationTreeData } = this.state;
+    const { automationTreeData, exitConditionFormResource } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -106,6 +114,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
                       datamart_id: datamartId,
                     }
                   : undefined,
+              exitCondition: exitConditionFormResource,
               automationTreeData: automationTreeData,
             }}
             saveOrUpdate={saveOrUpdate}
@@ -117,12 +126,11 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
             <AutomationBuilder
               datamartId={datamartId}
               automationTreeData={automationTreeData}
+              exitCondition={exitConditionFormResource}
               scenarioId={storylineNodeData[0].scenario_id}
               updateAutomationData={this.handleUpdateAutomationData}
               viewer={false}
               creation_mode={creation_mode}
-              hasFeature={hasFeature}
-              intl={intl}
             />
           </Layout.Content>
         </Layout>
@@ -132,9 +140,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
 }
 
 export default compose<Props, AutomationBuilderContainerProps>(
-  injectIntl,
   injectNotifications,
-  injectFeatures,
   withRouter,
   connect(state => ({
     getWorkspace: SessionHelper.getWorkspace,

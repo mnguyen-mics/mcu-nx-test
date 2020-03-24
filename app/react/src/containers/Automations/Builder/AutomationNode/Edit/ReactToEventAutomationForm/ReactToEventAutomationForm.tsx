@@ -6,14 +6,13 @@ import { Path } from "../../../../../../components/ActionBar";
 import { injectIntl, InjectedIntlProps, defineMessages } from "react-intl";
 import { withValidators } from "../../../../../../components/Form";
 import { ValidatorProps } from "../../../../../../components/Form/withValidators";
-import { WizardValidObjectTypeField, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent, wizardValidObjectTypes } from "../../../domain";
+import { WizardValidObjectTypeField, getValidObjectType, getEventsNames } from "../../../domain";
 import { MicsReduxState } from "../../../../../../utils/ReduxHelper";
 import { connect, DispatchProp } from "react-redux";
 import { QueryDocument, ObjectNode, FieldNode } from "../../../../../../models/datamart/graphdb/QueryDocument";
 import { QueryInputNodeResource } from "../../../../../../models/automations/automations";
 import { Loading } from "../../../../../../components";
 import injectNotifications, { InjectedNotificationProps } from "../../../../../Notifications/injectNotifications";
-import { reducePromises } from "../../../../../../utils/PromiseHelper";
 import { IRuntimeSchemaService } from "../../../../../../services/RuntimeSchemaService";
 import { TYPES } from "../../../../../../constants/types";
 import { lazyInject } from "../../../../../../config/inversify.config";
@@ -22,8 +21,6 @@ import { QueryLanguage } from "../../../../../../models/datamart/DatamartResourc
 import { FormSearchObjectField } from "../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm";
 import FormSearchObject from "../../../../../../components/Form/FormSelect/FormSearchObject";
 import { IQueryService } from "../../../../../../services/QueryService";
-import { isAggregateResult } from "../../../../../../models/datamart/graphdb/OTQLResult";
-import { LabeledValue } from "antd/lib/select";
 
 const FORM_ID = 'reactToEventForm';
 
@@ -88,103 +85,26 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       dispatch,
       intl: {
         formatMessage,
-      }
+      },
+	  notifyError,
+	  formValues: { datamart_id }
     } = this.props;
 
     if (dispatch)
       dispatch(change(FORM_ID, 'query_language', 'JSON_OTQL'))
 
-    this.getValidObjectType().then(validObjectType => {
-      if(!validObjectType || !validObjectType.objectTypeQueryName) {
-        message.warning(formatMessage(messages.schemaNotSuitableForAction));
-        return;
-      }
-      this.setState({
-        validObjectType,
-        isLoading: false,
-      })
-    });
-  }
-
-  getValidObjectType = (): Promise<WizardValidObjectTypeField | undefined> => {
-    const {
-      notifyError,
-      formValues: { datamart_id }
-    } = this.props;
-
-    return this._runtimeSchemaService.getRuntimeSchemas(datamart_id)
-    .then(({ data: schemas }) => {
-      const runtimeSchema = schemas.find(
-        schema => schema.status === 'LIVE',
-      );
-
-      if (!runtimeSchema) return;
-
-      return this._runtimeSchemaService.getObjectTypes(
-        datamart_id,
-        runtimeSchema.id,
-      ).then(({ data: objectTypes }) => {
-        return reducePromises(
-          getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
-            return this._runtimeSchemaService.getFields(
-              datamart_id,
-              runtimeSchema.id, 
-              validObjectType.id,
-            ).then(({ data: fields }) => {
-              return { objectType: validObjectType, validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields)};
-            });
-          })
-        )
-        .then(validObjectTypes => {
-          /*
-          Here we need to find a WizardValidObjectTypeField
-          For each WizardValidObjectTypeField we check if we have an objectType with 
-          the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
-          its fields contain at least one with the WizardValidObjectTypeField.fieldName.
-          */
-          const wizardValidObjectTypesFitlered = wizardValidObjectTypes.find(
-            automationWizardValidObjectType =>
-            !!validObjectTypes.find(validObjectType =>
-              validObjectType.objectType.name === automationWizardValidObjectType.objectTypeName &&
-              !!validObjectType.validFields.find(of => of.name === automationWizardValidObjectType.fieldName),
-            ),
-          );
-          
-          if(!wizardValidObjectTypesFitlered) return;
-
-          /*
-          We need to fetch the ObjectType UserPoint as it refers to our valid object type, 
-          thus we can have its usable name to use in a query.
-          For example: ActivityEvent => activity_events
-          */
-          const userPointObjectType = objectTypes.find(o => o.name === 'UserPoint');
-
-          if(userPointObjectType) {
-            return this._runtimeSchemaService.getFields(
-              datamart_id,
-              runtimeSchema.id,
-              userPointObjectType.id,
-            ).then(upFields => {
-              const field = upFields.data.find(
-                f => f.field_type.match(/\w+/)![0] === wizardValidObjectTypesFitlered.objectTypeName
-              );
-
-              if(field)
-                return {
-                  ...wizardValidObjectTypesFitlered,
-                  objectTypeQueryName: field ? field.name : undefined
-                };
-
-              return;
-            });
-          } else return;
+    getValidObjectType(datamart_id, this._runtimeSchemaService)
+      .then(validObjectType => {
+        if (!validObjectType || !validObjectType.objectTypeQueryName) {
+          message.warning(formatMessage(messages.schemaNotSuitableForAction));
+          return;
+        }
+        this.setState({
+          validObjectType,
+          isLoading: false,
         });
-      });
-    })
-    .catch(error => {
-      notifyError(error);
-      return undefined;
-    });
+      })
+      .catch(error => notifyError(error));
   }
 
   onEventsChange = (event?: any, newValue?: any, previousValue?: any) => {
@@ -219,44 +139,6 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       this.props.dispatch(change(FORM_ID, 'query_text', JSON.stringify(query)))
   }
 
-  getEventsNames = (validObjectType: WizardValidObjectTypeField): Promise<LabeledValue[]> => {
-    const { formValues: { datamart_id } } = this.props;
-
-    if (!validObjectType || !validObjectType.objectTypeQueryName)
-      return Promise.resolve([]);
-
-    const query: QueryDocument = {
-      from: 'UserPoint',
-      operations: [{
-        selections: [{
-          name: validObjectType.objectTypeQueryName,
-          selections: [{
-            name: validObjectType.fieldName,
-            directives: [{name: 'map'}]
-          }] }]
-      }],
-    };
-
-    return this._queryService.runJSONOTQLQuery(
-      datamart_id,
-      query,
-      { use_cache: true }
-    ).then(oTQLDataResponse => {
-      if (isAggregateResult(oTQLDataResponse.data.rows)) {
-        return oTQLDataResponse.data.rows[0]
-      } else {
-        throw new Error('err')
-      }
-    })
-    .then(oTQLAggregationResult => {
-      return oTQLAggregationResult.aggregations.buckets[0]
-    })
-    .then(oTQLBuckets => {
-      return oTQLBuckets.buckets.map(({ key }) => ({key: key, label: key}))
-    })
-    .catch(() => { return [] })
-  }
-
   render() {
     const {
       intl: { formatMessage },
@@ -266,6 +148,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       close,
       disabled,
       breadCrumbPaths,
+      formValues: { datamart_id }
     } = this.props;
 
     const {
@@ -281,7 +164,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       disabled: !disabled && isLoading,
     };
 
-    const fetchListMethod = (k: string) => {return this.getEventsNames(validObjectType!)}
+    const fetchListMethod = (k: string) => {return getEventsNames(datamart_id, validObjectType!, this._queryService)}
     const fetchSingleMethod = (event: string) => {return Promise.resolve({key: event, label: event})}
 
     return (

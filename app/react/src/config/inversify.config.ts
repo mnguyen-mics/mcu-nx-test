@@ -210,6 +210,7 @@ import {
   EmailCampaignFormService,
 } from '../containers/Campaigns/Email/Edit/EmailCampaignFormService';
 import { IRecommenderService } from '../services/Library/RecommenderService';
+import { ScenarioExitConditionService, IScenarioExitConditionService } from '../services/ScenarioExitConditionService';
 
 const container = new Container();
 
@@ -255,6 +256,7 @@ container
 container.bind<IImportService>(TYPES.IImportService).to(ImportService);
 container.bind<IExportService>(TYPES.IExportService).to(ExportService);
 container.bind<IScenarioService>(TYPES.IScenarioService).to(ScenarioService);
+container.bind<IScenarioExitConditionService>(TYPES.IScenarioExitConditionService).to(ScenarioExitConditionService);
 container.bind<IDatamartService>(TYPES.IDatamartService).to(DatamartService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)

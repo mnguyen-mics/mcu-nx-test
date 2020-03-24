@@ -7,7 +7,10 @@ import {
   DeleteFromSegmentAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
-import { QueryResource } from './../datamart/DatamartResource';
+import {
+  QueryResource,
+  QueryCreateRequest,
+} from './../datamart/DatamartResource';
 import { AutomationSimpleFormData } from './../../containers/Automations/Builder/ActionBar/AutomationSimpleForm';
 export interface AutomationResource {
   id: string;
@@ -94,9 +97,14 @@ export interface DeleteFromSegmentNodeResource extends ScenarioNodeResource {
   initialFormData: DeleteFromSegmentAutomationFormData;
 }
 
-export type QueryInputEvaluationPeriodUnit = 'MINUTE' | 'HOUR' | 'DAY' | 'WEEK' | 'MONTH';
+export type QueryInputEvaluationPeriodUnit =
+  | 'MINUTE'
+  | 'HOUR'
+  | 'DAY'
+  | 'WEEK'
+  | 'MONTH';
 
-export type QueryInputEvaluationMode = 'LIVE' | 'PERIODIC';
+export type QueryInputEvaluationMode = 'LIVE' | 'PERIODIC';
 
 export type QueryInputUiCreationMode = 'EVENT' | 'QUERY';
 
@@ -163,10 +171,35 @@ export interface ScenarioEdgeResource {
   scenario_id: string;
 }
 
-export type EdgeHandler = 'ON_VISIT' | 'ON_GOAL' | 'OUT' | 'IF_CONDITION_TRUE' | 'IF_CONDITION_FALSE';
+export type EdgeHandler =
+  | 'ON_VISIT'
+  | 'ON_GOAL'
+  | 'OUT'
+  | 'IF_CONDITION_TRUE'
+  | 'IF_CONDITION_FALSE';
 
 export interface StorylineNodeResource {
   node: ScenarioNodeShape;
   in_edge?: ScenarioEdgeResource;
   out_edges: StorylineNodeResource[];
+}
+
+export interface ScenarioExitConditionCreateResource {
+  type: 'EVENT';
+  query_id: string;
+}
+
+export interface ScenarioExitConditionResource
+  extends ScenarioExitConditionCreateResource {
+  id: string;
+  scenario_id: string;
+}
+
+export interface ScenarioExitConditionFormData
+  extends Partial<QueryCreateRequest> {}
+
+export interface ScenarioExitConditionFormResource
+  extends ScenarioExitConditionResource {
+  formData: ScenarioExitConditionFormData;
+  initialFormData: ScenarioExitConditionFormData;
 }
