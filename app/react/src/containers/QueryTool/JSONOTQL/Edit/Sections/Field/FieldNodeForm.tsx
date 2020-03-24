@@ -640,7 +640,7 @@ class FieldNodeForm extends React.Component<Props, State> {
             break;
           case 'CHANNELS':
             fetchListMethod = (keywords: string) => {
-              return this._channelService.getChannels(organisationId, datamartId, { keywords: keywords }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
+              return this._channelService.getChannelsByOrganisation(organisationId, { community_id: organisationId, keywords: keywords, with_source_datamarts: true }).then(res => res.data.map(r => ({ key: r.id, label: r.name })))
             }
             fetchSingleMethod = (id: string) => this._channelService.getChannel(datamartId, id).then(res => ({ key: res.data.id, label: res.data.name }))
             break;
