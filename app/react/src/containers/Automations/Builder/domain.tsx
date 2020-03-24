@@ -761,7 +761,7 @@ export const getValidFieldsForWizardReactToEvent = (objectType: ObjectLikeTypeRe
 export const getEventsNames = (
   datamartId: string,
   validObjectType: WizardValidObjectTypeField,
-  _queryService: IQueryService,
+  queryService: IQueryService,
 ): Promise<LabeledValue[]> => {
 
   if (!validObjectType || !validObjectType.objectTypeQueryName)
@@ -786,7 +786,7 @@ export const getEventsNames = (
     ],
   };
 
-  return _queryService
+  return queryService
     .runJSONOTQLQuery(datamartId, query, { use_cache: true })
     .then(oTQLDataResponse => {
       if (isAggregateResult(oTQLDataResponse.data.rows)) {
@@ -808,22 +808,22 @@ export const getEventsNames = (
 
 export const getValidObjectType = (
   datamartId: string,
-  _runtimeSchemaService: IRuntimeSchemaService,
+  runtimeSchemaService: IRuntimeSchemaService,
 ): Promise<WizardValidObjectTypeField | undefined> => {
-  return _runtimeSchemaService
+  return runtimeSchemaService
     .getRuntimeSchemas(datamartId)
     .then(({ data: schemas }) => {
       const runtimeSchema = schemas.find(schema => schema.status === 'LIVE');
 
       if (!runtimeSchema) return;
 
-      return _runtimeSchemaService
+      return runtimeSchemaService
         .getObjectTypes(datamartId, runtimeSchema.id)
         .then(({ data: objectTypes }) => {
           return reducePromises(
             getValidObjectTypesForWizardReactToEvent(objectTypes).map(
               validObjectType => {
-                return _runtimeSchemaService
+                return runtimeSchemaService
                   .getFields(datamartId, runtimeSchema.id, validObjectType.id)
                   .then(({ data: fields }) => {
                     return {
@@ -868,7 +868,7 @@ export const getValidObjectType = (
             );
 
             if (userPointObjectType) {
-              return _runtimeSchemaService
+              return runtimeSchemaService
                 .getFields(datamartId, runtimeSchema.id, userPointObjectType.id)
                 .then(upFields => {
                   const field = upFields.data.find(

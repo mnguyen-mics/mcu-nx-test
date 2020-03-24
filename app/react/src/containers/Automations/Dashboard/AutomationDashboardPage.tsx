@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import injectNotifications, {
@@ -15,9 +14,6 @@ import AutomationBuilder from '../Builder/AutomationBuilder';
 import ActionBar, { Path } from '../../../components/ActionBar';
 import { IScenarioService } from '../../../services/ScenarioService';
 import { AutomationStatus } from '../../../models/automations/automations';
-import { injectFeatures, InjectedFeaturesProps } from '../../Features';
-import { injectDrawer } from '../../../components/Drawer';
-import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 
 export interface AutomationDashboardrams {
   organisationId: string;
@@ -31,10 +27,7 @@ interface State {
 }
 
 type Props = RouteComponentProps<AutomationDashboardrams> &
-  InjectedNotificationProps &
-  InjectedIntlProps &
-  InjectedDrawerProps &
-  InjectedFeaturesProps;
+  InjectedNotificationProps;
 
 
 class AutomationDashboardPage extends React.Component<Props, State> {
@@ -147,7 +140,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
   }
 
   render() {
-    const { match: { params: { organisationId } }, hasFeature, intl, openNextDrawer, closeNextDrawer } = this.props;
+    const { match: { params: { organisationId } } } = this.props;
     const { automationFormData, isLoading, updating, } = this.state;
 
     if (isLoading) {
@@ -194,10 +187,6 @@ class AutomationDashboardPage extends React.Component<Props, State> {
               scenarioId={automationFormData.automation.id!}
               viewer={true}
               creation_mode={automationFormData.automationTreeData && automationFormData.automationTreeData.node.type === 'QUERY_INPUT' ? automationFormData.automationTreeData.node.ui_creation_mode : 'QUERY'}
-              hasFeature={hasFeature}
-              intl={intl}
-              openNextDrawer={openNextDrawer}
-              closeNextDrawer={closeNextDrawer}
             />
           </Layout.Content>
         </Layout>
@@ -207,9 +196,6 @@ class AutomationDashboardPage extends React.Component<Props, State> {
 }
 
 export default compose(
-  injectIntl,
 	withRouter,
-	injectDrawer,
   injectNotifications,
-  injectFeatures
 )(AutomationDashboardPage);

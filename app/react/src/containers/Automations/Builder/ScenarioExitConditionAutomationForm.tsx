@@ -239,6 +239,6 @@ const messages = defineMessages({
   },
   schemaNotSuitableForAction: {
     id: 'automation.builder.node.scenarioExitConditionForm.schemaNotSuitableForAction',
-    defaultMessage: 'Schema is not suitable for this actions.',
+    defaultMessage: 'Schema is not suitable for this action.',
   }
 });

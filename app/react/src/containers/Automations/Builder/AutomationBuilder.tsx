@@ -37,12 +37,13 @@ import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 import { AutomationFormDataType } from './AutomationNode/Edit/domain';
-import { defineMessages, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
-import { InjectedFeaturesProps } from '../../Features';
-import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
-import ScenarioExitConditionForm from './ScenarioExitConditionForm';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
+import ScenarioExitConditionAutomationForm from './ScenarioExitConditionAutomationForm';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
+import { compose } from 'recompose';
 
 
 export const messages = defineMessages({
@@ -405,7 +406,7 @@ class AutomationBuilder extends React.Component<Props, State> {
 		
     if(exitCondition) {
 			openNextDrawer<{}>(
-				ScenarioExitConditionForm,
+				ScenarioExitConditionAutomationForm,
 				{
 					additionalProps: {
 						exitCondition: exitCondition,
@@ -461,7 +462,7 @@ class AutomationBuilder extends React.Component<Props, State> {
                     ? {}
                     : {
                         transform: 'rotate(180deg)',
-                        transition: 'all 0.5s ease', // 0.5ms really noticeable ??
+                        transition: 'all 0.5s ease',
                       }
                 }
               />{' '}
@@ -535,4 +536,8 @@ class AutomationBuilder extends React.Component<Props, State> {
   }
 }
 
-export default withDragDropContext(AutomationBuilder);
+export default compose<Props, AutomationBuilderProps>(
+  injectIntl,
+  injectFeatures,
+  injectDrawer,
+)(withDragDropContext(AutomationBuilder));

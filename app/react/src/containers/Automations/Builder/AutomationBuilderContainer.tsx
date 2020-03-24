@@ -8,16 +8,12 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import AutomationBuilder from './AutomationBuilder';
 import { StorylineNodeModel, storylineNodeData } from './domain';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
 import AutomationActionBar from './ActionBar/AutomationActionBar';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
 import { Loading } from '../../../components';
 import { QueryInputUiCreationMode, ScenarioExitConditionFormResource } from '../../../models/automations/automations';
-import { injectFeatures, InjectedFeaturesProps } from '../../Features';
-import { injectDrawer } from '../../../components/Drawer';
-import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
@@ -30,10 +26,7 @@ export interface AutomationBuilderContainerProps {
 
 type Props = AutomationBuilderContainerProps &
   InjectedNotificationProps &
-  RouteComponentProps<AutomationBuilderPageRouteParams> &
-  InjectedIntlProps &
-  InjectedDrawerProps &
-  InjectedFeaturesProps;
+  RouteComponentProps<AutomationBuilderPageRouteParams>;
 
 interface State {
   automationTreeData: StorylineNodeModel;
@@ -100,10 +93,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       saveOrUpdate,
       loading,
       creation_mode,
-      hasFeature,
-      intl,
-      openNextDrawer,
-      closeNextDrawer,
     } = this.props;
     const { automationTreeData, exitConditionFormResource } = this.state;
 
@@ -140,10 +129,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
               updateAutomationData={this.handleUpdateAutomationData}
               viewer={false}
               creation_mode={creation_mode}
-              hasFeature={hasFeature}
-              intl={intl}
-              openNextDrawer={openNextDrawer}
-              closeNextDrawer={closeNextDrawer}
             />
           </Layout.Content>
         </Layout>
@@ -153,11 +138,8 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
 }
 
 export default compose<Props, AutomationBuilderContainerProps>(
-  injectIntl,
   injectNotifications,
-  injectFeatures,
   withRouter,
-  injectDrawer,
   connect(state => ({
     getWorkspace: SessionHelper.getWorkspace,
   })),
