@@ -19,6 +19,7 @@ import { ColorPalletteOption, getColorPalettes, rgbToHex, getPerceivedBrightness
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import FeedChart from '../../../Audience/Segments/Dashboard/Feeds/Charts/FeedChart';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
+import { FeedStatsUnit } from '../../../../utils/FeedsStatsReportHelper';
 
 
 const FORM_NAME = 'pluginForm';
@@ -41,6 +42,7 @@ export interface PluginCardModalContentProps<T> {
   selectedTab: PluginCardModalTab;
   nameField?: PluginExtraField;
   descriptionField?: PluginExtraField;
+  feedStatsUnit?: FeedStatsUnit;
 }
 
 type Props<T extends LayoutablePlugin> = PluginCardModalContentProps<T> &
@@ -230,12 +232,9 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
   }
 
   renderStats = () => {
-    const {
-      plugin,
-      organisationId
-    } = this.props;
+    const { plugin, organisationId, feedStatsUnit } = this.props;
 
-    return <FeedChart organisationId={organisationId} feedId={plugin.id}/>;
+    return <FeedChart organisationId={organisationId} feedId={plugin.id} feedStatsUnit={feedStatsUnit}/>;
   }
 
   public render() {

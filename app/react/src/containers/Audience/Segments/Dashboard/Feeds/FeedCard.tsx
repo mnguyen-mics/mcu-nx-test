@@ -13,7 +13,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
 import { Modal, Dropdown, Menu, Tooltip } from 'antd';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, InjectedIntl } from 'react-intl';
 import { IPluginService } from '../../../../../services/PluginService';
 import PluginCardModal, {
   PluginCardModalProps,
@@ -31,6 +31,7 @@ import {
 } from '../../../../../services/AudienceSegmentFeedService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
+import { FeedStatsUnit, getFeedStatsUnit, FeedStatsCounts } from '../../../../../utils/FeedsStatsReportHelper';
 
 export interface FeedCardProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -43,7 +44,10 @@ export interface FeedCardProps {
   segmentId: string;
   organisationId: string;
   exportedUserPointsCount?: number;
+  exportedUserIdentifiersCount?: number;
 }
+
+type FeedStatsDisplayStatus = "LOADING" | "READY" | "READY-NO-DATA";
 
 interface FeedCardState {
   isLoading: boolean;
@@ -98,6 +102,10 @@ const messages = defineMessages({
     id: 'audienceFeed.card.actions.stats',
     defaultMessage: 'Stats (BETA)',
   },
+  inTheLast7Days: {
+    id: 'audienceFeed.card.inTheLast7Days',
+    defaultMessage: 'In the last 7 days... (BETA)',
+  },
   view: {
     id: 'audienceFeed.card.actions.view',
     defaultMessage: 'View',
@@ -106,9 +114,21 @@ const messages = defineMessages({
     id: 'audienceFeed.card.actions.delete',
     defaultMessage: 'Delete',
   },
+  loadingStats: {
+    id: 'audienceFeed.card.loadingStats',
+    defaultMessage: 'Loading stats...',
+  },
+  nothingSent: {
+    id: 'audienceFeed.card.nothingSent',
+    defaultMessage: 'Nothing was sent',
+  },
   userPointsSent: {
     id: 'audienceFeed.card.userPointsSent',
     defaultMessage: 'user points sent',
+  },
+  identifiersSent: {
+    id: 'audienceFeed.card.identifiersSent',
+    defaultMessage: 'identifiers (cookies, mobile IDs) sent',
   },
   feedModalNameFieldLabel: {
     id: 'audience.segment.feed.card.create.nameField.label',
@@ -377,6 +397,37 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       });
   };
 
+  getFeedStatsDisplayStatus(counts: FeedStatsCounts): FeedStatsDisplayStatus {
+
+    // If the count is null, the stat request is not complete yet
+    if (counts.exportedUserIdentifiersCount == null && counts.exportedUserPointsCount == null) return "LOADING";
+    // If both counts are 0, we'll display a message to tell that nothing was sent
+    else if (counts.exportedUserIdentifiersCount === 0 && counts.exportedUserPointsCount === 0) return "READY-NO-DATA";
+    else return "READY";
+  }
+
+  getFeedStatsDisplayMsg(intl: InjectedIntl, status: FeedStatsDisplayStatus, unit: FeedStatsUnit, counts: FeedStatsCounts): string {
+
+    switch (status) {
+      case "LOADING":
+        return intl.formatMessage(messages.loadingStats);
+      case "READY-NO-DATA":
+        return intl.formatMessage(messages.nothingSent);
+      case "READY":
+        switch (unit) {
+          case "USER_POINTS":
+            return `${counts.exportedUserPointsCount ? counts.exportedUserPointsCount.toLocaleString() : '-'} ${intl.formatMessage(messages.userPointsSent)}`;
+          case "USER_IDENTIFIERS":
+            return `${counts.exportedUserIdentifiersCount ? counts.exportedUserIdentifiersCount.toLocaleString() : '-'} ${intl.formatMessage(messages.identifiersSent)}`;
+          // Should not happen
+          default:
+            return "error";
+        }
+      default:
+        return "error";
+    }
+  }
+
   render() {
     const {
       feed,
@@ -384,6 +435,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       segmentId,
       organisationId,
       exportedUserPointsCount,
+      exportedUserIdentifiersCount,
       notifyError,
       hasFeature,
       history,
@@ -473,6 +525,12 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const popupContainer = () => document.getElementById(this.id)!;
     const onClose = () => this.setState({ opened: false });
 
+
+    const counts: FeedStatsCounts = { exportedUserPointsCount, exportedUserIdentifiersCount };
+    const feedStatsStatus = this.getFeedStatsDisplayStatus(counts);
+    const feedStatsUnit = getFeedStatsUnit(feed);
+    const feedStatsDisplayMsg = this.getFeedStatsDisplayMsg(intl, feedStatsStatus, feedStatsUnit, counts);
+
     return (
       <Card className="hoverable-card actionable-card compact feed-card">
         <div className="top-menu" id={this.id}>
@@ -502,13 +560,13 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               {
                 feed.name &&
                 <div className="feed-name">
-                    {feed.name}
+                  {feed.name}
                 </div>
               }
               <div className="plugin-name">
                 {cardHeaderTitle
-                ? cardHeaderTitle
-                : feed.artifact_id}
+                  ? cardHeaderTitle
+                  : feed.artifact_id}
               </div>
             </div>
           </div>
@@ -519,11 +577,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             </div>
             {hasFeature('audience-feeds_stats') && (
               <div className="content-right">
-                {exportedUserPointsCount == null
-                  ? '-'
-                  : exportedUserPointsCount}{' '}
-                {intl.formatMessage(messages.userPointsSent)}{' '}
-                <Tooltip placement="topRight" title="In the last 7 days">
+                {feedStatsDisplayMsg}{' '}
+                <Tooltip placement="topRight" title={intl.formatMessage(messages.inTheLast7Days)}>
                   {' '}
                   <McsIcon style={{ marginRight: '0px' }} type="info" />
                 </Tooltip>
@@ -551,6 +606,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
               pluginVersionId={feed.version_id}
               save={this.saveOrCreatePluginInstance}
               selectedTab={this.state.modalTab}
+              feedStatsUnit={feedStatsUnit}
               nameField={{
                 label: formatMessage(messages.feedModalNameFieldLabel),
                 title: <div>

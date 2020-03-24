@@ -31,6 +31,7 @@ export interface FeedCardListState {
   feedsStatsByFeedId: Index<{
     feed_id: string;
     uniq_user_points_count: number;
+    uniq_user_identifiers_count: number;
   }>;
 }
 
@@ -162,6 +163,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
         const normalized = normalizeReportView<{
           feed_id: string;
           uniq_user_points_count: number;
+          uniq_user_identifiers_count: number;
         }>(res.data.report_view);
 
         const normalizedObjects = normalizeArrayOfObject(normalized, 'feed_id');
@@ -172,6 +174,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
             normalizedObjects[feed.id] = {
               feed_id: feed.id,
               uniq_user_points_count: 0,
+              uniq_user_identifiers_count: 0
             };
           }
         });
@@ -227,6 +230,11 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
                     exportedUserPointsCount={
                       feedsStatsByFeedId[cf.id]
                         ? feedsStatsByFeedId[cf.id].uniq_user_points_count
+                        : undefined
+                    }
+                    exportedUserIdentifiersCount={
+                      feedsStatsByFeedId[cf.id]
+                        ? feedsStatsByFeedId[cf.id].uniq_user_identifiers_count
                         : undefined
                     }
                   />

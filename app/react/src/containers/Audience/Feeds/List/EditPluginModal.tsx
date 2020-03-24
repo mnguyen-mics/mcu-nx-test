@@ -22,6 +22,7 @@ import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { getFeedStatsUnit } from '../../../../utils/FeedsStatsReportHelper';
 
 export interface EditPluginModalProps {
   feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
@@ -250,6 +251,8 @@ class EditPluginModal extends React.Component<Props, State> {
     } = this.props;
     const { isLoading, layout, pluginProperties, initialValues } = this.state;
 
+    const feedStatsUnit = getFeedStatsUnit(feed);
+
     return (
       <PluginCardModal
         onClose={onClose}
@@ -258,11 +261,13 @@ class EditPluginModal extends React.Component<Props, State> {
         plugin={{
           id: feed.id,
           organisation_id: feed.organisation_id,
+          type: feed.type,
           group_id: feed.group_id,
           artifact_id: feed.artifact_id,
           current_version_id: feed.version_id,
           plugin_layout: layout,
         }}
+        feedStatsUnit={feedStatsUnit}
         save={this.savePluginInstance}
         pluginProperties={pluginProperties}
         disableFields={feed.status === 'ACTIVE' || feed.status === 'PUBLISHED'}
