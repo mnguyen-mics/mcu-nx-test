@@ -17,9 +17,6 @@ import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
 import { MonitoringData } from '../../../models/timeline/timeline';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../Notifications/injectNotifications';
 import { EmptyTableView } from '../../../components/TableView';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../config/inversify.config';
@@ -51,7 +48,6 @@ interface MonitoringProps {
 
 type Props = MonitoringProps &
   MapStateToProps &
-  InjectedNotificationProps &
   RouteComponentProps<TimelinePageParams>;
 
 class Monitoring extends React.Component<Props, State> {
@@ -109,11 +105,11 @@ class Monitoring extends React.Component<Props, State> {
             isLoading: false,
           });
         })
-        .catch(error => {
+        .catch(() => {
+          // we don't want to catch and notify 404 erros here
           this.setState({
             isLoading: false,
           });
-          this.props.notifyError(error);
         });
     }
   }
@@ -155,7 +151,8 @@ class Monitoring extends React.Component<Props, State> {
               isLoading: false,
             });
           })
-          .catch(error => {
+          .catch(() => {
+            // we don't want to catch and notify 404 erros here
             this.setState({
               monitoringData: {
                 userAgentList: [],
@@ -175,7 +172,6 @@ class Monitoring extends React.Component<Props, State> {
               },
               isLoading: false,
             });
-            this.props.notifyError(error);
           });
       }
     }
@@ -306,6 +302,5 @@ const mapStateToProps = (state: MicsReduxState) => ({
 
 export default compose<Props, MonitoringProps>(
   withRouter,
-  injectNotifications,
   connect(mapStateToProps, undefined),
 )(Monitoring);
