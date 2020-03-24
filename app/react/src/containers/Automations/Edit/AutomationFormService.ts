@@ -5,7 +5,7 @@ import {
   ScenarioNodeShape,
   ScenarioEdgeResource,
   QueryInputNodeResource,
-	ScenarioExitConditionFormResource,
+  ScenarioExitConditionFormResource,
 } from './../../../models/automations/automations';
 import { IScenarioService } from './../../../services/ScenarioService';
 import { injectable, inject } from 'inversify';
@@ -348,14 +348,15 @@ export class AutomationFormService implements IAutomationFormService {
   addEdgeId = (id: string) => this.ids.push(`e-${id}`);
 
   saveOrCreateExitCondition(
-		automationId: string,
-		datamartId: string,
+    automationId: string,
+    datamartId: string,
     exitConditionFormResource: ScenarioExitConditionFormResource,
-	): Promise<void> {
-		const initialQueryText = exitConditionFormResource.initialFormData.query_text;
-		const queryText = exitConditionFormResource.formData.query_text;
+  ): Promise<void> {
+    const initialQueryText =
+      exitConditionFormResource.initialFormData.query_text;
+    const queryText = exitConditionFormResource.formData.query_text;
 
-		const createQueryAndExitCondition = () => {
+    const createQueryAndExitCondition = () => {
       return this._queryService
         .createQuery(datamartId, exitConditionFormResource.formData)
         .then(({ data: query }) => {
@@ -369,30 +370,30 @@ export class AutomationFormService implements IAutomationFormService {
         });
     };
 
-		if(initialQueryText && !queryText) {
-			return this._scenarioExitConditionService.deleteScenarioExitConditions(
+    if (initialQueryText && !queryText) {
+      return this._scenarioExitConditionService.deleteScenarioExitConditions(
         automationId,
         exitConditionFormResource.id,
       );
-		} else if(queryText) {
-			if(initialQueryText && initialQueryText !== queryText) {
-				return this._scenarioExitConditionService
+    } else if (queryText) {
+      if (initialQueryText && initialQueryText !== queryText) {
+        return this._scenarioExitConditionService
           .deleteScenarioExitConditions(
             automationId,
             exitConditionFormResource.id,
           )
           .then(() => {
-						return createQueryAndExitCondition();
-					});
-			} else if(!initialQueryText) {
-				return createQueryAndExitCondition();
-			}
+            return createQueryAndExitCondition();
+          });
+      } else if (!initialQueryText) {
+        return createQueryAndExitCondition();
+      }
 
-			return Promise.resolve();
-		}
+      return Promise.resolve();
+    }
 
-		return Promise.resolve();
-	}
+    return Promise.resolve();
+  }
 
   saveOrCreateAutomation(
     organisationId: string,
@@ -429,17 +430,17 @@ export class AutomationFormService implements IAutomationFormService {
     if (storageModelVersion === 'v201506') {
       return saveOrCreatePromise();
     } else {
-			return saveOrCreatePromise()
+      return saveOrCreatePromise()
         .then(createdAutomation => {
-					if(formData.automation.datamart_id) {
-						return this.saveOrCreateExitCondition(
-							createdAutomation.data.id, 
-							formData.automation.datamart_id,
-							formData.exitCondition
-						).then(() => createdAutomation);
-					}
-					return createdAutomation;
-				})
+          if (formData.automation.datamart_id) {
+            return this.saveOrCreateExitCondition(
+              createdAutomation.data.id,
+              formData.automation.datamart_id,
+              formData.exitCondition,
+            ).then(() => createdAutomation);
+          }
+          return createdAutomation;
+        })
         .then(createdAutomation => {
           const savedAutomationId = createdAutomation.data.id;
           const datamartId = formData.automation.datamart_id;
@@ -785,9 +786,11 @@ export class AutomationFormService implements IAutomationFormService {
         y: node.y,
         type: node.type,
         user_list_segment_id: audienceSegmentId,
-        user_segment_expiration_period: node.formData.ttl.value ? moment
-          .duration(+node.formData.ttl.value, node.formData.ttl.unit)
-          .toISOString() : undefined,
+        user_segment_expiration_period: node.formData.ttl.value
+          ? moment
+              .duration(+node.formData.ttl.value, node.formData.ttl.unit)
+              .toISOString()
+          : undefined,
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
     } else if (isDeleteFromSegmentNode(node)) {

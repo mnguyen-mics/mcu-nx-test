@@ -13,7 +13,10 @@ import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
 import { Loading } from '../../../components';
-import { QueryInputUiCreationMode, ScenarioExitConditionFormResource } from '../../../models/automations/automations';
+import {
+  QueryInputUiCreationMode,
+  ScenarioExitConditionFormResource,
+} from '../../../models/automations/automations';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
@@ -41,11 +44,11 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       automationTreeData:
         props.automationFormData && props.automationFormData.automationTreeData
           ? props.automationFormData.automationTreeData
-					: INITIAL_AUTOMATION_DATA.automationTreeData,
-			exitConditionFormResource:
-				props.automationFormData && props.automationFormData.exitCondition ?
-				props.automationFormData.exitCondition :
-				INITIAL_AUTOMATION_DATA.exitCondition
+          : INITIAL_AUTOMATION_DATA.automationTreeData,
+      exitConditionFormResource:
+        props.automationFormData && props.automationFormData.exitCondition
+          ? props.automationFormData.exitCondition
+          : INITIAL_AUTOMATION_DATA.exitCondition,
     };
   }
 
@@ -69,22 +72,21 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
   }
 
   handleUpdateAutomationData = (
-		newAutomationData: StorylineNodeModel,
-		exitConditionData?: ScenarioExitConditionFormResource,
+    newAutomationData: StorylineNodeModel,
+    exitConditionData?: ScenarioExitConditionFormResource,
   ): StorylineNodeModel => {
-		if(exitConditionData) {
-			this.setState({
-				automationTreeData: newAutomationData,
-				exitConditionFormResource: exitConditionData,
-			});
-		} else {
-			this.setState({
-				automationTreeData: newAutomationData,
-			});
-		}
+    if (exitConditionData) {
+      this.setState({
+        automationTreeData: newAutomationData,
+        exitConditionFormResource: exitConditionData,
+      });
+    } else {
+      this.setState({
+        automationTreeData: newAutomationData,
+      });
+    }
     return newAutomationData;
   };
-
 
   render() {
     const {
@@ -111,8 +113,8 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
                       ...automationFormData.automation,
                       datamart_id: datamartId,
                     }
-									: undefined,
-							exitCondition: exitConditionFormResource,
+                  : undefined,
+              exitCondition: exitConditionFormResource,
               automationTreeData: automationTreeData,
             }}
             saveOrUpdate={saveOrUpdate}

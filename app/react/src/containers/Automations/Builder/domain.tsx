@@ -763,7 +763,6 @@ export const getEventsNames = (
   validObjectType: WizardValidObjectTypeField,
   queryService: IQueryService,
 ): Promise<LabeledValue[]> => {
-
   if (!validObjectType || !validObjectType.objectTypeQueryName)
     return Promise.resolve([]);
 

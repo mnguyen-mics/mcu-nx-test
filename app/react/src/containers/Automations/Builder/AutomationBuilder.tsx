@@ -19,8 +19,8 @@ import {
   EdgeHandler,
   ScenarioNodeShape,
   QueryInputUiCreationMode,
-	ScenarioExitConditionFormResource,
-	ScenarioExitConditionFormData,
+  ScenarioExitConditionFormResource,
+  ScenarioExitConditionFormData,
 } from '../../../models/automations/automations';
 import {
   StorylineNodeModel,
@@ -37,14 +37,20 @@ import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 import { AutomationFormDataType } from './AutomationNode/Edit/domain';
-import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  InjectedIntlProps,
+  injectIntl,
+} from 'react-intl';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
+import injectDrawer, {
+  InjectedDrawerProps,
+} from '../../../components/Drawer/injectDrawer';
 import ScenarioExitConditionAutomationForm from './ScenarioExitConditionAutomationForm';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { compose } from 'recompose';
-
 
 export const messages = defineMessages({
   ifNodeFalsePathLabel: {
@@ -54,26 +60,26 @@ export const messages = defineMessages({
   ifNodeTruePathLabel: {
     id: 'automation.builder.ifNode.label.true',
     defaultMessage: 'If Condition True',
-	},
-	eventGlobalExitCondition: {
+  },
+  eventGlobalExitCondition: {
     id: 'automation.builder.exitCondition.event',
-    defaultMessage: 'Exit on Event'
+    defaultMessage: 'Exit on Event',
   },
   addGlobalExitCondition: {
     id: 'automation.builder.exitCondition.new',
-    defaultMessage: 'Add Exit condition'
+    defaultMessage: 'Add Exit condition',
   },
   deleteGlobalExitConditionTitle: {
     id: 'automation.builder.exitCondition.delete.info',
-    defaultMessage: 'Are you sure you want to delete the exit condition ?'
+    defaultMessage: 'Are you sure you want to delete the exit condition ?',
   },
   deleteGlobalExitConditionConfirm: {
     id: 'automation.builder.exitCondition.delete.confirm',
-    defaultMessage: 'Yes'
+    defaultMessage: 'Yes',
   },
   deleteGlobalExitConditionCancel: {
     id: 'automation.builder.exitCondition.delete.cancel',
-    defaultMessage: 'No'
+    defaultMessage: 'No',
   },
 });
 
@@ -86,11 +92,13 @@ export interface AutomationBuilderBaseProps {
   creation_mode: QueryInputUiCreationMode;
 }
 
-export interface AutomationBuilderVisualizerProps extends AutomationBuilderBaseProps {
+export interface AutomationBuilderVisualizerProps
+  extends AutomationBuilderBaseProps {
   viewer: true;
 }
 
-export interface AutomationBuilderEditorProps extends AutomationBuilderBaseProps {
+export interface AutomationBuilderEditorProps
+  extends AutomationBuilderBaseProps {
   viewer: false;
   updateAutomationData: (
     automationData: StorylineNodeModel,
@@ -98,21 +106,25 @@ export interface AutomationBuilderEditorProps extends AutomationBuilderBaseProps
   ) => StorylineNodeModel;
 }
 
-export type AutomationBuilderProps = AutomationBuilderEditorProps | AutomationBuilderVisualizerProps;
+export type AutomationBuilderProps =
+  | AutomationBuilderEditorProps
+  | AutomationBuilderVisualizerProps;
 
-const isAutomationBuilderEditorProp = (props: AutomationBuilderProps): props is AutomationBuilderEditorProps => {
-  return props.viewer === false
-}
+const isAutomationBuilderEditorProp = (
+  props: AutomationBuilderProps,
+): props is AutomationBuilderEditorProps => {
+  return props.viewer === false;
+};
 
 interface State {
   locked: boolean;
   viewNodeSelector: boolean;
 }
 
-type Props = AutomationBuilderProps
-& InjectedDrawerProps
-& InjectedFeaturesProps
-& InjectedIntlProps;
+type Props = AutomationBuilderProps &
+  InjectedDrawerProps &
+  InjectedFeaturesProps &
+  InjectedIntlProps;
 
 class AutomationBuilder extends React.Component<Props, State> {
   engine = new DiagramEngine();
@@ -136,7 +148,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     this.engine.registerPortFactory(new SimplePortFactory());
     this.state = {
       locked: false,
-      viewNodeSelector: true
+      viewNodeSelector: true,
     };
   }
 
@@ -183,28 +195,32 @@ class AutomationBuilder extends React.Component<Props, State> {
     const model = new DiagramModel();
     model.setLocked(true);
     this.startAutomationTree(automationTreeData, model);
-		this.engine.setDiagramModel(model);
+    this.engine.setDiagramModel(model);
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const { automationTreeData } = this.props;
-		const { automationTreeData: prevAutomationTreeData } = prevProps;
+    const { automationTreeData: prevAutomationTreeData } = prevProps;
 
-		let cleanedAutomationTreeData = automationTreeData;
-		if(automationTreeData) {
-			const prevNodeWithLastAdded = automationTreeData ? findLastAddedNode(automationTreeData) : undefined;
-			const nodeWithLastAdded = prevAutomationTreeData ? findLastAddedNode(prevAutomationTreeData) : undefined;
+    let cleanedAutomationTreeData = automationTreeData;
+    if (automationTreeData) {
+      const prevNodeWithLastAdded = automationTreeData
+        ? findLastAddedNode(automationTreeData)
+        : undefined;
+      const nodeWithLastAdded = prevAutomationTreeData
+        ? findLastAddedNode(prevAutomationTreeData)
+        : undefined;
 
-			if (
-				prevNodeWithLastAdded &&
-				nodeWithLastAdded &&
-				prevNodeWithLastAdded.node.id === nodeWithLastAdded.node.id
-			) {
-				cleanedAutomationTreeData = cleanLastAdded(automationTreeData);
-			}
-		}
+      if (
+        prevNodeWithLastAdded &&
+        nodeWithLastAdded &&
+        prevNodeWithLastAdded.node.id === nodeWithLastAdded.node.id
+      ) {
+        cleanedAutomationTreeData = cleanLastAdded(automationTreeData);
+      }
+    }
 
-    if(this.state.viewNodeSelector === prevState.viewNodeSelector) {
+    if (this.state.viewNodeSelector === prevState.viewNodeSelector) {
       const model = new DiagramModel();
       model.setLocked(this.engine.getDiagramModel().locked);
       model.setZoomLevel(this.engine.getDiagramModel().getZoomLevel());
@@ -227,7 +243,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     if (isAutomationBuilderEditorProp(props) && props.automationTreeData) {
       // Otherwise every node of the same type have the same id
       // The id seems to be generated only once for all the class instances
-      node.id = generateFakeId()
+      node.id = generateFakeId();
       return props.updateAutomationData(
         new AddNodeOperation(idParentNode, childNodeId, node).execute(
           props.automationTreeData,
@@ -240,7 +256,9 @@ class AutomationBuilder extends React.Component<Props, State> {
     const props = this.props;
     if (isAutomationBuilderEditorProp(props) && props.automationTreeData) {
       return props.updateAutomationData(
-        new DeleteNodeOperation(idNodeToBeDeleted).execute(props.automationTreeData),
+        new DeleteNodeOperation(idNodeToBeDeleted).execute(
+          props.automationTreeData,
+        ),
       );
     }
   };
@@ -258,17 +276,23 @@ class AutomationBuilder extends React.Component<Props, State> {
         ),
       );
     }
-	};
-	
-	updateExitCondition = (exitConditionFormData: ScenarioExitConditionFormData): void => {
-		const props = this.props;
-		if (isAutomationBuilderEditorProp(props) && props.automationTreeData && props.exitCondition) {
-			props.updateAutomationData(props.automationTreeData, {
-				...props.exitCondition,
-				formData: exitConditionFormData,
-			});
-		}
-	}
+  };
+
+  updateExitCondition = (
+    exitConditionFormData: ScenarioExitConditionFormData,
+  ): void => {
+    const props = this.props;
+    if (
+      isAutomationBuilderEditorProp(props) &&
+      props.automationTreeData &&
+      props.exitCondition
+    ) {
+      props.updateAutomationData(props.automationTreeData, {
+        ...props.exitCondition,
+        formData: exitConditionFormData,
+      });
+    }
+  };
 
   buildAutomationNode(nodeModel: StorylineNodeResource): AutomationNodeModel {
     const storylineNode = new AutomationNodeModel(
@@ -325,7 +349,7 @@ class AutomationBuilder extends React.Component<Props, State> {
         outLink.setSourcePort(nodeModel.ports.center);
         outLink.setTargetPort(storylineNode.ports.center);
         outLink.setColor('#afafaf');
-        this.addLabelForIfNodeLink(outLink, child)
+        this.addLabelForIfNodeLink(outLink, child);
 
         model.addLink(outLink);
       }
@@ -338,7 +362,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           nodeModel.x + nodeModel.getNodeSize().width + 21.5,
           linkPointHeight,
         );
-        this.addLabelForIfNodeLink(link, child)
+        this.addLabelForIfNodeLink(link, child);
 
         model.addLink(link);
       }
@@ -354,16 +378,20 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   addLabelForIfNodeLink = (
     link: AutomationLinkModel,
-    child: StorylineNodeModel
+    child: StorylineNodeModel,
   ) => {
     if (child.in_edge !== undefined) {
       if (child.in_edge.handler === 'IF_CONDITION_FALSE') {
-        link.addLabel(new LabelModel(messages.ifNodeFalsePathLabel.defaultMessage))
+        link.addLabel(
+          new LabelModel(messages.ifNodeFalsePathLabel.defaultMessage),
+        );
       } else if (child.in_edge.handler === 'IF_CONDITION_TRUE') {
-        link.addLabel(new LabelModel(messages.ifNodeTruePathLabel.defaultMessage))
+        link.addLabel(
+          new LabelModel(messages.ifNodeTruePathLabel.defaultMessage),
+        );
       }
     }
-  }
+  };
 
   startAutomationTree = (
     automationData?: StorylineNodeModel,
@@ -379,7 +407,7 @@ class AutomationBuilder extends React.Component<Props, State> {
         generateNodeProperties(automationData.node).iconAnt,
         undefined,
         true,
-        this.props.creation_mode
+        this.props.creation_mode,
       );
       rootNode.root = true;
       rootNode.x = ROOT_NODE_POSITION.x;
@@ -402,41 +430,50 @@ class AutomationBuilder extends React.Component<Props, State> {
   };
 
   onGlobalExitConditionSelect = () => {
-		const { openNextDrawer, closeNextDrawer, exitCondition, datamartId } = this.props;
-		
-    if(exitCondition) {
-			openNextDrawer<{}>(
-				ScenarioExitConditionAutomationForm,
-				{
-					additionalProps: {
-						exitCondition: exitCondition,
-						disabled: false,
-						initialValues: {
-              ...exitCondition.formData,
-							datamart_id: datamartId,
-              events: [],
-						},
-						close: () => {
-							closeNextDrawer();
-						},
-						onSubmit: (formData: ScenarioExitConditionFormData) => {
-							this.updateExitCondition(formData);
-							closeNextDrawer();
-						},
-					},
-					size: 'small'
-				}
-			)
-		}
-  }
+    const {
+      openNextDrawer,
+      closeNextDrawer,
+      exitCondition,
+      datamartId,
+    } = this.props;
+
+    if (exitCondition) {
+      openNextDrawer<{}>(ScenarioExitConditionAutomationForm, {
+        additionalProps: {
+          exitCondition: exitCondition,
+          disabled: false,
+          initialValues: {
+            ...exitCondition.formData,
+            datamart_id: datamartId,
+            events: [],
+          },
+          close: () => {
+            closeNextDrawer();
+          },
+          onSubmit: (formData: ScenarioExitConditionFormData) => {
+            this.updateExitCondition(formData);
+            closeNextDrawer();
+          },
+        },
+        size: 'small',
+      });
+    }
+  };
 
   onGlobalExitConditionDelete = () => {
-    this.updateExitCondition(INITIAL_AUTOMATION_DATA.exitCondition.initialFormData);
+    this.updateExitCondition(
+      INITIAL_AUTOMATION_DATA.exitCondition.initialFormData,
+    );
   };
 
   render() {
     const { viewNodeSelector } = this.state;
-    const { hasFeature, viewer, intl: { formatMessage }, exitCondition } = this.props;
+    const {
+      hasFeature,
+      viewer,
+      intl: { formatMessage },
+      exitCondition,
+    } = this.props;
 
     let content = (
       <div className={`automation-builder`} ref={this.div}>
@@ -515,10 +552,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     if (viewer) {
       content = (
         <div className={`automation-builder`} ref={this.div}>
-          <Col
-            span={24}
-            className={'diagram'}
-          >
+          <Col span={24} className={'diagram'}>
             <DiagramWidget
               diagramEngine={this.engine}
               allowCanvasZoom={!this.state.locked}
@@ -529,7 +563,7 @@ class AutomationBuilder extends React.Component<Props, State> {
             />
           </Col>
         </div>
-      )
+      );
     }
 
     return content;
