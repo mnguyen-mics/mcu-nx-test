@@ -213,11 +213,9 @@ function* authentication() {
     });
 
     if (signOutAction) {
-      const _persistedStoreService = yield getContext('persistedStoreService');
       yield call(_authService.revokeRefreshToken);
       yield call(_authService.deleteCredentials);
       yield call(_authService.setIsLogged, false);
-      _persistedStoreService.removeStringItem('store');
       if (signOutAction.meta && signOutAction.meta.redirectCb) {
         signOutAction.meta.redirectCb();
       }

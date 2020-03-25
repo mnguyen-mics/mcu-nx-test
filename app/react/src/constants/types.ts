@@ -60,7 +60,6 @@ const TYPES = {
     'audienceSegmentFeedServiceFactory',
   ),
   IAuthService: Symbol.for('authService'),
-  IPersistedStoreService: Symbol.for('persistedStoreService'),
   IMicsTagService: Symbol.for('micsTagService'),
   ILabelService: Symbol.for('labelService'),
   IOrganisationService: Symbol.for('organisationService'),

@@ -1,5 +1,3 @@
-import { IPersistedStoreService } from './../services/PersistedStoreService';
-// https://github.com/redux-saga/redux-saga#using-umd-build-in-the-browser
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
@@ -15,14 +13,10 @@ import { IOrganisationService } from '../services/OrganisationService';
 import { MicsReduxState } from '../utils/ReduxHelper';
 import { IMicsTagService } from '../services/MicsTagService';
 
-// Uncomment to ajust plugged middlewares accordingly
-// const IS_PROD = process.env.NODE_ENV !== 'production';
-
 function bindDependencies(
   func: (
     navigatorService: INavigatorService,
     authService: IAuthService,
-    persistedStoreService: IPersistedStoreService,
     labelService: ILabelService,
     organisationService: IOrganisationService,
     micsTagService: IMicsTagService,
@@ -41,7 +35,6 @@ export { bindDependencies };
 function configureStore(
   navigatorService: INavigatorService,
   authService: IAuthService,
-  persistedStoreService: IPersistedStoreService,
   labelService: ILabelService,
   organisationService: IOrganisationService,
   micsTagService: IMicsTagService,
@@ -53,7 +46,6 @@ function configureStore(
     context: {
       navigatorService: navigatorService,
       authService: authService,
-      persistedStoreService: persistedStoreService,
       labelService: labelService,
       organisationService: organisationService,
       micsTagService: micsTagService,
@@ -87,7 +79,6 @@ function configureStore(
 export default bindDependencies(configureStore, [
   TYPES.INavigatorService,
   TYPES.IAuthService,
-  TYPES.IPersistedStoreService,
   TYPES.ILabelService,
   TYPES.IOrganisationService,
   TYPES.IMicsTagService,
