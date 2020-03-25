@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'antd';
 import cuid from 'cuid';
 
@@ -23,8 +23,10 @@ export interface FieldNodeSectionProps {
   formChange: (fieldName: string, fieldValue: any) => void;
   objectType: ObjectLikeTypeInfoResource;
   datamartId: string;
-	runtimeSchemaId: string;
-	formName?: string;
+  runtimeSchemaId: string;
+  formName?: string;
+  title: FormattedMessage.MessageDescriptor;
+  subtitle: FormattedMessage.MessageDescriptor;
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -43,7 +45,9 @@ class FieldNodeSection extends React.Component<JoinedProps> {
       objectType,
       datamartId,
 			runtimeSchemaId,
-			formName
+			formName,
+			title,
+			subtitle,
     } = this.props;
 
     const handleOnClick = () =>
@@ -68,8 +72,8 @@ class FieldNodeSection extends React.Component<JoinedProps> {
               availableFields={availableFields}
               objectType={objectType}
               datamartId={datamartId}
-							runtimeSchemaId={runtimeSchemaId}
-							formName={formName}
+              runtimeSchemaId={runtimeSchemaId}
+              formName={formName}
             />
           </div>
         </div>
@@ -114,8 +118,8 @@ class FieldNodeSection extends React.Component<JoinedProps> {
     return (
       <div>
         <FormSection
-          subtitle={messages.fieldConditionSubTitle}
-          title={messages.fieldConditionTitle}
+          title={title}
+          subtitle={subtitle}
         />
         <div className="form-field-wrapper">
           {renderedFields}

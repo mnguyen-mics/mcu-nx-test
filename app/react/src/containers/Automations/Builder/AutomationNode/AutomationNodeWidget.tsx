@@ -199,7 +199,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           case 'WAIT_NODE':
             initialValue = {
               ...scenarioNodeShape.formData,
-              name: scenarioNodeShape.name
+              name: scenarioNodeShape.name,
             };
             break;
           case 'QUERY_INPUT':
@@ -207,16 +207,19 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             // add here query input
             initialValue = {
               ...scenarioNodeShape.formData,
-              datamart_id: scenarioNodeShape.formData.datamart_id ? scenarioNodeShape.formData.datamart_id : datamartId,
+              datamart_id: scenarioNodeShape.formData.datamart_id
+                ? scenarioNodeShape.formData.datamart_id
+                : datamartId,
               name: scenarioNodeShape.name,
-							events: [],
-							fieldNodeForm: [],
+              events: [],
+              fieldNodeForm: [],
             } as any;
-            size = scenarioNodeShape.type === 'QUERY_INPUT'
-              ? scenarioNodeShape.ui_creation_mode === 'EVENT'
-                ? 'small'
-                : 'large'
-              : 'large'
+            size =
+              scenarioNodeShape.type === 'QUERY_INPUT'
+                ? scenarioNodeShape.ui_creation_mode === 'EVENT'
+                  ? 'small'
+                  : 'large'
+                : 'large';
             break;
           case 'DELETE_FROM_SEGMENT_NODE':
           case 'ADD_TO_SEGMENT_NODE':
