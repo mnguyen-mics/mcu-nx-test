@@ -31,9 +31,13 @@ type JoinedProp = RouteComponentProps & DatamartAnalysisProps;
 class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
     super(props);
-    this.state = { layout: [], isLoading: false };
+    this.state = { 
+      layout: [], 
+      isLoading: false,
+    };
     this.onSegmentFilterChange = this.onSegmentFilterChange.bind(this);
     this.updateLocationSearch = this.updateLocationSearch.bind(this);
+    this.onAllUserFilterChange = this.onAllUserFilterChange.bind(this);
   }
 
   componentWillMount() {
@@ -41,6 +45,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       from: new McsMoment('now-8d'),
       to: new McsMoment('now-1d'),
       segments: [],
+      allusers: true
     });
   }
 
@@ -95,7 +100,14 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     });
   }
 
+  onAllUserFilterChange(status: boolean) {
+    this.updateLocationSearch({
+      allusers: status
+    });
+  }
+
   getLoadingState = (isLoading: boolean) => this.setState({isLoading})
+
 
   render() {
     const { 
@@ -123,7 +135,11 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
           </Col>
         </Row>
         { showFilter && <Row>
-          <SegmentFilter className={ isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'} onChange={this.onSegmentFilterChange} />
+          <SegmentFilter 
+            className={ isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'} 
+            onChange={this.onSegmentFilterChange}
+            onToggleAllUsersFilter={this.onAllUserFilterChange}
+          />
           <Col className="text-right" offset={6}>
               {this.renderDatePicker()}
           </Col>

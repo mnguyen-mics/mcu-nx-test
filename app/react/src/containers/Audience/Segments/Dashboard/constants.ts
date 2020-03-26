@@ -3,6 +3,7 @@ import {
   DATE_SEARCH_SETTINGS,
   KEYWORD_SEARCH_SETTINGS,
   SEGMENTS_FILTERS_SEARCH_SETTINGS,
+  ALL_USERS,
 } from '../../../../utils/LocationSearchHelper';
 
 type QueryType = { types: string };
@@ -31,7 +32,8 @@ export const SEGMENT_QUERY_SETTINGS = [
 
 export const DATAMART_USERS_ANALYTICS_SETTING = [
   ...SEGMENTS_FILTERS_SEARCH_SETTINGS,
-  ...DATE_SEARCH_SETTINGS
+  ...DATE_SEARCH_SETTINGS,
+  ...ALL_USERS
 ]
 
 export interface AudienceReportData {

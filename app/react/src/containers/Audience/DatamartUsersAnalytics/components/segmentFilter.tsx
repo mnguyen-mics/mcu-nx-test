@@ -7,11 +7,13 @@ import { LabeledValue } from 'antd/lib/select';
 interface SegmentFilterProps {
   className: string;
   onChange: (values: string[]) => void;
+  onToggleAllUsersFilter: (allUsersEnabled: boolean) => void;
 }
 interface SegmentFilterState {
   segmentSearchDisplayed: boolean;
   appliedSegmentFilters: AppliedSegmentFilter[];
   colors: string[];
+  allUsersEnabled: boolean;
 }
 
 interface AppliedSegmentFilter extends LabeledValue {
@@ -30,11 +32,14 @@ class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterSta
       segmentSearchDisplayed: false,
       appliedSegmentFilters: [],
       colors: chroma.scale([this._firstFilterColor, this._lastFilterColor]).mode('lch').colors(3),
+      allUsersEnabled: true
     };
     this.showSegmentSearch = this.showSegmentSearch.bind(this);
     this.onSegmentByNameSelectorChange = this.onSegmentByNameSelectorChange.bind(this);
     this.removeFilter = this.removeFilter.bind(this);
+    this.toggleAllUserFilter = this.toggleAllUserFilter.bind(this);
     this.handleOnSegmentNameFilterClick = this.handleOnSegmentNameFilterClick.bind(this);
+    this.handleOnAllUserFilterToggle = this.handleOnAllUserFilterToggle.bind(this);
   }
 
   showSegmentSearch() {
@@ -56,9 +61,9 @@ class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterSta
             color: colors[state.appliedSegmentFilters.length],
             ...newValue
           });
-  
-          const segmentIds = newAppliedSegmentFilters.slice().map((item: AppliedSegmentFilter) => item.key)
-          onChange(segmentIds);
+
+        const segmentIds = newAppliedSegmentFilters.slice().map((item: AppliedSegmentFilter) => item.key)
+        onChange(segmentIds);
         return {
           appliedSegmentFilters: newAppliedSegmentFilters,
           segmentSearchDisplayed: false
@@ -79,15 +84,26 @@ class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterSta
     });
   }
 
+  toggleAllUserFilter() {
+    const { onToggleAllUsersFilter } = this.props;
+    const { allUsersEnabled } = this.state;
+    onToggleAllUsersFilter(!allUsersEnabled);
+    this.setState({
+      allUsersEnabled: !allUsersEnabled
+    })
+  }
+
   handleOnSegmentNameFilterClick = (segmentId: string) => this.removeFilter(segmentId);
 
+  handleOnAllUserFilterToggle = () => this.toggleAllUserFilter();
+
   render() {
-    const { segmentSearchDisplayed, appliedSegmentFilters } = this.state;
+    const { segmentSearchDisplayed, appliedSegmentFilters, allUsersEnabled } = this.state;
     const { className } = this.props;
     return (
       <div className={className}>
-        <Button className="appliedSegmentName" ghost={true} style={{ border: `1px solid ${this._allUserFilterColor}` }}>
-          <span className="oval" style={{ border: `5px solid ${this._allUserFilterColor}` }} /><span className="name">All Users</span>
+        <Button className={allUsersEnabled ? 'appliedSegmentName' : 'appliedSegmentName _is_disable' } ghost={true} style={{ border: `1px solid ${this._allUserFilterColor}` }} onClick={this.handleOnAllUserFilterToggle}>
+          <span className="oval" style={{ border: `5px solid ${this._allUserFilterColor}` }} /><span className="name">All Users {allUsersEnabled}</span>
         </Button>
         {appliedSegmentFilters.map((item: AppliedSegmentFilter) =>
           <Button key={item.key} className="appliedSegmentName" ghost={true} style={{ border: `1px solid ${item.color}` }} onClick={this.handleOnSegmentNameFilterClick.bind(this, item.key)}>
@@ -95,7 +111,7 @@ class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterSta
           </Button>)}
 
         {appliedSegmentFilters.length < 2 && (!segmentSearchDisplayed ?
-          <Button type="dashed" ghost={true}  className="segmentFilter" icon="plus" onClick={this.showSegmentSearch}>
+          <Button type="dashed" ghost={true} className="segmentFilter" icon="plus" onClick={this.showSegmentSearch}>
             <span className="placeholder">Select a segment to compare with</span>
           </Button>
           : <SegmentByNameSelector onchange={this.onSegmentByNameSelectorChange} />)}

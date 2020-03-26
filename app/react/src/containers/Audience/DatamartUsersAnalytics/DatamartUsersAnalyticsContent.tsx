@@ -31,6 +31,7 @@ interface DatamartUsersAnalyticsContentProps {
 interface DatamartUsersAnalyticsContentStates {
   formattedConfig: DashboardConfig[];
   filters: string[];
+  allUsers: boolean;
 }
 
 type JoinedProp = RouteComponentProps & DatamartUsersAnalyticsContentProps;
@@ -47,7 +48,8 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
 
     this.state = {
       formattedConfig: [],
-      filters: []
+      filters: [],
+      allUsers: true
     }
   }
 
@@ -55,7 +57,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
     const { config } = this.props;
 
     for (const configItem of config) {
-      const currentConfigItem = {...configItem};
+      const currentConfigItem = { ...configItem };
       configItem.color = this._allUserFilterColor;
       config.concat(currentConfigItem);
     }
@@ -65,33 +67,51 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
     });
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(previousProps: DatamartUsersAnalyticsContentProps) {
     const { location: { search }, config } = this.props;
-    const { filters } = this.state;
+    const { filters, allUsers } = this.state;
+
     const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
+
     if (!isEqual(filter.segments, filters)) {
       const tmpDashboardConfig = [] as DashboardConfig[];
       let newDashboardConfig = [] as DashboardConfig[];
+
       this.setState(state => {
         const formattedConfig = state.formattedConfig.slice();
         if (filters.length < filter.segments.length) {
+          // Add segment filter
           for (const configItem of config) {
-            const currentConfigItem = {...configItem};
+            const currentConfigItem = {
+              ...configItem,
+              segmentId: filter.segments[filters.length],
+              color: this._colors[filters.length]
+            };
             currentConfigItem.layout.y += 3;
-            currentConfigItem.color = this._colors[filters.length];
-            currentConfigItem.segmentId = filter.segments[filters.length];
             tmpDashboardConfig.push(currentConfigItem);
           }
           newDashboardConfig = formattedConfig.concat(tmpDashboardConfig);
         }
         else {
           const thedifference = difference(filters, filter.segments);
+          // Remove segment filter
           newDashboardConfig = formattedConfig.filter(item => item.segmentId !== thedifference[0]);
         }
 
         return {
           formattedConfig: newDashboardConfig,
           filters: filter.segments
+        }
+      });
+    }
+
+    if (!isEqual(filter.allusers, allUsers)) {
+      this.setState(state => {
+        const formattedConfig = state.formattedConfig.slice();
+        const newDashboardConfig = !filter.allusers ? formattedConfig.filter(item => item.segmentId) : formattedConfig.concat(config);
+        return {
+          formattedConfig: newDashboardConfig,
+          allUsers: filter.allusers
         }
       });
     }
@@ -107,14 +127,14 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
           style={{ borderLeft: `5px solid ${comp.color}` }}
         >
           {comp.charts.map((chart: Chart, index) => {
-            return <ApiQueryWrapper 
-                      key={index.toString()} 
-                      chart={chart} 
-                      datamartId={datamartId} 
-                      dateRange={dateRange} 
-                      onChange={onChange} 
-                      segmentId={comp.segmentId} 
-                    />
+            return <ApiQueryWrapper
+              key={index.toString()}
+              chart={chart}
+              datamartId={datamartId}
+              dateRange={dateRange}
+              onChange={onChange}
+              segmentId={comp.segmentId}
+            />
           })}
         </CardFlex>
       );

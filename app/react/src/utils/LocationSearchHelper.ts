@@ -213,6 +213,18 @@ export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [
   },
 ];
 
+export const ALL_USERS: SearchSetting[] = [
+  {
+    paramName: 'allusers',
+    defaultValue: true,
+    deserialize: (query: Index<string>) => query.allusers === 'true',
+    serialize: (value: boolean) => value.toString(),
+    isValid: (query: Index<string>) => {
+      return query.allusers === 'true' || query.allusers === 'false';
+    },
+  },
+];
+
 export const DATAMART_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'datamartId',

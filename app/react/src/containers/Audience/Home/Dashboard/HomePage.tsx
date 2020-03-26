@@ -24,7 +24,7 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import { averageSessionDurationConfig, /*channelEngagementConfig, acquisitionEngagementConfig*/ } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
 
@@ -111,16 +111,16 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         config: averageSessionDurationConfig as any,
         showFilter: true
       },
-      // {
-      //   title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
-      //   datamartId: datamartId,
-      //   config: channelEngagementConfig as any
-      // },
-      // {
-      //   title: intl.formatMessage(messages.acquisitionEngagementTitle),
-      //   datamartId: datamartId,
-      //   config: acquisitionEngagementConfig as any
-      // }
+      {
+        title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
+        datamartId: datamartId,
+        config: channelEngagementConfig as any
+      },
+      {
+        title: intl.formatMessage(messages.acquisitionEngagementTitle),
+        datamartId: datamartId,
+        config: acquisitionEngagementConfig as any
+      }
     ];
   };
 
