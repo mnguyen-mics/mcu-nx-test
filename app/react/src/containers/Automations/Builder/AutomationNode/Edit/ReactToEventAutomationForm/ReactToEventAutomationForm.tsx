@@ -183,19 +183,18 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
           if (expressionEventNames.length > 0)
             events = expressionEventNames[0].comparison.values;
 
-          fieldNodeForm = query.where.expressions.filter(
-            (expression: FieldNode) => {
+          fieldNodeForm = query.where.expressions
+            .filter((expression: FieldNode) => {
               if (isFieldNode(expression))
                 return expression.field !== validObjectType.fieldName;
               return true;
-            },
-          ).map((expression: FieldNode) => {
-							return {
-								...expression,
-								key: cuid(),
-							}
-						}
-					);
+            })
+            .map((expression: FieldNode) => {
+              return {
+                ...expression,
+                key: cuid(),
+              };
+            });
         }
 
         if (dispatch) {
@@ -480,7 +479,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                   fetchSingleMethod={fetchSingleMethod}
                   formItemProps={{
                     label: formatMessage(messages.eventName),
-										required: true,
+                    required: true,
                   }}
                   helpToolTipProps={{
                     title: formatMessage(messages.eventNameHelp),
@@ -488,8 +487,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                   small={true}
                   validate={isRequired}
                   selectProps={{
-										mode: 'tags',
-										disabled,
+                    mode: 'tags',
+                    disabled,
                   }}
                   loadOnlyOnce={true}
                 />
@@ -507,8 +506,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                   runtimeSchemaId={runtimeSchemaId}
                   formName={FORM_ID}
                   title={messages.propertyFilterSectionTitle}
-									subtitle={messages.propertyFilterSectionSubtitle}
-									disabled={disabled}
+                  subtitle={messages.propertyFilterSectionSubtitle}
+                  disabled={disabled}
                 />
               )}
             </Form>

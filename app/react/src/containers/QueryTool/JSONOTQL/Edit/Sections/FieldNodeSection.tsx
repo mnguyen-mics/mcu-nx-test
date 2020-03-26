@@ -12,7 +12,10 @@ import { QueryBooleanOperator } from '../../../../../models/datamart/graphdb/Que
 // import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { FormItemProps } from 'antd/lib/form';
 import { FieldNodeFormData } from '../domain';
-import { FieldInfoResource, ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
+import {
+  FieldInfoResource,
+  ObjectLikeTypeInfoResource,
+} from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import FieldNodeForm from './Field/FieldNodeForm';
 
 export interface FieldNodeSectionProps {
@@ -26,8 +29,8 @@ export interface FieldNodeSectionProps {
   runtimeSchemaId: string;
   formName?: string;
   title: FormattedMessage.MessageDescriptor;
-	subtitle: FormattedMessage.MessageDescriptor;
-	disabled?: boolean,
+  subtitle: FormattedMessage.MessageDescriptor;
+  disabled?: boolean;
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -45,11 +48,11 @@ class FieldNodeSection extends React.Component<JoinedProps> {
       booleanOperator,
       objectType,
       datamartId,
-			runtimeSchemaId,
-			formName,
-			title,
-			subtitle,
-			disabled,
+      runtimeSchemaId,
+      formName,
+      title,
+      subtitle,
+      disabled,
     } = this.props;
 
     const handleOnClick = () =>
@@ -63,9 +66,11 @@ class FieldNodeSection extends React.Component<JoinedProps> {
       const handleRemove = () => fields.remove(index);
       return (
         <div className={'form-input-group'} key={_fields.get(index).key}>
-          {!disabled && <div className={'action-buttons'} onClick={handleRemove}>
-            <McsIcon type="close" />
-          </div>}
+          {!disabled && (
+            <div className={'action-buttons'} onClick={handleRemove}>
+              <McsIcon type="close" />
+            </div>
+          )}
           <div>
             <FieldNodeForm
               formChange={formChange}
@@ -75,8 +80,8 @@ class FieldNodeSection extends React.Component<JoinedProps> {
               objectType={objectType}
               datamartId={datamartId}
               runtimeSchemaId={runtimeSchemaId}
-							formName={formName}
-							disabled={disabled}
+              formName={formName}
+              disabled={disabled}
             />
           </div>
         </div>
@@ -120,25 +125,22 @@ class FieldNodeSection extends React.Component<JoinedProps> {
 
     return (
       <div>
-        <FormSection
-          title={title}
-          subtitle={subtitle}
-        />
-        <div className="form-field-wrapper">
-          {renderedFields}
-        </div>
-        {!disabled && <Row>
-          <Col span={24}>
-            <div onClick={handleOnClick}>
-              <Col span={24} className="add-field-button">
-                <p>
-                  <McsIcon type="plus" />
-                  {intl.formatMessage(messages.fieldConditionAdditionButton)}
-                </p>
-              </Col>
-            </div>
-          </Col>
-        </Row>}
+        <FormSection title={title} subtitle={subtitle} />
+        <div className="form-field-wrapper">{renderedFields}</div>
+        {!disabled && (
+          <Row>
+            <Col span={24}>
+              <div onClick={handleOnClick}>
+                <Col span={24} className="add-field-button">
+                  <p>
+                    <McsIcon type="plus" />
+                    {intl.formatMessage(messages.fieldConditionAdditionButton)}
+                  </p>
+                </Col>
+              </div>
+            </Col>
+          </Row>
+        )}
       </div>
     );
   }
