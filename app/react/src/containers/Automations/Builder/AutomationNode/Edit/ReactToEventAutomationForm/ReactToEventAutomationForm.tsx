@@ -1,6 +1,7 @@
 import React from 'react';
 import { compose } from 'recompose';
 import { Form, Layout, message } from 'antd';
+import cuid from 'cuid';
 import {
   change,
   reduxForm,
@@ -188,7 +189,13 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                 return expression.field !== validObjectType.fieldName;
               return true;
             },
-          );
+          ).map((expression: FieldNode) => {
+							return {
+								...expression,
+								key: cuid(),
+							}
+						}
+					);
         }
 
         if (dispatch) {
@@ -365,20 +372,9 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
         boolean_operator: 'AND',
         field: validObjectType.objectTypeQueryName,
         type: 'OBJECT',
-        expressions: [
-          {
-            type: 'FIELD',
-            field: validObjectType.fieldName,
-            comparison: {
-              type: 'STRING',
-              operator: 'EQ',
-              values: newValue,
-            },
-          },
-        ] as FieldNode[],
+        expressions: extractExpressions,
       };
 
-      where.expressions = extractExpressions;
       where.expressions.push({
         type: 'FIELD',
         field: validObjectType.fieldName,
@@ -449,7 +445,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       paths: breadCrumbPaths,
       message: messages.save,
       onClose: close,
-      disabled: !disabled && isLoading,
+      disabled: disabled || isLoading,
     };
 
     const fetchListMethod = (k: string) => {
@@ -484,7 +480,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                   fetchSingleMethod={fetchSingleMethod}
                   formItemProps={{
                     label: formatMessage(messages.eventName),
-                    required: true,
+										required: true,
                   }}
                   helpToolTipProps={{
                     title: formatMessage(messages.eventNameHelp),
@@ -492,7 +488,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                   small={true}
                   validate={isRequired}
                   selectProps={{
-                    mode: 'tags',
+										mode: 'tags',
+										disabled,
                   }}
                   loadOnlyOnce={true}
                 />
@@ -510,7 +507,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                   runtimeSchemaId={runtimeSchemaId}
                   formName={FORM_ID}
                   title={messages.propertyFilterSectionTitle}
-                  subtitle={messages.propertyFilterSectionSubtitle}
+									subtitle={messages.propertyFilterSectionSubtitle}
+									disabled={disabled}
                 />
               )}
             </Form>

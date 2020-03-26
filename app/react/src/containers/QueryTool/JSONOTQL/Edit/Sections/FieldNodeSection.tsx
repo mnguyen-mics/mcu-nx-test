@@ -26,7 +26,8 @@ export interface FieldNodeSectionProps {
   runtimeSchemaId: string;
   formName?: string;
   title: FormattedMessage.MessageDescriptor;
-  subtitle: FormattedMessage.MessageDescriptor;
+	subtitle: FormattedMessage.MessageDescriptor;
+	disabled?: boolean,
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -48,6 +49,7 @@ class FieldNodeSection extends React.Component<JoinedProps> {
 			formName,
 			title,
 			subtitle,
+			disabled,
     } = this.props;
 
     const handleOnClick = () =>
@@ -61,9 +63,9 @@ class FieldNodeSection extends React.Component<JoinedProps> {
       const handleRemove = () => fields.remove(index);
       return (
         <div className={'form-input-group'} key={_fields.get(index).key}>
-          <div className={'action-buttons'} onClick={handleRemove}>
+          {!disabled && <div className={'action-buttons'} onClick={handleRemove}>
             <McsIcon type="close" />
-          </div>
+          </div>}
           <div>
             <FieldNodeForm
               formChange={formChange}
@@ -73,7 +75,8 @@ class FieldNodeSection extends React.Component<JoinedProps> {
               objectType={objectType}
               datamartId={datamartId}
               runtimeSchemaId={runtimeSchemaId}
-              formName={formName}
+							formName={formName}
+							disabled={disabled}
             />
           </div>
         </div>
@@ -124,7 +127,7 @@ class FieldNodeSection extends React.Component<JoinedProps> {
         <div className="form-field-wrapper">
           {renderedFields}
         </div>
-        <Row>
+        {!disabled && <Row>
           <Col span={24}>
             <div onClick={handleOnClick}>
               <Col span={24} className="add-field-button">
@@ -135,7 +138,7 @@ class FieldNodeSection extends React.Component<JoinedProps> {
               </Col>
             </div>
           </Col>
-        </Row>
+        </Row>}
       </div>
     );
   }

@@ -77,7 +77,8 @@ export interface FieldNodeFormProps {
   datamartId: string;
   formName?: string;
   runFieldProposal?: FieldProposalLookup
-  treeNodePath?: number[];
+	treeNodePath?: number[];
+	disabled?: boolean,
 }
 
 interface FormValues {
@@ -605,7 +606,8 @@ class FieldNodeForm extends React.Component<Props, State> {
       runtimeSchemaId,
       formValues,
       expressionIndex,
-      fieldValidators,
+			fieldValidators,
+			disabled,
       match: {
         params: {
           organisationId
@@ -690,7 +692,8 @@ class FieldNodeForm extends React.Component<Props, State> {
           fieldValidators.isRequired,
         ]}
         selectProps={{
-          ...selectProps,
+					...selectProps,
+					disabled: disabled,
         }}
         type={field && field.field}
         small={true}
@@ -717,7 +720,8 @@ class FieldNodeForm extends React.Component<Props, State> {
       intl,
       formValues,
       name,
-      idToAttachDropDowns,
+			idToAttachDropDowns,
+			disabled,
     } = this.props;
 
    
@@ -754,8 +758,10 @@ class FieldNodeForm extends React.Component<Props, State> {
             required: true,
           }}
           selectProps={{
-            ...popUpProps,
-          }}
+						...popUpProps,
+						disabled,
+					}}
+					disabled={disabled}
           small={true}
         />
         <FormSelectField
@@ -767,11 +773,12 @@ class FieldNodeForm extends React.Component<Props, State> {
             label: intl.formatMessage(messages.fieldConditionConditionLabel),
           }}
           selectProps={{
-            notFoundContent: intl.formatMessage(messages.fieldTypeNotSupported),
+						notFoundContent: intl.formatMessage(messages.fieldTypeNotSupported),
             ...popUpProps,
+						disabled,
           }}
           small={true}
-          disabled={!hasSelectedAField}
+          disabled={!hasSelectedAField || disabled}
         />
         {fieldName &&
           fieldCondition &&
