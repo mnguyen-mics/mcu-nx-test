@@ -134,7 +134,7 @@ const myDashboards: DashboardResource[] = [
           id: 4,
           component_type: 'COUNT',
           query_id: '25347',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
         },
       },
       {
@@ -209,8 +209,8 @@ const myDashboards: DashboardResource[] = [
           query_ids: ['25357', '25358'],
           labels_enabled: true,
           plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
+            'Contact CRM avec activité',
+            'Contact CRM sans activité',
           ],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
@@ -336,7 +336,7 @@ const myDashboards: DashboardResource[] = [
           id: 4,
           component_type: 'COUNT',
           query_id: '27828',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
         },
       },
       {
@@ -538,7 +538,7 @@ const myDashboards: DashboardResource[] = [
           id: 4,
           component_type: 'COUNT',
           query_id: '27872',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
         },
       },
       {
@@ -571,7 +571,7 @@ const myDashboards: DashboardResource[] = [
           query_ids: ['27875', '27876', '27877'],
           labels_enabled: true,
           plot_labels: ['2nd', '1st_email_click', '1st logged'],
-          title: 'Nombre de user par type de profil matching (30j)',
+          title: 'Nombre de users par type de profil matching (30j)',
           show_legend: false,
         },
       },
@@ -714,7 +714,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 4,
           component_type: 'COUNT',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
           query_id: '29522',
         },
       },
@@ -735,7 +735,7 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
           plot_labels: ['2nd', '1st_email_click', '1st logged'],
-          title: 'Nombre de user par type de profil matching (30j)',
+          title: 'Nombre de users par type de profil matching (30j)',
           show_legend: false,
           query_ids: ['29529', '29532', '29531'],
         },
@@ -874,7 +874,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 4,
           component_type: 'COUNT',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
           query_id: '29692',
         },
       },
@@ -1076,7 +1076,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 4,
           component_type: 'COUNT',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
           query_id: '29716',
         },
       },
@@ -1278,7 +1278,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 4,
           component_type: 'COUNT',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
           query_id: '29856',
         },
       },
@@ -1480,7 +1480,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 4,
           component_type: 'COUNT',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
           query_id: '29760',
         },
       },
@@ -1682,7 +1682,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 4,
           component_type: 'COUNT',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
           query_id: '29787',
         },
       },
@@ -1884,7 +1884,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 4,
           component_type: 'COUNT',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
           query_id: '29808',
         },
       },
@@ -2062,7 +2062,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 4,
           component_type: 'COUNT',
-          title: 'Nombre de userpoints web',
+          title: 'Nombre de UserPoints web',
           query_id: '32027',
         },
       },
@@ -2071,7 +2071,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 5,
           component_type: 'MAP_PIE_CHART',
-          title: 'Repartion des visites par type de profil matching (30j)',
+          title: 'Répartion des visites par type de profil matching (30j)',
           show_legend: true,
           query_id: '32026',
         },
@@ -2792,7 +2792,7 @@ const myDashboards: DashboardResource[] = [
         "component": {
           "id": 4,
           "component_type": "COUNT",
-          "title": "Nombre de userpoints web",
+          "title": "Nombre de UserPoints web",
           "query_id": "33036"
         }
       },
@@ -2807,7 +2807,7 @@ const myDashboards: DashboardResource[] = [
         "component": {
           "id": 5,
           "component_type": "MAP_PIE_CHART",
-          "title": "Repartion des visites par type de profil matching (30j)",
+          "title": "Répartion des visites par type de profil matching (30j)",
           "show_legend": true,
           "query_id": "33035"
         }
