@@ -86,7 +86,7 @@ class FormSearchObject extends React.Component<
     const { fetchSingleMethod, selectProps } = this.props;
     this.setState({ initialFetch: true })
 
-    if(selectProps && selectProps.mode === "default") {
+    if(selectProps && selectProps.mode === "default" || typeof values === "string") {
       const singleValue = values as string;
 
       if(!singleValue) {

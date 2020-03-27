@@ -92,6 +92,18 @@ export type ObjectTreeExpressionNodeShape =
   | ObjectNode
   | TaxonomyObjectNode;
 
+export function isFieldNode(
+  node: ObjectTreeExpressionNodeShape,
+): node is FieldNode {
+  return node.type === 'FIELD';
+}
+
+export function isObjectNode(
+  node: ObjectTreeExpressionNodeShape,
+): node is ObjectNode {
+  return node.type === 'OBJECT';
+}
+
 export interface FieldNode {
   type: 'FIELD';
   field: string;

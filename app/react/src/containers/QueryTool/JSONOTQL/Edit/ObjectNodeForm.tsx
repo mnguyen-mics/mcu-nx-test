@@ -1,5 +1,5 @@
 import * as React from 'react';
-import lodash from 'lodash'
+import lodash from 'lodash';
 import { Omit, connect } from 'react-redux';
 import {
   reduxForm,
@@ -50,7 +50,7 @@ interface MapStateToProps {
 const FieldNodeListFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   FieldNodeSectionProps
-  >;
+>;
 
 type Props = InjectedFormProps<ObjectNodeFormData, ObjectNodeFormProps> &
   ObjectNodeFormProps &
@@ -67,15 +67,26 @@ class ObjectNodeForm extends React.Component<Props> {
    */
 
   filterAvailableFields(objectType: ObjectLikeTypeInfoResource): boolean {
-    return lodash.flatMap(objectType.directives, d => d.arguments.map(a =>
-      Object.values(typesTrigger).includes(a.value.replace(/[^a-zA-Z]+/g,'')))).reduce((acc: boolean, val: boolean) => {return acc || val}, false)
+    return lodash
+      .flatMap(objectType.directives, d =>
+        d.arguments.map(a =>
+          Object.values(typesTrigger).includes(
+            a.value.replace(/[^a-zA-Z]+/g, ''),
+          ),
+        ),
+      )
+      .reduce((acc: boolean, val: boolean) => {
+        return acc || val;
+      }, false);
   }
 
   getQueryableObjectTypes = (isTrigger: boolean) => {
     const { objectType, objectTypes } = this.props;
 
-    if(isTrigger && objectType.name==="UserPoint"){
-      const filteredObjectTypes = objectTypes.filter(o => this.filterAvailableFields(o))
+    if (isTrigger && objectType.name === 'UserPoint') {
+      const filteredObjectTypes = objectTypes.filter(o =>
+        this.filterAvailableFields(o),
+      );
       return objectType.fields.filter(field => {
         const found = filteredObjectTypes.find(ot => {
           const match = field.field_type.match(/\w+/);
@@ -106,13 +117,11 @@ class ObjectNodeForm extends React.Component<Props> {
       f => f.name === formValues.objectNodeForm.field,
     )!.field_type;
 
-    return objectTypes
-      .find(ot => {
-        const match = selectedFieldType.match(/\w+/);
-        return !!(match && match[0] === ot.name);
-      })!
-
-  }
+    return objectTypes.find(ot => {
+      const match = selectedFieldType.match(/\w+/);
+      return !!(match && match[0] === ot.name);
+    })!;
+  };
 
   /**
    * Same a getQueryableObjectTypes but for scalar types
@@ -120,13 +129,12 @@ class ObjectNodeForm extends React.Component<Props> {
   getQueryableFields = () => {
     const { objectTypes } = this.props;
 
-    return this.getSelectedObjectType()
-      .fields.filter(
-        f =>
-          !objectTypes.find(ot => {
-            const match = f.field_type.match(/\w+/);
-            return !!(match && match[0] === ot.name);
-          }) && f.directives.find(dir => dir.name === 'TreeIndex'),
+    return this.getSelectedObjectType().fields.filter(
+      f =>
+        !objectTypes.find(ot => {
+          const match = f.field_type.match(/\w+/);
+          return !!(match && match[0] === ot.name);
+        }) && f.directives.find(dir => dir.name === 'TreeIndex'),
     );
   };
 
@@ -140,7 +148,7 @@ class ObjectNodeForm extends React.Component<Props> {
       isTrigger,
       objectType,
       datamartId,
-      runtimeSchemaId
+      runtimeSchemaId,
     } = this.props;
 
     const genericFieldArrayProps = {
@@ -175,7 +183,9 @@ class ObjectNodeForm extends React.Component<Props> {
         <ObjectNodeSection
           objectTypeFields={this.getQueryableObjectTypes(isTrigger)}
           objectType={objectType}
-          selectedObjectType={hasField ? this.getSelectedObjectType() : undefined}
+          selectedObjectType={
+            hasField ? this.getSelectedObjectType() : undefined
+          }
           onSelect={resetFieldNodeForm}
           isTrigger={isTrigger}
         />
@@ -200,6 +210,8 @@ class ObjectNodeForm extends React.Component<Props> {
             objectType={this.getSelectedObjectType()}
             datamartId={datamartId}
             runtimeSchemaId={runtimeSchemaId}
+            title={messages.fieldConditionTitle}
+            subtitle={messages.fieldConditionSubTitle}
             {...genericFieldArrayProps}
           />
         ),
