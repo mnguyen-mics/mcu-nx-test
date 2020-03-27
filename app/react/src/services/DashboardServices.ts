@@ -209,8 +209,8 @@ const myDashboards: DashboardResource[] = [
           query_ids: ['25357', '25358'],
           labels_enabled: true,
           plot_labels: [
-            'Contact CRM avec activité',
-            'Contact CRM sans activité',
+            'Contact CRM avec activités',
+            'Contact CRM sans activités',
           ],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
@@ -2071,7 +2071,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 5,
           component_type: 'MAP_PIE_CHART',
-          title: 'Répartion des visites par type de profil matching (30j)',
+          title: 'Répartition des visites par type de profil matching (30j)',
           show_legend: true,
           query_id: '32026',
         },
