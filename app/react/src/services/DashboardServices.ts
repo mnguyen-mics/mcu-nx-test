@@ -2730,4 +2730,243 @@ const myDashboards: DashboardResource[] = [
       },
     ],
   },
+  {
+    "id": "1",
+    "name": "Home",
+    "type": "HOME",
+    "components": [
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 0,
+          "y": 0
+        },
+        "component": {
+          "id": 1,
+          "component_type": "PERCENTAGE",
+          "title": "Pourcentage de visites reconnues (30j)",
+          "query_id": "33033",
+          "total_query_id": "33037"
+        }
+      },
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 3,
+          "y": 0
+        },
+        "component": {
+          "id": 2,
+          "component_type": "COUNT",
+          "title": "Nombre de tickets global",
+          "query_id": "33032"
+        }
+      },
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 6,
+          "y": 0
+        },
+        "component": {
+          "id": 3,
+          "component_type": "COUNT",
+          "title": "Nombre de contacts CRM",
+          "query_id": "33034"
+        }
+      },
+      {
+        "layout": {
+          "h": 1,
+          "static": false,
+          "w": 3,
+          "x": 9,
+          "y": 0
+        },
+        "component": {
+          "id": 4,
+          "component_type": "COUNT",
+          "title": "Nombre de userpoints web",
+          "query_id": "33036"
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 6,
+          "x": 0,
+          "y": 1
+        },
+        "component": {
+          "id": 5,
+          "component_type": "MAP_PIE_CHART",
+          "title": "Repartion des visites par type de profil matching (30j)",
+          "show_legend": true,
+          "query_id": "33035"
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 6,
+          "x": 6,
+          "y": 1
+        },
+        "component": {
+          "id": 5,
+          "component_type": "COUNT_PIE_CHART",
+          "labels_enabled": true,
+          "plot_labels": [
+            "2nd",
+            "1st_email_click",
+            "1st logged"
+          ],
+          "title": "Nombre de user par type de profil matching (30j)",
+          "show_legend": false,
+          "query_ids": [
+            "33039",
+            "33041",
+            "33040"
+          ]
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 6,
+          "x": 0,
+          "y": 4
+        },
+        "component": {
+          "id": 5,
+          "component_type": "COUNT_PIE_CHART",
+          "labels_enabled": true,
+          "plot_labels": [
+            "Page View",
+            "Basket View",
+            "Purchase",
+            "Search",
+            "Email Click"
+          ],
+          "title": "Nombre d'évènements web par typologie (30j)",
+          "show_legend": false,
+          "query_ids": [
+            "33042",
+            "33038",
+            "33043",
+            "33045",
+            "33047"
+          ]
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 6,
+          "x": 6,
+          "y": 4
+        },
+        "component": {
+          "id": 5,
+          "component_type": "COUNT_PIE_CHART",
+          "labels_enabled": true,
+          "plot_labels": [
+            "Contact CRM avec activités",
+            "Contact CRM sans activités"
+          ],
+          "title": "Activité web des contacts CRM ",
+          "show_legend": false,
+          "query_ids": [
+            "33044",
+            "33046"
+          ]
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 12,
+          "x": 0,
+          "y": 7
+        },
+        "component": {
+          "id": 5,
+          "component_type": "DATE_AGGREGATION_CHART",
+          "plot_labels": [
+            "email clicks",
+            "basket view",
+            "purchase",
+            "search"
+          ],
+          "title": "Nombre d'évènements web par jour par typologie (30j)",
+          "labels_enabled": true,
+          "format": "YYYY/MM/DD",
+          "query_ids": [
+            "33048",
+            "33049",
+            "33050",
+            "33052"
+          ]
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 12,
+          "x": 0,
+          "y": 10
+        },
+        "component": {
+          "id": 5,
+          "component_type": "DATE_AGGREGATION_CHART",
+          "plot_labels": [
+            "1st",
+            "2nd"
+          ],
+          "title": "Nombre de visites par jour par type de profil matching (30j)",
+          "labels_enabled": true,
+          "format": "YYYY/MM/DD",
+          "query_ids": [
+            "33053",
+            "33051"
+          ]
+        }
+      },
+      {
+        "layout": {
+          "h": 3,
+          "static": false,
+          "w": 12,
+          "x": 0,
+          "y": 13
+        },
+        "component": {
+          "id": 5,
+          "component_type": "DATE_AGGREGATION_CHART",
+          "plot_labels": [
+            "tickets"
+          ],
+          "title": "Nombre de tickets réalisés par les contacts CRM",
+          "labels_enabled": true,
+          "format": "YYYY/MM/DD",
+          "query_ids": [
+            "33054"
+          ]
+        }
+      }
+    ],
+    "datamart_id": "1433"
+  }
 ];
