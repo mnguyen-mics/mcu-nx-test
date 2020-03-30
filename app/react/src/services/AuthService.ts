@@ -150,9 +150,9 @@ export class AuthService implements IAuthService {
     });
   };
 
-  setLoginStatus = (loginStatus: boolean) => {
+  setIsLogged = (isLogged: boolean) => {
     LocalStorage.setItem({
-      login: String(loginStatus),
+      isLogged: String(isLogged),
     });
   };
 

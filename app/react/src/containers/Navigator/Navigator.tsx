@@ -167,7 +167,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     const renderRoute = ({
       match,
-      location,
     }: RouteComponentProps<{ organisationId: string }>) => {
       const authenticated = this._authService.isAuthenticated();
       let redirectToUrl = '/login';
@@ -186,9 +185,11 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       return <Login />;
     };
 
-    const logoutRouteRender = ({ history }: any) => {
+    const logoutRouteRender = () => {
       const redirectCb = () => {
-        history.push('/');
+        this.props.history.push({
+          pathname: '/',
+        });
       };
       this.props.logOut(undefined, { redirectCb });
       return null;
@@ -328,8 +329,5 @@ const mapDispatchToProps = {
 export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
 )(Navigator);

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { ActionFunctionAny, ActionMeta } from 'redux-actions';
 import { compose } from 'recompose';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import {
@@ -80,7 +81,7 @@ interface MapDispatchToProps {
   logInRequest: (
     payloadCreator: Credentials & { remember: boolean },
     metaCreator: { redirect: () => void },
-  ) => Promise<void>;
+  ) => ActionFunctionAny<ActionMeta<any, any>>;
 }
 
 type Props = MapStateToProps &
@@ -105,11 +106,11 @@ class Login extends React.Component<Props, State> {
       const loginEvent = storageEvents.find(
         ev =>
           ev.storageArea &&
-          ev.storageArea.login &&
-          ev.storageArea.login === 'true',
+          ev.storageArea.isLogged &&
+          ev.storageArea.isLogged === 'true',
       );
       if (!!loginEvent && !loggedIn) {
-        this.handleSubmit(e);
+        location.reload();
         loggedIn = true;
         storageEvents = [];
       }

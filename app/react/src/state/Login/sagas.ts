@@ -39,7 +39,7 @@ function* authorize(credentialsOrRefreshToken: any) {
     log.debug(`Store refresh token ${refresh_token}`);
     yield call(_authService.setRefreshToken, refresh_token);
     yield call(_authService.setRefreshTokenExpirationDate, expires_in);
-    yield call(_authService.setLoginStatus, true);
+    yield call(_authService.setIsLogged, true);
   }
 
   yield put(logIn.success(access_token));
@@ -216,7 +216,7 @@ function* authentication() {
       const _persistedStoreService = yield getContext('persistedStoreService');
       yield call(_authService.revokeRefreshToken);
       yield call(_authService.deleteCredentials);
-      yield call(_authService.setLoginStatus, false);
+      yield call(_authService.setIsLogged, false);
       _persistedStoreService.removeStringItem('store');
       if (signOutAction.meta && signOutAction.meta.redirectCb) {
         signOutAction.meta.redirectCb();
